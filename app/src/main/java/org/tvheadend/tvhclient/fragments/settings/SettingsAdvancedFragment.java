@@ -15,7 +15,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import org.tvheadend.tvhclient.BuildConfig;
 import org.tvheadend.tvhclient.Logger;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
+import org.tvheadend.tvhclient.interfaces.ToolbarInterface;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -26,7 +26,7 @@ public class SettingsAdvancedFragment extends PreferenceFragment {
     private final static String TAG = SettingsAdvancedFragment.class.getSimpleName();
 
     private Activity activity;
-    private ActionBarInterface actionBarInterface;
+    private ToolbarInterface toolbarInterface;
     private CheckBoxPreference prefDebugMode;
     private Preference prefSendLogfile;
     private Logger logger;
@@ -43,11 +43,11 @@ public class SettingsAdvancedFragment extends PreferenceFragment {
         super.onActivityCreated(savedInstanceState);
 
         activity = getActivity();
-        if (activity instanceof ActionBarInterface) {
-            actionBarInterface = (ActionBarInterface) activity;
+        if (activity instanceof ToolbarInterface) {
+            toolbarInterface = (ToolbarInterface) activity;
         }
-        if (actionBarInterface != null) {
-            actionBarInterface.setActionBarTitle(getString(R.string.pref_advanced_settings));
+        if (toolbarInterface != null) {
+            toolbarInterface.setActionBarTitle(getString(R.string.pref_advanced_settings));
         }
 
         logger = Logger.getInstance();
@@ -135,7 +135,7 @@ public class SettingsAdvancedFragment extends PreferenceFragment {
     }
 
     public void onDestroy() {
-        actionBarInterface = null;
+        toolbarInterface = null;
         super.onDestroy();
     }
 }

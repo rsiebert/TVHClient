@@ -80,11 +80,11 @@ public class RemovedRecordingListFragment extends RecordingListFragment {
         adapter.notifyDataSetChanged();
 
         // Shows the currently visible number of recordings of the type  
-        if (actionBarInterface != null) {
-            actionBarInterface.setActionBarTitle(getString(R.string.removed_recordings));
+        if (toolbarInterface != null) {
+            toolbarInterface.setActionBarTitle(getString(R.string.removed_recordings));
             String items = getResources().getQuantityString(R.plurals.recordings, adapter.getCount(), adapter.getCount());
-            actionBarInterface.setActionBarSubtitle(items);
-            actionBarInterface.setActionBarIcon(R.mipmap.ic_launcher);
+            toolbarInterface.setActionBarSubtitle(items);
+            toolbarInterface.setActionBarIcon(R.mipmap.ic_launcher);
         }
 
         // Inform the activity that the channel list has been populated. It will

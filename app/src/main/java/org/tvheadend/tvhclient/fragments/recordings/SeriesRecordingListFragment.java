@@ -23,7 +23,7 @@ import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.adapter.SeriesRecordingListAdapter;
-import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
+import org.tvheadend.tvhclient.interfaces.ToolbarInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
@@ -38,7 +38,7 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
     private static final String TAG = SeriesRecordingListFragment.class.getSimpleName();
 
     private AppCompatActivity activity;
-    private ActionBarInterface actionBarInterface;
+    private ToolbarInterface toolbarInterface;
     private FragmentStatusInterface fragmentStatusInterface;
     private SeriesRecordingListAdapter adapter;
     private ListView listView;
@@ -71,8 +71,8 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
         dataStorage = DataStorage.getInstance();
         menuUtils = new MenuUtils(getActivity());
 
-        if (activity instanceof ActionBarInterface) {
-            actionBarInterface = (ActionBarInterface) activity;
+        if (activity instanceof ToolbarInterface) {
+            toolbarInterface = (ToolbarInterface) activity;
         }
         if (activity instanceof FragmentStatusInterface) {
             fragmentStatusInterface = (FragmentStatusInterface) activity;
@@ -113,7 +113,7 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
     @Override
     public void onDestroy() {
         fragmentStatusInterface = null;
-        actionBarInterface = null;
+        toolbarInterface = null;
         super.onDestroy();
     }
 
@@ -169,11 +169,11 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
         adapter.notifyDataSetChanged();
 
         // Shows the currently visible number of recordings of the type  
-        if (actionBarInterface != null) {
-            actionBarInterface.setActionBarTitle(getString(R.string.series_recordings));
+        if (toolbarInterface != null) {
+            toolbarInterface.setActionBarTitle(getString(R.string.series_recordings));
             String items = getResources().getQuantityString(R.plurals.items, adapter.getCount(), adapter.getCount());
-            actionBarInterface.setActionBarSubtitle(items);
-            actionBarInterface.setActionBarIcon(R.mipmap.ic_launcher);
+            toolbarInterface.setActionBarSubtitle(items);
+            toolbarInterface.setActionBarIcon(R.mipmap.ic_launcher);
         }
         // Inform the listeners that the channel list is populated.
         // They could then define the preselected list item.

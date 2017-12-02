@@ -22,7 +22,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.adapter.ConnectionListAdapter;
-import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
+import org.tvheadend.tvhclient.interfaces.ToolbarInterface;
 import org.tvheadend.tvhclient.interfaces.SettingsInterface;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.tasks.WakeOnLanTask;
@@ -37,7 +37,7 @@ public class SettingsShowConnectionsFragment extends Fragment implements ActionM
     private final static String TAG = SettingsShowConnectionsFragment.class.getSimpleName();
 
     private Activity activity;
-    private ActionBarInterface actionBarInterface;
+    private ToolbarInterface toolbarInterface;
     private SettingsInterface settingsInterface;
 
     private ConnectionListAdapter adapter;
@@ -63,7 +63,7 @@ public class SettingsShowConnectionsFragment extends Fragment implements ActionM
 
     @Override
     public void onDestroy() {
-        actionBarInterface = null;
+        toolbarInterface = null;
         settingsInterface = null;
         super.onDestroy();
     }
@@ -75,8 +75,8 @@ public class SettingsShowConnectionsFragment extends Fragment implements ActionM
         activity = getActivity();
         databaseHelper = DatabaseHelper.getInstance(getActivity().getApplicationContext());
 
-        if (activity instanceof ActionBarInterface) {
-            actionBarInterface = (ActionBarInterface) activity;
+        if (activity instanceof ToolbarInterface) {
+            toolbarInterface = (ToolbarInterface) activity;
         }
         if (activity instanceof SettingsInterface) {
             settingsInterface = (SettingsInterface) activity;
@@ -133,9 +133,9 @@ public class SettingsShowConnectionsFragment extends Fragment implements ActionM
         }
         adapter.sort();
         adapter.notifyDataSetChanged();
-        if (actionBarInterface != null) {
-            actionBarInterface.setActionBarTitle(getString(R.string.settings));
-            actionBarInterface.setActionBarSubtitle(
+        if (toolbarInterface != null) {
+            toolbarInterface.setActionBarTitle(getString(R.string.settings));
+            toolbarInterface.setActionBarSubtitle(
                     getResources().getQuantityString(R.plurals.number_of_connections,
                             adapter.getCount(), adapter.getCount()));
         }
@@ -239,8 +239,8 @@ public class SettingsShowConnectionsFragment extends Fragment implements ActionM
                                 adapter.remove(c);
                                 adapter.notifyDataSetChanged();
                                 adapter.sort();
-                                if (actionBarInterface != null) {
-                                    actionBarInterface.setActionBarSubtitle(
+                                if (toolbarInterface != null) {
+                                    toolbarInterface.setActionBarSubtitle(
                                             getResources().getQuantityString(R.plurals.number_of_connections,
                                                     adapter.getCount(), adapter.getCount()));
                                 }

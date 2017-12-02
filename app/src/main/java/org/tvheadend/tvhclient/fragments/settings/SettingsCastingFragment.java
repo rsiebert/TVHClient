@@ -42,7 +42,7 @@ import org.tvheadend.tvhclient.Logger;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.htsp.HTSService;
-import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
+import org.tvheadend.tvhclient.interfaces.ToolbarInterface;
 import org.tvheadend.tvhclient.interfaces.BackPressedInterface;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Connection;
@@ -58,7 +58,7 @@ public class SettingsCastingFragment extends PreferenceFragment implements HTSLi
     private static final String CAST_PROFILE_UUID = "cast_profile_uuid";
 
     private Activity activity;
-    private ActionBarInterface actionBarInterface;
+    private ToolbarInterface toolbarInterface;
     private Connection conn = null;
     private Profile castProfile = null;
     private CheckBoxPreference prefEnableCasting;
@@ -76,7 +76,7 @@ public class SettingsCastingFragment extends PreferenceFragment implements HTSLi
 
     @Override
     public void onDestroy() {
-        actionBarInterface = null;
+        toolbarInterface = null;
         super.onDestroy();
     }
 
@@ -91,11 +91,11 @@ public class SettingsCastingFragment extends PreferenceFragment implements HTSLi
         super.onActivityCreated(savedInstanceState);
 
         activity = getActivity();
-        if (activity instanceof ActionBarInterface) {
-            actionBarInterface = (ActionBarInterface) activity;
+        if (activity instanceof ToolbarInterface) {
+            toolbarInterface = (ToolbarInterface) activity;
         }
-        if (actionBarInterface != null) {
-            actionBarInterface.setActionBarTitle(getString(R.string.pref_casting));
+        if (toolbarInterface != null) {
+            toolbarInterface.setActionBarTitle(getString(R.string.pref_casting));
         }
 
         app = TVHClientApplication.getInstance();
@@ -158,8 +158,8 @@ public class SettingsCastingFragment extends PreferenceFragment implements HTSLi
         super.onResume();
         app.addListener(this);
 
-        if (actionBarInterface != null) {
-            actionBarInterface.setActionBarSubtitle(conn.name);
+        if (toolbarInterface != null) {
+            toolbarInterface.setActionBarSubtitle(conn.name);
         }
 
         loadProfiles();
@@ -213,8 +213,8 @@ public class SettingsCastingFragment extends PreferenceFragment implements HTSLi
         }
 
         // Set the loading indication
-        if (actionBarInterface != null) {
-            actionBarInterface.setActionBarSubtitle(getString(R.string.loading_profiles));
+        if (toolbarInterface != null) {
+            toolbarInterface.setActionBarSubtitle(getString(R.string.loading_profiles));
         }
 
         // Get the available profiles from the server
@@ -229,8 +229,8 @@ public class SettingsCastingFragment extends PreferenceFragment implements HTSLi
             activity.runOnUiThread(new Runnable() {
                 public void run() {
                     // Loading is done, remove the loading subtitle
-                    if (actionBarInterface != null) {
-                        actionBarInterface.setActionBarSubtitle(conn.name);
+                    if (toolbarInterface != null) {
+                        toolbarInterface.setActionBarSubtitle(conn.name);
                     }
 
                     if (prefCastProfiles != null && prefEnableCasting != null) {

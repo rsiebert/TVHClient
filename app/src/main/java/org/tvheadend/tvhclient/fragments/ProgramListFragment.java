@@ -29,7 +29,7 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.adapter.ProgramListAdapter;
 import org.tvheadend.tvhclient.htsp.HTSService;
-import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
+import org.tvheadend.tvhclient.interfaces.ToolbarInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
@@ -51,7 +51,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
     private final static String TAG = ProgramListFragment.class.getSimpleName();
 
     private Activity activity;
-    private ActionBarInterface actionBarInterface;
+    private ToolbarInterface toolbarInterface;
     private FragmentStatusInterface fragmentStatusInterface;
 
     private ProgramListAdapter adapter;
@@ -90,8 +90,8 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
         app = TVHClientApplication.getInstance();
         dataStorage = DataStorage.getInstance();
 
-        if (activity instanceof ActionBarInterface) {
-            actionBarInterface = (ActionBarInterface) activity;
+        if (activity instanceof ToolbarInterface) {
+            toolbarInterface = (ToolbarInterface) activity;
         }
         if (activity instanceof FragmentStatusInterface) {
             fragmentStatusInterface = (FragmentStatusInterface) activity;
@@ -198,15 +198,15 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
 
         // Inform the activity to show the currently visible number of the
         // programs and that the program list has been filled with data.
-        if (actionBarInterface != null && channel != null) {
-            actionBarInterface.setActionBarTitle(channel.name);
+        if (toolbarInterface != null && channel != null) {
+            toolbarInterface.setActionBarTitle(channel.name);
             String items = getResources().getQuantityString(R.plurals.programs, adapter.getCount(), adapter.getCount());
-            actionBarInterface.setActionBarSubtitle(items);
+            toolbarInterface.setActionBarSubtitle(items);
             if (!isDualPane) {
                 if (Utils.showChannelIcons(activity)) {
-                    actionBarInterface.setActionBarIcon(channel.iconBitmap);
+                    toolbarInterface.setActionBarIcon(channel.iconBitmap);
                 } else {
-                    actionBarInterface.setActionBarIcon(R.mipmap.ic_launcher);
+                    toolbarInterface.setActionBarIcon(R.mipmap.ic_launcher);
                 }
             }
         }
@@ -226,7 +226,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
     @Override
     public void onDestroy() {
         fragmentStatusInterface = null;
-        actionBarInterface = null;
+        toolbarInterface = null;
         super.onDestroy();
     }
 
@@ -418,9 +418,9 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
                             adapter.add(p);
                             adapter.notifyDataSetChanged();
                             adapter.sort();
-                            if (actionBarInterface != null) {
+                            if (toolbarInterface != null) {
                                 String items = getResources().getQuantityString(R.plurals.programs, adapter.getCount(), adapter.getCount());
-                                actionBarInterface.setActionBarSubtitle(items);
+                                toolbarInterface.setActionBarSubtitle(items);
                             }
                         }
                     }
@@ -431,9 +431,9 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
                     public void run() {
                         adapter.remove((Program) obj);
                         adapter.notifyDataSetChanged();
-                        if (actionBarInterface != null) {
+                        if (toolbarInterface != null) {
                             String items = getResources().getQuantityString(R.plurals.programs, adapter.getCount(), adapter.getCount());
-                            actionBarInterface.setActionBarSubtitle(items);
+                            toolbarInterface.setActionBarSubtitle(items);
                         }
                     }
                 });

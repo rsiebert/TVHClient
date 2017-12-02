@@ -2,7 +2,7 @@ package org.tvheadend.tvhclient.interfaces;
 
 import android.graphics.Bitmap;
 
-public interface ActionBarInterface {
+public interface ToolbarInterface {
 
     void setActionBarTitle(final String title);
 

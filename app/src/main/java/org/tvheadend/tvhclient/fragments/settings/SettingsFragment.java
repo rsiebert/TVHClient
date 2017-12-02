@@ -34,7 +34,7 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.SuggestionProvider;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.activities.UnlockerActivity;
-import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
+import org.tvheadend.tvhclient.interfaces.ToolbarInterface;
 import org.tvheadend.tvhclient.interfaces.SettingsInterface;
 
 import java.io.File;
@@ -45,7 +45,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
     private final static String TAG = SettingsFragment.class.getSimpleName();
 
     private AppCompatActivity activity;
-    private ActionBarInterface actionBarInterface;
+    private ToolbarInterface toolbarInterface;
     private SettingsInterface settingsInterface;
 
     private Preference prefClearIconCache;
@@ -98,15 +98,15 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
         prefMenuNotifications  = findPreference("pref_menu_notifications");
         prefDownloadDir = findPreference("pref_download_directory");
 
-        if (activity instanceof ActionBarInterface) {
-            actionBarInterface = (ActionBarInterface) activity;
+        if (activity instanceof ToolbarInterface) {
+            toolbarInterface = (ToolbarInterface) activity;
         }
         if (activity instanceof SettingsInterface) {
             settingsInterface = (SettingsInterface) activity;
         }
-        if (actionBarInterface != null) {
-            actionBarInterface.setActionBarTitle(getString(R.string.settings));
-            actionBarInterface.setActionBarSubtitle("");
+        if (toolbarInterface != null) {
+            toolbarInterface.setActionBarTitle(getString(R.string.settings));
+            toolbarInterface.setActionBarSubtitle("");
         }
 
         // Get the available menu names and id values and add only those entries
@@ -410,7 +410,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
     @Override
     public void onDestroy() {
         settingsInterface = null;
-        actionBarInterface = null;
+        toolbarInterface = null;
         super.onDestroy();
     }
 

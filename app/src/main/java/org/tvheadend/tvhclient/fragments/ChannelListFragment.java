@@ -31,7 +31,7 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.adapter.ChannelListAdapter;
 import org.tvheadend.tvhclient.htsp.HTSService;
-import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
+import org.tvheadend.tvhclient.interfaces.ToolbarInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentScrollInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
@@ -61,7 +61,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
     private Activity activity;
     private FragmentStatusInterface fragmentStatusInterface;
     private FragmentScrollInterface fragmentScrollInterface;
-	private ActionBarInterface actionBarInterface;
+	private ToolbarInterface toolbarInterface;
 
     private ArrayList<ChannelTag> tagList = new ArrayList<>();
     private ChannelListAdapter adapter;
@@ -132,8 +132,8 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
         app = TVHClientApplication.getInstance();
         dataStorage = DataStorage.getInstance();
 
-        if (activity instanceof ActionBarInterface) {
-            actionBarInterface = (ActionBarInterface) activity;
+        if (activity instanceof ToolbarInterface) {
+            toolbarInterface = (ToolbarInterface) activity;
         }
         if (activity instanceof FragmentStatusInterface) {
             fragmentStatusInterface = (FragmentStatusInterface) activity;
@@ -462,17 +462,17 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
 
         // Show the name of the selected channel tag and the number of channels
         // in the action bar. If enabled show also the channel tag icon.
-        if (actionBarInterface != null) {
-            actionBarInterface.setActionBarTitle((currentTag == null) ? getString(R.string.all_channels) : currentTag.name);
+        if (toolbarInterface != null) {
+            toolbarInterface.setActionBarTitle((currentTag == null) ? getString(R.string.all_channels) : currentTag.name);
             String items = getResources().getQuantityString(R.plurals.items, adapter.getCount(), adapter.getCount());
-            actionBarInterface.setActionBarSubtitle(items);
+            toolbarInterface.setActionBarSubtitle(items);
 
             if (Utils.showChannelIcons(activity) && Utils.showChannelTagIcon(activity)
                     && currentTag != null 
                     && currentTag.id != 0) {
-                actionBarInterface.setActionBarIcon(currentTag.iconBitmap);
+                toolbarInterface.setActionBarIcon(currentTag.iconBitmap);
             } else {
-                actionBarInterface.setActionBarIcon(R.mipmap.ic_launcher);
+                toolbarInterface.setActionBarIcon(R.mipmap.ic_launcher);
             }
         }
 
@@ -511,7 +511,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
     public void onDestroy() {
         fragmentStatusInterface = null;
         fragmentScrollInterface = null;
-        actionBarInterface = null;
+        toolbarInterface = null;
         super.onDestroy();
     }
 

@@ -16,13 +16,12 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
-import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.Logger;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.adapter.RecordingListAdapter;
-import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
+import org.tvheadend.tvhclient.interfaces.ToolbarInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
@@ -37,7 +36,7 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
     protected static String TAG = RecordingListFragment.class.getSimpleName();
 
     protected AppCompatActivity activity;
-    protected ActionBarInterface actionBarInterface;
+    protected ToolbarInterface toolbarInterface;
     protected FragmentStatusInterface fragmentStatusInterface;
     protected RecordingListAdapter adapter;
     private ListView listView;
@@ -73,8 +72,8 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
         dataStorage = DataStorage.getInstance();
         menuUtils = new MenuUtils(getActivity());
 
-        if (activity instanceof ActionBarInterface) {
-            actionBarInterface = (ActionBarInterface) activity;
+        if (activity instanceof ToolbarInterface) {
+            toolbarInterface = (ToolbarInterface) activity;
         }
         if (activity instanceof FragmentStatusInterface) {
             fragmentStatusInterface = (FragmentStatusInterface) activity;
@@ -115,7 +114,7 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
     @Override
     public void onDestroy() {
         fragmentStatusInterface = null;
-        actionBarInterface = null;
+        toolbarInterface = null;
         super.onDestroy();
     }
 

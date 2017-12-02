@@ -14,7 +14,7 @@ import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
+import org.tvheadend.tvhclient.interfaces.ToolbarInterface;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.DiscSpace;
@@ -26,7 +26,7 @@ public class StatusFragment extends Fragment implements HTSListener {
     private final static String TAG = StatusFragment.class.getSimpleName();
 
     private Activity activity;
-    private ActionBarInterface actionBarInterface;
+    private ToolbarInterface toolbarInterface;
 
     private LinearLayout additionalInformationLayout;
 
@@ -87,12 +87,12 @@ public class StatusFragment extends Fragment implements HTSListener {
         app = TVHClientApplication.getInstance();
         dataStorage = DataStorage.getInstance();
 
-        if (activity instanceof ActionBarInterface) {
-            actionBarInterface = (ActionBarInterface) activity;
+        if (activity instanceof ToolbarInterface) {
+            toolbarInterface = (ToolbarInterface) activity;
         }
-        if (actionBarInterface != null) {
-            actionBarInterface.setActionBarTitle(getString(R.string.status));
-            actionBarInterface.setActionBarSubtitle("");
+        if (toolbarInterface != null) {
+            toolbarInterface.setActionBarTitle(getString(R.string.status));
+            toolbarInterface.setActionBarSubtitle("");
         }
 
         Bundle bundle = getArguments();
@@ -125,7 +125,7 @@ public class StatusFragment extends Fragment implements HTSListener {
 
     @Override
     public void onDestroy() {
-        actionBarInterface = null;
+        toolbarInterface = null;
         super.onDestroy();
     }
 
@@ -152,9 +152,9 @@ public class StatusFragment extends Fragment implements HTSListener {
                     public void run() {
                         connectionStatus = action;
 
-                        if (actionBarInterface != null) {
-                            actionBarInterface.setActionBarTitle(getString(R.string.status));
-                            actionBarInterface.setActionBarSubtitle("");
+                        if (toolbarInterface != null) {
+                            toolbarInterface.setActionBarTitle(getString(R.string.status));
+                            toolbarInterface.setActionBarSubtitle("");
                         }
 
                         // Hide the additional status information because the
@@ -169,9 +169,9 @@ public class StatusFragment extends Fragment implements HTSListener {
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
                         boolean loading = (Boolean) obj;
-                        if (actionBarInterface != null) {
-                            actionBarInterface.setActionBarTitle(getString(R.string.status));
-                            actionBarInterface.setActionBarSubtitle((loading ? getString(R.string.updating) : ""));
+                        if (toolbarInterface != null) {
+                            toolbarInterface.setActionBarTitle(getString(R.string.status));
+                            toolbarInterface.setActionBarSubtitle((loading ? getString(R.string.updating) : ""));
                         }
 
                         // Show that data is being loaded from the server and hide

@@ -26,7 +26,7 @@ import android.preference.PreferenceFragment;
 
 import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
+import org.tvheadend.tvhclient.interfaces.ToolbarInterface;
 import org.tvheadend.tvhclient.interfaces.BackPressedInterface;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.Profile;
@@ -37,7 +37,7 @@ public class SettingsTranscodingFragment extends PreferenceFragment implements B
     private final static String TAG = SettingsTranscodingFragment.class.getSimpleName();
 
     private Activity activity;
-    private ActionBarInterface actionBarInterface;
+    private ToolbarInterface toolbarInterface;
 
     private Connection conn = null;
     private Profile progProfile = null;
@@ -94,7 +94,7 @@ public class SettingsTranscodingFragment extends PreferenceFragment implements B
 
     @Override
     public void onDestroy() {
-        actionBarInterface = null;
+        toolbarInterface = null;
         super.onDestroy();
     }
 
@@ -124,11 +124,11 @@ public class SettingsTranscodingFragment extends PreferenceFragment implements B
         prefRecVideoCodec = (ListPreference) findPreference("recVcodecPref");
         prefRecSubtitleCodec = (ListPreference) findPreference("recScodecPref");
 
-        if (activity instanceof ActionBarInterface) {
-            actionBarInterface = (ActionBarInterface) activity;
+        if (activity instanceof ToolbarInterface) {
+            toolbarInterface = (ToolbarInterface) activity;
         }
-        if (actionBarInterface != null) {
-            actionBarInterface.setActionBarTitle(getString(R.string.pref_transcoding));
+        if (toolbarInterface != null) {
+            toolbarInterface.setActionBarTitle(getString(R.string.pref_transcoding));
         }
 
         conn = databaseHelper.getSelectedConnection();
@@ -169,8 +169,8 @@ public class SettingsTranscodingFragment extends PreferenceFragment implements B
     public void onResume() {
         super.onResume();
 
-        if (actionBarInterface != null) {
-            actionBarInterface.setActionBarSubtitle(conn.name);
+        if (toolbarInterface != null) {
+            toolbarInterface.setActionBarSubtitle(conn.name);
         }
 
         prefProgContainer.setValue(progProfile.container);

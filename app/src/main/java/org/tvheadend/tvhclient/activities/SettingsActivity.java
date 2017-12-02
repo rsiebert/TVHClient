@@ -31,7 +31,7 @@ import org.tvheadend.tvhclient.fragments.settings.SettingsProfilesFragment;
 import org.tvheadend.tvhclient.fragments.settings.SettingsShowConnectionsFragment;
 import org.tvheadend.tvhclient.fragments.settings.SettingsTranscodingFragment;
 import org.tvheadend.tvhclient.fragments.settings.SettingsUserInterfaceFragment;
-import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
+import org.tvheadend.tvhclient.interfaces.ToolbarInterface;
 import org.tvheadend.tvhclient.interfaces.BackPressedInterface;
 import org.tvheadend.tvhclient.interfaces.SettingsInterface;
 import org.tvheadend.tvhclient.utils.MiscUtils;
@@ -39,7 +39,7 @@ import org.tvheadend.tvhclient.utils.Utils;
 
 import java.io.File;
 
-public class SettingsActivity extends AppCompatActivity implements ActionBarInterface, SettingsInterface, FolderChooserDialog.FolderCallback {
+public class SettingsActivity extends AppCompatActivity implements ToolbarInterface, SettingsInterface, FolderChooserDialog.FolderCallback {
 
     @SuppressWarnings("unused")
     private final static String TAG = SettingsActivity.class.getSimpleName();

@@ -38,7 +38,7 @@ import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.htsp.HTSService;
-import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
+import org.tvheadend.tvhclient.interfaces.ToolbarInterface;
 import org.tvheadend.tvhclient.interfaces.BackPressedInterface;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Connection;
@@ -53,7 +53,7 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
     private final static String TAG = SettingsProfilesFragment.class.getSimpleName();
 
     private Activity activity;
-    private ActionBarInterface actionBarInterface;
+    private ToolbarInterface toolbarInterface;
 
     private Connection conn = null;
     private Profile progProfile = null;
@@ -80,7 +80,7 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
 
     @Override
     public void onDestroy() {
-        actionBarInterface = null;
+        toolbarInterface = null;
         super.onDestroy();
     }
 
@@ -121,11 +121,11 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
             recProfile.uuid = savedInstanceState.getString(REC_PROFILE_UUID);
         }
 
-        if (activity instanceof ActionBarInterface) {
-            actionBarInterface = (ActionBarInterface) activity;
+        if (activity instanceof ToolbarInterface) {
+            toolbarInterface = (ToolbarInterface) activity;
         }
-        if (actionBarInterface != null) {
-            actionBarInterface.setActionBarTitle(getString(R.string.pref_profiles));
+        if (toolbarInterface != null) {
+            toolbarInterface.setActionBarTitle(getString(R.string.pref_profiles));
         }
 
         prefEnableRecProfiles.setOnPreferenceClickListener(new OnPreferenceClickListener() {
@@ -148,8 +148,8 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
         super.onResume();
         app.addListener(this);
 
-        if (actionBarInterface != null) {
-            actionBarInterface.setActionBarSubtitle(conn.name);
+        if (toolbarInterface != null) {
+            toolbarInterface.setActionBarSubtitle(conn.name);
         }
 
         loadProfiles();
@@ -226,8 +226,8 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
         }
 
         // Set the loading indication
-        if (actionBarInterface != null) {
-            actionBarInterface.setActionBarSubtitle(getString(R.string.loading_profiles));
+        if (toolbarInterface != null) {
+            toolbarInterface.setActionBarSubtitle(getString(R.string.loading_profiles));
         }
 
         // Get the available profiles from the server
@@ -244,8 +244,8 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
             activity.runOnUiThread(new Runnable() {
                 public void run() {
                     // Loading is done, remove the loading subtitle
-                    if (actionBarInterface != null) {
-                        actionBarInterface.setActionBarSubtitle(conn.name);
+                    if (toolbarInterface != null) {
+                        toolbarInterface.setActionBarSubtitle(conn.name);
                     }
 
                     if (prefRecProfiles != null && prefEnableRecProfiles != null) {
@@ -274,8 +274,8 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
             activity.runOnUiThread(new Runnable() {
                 public void run() {
                     // Loading is done, remove the loading subtitle
-                    if (actionBarInterface != null) {
-                        actionBarInterface.setActionBarSubtitle(conn.name);
+                    if (toolbarInterface != null) {
+                        toolbarInterface.setActionBarSubtitle(conn.name);
                     }
 
                     if (prefProgProfiles != null && prefEnableProgProfiles != null) {

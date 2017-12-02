@@ -20,7 +20,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.interfaces.ActionBarInterface;
+import org.tvheadend.tvhclient.interfaces.ToolbarInterface;
 import org.tvheadend.tvhclient.interfaces.BackPressedInterface;
 import org.tvheadend.tvhclient.interfaces.SettingsInterface;
 import org.tvheadend.tvhclient.model.Connection;
@@ -34,7 +34,7 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
     private final static String TAG = SettingsManageConnectionFragment.class.getSimpleName();
     
     private Activity activity;
-    private ActionBarInterface actionBarInterface;
+    private ToolbarInterface toolbarInterface;
     private SettingsInterface settingsInterface;
     
     // Preference widgets
@@ -74,7 +74,7 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
 
     @Override
     public void onDestroy() {
-        actionBarInterface = null;
+        toolbarInterface = null;
         settingsInterface = null;
         super.onDestroy();
     }
@@ -104,15 +104,15 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
         prefWolPort = (EditTextPreference) findPreference("pref_wol_port");
         prefWolBroadcast = (CheckBoxPreference) findPreference("pref_wol_broadcast");
 
-        if (activity instanceof ActionBarInterface) {
-            actionBarInterface = (ActionBarInterface) activity;
+        if (activity instanceof ToolbarInterface) {
+            toolbarInterface = (ToolbarInterface) activity;
         }
         if (activity instanceof SettingsInterface) {
             settingsInterface = (SettingsInterface) activity;
         }
-        if (actionBarInterface != null) {
-            actionBarInterface.setActionBarTitle(getString(R.string.add_connection));
-            actionBarInterface.setActionBarSubtitle("");
+        if (toolbarInterface != null) {
+            toolbarInterface.setActionBarTitle(getString(R.string.add_connection));
+            toolbarInterface.setActionBarSubtitle("");
         }
         
         // Initially the connection has no been changed
@@ -134,9 +134,9 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
             // Otherwise create a new connection with default values.
             if (connId > 0) {
                 conn = databaseHelper.getConnection(connId);
-                if (actionBarInterface != null) {
-                    actionBarInterface.setActionBarTitle(getString(R.string.edit_connection));
-                    actionBarInterface.setActionBarSubtitle(conn != null ? conn.name : "");
+                if (toolbarInterface != null) {
+                    toolbarInterface.setActionBarTitle(getString(R.string.edit_connection));
+                    toolbarInterface.setActionBarSubtitle(conn != null ? conn.name : "");
                 }
             } else {
                 setPreferenceDefaults();
