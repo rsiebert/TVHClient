@@ -36,8 +36,11 @@
     <color name="drawer_selected_light">#aadedede</color>
     <color name="drawer_selected_dark">#666e6e6e</color>
 
-	<color name="menu_text_background_light">#ffececed</color>
-	<color name="menu_text_background_dark">#ff363637</color>
+	<color name="menu_background_light">#ffececed</color>
+	<color name="menu_background_dark">#ff363637</color>
+
+	<color name="menu_text_light">#ffececed</color>
+	<color name="menu_text_dark">#ff363637</color>
 
     <color name="menu_text_selected_light">#aabebebe</color>
     <color name="menu_text_selected_dark">#66bebebe</color>
@@ -49,4 +52,5 @@
     <!-- Theme colors -->
     <color name="window_background_color_light">#fff5f5f5</color>
     <color name="window_background_color_dark">#ff171717</color>
+
 </resources>

@@ -36,9 +36,8 @@
     <attr name="ProgramGuideContentFont" format="reference" />
     <attr name="TimelineItemLayoutStyle" format="reference" />
     <attr name="TimelineHeaderLayoutStyle" format="reference" />
-    <attr name="MenuItemLayoutStyle" format="reference" />
-    <attr name="MenuHeaderLayoutStyle" format="reference" />
     <attr name="menu_text_selector" format="reference" />
+    <attr name="menu_background_selector" format="reference" />
     <attr name="FragmentDividerLayoutStyle" format="reference" />
     <attr name="toolbar_background_color" format="reference" />
     <attr name="borderless_button" format="reference" />
