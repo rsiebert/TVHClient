@@ -289,7 +289,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         };
         initCasting();
-        initNavigationHeader();
+        showNavigationHeader();
     }
 
     /**
@@ -525,15 +525,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
      * and server capabilities. Also updates the server connection status and
      * the recording counts in the main menu.
      */
-    private void initNavigationHeader() {
-        Log.d(TAG, "initNavigationHeader() called");
+    private void showNavigationHeader() {
+        Log.d(TAG, "showNavigationHeader() called");
 
         TextView serverName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.server_name);
         ImageView serverSelection = (ImageView) navigationView.getHeaderView(0).findViewById(R.id.server_selection);
 
         // Update the server connection status
         if (serverName != null && serverSelection != null) {
-            Log.d(TAG, "initNavigationHeader: found views");
+            Log.d(TAG, "showNavigationHeader: found views");
             // Remove any previous listeners
             serverName.setOnClickListener(null);
             serverSelection.setOnClickListener(null);
@@ -617,13 +617,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Update the drawer menu so that all available menu items are
         // shown in case the recording counts have changed or the user has
         // bought the unlocked version to enable all features
-        updateNavigationViewMenu();
+        showNavigationViewMenu();
+        showNavigationHeader();
     }
 
-    private void updateNavigationViewMenu() {
+    private void showNavigationViewMenu() {
+        boolean show = connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_OK) && !dataStorage.isLoading();
+
         Menu navigationViewMenu = navigationView.getMenu();
-        navigationViewMenu.findItem(R.id.nav_series_recordings).setVisible(dataStorage.getProtocolVersion() >= Constants.MIN_API_VERSION_SERIES_RECORDINGS);
-        navigationViewMenu.findItem(R.id.nav_timer_recordings).setVisible(dataStorage.getProtocolVersion() >= Constants.MIN_API_VERSION_TIMER_RECORDINGS && app.isUnlocked());
+        navigationViewMenu.findItem(R.id.nav_channel_list).setVisible(show);
+        navigationViewMenu.findItem(R.id.nav_program_guide).setVisible(show);
+        navigationViewMenu.findItem(R.id.nav_completed_recordings).setVisible(show);
+        navigationViewMenu.findItem(R.id.nav_scheduled_recordings).setVisible(show);
+        navigationViewMenu.findItem(R.id.nav_failed_recordings).setVisible(show);
+        navigationViewMenu.findItem(R.id.nav_removed_recordings).setVisible(show);
+        navigationViewMenu.findItem(R.id.nav_series_recordings).setVisible(show && dataStorage.getProtocolVersion() >= Constants.MIN_API_VERSION_SERIES_RECORDINGS);
+        navigationViewMenu.findItem(R.id.nav_timer_recordings).setVisible(show && dataStorage.getProtocolVersion() >= Constants.MIN_API_VERSION_TIMER_RECORDINGS && app.isUnlocked());
         navigationViewMenu.findItem(R.id.nav_extras).setVisible(!app.isUnlocked());
 
         TextView menuActionViewChannelCount = (TextView) navigationView.getMenu().findItem(R.id.nav_channel_list).getActionView();
@@ -1039,11 +1048,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             // Reload the menu. Only after the initial sync we know the server
                             // version which determines the visibility of the casting icon
                             invalidateOptionsMenu();
-                            updateNavigationViewMenu();
                         }
                     }
                 });
                 break;
+            case Constants.ACTION_CONNECTION_STATE_OK:
+                connectionStatus = action;
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        showNavigationViewMenu();
+                    }
+                });
             case "channelUpdate":
                 runOnUiThread(new Runnable() {
                     public void run() {
@@ -1103,6 +1118,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         public void run() {
                             connectionStatus = action;
                             selectNavigationItem(MENU_STATUS);
+
+                            showNavigationViewMenu();
                         }
                     });
                 }
