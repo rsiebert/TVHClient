@@ -9,7 +9,6 @@ import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
-import android.util.SparseArray;
 
 import com.anjlab.android.iab.v3.BillingProcessor;
 import com.anjlab.android.iab.v3.TransactionDetails;
@@ -83,73 +82,6 @@ public class TVHClientApplication extends Application implements BillingProcesso
             }
         }
     }
-
-    public static SparseArray<String> getContentTypes(Context ctx) {
-        SparseArray<String> ret = new SparseArray<>();
-
-        String[] s = ctx.getResources().getStringArray(R.array.pr_content_type0);
-        for (int i = 0; i < s.length; i++) {
-            ret.append(i, s[i]);
-        }
-
-        s = ctx.getResources().getStringArray(R.array.pr_content_type1);
-        for (int i = 0; i < s.length; i++) {
-            ret.append(0x10 + i, s[i]);
-        }
-
-        s = ctx.getResources().getStringArray(R.array.pr_content_type2);
-        for (int i = 0; i < s.length; i++) {
-            ret.append(0x20 + i, s[i]);
-        }
-
-        s = ctx.getResources().getStringArray(R.array.pr_content_type3);
-        for (int i = 0; i < s.length; i++) {
-            ret.append(0x30 + i, s[i]);
-        }
-
-        s = ctx.getResources().getStringArray(R.array.pr_content_type4);
-        for (int i = 0; i < s.length; i++) {
-            ret.append(0x40 + i, s[i]);
-        }
-
-        s = ctx.getResources().getStringArray(R.array.pr_content_type5);
-        for (int i = 0; i < s.length; i++) {
-            ret.append(0x50 + i, s[i]);
-        }
-
-        s = ctx.getResources().getStringArray(R.array.pr_content_type6);
-        for (int i = 0; i < s.length; i++) {
-            ret.append(0x60 + i, s[i]);
-        }
-
-        s = ctx.getResources().getStringArray(R.array.pr_content_type7);
-        for (int i = 0; i < s.length; i++) {
-            ret.append(0x70 + i, s[i]);
-        }
-
-        s = ctx.getResources().getStringArray(R.array.pr_content_type8);
-        for (int i = 0; i < s.length; i++) {
-            ret.append(0x80 + i, s[i]);
-        }
-
-        s = ctx.getResources().getStringArray(R.array.pr_content_type9);
-        for (int i = 0; i < s.length; i++) {
-            ret.append(0x90 + i, s[i]);
-        }
-
-        s = ctx.getResources().getStringArray(R.array.pr_content_type10);
-        for (int i = 0; i < s.length; i++) {
-            ret.append(0xa0 + i, s[i]);
-        }
-
-        s = ctx.getResources().getStringArray(R.array.pr_content_type11);
-        for (int i = 0; i < s.length; i++) {
-            ret.append(0xb0 + i, s[i]);
-        }
-
-        return ret;
-    }
-
 
     private RefWatcher refWatcher;
 
