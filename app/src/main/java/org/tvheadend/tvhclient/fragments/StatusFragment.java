@@ -381,7 +381,7 @@ public class StatusFragment extends Fragment implements HTSListener {
         if (dataStorage.getProtocolVersion() < Constants.MIN_API_VERSION_TIMER_RECORDINGS || !app.isUnlocked()) {
             timerRec.setVisibility(View.GONE);
         } else {
-            final int timerRecCount = dataStorage.getTimerRecordings().size();
+            final int timerRecCount = dataStorage.getTimerRecordingsFromArray().size();
             timerRec.setText(getResources().getQuantityString(
                     R.plurals.timer_recordings, timerRecCount, timerRecCount));
         }
