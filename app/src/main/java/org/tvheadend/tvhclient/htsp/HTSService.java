@@ -33,7 +33,7 @@ import org.tvheadend.tvhclient.model.SourceInfo;
 import org.tvheadend.tvhclient.model.Stream;
 import org.tvheadend.tvhclient.model.Subscription;
 import org.tvheadend.tvhclient.model.SystemTime;
-import org.tvheadend.tvhclient.model.TimerRecording;
+import org.tvheadend.tvhclient.model.TimerRecording2;
 import org.tvheadend.tvhclient.utils.Utils;
 
 import java.io.BufferedInputStream;
@@ -515,65 +515,16 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     private void onTimerRecEntryAdd(HTSMessage msg) {
-        dataStorage.addTimerRecordingToArray(HTSUtils.convertMessageToTimerRecordingModel(msg));
-
-        TimerRecording rec = new TimerRecording();
-        rec.id = msg.getString("id", "");
-        
-        rec.daysOfWeek = msg.getLong("daysOfWeek", 0);
-        rec.retention = msg.getLong("retention", 0);
-        rec.priority = msg.getLong("priority", 0);
-        rec.start = msg.getLong("start", 0);
-        rec.stop = msg.getLong("stop", 0);
-        rec.title = msg.getString("title");
-        rec.name = msg.getString("name");
-        rec.directory = msg.getString("directory");
-        rec.channel = dataStorage.getChannel(msg.getLong("channel", 0));
-
-        // The enabled flag was added in HTSP API version 18. The support for
-        // timer recordings are available since version 17.
-        if (connection.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED) {
-            rec.enabled = msg.getLong("enabled", 0) != 0;
-        }
-        //dataStorage.addTimerRecording(rec);
+        dataStorage.addTimerRecordingToArray(HTSUtils.convertMessageToTimerRecordingModel(new TimerRecording2(), msg));
     }
 
     private void onTimerRecEntryUpdate(HTSMessage msg) {
-        dataStorage.updateTimerRecordingInArray(HTSUtils.convertMessageToTimerRecordingModel(msg));
-
-        TimerRecording rec = dataStorage.getTimerRecording(msg.getString("id"));
-        if (rec == null) {
-            return;
-        }
-
-        rec.daysOfWeek = msg.getLong("daysOfWeek", rec.daysOfWeek);
-        rec.retention = msg.getLong("retention", rec.retention);
-        rec.priority = msg.getLong("priority", rec.priority);
-        rec.start = msg.getLong("start", rec.start);
-        rec.stop = msg.getLong("stop", rec.stop);
-        rec.title = msg.getString("title", rec.title);
-        rec.name = msg.getString("name", rec.name);
-        rec.directory = msg.getString("directory", rec.name);
-        rec.channel = dataStorage.getChannel(msg.getLong("channel", 0));
-
-        // The enabled flag was added in HTSP API version 18. The support for
-        // timer recordings are available since version 17.
-        if (connection.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED) {
-            rec.enabled = msg.getLong("enabled", 0) != 0;
-        }
-        //dataStorage.updateTimerRecording(rec);
+        TimerRecording2 rec = dataStorage.getTimerRecordingFromArray(msg.getString("id"));
+        dataStorage.updateTimerRecordingInArray(HTSUtils.convertMessageToTimerRecordingModel(rec, msg));
     }
 
     private void onTimerRecEntryDelete(HTSMessage msg) {
         dataStorage.removeTimerRecordingFromArray(msg.getString("id"));
-        TimerRecording rec = dataStorage.getTimerRecording(msg.getString("id"));
-
-        if (rec == null || rec.channel == null) {
-            return;
-        }
-
-        rec.channel = null;
-        //dataStorage.removeTimerRecording(rec);
     }
 
     private void onInitialSyncCompleted() {

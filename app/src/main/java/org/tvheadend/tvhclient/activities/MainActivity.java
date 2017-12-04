@@ -81,7 +81,6 @@ import org.tvheadend.tvhclient.model.Profile;
 import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.model.SeriesRecording;
-import org.tvheadend.tvhclient.model.TimerRecording;
 import org.tvheadend.tvhclient.model.TimerRecording2;
 import org.tvheadend.tvhclient.tasks.WakeOnLanTask;
 import org.tvheadend.tvhclient.tasks.WakeOnLanTaskCallback;
@@ -1360,33 +1359,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 showFragment(SeriesRecordingDetailsFragment.class.getName(), R.id.right_fragment, args);
             } else {
                 DialogFragment newFragment = SeriesRecordingDetailsFragment.newInstance(args);
-                newFragment.show(getSupportFragmentManager(), "dialog");
-            }
-        }
-    }
-
-    @Override
-    public void onListItemSelected(final int position, final TimerRecording timerRecording, final String tag) {
-        // Save the position of the selected recording type so it can be
-        // restored after an orientation change
-        switch (selectedNavigationMenuId) {
-            case MENU_TIMER_RECORDINGS:
-                timerRecordingListPosition = position;
-                break;
-        }
-        // When a timer recording has been selected from the recording list fragment,
-        // show its details. In dual mode these are shown in a separate fragment
-        // to the right of the series recording list, otherwise replace the recording
-        // list with the details fragment.
-        if (timerRecording != null) {
-            Bundle args = new Bundle();
-            args.putString("id", timerRecording.id);
-            args.putBoolean(Constants.BUNDLE_SHOW_CONTROLS, !isDualPane);
-
-            if (isDualPane) {
-                showFragment(TimerRecordingDetailsFragment.class.getName(), R.id.right_fragment, args);
-            } else {
-                DialogFragment newFragment = TimerRecordingDetailsFragment.newInstance(args);
                 newFragment.show(getSupportFragmentManager(), "dialog");
             }
         }

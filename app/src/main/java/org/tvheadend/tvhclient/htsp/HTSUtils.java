@@ -291,11 +291,7 @@ public class HTSUtils {
     }
 
 
-    public static TimerRecording2 convertMessageToTimerRecordingModel(HTSMessage msg) {
-        TimerRecording2 timerRecording = new TimerRecording2();
-        if (msg.containsKey("id")) {
-            timerRecording.id = msg.getString("id");
-        }
+    public static TimerRecording2 convertMessageToTimerRecordingModel(TimerRecording2 timerRecording, HTSMessage msg) {
         if (msg.containsKey("title")) {
             timerRecording.title = msg.getString("title");
         }
