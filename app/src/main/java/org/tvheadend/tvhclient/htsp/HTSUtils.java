@@ -225,8 +225,7 @@ public class HTSUtils {
         return program;
     }
 
-    public static SeriesRecording2 convertMessageToSeriesRecordingModel(HTSMessage msg) {
-        SeriesRecording2 seriesRecording = new SeriesRecording2();
+    public static SeriesRecording2 convertMessageToSeriesRecordingModel(SeriesRecording2 seriesRecording, HTSMessage msg) {
         if (msg.containsKey("id")) {
             seriesRecording.id = msg.getString("id");
         }
@@ -292,6 +291,9 @@ public class HTSUtils {
 
 
     public static TimerRecording2 convertMessageToTimerRecordingModel(TimerRecording2 timerRecording, HTSMessage msg) {
+        if (msg.containsKey("id")) {
+            timerRecording.id = msg.getString("id");
+        }
         if (msg.containsKey("title")) {
             timerRecording.title = msg.getString("title");
         }

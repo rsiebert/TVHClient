@@ -28,7 +28,7 @@ import org.tvheadend.tvhclient.model.Profiles;
 import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.model.SeriesInfo;
-import org.tvheadend.tvhclient.model.SeriesRecording;
+import org.tvheadend.tvhclient.model.SeriesRecording2;
 import org.tvheadend.tvhclient.model.SourceInfo;
 import org.tvheadend.tvhclient.model.Stream;
 import org.tvheadend.tvhclient.model.Subscription;
@@ -669,71 +669,15 @@ public class HTSService extends Service implements HTSConnectionListener {
 
     private void onAutorecEntryDelete(HTSMessage msg) {
         dataStorage.removeSeriesRecordingFromArray(msg.getString("id"));
-        String id = msg.getString("id");
-        if (id == null) {
-            return;
-        }
-        // Remove the series recording from the list and also update all
-        // recordings by removing the series id
-        dataStorage.removeSeriesRecording(id);
-        for (Recording rec : dataStorage.getRecordings()) {
-            if (rec.autorecId != null && rec.autorecId.equals(id)) {
-                rec.autorecId = null;
-            }
-        }
     }
 
     private void onAutorecEntryUpdate(HTSMessage msg) {
-        dataStorage.updateSeriesRecordingInArray(HTSUtils.convertMessageToSeriesRecordingModel(msg));
-
-        SeriesRecording srec = dataStorage.getSeriesRecording(msg.getString("id"));
-        if (srec == null) {
-            return;
-        }
-        srec.enabled = msg.getLong("enabled", 0) != 0;
-        srec.maxDuration = msg.getLong("maxDuration");
-        srec.minDuration = msg.getLong("minDuration");
-        srec.retention = msg.getLong("retention");
-        srec.daysOfWeek = msg.getLong("daysOfWeek");
-        srec.approxTime = msg.getLong("approxTime", -1);
-        srec.priority = msg.getLong("priority");
-        srec.start = msg.getLong("start", -1);
-        srec.startWindow = msg.getLong("startWindow", -1);
-        srec.startExtra = msg.getLong("startExtra", 0);
-        srec.stopExtra = msg.getLong("stopExtra", 0);
-        srec.dupDetect = msg.getLong("dupDetect", 0);
-        srec.title = msg.getString("title", srec.title);
-        srec.name = msg.getString("name", srec.name);
-        srec.directory = msg.getString("directory", srec.directory);
-        srec.fulltext = msg.getString("fulltext", srec.fulltext);
-
-        dataStorage.updateSeriesRecording(srec);
+        SeriesRecording2 rec = dataStorage.getSeriesRecordingFromArray(msg.getString("id"));
+        dataStorage.updateSeriesRecordingInArray(HTSUtils.convertMessageToSeriesRecordingModel(rec, msg));
     }
 
     private void onAutorecEntryAdd(HTSMessage msg) {
-        dataStorage.addSeriesRecordingToArray(HTSUtils.convertMessageToSeriesRecordingModel(msg));
-
-        SeriesRecording srec = new SeriesRecording();
-        srec.id = msg.getString("id");
-        srec.enabled = msg.getLong("enabled", 0) != 0;
-        srec.maxDuration = msg.getLong("maxDuration");
-        srec.minDuration = msg.getLong("minDuration");
-        srec.retention = msg.getLong("retention");
-        srec.daysOfWeek = msg.getLong("daysOfWeek");
-        srec.approxTime = msg.getLong("approxTime", -1);
-        srec.priority = msg.getLong("priority");
-        srec.start = msg.getLong("start", -1);
-        srec.startWindow = msg.getLong("startWindow", -1);
-        srec.startExtra = msg.getLong("startExtra", 0);
-        srec.stopExtra = msg.getLong("stopExtra", 0);
-        srec.dupDetect = msg.getLong("dupDetect", 0);
-        srec.title = msg.getString("title");
-        srec.name = msg.getString("name");
-        srec.directory = msg.getString("directory");
-        srec.channel = dataStorage.getChannel(msg.getLong("channel", 0));
-        srec.fulltext = msg.getString("fulltext");
-
-        dataStorage.addSeriesRecording(srec);
+        dataStorage.addSeriesRecordingToArray(HTSUtils.convertMessageToSeriesRecordingModel(new SeriesRecording2(), msg));
     }
 
     public void onMessage(HTSMessage msg) {

@@ -28,7 +28,7 @@ import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.GenreColorDialogItem;
 import org.tvheadend.tvhclient.model.Profile;
 import org.tvheadend.tvhclient.model.Recording;
-import org.tvheadend.tvhclient.model.SeriesRecording;
+import org.tvheadend.tvhclient.model.SeriesRecording2;
 import org.tvheadend.tvhclient.model.TimerRecording2;
 
 import java.io.UnsupportedEncodingException;
@@ -380,7 +380,7 @@ public class MenuUtils {
                 }).show();
     }
 
-    public void handleMenuRemoveAllSeriesRecordingSelection(List<SeriesRecording> items) {
+    public void handleMenuRemoveAllSeriesRecordingSelection(List<SeriesRecording2> items) {
         Activity activity = this.activity.get();
         if (activity == null) {
             return;
@@ -395,7 +395,7 @@ public class MenuUtils {
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         new Thread() {
                             public void run() {
-                                for (SeriesRecording item : items) {
+                                for (SeriesRecording2 item : items) {
                                     final Intent intent = new Intent(activity, HTSService.class);
                                     intent.setAction("deleteAutorecEntry");
                                     intent.putExtra("id", item.id);

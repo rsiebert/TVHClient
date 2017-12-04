@@ -40,9 +40,10 @@ import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Channel;
+import org.tvheadend.tvhclient.model.Channel2;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.Profile;
-import org.tvheadend.tvhclient.model.SeriesRecording;
+import org.tvheadend.tvhclient.model.SeriesRecording2;
 import org.tvheadend.tvhclient.utils.Utils;
 
 import java.util.Arrays;
@@ -55,7 +56,7 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
     private final static String TAG = SeriesRecordingAddFragment.class.getSimpleName();
 
     private Activity activity;
-    private SeriesRecording rec;
+    private SeriesRecording2 rec;
     private Toolbar toolbar;
 
     private CheckBox isEnabled;
@@ -291,7 +292,7 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
             }
 
             // Get the recording so we can show its details
-            rec = dataStorage.getSeriesRecording(recId);
+            rec = dataStorage.getSeriesRecordingFromArray(recId);
             if (rec != null) {
                 priorityValue = rec.priority;
                 minDurationValue = (rec.minDuration / 60);
@@ -306,14 +307,15 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
                 directoryValue = rec.directory;
                 titleValue = rec.title;
                 nameValue = rec.name;
-                enabledValue = rec.enabled;
+                enabledValue = rec.enabled > 0;
 
                 // The default value is no channel
                 channelSelectionValue = 0;
                 // Get the position of the given channel in the channelList
-                if (rec.channel != null) {
+                Channel2 channel = dataStorage.getChannelFromArray(rec.channel);
+                if (channel != null) {
                     for (int i = 0; i < channelList.length; i++) {
-                        if (channelList[i].equals(rec.channel.name)) {
+                        if (channelList[i].equals(channel.channelName)) {
                             channelSelectionValue = i;
                             break;
                         }

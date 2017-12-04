@@ -19,7 +19,8 @@ import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.model.SeriesRecording;
+import org.tvheadend.tvhclient.model.Channel2;
+import org.tvheadend.tvhclient.model.SeriesRecording2;
 import org.tvheadend.tvhclient.utils.MenuUtils;
 import org.tvheadend.tvhclient.utils.Utils;
 
@@ -30,7 +31,7 @@ public class SeriesRecordingDetailsFragment extends DialogFragment {
 
     private AppCompatActivity activity;
     private boolean showControls = false;
-    private SeriesRecording srec;
+    private SeriesRecording2 srec;
 
     private TextView isEnabled;
     private TextView directoryLabel;
@@ -128,7 +129,7 @@ public class SeriesRecordingDetailsFragment extends DialogFragment {
         }
 
         // Get the recording so we can show its details
-        srec = dataStorage.getSeriesRecording(srecId);
+        srec = dataStorage.getSeriesRecordingFromArray(srecId);
 
         // If the recording is null exit
         if (srec == null) {
@@ -154,13 +155,14 @@ public class SeriesRecordingDetailsFragment extends DialogFragment {
         }
 
         isEnabled.setVisibility(dataStorage.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED ? View.VISIBLE : View.GONE);
-        isEnabled.setText(srec.enabled ? R.string.recording_enabled : R.string.recording_disabled);
+        isEnabled.setText(srec.enabled > 0 ? R.string.recording_enabled : R.string.recording_disabled);
 
         directoryLabel.setVisibility(dataStorage.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_DIRECTORY ? View.VISIBLE : View.GONE);
         directory.setVisibility(dataStorage.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_DIRECTORY ? View.VISIBLE : View.GONE);
         directory.setText(srec.directory);
 
-        channelName.setText(srec.channel != null ? srec.channel.name : getString(R.string.all_channels));
+        Channel2 channel = dataStorage.getChannelFromArray(srec.channel);
+        channelName.setText(channel != null ? channel.channelName : getString(R.string.all_channels));
 
         Utils.setDescription(nameLabel, name, srec.name);
         Utils.setDaysOfWeek(activity, null, daysOfWeek, srec.daysOfWeek);

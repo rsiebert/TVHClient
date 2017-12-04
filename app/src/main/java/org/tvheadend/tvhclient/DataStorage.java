@@ -16,7 +16,6 @@ import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Program2;
 import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.model.Recording2;
-import org.tvheadend.tvhclient.model.SeriesRecording;
 import org.tvheadend.tvhclient.model.SeriesRecording2;
 import org.tvheadend.tvhclient.model.Subscription;
 import org.tvheadend.tvhclient.model.SystemTime;
@@ -36,7 +35,6 @@ public class DataStorage {
     private final List<ChannelTag> tags = Collections.synchronizedList(new ArrayList<ChannelTag>());
     private final List<Channel> channels = Collections.synchronizedList(new ArrayList<Channel>());
     private final List<Recording> recordings = Collections.synchronizedList(new ArrayList<Recording>());
-    private final List<SeriesRecording> seriesRecordings = Collections.synchronizedList(new ArrayList<SeriesRecording>());
     private final List<Subscription> subscriptions = Collections.synchronizedList(new ArrayList<Subscription>());
     private final List<Profiles> dvrConfigs = Collections.synchronizedList(new ArrayList<Profiles>());
     private final List<Profiles> profiles = Collections.synchronizedList(new ArrayList<Profiles>());
@@ -496,105 +494,6 @@ public class DataStorage {
     }
 
     /**
-     * Returns the list of all available series recordings. If loading has
-     * finished any listener will be informed that a series recording has been
-     * added.
-     *
-     * @param rec Series recording
-     */
-    public void addSeriesRecording(SeriesRecording rec) {
-        synchronized (seriesRecordings) {
-            boolean recordingFound = false;
-            for (SeriesRecording sr : seriesRecordings) {
-                if (sr.id.equals(rec.id)) {
-                    recordingFound = true;
-                    break;
-                }
-            }
-            if (!recordingFound) {
-                seriesRecordings.add(rec);
-            }
-        }
-        if (!loading) {
-            app.broadcastMessage("autorecEntryAdd", rec);
-        }
-    }
-
-    /**
-     * Adds the given series recording to the list of available series
-     * recordings
-     *
-     * @return List of all series recordings
-     */
-    public List<SeriesRecording> getSeriesRecordings() {
-        synchronized (seriesRecordings) {
-            return seriesRecordings;
-        }
-    }
-
-    /**
-     * Returns a single series recording that matches the given id.
-     *
-     * @param id The id of the series recording
-     * @return Series recording
-     */
-    public SeriesRecording getSeriesRecording(String id) {
-        synchronized (seriesRecordings) {
-            for (SeriesRecording srec : getSeriesRecordings()) {
-                if (srec.id.equals(id)) {
-                    return srec;
-                }
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Removes the given series recording from the list of all available series
-     * recordings. If loading has finished any listener will be informed that a
-     * series recording has been removed.
-     *
-     * @param srec Series recording
-     */
-    private void removeSeriesRecording(SeriesRecording srec) {
-        synchronized (seriesRecordings) {
-            seriesRecordings.remove(srec);
-        }
-        if (!loading) {
-            app.broadcastMessage("autorecEntryDelete", srec);
-        }
-    }
-
-    /**
-     * Removes the series recording from the list of all available series
-     * recordings that matches the given id.
-     *
-     * @param id The id of the series recording
-     */
-    public void removeSeriesRecording(String id) {
-        synchronized (seriesRecordings) {
-            for (SeriesRecording srec : getSeriesRecordings()) {
-                if (srec.id.equals(id)) {
-                    removeSeriesRecording(srec);
-                    return;
-                }
-            }
-        }
-    }
-
-    /**
-     * If loading has finished any listener will be informed that a series
-     * recording has been updated.
-     *
-     * @param srec Series recording
-     */
-    public void updateSeriesRecording(SeriesRecording srec) {
-        if (!loading) {
-            app.broadcastMessage("autorecEntryUpdate", srec);
-        }
-    }
-
-    /**
      * Informes all registered listeners about the loading status.
      *
      * @param b The loading state
@@ -630,7 +529,7 @@ public class DataStorage {
     public void clearAll() {
         tags.clear();
         recordings.clear();
-        seriesRecordings.clear();
+        seriesRecordingArray.clear();
         timerRecordingArray.clear();
 
         for (Channel ch : channels) {

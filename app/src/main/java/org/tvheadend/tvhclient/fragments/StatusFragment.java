@@ -371,7 +371,7 @@ public class StatusFragment extends Fragment implements HTSListener {
         if (dataStorage.getProtocolVersion() < Constants.MIN_API_VERSION_SERIES_RECORDINGS) {
             seriesRec.setVisibility(View.GONE);
         } else {
-            final int seriesRecCount = dataStorage.getSeriesRecordings().size();
+            final int seriesRecCount = dataStorage.getSeriesRecordingsFromArray().size();
             seriesRec.setText(getResources().getQuantityString(
                     R.plurals.series_recordings, seriesRecCount, seriesRecCount));
         }

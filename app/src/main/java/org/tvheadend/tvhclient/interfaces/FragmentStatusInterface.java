@@ -3,7 +3,7 @@ package org.tvheadend.tvhclient.interfaces;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
-import org.tvheadend.tvhclient.model.SeriesRecording;
+import org.tvheadend.tvhclient.model.SeriesRecording2;
 import org.tvheadend.tvhclient.model.TimerRecording2;
 
 public interface FragmentStatusInterface {
@@ -49,7 +49,7 @@ public interface FragmentStatusInterface {
      * @param seriesRecording Selected series recording
      * @param tag Tag of the calling class
      */
-    void onListItemSelected(final int position, final SeriesRecording seriesRecording, final String tag);
+    void onListItemSelected(final int position, final SeriesRecording2 seriesRecording, final String tag);
 
     /**
      * Informs the activity that user has selected a certain timer recording

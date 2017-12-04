@@ -12,31 +12,30 @@ import android.widget.TextView;
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.model.SeriesRecording;
+import org.tvheadend.tvhclient.model.Channel2;
+import org.tvheadend.tvhclient.model.SeriesRecording2;
 import org.tvheadend.tvhclient.utils.Utils;
 
 import java.util.Comparator;
 import java.util.List;
 
-public class SeriesRecordingListAdapter extends ArrayAdapter<SeriesRecording> {
+public class SeriesRecordingListAdapter extends ArrayAdapter<SeriesRecording2> {
 
     private final Activity context;
-    private final List<SeriesRecording> list;
+    private final List<SeriesRecording2> list;
     private int selectedPosition = 0;
-    private final int layout;
 
-    public SeriesRecordingListAdapter(Activity context, List<SeriesRecording> list, int layout) {
-        super(context, layout, list);
+    public SeriesRecordingListAdapter(Activity context, List<SeriesRecording2> list) {
+        super(context, 0);
         this.context = context;
-        this.layout = layout;
         this.list = list;
     }
 
     public void sort(final int type) {
         switch (type) {
         case Constants.RECORDING_SORT_ASCENDING:
-            sort(new Comparator<SeriesRecording>() {
-                public int compare(SeriesRecording x, SeriesRecording y) {
+            sort(new Comparator<SeriesRecording2>() {
+                public int compare(SeriesRecording2 x, SeriesRecording2 y) {
                     if (x != null && y != null && x.title != null && y.title != null) {
                         return (y.title.compareTo(x.title));
                     }
@@ -45,8 +44,8 @@ public class SeriesRecordingListAdapter extends ArrayAdapter<SeriesRecording> {
             });
         break;
         case Constants.RECORDING_SORT_DESCENDING:
-            sort(new Comparator<SeriesRecording>() {
-                public int compare(SeriesRecording x, SeriesRecording y) {
+            sort(new Comparator<SeriesRecording2>() {
+                public int compare(SeriesRecording2 x, SeriesRecording2 y) {
                     if (x != null && y != null && x.title != null && y.title != null) {
                         return (x.title.compareTo(y.title));
                     }
@@ -77,7 +76,7 @@ public class SeriesRecordingListAdapter extends ArrayAdapter<SeriesRecording> {
         ViewHolder holder;
 
         if (view == null) {
-            view = context.getLayoutInflater().inflate(layout, parent, false);
+            view = context.getLayoutInflater().inflate(R.layout.series_recording_list_widget, parent, false);
             holder = new ViewHolder();
             holder.icon = view.findViewById(R.id.icon);
             holder.title = view.findViewById(R.id.title);
@@ -108,12 +107,13 @@ public class SeriesRecordingListAdapter extends ArrayAdapter<SeriesRecording> {
         }
 
         // Get the program and assign all the values
-        SeriesRecording srec = getItem(position);
+        SeriesRecording2 srec = getItem(position);
         if (srec != null) {
+            Channel2 channel = DataStorage.getInstance().getChannelFromArray(srec.channel);
             holder.title.setText(srec.title);
             if (holder.channel != null) {
-                if (srec.channel != null) {
-                    holder.channel.setText(srec.channel.name);
+                if (channel != null) {
+                    holder.channel.setText(channel.channelName);
                 } else {
                     holder.channel.setText(R.string.all_channels);
                 }
@@ -126,18 +126,18 @@ public class SeriesRecordingListAdapter extends ArrayAdapter<SeriesRecording> {
                 holder.name.setVisibility(View.GONE);
             }
 
-            Utils.setChannelIcon(holder.icon, null, srec.channel);
+            // TODO Utils.setChannelIcon(holder.icon, null, srec.channel);
             Utils.setDaysOfWeek(context, null, holder.daysOfWeek, srec.daysOfWeek);
 
             if (holder.isEnabled != null) {
                 holder.isEnabled.setVisibility(DataStorage.getInstance().getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED ? View.VISIBLE : View.GONE);
-                holder.isEnabled.setText(srec.enabled ? R.string.recording_enabled : R.string.recording_disabled);
+                holder.isEnabled.setText(srec.enabled > 0? R.string.recording_enabled : R.string.recording_disabled);
             }
         }
         return view;
     }
 
-    public void update(SeriesRecording srec) {
+    public void update(SeriesRecording2 srec) {
         int length = list.size();
 
         // Go through the list of programs and find the
@@ -150,14 +150,14 @@ public class SeriesRecordingListAdapter extends ArrayAdapter<SeriesRecording> {
         }
     }
 
-    public SeriesRecording getSelectedItem() {
+    public SeriesRecording2 getSelectedItem() {
         if (list.size() > 0 && list.size() > selectedPosition) {
             return list.get(selectedPosition);
         }
         return null;
     }
 
-    public List<SeriesRecording> getAllItems() {
+    public List<SeriesRecording2> getAllItems() {
         return list;
     }
 }

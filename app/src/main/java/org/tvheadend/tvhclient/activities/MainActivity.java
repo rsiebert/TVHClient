@@ -80,7 +80,7 @@ import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.Profile;
 import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
-import org.tvheadend.tvhclient.model.SeriesRecording;
+import org.tvheadend.tvhclient.model.SeriesRecording2;
 import org.tvheadend.tvhclient.model.TimerRecording2;
 import org.tvheadend.tvhclient.tasks.WakeOnLanTask;
 import org.tvheadend.tvhclient.tasks.WakeOnLanTaskCallback;
@@ -646,7 +646,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int channelCount = dataStorage.getChannels().size();
         int completedRecordingCount = dataStorage.getRecordingsByType(Constants.RECORDING_TYPE_COMPLETED).size();
         int scheduledRecordingCount = dataStorage.getRecordingsByType(Constants.RECORDING_TYPE_SCHEDULED).size();
-        int seriesRecordingCount = dataStorage.getSeriesRecordings().size();
+        int seriesRecordingCount = dataStorage.getSeriesRecordingsFromArray().size();
         int timerRecordingCount = dataStorage.getTimerRecordingsFromArray().size();
         int failedRecordingCount = dataStorage.getRecordingsByType(Constants.RECORDING_TYPE_FAILED).size();
         int removedRecordingCount = dataStorage.getRecordingsByType(Constants.RECORDING_TYPE_REMOVED).size();
@@ -1338,7 +1338,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
-    public void onListItemSelected(final int position, final SeriesRecording seriesRecording, final String tag) {
+    public void onListItemSelected(final int position, final SeriesRecording2 seriesRecording, final String tag) {
         // Save the position of the selected recording type so it can be
         // restored after an orientation change
         switch (selectedNavigationMenuId) {

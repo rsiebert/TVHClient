@@ -23,11 +23,11 @@ import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.adapter.SeriesRecordingListAdapter;
-import org.tvheadend.tvhclient.interfaces.ToolbarInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
-import org.tvheadend.tvhclient.model.SeriesRecording;
+import org.tvheadend.tvhclient.interfaces.ToolbarInterface;
+import org.tvheadend.tvhclient.model.SeriesRecording2;
 import org.tvheadend.tvhclient.utils.MenuUtils;
 
 import java.util.ArrayList;
@@ -84,12 +84,7 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
             isDualPane  = bundle.getBoolean("dual_pane", false);
         }
 
-        // This is the default view for the channel list adapter. Other views can be
-        // passed to the adapter to show less information. This is used in the
-        // program guide where only the channel icon is relevant.
-        int adapterLayout = R.layout.series_recording_list_widget;
-
-        adapter = new SeriesRecordingListAdapter(activity, new ArrayList<SeriesRecording>(), adapterLayout);
+        adapter = new SeriesRecordingListAdapter(activity, new ArrayList<SeriesRecording2>());
         listView.setAdapter(adapter);
 
         // Set the listener to show the recording details activity when the user
@@ -97,7 +92,7 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
         listView.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                SeriesRecording srec = adapter.getItem(position);
+                SeriesRecording2 srec = adapter.getItem(position);
                 if (fragmentStatusInterface != null) {
                     fragmentStatusInterface.onListItemSelected(position, srec, TAG);
                 }
@@ -161,8 +156,9 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
     private void populateList() {
         // Clear the list and add the recordings
         adapter.clear();
-        for (SeriesRecording srec : dataStorage.getSeriesRecordings()) {
-            adapter.add(srec);
+        Object[] trecList = dataStorage.getSeriesRecordingsFromArray().values().toArray();
+        for (Object trec : trecList) {
+            adapter.add((SeriesRecording2) trec);
         }
         // Show the newest scheduled recordings first 
         adapter.sort(Constants.RECORDING_SORT_DESCENDING);
@@ -202,12 +198,12 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
             return true;
 
         case R.id.menu_record_remove:
-            SeriesRecording srec = adapter.getSelectedItem();
+            SeriesRecording2 srec = adapter.getSelectedItem();
             menuUtils.handleMenuRemoveSeriesRecordingSelection(srec.id, srec.title);
             return true;
 
         case R.id.menu_record_remove_all:
-            CopyOnWriteArrayList<SeriesRecording> list = new CopyOnWriteArrayList<>(adapter.getAllItems());
+            CopyOnWriteArrayList<SeriesRecording2> list = new CopyOnWriteArrayList<>(adapter.getAllItems());
             menuUtils.handleMenuRemoveAllSeriesRecordingSelection(list);
             return true;
 
@@ -234,7 +230,7 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
         // Get the currently selected program from the list where the context
         // menu has been triggered
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-        final SeriesRecording srec = adapter.getItem(info.position);
+        final SeriesRecording2 srec = adapter.getItem(info.position);
         if (srec != null) {
             menu.setHeaderTitle(srec.title);
         }
@@ -256,7 +252,7 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
             return super.onContextItemSelected(item);
         }
 
-        final SeriesRecording srec = adapter.getItem(info.position);
+        final SeriesRecording2 srec = adapter.getItem(info.position);
         if (srec == null) {
             return super.onContextItemSelected(item);
         }
@@ -311,7 +307,7 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
             case "autorecEntryAdd":
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
-                        adapter.add((SeriesRecording) obj);
+                        adapter.add((SeriesRecording2) obj);
                         populateList();
                     }
                 });
@@ -322,11 +318,11 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
                         // Get the position of the recording that is shown before
                         // the one that has been deleted. This recording will then
                         // be selected when the list has been updated.
-                        int previousPosition = adapter.getPosition((SeriesRecording) obj);
+                        int previousPosition = adapter.getPosition((SeriesRecording2) obj);
                         if (--previousPosition < 0) {
                             previousPosition = 0;
                         }
-                        adapter.remove((SeriesRecording) obj);
+                        adapter.remove((SeriesRecording2) obj);
                         populateList();
                         setInitialSelection(previousPosition);
                     }
@@ -335,7 +331,7 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
             case "autorecEntryUpdate":
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
-                        adapter.update((SeriesRecording) obj);
+                        adapter.update((SeriesRecording2) obj);
                         adapter.notifyDataSetChanged();
                     }
                 });
@@ -367,7 +363,7 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
             // Simulate a click in the list item to inform the activity
             // It will then show the details fragment if dual pane is active
             if (isDualPane) {
-                SeriesRecording srec = adapter.getItem(position);
+                SeriesRecording2 srec = adapter.getItem(position);
                 if (fragmentStatusInterface != null) {
                     fragmentStatusInterface.onListItemSelected(position, srec, TAG);
                 }
