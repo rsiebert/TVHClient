@@ -1068,12 +1068,6 @@ public class DataStorage {
         }
     }
 
-
-
-
-
-
-
     public ChannelTag2 getTagFromArray(int id) {
         synchronized (tagArray) {
             return tagArray.valueAt(id);
@@ -1113,9 +1107,6 @@ public class DataStorage {
         }
     }
 
-
-
-
     public SeriesRecording2 getSeriesRecordingFromArray(String id) {
         synchronized (seriesRecordingArray) {
             return seriesRecordingArray.get(id);
@@ -1154,9 +1145,6 @@ public class DataStorage {
             app.broadcastMessage("autorecEntryUpdate", seriesRecording);
         }
     }
-
-
-
 
     public TimerRecording2 getTimerRecordingFromArray(String id) {
         synchronized (timerRecordingArray) {
