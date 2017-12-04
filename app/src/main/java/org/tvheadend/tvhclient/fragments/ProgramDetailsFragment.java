@@ -114,35 +114,35 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
 
         // Initialize all the widgets from the layout
         final View v = inflater.inflate(R.layout.program_details_layout, container, false);
-        state = (ImageView) v.findViewById(R.id.state);
-        summaryLabel = (TextView) v.findViewById(R.id.summary_label);
-        summary = (TextView) v.findViewById(R.id.summary);
-        descLabel = (TextView) v.findViewById(R.id.description_label);
-        desc = (TextView) v.findViewById(R.id.description);
-        channelLabel = (TextView) v.findViewById(R.id.channel_label);
-        channelName = (TextView) v.findViewById(R.id.channel);
-        date = (TextView) v.findViewById(R.id.date);
-        time = (TextView) v.findViewById(R.id.time);
-        duration = (TextView) v.findViewById(R.id.duration);
-        progress = (TextView) v.findViewById(R.id.progress);
-        contentTypeLabel = (TextView) v.findViewById(R.id.content_type_label);
-        contentType = (TextView) v.findViewById(R.id.content_type);
-        seriesInfoLabel = (TextView) v.findViewById(R.id.series_info_label);
-        seriesInfo = (TextView) v.findViewById(R.id.series_info);
-        ratingBarLabel = (TextView) v.findViewById(R.id.star_rating_label);
-        ratingBarText = (TextView) v.findViewById(R.id.star_rating_text);
-        ratingBar = (RatingBar) v.findViewById(R.id.star_rating);
-        toolbar = (Toolbar) v.findViewById(R.id.toolbar);
-        toolbarTitle = (TextView) v.findViewById(R.id.toolbar_title);
+        state = v.findViewById(R.id.state);
+        summaryLabel = v.findViewById(R.id.summary_label);
+        summary = v.findViewById(R.id.summary);
+        descLabel = v.findViewById(R.id.description_label);
+        desc = v.findViewById(R.id.description);
+        channelLabel = v.findViewById(R.id.channel_label);
+        channelName = v.findViewById(R.id.channel);
+        date = v.findViewById(R.id.date);
+        time = v.findViewById(R.id.time);
+        duration = v.findViewById(R.id.duration);
+        progress = v.findViewById(R.id.progress);
+        contentTypeLabel = v.findViewById(R.id.content_type_label);
+        contentType = v.findViewById(R.id.content_type);
+        seriesInfoLabel = v.findViewById(R.id.series_info_label);
+        seriesInfo = v.findViewById(R.id.series_info);
+        ratingBarLabel = v.findViewById(R.id.star_rating_label);
+        ratingBarText = v.findViewById(R.id.star_rating_text);
+        ratingBar = v.findViewById(R.id.star_rating);
+        toolbar = v.findViewById(R.id.toolbar);
+        toolbarTitle = v.findViewById(R.id.toolbar_title);
         toolbarShadow = v.findViewById(R.id.toolbar_shadow);
-        imageView = (ImageView) v.findViewById(R.id.image);
+        imageView = v.findViewById(R.id.image);
         
         // Initialize the player layout
-        playerLayout = (LinearLayout) v.findViewById(R.id.player_layout);
-        playButton = (Button) v.findViewById(R.id.menu_play);
-        recordOnceButton = (Button) v.findViewById(R.id.menu_record_once);
-        recordSeriesButton = (Button) v.findViewById(R.id.menu_record_series);
-        recordRemoveButton = (Button) v.findViewById(R.id.menu_record_remove);
+        playerLayout = v.findViewById(R.id.player_layout);
+        playButton = v.findViewById(R.id.menu_play);
+        recordOnceButton = v.findViewById(R.id.menu_record_once);
+        recordSeriesButton = v.findViewById(R.id.menu_record_series);
+        recordRemoveButton = v.findViewById(R.id.menu_record_remove);
 
         return v;
     }

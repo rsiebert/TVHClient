@@ -86,22 +86,22 @@ public class TimerRecordingDetailsFragment extends DialogFragment {
 
         // Initialize all the widgets from the layout
         View v = inflater.inflate(R.layout.timer_recording_details_layout, container, false);
-        channelName = (TextView) v.findViewById(R.id.channel);
-        isEnabled = (TextView) v.findViewById(R.id.is_enabled);
-        directoryLabel = (TextView) v.findViewById(R.id.directory_label);
-        directory = (TextView) v.findViewById(R.id.directory);
-        time = (TextView) v.findViewById(R.id.time);
-        duration = (TextView) v.findViewById(R.id.duration);
-        daysOfWeek = (TextView) v.findViewById(R.id.days_of_week);
-        priority = (TextView) v.findViewById(R.id.priority);
-        toolbar = (Toolbar) v.findViewById(R.id.toolbar);
-        toolbarTitle = (TextView) v.findViewById(R.id.toolbar_title);
+        channelName = v.findViewById(R.id.channel);
+        isEnabled = v.findViewById(R.id.is_enabled);
+        directoryLabel = v.findViewById(R.id.directory_label);
+        directory = v.findViewById(R.id.directory);
+        time = v.findViewById(R.id.time);
+        duration = v.findViewById(R.id.duration);
+        daysOfWeek = v.findViewById(R.id.days_of_week);
+        priority = v.findViewById(R.id.priority);
+        toolbar = v.findViewById(R.id.toolbar);
+        toolbarTitle = v.findViewById(R.id.toolbar_title);
         toolbarShadow = v.findViewById(R.id.toolbar_shadow);
 
         // Initialize the player layout
-        playerLayout = (LinearLayout) v.findViewById(R.id.player_layout);
-        recordRemoveButton = (Button) v.findViewById(R.id.menu_record_remove);
-        recordEditButton = (Button) v.findViewById(R.id.menu_record_edit);
+        playerLayout = v.findViewById(R.id.player_layout);
+        recordRemoveButton = v.findViewById(R.id.menu_record_remove);
+        recordEditButton = v.findViewById(R.id.menu_record_edit);
 
         return v;
     }

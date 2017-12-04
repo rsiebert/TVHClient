@@ -108,41 +108,41 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
 
         // Initialize all the widgets from the layout
         View v = inflater.inflate(R.layout.recording_details_layout, container, false);
-        summaryLabel = (TextView) v.findViewById(R.id.summary_label);
-        summary = (TextView) v.findViewById(R.id.summary);
-        descLabel = (TextView) v.findViewById(R.id.description_label);
-        desc = (TextView) v.findViewById(R.id.description);
-        subtitleLabel = (TextView) v.findViewById(R.id.subtitle_label);
-        subtitle = (TextView) v.findViewById(R.id.subtitle);
-        channelLabel = (TextView) v.findViewById(R.id.channel_label);
-        channelName = (TextView) v.findViewById(R.id.channel);
-        date = (TextView) v.findViewById(R.id.date);
-        time = (TextView) v.findViewById(R.id.time);
-        duration = (TextView) v.findViewById(R.id.duration);
-        failed_reason = (TextView) v.findViewById(R.id.failed_reason);
-        is_series_recording = (TextView) v.findViewById(R.id.is_series_recording);
-        is_timer_recording = (TextView) v.findViewById(R.id.is_timer_recording);
-        isEnabled = (TextView) v.findViewById(R.id.is_enabled);
-        toolbar = (Toolbar) v.findViewById(R.id.toolbar);
-        toolbarTitle = (TextView) v.findViewById(R.id.toolbar_title);
+        summaryLabel = v.findViewById(R.id.summary_label);
+        summary = v.findViewById(R.id.summary);
+        descLabel = v.findViewById(R.id.description_label);
+        desc = v.findViewById(R.id.description);
+        subtitleLabel = v.findViewById(R.id.subtitle_label);
+        subtitle = v.findViewById(R.id.subtitle);
+        channelLabel = v.findViewById(R.id.channel_label);
+        channelName = v.findViewById(R.id.channel);
+        date = v.findViewById(R.id.date);
+        time = v.findViewById(R.id.time);
+        duration = v.findViewById(R.id.duration);
+        failed_reason = v.findViewById(R.id.failed_reason);
+        is_series_recording = v.findViewById(R.id.is_series_recording);
+        is_timer_recording = v.findViewById(R.id.is_timer_recording);
+        isEnabled = v.findViewById(R.id.is_enabled);
+        toolbar = v.findViewById(R.id.toolbar);
+        toolbarTitle = v.findViewById(R.id.toolbar_title);
         toolbarShadow = v.findViewById(R.id.toolbar_shadow);
 
-        episode = (TextView) v.findViewById(R.id.episode);
-        episodeLabel = (TextView) v.findViewById(R.id.episode_label);
-        comment = (TextView) v.findViewById(R.id.comment);
-        commentLabel = (TextView) v.findViewById(R.id.comment_label);
-        statusLabel = (TextView) v.findViewById(R.id.status_label);
-        subscription_error = (TextView) v.findViewById(R.id.subscription_error);
-        stream_errors = (TextView) v.findViewById(R.id.stream_errors);
-        data_errors = (TextView) v.findViewById(R.id.data_errors);
-        data_size = (TextView) v.findViewById(R.id.data_size);
+        episode = v.findViewById(R.id.episode);
+        episodeLabel = v.findViewById(R.id.episode_label);
+        comment = v.findViewById(R.id.comment);
+        commentLabel = v.findViewById(R.id.comment_label);
+        statusLabel = v.findViewById(R.id.status_label);
+        subscription_error = v.findViewById(R.id.subscription_error);
+        stream_errors = v.findViewById(R.id.stream_errors);
+        data_errors = v.findViewById(R.id.data_errors);
+        data_size = v.findViewById(R.id.data_size);
 
         // Initialize the player layout
-        playerLayout = (LinearLayout) v.findViewById(R.id.player_layout);
-        playRecordingButton = (Button) v.findViewById(R.id.menu_play);
-        editRecordingButton = (Button) v.findViewById(R.id.menu_edit);
-        removeRecordingButton = (Button) v.findViewById(R.id.menu_record_remove);
-        downloadRecordingButton = (Button) v.findViewById(R.id.menu_download);
+        playerLayout = v.findViewById(R.id.player_layout);
+        playRecordingButton = v.findViewById(R.id.menu_play);
+        editRecordingButton = v.findViewById(R.id.menu_edit);
+        removeRecordingButton = v.findViewById(R.id.menu_record_remove);
+        downloadRecordingButton = v.findViewById(R.id.menu_download);
 
         return v;
     }
