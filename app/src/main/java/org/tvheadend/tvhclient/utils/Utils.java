@@ -8,6 +8,7 @@ import android.content.res.Configuration;
 import android.preference.PreferenceManager;
 import android.text.format.DateUtils;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -27,6 +28,7 @@ import org.tvheadend.tvhclient.model.ChannelTag;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
+import org.tvheadend.tvhclient.model.Recording2;
 import org.tvheadend.tvhclient.model.SeriesInfo;
 
 import java.text.SimpleDateFormat;
@@ -269,6 +271,20 @@ public class Utils {
         duration.setVisibility((s.length() > 0) ? View.VISIBLE : View.GONE);
     }
 
+    public static void setDuration2(TextView duration, final long start, final long stop) {
+        Log.d(TAG, "setDuration2() called with: duration = [" + duration + "], start = [" + start + "], stop = [" + stop + "]");
+        if (duration == null) {
+            return;
+        }
+        duration.setVisibility(View.VISIBLE);
+        // Get the start and end times so we can show them
+        // and calculate the duration. Then show the duration in minutes
+        final double durationTime = ((stop - start) / 60);
+        final String s = duration.getContext().getString(R.string.minutes, (int) durationTime);
+        duration.setText(duration.getContext().getString(R.string.minutes, (int) durationTime));
+        duration.setVisibility((s.length() > 0) ? View.VISIBLE : View.GONE);
+    }
+
     /**
      * Shows the given time for the given view.
      * 
@@ -305,6 +321,46 @@ public class Utils {
             SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.US);
             startTime = sdf.format(start.getTime());
             endTime = sdf.format(stop.getTime());
+        }
+
+        String value = startTime + " - " + endTime;
+        time.setText(value);
+    }
+
+    public static void setTime2(TextView time, final long sta, final long sto) {
+        Log.d(TAG, "setTime2() called with: time = [" + time + "], sta = [" + sta + "], sto = [" + sto + "]");
+        if (time == null) {
+            return;
+        }
+
+        long start = sta * 1000;
+        long stop = sto * 1000;
+
+        time.setVisibility(View.VISIBLE);
+        String startTime = ""; // DateFormat.getTimeFormat(time.getContext()).format(start);
+        String endTime = ""; // DateFormat.getTimeFormat(time.getContext()).format(stop);
+
+        Context context = time.getContext();
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        if (prefs.getBoolean("useLocalizedDateTimeFormatPref", false)) {
+            // Show the date as defined with the currently active locale.
+            // For the date display the short version will be used
+            Locale locale;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                locale = context.getResources().getConfiguration().getLocales().get(0);
+            } else {
+                locale = context.getResources().getConfiguration().locale;
+            }
+            if (locale != null) {
+                final java.text.DateFormat df = java.text.DateFormat.getTimeInstance(java.text.DateFormat.SHORT, locale);
+                startTime = df.format(start);
+                endTime = df.format(stop);
+            }
+        } else {
+            // Show the date using the default format like 31.07.2013
+            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.US);
+            startTime = sdf.format(start);
+            endTime = sdf.format(stop);
         }
 
         String value = startTime + " - " + endTime;
@@ -397,6 +453,95 @@ public class Utils {
                     // Show the date using the default format like 31.07.2013
                     SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy", Locale.US);
                     dateText = sdf.format(start.getTime());
+                }
+
+                date.setText(dateText);
+                break;
+        }
+    }
+
+    public static void setDate2(TextView date, final long st) {
+        Log.d(TAG, "setDate2() called with: date = [" + date + "], st = [" + st + "]");
+        if (date == null) {
+            return;
+        }
+
+        String dateText = "";
+        long start = st * 1000;
+        if (DateUtils.isToday(start)) {
+            // Show the string today
+            dateText = date.getContext().getString(R.string.today);
+        } else if (start < System.currentTimeMillis() + twoDays
+                && start > System.currentTimeMillis() - twoDays) {
+            // Show a string like "42 minutes ago"
+            dateText = DateUtils.getRelativeTimeSpanString(start, System.currentTimeMillis(),
+                    DateUtils.DAY_IN_MILLIS).toString();
+        } else if (start < System.currentTimeMillis() + sixDays
+                && start > System.currentTimeMillis() - twoDays) {
+            // Show the day of the week, like Monday or Tuesday
+            SimpleDateFormat sdf = new SimpleDateFormat("EEEE", Locale.US);
+            dateText = sdf.format(start);
+        }
+
+        // Translate the day strings, if the string is empty
+        // use the day month year date representation
+        switch (dateText) {
+            case "today":
+                date.setText(R.string.today);
+                break;
+            case "tomorrow":
+                date.setText(R.string.tomorrow);
+                break;
+            case "in 2 days":
+                date.setText(R.string.in_2_days);
+                break;
+            case "Monday":
+                date.setText(R.string.monday);
+                break;
+            case "Tuesday":
+                date.setText(R.string.tuesday);
+                break;
+            case "Wednesday":
+                date.setText(R.string.wednesday);
+                break;
+            case "Thursday":
+                date.setText(R.string.thursday);
+                break;
+            case "Friday":
+                date.setText(R.string.friday);
+                break;
+            case "Saturday":
+                date.setText(R.string.saturday);
+                break;
+            case "Sunday":
+                date.setText(R.string.sunday);
+                break;
+            case "yesterday":
+                date.setText(R.string.yesterday);
+                break;
+            case "2 days ago":
+                date.setText(R.string.two_days_ago);
+                break;
+            default:
+                Context context = date.getContext();
+                final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+                if (prefs.getBoolean("useLocalizedDateTimeFormatPref", false)) {
+                    // Show the date as defined with the currently active locale.
+                    // For the date display the short version will be used
+                    Locale locale;
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                        locale = context.getResources().getConfiguration().getLocales().get(0);
+                    } else {
+                        locale = context.getResources().getConfiguration().locale;
+                    }
+                    if (locale != null) {
+                        final java.text.DateFormat df = java.text.DateFormat.getDateInstance(java.text.DateFormat.SHORT, locale);
+                        dateText = df.format(start);
+                    }
+                } else {
+                    // Show the date using the default format like 31.07.2013
+                    SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy", Locale.US);
+                    dateText = sdf.format(start);
                 }
 
                 date.setText(dateText);
@@ -615,7 +760,7 @@ public class Utils {
      * @param failed_reason Widget that shows the failed reason text
      * @param rec           Recording
      */
-    public static void setFailedReason(final TextView failed_reason, final Recording rec) {
+    public static void setFailedReason(final TextView failed_reason, final Recording2 rec) {
         if (failed_reason == null) {
             return;
         }
@@ -678,6 +823,35 @@ public class Utils {
         final double durationTime = (stop.getTime() - start.getTime());
         final double elapsedTime = new Date().getTime() - start.getTime();
         
+        // Show the progress as a percentage
+        double percent = 0;
+        if (durationTime > 0) {
+            percent = elapsedTime / durationTime;
+        }
+        int progress = (int) Math.floor(percent * 100);
+        if (progress > 100) {
+            progress = 100;
+        }
+        if (progress > 0) {
+            progressText.setText(progressText.getResources().getString(R.string.progress, progress));
+            progressText.setVisibility(View.VISIBLE);
+        } else {
+            progressText.setVisibility(View.GONE);
+        }
+    }
+
+    public static void setProgressText2(TextView progressText, final long sta, final long sto) {
+        Log.d(TAG, "setProgressText2() called with: progressText = [" + progressText + "], sta = [" + sta + "], sto = [" + sto + "]");
+        if (progressText == null) {
+            return;
+        }
+        long start = sta * 1000;
+        long stop = sto * 1000;
+
+        // Get the start and end times to calculate the progress.
+        final double durationTime = (stop - start);
+        final double elapsedTime = new Date().getTime() - start;
+
         // Show the progress as a percentage
         double percent = 0;
         if (durationTime > 0) {

@@ -320,8 +320,8 @@
     <string name="duplicate_detection">Detekovať duplicitné programy</string>
 
     <string name="subscription_error">Chyba Subscription: %1$s</string>
-    <string name="stream_errors">Chyby streamu: %1$d</string>
-    <string name="data_errors">Chyby dát: %1$d</string>
+    <string name="stream_errors">Chyby streamu: %1$s</string>
+    <string name="data_errors">Chyby dát: %1$s</string>
     <string name="data_size">Veľkosť súboru: %1$d %2$s</string>
 	
     <string name="nothing">Žiadne</string>

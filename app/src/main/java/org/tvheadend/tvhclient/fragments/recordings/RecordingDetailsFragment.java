@@ -23,7 +23,8 @@ import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
-import org.tvheadend.tvhclient.model.Recording;
+import org.tvheadend.tvhclient.model.Channel2;
+import org.tvheadend.tvhclient.model.Recording2;
 import org.tvheadend.tvhclient.utils.MenuUtils;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 import org.tvheadend.tvhclient.utils.Utils;
@@ -35,7 +36,7 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
 
     private AppCompatActivity activity;
     private boolean showControls = false;
-    private Recording rec;
+    private Recording2 rec;
 
     private TextView summaryLabel;
     private TextView summary;
@@ -156,15 +157,15 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
         dataStorage = DataStorage.getInstance();
         menuUtils = new MenuUtils(getActivity());
 
-        long recId = 0;
+        int recId = 0;
         Bundle bundle = getArguments();
         if (bundle != null) {
-            recId = bundle.getLong("dvrId", 0);
+            recId = bundle.getInt("dvrId", 0);
             showControls = bundle.getBoolean(Constants.BUNDLE_SHOW_CONTROLS, false);
         }
 
         // Get the recording so we can show its details
-        rec = dataStorage.getRecording(recId);
+        rec = dataStorage.getRecordingFromArray(recId);
 
         // If the recording is null exit
         if (rec == null) {
@@ -188,16 +189,18 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
             showPlayerControls();
         }
 
-        Utils.setDate(date, rec.start);
-        Utils.setTime(time, rec.start, rec.stop);
-        Utils.setDuration(duration, rec.start, rec.stop);
-        Utils.setProgressText(null, rec.start, rec.stop);
-        Utils.setDescription(channelLabel, channelName, ((rec.channel != null) ? rec.channel.name : ""));
+        Utils.setDate2(date, rec.start);
+        Utils.setTime2(time, rec.start, rec.stop);
+        Utils.setDuration2(duration, rec.start, rec.stop);
+
+        Channel2 channel = dataStorage.getChannelFromArray(rec.channel);
+        Utils.setDescription(channelLabel, channelName, ((channel != null) ? channel.channelName : ""));
         Utils.setDescription(summaryLabel, summary, rec.summary);
         Utils.setDescription(descLabel, desc, rec.description);
         Utils.setDescription(subtitleLabel, subtitle, rec.subtitle);
         Utils.setDescription(episodeLabel, episode, rec.episode);
         Utils.setDescription(commentLabel, comment, rec.comment);
+
         Utils.setFailedReason(failed_reason, rec);
 
         // Show the information if the recording belongs to a series recording
@@ -205,8 +208,8 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
         is_series_recording.setVisibility((rec.autorecId != null && showControls) ? ImageView.VISIBLE : ImageView.GONE);
         is_timer_recording.setVisibility((rec.timerecId != null && showControls) ? ImageView.VISIBLE : ImageView.GONE);
 
-        isEnabled.setVisibility((dataStorage.getProtocolVersion() >= Constants.MIN_API_VERSION_DVR_FIELD_ENABLED && !rec.enabled) ? View.VISIBLE : View.GONE);
-        isEnabled.setText(rec.enabled ? R.string.recording_enabled : R.string.recording_disabled);
+        isEnabled.setVisibility((dataStorage.getProtocolVersion() >= Constants.MIN_API_VERSION_DVR_FIELD_ENABLED && rec.enabled == 0) ? View.VISIBLE : View.GONE);
+        isEnabled.setText(rec.enabled > 0 ? R.string.recording_enabled : R.string.recording_disabled);
 
         // Only show the status details in the 
         // completed and failed details screens
@@ -218,9 +221,10 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
             } else {
                 subscription_error.setVisibility(View.GONE);
             }
-    
-            stream_errors.setText(getResources().getString(R.string.stream_errors, rec.streamErrors));
-            data_errors.setText(getResources().getString(R.string.data_errors, rec.dataErrors));
+
+
+            stream_errors.setText(getResources().getString(R.string.stream_errors, rec.streamErrors == null ? "0" : rec.streamErrors));
+            data_errors.setText(getResources().getString(R.string.data_errors, rec.dataErrors == null ? "0" : rec.dataErrors));
     
             if (rec.dataSize > 1048576) {
                 data_size.setText(getResources().getString(R.string.data_size, rec.dataSize / 1048576, "MB"));
@@ -280,7 +284,6 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
         removeRecordingButton.setVisibility(View.GONE);
         downloadRecordingButton.setVisibility(View.GONE);
 
-        // TODO use Objects.equals(Object, Object) for comparing strings
         if (rec != null) {
             if (rec.isCompleted()) {
                 // The recording is available, it can be played and removed

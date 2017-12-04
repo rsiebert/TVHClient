@@ -146,7 +146,7 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
             Utils.setDuration(holder.duration, rec.start, rec.stop);
             Utils.setDescription(null, holder.summary, rec.summary);
             Utils.setDescription(null, holder.description, rec.description);
-            Utils.setFailedReason(holder.failed_reason, rec);
+            // TODO Utils.setFailedReason(holder.failed_reason, rec);
             
             // Show only the recording icon
             if (holder.state != null) {

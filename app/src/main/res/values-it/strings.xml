@@ -255,7 +255,7 @@ L'indirizzo deve essere nella forma '01:24:67:9a:cd:ef' e può contenere solo ci
     <string name="connection_recovered">La connessione al dispositivo di trasmissione è stata ripristinata</string>
     <string name="connection_temp_lost">La connessione al dispositivo di trasmissione è stata temporaneamente persa</string>
     <string name="current_time">Orario attuale</string>
-    <string name="data_errors">Errori dati: %1$d</string>
+    <string name="data_errors">Errori dati: %1$s</string>
     <string name="data_size">Dim. file: %1$d %2$s</string>
     <string name="discard">Annulla</string>
     <string name="download_error_authentication_required">"Errore download registrazione '%s'. Autentificazione non corretta o mancante."</string>
@@ -336,7 +336,7 @@ Verifica che siano soddsifatti i requisiti descritti nelle impostazioni trasmiss
     <string name="start_before_time">Fine</string>
     <string name="stop">Stop</string>
     <string name="stop_recording">"Vuoi veramente fermare la registrazione '%s'?"</string>
-    <string name="stream_errors">Errori stream: %1$d</string>
+    <string name="stream_errors">Errori stream: %1$s</string>
     <string name="subscription_error">Errore sottoscrizione: %1$s</string>
     <string name="subtitle">Sottotitoli</string>
     <string name="success_adding_recording">Registrazione aggiunta.</string>

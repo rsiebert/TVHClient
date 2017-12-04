@@ -1,5 +1,7 @@
 package org.tvheadend.tvhclient.model;
 
+import android.text.TextUtils;
+
 import java.util.List;
 
 public class Recording2 {
@@ -31,4 +33,34 @@ public class Recording2 {
     public List<String> files;          // msg   optional   All recorded files for playback (Added in version 21).
     public long dataSize;               // s64   optional   Actual file size of the last recordings (Added in version 21).
     public int enabled;                 // u32   optional   Enabled flag (Added in version 23).
+    public String episode;              // str   optional   Episode (Added in version 18).
+    public String comment;              // str   optional   Comment (Added in version 18).
+
+    public boolean isCompleted() {
+        return error == null && TextUtils.equals(state, "completed");
+    }
+
+    public boolean isRecording() {
+        return error == null && (TextUtils.equals(state, "recording") && !TextUtils.equals(state, "scheduled"));
+    }
+
+    public boolean isScheduled() {
+        return error == null && (TextUtils.equals(state, "recording") || TextUtils.equals(state, "scheduled"));
+    }
+
+    public boolean isFailed() {
+        return TextUtils.equals(state, "invalid");
+    }
+
+    public boolean isMissed() {
+        return TextUtils.equals(state, "missed");
+    }
+
+    public boolean isAborted() {
+        return TextUtils.equals(error, "Aborted by user") && TextUtils.equals(state, "completed");
+    }
+
+    public boolean isRemoved() {
+        return TextUtils.equals(error, "File missing") && TextUtils.equals(state, "completed");
+    }
 }

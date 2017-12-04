@@ -1324,7 +1324,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 // to the right of the recording list, otherwise replace the recording
                 // list with the details fragment.
                 Bundle args = new Bundle();
-                args.putLong("dvrId", recording.id);
+                args.putInt("dvrId", (int) recording.id);
                 args.putBoolean(Constants.BUNDLE_SHOW_CONTROLS, !isDualPane);
 
                 if (isDualPane) {

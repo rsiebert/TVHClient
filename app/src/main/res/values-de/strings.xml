@@ -316,8 +316,8 @@
     <string name="duplicate_detection">Erkenne doppelte Sendungen</string>
 
     <string name="subscription_error">Subscription-Fehler: %1$s</string>
-    <string name="stream_errors">Streamingfehler: %1$d</string>
-    <string name="data_errors">Datenfehler: %1$d</string>
+    <string name="stream_errors">Streamingfehler: %1$s</string>
+    <string name="data_errors">Datenfehler: %1$s</string>
     <string name="data_size">Dateigröße: %1$d %2$s</string>
 
     <string name="nothing">Keine</string>

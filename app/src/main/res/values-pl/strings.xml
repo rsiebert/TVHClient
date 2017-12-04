@@ -320,8 +320,8 @@
     <string name="duplicate_detection">Pokazuj wykryte duplikaty</string>
 
     <string name="subscription_error">Błędy subskrypcji: %1$s</string>
-    <string name="stream_errors">Błędy strumienia: %1$d</string>
-    <string name="data_errors">Błędy danych: %1$d</string>
+    <string name="stream_errors">Błędy strumienia: %1$s</string>
+    <string name="data_errors">Błędy danych: %1$s</string>
     <string name="data_size">Rozmiar pliku: %1$d %2$s</string>
     
     <string name="nothing">Brak</string>

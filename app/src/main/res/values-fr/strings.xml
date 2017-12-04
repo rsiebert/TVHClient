@@ -313,8 +313,8 @@
     <string name="duplicate_detection">Détecte les programmes en double</string>
 
     <string name="subscription_error">Erreur de souscription: %1$s</string>
-    <string name="stream_errors">Erreur de flux: %1$d</string>
-    <string name="data_errors">Erreur de données: %1$d</string>
+    <string name="stream_errors">Erreur de flux: %1$s</string>
+    <string name="data_errors">Erreur de données: %1$s</string>
     <string name="data_size">Taille de fichier: %1$d %2$s</string>
 
     <string name="nothing">Rien</string>

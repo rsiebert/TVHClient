@@ -320,8 +320,8 @@
     <string name="duplicate_detection">Detect duplicate shows</string>
 
     <string name="subscription_error">Subscription error: %1$s</string>
-    <string name="stream_errors">Stream errors: %1$d</string>
-    <string name="data_errors">Data errors: %1$d</string>
+    <string name="stream_errors">Stream errors: %1$s</string>
+    <string name="data_errors">Data errors: %1$s</string>
     <string name="data_size">File size: %1$d %2$s</string>
 
     <string name="nothing">Nothing</string>
