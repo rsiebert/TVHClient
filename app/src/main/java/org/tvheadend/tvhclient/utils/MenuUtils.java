@@ -29,7 +29,7 @@ import org.tvheadend.tvhclient.model.GenreColorDialogItem;
 import org.tvheadend.tvhclient.model.Profile;
 import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.model.SeriesRecording;
-import org.tvheadend.tvhclient.model.TimerRecording;
+import org.tvheadend.tvhclient.model.TimerRecording2;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
@@ -412,7 +412,7 @@ public class MenuUtils {
                 }).show();
     }
 
-    public void handleMenuRemoveAllTimerRecordingSelection(List<TimerRecording> items) {
+    public void handleMenuRemoveAllTimerRecordingSelection(List<TimerRecording2> items) {
         Activity activity = this.activity.get();
         if (activity == null) {
             return;
@@ -427,7 +427,7 @@ public class MenuUtils {
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         new Thread() {
                             public void run() {
-                                for (TimerRecording item : items) {
+                                for (TimerRecording2 item : items) {
                                     final Intent intent = new Intent(activity, HTSService.class);
                                     intent.setAction("deleteTimerecEntry");
                                     intent.putExtra("id", item.id);

@@ -5,6 +5,7 @@ import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.model.SeriesRecording;
 import org.tvheadend.tvhclient.model.TimerRecording;
+import org.tvheadend.tvhclient.model.TimerRecording2;
 
 public interface FragmentStatusInterface {
 
@@ -61,6 +62,8 @@ public interface FragmentStatusInterface {
      * @param tag Tag of the calling class
      */
     void onListItemSelected(final int position, final TimerRecording timerRecording, final String tag);
+
+    void onListItemSelected(final int position, final TimerRecording2 timerRecording, final String tag);
 
     /**
      * Informs the activity that user has selected a certain program from the

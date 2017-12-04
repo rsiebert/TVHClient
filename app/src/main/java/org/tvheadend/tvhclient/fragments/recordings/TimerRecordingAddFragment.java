@@ -41,9 +41,10 @@ import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Channel;
+import org.tvheadend.tvhclient.model.Channel2;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.Profile;
-import org.tvheadend.tvhclient.model.TimerRecording;
+import org.tvheadend.tvhclient.model.TimerRecording2;
 import org.tvheadend.tvhclient.utils.Utils;
 
 import java.util.Arrays;
@@ -56,7 +57,7 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
     private final static String TAG = TimerRecordingAddFragment.class.getSimpleName();
 
     private Activity activity;
-    private TimerRecording rec;
+    private TimerRecording2 rec;
     private Toolbar toolbar;
 
     private CheckBox isEnabled;
@@ -254,7 +255,7 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
             }
 
             // Get the recording so we can show its details
-            rec = dataStorage.getTimerRecording(recId);
+            rec = dataStorage.getTimerRecordingFromArray(recId);
             if (rec != null) {
                 priorityValue = rec.priority;
                 startTimeValue = rec.start;
@@ -263,14 +264,15 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
                 directoryValue = rec.directory;
                 titleValue = rec.title;
                 nameValue = rec.name;
-                enabledValue = rec.enabled;
+                enabledValue = (rec.enabled > 0);
 
                 // The default value is no channel
                 channelSelectionValue = 0;
                 // Get the position of the given channel in the channelList
-                if (rec.channel != null) {
+                Channel2 channel = dataStorage.getChannelFromArray(rec.channel);
+                if (channel != null) {
                     for (int i = 0; i < channelList.length; i++) {
-                        if (channelList[i].equals(rec.channel.name)) {
+                        if (channelList[i].equals(channel.channelName)) {
                             // If all channels is available then all entries in the channel
                             // list are one index higher because all channels is index 0
                             channelSelectionValue = (allowRecordingOnAllChannels ? (i+1) : i);
@@ -571,11 +573,12 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
                 intent.putExtra("id", rec.id);
                 activity.startService(intent);
     
+                // TODO check if this still works
                 // If no channel is defined then the server will not notify us about
                 // the deletion and thus not triggering the adding of the edited
                 // recording. In this case start the timer that will add a new
                 // recording after x seconds and reload all data from the server.
-                if (rec.channel == null) {
+                if (rec.channel == 0) {
                     addHandler.removeCallbacks(addTask);
                     addHandler.postDelayed(addTask, 2000);
                 }

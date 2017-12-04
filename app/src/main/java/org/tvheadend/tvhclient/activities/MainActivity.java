@@ -69,12 +69,12 @@ import org.tvheadend.tvhclient.fragments.recordings.SeriesRecordingListFragment;
 import org.tvheadend.tvhclient.fragments.recordings.TimerRecordingDetailsFragment;
 import org.tvheadend.tvhclient.fragments.recordings.TimerRecordingListFragment;
 import org.tvheadend.tvhclient.htsp.HTSService;
-import org.tvheadend.tvhclient.interfaces.ToolbarInterface;
 import org.tvheadend.tvhclient.interfaces.ChangeLogDialogInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentScrollInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
+import org.tvheadend.tvhclient.interfaces.ToolbarInterface;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.Profile;
@@ -82,6 +82,7 @@ import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.model.SeriesRecording;
 import org.tvheadend.tvhclient.model.TimerRecording;
+import org.tvheadend.tvhclient.model.TimerRecording2;
 import org.tvheadend.tvhclient.tasks.WakeOnLanTask;
 import org.tvheadend.tvhclient.tasks.WakeOnLanTaskCallback;
 import org.tvheadend.tvhclient.utils.MenuUtils;
@@ -647,7 +648,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int completedRecordingCount = dataStorage.getRecordingsByType(Constants.RECORDING_TYPE_COMPLETED).size();
         int scheduledRecordingCount = dataStorage.getRecordingsByType(Constants.RECORDING_TYPE_SCHEDULED).size();
         int seriesRecordingCount = dataStorage.getSeriesRecordings().size();
-        int timerRecordingCount = dataStorage.getTimerRecordings().size();
+        int timerRecordingCount = dataStorage.getTimerRecordingsFromArray().size();
         int failedRecordingCount = dataStorage.getRecordingsByType(Constants.RECORDING_TYPE_FAILED).size();
         int removedRecordingCount = dataStorage.getRecordingsByType(Constants.RECORDING_TYPE_REMOVED).size();
 
@@ -761,14 +762,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-
+/*
         // If the navigation drawer is open, hide all menu items
         //boolean drawerOpen = drawerLayout.isDrawerOpen(drawerList);
         boolean drawerOpen = drawerLayout.isDrawerOpen(GravityCompat.START);
         for (int i = 0; i < menu.size(); i++) {
             menu.getItem(i).setVisible(!drawerOpen);
         }
-
+*/
         // Do not show the search menu on these screens
         if (selectedNavigationMenuId == MENU_STATUS
                 || (selectedNavigationMenuId == MENU_COMPLETED_RECORDINGS && dataStorage.getRecordingsByType(Constants.RECORDING_TYPE_COMPLETED).size() == 0)
@@ -1366,6 +1367,33 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onListItemSelected(final int position, final TimerRecording timerRecording, final String tag) {
+        // Save the position of the selected recording type so it can be
+        // restored after an orientation change
+        switch (selectedNavigationMenuId) {
+            case MENU_TIMER_RECORDINGS:
+                timerRecordingListPosition = position;
+                break;
+        }
+        // When a timer recording has been selected from the recording list fragment,
+        // show its details. In dual mode these are shown in a separate fragment
+        // to the right of the series recording list, otherwise replace the recording
+        // list with the details fragment.
+        if (timerRecording != null) {
+            Bundle args = new Bundle();
+            args.putString("id", timerRecording.id);
+            args.putBoolean(Constants.BUNDLE_SHOW_CONTROLS, !isDualPane);
+
+            if (isDualPane) {
+                showFragment(TimerRecordingDetailsFragment.class.getName(), R.id.right_fragment, args);
+            } else {
+                DialogFragment newFragment = TimerRecordingDetailsFragment.newInstance(args);
+                newFragment.show(getSupportFragmentManager(), "dialog");
+            }
+        }
+    }
+
+    @Override
+    public void onListItemSelected(final int position, final TimerRecording2 timerRecording, final String tag) {
         // Save the position of the selected recording type so it can be
         // restored after an orientation change
         switch (selectedNavigationMenuId) {

@@ -12,7 +12,8 @@ import android.widget.TextView;
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.model.TimerRecording;
+import org.tvheadend.tvhclient.model.Channel2;
+import org.tvheadend.tvhclient.model.TimerRecording2;
 import org.tvheadend.tvhclient.utils.Utils;
 
 import java.util.Calendar;
@@ -20,25 +21,23 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
-public class TimerRecordingListAdapter extends ArrayAdapter<TimerRecording> {
+public class TimerRecordingListAdapter extends ArrayAdapter<TimerRecording2> {
 
     private final Activity context;
-    private final List<TimerRecording> list;
+    private final List<TimerRecording2> list;
     private int selectedPosition = 0;
-    private final int layout;
 
-    public TimerRecordingListAdapter(Activity context, List<TimerRecording> list, int layout) {
-        super(context, layout, list);
+    public TimerRecordingListAdapter(Activity context, List<TimerRecording2> list) {
+        super(context, 0);
         this.context = context;
-        this.layout = layout;
         this.list = list;
     }
 
     public void sort(final int type) {
         switch (type) {
         case Constants.RECORDING_SORT_ASCENDING:
-            sort(new Comparator<TimerRecording>() {
-                public int compare(TimerRecording x, TimerRecording y) {
+            sort(new Comparator<TimerRecording2>() {
+                public int compare(TimerRecording2 x, TimerRecording2 y) {
                     if (x != null && y != null && x.title != null && y.title != null) {
                         return (y.title.compareTo(x.title));
                     }
@@ -47,8 +46,8 @@ public class TimerRecordingListAdapter extends ArrayAdapter<TimerRecording> {
             });
         break;
         case Constants.RECORDING_SORT_DESCENDING:
-            sort(new Comparator<TimerRecording>() {
-                public int compare(TimerRecording x, TimerRecording y) {
+            sort(new Comparator<TimerRecording2>() {
+                public int compare(TimerRecording2 x, TimerRecording2 y) {
                     if (x != null && y != null && x.title != null && y.title != null) {
                         return (x.title.compareTo(y.title));
                     }
@@ -80,7 +79,7 @@ public class TimerRecordingListAdapter extends ArrayAdapter<TimerRecording> {
         ViewHolder holder;
 
         if (view == null) {
-            view = context.getLayoutInflater().inflate(layout, parent, false);
+            view = context.getLayoutInflater().inflate(R.layout.timer_recording_list_widget, parent, false);
             holder = new ViewHolder();
             holder.icon = view.findViewById(R.id.icon);
             holder.title = view.findViewById(R.id.title);
@@ -112,21 +111,23 @@ public class TimerRecordingListAdapter extends ArrayAdapter<TimerRecording> {
         }
 
         // Get the program and assign all the values
-        TimerRecording trec = getItem(position);
+        TimerRecording2 trec = getItem(position);
         if (trec != null) {
+            Channel2 channel = DataStorage.getInstance().getChannelFromArray(trec.channel);
             if (trec.title != null && trec.title.length() > 0) {
                 holder.title.setText(trec.title);
             } else {
                 holder.title.setText(trec.name);
             }
             if (holder.channel != null) {
-                if (trec.channel != null) {
-                    holder.channel.setText(trec.channel.name);
+                if (channel != null) {
+                    holder.channel.setText(channel.channelName);
                 } else {
                     holder.channel.setText(R.string.all_channels);
                 }
             }
-            Utils.setChannelIcon(holder.icon, null, trec.channel);
+
+            // TODO Utils.setChannelIcon(holder.icon, null, channel);
             Utils.setDaysOfWeek(context, null, holder.daysOfWeek, trec.daysOfWeek);
 
             // TODO multiple uses, consolidate
@@ -144,13 +145,13 @@ public class TimerRecordingListAdapter extends ArrayAdapter<TimerRecording> {
             }
             if (holder.isEnabled != null) {
                 holder.isEnabled.setVisibility(DataStorage.getInstance().getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED ? View.VISIBLE : View.GONE);
-                holder.isEnabled.setText(trec.enabled ? R.string.recording_enabled : R.string.recording_disabled);
+                holder.isEnabled.setText(trec.enabled > 0? R.string.recording_enabled : R.string.recording_disabled);
             }
         }
         return view;
     }
 
-    public void update(TimerRecording trec) {
+    public void update(TimerRecording2 trec) {
         int length = list.size();
 
         // Go through the list of programs and find the
@@ -163,14 +164,14 @@ public class TimerRecordingListAdapter extends ArrayAdapter<TimerRecording> {
         }
     }
 
-    public TimerRecording getSelectedItem() {
+    public TimerRecording2 getSelectedItem() {
         if (list.size() > 0 && list.size() > selectedPosition) {
             return list.get(selectedPosition);
         }
         return null;
     }
 
-    public List<TimerRecording> getAllItems() {
+    public List<TimerRecording2> getAllItems() {
         return list;
     }
 }

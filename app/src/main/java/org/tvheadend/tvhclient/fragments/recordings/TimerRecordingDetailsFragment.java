@@ -19,7 +19,8 @@ import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.model.TimerRecording;
+import org.tvheadend.tvhclient.model.Channel2;
+import org.tvheadend.tvhclient.model.TimerRecording2;
 import org.tvheadend.tvhclient.utils.MenuUtils;
 import org.tvheadend.tvhclient.utils.Utils;
 
@@ -33,7 +34,7 @@ public class TimerRecordingDetailsFragment extends DialogFragment {
 
     private AppCompatActivity activity;
     private boolean showControls = false;
-    private TimerRecording trec;
+    private TimerRecording2 trec;
 
     private TextView isEnabled;
     private TextView directoryLabel;
@@ -123,7 +124,7 @@ public class TimerRecordingDetailsFragment extends DialogFragment {
         }
 
         // Get the recording so we can show its details
-        trec = dataStorage.getTimerRecording(recId);
+        trec = dataStorage.getTimerRecordingFromArray(recId);
 
         // If the recording is null exit
         if (trec == null) {
@@ -153,14 +154,15 @@ public class TimerRecordingDetailsFragment extends DialogFragment {
         }
 
         isEnabled.setVisibility((dataStorage.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED) ? View.VISIBLE : View.GONE);
-        isEnabled.setText(trec.enabled ? R.string.recording_enabled : R.string.recording_disabled);
+        isEnabled.setText(trec.enabled > 0 ? R.string.recording_enabled : R.string.recording_disabled);
 
         directoryLabel.setVisibility(dataStorage.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_DIRECTORY ? View.VISIBLE : View.GONE);
         directory.setVisibility(dataStorage.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_DIRECTORY ? View.VISIBLE : View.GONE);
         directory.setText(trec.directory);
 
-        if (trec.channel != null) {
-            channelName.setText(trec.channel.name);
+        Channel2 channel = dataStorage.getChannelFromArray(trec.channel);
+        if (channel != null) {
+            channelName.setText(channel.channelName);
         } else {
             channelName.setText(R.string.all_channels);
         }
