@@ -196,7 +196,7 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
             // Create the fragment and show it as a dialog.
             DialogFragment editFragment = SeriesRecordingAddFragment.newInstance();
             Bundle bundle = new Bundle();
-            bundle.putString(Constants.BUNDLE_SERIES_RECORDING_ID, adapter.getSelectedItem().id);
+            bundle.putString("id", adapter.getSelectedItem().id);
             editFragment.setArguments(bundle);
             editFragment.show(activity.getSupportFragmentManager(), "dialog");
             return true;
@@ -266,7 +266,7 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
             // Create the fragment and show it as a dialog.
             DialogFragment editFragment = SeriesRecordingAddFragment.newInstance();
             Bundle bundle = new Bundle();
-            bundle.putString(Constants.BUNDLE_SERIES_RECORDING_ID, srec.id);
+            bundle.putString("id", srec.id);
             editFragment.setArguments(bundle);
             editFragment.show(activity.getSupportFragmentManager(), "dialog");
             return true;

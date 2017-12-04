@@ -1352,7 +1352,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // list with the details fragment.
         if (seriesRecording != null) {
             Bundle args = new Bundle();
-            args.putString(Constants.BUNDLE_SERIES_RECORDING_ID, seriesRecording.id);
+            args.putString("id", seriesRecording.id);
             args.putBoolean(Constants.BUNDLE_SHOW_CONTROLS, !isDualPane);
 
             if (isDualPane) {
@@ -1379,7 +1379,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // list with the details fragment.
         if (timerRecording != null) {
             Bundle args = new Bundle();
-            args.putString(Constants.BUNDLE_TIMER_RECORDING_ID, timerRecording.id);
+            args.putString("id", timerRecording.id);
             args.putBoolean(Constants.BUNDLE_SHOW_CONTROLS, !isDualPane);
 
             if (isDualPane) {

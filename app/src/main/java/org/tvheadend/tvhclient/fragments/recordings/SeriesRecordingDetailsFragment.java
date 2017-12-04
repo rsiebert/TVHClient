@@ -123,7 +123,7 @@ public class SeriesRecordingDetailsFragment extends DialogFragment {
         String srecId = "";
         Bundle bundle = getArguments();
         if (bundle != null) {
-            srecId = bundle.getString(Constants.BUNDLE_SERIES_RECORDING_ID);
+            srecId = bundle.getString("id");
             showControls = bundle.getBoolean(Constants.BUNDLE_SHOW_CONTROLS, false);
         }
 
@@ -200,7 +200,7 @@ public class SeriesRecordingDetailsFragment extends DialogFragment {
                 // Create the fragment and show it as a dialog.
                 DialogFragment editFragment = SeriesRecordingAddFragment.newInstance();
                 Bundle bundle = new Bundle();
-                bundle.putString(Constants.BUNDLE_SERIES_RECORDING_ID, srec.id);
+                bundle.putString("id", srec.id);
                 editFragment.setArguments(bundle);
                 editFragment.show(activity.getSupportFragmentManager(), "dialog");
 

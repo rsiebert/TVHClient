@@ -250,7 +250,7 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
             String recId = "";
             Bundle bundle = getArguments();
             if (bundle != null) {
-                recId = bundle.getString(Constants.BUNDLE_TIMER_RECORDING_ID);
+                recId = bundle.getString("id");
             }
 
             // Get the recording so we can show its details

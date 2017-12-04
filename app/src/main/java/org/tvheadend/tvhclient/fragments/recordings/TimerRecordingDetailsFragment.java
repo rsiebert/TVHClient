@@ -118,7 +118,7 @@ public class TimerRecordingDetailsFragment extends DialogFragment {
         String recId = "";
         Bundle bundle = getArguments();
         if (bundle != null) {
-            recId = bundle.getString(Constants.BUNDLE_TIMER_RECORDING_ID);
+            recId = bundle.getString("id");
             showControls = bundle.getBoolean(Constants.BUNDLE_SHOW_CONTROLS, false);
         }
 
@@ -206,7 +206,7 @@ public class TimerRecordingDetailsFragment extends DialogFragment {
                 // Create the fragment and show it as a dialog.
                 DialogFragment editFragment = TimerRecordingAddFragment.newInstance();
                 Bundle bundle = new Bundle();
-                bundle.putString(Constants.BUNDLE_TIMER_RECORDING_ID, trec.id);
+                bundle.putString("id", trec.id);
                 editFragment.setArguments(bundle);
                 editFragment.show(activity.getSupportFragmentManager(), "dialog");
 

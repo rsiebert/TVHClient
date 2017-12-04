@@ -287,7 +287,7 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
             String recId = "";
             Bundle bundle = getArguments();
             if (bundle != null) {
-                recId = bundle.getString(Constants.BUNDLE_SERIES_RECORDING_ID);
+                recId = bundle.getString("id");
             }
 
             // Get the recording so we can show its details
