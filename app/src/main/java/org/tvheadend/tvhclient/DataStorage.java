@@ -2,25 +2,35 @@ package org.tvheadend.tvhclient;
 
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.util.Log;
+import android.util.SparseArray;
 
 import org.tvheadend.tvhclient.model.Channel;
+import org.tvheadend.tvhclient.model.Channel2;
 import org.tvheadend.tvhclient.model.ChannelTag;
+import org.tvheadend.tvhclient.model.ChannelTag2;
 import org.tvheadend.tvhclient.model.DiscSpace;
 import org.tvheadend.tvhclient.model.HttpTicket;
 import org.tvheadend.tvhclient.model.Packet;
 import org.tvheadend.tvhclient.model.Profiles;
 import org.tvheadend.tvhclient.model.Program;
+import org.tvheadend.tvhclient.model.Program2;
 import org.tvheadend.tvhclient.model.Recording;
+import org.tvheadend.tvhclient.model.Recording2;
 import org.tvheadend.tvhclient.model.SeriesRecording;
+import org.tvheadend.tvhclient.model.SeriesRecording2;
 import org.tvheadend.tvhclient.model.Subscription;
 import org.tvheadend.tvhclient.model.SystemTime;
 import org.tvheadend.tvhclient.model.TimerRecording;
+import org.tvheadend.tvhclient.model.TimerRecording2;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class DataStorage {
     private final static String TAG = TVHClientApplication.class.getSimpleName();
@@ -33,6 +43,14 @@ public class DataStorage {
     private final List<Subscription> subscriptions = Collections.synchronizedList(new ArrayList<Subscription>());
     private final List<Profiles> dvrConfigs = Collections.synchronizedList(new ArrayList<Profiles>());
     private final List<Profiles> profiles = Collections.synchronizedList(new ArrayList<Profiles>());
+
+    private final SparseArray<Program2> programArray = new SparseArray<>();
+    private final SparseArray<Recording2> recordingArray = new SparseArray<>();
+    private final SparseArray<Channel2> channelArray = new SparseArray<>();
+    private final SparseArray<ChannelTag2> tagArray = new SparseArray<>();
+    private final Map<String, SeriesRecording2> seriesRecordingArray = new HashMap<>();
+    private final Map<String, TimerRecording2> timerRecordingArray = new HashMap<>();
+
     private final TVHClientApplication app;
     private SystemTime systemTime = new SystemTime();
     private DiscSpace discSpace = new DiscSpace();
@@ -680,6 +698,12 @@ public class DataStorage {
         }
         loading = b;
 
+        if (!loading) {
+            Log.d(TAG, "setLoading: channels:   " + getChannelsFromArray().size());
+            Log.d(TAG, "setLoading: programs:   " + getProgramsFromArray().size());
+            Log.d(TAG, "setLoading: recordings: " + getRecordingsFromArray().size());
+        }
+
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(app);
         if (!loading && prefs.getBoolean("pref_show_notifications", false)) {
             long offset = 0;
@@ -929,4 +953,247 @@ public class DataStorage {
         }
     }
 
+
+
+
+    public SparseArray<Program2> getProgramsFromArray() {
+        synchronized (programArray) {
+            return programArray;
+        }
+    }
+
+    public void addProgramToArray(Program2 program) {
+        synchronized (programArray) {
+            programArray.put(program.eventId, program);
+        }
+        if (!loading) {
+            app.broadcastMessage("eventAdd", program);
+        }
+    }
+
+    public void removeProgramFromArray(int id) {
+        synchronized (programArray) {
+            programArray.remove(id);
+        }
+        if (!loading) {
+            app.broadcastMessage("eventDelete", null);
+        }
+    }
+
+    public void updateProgramInArray(Program2 program) {
+        synchronized (programArray) {
+            programArray.put(program.eventId, program);
+        }
+        if (!loading) {
+            app.broadcastMessage("eventUpdate", program);
+        }
+    }
+
+    public Recording2 getRecordingFromArray(int id) {
+        synchronized (recordingArray) {
+            return recordingArray.valueAt(id);
+        }
+    }
+
+    public SparseArray<Recording2> getRecordingsFromArray() {
+        synchronized (recordingArray) {
+            return recordingArray;
+        }
+    }
+
+    public void addRecordingToArray(Recording2 recording) {
+        synchronized (recordingArray) {
+            recordingArray.put(recording.id, recording);
+        }
+        if (!loading) {
+            app.broadcastMessage("dvrEntryAdd", recording);
+        }
+    }
+
+    public void removeRecordingFromArray(int id) {
+        synchronized (recordingArray) {
+            recordingArray.remove(id);
+        }
+        if (!loading) {
+            app.broadcastMessage("dvrEntryDelete", null);
+        }
+    }
+
+    public void updateRecordingInArray(Recording2 recording) {
+        synchronized (recordingArray) {
+            recordingArray.put(recording.id, recording);
+        }
+        if (!loading) {
+            app.broadcastMessage("dvrEntryUpdate", recording);
+        }
+    }
+
+
+    public Channel2 getChannelFromArray(int id) {
+        synchronized (channelArray) {
+            return channelArray.valueAt(id);
+        }
+    }
+
+    public SparseArray<Channel2> getChannelsFromArray() {
+        synchronized (channelArray) {
+            return channelArray;
+        }
+    }
+
+    public void addChannelToArray(Channel2 channel) {
+        synchronized (channelArray) {
+            channelArray.put(channel.channelId, channel);
+        }
+        if (!loading) {
+            app.broadcastMessage("channelAdd", channel);
+        }
+    }
+
+    public void removeChannelFromArray(int id) {
+        synchronized (channelArray) {
+            channelArray.remove(id);
+        }
+        if (!loading) {
+            app.broadcastMessage("channelDelete", null);
+        }
+    }
+
+    public void updateChannelInArray(Channel2 channel) {
+        synchronized (channelArray) {
+            channelArray.put(channel.channelId, channel);
+        }
+        if (!loading) {
+            app.broadcastMessage("channelUpdate", channel);
+        }
+    }
+
+
+
+
+
+
+
+    public ChannelTag2 getTagFromArray(int id) {
+        synchronized (tagArray) {
+            return tagArray.valueAt(id);
+        }
+    }
+
+    public SparseArray<ChannelTag2> getTagsFromArray() {
+        synchronized (tagArray) {
+            return tagArray;
+        }
+    }
+
+    public void addTagToArray(ChannelTag2 tag) {
+        synchronized (tagArray) {
+            tagArray.put(tag.tagId, tag);
+        }
+        if (!loading) {
+            app.broadcastMessage("tagAdd", tag);
+        }
+    }
+
+    public void removeTagFromArray(int id) {
+        synchronized (tagArray) {
+            tagArray.remove(id);
+        }
+        if (!loading) {
+            app.broadcastMessage("tagDelete", null);
+        }
+    }
+
+    public void updateTagInArray(ChannelTag2 tag) {
+        synchronized (tagArray) {
+            tagArray.put(tag.tagId, tag);
+        }
+        if (!loading) {
+            app.broadcastMessage("tagUpdate", tag);
+        }
+    }
+
+
+
+
+    public SeriesRecording2 getSeriesRecordingFromArray(String id) {
+        synchronized (seriesRecordingArray) {
+            return seriesRecordingArray.get(id);
+        }
+    }
+
+    public Map<String, SeriesRecording2> getSeriesRecordingsFromArray() {
+        synchronized (seriesRecordingArray) {
+            return seriesRecordingArray;
+        }
+    }
+
+    public void addSeriesRecordingToArray(SeriesRecording2 seriesRecording) {
+        synchronized (seriesRecordingArray) {
+            seriesRecordingArray.put(seriesRecording.id, seriesRecording);
+        }
+        if (!loading) {
+            app.broadcastMessage("autorecEntryAdd", seriesRecording);
+        }
+    }
+
+    public void removeSeriesRecordingFromArray(String id) {
+        synchronized (seriesRecordingArray) {
+            seriesRecordingArray.remove(id);
+        }
+        if (!loading) {
+            app.broadcastMessage("autorecEntryDelete", null);
+        }
+    }
+
+    public void updateSeriesRecordingInArray(SeriesRecording2 seriesRecording) {
+        synchronized (seriesRecordingArray) {
+            seriesRecordingArray.put(seriesRecording.id, seriesRecording);
+        }
+        if (!loading) {
+            app.broadcastMessage("autorecEntryUpdate", seriesRecording);
+        }
+    }
+
+
+
+
+    public TimerRecording2 getTimerRecordingFromArray(String id) {
+        synchronized (timerRecordingArray) {
+            return timerRecordingArray.get(id);
+        }
+    }
+
+    public Map<String, TimerRecording2> getTimerRecordingsFromArray() {
+        synchronized (timerRecordingArray) {
+            return timerRecordingArray;
+        }
+    }
+
+    public void addTimerRecordingToArray(TimerRecording2 timerRecording) {
+        synchronized (timerRecordingArray) {
+            timerRecordingArray.put(timerRecording.id, timerRecording);
+        }
+        if (!loading) {
+            app.broadcastMessage("timerecEntryAdd", timerRecording);
+        }
+    }
+
+    public void removeTimerRecordingFromArray(String id) {
+        synchronized (timerRecordingArray) {
+            timerRecordingArray.remove(id);
+        }
+        if (!loading) {
+            app.broadcastMessage("timerecEntryDelete", null);
+        }
+    }
+
+    public void updateTimerRecordingInArray(TimerRecording2 timerRecording) {
+        synchronized (timerRecordingArray) {
+            timerRecordingArray.put(timerRecording.id, timerRecording);
+        }
+        if (!loading) {
+            app.broadcastMessage("timerecEntryUpdate", timerRecording);
+        }
+    }
 }
