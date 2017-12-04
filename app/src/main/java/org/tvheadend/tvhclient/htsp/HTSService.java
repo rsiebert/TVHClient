@@ -239,6 +239,8 @@ public class HTSService extends Service implements HTSConnectionListener {
     private final IBinder mBinder = new LocalBinder();
 
     private void onTagAdd(HTSMessage msg) {
+        dataStorage.addTagToArray(HTSUtils.convertMessageToChannelTagModel(msg));
+
         ChannelTag tag = new ChannelTag();
         tag.id = msg.getLong("tagId");
         tag.name = msg.getString("tagName", null);
@@ -250,6 +252,8 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     private void onTagUpdate(HTSMessage msg) {
+        dataStorage.updateTagInArray(HTSUtils.convertMessageToChannelTagModel(msg));
+
         ChannelTag tag = dataStorage.getChannelTag(msg.getLong("tagId"));
         if (tag == null) {
             return;
@@ -267,10 +271,13 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     private void onTagDelete(HTSMessage msg) {
+        dataStorage.removeTagFromArray(msg.getInt("tagId"));
         dataStorage.removeChannelTag(msg.getLong("tagId"));
     }
 
     private void onChannelAdd(HTSMessage msg) {
+        dataStorage.addChannelToArray(HTSUtils.convertMessageToChannelModel(msg));
+
         final Channel ch = new Channel();
         ch.id = msg.getLong("channelId");
         ch.name = msg.getString("channelName", null);
@@ -304,6 +311,8 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     private void onChannelUpdate(HTSMessage msg) {
+        dataStorage.updateChannelInArray(HTSUtils.convertMessageToChannelModel(msg));
+
         final Channel ch = dataStorage.getChannel(msg.getLong("channelId"));
         if (ch == null) {
             return;
@@ -362,10 +371,13 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     private void onChannelDelete(HTSMessage msg) {
+        dataStorage.removeChannelFromArray(msg.getInt("channelId"));
         dataStorage.removeChannel(msg.getLong("channelId"));
     }
 
     private void onDvrEntryAdd(HTSMessage msg) {
+        dataStorage.addRecordingToArray(HTSUtils.convertMessageToRecordingModel(msg));
+
         Recording rec = new Recording();
         rec.id = msg.getLong("id");
         rec.description = msg.getString("description");
@@ -431,6 +443,8 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     private void onDvrEntryUpdate(HTSMessage msg) {
+        dataStorage.updateRecordingInArray(HTSUtils.convertMessageToRecordingModel(msg));
+
         Recording rec = dataStorage.getRecording(msg.getLong("id"));
         if (rec == null) {
             return;
@@ -481,6 +495,8 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     private void onDvrEntryDelete(HTSMessage msg) {
+        dataStorage.removeRecordingFromArray(msg.getInt("id"));
+
         Recording rec = dataStorage.getRecording(msg.getLong("id"));
 
         if (rec == null || rec.channel == null) {
@@ -499,6 +515,8 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     private void onTimerRecEntryAdd(HTSMessage msg) {
+        dataStorage.addTimerRecordingToArray(HTSUtils.convertMessageToTimerRecordingModel(msg));
+
         TimerRecording rec = new TimerRecording();
         rec.id = msg.getString("id", "");
         
@@ -521,6 +539,8 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     private void onTimerRecEntryUpdate(HTSMessage msg) {
+        dataStorage.updateTimerRecordingInArray(HTSUtils.convertMessageToTimerRecordingModel(msg));
+
         TimerRecording rec = dataStorage.getTimerRecording(msg.getString("id"));
         if (rec == null) {
             return;
@@ -545,6 +565,7 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     private void onTimerRecEntryDelete(HTSMessage msg) {
+        dataStorage.removeTimerRecordingFromArray(msg.getString("id"));
         TimerRecording rec = dataStorage.getTimerRecording(msg.getString("id"));
 
         if (rec == null || rec.channel == null) {
@@ -696,6 +717,7 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     private void onAutorecEntryDelete(HTSMessage msg) {
+        dataStorage.removeSeriesRecordingFromArray(msg.getString("id"));
         String id = msg.getString("id");
         if (id == null) {
             return;
@@ -711,6 +733,8 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     private void onAutorecEntryUpdate(HTSMessage msg) {
+        dataStorage.updateSeriesRecordingInArray(HTSUtils.convertMessageToSeriesRecordingModel(msg));
+
         SeriesRecording srec = dataStorage.getSeriesRecording(msg.getString("id"));
         if (srec == null) {
             return;
@@ -736,6 +760,8 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     private void onAutorecEntryAdd(HTSMessage msg) {
+        dataStorage.addSeriesRecordingToArray(HTSUtils.convertMessageToSeriesRecordingModel(msg));
+
         SeriesRecording srec = new SeriesRecording();
         srec.id = msg.getString("id");
         srec.enabled = msg.getLong("enabled", 0) != 0;
@@ -834,13 +860,13 @@ public class HTSService extends Service implements HTSConnectionListener {
                 onSubscriptionSignalStatus(msg);
                 break;
             case "eventAdd":
-                eventAdd(msg);
+                onEventAdd(msg);
                 break;
             case "eventUpdate":
-                eventUpdate(msg);
+                onEventUpdate(msg);
                 break;
             case "eventDelete":
-                eventDelete(msg);
+                onEventDelete(msg);
                 break;
             default:
                 break;
@@ -1849,15 +1875,15 @@ public class HTSService extends Service implements HTSConnectionListener {
         });
     }
 
-    private void eventDelete(HTSMessage msg) {
-
+    private void onEventAdd(HTSMessage msg) {
+        dataStorage.addProgramToArray(HTSUtils.convertMessageToProgramModel(msg));
     }
 
-    private void eventUpdate(HTSMessage msg) {
-
+    private void onEventUpdate(HTSMessage msg) {
+        dataStorage.updateProgramInArray(HTSUtils.convertMessageToProgramModel(msg));
     }
 
-    private void eventAdd(HTSMessage msg) {
-
+    private void onEventDelete(HTSMessage msg) {
+        dataStorage.removeProgramFromArray(msg.getInt("eventId"));
     }
 }
