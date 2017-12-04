@@ -2,6 +2,7 @@ package org.tvheadend.tvhclient.adapter;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.model.Channel2;
 import org.tvheadend.tvhclient.model.TimerRecording2;
+import org.tvheadend.tvhclient.utils.MiscUtils;
 import org.tvheadend.tvhclient.utils.Utils;
 
 import java.util.Calendar;
@@ -126,8 +128,14 @@ public class TimerRecordingListAdapter extends ArrayAdapter<TimerRecording2> {
                     holder.channel.setText(R.string.all_channels);
                 }
             }
+            if (holder.icon != null && channel != null) {
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+                boolean showChannelIcons = prefs.getBoolean("showIconPref", true);
+                Bitmap iconBitmap = MiscUtils.getCachedIcon(context, channel.channelIcon);
+                holder.icon.setImageBitmap(iconBitmap);
+                holder.icon.setVisibility(showChannelIcons ? ImageView.VISIBLE : ImageView.GONE);
+            }
 
-            // TODO Utils.setChannelIcon(holder.icon, null, channel);
             Utils.setDaysOfWeek(context, null, holder.daysOfWeek, trec.daysOfWeek);
 
             // TODO multiple uses, consolidate

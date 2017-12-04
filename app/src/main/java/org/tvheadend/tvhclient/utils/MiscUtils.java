@@ -2,6 +2,8 @@ package org.tvheadend.tvhclient.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
@@ -14,9 +16,12 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.model.Program;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Locale;
 
 public class MiscUtils {
@@ -26,6 +31,49 @@ public class MiscUtils {
 
     private MiscUtils() {
         throw new IllegalAccessError("Utility class");
+    }
+
+    /**
+     * Returns the cached image file. When no channel icon shall be shown return
+     * null instead of the icon. The icon will not be shown anyway, so returning
+     * null will drastically reduce memory consumption.
+     *
+     * @param url The url of the file
+     * @return The actual image of the file as a bitmap
+     */
+    public static Bitmap getCachedIcon(Context context, final String url) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        Boolean showIcons = prefs.getBoolean("showIconPref", true);
+        if (!showIcons) {
+            return null;
+        }
+        if (url == null || url.length() == 0) {
+            return null;
+        }
+        File file = new File(context.getCacheDir(), convertUrlToHashString(url) + ".png");
+        return BitmapFactory.decodeFile(file.toString());
+    }
+
+    /**
+     * Converts the given url into a unique hash value.
+     *
+     * @param url The url that shall be converted
+     * @return The hash value or the url or an empty string if an error occurred
+     */
+    private static String convertUrlToHashString(String url) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("MD5");
+            digest.update(url.getBytes());
+            byte messageDigest[] = digest.digest();
+            StringBuilder hexString = new StringBuilder();
+            for (byte md : messageDigest) {
+                hexString.append(Integer.toHexString(0xFF & md));
+            }
+            return hexString.toString();
+        } catch (NoSuchAlgorithmException e) {
+            // NOP
+        }
+        return null;
     }
 
     /**
