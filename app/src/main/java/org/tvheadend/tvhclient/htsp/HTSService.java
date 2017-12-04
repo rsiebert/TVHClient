@@ -535,7 +535,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         if (connection.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED) {
             rec.enabled = msg.getLong("enabled", 0) != 0;
         }
-        dataStorage.addTimerRecording(rec);
+        //dataStorage.addTimerRecording(rec);
     }
 
     private void onTimerRecEntryUpdate(HTSMessage msg) {
@@ -561,7 +561,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         if (connection.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED) {
             rec.enabled = msg.getLong("enabled", 0) != 0;
         }
-        dataStorage.updateTimerRecording(rec);
+        //dataStorage.updateTimerRecording(rec);
     }
 
     private void onTimerRecEntryDelete(HTSMessage msg) {
@@ -573,7 +573,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         }
 
         rec.channel = null;
-        dataStorage.removeTimerRecording(rec);
+        //dataStorage.removeTimerRecording(rec);
     }
 
     private void onInitialSyncCompleted() {
