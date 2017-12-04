@@ -331,7 +331,7 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
                 if (rec != null) {
                     DialogFragment editFragment = RecordingAddFragment.newInstance();
                     Bundle bundle = new Bundle();
-                    bundle.putLong("dvrId", rec.id);
+                    bundle.putInt("dvrId", rec.id);
                     editFragment.setArguments(bundle);
                     editFragment.show(activity.getSupportFragmentManager(), "dialog");
                 }

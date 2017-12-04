@@ -36,9 +36,10 @@ import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.model.Channel;
+import org.tvheadend.tvhclient.model.Channel2;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.Profile;
-import org.tvheadend.tvhclient.model.Recording;
+import org.tvheadend.tvhclient.model.Recording2;
 
 import java.util.Arrays;
 import java.util.Calendar;
@@ -50,7 +51,7 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
     private final static String TAG = RecordingAddFragment.class.getSimpleName();
 
     private AppCompatActivity activity;
-    private Recording rec;
+    private Recording2 rec;
     private Toolbar toolbar;
 
     private TextView startTime;
@@ -156,24 +157,24 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
         View v = inflater.inflate(layout, container, false);
 
         // Initialize all the widgets from the layout
-        isEnabled = (CheckBox) v.findViewById(R.id.is_enabled);
-        title = (EditText) v.findViewById(R.id.title);
-        titelLabel = (TextView) v.findViewById(R.id.title_label);
-        subtitle = (EditText) v.findViewById(R.id.subtitle);
-        subtitleLabel = (TextView) v.findViewById(R.id.subtitle_label);
-        description = (EditText) v.findViewById(R.id.description);
-        descriptionLabel = (TextView) v.findViewById(R.id.description_label);
-        channelName = (TextView) v.findViewById(R.id.channel);
-        startExtra = (EditText) v.findViewById(R.id.start_extra);
-        stopExtra = (EditText) v.findViewById(R.id.stop_extra);
-        startTime = (TextView) v.findViewById(R.id.start_time);
-        stopTime = (TextView) v.findViewById(R.id.stop_time);
-        startDate = (TextView) v.findViewById(R.id.start_date);
-        stopDate = (TextView) v.findViewById(R.id.stop_date);
-        priority = (TextView) v.findViewById(R.id.priority);
-        dvrConfigName = (TextView) v.findViewById(R.id.dvr_config);
-        dvrConfigNameLabel = (TextView) v.findViewById(R.id.dvr_config_label);
-        toolbar = (Toolbar) v.findViewById(R.id.toolbar);
+        isEnabled = v.findViewById(R.id.is_enabled);
+        title = v.findViewById(R.id.title);
+        titelLabel = v.findViewById(R.id.title_label);
+        subtitle = v.findViewById(R.id.subtitle);
+        subtitleLabel = v.findViewById(R.id.subtitle_label);
+        description = v.findViewById(R.id.description);
+        descriptionLabel = v.findViewById(R.id.description_label);
+        channelName = v.findViewById(R.id.channel);
+        startExtra = v.findViewById(R.id.start_extra);
+        stopExtra = v.findViewById(R.id.stop_extra);
+        startTime = v.findViewById(R.id.start_time);
+        stopTime = v.findViewById(R.id.stop_time);
+        startDate = v.findViewById(R.id.start_date);
+        stopDate = v.findViewById(R.id.stop_date);
+        priority = v.findViewById(R.id.priority);
+        dvrConfigName = v.findViewById(R.id.dvr_config);
+        dvrConfigNameLabel = v.findViewById(R.id.dvr_config_label);
+        toolbar = v.findViewById(R.id.toolbar);
         return v;
     }
 
@@ -221,31 +222,32 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
         // create new one. Otherwise an orientation change has occurred and the
         // saved values must be applied to the user input elements.
         if (savedInstanceState == null) {
-            long recId = 0;
+            int recId = 0;
             Bundle bundle = getArguments();
             if (bundle != null) {
-                recId = bundle.getLong("dvrId");
+                recId = bundle.getInt("dvrId");
             }
 
             // Get the recording so we can show its detail
-            rec = dataStorage.getRecording(recId);
+            rec = dataStorage.getRecordingFromArray(recId);
             if (rec != null) {
                 priorityValue = rec.priority;
                 startExtraValue = rec.startExtra;
                 stopExtraValue = rec.stopExtra;
-                startValue.setTimeInMillis(rec.start.getTime());
-                stopValue.setTimeInMillis(rec.stop.getTime());
+                startValue.setTimeInMillis(rec.start * 1000);
+                stopValue.setTimeInMillis(rec.stop * 1000);
                 titleValue = rec.title;
                 subtitleValue = rec.subtitle;
                 descriptionValue = rec.description;
-                enabledValue = rec.enabled;
+                enabledValue = rec.enabled > 0;
 
                 // The default value is the first one
                 channelSelectionValue = 0;
                 // Get the position of the given channel in the channelList
-                if (rec.channel != null) {
+                Channel2 channel = dataStorage.getChannelFromArray(rec.channel);
+                if (channel != null) {
                     for (int i = 0; i < channelList.length; i++) {
-                        if (channelList[i].equals(rec.channel.name)) {
+                        if (channelList[i].equals(channel.channelName)) {
                             channelSelectionValue = i;
                             break;
                         }
