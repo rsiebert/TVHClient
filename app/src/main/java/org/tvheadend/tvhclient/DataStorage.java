@@ -3,7 +3,6 @@ package org.tvheadend.tvhclient;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.util.SparseArray;
 
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Channel2;
@@ -44,10 +43,10 @@ public class DataStorage {
     private final List<Profiles> dvrConfigs = Collections.synchronizedList(new ArrayList<Profiles>());
     private final List<Profiles> profiles = Collections.synchronizedList(new ArrayList<Profiles>());
 
-    private final SparseArray<Program2> programArray = new SparseArray<>();
-    private final SparseArray<Recording2> recordingArray = new SparseArray<>();
-    private final SparseArray<Channel2> channelArray = new SparseArray<>();
-    private final SparseArray<ChannelTag2> tagArray = new SparseArray<>();
+    private final Map<Integer, Program2> programArray = new HashMap<>();
+    private final Map<Integer, Recording2> recordingArray = new HashMap<>();
+    private final Map<Integer, Channel2> channelArray = new HashMap<>();
+    private final Map<Integer, ChannelTag2> tagArray = new HashMap<>();
     private final Map<String, SeriesRecording2> seriesRecordingArray = new HashMap<>();
     private final Map<String, TimerRecording2> timerRecordingArray = new HashMap<>();
 
@@ -956,7 +955,7 @@ public class DataStorage {
 
 
 
-    public SparseArray<Program2> getProgramsFromArray() {
+    public Map<Integer, Program2> getProgramsFromArray() {
         synchronized (programArray) {
             return programArray;
         }
@@ -991,11 +990,11 @@ public class DataStorage {
 
     public Recording2 getRecordingFromArray(int id) {
         synchronized (recordingArray) {
-            return recordingArray.valueAt(id);
+            return recordingArray.get(id);
         }
     }
 
-    public SparseArray<Recording2> getRecordingsFromArray() {
+    public Map<Integer, Recording2> getRecordingsFromArray() {
         synchronized (recordingArray) {
             return recordingArray;
         }
@@ -1031,11 +1030,11 @@ public class DataStorage {
 
     public Channel2 getChannelFromArray(int id) {
         synchronized (channelArray) {
-            return channelArray.valueAt(id);
+            return channelArray.get(id);
         }
     }
 
-    public SparseArray<Channel2> getChannelsFromArray() {
+    public Map<Integer, Channel2> getChannelsFromArray() {
         synchronized (channelArray) {
             return channelArray;
         }
@@ -1070,11 +1069,11 @@ public class DataStorage {
 
     public ChannelTag2 getTagFromArray(int id) {
         synchronized (tagArray) {
-            return tagArray.valueAt(id);
+            return tagArray.get(id);
         }
     }
 
-    public SparseArray<ChannelTag2> getTagsFromArray() {
+    public Map<Integer, ChannelTag2> getTagsFromArray() {
         synchronized (tagArray) {
             return tagArray;
         }
