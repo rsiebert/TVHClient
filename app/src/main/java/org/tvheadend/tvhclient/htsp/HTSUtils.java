@@ -71,7 +71,7 @@ public class HTSUtils {
             recording.start = msg.getLong("start");
         }
         if (msg.containsKey("stop")) {
-            recording.start = msg.getLong("stop");
+            recording.stop = msg.getLong("stop");
         }
         if (msg.containsKey("startExtra")) {
             recording.startExtra = msg.getLong("startExtra");
