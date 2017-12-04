@@ -152,6 +152,11 @@ public class HTSConnection extends Thread {
         authMessage.setMethod("enableAsyncMetadata");
         authMessage.putField("username", username);
 
+        // Sync the defined number of hours of epg data from the current time
+        long epgMaxTime = (4 * 3600) + (System.currentTimeMillis() / 1000L);
+        authMessage.putField("epg", 1);
+        authMessage.putField("epgMaxTime", epgMaxTime);
+
         final HTSResponseHandler authHandler = new HTSResponseHandler() {
             public void handleResponse(HTSMessage response) {
                 logger.log(TAG, "handleResponse: Response to 'authenticate' message");
