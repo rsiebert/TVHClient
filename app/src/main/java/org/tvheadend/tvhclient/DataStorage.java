@@ -20,7 +20,6 @@ import org.tvheadend.tvhclient.model.SeriesRecording;
 import org.tvheadend.tvhclient.model.SeriesRecording2;
 import org.tvheadend.tvhclient.model.Subscription;
 import org.tvheadend.tvhclient.model.SystemTime;
-import org.tvheadend.tvhclient.model.TimerRecording;
 import org.tvheadend.tvhclient.model.TimerRecording2;
 
 import java.util.ArrayList;
@@ -38,7 +37,6 @@ public class DataStorage {
     private final List<Channel> channels = Collections.synchronizedList(new ArrayList<Channel>());
     private final List<Recording> recordings = Collections.synchronizedList(new ArrayList<Recording>());
     private final List<SeriesRecording> seriesRecordings = Collections.synchronizedList(new ArrayList<SeriesRecording>());
-    private final List<TimerRecording> timerRecordings = Collections.synchronizedList(new ArrayList<TimerRecording>());
     private final List<Subscription> subscriptions = Collections.synchronizedList(new ArrayList<Subscription>());
     private final List<Profiles> dvrConfigs = Collections.synchronizedList(new ArrayList<Profiles>());
     private final List<Profiles> profiles = Collections.synchronizedList(new ArrayList<Profiles>());
@@ -597,96 +595,6 @@ public class DataStorage {
     }
 
     /**
-     * Returns the list of all available timer recordings. If loading has
-     * finished any listener will be informed that a timer recording has been
-     * added.
-     *
-     * @param rec Timer recording
-     */
-    public void addTimerRecording(TimerRecording rec) {
-        synchronized (timerRecordings) {
-            if (timerRecordings.indexOf(rec) == -1) {
-                timerRecordings.add(rec);
-            }
-        }
-        if (!loading) {
-            app.broadcastMessage("timerecEntryAdd", rec);
-        }
-    }
-
-    /**
-     * Adds the given timer recording to the list of available timer
-     * recordings
-     *
-     * @return List of all timer recordings
-     */
-    public List<TimerRecording> getTimerRecordings() {
-        return timerRecordings;
-    }
-
-    /**
-     * Returns a single timer recording that matches the given id.
-     *
-     * @param id The id of the timer recording
-     * @return Timer recording
-     */
-    public TimerRecording getTimerRecording(String id) {
-        synchronized (timerRecordings) {
-            for (TimerRecording rec : getTimerRecordings()) {
-                if (rec.id.equals(id)) {
-                    return rec;
-                }
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Removes the given timer recording from the list of all available timer
-     * recordings. If loading has finished any listener will be informed that a
-     * timer recording has been removed.
-     *
-     * @param rec Timer recording
-     */
-    public void removeTimerRecording(TimerRecording rec) {
-        synchronized (timerRecordings) {
-            timerRecordings.remove(rec);
-        }
-        if (!loading) {
-            app.broadcastMessage("timerecEntryDelete", rec);
-        }
-    }
-
-    /**
-     * Removes the timer recording from the list of all available timer
-     * recordings that matches the given id.
-     *
-     * @param id The id of the timer recording
-     */
-    public void removeTimerRecording(String id) {
-        synchronized (timerRecordings) {
-            for (TimerRecording rec : getTimerRecordings()) {
-                if (rec.id.equals(id)) {
-                    removeTimerRecording(rec);
-                    return;
-                }
-            }
-        }
-    }
-
-    /**
-     * If loading has finished any listener will be informed that a series
-     * recording has been updated.
-     *
-     * @param rec Timer recording
-     */
-    public void updateTimerRecording(TimerRecording rec) {
-        if (!loading) {
-            app.broadcastMessage("timerecEntryUpdate", rec);
-        }
-    }
-
-    /**
      * Informes all registered listeners about the loading status.
      *
      * @param b The loading state
@@ -723,7 +631,7 @@ public class DataStorage {
         tags.clear();
         recordings.clear();
         seriesRecordings.clear();
-        timerRecordings.clear();
+        timerRecordingArray.clear();
 
         for (Channel ch : channels) {
             ch.epg.clear();
