@@ -91,6 +91,7 @@ import org.tvheadend.tvhclient.utils.Utils;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, ChangeLogDialogInterface, ToolbarInterface, FragmentStatusInterface, FragmentScrollInterface, HTSListener, WakeOnLanTaskCallback {
 
@@ -644,12 +645,26 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         TextView menuActionViewRemovedRecordings = (TextView) navigationView.getMenu().findItem(R.id.nav_removed_recordings).getActionView();
 
         int channelCount = dataStorage.getChannels().size();
-        int completedRecordingCount = dataStorage.getRecordingsByType(Constants.RECORDING_TYPE_COMPLETED).size();
-        int scheduledRecordingCount = dataStorage.getRecordingsByType(Constants.RECORDING_TYPE_SCHEDULED).size();
+
+        int completedRecordingCount = 0;
+        int scheduledRecordingCount = 0;
+        int failedRecordingCount = 0;
+        int removedRecordingCount = 0;
+        Map<Integer, Recording2> map = dataStorage.getRecordingsFromArray();
+        for (Recording2 recording : map.values()) {
+            if (recording.isCompleted()) {
+                completedRecordingCount++;
+            } else if (recording.isScheduled()) {
+                scheduledRecordingCount++;
+            } else if (recording.isFailed()) {
+                failedRecordingCount++;
+            } else if (recording.isRemoved()) {
+                removedRecordingCount++;
+            }
+        }
+
         int seriesRecordingCount = dataStorage.getSeriesRecordingsFromArray().size();
         int timerRecordingCount = dataStorage.getTimerRecordingsFromArray().size();
-        int failedRecordingCount = dataStorage.getRecordingsByType(Constants.RECORDING_TYPE_FAILED).size();
-        int removedRecordingCount = dataStorage.getRecordingsByType(Constants.RECORDING_TYPE_REMOVED).size();
 
         menuActionViewChannelCount.setText(channelCount > 0 ? String.valueOf(channelCount) : null);
         menuActionViewCompletedRecordings.setText(completedRecordingCount > 0 ? String.valueOf(completedRecordingCount) : null);
@@ -769,9 +784,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             menu.getItem(i).setVisible(!drawerOpen);
         }
 */
+        int completedRecordingCount = 0;
+        Map<Integer, Recording2> map = dataStorage.getRecordingsFromArray();
+        for (Recording2 recording : map.values()) {
+            if (recording.isCompleted()) {
+                completedRecordingCount++;
+                break;
+            }
+        }
+
         // Do not show the search menu on these screens
         if (selectedNavigationMenuId == MENU_STATUS
-                || (selectedNavigationMenuId == MENU_COMPLETED_RECORDINGS && dataStorage.getRecordingsByType(Constants.RECORDING_TYPE_COMPLETED).size() == 0)
+                || (selectedNavigationMenuId == MENU_COMPLETED_RECORDINGS && completedRecordingCount == 0)
                 || selectedNavigationMenuId == MENU_SCHEDULED_RECORDINGS
                 || selectedNavigationMenuId == MENU_FAILED_RECORDINGS
                 || selectedNavigationMenuId == MENU_REMOVED_RECORDINGS

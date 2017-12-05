@@ -27,7 +27,6 @@ import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.ChannelTag;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.Program;
-import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.model.Recording2;
 import org.tvheadend.tvhclient.model.SeriesInfo;
 
@@ -230,8 +229,7 @@ public class Utils {
             // Show the state icon and set the correct image
             state.setVisibility(ImageView.VISIBLE);
 
-            TVHClientApplication app = (TVHClientApplication) activity.getApplication();
-            Recording rec = DataStorage.getInstance().getRecording(p.recording.id);
+            Recording2 rec = DataStorage.getInstance().getRecordingFromArray((int)p.recording.id);
 
             if (rec == null || rec.isFailed()) {
                 state.setImageResource(R.drawable.ic_error_small);
