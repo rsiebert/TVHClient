@@ -21,15 +21,15 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
-public class SearchResultAdapter extends ArrayAdapter<Model> implements Filterable {
+public class SearchResultAdapter extends ArrayAdapter<Program> implements Filterable {
 
     private final static String TAG = SearchResultAdapter.class.getSimpleName();
     private final Activity context;
-    private List<Model> originalData = null;
-    private List<Model> filteredData = null;
+    private List<Program> originalData = null;
+    private List<Program> filteredData = null;
     private final ItemFilter mFilter = new ItemFilter();
 
-    public SearchResultAdapter(Activity context, List<Model> list) {
+    public SearchResultAdapter(Activity context, List<Program> list) {
         super(context, R.layout.search_result_widget, list);
         this.context = context;
         originalData = list;
@@ -91,15 +91,15 @@ public class SearchResultAdapter extends ArrayAdapter<Model> implements Filterab
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View view = null;
-        Model m = getItem(position);
-        if (m instanceof Program) {
+        Program m = getItem(position);
+        //if (m instanceof Program) {
             view = getProgramView(position, convertView, parent);
-        } else if (m instanceof Recording) {
+        /*} else if (m instanceof Recording) {
             view = getRecordingView(position, convertView, parent);
-        }
+        }*/
         return view;
     }
-
+/*
     private View getRecordingView(int position, View convertView, ViewGroup parent) {
         View view = convertView;
         RecordingViewHolder holder;
@@ -178,7 +178,7 @@ public class SearchResultAdapter extends ArrayAdapter<Model> implements Filterab
         }
         return view;
     }
-
+*/
     private View getProgramView(int position, View convertView, ViewGroup parent) {
         View view = convertView;
         ProgramViewHolder holder;
@@ -223,7 +223,7 @@ public class SearchResultAdapter extends ArrayAdapter<Model> implements Filterab
         return view;
     }
 
-    public void update(Model p) {
+    public void update(Program p) {
         final int length = originalData.size();
         // Go through the list of programs and find the
         // one with the same id. If its been found, replace it.
@@ -235,7 +235,7 @@ public class SearchResultAdapter extends ArrayAdapter<Model> implements Filterab
         }
     }
 
-    public Model getItem(int position) {
+    public Program getItem(int position) {
         return filteredData.get(position);
     }
 
@@ -253,11 +253,11 @@ public class SearchResultAdapter extends ArrayAdapter<Model> implements Filterab
         return 0;
     }
 
-    public List<Model> getFullList() {
+    public List<Program> getFullList() {
         return originalData;
     }
 
-    public List<Model> getList() {
+    public List<Program> getList() {
         return filteredData;
     }
 
@@ -297,7 +297,7 @@ public class SearchResultAdapter extends ArrayAdapter<Model> implements Filterab
         @SuppressWarnings("unchecked")
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
-            filteredData = (ArrayList<Model>) results.values;
+            filteredData = (ArrayList<Program>) results.values;
             notifyDataSetChanged();
         }
     }

@@ -51,7 +51,6 @@ import org.tvheadend.tvhclient.SuggestionProvider;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.adapter.SearchResultAdapter;
 import org.tvheadend.tvhclient.fragments.ProgramDetailsFragment;
-import org.tvheadend.tvhclient.fragments.recordings.RecordingDetailsFragment;
 import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Channel;
@@ -73,7 +72,7 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
     private ActionBar actionBar = null;
     private SearchResultAdapter adapter;
     private Channel channel;
-    private Recording recording;
+    //private Recording recording;
     private MenuItem searchMenuItem = null;
     private Runnable updateTask;
     private Runnable finishTask;
@@ -118,11 +117,11 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
             listView.setOnItemClickListener(new OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Model model = adapter.getItem(position);
+                    Program program = adapter.getItem(position);
 
                     // Show the program details dialog
-                    if (model instanceof Program) {
-                        final Program program = (Program) model;
+                    //if (model instanceof Program) {
+                        //final Program program = (Program) model;
                         Bundle args = new Bundle();
                         args.putLong("eventId", program.id);
                         args.putLong("channelId", program.channel.id);
@@ -130,10 +129,10 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
                         args.putBoolean(Constants.BUNDLE_SHOW_CONTROLS, true);
                         DialogFragment newFragment = ProgramDetailsFragment.newInstance(args);
                         newFragment.show(getSupportFragmentManager(), "dialog");
-                    }
+                    //}
 
                     // Show the recording details dialog
-                    if (model instanceof Recording) {
+                    /*if (model instanceof Recording) {
                         final Recording recording = (Recording) model;
                         Bundle args = new Bundle();
                         args.putLong("dvrId", recording.id);
@@ -141,14 +140,14 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
                         args.putBoolean(Constants.BUNDLE_SHOW_CONTROLS, true);
                         DialogFragment newFragment = RecordingDetailsFragment.newInstance(args);
                         newFragment.show(getSupportFragmentManager(), "dialog");
-                    }
+                    }*/
                 }
             });
         }
 
         // This is the list with the initial data from the program guide. It
         // will be passed to the search adapter. 
-        List<Model> list = new ArrayList<>();
+        List<Program> list = new ArrayList<>();
 
         Intent intent = getIntent();
 
@@ -157,22 +156,22 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
         Bundle bundle = intent.getBundleExtra(SearchManager.APP_DATA);
         if (bundle != null) {
             channel = dataStorage.getChannel(bundle.getLong("channelId"));
-            recording = dataStorage.getRecording(bundle.getLong("dvrId"));
+            //recording = dataStorage.getRecording(bundle.getLong("dvrId"));
         } else {
             channel = null;
-            recording = null;
+            //recording = null;
         }
 
         // Depending on the search request, fill the adapter with the already
         // available data. Either add all completed recordings or add all
         // available programs from one or all channels.
-        if (recording != null) {
+        /*if (recording != null) {
             for (Recording rec : dataStorage.getRecordingsByType(Constants.RECORDING_TYPE_COMPLETED)) {
                 if (rec != null && rec.title != null && rec.title.length() > 0) {
                     list.add(rec);
                 }
             }
-        } else {
+        } else {*/
             if (channel == null) {
                 // Get all available programs from all channels.
                 for (Channel ch : dataStorage.getChannels()) {
@@ -196,7 +195,7 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
                     }
                 }
             }
-        }
+        //}
 
         // Create the adapter with the given initial program guide data
         adapter = new SearchResultAdapter(this, list);
@@ -211,15 +210,15 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
             public void run() {
                 adapter.getFilter().filter(query);
                 adapter.sort();
-                if (recording == null) {
+                /*if (recording == null) {
                     actionBar.setSubtitle(getResources().getQuantityString(
                             R.plurals.searching_programs, adapter.getFullCount(),
                             adapter.getFullCount()));
-                } else {
+                } else {*/
                     actionBar.setSubtitle(getResources().getQuantityString(
                             R.plurals.searching_recordings, adapter.getFullCount(),
                             adapter.getFullCount()));
-                }
+                //}
                 handlerRunning  = false;
             }
         };
@@ -273,7 +272,7 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
         // adapter. If a user starts a different search later all programs are
         // available already and not only the ones that would be been loaded if
         // the query would have been passed to the server.
-        if (recording == null) {
+        //if (recording == null) {
             intent = new Intent(this, HTSService.class);
             intent.setAction("epgQuery");
             intent.putExtra("query", query);
@@ -281,7 +280,7 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
                 intent.putExtra("channelId", channel.id);
             }
             startService(intent);
-        }
+        //}
 
         startDelayedAdapterUpdate();
     }
@@ -507,7 +506,7 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
             case "eventAdd":
                 runOnUiThread(new Runnable() {
                     public void run() {
-                        Model m = (Model) obj;
+                        Program m = (Program) obj;
                         adapter.remove(m);
                         adapter.add(m);
                         startDelayedAdapterUpdate();
@@ -517,7 +516,7 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
             case "eventDelete":
                 runOnUiThread(new Runnable() {
                     public void run() {
-                        Model m = (Model) obj;
+                        Program m = (Program) obj;
                         adapter.remove(m);
                         startDelayedAdapterUpdate();
                     }
@@ -526,7 +525,7 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
             case "eventUpdate":
                 runOnUiThread(new Runnable() {
                     public void run() {
-                        adapter.update((Model) obj);
+                        adapter.update((Program) obj);
                         startDelayedAdapterUpdate();
                     }
                 });
@@ -534,7 +533,7 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
             case "dvrEntryDelete":
                 runOnUiThread(new Runnable() {
                     public void run() {
-                        Model m = (Model) obj;
+                        Program m = (Program) obj;
                         adapter.remove(m);
                         startDelayedAdapterUpdate();
                     }
@@ -543,7 +542,7 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
             case "dvrEntryUpdate":
                 runOnUiThread(new Runnable() {
                     public void run() {
-                        adapter.update((Model) obj);
+                        adapter.update((Program) obj);
                         startDelayedAdapterUpdate();
                     }
                 });
