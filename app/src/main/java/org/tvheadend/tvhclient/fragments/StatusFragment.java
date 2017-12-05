@@ -14,11 +14,14 @@ import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.interfaces.ToolbarInterface;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
+import org.tvheadend.tvhclient.interfaces.ToolbarInterface;
+import org.tvheadend.tvhclient.model.Channel2;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.DiscSpace;
-import org.tvheadend.tvhclient.model.Recording;
+import org.tvheadend.tvhclient.model.Recording2;
+
+import java.util.Map;
 
 public class StatusFragment extends Fragment implements HTSListener {
 
@@ -333,11 +336,13 @@ public class StatusFragment extends Fragment implements HTSListener {
         String currentRecText = "";
 
         // Get the programs that are currently being recorded
-        for (Recording rec : dataStorage.getRecordings()) {
+        Map<Integer, Recording2> map = dataStorage.getRecordingsFromArray();
+        for (Recording2 rec : map.values()) {
             if (rec.isRecording()) {
                 currentRecText += getString(R.string.currently_recording) + ": " + rec.title;
-                if (rec.channel != null) {
-                    currentRecText += " (" + getString(R.string.channel) + " " + rec.channel.name + ")\n";
+                Channel2 channel = dataStorage.getChannelFromArray(rec.channel);
+                if (channel != null) {
+                    currentRecText += " (" + getString(R.string.channel) + " " + channel.channelName + ")\n";
                 }
             }
         }
@@ -346,14 +351,21 @@ public class StatusFragment extends Fragment implements HTSListener {
         currentlyRec.setText(currentRecText.length() > 0 ? currentRecText
                 : getString(R.string.nothing));
 
-        final int completedRecCount = dataStorage.getRecordingsByType(
-                Constants.RECORDING_TYPE_COMPLETED).size();
-        final int scheduledRecCount = dataStorage.getRecordingsByType(
-                Constants.RECORDING_TYPE_SCHEDULED).size();
-        final int failedRecCount = dataStorage.getRecordingsByType(
-                Constants.RECORDING_TYPE_FAILED).size();
-        final int removedRecCount = dataStorage.getRecordingsByType(
-                Constants.RECORDING_TYPE_REMOVED).size();
+        int completedRecCount = 0;
+        int scheduledRecCount = 0;
+        int failedRecCount = 0;
+        int removedRecCount = 0;
+        for (Recording2 recording : map.values()) {
+            if (recording.isCompleted()) {
+                completedRecCount++;
+            } else if (recording.isScheduled()) {
+                scheduledRecCount++;
+            } else if (recording.isFailed()) {
+                failedRecCount++;
+            } else if (recording.isRemoved()) {
+                removedRecCount++;
+            }
+        }
 
         // Show how many different recordings are available
         completedRec.setText(getResources().getQuantityString(
