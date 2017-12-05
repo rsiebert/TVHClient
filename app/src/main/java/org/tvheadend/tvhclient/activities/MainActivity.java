@@ -80,6 +80,7 @@ import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.Profile;
 import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
+import org.tvheadend.tvhclient.model.Recording2;
 import org.tvheadend.tvhclient.model.SeriesRecording2;
 import org.tvheadend.tvhclient.model.TimerRecording2;
 import org.tvheadend.tvhclient.tasks.WakeOnLanTask;
@@ -1293,7 +1294,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
-    public void onListItemSelected(final int position, final Recording recording, final String tag) {
+    public void onListItemSelected(final int position, final Recording2 recording, final String tag) {
         // Save the position of the selected recording type so it can be
         // restored after an orientation change
         switch (selectedNavigationMenuId) {
@@ -1324,7 +1325,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 // to the right of the recording list, otherwise replace the recording
                 // list with the details fragment.
                 Bundle args = new Bundle();
-                args.putInt("dvrId", (int) recording.id);
+                args.putInt("dvrId", recording.id);
                 args.putBoolean(Constants.BUNDLE_SHOW_CONTROLS, !isDualPane);
 
                 if (isDualPane) {

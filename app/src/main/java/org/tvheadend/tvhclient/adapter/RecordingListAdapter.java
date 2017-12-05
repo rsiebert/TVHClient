@@ -2,6 +2,7 @@ package org.tvheadend.tvhclient.adapter;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -14,20 +15,22 @@ import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
-import org.tvheadend.tvhclient.model.Recording;
+import org.tvheadend.tvhclient.model.Channel2;
+import org.tvheadend.tvhclient.model.Recording2;
+import org.tvheadend.tvhclient.utils.MiscUtils;
 import org.tvheadend.tvhclient.utils.Utils;
 
 import java.util.Comparator;
 import java.util.List;
 
-public class RecordingListAdapter extends ArrayAdapter<Recording> {
+public class RecordingListAdapter extends ArrayAdapter<Recording2> {
 
     private final Activity context;
-    private final List<Recording> list;
+    private final List<Recording2> list;
     private int selectedPosition = 0;
     private final int layout;
 
-    public RecordingListAdapter(Activity context, List<Recording> list, int layout) {
+    public RecordingListAdapter(Activity context, List<Recording2> list, int layout) {
         super(context, layout, list);
         this.context = context;
         this.layout = layout;
@@ -37,16 +40,28 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
     public void sort(final int type) {
         switch (type) {
         case Constants.RECORDING_SORT_ASCENDING:
-            sort(new Comparator<Recording>() {
-                public int compare(Recording x, Recording y) {
-                    return (y.start.compareTo(x.start));
+            sort(new Comparator<Recording2>() {
+                public int compare(Recording2 x, Recording2 y) {
+                    if (y.start == x.start) {
+                        return 1;
+                    } else if (x.start < y.start){
+                        return -1;
+                    } else {
+                        return 1;
+                    }
                 }
             });
         break;
         case Constants.RECORDING_SORT_DESCENDING:
-            sort(new Comparator<Recording>() {
-                public int compare(Recording x, Recording y) {
-                    return (x.start.compareTo(y.start));
+            sort(new Comparator<Recording2>() {
+                public int compare(Recording2 x, Recording2 y) {
+                    if (y.start == x.start) {
+                        return 1;
+                    } else if (x.start > y.start){
+                        return -1;
+                    } else {
+                        return 1;
+                    }
                 }
             });
             break;
@@ -57,7 +72,7 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
         selectedPosition = pos;
     }
 
-    public List<Recording> getAllItems() {
+    public List<Recording2> getAllItems() {
         return list;
     }
 
@@ -126,11 +141,12 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
         }
 
         // Get the program and assign all the values
-        final Recording rec = getItem(position);
+        final Recording2 rec = getItem(position);
         if (rec != null) {
+            Channel2 channel = DataStorage.getInstance().getChannelFromArray(rec.channel);
             holder.title.setText(rec.title);
-            if (holder.channel != null && rec.channel != null) {
-                holder.channel.setText(rec.channel.name);
+            if (holder.channel != null && channel != null) {
+                holder.channel.setText(channel.channelName);
             }
 
             if (rec.subtitle != null && rec.subtitle.length() > 0) {
@@ -140,10 +156,26 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
                 holder.subtitle.setVisibility(View.GONE);
             }
 
-            Utils.setChannelIcon(holder.icon, holder.icon_text, rec.channel);
-            Utils.setDate(holder.date, rec.start);
-            Utils.setTime(holder.time, rec.start, rec.stop);
-            Utils.setDuration(holder.duration, rec.start, rec.stop);
+            // Show the channel icon if available and set in the preferences.
+            // If not chosen, hide the imageView and show the channel name.
+            if (holder.icon != null && holder.icon_text != null) {
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+                boolean showChannelIcons = prefs.getBoolean("showIconPref", true);
+
+                Bitmap iconBitmap = MiscUtils.getCachedIcon(context, channel.channelIcon);
+                // Show the icon or a blank one if it does not exist
+                holder.icon.setImageBitmap(iconBitmap);
+                holder.icon_text.setText(channel.channelName);
+                // Show the channels icon if set in the preferences.
+                // If not then hide the icon and show the channel name as a placeholder
+                holder.icon.setVisibility(showChannelIcons ? ImageView.VISIBLE : ImageView.GONE);
+                holder.icon_text.setVisibility(showChannelIcons ? ImageView.GONE : ImageView.VISIBLE);
+            }
+
+
+            Utils.setDate2(holder.date, rec.start);
+            Utils.setTime2(holder.time, rec.start, rec.stop);
+            Utils.setDuration2(holder.duration, rec.start, rec.stop);
             Utils.setDescription(null, holder.summary, rec.summary);
             Utils.setDescription(null, holder.description, rec.description);
             // TODO Utils.setFailedReason(holder.failed_reason, rec);
@@ -190,14 +222,14 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
             }
 
             if (holder.isEnabled != null) {
-                holder.isEnabled.setVisibility((DataStorage.getInstance().getProtocolVersion() >= Constants.MIN_API_VERSION_DVR_FIELD_ENABLED && !rec.enabled) ? View.VISIBLE : View.GONE);
-                holder.isEnabled.setText(rec.enabled ? R.string.recording_enabled : R.string.recording_disabled);
+                holder.isEnabled.setVisibility((DataStorage.getInstance().getProtocolVersion() >= Constants.MIN_API_VERSION_DVR_FIELD_ENABLED && rec.enabled > 0) ? View.VISIBLE : View.GONE);
+                holder.isEnabled.setText(rec.enabled > 0? R.string.recording_enabled : R.string.recording_disabled);
             }
         }
         return view;
     }
 
-    public void update(Recording rec) {
+    public void update(Recording2 rec) {
         int length = list.size();
 
         // Go through the list of programs and find the
@@ -210,7 +242,7 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
         }
     }
     
-    public Recording getSelectedItem() {
+    public Recording2 getSelectedItem() {
         if (list.size() > 0 && list.size() > selectedPosition) {
             return list.get(selectedPosition);
         }

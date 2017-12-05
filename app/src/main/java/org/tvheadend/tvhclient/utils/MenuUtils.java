@@ -27,7 +27,7 @@ import org.tvheadend.tvhclient.model.ChannelTag;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.GenreColorDialogItem;
 import org.tvheadend.tvhclient.model.Profile;
-import org.tvheadend.tvhclient.model.Recording;
+import org.tvheadend.tvhclient.model.Recording2;
 import org.tvheadend.tvhclient.model.SeriesRecording2;
 import org.tvheadend.tvhclient.model.TimerRecording2;
 
@@ -344,7 +344,7 @@ public class MenuUtils {
                 .show();
     }
 
-    public void handleMenuRemoveAllRecordingsSelection(List<Recording> items) {
+    public void handleMenuRemoveAllRecordingsSelection(List<Recording2> items) {
         Activity activity = this.activity.get();
         if (activity == null) {
             return;
@@ -359,7 +359,7 @@ public class MenuUtils {
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         new Thread() {
                             public void run() {
-                                for (Recording item : items) {
+                                for (Recording2 item : items) {
                                     final Intent intent = new Intent(activity, HTSService.class);
                                     intent.putExtra("id", item.id);
                                     if (item.isRecording() || item.isScheduled()) {

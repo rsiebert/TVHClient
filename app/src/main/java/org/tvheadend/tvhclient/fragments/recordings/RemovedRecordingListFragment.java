@@ -9,7 +9,9 @@ import android.view.View;
 
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.model.Recording;
+import org.tvheadend.tvhclient.model.Recording2;
+
+import java.util.Map;
 
 public class RemovedRecordingListFragment extends RecordingListFragment {
 
@@ -71,8 +73,11 @@ public class RemovedRecordingListFragment extends RecordingListFragment {
     private void populateList() {
         // Clear the list and add the recordings
         adapter.clear();
-        for (Recording rec : dataStorage.getRecordingsByType(Constants.RECORDING_TYPE_REMOVED)) {
-            adapter.add(rec);
+        Map<Integer, Recording2> map = dataStorage.getRecordingsFromArray();
+        for (Recording2 recording : map.values()) {
+            if (recording.isRemoved()) {
+                adapter.add(recording);
+            }
         }
 
         // Show the newest failed recordings first

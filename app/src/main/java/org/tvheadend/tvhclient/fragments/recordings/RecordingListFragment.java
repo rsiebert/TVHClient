@@ -25,7 +25,7 @@ import org.tvheadend.tvhclient.interfaces.ToolbarInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
-import org.tvheadend.tvhclient.model.Recording;
+import org.tvheadend.tvhclient.model.Recording2;
 import org.tvheadend.tvhclient.utils.MenuUtils;
 
 import java.util.ArrayList;
@@ -90,7 +90,7 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
         // program guide where only the channel icon is relevant.
         int adapterLayout = R.layout.recording_list_widget;
 
-        adapter = new RecordingListAdapter(activity, new ArrayList<Recording>(), adapterLayout);
+        adapter = new RecordingListAdapter(activity, new ArrayList<Recording2>(), adapterLayout);
         listView.setAdapter(adapter);
 
         // Set the listener to show the recording details activity when the user
@@ -98,7 +98,7 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
         listView.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Recording rec = adapter.getItem(position);
+                Recording2 rec = adapter.getItem(position);
                 if (fragmentStatusInterface != null) {
                     fragmentStatusInterface.onListItemSelected(position, rec, TAG);
                 }
@@ -120,7 +120,7 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        final Recording rec = adapter.getSelectedItem();
+        final Recording2 rec = adapter.getSelectedItem();
         switch (item.getItemId()) {
         case R.id.menu_play:
             menuUtils.handleMenuPlaySelection(-1, rec.id);
@@ -158,7 +158,7 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
             return true;
 
         case R.id.menu_record_remove_all:
-            CopyOnWriteArrayList<Recording> list = new CopyOnWriteArrayList<>(adapter.getAllItems());
+            CopyOnWriteArrayList<Recording2> list = new CopyOnWriteArrayList<>(adapter.getAllItems());
             menuUtils.handleMenuRemoveAllRecordingsSelection(list);
             return true;
 
@@ -180,7 +180,7 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
 
         // Get the selected program from the list where the context menu was opened
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-        Recording rec = adapter.getItem(info.position);
+        Recording2 rec = adapter.getItem(info.position);
 
         // Hide these menus as a default, the required ones will be made visible
         // in the derived classes
@@ -216,7 +216,7 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
             return super.onContextItemSelected(item);
         }
 
-        final Recording rec = adapter.getItem(info.position);
+        final Recording2 rec = adapter.getItem(info.position);
         if (rec == null) {
             return super.onContextItemSelected(item);
         }
@@ -274,7 +274,7 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
             case "dvrEntryAdd":
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
-                        adapter.add((Recording) obj);
+                        adapter.add((Recording2) obj);
                     }
                 });
                 break;
@@ -284,13 +284,13 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
                         // Get the position of the recording that is shown before
                         // the one that has been deleted. This recording will then
                         // be selected when the list has been updated.
-                        int previousPosition = adapter.getPosition((Recording) obj);
+                        int previousPosition = adapter.getPosition((Recording2) obj);
                         if (--previousPosition < 0) {
                             previousPosition = 0;
                         }
                         // Remove the recording from the adapter and set the
                         // recording below the deleted one as the newly selected one
-                        adapter.remove((Recording) obj);
+                        adapter.remove((Recording2) obj);
                         setInitialSelection(previousPosition);
                     }
                 });
@@ -298,7 +298,7 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
             case "dvrEntryUpdate":
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
-                        adapter.update((Recording) obj);
+                        adapter.update((Recording2) obj);
                     }
                 });
                 break;
@@ -348,7 +348,7 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
             adapter.setPosition(position);
 
             if (isDualPane) {
-                final Recording recording = adapter.getItem(position);
+                final Recording2 recording = adapter.getItem(position);
                 if (fragmentStatusInterface != null) {
                     fragmentStatusInterface.onListItemSelected(position, recording, TAG);
                 }
