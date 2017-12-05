@@ -24,10 +24,11 @@ import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Channel;
+import org.tvheadend.tvhclient.model.Channel2;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.HttpTicket;
 import org.tvheadend.tvhclient.model.Profile;
-import org.tvheadend.tvhclient.model.Recording;
+import org.tvheadend.tvhclient.model.Recording2;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 import org.tvheadend.tvhclient.utils.Utils;
 
@@ -47,7 +48,7 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
     private int action;
 
     private Channel ch;
-    private Recording rec;
+    private Recording2 rec;
     private String baseUrl;
     private Profile playbackProfile;
     private Profile castingProfile;
@@ -74,7 +75,7 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
 
         // Check that a valid channel or recording was specified
         ch = dataStorage.getChannel(getIntent().getLongExtra("channelId", 0));
-        rec = dataStorage.getRecording(getIntent().getLongExtra("dvrId", 0));
+        rec = dataStorage.getRecordingFromArray(getIntent().getIntExtra("dvrId", 0));
 
         // Get the title from either the channel or recording
         if (ch != null) {
@@ -337,15 +338,14 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
             streamType = MediaInfo.STREAM_TYPE_LIVE;
         } else if (rec != null) {
             castUrl += "/dvrfile/" + rec.id;
-            iconUrl += "/" + (rec.channel != null ? rec.channel.icon : "");
+            Channel2 channel = dataStorage.getChannelFromArray(rec.channel);
+            iconUrl += "/" + (channel != null ? channel.channelIcon : "");
             streamType = MediaInfo.STREAM_TYPE_BUFFERED;
 
             if (rec.subtitle != null) {
                 subtitle = (rec.subtitle.length() > 0 ? rec.subtitle : rec.summary);
             }
-            if (rec.stop != null && rec.start != null) {
-                duration = rec.stop.getTime() - rec.start.getTime();
-            }
+            duration = rec.stop - rec.start;
         }
 
         MediaMetadata movieMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE);

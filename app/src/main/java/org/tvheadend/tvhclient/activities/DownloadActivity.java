@@ -30,7 +30,7 @@ import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.Logger;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.model.Connection;
-import org.tvheadend.tvhclient.model.Recording;
+import org.tvheadend.tvhclient.model.Recording2;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 import org.tvheadend.tvhclient.utils.Utils;
 
@@ -42,7 +42,7 @@ public class DownloadActivity extends Activity implements OnRequestPermissionsRe
     private Connection conn;
     private DownloadManager dm;
 
-    private Recording rec;
+    private Recording2 rec;
     private Logger logger;
 
     @Override
@@ -55,7 +55,7 @@ public class DownloadActivity extends Activity implements OnRequestPermissionsRe
         DatabaseHelper databaseHelper = DatabaseHelper.getInstance(getApplicationContext());
         conn = databaseHelper.getSelectedConnection();
         // Check that a valid channel or recording was specified
-        rec = dataStorage.getRecording(getIntent().getLongExtra("dvrId", 0));
+        rec = dataStorage.getRecordingFromArray(getIntent().getIntExtra("dvrId", 0));
         logger = Logger.getInstance();
     }
 

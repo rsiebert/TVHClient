@@ -79,7 +79,6 @@ import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.Profile;
 import org.tvheadend.tvhclient.model.Program;
-import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.model.Recording2;
 import org.tvheadend.tvhclient.model.SeriesRecording2;
 import org.tvheadend.tvhclient.model.TimerRecording2;
@@ -1636,8 +1635,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // visible in the required screens.
         if (f instanceof RecordingListFragment) {
             Object o = ((FragmentControlInterface) f).getSelectedItem();
-            if (o instanceof Recording) {
-                final Recording rec = (Recording) o;
+            if (o instanceof Recording2) {
+                final Recording2 rec = (Recording2) o;
                 bundle.putLong("dvrId", rec.id);
             }
         }
