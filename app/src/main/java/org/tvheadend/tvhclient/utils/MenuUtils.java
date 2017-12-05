@@ -23,7 +23,7 @@ import org.tvheadend.tvhclient.activities.SearchResultActivity;
 import org.tvheadend.tvhclient.adapter.ChannelTagListAdapter;
 import org.tvheadend.tvhclient.adapter.GenreColorDialogAdapter;
 import org.tvheadend.tvhclient.htsp.HTSService;
-import org.tvheadend.tvhclient.model.ChannelTag;
+import org.tvheadend.tvhclient.model.ChannelTag2;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.GenreColorDialogItem;
 import org.tvheadend.tvhclient.model.Profile;
@@ -118,7 +118,7 @@ public class MenuUtils {
      * @param selectedTagId
      * @param callback
      */
-    public void handleMenuTagsSelection(List<ChannelTag> channelTagList, long selectedTagId, MenuTagSelectionCallback callback) {
+    public void handleMenuTagsSelection(List<ChannelTag2> channelTagList, long selectedTagId, MenuTagSelectionCallback callback) {
         Activity activity = this.activity.get();
         if (activity == null) {
             return;
@@ -126,7 +126,7 @@ public class MenuUtils {
 
         // Show the dialog that shows all available channel tags. When the
         // user has selected a tag, restart the loader to get the updated channel list
-        final ChannelTagListAdapter channelTagListAdapter = new ChannelTagListAdapter(channelTagList, selectedTagId);
+        final ChannelTagListAdapter channelTagListAdapter = new ChannelTagListAdapter(activity, channelTagList, selectedTagId);
         final MaterialDialog dialog = new MaterialDialog.Builder(activity)
                 .title(R.string.tags)
                 .adapter(channelTagListAdapter, null)

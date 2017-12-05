@@ -19,7 +19,7 @@ import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.interfaces.HTSConnectionListener;
 import org.tvheadend.tvhclient.interfaces.HTSResponseHandler;
 import org.tvheadend.tvhclient.model.Channel;
-import org.tvheadend.tvhclient.model.ChannelTag;
+import org.tvheadend.tvhclient.model.ChannelTag2;
 import org.tvheadend.tvhclient.model.DiscSpace;
 import org.tvheadend.tvhclient.model.DvrCutpoint;
 import org.tvheadend.tvhclient.model.HttpTicket;
@@ -35,6 +35,7 @@ import org.tvheadend.tvhclient.model.Stream;
 import org.tvheadend.tvhclient.model.Subscription;
 import org.tvheadend.tvhclient.model.SystemTime;
 import org.tvheadend.tvhclient.model.TimerRecording2;
+import org.tvheadend.tvhclient.utils.MiscUtils;
 import org.tvheadend.tvhclient.utils.Utils;
 
 import java.io.BufferedInputStream;
@@ -240,40 +241,52 @@ public class HTSService extends Service implements HTSConnectionListener {
     private final IBinder mBinder = new LocalBinder();
 
     private void onTagAdd(HTSMessage msg) {
-        dataStorage.addTagToArray(HTSUtils.convertMessageToChannelTagModel(msg));
-
-        ChannelTag tag = new ChannelTag();
-        tag.id = msg.getLong("tagId");
-        tag.name = msg.getString("tagName", null);
-        tag.icon = msg.getString("tagIcon", null);
-        dataStorage.addChannelTag(tag);
-        if (tag.icon != null) {
-            getChannelTagIcon(tag);
+        dataStorage.addTagToArray(HTSUtils.convertMessageToChannelTagModel(new ChannelTag2(), msg));
+        final String icon = msg.getString("tagIcon");
+        if (icon != null) {
+            execService.execute(new Runnable() {
+                public void run() {
+                    try {
+                        getIcon(icon);
+                    } catch (Throwable ex) {
+                        logger.log(TAG, "run: Could not load tag icon. " + ex.getLocalizedMessage());
+                    }
+                }
+            });
         }
     }
 
     private void onTagUpdate(HTSMessage msg) {
-        dataStorage.updateTagInArray(HTSUtils.convertMessageToChannelTagModel(msg));
-
-        ChannelTag tag = dataStorage.getChannelTag(msg.getLong("tagId"));
-        if (tag == null) {
-            return;
-        }
-
-        tag.name = msg.getString("tagName", tag.name);
-        String icon = msg.getString("tagIcon", tag.icon);
-        if (icon == null) {
-            tag.icon = null;
-            tag.iconBitmap = null;
-        } else if (!icon.equals(tag.icon)) {
-            tag.icon = icon;
-            getChannelTagIcon(tag);
+        ChannelTag2 tag = dataStorage.getTagFromArray(msg.getInt("tagId"));
+        dataStorage.updateTagInArray(HTSUtils.convertMessageToChannelTagModel(tag, msg));
+        final String icon = msg.getString("tagIcon");
+        if (icon != null) {
+            execService.execute(new Runnable() {
+                public void run() {
+                    try {
+                        getIcon(icon);
+                    } catch (Throwable ex) {
+                        logger.log(TAG, "run: Could not load tag icon. " + ex.getLocalizedMessage());
+                    }
+                }
+            });
         }
     }
 
     private void onTagDelete(HTSMessage msg) {
         dataStorage.removeTagFromArray(msg.getInt("tagId"));
-        dataStorage.removeChannelTag(msg.getLong("tagId"));
+        final String icon = msg.getString("tagIcon");
+        if (icon != null) {
+            deleteIconFileFromCache(icon);
+        }
+    }
+
+    private boolean deleteIconFileFromCache(String url) {
+        if (url == null || url.length() == 0) {
+            return false;
+        }
+        File file = new File(getCacheDir(), MiscUtils.convertUrlToHashString(url) + ".png");
+        return file.exists() && file.delete();
     }
 
     private void onChannelAdd(HTSMessage msg) {
@@ -743,19 +756,6 @@ public class HTSService extends Service implements HTSConnectionListener {
                     dataStorage.updateChannel(ch);
                 } catch (Throwable ex) {
                     logger.log(TAG, "run: Could not load channel icon. " + ex.getLocalizedMessage());
-                }
-            }
-        });
-    }
-
-    private void getChannelTagIcon(final ChannelTag tag) {
-        execService.execute(new Runnable() {
-            public void run() {
-                try {
-                    tag.iconBitmap = getIcon(tag.icon);
-                    dataStorage.updateChannelTag(tag);
-                } catch (Throwable ex) {
-                    logger.log(TAG, "run: Could not load tag icon. " + ex.getLocalizedMessage());
                 }
             }
         });

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -31,13 +32,13 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.adapter.ChannelListAdapter;
 import org.tvheadend.tvhclient.htsp.HTSService;
-import org.tvheadend.tvhclient.interfaces.ToolbarInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentScrollInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
+import org.tvheadend.tvhclient.interfaces.ToolbarInterface;
 import org.tvheadend.tvhclient.model.Channel;
-import org.tvheadend.tvhclient.model.ChannelTag;
+import org.tvheadend.tvhclient.model.ChannelTag2;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.Profile;
 import org.tvheadend.tvhclient.model.Program;
@@ -45,12 +46,14 @@ import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.utils.MenuTagSelectionCallback;
 import org.tvheadend.tvhclient.utils.MenuTimeSelectionCallback;
 import org.tvheadend.tvhclient.utils.MenuUtils;
+import org.tvheadend.tvhclient.utils.MiscUtils;
 import org.tvheadend.tvhclient.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -63,7 +66,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
     private FragmentScrollInterface fragmentScrollInterface;
 	private ToolbarInterface toolbarInterface;
 
-    private ArrayList<ChannelTag> tagList = new ArrayList<>();
+    private ArrayList<ChannelTag2> tagList = new ArrayList<>();
     private ChannelListAdapter adapter;
     private ListView listView;
 
@@ -253,8 +256,8 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
             return true;
 
         case R.id.menu_tags:
-            ChannelTag tag = Utils.getChannelTag(activity);
-            menuUtils.handleMenuTagsSelection(tagList, (tag != null ? tag.id : -1), this);
+            ChannelTag2 tag = Utils.getChannelTag(activity);
+            menuUtils.handleMenuTagsSelection(tagList, (tag != null ? tag.tagId : -1), this);
             return true;
 
         case R.id.menu_timeframe:
@@ -432,7 +435,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
      */
     private void populateList() {
         // Get the currently selected channel tag
-        ChannelTag currentTag = Utils.getChannelTag(activity);
+        ChannelTag2 currentTag = Utils.getChannelTag(activity);
 
         // Add only those channels that contain the selected channel tag
         adapter.clear();
@@ -441,7 +444,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
         Channel ch;
         while (cIt.hasNext()) {
             ch = cIt.next();
-            if (currentTag == null || ch.hasTag(currentTag.id)) {
+            if (currentTag == null || ch.hasTag(currentTag.tagId)) {
                 adapter.add(ch);
             }
         }
@@ -452,25 +455,23 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
 
         // Fill the channel tag adapter with the available channel tags
         tagList.clear();
-        CopyOnWriteArrayList<ChannelTag> channelTagList = new CopyOnWriteArrayList<>(dataStorage.getChannelTags());
-        Iterator<ChannelTag> ctIt = channelTagList.iterator();
-        ChannelTag tag;
-        while (ctIt.hasNext()) {
-            tag = ctIt.next();
+        Map<Integer, ChannelTag2> map = dataStorage.getTagsFromArray();
+        for (ChannelTag2 tag : map.values()) {
             tagList.add(tag);
         }
 
         // Show the name of the selected channel tag and the number of channels
         // in the action bar. If enabled show also the channel tag icon.
         if (toolbarInterface != null) {
-            toolbarInterface.setActionBarTitle((currentTag == null) ? getString(R.string.all_channels) : currentTag.name);
+            toolbarInterface.setActionBarTitle((currentTag == null) ? getString(R.string.all_channels) : currentTag.tagName);
             String items = getResources().getQuantityString(R.plurals.items, adapter.getCount(), adapter.getCount());
             toolbarInterface.setActionBarSubtitle(items);
 
             if (Utils.showChannelIcons(activity) && Utils.showChannelTagIcon(activity)
                     && currentTag != null 
-                    && currentTag.id != 0) {
-                toolbarInterface.setActionBarIcon(currentTag.iconBitmap);
+                    && currentTag.tagId != 0) {
+                Bitmap iconBitmap = MiscUtils.getCachedIcon(activity, currentTag.tagIcon);
+                toolbarInterface.setActionBarIcon(iconBitmap);
             } else {
                 toolbarInterface.setActionBarIcon(R.mipmap.ic_launcher);
             }
@@ -563,7 +564,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
             case "tagAdd":
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
-                        ChannelTag tag = (ChannelTag) obj;
+                        ChannelTag2 tag = (ChannelTag2) obj;
                         tagList.add(tag);
                     }
                 });
@@ -571,7 +572,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
             case "tagDelete":
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
-                        ChannelTag tag = (ChannelTag) obj;
+                        ChannelTag2 tag = (ChannelTag2) obj;
                         tagList.remove(tag);
                     }
                 });

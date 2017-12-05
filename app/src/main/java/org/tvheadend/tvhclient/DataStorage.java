@@ -5,7 +5,6 @@ import android.preference.PreferenceManager;
 
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Channel2;
-import org.tvheadend.tvhclient.model.ChannelTag;
 import org.tvheadend.tvhclient.model.ChannelTag2;
 import org.tvheadend.tvhclient.model.DiscSpace;
 import org.tvheadend.tvhclient.model.HttpTicket;
@@ -22,16 +21,13 @@ import org.tvheadend.tvhclient.model.TimerRecording2;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 public class DataStorage {
     private final static String TAG = TVHClientApplication.class.getSimpleName();
 
-    private final List<ChannelTag> tags = Collections.synchronizedList(new ArrayList<ChannelTag>());
     private final List<Channel> channels = Collections.synchronizedList(new ArrayList<Channel>());
     private final List<Recording> recordings = Collections.synchronizedList(new ArrayList<Recording>());
     private final List<Subscription> subscriptions = Collections.synchronizedList(new ArrayList<Subscription>());
@@ -83,117 +79,6 @@ public class DataStorage {
      */
     public void broadcastPacket(Packet p) {
         app.broadcastMessage(Constants.ACTION_PLAYBACK_PACKET, p);
-    }
-
-    /**
-     * Returns the list of available channel tags
-     *
-     * @return List of all channel tags
-     */
-    public List<ChannelTag> getChannelTags() {
-        synchronized (tags) {
-
-            // Sort the channel tags ny name, but keep the all channels always on top
-            Collections.sort(tags, new Comparator<ChannelTag>() {
-                public int compare(ChannelTag x, ChannelTag y) {
-                    if (x != null && y != null && x.name != null && y.name != null) {
-                        if (y.name.equals(app.getString(R.string.all_channels))) {
-                            return 1;
-                        } else {
-                            return x.name.toLowerCase(Locale.getDefault())
-                                    .compareTo(y.name.toLowerCase(Locale.getDefault()));
-                        }
-                    }
-                    return 0;
-                }
-            });
-            return tags;
-        }
-    }
-
-    /**
-     * Adds the new channel tag to the list. If loading is not in progress all
-     * registered listeners will be informed.
-     *
-     * @param tag Channel tag
-     */
-    public void addChannelTag(ChannelTag tag) {
-        synchronized (tags) {
-            boolean channelTagExists = false;
-            for (ChannelTag ct : getChannelTags()) {
-                if (ct.id == tag.id) {
-                    channelTagExists = true;
-                    break;
-                }
-            }
-            if (!channelTagExists) {
-                tags.add(tag);
-            }
-        }
-        if (!loading) {
-            app.broadcastMessage("tagAdd", tag);
-        }
-    }
-
-    /**
-     * Removes the given channel tag from the list. If loading is not in progress
-     * all registered listeners will be informed.
-     *
-     * @param tag Channel tag
-     */
-    private void removeChannelTag(ChannelTag tag) {
-        synchronized (tags) {
-            tags.remove(tag);
-        }
-        if (!loading) {
-            app.broadcastMessage("tagDelete", tag);
-        }
-    }
-
-    /**
-     * Removes the channel tag (given by the id) from the list. If loading is
-     * not in progress all registered listeners will be informed.
-     *
-     * @param id Id of the channel tag
-     */
-    public void removeChannelTag(long id) {
-        synchronized (tags) {
-            for (ChannelTag tag : getChannelTags()) {
-                if (tag.id == id) {
-                    removeChannelTag(tag);
-                    return;
-                }
-            }
-        }
-    }
-
-    /**
-     * Returns the channel tag that matches the given id.
-     *
-     * @param id Id of the channel tag
-     * @return Channel tag
-     */
-    public ChannelTag getChannelTag(long id) {
-        synchronized (tags) {
-            for (ChannelTag tag : getChannelTags()) {
-                if (tag.id == id) {
-                    return tag;
-                }
-            }
-        }
-        return null;
-    }
-
-    /**
-     * If loading has finished any listener will be informed that this channel
-     * tag has been updated.
-     *
-     * @param tag ChannelTag
-     */
-    public void updateChannelTag(ChannelTag tag) {
-        if (!loading) {
-            app.broadcastMessage("tagUpdate", tag);
-        }
     }
 
     /**
@@ -356,8 +241,8 @@ public class DataStorage {
      * lists and sub lists. For the channel tags the default value will be set.
      */
     public void clearAll() {
-        tags.clear();
-        recordings.clear();
+        tagArray.clear();
+        recordingArray.clear();
         seriesRecordingArray.clear();
         timerRecordingArray.clear();
 
@@ -373,10 +258,10 @@ public class DataStorage {
         subscriptions.clear();
 
         // Add the default tag (all channels) to the list
-        ChannelTag tag = new ChannelTag();
-        tag.id = 0;
-        tag.name = app.getString(R.string.all_channels);
-        addChannelTag(tag);
+        ChannelTag2 tag = new ChannelTag2();
+        tag.tagId = 0;
+        tag.tagName = app.getString(R.string.all_channels);
+        addTagToArray(tag);
     }
 
     /**

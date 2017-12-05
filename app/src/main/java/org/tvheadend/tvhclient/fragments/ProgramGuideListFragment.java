@@ -32,7 +32,7 @@ import org.tvheadend.tvhclient.interfaces.FragmentScrollInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Channel;
-import org.tvheadend.tvhclient.model.ChannelTag;
+import org.tvheadend.tvhclient.model.ChannelTag2;
 import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.utils.MenuUtils;
@@ -226,13 +226,13 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
      * adapter that contain the selected channel tag.
      */
     private void populateList() {
-        ChannelTag currentTag = Utils.getChannelTag(activity);
+        ChannelTag2 currentTag = Utils.getChannelTag(activity);
         adapter.clear();
 
         // Make a copy of the channel list before iterating over it
         List<Channel> channels = dataStorage.getChannels();
         for (Channel ch : channels) {
-            if (currentTag == null || ch.hasTag(currentTag.id)) {
+            if (currentTag == null || ch.hasTag(currentTag.tagId)) {
                 adapter.add(ch);
             }
         }

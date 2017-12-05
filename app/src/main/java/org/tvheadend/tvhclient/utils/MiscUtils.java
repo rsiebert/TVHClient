@@ -60,7 +60,7 @@ public class MiscUtils {
      * @param url The url that shall be converted
      * @return The hash value or the url or an empty string if an error occurred
      */
-    private static String convertUrlToHashString(String url) {
+    public static String convertUrlToHashString(String url) {
         try {
             MessageDigest digest = MessageDigest.getInstance("MD5");
             digest.update(url.getBytes());

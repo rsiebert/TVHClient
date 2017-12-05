@@ -24,7 +24,7 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.model.Channel;
-import org.tvheadend.tvhclient.model.ChannelTag;
+import org.tvheadend.tvhclient.model.ChannelTag2;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording2;
@@ -32,7 +32,6 @@ import org.tvheadend.tvhclient.model.SeriesInfo;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -975,12 +974,8 @@ public class Utils {
      * @param activity Activity context
      * @return Channel tag
      */
-    public static ChannelTag getChannelTag(final Activity activity) {
-        List<ChannelTag> ctl = DataStorage.getInstance().getChannelTags();
-        if (ctl.size() > getChannelTagId(activity)) {
-            return ctl.get(getChannelTagId(activity));
-        }
-        return null;
+    public static ChannelTag2 getChannelTag(final Activity activity) {
+        return DataStorage.getInstance().getTagFromArray(getChannelTagId(activity));
     }
 
 	/**

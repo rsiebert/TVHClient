@@ -12,8 +12,7 @@ public class HTSUtils {
         throw new IllegalAccessError("Utility class");
     }
 
-    public static ChannelTag2 convertMessageToChannelTagModel(HTSMessage msg) {
-        ChannelTag2 tag = new ChannelTag2();
+    public static ChannelTag2 convertMessageToChannelTagModel(ChannelTag2 tag, HTSMessage msg) {
         if (msg.containsKey("tagId")) {
             tag.tagId = msg.getInt("tagId");
         }

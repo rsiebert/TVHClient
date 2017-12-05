@@ -1,6 +1,8 @@
 package org.tvheadend.tvhclient.adapter;
 
+import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.preference.PreferenceManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -10,14 +12,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.model.ChannelTag;
+import org.tvheadend.tvhclient.model.ChannelTag2;
+import org.tvheadend.tvhclient.utils.MiscUtils;
 
 import java.util.List;
 
 public class ChannelTagListAdapter extends RecyclerView.Adapter<ChannelTagListAdapter.ViewHolder> {
 
+    private final Context context;
     private Callback mCallback;
-    private List<ChannelTag> mTagList;
+    private List<ChannelTag2> mTagList;
     private long mSelectedTagId;
     private boolean mShowChannelTagIcons;
 
@@ -25,7 +29,8 @@ public class ChannelTagListAdapter extends RecyclerView.Adapter<ChannelTagListAd
         void onItemClicked(int index);
     }
 
-    public ChannelTagListAdapter(List<ChannelTag> mChannelTagList, long selectedTagId) {
+    public ChannelTagListAdapter(Context context, List<ChannelTag2> mChannelTagList, long selectedTagId) {
+        this.context = context;
         mTagList = mChannelTagList;
         mSelectedTagId = selectedTagId;
     }
@@ -45,16 +50,17 @@ public class ChannelTagListAdapter extends RecyclerView.Adapter<ChannelTagListAd
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        final ChannelTag item = mTagList.get(position);
+        final ChannelTag2 item = mTagList.get(position);
         if (item != null) {
             // TODO highlight the selected tag using mSelectedTagId, its -1 if not set
 
             if (holder.icon != null) {
-                holder.icon.setImageBitmap(item.iconBitmap);
-                holder.icon.setVisibility(item.iconBitmap != null && mShowChannelTagIcons ? ImageView.VISIBLE : ImageView.GONE);
+                Bitmap iconBitmap = MiscUtils.getCachedIcon(context, item.tagIcon);
+                holder.icon.setImageBitmap(iconBitmap);
+                holder.icon.setVisibility(iconBitmap != null && mShowChannelTagIcons ? ImageView.VISIBLE : ImageView.GONE);
             }
             if (holder.title != null) {
-                holder.title.setText(item.name);
+                holder.title.setText(item.tagName);
                 holder.title.setTag(position);
             }
         }
