@@ -2,7 +2,6 @@ package org.tvheadend.tvhclient;
 
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Channel2;
@@ -330,170 +329,6 @@ public class DataStorage {
     }
 
     /**
-     * Adds the given recording to the list of available recordings. If loading
-     * has finished any listener will be informed that a recording has been
-     * added.
-     *
-     * @param rec Recording
-     */
-    public void addRecording(Recording rec) {
-        synchronized (recordings) {
-            if (recordings.indexOf(rec) == -1) {
-                recordings.add(rec);
-            }
-        }
-        if (!loading) {
-            app.broadcastMessage("dvrEntryAdd", rec);
-
-            // Add a notification for scheduled recordings
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(app);
-            if (prefs.getBoolean("pref_show_notifications", false) && rec.isScheduled()) {
-                NotificationHandler.getInstance().addNotification(rec.id);
-            }
-        }
-    }
-
-    /**
-     * Returns the list of all available recordings.
-     *
-     * @return List of all recordings
-     */
-    public List<Recording> getRecordings() {
-        synchronized (recordings) {
-            return recordings;
-        }
-    }
-
-    /**
-     * Returns a single recording that matches the given id.
-     *
-     * @param id The id of the recording
-     * @return Recording
-     */
-    public Recording getRecording(long id) {
-        synchronized (recordings) {
-            for (Recording rec : getRecordings()) {
-                if (rec.id == id) {
-                    return rec;
-                }
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Returns a single recording that matches the given type. The type
-     * identifies if a recording is completed, scheduled for recording or failed
-     * due to some reason.
-     *
-     * @param type The type of the recording
-     * @return List of recordings of the given type
-     */
-    public List<Recording> getRecordingsByType(int type) {
-        List<Recording> recs = new ArrayList<>();
-
-        switch (type) {
-            case Constants.RECORDING_TYPE_COMPLETED:
-                synchronized (recordings) {
-                    for (Recording rec : recordings) {
-                        // Include all recordings that are marked as completed, also
-                        // include recordings marked as auto recorded
-                        if (rec.isCompleted()) {
-                            recs.add(rec);
-                        }
-                    }
-                }
-                break;
-
-            case Constants.RECORDING_TYPE_SCHEDULED:
-                synchronized (recordings) {
-                    for (Recording rec : recordings) {
-                        // Include all scheduled recordings in the list, also
-                        // include recordings marked as auto recorded
-                        if (rec.isRecording() || rec.isScheduled()) {
-                            recs.add(rec);
-                        }
-                    }
-                }
-                break;
-
-            case Constants.RECORDING_TYPE_FAILED:
-                synchronized (recordings) {
-                    for (Recording rec : recordings) {
-                        // Include all failed recordings in the list
-                        if (rec.isFailed() || rec.isMissed() || rec.isAborted()) {
-                            recs.add(rec);
-                        }
-                    }
-                }
-                break;
-
-            case Constants.RECORDING_TYPE_REMOVED:
-                synchronized (recordings) {
-                    for (Recording rec : recordings) {
-                        // Include all removed recordings in the list
-                        if (rec.isRemoved()) {
-                            recs.add(rec);
-                        }
-                    }
-                }
-                break;
-        }
-        return recs;
-    }
-
-    /**
-     * Removes the given recording from the list of all available recordings. If
-     * loading has finished any listener will be informed that a recording has
-     * been removed.
-     *
-     * @param rec Recording
-     */
-    public void removeRecording(Recording rec) {
-        synchronized (recordings) {
-            recordings.remove(rec);
-        }
-        if (!loading) {
-            app.broadcastMessage("dvrEntryDelete", rec);
-
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(app);
-            if (prefs.getBoolean("pref_show_notifications", false)) {
-                NotificationHandler.getInstance().cancelNotification(rec.id);
-            }
-        }
-    }
-
-    /**
-     * Removes the recording from the list of all available recordings that
-     * matches the given id.
-     *
-     * @param id Id of the recording
-     */
-    @SuppressWarnings("unused")
-    public void removeRecording(long id) {
-        synchronized (recordings) {
-            for (Recording rec : getRecordings()) {
-                if (rec.id == id) {
-                    removeRecording(rec);
-                    return;
-                }
-            }
-        }
-    }
-
-    /**
-     * If loading has finished any listener will be informed that a recording
-     * has been updated.
-     *
-     * @param rec Recording
-     */
-    public void updateRecording(Recording rec) {
-        if (!loading) {
-            app.broadcastMessage("dvrEntryUpdate", rec);
-        }
-    }
-
-    /**
      * Informes all registered listeners about the loading status.
      *
      * @param b The loading state
@@ -503,12 +338,6 @@ public class DataStorage {
             app.broadcastMessage(Constants.ACTION_LOADING, b);
         }
         loading = b;
-
-        if (!loading) {
-            Log.d(TAG, "setLoading: channels:   " + getChannelsFromArray().size());
-            Log.d(TAG, "setLoading: programs:   " + getProgramsFromArray().size());
-            Log.d(TAG, "setLoading: recordings: " + getRecordingsFromArray().size());
-        }
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(app);
         if (!loading && prefs.getBoolean("pref_show_notifications", false)) {
@@ -813,6 +642,11 @@ public class DataStorage {
         }
         if (!loading) {
             app.broadcastMessage("dvrEntryAdd", recording);
+            // Add a notification for scheduled recordings
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(app);
+            if (prefs.getBoolean("pref_show_notifications", false) && recording.isScheduled()) {
+                NotificationHandler.getInstance().addNotification(recording.id);
+            }
         }
     }
 
@@ -822,6 +656,11 @@ public class DataStorage {
         }
         if (!loading) {
             app.broadcastMessage("dvrEntryDelete", null);
+
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(app);
+            if (prefs.getBoolean("pref_show_notifications", false)) {
+                NotificationHandler.getInstance().cancelNotification(id);
+            }
         }
     }
 

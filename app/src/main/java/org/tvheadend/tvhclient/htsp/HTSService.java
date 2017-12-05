@@ -27,6 +27,7 @@ import org.tvheadend.tvhclient.model.Packet;
 import org.tvheadend.tvhclient.model.Profiles;
 import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
+import org.tvheadend.tvhclient.model.Recording2;
 import org.tvheadend.tvhclient.model.SeriesInfo;
 import org.tvheadend.tvhclient.model.SeriesRecording2;
 import org.tvheadend.tvhclient.model.SourceInfo;
@@ -171,7 +172,7 @@ public class HTSService extends Service implements HTSConnectionListener {
 
         } else if (action.equals("getTicket")) {
             Channel ch = dataStorage.getChannel(intent.getLongExtra("channelId", 0));
-            Recording rec = dataStorage.getRecording(intent.getLongExtra("dvrId", 0));
+            Recording2 rec = dataStorage.getRecordingFromArray(intent.getIntExtra("dvrId", 0));
             if (ch != null) {
                 getTicket(ch);
             } else if (rec != null) {
@@ -197,10 +198,10 @@ public class HTSService extends Service implements HTSConnectionListener {
             subscriptionFilterStream();
             
         } else if (action.equals("getDvrCutpoints")) {
-            Recording rec = dataStorage.getRecording(intent.getLongExtra("dvrId", 0));
-            if (rec != null) {
-                getDvrCutpoints(rec);
-            }
+            //Recording rec = dataStorage.getRecording(intent.getLongExtra("dvrId", 0));
+            //if (rec != null) {
+            //    getDvrCutpoints(rec);
+            //}
             
         } else if (action.equals("addAutorecEntry")) {
             addAutorecEntry(intent);
@@ -376,142 +377,16 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     private void onDvrEntryAdd(HTSMessage msg) {
-        dataStorage.addRecordingToArray(HTSUtils.convertMessageToRecordingModel(msg));
-
-        Recording rec = new Recording();
-        rec.id = msg.getLong("id");
-        rec.description = msg.getString("description");
-        rec.summary = msg.getString("summary");
-        rec.error = msg.getString("error");
-        rec.start = msg.getDate("start");
-        rec.state = msg.getString("state");
-        rec.stop = msg.getDate("stop");
-        rec.title = msg.getString("title");
-        rec.subtitle = msg.getString("subtitle");
-        rec.enabled = msg.getLong("enabled", 1) != 0;
-
-        rec.channel = dataStorage.getChannel(msg.getLong("channel", 0));
-        if (rec.channel != null) {
-            rec.channel.recordings.add(rec);
-        }
-
-        // Not all fields can be set with default values, so check if the server
-        // provides a supported HTSP API version. These entries are available
-        // only on version 13 and higher
-        if (connection.getProtocolVersion() >= Constants.MIN_API_VERSION_SERIES_RECORDINGS) {
-            rec.eventId = msg.getLong("eventId", 0);
-            rec.autorecId = msg.getString("autorecId");
-            rec.startExtra = msg.getLong("startExtra", 0);
-            rec.stopExtra = msg.getLong("stopExtra", 0);
-            rec.retention = msg.getLong("retention");
-            rec.priority = msg.getLong("priority");
-            rec.contentType = msg.getLong("contentType", -1);
-        }
-
-        // Not all fields can be set with default values, so check if the server
-        // provides a supported HTSP API version. These entries are available
-        // only on version 17 and higher
-        if (connection.getProtocolVersion() >= Constants.MIN_API_VERSION_TIMER_RECORDINGS) {
-            rec.timerecId = msg.getString("timerecId");
-        }
-
-        rec.episode = msg.getString("episode", null);
-        rec.comment = msg.getString("comment", null);
-        rec.subscriptionError = msg.getString("subscriptionError", null);
-        rec.streamErrors = msg.getLong("streamErrors", 0);
-        rec.dataErrors = msg.getLong("dataErrors", 0);
-        rec.dataSize = msg.getLong("dataSize", 0);
-
-        if (rec.channel != null && rec.channel.epg != null) {
-            for (Program p : rec.channel.epg) {
-                if (p != null 
-                        && p.title.equals(rec.title)
-                        && p.start.getTime() == rec.start.getTime()
-                        && p.stop.getTime() == rec.stop.getTime()) {
-                    p.recording = rec;
-                    break;
-                }
-            }
-        }
-
-        rec.owner = msg.getString("owner", null);
-        rec.creator = msg.getString("creator", null);
-        rec.path = msg.getString("path", null);
-        rec.files = msg.getString("files", null);
-
-        dataStorage.addRecording(rec);
+        dataStorage.addRecordingToArray(HTSUtils.convertMessageToRecordingModel(new Recording2(), msg));
     }
 
     private void onDvrEntryUpdate(HTSMessage msg) {
-        dataStorage.updateRecordingInArray(HTSUtils.convertMessageToRecordingModel(msg));
-
-        Recording rec = dataStorage.getRecording(msg.getLong("id"));
-        if (rec == null) {
-            return;
-        }
-
-        rec.description = msg.getString("description", rec.description);
-        rec.summary = msg.getString("summary", rec.summary);
-        rec.error = msg.getString("error", rec.error);
-        rec.start = msg.getDate("start");
-        rec.state = msg.getString("state", rec.state);
-        rec.stop = msg.getDate("stop");
-        rec.title = msg.getString("title", rec.title);
-        rec.subtitle = msg.getString("subtitle", rec.subtitle);
-        rec.enabled = msg.getLong("enabled", 1) != 0;
-
-        // Not all fields can be set with default values, so check if the server
-        // provides a supported HTSP API version. These entries are available
-        // only on version 13 and higher
-        if (connection.getProtocolVersion() >= Constants.MIN_API_VERSION_SERIES_RECORDINGS) {
-            rec.eventId = msg.getLong("eventId", 0);
-            rec.autorecId = msg.getString("autorecId");
-            rec.startExtra = msg.getLong("startExtra", 0);
-            rec.stopExtra = msg.getLong("stopExtra", 0);
-            rec.retention = msg.getLong("retention");
-            rec.priority = msg.getLong("priority");
-            rec.contentType = msg.getLong("contentType", -1);
-        }
-
-        // Not all fields can be set with default values, so check if the server
-        // provides a supported HTSP API version. These entries are available
-        // only on version 17 and higher
-        if (connection.getProtocolVersion() >= Constants.MIN_API_VERSION_TIMER_RECORDINGS) {
-            rec.timerecId = msg.getString("timerecId");
-        }
-
-        rec.episode = msg.getString("episode", null);
-        rec.comment = msg.getString("comment", null);
-        rec.subscriptionError = msg.getString("subscriptionError", null);
-        rec.streamErrors = msg.getLong("streamErrors", 0);
-        rec.dataErrors = msg.getLong("dataErrors", 0);
-        rec.dataSize = msg.getLong("dataSize", 0);
-        rec.owner = msg.getString("owner", rec.owner);
-        rec.creator = msg.getString("creator", rec.creator);
-        rec.path = msg.getString("path", rec.path);
-        rec.files = msg.getString("files", rec.files);
-
-        dataStorage.updateRecording(rec);
+        Recording2 rec = dataStorage.getRecordingFromArray(msg.getInt("id"));
+        dataStorage.updateRecordingInArray(HTSUtils.convertMessageToRecordingModel(rec, msg));
     }
 
     private void onDvrEntryDelete(HTSMessage msg) {
         dataStorage.removeRecordingFromArray(msg.getInt("id"));
-
-        Recording rec = dataStorage.getRecording(msg.getLong("id"));
-
-        if (rec == null || rec.channel == null) {
-            return;
-        }
-
-        rec.channel.recordings.remove(rec);
-        for (Program p : rec.channel.epg) {
-            if (p.recording == rec) {
-                p.recording = null;
-                dataStorage.updateProgram(p);
-                break;
-            }
-        }
-        dataStorage.removeRecording(rec);
     }
 
     private void onTimerRecEntryAdd(HTSMessage msg) {
@@ -922,7 +797,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         p.description = sub.getString("description");
         p.summary = sub.getString("summary");
         p.subtitle = sub.getString("subtitle");
-        p.recording = dataStorage.getRecording(sub.getLong("dvrId", 0));
+        // TODO p.recording = dataStorage.getRecording(sub.getLong("dvrId", 0));
         p.contentType = sub.getInt("contentType", -1);
         p.title = sub.getString("title");
         p.start = sub.getDate("start");
@@ -1216,7 +1091,7 @@ public class HTSService extends Service implements HTSConnectionListener {
                 if (success && ch != null) {
                     for (Program p : ch.epg) {
                         if (p.id == eventId) {
-                            p.recording = dataStorage.getRecording(response.getLong("id", 0));
+                            // TODO p.recording = dataStorage.getRecording(response.getLong("id", 0));
                             dataStorage.updateProgram(p);
                             break;
                         }
@@ -1430,7 +1305,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         });
     }
 
-    private void getTicket(Recording rec) {
+    private void getTicket(Recording2 rec) {
         HTSMessage request = new HTSMessage();
         request.setMethod("getTicket");
         request.putField("dvrId", rec.id);
