@@ -59,8 +59,7 @@ public class HTSUtils {
         return channel;
     }
 
-    public static Recording2 convertMessageToRecordingModel(HTSMessage msg) {
-        Recording2 recording = new Recording2();
+    public static Recording2 convertMessageToRecordingModel(Recording2 recording, HTSMessage msg) {
         if (msg.containsKey("id")) {
             recording.id = msg.getInt("id");
         }
