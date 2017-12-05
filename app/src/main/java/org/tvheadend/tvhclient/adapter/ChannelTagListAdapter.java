@@ -90,7 +90,8 @@ public class ChannelTagListAdapter extends RecyclerView.Adapter<ChannelTagListAd
         @Override
         public void onClick(View view) {
             if (channelTagListAdapter != null && channelTagListAdapter.mCallback != null) {
-                channelTagListAdapter.mCallback.onItemClicked(getAdapterPosition());
+                int id = channelTagListAdapter.mTagList.get(getAdapterPosition()).tagId;
+                channelTagListAdapter.mCallback.onItemClicked(id);
             }
         }
     }

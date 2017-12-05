@@ -23,7 +23,6 @@ import org.acra.config.ACRAConfigurationException;
 import org.acra.config.ConfigurationBuilder;
 import org.acra.sender.HttpSender;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
-import org.tvheadend.tvhclient.model.ChannelTag2;
 import org.tvheadend.tvhclient.utils.BillingUtils;
 
 import java.util.ArrayList;
@@ -118,12 +117,6 @@ public class TVHClientApplication extends Application implements BillingProcesso
                 logger.log(TAG, "onCreate: Could not load purchase information");
             }
         }
-
-        // Add the default tag (all channels) to the list
-        ChannelTag2 tag = new ChannelTag2();
-        tag.tagId = 0;
-        tag.tagName = getString(R.string.all_channels);
-        dataStorage.addTagToArray(tag);
 
         // Build a CastConfiguration object and initialize VideoCastManager
         CastConfiguration options = new CastConfiguration.Builder(Constants.CAST_APPLICATION_ID)

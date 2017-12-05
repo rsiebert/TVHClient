@@ -36,6 +36,8 @@ import java.lang.ref.WeakReference;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class MenuUtils {
@@ -124,9 +126,23 @@ public class MenuUtils {
             return;
         }
 
+        // Sort the channel tag list before showing it
+        Collections.sort(channelTagList, new Comparator<ChannelTag2>() {
+            @Override
+            public int compare(ChannelTag2 o1, ChannelTag2 o2) {
+                return o1.tagName.compareTo(o2.tagName);
+            }
+        });
+
+        // Add the default tag (all channels) to the list after it has been sorted
+        ChannelTag2 tag = new ChannelTag2();
+        tag.tagId = 0;
+        tag.tagName = activity.getString(R.string.all_channels);
+        channelTagList.add(0, tag);
+
+        final ChannelTagListAdapter channelTagListAdapter = new ChannelTagListAdapter(activity, channelTagList, selectedTagId);
         // Show the dialog that shows all available channel tags. When the
         // user has selected a tag, restart the loader to get the updated channel list
-        final ChannelTagListAdapter channelTagListAdapter = new ChannelTagListAdapter(activity, channelTagList, selectedTagId);
         final MaterialDialog dialog = new MaterialDialog.Builder(activity)
                 .title(R.string.tags)
                 .adapter(channelTagListAdapter, null)

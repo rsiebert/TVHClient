@@ -145,7 +145,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
             fragmentScrollInterface = (FragmentScrollInterface) activity;
         }
 
-        adapter = new ChannelListAdapter(activity, new ArrayList<Channel>(), adapterLayout);
+        adapter = new ChannelListAdapter(activity, new ArrayList<>(), adapterLayout);
         listView.setAdapter(adapter);
 
         menuUtils = new MenuUtils(getActivity());
@@ -456,9 +456,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
         // Fill the channel tag adapter with the available channel tags
         tagList.clear();
         Map<Integer, ChannelTag2> map = dataStorage.getTagsFromArray();
-        for (ChannelTag2 tag : map.values()) {
-            tagList.add(tag);
-        }
+        tagList.addAll(map.values());
 
         // Show the name of the selected channel tag and the number of channels
         // in the action bar. If enabled show also the channel tag icon.

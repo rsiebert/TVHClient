@@ -256,12 +256,6 @@ public class DataStorage {
             s.streams.clear();
         }
         subscriptions.clear();
-
-        // Add the default tag (all channels) to the list
-        ChannelTag2 tag = new ChannelTag2();
-        tag.tagId = 0;
-        tag.tagName = app.getString(R.string.all_channels);
-        addTagToArray(tag);
     }
 
     /**
