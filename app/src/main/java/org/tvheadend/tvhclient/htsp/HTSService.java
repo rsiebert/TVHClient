@@ -28,7 +28,6 @@ import org.tvheadend.tvhclient.model.Packet;
 import org.tvheadend.tvhclient.model.Profiles;
 import org.tvheadend.tvhclient.model.Program2;
 import org.tvheadend.tvhclient.model.Recording2;
-import org.tvheadend.tvhclient.model.SeriesInfo;
 import org.tvheadend.tvhclient.model.SeriesRecording2;
 import org.tvheadend.tvhclient.model.SourceInfo;
 import org.tvheadend.tvhclient.model.Stream;
@@ -725,19 +724,6 @@ public class HTSService extends Service implements HTSConnectionListener {
         });
     }
 
-    private SeriesInfo buildSeriesInfo(HTSMessage msg) {
-        SeriesInfo info = new SeriesInfo();
-        info.episodeCount = msg.getInt("episodeCount", 0);
-        info.episodeNumber = msg.getInt("episodeNumber", 0);
-        info.onScreen = msg.getString("episodeOnscreen");
-        info.partCount = msg.getInt("partCount", 0);
-        info.partNumber = msg.getInt("partNumber", 0);
-        info.seasonCount = msg.getInt("seasonCount", 0);
-        info.seasonNumber = msg.getInt("seasonNumber", 0);
-        info.serieslinkId = msg.getInt("serieslinkId", 0);
-        return info;
-    }
-	
     private void epgQuery(final Intent intent) {
 
         final Channel2 ch = dataStorage.getChannelFromArray(intent.getIntExtra("channelId", 0));

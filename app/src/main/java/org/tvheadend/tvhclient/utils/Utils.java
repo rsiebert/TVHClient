@@ -30,7 +30,6 @@ import org.tvheadend.tvhclient.model.ChannelTag2;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.Program2;
 import org.tvheadend.tvhclient.model.Recording2;
-import org.tvheadend.tvhclient.model.SeriesInfo;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -70,50 +69,6 @@ public class Utils {
     public static boolean showChannelTagIcon(final Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         return prefs.getBoolean("showTagIconPref", false);
-    }
-
-    /**
-     * Combines the episode and series values into a single string
-     * @param context Context
-     * @param info Season and episode information
-     * @return String with the season and episode
-     */
-    private static String buildSeriesInfoString(final Context context, final SeriesInfo info) {
-        String s = "";
-        if (info == null) {
-            return s;
-        }
-
-        if (info.onScreen != null && info.onScreen.length() > 0) {
-            return info.onScreen;
-        }
-        
-        final String season = context.getResources().getString(R.string.season);
-        final String episode = context.getResources().getString(R.string.episode);
-        final String part = context.getResources().getString(R.string.part);
-        
-        if (info.onScreen != null && info.onScreen.length() > 0) {
-            return info.onScreen;
-        }
-        if (info.seasonNumber > 0) {
-            if (s.length() > 0)
-                s += ", ";
-            s += String.format(Locale.getDefault(), "%s %02d", season.toLowerCase(Locale.getDefault()), info.seasonNumber);
-        }
-        if (info.episodeNumber > 0) {
-            if (s.length() > 0)
-                s += ", ";
-            s += String.format(Locale.getDefault(), "%s %02d", episode.toLowerCase(Locale.getDefault()), info.episodeNumber);
-        }
-        if (info.partNumber > 0) {
-            if (s.length() > 0)
-                s += ", ";
-            s += String.format(Locale.getDefault(), "%s %d", part.toLowerCase(Locale.getDefault()), info.partNumber);
-        }
-        if (s.length() > 0) {
-            s = s.substring(0,1).toUpperCase(Locale.getDefault()) + s.substring(1);
-        }
-        return s;
     }
 
     /**
