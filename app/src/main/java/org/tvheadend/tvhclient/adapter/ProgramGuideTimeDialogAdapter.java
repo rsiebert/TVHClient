@@ -1,6 +1,7 @@
 package org.tvheadend.tvhclient.adapter;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,14 +55,15 @@ public class ProgramGuideTimeDialogAdapter extends RecyclerView.Adapter<ProgramG
     public void onBindViewHolder(ViewHolder holder, int position) {
         ProgramGuideTimeDialogItem item = list.get(position);
         if (item != null) {
+            Log.d("XXS", "onBindViewHolder: start " + item.start);
             // Convert the dates into a nice string representation
             final SimpleDateFormat sdf1 = new SimpleDateFormat("HH:mm", Locale.US);
-            String time = sdf1.format(item.start * 1000) + " - " + sdf1.format(item.end * 1000);
+            String time = sdf1.format(item.start) + " - " + sdf1.format(item.end);
             holder.time.setText(time);
 
             final SimpleDateFormat sdf2 = new SimpleDateFormat("dd.MM.yyyy", Locale.US);
-            Utils.setDate2(holder.date1, item.start);
-            holder.date2.setText(sdf2.format(item.start * 1000));
+            Utils.setDate2(holder.date1, item.start / 1000);
+            holder.date2.setText(sdf2.format(item.start));
 
             if (holder.date1.getText().equals(holder.date2.getText())) {
                 holder.date2.setVisibility(View.GONE);

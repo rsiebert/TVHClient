@@ -22,8 +22,8 @@ import org.tvheadend.tvhclient.utils.MiscUtils;
 import org.tvheadend.tvhclient.utils.Utils;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ProgramGuideItemView extends LinearLayout {
 
@@ -33,7 +33,7 @@ public class ProgramGuideItemView extends LinearLayout {
     private Activity activity;
     private Channel2 channel;
     private int displayWidth;
-    
+
     // Specifies the usable width for the layout of a single program guide item
     // to the entire display width. After each adding of a program item the
     // width will be reduced.
@@ -87,7 +87,7 @@ public class ProgramGuideItemView extends LinearLayout {
             pixelsPerMinute = bundle.getFloat(Constants.BUNDLE_EPG_PIXELS_PER_MINUTE, 5.0f);
             displayWidth = bundle.getInt(Constants.BUNDLE_EPG_DISPLAY_WIDTH, 400);
         }
-
+        Log.d(TAG, "ProgramGuideItemView: startTime " + startTime + " endTime " + endTime);
         displayWidthRemaining = displayWidth;
     }
 
@@ -97,9 +97,9 @@ public class ProgramGuideItemView extends LinearLayout {
      * the last program was reached, a call to load more programs is made.
      *
      * @param parent ViewGroup parent required for the layout
-     * @param ch Channel with the available EPG data
+     * @param ch     Channel with the available EPG data
      */
-    public void addPrograms(ViewGroup parent, Channel2 ch) {
+    public void addPrograms(ViewGroup parent, List<Program2> programList, Channel2 ch) {
         channel = ch;
         // Clear all previously shown programs
         layout.removeAllViews();
@@ -125,14 +125,10 @@ public class ProgramGuideItemView extends LinearLayout {
         // Defaults
         int programType = PROGRAM_TIMESLOT_ERROR;
         int programsAddedCounter = 0;
-        
-        try {
-            // Go through all programs and add them to the view
-            CopyOnWriteArrayList<Program2> epg = new CopyOnWriteArrayList<>();
-            epg.addAll(DataStorage.getInstance().getProgramsFromArray().values());
 
-            Iterator<Program2> it = epg.iterator();
+        try {
             Program2 p;
+            Iterator<Program2> it = programList.iterator();
             while (it.hasNext()) {
                 p = it.next();
 
@@ -166,8 +162,7 @@ public class ProgramGuideItemView extends LinearLayout {
                     break;
                 }
             }
-        }
-        catch (NoSuchElementException e) {
+        } catch (NoSuchElementException e) {
             Log.e(TAG, "The selected channel contains no programs.");
         }
 
@@ -249,58 +244,58 @@ public class ProgramGuideItemView extends LinearLayout {
         int width = getProgramLayoutWidth(program, programType);
 
         switch (programType) {
-        case PROGRAM_MOVES_INTO_TIMESLOT:
-            addCurrentProgramToView(program, width, parent);
-            displayWidthRemaining -= width;
-            break;
+            case PROGRAM_MOVES_INTO_TIMESLOT:
+                addCurrentProgramToView(program, width, parent);
+                displayWidthRemaining -= width;
+                break;
 
-        case PROGRAM_IS_WITHIN_TIMESLOT:
-            // If this program is the first in the guide data and is already
-            // within the time slot it would start somewhere in the middle of
-            // the view. So we need to fill in a placeholder program.
-            if (programsAddedCounter == 0) {
-                final double durationTime = ((program.start * 1000 - startTime) / 1000 / 60);
-                final int w = (int) (durationTime * pixelsPerMinute);
-                addCurrentProgramToView(null, w, parent);
-            }
-            addCurrentProgramToView(program, width, parent);
-            displayWidthRemaining -= width;
-            break;
+            case PROGRAM_IS_WITHIN_TIMESLOT:
+                // If this program is the first in the guide data and is already
+                // within the time slot it would start somewhere in the middle of
+                // the view. So we need to fill in a placeholder program.
+                if (programsAddedCounter == 0) {
+                    final double durationTime = ((program.start * 1000 - startTime) / 1000 / 60);
+                    final int w = (int) (durationTime * pixelsPerMinute);
+                    addCurrentProgramToView(null, w, parent);
+                }
+                addCurrentProgramToView(program, width, parent);
+                displayWidthRemaining -= width;
+                break;
 
-        case PROGRAM_MOVES_OUT_OF_TIMESLOT:
-            // If this program is the first in the guide data and is already
-            // within the time slot it would start somewhere in the middle of
-            // the view. So we need to fill in a placeholder program.
-            if (programsAddedCounter == 0) {
-                final double durationTime = ((program.start * 1000 - startTime) / 1000 / 60);
-                final int w = (int) (durationTime * pixelsPerMinute);
-                addCurrentProgramToView(null, w, parent);
-            }
-            // Set the width to the remaining width to indicate for the next
-            // program (by the program logic no additional program will be
-            // added) there is not space left. The boolean flag will let the
-            // layout use the full space instead of the given width.
-            if (width >= displayWidthRemaining) {
-                width = displayWidthRemaining;
-            }
-            addCurrentProgramToView(program, width, parent);
-            displayWidthRemaining -= width;
-            break;
+            case PROGRAM_MOVES_OUT_OF_TIMESLOT:
+                // If this program is the first in the guide data and is already
+                // within the time slot it would start somewhere in the middle of
+                // the view. So we need to fill in a placeholder program.
+                if (programsAddedCounter == 0) {
+                    final double durationTime = ((program.start * 1000 - startTime) / 1000 / 60);
+                    final int w = (int) (durationTime * pixelsPerMinute);
+                    addCurrentProgramToView(null, w, parent);
+                }
+                // Set the width to the remaining width to indicate for the next
+                // program (by the program logic no additional program will be
+                // added) there is not space left. The boolean flag will let the
+                // layout use the full space instead of the given width.
+                if (width >= displayWidthRemaining) {
+                    width = displayWidthRemaining;
+                }
+                addCurrentProgramToView(program, width, parent);
+                displayWidthRemaining -= width;
+                break;
 
-        case PROGRAM_OVERLAPS_TIMESLOT:
-            // Set the width to the remaining width to indicate for the next
-            // program (by the program logic no additional program will be
-            // added) there is not space left. The boolean flag will let the
-            // layout use the full space instead of the given width.
-            if (width >= displayWidthRemaining) {
-                width = displayWidthRemaining;
-            }
-            addCurrentProgramToView(program, width, parent);
-            displayWidthRemaining -= width;
-            break;
+            case PROGRAM_OVERLAPS_TIMESLOT:
+                // Set the width to the remaining width to indicate for the next
+                // program (by the program logic no additional program will be
+                // added) there is not space left. The boolean flag will let the
+                // layout use the full space instead of the given width.
+                if (width >= displayWidthRemaining) {
+                    width = displayWidthRemaining;
+                }
+                addCurrentProgramToView(program, width, parent);
+                displayWidthRemaining -= width;
+                break;
 
-        default:
-            break;
+            default:
+                break;
         }
     }
 
@@ -321,27 +316,27 @@ public class ProgramGuideItemView extends LinearLayout {
         int width = 0;
 
         switch (programType) {
-        case PROGRAM_MOVES_INTO_TIMESLOT:
-            offset = (int) (durationTime - ((startTime - programStartTime) / 1000 / 60));
-            width = (int) (offset * pixelsPerMinute);
-            break;
+            case PROGRAM_MOVES_INTO_TIMESLOT:
+                offset = (int) (durationTime - ((startTime - programStartTime) / 1000 / 60));
+                width = (int) (offset * pixelsPerMinute);
+                break;
 
-        case PROGRAM_IS_WITHIN_TIMESLOT:
-            width = (int) (durationTime * pixelsPerMinute);
-            break;
+            case PROGRAM_IS_WITHIN_TIMESLOT:
+                width = (int) (durationTime * pixelsPerMinute);
+                break;
 
-        case PROGRAM_MOVES_OUT_OF_TIMESLOT:
-            offset = (int) (durationTime - ((programEndTime - endTime)) / 1000 / 60);
-            width = (int) (offset * pixelsPerMinute);
-            break;
+            case PROGRAM_MOVES_OUT_OF_TIMESLOT:
+                offset = (int) (durationTime - ((programEndTime - endTime)) / 1000 / 60);
+                width = (int) (offset * pixelsPerMinute);
+                break;
 
-        case PROGRAM_OVERLAPS_TIMESLOT:
-            offset = (int) (durationTime - ((programEndTime - endTime)) / 1000 / 60);
-            width = (int) (offset * pixelsPerMinute);
-            break;
+            case PROGRAM_OVERLAPS_TIMESLOT:
+                offset = (int) (durationTime - ((programEndTime - endTime)) / 1000 / 60);
+                width = (int) (offset * pixelsPerMinute);
+                break;
 
-        default:
-        	break;
+            default:
+                break;
         }
         return width;
     }
@@ -350,8 +345,8 @@ public class ProgramGuideItemView extends LinearLayout {
      * Creates the views and layout for the given program and adds all required
      * information to it.
      *
-     * @param p            Program
-     * @param layoutWidth  Width in pixels of the layout
+     * @param p           Program
+     * @param layoutWidth Width in pixels of the layout
      */
     private void addCurrentProgramToView(final Program2 p, final int layoutWidth, ViewGroup parent) {
 
@@ -376,51 +371,51 @@ public class ProgramGuideItemView extends LinearLayout {
 
         if (p != null) {
             MiscUtils.setGenreColor(activity, itemLayout, p.contentType, TAG);
-	        itemLayout.setTag(p.eventId);
-	        title.setText(p.title);
-	        // TODO Utils.setState(activity, state, p);
+            itemLayout.setTag(p.eventId);
+            title.setText(p.title);
+            Utils.setState(activity, state, p);
 
-	        // Only show the duration if the layout is wide enough
-	        if (layoutWidth >= MIN_DISPLAY_WIDTH_FOR_DETAILS) {
-	            Utils.setDuration2(duration, p.start, p.stop);
-	        } else {
-	            duration.setVisibility(View.GONE);
-	        }
-	        // Create the context menu so that the user can
-	        // record or do other stuff with the selected program
-	        itemLayout.setOnCreateContextMenuListener((new OnCreateContextMenuListener() {
-	            @Override
-	            public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-	                activity.getMenuInflater().inflate(R.menu.program_context_menu, menu);
-	                // Set the title of the context menu and show or hide
-	                // the menu items depending on the program state
-	                fragmentInterface.setSelectedContextItem(p);
-	                menu.setHeaderTitle(p.title);
-	                //Utils.setProgramMenu(app, menu, p);
+            // Only show the duration if the layout is wide enough
+            if (layoutWidth >= MIN_DISPLAY_WIDTH_FOR_DETAILS) {
+                Utils.setDuration2(duration, p.start, p.stop);
+            } else {
+                duration.setVisibility(View.GONE);
+            }
+            // Create the context menu so that the user can
+            // record or do other stuff with the selected program
+            itemLayout.setOnCreateContextMenuListener((new OnCreateContextMenuListener() {
+                @Override
+                public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+                    activity.getMenuInflater().inflate(R.menu.program_context_menu, menu);
+                    // Set the title of the context menu and show or hide
+                    // the menu items depending on the program state
+                    fragmentInterface.setSelectedContextItem(p);
+                    menu.setHeaderTitle(p.title);
+                    //Utils.setProgramMenu(app, menu, p);
 
                     // Add a listener to each menu item. When the menu item is
                     // called the context handler method from the fragment will
                     // be called. Without this the context menu handler from the
                     // channel list fragment was called (not clear why) which 
-	                // resulted in a null pointer exception.
-	                int size = menu.size();
+                    // resulted in a null pointer exception.
+                    int size = menu.size();
                     for (int i = 0; i < size; ++i) {
-	                    menu.getItem(i).setOnMenuItemClickListener(new OnMenuItemClickListener() {
-	                        @Override
-	                        public boolean onMenuItemClick(MenuItem item) {
-	                            fragmentInterface.setMenuSelection(item);
-	                            return true;
-	                        }
-	                    }); 
-	                }
-	            }
-	        }));
+                        menu.getItem(i).setOnMenuItemClickListener(new OnMenuItemClickListener() {
+                            @Override
+                            public boolean onMenuItemClick(MenuItem item) {
+                                fragmentInterface.setMenuSelection(item);
+                                return true;
+                            }
+                        });
+                    }
+                }
+            }));
 
-	        // Add the listener to the layout so that a 
-	        // click will show the program details activity
-	        itemLayout.setOnClickListener(new OnClickListener() {
-	            @Override
-	            public void onClick(View v) {
+            // Add the listener to the layout so that a
+            // click will show the program details activity
+            itemLayout.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
                     if (channel == null) {
                         return;
                     }
@@ -431,8 +426,8 @@ public class ProgramGuideItemView extends LinearLayout {
                     if (fragmentStatusInterface != null && program != null) {
                         fragmentStatusInterface.onListItemSelected(0, program, TAG);
                     }
-	            }
-	        });
+                }
+            });
         }
         layout.addView(v);
     }
@@ -449,7 +444,7 @@ public class ProgramGuideItemView extends LinearLayout {
         View v = inflate(getContext(), R.layout.program_guide_data_item_loading, null);
         layout.addView(v);
     }
-    
+
     public interface ProgramContextMenuInterface {
         void setSelectedContextItem(Program2 p);
 

@@ -11,13 +11,18 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import org.tvheadend.tvhclient.Constants;
+import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.ProgramGuideItemView;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.model.Channel2;
+import org.tvheadend.tvhclient.model.Program2;
 
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class ProgramGuideListAdapter extends ArrayAdapter<Channel2> {
 
@@ -47,7 +52,7 @@ public class ProgramGuideListAdapter extends ArrayAdapter<Channel2> {
         case Constants.CHANNEL_SORT_DEFAULT:
             sort(new Comparator<Channel2>() {
                 public int compare(Channel2 x, Channel2 y) {
-                    // TODO return x.compareTo(y);
+                    // return x.compareTo(y);
                     return x.channelName.toLowerCase(Locale.US).compareTo(y.channelName.toLowerCase(Locale.US));
                 }
             });
@@ -101,7 +106,37 @@ public class ProgramGuideListAdapter extends ArrayAdapter<Channel2> {
 
         // Adds the channel and shows the programs. Channel is
         // required to have access to the EPG data.
-        // TODO holder.item.addPrograms(parent, getItem(position));
+        // Go through all programs and add them to the view
+        Channel2 channel = getItem(position);
+        int nextId = 0;
+        List<Program2> programList = new ArrayList<>();
+
+        Map<Integer, Program2> map = DataStorage.getInstance().getProgramsFromArray();
+        Iterator mapIt = map.values().iterator();
+        long startTime = bundle.getLong(Constants.BUNDLE_EPG_START_TIME, 0);
+        Program2 p;
+        while (mapIt.hasNext()) {
+            p = (Program2) mapIt.next();
+            if (p.channelId == channel.channelId) {
+                if ((p.start * 1000) <= startTime && (p.stop * 1000) > startTime) {
+                    programList.add(p);
+                    nextId = p.nextEventId;
+                    break;
+                }
+            }
+        }
+
+        while (nextId != 0) {
+            p = DataStorage.getInstance().getProgramFromArray(nextId);
+            if (p != null && p.nextEventId > 0) {
+                programList.add(p);
+                nextId = p.nextEventId;
+            } else {
+                nextId = 0;
+            }
+        }
+
+        holder.item.addPrograms(parent, programList, channel);
         return view;
     }
     

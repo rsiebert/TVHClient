@@ -229,9 +229,10 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
         adapter.clear();
 
         // Make a copy of the channel list before iterating over it
-        for (Channel2 ch : dataStorage.getChannelsFromArray().values()) {
-            if (currentTag == null || currentTag.members.contains(ch.channelId)) {
-                adapter.add(ch);
+        adapter.clear();
+        for (Channel2 channel : DataStorage.getInstance().getChannelsFromArray().values()) {
+            if (currentTag == null || channel.tags.contains(currentTag.tagId)) {
+                adapter.add(channel);
             }
         }
         adapter.sort(Utils.getChannelSortOrder(activity));

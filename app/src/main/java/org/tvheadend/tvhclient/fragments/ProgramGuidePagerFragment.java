@@ -12,9 +12,9 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.text.format.Time;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -115,13 +115,13 @@ public class ProgramGuidePagerFragment extends Fragment implements FragmentContr
                     MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
         }
     }
-
+/*
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.epg_menu, menu);
     }
-
+*/
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -194,6 +194,7 @@ public class ProgramGuidePagerFragment extends Fragment implements FragmentContr
         // Get the current time in milliseconds
         Time now = new Time(Time.getCurrentTimezone());
         now.setToNow();
+        Log.d(TAG, "calcProgramGuideTimeslots: time now " + now.hour + ":" + now.minute);
 
         // Get the current time in milliseconds without the seconds but in 30
         // minute slots. If the current time is later then 16:30 start from
@@ -207,6 +208,7 @@ public class ProgramGuidePagerFragment extends Fragment implements FragmentContr
         long offsetTime = hoursToShow * 60 * 60 * 1000;
 
         // Set the start and end times for each fragment
+        Log.d(TAG, "calcProgramGuideTimeslots: startTime " + startTime);
         for (int i = 0; i < fragmentCount; ++i) {
             startTimes.add(startTime);
             endTimes.add(startTime + offsetTime - 1);
