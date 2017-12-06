@@ -253,7 +253,7 @@ public class MenuUtils {
         activity.startService(intent);
     }
 
-    public void handleMenuPlaySelection(long channelId, long dvrId) {
+    public void handleMenuPlaySelection(int channelId, int dvrId) {
         Activity activity = this.activity.get();
         if (activity == null) {
             return;
