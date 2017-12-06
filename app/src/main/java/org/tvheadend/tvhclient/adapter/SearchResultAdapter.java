@@ -155,7 +155,7 @@ public class SearchResultAdapter extends ArrayAdapter<Program2> implements Filte
             Utils.setDuration(holder.duration, rec.start, rec.stop);
             Utils.setDescription(null, holder.summary, rec.summary);
             Utils.setDescription(null, holder.description, rec.description);
-            // TODO Utils.setFailedReason(holder.failed_reason, rec);
+            Utils.setFailedReason(holder.failed_reason, rec);
 
             // Show only the recording icon
             if (holder.state != null) {
