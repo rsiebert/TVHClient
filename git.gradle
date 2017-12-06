@@ -1,6 +1,6 @@
 apply plugin: 'co.riiid.gradle'
 
-def String getLatestChangelog() {
+String getLatestChangelog() {
 
     def changes = ""
     def changelogFile = rootProject.file("app/src/main/res/raw/changelog.txt")
