@@ -287,7 +287,7 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     private void onChannelAdd(HTSMessage msg) {
-        dataStorage.addChannelToArray(HTSUtils.convertMessageToChannelModel(msg));
+        dataStorage.addChannelToArray(HTSUtils.convertMessageToChannelModel(new Channel2(), msg));
         final String icon = msg.getString("channelIcon");
         if (icon != null) {
             execService.execute(new Runnable() {
@@ -303,7 +303,8 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     private void onChannelUpdate(HTSMessage msg) {
-        dataStorage.updateChannelInArray(HTSUtils.convertMessageToChannelModel(msg));
+        Channel2 channel = dataStorage.getChannelFromArray(msg.getInt("channelId"));
+        dataStorage.updateChannelInArray(HTSUtils.convertMessageToChannelModel(channel, msg));
         final String icon = msg.getString("channelIcon");
         if (icon != null) {
             execService.execute(new Runnable() {

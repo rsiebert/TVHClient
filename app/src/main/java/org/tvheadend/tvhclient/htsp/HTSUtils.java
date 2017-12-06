@@ -34,9 +34,7 @@ public class HTSUtils {
         return tag;
     }
 
-    public static Channel2 convertMessageToChannelModel(HTSMessage msg) {
-        Channel2 channel = new Channel2();
-
+    public static Channel2 convertMessageToChannelModel(Channel2 channel, HTSMessage msg) {
         if (msg.containsKey("channelId")) {
             channel.channelId = msg.getInt("channelId");
         }
