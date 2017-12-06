@@ -20,7 +20,6 @@ import org.tvheadend.tvhclient.utils.Utils;
 
 import java.util.Calendar;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 
 public class TimerRecordingListAdapter extends ArrayAdapter<TimerRecording2> {
@@ -147,7 +146,7 @@ public class TimerRecordingListAdapter extends ArrayAdapter<TimerRecording2> {
             endTime.set(Calendar.HOUR_OF_DAY, trec.stop / 60);
             endTime.set(Calendar.MINUTE, trec.stop % 60);
 
-            Utils.setTime(holder.time, new Date(startTime.getTimeInMillis()), new Date(endTime.getTimeInMillis()));
+            Utils.setTime2(holder.time, startTime.getTimeInMillis() / 1000, endTime.getTimeInMillis() / 1000);
             if (holder.duration != null) {
                 holder.duration.setText(context.getString(R.string.minutes, (int) (trec.stop - trec.start)));
             }

@@ -11,7 +11,6 @@ import org.tvheadend.tvhclient.model.ProgramGuideTimeDialogItem;
 import org.tvheadend.tvhclient.utils.Utils;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -55,18 +54,14 @@ public class ProgramGuideTimeDialogAdapter extends RecyclerView.Adapter<ProgramG
     public void onBindViewHolder(ViewHolder holder, int position) {
         ProgramGuideTimeDialogItem item = list.get(position);
         if (item != null) {
-            // Get the date objects from the millisecond values
-            final Date startDate = new Date(item.start);
-            final Date endDate = new Date(item.end);
-
             // Convert the dates into a nice string representation
             final SimpleDateFormat sdf1 = new SimpleDateFormat("HH:mm", Locale.US);
-            String time = sdf1.format(startDate) + " - " + sdf1.format(endDate);
+            String time = sdf1.format(item.start * 1000) + " - " + sdf1.format(item.end * 1000);
             holder.time.setText(time);
 
             final SimpleDateFormat sdf2 = new SimpleDateFormat("dd.MM.yyyy", Locale.US);
-            Utils.setDate(holder.date1, startDate);
-            holder.date2.setText(sdf2.format(startDate));
+            Utils.setDate2(holder.date1, item.start);
+            holder.date2.setText(sdf2.format(item.start * 1000));
 
             if (holder.date1.getText().equals(holder.date2.getText())) {
                 holder.date2.setVisibility(View.GONE);

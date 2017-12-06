@@ -25,7 +25,6 @@ import org.tvheadend.tvhclient.utils.MenuUtils;
 import org.tvheadend.tvhclient.utils.Utils;
 
 import java.util.Calendar;
-import java.util.Date;
 
 public class TimerRecordingDetailsFragment extends DialogFragment {
 
@@ -183,7 +182,7 @@ public class TimerRecordingDetailsFragment extends DialogFragment {
         endTime.set(Calendar.HOUR_OF_DAY, trec.stop / 60);
         endTime.set(Calendar.MINUTE, trec.stop % 60);
 
-        Utils.setTime(time, new Date(startTime.getTimeInMillis()), new Date(endTime.getTimeInMillis()));
+        Utils.setTime2(time, startTime.getTimeInMillis() / 1000, endTime.getTimeInMillis() / 1000);
         duration.setText(getString(R.string.minutes, (int) (trec.stop - trec.start)));
     }
 
