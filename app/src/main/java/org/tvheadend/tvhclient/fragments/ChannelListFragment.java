@@ -45,7 +45,6 @@ import org.tvheadend.tvhclient.utils.Utils;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Map;
 
 public class ChannelListFragment extends Fragment implements HTSListener, FragmentControlInterface, MenuTimeSelectionCallback, MenuTagSelectionCallback {
 
@@ -378,12 +377,11 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
     private void populateList() {
         // Get the currently selected channel tag
         ChannelTag2 currentTag = Utils.getChannelTag(activity);
-
+        //Log.d(TAG, "populateList: tag " + currentTag != null ? String.valueOf(currentTag.tagId) : "none");
         // Add only those channels that contain the selected channel tag
         adapter.clear();
-        Map<Integer, Channel2> programMap = DataStorage.getInstance().getChannelsFromArray();
-        for (Channel2 channel : programMap.values()) {
-            if (currentTag == null || currentTag.members.contains(channel.channelId)) {
+        for (Channel2 channel : DataStorage.getInstance().getChannelsFromArray().values()) {
+            if (currentTag == null || channel.tags.contains(currentTag.tagId)) {
                 adapter.add(channel);
             }
         }
