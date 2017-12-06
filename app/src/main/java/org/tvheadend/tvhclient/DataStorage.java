@@ -18,9 +18,9 @@ import org.tvheadend.tvhclient.model.TimerRecording;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class DataStorage {
     private final static String TAG = TVHClientApplication.class.getSimpleName();
@@ -29,12 +29,12 @@ public class DataStorage {
     private final List<Profiles> dvrConfigs = Collections.synchronizedList(new ArrayList<Profiles>());
     private final List<Profiles> profiles = Collections.synchronizedList(new ArrayList<Profiles>());
 
-    private final Map<Integer, Program> programArray = new HashMap<>();
-    private final Map<Integer, Recording> recordingArray = new HashMap<>();
-    private final Map<Integer, Channel> channelArray = new HashMap<>();
-    private final Map<Integer, ChannelTag> tagArray = new HashMap<>();
-    private final Map<String, SeriesRecording> seriesRecordingArray = new HashMap<>();
-    private final Map<String, TimerRecording> timerRecordingArray = new HashMap<>();
+    private final Map<Integer, Program> programArray = new ConcurrentHashMap<>();
+    private final Map<Integer, Recording> recordingArray = new ConcurrentHashMap<>();
+    private final Map<Integer, Channel> channelArray = new ConcurrentHashMap<>();
+    private final Map<Integer, ChannelTag> tagArray = new ConcurrentHashMap<>();
+    private final Map<String, SeriesRecording> seriesRecordingArray = new ConcurrentHashMap<>();
+    private final Map<String, TimerRecording> timerRecordingArray = new ConcurrentHashMap<>();
 
     private final TVHClientApplication app;
     private SystemTime systemTime = new SystemTime();
