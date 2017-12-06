@@ -10,6 +10,7 @@ import android.graphics.BitmapFactory;
 import android.os.Binder;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DataStorage;
@@ -18,15 +19,14 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.interfaces.HTSConnectionListener;
 import org.tvheadend.tvhclient.interfaces.HTSResponseHandler;
-import org.tvheadend.tvhclient.model.Channel;
+import org.tvheadend.tvhclient.model.Channel2;
 import org.tvheadend.tvhclient.model.ChannelTag2;
 import org.tvheadend.tvhclient.model.DiscSpace;
 import org.tvheadend.tvhclient.model.DvrCutpoint;
 import org.tvheadend.tvhclient.model.HttpTicket;
 import org.tvheadend.tvhclient.model.Packet;
 import org.tvheadend.tvhclient.model.Profiles;
-import org.tvheadend.tvhclient.model.Program;
-import org.tvheadend.tvhclient.model.Recording;
+import org.tvheadend.tvhclient.model.Program2;
 import org.tvheadend.tvhclient.model.Recording2;
 import org.tvheadend.tvhclient.model.SeriesInfo;
 import org.tvheadend.tvhclient.model.SeriesRecording2;
@@ -49,11 +49,9 @@ import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 public class HTSService extends Service implements HTSConnectionListener {
 
@@ -127,8 +125,7 @@ public class HTSService extends Service implements HTSConnectionListener {
             getEvent(intent.getLongExtra("eventId", 0));
 
         } else if (action.equals("getEvents")) {
-            final Channel ch = dataStorage.getChannel(intent.getLongExtra("channelId", 0));
-            getEvents(ch, intent.getLongExtra("eventId", 0), intent.getIntExtra("count", 10));
+            getEvents(intent);
 
         } else if (action.equals("addDvrEntry")) {
             addDvrEntry(intent);
@@ -172,7 +169,7 @@ public class HTSService extends Service implements HTSConnectionListener {
             feedback(intent.getLongExtra("subscriptionId", 0), intent.getIntExtra("speed", 0));
 
         } else if (action.equals("getTicket")) {
-            Channel ch = dataStorage.getChannel(intent.getLongExtra("channelId", 0));
+            Channel2 ch = dataStorage.getChannelFromArray(intent.getIntExtra("channelId", 0));
             Recording2 rec = dataStorage.getRecordingFromArray(intent.getIntExtra("dvrId", 0));
             if (ch != null) {
                 getTicket(ch);
@@ -190,7 +187,7 @@ public class HTSService extends Service implements HTSConnectionListener {
             getProfiles();
             
         } else if (action.equals("getChannel")) {
-            Channel ch = dataStorage.getChannel(intent.getLongExtra("channelId", 0));
+            Channel2 ch = dataStorage.getChannelFromArray(intent.getIntExtra("channelId", 0));
             if (ch != null) {
                 getChannel(ch);
             }
@@ -291,102 +288,42 @@ public class HTSService extends Service implements HTSConnectionListener {
 
     private void onChannelAdd(HTSMessage msg) {
         dataStorage.addChannelToArray(HTSUtils.convertMessageToChannelModel(msg));
-
-        final Channel ch = new Channel();
-        ch.id = msg.getLong("channelId");
-        ch.name = msg.getString("channelName", null);
-        ch.number = msg.getInt("channelNumber", 0);
-
-        // The default values will be set in case a server with a htsp API
-        // version 12 or lower is used
-        ch.numberMinor = msg.getInt("channelNumberMinor", 0);
-
-        ch.icon = msg.getString("channelIcon", null);
-        ch.tags = msg.getIntList("tags", ch.tags);
-
-        if (ch.number == 0) {
-            ch.number = (int) (ch.id + 25000);
-        }
-
-        dataStorage.addChannel(ch);
-        if (ch.icon != null) {
-            getChannelIcon(ch);
-        }
-        long currEventId = msg.getLong("eventId", 0);
-        long nextEventId = msg.getLong("nextEventId", 0);
-
-        ch.isTransmitting = (currEventId != 0);
-
-        if (currEventId > 0) {
-            getEvents(ch, currEventId, Constants.PREF_PROGRAMS_TO_LOAD);
-        } else if (nextEventId > 0) {
-            getEvents(ch, nextEventId, Constants.PREF_PROGRAMS_TO_LOAD);
+        final String icon = msg.getString("channelIcon");
+        if (icon != null) {
+            execService.execute(new Runnable() {
+                public void run() {
+                    try {
+                        getIcon(icon);
+                    } catch (Throwable ex) {
+                        logger.log(TAG, "run: Could not load channel icon. " + ex.getLocalizedMessage());
+                    }
+                }
+            });
         }
     }
 
     private void onChannelUpdate(HTSMessage msg) {
         dataStorage.updateChannelInArray(HTSUtils.convertMessageToChannelModel(msg));
-
-        final Channel ch = dataStorage.getChannel(msg.getLong("channelId"));
-        if (ch == null) {
-            return;
-        }
-
-        ch.name = msg.getString("channelName", ch.name);
-        ch.number = msg.getInt("channelNumber", ch.number);
-
-        // The default values will be set in case a server with a htsp API
-        // version 12 or lower is used
-        ch.numberMinor = msg.getInt("channelNumberMinor", 0);
-
-        String icon = msg.getString("channelIcon", ch.icon);
-        ch.tags = msg.getIntList("tags", ch.tags);
-
-        if (icon == null) {
-            ch.icon = null;
-            ch.iconBitmap = null;
-        } else if (!icon.equals(ch.icon)) {
-            ch.icon = icon;
-            getChannelIcon(ch);
-        }
-        // Remove programs that have ended
-        long currEventId = msg.getLong("eventId", 0);
-        long nextEventId = msg.getLong("nextEventId", 0);
-
-        ch.isTransmitting = currEventId != 0;
-
-        Iterator<Program> it = ch.epg.iterator();
-        ArrayList<Program> tmp = new ArrayList<>();
-
-        while (it.hasNext() && currEventId > 0) {
-            Program p = it.next();
-            if (p.id != currEventId) {
-                tmp.add(p);
-            } else {
-                break;
-            }
-        }
-        ch.epg.removeAll(tmp);
-
-        for (Program p : tmp) {
-            dataStorage.removeProgram(p);
-        }
-
-        final long eventId = currEventId != 0 ? currEventId : nextEventId;
-        if (eventId > 0 && ch.epg.size() < 2) {
-            execService.schedule(new Runnable() {
+        final String icon = msg.getString("channelIcon");
+        if (icon != null) {
+            execService.execute(new Runnable() {
                 public void run() {
-                    getEvents(ch, eventId, 5);
+                    try {
+                        getIcon(icon);
+                    } catch (Throwable ex) {
+                        logger.log(TAG, "run: Could not load channel icon. " + ex.getLocalizedMessage());
+                    }
                 }
-            }, 30, TimeUnit.SECONDS);
-        } else {
-            dataStorage.updateChannel(ch);
+            });
         }
     }
 
     private void onChannelDelete(HTSMessage msg) {
         dataStorage.removeChannelFromArray(msg.getInt("channelId"));
-        dataStorage.removeChannel(msg.getLong("channelId"));
+        final String icon = msg.getString("channelIcon");
+        if (icon != null) {
+            deleteIconFileFromCache(icon);
+        }
     }
 
     private void onDvrEntryAdd(HTSMessage msg) {
@@ -747,21 +684,13 @@ public class HTSService extends Service implements HTSConnectionListener {
         return BitmapFactory.decodeFile(f.toString());
     }
 
-    private void getChannelIcon(final Channel ch) {
-        execService.execute(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    ch.iconBitmap = getIcon(ch.icon);
-                    dataStorage.updateChannel(ch);
-                } catch (Throwable ex) {
-                    logger.log(TAG, "run: Could not load channel icon. " + ex.getLocalizedMessage());
-                }
-            }
-        });
-    }
+    private void getEvents(final Intent intent) {
+        Log.d(TAG, "getEvents() called with: intent = [" + intent + "]");
 
-    private void getEvents(final Channel ch, final long eventId, int cnt) {
+        Channel2 ch = dataStorage.getChannelFromArray(intent.getIntExtra("channelId", 0));
+        int eventId = intent.getIntExtra("eventId", 0);
+        int count = intent.getIntExtra("count", 10);
+
         if (ch == null) {
             return;
         }
@@ -769,43 +698,18 @@ public class HTSService extends Service implements HTSConnectionListener {
         HTSMessage request = new HTSMessage();
         request.setMethod("getEvents");
         request.putField("eventId", eventId);
-        request.putField("numFollowing", cnt);
+        request.putField("numFollowing", count);
         connection.sendMessage(request, new HTSResponseHandler() {
             public void handleResponse(HTSMessage response) {
                 if (!response.containsKey("events")) {
                     return;
                 }
-
                 for (Object obj : response.getList("events")) {
                     HTSMessage sub = (HTSMessage) obj;
-                    Program p = getProgramFromEventMessage(sub);
-                    p.channel = ch;
-
-                    if (ch.epg.add(p)) {
-                        dataStorage.addProgram(p);
-                    }
+                    dataStorage.addProgramToArray(HTSUtils.convertMessageToProgramModel(new Program2(), sub));
                 }
-                dataStorage.updateChannel(ch);
             }
         });
-    }
-
-    private Program getProgramFromEventMessage(HTSMessage sub) {
-        Program p = new Program();
-        p.id = sub.getLong("eventId", 0);
-        p.nextId = sub.getLong("nextEventId", 0);
-        p.description = sub.getString("description");
-        p.summary = sub.getString("summary");
-        p.subtitle = sub.getString("subtitle");
-        // TODO p.recording = dataStorage.getRecording(sub.getLong("dvrId", 0));
-        p.contentType = sub.getInt("contentType", -1);
-        p.title = sub.getString("title");
-        p.start = sub.getDate("start");
-        p.stop = sub.getDate("stop");
-        p.seriesInfo = buildSeriesInfo(sub);
-        p.starRating = sub.getInt("starRating", -1);
-        p.image = sub.getString("image");
-        return p;
     }
 
     private void getEvent(long eventId) {
@@ -815,14 +719,7 @@ public class HTSService extends Service implements HTSConnectionListener {
 
         connection.sendMessage(request, new HTSResponseHandler() {
             public void handleResponse(HTSMessage response) {
-                Channel ch = dataStorage.getChannel(response.getLong("channelId"));
-                Program p = getProgramFromEventMessage(response);
-                p.channel = ch;
-
-                if (ch.epg.add(p)) {
-                    dataStorage.addProgram(p);
-                    dataStorage.updateChannel(ch);
-                }
+                dataStorage.addProgramToArray(HTSUtils.convertMessageToProgramModel(new Program2(), response));
             }
         });
     }
@@ -842,7 +739,7 @@ public class HTSService extends Service implements HTSConnectionListener {
 	
     private void epgQuery(final Intent intent) {
 
-        final Channel ch = dataStorage.getChannel(intent.getLongExtra("channelId", 0));
+        final Channel2 ch = dataStorage.getChannelFromArray(intent.getIntExtra("channelId", 0));
         final String query = intent.getStringExtra("query");
         final long tagId = intent.getLongExtra("tagId", 0);
 
@@ -855,8 +752,8 @@ public class HTSService extends Service implements HTSConnectionListener {
         request.putField("minduration", 0);
         request.putField("maxduration", Integer.MAX_VALUE);
 
-        if (ch != null && ch.id > 0) {
-            request.putField("channelId", ch.id);
+        if (ch != null && ch.channelId > 0) {
+            request.putField("channelId", ch.channelId);
         }
         if (tagId > 0) {
             request.putField("tagId", tagId);
@@ -1083,21 +980,11 @@ public class HTSService extends Service implements HTSConnectionListener {
 
         // Get the channel from the id to update the program list of the channel
         // when the recording was added.
-        final Channel ch = dataStorage.getChannel(channelId);
+        //final Channel ch = dataStorage.getChannel(channelId);
 
         connection.sendMessage(request, new HTSResponseHandler() {
             public void handleResponse(HTSMessage response) {
                 boolean success = response.getInt("success", 0) == 1;
-                if (success && ch != null) {
-                    for (Program p : ch.epg) {
-                        if (p.id == eventId) {
-                            // TODO p.recording = dataStorage.getRecording(response.getLong("id", 0));
-                            dataStorage.updateProgram(p);
-                            break;
-                        }
-                    }
-                }
-
                 if (!success) {
                     dataStorage.showMessage(getString(R.string.error_adding_recording,
                             response.getString("error", "")));
@@ -1288,10 +1175,10 @@ public class HTSService extends Service implements HTSConnectionListener {
         });
     }
 
-    private void getTicket(Channel ch) {
+    private void getTicket(Channel2 ch) {
         HTSMessage request = new HTSMessage();
         request.setMethod("getTicket");
-        request.putField("channelId", ch.id);
+        request.putField("channelId", ch.channelId);
         connection.sendMessage(request, new HTSResponseHandler() {
             public void handleResponse(HTSMessage response) {
                 String path = response.getString("path", null);
@@ -1582,7 +1469,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         });
     }
 
-    private void getDvrCutpoints(final Recording rec) {
+    private void getDvrCutpoints(final Recording2 rec) {
 
         HTSMessage request = new HTSMessage();
         request.setMethod("getDvrCutpoints");
@@ -1593,7 +1480,7 @@ public class HTSService extends Service implements HTSConnectionListener {
                     return;
                 }
                 // Clear all saved cut points before adding new ones.
-                rec.dvrCutPoints.clear();
+                //rec.dvrCutPoints.clear();
 
                 for (Object obj : response.getList("cutpoints")) {
                     DvrCutpoint dc = new DvrCutpoint();
@@ -1601,7 +1488,7 @@ public class HTSService extends Service implements HTSConnectionListener {
                     dc.start = sub.getInt("start");
                     dc.end = sub.getInt("end");
                     dc.type = sub.getInt("type");
-                    rec.dvrCutPoints.add(dc);
+                    //rec.dvrCutPoints.add(dc);
                 }
             }
         });
@@ -1611,10 +1498,10 @@ public class HTSService extends Service implements HTSConnectionListener {
         // NOP
     }
 
-    private void getChannel(final Channel ch) {
+    private void getChannel(final Channel2 ch) {
         HTSMessage request = new HTSMessage();
         request.setMethod("getChannel");
-        request.putField("channelId", ch.id);
+        request.putField("channelId", ch.channelId);
         connection.sendMessage(request, new HTSResponseHandler() {
             public void handleResponse(HTSMessage response) {
                 // NOP
@@ -1646,11 +1533,12 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     private void onEventAdd(HTSMessage msg) {
-        dataStorage.addProgramToArray(HTSUtils.convertMessageToProgramModel(msg));
+        dataStorage.addProgramToArray(HTSUtils.convertMessageToProgramModel(new Program2(), msg));
     }
 
     private void onEventUpdate(HTSMessage msg) {
-        dataStorage.updateProgramInArray(HTSUtils.convertMessageToProgramModel(msg));
+        Program2 program = dataStorage.getProgramFromArray(msg.getInt("eventId"));
+        dataStorage.updateProgramInArray(HTSUtils.convertMessageToProgramModel(program, msg));
     }
 
     private void onEventDelete(HTSMessage msg) {

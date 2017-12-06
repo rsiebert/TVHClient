@@ -5,7 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -23,17 +25,16 @@ import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.htsp.HTSService;
-import org.tvheadend.tvhclient.model.Channel;
+import org.tvheadend.tvhclient.model.Channel2;
 import org.tvheadend.tvhclient.model.ChannelTag2;
 import org.tvheadend.tvhclient.model.Connection;
-import org.tvheadend.tvhclient.model.Program;
+import org.tvheadend.tvhclient.model.Program2;
 import org.tvheadend.tvhclient.model.Recording2;
 import org.tvheadend.tvhclient.model.SeriesInfo;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Utils {
 
@@ -147,7 +148,7 @@ public class Utils {
      * @param menu    Menu with all menu items
      * @param program Program
      */
-    public static void setProgramMenu(final TVHClientApplication app, final Menu menu, final Program program) {
+    public static void setProgramMenu(final TVHClientApplication app, final Menu menu, final Program2 program) {
         MenuItem recordOnceMenuItem = menu.findItem(R.id.menu_record_once);
         MenuItem recordOnceCustomProfileMenuItem = menu.findItem(R.id.menu_record_once_custom_profile);
         MenuItem recordSeriesMenuItem = menu.findItem(R.id.menu_record_series);
@@ -177,26 +178,24 @@ public class Utils {
         // Show the play menu item when the current 
         // time is between the program start and end time
         long currentTime = new Date().getTime();
-        if (program.start != null && program.stop != null && 
-                currentTime > program.start.getTime()
-                && currentTime < program.stop.getTime()) {
+        if (currentTime > (program.start * 1000) && currentTime < (program.stop * 1000)) {
             playMenuItem.setVisible(true);
         }
-
-        if (program.recording == null) {
+        Recording2 rec = DataStorage.getInstance().getRecordingFromArray(program.dvrId);
+        if (rec == null || (rec != null && !rec.isRecording() && !rec.isScheduled())) {
             // Show the record menu
             recordOnceMenuItem.setVisible(true);
             recordOnceCustomProfileMenuItem.setVisible(TVHClientApplication.getInstance().isUnlocked());
             if (DataStorage.getInstance().getProtocolVersion() >= Constants.MIN_API_VERSION_SERIES_RECORDINGS) {
                 recordSeriesMenuItem.setVisible(true);
             }
-        } else if (program.isRecording()) {
+        } else if (rec.isRecording()) {
             // Show the play and stop menu
             playMenuItem.setVisible(true);
             recordRemoveMenuItem.setTitle(R.string.stop);
             recordRemoveMenuItem.setVisible(true);
 
-        } else if (program.isScheduled()) {
+        } else if (rec.isScheduled()) {
             recordRemoveMenuItem.setTitle(R.string.cancel);
             recordRemoveMenuItem.setVisible(true);
 
@@ -215,20 +214,20 @@ public class Utils {
      * @param state    Widget that shall show the program state
      * @param p        Program
      */
-    public static void setState(Activity activity, ImageView state, final Program p) {
+    public static void setState(Activity activity, ImageView state, final Program2 p) {
         if (state == null) {
             return;
         }
 
         // If no recording was given hide the state icon
-        if (p == null || p.recording == null) {
+        if (p == null || p.dvrId == 0) {
             state.setImageDrawable(null);
             state.setVisibility(ImageView.GONE);
         } else {
             // Show the state icon and set the correct image
             state.setVisibility(ImageView.VISIBLE);
 
-            Recording2 rec = DataStorage.getInstance().getRecordingFromArray((int)p.recording.id);
+            Recording2 rec = DataStorage.getInstance().getRecordingFromArray(p.dvrId);
 
             if (rec == null || rec.isFailed()) {
                 state.setImageResource(R.drawable.ic_error_small);
@@ -269,7 +268,6 @@ public class Utils {
     }
 
     public static void setDuration2(TextView duration, final long start, final long stop) {
-        Log.d(TAG, "setDuration2() called with: duration = [" + duration + "], start = [" + start + "], stop = [" + stop + "]");
         if (duration == null) {
             return;
         }
@@ -325,7 +323,6 @@ public class Utils {
     }
 
     public static void setTime2(TextView time, final long sta, final long sto) {
-        Log.d(TAG, "setTime2() called with: time = [" + time + "], sta = [" + sta + "], sto = [" + sto + "]");
         if (time == null) {
             return;
         }
@@ -458,7 +455,6 @@ public class Utils {
     }
 
     public static void setDate2(TextView date, final long st) {
-        Log.d(TAG, "setDate2() called with: date = [" + date + "], st = [" + st + "]");
         if (date == null) {
             return;
         }
@@ -595,17 +591,48 @@ public class Utils {
      * Shows the given series text for the given view. If the text is empty
      * then the view will be hidden.
      *
+     * @param context
      * @param seriesInfoLabel Widget that show the series information header
-     * @param seriesInfo      Widget that shall show the series information
-     * @param si              Series data
+     * @param seriesInfo Widget that shall show the series information
+     * @param p
      */
-    public static void setSeriesInfo(TextView seriesInfoLabel, TextView seriesInfo, final SeriesInfo si) {
+    public static void setSeriesInfo(Context context, TextView seriesInfoLabel, TextView seriesInfo, final Program2 p) {
+
+        final String season = context.getResources().getString(R.string.season);
+        final String episode = context.getResources().getString(R.string.episode);
+        final String part = context.getResources().getString(R.string.part);
+
+        String seasonInfo = "";
+        if (!TextUtils.isEmpty(p.episodeOnscreen)) {
+            seasonInfo = p.episodeOnscreen;
+        } else {
+            if (p.seasonNumber > 0) {
+                seasonInfo += String.format(Locale.getDefault(), "%s %02d",
+                        season.toLowerCase(Locale.getDefault()), p.seasonNumber);
+            }
+            if (p.episodeNumber > 0) {
+                if (seasonInfo.length() > 0)
+                    seasonInfo += ", ";
+                seasonInfo += String.format(Locale.getDefault(), "%s %02d",
+                        episode.toLowerCase(Locale.getDefault()), p.episodeNumber);
+            }
+            if (p.partNumber > 0) {
+                if (seasonInfo.length() > 0)
+                    seasonInfo += ", ";
+                seasonInfo += String.format(Locale.getDefault(), "%s %d",
+                        part.toLowerCase(Locale.getDefault()), p.partNumber);
+            }
+            if (seasonInfo.length() > 0) {
+                seasonInfo = seasonInfo.substring(0, 1).toUpperCase(
+                        Locale.getDefault()) + seasonInfo.substring(1);
+            }
+        }
+
         if (seriesInfo != null) {
-            final String s = Utils.buildSeriesInfoString(seriesInfo.getContext(), si);
-            seriesInfo.setText(s);
-            seriesInfo.setVisibility((s.length() > 0) ? View.VISIBLE : View.GONE);
+            seriesInfo.setText(seasonInfo);
+            seriesInfo.setVisibility(!TextUtils.isEmpty(seasonInfo) ? View.VISIBLE : View.GONE);
             if (seriesInfoLabel != null) {
-                seriesInfoLabel.setVisibility((s.length() > 0) ? View.VISIBLE : View.GONE);
+                seriesInfoLabel.setVisibility(!TextUtils.isEmpty(seasonInfo) ? View.VISIBLE : View.GONE);
             }
         }
     }
@@ -707,26 +734,26 @@ public class Utils {
      * @param iconText Widget that shows the channel name if no icon is available
      * @param ch       Channel
      */
-    public static void setChannelIcon(ImageView icon, TextView iconText, final Channel ch) {
+    public static void setChannelIcon(Context context, ImageView icon, TextView iconText, final Channel2 ch) {
         if (icon != null) {
             // Get the setting if the channel icon shall be shown or not
             final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(icon.getContext());
-            final boolean showIcons = prefs.getBoolean("showIconPref", true);
-
+            final boolean showChannelIcons = prefs.getBoolean("showIconPref", true);
             if (ch != null) {
-                // Show the channels icon if available. If not hide the view. 
-                icon.setImageBitmap((ch.iconBitmap != null) ? ch.iconBitmap : null);
-                icon.setVisibility((showIcons && ch.iconBitmap != null) ? ImageView.VISIBLE : ImageView.GONE);
+                // Show the channels icon if available. If not hide the view.
+                Bitmap iconBitmap = MiscUtils.getCachedIcon(context, ch.channelIcon);
+                icon.setImageBitmap(iconBitmap);
+                icon.setVisibility((showChannelIcons && iconBitmap != null) ? ImageView.VISIBLE : ImageView.GONE);
 
                 // If the channel icon is not available show the channel name as a placeholder.
                 if (iconText != null) {
-                    iconText.setText(ch.name);
-                    iconText.setVisibility((showIcons && ch.iconBitmap == null) ? ImageView.VISIBLE : ImageView.GONE);
+                    iconText.setText(ch.channelName);
+                    iconText.setVisibility((showChannelIcons && iconBitmap == null) ? ImageView.VISIBLE : ImageView.GONE);
                 }
             } else {
                 // Show a blank icon if no channel icon exists and they shall be shown. 
                 icon.setImageBitmap(null);
-                icon.setVisibility(showIcons ? ImageView.VISIBLE : ImageView.GONE);
+                icon.setVisibility(showChannelIcons ? ImageView.VISIBLE : ImageView.GONE);
             }
         }
     }
@@ -804,6 +831,25 @@ public class Utils {
         progress.setVisibility(View.VISIBLE);
     }
 
+    public static void setProgress2(ProgressBar progress, final long sta, final long sto) {
+        if (progress == null) {
+            return;
+        }
+        long start = sta * 1000;
+        long stop = sto * 1000;
+        // Get the start and end times to calculate the progress.
+        double durationTime = (stop - start);
+        double elapsedTime = new Date().getTime() - start;
+
+        // Show the progress as a percentage
+        double percent = 0;
+        if (durationTime > 0) {
+            percent = elapsedTime / durationTime;
+        }
+        progress.setProgress((int) Math.floor(percent * 100));
+        progress.setVisibility(View.VISIBLE);
+    }
+
     /**
      * Shows the progress not as a progress bar but as a text with the
      * percentage symbol.
@@ -838,7 +884,6 @@ public class Utils {
     }
 
     public static void setProgressText2(TextView progressText, final long sta, final long sto) {
-        Log.d(TAG, "setProgressText2() called with: progressText = [" + progressText + "], sta = [" + sta + "], sto = [" + sto + "]");
         if (progressText == null) {
             return;
         }
@@ -873,44 +918,33 @@ public class Utils {
      * @param context Activity context
      * @param channel Channel
      */
-    public static void loadMorePrograms(final Context context, final Channel channel) {
+    public static void loadMorePrograms(final Context context, final Channel2 channel) {
+        Log.d(TAG, "loadMorePrograms() called with: context = [" + context + "], channel = [" + channel + "]");
+
         if (channel == null) {
             return;
         }
 
-        Program program = null;
-        long nextId = 0;
-        CopyOnWriteArrayList<Program> epg = new CopyOnWriteArrayList<>(channel.epg);
-        for (Program p : epg) {
-            program = p;
-            // Check if there is a next program available or if the current
-            // program has an id for the next one
-            if (program.id != nextId && nextId != 0) {
+        int nextId = channel.eventId;
+        Log.d(TAG, "loadMorePrograms: nextid " + nextId);
+
+        while (nextId != 0) {
+            Log.d(TAG, "loadMorePrograms: nextid " + nextId);
+            Program2 p = DataStorage.getInstance().getProgramFromArray(nextId);
+            if (p != null && p.nextEventId > 0) {
+                nextId = p.nextEventId;
+            } else {
                 break;
             }
-            // Get the next id of the program so we can check in
-            // the next iteration if this program is the last one.
-            nextId = program.nextId;
         }
 
-        if (program == null) {
-            return;
-        }
-        // In case the while loop was not entered get the next id 
-        // or if there is none the current id if the program.
-        if (nextId == 0) {
-            nextId = program.nextId;
-        }
-        if (nextId == 0) {
-            nextId = program.id;
-        }
-
+        Log.d(TAG, "loadMorePrograms: loading from eventId " + nextId);
         // Set the required information and start the service command.
         Intent intent = new Intent(context, HTSService.class);
         intent.setAction("getEvents");
         intent.putExtra("eventId", nextId);
-        intent.putExtra("channelId", channel.id);
-        intent.putExtra(Constants.BUNDLE_COUNT, Constants.PREF_PROGRAMS_TO_LOAD);
+        intent.putExtra("channelId", channel.channelId);
+        intent.putExtra("count", 15);
         context.startService(intent);
     }
 

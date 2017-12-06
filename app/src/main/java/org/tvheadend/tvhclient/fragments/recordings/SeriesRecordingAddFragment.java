@@ -39,7 +39,6 @@ import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
-import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Channel2;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.Profile;
@@ -172,14 +171,14 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
 
         // Initialize all the widgets from the layout
         View v = inflater.inflate(R.layout.series_recording_add_layout, container, false);
-        channelName = (TextView) v.findViewById(R.id.channel);
-        isEnabled = (CheckBox) v.findViewById(R.id.is_enabled);
-        directoryLabel = (TextView) v.findViewById(R.id.directory_label);
-        directory = (EditText) v.findViewById(R.id.directory);
-        title = (EditText) v.findViewById(R.id.title);
-        name = (EditText) v.findViewById(R.id.name);
-        minDuration = (EditText) v.findViewById(R.id.minimum_duration);
-        maxDuration = (EditText) v.findViewById(R.id.maximum_duration);
+        channelName = v.findViewById(R.id.channel);
+        isEnabled = v.findViewById(R.id.is_enabled);
+        directoryLabel = v.findViewById(R.id.directory_label);
+        directory = v.findViewById(R.id.directory);
+        title = v.findViewById(R.id.title);
+        name = v.findViewById(R.id.name);
+        minDuration = v.findViewById(R.id.minimum_duration);
+        maxDuration = v.findViewById(R.id.maximum_duration);
 
         // For the shown days in each toggle button the array with the short
         // names is used. If the screen width is not large enough then the short
@@ -190,7 +189,7 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
         wm.getDefaultDisplay().getMetrics(displaymetrics);
         final int displayWidth = displaymetrics.widthPixels;
 
-        LinearLayout daysOfWeekLayout = (LinearLayout) v.findViewById(R.id.days_of_week_layout);
+        LinearLayout daysOfWeekLayout = v.findViewById(R.id.days_of_week_layout);
         String[] shortDays = getResources().getStringArray(R.array.day_short_names);
         for (int i = 0; i < 7; i++) {
             final ToggleButton dayButton = (ToggleButton) inflater.inflate(R.layout.day_toggle_button, daysOfWeekLayout, false);
@@ -214,17 +213,17 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
             daysOfWeekButtons[i] = dayButton;
         }
 
-        startTime = (TextView) v.findViewById(R.id.start_after_time);
-        timeEnabled = (CheckBox) v.findViewById(R.id.time_enabled);
-        startWindowTime = (TextView) v.findViewById(R.id.start_before_time);
-        startExtraTime = (EditText) v.findViewById(R.id.start_extra);
-        stopExtraTime = (EditText) v.findViewById(R.id.stop_extra);
-        dupDetect = (TextView) v.findViewById(R.id.duplicate_detection);
-        dupDetectLabel = (TextView) v.findViewById(R.id.duplicate_detection_label);
-        priority = (TextView) v.findViewById(R.id.priority);
-        dvrConfigName = (TextView) v.findViewById(R.id.dvr_config);
-        dvrConfigNameLabel = (TextView) v.findViewById(R.id.dvr_config_label);
-        toolbar = (Toolbar) v.findViewById(R.id.toolbar);
+        startTime = v.findViewById(R.id.start_after_time);
+        timeEnabled = v.findViewById(R.id.time_enabled);
+        startWindowTime = v.findViewById(R.id.start_before_time);
+        startExtraTime = v.findViewById(R.id.start_extra);
+        stopExtraTime = v.findViewById(R.id.stop_extra);
+        dupDetect = v.findViewById(R.id.duplicate_detection);
+        dupDetectLabel = v.findViewById(R.id.duplicate_detection_label);
+        priority = v.findViewById(R.id.priority);
+        dvrConfigName = v.findViewById(R.id.dvr_config);
+        dvrConfigNameLabel = v.findViewById(R.id.dvr_config_label);
+        toolbar = v.findViewById(R.id.toolbar);
         return v;
     }
 
@@ -244,12 +243,14 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
         // Create the list of channels that the user can select. If recording on
         // all channels are available the add the 'all channels' string to
         // the beginning of the list before adding the available channels.
-        channelList = new String[dataStorage.getChannels().size() + offset];
+        channelList = new String[dataStorage.getChannelsFromArray().size() + offset];
         if (allowRecordingOnAllChannels) {
             channelList[0] = activity.getString(R.string.all_channels);
         }
-        for (int i = 0; i < dataStorage.getChannels().size(); i++) {
-            channelList[i + offset] = dataStorage.getChannels().get(i).name;
+        int j = 0;
+        for (Channel2 channel : dataStorage.getChannelsFromArray().values()) {
+            channelList[j + offset] = channel.channelName;
+            j++;
         }
 
         // Sort the channels in the list by name. Keep the all channels string
@@ -827,9 +828,9 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
         // server. So go through all available channels and get the id for the
         // selected channel name.
         if (!allowRecordingOnAllChannels || channelSelectionValue > 1) {
-            for (Channel c : dataStorage.getChannels()) {
-                if (c.name.equals(channelName.getText().toString())) {
-                    intent.putExtra("channelId", c.id);
+            for (Channel2 c : dataStorage.getChannelsFromArray().values()) {
+                if (c.channelName.equals(channelName.getText().toString())) {
+                    intent.putExtra("channelId", c.channelId);
                     break;
                 }
             }

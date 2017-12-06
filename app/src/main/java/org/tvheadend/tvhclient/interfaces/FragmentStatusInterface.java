@@ -1,7 +1,7 @@
 package org.tvheadend.tvhclient.interfaces;
 
-import org.tvheadend.tvhclient.model.Channel;
-import org.tvheadend.tvhclient.model.Program;
+import org.tvheadend.tvhclient.model.Channel2;
+import org.tvheadend.tvhclient.model.Program2;
 import org.tvheadend.tvhclient.model.Recording2;
 import org.tvheadend.tvhclient.model.SeriesRecording2;
 import org.tvheadend.tvhclient.model.TimerRecording2;
@@ -17,7 +17,7 @@ public interface FragmentStatusInterface {
      * @param channel Channel
      * @param tag Tag of the calling class
      */
-    void moreDataRequired(final Channel channel, final String tag);
+    void moreDataRequired(final Channel2 channel, final String tag);
     
     /**
      * Informs the activity that user has selected a certain channel from the
@@ -28,7 +28,7 @@ public interface FragmentStatusInterface {
      * @param channel Selected channel
      * @param tag Tag of the calling class
      */
-    void onListItemSelected(final int position, final Channel channel, final String tag);
+    void onListItemSelected(final int position, final Channel2 channel, final String tag);
     
     /**
      * Informs the activity that user has selected a certain recording from the
@@ -70,7 +70,7 @@ public interface FragmentStatusInterface {
      * @param program Selected program
      * @param tag Tag of the calling class
      */
-    void onListItemSelected(final int position, final Program program, final String tag);
+    void onListItemSelected(final int position, final Program2 program, final String tag);
 
     /**
      * Informs the activity that the list is showing all available data from the

@@ -140,12 +140,12 @@ public class TimerRecordingListAdapter extends ArrayAdapter<TimerRecording2> {
 
             // TODO multiple uses, consolidate
             Calendar startTime = Calendar.getInstance();
-            startTime.set(Calendar.HOUR_OF_DAY, (int) (trec.start / 60));
-            startTime.set(Calendar.MINUTE, (int) (trec.start % 60));
+            startTime.set(Calendar.HOUR_OF_DAY, trec.start / 60);
+            startTime.set(Calendar.MINUTE, trec.start % 60);
 
             Calendar endTime = Calendar.getInstance();
-            endTime.set(Calendar.HOUR_OF_DAY, (int) (trec.stop / 60));
-            endTime.set(Calendar.MINUTE, (int) (trec.stop % 60));
+            endTime.set(Calendar.HOUR_OF_DAY, trec.stop / 60);
+            endTime.set(Calendar.MINUTE, trec.stop % 60);
 
             Utils.setTime(holder.time, new Date(startTime.getTimeInMillis()), new Date(endTime.getTimeInMillis()));
             if (holder.duration != null) {

@@ -13,7 +13,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.model.Program;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -157,9 +156,9 @@ public class MiscUtils {
      *
      * @param context Activity context
      * @param view    The view that shows the genre color
-     * @param program Program
+     * @param contentType contentType
      */
-    public static void setGenreColor(final Context context, View view, final Program program, final String tag) {
+    public static void setGenreColor(final Context context, View view, final int contentType, final String tag) {
         if (view == null) {
             return;
         }
@@ -189,8 +188,8 @@ public class MiscUtils {
         // also show the transparent color. This is used in the EPG where the
         // background is used as the genre indicator.
         int color = context.getResources().getColor(android.R.color.transparent);
-        if (program != null && showGenre) {
-            color = getGenreColor(context, program.contentType, offset);
+        if (contentType > 0 && showGenre) {
+            color = getGenreColor(context, contentType, offset);
         }
 
         if (view instanceof TextView) {

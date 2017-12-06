@@ -28,6 +28,9 @@ public class HTSUtils {
         if (msg.containsKey("tagTitledIcon")) {
             tag.tagTitledIcon = msg.getInt("tagTitledIcon");
         }
+        if (msg.containsKey("members")) {
+            tag.members = msg.getIntList("members", tag.members);
+        }
         return tag;
     }
 
@@ -54,6 +57,9 @@ public class HTSUtils {
         }
         if (msg.containsKey("nextEventId")) {
             channel.nextEventId = msg.getInt("nextEventId");
+        }
+        if (msg.containsKey("tags")) {
+            channel.tags = msg.getIntList("tags", channel.tags);
         }
         return channel;
     }
@@ -140,8 +146,8 @@ public class HTSUtils {
         return recording;
     }
 
-    public static Program2 convertMessageToProgramModel(HTSMessage msg) {
-        Program2 program = new Program2();
+    public static Program2 convertMessageToProgramModel(Program2 program, HTSMessage msg) {
+
         if (msg.containsKey("eventId")) {
             program.eventId = msg.getInt("eventId");
         }

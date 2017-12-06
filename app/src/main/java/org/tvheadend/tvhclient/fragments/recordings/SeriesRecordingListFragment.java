@@ -58,7 +58,7 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
         }
 
         View v = inflater.inflate(R.layout.list_layout, container, false);
-        listView = (ListView) v.findViewById(R.id.item_list);
+        listView = v.findViewById(R.id.item_list);
         return v;
     }
 

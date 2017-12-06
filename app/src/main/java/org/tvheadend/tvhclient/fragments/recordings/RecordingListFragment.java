@@ -58,7 +58,7 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
         }
 
         View v = inflater.inflate(R.layout.list_layout, container, false);
-        listView = (ListView) v.findViewById(R.id.item_list);
+        listView = v.findViewById(R.id.item_list);
         return v;
     }
 
@@ -140,7 +140,7 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
             // Create the fragment and show it as a dialog.
             DialogFragment editFragment = RecordingAddFragment.newInstance();
             Bundle bundle = new Bundle();
-            bundle.putInt("dvrId", (int) adapter.getSelectedItem().id);
+            bundle.putInt("dvrId", adapter.getSelectedItem().id);
             editFragment.setArguments(bundle);
             editFragment.show(activity.getSupportFragmentManager(), "dialog");
             return true;
@@ -252,7 +252,7 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
             // Create the fragment to edit a recording but show it as a dialog.
             DialogFragment df = RecordingAddFragment.newInstance();
             Bundle bundle = new Bundle();
-            bundle.putInt("dvrId", (int) rec.id);
+            bundle.putInt("dvrId", rec.id);
             df.setArguments(bundle);
             df.show(activity.getSupportFragmentManager(), "dialog");
             return true;

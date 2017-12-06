@@ -23,7 +23,6 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
-import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Channel2;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.HttpTicket;
@@ -47,7 +46,7 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
     private TVHClientApplication app;
     private int action;
 
-    private Channel ch;
+    private Channel2 ch;
     private Recording2 rec;
     private String baseUrl;
     private Profile playbackProfile;
@@ -74,12 +73,12 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
         action = getIntent().getIntExtra(Constants.BUNDLE_ACTION, ACTION_PLAY);
 
         // Check that a valid channel or recording was specified
-        ch = dataStorage.getChannel(getIntent().getLongExtra("channelId", 0));
+        ch = dataStorage.getChannelFromArray(getIntent().getIntExtra("channelId", 0));
         rec = dataStorage.getRecordingFromArray(getIntent().getIntExtra("dvrId", 0));
 
         // Get the title from either the channel or recording
         if (ch != null) {
-            title = ch.name;
+            title = ch.channelName;
         } else if (rec != null) {
             title = rec.title;
         } else {
@@ -162,8 +161,8 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
             break;
 
         case ACTION_CAST:
-            if (ch != null && ch.number > 0) {
-                logger.log(TAG, "initAction: Starting to cast channel '" + ch.name + "'");
+            if (ch != null && ch.channelNumber > 0) {
+                logger.log(TAG, "initAction: Starting to cast channel '" + ch.channelName + "'");
                 startCasting();
             } else if (rec != null) {
                 logger.log(TAG, "initAction: Starting to cast recording '" + rec.title + "'");
@@ -333,8 +332,8 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
         int streamType = MediaInfo.STREAM_TYPE_NONE;
 
         if (ch != null) {
-            castUrl += "/stream/channelnumber/" + ch.number;
-            iconUrl += "/" + ch.icon;
+            castUrl += "/stream/channelnumber/" + ch.channelNumber;
+            iconUrl += "/" + ch.channelIcon;
             streamType = MediaInfo.STREAM_TYPE_LIVE;
         } else if (rec != null) {
             castUrl += "/dvrfile/" + rec.id;

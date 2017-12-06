@@ -53,17 +53,14 @@ import org.tvheadend.tvhclient.adapter.SearchResultAdapter;
 import org.tvheadend.tvhclient.fragments.ProgramDetailsFragment;
 import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
-import org.tvheadend.tvhclient.model.Channel;
-import org.tvheadend.tvhclient.model.Model;
-import org.tvheadend.tvhclient.model.Program;
-import org.tvheadend.tvhclient.model.Recording;
+import org.tvheadend.tvhclient.model.Channel2;
+import org.tvheadend.tvhclient.model.Program2;
+import org.tvheadend.tvhclient.model.Recording2;
 import org.tvheadend.tvhclient.utils.MenuUtils;
 import org.tvheadend.tvhclient.utils.MiscUtils;
-import org.tvheadend.tvhclient.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class SearchResultActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, HTSListener {
 
@@ -71,7 +68,7 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
 
     private ActionBar actionBar = null;
     private SearchResultAdapter adapter;
-    private Channel channel;
+    private Channel2 channel;
     //private Recording recording;
     private MenuItem searchMenuItem = null;
     private Runnable updateTask;
@@ -117,18 +114,19 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
             listView.setOnItemClickListener(new OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Program program = adapter.getItem(position);
+                    Program2 program = adapter.getItem(position);
 
                     // Show the program details dialog
                     //if (model instanceof Program) {
-                        //final Program program = (Program) model;
-                        Bundle args = new Bundle();
-                        args.putLong("eventId", program.id);
-                        args.putLong("channelId", program.channel.id);
-                        args.putBoolean("dual_pane", false);
-                        args.putBoolean(Constants.BUNDLE_SHOW_CONTROLS, true);
-                        DialogFragment newFragment = ProgramDetailsFragment.newInstance(args);
-                        newFragment.show(getSupportFragmentManager(), "dialog");
+                    //final Program program = (Program) model;
+                    Bundle args = new Bundle();
+                    args.putLong("eventId", program.eventId);
+                    Channel2 channel = dataStorage.getChannelFromArray(program.channelId);
+                    args.putLong("channelId", channel.eventId);
+                    args.putBoolean("dual_pane", false);
+                    args.putBoolean(Constants.BUNDLE_SHOW_CONTROLS, true);
+                    DialogFragment newFragment = ProgramDetailsFragment.newInstance(args);
+                    newFragment.show(getSupportFragmentManager(), "dialog");
                     //}
 
                     // Show the recording details dialog
@@ -147,7 +145,7 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
 
         // This is the list with the initial data from the program guide. It
         // will be passed to the search adapter. 
-        List<Program> list = new ArrayList<>();
+        List<Program2> list = new ArrayList<>();
 
         Intent intent = getIntent();
 
@@ -155,7 +153,7 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
         // a single channel or the completed recordings.
         Bundle bundle = intent.getBundleExtra(SearchManager.APP_DATA);
         if (bundle != null) {
-            channel = dataStorage.getChannel(bundle.getLong("channelId"));
+            channel = dataStorage.getChannelFromArray(bundle.getInt("channelId"));
             //recording = dataStorage.getRecording(bundle.getLong("dvrId"));
         } else {
             channel = null;
@@ -171,7 +169,7 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
                     list.add(rec);
                 }
             }
-        } else {*/
+        } else {
             if (channel == null) {
                 // Get all available programs from all channels.
                 for (Channel ch : dataStorage.getChannels()) {
@@ -196,7 +194,7 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
                 }
             }
         //}
-
+*/
         // Create the adapter with the given initial program guide data
         adapter = new SearchResultAdapter(this, list);
         if (listView != null) {
@@ -215,11 +213,11 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
                             R.plurals.searching_programs, adapter.getFullCount(),
                             adapter.getFullCount()));
                 } else {*/
-                    actionBar.setSubtitle(getResources().getQuantityString(
-                            R.plurals.searching_recordings, adapter.getFullCount(),
-                            adapter.getFullCount()));
+                actionBar.setSubtitle(getResources().getQuantityString(
+                        R.plurals.searching_recordings, adapter.getFullCount(),
+                        adapter.getFullCount()));
                 //}
-                handlerRunning  = false;
+                handlerRunning = false;
             }
         };
 
@@ -273,13 +271,13 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
         // available already and not only the ones that would be been loaded if
         // the query would have been passed to the server.
         //if (recording == null) {
-            intent = new Intent(this, HTSService.class);
-            intent.setAction("epgQuery");
-            intent.putExtra("query", query);
-            if (channel != null) {
-                intent.putExtra("channelId", channel.id);
-            }
-            startService(intent);
+        intent = new Intent(this, HTSService.class);
+        intent.setAction("epgQuery");
+        intent.putExtra("query", query);
+        if (channel != null) {
+            intent.putExtra("channelId", channel.channelId);
+        }
+        startService(intent);
         //}
 
         startDelayedAdapterUpdate();
@@ -325,16 +323,16 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-        case android.R.id.home:
-            onBackPressed();
-            return true;
+            case android.R.id.home:
+                onBackPressed();
+                return true;
 
-        case R.id.menu_genre_color_info:
-            menuUtils.handleMenuGenreColorSelection();
-            return true;
+            case R.id.menu_genre_color_info:
+                menuUtils.handleMenuGenreColorSelection();
+                return true;
 
-        default:
-            return super.onOptionsItemSelected(item);
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 
@@ -350,29 +348,24 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
             return super.onContextItemSelected(item);
         }
 
-        final Model model = adapter.getItem(info.position);
-        if (model == null) {
+        final Program2 program = adapter.getItem(info.position);
+        if (program == null) {
             return super.onContextItemSelected(item);
         }
 
+        Recording2 rec = dataStorage.getRecordingFromArray(program.dvrId);
+        Channel2 channel = dataStorage.getChannelFromArray(program.channelId);
+
         switch (item.getItemId()) {
-        case R.id.menu_search_epg:
-            if (model instanceof Program) {
-                final Program program = (Program) model;
+            case R.id.menu_search_epg:
                 menuUtils.handleMenuSearchEpgSelection(program.title);
-            }
-            return true;
+                return true;
 
-        case R.id.menu_search_imdb:
-            if (model instanceof Program) {
-                final Program program = (Program) model;
+            case R.id.menu_search_imdb:
                 menuUtils.handleMenuSearchWebSelection(program.title);
-            }
-            return true;
+                return true;
 
-        case R.id.menu_record_remove:
-            if (model instanceof Program) {
-                Recording rec = ((Program) model).recording;
+            case R.id.menu_record_remove:
                 if (rec != null) {
                     if (rec.isRecording()) {
                         menuUtils.handleMenuStopRecordingSelection(rec.id, rec.title);
@@ -382,54 +375,40 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
                         menuUtils.handleMenuRemoveRecordingSelection(rec.id, rec.title);
                     }
                 }
-            }
+            /*
             if (model instanceof Recording) {
                 Recording rec = (Recording) model;
                 menuUtils.handleMenuRemoveRecordingSelection(rec.id, rec.title);
             }
-            return true;
+            */
+                return true;
 
-        case R.id.menu_record_once:
-            if (model instanceof Program) {
-                Program program = (Program) model;
-                menuUtils.handleMenuRecordSelection(program.id);
-            }
-            return true;
+            case R.id.menu_record_once:
+                menuUtils.handleMenuRecordSelection(program.eventId);
+                return true;
 
-        case R.id.menu_record_once_custom_profile:
-            // TODO hide this menu if no profiles are available
-            if (model instanceof Program) {
-                Program program = (Program) model;
-                menuUtils.handleMenuCustomRecordSelection(program.id, program.channel.id);
-            }
-            return true;
+            case R.id.menu_record_once_custom_profile:
+                // TODO hide this menu if no profiles are available
+                menuUtils.handleMenuCustomRecordSelection(program.eventId, channel.channelId);
+                return true;
 
-        case R.id.menu_record_series:
-            if (model instanceof Program) {
-                Program program = (Program) model;
+            case R.id.menu_record_series:
                 menuUtils.handleMenuSeriesRecordSelection(program.title);
-            }
-            return true;
+                return true;
 
-        case R.id.menu_play:
-            if (model instanceof Program) {
-                Program program = (Program) model;
-                menuUtils.handleMenuPlaySelection(program.channel.id, -1);
-            } else if (model instanceof Recording) {
-                Recording rec = (Recording) model;
-                menuUtils.handleMenuPlaySelection(-1, rec.id);
-            }
-            return true;
+            case R.id.menu_play:
+                menuUtils.handleMenuPlaySelection(channel.channelId, -1);
+                //menuUtils.handleMenuPlaySelection(-1, rec.id);
+                return true;
 
-        case R.id.menu_download:
-            if (model instanceof Recording) {
-                final Recording rec = (Recording) model;
-                menuUtils.handleMenuDownloadSelection(rec.id);
-            }
-            return true;
+            case R.id.menu_download:
+                if (rec != null) {
+                    menuUtils.handleMenuDownloadSelection(rec.id);
+                }
+                return true;
 
-        default:
-            return super.onContextItemSelected(item);
+            default:
+                return super.onContextItemSelected(item);
         }
     }
 
@@ -440,16 +419,14 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
         // Get the currently selected program from the list where the context
         // menu has been triggered
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-        final Model model = adapter.getItem(info.position);
+        final Program2 program = adapter.getItem(info.position);
 
-        if (model instanceof Program) {
-            getMenuInflater().inflate(R.menu.program_context_menu, menu);
-            Program program = (Program) model;
-            // Set the title of the context menu
-            menu.setHeaderTitle(program.title);
-            // Show or hide the menu items depending on the program state
-            Utils.setProgramMenu(app, menu, program);
-
+        getMenuInflater().inflate(R.menu.program_context_menu, menu);
+        // Set the title of the context menu
+        menu.setHeaderTitle(program.title);
+        // Show or hide the menu items depending on the program state
+        //Utils.setProgramMenu(app, menu, program);
+/*
         } else if (model instanceof Recording) {
             getMenuInflater().inflate(R.menu.recording_context_menu, menu);
             Recording rec = (Recording) model;
@@ -458,7 +435,7 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
             for (int i = 0; i < menu.size(); i++) {
                 menu.getItem(i).setVisible(false);
             }
-            
+
             // Allow playing, removing and downloading a recording
             (menu.findItem(R.id.menu_record_remove)).setVisible(true);
             (menu.findItem(R.id.menu_play)).setVisible(true);
@@ -466,6 +443,7 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
                 (menu.findItem(R.id.menu_download)).setVisible(true);
             }
         }
+*/
     }
 
     /**
@@ -506,7 +484,7 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
             case "eventAdd":
                 runOnUiThread(new Runnable() {
                     public void run() {
-                        Program m = (Program) obj;
+                        Program2 m = (Program2) obj;
                         adapter.remove(m);
                         adapter.add(m);
                         startDelayedAdapterUpdate();
@@ -516,7 +494,7 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
             case "eventDelete":
                 runOnUiThread(new Runnable() {
                     public void run() {
-                        Program m = (Program) obj;
+                        Program2 m = (Program2) obj;
                         adapter.remove(m);
                         startDelayedAdapterUpdate();
                     }
@@ -525,7 +503,7 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
             case "eventUpdate":
                 runOnUiThread(new Runnable() {
                     public void run() {
-                        adapter.update((Program) obj);
+                        adapter.update((Program2) obj);
                         startDelayedAdapterUpdate();
                     }
                 });
@@ -533,7 +511,7 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
             case "dvrEntryDelete":
                 runOnUiThread(new Runnable() {
                     public void run() {
-                        Program m = (Program) obj;
+                        Program2 m = (Program2) obj;
                         adapter.remove(m);
                         startDelayedAdapterUpdate();
                     }
@@ -542,7 +520,7 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
             case "dvrEntryUpdate":
                 runOnUiThread(new Runnable() {
                     public void run() {
-                        adapter.update((Program) obj);
+                        adapter.update((Program2) obj);
                         startDelayedAdapterUpdate();
                     }
                 });

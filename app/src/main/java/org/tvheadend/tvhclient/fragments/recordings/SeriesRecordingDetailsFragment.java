@@ -169,7 +169,7 @@ public class SeriesRecordingDetailsFragment extends DialogFragment {
 
         String[] priorityItems = getResources().getStringArray(R.array.dvr_priorities);
         if (srec.priority >= 0 && srec.priority < priorityItems.length) {
-            priority.setText(priorityItems[(int) (srec.priority)]);
+            priority.setText(priorityItems[srec.priority]);
         }
         if (srec.minDuration > 0) {
             // The minimum time is given in seconds, but we want to show it in minutes

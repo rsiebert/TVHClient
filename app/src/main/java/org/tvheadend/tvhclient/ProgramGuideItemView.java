@@ -16,8 +16,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
-import org.tvheadend.tvhclient.model.Channel;
-import org.tvheadend.tvhclient.model.Program;
+import org.tvheadend.tvhclient.model.Channel2;
+import org.tvheadend.tvhclient.model.Program2;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 import org.tvheadend.tvhclient.utils.Utils;
 
@@ -31,7 +31,7 @@ public class ProgramGuideItemView extends LinearLayout {
 
     private LinearLayout layout;
     private Activity activity;
-    private Channel channel;
+    private Channel2 channel;
     private int displayWidth;
     
     // Specifies the usable width for the layout of a single program guide item
@@ -99,13 +99,13 @@ public class ProgramGuideItemView extends LinearLayout {
      * @param parent ViewGroup parent required for the layout
      * @param ch Channel with the available EPG data
      */
-    public void addPrograms(ViewGroup parent, Channel ch) {
+    public void addPrograms(ViewGroup parent, Channel2 ch) {
         channel = ch;
         // Clear all previously shown programs
         layout.removeAllViews();
 
         // Show that no programs are available
-        if (channel == null || channel.epg == null || channel.epg.isEmpty()) {
+        if (channel == null) {
             addEmptyProgramToView();
             return;
         }
@@ -128,9 +128,11 @@ public class ProgramGuideItemView extends LinearLayout {
         
         try {
             // Go through all programs and add them to the view
-            CopyOnWriteArrayList<Program> epg = new CopyOnWriteArrayList<>(channel.epg);
-            Iterator<Program> it = epg.iterator();
-            Program p;
+            CopyOnWriteArrayList<Program2> epg = new CopyOnWriteArrayList<>();
+            epg.addAll(DataStorage.getInstance().getProgramsFromArray().values());
+
+            Iterator<Program2> it = epg.iterator();
+            Program2 p;
             while (it.hasNext()) {
                 p = it.next();
 
@@ -197,9 +199,9 @@ public class ProgramGuideItemView extends LinearLayout {
      * @param p Program
      * @return Type of program
      */
-    private int getProgramType(final Program p) {
-        final long programStartTime = p.start.getTime();
-        final long programEndTime = p.stop.getTime();
+    private int getProgramType(final Program2 p) {
+        final long programStartTime = (p.start * 1000);
+        final long programEndTime = (p.stop * 1000);
 
         if (programStartTime < startTime && programEndTime > startTime && programEndTime < endTime) {
             // The program starts on the previous day and goes over midnight
@@ -241,7 +243,7 @@ public class ProgramGuideItemView extends LinearLayout {
      * @param programType          Type of program
      * @param programsAddedCounter Number of programs that were added to the view
      */
-    private void addCurrentProgram(final Program program, final int programType, int programsAddedCounter, ViewGroup parent) {
+    private void addCurrentProgram(final Program2 program, final int programType, int programsAddedCounter, ViewGroup parent) {
 
         // Calculate the width of the program layout in the view.
         int width = getProgramLayoutWidth(program, programType);
@@ -257,7 +259,7 @@ public class ProgramGuideItemView extends LinearLayout {
             // within the time slot it would start somewhere in the middle of
             // the view. So we need to fill in a placeholder program.
             if (programsAddedCounter == 0) {
-                final double durationTime = ((program.start.getTime() - startTime) / 1000 / 60);
+                final double durationTime = ((program.start * 1000 - startTime) / 1000 / 60);
                 final int w = (int) (durationTime * pixelsPerMinute);
                 addCurrentProgramToView(null, w, parent);
             }
@@ -270,7 +272,7 @@ public class ProgramGuideItemView extends LinearLayout {
             // within the time slot it would start somewhere in the middle of
             // the view. So we need to fill in a placeholder program.
             if (programsAddedCounter == 0) {
-                final double durationTime = ((program.start.getTime() - startTime) / 1000 / 60);
+                final double durationTime = ((program.start * 1000 - startTime) / 1000 / 60);
                 final int w = (int) (durationTime * pixelsPerMinute);
                 addCurrentProgramToView(null, w, parent);
             }
@@ -311,10 +313,10 @@ public class ProgramGuideItemView extends LinearLayout {
      * @param programType Type of program
      * @return Widht in pixels that a program shall take up in the EPG view
      */
-    private int getProgramLayoutWidth(final Program p, final int programType) {
-        final long programStartTime = p.start.getTime();
-        final long programEndTime = p.stop.getTime();
-        final double durationTime = ((p.stop.getTime() - p.start.getTime()) / 1000 / 60);
+    private int getProgramLayoutWidth(final Program2 p, final int programType) {
+        final long programStartTime = (p.start * 1000);
+        final long programEndTime = (p.stop * 1000);
+        final double durationTime = ((p.stop * 1000 - p.start * 1000) / 1000 / 60);
         int offset;
         int width = 0;
 
@@ -351,7 +353,7 @@ public class ProgramGuideItemView extends LinearLayout {
      * @param p            Program
      * @param layoutWidth  Width in pixels of the layout
      */
-    private void addCurrentProgramToView(final Program p, final int layoutWidth, ViewGroup parent) {
+    private void addCurrentProgramToView(final Program2 p, final int layoutWidth, ViewGroup parent) {
 
         View v = activity.getLayoutInflater().inflate(R.layout.program_guide_data_item, parent, false);
         final LinearLayout itemLayout = v.findViewById(R.id.timeline_item);
@@ -373,14 +375,14 @@ public class ProgramGuideItemView extends LinearLayout {
         }
 
         if (p != null) {
-            MiscUtils.setGenreColor(activity, itemLayout, p, TAG);
-	        itemLayout.setTag(p.id);
+            MiscUtils.setGenreColor(activity, itemLayout, p.contentType, TAG);
+	        itemLayout.setTag(p.eventId);
 	        title.setText(p.title);
-	        Utils.setState(activity, state, p);
+	        // TODO Utils.setState(activity, state, p);
 
 	        // Only show the duration if the layout is wide enough
 	        if (layoutWidth >= MIN_DISPLAY_WIDTH_FOR_DETAILS) {
-	            Utils.setDuration(duration, p.start, p.stop);
+	            Utils.setDuration2(duration, p.start, p.stop);
 	        } else {
 	            duration.setVisibility(View.GONE);
 	        }
@@ -394,7 +396,7 @@ public class ProgramGuideItemView extends LinearLayout {
 	                // the menu items depending on the program state
 	                fragmentInterface.setSelectedContextItem(p);
 	                menu.setHeaderTitle(p.title);
-	                Utils.setProgramMenu(app, menu, p);
+	                //Utils.setProgramMenu(app, menu, p);
 
                     // Add a listener to each menu item. When the menu item is
                     // called the context handler method from the fragment will
@@ -424,20 +426,8 @@ public class ProgramGuideItemView extends LinearLayout {
                     }
                     // We only have saved the id of the program, so go through
                     // all program in the current channel until we find the one.
-                    Program program = null;
-                    long id = (Long) v.getTag();
-
-                    CopyOnWriteArrayList<Program> epg = new CopyOnWriteArrayList<>(channel.epg);
-                    Iterator<Program> it = epg.iterator();
-                    Program p;
-                    while (it.hasNext()) {
-                        p = it.next();
-                        if (p.id == id) {
-                            program = p;
-                            break;
-                        }
-                    }
-
+                    int id = (int) v.getTag();
+                    Program2 program = DataStorage.getInstance().getProgramFromArray(id);
                     if (fragmentStatusInterface != null && program != null) {
                         fragmentStatusInterface.onListItemSelected(0, program, TAG);
                     }
@@ -461,7 +451,7 @@ public class ProgramGuideItemView extends LinearLayout {
     }
     
     public interface ProgramContextMenuInterface {
-        void setSelectedContextItem(Program p);
+        void setSelectedContextItem(Program2 p);
 
         void setMenuSelection(MenuItem item);
     }

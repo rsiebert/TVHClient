@@ -39,6 +39,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 public class MenuUtils {
     private final static String TAG = MiscUtils.class.getSimpleName();
@@ -116,15 +117,19 @@ public class MenuUtils {
 
     /**
      *
-     * @param channelTagList
      * @param selectedTagId
      * @param callback
      */
-    public void handleMenuTagsSelection(List<ChannelTag2> channelTagList, long selectedTagId, MenuTagSelectionCallback callback) {
+    public void handleMenuTagsSelection(long selectedTagId, MenuTagSelectionCallback callback) {
         Activity activity = this.activity.get();
         if (activity == null) {
             return;
         }
+
+        // Fill the channel tag adapter with the available channel tags
+        List<ChannelTag2> channelTagList = new ArrayList<>();
+        Map<Integer, ChannelTag2> map = DataStorage.getInstance().getTagsFromArray();
+        channelTagList.addAll(map.values());
 
         // Sort the channel tag list before showing it
         Collections.sort(channelTagList, new Comparator<ChannelTag2>() {
@@ -212,6 +217,7 @@ public class MenuUtils {
         if (activity == null) {
             return;
         }
+        Log.d(TAG, "handleMenuRecordSelection() called with: eventId = [" + eventId + "]");
         final Intent intent = new Intent(activity, HTSService.class);
         intent.setAction("addDvrEntry");
         intent.putExtra("eventId", eventId);

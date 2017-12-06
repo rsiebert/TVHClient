@@ -3,16 +3,13 @@ package org.tvheadend.tvhclient;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
-import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Channel2;
 import org.tvheadend.tvhclient.model.ChannelTag2;
 import org.tvheadend.tvhclient.model.DiscSpace;
 import org.tvheadend.tvhclient.model.HttpTicket;
 import org.tvheadend.tvhclient.model.Packet;
 import org.tvheadend.tvhclient.model.Profiles;
-import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Program2;
-import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.model.Recording2;
 import org.tvheadend.tvhclient.model.SeriesRecording2;
 import org.tvheadend.tvhclient.model.Subscription;
@@ -28,8 +25,6 @@ import java.util.Map;
 public class DataStorage {
     private final static String TAG = TVHClientApplication.class.getSimpleName();
 
-    private final List<Channel> channels = Collections.synchronizedList(new ArrayList<Channel>());
-    private final List<Recording> recordings = Collections.synchronizedList(new ArrayList<Recording>());
     private final List<Subscription> subscriptions = Collections.synchronizedList(new ArrayList<Subscription>());
     private final List<Profiles> dvrConfigs = Collections.synchronizedList(new ArrayList<Profiles>());
     private final List<Profiles> profiles = Collections.synchronizedList(new ArrayList<Profiles>());
@@ -82,138 +77,6 @@ public class DataStorage {
     }
 
     /**
-     * Adds the given channel to the list of available channels.
-     *
-     * @param channel Channel
-     */
-    public void addChannel(Channel channel) {
-        synchronized (channels) {
-            boolean channelExists = false;
-            for (Channel ch : getChannels()) {
-                if (ch.id == channel.id) {
-                    channelExists = true;
-                    break;
-                }
-            }
-            if (!channelExists) {
-                channels.add(channel);
-            }
-        }
-        if (!loading) {
-            app.broadcastMessage("channelAdd", channel);
-        }
-    }
-
-    /**
-     * Returns the list of all available channels.
-     *
-     * @return List of all channels
-     */
-    public List<Channel> getChannels() {
-        synchronized (channels) {
-            return channels;
-        }
-    }
-
-    /**
-     * Removes the given channel from the list of available channels. If loading
-     * has finished any listener will be informed that this channel has been
-     * removed.
-     *
-     * @param channel Channel
-     */
-    private void removeChannel(Channel channel) {
-        synchronized (channels) {
-            channels.remove(channel);
-        }
-        if (!loading) {
-            app.broadcastMessage("channelDelete", channel);
-        }
-    }
-
-    /**
-     * Returns the channel that matches the given id.
-     *
-     * @param id Id of the channel
-     * @return Channel
-     */
-    public Channel getChannel(long id) {
-        synchronized (channels) {
-            for (Channel ch : getChannels()) {
-                if (ch.id == id) {
-                    return ch;
-                }
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Removes the channel from the list of available channels that matches the
-     * given id. Any listener will be informed about that removal.
-     *
-     * @param id Id of the channel
-     */
-    public void removeChannel(long id) {
-        synchronized (channels) {
-            for (Channel ch : getChannels()) {
-                if (ch.id == id) {
-                    removeChannel(ch);
-                    return;
-                }
-            }
-        }
-    }
-
-    /**
-     * If loading has finished any listener will be informed that the given
-     * channel has been updated.
-     *
-     * @param ch Channel
-     */
-    public void updateChannel(Channel ch) {
-        if (!loading) {
-            app.broadcastMessage("channelUpdate", ch);
-        }
-    }
-
-    /**
-     * If loading has finished any listener will be informed that the given
-     * program has been added.
-     *
-     * @param p Program
-     */
-    public void addProgram(Program p) {
-        if (!loading) {
-            app.broadcastMessage("eventAdd", p);
-        }
-    }
-
-    /**
-     * If loading has finished any listener will be informed that the given
-     * program has been deleted.
-     *
-     * @param p Program
-     */
-    public void removeProgram(Program p) {
-        if (!loading) {
-            app.broadcastMessage("eventDelete", p);
-        }
-    }
-
-    /**
-     * If loading has finished any listener will be informed that the given
-     * program has been updated.
-     *
-     * @param p Program
-     */
-    public void updateProgram(Program p) {
-        if (!loading) {
-            app.broadcastMessage("eventUpdate", p);
-        }
-    }
-
-    /**
      * Informes all registered listeners about the loading status.
      *
      * @param b The loading state
@@ -245,12 +108,7 @@ public class DataStorage {
         recordingArray.clear();
         seriesRecordingArray.clear();
         timerRecordingArray.clear();
-
-        for (Channel ch : channels) {
-            ch.epg.clear();
-            ch.recordings.clear();
-        }
-        channels.clear();
+        channelArray.clear();
 
         for (Subscription s : subscriptions) {
             s.streams.clear();
@@ -467,8 +325,11 @@ public class DataStorage {
         }
     }
 
-
-
+    public Program2 getProgramFromArray(int id) {
+        synchronized (programArray) {
+            return programArray.get(id);
+        }
+    }
 
     public Map<Integer, Program2> getProgramsFromArray() {
         synchronized (programArray) {

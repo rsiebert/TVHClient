@@ -2,6 +2,7 @@ package org.tvheadend.tvhclient.adapter;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -13,31 +14,32 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.tvheadend.tvhclient.Constants;
+import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
-import org.tvheadend.tvhclient.model.Channel;
-import org.tvheadend.tvhclient.model.Program;
+import org.tvheadend.tvhclient.model.Channel2;
+import org.tvheadend.tvhclient.model.Program2;
+import org.tvheadend.tvhclient.model.Recording2;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 import org.tvheadend.tvhclient.utils.Utils;
 
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.Map;
 
-public class ChannelListAdapter extends ArrayAdapter<Channel> {
+public class ChannelListAdapter extends ArrayAdapter<Channel2> {
 
     private final static String TAG = ChannelListAdapter.class.getSimpleName();
 
     private final Activity context;
-    private final List<Channel> list;
+    private final List<Channel2> list;
     private final int layout;
     private int selectedPosition = 0;
     private final SharedPreferences prefs;
     private long showProgramsFromTime;
 
-    public ChannelListAdapter(Activity context, List<Channel> list, int layout) {
+    public ChannelListAdapter(Activity context, List<Channel2> list, int layout) {
         super(context, layout, list);
         this.context = context;
         this.layout = layout;
@@ -51,33 +53,43 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
 
     public void sort(final int type) {
         switch (type) {
-        case Constants.CHANNEL_SORT_DEFAULT:
-            sort(new Comparator<Channel>() {
-                public int compare(Channel x, Channel y) {
-                    return x.compareTo(y);
-                }
-            });
-            break;
-        case Constants.CHANNEL_SORT_BY_NAME:
-            sort(new Comparator<Channel>() {
-                public int compare(Channel x, Channel y) {
-                    return x.name.toLowerCase(Locale.US).compareTo(y.name.toLowerCase(Locale.US));
-                }
-            });
-            break;
-        case Constants.CHANNEL_SORT_BY_NUMBER:
-            sort(new Comparator<Channel>() {
-                public int compare(Channel x, Channel y) {
-                    if (x.number > y.number) {
-                        return 1;
-                    } else if (x.number < y.number) {
-                        return -1;
-                    } else {
+            case Constants.CHANNEL_SORT_DEFAULT:
+                sort(new Comparator<Channel2>() {
+                    public int compare(Channel2 x, Channel2 y) {
+                        if (x != null && y != null) {
+                            return x.channelName.compareTo(y.channelName);
+                        }
                         return 0;
                     }
-                }
-            });
-            break;
+                });
+                break;
+            case Constants.CHANNEL_SORT_BY_NAME:
+                sort(new Comparator<Channel2>() {
+                    public int compare(Channel2 x, Channel2 y) {
+                        if (x != null && y != null) {
+                            return x.channelName.toLowerCase(Locale.US).compareTo(y.channelName.toLowerCase(Locale.US));
+                        }
+                        return 0;
+                    }
+                });
+                break;
+            case Constants.CHANNEL_SORT_BY_NUMBER:
+                sort(new Comparator<Channel2>() {
+                    public int compare(Channel2 x, Channel2 y) {
+                        if (x != null && y != null) {
+
+                            if (x.channelNumber > y.channelNumber) {
+                                return 1;
+                            } else if (x.channelNumber < y.channelNumber) {
+                                return -1;
+                            } else {
+                                return 0;
+                            }
+                        }
+                        return 0;
+                    }
+                });
+                break;
         }
     }
 
@@ -137,7 +149,7 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
         if (holder.dual_pane_list_item_selection != null) {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
             final boolean lightTheme = prefs.getBoolean("lightThemePref", true);
-            
+
             if (selectedPosition == position) {
                 final int icon = (lightTheme) ? R.drawable.dual_pane_selector_active_light : R.drawable.dual_pane_selector_active_dark;
                 holder.dual_pane_list_item_selection.setBackgroundResource(icon);
@@ -148,7 +160,7 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
         }
 
         // Get the program and assign all the values
-        final Channel c = getItem(position);
+        final Channel2 c = getItem(position);
         if (c != null) {
 
             // Set the initial values
@@ -157,21 +169,25 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
                 holder.progressbar.setVisibility(prefs.getBoolean("showProgramProgressbarPref", true) ? View.VISIBLE : View.GONE);
             }
             if (holder.channel != null) {
-                holder.channel.setText(c.name);
+                holder.channel.setText(c.channelName);
                 holder.channel.setVisibility(prefs.getBoolean("showChannelNamePref", true) ? View.VISIBLE : View.GONE);
             }
+            // Show the channel icon if available and set in the preferences.
+            // If not chosen, hide the imageView and show the channel name.
+            if (holder.icon != null && holder.icon_text != null) {
+                final boolean showChannelIcons = prefs.getBoolean("showIconPref", true);
+                Bitmap iconBitmap = MiscUtils.getCachedIcon(context, c.channelIcon);
+                // Show the icon or a blank one if it does not exist
+                holder.icon.setImageBitmap(iconBitmap);
+                holder.icon_text.setText(c.channelName);
+                // Show the channels icon if set in the preferences.
+                // If not then hide the icon and show the channel name as a placeholder
+                holder.icon.setVisibility(showChannelIcons ? ImageView.VISIBLE : ImageView.GONE);
+                holder.icon_text.setVisibility(showChannelIcons ? ImageView.GONE : ImageView.VISIBLE);
 
-            Utils.setChannelIcon(holder.icon, holder.icon_text, c);
-            // Only show the channel text in the program guide when no icons shall be shown
-            if (holder.icon_text != null) {
-                final boolean showIcons = prefs.getBoolean("showIconPref", true);
-                if (!showIcons && layout == R.layout.program_guide_channel_item) {
-                    holder.icon_text.setText(c.name);
-                    holder.icon_text.setVisibility(ImageView.VISIBLE);
-                }
-                // If activated in the settings allow playing 
+                // If activated in the settings allow playing
                 // the program by selecting the channel icon
-                holder.icon_text.setOnClickListener(new OnClickListener() {
+                holder.icon.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         if (context instanceof FragmentStatusInterface) {
@@ -179,12 +195,10 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
                         }
                     }
                 });
-            }
 
-            if (holder.icon != null) {
-                // If activated in the settings allow playing 
-                // the program by selecting the channel icon 
-                holder.icon.setOnClickListener(new OnClickListener() {
+                // If activated in the settings allow playing
+                // the program by selecting the channel icon
+                holder.icon_text.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         if (context instanceof FragmentStatusInterface) {
@@ -197,7 +211,15 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
             // Add a small recording icon above the channel icon, if we are
             // recording the current program.
             if (holder.state != null) {
-                if (c.isRecording()) {
+                boolean isRecording = false;
+                Map<Integer, Recording2> recMap = DataStorage.getInstance().getRecordingsFromArray();
+                for (Recording2 rec : recMap.values()) {
+                    if (rec.eventId == c.eventId) {
+                        isRecording = rec.isRecording();
+                        break;
+                    }
+                }
+                if (isRecording) {
                     holder.state.setImageResource(R.drawable.ic_rec_small);
                     holder.state.setVisibility(View.VISIBLE);
                 } else {
@@ -206,38 +228,25 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
                 }
             }
 
-            CopyOnWriteArrayList<Program> epg = new CopyOnWriteArrayList<>(c.epg);
-            Program p = null;
-            int availableProgramCount = epg.size();
-            boolean currentProgramFound = false;
-            Iterator<Program> it = epg.iterator();
+            Program2 p = null;
+            Program2 np = null;
 
-            // Search through the EPG and find the first program that is currently running.
-            // Also count how many programs are available without counting the ones in the past.
-            while (it.hasNext()) {
-                p = it.next();
-                if (p.start.getTime() >= showProgramsFromTime ||
-                    p.stop.getTime() >= showProgramsFromTime) {
-                    currentProgramFound = true;
-                    break;
-                } else {
-                    availableProgramCount--;
+            for (Program2 program : DataStorage.getInstance().getProgramsFromArray().values()) {
+                if (program.channelId == c.channelId) {
+                    if ((program.start * 1000) <= showProgramsFromTime && (program.stop * 1000) > showProgramsFromTime) {
+                        p = program;
+                        break;
+                    }
                 }
             }
 
-            if ((!currentProgramFound || availableProgramCount < Constants.PROGRAMS_VISIBLE_BEFORE_LOADING_MORE) &&
-                    layout != R.layout.program_guide_channel_item) {
-                Utils.loadMorePrograms(context, c);
-            }
-
-            Program np = null;
-            if (it.hasNext()) {
-                np = it.next();
+            if (p != null) {
+                np = DataStorage.getInstance().getProgramFromArray(p.nextEventId);
             }
 
             // Check if the channel is actually transmitting
             // data and contains program data which can be shown.
-            if (!c.isTransmitting && p != null) {
+            if (c.eventId == 0) {
                 if (holder.title != null) {
                     holder.title.setText(R.string.no_transmission);
                 }
@@ -255,19 +264,18 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
                     holder.subtitle.setText(p.subtitle);
                     holder.subtitle.setVisibility(prefs.getBoolean("showProgramSubtitlePref", true) ? View.VISIBLE : View.GONE);
                 }
-                Utils.setTime(holder.time, p.start, p.stop);
-                Utils.setDuration(holder.duration, p.start, p.stop);
+                Utils.setTime2(holder.time, p.start, p.stop);
+                Utils.setDuration2(holder.duration, p.start, p.stop);
 
                 if (holder.progressbar != null) {
-                    Utils.setProgress(holder.progressbar, p.start, p.stop);
+                    Utils.setProgress2(holder.progressbar, p.start, p.stop);
                     holder.progressbar.setVisibility(prefs.getBoolean("showProgramProgressbarPref", true) ? View.VISIBLE : View.GONE);
                 }
                 if (holder.nextTitle != null && np != null) {
                     holder.nextTitle.setVisibility(prefs.getBoolean("showNextProgramPref", true) ? View.VISIBLE : View.GONE);
                     holder.nextTitle.setText(context.getString(R.string.next_program, np.title));
                 }
-            }
-            else {
+            } else {
                 // The channel does not provide program data. Hide the progress
                 // bar,the time and duration texts.
                 if (holder.title != null) {
@@ -292,30 +300,31 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
                     holder.nextTitle.setVisibility(View.GONE);
                 }
             }
-            if (layout == R.layout.program_guide_channel_item) {
-                MiscUtils.setGenreColor(context, holder.channel_item_layout, p, TAG);
-            } else {
-                MiscUtils.setGenreColor(context, holder.genre, p, TAG);
+            if (p != null) {
+                if (layout == R.layout.program_guide_channel_item) {
+                    MiscUtils.setGenreColor(context, holder.channel_item_layout, p.contentType, TAG);
+                } else {
+                    MiscUtils.setGenreColor(context, holder.genre, p.contentType, TAG);
+                }
             }
-
         }
         return view;
     }
 
-    public void update(Channel c) {
+    public void update(Channel2 c) {
         int length = list.size();
 
         // Go through the list of channels and find the
         // one with the same id. If its been found, replace it.
         for (int i = 0; i < length; ++i) {
-            if (list.get(i).id == c.id) {
+            if (list.get(i).channelId == c.channelId) {
                 list.set(i, c);
                 break;
             }
         }
     }
 
-    public Channel getSelectedItem() {
+    public Channel2 getSelectedItem() {
         if (list.size() > 0 && list.size() > selectedPosition) {
             return list.get(selectedPosition);
         }

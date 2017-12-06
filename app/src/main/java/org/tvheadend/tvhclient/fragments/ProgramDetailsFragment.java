@@ -28,17 +28,15 @@ import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
-import org.tvheadend.tvhclient.model.Channel;
-import org.tvheadend.tvhclient.model.Program;
-import org.tvheadend.tvhclient.model.Recording;
+import org.tvheadend.tvhclient.model.Channel2;
+import org.tvheadend.tvhclient.model.Program2;
+import org.tvheadend.tvhclient.model.Recording2;
 import org.tvheadend.tvhclient.tasks.ImageDownloadTask;
 import org.tvheadend.tvhclient.tasks.ImageDownloadTaskCallback;
 import org.tvheadend.tvhclient.utils.MenuUtils;
 import org.tvheadend.tvhclient.utils.Utils;
 
 import java.util.Date;
-import java.util.Iterator;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ProgramDetailsFragment extends DialogFragment implements HTSListener, ImageDownloadTaskCallback {
 
@@ -47,8 +45,8 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
 
     private Activity activity;
     private boolean showControls = false;
-    private Program program;
-    private Channel channel;
+    private Program2 program;
+    private Channel2 channel;
 
     private ImageView state;
     private TextView summaryLabel;
@@ -163,32 +161,19 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
             toolbarShadow.setVisibility(getDialog() != null ? View.VISIBLE : View.GONE);
         }
 
-        long channelId = 0;
-        long programId = 0;
+        int channelId = 0;
+        int programId = 0;
 
         Bundle bundle = getArguments();
         if (bundle != null) {
-            channelId = bundle.getLong("channelId", 0);
-            programId = bundle.getLong("eventId", 0);
+            channelId = bundle.getInt("channelId", 0);
+            programId = bundle.getInt("eventId", 0);
             showControls = bundle.getBoolean(Constants.BUNDLE_SHOW_CONTROLS, false);
         }
 
         // Get the channel of the program
-        channel = dataStorage.getChannel(channelId);
-        if (channel != null) {
-            // Find the program with the given id within this channel so we can
-            // show the program details
-            CopyOnWriteArrayList<Program> epg = new CopyOnWriteArrayList<>(channel.epg);
-            Iterator<Program> it = epg.iterator();
-            Program p;
-            while (it.hasNext()) {
-                p = it.next();
-                if (p.id == programId) {
-                    program = p;
-                    break;
-                }
-            }
-        }
+        channel = dataStorage.getChannelFromArray(channelId);
+        program = dataStorage.getProgramFromArray(programId);
 
         // If the channel or program is null exit
         if (channel == null || program == null) {
@@ -208,15 +193,15 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
 
         // Show the program information        
         Utils.setState(activity, state, program);
-        Utils.setDate(date, program.start);
-        Utils.setTime(time, program.start, program.stop);
-        Utils.setDuration(duration, program.start, program.stop);
-        Utils.setProgressText(progress, program.start, program.stop);
+        Utils.setDate2(date, program.start);
+        Utils.setTime2(time, program.start, program.stop);
+        Utils.setDuration2(duration, program.start, program.stop);
+        Utils.setProgressText2(progress, program.start, program.stop);
         Utils.setDescription(descLabel, desc, program.description);
         Utils.setDescription(summaryLabel, summary, program.summary);
-        Utils.setDescription(channelLabel, channelName, channel.name);
+        Utils.setDescription(channelLabel, channelName, channel.channelName);
         Utils.setDescription(descLabel, desc, program.description);
-        Utils.setSeriesInfo(seriesInfoLabel, seriesInfo, program.seriesInfo);
+        Utils.setSeriesInfo(getContext(), seriesInfoLabel, seriesInfo, program);
         Utils.setContentType(contentTypeLabel, contentType, program.contentType);
         
         // Show the rating information as starts
@@ -234,7 +219,7 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         if (app.isUnlocked() && prefs.getBoolean("pref_show_program_artwork", false)) {
             ImageDownloadTask dt = new ImageDownloadTask(this);
-            dt.execute(program.image, String.valueOf(program.id));
+            dt.execute(program.image, String.valueOf(program.eventId));
         }
 
         if (getDialog() != null && Build.VERSION.SDK_INT >= 21) {
@@ -292,23 +277,22 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
         // Show the play menu item when the current 
         // time is between the program start and end time
         long currentTime = new Date().getTime();
-        if (program.start != null && program.stop != null
-                && currentTime > program.start.getTime()
-                && currentTime < program.stop.getTime()) {
+        if (currentTime > (program.start * 1000) && currentTime < (program.stop * 1000)) {
             playButton.setVisibility(View.VISIBLE);
         } else {
             playButton.setVisibility(View.GONE);
         }
 
-        if (program.recording == null) {
+        Recording2 rec = dataStorage.getRecordingFromArray(program.dvrId);
+        if (rec == null) {
             // Show the record menu
             recordRemoveButton.setVisibility(View.GONE);
-        } else if (program.isRecording()) {
+        } else if (rec.isRecording()) {
             // Show the cancel menu
             recordOnceButton.setVisibility(View.GONE);
             recordSeriesButton.setVisibility(View.GONE);
             recordRemoveButton.setText(R.string.stop);
-        } else if (program.isScheduled()) {
+        } else if (rec.isScheduled()) {
             // Show the cancel and play menu
             recordOnceButton.setVisibility(View.GONE);
             recordSeriesButton.setVisibility(View.GONE);
@@ -327,7 +311,8 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
             playButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    menuUtils.handleMenuPlaySelection(program.channel.id, -1);
+                    Channel2 channel = dataStorage.getChannelFromArray(program.channelId);
+                    menuUtils.handleMenuPlaySelection(channel.channelId, -1);
                 }
             });
         }
@@ -335,7 +320,7 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
             recordOnceButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    menuUtils.handleMenuRecordSelection(program.id);
+                    menuUtils.handleMenuRecordSelection(program.eventId);
                     if (getDialog() != null) {
                         getDialog().dismiss();
                     }
@@ -357,7 +342,7 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
             recordRemoveButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Recording rec = program.recording;
+                    Recording2 rec = dataStorage.getRecordingFromArray(program.dvrId);
                     if (rec != null) {
                         if (rec.isRecording()) {
                             menuUtils.handleMenuStopRecordingSelection(rec.id, rec.title);

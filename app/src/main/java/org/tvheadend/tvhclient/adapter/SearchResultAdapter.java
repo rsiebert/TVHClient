@@ -9,10 +9,10 @@ import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.model.Model;
-import org.tvheadend.tvhclient.model.Program;
-import org.tvheadend.tvhclient.model.Recording;
+import org.tvheadend.tvhclient.model.Channel2;
+import org.tvheadend.tvhclient.model.Program2;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 import org.tvheadend.tvhclient.utils.Utils;
 
@@ -21,15 +21,15 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
-public class SearchResultAdapter extends ArrayAdapter<Program> implements Filterable {
+public class SearchResultAdapter extends ArrayAdapter<Program2> implements Filterable {
 
     private final static String TAG = SearchResultAdapter.class.getSimpleName();
     private final Activity context;
-    private List<Program> originalData = null;
-    private List<Program> filteredData = null;
+    private List<Program2> originalData = null;
+    private List<Program2> filteredData = null;
     private final ItemFilter mFilter = new ItemFilter();
 
-    public SearchResultAdapter(Activity context, List<Program> list) {
+    public SearchResultAdapter(Activity context, List<Program2> list) {
         super(context, R.layout.search_result_widget, list);
         this.context = context;
         originalData = list;
@@ -37,11 +37,18 @@ public class SearchResultAdapter extends ArrayAdapter<Program> implements Filter
     }
 
     public void sort() {
-        sort(new Comparator<Model>() {
-            public int compare(Model x, Model y) {
-                if (x instanceof Program && y instanceof Program) {
-                    return (((Program)x).start.compareTo(((Program)y).start));
+        sort(new Comparator<Program2>() {
+            public int compare(Program2 x, Program2 y) {
+                if (x != null && y != null) {
+                    if (x.start > y.start) {
+                        return 1;
+                    } else if (x.start < y.start) {
+                        return -1;
+                    } else {
+                        return 0;
+                    }
                 }
+                /*
                 if (x instanceof Recording && y instanceof Recording) {
                     if (((Recording)x).startExtra < ((Recording)y).startExtra) {
                         return -1;
@@ -51,6 +58,7 @@ public class SearchResultAdapter extends ArrayAdapter<Program> implements Filter
                         return 0;
                     }
                 }
+                */
                 return 0;
             }
         });
@@ -91,7 +99,7 @@ public class SearchResultAdapter extends ArrayAdapter<Program> implements Filter
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View view = null;
-        Program m = getItem(position);
+        Program2 m = getItem(position);
         //if (m instanceof Program) {
             view = getProgramView(position, convertView, parent);
         /*} else if (m instanceof Recording) {
@@ -204,38 +212,39 @@ public class SearchResultAdapter extends ArrayAdapter<Program> implements Filter
         }
 
         // Get the program and assign all the values
-        Program p = (Program)getItem(position);
+        Program2 p = getItem(position);
         if (p != null) {
             holder.title.setText(p.title);
-            if (holder.channel != null && p.channel != null) {
-                holder.channel.setText(p.channel.name);
+            Channel2 channel = DataStorage.getInstance().getChannelFromArray(p.channelId);
+            if (holder.channel != null && channel != null) {
+                holder.channel.setText(channel.channelName);
             }
-            Utils.setChannelIcon(holder.icon, holder.icon_text, p.channel);
-            Utils.setState(context, holder.state, p);
-            Utils.setDate(holder.date, p.start);
-            Utils.setTime(holder.time, p.start, p.stop);
-            Utils.setDuration(holder.duration, p.start, p.stop);
+            Utils.setChannelIcon(context, holder.icon, holder.icon_text, channel);
+            //Utils.setState(context, holder.state, p);
+            Utils.setDate2(holder.date, p.start);
+            Utils.setTime2(holder.time, p.start, p.stop);
+            Utils.setDuration2(holder.duration, p.start, p.stop);
             Utils.setDescription(null, holder.description, p.description);
             Utils.setContentType(null, holder.contentType, p.contentType);
-            Utils.setSeriesInfo(null, holder.seriesInfo, p.seriesInfo);
-            MiscUtils.setGenreColor(context, holder.genre, p, TAG);
+            Utils.setSeriesInfo(context, null, holder.seriesInfo, p);
+            MiscUtils.setGenreColor(context, holder.genre, p.contentType, TAG);
         }
         return view;
     }
 
-    public void update(Program p) {
+    public void update(Program2 p) {
         final int length = originalData.size();
         // Go through the list of programs and find the
         // one with the same id. If its been found, replace it.
         for (int i = 0; i < length; ++i) {
-            if (originalData.get(i).id == p.id) {
+            if (originalData.get(i).eventId == p.eventId) {
                 originalData.set(i, p);
                 break;
             }
         }
     }
 
-    public Program getItem(int position) {
+    public Program2 getItem(int position) {
         return filteredData.get(position);
     }
 
@@ -253,11 +262,11 @@ public class SearchResultAdapter extends ArrayAdapter<Program> implements Filter
         return 0;
     }
 
-    public List<Program> getFullList() {
+    public List<Program2> getFullList() {
         return originalData;
     }
 
-    public List<Program> getList() {
+    public List<Program2> getList() {
         return filteredData;
     }
 
@@ -273,21 +282,22 @@ public class SearchResultAdapter extends ArrayAdapter<Program> implements Filter
             FilterResults results = new FilterResults();
 
             final int count = originalData.size();
-            final ArrayList<Model> newList = new ArrayList<>(count);
+            final ArrayList<Program2> newList = new ArrayList<>(count);
 
-            Model p;
+            Program2 p;
             for (int i = 0; i < count; i++) {
                 p = originalData.get(i);
-                if (p instanceof Program) {
-                    if (((Program)p).title.toLowerCase(Locale.getDefault()).contains(filterString)) {
-                        newList.add(p);
-                    }
+                if (p.title.toLowerCase(Locale.getDefault()).contains(filterString)) {
+                    newList.add(p);
                 }
+
+                /*
                 if (p instanceof Recording) {
                     if (((Recording)p).title.toLowerCase(Locale.getDefault()).contains(filterString)) {
                         newList.add(p);
                     }
                 }
+                */
             }
 
             results.values = newList;
@@ -297,7 +307,7 @@ public class SearchResultAdapter extends ArrayAdapter<Program> implements Filter
         @SuppressWarnings("unchecked")
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
-            filteredData = (ArrayList<Program>) results.values;
+            filteredData = (ArrayList<Program2>) results.values;
             notifyDataSetChanged();
         }
     }

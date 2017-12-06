@@ -104,12 +104,12 @@ public class SliderPreference extends DialogPreference {
         View view = super.onCreateDialogView();
 
         // Show the value of the slider as a text
-        final TextView seekbarValue = (TextView) view.findViewById(R.id.slider_preference_value);
+        final TextView seekbarValue = view.findViewById(R.id.slider_preference_value);
         seekbarValue.setText(String.valueOf(mSeekBarValue));
 
         // Set the actual value of the slider and create the listener that
         // updates the text and saves the value when the slider is moved.
-        final SeekBar seekbar = (SeekBar) view.findViewById(R.id.slider_preference_seekbar);
+        final SeekBar seekbar = view.findViewById(R.id.slider_preference_seekbar);
         seekbar.setMax(mSeekBarResolution);
         seekbar.setProgress(mSeekBarValue - mSeekBarMinValue);
         seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {

@@ -35,7 +35,6 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
-import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Channel2;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.Profile;
@@ -189,9 +188,9 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
         dataStorage = DataStorage.getInstance();
 
         // Create the list of channels that the user can select
-        channelList = new String[dataStorage.getChannels().size()];
-        for (int i = 0; i < dataStorage.getChannels().size(); i++) {
-            channelList[i] = dataStorage.getChannels().get(i).name;
+        channelList = new String[dataStorage.getChannelsFromArray().size()];
+        for (int i = 0; i < dataStorage.getChannelsFromArray().size(); i++) {
+            channelList[i] = dataStorage.getChannelsFromArray().get(i).channelName;
         }
 
         // Sort the channels in the list by name
@@ -552,9 +551,9 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
 
         // The id must be passed on to the server, not the name. So go through
         // all available channels and get the id for the selected channel name.
-        for (Channel c : dataStorage.getChannels()) {
-            if (c.name.equals(channelList[channelSelectionValue])) {
-                intent.putExtra("channelId", c.id);
+        for (Channel2 c : dataStorage.getChannelsFromArray().values()) {
+            if (c.channelName.equals(channelList[channelSelectionValue])) {
+                intent.putExtra("channelId", c.channelId);
                 break;
             }
         }

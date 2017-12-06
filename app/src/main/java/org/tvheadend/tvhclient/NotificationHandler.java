@@ -111,7 +111,7 @@ public class NotificationHandler {
         bundle.putString(Constants.BUNDLE_NOTIFICATION_MSG, msg);
         intent.putExtras(bundle);
 
-        PendingIntent pi = PendingIntent.getBroadcast(app.getApplicationContext(), (int) id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pi = PendingIntent.getBroadcast(app.getApplicationContext(), id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager am = (AlarmManager) app.getSystemService(Service.ALARM_SERVICE);
         am.set(AlarmManager.RTC_WAKEUP, time, pi);
     }

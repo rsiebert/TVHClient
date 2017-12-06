@@ -63,20 +63,20 @@ public class StatusFragment extends Fragment implements HTSListener {
         }
 
         View v = inflater.inflate(R.layout.status_fragment_layout, container, false);
-        connection = (TextView) v.findViewById(R.id.connection);
-        status = (TextView) v.findViewById(R.id.status);
-        additionalInformationLayout = (LinearLayout) v.findViewById(R.id.additional_information_layout);
-        channels = (TextView) v.findViewById(R.id.channels);
-        currentlyRec = (TextView) v.findViewById(R.id.currently_recording);
-        completedRec = (TextView) v.findViewById(R.id.completed_recordings);
-        upcomingRec = (TextView) v.findViewById(R.id.upcoming_recordings);
-        failedRec = (TextView) v.findViewById(R.id.failed_recordings);
-        removedRec = (TextView) v.findViewById(R.id.removed_recordings);
-        seriesRec = (TextView) v.findViewById(R.id.series_recordings);
-        timerRec = (TextView) v.findViewById(R.id.timer_recordings);
-        freediscspace = (TextView) v.findViewById(R.id.free_discspace);
-        totaldiscspace = (TextView) v.findViewById(R.id.total_discspace);
-        serverApiVersion = (TextView) v.findViewById(R.id.server_api_version);
+        connection = v.findViewById(R.id.connection);
+        status = v.findViewById(R.id.status);
+        additionalInformationLayout = v.findViewById(R.id.additional_information_layout);
+        channels = v.findViewById(R.id.channels);
+        currentlyRec = v.findViewById(R.id.currently_recording);
+        completedRec = v.findViewById(R.id.completed_recordings);
+        upcomingRec = v.findViewById(R.id.upcoming_recordings);
+        failedRec = v.findViewById(R.id.failed_recordings);
+        removedRec = v.findViewById(R.id.removed_recordings);
+        seriesRec = v.findViewById(R.id.series_recordings);
+        timerRec = v.findViewById(R.id.timer_recordings);
+        freediscspace = v.findViewById(R.id.free_discspace);
+        totaldiscspace = v.findViewById(R.id.total_discspace);
+        serverApiVersion = v.findViewById(R.id.server_api_version);
 
         return v;
     }
@@ -222,7 +222,7 @@ public class StatusFragment extends Fragment implements HTSListener {
         showDiscSpace();
 
         // Show the number of available channels
-        final String text = dataStorage.getChannels().size() + " " + getString(R.string.available);
+        final String text = dataStorage.getChannelsFromArray().size() + " " + getString(R.string.available);
         channels.setText(text);
     }
 

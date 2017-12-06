@@ -31,17 +31,16 @@ import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentScrollInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
-import org.tvheadend.tvhclient.model.Channel;
+import org.tvheadend.tvhclient.model.Channel2;
 import org.tvheadend.tvhclient.model.ChannelTag2;
-import org.tvheadend.tvhclient.model.Program;
-import org.tvheadend.tvhclient.model.Recording;
+import org.tvheadend.tvhclient.model.Program2;
+import org.tvheadend.tvhclient.model.Recording2;
 import org.tvheadend.tvhclient.utils.MenuUtils;
 import org.tvheadend.tvhclient.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
 public class ProgramGuideListFragment extends Fragment implements HTSListener, FragmentControlInterface, ProgramContextMenuInterface {
 
@@ -58,7 +57,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
     private TextView titleHours;
     private ImageView currentTimeIndication;
     private Bundle bundle;
-    private Program selectedProgram = null;
+    private Program2 selectedProgram = null;
     private int tabIndex;
 
     private Handler updateEpgHandler;
@@ -88,12 +87,12 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
         }
 
         View v = inflater.inflate(R.layout.program_guide_pager_list, container, false);
-        listView = (ListView) v.findViewById(R.id.item_list);
-        titleLayout = (LinearLayout) v.findViewById(R.id.pager_title);
-        titleDateText = (TextView) v.findViewById(R.id.pager_title_date_text);
-        titleDate = (TextView) v.findViewById(R.id.pager_title_date);
-        titleHours = (TextView) v.findViewById(R.id.pager_title_hours);
-        currentTimeIndication = (ImageView) v.findViewById(R.id.current_time);
+        listView = v.findViewById(R.id.item_list);
+        titleLayout = v.findViewById(R.id.pager_title);
+        titleDateText = v.findViewById(R.id.pager_title_date_text);
+        titleDate = v.findViewById(R.id.pager_title_date);
+        titleHours = v.findViewById(R.id.pager_title_hours);
+        currentTimeIndication = v.findViewById(R.id.current_time);
         return v;
     }
 
@@ -140,7 +139,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
             Utils.setTime(titleHours, startDate, endDate);
         }
 
-        adapter = new ProgramGuideListAdapter(activity, this, new ArrayList<Channel>(), bundle);
+        adapter = new ProgramGuideListAdapter(activity, this, new ArrayList<Channel2>(), bundle);
         listView.setAdapter(adapter);
 
         // Inform the activity when the program guide list is scrolling or has
@@ -230,9 +229,8 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
         adapter.clear();
 
         // Make a copy of the channel list before iterating over it
-        List<Channel> channels = dataStorage.getChannels();
-        for (Channel ch : channels) {
-            if (currentTag == null || ch.hasTag(currentTag.tagId)) {
+        for (Channel2 ch : dataStorage.getChannelsFromArray().values()) {
+            if (currentTag == null || currentTag.members.contains(ch.channelId)) {
                 adapter.add(ch);
             }
         }
@@ -327,7 +325,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
             return true;
 
         case R.id.menu_record_remove:
-            Recording rec = selectedProgram.recording;
+            Recording2 rec = dataStorage.getRecordingFromArray(selectedProgram.dvrId);
             if (rec != null) {
                 if (rec.isRecording()) {
                     menuUtils.handleMenuStopRecordingSelection(rec.id, rec.title);
@@ -340,7 +338,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
             return true;
 
         case R.id.menu_record_once:
-            menuUtils.handleMenuRecordSelection(selectedProgram.id);
+            menuUtils.handleMenuRecordSelection(selectedProgram.eventId);
             return true;
 
         case R.id.menu_record_series:
@@ -374,7 +372,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
             case "channelAdd":
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
-                        adapter.add((Channel) obj);
+                        adapter.add((Channel2) obj);
                         adapter.sort(Utils.getChannelSortOrder(activity));
                         startDelayedAdapterUpdate();
                     }
@@ -383,7 +381,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
             case "channelDelete":
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
-                        adapter.remove((Channel) obj);
+                        adapter.remove((Channel2) obj);
                         startDelayedAdapterUpdate();
                     }
                 });
@@ -402,7 +400,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
             case "channelUpdate":
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
-                        final Channel ch = (Channel) obj;
+                        final Channel2 ch = (Channel2) obj;
                         adapter.update(ch);
                         startDelayedAdapterUpdate();
                     }
@@ -412,7 +410,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
     }
 
     @Override
-    public void setSelectedContextItem(Program p) {
+    public void setSelectedContextItem(Program2 p) {
         selectedProgram = p;
     }
 

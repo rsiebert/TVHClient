@@ -2,7 +2,6 @@ package org.tvheadend.tvhclient.fragments;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -23,26 +22,20 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
-import com.afollestad.materialdialogs.MaterialDialog;
-
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DataStorage;
-import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.adapter.ChannelListAdapter;
-import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentScrollInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.interfaces.ToolbarInterface;
-import org.tvheadend.tvhclient.model.Channel;
+import org.tvheadend.tvhclient.model.Channel2;
 import org.tvheadend.tvhclient.model.ChannelTag2;
-import org.tvheadend.tvhclient.model.Connection;
-import org.tvheadend.tvhclient.model.Profile;
-import org.tvheadend.tvhclient.model.Program;
-import org.tvheadend.tvhclient.model.Recording;
+import org.tvheadend.tvhclient.model.Program2;
+import org.tvheadend.tvhclient.model.Recording2;
 import org.tvheadend.tvhclient.utils.MenuTagSelectionCallback;
 import org.tvheadend.tvhclient.utils.MenuTimeSelectionCallback;
 import org.tvheadend.tvhclient.utils.MenuUtils;
@@ -52,10 +45,7 @@ import org.tvheadend.tvhclient.utils.Utils;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ChannelListFragment extends Fragment implements HTSListener, FragmentControlInterface, MenuTimeSelectionCallback, MenuTagSelectionCallback {
 
@@ -66,7 +56,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
     private FragmentScrollInterface fragmentScrollInterface;
 	private ToolbarInterface toolbarInterface;
 
-    private ArrayList<ChannelTag2> tagList = new ArrayList<>();
+    //private ArrayList<ChannelTag2> tagList = new ArrayList<>();
     private ChannelListAdapter adapter;
     private ListView listView;
 
@@ -124,7 +114,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
         }
 
         View v = inflater.inflate(viewLayout, container, false);
-        listView = (ListView) v.findViewById(R.id.item_list);
+        listView = v.findViewById(R.id.item_list);
         return v;
     }
 
@@ -155,7 +145,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
             listView.setOnItemClickListener(new OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    final Channel ch = adapter.getItem(position);
+                    final Channel2 ch = adapter.getItem(position);
                     if (fragmentStatusInterface != null) {
                         fragmentStatusInterface.onListItemSelected(position, ch, TAG);
                     }
@@ -252,12 +242,12 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
         switch (item.getItemId()) {
         case R.id.menu_play:
             // Open a new activity to stream the current program to this device
-            menuUtils.handleMenuPlaySelection(adapter.getSelectedItem().id, -1);
+            menuUtils.handleMenuPlaySelection(adapter.getSelectedItem().channelId, -1);
             return true;
 
         case R.id.menu_tags:
             ChannelTag2 tag = Utils.getChannelTag(activity);
-            menuUtils.handleMenuTagsSelection(tagList, (tag != null ? tag.tagId : -1), this);
+            menuUtils.handleMenuTagsSelection((tag != null ? tag.tagId : -1), this);
             return true;
 
         case R.id.menu_timeframe:
@@ -289,22 +279,18 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
             return super.onContextItemSelected(item);
         }
 
-        // Get the currently selected channel. Also get the program that is
-        // currently being transmitting by this channel.
-        Program program = null;
-        final Channel channel = adapter.getItem(info.position);
-        if (channel != null) {
-            CopyOnWriteArrayList<Program> epg = new CopyOnWriteArrayList<>(channel.epg);
-            if (channel.isTransmitting) {
-                for (Program p : epg) {
-                    if (p.start.getTime() >= showProgramsFromTime ||
-                            p.stop.getTime() >= showProgramsFromTime) {
-                        program = p;
-                        break;
-                    }
+        // Add all programs to a list
+        Program2 program = null;
+        final Channel2 channel = adapter.getItem(info.position);
+        for (Program2 p : DataStorage.getInstance().getProgramsFromArray().values()) {
+            if (p.channelId == channel.channelId) {
+                if ((p.start * 1000) <= showProgramsFromTime && (p.stop * 1000) > showProgramsFromTime) {
+                    program = p;
+                    break;
                 }
             }
         }
+
 
         // Return if the program is null. This is just a precaution and should
         // not happen because the user has selected the context menu of an
@@ -319,11 +305,11 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
             return true;
 
         case R.id.menu_search_epg:
-            menuUtils.handleMenuSearchEpgSelection(program.title, channel.id);
+            menuUtils.handleMenuSearchEpgSelection(program.title, channel.channelId);
             return true;
             
         case R.id.menu_record_remove:
-            Recording rec = program.recording;
+            Recording2 rec = dataStorage.getRecordingFromArray(program.dvrId);
             if (rec != null) {
                 if (rec.isRecording()) {
                     menuUtils.handleMenuStopRecordingSelection(rec.id, rec.title);
@@ -336,53 +322,11 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
             return true;
 
         case R.id.menu_record_once:
-            menuUtils.handleMenuRecordSelection(program.id);
+            menuUtils.handleMenuRecordSelection(program.eventId);
             return true;
 
         case R.id.menu_record_once_custom_profile:
-            // Create the list of available recording profiles that the user can select from
-            String[] dvrConfigList = new String[dataStorage.getDvrConfigs().size()];
-            for (int i = 0; i < dataStorage.getDvrConfigs().size(); i++) {
-                dvrConfigList[i] = dataStorage.getDvrConfigs().get(i).name;
-            }
-
-            // Get the selected recording profile to highlight the 
-            // correct item in the list of the selection dialog
-            int dvrConfigNameValue = 0;
-            DatabaseHelper databaseHelper = DatabaseHelper.getInstance(getActivity().getApplicationContext());
-            final Connection conn = databaseHelper.getSelectedConnection();
-            final Profile p = databaseHelper.getProfile(conn.recording_profile_id);
-            if (p != null) {
-                for (int i = 0; i < dvrConfigList.length; i++) {
-                    if (dvrConfigList[i].equals(p.name)) {
-                        dvrConfigNameValue = i;
-                        break;
-                    }
-                }
-            }
-
-            // Create new variables because the dialog needs them as final
-            final Program prog = program;
-            final String[] dcList = dvrConfigList;
-
-            // Create the dialog to show the available profiles
-            new MaterialDialog.Builder(activity)
-            .title(R.string.select_dvr_config)
-            .items(dvrConfigList)
-            .itemsCallbackSingleChoice(dvrConfigNameValue, new MaterialDialog.ListCallbackSingleChoice() {
-                @Override
-                public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
-                    // Pass over the 
-                    Intent intent = new Intent(activity, HTSService.class);
-                    intent.setAction("addDvrEntry");
-                    intent.putExtra("eventId", prog.id);
-                    intent.putExtra("channelId", prog.channel.id);
-                    intent.putExtra("configName", dcList[which]);
-                    activity.startService(intent);
-                    return true;
-                }
-            })
-            .show();
+            menuUtils.handleMenuCustomRecordSelection(program.eventId, channel.channelId);
             return true;
 
         case R.id.menu_record_series:
@@ -391,7 +335,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
 
         case R.id.menu_play:
             // Open a new activity to stream the current program to this device
-            menuUtils.handleMenuPlaySelection(channel.id, -1);
+            menuUtils.handleMenuPlaySelection(channel.channelId, -1);
             return true;
 
         default:
@@ -407,23 +351,21 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
         // Get the currently selected channel. Also get the program that is
         // currently being transmitting by this channel.
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-        Program program = null;
-        final Channel channel = adapter.getItem(info.position);
-        if (channel != null) {
-            final Set<Program> epg = channel.epg;
-            for (Program p : epg) {
-                program = p;
-                if (channel.isTransmitting &&
-                        channelTimeSelection == 0 &&
-                        program.start.getTime() >= showProgramsFromTime ||
-                        program.stop.getTime() >= showProgramsFromTime) {
+        final Channel2 channel = adapter.getItem(info.position);
+
+        Program2 p = null;
+        for (Program2 program : DataStorage.getInstance().getProgramsFromArray().values()) {
+            if (program.channelId == channel.channelId) {
+                if ((program.start * 1000) <= showProgramsFromTime && (program.stop * 1000) > showProgramsFromTime) {
+                    p = program;
                     break;
                 }
             }
         }
-        if (program != null) {
-            menu.setHeaderTitle(program.title);
-            Utils.setProgramMenu(app, menu, program);
+
+        if (p != null) {
+            menu.setHeaderTitle(p.title);
+            Utils.setProgramMenu(app, menu, p);
         }
     }
 
@@ -439,24 +381,16 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
 
         // Add only those channels that contain the selected channel tag
         adapter.clear();
-        CopyOnWriteArrayList<Channel> channelList = new CopyOnWriteArrayList<>(dataStorage.getChannels());
-        Iterator<Channel> cIt = channelList.iterator();
-        Channel ch;
-        while (cIt.hasNext()) {
-            ch = cIt.next();
-            if (currentTag == null || ch.hasTag(currentTag.tagId)) {
-                adapter.add(ch);
+        Map<Integer, Channel2> programMap = DataStorage.getInstance().getChannelsFromArray();
+        for (Channel2 channel : programMap.values()) {
+            if (currentTag == null || currentTag.members.contains(channel.channelId)) {
+                adapter.add(channel);
             }
         }
 
         adapter.sort(Utils.getChannelSortOrder(activity));
         adapter.setTime(showProgramsFromTime);
         adapter.notifyDataSetChanged();
-
-        // Fill the channel tag adapter with the available channel tags
-        tagList.clear();
-        Map<Integer, ChannelTag2> map = dataStorage.getTagsFromArray();
-        tagList.addAll(map.values());
 
         // Show the name of the selected channel tag and the number of channels
         // in the action bar. If enabled show also the channel tag icon.
@@ -537,7 +471,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
             case "channelAdd":
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
-                        adapter.add((Channel) obj);
+                        adapter.add((Channel2) obj);
                         adapter.sort(Utils.getChannelSortOrder(activity));
                         adapter.notifyDataSetChanged();
                     }
@@ -546,7 +480,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
             case "channelDelete":
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
-                        adapter.remove((Channel) obj);
+                        adapter.remove((Channel2) obj);
                         adapter.notifyDataSetChanged();
                     }
                 });
@@ -554,11 +488,12 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
             case "channelUpdate":
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
-                        adapter.update((Channel) obj);
+                        adapter.update((Channel2) obj);
                         adapter.notifyDataSetChanged();
                     }
                 });
                 break;
+                /*
             case "tagAdd":
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
@@ -575,10 +510,12 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
                     }
                 });
                 break;
+                */
             case "eventUpdate":
             case "eventDelete":
             case "dvrEntryAdd":
             case "dvrEntryUpdate":
+            case "dvrEntryDelete":
                 // An existing program has been updated
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
@@ -609,7 +546,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
             adapter.setPosition(position);
 
             if (fragmentStatusInterface != null) {
-                final Channel ch = adapter.getItem(position);
+                final Channel2 ch = adapter.getItem(position);
                 fragmentStatusInterface.onListItemSelected(position, ch, TAG);
             }
         }

@@ -29,7 +29,7 @@ public class NotificationReceiver extends BroadcastReceiver {
                     .setAutoCancel(true);
 
             NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-            nm.notify((int) rec.id, mBuilder.build());
+            nm.notify(rec.id, mBuilder.build());
         }
     }
 }

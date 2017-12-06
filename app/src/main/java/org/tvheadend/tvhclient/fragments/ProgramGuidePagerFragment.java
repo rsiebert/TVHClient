@@ -66,7 +66,7 @@ public class ProgramGuidePagerFragment extends Fragment implements FragmentContr
         }
 
         View v = inflater.inflate(R.layout.program_guide_pager, container, false);
-        viewPager = (ViewPager) v.findViewById(R.id.pager);
+        viewPager = v.findViewById(R.id.pager);
         return v;
     }
 

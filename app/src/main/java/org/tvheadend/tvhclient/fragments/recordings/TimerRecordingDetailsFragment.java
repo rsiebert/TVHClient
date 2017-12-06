@@ -171,17 +171,17 @@ public class TimerRecordingDetailsFragment extends DialogFragment {
 
         String[] priorityItems = getResources().getStringArray(R.array.dvr_priorities);
         if (trec.priority >= 0 && trec.priority < priorityItems.length) {
-            priority.setText(priorityItems[(int) (trec.priority)]);
+            priority.setText(priorityItems[trec.priority]);
         }
 
         // TODO multiple uses, consolidate
         Calendar startTime = Calendar.getInstance();
-        startTime.set(Calendar.HOUR_OF_DAY, (int) (trec.start / 60));
-        startTime.set(Calendar.MINUTE, (int) (trec.start % 60));
+        startTime.set(Calendar.HOUR_OF_DAY, trec.start / 60);
+        startTime.set(Calendar.MINUTE, trec.start % 60);
 
         Calendar endTime = Calendar.getInstance();
-        endTime.set(Calendar.HOUR_OF_DAY, (int) (trec.stop / 60));
-        endTime.set(Calendar.MINUTE, (int) (trec.stop % 60));
+        endTime.set(Calendar.HOUR_OF_DAY, trec.stop / 60);
+        endTime.set(Calendar.MINUTE, trec.stop % 60);
 
         Utils.setTime(time, new Date(startTime.getTimeInMillis()), new Date(endTime.getTimeInMillis()));
         duration.setText(getString(R.string.minutes, (int) (trec.stop - trec.start)));

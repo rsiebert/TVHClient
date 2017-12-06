@@ -13,19 +13,19 @@ import android.widget.LinearLayout;
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.ProgramGuideItemView;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.model.Channel;
+import org.tvheadend.tvhclient.model.Channel2;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
-public class ProgramGuideListAdapter extends ArrayAdapter<Channel> {
+public class ProgramGuideListAdapter extends ArrayAdapter<Channel2> {
 
     @SuppressWarnings("unused")
     private final static String TAG = ProgramGuideListAdapter.class.getSimpleName();
 
     private final Activity activity;
-    private final List<Channel> list;
+    private final List<Channel2> list;
     private ViewHolder holder = null;
     private final Bundle bundle;
     final private LayoutInflater inflater;
@@ -33,7 +33,7 @@ public class ProgramGuideListAdapter extends ArrayAdapter<Channel> {
     private final Fragment fragment;
     // private HashMap<Channel, Set<Program>> channelProgramList = new HashMap<Channel, Set<Program>>();
     
-    public ProgramGuideListAdapter(Activity activity, Fragment fragment, List<Channel> list, Bundle bundle) {
+    public ProgramGuideListAdapter(Activity activity, Fragment fragment, List<Channel2> list, Bundle bundle) {
         super(activity, R.layout.program_guide_pager_list_item, list);
         this.activity = activity;
         this.fragment = fragment;
@@ -45,25 +45,26 @@ public class ProgramGuideListAdapter extends ArrayAdapter<Channel> {
     public void sort(final int type) {
         switch (type) {
         case Constants.CHANNEL_SORT_DEFAULT:
-            sort(new Comparator<Channel>() {
-                public int compare(Channel x, Channel y) {
-                    return x.compareTo(y);
+            sort(new Comparator<Channel2>() {
+                public int compare(Channel2 x, Channel2 y) {
+                    // TODO return x.compareTo(y);
+                    return x.channelName.toLowerCase(Locale.US).compareTo(y.channelName.toLowerCase(Locale.US));
                 }
             });
             break;
         case Constants.CHANNEL_SORT_BY_NAME:
-            sort(new Comparator<Channel>() {
-                public int compare(Channel x, Channel y) {
-                    return x.name.toLowerCase(Locale.US).compareTo(y.name.toLowerCase(Locale.US));
+            sort(new Comparator<Channel2>() {
+                public int compare(Channel2 x, Channel2 y) {
+                    return x.channelName.toLowerCase(Locale.US).compareTo(y.channelName.toLowerCase(Locale.US));
                 }
             });
             break;
         case Constants.CHANNEL_SORT_BY_NUMBER:
-            sort(new Comparator<Channel>() {
-                public int compare(Channel x, Channel y) {
-                    if (x.number > y.number) {
+            sort(new Comparator<Channel2>() {
+                public int compare(Channel2 x, Channel2 y) {
+                    if (x.channelNumber > y.channelNumber) {
                         return 1;
-                    } else if (x.number < y.number) {
+                    } else if (x.channelNumber < y.channelNumber) {
                         return -1;
                     } else {
                         return 0;
@@ -100,23 +101,23 @@ public class ProgramGuideListAdapter extends ArrayAdapter<Channel> {
 
         // Adds the channel and shows the programs. Channel is
         // required to have access to the EPG data.
-        holder.item.addPrograms(parent, getItem(position));
+        // TODO holder.item.addPrograms(parent, getItem(position));
         return view;
     }
     
-    public void update(Channel c) {
+    public void update(Channel2 c) {
         int length = list.size();
         // Go through the list of programs and find the
         // one with the same id. If its been found, replace it.
         for (int i = 0; i < length; ++i) {
-            if (list.get(i).id == c.id) {
+            if (list.get(i).channelId == c.channelId) {
                 list.set(i, c);
                 break;
             }
         }
     }
 
-    public List<Channel> getList() {
+    public List<Channel2> getList() {
         return list;
     }
 }

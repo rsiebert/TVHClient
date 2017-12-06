@@ -75,10 +75,10 @@ import org.tvheadend.tvhclient.interfaces.FragmentScrollInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.interfaces.ToolbarInterface;
-import org.tvheadend.tvhclient.model.Channel;
+import org.tvheadend.tvhclient.model.Channel2;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.Profile;
-import org.tvheadend.tvhclient.model.Program;
+import org.tvheadend.tvhclient.model.Program2;
 import org.tvheadend.tvhclient.model.Recording2;
 import org.tvheadend.tvhclient.model.SeriesRecording2;
 import org.tvheadend.tvhclient.model.TimerRecording2;
@@ -92,6 +92,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+// TODO nav menu not updated when recordings change
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, ChangeLogDialogInterface, ToolbarInterface, FragmentStatusInterface, FragmentScrollInterface, HTSListener, WakeOnLanTaskCallback {
 
@@ -138,7 +140,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private ArrayList<Integer> menuStack = new ArrayList<>();
 
     // Holds a list of channels that are currently being loaded
-    private final List<Channel> channelLoadingList = new ArrayList<>();
+    private final List<Channel2> channelLoadingList = new ArrayList<>();
     private Runnable channelLoadingTask;
     private final Handler channelLoadingHandler = new Handler();
 
@@ -236,12 +238,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             actionBar.setDisplayUseLogoEnabled(Utils.showChannelIcons(this));
         }
 
-        coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
+        coordinatorLayout = findViewById(R.id.coordinatorLayout);
 
         // Get the widgets so we can use them later and do not need to inflate again
-        actionBarTitle = (TextView) toolbar.findViewById(R.id.actionbar_title);
-        actionBarSubtitle = (TextView) toolbar.findViewById(R.id.actionbar_subtitle);
-        actionBarIcon = (ImageView) toolbar.findViewById(R.id.actionbar_icon);
+        actionBarTitle = toolbar.findViewById(R.id.actionbar_title);
+        actionBarSubtitle = toolbar.findViewById(R.id.actionbar_subtitle);
+        actionBarIcon = toolbar.findViewById(R.id.actionbar_icon);
         actionBarIcon.setVisibility(View.GONE);
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -374,7 +376,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void initCasting() {
         logger.log(TAG, "initCasting() called");
 
-        mMiniController = (MiniController) findViewById(R.id.miniController);
+        mMiniController = findViewById(R.id.miniController);
         mCastManager = VideoCastManager.getInstance();
         mCastManager.reconnectSessionIfPossible();
 
@@ -504,7 +506,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         if (oldConn != null && newConn != null && oldConn.id != newConn.id) {
                             // Close the menu when a new connection has been selected
                             drawerLayout.closeDrawers();
-                            TextView serverName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.server_name);
+                            TextView serverName = navigationView.getHeaderView(0).findViewById(R.id.server_name);
                             serverName.setText(newConn.name);
 
                             // Set the new connection as the active one
@@ -529,8 +531,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void showNavigationHeader() {
         Log.d(TAG, "showNavigationHeader() called");
 
-        TextView serverName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.server_name);
-        ImageView serverSelection = (ImageView) navigationView.getHeaderView(0).findViewById(R.id.server_selection);
+        TextView serverName = navigationView.getHeaderView(0).findViewById(R.id.server_name);
+        ImageView serverSelection = navigationView.getHeaderView(0).findViewById(R.id.server_selection);
 
         // Update the server connection status
         if (serverName != null && serverSelection != null) {
@@ -644,7 +646,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         TextView menuActionViewFailedRecordings = (TextView) navigationView.getMenu().findItem(R.id.nav_failed_recordings).getActionView();
         TextView menuActionViewRemovedRecordings = (TextView) navigationView.getMenu().findItem(R.id.nav_removed_recordings).getActionView();
 
-        int channelCount = dataStorage.getChannels().size();
+        int channelCount = dataStorage.getChannelsFromArray().size();
 
         int completedRecordingCount = 0;
         int scheduledRecordingCount = 0;
@@ -990,7 +992,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
         // This is the layout for the main content. It is always visible
-        FrameLayout mainLayout = (FrameLayout) findViewById(R.id.main_fragment);
+        FrameLayout mainLayout = findViewById(R.id.main_fragment);
         if (mainLayout != null) {
             LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) mainLayout.getLayoutParams();
             layoutParams.weight = mainLayoutWeight;
@@ -998,7 +1000,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         // This is the layout for the details on the right side. It is only
         // available on large tablets and on smaller tablets in landscape mode.
-        FrameLayout rightLayout = (FrameLayout) findViewById(R.id.right_fragment);
+        FrameLayout rightLayout = findViewById(R.id.right_fragment);
         if (rightLayout != null) {
             LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) rightLayout.getLayoutParams();
             layoutParams.weight = rightLayoutWeight;
@@ -1086,7 +1088,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case "channelUpdate":
                 runOnUiThread(new Runnable() {
                     public void run() {
-                        final Channel ch = (Channel) obj;
+                        final Channel2 ch = (Channel2) obj;
 
                         // The channel has been updated (usually by a call to load
                         // more data) so remove it from the loading queue and
@@ -1264,7 +1266,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
-    public void moreDataRequired(final Channel channel, final String tag) {
+    public void moreDataRequired(final Channel2 channel, final String tag) {
+        Log.d(TAG, "moreDataRequired() called with: channel = [" + channel + "], tag = [" + tag + "]");
         if (dataStorage.isLoading() || channel == null) {
             return;
         }
@@ -1275,7 +1278,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
-    public void onListItemSelected(final int position, final Channel channel, final String tag) {
+    public void onListItemSelected(final int position, final Channel2 channel, final String tag) {
         switch (selectedNavigationMenuId) {
             case MENU_CHANNELS:
                 // Save the position of the selected channel so it can be restored
@@ -1291,11 +1294,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
                     if (prefs.getBoolean("playWhenChannelIconSelectedPref", true)
                             && tag.equals(Constants.TAG_CHANNEL_ICON)) {
-                        menuUtils.handleMenuPlaySelection(channel.id, -1);
+                        menuUtils.handleMenuPlaySelection(channel.channelId, -1);
 
                     } else {
                         Bundle bundle = new Bundle();
-                        bundle.putLong("channelId", channel.id);
+                        bundle.putInt("channelId", channel.channelId);
                         bundle.putBoolean("dual_pane", isDualPane);
                         bundle.putLong("show_programs_from_time", showProgramsFromTime);
 
@@ -1311,7 +1314,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case MENU_PROGRAM_GUIDE:
                 // If a channel was selected in the program guide screen, start
                 // playing the selected channel
-                menuUtils.handleMenuPlaySelection(channel.id, -1);
+                menuUtils.handleMenuPlaySelection(channel.channelId, -1);
                 break;
         }
     }
@@ -1416,14 +1419,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
-    public void onListItemSelected(final int position, final Program program, final String tag) {
+    public void onListItemSelected(final int position, final Program2 program, final String tag) {
         // When a program has been selected from the program list fragment,
         // show its details. In single or dual pane mode these are shown in a
         // separate dialog fragment
         if (program != null) {
             Bundle args = new Bundle();
-            args.putLong("eventId", program.id);
-            args.putLong("channelId", program.channel.id);
+            args.putInt("eventId", program.eventId);
+            Channel2 channel = dataStorage.getChannelFromArray(program.channelId);
+            args.putInt("channelId", channel.channelId);
             args.putBoolean(Constants.BUNDLE_SHOW_CONTROLS, true);
 
             DialogFragment newFragment = ProgramDetailsFragment.newInstance(args);
@@ -1647,9 +1651,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (!isDualPane) {
             if (f instanceof ProgramListFragment) {
                 Object o = ((FragmentControlInterface) f).getSelectedItem();
-                if (o instanceof Channel) {
-                    final Channel ch = (Channel) o;
-                    bundle.putLong("channelId", ch.id);
+                if (o instanceof Channel2) {
+                    final Channel2 ch = (Channel2) o;
+                    bundle.putInt("channelId", ch.channelId);
                 }
             }
         }
