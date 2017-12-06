@@ -75,13 +75,13 @@ import org.tvheadend.tvhclient.interfaces.FragmentScrollInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.interfaces.ToolbarInterface;
-import org.tvheadend.tvhclient.model.Channel2;
+import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.Profile;
-import org.tvheadend.tvhclient.model.Program2;
-import org.tvheadend.tvhclient.model.Recording2;
-import org.tvheadend.tvhclient.model.SeriesRecording2;
-import org.tvheadend.tvhclient.model.TimerRecording2;
+import org.tvheadend.tvhclient.model.Program;
+import org.tvheadend.tvhclient.model.Recording;
+import org.tvheadend.tvhclient.model.SeriesRecording;
+import org.tvheadend.tvhclient.model.TimerRecording;
 import org.tvheadend.tvhclient.tasks.WakeOnLanTask;
 import org.tvheadend.tvhclient.tasks.WakeOnLanTaskCallback;
 import org.tvheadend.tvhclient.utils.MenuUtils;
@@ -140,7 +140,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private ArrayList<Integer> menuStack = new ArrayList<>();
 
     // Holds a list of channels that are currently being loaded
-    private final List<Channel2> channelLoadingList = new ArrayList<>();
+    private final List<Channel> channelLoadingList = new ArrayList<>();
     private Runnable channelLoadingTask;
     private final Handler channelLoadingHandler = new Handler();
 
@@ -651,8 +651,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int scheduledRecordingCount = 0;
         int failedRecordingCount = 0;
         int removedRecordingCount = 0;
-        Map<Integer, Recording2> map = dataStorage.getRecordingsFromArray();
-        for (Recording2 recording : map.values()) {
+        Map<Integer, Recording> map = dataStorage.getRecordingsFromArray();
+        for (Recording recording : map.values()) {
             if (recording.isCompleted()) {
                 completedRecordingCount++;
             } else if (recording.isScheduled()) {
@@ -786,8 +786,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 */
         int completedRecordingCount = 0;
-        Map<Integer, Recording2> map = dataStorage.getRecordingsFromArray();
-        for (Recording2 recording : map.values()) {
+        Map<Integer, Recording> map = dataStorage.getRecordingsFromArray();
+        for (Recording recording : map.values()) {
             if (recording.isCompleted()) {
                 completedRecordingCount++;
                 break;
@@ -1088,7 +1088,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case "channelUpdate":
                 runOnUiThread(new Runnable() {
                     public void run() {
-                        final Channel2 ch = (Channel2) obj;
+                        final Channel ch = (Channel) obj;
 
                         // The channel has been updated (usually by a call to load
                         // more data) so remove it from the loading queue and
@@ -1274,7 +1274,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
-    public void moreDataRequired(final Channel2 channel, final String tag) {
+    public void moreDataRequired(final Channel channel, final String tag) {
         Log.d(TAG, "moreDataRequired() called with: channel = [" + channel + "], tag = [" + tag + "]");
         if (dataStorage.isLoading() || channel == null) {
             return;
@@ -1286,7 +1286,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
-    public void onListItemSelected(final int position, final Channel2 channel, final String tag) {
+    public void onListItemSelected(final int position, final Channel channel, final String tag) {
         switch (selectedNavigationMenuId) {
             case MENU_CHANNELS:
                 // Save the position of the selected channel so it can be restored
@@ -1328,7 +1328,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
-    public void onListItemSelected(final int position, final Recording2 recording, final String tag) {
+    public void onListItemSelected(final int position, final Recording recording, final String tag) {
         // Save the position of the selected recording type so it can be
         // restored after an orientation change
         switch (selectedNavigationMenuId) {
@@ -1373,7 +1373,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
-    public void onListItemSelected(final int position, final SeriesRecording2 seriesRecording, final String tag) {
+    public void onListItemSelected(final int position, final SeriesRecording seriesRecording, final String tag) {
         // Save the position of the selected recording type so it can be
         // restored after an orientation change
         switch (selectedNavigationMenuId) {
@@ -1400,7 +1400,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
-    public void onListItemSelected(final int position, final TimerRecording2 timerRecording, final String tag) {
+    public void onListItemSelected(final int position, final TimerRecording timerRecording, final String tag) {
         // Save the position of the selected recording type so it can be
         // restored after an orientation change
         switch (selectedNavigationMenuId) {
@@ -1427,14 +1427,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
-    public void onListItemSelected(final int position, final Program2 program, final String tag) {
+    public void onListItemSelected(final int position, final Program program, final String tag) {
         // When a program has been selected from the program list fragment,
         // show its details. In single or dual pane mode these are shown in a
         // separate dialog fragment
         if (program != null) {
             Bundle args = new Bundle();
             args.putInt("eventId", program.eventId);
-            Channel2 channel = dataStorage.getChannelFromArray(program.channelId);
+            Channel channel = dataStorage.getChannelFromArray(program.channelId);
             args.putInt("channelId", channel.channelId);
             args.putBoolean(Constants.BUNDLE_SHOW_CONTROLS, true);
 
@@ -1659,8 +1659,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (!isDualPane) {
             if (f instanceof ProgramListFragment) {
                 Object o = ((FragmentControlInterface) f).getSelectedItem();
-                if (o instanceof Channel2) {
-                    final Channel2 ch = (Channel2) o;
+                if (o instanceof Channel) {
+                    final Channel ch = (Channel) o;
                     bundle.putInt("channelId", ch.channelId);
                 }
             }
@@ -1671,8 +1671,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // visible in the required screens.
         if (f instanceof RecordingListFragment) {
             Object o = ((FragmentControlInterface) f).getSelectedItem();
-            if (o instanceof Recording2) {
-                final Recording2 rec = (Recording2) o;
+            if (o instanceof Recording) {
+                final Recording rec = (Recording) o;
                 bundle.putLong("dvrId", rec.id);
             }
         }

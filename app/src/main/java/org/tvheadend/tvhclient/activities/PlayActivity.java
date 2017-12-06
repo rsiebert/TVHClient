@@ -23,11 +23,11 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
-import org.tvheadend.tvhclient.model.Channel2;
+import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.HttpTicket;
 import org.tvheadend.tvhclient.model.Profile;
-import org.tvheadend.tvhclient.model.Recording2;
+import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 import org.tvheadend.tvhclient.utils.Utils;
 
@@ -46,8 +46,8 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
     private TVHClientApplication app;
     private int action;
 
-    private Channel2 ch;
-    private Recording2 rec;
+    private Channel ch;
+    private Recording rec;
     private String baseUrl;
     private Profile playbackProfile;
     private Profile castingProfile;
@@ -337,7 +337,7 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
             streamType = MediaInfo.STREAM_TYPE_LIVE;
         } else if (rec != null) {
             castUrl += "/dvrfile/" + rec.id;
-            Channel2 channel = dataStorage.getChannelFromArray(rec.channel);
+            Channel channel = dataStorage.getChannelFromArray(rec.channel);
             iconUrl += "/" + (channel != null ? channel.channelIcon : "");
             streamType = MediaInfo.STREAM_TYPE_BUFFERED;
 

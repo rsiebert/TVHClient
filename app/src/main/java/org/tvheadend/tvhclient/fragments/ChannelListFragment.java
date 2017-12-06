@@ -32,10 +32,10 @@ import org.tvheadend.tvhclient.interfaces.FragmentScrollInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.interfaces.ToolbarInterface;
-import org.tvheadend.tvhclient.model.Channel2;
-import org.tvheadend.tvhclient.model.ChannelTag2;
-import org.tvheadend.tvhclient.model.Program2;
-import org.tvheadend.tvhclient.model.Recording2;
+import org.tvheadend.tvhclient.model.Channel;
+import org.tvheadend.tvhclient.model.ChannelTag;
+import org.tvheadend.tvhclient.model.Program;
+import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.utils.MenuTagSelectionCallback;
 import org.tvheadend.tvhclient.utils.MenuTimeSelectionCallback;
 import org.tvheadend.tvhclient.utils.MenuUtils;
@@ -55,7 +55,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
     private FragmentScrollInterface fragmentScrollInterface;
 	private ToolbarInterface toolbarInterface;
 
-    //private ArrayList<ChannelTag2> tagList = new ArrayList<>();
+    //private ArrayList<ChannelTag> tagList = new ArrayList<>();
     private ChannelListAdapter adapter;
     private ListView listView;
 
@@ -144,7 +144,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
             listView.setOnItemClickListener(new OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    final Channel2 ch = adapter.getItem(position);
+                    final Channel ch = adapter.getItem(position);
                     if (fragmentStatusInterface != null) {
                         fragmentStatusInterface.onListItemSelected(position, ch, TAG);
                     }
@@ -245,7 +245,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
             return true;
 
         case R.id.menu_tags:
-            ChannelTag2 tag = Utils.getChannelTag(activity);
+            ChannelTag tag = Utils.getChannelTag(activity);
             menuUtils.handleMenuTagsSelection((tag != null ? tag.tagId : -1), this);
             return true;
 
@@ -279,9 +279,9 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
         }
 
         // Add all programs to a list
-        Program2 program = null;
-        final Channel2 channel = adapter.getItem(info.position);
-        for (Program2 p : DataStorage.getInstance().getProgramsFromArray().values()) {
+        Program program = null;
+        final Channel channel = adapter.getItem(info.position);
+        for (Program p : DataStorage.getInstance().getProgramsFromArray().values()) {
             if (p.channelId == channel.channelId) {
                 if ((p.start * 1000) <= showProgramsFromTime && (p.stop * 1000) > showProgramsFromTime) {
                     program = p;
@@ -308,7 +308,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
             return true;
             
         case R.id.menu_record_remove:
-            Recording2 rec = dataStorage.getRecordingFromArray(program.dvrId);
+            Recording rec = dataStorage.getRecordingFromArray(program.dvrId);
             if (rec != null) {
                 if (rec.isRecording()) {
                     menuUtils.handleMenuStopRecordingSelection(rec.id, rec.title);
@@ -350,10 +350,10 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
         // Get the currently selected channel. Also get the program that is
         // currently being transmitting by this channel.
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-        final Channel2 channel = adapter.getItem(info.position);
+        final Channel channel = adapter.getItem(info.position);
 
-        Program2 p = null;
-        for (Program2 program : DataStorage.getInstance().getProgramsFromArray().values()) {
+        Program p = null;
+        for (Program program : DataStorage.getInstance().getProgramsFromArray().values()) {
             if (program.channelId == channel.channelId) {
                 if ((program.start * 1000) <= showProgramsFromTime && (program.stop * 1000) > showProgramsFromTime) {
                     p = program;
@@ -376,11 +376,11 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
      */
     private void populateList() {
         // Get the currently selected channel tag
-        ChannelTag2 currentTag = Utils.getChannelTag(activity);
+        ChannelTag currentTag = Utils.getChannelTag(activity);
         //Log.d(TAG, "populateList: tag " + currentTag != null ? String.valueOf(currentTag.tagId) : "none");
         // Add only those channels that contain the selected channel tag
         adapter.clear();
-        for (Channel2 channel : DataStorage.getInstance().getChannelsFromArray().values()) {
+        for (Channel channel : DataStorage.getInstance().getChannelsFromArray().values()) {
             if (currentTag == null || channel.tags.contains(currentTag.tagId)) {
                 adapter.add(channel);
             }
@@ -469,7 +469,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
             case "channelAdd":
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
-                        adapter.add((Channel2) obj);
+                        adapter.add((Channel) obj);
                         adapter.sort(Utils.getChannelSortOrder(activity));
                         adapter.notifyDataSetChanged();
                     }
@@ -478,7 +478,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
             case "channelDelete":
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
-                        adapter.remove((Channel2) obj);
+                        adapter.remove((Channel) obj);
                         adapter.notifyDataSetChanged();
                     }
                 });
@@ -486,7 +486,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
             case "channelUpdate":
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
-                        adapter.update((Channel2) obj);
+                        adapter.update((Channel) obj);
                         adapter.notifyDataSetChanged();
                     }
                 });
@@ -495,7 +495,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
             case "tagAdd":
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
-                        ChannelTag2 tag = (ChannelTag2) obj;
+                        ChannelTag tag = (ChannelTag) obj;
                         tagList.add(tag);
                     }
                 });
@@ -503,7 +503,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
             case "tagDelete":
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
-                        ChannelTag2 tag = (ChannelTag2) obj;
+                        ChannelTag tag = (ChannelTag) obj;
                         tagList.remove(tag);
                     }
                 });
@@ -544,7 +544,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
             adapter.setPosition(position);
 
             if (fragmentStatusInterface != null) {
-                final Channel2 ch = adapter.getItem(position);
+                final Channel ch = adapter.getItem(position);
                 fragmentStatusInterface.onListItemSelected(position, ch, TAG);
             }
         }

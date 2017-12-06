@@ -6,7 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 
-import org.tvheadend.tvhclient.model.Recording2;
+import org.tvheadend.tvhclient.model.Recording;
 
 public class NotificationReceiver extends BroadcastReceiver {
 
@@ -18,7 +18,7 @@ public class NotificationReceiver extends BroadcastReceiver {
         // Get the recording of interest
         int recId = intent.getIntExtra("dvrId", 0);
         String msg = intent.getStringExtra(Constants.BUNDLE_NOTIFICATION_MSG);
-        final Recording2 rec = DataStorage.getInstance().getRecordingFromArray(recId);
+        final Recording rec = DataStorage.getInstance().getRecordingFromArray(recId);
 
         if (rec != null) {
             NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(

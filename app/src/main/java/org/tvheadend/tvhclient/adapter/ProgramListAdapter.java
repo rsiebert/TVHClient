@@ -10,21 +10,21 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.model.Program2;
+import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 import org.tvheadend.tvhclient.utils.Utils;
 
 import java.util.Comparator;
 import java.util.List;
 
-public class ProgramListAdapter extends ArrayAdapter<Program2> {
+public class ProgramListAdapter extends ArrayAdapter<Program> {
 
     private final static String TAG = ProgramListAdapter.class.getSimpleName();
     private final Activity context;
-    private final List<Program2> list;
+    private final List<Program> list;
     private final SharedPreferences prefs;
 
-    public ProgramListAdapter(Activity context, List<Program2> list) {
+    public ProgramListAdapter(Activity context, List<Program> list) {
         super(context, R.layout.program_list_widget, list);
         this.context = context;
         this.list = list;
@@ -32,8 +32,8 @@ public class ProgramListAdapter extends ArrayAdapter<Program2> {
     }
 
     public void sort() {
-        sort(new Comparator<Program2>() {
-            public int compare(Program2 x, Program2 y) {
+        sort(new Comparator<Program>() {
+            public int compare(Program x, Program y) {
                 if (x != null && y != null) {
                     if (x.start > y.start) {
                         return 1;
@@ -89,7 +89,7 @@ public class ProgramListAdapter extends ArrayAdapter<Program2> {
         }
 
         // Get the program and assign all the values
-        Program2 p = getItem(position);
+        Program p = getItem(position);
         if (p != null) {
             holder.title.setText(p.title);
             Utils.setState(context, holder.state, p);
@@ -112,7 +112,7 @@ public class ProgramListAdapter extends ArrayAdapter<Program2> {
         return view;
     }
 
-    public void update(Program2 p) {
+    public void update(Program p) {
         int length = list.size();
 
         // Go through the list of programs and find the
@@ -125,7 +125,7 @@ public class ProgramListAdapter extends ArrayAdapter<Program2> {
         }
     }
 
-    public List<Program2> getList() {
+    public List<Program> getList() {
         return list;
     }
 }

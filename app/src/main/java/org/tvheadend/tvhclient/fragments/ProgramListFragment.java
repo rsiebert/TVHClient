@@ -35,11 +35,11 @@ import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.interfaces.ToolbarInterface;
-import org.tvheadend.tvhclient.model.Channel2;
+import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.Profile;
-import org.tvheadend.tvhclient.model.Program2;
-import org.tvheadend.tvhclient.model.Recording2;
+import org.tvheadend.tvhclient.model.Program;
+import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.utils.MenuUtils;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 import org.tvheadend.tvhclient.utils.Utils;
@@ -58,7 +58,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
 
     private ProgramListAdapter adapter;
     private ListView listView;
-    private Channel2 channel;
+    private Channel channel;
     private boolean isDualPane = false;
     private long showProgramsFromTime;
 
@@ -123,7 +123,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
             }
         });
 
-        List<Program2> list = new ArrayList<>();
+        List<Program> list = new ArrayList<>();
         adapter = new ProgramListAdapter(activity, list);
         listView.setAdapter(adapter);
 
@@ -179,7 +179,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
 
             Log.d(TAG, "populateList: channel " + channel.channelName + ", showProgramsFromTime " + showProgramsFromTime);
             int nextId = 0;
-            for (Program2 program : DataStorage.getInstance().getProgramsFromArray().values()) {
+            for (Program program : DataStorage.getInstance().getProgramsFromArray().values()) {
                 if (program.channelId == channel.channelId) {
                     if ((program.start * 1000) <= showProgramsFromTime && (program.stop * 1000) > showProgramsFromTime) {
                         Log.d(TAG, "populateList: adding program " + program.title);
@@ -194,7 +194,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
 
             while (nextId != 0) {
                 Log.d(TAG, "populateList: nextid " + nextId);
-                Program2 p = DataStorage.getInstance().getProgramFromArray(nextId);
+                Program p = DataStorage.getInstance().getProgramFromArray(nextId);
                 if (p != null && p.nextEventId > 0) {
                     adapter.add(p);
                     availableProgramCount++;
@@ -264,7 +264,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
             return super.onContextItemSelected(item);
         }
 
-        final Program2 program = adapter.getItem(info.position);
+        final Program program = adapter.getItem(info.position);
         if (program == null) {
             return super.onContextItemSelected(item);
         }
@@ -285,7 +285,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
             return true;
 
         case R.id.menu_record_remove:
-            Recording2 rec = dataStorage.getRecordingFromArray(program.dvrId);
+            Recording rec = dataStorage.getRecordingFromArray(program.dvrId);
             if (rec != null) {
                 if (rec.isRecording()) {
                     menuUtils.handleMenuStopRecordingSelection(rec.id, rec.title);
@@ -337,7 +337,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
                     Intent intent = new Intent(activity, HTSService.class);
                     intent.setAction("addDvrEntry");
                     intent.putExtra("eventId", program.eventId);
-                    Channel2 channel = dataStorage.getChannelFromArray(program.channelId);
+                    Channel channel = dataStorage.getChannelFromArray(program.channelId);
                     intent.putExtra("channelId", channel.channelId);
                     intent.putExtra("configName", dcList[which]);
                     activity.startService(intent);
@@ -352,7 +352,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
             return true;
 
         case R.id.menu_play:
-            Channel2 channel = dataStorage.getChannelFromArray(program.channelId);
+            Channel channel = dataStorage.getChannelFromArray(program.channelId);
             menuUtils.handleMenuPlaySelection(channel.channelId, -1);
             return true;
 
@@ -369,7 +369,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
         // Get the currently selected program from the list where the context
         // menu has been triggered
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-        Program2 program = adapter.getItem(info.position);
+        Program program = adapter.getItem(info.position);
 
         // Set the title of the context menu and show or hide 
         // the menu items depending on the program state
@@ -435,8 +435,8 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
             case "eventAdd":
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
-                        Program2 p = (Program2) obj;
-                        Channel2 channel = dataStorage.getChannelFromArray(p.channelId);
+                        Program p = (Program) obj;
+                        Channel channel = dataStorage.getChannelFromArray(p.channelId);
                         if (channel != null) {
                             adapter.add(p);
                             adapter.notifyDataSetChanged();
@@ -452,7 +452,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
             case "eventDelete":
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
-                        adapter.remove((Program2) obj);
+                        adapter.remove((Program) obj);
                         adapter.notifyDataSetChanged();
                         if (toolbarInterface != null) {
                             String items = getResources().getQuantityString(R.plurals.programs, adapter.getCount(), adapter.getCount());
@@ -464,7 +464,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
             case "eventUpdate":
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
-                        adapter.update((Program2) obj);
+                        adapter.update((Program) obj);
                         adapter.notifyDataSetChanged();
                     }
                 });
@@ -472,8 +472,8 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
             case "dvrEntryUpdate":
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
-                        Recording2 rec = (Recording2) obj;
-                        for (Program2 p : adapter.getList()) {
+                        Recording rec = (Recording) obj;
+                        for (Program p : adapter.getList()) {
                             if (rec != null && rec.isRecording() && rec.id == p.dvrId) {
                                 adapter.update(p);
                                 adapter.notifyDataSetChanged();
@@ -509,7 +509,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
         setSelection(position, 0);
         // Simulate a click in the list item to inform the activity
         if (adapter != null && adapter.getCount() > position) {
-            Program2 p = adapter.getItem(position);
+            Program p = adapter.getItem(position);
             if (fragmentStatusInterface != null) {
                 fragmentStatusInterface.onListItemSelected(position, p, TAG);
             }

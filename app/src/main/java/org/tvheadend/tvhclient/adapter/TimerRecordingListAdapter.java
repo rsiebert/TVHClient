@@ -13,8 +13,8 @@ import android.widget.TextView;
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.model.Channel2;
-import org.tvheadend.tvhclient.model.TimerRecording2;
+import org.tvheadend.tvhclient.model.Channel;
+import org.tvheadend.tvhclient.model.TimerRecording;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 import org.tvheadend.tvhclient.utils.Utils;
 
@@ -22,13 +22,13 @@ import java.util.Calendar;
 import java.util.Comparator;
 import java.util.List;
 
-public class TimerRecordingListAdapter extends ArrayAdapter<TimerRecording2> {
+public class TimerRecordingListAdapter extends ArrayAdapter<TimerRecording> {
 
     private final Activity context;
-    private final List<TimerRecording2> list;
+    private final List<TimerRecording> list;
     private int selectedPosition = 0;
 
-    public TimerRecordingListAdapter(Activity context, List<TimerRecording2> list) {
+    public TimerRecordingListAdapter(Activity context, List<TimerRecording> list) {
         super(context, 0);
         this.context = context;
         this.list = list;
@@ -37,8 +37,8 @@ public class TimerRecordingListAdapter extends ArrayAdapter<TimerRecording2> {
     public void sort(final int type) {
         switch (type) {
         case Constants.RECORDING_SORT_ASCENDING:
-            sort(new Comparator<TimerRecording2>() {
-                public int compare(TimerRecording2 x, TimerRecording2 y) {
+            sort(new Comparator<TimerRecording>() {
+                public int compare(TimerRecording x, TimerRecording y) {
                     if (x != null && y != null && x.title != null && y.title != null) {
                         return (y.title.compareTo(x.title));
                     }
@@ -47,8 +47,8 @@ public class TimerRecordingListAdapter extends ArrayAdapter<TimerRecording2> {
             });
         break;
         case Constants.RECORDING_SORT_DESCENDING:
-            sort(new Comparator<TimerRecording2>() {
-                public int compare(TimerRecording2 x, TimerRecording2 y) {
+            sort(new Comparator<TimerRecording>() {
+                public int compare(TimerRecording x, TimerRecording y) {
                     if (x != null && y != null && x.title != null && y.title != null) {
                         return (x.title.compareTo(y.title));
                     }
@@ -112,9 +112,9 @@ public class TimerRecordingListAdapter extends ArrayAdapter<TimerRecording2> {
         }
 
         // Get the program and assign all the values
-        TimerRecording2 trec = getItem(position);
+        TimerRecording trec = getItem(position);
         if (trec != null) {
-            Channel2 channel = DataStorage.getInstance().getChannelFromArray(trec.channel);
+            Channel channel = DataStorage.getInstance().getChannelFromArray(trec.channel);
             if (trec.title != null && trec.title.length() > 0) {
                 holder.title.setText(trec.title);
             } else {
@@ -158,7 +158,7 @@ public class TimerRecordingListAdapter extends ArrayAdapter<TimerRecording2> {
         return view;
     }
 
-    public void update(TimerRecording2 trec) {
+    public void update(TimerRecording trec) {
         int length = list.size();
 
         // Go through the list of programs and find the
@@ -171,14 +171,14 @@ public class TimerRecordingListAdapter extends ArrayAdapter<TimerRecording2> {
         }
     }
 
-    public TimerRecording2 getSelectedItem() {
+    public TimerRecording getSelectedItem() {
         if (list.size() > 0 && list.size() > selectedPosition) {
             return list.get(selectedPosition);
         }
         return null;
     }
 
-    public List<TimerRecording2> getAllItems() {
+    public List<TimerRecording> getAllItems() {
         return list;
     }
 }

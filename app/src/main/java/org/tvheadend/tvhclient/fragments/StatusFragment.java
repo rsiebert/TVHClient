@@ -16,10 +16,10 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.interfaces.ToolbarInterface;
-import org.tvheadend.tvhclient.model.Channel2;
+import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.DiscSpace;
-import org.tvheadend.tvhclient.model.Recording2;
+import org.tvheadend.tvhclient.model.Recording;
 
 import java.util.Map;
 
@@ -336,11 +336,11 @@ public class StatusFragment extends Fragment implements HTSListener {
         String currentRecText = "";
 
         // Get the programs that are currently being recorded
-        Map<Integer, Recording2> map = dataStorage.getRecordingsFromArray();
-        for (Recording2 rec : map.values()) {
+        Map<Integer, Recording> map = dataStorage.getRecordingsFromArray();
+        for (Recording rec : map.values()) {
             if (rec.isRecording()) {
                 currentRecText += getString(R.string.currently_recording) + ": " + rec.title;
-                Channel2 channel = dataStorage.getChannelFromArray(rec.channel);
+                Channel channel = dataStorage.getChannelFromArray(rec.channel);
                 if (channel != null) {
                     currentRecText += " (" + getString(R.string.channel) + " " + channel.channelName + ")\n";
                 }
@@ -355,7 +355,7 @@ public class StatusFragment extends Fragment implements HTSListener {
         int scheduledRecCount = 0;
         int failedRecCount = 0;
         int removedRecCount = 0;
-        for (Recording2 recording : map.values()) {
+        for (Recording recording : map.values()) {
             if (recording.isCompleted()) {
                 completedRecCount++;
             } else if (recording.isScheduled()) {

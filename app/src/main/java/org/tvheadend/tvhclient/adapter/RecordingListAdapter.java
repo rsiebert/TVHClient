@@ -15,22 +15,22 @@ import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
-import org.tvheadend.tvhclient.model.Channel2;
-import org.tvheadend.tvhclient.model.Recording2;
+import org.tvheadend.tvhclient.model.Channel;
+import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 import org.tvheadend.tvhclient.utils.Utils;
 
 import java.util.Comparator;
 import java.util.List;
 
-public class RecordingListAdapter extends ArrayAdapter<Recording2> {
+public class RecordingListAdapter extends ArrayAdapter<Recording> {
 
     private final Activity context;
-    private final List<Recording2> list;
+    private final List<Recording> list;
     private int selectedPosition = 0;
     private final int layout;
 
-    public RecordingListAdapter(Activity context, List<Recording2> list, int layout) {
+    public RecordingListAdapter(Activity context, List<Recording> list, int layout) {
         super(context, layout, list);
         this.context = context;
         this.layout = layout;
@@ -40,8 +40,8 @@ public class RecordingListAdapter extends ArrayAdapter<Recording2> {
     public void sort(final int type) {
         switch (type) {
         case Constants.RECORDING_SORT_ASCENDING:
-            sort(new Comparator<Recording2>() {
-                public int compare(Recording2 x, Recording2 y) {
+            sort(new Comparator<Recording>() {
+                public int compare(Recording x, Recording y) {
                     if (y.start == x.start) {
                         return 1;
                     } else if (x.start < y.start){
@@ -53,8 +53,8 @@ public class RecordingListAdapter extends ArrayAdapter<Recording2> {
             });
         break;
         case Constants.RECORDING_SORT_DESCENDING:
-            sort(new Comparator<Recording2>() {
-                public int compare(Recording2 x, Recording2 y) {
+            sort(new Comparator<Recording>() {
+                public int compare(Recording x, Recording y) {
                     if (y.start == x.start) {
                         return 1;
                     } else if (x.start > y.start){
@@ -72,7 +72,7 @@ public class RecordingListAdapter extends ArrayAdapter<Recording2> {
         selectedPosition = pos;
     }
 
-    public List<Recording2> getAllItems() {
+    public List<Recording> getAllItems() {
         return list;
     }
 
@@ -141,9 +141,9 @@ public class RecordingListAdapter extends ArrayAdapter<Recording2> {
         }
 
         // Get the program and assign all the values
-        final Recording2 rec = getItem(position);
+        final Recording rec = getItem(position);
         if (rec != null) {
-            Channel2 channel = DataStorage.getInstance().getChannelFromArray(rec.channel);
+            Channel channel = DataStorage.getInstance().getChannelFromArray(rec.channel);
             holder.title.setText(rec.title);
             if (holder.channel != null && channel != null) {
                 holder.channel.setText(channel.channelName);
@@ -229,7 +229,7 @@ public class RecordingListAdapter extends ArrayAdapter<Recording2> {
         return view;
     }
 
-    public void update(Recording2 rec) {
+    public void update(Recording rec) {
         int length = list.size();
 
         // Go through the list of programs and find the
@@ -242,7 +242,7 @@ public class RecordingListAdapter extends ArrayAdapter<Recording2> {
         }
     }
     
-    public Recording2 getSelectedItem() {
+    public Recording getSelectedItem() {
         if (list.size() > 0 && list.size() > selectedPosition) {
             return list.get(selectedPosition);
         }

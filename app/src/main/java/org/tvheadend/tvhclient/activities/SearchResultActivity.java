@@ -53,9 +53,9 @@ import org.tvheadend.tvhclient.adapter.SearchResultAdapter;
 import org.tvheadend.tvhclient.fragments.ProgramDetailsFragment;
 import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
-import org.tvheadend.tvhclient.model.Channel2;
-import org.tvheadend.tvhclient.model.Program2;
-import org.tvheadend.tvhclient.model.Recording2;
+import org.tvheadend.tvhclient.model.Channel;
+import org.tvheadend.tvhclient.model.Program;
+import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.utils.MenuUtils;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
@@ -68,7 +68,7 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
 
     private ActionBar actionBar = null;
     private SearchResultAdapter adapter;
-    private Channel2 channel;
+    private Channel channel;
     //private Recording recording;
     private MenuItem searchMenuItem = null;
     private Runnable updateTask;
@@ -114,14 +114,14 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
             listView.setOnItemClickListener(new OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Program2 program = adapter.getItem(position);
+                    Program program = adapter.getItem(position);
 
                     // Show the program details dialog
                     //if (model instanceof Program) {
                     //final Program program = (Program) model;
                     Bundle args = new Bundle();
                     args.putLong("eventId", program.eventId);
-                    Channel2 channel = dataStorage.getChannelFromArray(program.channelId);
+                    Channel channel = dataStorage.getChannelFromArray(program.channelId);
                     args.putLong("channelId", channel.eventId);
                     args.putBoolean("dual_pane", false);
                     args.putBoolean(Constants.BUNDLE_SHOW_CONTROLS, true);
@@ -145,7 +145,7 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
 
         // This is the list with the initial data from the program guide. It
         // will be passed to the search adapter. 
-        List<Program2> list = new ArrayList<>();
+        List<Program> list = new ArrayList<>();
 
         Intent intent = getIntent();
 
@@ -348,13 +348,13 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
             return super.onContextItemSelected(item);
         }
 
-        final Program2 program = adapter.getItem(info.position);
+        final Program program = adapter.getItem(info.position);
         if (program == null) {
             return super.onContextItemSelected(item);
         }
 
-        Recording2 rec = dataStorage.getRecordingFromArray(program.dvrId);
-        Channel2 channel = dataStorage.getChannelFromArray(program.channelId);
+        Recording rec = dataStorage.getRecordingFromArray(program.dvrId);
+        Channel channel = dataStorage.getChannelFromArray(program.channelId);
 
         switch (item.getItemId()) {
             case R.id.menu_search_epg:
@@ -419,7 +419,7 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
         // Get the currently selected program from the list where the context
         // menu has been triggered
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-        final Program2 program = adapter.getItem(info.position);
+        final Program program = adapter.getItem(info.position);
 
         getMenuInflater().inflate(R.menu.program_context_menu, menu);
         // Set the title of the context menu
@@ -484,7 +484,7 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
             case "eventAdd":
                 runOnUiThread(new Runnable() {
                     public void run() {
-                        Program2 m = (Program2) obj;
+                        Program m = (Program) obj;
                         adapter.remove(m);
                         adapter.add(m);
                         startDelayedAdapterUpdate();
@@ -494,7 +494,7 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
             case "eventDelete":
                 runOnUiThread(new Runnable() {
                     public void run() {
-                        Program2 m = (Program2) obj;
+                        Program m = (Program) obj;
                         adapter.remove(m);
                         startDelayedAdapterUpdate();
                     }
@@ -503,7 +503,7 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
             case "eventUpdate":
                 runOnUiThread(new Runnable() {
                     public void run() {
-                        adapter.update((Program2) obj);
+                        adapter.update((Program) obj);
                         startDelayedAdapterUpdate();
                     }
                 });
@@ -511,7 +511,7 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
             case "dvrEntryDelete":
                 runOnUiThread(new Runnable() {
                     public void run() {
-                        Program2 m = (Program2) obj;
+                        Program m = (Program) obj;
                         adapter.remove(m);
                         startDelayedAdapterUpdate();
                     }
@@ -520,7 +520,7 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
             case "dvrEntryUpdate":
                 runOnUiThread(new Runnable() {
                     public void run() {
-                        adapter.update((Program2) obj);
+                        adapter.update((Program) obj);
                         startDelayedAdapterUpdate();
                     }
                 });

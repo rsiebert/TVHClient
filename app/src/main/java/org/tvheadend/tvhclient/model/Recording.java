@@ -4,7 +4,7 @@ import android.text.TextUtils;
 
 import java.util.List;
 
-public class Recording2 {
+public class Recording {
 
     public int id;                      // u32   required   ID of dvrEntry.
     public int channel;                 // u32   optional   Channel of dvrEntry.

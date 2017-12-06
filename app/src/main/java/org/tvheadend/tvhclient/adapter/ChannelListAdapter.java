@@ -17,9 +17,9 @@ import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
-import org.tvheadend.tvhclient.model.Channel2;
-import org.tvheadend.tvhclient.model.Program2;
-import org.tvheadend.tvhclient.model.Recording2;
+import org.tvheadend.tvhclient.model.Channel;
+import org.tvheadend.tvhclient.model.Program;
+import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 import org.tvheadend.tvhclient.utils.Utils;
 
@@ -28,18 +28,18 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public class ChannelListAdapter extends ArrayAdapter<Channel2> {
+public class ChannelListAdapter extends ArrayAdapter<Channel> {
 
     private final static String TAG = ChannelListAdapter.class.getSimpleName();
 
     private final Activity context;
-    private final List<Channel2> list;
+    private final List<Channel> list;
     private final int layout;
     private int selectedPosition = 0;
     private final SharedPreferences prefs;
     private long showProgramsFromTime;
 
-    public ChannelListAdapter(Activity context, List<Channel2> list, int layout) {
+    public ChannelListAdapter(Activity context, List<Channel> list, int layout) {
         super(context, layout, list);
         this.context = context;
         this.layout = layout;
@@ -54,8 +54,8 @@ public class ChannelListAdapter extends ArrayAdapter<Channel2> {
     public void sort(final int type) {
         switch (type) {
             case Constants.CHANNEL_SORT_DEFAULT:
-                sort(new Comparator<Channel2>() {
-                    public int compare(Channel2 x, Channel2 y) {
+                sort(new Comparator<Channel>() {
+                    public int compare(Channel x, Channel y) {
                         if (x != null && y != null) {
                             return x.channelName.compareTo(y.channelName);
                         }
@@ -64,8 +64,8 @@ public class ChannelListAdapter extends ArrayAdapter<Channel2> {
                 });
                 break;
             case Constants.CHANNEL_SORT_BY_NAME:
-                sort(new Comparator<Channel2>() {
-                    public int compare(Channel2 x, Channel2 y) {
+                sort(new Comparator<Channel>() {
+                    public int compare(Channel x, Channel y) {
                         if (x != null && y != null) {
                             return x.channelName.toLowerCase(Locale.US).compareTo(y.channelName.toLowerCase(Locale.US));
                         }
@@ -74,8 +74,8 @@ public class ChannelListAdapter extends ArrayAdapter<Channel2> {
                 });
                 break;
             case Constants.CHANNEL_SORT_BY_NUMBER:
-                sort(new Comparator<Channel2>() {
-                    public int compare(Channel2 x, Channel2 y) {
+                sort(new Comparator<Channel>() {
+                    public int compare(Channel x, Channel y) {
                         if (x != null && y != null) {
 
                             if (x.channelNumber > y.channelNumber) {
@@ -160,7 +160,7 @@ public class ChannelListAdapter extends ArrayAdapter<Channel2> {
         }
 
         // Get the program and assign all the values
-        final Channel2 c = getItem(position);
+        final Channel c = getItem(position);
         if (c != null) {
 
             // Set the initial values
@@ -212,8 +212,8 @@ public class ChannelListAdapter extends ArrayAdapter<Channel2> {
             // recording the current program.
             if (holder.state != null) {
                 boolean isRecording = false;
-                Map<Integer, Recording2> recMap = DataStorage.getInstance().getRecordingsFromArray();
-                for (Recording2 rec : recMap.values()) {
+                Map<Integer, Recording> recMap = DataStorage.getInstance().getRecordingsFromArray();
+                for (Recording rec : recMap.values()) {
                     if (rec.eventId == c.eventId) {
                         isRecording = rec.isRecording();
                         break;
@@ -228,10 +228,10 @@ public class ChannelListAdapter extends ArrayAdapter<Channel2> {
                 }
             }
 
-            Program2 p = null;
-            Program2 np = null;
+            Program p = null;
+            Program np = null;
 
-            for (Program2 program : DataStorage.getInstance().getProgramsFromArray().values()) {
+            for (Program program : DataStorage.getInstance().getProgramsFromArray().values()) {
                 if (program.channelId == c.channelId) {
                     if ((program.start * 1000) <= showProgramsFromTime && (program.stop * 1000) > showProgramsFromTime) {
                         p = program;
@@ -311,7 +311,7 @@ public class ChannelListAdapter extends ArrayAdapter<Channel2> {
         return view;
     }
 
-    public void update(Channel2 c) {
+    public void update(Channel c) {
         int length = list.size();
 
         // Go through the list of channels and find the
@@ -324,7 +324,7 @@ public class ChannelListAdapter extends ArrayAdapter<Channel2> {
         }
     }
 
-    public Channel2 getSelectedItem() {
+    public Channel getSelectedItem() {
         if (list.size() > 0 && list.size() > selectedPosition) {
             return list.get(selectedPosition);
         }

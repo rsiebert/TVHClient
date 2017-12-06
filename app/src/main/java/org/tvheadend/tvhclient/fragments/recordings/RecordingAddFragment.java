@@ -35,10 +35,10 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
-import org.tvheadend.tvhclient.model.Channel2;
+import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.Profile;
-import org.tvheadend.tvhclient.model.Recording2;
+import org.tvheadend.tvhclient.model.Recording;
 
 import java.util.Arrays;
 import java.util.Calendar;
@@ -50,7 +50,7 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
     private final static String TAG = RecordingAddFragment.class.getSimpleName();
 
     private AppCompatActivity activity;
-    private Recording2 rec;
+    private Recording rec;
     private Toolbar toolbar;
 
     private TextView startTime;
@@ -243,7 +243,7 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
                 // The default value is the first one
                 channelSelectionValue = 0;
                 // Get the position of the given channel in the channelList
-                Channel2 channel = dataStorage.getChannelFromArray(rec.channel);
+                Channel channel = dataStorage.getChannelFromArray(rec.channel);
                 if (channel != null) {
                     for (int i = 0; i < channelList.length; i++) {
                         if (channelList[i].equals(channel.channelName)) {
@@ -551,7 +551,7 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
 
         // The id must be passed on to the server, not the name. So go through
         // all available channels and get the id for the selected channel name.
-        for (Channel2 c : dataStorage.getChannelsFromArray().values()) {
+        for (Channel c : dataStorage.getChannelsFromArray().values()) {
             if (c.channelName.equals(channelList[channelSelectionValue])) {
                 intent.putExtra("channelId", c.channelId);
                 break;

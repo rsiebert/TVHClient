@@ -2,7 +2,7 @@ package org.tvheadend.tvhclient.model;
 
 import java.util.List;
 
-public class Channel2 {
+public class Channel {
 
     public int channelId;             // u32   required   ID of channel.
     public int channelNumber;         // u32   required   Channel number, 0 means unconfigured.

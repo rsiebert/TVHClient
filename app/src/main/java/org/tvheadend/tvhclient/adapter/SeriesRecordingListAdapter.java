@@ -13,21 +13,21 @@ import android.widget.TextView;
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.model.Channel2;
-import org.tvheadend.tvhclient.model.SeriesRecording2;
+import org.tvheadend.tvhclient.model.Channel;
+import org.tvheadend.tvhclient.model.SeriesRecording;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 import org.tvheadend.tvhclient.utils.Utils;
 
 import java.util.Comparator;
 import java.util.List;
 
-public class SeriesRecordingListAdapter extends ArrayAdapter<SeriesRecording2> {
+public class SeriesRecordingListAdapter extends ArrayAdapter<SeriesRecording> {
 
     private final Activity context;
-    private final List<SeriesRecording2> list;
+    private final List<SeriesRecording> list;
     private int selectedPosition = 0;
 
-    public SeriesRecordingListAdapter(Activity context, List<SeriesRecording2> list) {
+    public SeriesRecordingListAdapter(Activity context, List<SeriesRecording> list) {
         super(context, 0);
         this.context = context;
         this.list = list;
@@ -36,8 +36,8 @@ public class SeriesRecordingListAdapter extends ArrayAdapter<SeriesRecording2> {
     public void sort(final int type) {
         switch (type) {
         case Constants.RECORDING_SORT_ASCENDING:
-            sort(new Comparator<SeriesRecording2>() {
-                public int compare(SeriesRecording2 x, SeriesRecording2 y) {
+            sort(new Comparator<SeriesRecording>() {
+                public int compare(SeriesRecording x, SeriesRecording y) {
                     if (x != null && y != null && x.title != null && y.title != null) {
                         return (y.title.compareTo(x.title));
                     }
@@ -46,8 +46,8 @@ public class SeriesRecordingListAdapter extends ArrayAdapter<SeriesRecording2> {
             });
         break;
         case Constants.RECORDING_SORT_DESCENDING:
-            sort(new Comparator<SeriesRecording2>() {
-                public int compare(SeriesRecording2 x, SeriesRecording2 y) {
+            sort(new Comparator<SeriesRecording>() {
+                public int compare(SeriesRecording x, SeriesRecording y) {
                     if (x != null && y != null && x.title != null && y.title != null) {
                         return (x.title.compareTo(y.title));
                     }
@@ -109,9 +109,9 @@ public class SeriesRecordingListAdapter extends ArrayAdapter<SeriesRecording2> {
         }
 
         // Get the program and assign all the values
-        SeriesRecording2 srec = getItem(position);
+        SeriesRecording srec = getItem(position);
         if (srec != null) {
-            Channel2 channel = DataStorage.getInstance().getChannelFromArray(srec.channel);
+            Channel channel = DataStorage.getInstance().getChannelFromArray(srec.channel);
             holder.title.setText(srec.title);
             if (holder.channel != null) {
                 if (channel != null) {
@@ -144,7 +144,7 @@ public class SeriesRecordingListAdapter extends ArrayAdapter<SeriesRecording2> {
         return view;
     }
 
-    public void update(SeriesRecording2 srec) {
+    public void update(SeriesRecording srec) {
         int length = list.size();
 
         // Go through the list of programs and find the
@@ -157,14 +157,14 @@ public class SeriesRecordingListAdapter extends ArrayAdapter<SeriesRecording2> {
         }
     }
 
-    public SeriesRecording2 getSelectedItem() {
+    public SeriesRecording getSelectedItem() {
         if (list.size() > 0 && list.size() > selectedPosition) {
             return list.get(selectedPosition);
         }
         return null;
     }
 
-    public List<SeriesRecording2> getAllItems() {
+    public List<SeriesRecording> getAllItems() {
         return list;
     }
 }

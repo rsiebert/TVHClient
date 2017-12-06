@@ -10,7 +10,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 
-import org.tvheadend.tvhclient.model.Recording2;
+import org.tvheadend.tvhclient.model.Recording;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -69,7 +69,7 @@ public class NotificationHandler {
         Logger logger = Logger.getInstance();
         logger.log(TAG, "addNotification() called with: id = [" + id + "], offset = [" + offset + "]");
 
-        final Recording2 rec = dataStorage.getRecordingFromArray(id);
+        final Recording rec = dataStorage.getRecordingFromArray(id);
         if (dataStorage.isLoading() || rec == null) {
             return;
         }
@@ -134,8 +134,8 @@ public class NotificationHandler {
      * @param offset Time in minutes that the notification shall be shown earlier
      */
     public void addNotifications(final long offset) {
-        Map<Integer, Recording2> map = dataStorage.getRecordingsFromArray();
-        for (Recording2 rec : map.values()) {
+        Map<Integer, Recording> map = dataStorage.getRecordingsFromArray();
+        for (Recording rec : map.values()) {
             if (rec.isScheduled()) {
                 addNotification(rec.id, offset);
             }
@@ -146,8 +146,8 @@ public class NotificationHandler {
      * Cancels all pending notifications related to recordings
      */
     public void cancelNotifications() {
-        Map<Integer, Recording2> map = dataStorage.getRecordingsFromArray();
-        for (Recording2 rec : map.values()) {
+        Map<Integer, Recording> map = dataStorage.getRecordingsFromArray();
+        for (Recording rec : map.values()) {
             cancelNotification(rec.id);
         }
     }

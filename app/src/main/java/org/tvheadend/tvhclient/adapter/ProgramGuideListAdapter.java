@@ -14,8 +14,8 @@ import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.ProgramGuideItemView;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.model.Channel2;
-import org.tvheadend.tvhclient.model.Program2;
+import org.tvheadend.tvhclient.model.Channel;
+import org.tvheadend.tvhclient.model.Program;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -24,13 +24,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public class ProgramGuideListAdapter extends ArrayAdapter<Channel2> {
+public class ProgramGuideListAdapter extends ArrayAdapter<Channel> {
 
     @SuppressWarnings("unused")
     private final static String TAG = ProgramGuideListAdapter.class.getSimpleName();
 
     private final Activity activity;
-    private final List<Channel2> list;
+    private final List<Channel> list;
     private ViewHolder holder = null;
     private final Bundle bundle;
     final private LayoutInflater inflater;
@@ -38,7 +38,7 @@ public class ProgramGuideListAdapter extends ArrayAdapter<Channel2> {
     private final Fragment fragment;
     // private HashMap<Channel, Set<Program>> channelProgramList = new HashMap<Channel, Set<Program>>();
     
-    public ProgramGuideListAdapter(Activity activity, Fragment fragment, List<Channel2> list, Bundle bundle) {
+    public ProgramGuideListAdapter(Activity activity, Fragment fragment, List<Channel> list, Bundle bundle) {
         super(activity, R.layout.program_guide_pager_list_item, list);
         this.activity = activity;
         this.fragment = fragment;
@@ -50,23 +50,23 @@ public class ProgramGuideListAdapter extends ArrayAdapter<Channel2> {
     public void sort(final int type) {
         switch (type) {
         case Constants.CHANNEL_SORT_DEFAULT:
-            sort(new Comparator<Channel2>() {
-                public int compare(Channel2 x, Channel2 y) {
+            sort(new Comparator<Channel>() {
+                public int compare(Channel x, Channel y) {
                     // return x.compareTo(y);
                     return x.channelName.toLowerCase(Locale.US).compareTo(y.channelName.toLowerCase(Locale.US));
                 }
             });
             break;
         case Constants.CHANNEL_SORT_BY_NAME:
-            sort(new Comparator<Channel2>() {
-                public int compare(Channel2 x, Channel2 y) {
+            sort(new Comparator<Channel>() {
+                public int compare(Channel x, Channel y) {
                     return x.channelName.toLowerCase(Locale.US).compareTo(y.channelName.toLowerCase(Locale.US));
                 }
             });
             break;
         case Constants.CHANNEL_SORT_BY_NUMBER:
-            sort(new Comparator<Channel2>() {
-                public int compare(Channel2 x, Channel2 y) {
+            sort(new Comparator<Channel>() {
+                public int compare(Channel x, Channel y) {
                     if (x.channelNumber > y.channelNumber) {
                         return 1;
                     } else if (x.channelNumber < y.channelNumber) {
@@ -107,16 +107,16 @@ public class ProgramGuideListAdapter extends ArrayAdapter<Channel2> {
         // Adds the channel and shows the programs. Channel is
         // required to have access to the EPG data.
         // Go through all programs and add them to the view
-        Channel2 channel = getItem(position);
+        Channel channel = getItem(position);
         int nextId = 0;
-        List<Program2> programList = new ArrayList<>();
+        List<Program> programList = new ArrayList<>();
 
-        Map<Integer, Program2> map = DataStorage.getInstance().getProgramsFromArray();
+        Map<Integer, Program> map = DataStorage.getInstance().getProgramsFromArray();
         Iterator mapIt = map.values().iterator();
         long startTime = bundle.getLong(Constants.BUNDLE_EPG_START_TIME, 0);
-        Program2 p;
+        Program p;
         while (mapIt.hasNext()) {
-            p = (Program2) mapIt.next();
+            p = (Program) mapIt.next();
             if (p.channelId == channel.channelId) {
                 if ((p.start * 1000) <= startTime && (p.stop * 1000) > startTime) {
                     programList.add(p);
@@ -140,7 +140,7 @@ public class ProgramGuideListAdapter extends ArrayAdapter<Channel2> {
         return view;
     }
     
-    public void update(Channel2 c) {
+    public void update(Channel c) {
         int length = list.size();
         // Go through the list of programs and find the
         // one with the same id. If its been found, replace it.
@@ -152,7 +152,7 @@ public class ProgramGuideListAdapter extends ArrayAdapter<Channel2> {
         }
     }
 
-    public List<Channel2> getList() {
+    public List<Channel> getList() {
         return list;
     }
 }

@@ -23,13 +23,13 @@ import org.tvheadend.tvhclient.activities.SearchResultActivity;
 import org.tvheadend.tvhclient.adapter.ChannelTagListAdapter;
 import org.tvheadend.tvhclient.adapter.GenreColorDialogAdapter;
 import org.tvheadend.tvhclient.htsp.HTSService;
-import org.tvheadend.tvhclient.model.ChannelTag2;
+import org.tvheadend.tvhclient.model.ChannelTag;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.GenreColorDialogItem;
 import org.tvheadend.tvhclient.model.Profile;
-import org.tvheadend.tvhclient.model.Recording2;
-import org.tvheadend.tvhclient.model.SeriesRecording2;
-import org.tvheadend.tvhclient.model.TimerRecording2;
+import org.tvheadend.tvhclient.model.Recording;
+import org.tvheadend.tvhclient.model.SeriesRecording;
+import org.tvheadend.tvhclient.model.TimerRecording;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
@@ -127,20 +127,20 @@ public class MenuUtils {
         }
 
         // Fill the channel tag adapter with the available channel tags
-        List<ChannelTag2> channelTagList = new ArrayList<>();
-        Map<Integer, ChannelTag2> map = DataStorage.getInstance().getTagsFromArray();
+        List<ChannelTag> channelTagList = new ArrayList<>();
+        Map<Integer, ChannelTag> map = DataStorage.getInstance().getTagsFromArray();
         channelTagList.addAll(map.values());
 
         // Sort the channel tag list before showing it
-        Collections.sort(channelTagList, new Comparator<ChannelTag2>() {
+        Collections.sort(channelTagList, new Comparator<ChannelTag>() {
             @Override
-            public int compare(ChannelTag2 o1, ChannelTag2 o2) {
+            public int compare(ChannelTag o1, ChannelTag o2) {
                 return o1.tagName.compareTo(o2.tagName);
             }
         });
 
         // Add the default tag (all channels) to the list after it has been sorted
-        ChannelTag2 tag = new ChannelTag2();
+        ChannelTag tag = new ChannelTag();
         tag.tagId = 0;
         tag.tagName = activity.getString(R.string.all_channels);
         channelTagList.add(0, tag);
@@ -366,7 +366,7 @@ public class MenuUtils {
                 .show();
     }
 
-    public void handleMenuRemoveAllRecordingsSelection(List<Recording2> items) {
+    public void handleMenuRemoveAllRecordingsSelection(List<Recording> items) {
         Activity activity = this.activity.get();
         if (activity == null) {
             return;
@@ -381,7 +381,7 @@ public class MenuUtils {
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         new Thread() {
                             public void run() {
-                                for (Recording2 item : items) {
+                                for (Recording item : items) {
                                     final Intent intent = new Intent(activity, HTSService.class);
                                     intent.putExtra("id", item.id);
                                     if (item.isRecording() || item.isScheduled()) {
@@ -402,7 +402,7 @@ public class MenuUtils {
                 }).show();
     }
 
-    public void handleMenuRemoveAllSeriesRecordingSelection(List<SeriesRecording2> items) {
+    public void handleMenuRemoveAllSeriesRecordingSelection(List<SeriesRecording> items) {
         Activity activity = this.activity.get();
         if (activity == null) {
             return;
@@ -417,7 +417,7 @@ public class MenuUtils {
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         new Thread() {
                             public void run() {
-                                for (SeriesRecording2 item : items) {
+                                for (SeriesRecording item : items) {
                                     final Intent intent = new Intent(activity, HTSService.class);
                                     intent.setAction("deleteAutorecEntry");
                                     intent.putExtra("id", item.id);
@@ -434,7 +434,7 @@ public class MenuUtils {
                 }).show();
     }
 
-    public void handleMenuRemoveAllTimerRecordingSelection(List<TimerRecording2> items) {
+    public void handleMenuRemoveAllTimerRecordingSelection(List<TimerRecording> items) {
         Activity activity = this.activity.get();
         if (activity == null) {
             return;
@@ -449,7 +449,7 @@ public class MenuUtils {
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         new Thread() {
                             public void run() {
-                                for (TimerRecording2 item : items) {
+                                for (TimerRecording item : items) {
                                     final Intent intent = new Intent(activity, HTSService.class);
                                     intent.setAction("deleteTimerecEntry");
                                     intent.putExtra("id", item.id);

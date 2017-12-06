@@ -30,7 +30,7 @@ import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.Logger;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.model.Connection;
-import org.tvheadend.tvhclient.model.Recording2;
+import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 import org.tvheadend.tvhclient.utils.Utils;
 
@@ -42,7 +42,7 @@ public class DownloadActivity extends Activity implements OnRequestPermissionsRe
     private Connection conn;
     private DownloadManager dm;
 
-    private Recording2 rec;
+    private Recording rec;
     private Logger logger;
 
     @Override

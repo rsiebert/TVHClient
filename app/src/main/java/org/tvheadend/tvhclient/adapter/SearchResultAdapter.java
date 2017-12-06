@@ -11,8 +11,8 @@ import android.widget.TextView;
 
 import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.model.Channel2;
-import org.tvheadend.tvhclient.model.Program2;
+import org.tvheadend.tvhclient.model.Channel;
+import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 import org.tvheadend.tvhclient.utils.Utils;
 
@@ -21,15 +21,15 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
-public class SearchResultAdapter extends ArrayAdapter<Program2> implements Filterable {
+public class SearchResultAdapter extends ArrayAdapter<Program> implements Filterable {
 
     private final static String TAG = SearchResultAdapter.class.getSimpleName();
     private final Activity context;
-    private List<Program2> originalData = null;
-    private List<Program2> filteredData = null;
+    private List<Program> originalData = null;
+    private List<Program> filteredData = null;
     private final ItemFilter mFilter = new ItemFilter();
 
-    public SearchResultAdapter(Activity context, List<Program2> list) {
+    public SearchResultAdapter(Activity context, List<Program> list) {
         super(context, R.layout.search_result_widget, list);
         this.context = context;
         originalData = list;
@@ -37,8 +37,8 @@ public class SearchResultAdapter extends ArrayAdapter<Program2> implements Filte
     }
 
     public void sort() {
-        sort(new Comparator<Program2>() {
-            public int compare(Program2 x, Program2 y) {
+        sort(new Comparator<Program>() {
+            public int compare(Program x, Program y) {
                 if (x != null && y != null) {
                     if (x.start > y.start) {
                         return 1;
@@ -99,7 +99,7 @@ public class SearchResultAdapter extends ArrayAdapter<Program2> implements Filte
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View view = null;
-        Program2 m = getItem(position);
+        Program m = getItem(position);
         //if (m instanceof Program) {
             view = getProgramView(position, convertView, parent);
         /*} else if (m instanceof Recording) {
@@ -212,10 +212,10 @@ public class SearchResultAdapter extends ArrayAdapter<Program2> implements Filte
         }
 
         // Get the program and assign all the values
-        Program2 p = getItem(position);
+        Program p = getItem(position);
         if (p != null) {
             holder.title.setText(p.title);
-            Channel2 channel = DataStorage.getInstance().getChannelFromArray(p.channelId);
+            Channel channel = DataStorage.getInstance().getChannelFromArray(p.channelId);
             if (holder.channel != null && channel != null) {
                 holder.channel.setText(channel.channelName);
             }
@@ -232,7 +232,7 @@ public class SearchResultAdapter extends ArrayAdapter<Program2> implements Filte
         return view;
     }
 
-    public void update(Program2 p) {
+    public void update(Program p) {
         final int length = originalData.size();
         // Go through the list of programs and find the
         // one with the same id. If its been found, replace it.
@@ -244,7 +244,7 @@ public class SearchResultAdapter extends ArrayAdapter<Program2> implements Filte
         }
     }
 
-    public Program2 getItem(int position) {
+    public Program getItem(int position) {
         return filteredData.get(position);
     }
 
@@ -262,11 +262,11 @@ public class SearchResultAdapter extends ArrayAdapter<Program2> implements Filte
         return 0;
     }
 
-    public List<Program2> getFullList() {
+    public List<Program> getFullList() {
         return originalData;
     }
 
-    public List<Program2> getList() {
+    public List<Program> getList() {
         return filteredData;
     }
 
@@ -282,9 +282,9 @@ public class SearchResultAdapter extends ArrayAdapter<Program2> implements Filte
             FilterResults results = new FilterResults();
 
             final int count = originalData.size();
-            final ArrayList<Program2> newList = new ArrayList<>(count);
+            final ArrayList<Program> newList = new ArrayList<>(count);
 
-            Program2 p;
+            Program p;
             for (int i = 0; i < count; i++) {
                 p = originalData.get(i);
                 if (p.title.toLowerCase(Locale.getDefault()).contains(filterString)) {
@@ -307,7 +307,7 @@ public class SearchResultAdapter extends ArrayAdapter<Program2> implements Filte
         @SuppressWarnings("unchecked")
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
-            filteredData = (ArrayList<Program2>) results.values;
+            filteredData = (ArrayList<Program>) results.values;
             notifyDataSetChanged();
         }
     }

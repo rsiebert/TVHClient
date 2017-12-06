@@ -19,8 +19,8 @@ import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.model.Channel2;
-import org.tvheadend.tvhclient.model.TimerRecording2;
+import org.tvheadend.tvhclient.model.Channel;
+import org.tvheadend.tvhclient.model.TimerRecording;
 import org.tvheadend.tvhclient.utils.MenuUtils;
 import org.tvheadend.tvhclient.utils.Utils;
 
@@ -33,7 +33,7 @@ public class TimerRecordingDetailsFragment extends DialogFragment {
 
     private AppCompatActivity activity;
     private boolean showControls = false;
-    private TimerRecording2 trec;
+    private TimerRecording trec;
 
     private TextView isEnabled;
     private TextView directoryLabel;
@@ -159,7 +159,7 @@ public class TimerRecordingDetailsFragment extends DialogFragment {
         directory.setVisibility(dataStorage.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_DIRECTORY ? View.VISIBLE : View.GONE);
         directory.setText(trec.directory);
 
-        Channel2 channel = dataStorage.getChannelFromArray(trec.channel);
+        Channel channel = dataStorage.getChannelFromArray(trec.channel);
         if (channel != null) {
             channelName.setText(channel.channelName);
         } else {

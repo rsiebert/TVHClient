@@ -27,7 +27,7 @@ import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.interfaces.ToolbarInterface;
-import org.tvheadend.tvhclient.model.TimerRecording2;
+import org.tvheadend.tvhclient.model.TimerRecording;
 import org.tvheadend.tvhclient.utils.MenuUtils;
 
 import java.util.ArrayList;
@@ -91,7 +91,7 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
         listView.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                TimerRecording2 trec = adapter.getItem(position);
+                TimerRecording trec = adapter.getItem(position);
                 if (fragmentStatusInterface != null) {
                     fragmentStatusInterface.onListItemSelected(position, trec, TAG);
                 }
@@ -151,7 +151,7 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
         adapter.clear();
         Object[] trecList = dataStorage.getTimerRecordingsFromArray().values().toArray();
         for (Object trec : trecList) {
-            adapter.add((TimerRecording2) trec);
+            adapter.add((TimerRecording) trec);
         }
         // Show the newest scheduled recordings first 
         adapter.sort(Constants.RECORDING_SORT_DESCENDING);
@@ -191,14 +191,14 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
             return true;
 
         case R.id.menu_record_remove:
-            TimerRecording2 trec = adapter.getSelectedItem();
+            TimerRecording trec = adapter.getSelectedItem();
             final String name = (trec.name != null && trec.name.length() > 0) ? trec.name : "";
             final String title = trec.title != null ? trec.title : "";
             menuUtils.handleMenuRemoveTimerRecordingSelection(trec.id, (name.length() > 0 ? name : title));
             return true;
 
         case R.id.menu_record_remove_all:
-            CopyOnWriteArrayList<TimerRecording2> list = new CopyOnWriteArrayList<>(adapter.getAllItems());
+            CopyOnWriteArrayList<TimerRecording> list = new CopyOnWriteArrayList<>(adapter.getAllItems());
             menuUtils.handleMenuRemoveAllTimerRecordingSelection(list);
             return true;
 
@@ -221,7 +221,7 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
         // Get the currently selected program from the list where the context
         // menu has been triggered
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-        TimerRecording2 trec = adapter.getItem(info.position);
+        TimerRecording trec = adapter.getItem(info.position);
         if (trec != null) {
             menu.setHeaderTitle(trec.title);
         }
@@ -243,7 +243,7 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
             return super.onContextItemSelected(item);
         }
 
-        final TimerRecording2 trec = adapter.getItem(info.position);
+        final TimerRecording trec = adapter.getItem(info.position);
         if (trec == null) {
             return super.onContextItemSelected(item);
         }
@@ -300,7 +300,7 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
             case "timerecEntryAdd":
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
-                        adapter.add((TimerRecording2) obj);
+                        adapter.add((TimerRecording) obj);
                         populateList();
                     }
                 });
@@ -311,11 +311,11 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
                         // Get the position of the recording that is shown before
                         // the one that has been deleted. This recording will then
                         // be selected when the list has been updated.
-                        int previousPosition = adapter.getPosition((TimerRecording2) obj);
+                        int previousPosition = adapter.getPosition((TimerRecording) obj);
                         if (--previousPosition < 0) {
                             previousPosition = 0;
                         }
-                        adapter.remove((TimerRecording2) obj);
+                        adapter.remove((TimerRecording) obj);
                         populateList();
                         setInitialSelection(previousPosition);
                     }
@@ -324,7 +324,7 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
             case "timerecEntryUpdate":
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
-                        adapter.update((TimerRecording2) obj);
+                        adapter.update((TimerRecording) obj);
                         adapter.notifyDataSetChanged();
                     }
                 });
@@ -356,7 +356,7 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
             // Simulate a click in the list item to inform the activity
             // It will then show the details fragment if dual pane is active
             if (isDualPane) {
-                TimerRecording2 trec = adapter.getItem(position);
+                TimerRecording trec = adapter.getItem(position);
                 if (fragmentStatusInterface != null) {
                     fragmentStatusInterface.onListItemSelected(position, trec, TAG);
                 }

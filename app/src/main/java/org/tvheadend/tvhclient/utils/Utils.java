@@ -25,11 +25,11 @@ import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.htsp.HTSService;
-import org.tvheadend.tvhclient.model.Channel2;
-import org.tvheadend.tvhclient.model.ChannelTag2;
+import org.tvheadend.tvhclient.model.Channel;
+import org.tvheadend.tvhclient.model.ChannelTag;
 import org.tvheadend.tvhclient.model.Connection;
-import org.tvheadend.tvhclient.model.Program2;
-import org.tvheadend.tvhclient.model.Recording2;
+import org.tvheadend.tvhclient.model.Program;
+import org.tvheadend.tvhclient.model.Recording;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -103,7 +103,7 @@ public class Utils {
      * @param menu    Menu with all menu items
      * @param program Program
      */
-    public static void setProgramMenu(final TVHClientApplication app, final Menu menu, final Program2 program) {
+    public static void setProgramMenu(final TVHClientApplication app, final Menu menu, final Program program) {
         MenuItem recordOnceMenuItem = menu.findItem(R.id.menu_record_once);
         MenuItem recordOnceCustomProfileMenuItem = menu.findItem(R.id.menu_record_once_custom_profile);
         MenuItem recordSeriesMenuItem = menu.findItem(R.id.menu_record_series);
@@ -136,7 +136,7 @@ public class Utils {
         if (currentTime > (program.start * 1000) && currentTime < (program.stop * 1000)) {
             playMenuItem.setVisible(true);
         }
-        Recording2 rec = DataStorage.getInstance().getRecordingFromArray(program.dvrId);
+        Recording rec = DataStorage.getInstance().getRecordingFromArray(program.dvrId);
         if (rec == null || (rec != null && !rec.isRecording() && !rec.isScheduled())) {
             // Show the record menu
             recordOnceMenuItem.setVisible(true);
@@ -169,7 +169,7 @@ public class Utils {
      * @param state    Widget that shall show the program state
      * @param p        Program
      */
-    public static void setState(Activity activity, ImageView state, final Program2 p) {
+    public static void setState(Activity activity, ImageView state, final Program p) {
         if (state == null) {
             return;
         }
@@ -182,7 +182,7 @@ public class Utils {
             // Show the state icon and set the correct image
             state.setVisibility(ImageView.VISIBLE);
 
-            Recording2 rec = DataStorage.getInstance().getRecordingFromArray(p.dvrId);
+            Recording rec = DataStorage.getInstance().getRecordingFromArray(p.dvrId);
 
             if (rec == null || rec.isFailed()) {
                 state.setImageResource(R.drawable.ic_error_small);
@@ -417,7 +417,7 @@ public class Utils {
      * @param seriesInfo Widget that shall show the series information
      * @param p
      */
-    public static void setSeriesInfo(Context context, TextView seriesInfoLabel, TextView seriesInfo, final Program2 p) {
+    public static void setSeriesInfo(Context context, TextView seriesInfoLabel, TextView seriesInfo, final Program p) {
 
         final String season = context.getResources().getString(R.string.season);
         final String episode = context.getResources().getString(R.string.episode);
@@ -555,7 +555,7 @@ public class Utils {
      * @param iconText Widget that shows the channel name if no icon is available
      * @param ch       Channel
      */
-    public static void setChannelIcon(Context context, ImageView icon, TextView iconText, final Channel2 ch) {
+    public static void setChannelIcon(Context context, ImageView icon, TextView iconText, final Channel ch) {
         if (icon != null) {
             // Get the setting if the channel icon shall be shown or not
             final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(icon.getContext());
@@ -605,7 +605,7 @@ public class Utils {
      * @param failed_reason Widget that shows the failed reason text
      * @param rec           Recording
      */
-    public static void setFailedReason(final TextView failed_reason, final Recording2 rec) {
+    public static void setFailedReason(final TextView failed_reason, final Recording rec) {
         if (failed_reason == null) {
             return;
         }
@@ -682,7 +682,7 @@ public class Utils {
      * @param context Activity context
      * @param channel Channel
      */
-    public static void loadMorePrograms(final Context context, final Channel2 channel) {
+    public static void loadMorePrograms(final Context context, final Channel channel) {
         Log.d(TAG, "loadMorePrograms() called with: context = [" + context + "], channel = [" + channel + "]");
 
         if (channel == null) {
@@ -694,7 +694,7 @@ public class Utils {
 
         while (nextId != 0) {
             Log.d(TAG, "loadMorePrograms: nextid " + nextId);
-            Program2 p = DataStorage.getInstance().getProgramFromArray(nextId);
+            Program p = DataStorage.getInstance().getProgramFromArray(nextId);
             if (p != null && p.nextEventId > 0) {
                 nextId = p.nextEventId;
             } else {
@@ -772,7 +772,7 @@ public class Utils {
      * @param activity Activity context
      * @return Channel tag
      */
-    public static ChannelTag2 getChannelTag(final Activity activity) {
+    public static ChannelTag getChannelTag(final Activity activity) {
         return DataStorage.getInstance().getTagFromArray(getChannelTagId(activity));
     }
 

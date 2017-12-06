@@ -1,10 +1,10 @@
 package org.tvheadend.tvhclient.interfaces;
 
-import org.tvheadend.tvhclient.model.Channel2;
-import org.tvheadend.tvhclient.model.Program2;
-import org.tvheadend.tvhclient.model.Recording2;
-import org.tvheadend.tvhclient.model.SeriesRecording2;
-import org.tvheadend.tvhclient.model.TimerRecording2;
+import org.tvheadend.tvhclient.model.Channel;
+import org.tvheadend.tvhclient.model.Program;
+import org.tvheadend.tvhclient.model.Recording;
+import org.tvheadend.tvhclient.model.SeriesRecording;
+import org.tvheadend.tvhclient.model.TimerRecording;
 
 public interface FragmentStatusInterface {
 
@@ -17,7 +17,7 @@ public interface FragmentStatusInterface {
      * @param channel Channel
      * @param tag Tag of the calling class
      */
-    void moreDataRequired(final Channel2 channel, final String tag);
+    void moreDataRequired(final Channel channel, final String tag);
     
     /**
      * Informs the activity that user has selected a certain channel from the
@@ -28,7 +28,7 @@ public interface FragmentStatusInterface {
      * @param channel Selected channel
      * @param tag Tag of the calling class
      */
-    void onListItemSelected(final int position, final Channel2 channel, final String tag);
+    void onListItemSelected(final int position, final Channel channel, final String tag);
     
     /**
      * Informs the activity that user has selected a certain recording from the
@@ -38,7 +38,7 @@ public interface FragmentStatusInterface {
      * @param recording Selected recording
      * @param tag Tag of the calling class
      */
-    void onListItemSelected(final int position, final Recording2 recording, final String tag);
+    void onListItemSelected(final int position, final Recording recording, final String tag);
 
     /**
      * Informs the activity that user has selected a certain series recording
@@ -49,7 +49,7 @@ public interface FragmentStatusInterface {
      * @param seriesRecording Selected series recording
      * @param tag Tag of the calling class
      */
-    void onListItemSelected(final int position, final SeriesRecording2 seriesRecording, final String tag);
+    void onListItemSelected(final int position, final SeriesRecording seriesRecording, final String tag);
 
     /**
      * Informs the activity that user has selected a certain timer recording
@@ -60,7 +60,7 @@ public interface FragmentStatusInterface {
      * @param timerRecording Selected timer recording
      * @param tag Tag of the calling class
      */
-    void onListItemSelected(final int position, final TimerRecording2 timerRecording, final String tag);
+    void onListItemSelected(final int position, final TimerRecording timerRecording, final String tag);
 
     /**
      * Informs the activity that user has selected a certain program from the
@@ -70,7 +70,7 @@ public interface FragmentStatusInterface {
      * @param program Selected program
      * @param tag Tag of the calling class
      */
-    void onListItemSelected(final int position, final Program2 program, final String tag);
+    void onListItemSelected(final int position, final Program program, final String tag);
 
     /**
      * Informs the activity that the list is showing all available data from the

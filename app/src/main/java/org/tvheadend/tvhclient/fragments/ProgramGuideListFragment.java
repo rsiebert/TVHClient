@@ -31,10 +31,10 @@ import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentScrollInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
-import org.tvheadend.tvhclient.model.Channel2;
-import org.tvheadend.tvhclient.model.ChannelTag2;
-import org.tvheadend.tvhclient.model.Program2;
-import org.tvheadend.tvhclient.model.Recording2;
+import org.tvheadend.tvhclient.model.Channel;
+import org.tvheadend.tvhclient.model.ChannelTag;
+import org.tvheadend.tvhclient.model.Program;
+import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.utils.MenuUtils;
 import org.tvheadend.tvhclient.utils.Utils;
 
@@ -57,7 +57,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
     private TextView titleHours;
     private ImageView currentTimeIndication;
     private Bundle bundle;
-    private Program2 selectedProgram = null;
+    private Program selectedProgram = null;
     private int tabIndex;
 
     private Handler updateEpgHandler;
@@ -139,7 +139,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
             Utils.setTime2(titleHours, startDate.getTime() / 1000, endDate.getTime() / 1000);
         }
 
-        adapter = new ProgramGuideListAdapter(activity, this, new ArrayList<Channel2>(), bundle);
+        adapter = new ProgramGuideListAdapter(activity, this, new ArrayList<Channel>(), bundle);
         listView.setAdapter(adapter);
 
         // Inform the activity when the program guide list is scrolling or has
@@ -225,12 +225,12 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
      * adapter that contain the selected channel tag.
      */
     private void populateList() {
-        ChannelTag2 currentTag = Utils.getChannelTag(activity);
+        ChannelTag currentTag = Utils.getChannelTag(activity);
         adapter.clear();
 
         // Make a copy of the channel list before iterating over it
         adapter.clear();
-        for (Channel2 channel : DataStorage.getInstance().getChannelsFromArray().values()) {
+        for (Channel channel : DataStorage.getInstance().getChannelsFromArray().values()) {
             if (currentTag == null || channel.tags.contains(currentTag.tagId)) {
                 adapter.add(channel);
             }
@@ -326,7 +326,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
             return true;
 
         case R.id.menu_record_remove:
-            Recording2 rec = dataStorage.getRecordingFromArray(selectedProgram.dvrId);
+            Recording rec = dataStorage.getRecordingFromArray(selectedProgram.dvrId);
             if (rec != null) {
                 if (rec.isRecording()) {
                     menuUtils.handleMenuStopRecordingSelection(rec.id, rec.title);
@@ -373,7 +373,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
             case "channelAdd":
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
-                        adapter.add((Channel2) obj);
+                        adapter.add((Channel) obj);
                         adapter.sort(Utils.getChannelSortOrder(activity));
                         startDelayedAdapterUpdate();
                     }
@@ -382,7 +382,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
             case "channelDelete":
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
-                        adapter.remove((Channel2) obj);
+                        adapter.remove((Channel) obj);
                         startDelayedAdapterUpdate();
                     }
                 });
@@ -401,7 +401,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
             case "channelUpdate":
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
-                        final Channel2 ch = (Channel2) obj;
+                        final Channel ch = (Channel) obj;
                         adapter.update(ch);
                         startDelayedAdapterUpdate();
                     }
@@ -411,7 +411,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
     }
 
     @Override
-    public void setSelectedContextItem(Program2 p) {
+    public void setSelectedContextItem(Program p) {
         selectedProgram = p;
     }
 

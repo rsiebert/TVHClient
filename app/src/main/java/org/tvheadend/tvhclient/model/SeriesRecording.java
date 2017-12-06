@@ -1,6 +1,6 @@
 package org.tvheadend.tvhclient.model;
 
-public class SeriesRecording2 {
+public class SeriesRecording {
     public String id;           // str   required   ID (string!) of dvrAutorecEntry.
     public int enabled;         // u32   required   If autorec entry is enabled (activated).
     public String name;         // str   required   Name of the autorec entry (Added in version 18).

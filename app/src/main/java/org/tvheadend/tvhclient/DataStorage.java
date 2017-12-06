@@ -3,18 +3,18 @@ package org.tvheadend.tvhclient;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
-import org.tvheadend.tvhclient.model.Channel2;
-import org.tvheadend.tvhclient.model.ChannelTag2;
+import org.tvheadend.tvhclient.model.Channel;
+import org.tvheadend.tvhclient.model.ChannelTag;
 import org.tvheadend.tvhclient.model.DiscSpace;
 import org.tvheadend.tvhclient.model.HttpTicket;
 import org.tvheadend.tvhclient.model.Packet;
 import org.tvheadend.tvhclient.model.Profiles;
-import org.tvheadend.tvhclient.model.Program2;
-import org.tvheadend.tvhclient.model.Recording2;
-import org.tvheadend.tvhclient.model.SeriesRecording2;
+import org.tvheadend.tvhclient.model.Program;
+import org.tvheadend.tvhclient.model.Recording;
+import org.tvheadend.tvhclient.model.SeriesRecording;
 import org.tvheadend.tvhclient.model.Subscription;
 import org.tvheadend.tvhclient.model.SystemTime;
-import org.tvheadend.tvhclient.model.TimerRecording2;
+import org.tvheadend.tvhclient.model.TimerRecording;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,12 +29,12 @@ public class DataStorage {
     private final List<Profiles> dvrConfigs = Collections.synchronizedList(new ArrayList<Profiles>());
     private final List<Profiles> profiles = Collections.synchronizedList(new ArrayList<Profiles>());
 
-    private final Map<Integer, Program2> programArray = new HashMap<>();
-    private final Map<Integer, Recording2> recordingArray = new HashMap<>();
-    private final Map<Integer, Channel2> channelArray = new HashMap<>();
-    private final Map<Integer, ChannelTag2> tagArray = new HashMap<>();
-    private final Map<String, SeriesRecording2> seriesRecordingArray = new HashMap<>();
-    private final Map<String, TimerRecording2> timerRecordingArray = new HashMap<>();
+    private final Map<Integer, Program> programArray = new HashMap<>();
+    private final Map<Integer, Recording> recordingArray = new HashMap<>();
+    private final Map<Integer, Channel> channelArray = new HashMap<>();
+    private final Map<Integer, ChannelTag> tagArray = new HashMap<>();
+    private final Map<String, SeriesRecording> seriesRecordingArray = new HashMap<>();
+    private final Map<String, TimerRecording> timerRecordingArray = new HashMap<>();
 
     private final TVHClientApplication app;
     private SystemTime systemTime = new SystemTime();
@@ -325,19 +325,19 @@ public class DataStorage {
         }
     }
 
-    public Program2 getProgramFromArray(int id) {
+    public Program getProgramFromArray(int id) {
         synchronized (programArray) {
             return programArray.get(id);
         }
     }
 
-    public Map<Integer, Program2> getProgramsFromArray() {
+    public Map<Integer, Program> getProgramsFromArray() {
         synchronized (programArray) {
             return programArray;
         }
     }
 
-    public void addProgramToArray(Program2 program) {
+    public void addProgramToArray(Program program) {
         synchronized (programArray) {
             programArray.put(program.eventId, program);
         }
@@ -355,7 +355,7 @@ public class DataStorage {
         }
     }
 
-    public void updateProgramInArray(Program2 program) {
+    public void updateProgramInArray(Program program) {
         synchronized (programArray) {
             programArray.put(program.eventId, program);
         }
@@ -364,19 +364,19 @@ public class DataStorage {
         }
     }
 
-    public Recording2 getRecordingFromArray(int id) {
+    public Recording getRecordingFromArray(int id) {
         synchronized (recordingArray) {
             return recordingArray.get(id);
         }
     }
 
-    public Map<Integer, Recording2> getRecordingsFromArray() {
+    public Map<Integer, Recording> getRecordingsFromArray() {
         synchronized (recordingArray) {
             return recordingArray;
         }
     }
 
-    public void addRecordingToArray(Recording2 recording) {
+    public void addRecordingToArray(Recording recording) {
         synchronized (recordingArray) {
             recordingArray.put(recording.id, recording);
         }
@@ -404,7 +404,7 @@ public class DataStorage {
         }
     }
 
-    public void updateRecordingInArray(Recording2 recording) {
+    public void updateRecordingInArray(Recording recording) {
         synchronized (recordingArray) {
             recordingArray.put(recording.id, recording);
         }
@@ -414,19 +414,19 @@ public class DataStorage {
     }
 
 
-    public Channel2 getChannelFromArray(int id) {
+    public Channel getChannelFromArray(int id) {
         synchronized (channelArray) {
             return channelArray.get(id);
         }
     }
 
-    public Map<Integer, Channel2> getChannelsFromArray() {
+    public Map<Integer, Channel> getChannelsFromArray() {
         synchronized (channelArray) {
             return channelArray;
         }
     }
 
-    public void addChannelToArray(Channel2 channel) {
+    public void addChannelToArray(Channel channel) {
         synchronized (channelArray) {
             channelArray.put(channel.channelId, channel);
         }
@@ -444,7 +444,7 @@ public class DataStorage {
         }
     }
 
-    public void updateChannelInArray(Channel2 channel) {
+    public void updateChannelInArray(Channel channel) {
         synchronized (channelArray) {
             channelArray.put(channel.channelId, channel);
         }
@@ -453,19 +453,19 @@ public class DataStorage {
         }
     }
 
-    public ChannelTag2 getTagFromArray(int id) {
+    public ChannelTag getTagFromArray(int id) {
         synchronized (tagArray) {
             return tagArray.get(id);
         }
     }
 
-    public Map<Integer, ChannelTag2> getTagsFromArray() {
+    public Map<Integer, ChannelTag> getTagsFromArray() {
         synchronized (tagArray) {
             return tagArray;
         }
     }
 
-    public void addTagToArray(ChannelTag2 tag) {
+    public void addTagToArray(ChannelTag tag) {
         synchronized (tagArray) {
             tagArray.put(tag.tagId, tag);
         }
@@ -483,7 +483,7 @@ public class DataStorage {
         }
     }
 
-    public void updateTagInArray(ChannelTag2 tag) {
+    public void updateTagInArray(ChannelTag tag) {
         synchronized (tagArray) {
             tagArray.put(tag.tagId, tag);
         }
@@ -492,19 +492,19 @@ public class DataStorage {
         }
     }
 
-    public SeriesRecording2 getSeriesRecordingFromArray(String id) {
+    public SeriesRecording getSeriesRecordingFromArray(String id) {
         synchronized (seriesRecordingArray) {
             return seriesRecordingArray.get(id);
         }
     }
 
-    public Map<String, SeriesRecording2> getSeriesRecordingsFromArray() {
+    public Map<String, SeriesRecording> getSeriesRecordingsFromArray() {
         synchronized (seriesRecordingArray) {
             return seriesRecordingArray;
         }
     }
 
-    public void addSeriesRecordingToArray(SeriesRecording2 seriesRecording) {
+    public void addSeriesRecordingToArray(SeriesRecording seriesRecording) {
         synchronized (seriesRecordingArray) {
             seriesRecordingArray.put(seriesRecording.id, seriesRecording);
         }
@@ -522,7 +522,7 @@ public class DataStorage {
         }
     }
 
-    public void updateSeriesRecordingInArray(SeriesRecording2 seriesRecording) {
+    public void updateSeriesRecordingInArray(SeriesRecording seriesRecording) {
         synchronized (seriesRecordingArray) {
             seriesRecordingArray.put(seriesRecording.id, seriesRecording);
         }
@@ -531,19 +531,19 @@ public class DataStorage {
         }
     }
 
-    public TimerRecording2 getTimerRecordingFromArray(String id) {
+    public TimerRecording getTimerRecordingFromArray(String id) {
         synchronized (timerRecordingArray) {
             return timerRecordingArray.get(id);
         }
     }
 
-    public Map<String, TimerRecording2> getTimerRecordingsFromArray() {
+    public Map<String, TimerRecording> getTimerRecordingsFromArray() {
         synchronized (timerRecordingArray) {
             return timerRecordingArray;
         }
     }
 
-    public void addTimerRecordingToArray(TimerRecording2 timerRecording) {
+    public void addTimerRecordingToArray(TimerRecording timerRecording) {
         synchronized (timerRecordingArray) {
             timerRecordingArray.put(timerRecording.id, timerRecording);
         }
@@ -561,7 +561,7 @@ public class DataStorage {
         }
     }
 
-    public void updateTimerRecordingInArray(TimerRecording2 timerRecording) {
+    public void updateTimerRecordingInArray(TimerRecording timerRecording) {
         synchronized (timerRecordingArray) {
             timerRecordingArray.put(timerRecording.id, timerRecording);
         }

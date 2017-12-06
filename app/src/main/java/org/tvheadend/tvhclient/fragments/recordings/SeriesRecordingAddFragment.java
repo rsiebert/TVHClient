@@ -39,10 +39,10 @@ import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
-import org.tvheadend.tvhclient.model.Channel2;
+import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.Profile;
-import org.tvheadend.tvhclient.model.SeriesRecording2;
+import org.tvheadend.tvhclient.model.SeriesRecording;
 import org.tvheadend.tvhclient.utils.Utils;
 
 import java.util.Arrays;
@@ -55,7 +55,7 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
     private final static String TAG = SeriesRecordingAddFragment.class.getSimpleName();
 
     private Activity activity;
-    private SeriesRecording2 rec;
+    private SeriesRecording rec;
     private Toolbar toolbar;
 
     private CheckBox isEnabled;
@@ -248,7 +248,7 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
             channelList[0] = activity.getString(R.string.all_channels);
         }
         int j = 0;
-        for (Channel2 channel : dataStorage.getChannelsFromArray().values()) {
+        for (Channel channel : dataStorage.getChannelsFromArray().values()) {
             channelList[j + offset] = channel.channelName;
             j++;
         }
@@ -313,7 +313,7 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
                 // The default value is no channel
                 channelSelectionValue = 0;
                 // Get the position of the given channel in the channelList
-                Channel2 channel = dataStorage.getChannelFromArray(rec.channel);
+                Channel channel = dataStorage.getChannelFromArray(rec.channel);
                 if (channel != null) {
                     for (int i = 0; i < channelList.length; i++) {
                         if (channelList[i].equals(channel.channelName)) {
@@ -828,7 +828,7 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
         // server. So go through all available channels and get the id for the
         // selected channel name.
         if (!allowRecordingOnAllChannels || channelSelectionValue > 1) {
-            for (Channel2 c : dataStorage.getChannelsFromArray().values()) {
+            for (Channel c : dataStorage.getChannelsFromArray().values()) {
                 if (c.channelName.equals(channelName.getText().toString())) {
                     intent.putExtra("channelId", c.channelId);
                     break;

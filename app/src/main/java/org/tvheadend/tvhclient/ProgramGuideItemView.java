@@ -16,8 +16,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
-import org.tvheadend.tvhclient.model.Channel2;
-import org.tvheadend.tvhclient.model.Program2;
+import org.tvheadend.tvhclient.model.Channel;
+import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 import org.tvheadend.tvhclient.utils.Utils;
 
@@ -31,7 +31,7 @@ public class ProgramGuideItemView extends LinearLayout {
 
     private LinearLayout layout;
     private Activity activity;
-    private Channel2 channel;
+    private Channel channel;
     private int displayWidth;
 
     // Specifies the usable width for the layout of a single program guide item
@@ -99,7 +99,7 @@ public class ProgramGuideItemView extends LinearLayout {
      * @param parent ViewGroup parent required for the layout
      * @param ch     Channel with the available EPG data
      */
-    public void addPrograms(ViewGroup parent, List<Program2> programList, Channel2 ch) {
+    public void addPrograms(ViewGroup parent, List<Program> programList, Channel ch) {
         channel = ch;
         // Clear all previously shown programs
         layout.removeAllViews();
@@ -127,8 +127,8 @@ public class ProgramGuideItemView extends LinearLayout {
         int programsAddedCounter = 0;
 
         try {
-            Program2 p;
-            Iterator<Program2> it = programList.iterator();
+            Program p;
+            Iterator<Program> it = programList.iterator();
             while (it.hasNext()) {
                 p = it.next();
 
@@ -194,7 +194,7 @@ public class ProgramGuideItemView extends LinearLayout {
      * @param p Program
      * @return Type of program
      */
-    private int getProgramType(final Program2 p) {
+    private int getProgramType(final Program p) {
         final long programStartTime = (p.start * 1000);
         final long programEndTime = (p.stop * 1000);
 
@@ -238,7 +238,7 @@ public class ProgramGuideItemView extends LinearLayout {
      * @param programType          Type of program
      * @param programsAddedCounter Number of programs that were added to the view
      */
-    private void addCurrentProgram(final Program2 program, final int programType, int programsAddedCounter, ViewGroup parent) {
+    private void addCurrentProgram(final Program program, final int programType, int programsAddedCounter, ViewGroup parent) {
 
         // Calculate the width of the program layout in the view.
         int width = getProgramLayoutWidth(program, programType);
@@ -308,7 +308,7 @@ public class ProgramGuideItemView extends LinearLayout {
      * @param programType Type of program
      * @return Widht in pixels that a program shall take up in the EPG view
      */
-    private int getProgramLayoutWidth(final Program2 p, final int programType) {
+    private int getProgramLayoutWidth(final Program p, final int programType) {
         final long programStartTime = (p.start * 1000);
         final long programEndTime = (p.stop * 1000);
         final double durationTime = ((p.stop * 1000 - p.start * 1000) / 1000 / 60);
@@ -348,7 +348,7 @@ public class ProgramGuideItemView extends LinearLayout {
      * @param p           Program
      * @param layoutWidth Width in pixels of the layout
      */
-    private void addCurrentProgramToView(final Program2 p, final int layoutWidth, ViewGroup parent) {
+    private void addCurrentProgramToView(final Program p, final int layoutWidth, ViewGroup parent) {
 
         View v = activity.getLayoutInflater().inflate(R.layout.program_guide_data_item, parent, false);
         final LinearLayout itemLayout = v.findViewById(R.id.timeline_item);
@@ -422,7 +422,7 @@ public class ProgramGuideItemView extends LinearLayout {
                     // We only have saved the id of the program, so go through
                     // all program in the current channel until we find the one.
                     int id = (int) v.getTag();
-                    Program2 program = DataStorage.getInstance().getProgramFromArray(id);
+                    Program program = DataStorage.getInstance().getProgramFromArray(id);
                     if (fragmentStatusInterface != null && program != null) {
                         fragmentStatusInterface.onListItemSelected(0, program, TAG);
                     }
@@ -446,7 +446,7 @@ public class ProgramGuideItemView extends LinearLayout {
     }
 
     public interface ProgramContextMenuInterface {
-        void setSelectedContextItem(Program2 p);
+        void setSelectedContextItem(Program p);
 
         void setMenuSelection(MenuItem item);
     }

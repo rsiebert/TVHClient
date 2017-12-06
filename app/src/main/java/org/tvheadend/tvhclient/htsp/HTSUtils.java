@@ -1,18 +1,18 @@
 package org.tvheadend.tvhclient.htsp;
 
-import org.tvheadend.tvhclient.model.Channel2;
-import org.tvheadend.tvhclient.model.ChannelTag2;
-import org.tvheadend.tvhclient.model.Program2;
-import org.tvheadend.tvhclient.model.Recording2;
-import org.tvheadend.tvhclient.model.SeriesRecording2;
-import org.tvheadend.tvhclient.model.TimerRecording2;
+import org.tvheadend.tvhclient.model.Channel;
+import org.tvheadend.tvhclient.model.ChannelTag;
+import org.tvheadend.tvhclient.model.Program;
+import org.tvheadend.tvhclient.model.Recording;
+import org.tvheadend.tvhclient.model.SeriesRecording;
+import org.tvheadend.tvhclient.model.TimerRecording;
 
 public class HTSUtils {
     private HTSUtils() {
         throw new IllegalAccessError("Utility class");
     }
 
-    public static ChannelTag2 convertMessageToChannelTagModel(ChannelTag2 tag, HTSMessage msg) {
+    public static ChannelTag convertMessageToChannelTagModel(ChannelTag tag, HTSMessage msg) {
         if (msg.containsKey("tagId")) {
             tag.tagId = msg.getInt("tagId");
         }
@@ -34,7 +34,7 @@ public class HTSUtils {
         return tag;
     }
 
-    public static Channel2 convertMessageToChannelModel(Channel2 channel, HTSMessage msg) {
+    public static Channel convertMessageToChannelModel(Channel channel, HTSMessage msg) {
         if (msg.containsKey("channelId")) {
             channel.channelId = msg.getInt("channelId");
         }
@@ -62,7 +62,7 @@ public class HTSUtils {
         return channel;
     }
 
-    public static Recording2 convertMessageToRecordingModel(Recording2 recording, HTSMessage msg) {
+    public static Recording convertMessageToRecordingModel(Recording recording, HTSMessage msg) {
         if (msg.containsKey("id")) {
             recording.id = msg.getInt("id");
         }
@@ -144,7 +144,7 @@ public class HTSUtils {
         return recording;
     }
 
-    public static Program2 convertMessageToProgramModel(Program2 program, HTSMessage msg) {
+    public static Program convertMessageToProgramModel(Program program, HTSMessage msg) {
 
         if (msg.containsKey("eventId")) {
             program.eventId = msg.getInt("eventId");
@@ -227,7 +227,7 @@ public class HTSUtils {
         return program;
     }
 
-    public static SeriesRecording2 convertMessageToSeriesRecordingModel(SeriesRecording2 seriesRecording, HTSMessage msg) {
+    public static SeriesRecording convertMessageToSeriesRecordingModel(SeriesRecording seriesRecording, HTSMessage msg) {
         if (msg.containsKey("id")) {
             seriesRecording.id = msg.getString("id");
         }
@@ -292,7 +292,7 @@ public class HTSUtils {
     }
 
 
-    public static TimerRecording2 convertMessageToTimerRecordingModel(TimerRecording2 timerRecording, HTSMessage msg) {
+    public static TimerRecording convertMessageToTimerRecordingModel(TimerRecording timerRecording, HTSMessage msg) {
         if (msg.containsKey("id")) {
             timerRecording.id = msg.getString("id");
         }

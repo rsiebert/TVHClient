@@ -1,6 +1,6 @@
 package org.tvheadend.tvhclient.model;
 
-public class TimerRecording2 {
+public class TimerRecording {
     public String id;           // str   required   ID (string!) of dvrTimerecEntry.
     public String title;        // str   required   Title for the recordings.
     public String directory;    // str   optional   Forced directory name (Added in version 19).

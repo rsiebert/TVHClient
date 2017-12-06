@@ -1,6 +1,6 @@
 package org.tvheadend.tvhclient.model;
 
-public class Program2 {
+public class Program {
 
     public int eventId;             // u32   required   Event ID
     public int channelId;           // u32   required   The channel this event is related to.

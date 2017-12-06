@@ -12,7 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.model.ChannelTag2;
+import org.tvheadend.tvhclient.model.ChannelTag;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
 import java.util.List;
@@ -21,7 +21,7 @@ public class ChannelTagListAdapter extends RecyclerView.Adapter<ChannelTagListAd
 
     private final Context context;
     private Callback mCallback;
-    private List<ChannelTag2> mTagList;
+    private List<ChannelTag> mTagList;
     private long mSelectedTagId;
     private boolean mShowChannelTagIcons;
 
@@ -29,7 +29,7 @@ public class ChannelTagListAdapter extends RecyclerView.Adapter<ChannelTagListAd
         void onItemClicked(int index);
     }
 
-    public ChannelTagListAdapter(Context context, List<ChannelTag2> mChannelTagList, long selectedTagId) {
+    public ChannelTagListAdapter(Context context, List<ChannelTag> mChannelTagList, long selectedTagId) {
         this.context = context;
         mTagList = mChannelTagList;
         mSelectedTagId = selectedTagId;
@@ -50,7 +50,7 @@ public class ChannelTagListAdapter extends RecyclerView.Adapter<ChannelTagListAd
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        final ChannelTag2 item = mTagList.get(position);
+        final ChannelTag item = mTagList.get(position);
         if (item != null) {
             // TODO highlight the selected tag using mSelectedTagId, its -1 if not set
 

@@ -28,9 +28,9 @@ import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
-import org.tvheadend.tvhclient.model.Channel2;
-import org.tvheadend.tvhclient.model.Program2;
-import org.tvheadend.tvhclient.model.Recording2;
+import org.tvheadend.tvhclient.model.Channel;
+import org.tvheadend.tvhclient.model.Program;
+import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.tasks.ImageDownloadTask;
 import org.tvheadend.tvhclient.tasks.ImageDownloadTaskCallback;
 import org.tvheadend.tvhclient.utils.MenuUtils;
@@ -45,8 +45,8 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
 
     private Activity activity;
     private boolean showControls = false;
-    private Program2 program;
-    private Channel2 channel;
+    private Program program;
+    private Channel channel;
 
     private ImageView state;
     private TextView summaryLabel;
@@ -283,7 +283,7 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
             playButton.setVisibility(View.GONE);
         }
 
-        Recording2 rec = dataStorage.getRecordingFromArray(program.dvrId);
+        Recording rec = dataStorage.getRecordingFromArray(program.dvrId);
         if (rec == null) {
             // Show the record menu
             recordRemoveButton.setVisibility(View.GONE);
@@ -311,7 +311,7 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
             playButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Channel2 channel = dataStorage.getChannelFromArray(program.channelId);
+                    Channel channel = dataStorage.getChannelFromArray(program.channelId);
                     menuUtils.handleMenuPlaySelection(channel.channelId, -1);
                 }
             });
@@ -342,7 +342,7 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
             recordRemoveButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Recording2 rec = dataStorage.getRecordingFromArray(program.dvrId);
+                    Recording rec = dataStorage.getRecordingFromArray(program.dvrId);
                     if (rec != null) {
                         if (rec.isRecording()) {
                             menuUtils.handleMenuStopRecordingSelection(rec.id, rec.title);

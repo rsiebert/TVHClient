@@ -10,7 +10,7 @@ import android.view.View;
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
-import org.tvheadend.tvhclient.model.Recording2;
+import org.tvheadend.tvhclient.model.Recording;
 
 import java.util.Map;
 
@@ -74,8 +74,8 @@ public class FailedRecordingListFragment extends RecordingListFragment implement
     private void populateList() {
         // Clear the list and add the recordings
         adapter.clear();
-        Map<Integer, Recording2> map = dataStorage.getRecordingsFromArray();
-        for (Recording2 recording : map.values()) {
+        Map<Integer, Recording> map = dataStorage.getRecordingsFromArray();
+        for (Recording recording : map.values()) {
             if (recording.isFailed() || recording.isAborted() || recording.isMissed()) {
                 adapter.add(recording);
             }

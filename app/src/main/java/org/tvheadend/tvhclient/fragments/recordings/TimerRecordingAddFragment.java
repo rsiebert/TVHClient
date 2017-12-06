@@ -40,10 +40,10 @@ import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
-import org.tvheadend.tvhclient.model.Channel2;
+import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.Profile;
-import org.tvheadend.tvhclient.model.TimerRecording2;
+import org.tvheadend.tvhclient.model.TimerRecording;
 import org.tvheadend.tvhclient.utils.Utils;
 
 import java.util.Arrays;
@@ -56,7 +56,7 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
     private final static String TAG = TimerRecordingAddFragment.class.getSimpleName();
 
     private Activity activity;
-    private TimerRecording2 rec;
+    private TimerRecording rec;
     private Toolbar toolbar;
 
     private CheckBox isEnabled;
@@ -216,7 +216,7 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
             channelList[0] = activity.getString(R.string.all_channels);
         }
         int j = 0;
-        for (Channel2 channel : dataStorage.getChannelsFromArray().values()) {
+        for (Channel channel : dataStorage.getChannelsFromArray().values()) {
             channelList[j + offset] = channel.channelName;
             j++;
         }
@@ -270,7 +270,7 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
                 // The default value is no channel
                 channelSelectionValue = 0;
                 // Get the position of the given channel in the channelList
-                Channel2 channel = dataStorage.getChannelFromArray(rec.channel);
+                Channel channel = dataStorage.getChannelFromArray(rec.channel);
                 if (channel != null) {
                     for (int i = 0; i < channelList.length; i++) {
                         if (channelList[i].equals(channel.channelName)) {
@@ -694,7 +694,7 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
 
         // The id must be passed on to the server, not the name. So go through
         // all available channels and get the id for the selected channel name.
-        for (Channel2 c : dataStorage.getChannelsFromArray().values()) {
+        for (Channel c : dataStorage.getChannelsFromArray().values()) {
             if (c.channelName.equals(channelName.getText().toString())) {
                 intent.putExtra("channelId", c.channelId);
                 break;

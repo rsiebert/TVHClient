@@ -19,8 +19,8 @@ import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.model.Channel2;
-import org.tvheadend.tvhclient.model.SeriesRecording2;
+import org.tvheadend.tvhclient.model.Channel;
+import org.tvheadend.tvhclient.model.SeriesRecording;
 import org.tvheadend.tvhclient.utils.MenuUtils;
 import org.tvheadend.tvhclient.utils.Utils;
 
@@ -31,7 +31,7 @@ public class SeriesRecordingDetailsFragment extends DialogFragment {
 
     private AppCompatActivity activity;
     private boolean showControls = false;
-    private SeriesRecording2 srec;
+    private SeriesRecording srec;
 
     private TextView isEnabled;
     private TextView directoryLabel;
@@ -161,7 +161,7 @@ public class SeriesRecordingDetailsFragment extends DialogFragment {
         directory.setVisibility(dataStorage.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_DIRECTORY ? View.VISIBLE : View.GONE);
         directory.setText(srec.directory);
 
-        Channel2 channel = dataStorage.getChannelFromArray(srec.channel);
+        Channel channel = dataStorage.getChannelFromArray(srec.channel);
         channelName.setText(channel != null ? channel.channelName : getString(R.string.all_channels));
 
         Utils.setDescription(nameLabel, name, srec.name);

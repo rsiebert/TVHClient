@@ -23,8 +23,8 @@ import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
-import org.tvheadend.tvhclient.model.Channel2;
-import org.tvheadend.tvhclient.model.Recording2;
+import org.tvheadend.tvhclient.model.Channel;
+import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.utils.MenuUtils;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 import org.tvheadend.tvhclient.utils.Utils;
@@ -36,7 +36,7 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
 
     private AppCompatActivity activity;
     private boolean showControls = false;
-    private Recording2 rec;
+    private Recording rec;
 
     private TextView summaryLabel;
     private TextView summary;
@@ -193,7 +193,7 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
         Utils.setTime2(time, rec.start, rec.stop);
         Utils.setDuration2(duration, rec.start, rec.stop);
 
-        Channel2 channel = dataStorage.getChannelFromArray(rec.channel);
+        Channel channel = dataStorage.getChannelFromArray(rec.channel);
         Utils.setDescription(channelLabel, channelName, ((channel != null) ? channel.channelName : ""));
         Utils.setDescription(summaryLabel, summary, rec.summary);
         Utils.setDescription(descLabel, desc, rec.description);

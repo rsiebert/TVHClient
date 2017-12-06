@@ -10,7 +10,7 @@ import android.widget.AdapterView;
 
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.model.Recording2;
+import org.tvheadend.tvhclient.model.Recording;
 
 import java.util.Map;
 
@@ -75,7 +75,7 @@ public class ScheduledRecordingListFragment extends RecordingListFragment {
         // Show the play button if the selected recording in dual pane
         // mode is currently recording
         if (isDualPane && adapter.getCount() > 0) {
-            Recording2 rec = adapter.getSelectedItem();
+            Recording rec = adapter.getSelectedItem();
             if (rec == null || !rec.isRecording()) {
                 (menu.findItem(R.id.menu_play)).setVisible(false);
             }
@@ -88,7 +88,7 @@ public class ScheduledRecordingListFragment extends RecordingListFragment {
 
         // Get the selected program from the list where the context menu was opened
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-        Recording2 rec = adapter.getItem(info.position);
+        Recording rec = adapter.getItem(info.position);
 
         if (rec != null && rec.isRecording()) {
             (menu.findItem(R.id.menu_record_remove)).setTitle(R.string.stop);
@@ -110,8 +110,8 @@ public class ScheduledRecordingListFragment extends RecordingListFragment {
     private void populateList() {
         // Clear the list and add the recordings
         adapter.clear();
-        Map<Integer, Recording2> map = dataStorage.getRecordingsFromArray();
-        for (Recording2 recording : map.values()) {
+        Map<Integer, Recording> map = dataStorage.getRecordingsFromArray();
+        for (Recording recording : map.values()) {
             if (recording.isScheduled()) {
                 adapter.add(recording);
             }
