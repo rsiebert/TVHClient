@@ -292,7 +292,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         };
         initCasting();
-        showNavigationHeader();
     }
 
     /**
@@ -1082,6 +1081,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 connectionStatus = action;
                 runOnUiThread(new Runnable() {
                     public void run() {
+                        showNavigationHeader();
                         showNavigationViewMenu();
                     }
                 });
@@ -1154,6 +1154,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case Constants.ACTION_SHOW_MESSAGE:
                 final String msg = (String) obj;
                 showMessage(msg);
+                break;
+            case "dvrEntryAdd":
+            case "dvrEntryDelete":
+            case "autorecEntryAdd":
+            case "autorecEntryDelete":
+            case "timerecEntryAdd":
+            case "timerecEntryDelete":
+                showNavigationViewMenu();
                 break;
         }
     }
