@@ -146,7 +146,7 @@ public class TimerRecordingListAdapter extends ArrayAdapter<TimerRecording> {
             endTime.set(Calendar.HOUR_OF_DAY, trec.stop / 60);
             endTime.set(Calendar.MINUTE, trec.stop % 60);
 
-            Utils.setTime2(holder.time, startTime.getTimeInMillis() / 1000, endTime.getTimeInMillis() / 1000);
+            Utils.setTime2(holder.time, startTime.getTimeInMillis(), endTime.getTimeInMillis());
             if (holder.duration != null) {
                 holder.duration.setText(context.getString(R.string.minutes, (int) (trec.stop - trec.start)));
             }

@@ -283,7 +283,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
         final Channel channel = adapter.getItem(info.position);
         for (Program p : DataStorage.getInstance().getProgramsFromArray().values()) {
             if (p.channelId == channel.channelId) {
-                if ((p.start * 1000) <= showProgramsFromTime && (p.stop * 1000) > showProgramsFromTime) {
+                if (p.start <= showProgramsFromTime && p.stop > showProgramsFromTime) {
                     program = p;
                     break;
                 }
@@ -355,7 +355,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
         Program p = null;
         for (Program program : DataStorage.getInstance().getProgramsFromArray().values()) {
             if (program.channelId == channel.channelId) {
-                if ((program.start * 1000) <= showProgramsFromTime && (program.stop * 1000) > showProgramsFromTime) {
+                if (program.start <= showProgramsFromTime && program.stop > showProgramsFromTime) {
                     p = program;
                     break;
                 }

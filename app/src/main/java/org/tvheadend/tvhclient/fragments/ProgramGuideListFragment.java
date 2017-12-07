@@ -124,8 +124,8 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
             final Date endDate = new Date(bundle.getLong(Constants.BUNDLE_EPG_END_TIME, 0));
 
             // Set the current date and the date as text in the title
-            Utils.setDate2(titleDateText, startDate.getTime() / 1000);
-            Utils.setDate2(titleDate, startDate.getTime() / 1000);
+            Utils.setDate2(titleDateText, startDate.getTime());
+            Utils.setDate2(titleDate, startDate.getTime());
 
             // Hide the date text if it shows the date time or the display is too narrow.
             // It is considered too narrow if the width falls below 400 pixels.
@@ -136,7 +136,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
                 titleDate.setVisibility(View.GONE);
             }
 
-            Utils.setTime2(titleHours, startDate.getTime() / 1000, endDate.getTime() / 1000);
+            Utils.setTime2(titleHours, startDate.getTime(), endDate.getTime());
         }
 
         adapter = new ProgramGuideListAdapter(activity, this, new ArrayList<Channel>(), bundle);

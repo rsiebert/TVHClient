@@ -195,8 +195,8 @@ public class ProgramGuideItemView extends LinearLayout {
      * @return Type of program
      */
     private int getProgramType(final Program p) {
-        final long programStartTime = (p.start * 1000);
-        final long programEndTime = (p.stop * 1000);
+        final long programStartTime = p.start;
+        final long programEndTime = p.stop;
 
         if (programStartTime < startTime && programEndTime > startTime && programEndTime < endTime) {
             // The program starts on the previous day and goes over midnight
@@ -254,7 +254,7 @@ public class ProgramGuideItemView extends LinearLayout {
                 // within the time slot it would start somewhere in the middle of
                 // the view. So we need to fill in a placeholder program.
                 if (programsAddedCounter == 0) {
-                    final double durationTime = ((program.start * 1000 - startTime) / 1000 / 60);
+                    final double durationTime = ((program.start - startTime) / 1000 / 60);
                     final int w = (int) (durationTime * pixelsPerMinute);
                     addCurrentProgramToView(null, w, parent);
                 }
@@ -267,7 +267,7 @@ public class ProgramGuideItemView extends LinearLayout {
                 // within the time slot it would start somewhere in the middle of
                 // the view. So we need to fill in a placeholder program.
                 if (programsAddedCounter == 0) {
-                    final double durationTime = ((program.start * 1000 - startTime) / 1000 / 60);
+                    final double durationTime = ((program.start - startTime) / 1000 / 60);
                     final int w = (int) (durationTime * pixelsPerMinute);
                     addCurrentProgramToView(null, w, parent);
                 }
@@ -309,9 +309,9 @@ public class ProgramGuideItemView extends LinearLayout {
      * @return Widht in pixels that a program shall take up in the EPG view
      */
     private int getProgramLayoutWidth(final Program p, final int programType) {
-        final long programStartTime = (p.start * 1000);
-        final long programEndTime = (p.stop * 1000);
-        final double durationTime = ((p.stop * 1000 - p.start * 1000) / 1000 / 60);
+        final long programStartTime = p.start;
+        final long programEndTime = p.stop;
+        final double durationTime = ((p.stop - p.start) / 1000 / 60);
         int offset;
         int width = 0;
 

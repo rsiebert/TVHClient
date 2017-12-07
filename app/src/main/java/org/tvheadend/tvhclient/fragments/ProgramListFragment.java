@@ -181,7 +181,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
             int nextId = 0;
             for (Program program : DataStorage.getInstance().getProgramsFromArray().values()) {
                 if (program.channelId == channel.channelId) {
-                    if ((program.start * 1000) <= showProgramsFromTime && (program.stop * 1000) > showProgramsFromTime) {
+                    if (program.start <= showProgramsFromTime && program.stop > showProgramsFromTime) {
                         Log.d(TAG, "populateList: adding program " + program.title);
                         adapter.add(program);
                         nextId = program.nextEventId;

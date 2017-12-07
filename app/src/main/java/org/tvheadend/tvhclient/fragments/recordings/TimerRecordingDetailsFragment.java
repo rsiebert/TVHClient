@@ -182,7 +182,7 @@ public class TimerRecordingDetailsFragment extends DialogFragment {
         endTime.set(Calendar.HOUR_OF_DAY, trec.stop / 60);
         endTime.set(Calendar.MINUTE, trec.stop % 60);
 
-        Utils.setTime2(time, startTime.getTimeInMillis() / 1000, endTime.getTimeInMillis() / 1000);
+        Utils.setTime2(time, startTime.getTimeInMillis(), endTime.getTimeInMillis());
         duration.setText(getString(R.string.minutes, (int) (trec.stop - trec.start)));
     }
 

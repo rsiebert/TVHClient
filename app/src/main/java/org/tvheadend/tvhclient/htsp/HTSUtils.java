@@ -70,10 +70,10 @@ public class HTSUtils {
             recording.channel = msg.getInt("channel");
         }
         if (msg.containsKey("start")) {
-            recording.start = msg.getLong("start");
+            recording.start = msg.getLong("start") * 1000;
         }
         if (msg.containsKey("stop")) {
-            recording.stop = msg.getLong("stop");
+            recording.stop = msg.getLong("stop") * 1000;
         }
         if (msg.containsKey("startExtra")) {
             recording.startExtra = msg.getLong("startExtra");
@@ -153,10 +153,10 @@ public class HTSUtils {
             program.channelId = msg.getInt("channelId");
         }
         if (msg.containsKey("start")) {
-            program.start = msg.getLong("start");
+            program.start = msg.getLong("start") * 1000;
         }
         if (msg.containsKey("stop")) {
-            program.stop = msg.getLong("stop");
+            program.stop = msg.getLong("stop") * 1000;
         }
         if (msg.containsKey("title")) {
             program.title = msg.getString("title");

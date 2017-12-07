@@ -817,8 +817,8 @@ public class HTSService extends Service implements HTSConnectionListener {
 
         final long id = intent.getLongExtra("id", 0);
         final long channelId = intent.getLongExtra("channelId", 0);
-        final long start = intent.getLongExtra("start", 0);
-        final long stop = intent.getLongExtra("stop", 0);
+        final long start = intent.getLongExtra("start", 1) / 1000;
+        final long stop = intent.getLongExtra("stop", 1) / 1000;
         final long retention = intent.getLongExtra("retention", 0);
         final long priority = intent.getLongExtra("priority", 2);
         final long enabled = intent.getLongExtra("enabled", 1);
@@ -918,8 +918,8 @@ public class HTSService extends Service implements HTSConnectionListener {
 
         final long eventId = intent.getLongExtra("eventId", 0);
         final long channelId = intent.getLongExtra("channelId", 0);
-        final long start = intent.getLongExtra("start", 0);
-        final long stop = intent.getLongExtra("stop", 0);
+        final long start = intent.getLongExtra("start", 1) / 1000;
+        final long stop = intent.getLongExtra("stop", 1) / 1000;
         final long retention = intent.getLongExtra("retention", 0);
         final String creator = intent.getStringExtra("creator");
         final long priority = intent.getLongExtra("priority", 2);

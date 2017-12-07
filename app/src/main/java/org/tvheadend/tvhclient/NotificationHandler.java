@@ -76,7 +76,7 @@ public class NotificationHandler {
 
         // The start time when the notification shall be shown
         String msg = app.getString(R.string.recording_started);
-        long time = rec.start * 1000;
+        long time = rec.start;
         if (time > (new Date()).getTime()) {
             logger.log(TAG, "addNotification: Recording added");
             if (offset > 0) {
@@ -87,7 +87,7 @@ public class NotificationHandler {
 
             // Create the intent for the start and stop notifications
             createNotification(rec.id, time, msg);
-            createNotification(rec.id * 100, rec.stop * 1000, app.getString(R.string.recording_completed));
+            createNotification(rec.id * 100, rec.stop, app.getString(R.string.recording_completed));
         } else {
             logger.log(TAG, "addNotification: Recording not added, start time is in the past");
         }

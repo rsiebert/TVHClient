@@ -133,7 +133,7 @@ public class Utils {
         // Show the play menu item when the current 
         // time is between the program start and end time
         long currentTime = new Date().getTime();
-        if (currentTime > (program.start * 1000) && currentTime < (program.stop * 1000)) {
+        if (currentTime > program.start && currentTime < program.stop) {
             playMenuItem.setVisible(true);
         }
         Recording rec = DataStorage.getInstance().getRecordingFromArray(program.dvrId);
@@ -216,7 +216,7 @@ public class Utils {
         duration.setVisibility(View.VISIBLE);
         // Get the start and end times so we can show them
         // and calculate the duration. Then show the duration in minutes
-        final double durationTime = ((stop - start) / 60);
+        final double durationTime = ((stop - start) / 1000 / 60);
         final String s = duration.getContext().getString(R.string.minutes, (int) durationTime);
         duration.setText(duration.getContext().getString(R.string.minutes, (int) durationTime));
         duration.setVisibility((s.length() > 0) ? View.VISIBLE : View.GONE);
@@ -226,16 +226,13 @@ public class Utils {
      * Shows the given time for the given view.
      * 
      * @param time     Time
-     * @param sta   Start time
-     * @param sto     Stop time
+     * @param start   Start time
+     * @param stop     Stop time
      */
-    public static void setTime2(TextView time, final long sta, final long sto) {
+    public static void setTime2(TextView time, final long start, final long stop) {
         if (time == null) {
             return;
         }
-
-        long start = sta * 1000;
-        long stop = sto * 1000;
 
         time.setVisibility(View.VISIBLE);
         String startTime = ""; // DateFormat.getTimeFormat(time.getContext()).format(start);
@@ -273,15 +270,14 @@ public class Utils {
      * After one week the date value will be used.
      *
      * @param date  Date
-     * @param st Start time
+     * @param start Start time
      */
-    public static void setDate2(TextView date, final long st) {
+    public static void setDate2(TextView date, final long start) {
         if (date == null) {
             return;
         }
 
         String dateText = "";
-        long start = st * 1000;
         if (DateUtils.isToday(start)) {
             // Show the string today
             dateText = date.getContext().getString(R.string.today);
@@ -628,12 +624,10 @@ public class Utils {
         }
     }
 
-    public static void setProgress2(ProgressBar progress, final long sta, final long sto) {
+    public static void setProgress2(ProgressBar progress, final long start, final long stop) {
         if (progress == null) {
             return;
         }
-        long start = sta * 1000;
-        long stop = sto * 1000;
         // Get the start and end times to calculate the progress.
         double durationTime = (stop - start);
         double elapsedTime = new Date().getTime() - start;
@@ -647,12 +641,10 @@ public class Utils {
         progress.setVisibility(View.VISIBLE);
     }
 
-    public static void setProgressText2(TextView progressText, final long sta, final long sto) {
+    public static void setProgressText2(TextView progressText, final long start, final long stop) {
         if (progressText == null) {
             return;
         }
-        long start = sta * 1000;
-        long stop = sto * 1000;
 
         // Get the start and end times to calculate the progress.
         final double durationTime = (stop - start);

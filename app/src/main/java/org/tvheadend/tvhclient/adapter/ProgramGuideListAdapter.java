@@ -118,7 +118,7 @@ public class ProgramGuideListAdapter extends ArrayAdapter<Channel> {
         while (mapIt.hasNext()) {
             p = (Program) mapIt.next();
             if (p.channelId == channel.channelId) {
-                if ((p.start * 1000) <= startTime && (p.stop * 1000) > startTime) {
+                if (p.start <= startTime && p.stop > startTime) {
                     programList.add(p);
                     nextId = p.nextEventId;
                     break;

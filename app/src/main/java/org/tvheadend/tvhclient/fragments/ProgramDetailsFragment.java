@@ -277,7 +277,7 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
         // Show the play menu item when the current 
         // time is between the program start and end time
         long currentTime = new Date().getTime();
-        if (currentTime > (program.start * 1000) && currentTime < (program.stop * 1000)) {
+        if (currentTime > program.start && currentTime < program.stop) {
             playButton.setVisibility(View.VISIBLE);
         } else {
             playButton.setVisibility(View.GONE);

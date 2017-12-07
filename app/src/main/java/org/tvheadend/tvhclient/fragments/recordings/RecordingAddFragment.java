@@ -233,8 +233,8 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
                 priorityValue = rec.priority;
                 startExtraValue = rec.startExtra;
                 stopExtraValue = rec.stopExtra;
-                startValue.setTimeInMillis(rec.start * 1000);
-                stopValue.setTimeInMillis(rec.stop * 1000);
+                startValue.setTimeInMillis(rec.start);
+                stopValue.setTimeInMillis(rec.stop);
                 titleValue = rec.title;
                 subtitleValue = rec.subtitle;
                 descriptionValue = rec.description;
@@ -560,8 +560,8 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
 
         intent.putExtra("title", titleValue);
         intent.putExtra("subtitle", subtitleValue);
-        intent.putExtra("start", startValue.getTimeInMillis() / 1000); // Pass on seconds not milliseconds
-        intent.putExtra("stop", stopValue.getTimeInMillis() / 1000); // Pass on seconds not milliseconds
+        intent.putExtra("start", startValue.getTimeInMillis()); // Pass on seconds not milliseconds
+        intent.putExtra("stop", stopValue.getTimeInMillis()); // Pass on seconds not milliseconds
         intent.putExtra("startExtra", startExtraValue);
         intent.putExtra("stopExtra", stopExtraValue);
         intent.putExtra("description", descriptionValue);

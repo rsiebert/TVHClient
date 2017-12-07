@@ -233,7 +233,7 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
 
             for (Program program : DataStorage.getInstance().getProgramsFromArray().values()) {
                 if (program.channelId == c.channelId) {
-                    if ((program.start * 1000) <= showProgramsFromTime && (program.stop * 1000) > showProgramsFromTime) {
+                    if (program.start <= showProgramsFromTime && program.stop > showProgramsFromTime) {
                         p = program;
                         break;
                     }
