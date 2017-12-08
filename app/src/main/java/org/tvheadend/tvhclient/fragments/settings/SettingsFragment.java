@@ -1,7 +1,6 @@
 package org.tvheadend.tvhclient.fragments.settings;
 
 import android.Manifest;
-import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -9,7 +8,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
@@ -40,10 +38,6 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
 
     private SettingsToolbarInterface toolbarInterface;
     private Preference prefDownloadDir;
-    private Preference prefClearSearchHistory;
-    private Preference prefClearIconCache;
-    private Preference prefLanguage;
-    private ListPreference prefDefaultMenu;
     private boolean isUnlocked;
     private int htspVersion;
     private SharedPreferences sharedPreferences;
@@ -78,10 +72,9 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
         Preference prefPurchaseUnlocker = findPreference("pref_unlocker");
         Preference prefMenuAdvanced = findPreference("pref_advanced");
         Preference prefShowChangelog = findPreference("pref_changelog");
-        prefLanguage = findPreference("languagePref");
-        prefDefaultMenu = (ListPreference) findPreference("defaultMenuPositionPref");
-        prefClearSearchHistory = findPreference("pref_clear_search_history");
-        prefClearIconCache = findPreference("pref_clear_icon_cache");
+        Preference prefLanguage = findPreference("languagePref");
+        Preference prefClearSearchHistory = findPreference("pref_clear_search_history");
+        Preference prefClearIconCache = findPreference("pref_clear_icon_cache");
         prefDownloadDir = findPreference("pref_download_directory");
 
         prefManageConnections.setOnPreferenceClickListener(this);
@@ -111,15 +104,6 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
     public void onPause() {
         super.onPause();
         sharedPreferences.unregisterOnSharedPreferenceChangeListener(this);
-
-        // Close the menu dialog if it is visible to avoid crashing or showing
-        // wrong values after an orientation.
-        if (prefDefaultMenu.getDialog() != null) {
-            Dialog dlg = prefDefaultMenu.getDialog();
-            if (dlg.isShowing()) {
-                dlg.cancel();
-            }
-        }
     }
 
     private void updateDownloadDirSummary() {
