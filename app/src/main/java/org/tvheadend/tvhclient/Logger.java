@@ -135,12 +135,14 @@ public class Logger {
      * Removes any log files that are older than a week
      */
     private void removeOldLogfiles() {
-        File[] files = logPath.listFiles();
-        for(File f : files) {
-            long diff = new Date().getTime() - f.lastModified();
-            if (diff > 7 * 24 * 60 * 60 * 1000) {
-                if (!f.delete()) {
-                    log(TAG, "removeOldLogfiles: Could not remove file " + f.getName());
+        if (logPath != null) {
+            File[] files = logPath.listFiles();
+            for (File f : files) {
+                long diff = new Date().getTime() - f.lastModified();
+                if (diff > 7 * 24 * 60 * 60 * 1000) {
+                    if (!f.delete()) {
+                        log(TAG, "removeOldLogfiles: Could not remove file " + f.getName());
+                    }
                 }
             }
         }
