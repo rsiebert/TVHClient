@@ -41,8 +41,8 @@ import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.Logger;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
+import org.tvheadend.tvhclient.activities.SettingsToolbarInterface;
 import org.tvheadend.tvhclient.htsp.HTSService;
-import org.tvheadend.tvhclient.interfaces.ToolbarInterface;
 import org.tvheadend.tvhclient.interfaces.BackPressedInterface;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Connection;
@@ -51,155 +51,88 @@ import org.tvheadend.tvhclient.model.Profiles;
 
 import java.util.List;
 
-public class SettingsCastingFragment extends PreferenceFragment implements HTSListener, BackPressedInterface {
+public class SettingsCastingFragment extends PreferenceFragment implements HTSListener, BackPressedInterface, OnPreferenceClickListener, OnPreferenceChangeListener {
 
 
     private final static String TAG = SettingsCastingFragment.class.getSimpleName();
-    private static final String CAST_PROFILE_UUID = "cast_profile_uuid";
 
     private Activity activity;
-    private ToolbarInterface toolbarInterface;
-    private Connection conn = null;
-    private Profile castProfile = null;
-    private CheckBoxPreference prefEnableCasting;
-    private ListPreference prefCastProfiles;
-    private TVHClientApplication app;
-    private DatabaseHelper databaseHelper;
-    private Logger logger;
-    private DataStorage dataStorage;
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        outState.putString(CAST_PROFILE_UUID, prefCastProfiles.getValue());
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    public void onDestroy() {
-        toolbarInterface = null;
-        super.onDestroy();
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        addPreferencesFromResource(R.xml.preferences_casting);
-    }
+    private SettingsToolbarInterface toolbarInterface;
+    private Connection connection = null;
+    private Profile castingProfile = null;
+    private CheckBoxPreference castingEnabledPreference;
+    private ListPreference castingProfileListPreference;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        addPreferencesFromResource(R.xml.preferences_casting);
 
         activity = getActivity();
-        if (activity instanceof ToolbarInterface) {
-            toolbarInterface = (ToolbarInterface) activity;
-        }
-        if (toolbarInterface != null) {
-            toolbarInterface.setActionBarTitle(getString(R.string.pref_casting));
+        if (activity instanceof SettingsToolbarInterface) {
+            toolbarInterface = (SettingsToolbarInterface) activity;
         }
 
-        app = TVHClientApplication.getInstance();
-        databaseHelper = DatabaseHelper.getInstance(getActivity().getApplicationContext());
-        logger = Logger.getInstance();
-        dataStorage = DataStorage.getInstance();
+        connection = DatabaseHelper.getInstance(getActivity()).getSelectedConnection();
+        toolbarInterface.setTitle(getString(R.string.pref_casting));
+        toolbarInterface.setSubtitle(connection.name);
 
-        prefEnableCasting = (CheckBoxPreference) findPreference("pref_enable_casting");
-        prefCastProfiles = (ListPreference) findPreference("pref_cast_profiles");
+        castingEnabledPreference = (CheckBoxPreference) findPreference("pref_enable_casting");
+        castingProfileListPreference = (ListPreference) findPreference("pref_cast_profiles");
+        castingEnabledPreference.setOnPreferenceClickListener(this);
+        castingProfileListPreference.setOnPreferenceChangeListener(this);
 
-        conn = databaseHelper.getSelectedConnection();
-        castProfile = databaseHelper.getProfile(conn.cast_profile_id);
-        if (castProfile == null) {
-            logger.log(TAG, "No casting profile defined in the connection");
-            castProfile = new Profile();
-        } else {
-            logger.log(TAG, "Casting profile " + castProfile.name + ", " + castProfile.uuid + " is defined in the connection");
+        castingProfile = DatabaseHelper.getInstance(getActivity()).getProfile(connection.cast_profile_id);
+        if (castingProfile == null) {
+            castingProfile = new Profile();
         }
-
-        // If the state is null then this activity has been started for
-        // the first time. If the state is not null then the screen has
-        // been rotated and we have to reuse the values.
+        // Restore the currently selected id after an orientation change
         if (savedInstanceState != null) {
-            castProfile.uuid = savedInstanceState.getString(CAST_PROFILE_UUID);
+            castingProfile.uuid = savedInstanceState.getString("casting_profile_uuid");
         }
-
-        prefEnableCasting.setOnPreferenceClickListener((new OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                prefCastProfiles.setEnabled(prefEnableCasting.isChecked());
-
-                // try to set the default profile
-                setCastProfile();
-                return false;
-            }
-        }));
-
-        prefCastProfiles.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                for (Profiles p : dataStorage.getProfiles()) {
-                    if (p.uuid.equals(newValue) && !p.name.equals(Constants.CAST_PROFILE_DEFAULT)) {
-                        new MaterialDialog.Builder(activity)
-                                .content(getString(R.string.cast_profile_invalid, p.name, Constants.CAST_PROFILE_DEFAULT))
-                                .positiveText(android.R.string.ok)
-                                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                                    @Override
-                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                        dialog.cancel();
-                                    }
-                                }).show();
-                    }
-                }
-                return true;
-            }
-        });
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putString("casting_profile_uuid", castingProfileListPreference.getValue());
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
-        app.addListener(this);
-
-        if (toolbarInterface != null) {
-            toolbarInterface.setActionBarSubtitle(conn.name);
-        }
-
+        TVHClientApplication.getInstance().addListener(this);
         loadProfiles();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        app.removeListener(this);
+        TVHClientApplication.getInstance().removeListener(this);
     }
 
     private void save() {
         // Save the values into the program profile (play and streaming)
-        castProfile.enabled = prefEnableCasting.isChecked();
-        castProfile.name = (prefCastProfiles.getEntry() != null ? prefCastProfiles.getEntry().toString() : "");
-        castProfile.uuid = prefCastProfiles.getValue();
+        castingProfile.enabled = castingEnabledPreference.isChecked();
+        castingProfile.name = (castingProfileListPreference.getEntry() != null ? castingProfileListPreference.getEntry().toString() : "");
+        castingProfile.uuid = castingProfileListPreference.getValue();
 
         // If the profile does not contain an id then it is a new one. Add it
         // to the database and update the connection with the new id. Otherwise
         // just update the profile.
-        if (castProfile.id == 0) {
-            conn.cast_profile_id = (int) databaseHelper.addProfile(castProfile);
-            databaseHelper.updateConnection(conn);
+        if (castingProfile.id == 0) {
+            connection.cast_profile_id = (int) DatabaseHelper.getInstance(getActivity()).addProfile(castingProfile);
+            DatabaseHelper.getInstance(getActivity()).updateConnection(connection);
         } else {
-            databaseHelper.updateProfile(castProfile);
+            DatabaseHelper.getInstance(getActivity()).updateProfile(castingProfile);
         }
     }
 
-    /**
-     * 
-     */
     private void loadProfiles() {
-        if (prefCastProfiles == null) {
-            return;
-        }
-
         // Disable the preferences until the profiles have been loaded.
         // If the server does not support it then it stays disabled
-        prefEnableCasting.setEnabled(false);
-        prefCastProfiles.setEnabled(false);
+        castingEnabledPreference.setEnabled(false);
+        castingProfileListPreference.setEnabled(false);
 
         // Get the connection status to check if the profile can be loaded from
         // the server. If not show a message and return
@@ -211,11 +144,8 @@ public class SettingsCastingFragment extends PreferenceFragment implements HTSLi
             }
             return;
         }
-
         // Set the loading indication
-        if (toolbarInterface != null) {
-            toolbarInterface.setActionBarSubtitle(getString(R.string.loading_profiles));
-        }
+        toolbarInterface.setSubtitle(getString(R.string.loading_profiles));
 
         // Get the available profiles from the server
         final Intent intent = new Intent(activity, HTSService.class);
@@ -228,17 +158,11 @@ public class SettingsCastingFragment extends PreferenceFragment implements HTSLi
         if (action.equals("getProfiles")) {
             activity.runOnUiThread(new Runnable() {
                 public void run() {
-                    // Loading is done, remove the loading subtitle
-                    if (toolbarInterface != null) {
-                        toolbarInterface.setActionBarSubtitle(conn.name);
-                    }
-
-                    if (prefCastProfiles != null && prefEnableCasting != null) {
-                        addProfiles(prefCastProfiles, dataStorage.getProfiles());
-                        prefCastProfiles.setEnabled(prefEnableCasting.isChecked());
-                        prefEnableCasting.setEnabled(true);
-                        setCastProfile();
-                    }
+                    toolbarInterface.setSubtitle(connection.name);
+                    addProfiles(castingProfileListPreference, DataStorage.getInstance().getProfiles());
+                    castingProfileListPreference.setEnabled(castingEnabledPreference.isChecked());
+                    castingEnabledPreference.setEnabled(true);
+                    setCastProfile();
                 }
             });
         }
@@ -247,22 +171,22 @@ public class SettingsCastingFragment extends PreferenceFragment implements HTSLi
     private void setCastProfile() {
         // If no uuid or name is set, no selected profile 
         // exists. Preselect the default one, if it exists.
-        if (castProfile.uuid == null
-            || (castProfile.name != null && castProfile.name.length() == 0)
-            || (castProfile.uuid != null && castProfile.uuid.length() == 0)) {
-            logger.log(TAG, "No valid casting profile defined in the current connection, setting default");
+        if (castingProfile.uuid == null
+            || (castingProfile.name != null && castingProfile.name.length() == 0)
+            || (castingProfile.uuid != null && castingProfile.uuid.length() == 0)) {
+            Logger.getInstance().log(TAG, "No valid casting profile defined in the current connection, setting default");
 
-            for (Profiles p : dataStorage.getProfiles()) {
+            for (Profiles p : DataStorage.getInstance().getProfiles()) {
                 if (p.name.equals(Constants.CAST_PROFILE_DEFAULT)) {
-                    castProfile.uuid = p.uuid;
+                    castingProfile.uuid = p.uuid;
                     break;
                 }
             }
         }
         // show the currently selected profile name, if none is
         // available then the default value is used
-        logger.log(TAG, "Setting casting profile " + castProfile.name);
-        prefCastProfiles.setValue(castProfile.uuid);
+        Logger.getInstance().log(TAG, "Setting casting profile " + castingProfile.name);
+        castingProfileListPreference.setValue(castingProfile.uuid);
     }
 
     /**
@@ -289,5 +213,38 @@ public class SettingsCastingFragment extends PreferenceFragment implements HTSLi
     @Override
     public void onBackPressed() {
         save();
+    }
+
+    @Override
+    public boolean onPreferenceChange(Preference preference, Object o) {
+        switch (preference.getKey()) {
+            case "pref_cast_profiles":
+                for (Profiles p : DataStorage.getInstance().getProfiles()) {
+                    if (p.uuid.equals(o) && !p.name.equals(Constants.CAST_PROFILE_DEFAULT)) {
+                        new MaterialDialog.Builder(activity)
+                                .content(getString(R.string.cast_profile_invalid, p.name, Constants.CAST_PROFILE_DEFAULT))
+                                .positiveText(android.R.string.ok)
+                                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                    @Override
+                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                        dialog.cancel();
+                                    }
+                                }).show();
+                    }
+                }
+                return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean onPreferenceClick(Preference preference) {
+        switch (preference.getKey()) {
+            case "pref_enable_casting":
+                castingProfileListPreference.setEnabled(castingEnabledPreference.isChecked());
+                setCastProfile();
+                return true;
+        }
+        return false;
     }
 }

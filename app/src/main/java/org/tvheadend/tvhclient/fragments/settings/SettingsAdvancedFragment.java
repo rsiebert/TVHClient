@@ -2,111 +2,117 @@ package org.tvheadend.tvhclient.fragments.settings;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.preference.PreferenceManager;
 import android.support.v4.content.FileProvider;
-import android.view.View;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.tvheadend.tvhclient.BuildConfig;
 import org.tvheadend.tvhclient.Logger;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.interfaces.ToolbarInterface;
+import org.tvheadend.tvhclient.activities.SettingsToolbarInterface;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-public class SettingsAdvancedFragment extends PreferenceFragment {
-    private final static String TAG = SettingsAdvancedFragment.class.getSimpleName();
+public class SettingsAdvancedFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener, SharedPreferences.OnSharedPreferenceChangeListener {
 
     private Activity activity;
-    private ToolbarInterface toolbarInterface;
+    private SettingsToolbarInterface toolbarInterface;
     private CheckBoxPreference prefDebugMode;
     private Preference prefSendLogfile;
-    private Logger logger;
-    private String[] logfileList;
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        addPreferencesFromResource(R.xml.preferences_advanced);
-    }
+    private SharedPreferences sharedPreferences;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        addPreferencesFromResource(R.xml.preferences_advanced);
 
         activity = getActivity();
-        if (activity instanceof ToolbarInterface) {
-            toolbarInterface = (ToolbarInterface) activity;
+        if (activity instanceof SettingsToolbarInterface) {
+            toolbarInterface = (SettingsToolbarInterface) activity;
         }
         if (toolbarInterface != null) {
-            toolbarInterface.setActionBarTitle(getString(R.string.pref_advanced_settings));
+            toolbarInterface.setTitle(getString(R.string.pref_advanced_settings));
         }
 
-        logger = Logger.getInstance();
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
         prefDebugMode = (CheckBoxPreference) findPreference("pref_debug_mode");
         prefSendLogfile = findPreference("pref_send_logfile");
+        prefDebugMode.setOnPreferenceClickListener(this);
+        prefSendLogfile.setOnPreferenceClickListener(this);
+    }
 
-        // Add a listener to the logger will be enabled or disabled depending on the setting
-        prefDebugMode.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                if (prefDebugMode.isChecked()) {
-                    logger.enableLogToFile();
-                } else {
-                    logger.disableLogToFile();
-                }
-                return false;
+    @Override
+    public void onResume() {
+        super.onResume();
+        sharedPreferences.registerOnSharedPreferenceChangeListener(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        sharedPreferences.unregisterOnSharedPreferenceChangeListener(this);
+    }
+
+    @Override
+    public boolean onPreferenceClick(Preference preference) {
+        switch (preference.getKey()) {
+            case "pref_debug_mode":
+                handlePreferenceDebugModeEnabledSelected();
+                break;
+            case "pref_send_logfile":
+                handlePreferenceSendLogFileSelected();
+                break;
+        }
+        return true;
+    }
+
+    private void handlePreferenceDebugModeEnabledSelected() {
+        prefDebugMode.setOnPreferenceClickListener(preference -> {
+            if (prefDebugMode.isChecked()) {
+                Logger.getInstance().enableLogToFile();
+            } else {
+                Logger.getInstance().disableLogToFile();
             }
+            return true;
         });
+    }
 
-        // Add a listener to the user can send the internal log file to the
-        // developer. He can then use the data for debugging purposes.
-        prefSendLogfile.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                logger.saveLog();
-
-                // Get the list of available files in the log path
-                File logPath = new File(activity.getCacheDir(), "logs");
-                File[] files = logPath.listFiles();
-
-                // Fill the items for the dialog
-                logfileList = new String[files.length];
-                for (int i = 0; i < files.length; i++) {
-                    logfileList[i] = files[i].getName();
-                }
-
-                // Show the dialog with the list of log files
-                new MaterialDialog.Builder(activity)
-                        .title(R.string.select_log_file)
-                        .items(logfileList)
-                        .itemsCallbackSingleChoice(-1, new MaterialDialog.ListCallbackSingleChoice() {
-                            @Override
-                            public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
-                                mailLogfile(logfileList[which]);
-                                return true;
-                            }
-                        })
-                        .show();
-                return false;
+    private void handlePreferenceSendLogFileSelected() {
+        prefSendLogfile.setOnPreferenceClickListener(preference -> {
+            Logger.getInstance().saveLog();
+            // Get the list of available files in the log path
+            File logPath = new File(getActivity().getCacheDir(), "logs");
+            File[] files = logPath.listFiles();
+            // Fill the items for the dialog
+            String[] logfileList = new String[files.length];
+            for (int i = 0; i < files.length; i++) {
+                logfileList[i] = files[i].getName();
             }
+            // Show the dialog with the list of log files
+            new MaterialDialog.Builder(getActivity())
+                    .title(R.string.select_log_file)
+                    .items(logfileList)
+                    .itemsCallbackSingleChoice(-1, (dialog, view, which, text) -> {
+                        mailLogfile(logfileList[which]);
+                        return true;
+                    })
+                    .show();
+            return true;
         });
     }
 
     private void mailLogfile(String filename) {
-        logger.log(TAG, "mailLogfile() called with: filename = [" + filename + "]");
-
-        // TODO sync logfile before sending?
-
         Date date = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH.mm", Locale.US);
         String dateText = sdf.format(date.getTime());
@@ -134,8 +140,22 @@ public class SettingsAdvancedFragment extends PreferenceFragment {
         }
     }
 
-    public void onDestroy() {
-        toolbarInterface = null;
-        super.onDestroy();
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+        switch (key) {
+            case "connectionTimeout":
+                try {
+                    int value = Integer.parseInt(prefs.getString(key, "5"));
+                    if (value < 1) {
+                        prefs.edit().putString(key, "1").apply();
+                    }
+                    if (value > 60) {
+                        prefs.edit().putString(key, "60").apply();
+                    }
+                } catch (NumberFormatException ex) {
+                    prefs.edit().putString(key, "5").apply();
+                }
+                break;
+        }
     }
 }

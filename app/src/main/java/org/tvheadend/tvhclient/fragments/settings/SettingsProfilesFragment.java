@@ -20,15 +20,12 @@ package org.tvheadend.tvhclient.fragments.settings;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceFragment;
-import android.preference.PreferenceManager;
-import android.support.design.widget.Snackbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 
@@ -37,8 +34,8 @@ import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
+import org.tvheadend.tvhclient.activities.SettingsToolbarInterface;
 import org.tvheadend.tvhclient.htsp.HTSService;
-import org.tvheadend.tvhclient.interfaces.ToolbarInterface;
 import org.tvheadend.tvhclient.interfaces.BackPressedInterface;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Connection;
@@ -47,118 +44,79 @@ import org.tvheadend.tvhclient.model.Profiles;
 
 import java.util.List;
 
-public class SettingsProfilesFragment extends PreferenceFragment implements HTSListener, BackPressedInterface {
-
-    @SuppressWarnings("unused")
-    private final static String TAG = SettingsProfilesFragment.class.getSimpleName();
+public class SettingsProfilesFragment extends PreferenceFragment implements OnPreferenceClickListener, HTSListener, BackPressedInterface {
 
     private Activity activity;
-    private ToolbarInterface toolbarInterface;
+    private SettingsToolbarInterface toolbarInterface;
 
-    private Connection conn = null;
-    private Profile progProfile = null;
-    private Profile recProfile = null;
+    private Connection connection = null;
+    private Profile playbackProfile = null;
+    private Profile recordingProfile = null;
 
-    private CheckBoxPreference prefEnableRecProfiles;
-    private CheckBoxPreference prefEnableProgProfiles;
-    private ListPreference prefRecProfiles;
-    private ListPreference prefProgProfiles;
-
-    private static final String PROG_PROFILE_UUID = "prog_profile_uuid";
-    private static final String REC_PROFILE_UUID = "rec_profile_uuid";
-
-    private TVHClientApplication app;
-    private DatabaseHelper databaseHelper;
-    private DataStorage dataStorage;
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        outState.putString(PROG_PROFILE_UUID, prefProgProfiles.getValue());
-        outState.putString(REC_PROFILE_UUID, prefRecProfiles.getValue());
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    public void onDestroy() {
-        toolbarInterface = null;
-        super.onDestroy();
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        addPreferencesFromResource(R.xml.preferences_profiles);
-    }
+    private CheckBoxPreference recordingProfileEnabledPreference;
+    private CheckBoxPreference playbackProfileEnabledPreference;
+    private ListPreference recordingProfileListPreference;
+    private ListPreference playbackProfileListPreference;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        addPreferencesFromResource(R.xml.preferences_profiles);
+
         activity = getActivity();
-        app = (TVHClientApplication) activity.getApplication();
-        databaseHelper = DatabaseHelper.getInstance(getActivity().getApplicationContext());
-        dataStorage = DataStorage.getInstance();
-
-        prefEnableRecProfiles = (CheckBoxPreference) findPreference("pref_enable_recording_profiles");
-        prefEnableProgProfiles = (CheckBoxPreference) findPreference("pref_enable_playback_profiles");
-        prefRecProfiles = (ListPreference) findPreference("pref_recording_profiles");
-        prefProgProfiles = (ListPreference) findPreference("pref_playback_profiles");
-
-        conn = databaseHelper.getSelectedConnection();
-        progProfile = databaseHelper.getProfile(conn.playback_profile_id);
-        if (progProfile == null) {
-            progProfile = new Profile();
-        }
-        recProfile = databaseHelper.getProfile(conn.recording_profile_id);
-        if (recProfile == null) {
-            recProfile = new Profile();
+        if (activity instanceof SettingsToolbarInterface) {
+            toolbarInterface = (SettingsToolbarInterface) activity;
         }
 
-        // If the state is null then this activity has been started for
-        // the first time. If the state is not null then the screen has
-        // been rotated and we have to reuse the values.
+        connection = DatabaseHelper.getInstance(getActivity()).getSelectedConnection();
+        toolbarInterface.setTitle(getString(R.string.pref_profiles));
+        toolbarInterface.setSubtitle(connection.name);
+
+        recordingProfileEnabledPreference = (CheckBoxPreference) findPreference("pref_enable_recording_profiles");
+        playbackProfileEnabledPreference = (CheckBoxPreference) findPreference("pref_enable_playback_profiles");
+        recordingProfileEnabledPreference.setOnPreferenceClickListener(this);
+        playbackProfileEnabledPreference.setOnPreferenceClickListener(this);
+
+        recordingProfileListPreference = (ListPreference) findPreference("pref_recording_profiles");
+        playbackProfileListPreference = (ListPreference) findPreference("pref_playback_profiles");
+
+        playbackProfile = DatabaseHelper.getInstance(getActivity()).getProfile(connection.playback_profile_id);
+        recordingProfile = DatabaseHelper.getInstance(getActivity()).getProfile(connection.recording_profile_id);
+
+        // Set defaults in case no profile was set for the current connection
+        if (playbackProfile == null) {
+            playbackProfile = new Profile();
+        }
+        if (recordingProfile == null) {
+            recordingProfile = new Profile();
+        }
+        // Restore the currently selected uuids after an orientation change
         if (savedInstanceState != null) {
-            progProfile.uuid = savedInstanceState.getString(PROG_PROFILE_UUID);
-            recProfile.uuid = savedInstanceState.getString(REC_PROFILE_UUID);
+            playbackProfile.uuid = savedInstanceState.getString("playback_profile_uuid");
+            recordingProfile.uuid = savedInstanceState.getString("recordind_profile_uuid");
         }
-
-        if (activity instanceof ToolbarInterface) {
-            toolbarInterface = (ToolbarInterface) activity;
-        }
-        if (toolbarInterface != null) {
-            toolbarInterface.setActionBarTitle(getString(R.string.pref_profiles));
-        }
-
-        prefEnableRecProfiles.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                prefRecProfiles.setEnabled(prefEnableRecProfiles.isChecked());
-                return false;
-            }
-        });
-        prefEnableProgProfiles.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                prefProgProfiles.setEnabled(prefEnableProgProfiles.isChecked());
-                return false;
-            }
-        });
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putString("playback_profile_uuid", playbackProfileListPreference.getValue());
+        outState.putString("recordind_profile_uuid", recordingProfileListPreference.getValue());
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
-        app.addListener(this);
-
-        if (toolbarInterface != null) {
-            toolbarInterface.setActionBarSubtitle(conn.name);
-        }
-
-        loadProfiles();
+        TVHClientApplication.getInstance().addListener(this);
+        toolbarInterface.setSubtitle(getString(R.string.loading_profiles));
+        loadRecordingProfiles();
+        loadPlaybackProfiles();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        app.removeListener(this);
+        TVHClientApplication.getInstance().removeListener(this);
     }
 
     @Override
@@ -167,73 +125,59 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
         inflater.inflate(R.menu.save_cancel_menu, menu);
     }
 
-    private void save() {
-        // Save the values into the program profile (play and streaming)
-        progProfile.enabled = prefEnableProgProfiles.isChecked();
-        progProfile.name = (prefProgProfiles.getEntry() != null ? prefProgProfiles.getEntry().toString() : "");
-        progProfile.uuid = prefProgProfiles.getValue();
-
-        // If the profile does not contain an id then it is a new one. Add it
-        // to the database and update the connection with the new id. Otherwise
-        // just update the profile.
-        if (progProfile.id == 0) {
-            conn.playback_profile_id = (int) databaseHelper.addProfile(progProfile);
-            databaseHelper.updateConnection(conn);
-        } else {
-            databaseHelper.updateProfile(progProfile);
-        }
-
+    private void saveRecordingProfile() {
         // Save the values into the recording profile (recording)
-        recProfile.enabled = prefEnableRecProfiles.isChecked();
-        recProfile.name = (prefRecProfiles.getEntry() != null ? prefRecProfiles.getEntry().toString() : "");
-        recProfile.uuid = prefRecProfiles.getValue();
+        recordingProfile.enabled = recordingProfileEnabledPreference.isChecked();
+        recordingProfile.name = (recordingProfileListPreference.getEntry() != null ? recordingProfileListPreference.getEntry().toString() : "");
+        recordingProfile.uuid = recordingProfileListPreference.getValue();
 
         // If the profile does not contain an id then it is a new one. Add it
         // to the database and update the connection with the new id. Otherwise
         // just update the profile.
-        if (recProfile.id == 0) {
-            conn.recording_profile_id = (int) databaseHelper.addProfile(recProfile);
-            databaseHelper.updateConnection(conn);
+        if (recordingProfile.id == 0) {
+            connection.recording_profile_id = (int) DatabaseHelper.getInstance(getActivity()).addProfile(recordingProfile);
+            DatabaseHelper.getInstance(getActivity()).updateConnection(connection);
         } else {
-            databaseHelper.updateProfile(recProfile);
+            DatabaseHelper.getInstance(getActivity()).updateProfile(recordingProfile);
         }
     }
 
-    /**
-     * 
-     */
-    private void loadProfiles() {
-        if (prefRecProfiles == null || prefProgProfiles == null) {
-            return;
-        }
+    private void savePlaybackProfile() {
+        // Save the values into the program profile (play and streaming)
+        playbackProfile.enabled = playbackProfileEnabledPreference.isChecked();
+        playbackProfile.name = (playbackProfileListPreference.getEntry() != null ? playbackProfileListPreference.getEntry().toString() : "");
+        playbackProfile.uuid = playbackProfileListPreference.getValue();
 
+        // If the profile does not contain an id then it is a new one. Add it
+        // to the database and update the connection with the new id. Otherwise
+        // just update the profile.
+        if (playbackProfile.id == 0) {
+            connection.playback_profile_id = (int) DatabaseHelper.getInstance(getActivity()).addProfile(playbackProfile);
+            DatabaseHelper.getInstance(getActivity()).updateConnection(connection);
+        } else {
+            DatabaseHelper.getInstance(getActivity()).updateProfile(playbackProfile);
+        }
+    }
+
+    private void loadRecordingProfiles() {
         // Disable the preferences until the profiles have been loaded.
         // If the server does not support it then it stays disabled
-        prefEnableRecProfiles.setEnabled(false);
-        prefEnableProgProfiles.setEnabled(false);
-        prefRecProfiles.setEnabled(false);
-        prefProgProfiles.setEnabled(false);
+        recordingProfileEnabledPreference.setEnabled(false);
+        recordingProfileListPreference.setEnabled(false);
 
-        // Get the connection status to check if the profile can be loaded from
-        // the server. If not show a message and return
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-        final String connectionStatus = prefs.getString("last_connection_state", "");
-        if (!connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_OK)) {
-            if (getView() != null) {
-                Snackbar.make(getView(), R.string.err_connect, Snackbar.LENGTH_LONG).show();
-            }
-            return;
-        }
-
-        // Set the loading indication
-        if (toolbarInterface != null) {
-            toolbarInterface.setActionBarSubtitle(getString(R.string.loading_profiles));
-        }
-
-        // Get the available profiles from the server
         final Intent intent = new Intent(activity, HTSService.class);
         intent.setAction("getDvrConfigs");
         activity.startService(intent);
+
+    }
+
+    private void loadPlaybackProfiles() {
+        // Disable the preferences until the profiles have been loaded.
+        // If the server does not support it then it stays disabled
+        playbackProfileEnabledPreference.setEnabled(false);
+        playbackProfileListPreference.setEnabled(false);
+
+        Intent intent = new Intent(activity, HTSService.class);
         intent.setAction("getProfiles");
         activity.startService(intent);
     }
@@ -244,59 +188,47 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
             activity.runOnUiThread(new Runnable() {
                 public void run() {
                     // Loading is done, remove the loading subtitle
-                    if (toolbarInterface != null) {
-                        toolbarInterface.setActionBarSubtitle(conn.name);
-                    }
+                    toolbarInterface.setSubtitle(connection.name);
 
-                    if (prefRecProfiles != null && prefEnableRecProfiles != null) {
-                        addProfiles(prefRecProfiles, dataStorage.getDvrConfigs());
+                    addProfiles(recordingProfileListPreference, DataStorage.getInstance().getDvrConfigs());
+                    recordingProfileListPreference.setEnabled(recordingProfileEnabledPreference.isChecked());
+                    recordingProfileEnabledPreference.setEnabled(true);
 
-                        prefRecProfiles.setEnabled(prefEnableRecProfiles.isChecked());
-                        prefEnableRecProfiles.setEnabled(true);
-
-                        // If no uuid is set, no selected profile exists.
-                        // Preselect the default one.
-                        if (recProfile.uuid == null || recProfile.uuid.length() == 0) {
-                            for (Profiles p : dataStorage.getDvrConfigs()) {
-                                if (p.name.equals(Constants.REC_PROFILE_DEFAULT)) {
-                                    recProfile.uuid = p.uuid;
-                                    break;
-                                }
+                    // If no uuid is set, no selected profile exists so preselect the default one.
+                    if (recordingProfile.uuid == null || recordingProfile.uuid.length() == 0) {
+                        for (Profiles p : DataStorage.getInstance().getDvrConfigs()) {
+                            if (p.name.equals(Constants.REC_PROFILE_DEFAULT)) {
+                                recordingProfile.uuid = p.uuid;
+                                break;
                             }
                         }
-                        // show the currently selected profile name, if none is
-                        // available then the default value is used
-                        prefRecProfiles.setValue(recProfile.uuid);
                     }
+                    // show the currently selected profile or the default name
+                    recordingProfileListPreference.setValue(recordingProfile.uuid);
+
                 }
             });
         } else if (action.equals("getProfiles")) {
             activity.runOnUiThread(new Runnable() {
                 public void run() {
                     // Loading is done, remove the loading subtitle
-                    if (toolbarInterface != null) {
-                        toolbarInterface.setActionBarSubtitle(conn.name);
-                    }
+                    toolbarInterface.setSubtitle(connection.name);
 
-                    if (prefProgProfiles != null && prefEnableProgProfiles != null) {
-                        addProfiles(prefProgProfiles, dataStorage.getProfiles());
-                        prefProgProfiles.setEnabled(prefEnableProgProfiles.isChecked());
-                        prefEnableProgProfiles.setEnabled(true);
+                    addProfiles(playbackProfileListPreference, DataStorage.getInstance().getProfiles());
+                    playbackProfileListPreference.setEnabled(playbackProfileEnabledPreference.isChecked());
+                    playbackProfileEnabledPreference.setEnabled(true);
 
-                        // If no uuid is set, no selected profile exists.
-                        // Preselect the default one.
-                        if (progProfile.uuid == null || progProfile.uuid.length() == 0) {
-                            for (Profiles p : dataStorage.getProfiles()) {
-                                if (p.name.equals(Constants.PROG_PROFILE_DEFAULT)) {
-                                    progProfile.uuid = p.uuid;
-                                    break;
-                                }
+                    // If no uuid is set, no selected profile exists so preselect the default one.
+                    if (playbackProfile.uuid == null || playbackProfile.uuid.length() == 0) {
+                        for (Profiles p : DataStorage.getInstance().getProfiles()) {
+                            if (p.name.equals(Constants.PROG_PROFILE_DEFAULT)) {
+                                playbackProfile.uuid = p.uuid;
+                                break;
                             }
                         }
-                        // show the currently selected profile name, if none is
-                        // available then the default value is used
-                        prefProgProfiles.setValue(progProfile.uuid);
                     }
+                    // show the currently selected profile or the default name
+                    playbackProfileListPreference.setValue(playbackProfile.uuid);
                 }
             });
         }
@@ -306,14 +238,13 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
      * Adds the names and uuids of the available profiles to the preference widget
      *
      * @param preferenceList Preference list widget that shall hold the values
-     * @param profileList Profile list with the data
+     * @param profileList    Profile list with the data
      */
     private void addProfiles(ListPreference preferenceList, final List<Profiles> profileList) {
         // Initialize the arrays that contain the profile values
         final int size = profileList.size();
         CharSequence[] entries = new CharSequence[size];
         CharSequence[] entryValues = new CharSequence[size];
-
         // Add the available profiles to list preference
         for (int i = 0; i < size; i++) {
             entries[i] = profileList.get(i).name;
@@ -325,6 +256,20 @@ public class SettingsProfilesFragment extends PreferenceFragment implements HTSL
 
     @Override
     public void onBackPressed() {
-        save();
+        saveRecordingProfile();
+        savePlaybackProfile();
+    }
+
+    @Override
+    public boolean onPreferenceClick(Preference preference) {
+        switch (preference.getKey()) {
+            case "pref_enable_recording_profiles":
+                recordingProfileListPreference.setEnabled(recordingProfileEnabledPreference.isChecked());
+                return true;
+            case "pref_enable_playback_profiles":
+                playbackProfileListPreference.setEnabled(playbackProfileEnabledPreference.isChecked());
+                return true;
+        }
+        return false;
     }
 }

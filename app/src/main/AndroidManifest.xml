@@ -82,6 +82,7 @@
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
+        <activity android:name=".activities.SettingsManageConnectionActivity" />
 
         <service android:name="com.google.android.libraries.cast.companionlibrary.notification.VideoCastNotificationService" />
         <service android:name="com.google.android.libraries.cast.companionlibrary.cast.reconnection.ReconnectionService"/>

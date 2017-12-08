@@ -18,7 +18,6 @@
  */
 package org.tvheadend.tvhclient.fragments.settings;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
@@ -26,22 +25,17 @@ import android.preference.PreferenceFragment;
 
 import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.interfaces.ToolbarInterface;
+import org.tvheadend.tvhclient.activities.SettingsToolbarInterface;
 import org.tvheadend.tvhclient.interfaces.BackPressedInterface;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.Profile;
 
 public class SettingsTranscodingFragment extends PreferenceFragment implements BackPressedInterface {
 
-    @SuppressWarnings("unused")
-    private final static String TAG = SettingsTranscodingFragment.class.getSimpleName();
-
-    private Activity activity;
-    private ToolbarInterface toolbarInterface;
-
-    private Connection conn = null;
-    private Profile progProfile = null;
-    private Profile recProfile = null;
+    private SettingsToolbarInterface toolbarInterface;
+    private Connection connection = null;
+    private Profile playbackProfile = null;
+    private Profile recordingProfile = null;
 
     private ListPreference prefProgContainer;
     private CheckBoxPreference prefProgTranscode;
@@ -70,11 +64,65 @@ public class SettingsTranscodingFragment extends PreferenceFragment implements B
     private static final String REC_PROFILE_VIDEO_CODEC = "rec_profile_vodeo_codec";
     private static final String REC_PROFILE_SUBTITLE_CODEC = "rec_profile_subtitle_codec";
 
-    private DatabaseHelper databaseHelper;
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        addPreferencesFromResource(R.xml.preferences_transcoding);
+
+        if (getActivity() instanceof SettingsToolbarInterface) {
+            toolbarInterface = (SettingsToolbarInterface) getActivity();
+        }
+        connection = DatabaseHelper.getInstance(getActivity()).getSelectedConnection();
+        toolbarInterface.setTitle(getString(R.string.pref_transcoding));
+        toolbarInterface.setSubtitle(connection.name);
+
+        prefProgContainer = (ListPreference) findPreference("progContainerPref");
+        prefProgTranscode = (CheckBoxPreference) findPreference("progTranscodePref");
+        prefProgResolution = (ListPreference) findPreference("progResolutionPref");
+        prefProgAudioCodec = (ListPreference) findPreference("progAcodecPref");
+        prefProgVideoCodec = (ListPreference) findPreference("progVcodecPref");
+        prefProgSubtitleCodec = (ListPreference) findPreference("progScodecPref");
+        prefRecContainer = (ListPreference) findPreference("recContainerPref");
+        prefRecTranscode = (CheckBoxPreference) findPreference("recTranscodePref");
+        prefRecResolution = (ListPreference) findPreference("recResolutionPref");
+        prefRecAudioCodec = (ListPreference) findPreference("recAcodecPref");
+        prefRecVideoCodec = (ListPreference) findPreference("recVcodecPref");
+        prefRecSubtitleCodec = (ListPreference) findPreference("recScodecPref");
+
+        playbackProfile = DatabaseHelper.getInstance(getActivity()).getProfile(connection.playback_profile_id);
+        recordingProfile = DatabaseHelper.getInstance(getActivity()).getProfile(connection.recording_profile_id);
+
+        // Set defaults in case no profile was set for the current connection
+        if (playbackProfile == null) {
+            playbackProfile = new Profile();
+        }
+        if (recordingProfile == null) {
+            recordingProfile = new Profile();
+        }
+
+        // Restore the currently selected uuids after an orientation change
+        if (savedInstanceState != null) {
+            connection = DatabaseHelper.getInstance(getActivity()).getSelectedConnection();
+
+            playbackProfile.container = savedInstanceState.getString(PROG_PROFILE_CONTAINER);
+            playbackProfile.transcode = savedInstanceState.getBoolean(PROG_PROFILE_TRANSCODE);
+            playbackProfile.resolution = savedInstanceState.getString(PROG_PROFILE_RESOLUTION);
+            playbackProfile.audio_codec = savedInstanceState.getString(PROG_PROFILE_AUDIO_CODEC);
+            playbackProfile.video_codec = savedInstanceState.getString(PROG_PROFILE_VIDEO_CODEC);
+            playbackProfile.subtitle_codec = savedInstanceState.getString(PROG_PROFILE_SUBTITLE_CODEC);
+
+            recordingProfile.container = savedInstanceState.getString(REC_PROFILE_CONTAINER);
+            recordingProfile.transcode = savedInstanceState.getBoolean(REC_PROFILE_TRANSCODE);
+            recordingProfile.resolution = savedInstanceState.getString(REC_PROFILE_RESOLUTION);
+            recordingProfile.audio_codec = savedInstanceState.getString(REC_PROFILE_AUDIO_CODEC);
+            recordingProfile.video_codec = savedInstanceState.getString(REC_PROFILE_VIDEO_CODEC);
+            recordingProfile.subtitle_codec = savedInstanceState.getString(REC_PROFILE_SUBTITLE_CODEC);
+        }
+    }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putLong(CONNECTION_ID, conn.id);
+        outState.putLong(CONNECTION_ID, connection.id);
 
         outState.putString(PROG_PROFILE_CONTAINER, prefProgContainer.getValue());
         outState.putBoolean(PROG_PROFILE_TRANSCODE, prefProgTranscode.isChecked());
@@ -92,142 +140,67 @@ public class SettingsTranscodingFragment extends PreferenceFragment implements B
         super.onSaveInstanceState(outState);
     }
 
-    @Override
-    public void onDestroy() {
-        toolbarInterface = null;
-        super.onDestroy();
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        addPreferencesFromResource(R.xml.preferences_transcoding);
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        activity = getActivity();
-        databaseHelper = DatabaseHelper.getInstance(getActivity().getApplicationContext());
-
-        prefProgContainer = (ListPreference) findPreference("progContainerPref");
-        prefProgTranscode = (CheckBoxPreference) findPreference("progTranscodePref");
-        prefProgResolution = (ListPreference) findPreference("progResolutionPref");
-        prefProgAudioCodec = (ListPreference) findPreference("progAcodecPref");
-        prefProgVideoCodec = (ListPreference) findPreference("progVcodecPref");
-        prefProgSubtitleCodec = (ListPreference) findPreference("progScodecPref");
-        prefRecContainer = (ListPreference) findPreference("recContainerPref");
-        prefRecTranscode = (CheckBoxPreference) findPreference("recTranscodePref");
-        prefRecResolution = (ListPreference) findPreference("recResolutionPref");
-        prefRecAudioCodec = (ListPreference) findPreference("recAcodecPref");
-        prefRecVideoCodec = (ListPreference) findPreference("recVcodecPref");
-        prefRecSubtitleCodec = (ListPreference) findPreference("recScodecPref");
-
-        if (activity instanceof ToolbarInterface) {
-            toolbarInterface = (ToolbarInterface) activity;
-        }
-        if (toolbarInterface != null) {
-            toolbarInterface.setActionBarTitle(getString(R.string.pref_transcoding));
-        }
-
-        conn = databaseHelper.getSelectedConnection();
-        if (conn != null) {
-            progProfile = databaseHelper.getProfile(conn.playback_profile_id);
-            if (progProfile == null) {
-                progProfile = new Profile();
-            }
-            recProfile = databaseHelper.getProfile(conn.recording_profile_id);
-            if (recProfile == null) {
-                recProfile = new Profile();
-            }
-        }
-
-        // If the state is null then this activity has been started for
-        // the first time. If the state is not null then the screen has
-        // been rotated and we have to reuse the values.
-        if (savedInstanceState != null) {
-            conn = databaseHelper.getSelectedConnection();
-            if (conn != null) {
-                progProfile.container = savedInstanceState.getString(PROG_PROFILE_CONTAINER);
-                progProfile.transcode = savedInstanceState.getBoolean(PROG_PROFILE_TRANSCODE);
-                progProfile.resolution = savedInstanceState.getString(PROG_PROFILE_RESOLUTION);
-                progProfile.audio_codec = savedInstanceState.getString(PROG_PROFILE_AUDIO_CODEC);
-                progProfile.video_codec = savedInstanceState.getString(PROG_PROFILE_VIDEO_CODEC);
-                progProfile.subtitle_codec = savedInstanceState.getString(PROG_PROFILE_SUBTITLE_CODEC);
-
-                recProfile.container = savedInstanceState.getString(REC_PROFILE_CONTAINER);
-                recProfile.transcode = savedInstanceState.getBoolean(REC_PROFILE_TRANSCODE);
-                recProfile.resolution = savedInstanceState.getString(REC_PROFILE_RESOLUTION);
-                recProfile.audio_codec = savedInstanceState.getString(REC_PROFILE_AUDIO_CODEC);
-                recProfile.video_codec = savedInstanceState.getString(REC_PROFILE_VIDEO_CODEC);
-                recProfile.subtitle_codec = savedInstanceState.getString(REC_PROFILE_SUBTITLE_CODEC);
-            }
-        }
-    }
-
     public void onResume() {
         super.onResume();
 
-        if (toolbarInterface != null) {
-            toolbarInterface.setActionBarSubtitle(conn.name);
-        }
+        prefProgContainer.setValue(playbackProfile.container);
+        prefProgTranscode.setChecked(playbackProfile.transcode);
+        prefProgResolution.setValue(playbackProfile.resolution);
+        prefProgAudioCodec.setValue(playbackProfile.audio_codec);
+        prefProgVideoCodec.setValue(playbackProfile.video_codec);
+        prefProgSubtitleCodec.setValue(playbackProfile.subtitle_codec);
 
-        prefProgContainer.setValue(progProfile.container);
-        prefProgTranscode.setChecked(progProfile.transcode);
-        prefProgResolution.setValue(progProfile.resolution);
-        prefProgAudioCodec.setValue(progProfile.audio_codec);
-        prefProgVideoCodec.setValue(progProfile.video_codec);
-        prefProgSubtitleCodec.setValue(progProfile.subtitle_codec);
-
-        prefRecContainer.setValue(recProfile.container);
-        prefRecTranscode.setChecked(recProfile.transcode);
-        prefRecResolution.setValue(recProfile.resolution);
-        prefRecAudioCodec.setValue(recProfile.audio_codec);
-        prefRecVideoCodec.setValue(recProfile.video_codec);
-        prefRecSubtitleCodec.setValue(recProfile.subtitle_codec);
+        prefRecContainer.setValue(recordingProfile.container);
+        prefRecTranscode.setChecked(recordingProfile.transcode);
+        prefRecResolution.setValue(recordingProfile.resolution);
+        prefRecAudioCodec.setValue(recordingProfile.audio_codec);
+        prefRecVideoCodec.setValue(recordingProfile.video_codec);
+        prefRecSubtitleCodec.setValue(recordingProfile.subtitle_codec);
     }
 
-    private void save() {
+    private void savePlaybackProfile() {
         // Save the values into the profile
-        progProfile.container = prefProgContainer.getValue();
-        progProfile.transcode = prefProgTranscode.isChecked();
-        progProfile.resolution = prefProgResolution.getValue();
-        progProfile.audio_codec = prefProgAudioCodec.getValue();
-        progProfile.video_codec = prefProgVideoCodec.getValue();
-        progProfile.subtitle_codec = prefProgSubtitleCodec.getValue();
+        playbackProfile.container = prefProgContainer.getValue();
+        playbackProfile.transcode = prefProgTranscode.isChecked();
+        playbackProfile.resolution = prefProgResolution.getValue();
+        playbackProfile.audio_codec = prefProgAudioCodec.getValue();
+        playbackProfile.video_codec = prefProgVideoCodec.getValue();
+        playbackProfile.subtitle_codec = prefProgSubtitleCodec.getValue();
 
         // If the profile does not contain an id then it is a new one. Add it
         // to the database and update the connection with the new id. Otherwise
         // just update the profile.
-        if (progProfile.id == 0) {
-            conn.playback_profile_id = (int) databaseHelper.addProfile(progProfile);
-            databaseHelper.updateConnection(conn);
+        if (playbackProfile.id == 0) {
+            connection.playback_profile_id = (int) DatabaseHelper.getInstance(getActivity()).addProfile(playbackProfile);
+            DatabaseHelper.getInstance(getActivity()).updateConnection(connection);
         } else {
-            databaseHelper.updateProfile(progProfile);
+            DatabaseHelper.getInstance(getActivity()).updateProfile(playbackProfile);
         }
+    }
 
+    private void saveRecordingProfile() {
         // Save the values into the profile
-        recProfile.container = prefRecContainer.getValue();
-        recProfile.transcode = prefRecTranscode.isChecked();
-        recProfile.resolution = prefRecResolution.getValue();
-        recProfile.audio_codec = prefRecAudioCodec.getValue();
-        recProfile.video_codec = prefRecVideoCodec.getValue();
-        recProfile.subtitle_codec = prefRecSubtitleCodec.getValue();
+        recordingProfile.container = prefRecContainer.getValue();
+        recordingProfile.transcode = prefRecTranscode.isChecked();
+        recordingProfile.resolution = prefRecResolution.getValue();
+        recordingProfile.audio_codec = prefRecAudioCodec.getValue();
+        recordingProfile.video_codec = prefRecVideoCodec.getValue();
+        recordingProfile.subtitle_codec = prefRecSubtitleCodec.getValue();
 
         // If the profile does not contain an id then it is a new one. Add it
         // to the database and update the connection with the new id. Otherwise
         // just update the profile.
-        if (recProfile.id == 0) {
-            conn.recording_profile_id = (int) databaseHelper.addProfile(recProfile);
-            databaseHelper.updateConnection(conn);
+        if (recordingProfile.id == 0) {
+            connection.recording_profile_id = (int) DatabaseHelper.getInstance(getActivity()).addProfile(recordingProfile);
+            DatabaseHelper.getInstance(getActivity()).updateConnection(connection);
         } else {
-            databaseHelper.updateProfile(recProfile);
+            DatabaseHelper.getInstance(getActivity()).updateProfile(recordingProfile);
         }
     }
 
     @Override
     public void onBackPressed() {
-        save();
+        savePlaybackProfile();
+        saveRecordingProfile();
     }
 }

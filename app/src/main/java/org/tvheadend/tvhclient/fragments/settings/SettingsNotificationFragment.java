@@ -28,84 +28,79 @@ import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.support.design.widget.Snackbar;
 
 import org.tvheadend.tvhclient.NotificationHandler;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.TVHClientApplication;
+import org.tvheadend.tvhclient.activities.SettingsToolbarInterface;
 
-public class SettingsNotificationFragment extends PreferenceFragment {
-
-    @SuppressWarnings("unused")
-    private final static String TAG = SettingsNotificationFragment.class.getSimpleName();
-
-    private CheckBoxPreference prefShowNotifications;
-    private ListPreference prefShowNotificationOffset;
+public class SettingsNotificationFragment extends PreferenceFragment implements OnPreferenceClickListener, OnPreferenceChangeListener {
 
     private Activity activity;
-    private TVHClientApplication app;
-    private NotificationHandler notificationHandler;
+    private SettingsToolbarInterface toolbarInterface;
+    private CheckBoxPreference prefShowNotifications;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        addPreferencesFromResource(R.xml.preferences_notifications);
+
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        addPreferencesFromResource(R.xml.preferences_notifications);
 
         activity = getActivity();
-        app = (TVHClientApplication) activity.getApplication();
-        notificationHandler = NotificationHandler.getInstance();
+        if (activity instanceof SettingsToolbarInterface) {
+            toolbarInterface = (SettingsToolbarInterface) activity;
+        }
+        toolbarInterface.setTitle(getString(R.string.pref_notifications));
 
         prefShowNotifications = (CheckBoxPreference) findPreference("pref_show_notifications");
-        prefShowNotificationOffset = (ListPreference) findPreference("pref_show_notification_offset");
+        ListPreference prefShowNotificationOffset = (ListPreference) findPreference("pref_show_notification_offset");
+        prefShowNotifications.setOnPreferenceClickListener(this);
+        prefShowNotificationOffset.setOnPreferenceChangeListener(this);
+    }
 
-        // Add a listener so that the notifications can be selected.
-        prefShowNotifications.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                if (!app.isUnlocked()) {
-                    if (getView() != null) {
-                        Snackbar.make(getView(), R.string.feature_not_available_in_free_version,
-                                Snackbar.LENGTH_SHORT).show();
-                    }
-                    prefShowNotifications.setChecked(false);
-                }
-
-                // If the checkbox is checked then add all 
-                // required notifications, otherwise remove them
+    @Override
+    public boolean onPreferenceClick(Preference preference) {
+        switch (preference.getKey()) {
+            case "pref_show_notifications":
+                // Add all notifications if the preference is checked, otherwise
+                // remove all existing in case it has been unchecked
                 if (prefShowNotifications.isChecked()) {
-                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
                     long offset = 0;
                     try {
+                        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
                         offset = Integer.valueOf(prefs.getString("pref_show_notification_offset", "0"));
                     } catch(NumberFormatException ex) {
                         // NOP
                     }
-                    notificationHandler.addNotifications(offset);
+                    NotificationHandler.getInstance().addNotifications(offset);
                 } else {
-                    notificationHandler.cancelNotifications();
+                    NotificationHandler.getInstance().cancelNotifications();
                 }
-
                 return true;
-            }
-        });
+        }
+        return false;
+    }
 
-        prefShowNotificationOffset.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object offset) {
-                // Refresh all notifications by removing adding them again
-                notificationHandler.cancelNotifications();
+    @Override
+    public boolean onPreferenceChange(Preference preference, Object o) {
+        switch (preference.getKey()) {
+            case "pref_show_notification_offset":
+                long offset = 0;
                 try {
-                    notificationHandler.addNotifications(Long.valueOf((String) offset));
+                    offset = Long.valueOf((String) o);
                 } catch (NumberFormatException ex) {
                     // NOP
                 }
+                // The offset has changes refresh all existing
+                // notifications by removing adding them again
+                NotificationHandler.getInstance().cancelNotifications();
+                NotificationHandler.getInstance().addNotifications(offset);
                 return true;
-            }
-        });
+        }
+        return false;
     }
 }

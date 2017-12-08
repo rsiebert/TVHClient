@@ -1,43 +1,36 @@
 package org.tvheadend.tvhclient.fragments.settings;
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
+import android.preference.Preference;
 import android.preference.PreferenceFragment;
-import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.text.TextUtils;
 import android.util.Patterns;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
-import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.interfaces.ToolbarInterface;
+import org.tvheadend.tvhclient.activities.SettingsToolbarInterface;
 import org.tvheadend.tvhclient.interfaces.BackPressedInterface;
-import org.tvheadend.tvhclient.interfaces.SettingsInterface;
 import org.tvheadend.tvhclient.model.Connection;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class SettingsManageConnectionFragment extends PreferenceFragment implements OnSharedPreferenceChangeListener, BackPressedInterface {
+public class SettingsManageConnectionFragment extends PreferenceFragment implements BackPressedInterface, Preference.OnPreferenceChangeListener {
 
-    @SuppressWarnings("unused")
-    private final static String TAG = SettingsManageConnectionFragment.class.getSimpleName();
-    
-    private Activity activity;
-    private ToolbarInterface toolbarInterface;
-    private SettingsInterface settingsInterface;
-    
-    // Preference widgets
+    private SettingsToolbarInterface toolbarInterface;
+    private Connection connection;
+    private boolean connectionValuesChanged;
+
     private EditTextPreference prefName;
     private EditTextPreference prefAddress;
     private EditTextPreference prefPort;
@@ -48,49 +41,17 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
     private EditTextPreference prefWolAddress;
     private EditTextPreference prefWolPort;
     private CheckBoxPreference prefWolBroadcast;
-    
-    private static final String CONNECTION_ID = "conn_id";
-    private static final String CONNECTION_NAME = "conn_name";
-    private static final String CONNECTION_ADDRESS = "conn_address";
-    private static final String CONNECTION_STREAMING_PORT = "conn_streaming_port";
-    private static final String CONNECTION_PORT = "conn_port";
-    private static final String CONNECTION_USERNAME = "conn_username";
-    private static final String CONNECTION_PASSWORD = "conn_password";
-    private static final String CONNECTION_WOL_ADDRESS = "conn_wol_address";
-    private static final String CONNECTION_WOL_PORT = "conn_wol_port";
-    private static final String CONNECTION_WOL_BROADCAST = "conn_wol_broadcast";
-    private static final String CONNECTION_CHANGED = "conn_changed";
-
-    private static final String IP_ADDRESS = 
-            "^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
-            "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
-            "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
-            "([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
-
-    private Connection conn = null;
-    private boolean connectionChanged;
-
-    private DatabaseHelper databaseHelper;
-
-    @Override
-    public void onDestroy() {
-        toolbarInterface = null;
-        settingsInterface = null;
-        super.onDestroy();
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        addPreferencesFromResource(R.xml.preferences_add_connection);
-    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        addPreferencesFromResource(R.xml.preferences_add_connection);
 
-        activity = getActivity();
-        databaseHelper = DatabaseHelper.getInstance(getActivity().getApplicationContext());
+        if (getActivity() instanceof SettingsToolbarInterface) {
+            toolbarInterface = (SettingsToolbarInterface) getActivity();
+        }
+        toolbarInterface.setTitle(getString(R.string.add_connection));
+        setHasOptionsMenu(true);
 
         // Get the connectivity preferences for later usage
         prefName = (EditTextPreference) findPreference("pref_name");
@@ -104,159 +65,87 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
         prefWolPort = (EditTextPreference) findPreference("pref_wol_port");
         prefWolBroadcast = (CheckBoxPreference) findPreference("pref_wol_broadcast");
 
-        if (activity instanceof ToolbarInterface) {
-            toolbarInterface = (ToolbarInterface) activity;
-        }
-        if (activity instanceof SettingsInterface) {
-            settingsInterface = (SettingsInterface) activity;
-        }
-        if (toolbarInterface != null) {
-            toolbarInterface.setActionBarTitle(getString(R.string.add_connection));
-            toolbarInterface.setActionBarSubtitle("");
-        }
-        
+        // Set the default values
+        prefName.setOnPreferenceChangeListener(this);
+        prefAddress.setOnPreferenceChangeListener(this);
+        prefPort.setOnPreferenceChangeListener(this);
+        prefStreamingPort.setOnPreferenceChangeListener(this);
+        prefUsername.setOnPreferenceChangeListener(this);
+        prefPassword.setOnPreferenceChangeListener(this);
+        prefSelected.setOnPreferenceChangeListener(this);
+        prefWolAddress.setOnPreferenceChangeListener(this);
+        prefWolPort.setOnPreferenceChangeListener(this);
+        prefWolBroadcast.setOnPreferenceChangeListener(this);
+
         // Initially the connection has no been changed
-        connectionChanged = false;
+        connectionValuesChanged = false;
 
-        // If the state is null then this activity has been started for
-        // the first time. If the state is not null then the screen has
-        // been rotated and we have to reuse the values.
-        if (savedInstanceState == null) {
-            
-            // Check if an id has been passed
-            long connId = 0;
-            Bundle bundle = getArguments();
-            if (bundle != null) {
-                connId = bundle.getLong(Constants.BUNDLE_CONNECTION_ID, 0);
-            }
-
-            // If an index is given then we want to edit this connection
-            // Otherwise create a new connection with default values.
-            if (connId > 0) {
-                conn = databaseHelper.getConnection(connId);
-                if (toolbarInterface != null) {
-                    toolbarInterface.setActionBarTitle(getString(R.string.edit_connection));
-                    toolbarInterface.setActionBarSubtitle(conn != null ? conn.name : "");
-                }
-            } else {
-                setPreferenceDefaults();
-            }
+        // Restore the added connection information after an orientation change
+        if (savedInstanceState != null) {
+            connection = new Connection();
+            connection.id = savedInstanceState.getLong("id");
+            connection.name = savedInstanceState.getString("name");
+            connection.address = savedInstanceState.getString("address");
+            connection.port = savedInstanceState.getInt("port");
+            connection.streaming_port = savedInstanceState.getInt("streaming_port");
+            connection.username = savedInstanceState.getString("username");
+            connection.password = savedInstanceState.getString("password");
+            connection.wol_mac_address = savedInstanceState.getString("wol_address");
+            connection.wol_port = savedInstanceState.getInt("wol_port");
+            connection.wol_broadcast = savedInstanceState.getBoolean("wol_use_broadcast");
+            connectionValuesChanged = savedInstanceState.getBoolean("connection_changed");
         } else {
-
-            // Get the connection id and the object
-            conn = new Connection();
-            conn.id = savedInstanceState.getLong(CONNECTION_ID);
-            conn.name = savedInstanceState.getString(CONNECTION_NAME);
-            conn.address = savedInstanceState.getString(CONNECTION_ADDRESS);
-            conn.port = savedInstanceState.getInt(CONNECTION_PORT);
-            conn.streaming_port = savedInstanceState.getInt(CONNECTION_STREAMING_PORT);
-            conn.username = savedInstanceState.getString(CONNECTION_USERNAME);
-            conn.password = savedInstanceState.getString(CONNECTION_PASSWORD);
-            conn.wol_mac_address = savedInstanceState.getString(CONNECTION_WOL_ADDRESS);
-            conn.wol_port = savedInstanceState.getInt(CONNECTION_WOL_PORT);
-            conn.wol_broadcast = savedInstanceState.getBoolean(CONNECTION_WOL_BROADCAST);
-            connectionChanged = savedInstanceState.getBoolean(CONNECTION_CHANGED);
+            // If the bundle is null then a new connection shall be added.
+            // Otherwise edit the connection with the given id
+            Bundle bundle = getArguments();
+            if (bundle == null) {
+                connection = new Connection();
+            } else {
+                long connectionId = bundle.getLong("connection_id", 0);
+                connection = DatabaseHelper.getInstance(getActivity()).getConnection(connectionId);
+            }
         }
-        setHasOptionsMenu(true);
+
+        toolbarInterface.setTitle(connection.id > 0 ?
+                getString(R.string.edit_connection) :
+                getString(R.string.add_connection));
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        if (conn != null) {
-            outState.putLong(CONNECTION_ID, conn.id);
-            outState.putString(CONNECTION_NAME, conn.name);
-            outState.putString(CONNECTION_ADDRESS, conn.address);
-            outState.putInt(CONNECTION_PORT, conn.port);
-            outState.putInt(CONNECTION_STREAMING_PORT, conn.streaming_port);
-            outState.putString(CONNECTION_USERNAME, conn.username);
-            outState.putString(CONNECTION_PASSWORD, conn.password);
-            outState.putString(CONNECTION_WOL_ADDRESS, conn.wol_mac_address);
-            outState.putInt(CONNECTION_WOL_PORT, conn.wol_port);
-            outState.putBoolean(CONNECTION_WOL_BROADCAST, conn.wol_broadcast);
-            outState.putBoolean(CONNECTION_CHANGED, connectionChanged);
-        }
+        outState.putLong("id", connection.id);
+        outState.putString("name", connection.name);
+        outState.putString("address", connection.address);
+        outState.putInt("port", connection.port);
+        outState.putInt("streaming_port", connection.streaming_port);
+        outState.putString("username", connection.username);
+        outState.putString("password", connection.password);
+        outState.putString("wol_address", connection.wol_mac_address);
+        outState.putInt("wol_port", connection.wol_port);
+        outState.putBoolean("wol_use_broadcast", connection.wol_broadcast);
+        outState.putBoolean("connection_changed", connectionValuesChanged);
         super.onSaveInstanceState(outState);
-    }
-
-    /**
-     * 
-     */
-    private void setPreferenceDefaults() {
-        // Create a new connection with these defaults 
-        conn = new Connection();
-        conn.id = 0;
-        conn.name = "";
-        conn.address = "";
-        conn.port = 9982;
-        conn.streaming_port = 9981;
-        conn.username = "";
-        conn.password = "";
-        conn.wol_mac_address = "";
-        conn.wol_port = 9;
-        conn.wol_broadcast = false;
-        // If this is the first connection make it active
-        conn.selected = (databaseHelper.getConnections().size() == 0);
     }
 
     @Override
     public void onResume() {
         super.onResume();
         showPreferenceValues();
-        showPreferenceSummary();
-
-        // Now register for any changes
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-        prefs.registerOnSharedPreferenceChangeListener(this);
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-        prefs.unregisterOnSharedPreferenceChangeListener(this);
-    }
-
-    /**
-     * 
-     */
     private void showPreferenceValues() {
-        if (conn != null) {
-            prefName.setText(conn.name);
-            prefAddress.setText(conn.address);
-            prefPort.setText(String.valueOf(conn.port));
-            prefStreamingPort.setText(String.valueOf(conn.streaming_port));
-            prefUsername.setText(conn.username);
-            prefPassword.setText(conn.password);
-            prefSelected.setChecked(conn.selected);
-            prefWolAddress.setText(conn.wol_mac_address);
-            prefWolPort.setText(String.valueOf(conn.wol_port));
-            prefWolBroadcast.setChecked(conn.wol_broadcast);
-        }
+        onPreferenceChange(prefName, connection.name);
+        onPreferenceChange(prefAddress, connection.address);
+        onPreferenceChange(prefPort, String.valueOf(connection.port));
+        onPreferenceChange(prefStreamingPort, String.valueOf(connection.streaming_port));
+        onPreferenceChange(prefUsername, connection.username);
+        onPreferenceChange(prefPassword, connection.password);
+        onPreferenceChange(prefSelected, connection.selected);
+        onPreferenceChange(prefWolAddress, connection.wol_mac_address);
+        onPreferenceChange(prefWolPort, connection.wol_port);
+        onPreferenceChange(prefWolBroadcast, connection.wol_broadcast);
     }
-    
-    /**
-     * 
-     */
-    private void showPreferenceSummary() {
-        if (conn != null) {
-            prefName.setSummary(conn.name.length() == 0 ? 
-                    getString(R.string.pref_name_sum) : conn.name);
-            prefAddress.setSummary(conn.address.length() == 0 ? 
-                    getString(R.string.pref_host_sum) : conn.address);
-            prefPort.setSummary(conn.port == 0 ? 
-                    getString(R.string.pref_port_sum) : String.valueOf(conn.port));
-            prefStreamingPort.setSummary(
-                    getString(R.string.pref_streaming_port_sum, conn.streaming_port));
-            prefUsername.setSummary(conn.username.length() == 0 ? 
-                    getString(R.string.pref_user_sum) : conn.username);
-            prefPassword.setSummary(conn.password.length() == 0 ? 
-                    getString(R.string.pref_pass_sum) : getString(R.string.pref_pass_set_sum));
-            prefWolAddress.setSummary((conn.wol_mac_address != null && conn.wol_mac_address.length() == 0) ?
-                    getString(R.string.pref_wol_address_sum) : conn.wol_mac_address);
-            prefWolPort.setSummary(getString(R.string.pref_wol_port_sum, conn.wol_port));
-        }
-    }
-    
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
@@ -266,148 +155,171 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-        case android.R.id.home:
-            cancel();
-            return true;
-
-        case R.id.menu_save:
-            save();
-            return true;
-
-        case R.id.menu_cancel:
-            cancel();
-            return true;
-
-        default:
-            return super.onOptionsItemSelected(item);
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+            case R.id.menu_save:
+                save();
+                return true;
+            case R.id.menu_cancel:
+                cancel();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
-    
-    @Override
-    public void onSharedPreferenceChanged(SharedPreferences pref, String key) {
-        connectionChanged = true;
 
-        if (conn != null) {
-            // Update the connection object with the new values
-            conn.name = prefName.getText();
-            conn.address = prefAddress.getText();
-            try {
-                conn.port = Integer.parseInt(prefPort.getText());
-            } catch (NumberFormatException nex) {
-                conn.port = 9982;
-            }
-            try {
-                conn.streaming_port = Integer.parseInt(prefStreamingPort.getText());
-            } catch (NumberFormatException nex) {
-                conn.port = 9981;
-            }
-            conn.username = prefUsername.getText();
-            conn.password = prefPassword.getText();
-            conn.selected = prefSelected.isChecked();
-            conn.wol_mac_address = prefWolAddress.getText();
-            try {
-                conn.wol_port = Integer.parseInt(prefWolPort.getText());
-            } catch (NumberFormatException nex) {
-                conn.port = 9;
-            }
-            conn.wol_broadcast = prefWolBroadcast.isChecked();
-        }
-        // Show the values from the connection object
-        // in the summary text of the preferences
-        showPreferenceSummary();
-    }
-    
     /**
      * Asks the user to confirm canceling the current activity. If no is
      * chosen the user can continue to add or edit the connection. Otherwise
      * the input will be discarded and the activity will be closed.
      */
     private void cancel() {
-        // Do not show the cancel dialog if nothing has changed
-        if (!connectionChanged) {
-            settingsInterface.showConnections();
-            return;
-        }
-        // Show confirmation dialog to cancel
-        new MaterialDialog.Builder(activity)
-                .content(R.string.confirm_discard_connection)
-                .positiveText(getString(R.string.discard))
-                .negativeText(getString(R.string.cancel))
-
-                .callback(new MaterialDialog.ButtonCallback() {
-
-                    @Override
-                    public void onPositive(MaterialDialog dialog) {
-                        // Delete the connection so that we start fresh when
-                        // the settings activity is called again.
-                        if (settingsInterface != null) {
-                            settingsInterface.showConnections();
+        if (!connectionValuesChanged) {
+            getActivity().finish();
+        } else {
+            // Show confirmation dialog to cancel
+            new MaterialDialog.Builder(getActivity())
+                    .content(R.string.confirm_discard_connection)
+                    .positiveText(getString(R.string.discard))
+                    .negativeText(getString(R.string.cancel))
+                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            getActivity().finish();
                         }
-                    }
-                    @Override
-                    public void onNegative(MaterialDialog dialog) {
-                        dialog.cancel();
-                    }
-                }).show();
-    }
-    
-    /**
-     * Validates the name, host name and port number. If they are valid the
-     * values will be saved as a new connection or the existing will be
-     * updated.
-     */
-    private void save() {
-        if (conn == null 
-                || !validateName() 
-                || !validatePort() 
-                || !validateIpAddress()
-                || !validateMacAddress()) {
-            return;
+                    })
+                    .onNegative(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            dialog.dismiss();
+                        }
+                    }).show();
         }
-        
+    }
+
+    private void save() {
         // If the current connection is set as selected
         // we need to unselect the previous one.
         if (prefSelected.isChecked()) {
-            Connection prevSelectedConn = databaseHelper.getSelectedConnection();
-            if (prevSelectedConn != null) {
-                prevSelectedConn.selected = false;
-                databaseHelper.updateConnection(prevSelectedConn);
+            Connection previousSelectedConnection = DatabaseHelper.getInstance(getActivity()).getSelectedConnection();
+            if (previousSelectedConnection != null) {
+                previousSelectedConnection.selected = false;
+                DatabaseHelper.getInstance(getActivity()).updateConnection(previousSelectedConnection);
             }
         }
-
         // If we have an id then the connection shall be updated
-        if (conn.id > 0) {
-            databaseHelper.updateConnection(conn);
+        if (connection.id > 0) {
+            DatabaseHelper.getInstance(getActivity()).updateConnection(connection);
         } else {
-            databaseHelper.addConnection(conn);
+            DatabaseHelper.getInstance(getActivity()).addConnection(connection);
         }
-        
-        // Nullify the connection so that we start fresh when
-        // the settings activity is called again.
-        conn = null;
-        if (settingsInterface != null) {
-            settingsInterface.reconnect();
-            settingsInterface.showConnections();
-        }
+        getActivity().finish();
     }
-    
+
+    @Override
+    public void onBackPressed() {
+        cancel();
+    }
+
+    @Override
+    public boolean onPreferenceChange(Preference preference, Object o) {
+        connectionValuesChanged = true;
+
+        String value = String.valueOf(o);
+        switch (preference.getKey()) {
+            case "pref_name":
+                if (validateName(value)) {
+                    connection.name = value;
+                    prefName.setSummary(value.isEmpty() ?
+                            getString(R.string.pref_name_sum) : value);
+                }
+                break;
+            case "pref_address":
+                if (validateIpAddress(value)) {
+                    connection.address = value;
+                    prefAddress.setSummary(value.isEmpty() ?
+                            getString(R.string.pref_host_sum) : value);
+                }
+                break;
+            case "pref_port":
+                try {
+                    int port = Integer.parseInt(value);
+                    if (validatePort(port)) {
+                        connection.port = Integer.parseInt(value);
+                        prefPort.setSummary(value.isEmpty() ?
+                                getString(R.string.pref_port_sum) : value);
+                    }
+                } catch (NumberFormatException nex) {
+                    // NOP
+                }
+                break;
+            case "pref_streaming_port":
+                try {
+                    int port = Integer.parseInt(value);
+                    if (validatePort(port)) {
+                        connection.streaming_port = Integer.parseInt(value);
+                        prefStreamingPort.setSummary(getString(R.string.pref_streaming_port_sum,
+                                Integer.valueOf(value)));
+                    }
+                } catch (NumberFormatException e) {
+                    // NOP
+                }
+                break;
+            case "pref_username":
+                connection.username = value;
+                prefUsername.setSummary(value.isEmpty() ?
+                        getString(R.string.pref_user_sum) : value);
+                break;
+            case "pref_password":
+                connection.password = value;
+                prefPassword.setSummary(value.isEmpty() ?
+                        getString(R.string.pref_pass_sum) :
+                        getString(R.string.pref_pass_set_sum));
+                break;
+            case "pref_selected":
+                connection.selected = Boolean.valueOf(value);
+                break;
+            case "pref_wol_address":
+                if (validateMacAddress(value)) {
+                    connection.wol_mac_address = value;
+                    prefWolAddress.setSummary(value.isEmpty() ?
+                            getString(R.string.pref_wol_address_sum) : value);
+                }
+                break;
+            case "pref_wol_port":
+                try {
+                    int port = Integer.parseInt(value);
+                    if (validatePort(port)) {
+                        connection.wol_port = port;
+                        prefWolPort.setSummary(getString(R.string.pref_wol_port_sum,
+                                Integer.valueOf(value)));
+                    }
+                } catch (NumberFormatException e) {
+                    // NOP
+                }
+                break;
+            case "pref_wol_broadcast":
+                connection.wol_broadcast = Boolean.valueOf(value);
+                break;
+        }
+        return true;
+    }
+
     /**
      * Checks if the MAC address syntax is correct.
-     * 
+     *
+     * @param macAddress The MAC address that shall be validated
      * @return True if MAC address is valid, otherwise false
      */
-    private boolean validateMacAddress() {
-        // Initialize in case it's somehow null
-        if (conn.wol_mac_address == null) {
-            conn.wol_mac_address = "";
-        }
+    private boolean validateMacAddress(String macAddress) {
         // Allow an empty address
-        if (conn.wol_mac_address.length() == 0) {
+        if (TextUtils.isEmpty(macAddress)) {
             return true;
         }
         // Check if the MAC address is valid
         Pattern pattern = Pattern.compile("([0-9a-fA-F]{2}(?::|-|$)){6}");
-        Matcher matcher = pattern.matcher(conn.wol_mac_address);
+        Matcher matcher = pattern.matcher(macAddress);
         if (!matcher.matches()) {
             if (getView() != null) {
                 Snackbar.make(getView(), R.string.pref_wol_address_invalid, Snackbar.LENGTH_SHORT).show();
@@ -420,25 +332,21 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
     /**
      * Checks if the given name is not empty or does not contain special
      * characters which are not allowed in the database
-     * 
+     *
+     * @param name The name to be validated
      * @return True if name is valid, otherwise false
      */
-    private boolean validateName() {
-        // Initialize in case it's somehow null
-        if (conn.name == null) {
-            conn.name = "";
-        }
+    private boolean validateName(String name) {
         // Do not allow an empty address
-        if (conn.name.length() == 0) {
+        if (TextUtils.isEmpty(name)) {
             if (getView() != null) {
                 Snackbar.make(getView(), R.string.pref_name_error_empty, Snackbar.LENGTH_SHORT).show();
             }
             return false;
         }
-
         // Check if the name contains only valid characters.
         Pattern pattern = Pattern.compile("^[0-9a-zA-Z_\\-\\.]*$");
-        Matcher matcher = pattern.matcher(conn.name);
+        Matcher matcher = pattern.matcher(name);
         if (!matcher.matches()) {
             if (getView() != null) {
                 Snackbar.make(getView(), R.string.pref_name_error_invalid, Snackbar.LENGTH_SHORT).show();
@@ -452,17 +360,13 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
      * Checks the given address for validity. It must not be empty and if it
      * is an IP address it must only contain numbers between 1 and 255 and
      * dots. If it is an host name it must contain only valid characters.
-     * 
+     *
+     * @param address The address that shall be validated
      * @return True if IP address is valid, otherwise false
      */
-    @SuppressLint("NewApi")
-    private boolean validateIpAddress() {
-        // Initialize in case it's somehow null
-        if (conn.address == null) {
-            conn.address = "";
-        }
+    private boolean validateIpAddress(String address) {
         // Do not allow an empty address
-        if (conn.address.length() == 0) {
+        if (TextUtils.isEmpty(address)) {
             if (getView() != null) {
                 Snackbar.make(getView(), R.string.pref_host_error_empty, Snackbar.LENGTH_SHORT).show();
             }
@@ -471,7 +375,7 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
 
         // Check if the name contains only valid characters.
         Pattern pattern = Pattern.compile("^[0-9a-zA-Z_\\-\\.]*$");
-        Matcher matcher = pattern.matcher(conn.address);
+        Matcher matcher = pattern.matcher(address);
         if (!matcher.matches()) {
             if (getView() != null) {
                 Snackbar.make(getView(), R.string.pref_host_error_invalid, Snackbar.LENGTH_SHORT).show();
@@ -481,12 +385,12 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
 
         // Check if the address has only numbers and dots in it.
         pattern = Pattern.compile("^[0-9\\.]*$");
-        matcher = pattern.matcher(conn.address);
+        matcher = pattern.matcher(address);
 
         // Now validate the IP address
         if (matcher.matches()) {
             pattern = Patterns.IP_ADDRESS;
-            matcher = pattern.matcher(conn.address);
+            matcher = pattern.matcher(address);
             if (!matcher.matches()) {
                 if (getView() != null) {
                     Snackbar.make(getView(), R.string.pref_host_error_invalid, Snackbar.LENGTH_SHORT).show();
@@ -500,29 +404,19 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
     /**
      * Validates the port numbers. It must not be empty and the value must be
      * between the allowed port range of zero to 65535.
-     * 
+     *
+     * @param port The port number
      * @return True if port is valid, otherwise false
      */
-    private boolean validatePort() {
-        if (prefPort.getText().length() == 0 || 
-                prefStreamingPort.getText().length() == 0) {
-            if (getView() != null) {
-                Snackbar.make(getView(), R.string.pref_port_error_empty, Snackbar.LENGTH_SHORT).show();
-            }
-            return false;
+    private boolean validatePort(int port) {
+        if (port > 0 && port <= 65535) {
+            return true;
         }
-        if ((conn.port <= 0 || conn.port > 65535) ||
-                (conn.streaming_port <= 0 || conn.streaming_port > 65535)) {
-            if (getView() != null) {
-                Snackbar.make(getView(), R.string.pref_port_error_invalid, Snackbar.LENGTH_SHORT).show();
-            }
-            return false;
+        if (getView() != null) {
+            Snackbar.make(getView(), R.string.pref_port_error_invalid,
+                    Snackbar.LENGTH_SHORT).show();
         }
-        return true;
+        return false;
     }
 
-    @Override
-    public void onBackPressed() {
-        cancel();
-    }
 }

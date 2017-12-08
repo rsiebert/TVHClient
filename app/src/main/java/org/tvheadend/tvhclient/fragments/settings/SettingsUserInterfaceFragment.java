@@ -18,109 +18,79 @@
  */
 package org.tvheadend.tvhclient.fragments.settings;
 
-import android.app.Activity;
-import android.content.SharedPreferences;
+import android.content.Intent;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
-import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.TaskStackBuilder;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.interfaces.SettingsInterface;
+import org.tvheadend.tvhclient.activities.MainActivity;
+import org.tvheadend.tvhclient.activities.SettingsToolbarInterface;
 
-public class SettingsUserInterfaceFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
+public class SettingsUserInterfaceFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener {
 
-    @SuppressWarnings("unused")
-    private final static String TAG = SettingsUserInterfaceFragment.class.getSimpleName();
-
-    private Activity activity;
-    private SettingsInterface settingsInterface;
     private CheckBoxPreference prefShowProgramArtwork;
-    private TVHClientApplication app;
-
-    @Override
-    public void onDestroy() {
-        settingsInterface = null;
-        super.onDestroy();
-    }
-
-    public void onResume() {
-        super.onResume();
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        prefs.registerOnSharedPreferenceChangeListener(this);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        prefs.unregisterOnSharedPreferenceChangeListener(this);
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        addPreferencesFromResource(R.xml.preferences_ui);
-    }
+    private CheckBoxPreference prefTheme;
+    private SettingsToolbarInterface toolbarInterface;
+    private boolean isUnlocked;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        addPreferencesFromResource(R.xml.preferences_ui);
+
+        if (getActivity() instanceof SettingsToolbarInterface) {
+            toolbarInterface = (SettingsToolbarInterface) getActivity();
+        }
+        toolbarInterface.setTitle(getString(R.string.pref_user_interface));
+        isUnlocked = TVHClientApplication.getInstance().isUnlocked();
 
         prefShowProgramArtwork = (CheckBoxPreference) findPreference("pref_show_program_artwork");
-
-        activity = getActivity();
-        app = (TVHClientApplication) activity.getApplication();
-
-        if (activity instanceof SettingsInterface) {
-            settingsInterface = (SettingsInterface) activity;
-        }
-
-        // Add a listener to the logger will be enabled or disabled depending on the setting
-        prefShowProgramArtwork.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                if (!app.isUnlocked()) {
-                    if (getView() != null) {
-                        Snackbar.make(getView(), R.string.feature_not_available_in_free_version,
-                                Snackbar.LENGTH_SHORT).show();
-                    }
-                    prefShowProgramArtwork.setChecked(false);
-                }
-                return false;
-            }
-        });
+        prefTheme = (CheckBoxPreference) findPreference("lightThemePref");
+        prefShowProgramArtwork.setOnPreferenceClickListener(this);
+        prefTheme.setOnPreferenceClickListener(this);
     }
 
-    /**
-     * Show a notification to the user in case the theme or language
-     * preference has changed.
-     */
     @Override
-    public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-        switch (key) {
-            case "lightThemePref":
-                if (settingsInterface != null) {
-                    settingsInterface.restart();
-                    settingsInterface.restartNow();
-                }
+    public boolean onPreferenceClick(Preference preference) {
+        switch (preference.getKey()) {
+            case "showIconPref":
+                handlePreferenceShowIconsSelected();
                 break;
-            case "epgMaxDays":
-            case "epgHoursVisible":
-                if (settingsInterface != null) {
-                    settingsInterface.restart();
-                }
+            case "lightThemePref":
+                handlePreferenceThemeSelected();
+                break;
+            case "pref_show_program_artwork":
+                handlePreferenceShowArtworkSelected();
                 break;
         }
-        // Reload the data to fetch the channel icons. They are not loaded
-        // (to save bandwidth) when not required.
-        if (key.equals("showIconPref")) {
-            if (settingsInterface != null) {
-                settingsInterface.reconnect();
+        return true;
+    }
+
+    private void handlePreferenceShowIconsSelected() {
+        // TODO Reload all icons from the server
+
+    }
+
+    private void handlePreferenceThemeSelected() {
+        TaskStackBuilder.create(getActivity())
+                .addNextIntent(new Intent(getActivity(), MainActivity.class))
+                .addNextIntent(getActivity().getIntent())
+                .startActivities();
+    }
+
+    private void handlePreferenceShowArtworkSelected() {
+        if (isUnlocked) {
+            if (getView() != null) {
+                Snackbar.make(getView(), R.string.feature_not_available_in_free_version, Snackbar.LENGTH_SHORT).show();
             }
+            prefShowProgramArtwork.setChecked(false);
         }
     }
+
+
 }
