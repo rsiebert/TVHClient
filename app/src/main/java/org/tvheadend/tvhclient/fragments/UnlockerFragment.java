@@ -11,37 +11,41 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
+import android.widget.ProgressBar;
 
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.utils.MiscUtils;
+import org.tvheadend.tvhclient.tasks.HtmlFileLoaderCallback;
+import org.tvheadend.tvhclient.tasks.HtmlFileLoaderTask;
 
-public class UnlockerFragment extends Fragment {
+public class UnlockerFragment extends Fragment implements HtmlFileLoaderCallback {
 
     private WebView webView;
-    private TVHClientApplication app;
+    private ProgressBar loadingProgressBar;
+    private HtmlFileLoaderTask htmlFileLoaderTask;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        View view = inflater.inflate(R.layout.webview_layout, container, false);
-        webView = view.findViewById(R.id.webview);
-        return view;
+        View v = inflater.inflate(R.layout.webview_layout, container, false);
+        webView = v.findViewById(R.id.webview);
+        loadingProgressBar = v.findViewById(R.id.loading);
+        return v;
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setHasOptionsMenu(true);
-        app = (TVHClientApplication) getActivity().getApplication();
-        loadContents();
+        htmlFileLoaderTask = new HtmlFileLoaderTask(getActivity(), "features", "en", this);
+        htmlFileLoaderTask.execute();
     }
 
-    private void loadContents() {
-        // TODO put the loading stuff into a separate task
-        String content = MiscUtils.loadHtmlFromFile(getActivity(), "features", "en");
-        webView.loadDataWithBaseURL("file:///android_asset/", content, "text/html", "utf-8", null);
+    @Override
+    public void onPause() {
+        super.onPause();
+        htmlFileLoaderTask.cancel(true);
     }
 
     @Override
@@ -58,13 +62,13 @@ public class UnlockerFragment extends Fragment {
                 return true;
             case R.id.menu_purchase:
                 // Open the activity where the user can actually make the purchase
-                if (app.getBillingProcessor().isInitialized()) {
-                    app.getBillingProcessor().purchase(getActivity(), Constants.UNLOCKER);
+                if (TVHClientApplication.getInstance().getBillingProcessor().isInitialized()) {
+                    TVHClientApplication.getInstance().getBillingProcessor().purchase(getActivity(), Constants.UNLOCKER);
                 }
                 // Check if the user has already made the purchase. We check this
                 // here because this activity is not information about any changes
                 // via the billing event interface.
-                if (app.getBillingProcessor().isPurchased(Constants.UNLOCKER)) {
+                if (TVHClientApplication.getInstance().getBillingProcessor().isPurchased(Constants.UNLOCKER)) {
                     if (getView() != null) {
                         Snackbar.make(getView(), getString(R.string.unlocker_already_purchased),
                                 Snackbar.LENGTH_SHORT).show();
@@ -79,10 +83,19 @@ public class UnlockerFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (!app.getBillingProcessor().handleActivityResult(requestCode, resultCode, data)) {
+        if (!TVHClientApplication.getInstance().getBillingProcessor().handleActivityResult(requestCode, resultCode, data)) {
             // The billing activity was not shown or did nothing. Nothing needs to be done
             super.onActivityResult(requestCode, resultCode, data);
         }
         getActivity().finish();
+    }
+
+    @Override
+    public void notify(String content) {
+        if (content != null) {
+            webView.loadDataWithBaseURL("file:///android_asset/", content, "text/html", "utf-8", null);
+            loadingProgressBar.setVisibility(View.GONE);
+            webView.setVisibility(View.VISIBLE);
+        }
     }
 }

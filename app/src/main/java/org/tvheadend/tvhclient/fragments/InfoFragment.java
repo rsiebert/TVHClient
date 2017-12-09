@@ -9,23 +9,25 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
+import android.widget.ProgressBar;
 
-import org.tvheadend.tvhclient.BuildConfig;
 import org.tvheadend.tvhclient.ChangeLogDialog;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.utils.MiscUtils;
+import org.tvheadend.tvhclient.tasks.HtmlFileLoaderCallback;
+import org.tvheadend.tvhclient.tasks.HtmlFileLoaderTask;
 
-import java.util.regex.Pattern;
-
-public class InfoFragment extends Fragment {
+public class InfoFragment extends Fragment implements HtmlFileLoaderCallback {
 
     private WebView webView;
+    private HtmlFileLoaderTask htmlFileLoaderTask;
+    private ProgressBar loadingProgressBar;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View v = inflater.inflate(R.layout.webview_layout, container, false);
         webView = v.findViewById(R.id.webview);
+        loadingProgressBar = v.findViewById(R.id.loading);
         return v;
     }
 
@@ -33,16 +35,14 @@ public class InfoFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setHasOptionsMenu(true);
-        loadContents();
+        htmlFileLoaderTask = new HtmlFileLoaderTask(getActivity(), "info_help", "en", this);
+        htmlFileLoaderTask.execute();
     }
 
-    private void loadContents() {
-        // TODO put the loading stuff into a separate task
-        String content = MiscUtils.loadHtmlFromFile(getActivity(), "info_help", "en");
-        // Replace the placeholder in the html file with the real version
-        String version = BuildConfig.VERSION_NAME + " (" + BuildConfig.BUILD_VERSION + ")";
-        content = (Pattern.compile("APP_VERSION").matcher(content).replaceAll(version));
-        webView.loadDataWithBaseURL("file:///android_asset/", content, "text/html", "utf-8", null);
+    @Override
+    public void onPause() {
+        super.onPause();
+        htmlFileLoaderTask.cancel(true);
     }
 
     @Override
@@ -63,6 +63,15 @@ public class InfoFragment extends Fragment {
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void notify(String content) {
+        if (content != null) {
+            webView.loadDataWithBaseURL("file:///android_asset/", content, "text/html", "utf-8", null);
+            loadingProgressBar.setVisibility(View.GONE);
+            webView.setVisibility(View.VISIBLE);
         }
     }
 }
