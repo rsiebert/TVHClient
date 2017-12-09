@@ -2,7 +2,6 @@ package org.tvheadend.tvhclient.fragments;
 
 import android.app.Fragment;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
@@ -43,12 +42,6 @@ public class UnlockerFragment extends Fragment {
         // TODO put the loading stuff into a separate task
         String content = MiscUtils.loadHtmlFromFile(getActivity(), "features", "en");
         webView.loadDataWithBaseURL("file:///android_asset/", content, "text/html", "utf-8", null);
-        // TODO assign a style to the webview
-        if (MiscUtils.getThemeId(getActivity()) == R.style.CustomTheme_Light) {
-            webView.setBackgroundColor(Color.WHITE);
-        } else {
-            webView.setBackgroundColor(Color.BLACK);
-        }
     }
 
     @Override

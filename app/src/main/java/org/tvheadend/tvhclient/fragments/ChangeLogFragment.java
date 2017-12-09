@@ -1,7 +1,6 @@
 package org.tvheadend.tvhclient.fragments;
 
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -51,7 +50,6 @@ public class ChangeLogFragment extends android.app.Fragment implements BackPress
 
         if (getActivity() instanceof SettingsToolbarInterface) {
             SettingsToolbarInterface toolbarInterface = (SettingsToolbarInterface) getActivity();
-            // TODO change to string
             toolbarInterface.setTitle(getString(R.string.pref_changelog));
         }
 
@@ -72,12 +70,6 @@ public class ChangeLogFragment extends android.app.Fragment implements BackPress
         // TODO put the loading stuff into a separate task
         String changes = getChangeLogFromFile(showFullChangeLog);
         webView.loadDataWithBaseURL("file:///android_asset/", changes, "text/html", "utf-8", null);
-        // TODO assign a style to the webview
-        if (MiscUtils.getThemeId(getActivity()) == R.style.CustomTheme_Light) {
-            webView.setBackgroundColor(Color.WHITE);
-        } else {
-            webView.setBackgroundColor(Color.BLACK);
-        }
     }
 
     @Override

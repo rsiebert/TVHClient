@@ -1,7 +1,6 @@
 package org.tvheadend.tvhclient.fragments;
 
 import android.app.Fragment;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -43,14 +42,7 @@ public class InfoFragment extends Fragment {
         // Replace the placeholder in the html file with the real version
         String version = BuildConfig.VERSION_NAME + " (" + BuildConfig.BUILD_VERSION + ")";
         content = (Pattern.compile("APP_VERSION").matcher(content).replaceAll(version));
-
         webView.loadDataWithBaseURL("file:///android_asset/", content, "text/html", "utf-8", null);
-        // TODO assign a style to the webview
-        if (MiscUtils.getThemeId(getActivity()) == R.style.CustomTheme_Light) {
-            webView.setBackgroundColor(Color.WHITE);
-        } else {
-            webView.setBackgroundColor(Color.BLACK);
-        }
     }
 
     @Override

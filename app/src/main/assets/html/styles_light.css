@@ -1,3 +1,6 @@
+body {
+    background-color:rgba(240,240,240,0.9);
+}
 div.title {
 	color:rgba(0,0,0,0.9);
 	font-size:1.1em;
