@@ -15,9 +15,6 @@
         <item>Fehlerhafte Aufnahmen</item>
         <item>Gelöschte Aufnahmen</item>
         <item>Status</item>
-        <item>Infos \u0026 Hilfe</item>
-        <item>Einstellungen</item>
-        <item>Extras freischalten</item>
     </string-array>
 
     <string-array name="pref_sort_channels_names">

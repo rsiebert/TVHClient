@@ -15,9 +15,6 @@
         <item>Neúspešné nahrávky</item>
         <item>Odstránené nahrávky</item>
         <item>Stav</item>
-        <item>Informácie a pomoc</item>
-        <item>Nastavenia</item>
-        <item>Povoliť doplnky</item>
     </string-array>
 
     <string-array name="pref_sort_channels_names">

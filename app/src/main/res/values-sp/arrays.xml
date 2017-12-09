@@ -15,9 +15,6 @@
         <item>Grabaciones fallidas</item>
         <item>Grabaciones eliminadas</item>
         <item>Estado</item>
-        <item>Información y ayuda</item>
-        <item>Ajustes</item>
-        <item>Habilitar extras</item>
     </string-array>
 
     <string-array name="pref_sort_channels_names">

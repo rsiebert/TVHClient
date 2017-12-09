@@ -15,9 +15,6 @@
         <item>Gefaalde opnames</item>
         <item>Verwijderde opnames</item>
         <item>Status</item>
-        <item>Informatie en hulp</item>
-        <item>Instellingen</item>
-        <item>Inschakelen Extras</item>
     </string-array>
 
     <string-array name="pref_sort_channels_names">

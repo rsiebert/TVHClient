@@ -29,9 +29,6 @@
         <item>Nieudane nagrania</item>
         <item>Usunięte nagrania</item>
         <item>Status</item>
-        <item>Informacje i pomoc</item>
-        <item>Ustawienia</item>
-        <item>Włącz dodatki</item>
     </string-array>
 
     <string-array name="pref_sort_channels_names">

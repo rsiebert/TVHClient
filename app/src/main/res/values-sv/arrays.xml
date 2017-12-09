@@ -15,9 +15,6 @@
         <item>Misslyckade Inspelningar</item>
         <item>Borttagna Inspelningar</item>
         <item>Status</item>
-        <item>Information och hjälp</item>
-        <item>Inställningar</item>
-        <item>Aktivera extra</item>
     </string-array>
 
     <string-array name="pref_sort_channels_names">

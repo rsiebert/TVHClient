@@ -141,9 +141,6 @@
         <item>Registrazioni fallite</item>
         <item>Registrazioni rimosse</item>
         <item>Stato</item>
-        <item>Informazioni e aiuto</item>
-        <item>Impostazioni</item>
-        <item>Abilita extra</item>
     </string-array>
     <string-array name="pref_scodec_list_display">
         <item>Pass-through</item>

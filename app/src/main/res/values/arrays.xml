@@ -99,9 +99,6 @@
         <item>6</item>
         <item>7</item>
         <item>8</item>
-        <item>9</item>
-        <item>10</item>
-        <item>11</item>
     </string-array>
 
     <string-array name="pref_menu_names">
@@ -114,9 +111,6 @@
         <item>Failed Recordings</item>
         <item>Removed Recordings</item>
         <item>Status</item>
-        <item>Info \u0026 Help</item>
-        <item>Settings</item>
-        <item>Enable Extras</item>
     </string-array>
 
     <string-array name="pref_buffer_size_ids" translatable="false">
