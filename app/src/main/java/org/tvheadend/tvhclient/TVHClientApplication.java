@@ -24,6 +24,7 @@ import org.acra.config.ConfigurationBuilder;
 import org.acra.sender.HttpSender;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.utils.BillingUtils;
+import org.tvheadend.tvhclient.utils.MigrateUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -102,7 +103,6 @@ public class TVHClientApplication extends Application implements BillingProcesso
 
         instance = this;
         logger = Logger.getInstance();
-        DataStorage dataStorage = DataStorage.getInstance();
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         if (prefs.getBoolean("pref_debug_mode", false)) {
@@ -157,6 +157,9 @@ public class TVHClientApplication extends Application implements BillingProcesso
                 Log.d(TAG, "attachBaseContext: Failed to init ACRA " + e.getLocalizedMessage());
             }
         }
+        // Migrate existing preferences or remove old
+        // ones before starting the actual application
+        MigrateUtils.doMigrate(getBaseContext());
     }
 
     /**
