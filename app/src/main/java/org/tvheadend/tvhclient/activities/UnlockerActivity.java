@@ -34,7 +34,7 @@ public class UnlockerActivity extends AppCompatActivity {
         TextView actionBarTitle = toolbar.findViewById(R.id.actionbar_title);
         TextView actionBarSubtitle = toolbar.findViewById(R.id.actionbar_subtitle);
         actionBarTitle.setText(getString(R.string.pref_unlocker));
-        actionBarTitle.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
+        actionBarTitle.setGravity(Gravity.START | Gravity.CENTER_VERTICAL);
         actionBarSubtitle.setVisibility(View.GONE);
 
         if (savedInstanceState == null) {
