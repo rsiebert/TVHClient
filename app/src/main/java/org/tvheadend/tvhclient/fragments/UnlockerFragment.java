@@ -16,10 +16,10 @@ import android.widget.ProgressBar;
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.tasks.HtmlFileLoaderCallback;
+import org.tvheadend.tvhclient.tasks.FileLoaderCallback;
 import org.tvheadend.tvhclient.tasks.HtmlFileLoaderTask;
 
-public class UnlockerFragment extends Fragment implements HtmlFileLoaderCallback {
+public class UnlockerFragment extends Fragment implements FileLoaderCallback {
 
     private WebView webView;
     private ProgressBar loadingProgressBar;

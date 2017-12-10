@@ -16,10 +16,10 @@ import org.tvheadend.tvhclient.BuildConfig;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.activities.SettingsToolbarInterface;
 import org.tvheadend.tvhclient.interfaces.BackPressedInterface;
-import org.tvheadend.tvhclient.tasks.ChangeLogLoaderCallback;
 import org.tvheadend.tvhclient.tasks.ChangeLogLoaderTask;
+import org.tvheadend.tvhclient.tasks.FileLoaderCallback;
 
-public class ChangeLogFragment extends android.app.Fragment implements BackPressedInterface, ChangeLogLoaderCallback {
+public class ChangeLogFragment extends android.app.Fragment implements BackPressedInterface, FileLoaderCallback {
 
     private WebView webView;
     private boolean showFullChangeLog = false;

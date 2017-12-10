@@ -20,9 +20,9 @@ public class HtmlFileLoaderTask extends AsyncTask<Void, Void, String> {
     private final String file;
     private final String defaultLocale;
     private WeakReference<Context> context;
-    private final HtmlFileLoaderCallback callback;
+    private final FileLoaderCallback callback;
 
-    public HtmlFileLoaderTask(Context context, String file, String defaultLocale, HtmlFileLoaderCallback callback) {
+    public HtmlFileLoaderTask(Context context, String file, String defaultLocale, FileLoaderCallback callback) {
         this.context = new WeakReference<>(context);
         this.file = file;
         this.defaultLocale = defaultLocale;

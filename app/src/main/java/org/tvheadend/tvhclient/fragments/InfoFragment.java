@@ -13,10 +13,10 @@ import android.widget.ProgressBar;
 
 import org.tvheadend.tvhclient.ChangeLogDialog;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.tasks.HtmlFileLoaderCallback;
+import org.tvheadend.tvhclient.tasks.FileLoaderCallback;
 import org.tvheadend.tvhclient.tasks.HtmlFileLoaderTask;
 
-public class InfoFragment extends Fragment implements HtmlFileLoaderCallback {
+public class InfoFragment extends Fragment implements FileLoaderCallback {
 
     private WebView webView;
     private HtmlFileLoaderTask htmlFileLoaderTask;

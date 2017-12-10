@@ -1,5 +1,5 @@
 package org.tvheadend.tvhclient.tasks;
 
-public interface HtmlFileLoaderCallback {
+public interface FileLoaderCallback {
     void notify(String content);
 }
