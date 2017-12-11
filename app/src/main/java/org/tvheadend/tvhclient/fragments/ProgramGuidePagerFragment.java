@@ -89,8 +89,7 @@ public class ProgramGuidePagerFragment extends Fragment implements FragmentContr
 
         // Show the list of channels on the left side
         Bundle bundle = new Bundle();
-        bundle.putBoolean(Constants.BUNDLE_SHOWS_ONLY_CHANNELS, true);
-        Fragment f = Fragment.instantiate(getActivity(), ChannelListFragment.class.getName());
+        Fragment f = Fragment.instantiate(getActivity(), ProgramGuideChannelListFragment.class.getName());
         f.setArguments(bundle);
         getChildFragmentManager().beginTransaction()
                 .replace(R.id.program_guide_channel_fragment, f)
@@ -268,7 +267,7 @@ public class ProgramGuidePagerFragment extends Fragment implements FragmentContr
             }
         }
         final Fragment cf = getChildFragmentManager().findFragmentById(R.id.program_guide_channel_fragment);
-        if (cf instanceof ChannelListFragment) {
+        if (cf instanceof ProgramGuideChannelListFragment) {
             ((FragmentControlInterface) cf).reloadData();
         }
     }

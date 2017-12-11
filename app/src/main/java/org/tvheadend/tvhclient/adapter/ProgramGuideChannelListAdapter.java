@@ -28,9 +28,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public class ChannelListAdapter extends ArrayAdapter<Channel> {
+public class ProgramGuideChannelListAdapter extends ArrayAdapter<Channel> {
 
-    private final static String TAG = ChannelListAdapter.class.getSimpleName();
+    private final static String TAG = ProgramGuideChannelListAdapter.class.getSimpleName();
 
     private final Activity context;
     private final List<Channel> list;
@@ -38,7 +38,7 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
     private final SharedPreferences prefs;
     private long showProgramsFromTime;
 
-    public ChannelListAdapter(Activity context, List<Channel> list) {
+    public ProgramGuideChannelListAdapter(Activity context, List<Channel> list) {
         super(context, 0);
         this.context = context;
         this.list = list;
@@ -117,7 +117,7 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
         ViewHolder holder;
 
         if (view == null) {
-            view = context.getLayoutInflater().inflate(R.layout.channel_list_widget, parent, false);
+            view = context.getLayoutInflater().inflate(R.layout.program_guide_channel_item, parent, false);
             holder = new ViewHolder();
 
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -299,7 +299,7 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
                 }
             }
             if (p != null) {
-                MiscUtils.setGenreColor(context, holder.genre, p.contentType, TAG);
+                MiscUtils.setGenreColor(context, holder.channel_item_layout, p.contentType, TAG);
             }
         }
         return view;

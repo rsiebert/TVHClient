@@ -54,6 +54,7 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.fragments.ChannelListFragment;
 import org.tvheadend.tvhclient.fragments.ProgramDetailsFragment;
+import org.tvheadend.tvhclient.fragments.ProgramGuideChannelListFragment;
 import org.tvheadend.tvhclient.fragments.ProgramGuideListFragment;
 import org.tvheadend.tvhclient.fragments.ProgramGuidePagerFragment;
 import org.tvheadend.tvhclient.fragments.ProgramListFragment;
@@ -1240,7 +1241,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 programGuideListPosition = position;
                 programGuideListPositionOffset = offset;
 
-                if (tag.equals(ChannelListFragment.class.getSimpleName())
+                if (tag.equals(ProgramGuideChannelListFragment.class.getSimpleName())
                         || tag.equals(ProgramGuideListFragment.class.getSimpleName())) {
                     // Scrolling was initiated by the channel or program guide list fragment. Keep
                     // the currently visible program guide list in sync by scrolling it to the same position
@@ -1258,7 +1259,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         switch (selectedNavigationMenuId) {
             case MENU_PROGRAM_GUIDE:
                 if (tag.equals(ProgramGuideListFragment.class.getSimpleName())
-                        || tag.equals(ChannelListFragment.class.getSimpleName())) {
+                        || tag.equals(ProgramGuideChannelListFragment.class.getSimpleName())) {
                     // Scrolling stopped by the program guide or the channel list
                     // fragment. Scroll all program guide fragments in the current
                     // view pager to the same position.
@@ -1602,7 +1603,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 // Inform the channel list fragment to clear all data from its
                 // channel list and show only the channels with the selected tag
                 final Fragment cf = getSupportFragmentManager().findFragmentById(R.id.program_guide_channel_fragment);
-                if (cf instanceof ChannelListFragment) {
+                if (cf instanceof ProgramGuideChannelListFragment) {
                     ((FragmentControlInterface) cf).reloadData();
                 }
                 // Additionally inform the program guide fragment to clear all data

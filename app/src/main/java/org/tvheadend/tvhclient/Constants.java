@@ -20,7 +20,6 @@ public class Constants {
     public static final int PROGRAMS_VISIBLE_BEFORE_LOADING_MORE = 15;
 
     // Strings used to identify the information passed via a bundle
-    public static final String BUNDLE_SHOWS_ONLY_CHANNELS = "showOnlyChannels";
     public static final String BUNDLE_RECONNECT = "reconnect";
     public static final String BUNDLE_RESTART = "reload";
     public static final String BUNDLE_COUNT = "count";

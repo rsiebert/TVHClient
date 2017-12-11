@@ -5,26 +5,23 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.ListView;
 
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.adapter.ChannelListAdapter;
+import org.tvheadend.tvhclient.adapter.ProgramGuideChannelListAdapter;
 import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentScrollInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
@@ -32,8 +29,6 @@ import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.interfaces.ToolbarInterface;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.ChannelTag;
-import org.tvheadend.tvhclient.model.Program;
-import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.utils.MenuTagSelectionCallback;
 import org.tvheadend.tvhclient.utils.MenuTimeSelectionCallback;
 import org.tvheadend.tvhclient.utils.MenuUtils;
@@ -42,11 +37,10 @@ import org.tvheadend.tvhclient.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 
-public class ChannelListFragment extends Fragment implements HTSListener, FragmentControlInterface, MenuTimeSelectionCallback, MenuTagSelectionCallback {
+public class ProgramGuideChannelListFragment extends Fragment implements HTSListener, FragmentControlInterface, MenuTimeSelectionCallback, MenuTagSelectionCallback {
 
-    private final static String TAG = ChannelListFragment.class.getSimpleName();
+    private final static String TAG = ProgramGuideChannelListFragment.class.getSimpleName();
 
     private Activity activity;
     private FragmentStatusInterface fragmentStatusInterface;
@@ -54,7 +48,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
     private ToolbarInterface toolbarInterface;
 
     //private ArrayList<ChannelTag> tagList = new ArrayList<>();
-    private ChannelListAdapter adapter;
+    private ProgramGuideChannelListAdapter adapter;
     private ListView listView;
 
     // Enables scrolling when the user has touch the screen and starts
@@ -63,8 +57,6 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
     private boolean enableScrolling = false;
     private boolean isDualPane = false;
     private TVHClientApplication app = null;
-    private Runnable channelUpdateTask;
-    private final Handler channelUpdateHandler = new Handler();
     private int channelTimeSelection;
     private long showProgramsFromTime;
     private DataStorage dataStorage;
@@ -89,7 +81,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
             showProgramsFromTime = bundle.getLong("show_programs_from_time");
         }
 
-        View v = inflater.inflate(R.layout.list_layout, container, false);
+        View v = inflater.inflate(R.layout.program_guide_channel_list_layout, container, false);
         listView = v.findViewById(R.id.item_list);
         return v;
     }
@@ -111,46 +103,42 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
             fragmentScrollInterface = (FragmentScrollInterface) activity;
         }
 
-        adapter = new ChannelListAdapter(activity, new ArrayList<>());
+        adapter = new ProgramGuideChannelListAdapter(activity, new ArrayList<>());
         listView.setAdapter(adapter);
 
         menuUtils = new MenuUtils(getActivity());
 
-        // Inform the activity when a channel has been selected.
-        listView.setOnItemClickListener(new OnItemClickListener() {
+        // Inform the activity when the channel list is scrolling or has
+        // finished scrolling. This is only valid in the program guide
+        // where only the channels are shown.
+
+        listView.setVerticalScrollBarEnabled(false);
+        listView.setOnScrollListener(new OnScrollListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                final Channel ch = adapter.getItem(position);
-                if (fragmentStatusInterface != null) {
-                    fragmentStatusInterface.onListItemSelected(position, ch, TAG);
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                if (scrollState == SCROLL_STATE_TOUCH_SCROLL) {
+                    enableScrolling = true;
+                } else if (scrollState == SCROLL_STATE_IDLE && enableScrolling) {
+                    if (fragmentScrollInterface != null) {
+                        enableScrolling = false;
+                        fragmentScrollInterface.onScrollStateIdle(TAG);
+                    }
                 }
-                adapter.setPosition(position);
-                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                if (fragmentScrollInterface != null && enableScrolling) {
+                    int position = view.getFirstVisiblePosition();
+                    View v = view.getChildAt(0);
+                    int offset = (v == null) ? 0 : v.getTop();
+                    fragmentScrollInterface.onScrollingChanged(position, offset, TAG);
+                }
             }
         });
 
-        // Disable the context menu when the channels are shown only. The
-        // functionality behind the context menu shall not be available when the
-        // program guide is displayed
-        registerForContextMenu(listView);
-
         // Enable the action bar menu
         setHasOptionsMenu(true);
-
-        // Initiate a timer that will update the adapter every minute
-        // so that the progress bars will be displayed correctly
-        // Also update the current adapter time if the current 
-        // time was selected from the channel time dialog, otherwise
-        // old programs will not be removed when they are over
-        channelUpdateTask = new Runnable() {
-            public void run() {
-                if (channelTimeSelection == 0) {
-                    adapter.setTime(new Date().getTime());
-                }
-                adapter.notifyDataSetChanged();
-                channelUpdateHandler.postDelayed(channelUpdateTask, 60000);
-            }
-        };
     }
 
     @SuppressLint({"InlinedApi", "NewApi"})
@@ -204,112 +192,6 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
 
             default:
                 return super.onOptionsItemSelected(item);
-        }
-    }
-
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        if (!getUserVisibleHint()) {
-            return false;
-        }
-
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-
-        // Check for a valid adapter, its size and if the context menu call came
-        // from the list in this fragment (needed to support multiple fragments
-        // in one screen)
-        if (info == null || adapter == null || (adapter.getCount() <= info.position)
-                || (getView() != null && info.targetView.getParent() != getView().findViewById(R.id.item_list))) {
-            return super.onContextItemSelected(item);
-        }
-
-        // Add all programs to a list
-        Program program = null;
-        final Channel channel = adapter.getItem(info.position);
-        for (Program p : DataStorage.getInstance().getProgramsFromArray().values()) {
-            if (p.channelId == channel.channelId) {
-                if (p.start <= showProgramsFromTime && p.stop > showProgramsFromTime) {
-                    program = p;
-                    break;
-                }
-            }
-        }
-
-
-        // Return if the program is null. This is just a precaution and should
-        // not happen because the user has selected the context menu of an
-        // available program.
-        if (program == null) {
-            return super.onContextItemSelected(item);
-        }
-
-        switch (item.getItemId()) {
-            case R.id.menu_search_imdb:
-                menuUtils.handleMenuSearchWebSelection(program.title);
-                return true;
-
-            case R.id.menu_search_epg:
-                menuUtils.handleMenuSearchEpgSelection(program.title, channel.channelId);
-                return true;
-
-            case R.id.menu_record_remove:
-                Recording rec = dataStorage.getRecordingFromArray(program.dvrId);
-                if (rec != null) {
-                    if (rec.isRecording()) {
-                        menuUtils.handleMenuStopRecordingSelection(rec.id, rec.title);
-                    } else if (rec.isScheduled()) {
-                        menuUtils.handleMenuCancelRecordingSelection(rec.id, rec.title);
-                    } else {
-                        menuUtils.handleMenuRemoveRecordingSelection(rec.id, rec.title);
-                    }
-                }
-                return true;
-
-            case R.id.menu_record_once:
-                menuUtils.handleMenuRecordSelection(program.eventId);
-                return true;
-
-            case R.id.menu_record_once_custom_profile:
-                menuUtils.handleMenuCustomRecordSelection(program.eventId, channel.channelId);
-                return true;
-
-            case R.id.menu_record_series:
-                menuUtils.handleMenuSeriesRecordSelection(program.title);
-                return true;
-
-            case R.id.menu_play:
-                // Open a new activity to stream the current program to this device
-                menuUtils.handleMenuPlaySelection(channel.channelId, -1);
-                return true;
-
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-        activity.getMenuInflater().inflate(R.menu.program_context_menu, menu);
-
-        // Get the currently selected channel. Also get the program that is
-        // currently being transmitting by this channel.
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-        final Channel channel = adapter.getItem(info.position);
-
-        Program p = null;
-        for (Program program : DataStorage.getInstance().getProgramsFromArray().values()) {
-            if (program.channelId == channel.channelId) {
-                if (program.start <= showProgramsFromTime && program.stop > showProgramsFromTime) {
-                    p = program;
-                    break;
-                }
-            }
-        }
-
-        if (p != null) {
-            menu.setHeaderTitle(p.title);
-            Utils.setProgramMenu(app, menu, p);
         }
     }
 
@@ -368,17 +250,12 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
         if (!dataStorage.isLoading()) {
             populateList();
         }
-
-        // Start the timer that updates the adapter so 
-        // it only shows programs within the current time
-        channelUpdateHandler.post(channelUpdateTask);
     }
 
     @Override
     public void onPause() {
         super.onPause();
         app.removeListener(this);
-        channelUpdateHandler.removeCallbacks(channelUpdateTask);
     }
 
     @Override
