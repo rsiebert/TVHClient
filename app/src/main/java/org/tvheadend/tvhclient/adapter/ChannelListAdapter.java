@@ -9,7 +9,6 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -96,7 +95,6 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
     }
 
     static class ViewHolder {
-        public LinearLayout channel_item_layout;
         public ImageView icon;
         public TextView icon_text;
         public TextView title;
@@ -123,8 +121,6 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
             final boolean bigIcon = prefs.getBoolean("showBigIconPref", false);
             holder.icon = view.findViewById(bigIcon ? R.id.icon_large : R.id.icon);
-
-            holder.channel_item_layout = view.findViewById(R.id.channel_item_layout);
             holder.icon_text = view.findViewById(bigIcon ? R.id.icon_text_large : R.id.icon_text);
             holder.title = view.findViewById(R.id.title);
             holder.subtitle = view.findViewById(R.id.subtitle);
@@ -233,73 +229,40 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
                 if (program.channelId == c.channelId) {
                     if (program.start <= showProgramsFromTime && program.stop > showProgramsFromTime) {
                         p = program;
+                        np = DataStorage.getInstance().getProgramFromArray(program.nextEventId);
                         break;
                     }
                 }
             }
 
-            if (p != null) {
-                np = DataStorage.getInstance().getProgramFromArray(p.nextEventId);
-            }
-
             // Check if the channel is actually transmitting
             // data and contains program data which can be shown.
-            if (c.eventId == 0) {
-                if (holder.title != null) {
-                    holder.title.setText(R.string.no_transmission);
-                }
-                if (holder.subtitle != null) {
-                    holder.subtitle.setVisibility(View.GONE);
-                }
-                if (holder.nextTitle != null) {
-                    holder.nextTitle.setVisibility(View.GONE);
-                }
-            } else if (p != null) {
-                if (holder.title != null) {
-                    holder.title.setText(p.title);
-                }
-                if (holder.subtitle != null) {
-                    holder.subtitle.setText(p.subtitle);
-                    holder.subtitle.setVisibility(prefs.getBoolean("showProgramSubtitlePref", true) ? View.VISIBLE : View.GONE);
-                }
+            if (p != null) {
+                holder.title.setText(p.title);
+                holder.subtitle.setText(p.subtitle);
+                holder.subtitle.setVisibility(prefs.getBoolean("showProgramSubtitlePref", true) ? View.VISIBLE : View.GONE);
+
                 Utils.setTime2(holder.time, p.start, p.stop);
                 Utils.setDuration2(holder.duration, p.start, p.stop);
 
-                if (holder.progressbar != null) {
-                    Utils.setProgress2(holder.progressbar, p.start, p.stop);
-                    holder.progressbar.setVisibility(prefs.getBoolean("showProgramProgressbarPref", true) ? View.VISIBLE : View.GONE);
-                }
-                if (holder.nextTitle != null && np != null) {
+                Utils.setProgress2(holder.progressbar, p.start, p.stop);
+                holder.progressbar.setVisibility(prefs.getBoolean("showProgramProgressbarPref", true) ? View.VISIBLE : View.GONE);
+
+                if (np != null) {
                     holder.nextTitle.setVisibility(prefs.getBoolean("showNextProgramPref", true) ? View.VISIBLE : View.GONE);
                     holder.nextTitle.setText(context.getString(R.string.next_program, np.title));
                 }
+                MiscUtils.setGenreColor(context, holder.genre, p.contentType, TAG);
             } else {
                 // The channel does not provide program data. Hide the progress
                 // bar,the time and duration texts.
-                if (holder.title != null) {
-                    holder.title.setText(R.string.no_data);
-                }
-                if (holder.subtitle != null) {
-                    holder.subtitle.setVisibility(View.GONE);
-                }
-                if (holder.progressbar != null) {
-                    holder.progressbar.setVisibility(View.GONE);
-                }
-                if (holder.time != null) {
-                    holder.time.setVisibility(View.GONE);
-                }
-                if (holder.duration != null) {
-                    holder.duration.setVisibility(View.GONE);
-                }
-                if (holder.genre != null) {
-                    holder.genre.setVisibility(View.GONE);
-                }
-                if (holder.nextTitle != null) {
-                    holder.nextTitle.setVisibility(View.GONE);
-                }
-            }
-            if (p != null) {
-                MiscUtils.setGenreColor(context, holder.genre, p.contentType, TAG);
+                holder.title.setText(R.string.no_data);
+                holder.subtitle.setVisibility(View.GONE);
+                holder.progressbar.setVisibility(View.GONE);
+                holder.time.setVisibility(View.GONE);
+                holder.duration.setVisibility(View.GONE);
+                holder.genre.setVisibility(View.GONE);
+                holder.nextTitle.setVisibility(View.GONE);
             }
         }
         return view;

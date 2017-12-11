@@ -15,6 +15,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,15 +24,21 @@ import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.adapter.ProgramGuideTimeDialogAdapter;
 import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
+import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
+import org.tvheadend.tvhclient.model.ChannelTag;
 import org.tvheadend.tvhclient.model.ProgramGuideTimeDialogItem;
+import org.tvheadend.tvhclient.utils.MenuTagSelectionCallback;
+import org.tvheadend.tvhclient.utils.MenuUtils;
+import org.tvheadend.tvhclient.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-public class ProgramGuidePagerFragment extends Fragment implements FragmentControlInterface {
+public class ProgramGuidePagerFragment extends Fragment implements FragmentControlInterface, MenuTagSelectionCallback {
 
     @SuppressWarnings("unused")
     private final static String TAG = ProgramGuidePagerFragment.class.getSimpleName();
@@ -39,6 +46,7 @@ public class ProgramGuidePagerFragment extends Fragment implements FragmentContr
     private Activity activity;
     private ViewPager viewPager = null;
     private ProgramGuidePagerAdapter adapter = null;
+    private MenuUtils menuUtils;
 
     // This is the width in pixels from the icon in the program_guide_list.xml
     // We need to subtract this value from the window width to get the real
@@ -55,7 +63,8 @@ public class ProgramGuidePagerFragment extends Fragment implements FragmentContr
     private static final List<Long> endTimes = new ArrayList<>();
     private static int hoursToShow;
     private static int fragmentCount;
-    
+    private FragmentStatusInterface fragmentStatusInterface;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
@@ -74,6 +83,12 @@ public class ProgramGuidePagerFragment extends Fragment implements FragmentContr
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         activity = getActivity();
+
+        menuUtils = new MenuUtils(getActivity());
+
+        if (activity instanceof FragmentStatusInterface) {
+            fragmentStatusInterface = (FragmentStatusInterface) activity;
+        }
 
         // Calculate the max number of fragments in the view pager 
         calcFragmentCount();
@@ -107,29 +122,48 @@ public class ProgramGuidePagerFragment extends Fragment implements FragmentContr
     @SuppressLint({ "InlinedApi", "NewApi" })
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
-        // Prevent the time frame menu item from going into the overlay menu
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
+        final boolean showGenreColors = prefs.getBoolean("showGenreColorsChannelsPref", false);
+        (menu.findItem(R.id.menu_genre_color_info_channels)).setVisible(showGenreColors);
+
+        (menu.findItem(R.id.menu_timeframe)).setVisible(TVHClientApplication.getInstance().isUnlocked());
+
+        // Prevent the channel tag menu item from going into the overlay menu
+        if (prefs.getBoolean("visibleMenuIconTagsPref", true)) {
+            menu.findItem(R.id.menu_tags).setShowAsActionFlags(
+                    MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+        }
+        // Prevent the time frame menu item from going into the overlay menu
         if (prefs.getBoolean("visibleMenuIconTagsPref", true)) {
             menu.findItem(R.id.menu_timeframe).setShowAsActionFlags(
                     MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
         }
     }
-/*
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.epg_menu, menu);
     }
-*/
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-        case R.id.menu_timeframe:
-            showProgramGuideTimeDialog();
-            return true;
+            case R.id.menu_tags:
+                ChannelTag tag = Utils.getChannelTag(activity);
+                menuUtils.handleMenuTagsSelection((tag != null ? tag.tagId : -1), this);
+                return true;
 
-        default:
-            return super.onOptionsItemSelected(item);
+            case R.id.menu_timeframe:
+                showProgramGuideTimeDialog();
+                return true;
+
+            case R.id.menu_genre_color_info_channels:
+                menuUtils.handleMenuGenreColorSelection();
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 
@@ -285,12 +319,12 @@ public class ProgramGuidePagerFragment extends Fragment implements FragmentContr
         // channel list fragment.
         for (int i = 0; i < fragmentCount; ++i) {
             Fragment f = getChildFragmentManager().findFragmentByTag("android:switcher:" + viewPager.getId() + ":" + adapter.getItemId(i));
-            if (f instanceof ProgramGuideListFragment) {
+            if (f instanceof FragmentControlInterface) {
                 ((FragmentControlInterface) f).setSelection(position, offset);
             }
         }
         final Fragment cf = getChildFragmentManager().findFragmentById(R.id.program_guide_channel_fragment);
-        if (cf instanceof ChannelListFragment) {
+        if (cf instanceof FragmentControlInterface) {
             ((FragmentControlInterface) cf).setSelection(position, offset);
         }
     }
@@ -308,5 +342,13 @@ public class ProgramGuidePagerFragment extends Fragment implements FragmentContr
             count = ((FragmentControlInterface) cf).getItemCount();
         }
         return count;
+    }
+
+    @Override
+    public void menuTagSelected(int which) {
+        Utils.setChannelTagId(activity, which);
+        if (fragmentStatusInterface != null) {
+            fragmentStatusInterface.channelTagChanged(TAG);
+        }
     }
 }

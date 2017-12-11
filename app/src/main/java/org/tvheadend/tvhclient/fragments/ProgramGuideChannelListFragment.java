@@ -1,16 +1,10 @@
 package org.tvheadend.tvhclient.fragments;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -29,16 +23,12 @@ import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.interfaces.ToolbarInterface;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.ChannelTag;
-import org.tvheadend.tvhclient.utils.MenuTagSelectionCallback;
-import org.tvheadend.tvhclient.utils.MenuTimeSelectionCallback;
-import org.tvheadend.tvhclient.utils.MenuUtils;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 import org.tvheadend.tvhclient.utils.Utils;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 
-public class ProgramGuideChannelListFragment extends Fragment implements HTSListener, FragmentControlInterface, MenuTimeSelectionCallback, MenuTagSelectionCallback {
+public class ProgramGuideChannelListFragment extends Fragment implements HTSListener, FragmentControlInterface {
 
     private final static String TAG = ProgramGuideChannelListFragment.class.getSimpleName();
 
@@ -55,12 +45,9 @@ public class ProgramGuideChannelListFragment extends Fragment implements HTSList
     // scrolling. When the user is done, scrolling will be disabled to prevent
     // unwanted calls to the interface. 
     private boolean enableScrolling = false;
-    private boolean isDualPane = false;
     private TVHClientApplication app = null;
-    private int channelTimeSelection;
-    private long showProgramsFromTime;
     private DataStorage dataStorage;
-    private MenuUtils menuUtils;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -70,17 +57,6 @@ public class ProgramGuideChannelListFragment extends Fragment implements HTSList
         if (container == null) {
             return null;
         }
-
-        // Check if only channels without any program information shall be
-        // visible. This is only the case when this fragment is part of the
-        // program guide view.
-        Bundle bundle = getArguments();
-        if (bundle != null) {
-            isDualPane = bundle.getBoolean("dual_pane", false);
-            channelTimeSelection = bundle.getInt("channel_time_selection");
-            showProgramsFromTime = bundle.getLong("show_programs_from_time");
-        }
-
         View v = inflater.inflate(R.layout.program_guide_channel_list_layout, container, false);
         listView = v.findViewById(R.id.item_list);
         return v;
@@ -106,12 +82,10 @@ public class ProgramGuideChannelListFragment extends Fragment implements HTSList
         adapter = new ProgramGuideChannelListAdapter(activity, new ArrayList<>());
         listView.setAdapter(adapter);
 
-        menuUtils = new MenuUtils(getActivity());
-
         // Inform the activity when the channel list is scrolling or has
         // finished scrolling. This is only valid in the program guide
         // where only the channels are shown.
-
+        listView.setFastScrollEnabled(false);
         listView.setVerticalScrollBarEnabled(false);
         listView.setOnScrollListener(new OnScrollListener() {
             @Override
@@ -136,63 +110,6 @@ public class ProgramGuideChannelListFragment extends Fragment implements HTSList
                 }
             }
         });
-
-        // Enable the action bar menu
-        setHasOptionsMenu(true);
-    }
-
-    @SuppressLint({"InlinedApi", "NewApi"})
-    @Override
-    public void onPrepareOptionsMenu(Menu menu) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-        final boolean showGenreColors = prefs.getBoolean("showGenreColorsChannelsPref", false);
-        (menu.findItem(R.id.menu_genre_color_info_channels)).setVisible(showGenreColors);
-
-        // Playing a channel shall not be available in channel only mode or in
-        // single pane mode, because no channel is preselected.
-        if (!isDualPane) {
-            (menu.findItem(R.id.menu_play)).setVisible(false);
-        }
-
-        (menu.findItem(R.id.menu_timeframe)).setVisible(app.isUnlocked());
-
-        // Prevent the channel tag menu item from going into the overlay menu
-        if (prefs.getBoolean("visibleMenuIconTagsPref", true)) {
-            menu.findItem(R.id.menu_tags).setShowAsActionFlags(
-                    MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
-        }
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.channel_menu, menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_play:
-                // Open a new activity to stream the current program to this device
-                menuUtils.handleMenuPlaySelection(adapter.getSelectedItem().channelId, -1);
-                return true;
-
-            case R.id.menu_tags:
-                ChannelTag tag = Utils.getChannelTag(activity);
-                menuUtils.handleMenuTagsSelection((tag != null ? tag.tagId : -1), this);
-                return true;
-
-            case R.id.menu_timeframe:
-                menuUtils.handleMenuTimeSelection(channelTimeSelection, this);
-                return true;
-
-            case R.id.menu_genre_color_info_channels:
-                menuUtils.handleMenuGenreColorSelection();
-                return true;
-
-            default:
-                return super.onOptionsItemSelected(item);
-        }
     }
 
     /**
@@ -214,7 +131,6 @@ public class ProgramGuideChannelListFragment extends Fragment implements HTSList
         }
 
         adapter.sort(Utils.getChannelSortOrder(activity));
-        adapter.setTime(showProgramsFromTime);
         adapter.notifyDataSetChanged();
 
         // Show the name of the selected channel tag and the number of channels
@@ -311,24 +227,6 @@ public class ProgramGuideChannelListFragment extends Fragment implements HTSList
                     }
                 });
                 break;
-                /*
-            case "tagAdd":
-                activity.runOnUiThread(new Runnable() {
-                    public void run() {
-                        ChannelTag tag = (ChannelTag) obj;
-                        tagList.add(tag);
-                    }
-                });
-                break;
-            case "tagDelete":
-                activity.runOnUiThread(new Runnable() {
-                    public void run() {
-                        ChannelTag tag = (ChannelTag) obj;
-                        tagList.remove(tag);
-                    }
-                });
-                break;
-                */
             case "eventUpdate":
             case "eventDelete":
             case "dvrEntryAdd":
@@ -378,38 +276,5 @@ public class ProgramGuideChannelListFragment extends Fragment implements HTSList
     @Override
     public int getItemCount() {
         return adapter.getCount();
-    }
-
-    @Override
-    public void menuTimeSelected(int which) {
-        channelTimeSelection = which;
-
-        // Get the current time and create the new time from the selection value.
-        // 0 is the current time, 1 is 2 hours ahead, 2 is 4 hours ahead and so on
-        Calendar c = Calendar.getInstance();
-        if (which > 0) {
-            c.set(Calendar.MINUTE, 0);
-            c.set(Calendar.SECOND, 0);
-            if (which > 0) {
-                c.set(Calendar.HOUR_OF_DAY, c.get(Calendar.HOUR_OF_DAY) + which);
-            }
-        }
-
-        showProgramsFromTime = c.getTimeInMillis();
-        adapter.setTime(showProgramsFromTime);
-        adapter.notifyDataSetChanged();
-
-        if (fragmentStatusInterface != null) {
-            fragmentStatusInterface.onChannelTimeSelected(channelTimeSelection, showProgramsFromTime);
-            fragmentStatusInterface.onListPopulated(TAG);
-        }
-    }
-
-    @Override
-    public void menuTagSelected(int which) {
-        Utils.setChannelTagId(activity, which);
-        if (fragmentStatusInterface != null) {
-            fragmentStatusInterface.channelTagChanged(TAG);
-        }
     }
 }
