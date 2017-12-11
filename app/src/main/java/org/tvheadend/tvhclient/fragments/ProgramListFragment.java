@@ -42,7 +42,6 @@ import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.utils.MenuUtils;
 import org.tvheadend.tvhclient.utils.MiscUtils;
-import org.tvheadend.tvhclient.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -69,6 +68,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
     private TVHClientApplication app;
     private DataStorage dataStorage;
     private MenuUtils menuUtils;
+    private SharedPreferences sharedPreferences;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -99,6 +99,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
             fragmentStatusInterface = (FragmentStatusInterface) activity;
         }
 
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         Bundle bundle = getArguments();
         if (bundle != null) {
             channel = dataStorage.getChannelFromArray(bundle.getInt("channelId", 0));
@@ -222,7 +223,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
             String items = getResources().getQuantityString(R.plurals.programs, adapter.getCount(), adapter.getCount());
             toolbarInterface.setActionBarSubtitle(items);
             if (!isDualPane) {
-                if (Utils.showChannelIcons(activity)) {
+                if (sharedPreferences.getBoolean("showIconPref", true)) {
                     Bitmap iconBitmap = MiscUtils.getCachedIcon(activity, channel.channelIcon);
                     toolbarInterface.setActionBarIcon(iconBitmap);
                 } else {

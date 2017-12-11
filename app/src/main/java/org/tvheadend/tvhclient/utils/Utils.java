@@ -50,28 +50,6 @@ public class Utils {
     private final static int LAYOUT_ICON_OFFSET = 66;
 
     /**
-     * Returns the information if channels shall be shown or not
-     * 
-     * @param context Context
-     * @return True if channel icons shall be shown, otherwise false
-     */
-    public static boolean showChannelIcons(final Context context) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        return prefs.getBoolean("showIconPref", true);
-    }
-
-    /**
-     * Returns the information if channels shall be shown or not
-     * 
-     * @param context Context
-     * @return True if channel tag icons shall be shown, otherwise false
-     */
-    public static boolean showChannelTagIcon(final Context context) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        return prefs.getBoolean("showTagIconPref", false);
-    }
-
-    /**
      * Connects to the server with the currently active connection.
      *
      * @param context Context

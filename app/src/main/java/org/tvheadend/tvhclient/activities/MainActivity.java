@@ -187,6 +187,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected NavigationView navigationView;
     private List<MenuItem> navigationMenuItems = new ArrayList<>();
     private DrawerLayout drawerLayout;
+    private SharedPreferences sharedPreferences;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -208,6 +209,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         dataStorage = DataStorage.getInstance();
         changeLogDialog = new ChangeLogDialog(this);
 
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         menuUtils = new MenuUtils(this);
 
         // Get the main toolbar and the floating action button (fab). The fab is
@@ -232,11 +234,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             navigationMenuItems.add(menu.getItem(i));
         }
 
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
         actionBar = getSupportActionBar();
         if (actionBar != null) {
             //actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setHomeButtonEnabled(true);
-            actionBar.setDisplayUseLogoEnabled(Utils.showChannelIcons(this));
+            actionBar.setDisplayUseLogoEnabled(prefs.getBoolean("showIconPref", true));
         }
 
         coordinatorLayout = findViewById(R.id.coordinatorLayout);
@@ -247,7 +251,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         actionBarIcon = toolbar.findViewById(R.id.actionbar_icon);
         actionBarIcon.setVisibility(View.GONE);
 
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         defaultMenuPosition = Integer.parseInt(prefs.getString("defaultMenuPositionPref", String.valueOf(MENU_STATUS)));
 
         if (savedInstanceState == null) {
@@ -1203,7 +1206,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             // to show the tag icon. For example the completed recordings could
             // be from channels from different channel tags.
             if (selectedNavigationMenuId == MENU_CHANNELS || selectedNavigationMenuId == MENU_PROGRAM_GUIDE) {
-                actionBarIcon.setVisibility(Utils.showChannelTagIcon(this) ? View.VISIBLE : View.GONE);
+                actionBarIcon.setVisibility(sharedPreferences.getBoolean("showTagIconPref", false) ? View.VISIBLE : View.GONE);
                 actionBarIcon.setBackgroundDrawable(new BitmapDrawable(getResources(), bitmap));
             } else {
                 actionBarIcon.setVisibility(View.GONE);
@@ -1219,7 +1222,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             // to show the tag icon. For example the completed recordings could
             // be from channels from different channel tags.
             if (selectedNavigationMenuId == MENU_CHANNELS || selectedNavigationMenuId == MENU_PROGRAM_GUIDE) {
-                actionBarIcon.setVisibility(Utils.showChannelTagIcon(this) ? View.VISIBLE : View.GONE);
+                actionBarIcon.setVisibility(sharedPreferences.getBoolean("showTagIconPref", false) ? View.VISIBLE : View.GONE);
                 actionBarIcon.setBackgroundResource(resource);
             } else {
                 actionBarIcon.setVisibility(View.GONE);

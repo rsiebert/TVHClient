@@ -69,6 +69,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
     private long showProgramsFromTime;
     private DataStorage dataStorage;
     private MenuUtils menuUtils;
+    private SharedPreferences sharedPreferences;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -111,6 +112,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
             fragmentScrollInterface = (FragmentScrollInterface) activity;
         }
 
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         adapter = new ChannelListAdapter(activity, new ArrayList<>());
         listView.setAdapter(adapter);
 
@@ -342,7 +344,8 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
             String items = getResources().getQuantityString(R.plurals.items, adapter.getCount(), adapter.getCount());
             toolbarInterface.setActionBarSubtitle(items);
 
-            if (Utils.showChannelIcons(activity) && Utils.showChannelTagIcon(activity)
+            if (sharedPreferences.getBoolean("showIconPref", true)
+                    && sharedPreferences.getBoolean("showTagIconPref", false)
                     && currentTag != null
                     && currentTag.tagId != 0) {
                 Bitmap iconBitmap = MiscUtils.getCachedIcon(activity, currentTag.tagIcon);

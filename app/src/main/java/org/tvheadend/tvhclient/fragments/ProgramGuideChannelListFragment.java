@@ -1,8 +1,10 @@
 package org.tvheadend.tvhclient.fragments;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,6 +49,7 @@ public class ProgramGuideChannelListFragment extends Fragment implements HTSList
     private boolean enableScrolling = false;
     private TVHClientApplication app = null;
     private DataStorage dataStorage;
+    private SharedPreferences sharedPreferences;
 
 
     @Override
@@ -79,6 +82,7 @@ public class ProgramGuideChannelListFragment extends Fragment implements HTSList
             fragmentScrollInterface = (FragmentScrollInterface) activity;
         }
 
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         adapter = new ProgramGuideChannelListAdapter(activity, new ArrayList<>());
         listView.setAdapter(adapter);
 
@@ -140,7 +144,8 @@ public class ProgramGuideChannelListFragment extends Fragment implements HTSList
             String items = getResources().getQuantityString(R.plurals.items, adapter.getCount(), adapter.getCount());
             toolbarInterface.setActionBarSubtitle(items);
 
-            if (Utils.showChannelIcons(activity) && Utils.showChannelTagIcon(activity)
+            if (sharedPreferences.getBoolean("showIconPref", true)
+                    && sharedPreferences.getBoolean("showTagIconPref", false)
                     && currentTag != null
                     && currentTag.tagId != 0) {
                 Bitmap iconBitmap = MiscUtils.getCachedIcon(activity, currentTag.tagIcon);
