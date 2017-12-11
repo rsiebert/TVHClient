@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -35,26 +37,26 @@ public class SeriesRecordingListAdapter extends ArrayAdapter<SeriesRecording> {
 
     public void sort(final int type) {
         switch (type) {
-        case Constants.RECORDING_SORT_ASCENDING:
-            sort(new Comparator<SeriesRecording>() {
-                public int compare(SeriesRecording x, SeriesRecording y) {
-                    if (x != null && y != null && x.title != null && y.title != null) {
-                        return (y.title.compareTo(x.title));
+            case Constants.RECORDING_SORT_ASCENDING:
+                sort(new Comparator<SeriesRecording>() {
+                    public int compare(SeriesRecording x, SeriesRecording y) {
+                        if (x != null && y != null && x.title != null && y.title != null) {
+                            return (y.title.compareTo(x.title));
+                        }
+                        return 0;
                     }
-                    return 0;
-                }
-            });
-        break;
-        case Constants.RECORDING_SORT_DESCENDING:
-            sort(new Comparator<SeriesRecording>() {
-                public int compare(SeriesRecording x, SeriesRecording y) {
-                    if (x != null && y != null && x.title != null && y.title != null) {
-                        return (x.title.compareTo(y.title));
+                });
+                break;
+            case Constants.RECORDING_SORT_DESCENDING:
+                sort(new Comparator<SeriesRecording>() {
+                    public int compare(SeriesRecording x, SeriesRecording y) {
+                        if (x != null && y != null && x.title != null && y.title != null) {
+                            return (x.title.compareTo(y.title));
+                        }
+                        return 0;
                     }
-                    return 0;
-                }
-            });
-            break;
+                });
+                break;
         }
     }
 
@@ -72,8 +74,9 @@ public class SeriesRecordingListAdapter extends ArrayAdapter<SeriesRecording> {
         public ImageView dual_pane_list_item_selection;
     }
 
+    @NonNull
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
         View view = convertView;
         ViewHolder holder;
 
@@ -113,40 +116,32 @@ public class SeriesRecordingListAdapter extends ArrayAdapter<SeriesRecording> {
         if (srec != null) {
             Channel channel = DataStorage.getInstance().getChannelFromArray(srec.channel);
             holder.title.setText(srec.title);
-            if (holder.channel != null) {
-                if (channel != null) {
-                    holder.channel.setText(channel.channelName);
-                } else {
-                    holder.channel.setText(R.string.all_channels);
-                }
-            }
 
-            if (srec.name != null && srec.name.length() > 0) {
+            if (!TextUtils.isEmpty(srec.name)) {
                 holder.name.setVisibility(View.VISIBLE);
                 holder.name.setText(srec.name);
             } else {
                 holder.name.setVisibility(View.GONE);
             }
-            if (holder.icon != null && channel != null) {
+            if (channel != null) {
+                holder.channel.setText(channel.channelName);
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
                 boolean showChannelIcons = prefs.getBoolean("showIconPref", true);
                 Bitmap iconBitmap = MiscUtils.getCachedIcon(context, channel.channelIcon);
                 holder.icon.setImageBitmap(iconBitmap);
                 holder.icon.setVisibility(showChannelIcons ? ImageView.VISIBLE : ImageView.GONE);
+            } else {
+                holder.channel.setText(R.string.all_channels);
             }
             Utils.setDaysOfWeek(context, null, holder.daysOfWeek, srec.daysOfWeek);
-
-            if (holder.isEnabled != null) {
-                holder.isEnabled.setVisibility(DataStorage.getInstance().getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED ? View.VISIBLE : View.GONE);
-                holder.isEnabled.setText(srec.enabled > 0? R.string.recording_enabled : R.string.recording_disabled);
-            }
+            holder.isEnabled.setVisibility(DataStorage.getInstance().getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED ? View.VISIBLE : View.GONE);
+            holder.isEnabled.setText(srec.enabled > 0 ? R.string.recording_enabled : R.string.recording_disabled);
         }
         return view;
     }
 
     public void update(SeriesRecording srec) {
         int length = list.size();
-
         // Go through the list of programs and find the
         // one with the same id. If its been found, replace it.
         for (int i = 0; i < length; ++i) {

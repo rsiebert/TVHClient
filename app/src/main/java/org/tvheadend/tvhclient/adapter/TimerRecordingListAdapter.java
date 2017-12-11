@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -36,26 +37,26 @@ public class TimerRecordingListAdapter extends ArrayAdapter<TimerRecording> {
 
     public void sort(final int type) {
         switch (type) {
-        case Constants.RECORDING_SORT_ASCENDING:
-            sort(new Comparator<TimerRecording>() {
-                public int compare(TimerRecording x, TimerRecording y) {
-                    if (x != null && y != null && x.title != null && y.title != null) {
-                        return (y.title.compareTo(x.title));
+            case Constants.RECORDING_SORT_ASCENDING:
+                sort(new Comparator<TimerRecording>() {
+                    public int compare(TimerRecording x, TimerRecording y) {
+                        if (x != null && y != null && x.title != null && y.title != null) {
+                            return (y.title.compareTo(x.title));
+                        }
+                        return 0;
                     }
-                    return 0;
-                }
-            });
-        break;
-        case Constants.RECORDING_SORT_DESCENDING:
-            sort(new Comparator<TimerRecording>() {
-                public int compare(TimerRecording x, TimerRecording y) {
-                    if (x != null && y != null && x.title != null && y.title != null) {
-                        return (x.title.compareTo(y.title));
+                });
+                break;
+            case Constants.RECORDING_SORT_DESCENDING:
+                sort(new Comparator<TimerRecording>() {
+                    public int compare(TimerRecording x, TimerRecording y) {
+                        if (x != null && y != null && x.title != null && y.title != null) {
+                            return (x.title.compareTo(y.title));
+                        }
+                        return 0;
                     }
-                    return 0;
-                }
-            });
-            break;
+                });
+                break;
         }
     }
 
@@ -115,24 +116,21 @@ public class TimerRecordingListAdapter extends ArrayAdapter<TimerRecording> {
         TimerRecording trec = getItem(position);
         if (trec != null) {
             Channel channel = DataStorage.getInstance().getChannelFromArray(trec.channel);
-            if (trec.title != null && trec.title.length() > 0) {
+            if (!TextUtils.isEmpty(trec.title)) {
                 holder.title.setText(trec.title);
             } else {
                 holder.title.setText(trec.name);
             }
-            if (holder.channel != null) {
-                if (channel != null) {
-                    holder.channel.setText(channel.channelName);
-                } else {
-                    holder.channel.setText(R.string.all_channels);
-                }
-            }
-            if (holder.icon != null && channel != null) {
+
+            if (channel != null) {
+                holder.channel.setText(channel.channelName);
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
                 boolean showChannelIcons = prefs.getBoolean("showIconPref", true);
                 Bitmap iconBitmap = MiscUtils.getCachedIcon(context, channel.channelIcon);
                 holder.icon.setImageBitmap(iconBitmap);
                 holder.icon.setVisibility(showChannelIcons ? ImageView.VISIBLE : ImageView.GONE);
+            } else {
+                holder.channel.setText(R.string.all_channels);
             }
 
             Utils.setDaysOfWeek(context, null, holder.daysOfWeek, trec.daysOfWeek);
@@ -147,20 +145,15 @@ public class TimerRecordingListAdapter extends ArrayAdapter<TimerRecording> {
             endTime.set(Calendar.MINUTE, trec.stop % 60);
 
             Utils.setTime(holder.time, startTime.getTimeInMillis(), endTime.getTimeInMillis());
-            if (holder.duration != null) {
-                holder.duration.setText(context.getString(R.string.minutes, (int) (trec.stop - trec.start)));
-            }
-            if (holder.isEnabled != null) {
-                holder.isEnabled.setVisibility(DataStorage.getInstance().getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED ? View.VISIBLE : View.GONE);
-                holder.isEnabled.setText(trec.enabled > 0? R.string.recording_enabled : R.string.recording_disabled);
-            }
+            holder.duration.setText(context.getString(R.string.minutes, (int) (trec.stop - trec.start)));
+            holder.isEnabled.setVisibility(DataStorage.getInstance().getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED ? View.VISIBLE : View.GONE);
+            holder.isEnabled.setText(trec.enabled > 0 ? R.string.recording_enabled : R.string.recording_disabled);
         }
         return view;
     }
 
     public void update(TimerRecording trec) {
         int length = list.size();
-
         // Go through the list of programs and find the
         // one with the same id. If its been found, replace it.
         for (int i = 0; i < length; ++i) {

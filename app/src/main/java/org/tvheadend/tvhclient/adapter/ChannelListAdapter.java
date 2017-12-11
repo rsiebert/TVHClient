@@ -38,7 +38,7 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
     private long showProgramsFromTime;
 
     public ChannelListAdapter(Activity context, List<Channel> list) {
-        super(context, 0);
+        super(context, R.layout.channel_list_widget, list);
         this.context = context;
         this.list = list;
         this.prefs = PreferenceManager.getDefaultSharedPreferences(context);

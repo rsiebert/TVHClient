@@ -32,7 +32,7 @@ public class ProgramGuideChannelListAdapter extends ArrayAdapter<Channel> {
     private final SharedPreferences prefs;
 
     public ProgramGuideChannelListAdapter(Activity context, List<Channel> list) {
-        super(context, 0);
+        super(context, R.layout.program_guide_channel_item, list);
         this.context = context;
         this.list = list;
         this.prefs = PreferenceManager.getDefaultSharedPreferences(context);
