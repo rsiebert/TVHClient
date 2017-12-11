@@ -22,24 +22,15 @@ public class Constants {
     // Strings used to identify the information passed via a bundle
     public static final String BUNDLE_RECONNECT = "reconnect";
     public static final String BUNDLE_RESTART = "reload";
-    public static final String BUNDLE_COUNT = "count";
     public static final String BUNDLE_SHOW_CONTROLS = "showControls";
     public static final String BUNDLE_EPG_START_TIME = "epgStartTime";
     public static final String BUNDLE_EPG_END_TIME = "epgEndTime";
     public static final String BUNDLE_EPG_INDEX = "showControls";
-    public static final String BUNDLE_CONNECTION_ID = "connectionId";
     public static final String BUNDLE_MANAGE_CONNECTIONS = "manageConnections";
-    public static final String BUNDLE_SETTINGS_MODE = "settingsMode";
     public static final String BUNDLE_EPG_PIXELS_PER_MINUTE = "pixelsPerMinute";
     public static final String BUNDLE_EPG_DISPLAY_WIDTH = "displayWidth";
     public static final String BUNDLE_ACTION = "action";
     public static final String BUNDLE_NOTIFICATION_MSG = "notificationMsg";
-
-    // Differentiates the different types of recordings
-    public static final int RECORDING_TYPE_COMPLETED = 1;
-    public static final int RECORDING_TYPE_SCHEDULED = 2;
-    public static final int RECORDING_TYPE_FAILED = 3;
-    public static final int RECORDING_TYPE_REMOVED = 4;
 
     // Default values for the program guide
     public static final String EPG_DEFAULT_MAX_DAYS = "7";
@@ -69,11 +60,9 @@ public class Constants {
     public static final String ACTION_SUBSCRIPTION_ADD = "SUBSCRIPTION_ADD";
     public static final String ACTION_SUBSCRIPTION_DELETE = "SUBSCRIPTION_DELETE";
     public static final String ACTION_SUBSCRIPTION_UPDATE = "SUBSCRIPTION_UPDATE";
-    public static final String ACTION_SIGNAL_STATUS = "SIGNAL_STATUS";
     public static final String ACTION_PLAYBACK_PACKET = "PLAYBACK_PACKET";
     public static final String ACTION_LOADING = "LOADING";
     public static final String ACTION_TICKET_ADD = "TICKET_ADD";
-    public static final String ACTION_ERROR = "ERROR";
     public static final String ACTION_DISC_SPACE = "DISC_SPACE";
     public static final String ACTION_SYSTEM_TIME = "SYSTEM_TIME";
     public static final String ACTION_SHOW_MESSAGE = "SHOW_MESSAGE";
@@ -102,8 +91,6 @@ public class Constants {
     // methods. These fields shall only be visible and used if supported.
     public static final int MIN_API_VERSION_REC_FIELD_ENABLED = 19;
     public static final int MIN_API_VERSION_REC_FIELD_DIRECTORY = 19;
-    public static final int MIN_API_VERSION_REC_FIELD_OWNER = 18;
-    public static final int MIN_API_VERSION_REC_FIELD_CREATOR = 18;
     public static final int MIN_API_VERSION_REC_FIELD_DUPDETECT = 20;
 
     public static final int MIN_API_VERSION_DVR_FIELD_ENABLED = 23;
