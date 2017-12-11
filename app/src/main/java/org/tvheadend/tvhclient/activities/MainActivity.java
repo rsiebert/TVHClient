@@ -1246,7 +1246,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     // Scrolling was initiated by the channel or program guide list fragment. Keep
                     // the currently visible program guide list in sync by scrolling it to the same position
                     final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
-                    if (f instanceof ProgramGuidePagerFragment) {
+                    if (f instanceof FragmentControlInterface) {
                         ((FragmentControlInterface) f).setSelection(position, offset);
                     }
                 }
