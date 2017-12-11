@@ -46,15 +46,4 @@
 
     </android.support.design.widget.CoordinatorLayout>
 
-    <android.support.design.widget.NavigationView
-        android:id="@+id/nav_view"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:fitsSystemWindows="true"
-        app:itemTextColor="?attr/menu_text_selector"
-        app:itemBackground="?attr/menu_background_selector"
-        app:headerLayout="@layout/navigation_header"
-        app:menu="@menu/menu_navigation_drawer" />
-
 </android.support.v4.widget.DrawerLayout>

@@ -55,6 +55,8 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:appcompat-v7:27.0.1'
+    compile 'com.android.support:recyclerview-v7:27.0.1'
+    compile 'com.android.support:support-annotations:27.0.1'
     compile 'com.android.support:design:27.0.1'
     compile 'com.google.android.gms:play-services-cast:11.6.0'
     compile 'com.android.support:mediarouter-v7:27.0.1'
@@ -64,6 +66,7 @@ dependencies {
     compile 'com.nineoldandroids:library:2.4.0'
     compile 'com.afollestad.material-dialogs:commons:0.9.6.0'
     compile 'ch.acra:acra:4.9.2'
+    compile 'com.mikepenz:materialdrawer:6.0.2'
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5.3'
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.3'
 }
