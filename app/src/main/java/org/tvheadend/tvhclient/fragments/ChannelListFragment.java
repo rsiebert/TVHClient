@@ -26,7 +26,6 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.adapter.ChannelListAdapter;
 import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
-import org.tvheadend.tvhclient.interfaces.FragmentScrollInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.interfaces.ToolbarInterface;
@@ -50,10 +49,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
 
     private Activity activity;
     private FragmentStatusInterface fragmentStatusInterface;
-    private FragmentScrollInterface fragmentScrollInterface;
     private ToolbarInterface toolbarInterface;
-
-    //private ArrayList<ChannelTag> tagList = new ArrayList<>();
     private ChannelListAdapter adapter;
     private ListView listView;
 
@@ -102,9 +98,6 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
         }
         if (activity instanceof FragmentStatusInterface) {
             fragmentStatusInterface = (FragmentStatusInterface) activity;
-        }
-        if (activity instanceof FragmentScrollInterface) {
-            fragmentScrollInterface = (FragmentScrollInterface) activity;
         }
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
@@ -447,7 +440,6 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
     @Override
     public void onDestroy() {
         fragmentStatusInterface = null;
-        fragmentScrollInterface = null;
         toolbarInterface = null;
         super.onDestroy();
     }
