@@ -377,7 +377,7 @@ public class ProgramGuideItemView extends LinearLayout {
 
             // Only show the duration if the layout is wide enough
             if (layoutWidth >= MIN_DISPLAY_WIDTH_FOR_DETAILS) {
-                Utils.setDuration2(duration, p.start, p.stop);
+                Utils.setDuration(duration, p.start, p.stop);
             } else {
                 duration.setVisibility(View.GONE);
             }

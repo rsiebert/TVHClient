@@ -189,9 +189,9 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
             showPlayerControls();
         }
 
-        Utils.setDate2(date, rec.start);
-        Utils.setTime2(time, rec.start, rec.stop);
-        Utils.setDuration2(duration, rec.start, rec.stop);
+        Utils.setDate(date, rec.start);
+        Utils.setTime(time, rec.start, rec.stop);
+        Utils.setDuration(duration, rec.start, rec.stop);
 
         Channel channel = dataStorage.getChannelFromArray(rec.channel);
         Utils.setDescription(channelLabel, channelName, ((channel != null) ? channel.channelName : ""));

@@ -221,9 +221,9 @@ public class SearchResultAdapter extends ArrayAdapter<Program> implements Filter
             }
             Utils.setChannelIcon(context, holder.icon, holder.icon_text, channel);
             //Utils.setState(context, holder.state, p);
-            Utils.setDate2(holder.date, p.start);
-            Utils.setTime2(holder.time, p.start, p.stop);
-            Utils.setDuration2(holder.duration, p.start, p.stop);
+            Utils.setDate(holder.date, p.start);
+            Utils.setTime(holder.time, p.start, p.stop);
+            Utils.setDuration(holder.duration, p.start, p.stop);
             Utils.setDescription(null, holder.description, p.description);
             Utils.setContentType(null, holder.contentType, p.contentType);
             Utils.setSeriesInfo(context, null, holder.seriesInfo, p);

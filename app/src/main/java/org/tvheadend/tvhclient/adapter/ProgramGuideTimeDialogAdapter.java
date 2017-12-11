@@ -62,7 +62,7 @@ public class ProgramGuideTimeDialogAdapter extends RecyclerView.Adapter<ProgramG
             holder.time.setText(time);
 
             final SimpleDateFormat sdf2 = new SimpleDateFormat("dd.MM.yyyy", Locale.US);
-            Utils.setDate2(holder.date1, item.start);
+            Utils.setDate(holder.date1, item.start);
             holder.date2.setText(sdf2.format(item.start));
 
             if (holder.date1.getText().equals(holder.date2.getText())) {

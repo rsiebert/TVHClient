@@ -187,7 +187,7 @@ public class Utils {
      * @param start    Start time
      * @param stop     Stop time
      */
-    public static void setDuration2(TextView duration, final long start, final long stop) {
+    public static void setDuration(TextView duration, final long start, final long stop) {
         if (duration == null) {
             return;
         }
@@ -207,7 +207,7 @@ public class Utils {
      * @param start   Start time
      * @param stop     Stop time
      */
-    public static void setTime2(TextView time, final long start, final long stop) {
+    public static void setTime(TextView time, final long start, final long stop) {
         if (time == null) {
             return;
         }
@@ -250,7 +250,7 @@ public class Utils {
      * @param date  Date
      * @param start Start time
      */
-    public static void setDate2(TextView date, final long start) {
+    public static void setDate(TextView date, final long start) {
         if (date == null) {
             return;
         }
@@ -602,7 +602,7 @@ public class Utils {
         }
     }
 
-    public static void setProgress2(ProgressBar progress, final long start, final long stop) {
+    public static void setProgress(ProgressBar progress, final long start, final long stop) {
         if (progress == null) {
             return;
         }
@@ -619,7 +619,7 @@ public class Utils {
         progress.setVisibility(View.VISIBLE);
     }
 
-    public static void setProgressText2(TextView progressText, final long start, final long stop) {
+    public static void setProgressText(TextView progressText, final long start, final long stop) {
         if (progressText == null) {
             return;
         }

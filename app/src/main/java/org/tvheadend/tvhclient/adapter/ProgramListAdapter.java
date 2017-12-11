@@ -93,10 +93,10 @@ public class ProgramListAdapter extends ArrayAdapter<Program> {
         if (p != null) {
             holder.title.setText(p.title);
             Utils.setState(context, holder.state, p);
-            Utils.setDate2(holder.date, p.start);
-            Utils.setTime2(holder.time, p.start, p.stop);
-            Utils.setDuration2(holder.duration, p.start, p.stop);
-            Utils.setProgressText2(holder.progress, p.start, p.stop);
+            Utils.setDate(holder.date, p.start);
+            Utils.setTime(holder.time, p.start, p.stop);
+            Utils.setDuration(holder.duration, p.start, p.stop);
+            Utils.setProgressText(holder.progress, p.start, p.stop);
             Utils.setDescription(null, holder.summary, p.summary);
             Utils.setDescription(null, holder.subtitle, p.subtitle);
             Utils.setDescription(null, holder.description, p.description);

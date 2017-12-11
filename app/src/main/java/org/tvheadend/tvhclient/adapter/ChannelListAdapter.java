@@ -242,10 +242,10 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
                 holder.subtitle.setText(p.subtitle);
                 holder.subtitle.setVisibility(prefs.getBoolean("showProgramSubtitlePref", true) ? View.VISIBLE : View.GONE);
 
-                Utils.setTime2(holder.time, p.start, p.stop);
-                Utils.setDuration2(holder.duration, p.start, p.stop);
+                Utils.setTime(holder.time, p.start, p.stop);
+                Utils.setDuration(holder.duration, p.start, p.stop);
 
-                Utils.setProgress2(holder.progressbar, p.start, p.stop);
+                Utils.setProgress(holder.progressbar, p.start, p.stop);
                 holder.progressbar.setVisibility(prefs.getBoolean("showProgramProgressbarPref", true) ? View.VISIBLE : View.GONE);
 
                 if (np != null) {

@@ -193,10 +193,10 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
 
         // Show the program information        
         Utils.setState(activity, state, program);
-        Utils.setDate2(date, program.start);
-        Utils.setTime2(time, program.start, program.stop);
-        Utils.setDuration2(duration, program.start, program.stop);
-        Utils.setProgressText2(progress, program.start, program.stop);
+        Utils.setDate(date, program.start);
+        Utils.setTime(time, program.start, program.stop);
+        Utils.setDuration(duration, program.start, program.stop);
+        Utils.setProgressText(progress, program.start, program.stop);
         Utils.setDescription(descLabel, desc, program.description);
         Utils.setDescription(summaryLabel, summary, program.summary);
         Utils.setDescription(channelLabel, channelName, channel.channelName);

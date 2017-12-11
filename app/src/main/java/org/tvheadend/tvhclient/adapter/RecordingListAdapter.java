@@ -173,9 +173,9 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
             }
 
 
-            Utils.setDate2(holder.date, rec.start);
-            Utils.setTime2(holder.time, rec.start, rec.stop);
-            Utils.setDuration2(holder.duration, rec.start, rec.stop);
+            Utils.setDate(holder.date, rec.start);
+            Utils.setTime(holder.time, rec.start, rec.stop);
+            Utils.setDuration(holder.duration, rec.start, rec.stop);
             Utils.setDescription(null, holder.summary, rec.summary);
             Utils.setDescription(null, holder.description, rec.description);
             Utils.setFailedReason(holder.failed_reason, rec);
