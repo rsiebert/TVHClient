@@ -2,16 +2,14 @@ package org.tvheadend.tvhclient.fragments.recordings;
 
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
+import android.support.v4.app.ListFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
@@ -29,7 +27,7 @@ import org.tvheadend.tvhclient.utils.MenuUtils;
 import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class RecordingListFragment extends Fragment implements HTSListener, FragmentControlInterface {
+public class RecordingListFragment extends ListFragment implements HTSListener, FragmentControlInterface {
 
     protected static String TAG = RecordingListFragment.class.getSimpleName();
 
@@ -37,25 +35,9 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
     protected ToolbarInterface toolbarInterface;
     protected FragmentStatusInterface fragmentStatusInterface;
     protected RecordingListAdapter adapter;
-    private ListView listView;
     boolean isUnlocked;
-
     protected boolean isDualPane;
     private MenuUtils menuUtils;
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        super.onCreateView(inflater, container, savedInstanceState);
-        // If the view group does not exist, the fragment would not be shown. So
-        // we can return anyway.
-        if (container == null) {
-            return null;
-        }
-
-        View v = inflater.inflate(R.layout.list_layout, container, false);
-        listView = v.findViewById(R.id.item_list);
-        return v;
-    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -78,11 +60,13 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
         }
 
         adapter = new RecordingListAdapter(activity, new ArrayList<>());
-        listView.setAdapter(adapter);
+        setListAdapter(adapter);
+        getListView().setFastScrollEnabled(true);
+        getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
         // Set the listener to show the recording details activity when the user
         // has selected a recording
-        listView.setOnItemClickListener(new OnItemClickListener() {
+        getListView().setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Recording rec = adapter.getItem(position);
@@ -95,7 +79,7 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
         });
 
         setHasOptionsMenu(true);
-        registerForContextMenu(listView);
+        registerForContextMenu(getListView());
     }
 
     @Override
@@ -306,8 +290,8 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
      * @param offset Offset in pixels from the top
      */
     public void setSelection(int position, int offset) {
-        if (listView != null && listView.getCount() > position && position >= 0) {
-            listView.setSelectionFromTop(position, offset);
+        if (getListView().getCount() > position && position >= 0) {
+            getListView().setSelectionFromTop(position, offset);
         }
     }
 

@@ -7,15 +7,13 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.support.v4.app.Fragment;
+import android.support.v4.app.ListFragment;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
@@ -43,7 +41,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-public class ChannelListFragment extends Fragment implements HTSListener, FragmentControlInterface, MenuTimeSelectionCallback, MenuTagSelectionCallback {
+public class ChannelListFragment extends ListFragment implements HTSListener, FragmentControlInterface, MenuTimeSelectionCallback, MenuTagSelectionCallback {
 
     private final static String TAG = ChannelListFragment.class.getSimpleName();
 
@@ -51,7 +49,6 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
     private FragmentStatusInterface fragmentStatusInterface;
     private ToolbarInterface toolbarInterface;
     private ChannelListAdapter adapter;
-    private ListView listView;
 
     // Enables scrolling when the user has touch the screen and starts
     // scrolling. When the user is done, scrolling will be disabled to prevent
@@ -65,12 +62,15 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
     private SharedPreferences sharedPreferences;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        super.onCreateView(inflater, container, savedInstanceState);
-        // If the view group does not exist, the fragment would not be shown. So
-        // we can return anyway.
-        if (container == null) {
-            return null;
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        activity = getActivity();
+        if (activity instanceof ToolbarInterface) {
+            toolbarInterface = (ToolbarInterface) activity;
+        }
+        if (activity instanceof FragmentStatusInterface) {
+            fragmentStatusInterface = (FragmentStatusInterface) activity;
         }
 
         // Check if only channels without any program information shall be
@@ -83,31 +83,16 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
             showProgramsFromTime = bundle.getLong("show_programs_from_time");
         }
 
-        View v = inflater.inflate(R.layout.list_layout, container, false);
-        listView = v.findViewById(R.id.item_list);
-        return v;
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        activity = getActivity();
-        if (activity instanceof ToolbarInterface) {
-            toolbarInterface = (ToolbarInterface) activity;
-        }
-        if (activity instanceof FragmentStatusInterface) {
-            fragmentStatusInterface = (FragmentStatusInterface) activity;
-        }
-
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         adapter = new ChannelListAdapter(activity, new ArrayList<>());
-        listView.setAdapter(adapter);
+        setListAdapter(adapter);
+        getListView().setFastScrollEnabled(true);
+        getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
         menuUtils = new MenuUtils(getActivity());
 
         // Inform the activity when a channel has been selected.
-        listView.setOnItemClickListener(new OnItemClickListener() {
+        getListView().setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 final Channel ch = adapter.getItem(position);
@@ -122,7 +107,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
         // Disable the context menu when the channels are shown only. The
         // functionality behind the context menu shall not be available when the
         // program guide is displayed
-        registerForContextMenu(listView);
+        registerForContextMenu(getListView());
 
         // Enable the action bar menu
         setHasOptionsMenu(true);
@@ -529,8 +514,8 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
 
     @Override
     public void setSelection(final int position, final int offset) {
-        if (listView != null && listView.getCount() > position && position >= 0) {
-            listView.setSelectionFromTop(position, offset);
+        if (getListView().getCount() > position && position >= 0) {
+            getListView().setSelectionFromTop(position, offset);
         }
     }
 

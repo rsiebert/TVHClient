@@ -6,16 +6,14 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.Fragment;
+import android.support.v4.app.ListFragment;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
@@ -47,16 +45,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class ProgramListFragment extends Fragment implements HTSListener, FragmentControlInterface {
+public class ProgramListFragment extends ListFragment implements HTSListener, FragmentControlInterface {
 
     private final static String TAG = ProgramListFragment.class.getSimpleName();
 
     private Activity activity;
     private ToolbarInterface toolbarInterface;
     private FragmentStatusInterface fragmentStatusInterface;
-
     private ProgramListAdapter adapter;
-    private ListView listView;
     private Channel channel;
     private boolean isDualPane = false;
     private long showProgramsFromTime;
@@ -67,20 +63,6 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
 
     private MenuUtils menuUtils;
     private SharedPreferences sharedPreferences;
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        super.onCreateView(inflater, container, savedInstanceState);
-        // If the view group does not exist, the fragment would not be shown. So
-        // we can return anyway.
-        if (container == null) {
-            return null;
-        }
-
-        View v = inflater.inflate(R.layout.list_layout, container, false);
-        listView = v.findViewById(R.id.item_list);
-        return v;
-    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -110,7 +92,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
 
         menuUtils = new MenuUtils(getActivity());
 
-        listView.setOnItemClickListener(new OnItemClickListener() {
+        getListView().setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (fragmentStatusInterface != null) {
@@ -121,10 +103,12 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
 
         List<Program> list = new ArrayList<>();
         adapter = new ProgramListAdapter(activity, list);
-        listView.setAdapter(adapter);
+        setListAdapter(adapter);
+        getListView().setFastScrollEnabled(true);
+        getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
         setHasOptionsMenu(true);
-        registerForContextMenu(listView);
+        registerForContextMenu(getListView());
     }
 
     /**
@@ -132,7 +116,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
      * of the program list has been reached.
      */
     private void enableScrollListener() {
-        listView.setOnScrollListener(new OnScrollListener() {
+        getListView().setOnScrollListener(new OnScrollListener() {
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
                 // Enable loading when the user has scrolled pretty much to the end of the list
@@ -236,7 +220,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
     public void onPause() {
         super.onPause();
         TVHClientApplication.getInstance().removeListener(this);
-        listView.setOnScrollListener(null);
+        getListView().setOnScrollListener(null);
     }
 
     @Override
@@ -495,8 +479,8 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
     }
     @Override
     public void setSelection(int position, int index) {
-        if (listView != null && listView.getCount() > position && position >= 0) {
-            listView.setSelectionFromTop(position, index);
+        if (getListView().getCount() > position && position >= 0) {
+            getListView().setSelectionFromTop(position, index);
         }
     }
 
