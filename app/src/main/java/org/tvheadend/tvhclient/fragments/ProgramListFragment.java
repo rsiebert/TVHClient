@@ -76,11 +76,15 @@ public class ProgramListFragment extends ListFragment implements HTSListener, Fr
             fragmentStatusInterface = (FragmentStatusInterface) activity;
         }
 
+        // Check to see if we have a frame in which to embed the details
+        // fragment directly in the containing UI.
+        View detailsFrame = getActivity().findViewById(R.id.right_fragment);
+        isDualPane = detailsFrame != null && detailsFrame.getVisibility() == View.VISIBLE;
+
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         Bundle bundle = getArguments();
         if (bundle != null) {
             channel = DataStorage.getInstance().getChannelFromArray(bundle.getInt("channelId", 0));
-            isDualPane = bundle.getBoolean("dual_pane", false);
             showProgramsFromTime = bundle.getLong("show_programs_from_time", new Date().getTime());
         }
 

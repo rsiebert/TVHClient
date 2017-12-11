@@ -53,11 +53,10 @@ public class RecordingListFragment extends ListFragment implements HTSListener, 
             fragmentStatusInterface = (FragmentStatusInterface) activity;
         }
 
-        // Get the passed argument so we know which recording type to display
-        Bundle bundle = getArguments();
-        if (bundle != null) {
-            isDualPane  = bundle.getBoolean("dual_pane", false);
-        }
+        // Check to see if we have a frame in which to embed the details
+        // fragment directly in the containing UI.
+        View detailsFrame = getActivity().findViewById(R.id.right_fragment);
+        isDualPane = detailsFrame != null && detailsFrame.getVisibility() == View.VISIBLE;
 
         adapter = new RecordingListAdapter(activity, new ArrayList<>());
         setListAdapter(adapter);

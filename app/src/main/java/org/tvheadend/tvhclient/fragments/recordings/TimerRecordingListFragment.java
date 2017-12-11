@@ -56,10 +56,10 @@ public class TimerRecordingListFragment extends ListFragment implements HTSListe
             fragmentStatusInterface = (FragmentStatusInterface) activity;
         }
 
-        Bundle bundle = getArguments();
-        if (bundle != null) {
-            isDualPane  = bundle.getBoolean("dual_pane", false);
-        }
+        // Check to see if we have a frame in which to embed the details
+        // fragment directly in the containing UI.
+        View detailsFrame = getActivity().findViewById(R.id.right_fragment);
+        isDualPane = detailsFrame != null && detailsFrame.getVisibility() == View.VISIBLE;
 
         adapter = new TimerRecordingListAdapter(activity, new ArrayList<>());
         setListAdapter(adapter);

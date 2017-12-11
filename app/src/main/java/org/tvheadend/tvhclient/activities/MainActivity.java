@@ -162,9 +162,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     // Contains the information about the current connection state.
     private String connectionStatus = Constants.ACTION_CONNECTION_STATE_UNKNOWN;
 
-    // The list of available menu items in the navigation drawer
-    //private String[] menuItems;
-
     private TextView actionBarTitle;
     private TextView actionBarSubtitle;
     private ImageView actionBarIcon;
@@ -231,6 +228,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 .withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
                     @Override
                     public boolean onProfileChanged(View view, IProfile profile, boolean currentProfile) {
+                        result.closeDrawer();
                         if (!currentProfile) {
                             handleDrawerProfileSelected(profile);
                         }
@@ -352,7 +350,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             Utils.connect(MainActivity.this, true);
 
             updateDrawerItemBadges();
-            updateDrawerHeader();
         }
     }
 
@@ -397,7 +394,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 // Show the channel list fragment. If the information to show only
                 // the channels as required in the program guide is not passed then
                 // the full channel list fragment will be shown.
-                bundle.putBoolean("dual_pane", isDualPane);
                 bundle.putInt("channel_time_selection", channelTimeSelection);
                 bundle.putLong("show_programs_from_time", showProgramsFromTime);
                 showFragment(ChannelListFragment.class.getName(), R.id.main_fragment, bundle);
@@ -408,27 +404,21 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 showFragment(ProgramGuidePagerFragment.class.getName(), R.id.main_fragment, null);
                 break;
             case MENU_COMPLETED_RECORDINGS:
-                bundle.putBoolean("dual_pane", isDualPane);
                 showFragment(CompletedRecordingListFragment.class.getName(), R.id.main_fragment, bundle);
                 break;
             case MENU_SCHEDULED_RECORDINGS:
-                bundle.putBoolean("dual_pane", isDualPane);
                 showFragment(ScheduledRecordingListFragment.class.getName(), R.id.main_fragment, bundle);
                 break;
             case MENU_SERIES_RECORDINGS:
-                bundle.putBoolean("dual_pane", isDualPane);
                 showFragment(SeriesRecordingListFragment.class.getName(), R.id.main_fragment, bundle);
                 break;
             case MENU_TIMER_RECORDINGS:
-                bundle.putBoolean("dual_pane", isDualPane);
                 showFragment(TimerRecordingListFragment.class.getName(), R.id.main_fragment, bundle);
                 break;
             case MENU_FAILED_RECORDINGS:
-                bundle.putBoolean("dual_pane", isDualPane);
                 showFragment(FailedRecordingListFragment.class.getName(), R.id.main_fragment, bundle);
                 break;
             case MENU_REMOVED_RECORDINGS:
-                bundle.putBoolean("dual_pane", isDualPane);
                 showFragment(RemovedRecordingListFragment.class.getName(), R.id.main_fragment, bundle);
                 break;
             case MENU_STATUS:
@@ -559,19 +549,23 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     private void updateDrawerHeader() {
         // Remove old profiles from the header
-        List<IProfile> profileList = headerResult.getProfiles();
-        for (IProfile profile : profileList) {
-            headerResult.removeProfile(profile);
+        List<Long> profileIdList = new ArrayList<>();
+        for (IProfile profile : headerResult.getProfiles()) {
+            profileIdList.add(profile.getIdentifier());
+        }
+        for (Long id : profileIdList) {
+            headerResult.removeProfileByIdentifier(id);
         }
         // Add the existing connections as new profiles
         final List<Connection> connectionList = databaseHelper.getConnections();
         if (connectionList.size() > 0) {
             for (Connection c : connectionList) {
-                headerResult.addProfiles(new ProfileDrawerItem().withSetSelected(c.selected).withIdentifier(c.id).withName(c.name).withEmail(c.address));
+                headerResult.addProfiles(new ProfileDrawerItem().withIdentifier(c.id).withName(c.name).withEmail(c.address));
             }
         } else {
             headerResult.addProfiles(new ProfileDrawerItem().withName(R.string.no_connection_available));
         }
+        headerResult.setActiveProfile(databaseHelper.getSelectedConnection().id);
     }
 
     /**

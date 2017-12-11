@@ -73,12 +73,16 @@ public class ChannelListFragment extends ListFragment implements HTSListener, Fr
             fragmentStatusInterface = (FragmentStatusInterface) activity;
         }
 
+        // Check to see if we have a frame in which to embed the details
+        // fragment directly in the containing UI.
+        View detailsFrame = getActivity().findViewById(R.id.right_fragment);
+        isDualPane = detailsFrame != null && detailsFrame.getVisibility() == View.VISIBLE;
+
         // Check if only channels without any program information shall be
         // visible. This is only the case when this fragment is part of the
         // program guide view.
         Bundle bundle = getArguments();
         if (bundle != null) {
-            isDualPane = bundle.getBoolean("dual_pane", false);
             channelTimeSelection = bundle.getInt("channel_time_selection");
             showProgramsFromTime = bundle.getLong("show_programs_from_time");
         }
