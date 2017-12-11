@@ -65,8 +65,6 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
     // stopped loading shall be allowed
     private boolean allowLoading = false;
 
-    private TVHClientApplication app;
-    private DataStorage dataStorage;
     private MenuUtils menuUtils;
     private SharedPreferences sharedPreferences;
 
@@ -89,9 +87,6 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
         super.onActivityCreated(savedInstanceState);
 
         activity = getActivity();
-        app = TVHClientApplication.getInstance();
-        dataStorage = DataStorage.getInstance();
-
         if (activity instanceof ToolbarInterface) {
             toolbarInterface = (ToolbarInterface) activity;
         }
@@ -102,7 +97,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         Bundle bundle = getArguments();
         if (bundle != null) {
-            channel = dataStorage.getChannelFromArray(bundle.getInt("channelId", 0));
+            channel = DataStorage.getInstance().getChannelFromArray(bundle.getInt("channelId", 0));
             isDualPane = bundle.getBoolean("dual_pane", false);
             showProgramsFromTime = bundle.getLong("show_programs_from_time", new Date().getTime());
         }
@@ -162,8 +157,8 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
     @Override
     public void onResume() {
         super.onResume();
-        app.addListener(this);
-        if (!dataStorage.isLoading()) {
+        TVHClientApplication.getInstance().addListener(this);
+        if (!DataStorage.getInstance().isLoading()) {
             populateList();
         }
     }
@@ -240,7 +235,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
     @Override
     public void onPause() {
         super.onPause();
-        app.removeListener(this);
+        TVHClientApplication.getInstance().removeListener(this);
         listView.setOnScrollListener(null);
     }
 
@@ -286,7 +281,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
             return true;
 
         case R.id.menu_record_remove:
-            Recording rec = dataStorage.getRecordingFromArray(program.dvrId);
+            Recording rec = DataStorage.getInstance().getRecordingFromArray(program.dvrId);
             if (rec != null) {
                 if (rec.isRecording()) {
                     menuUtils.handleMenuStopRecordingSelection(rec.id, rec.title);
@@ -304,9 +299,9 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
 
         case R.id.menu_record_once_custom_profile:
             // Create the list of available recording profiles that the user can select from
-            String[] dvrConfigList = new String[dataStorage.getDvrConfigs().size()];
-            for (int i = 0; i < dataStorage.getDvrConfigs().size(); i++) {
-                dvrConfigList[i] = dataStorage.getDvrConfigs().get(i).name;
+            String[] dvrConfigList = new String[DataStorage.getInstance().getDvrConfigs().size()];
+            for (int i = 0; i < DataStorage.getInstance().getDvrConfigs().size(); i++) {
+                dvrConfigList[i] = DataStorage.getInstance().getDvrConfigs().get(i).name;
             }
 
             // Get the selected recording profile to highlight the
@@ -338,7 +333,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
                     Intent intent = new Intent(activity, HTSService.class);
                     intent.setAction("addDvrEntry");
                     intent.putExtra("eventId", program.eventId);
-                    Channel channel = dataStorage.getChannelFromArray(program.channelId);
+                    Channel channel = DataStorage.getInstance().getChannelFromArray(program.channelId);
                     intent.putExtra("channelId", channel.channelId);
                     intent.putExtra("configName", dcList[which]);
                     activity.startService(intent);
@@ -353,7 +348,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
             return true;
 
         case R.id.menu_play:
-            Channel channel = dataStorage.getChannelFromArray(program.channelId);
+            Channel channel = DataStorage.getInstance().getChannelFromArray(program.channelId);
             menuUtils.handleMenuPlaySelection(channel.channelId, -1);
             return true;
 
@@ -437,7 +432,7 @@ public class ProgramListFragment extends Fragment implements HTSListener, Fragme
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
                         Program p = (Program) obj;
-                        Channel channel = dataStorage.getChannelFromArray(p.channelId);
+                        Channel channel = DataStorage.getInstance().getChannelFromArray(p.channelId);
                         if (channel != null) {
                             adapter.add(p);
                             adapter.notifyDataSetChanged();

@@ -9,7 +9,9 @@ import android.view.View;
 import android.widget.AdapterView;
 
 import org.tvheadend.tvhclient.Constants;
+import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.model.Recording;
 
 import java.util.Map;
@@ -28,8 +30,8 @@ public class ScheduledRecordingListFragment extends RecordingListFragment {
     @Override
     public void onResume() {
         super.onResume();
-        app.addListener(this);
-        if (!dataStorage.isLoading()) {
+        TVHClientApplication.getInstance().addListener(this);
+        if (!DataStorage.getInstance().isLoading()) {
             populateList();
         }
     }
@@ -37,7 +39,7 @@ public class ScheduledRecordingListFragment extends RecordingListFragment {
     @Override
     public void onPause() {
         super.onPause();
-        app.removeListener(this);
+        TVHClientApplication.getInstance().removeListener(this);
     }
 
     @Override
@@ -62,13 +64,13 @@ public class ScheduledRecordingListFragment extends RecordingListFragment {
 
         // Show the add button to create a custom recording only when the
         // application is unlocked
-        (menu.findItem(R.id.menu_add)).setVisible(app.isUnlocked());
+        (menu.findItem(R.id.menu_add)).setVisible(isUnlocked);
 
         // Show the edit button only when the application is unlocked and a
         // recording was selected. Additionally the HTSP version must be at
         // least 20 to assume the server is up to date and contains the required
         // fixes to support this feature.    
-        if (!isDualPane || adapter.getCount() == 0 || !app.isUnlocked()) {
+        if (!isDualPane || adapter.getCount() == 0 || !isUnlocked) {
             (menu.findItem(R.id.menu_edit)).setVisible(false);
         }
 
@@ -94,12 +96,12 @@ public class ScheduledRecordingListFragment extends RecordingListFragment {
             (menu.findItem(R.id.menu_record_remove)).setTitle(R.string.stop);
             (menu.findItem(R.id.menu_record_remove)).setVisible(true);
             (menu.findItem(R.id.menu_play)).setVisible(true);
-            (menu.findItem(R.id.menu_edit)).setVisible(app.isUnlocked());
+            (menu.findItem(R.id.menu_edit)).setVisible(isUnlocked);
         }
 
         if (rec != null && rec.isScheduled()) {
             (menu.findItem(R.id.menu_record_remove)).setVisible(true);
-            (menu.findItem(R.id.menu_edit)).setVisible(app.isUnlocked());
+            (menu.findItem(R.id.menu_edit)).setVisible(isUnlocked);
         }
     }
 
@@ -110,7 +112,7 @@ public class ScheduledRecordingListFragment extends RecordingListFragment {
     private void populateList() {
         // Clear the list and add the recordings
         adapter.clear();
-        Map<Integer, Recording> map = dataStorage.getRecordingsFromArray();
+        Map<Integer, Recording> map = DataStorage.getInstance().getRecordingsFromArray();
         for (Recording recording : map.values()) {
             if (recording.isScheduled()) {
                 adapter.add(recording);

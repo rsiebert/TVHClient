@@ -16,15 +16,13 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
-import org.tvheadend.tvhclient.DataStorage;
-import org.tvheadend.tvhclient.Logger;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.adapter.RecordingListAdapter;
-import org.tvheadend.tvhclient.interfaces.ToolbarInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
+import org.tvheadend.tvhclient.interfaces.ToolbarInterface;
 import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.utils.MenuUtils;
 
@@ -40,12 +38,9 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
     protected FragmentStatusInterface fragmentStatusInterface;
     protected RecordingListAdapter adapter;
     private ListView listView;
+    boolean isUnlocked;
 
     protected boolean isDualPane;
-
-    protected TVHClientApplication app;
-    private Logger logger;
-    protected DataStorage dataStorage;
     private MenuUtils menuUtils;
 
     @Override
@@ -67,9 +62,6 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
         super.onActivityCreated(savedInstanceState);
 
         activity = (AppCompatActivity) getActivity();
-        app = TVHClientApplication.getInstance();
-        logger = Logger.getInstance();
-        dataStorage = DataStorage.getInstance();
         menuUtils = new MenuUtils(getActivity());
 
         if (activity instanceof ToolbarInterface) {
@@ -104,6 +96,12 @@ public class RecordingListFragment extends Fragment implements HTSListener, Frag
 
         setHasOptionsMenu(true);
         registerForContextMenu(listView);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        isUnlocked = TVHClientApplication.getInstance().isUnlocked();
     }
 
     @Override

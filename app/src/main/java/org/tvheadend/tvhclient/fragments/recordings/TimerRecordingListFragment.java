@@ -43,9 +43,6 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
     private TimerRecordingListAdapter adapter;
     private ListView listView;
     private boolean isDualPane;
-
-    private TVHClientApplication app;
-    private DataStorage dataStorage;
     private MenuUtils menuUtils;
 
     @Override
@@ -67,8 +64,6 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
         super.onActivityCreated(savedInstanceState);
 
         activity = (AppCompatActivity) getActivity();
-        app = TVHClientApplication.getInstance();
-        dataStorage = DataStorage.getInstance();
         menuUtils = new MenuUtils(getActivity());
 
         if (activity instanceof ToolbarInterface) {
@@ -114,8 +109,8 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
     @Override
     public void onResume() {
         super.onResume();
-        app.addListener(this);
-        if (!dataStorage.isLoading()) {
+        TVHClientApplication.getInstance().addListener(this);
+        if (!DataStorage.getInstance().isLoading()) {
             populateList();
         }
     }
@@ -123,7 +118,7 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
     @Override
     public void onPause() {
         super.onPause();
-        app.removeListener(this);
+        TVHClientApplication.getInstance().removeListener(this);
     }
 
     @Override
@@ -149,7 +144,7 @@ public class TimerRecordingListFragment extends Fragment implements HTSListener,
     private void populateList() {
         // Clear the list and add the recordings
         adapter.clear();
-        Object[] trecList = dataStorage.getTimerRecordingsFromArray().values().toArray();
+        Object[] trecList = DataStorage.getInstance().getTimerRecordingsFromArray().values().toArray();
         for (Object trec : trecList) {
             adapter.add((TimerRecording) trec);
         }

@@ -59,15 +59,12 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
 
     // Enables scrolling when the user has touch the screen and starts
     // scrolling. When the user is done, scrolling will be disabled to prevent
-    // unwanted calls to the interface. 
-    private boolean enableScrolling = false;
+    // unwanted calls to the interface.
     private boolean isDualPane = false;
-    private TVHClientApplication app = null;
     private Runnable channelUpdateTask;
     private final Handler channelUpdateHandler = new Handler();
     private int channelTimeSelection;
     private long showProgramsFromTime;
-    private DataStorage dataStorage;
     private MenuUtils menuUtils;
     private SharedPreferences sharedPreferences;
 
@@ -98,10 +95,8 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        activity = getActivity();
-        app = TVHClientApplication.getInstance();
-        dataStorage = DataStorage.getInstance();
 
+        activity = getActivity();
         if (activity instanceof ToolbarInterface) {
             toolbarInterface = (ToolbarInterface) activity;
         }
@@ -168,7 +163,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
             (menu.findItem(R.id.menu_play)).setVisible(false);
         }
 
-        (menu.findItem(R.id.menu_timeframe)).setVisible(app.isUnlocked());
+        (menu.findItem(R.id.menu_timeframe)).setVisible(TVHClientApplication.getInstance().isUnlocked());
 
         // Prevent the channel tag menu item from going into the overlay menu
         if (prefs.getBoolean("visibleMenuIconTagsPref", true)) {
@@ -255,7 +250,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
                 return true;
 
             case R.id.menu_record_remove:
-                Recording rec = dataStorage.getRecordingFromArray(program.dvrId);
+                Recording rec = DataStorage.getInstance().getRecordingFromArray(program.dvrId);
                 if (rec != null) {
                     if (rec.isRecording()) {
                         menuUtils.handleMenuStopRecordingSelection(rec.id, rec.title);
@@ -311,7 +306,72 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
 
         if (p != null) {
             menu.setHeaderTitle(p.title);
-            Utils.setProgramMenu(app, menu, p);
+            setProgramMenu(menu, p);
+        }
+    }
+
+    /**
+     * Shows or hides certain items from the program menu. This depends on the
+     * current state of the program.
+     *
+     * @param menu    Menu with all menu items
+     * @param program Program
+     */
+    public void setProgramMenu(final Menu menu, final Program program) {
+        MenuItem recordOnceMenuItem = menu.findItem(R.id.menu_record_once);
+        MenuItem recordOnceCustomProfileMenuItem = menu.findItem(R.id.menu_record_once_custom_profile);
+        MenuItem recordSeriesMenuItem = menu.findItem(R.id.menu_record_series);
+        MenuItem recordRemoveMenuItem = menu.findItem(R.id.menu_record_remove);
+        MenuItem playMenuItem = menu.findItem(R.id.menu_play);
+        MenuItem searchMenuItemEpg = menu.findItem(R.id.menu_search_epg);
+        MenuItem searchMenuItemImdb = menu.findItem(R.id.menu_search_imdb);
+
+        // Disable these menus as a default
+        recordOnceMenuItem.setVisible(false);
+        recordOnceCustomProfileMenuItem.setVisible(false);
+        recordSeriesMenuItem.setVisible(false);
+        recordRemoveMenuItem.setVisible(false);
+        searchMenuItemEpg.setVisible(false);
+        searchMenuItemImdb.setVisible(false);
+        playMenuItem.setVisible(false);
+
+        // Exit if the recording is not valid
+        if (program == null) {
+            return;
+        }
+
+        // Allow searching the program
+        searchMenuItemEpg.setVisible(true);
+        searchMenuItemImdb.setVisible(true);
+
+        // Show the play menu item when the current
+        // time is between the program start and end time
+        long currentTime = new Date().getTime();
+        if (currentTime > program.start && currentTime < program.stop) {
+            playMenuItem.setVisible(true);
+        }
+        Recording rec = DataStorage.getInstance().getRecordingFromArray(program.dvrId);
+        if (rec == null || (rec != null && !rec.isRecording() && !rec.isScheduled())) {
+            // Show the record menu
+            recordOnceMenuItem.setVisible(true);
+            recordOnceCustomProfileMenuItem.setVisible(TVHClientApplication.getInstance().isUnlocked());
+            if (DataStorage.getInstance().getProtocolVersion() >= Constants.MIN_API_VERSION_SERIES_RECORDINGS) {
+                recordSeriesMenuItem.setVisible(true);
+            }
+        } else if (rec.isRecording()) {
+            // Show the play and stop menu
+            playMenuItem.setVisible(true);
+            recordRemoveMenuItem.setTitle(R.string.stop);
+            recordRemoveMenuItem.setVisible(true);
+
+        } else if (rec.isScheduled()) {
+            recordRemoveMenuItem.setTitle(R.string.cancel);
+            recordRemoveMenuItem.setVisible(true);
+
+        } else {
+            // Show the delete menu
+            recordRemoveMenuItem.setTitle(R.string.remove);
+            recordRemoveMenuItem.setVisible(true);
         }
     }
 
@@ -367,8 +427,8 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
     @Override
     public void onResume() {
         super.onResume();
-        app.addListener(this);
-        if (!dataStorage.isLoading()) {
+        TVHClientApplication.getInstance().addListener(this);
+        if (!DataStorage.getInstance().isLoading()) {
             populateList();
         }
 
@@ -380,7 +440,7 @@ public class ChannelListFragment extends Fragment implements HTSListener, Fragme
     @Override
     public void onPause() {
         super.onPause();
-        app.removeListener(this);
+        TVHClientApplication.getInstance().removeListener(this);
         channelUpdateHandler.removeCallbacks(channelUpdateTask);
     }
 

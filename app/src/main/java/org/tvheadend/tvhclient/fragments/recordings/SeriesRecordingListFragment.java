@@ -43,10 +43,8 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
     private SeriesRecordingListAdapter adapter;
     private ListView listView;
     private boolean isDualPane;
-
-    private TVHClientApplication app;
-    private DataStorage dataStorage;
     private MenuUtils menuUtils;
+    private boolean isUnlocked;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -67,8 +65,6 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
         super.onActivityCreated(savedInstanceState);
 
         activity = (AppCompatActivity) getActivity();
-        app = TVHClientApplication.getInstance();
-        dataStorage = DataStorage.getInstance();
         menuUtils = new MenuUtils(getActivity());
 
         if (activity instanceof ToolbarInterface) {
@@ -115,8 +111,9 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
     @Override
     public void onResume() {
         super.onResume();
-        app.addListener(this);
-        if (!dataStorage.isLoading()) {
+        TVHClientApplication.getInstance().addListener(this);
+        isUnlocked = TVHClientApplication.getInstance().isUnlocked();
+        if (!DataStorage.getInstance().isLoading()) {
             populateList();
         }
     }
@@ -124,7 +121,7 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
     @Override
     public void onPause() {
         super.onPause();
-        app.removeListener(this);
+        TVHClientApplication.getInstance().removeListener(this);
     }
 
     @Override
@@ -142,9 +139,9 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
         }
 
         // Show the add button only when the application is unlocked
-        (menu.findItem(R.id.menu_add)).setVisible(app.isUnlocked());
+        (menu.findItem(R.id.menu_add)).setVisible(isUnlocked);
 
-        if (!isDualPane || adapter.getCount() == 0 || !app.isUnlocked()) {
+        if (!isDualPane || adapter.getCount() == 0 || !isUnlocked) {
             (menu.findItem(R.id.menu_edit)).setVisible(false);
         }
     }
@@ -156,7 +153,7 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
     private void populateList() {
         // Clear the list and add the recordings
         adapter.clear();
-        Object[] trecList = dataStorage.getSeriesRecordingsFromArray().values().toArray();
+        Object[] trecList = DataStorage.getInstance().getSeriesRecordingsFromArray().values().toArray();
         for (Object trec : trecList) {
             adapter.add((SeriesRecording) trec);
         }
@@ -223,7 +220,7 @@ public class SeriesRecordingListFragment extends Fragment implements HTSListener
         super.onCreateContextMenu(menu, v, menuInfo);
         activity.getMenuInflater().inflate(R.menu.series_recording_context_menu, menu);
 
-        if (!app.isUnlocked()) {
+        if (!isUnlocked) {
             (menu.findItem(R.id.menu_edit)).setVisible(false);
         }
 

@@ -8,7 +8,9 @@ import android.view.Menu;
 import android.view.View;
 
 import org.tvheadend.tvhclient.Constants;
+import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
 import org.tvheadend.tvhclient.model.Recording;
 
@@ -28,8 +30,8 @@ public class FailedRecordingListFragment extends RecordingListFragment implement
     @Override
     public void onResume() {
         super.onResume();
-        app.addListener(this);
-        if (!dataStorage.isLoading()) {
+        TVHClientApplication.getInstance().addListener(this);
+        if (!DataStorage.getInstance().isLoading()) {
             populateList();
         }
     }
@@ -37,7 +39,7 @@ public class FailedRecordingListFragment extends RecordingListFragment implement
     @Override
     public void onPause() {
         super.onPause();
-        app.removeListener(this);
+        TVHClientApplication.getInstance().removeListener(this);
     }
 
     @Override
@@ -74,7 +76,7 @@ public class FailedRecordingListFragment extends RecordingListFragment implement
     private void populateList() {
         // Clear the list and add the recordings
         adapter.clear();
-        Map<Integer, Recording> map = dataStorage.getRecordingsFromArray();
+        Map<Integer, Recording> map = DataStorage.getInstance().getRecordingsFromArray();
         for (Recording recording : map.values()) {
             if (recording.isFailed() || recording.isAborted() || recording.isMissed()) {
                 adapter.add(recording);

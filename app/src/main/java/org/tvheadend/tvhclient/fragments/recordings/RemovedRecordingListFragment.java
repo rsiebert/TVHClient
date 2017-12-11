@@ -8,7 +8,9 @@ import android.view.Menu;
 import android.view.View;
 
 import org.tvheadend.tvhclient.Constants;
+import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.model.Recording;
 
 import java.util.Map;
@@ -27,8 +29,8 @@ public class RemovedRecordingListFragment extends RecordingListFragment {
     @Override
     public void onResume() {
         super.onResume();
-        app.addListener(this);
-        if (!dataStorage.isLoading()) {
+        TVHClientApplication.getInstance().addListener(this);
+        if (!DataStorage.getInstance().isLoading()) {
             populateList();
         }
     }
@@ -36,7 +38,7 @@ public class RemovedRecordingListFragment extends RecordingListFragment {
     @Override
     public void onPause() {
         super.onPause();
-        app.removeListener(this);
+        TVHClientApplication.getInstance().removeListener(this);
     }
 
     @Override
@@ -73,7 +75,7 @@ public class RemovedRecordingListFragment extends RecordingListFragment {
     private void populateList() {
         // Clear the list and add the recordings
         adapter.clear();
-        Map<Integer, Recording> map = dataStorage.getRecordingsFromArray();
+        Map<Integer, Recording> map = DataStorage.getInstance().getRecordingsFromArray();
         for (Recording recording : map.values()) {
             if (recording.isRemoved()) {
                 adapter.add(recording);
