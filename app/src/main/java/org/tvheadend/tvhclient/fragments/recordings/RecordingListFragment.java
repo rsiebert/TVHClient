@@ -4,8 +4,7 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.ListFragment;
 import android.support.v7.app.AppCompatActivity;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
+import android.support.v7.widget.PopupMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -27,7 +26,7 @@ import org.tvheadend.tvhclient.utils.MenuUtils;
 import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class RecordingListFragment extends ListFragment implements HTSListener, FragmentControlInterface {
+public class RecordingListFragment extends ListFragment implements HTSListener, FragmentControlInterface, OnItemClickListener, AdapterView.OnItemLongClickListener {
 
     protected static String TAG = RecordingListFragment.class.getSimpleName();
 
@@ -61,24 +60,11 @@ public class RecordingListFragment extends ListFragment implements HTSListener, 
         adapter = new RecordingListAdapter(activity, new ArrayList<>());
         setListAdapter(adapter);
         getListView().setFastScrollEnabled(true);
+        getListView().setOnItemClickListener(this);
+        getListView().setOnItemLongClickListener(this);
         getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
-        // Set the listener to show the recording details activity when the user
-        // has selected a recording
-        getListView().setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Recording rec = adapter.getItem(position);
-                if (fragmentStatusInterface != null) {
-                    fragmentStatusInterface.onListItemSelected(position, rec, TAG);
-                }
-                adapter.setPosition(position);
-                adapter.notifyDataSetChanged();
-            }
-        });
-
         setHasOptionsMenu(true);
-        registerForContextMenu(getListView());
     }
 
     @Override
@@ -98,48 +84,48 @@ public class RecordingListFragment extends ListFragment implements HTSListener, 
     public boolean onOptionsItemSelected(MenuItem item) {
         final Recording rec = adapter.getSelectedItem();
         switch (item.getItemId()) {
-        case R.id.menu_play:
-            menuUtils.handleMenuPlaySelection(-1, rec.id);
-            return true;
+            case R.id.menu_play:
+                menuUtils.handleMenuPlaySelection(-1, rec.id);
+                return true;
 
-        case R.id.menu_download:
-            menuUtils.handleMenuDownloadSelection(rec.id);
-            return true;
+            case R.id.menu_download:
+                menuUtils.handleMenuDownloadSelection(rec.id);
+                return true;
 
-        case R.id.menu_add:
-            // Create the fragment and show it as a dialog.
-            DialogFragment addFragment = RecordingAddFragment.newInstance();
-            addFragment.show(activity.getSupportFragmentManager(), "dialog");
-            return true;
+            case R.id.menu_add:
+                // Create the fragment and show it as a dialog.
+                DialogFragment addFragment = RecordingAddFragment.newInstance();
+                addFragment.show(activity.getSupportFragmentManager(), "dialog");
+                return true;
 
-        case R.id.menu_edit:
-            // Create the fragment and show it as a dialog.
-            DialogFragment editFragment = RecordingAddFragment.newInstance();
-            Bundle bundle = new Bundle();
-            bundle.putInt("dvrId", adapter.getSelectedItem().id);
-            editFragment.setArguments(bundle);
-            editFragment.show(activity.getSupportFragmentManager(), "dialog");
-            return true;
+            case R.id.menu_edit:
+                // Create the fragment and show it as a dialog.
+                DialogFragment editFragment = RecordingAddFragment.newInstance();
+                Bundle bundle = new Bundle();
+                bundle.putInt("dvrId", adapter.getSelectedItem().id);
+                editFragment.setArguments(bundle);
+                editFragment.show(activity.getSupportFragmentManager(), "dialog");
+                return true;
 
-        case R.id.menu_record_remove:
-            if (rec != null) {
-                if (rec.isRecording()) {
-                    menuUtils.handleMenuStopRecordingSelection(rec.id, rec.title);
-                } else if (rec.isScheduled()) {
-                    menuUtils.handleMenuCancelRecordingSelection(rec.id, rec.title);
-                } else {
-                    menuUtils.handleMenuRemoveRecordingSelection(rec.id, rec.title);
+            case R.id.menu_record_remove:
+                if (rec != null) {
+                    if (rec.isRecording()) {
+                        menuUtils.handleMenuStopRecordingSelection(rec.id, rec.title);
+                    } else if (rec.isScheduled()) {
+                        menuUtils.handleMenuCancelRecordingSelection(rec.id, rec.title);
+                    } else {
+                        menuUtils.handleMenuRemoveRecordingSelection(rec.id, rec.title);
+                    }
                 }
-            }
-            return true;
+                return true;
 
-        case R.id.menu_record_remove_all:
-            CopyOnWriteArrayList<Recording> list = new CopyOnWriteArrayList<>(adapter.getAllItems());
-            menuUtils.handleMenuRemoveAllRecordingsSelection(list);
-            return true;
+            case R.id.menu_record_remove_all:
+                CopyOnWriteArrayList<Recording> list = new CopyOnWriteArrayList<>(adapter.getAllItems());
+                menuUtils.handleMenuRemoveAllRecordingsSelection(list);
+                return true;
 
-        default:
-            return super.onOptionsItemSelected(item);
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 
@@ -147,95 +133,6 @@ public class RecordingListFragment extends ListFragment implements HTSListener, 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.recording_menu, menu);
-    }
-
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-        activity.getMenuInflater().inflate(R.menu.recording_context_menu, menu);
-
-        // Get the selected program from the list where the context menu was opened
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-        Recording rec = adapter.getItem(info.position);
-
-        // Hide these menus as a default, the required ones will be made visible
-        // in the derived classes
-        (menu.findItem(R.id.menu_record_remove)).setVisible(false);
-        (menu.findItem(R.id.menu_play)).setVisible(false);
-        (menu.findItem(R.id.menu_edit)).setVisible(false);
-        (menu.findItem(R.id.menu_download)).setVisible(false);
-
-        // These are always visible if the recording exists
-        (menu.findItem(R.id.menu_search_epg)).setVisible(rec != null);
-        (menu.findItem(R.id.menu_search_imdb)).setVisible(rec != null);
-
-        if (rec != null) {
-            if (rec.isRecording()) {
-                (menu.findItem(R.id.menu_record_remove)).setTitle(R.string.stop);
-            }
-            menu.setHeaderTitle(rec.title);
-        }
-    }
-
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        // The context menu is triggered for all fragments that are in a
-        // fragment pager. Do nothing for invisible fragments.
-        if (!getUserVisibleHint()) {
-            return super.onContextItemSelected(item);
-        }
-        // Get the selected program from the list where the context menu was opened
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-
-        // Check for a valid adapter size and objects
-        if (info == null || adapter == null || adapter.getCount() <= info.position) {
-            return super.onContextItemSelected(item);
-        }
-
-        final Recording rec = adapter.getItem(info.position);
-        if (rec == null) {
-            return super.onContextItemSelected(item);
-        }
-
-        switch (item.getItemId()) {
-        case R.id.menu_search_imdb:
-            menuUtils.handleMenuSearchWebSelection(rec.title);
-            return true;
-
-        case R.id.menu_search_epg:
-            menuUtils.handleMenuSearchEpgSelection(rec.title);
-            return true;
-
-        case R.id.menu_record_remove:
-            if (rec.isRecording()) {
-                menuUtils.handleMenuStopRecordingSelection(rec.id, rec.title);
-            } else if (rec.isScheduled()) {
-                menuUtils.handleMenuCancelRecordingSelection(rec.id, rec.title);
-            } else {
-                menuUtils.handleMenuRemoveRecordingSelection(rec.id, rec.title);
-            }
-            return true;
-
-        case R.id.menu_play:
-            menuUtils.handleMenuPlaySelection(-1, rec.id);
-            return true;
-
-        case R.id.menu_download:
-            menuUtils.handleMenuDownloadSelection(rec.id);
-            return true;
-
-        case R.id.menu_edit:
-            // Create the fragment to edit a recording but show it as a dialog.
-            DialogFragment df = RecordingAddFragment.newInstance();
-            Bundle bundle = new Bundle();
-            bundle.putInt("dvrId", rec.id);
-            df.setArguments(bundle);
-            df.show(activity.getSupportFragmentManager(), "dialog");
-            return true;
-
-        default:
-            return super.onContextItemSelected(item);
-        }
     }
 
     /**
@@ -284,9 +181,9 @@ public class RecordingListFragment extends ListFragment implements HTSListener, 
     /**
      * Sets the selected item and positions the selection y pixels from the top
      * edge of the ListView.
-     * 
+     *
      * @param position Position in the list
-     * @param offset Offset in pixels from the top
+     * @param offset   Offset in pixels from the top
      */
     public void setSelection(int position, int offset) {
         if (getListView().getCount() > position && position >= 0) {
@@ -314,7 +211,7 @@ public class RecordingListFragment extends ListFragment implements HTSListener, 
      * gets selected. When the dual pane mode is active inform the activity that
      * the list item was selected. The activity will then show the details
      * fragment to the selected item in the right side.
-     * 
+     *
      * @param position Position in the list
      */
     public void setInitialSelection(int position) {
@@ -330,5 +227,89 @@ public class RecordingListFragment extends ListFragment implements HTSListener, 
                 }
             }
         }
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+        Recording rec = adapter.getItem(position);
+        if (fragmentStatusInterface != null) {
+            fragmentStatusInterface.onListItemSelected(position, rec, TAG);
+        }
+        adapter.setPosition(position);
+        adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
+        final Recording recording = adapter.getItem(position);
+        if (getActivity() == null || recording == null) {
+            return true;
+        }
+        PopupMenu popupMenu = new PopupMenu(getActivity(), view);
+        popupMenu.getMenuInflater().inflate(R.menu.recording_context_menu, popupMenu.getMenu());
+
+        // Hide menus as a default, the required ones will
+        // be made visible depending on the recording status
+        (popupMenu.getMenu().findItem(R.id.menu_record_remove)).setVisible(false);
+        (popupMenu.getMenu().findItem(R.id.menu_play)).setVisible(false);
+        (popupMenu.getMenu().findItem(R.id.menu_edit)).setVisible(false);
+        (popupMenu.getMenu().findItem(R.id.menu_download)).setVisible(false);
+
+        if (recording.isCompleted()) {
+            popupMenu.getMenu().findItem(R.id.menu_record_remove).setVisible(true);
+            popupMenu.getMenu().findItem(R.id.menu_play).setVisible(true);
+            popupMenu.getMenu().findItem(R.id.menu_download).setVisible(isUnlocked);
+
+        } else if (recording.isScheduled() && !recording.isRecording()) {
+            popupMenu.getMenu().findItem(R.id.menu_record_remove).setVisible(true);
+            popupMenu.getMenu().findItem(R.id.menu_edit).setVisible(isUnlocked);
+
+        } else if (recording.isRecording()) {
+            popupMenu.getMenu().findItem(R.id.menu_record_remove).setTitle(R.string.stop);
+            popupMenu.getMenu().findItem(R.id.menu_record_remove).setVisible(true);
+            popupMenu.getMenu().findItem(R.id.menu_play).setVisible(true);
+            popupMenu.getMenu().findItem(R.id.menu_edit).setVisible(isUnlocked);
+
+        } else if (recording.isFailed() || recording.isRemoved()) {
+            popupMenu.getMenu().findItem(R.id.menu_record_remove).setVisible(true);
+        }
+
+        popupMenu.setOnMenuItemClickListener(item -> {
+            switch (item.getItemId()) {
+                case R.id.menu_search_imdb:
+                    menuUtils.handleMenuSearchWebSelection(recording.title);
+                    return true;
+                case R.id.menu_search_epg:
+                    menuUtils.handleMenuSearchEpgSelection(recording.title);
+                    return true;
+                case R.id.menu_record_remove:
+                    if (recording.isRecording()) {
+                        menuUtils.handleMenuStopRecordingSelection(recording.id, recording.title);
+                    } else if (recording.isScheduled()) {
+                        menuUtils.handleMenuCancelRecordingSelection(recording.id, recording.title);
+                    } else {
+                        menuUtils.handleMenuRemoveRecordingSelection(recording.id, recording.title);
+                    }
+                    return true;
+                case R.id.menu_play:
+                    menuUtils.handleMenuPlaySelection(-1, recording.id);
+                    return true;
+                case R.id.menu_download:
+                    menuUtils.handleMenuDownloadSelection(recording.id);
+                    return true;
+                case R.id.menu_edit:
+                    // Create the fragment to edit a recording but show it as a dialog.
+                    DialogFragment df = RecordingAddFragment.newInstance();
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("dvrId", recording.id);
+                    df.setArguments(bundle);
+                    df.show(activity.getSupportFragmentManager(), "dialog");
+                    return true;
+                default:
+                    return false;
+            }
+        });
+        popupMenu.show();
+        return true;
     }
 }

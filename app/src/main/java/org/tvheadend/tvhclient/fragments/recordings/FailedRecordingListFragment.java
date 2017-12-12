@@ -2,10 +2,7 @@ package org.tvheadend.tvhclient.fragments.recordings;
 
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
-import android.view.View;
 
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DataStorage;
@@ -61,12 +58,6 @@ public class FailedRecordingListFragment extends RecordingListFragment implement
         if (prefs.getBoolean("hideMenuDeleteAllRecordingsPref", false) || adapter.getCount() <= 1) {
             (menu.findItem(R.id.menu_record_remove_all)).setVisible(false);
         }
-    }
-
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-        menu.findItem(R.id.menu_record_remove).setVisible(true);
     }
 
     /**

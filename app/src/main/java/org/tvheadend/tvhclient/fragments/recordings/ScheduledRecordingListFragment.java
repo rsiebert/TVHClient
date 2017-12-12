@@ -2,11 +2,7 @@ package org.tvheadend.tvhclient.fragments.recordings;
 
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
-import android.view.View;
-import android.widget.AdapterView;
 
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DataStorage;
@@ -81,27 +77,6 @@ public class ScheduledRecordingListFragment extends RecordingListFragment {
             if (rec == null || !rec.isRecording()) {
                 (menu.findItem(R.id.menu_play)).setVisible(false);
             }
-        }
-    }
-
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-
-        // Get the selected program from the list where the context menu was opened
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-        Recording rec = adapter.getItem(info.position);
-
-        if (rec != null && rec.isRecording()) {
-            (menu.findItem(R.id.menu_record_remove)).setTitle(R.string.stop);
-            (menu.findItem(R.id.menu_record_remove)).setVisible(true);
-            (menu.findItem(R.id.menu_play)).setVisible(true);
-            (menu.findItem(R.id.menu_edit)).setVisible(isUnlocked);
-        }
-
-        if (rec != null && rec.isScheduled()) {
-            (menu.findItem(R.id.menu_record_remove)).setVisible(true);
-            (menu.findItem(R.id.menu_edit)).setVisible(isUnlocked);
         }
     }
 
