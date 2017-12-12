@@ -267,6 +267,7 @@ public class HTSConnection extends Thread {
                 selector.select(5000);
             } catch (IOException ex) {
                 listener.onError(Constants.ACTION_CONNECTION_STATE_LOST);
+                logger.log(TAG, "run: select " + ex.getMessage());
                 running = false;
                 continue;
             }
@@ -286,6 +287,7 @@ public class HTSConnection extends Thread {
                 socketChannel.register(selector, ops);
 
             } catch (Exception ex) {
+                logger.log(TAG, "run: after select " + ex.getMessage());
                 running = false;
 
             } finally {
