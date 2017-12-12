@@ -38,8 +38,6 @@ public class ProgramGuideChannelListFragment extends Fragment implements HTSList
     private FragmentStatusInterface fragmentStatusInterface;
     private FragmentScrollInterface fragmentScrollInterface;
     private ToolbarInterface toolbarInterface;
-
-    //private ArrayList<ChannelTag> tagList = new ArrayList<>();
     private ProgramGuideChannelListAdapter adapter;
     private ListView listView;
 
