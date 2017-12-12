@@ -1099,12 +1099,17 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 showMessage(msg);
                 break;
             case "dvrEntryAdd":
+            case "dvrEntryUpdate":
             case "dvrEntryDelete":
             case "autorecEntryAdd":
             case "autorecEntryDelete":
             case "timerecEntryAdd":
             case "timerecEntryDelete":
-                updateDrawerItemBadges();
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        updateDrawerItemBadges();
+                    }
+                });
                 break;
         }
     }
