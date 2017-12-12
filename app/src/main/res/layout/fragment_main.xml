@@ -8,8 +8,7 @@
     <FrameLayout
         android:id="@+id/main_fragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="?android:attr/detailsElementBackground" />
+        android:layout_height="match_parent" />
 
 <!--
     <FrameLayout
@@ -25,4 +24,5 @@
         android:layout_weight="0"
         android:background="?attr/FragmentDividerLayoutStyle" />
  -->
+    <!-- android:background="?android:attr/detailsElementBackground" -->
 </LinearLayout>
