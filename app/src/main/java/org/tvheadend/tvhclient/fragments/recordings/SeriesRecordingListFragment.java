@@ -6,8 +6,8 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.ListFragment;
 import android.support.v7.app.AppCompatActivity;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
+import android.support.v7.widget.PopupMenu;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -31,7 +31,7 @@ import org.tvheadend.tvhclient.utils.MenuUtils;
 import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class SeriesRecordingListFragment extends ListFragment implements HTSListener, FragmentControlInterface {
+public class SeriesRecordingListFragment extends ListFragment implements HTSListener, FragmentControlInterface, OnItemClickListener, AdapterView.OnItemLongClickListener {
 
     private static final String TAG = SeriesRecordingListFragment.class.getSimpleName();
 
@@ -65,24 +65,11 @@ public class SeriesRecordingListFragment extends ListFragment implements HTSList
         adapter = new SeriesRecordingListAdapter(activity, new ArrayList<SeriesRecording>());
         setListAdapter(adapter);
         getListView().setFastScrollEnabled(true);
+        getListView().setOnItemClickListener(this);
+        getListView().setOnItemLongClickListener(this);
         getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
-        // Set the listener to show the recording details activity when the user
-        // has selected a recording
-        getListView().setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                SeriesRecording srec = adapter.getItem(position);
-                if (fragmentStatusInterface != null) {
-                    fragmentStatusInterface.onListItemSelected(position, srec, TAG);
-                }
-                adapter.setPosition(position);
-                adapter.notifyDataSetChanged();
-            }
-        });
-
         setHasOptionsMenu(true);
-        registerForContextMenu(getListView());
     }
 
     @Override
@@ -199,72 +186,6 @@ public class SeriesRecordingListFragment extends ListFragment implements HTSList
         inflater.inflate(R.menu.series_recording_menu, menu);
     }
 
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-        activity.getMenuInflater().inflate(R.menu.series_recording_context_menu, menu);
-
-        if (!isUnlocked) {
-            (menu.findItem(R.id.menu_edit)).setVisible(false);
-        }
-
-        // Get the currently selected program from the list where the context
-        // menu has been triggered
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-        final SeriesRecording srec = adapter.getItem(info.position);
-        if (srec != null) {
-            menu.setHeaderTitle(srec.title);
-        }
-    }
-
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        // The context menu is triggered for all fragments that are in a
-        // fragment pager. Do nothing for invisible fragments.
-        if (!getUserVisibleHint()) {
-            return super.onContextItemSelected(item);
-        }
-        // Get the currently selected program from the list where the context
-        // menu has been triggered
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-
-        // Check for a valid adapter size and objects
-        if (info == null || adapter == null || adapter.getCount() <= info.position) {
-            return super.onContextItemSelected(item);
-        }
-
-        final SeriesRecording srec = adapter.getItem(info.position);
-        if (srec == null) {
-            return super.onContextItemSelected(item);
-        }
-
-        switch (item.getItemId()) {
-        case R.id.menu_edit:
-            // Create the fragment and show it as a dialog.
-            DialogFragment editFragment = SeriesRecordingAddFragment.newInstance();
-            Bundle bundle = new Bundle();
-            bundle.putString("id", srec.id);
-            editFragment.setArguments(bundle);
-            editFragment.show(activity.getSupportFragmentManager(), "dialog");
-            return true;
-
-        case R.id.menu_search_imdb:
-            menuUtils.handleMenuSearchWebSelection(srec.title);
-            return true;
-
-        case R.id.menu_search_epg:
-            menuUtils.handleMenuSearchEpgSelection(srec.title);
-            return true;
-
-        case R.id.menu_record_remove:
-            menuUtils.handleMenuRemoveSeriesRecordingSelection(srec.id, srec.title);
-            return true;
-
-        default:
-            return super.onContextItemSelected(item);
-        }
-    }
-
     /**
      * This method is part of the HTSListener interface. Whenever the HTSService
      * sends a new message the specified action will be executed here.
@@ -360,5 +281,51 @@ public class SeriesRecordingListFragment extends ListFragment implements HTSList
     @Override
     public int getItemCount() {
         return adapter.getCount();
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+        SeriesRecording srec = adapter.getItem(position);
+        if (fragmentStatusInterface != null) {
+            fragmentStatusInterface.onListItemSelected(position, srec, TAG);
+        }
+        adapter.setPosition(position);
+        adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
+        Log.d(TAG, "onItemLongClick() called with: adapterView = [" + adapterView + "], view = [" + view + "], position = [" + position + "], id = [" + id + "]");
+        PopupMenu popupMenu = new PopupMenu(getActivity(), view);
+        popupMenu.getMenuInflater().inflate(R.menu.series_recording_context_menu, popupMenu.getMenu());
+        if (!isUnlocked) {
+            (popupMenu.getMenu().findItem(R.id.menu_edit)).setVisible(false);
+        }
+        final SeriesRecording srec = adapter.getItem(position);
+        popupMenu.setOnMenuItemClickListener(item -> {
+            switch (item.getItemId()) {
+                case R.id.menu_edit:
+                    // Create the fragment and show it as a dialog.
+                    DialogFragment editFragment = SeriesRecordingAddFragment.newInstance();
+                    Bundle bundle = new Bundle();
+                    bundle.putString("id", srec.id);
+                    editFragment.setArguments(bundle);
+                    editFragment.show(activity.getSupportFragmentManager(), "dialog");
+                    return true;
+                case R.id.menu_search_imdb:
+                    menuUtils.handleMenuSearchWebSelection(srec.title);
+                    return true;
+                case R.id.menu_search_epg:
+                    menuUtils.handleMenuSearchEpgSelection(srec.title);
+                    return true;
+                case R.id.menu_record_remove:
+                    menuUtils.handleMenuRemoveSeriesRecordingSelection(srec.id, srec.title);
+                    return true;
+                default:
+                    return false;
+            }
+        });
+        popupMenu.show();
+        return true;
     }
 }

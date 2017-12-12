@@ -1,15 +1,13 @@
 package org.tvheadend.tvhclient.fragments;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ListFragment;
+import android.support.v7.widget.PopupMenu;
 import android.util.Log;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -20,22 +18,16 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
-import com.afollestad.materialdialogs.MaterialDialog;
-
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DataStorage;
-import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.adapter.ProgramListAdapter;
-import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.interfaces.ToolbarInterface;
 import org.tvheadend.tvhclient.model.Channel;
-import org.tvheadend.tvhclient.model.Connection;
-import org.tvheadend.tvhclient.model.Profile;
 import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.utils.MenuUtils;
@@ -45,7 +37,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class ProgramListFragment extends ListFragment implements HTSListener, FragmentControlInterface {
+public class ProgramListFragment extends ListFragment implements HTSListener, FragmentControlInterface, OnItemClickListener, AdapterView.OnItemLongClickListener {
 
     private final static String TAG = ProgramListFragment.class.getSimpleName();
 
@@ -96,23 +88,15 @@ public class ProgramListFragment extends ListFragment implements HTSListener, Fr
 
         menuUtils = new MenuUtils(getActivity());
 
-        getListView().setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (fragmentStatusInterface != null) {
-                    fragmentStatusInterface.onListItemSelected(position, adapter.getItem(position), TAG);
-                }
-            }
-        });
-
         List<Program> list = new ArrayList<>();
         adapter = new ProgramListAdapter(activity, list);
         setListAdapter(adapter);
         getListView().setFastScrollEnabled(true);
+        getListView().setOnItemClickListener(this);
+        getListView().setOnItemLongClickListener(this);
         getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
         setHasOptionsMenu(true);
-        registerForContextMenu(getListView());
     }
 
     /**
@@ -232,135 +216,6 @@ public class ProgramListFragment extends ListFragment implements HTSListener, Fr
         fragmentStatusInterface = null;
         toolbarInterface = null;
         super.onDestroy();
-    }
-
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        if (!getUserVisibleHint()) {
-            return false;
-        }
-        // Get the currently selected program from the list where the context
-        // menu has been triggered
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-
-        // Check for a valid adapter size and objects
-        if (info == null || adapter == null || adapter.getCount() <= info.position) {
-            return super.onContextItemSelected(item);
-        }
-
-        final Program program = adapter.getItem(info.position);
-        if (program == null) {
-            return super.onContextItemSelected(item);
-        }
-
-        // Check if the context menu call came from the list in this fragment
-        // (needed for support for multiple fragments in one screen)
-        if (getView() != null && info.targetView.getParent() != getView().findViewById(R.id.item_list)) {
-            return super.onContextItemSelected(item);
-        }
-
-        switch (item.getItemId()) {
-        case R.id.menu_search_imdb:
-            menuUtils.handleMenuSearchWebSelection(program.title);
-            return true;
-
-        case R.id.menu_search_epg:
-            menuUtils.handleMenuSearchEpgSelection(program.title);
-            return true;
-
-        case R.id.menu_record_remove:
-            Recording rec = DataStorage.getInstance().getRecordingFromArray(program.dvrId);
-            if (rec != null) {
-                if (rec.isRecording()) {
-                    menuUtils.handleMenuStopRecordingSelection(rec.id, rec.title);
-                } else if (rec.isScheduled()) {
-                    menuUtils.handleMenuCancelRecordingSelection(rec.id, rec.title);
-                } else {
-                    menuUtils.handleMenuRemoveRecordingSelection(rec.id, rec.title);
-                }
-            }
-            return true;
-
-        case R.id.menu_record_once:
-            menuUtils.handleMenuRecordSelection(program.eventId);
-            return true;
-
-        case R.id.menu_record_once_custom_profile:
-            // Create the list of available recording profiles that the user can select from
-            String[] dvrConfigList = new String[DataStorage.getInstance().getDvrConfigs().size()];
-            for (int i = 0; i < DataStorage.getInstance().getDvrConfigs().size(); i++) {
-                dvrConfigList[i] = DataStorage.getInstance().getDvrConfigs().get(i).name;
-            }
-
-            // Get the selected recording profile to highlight the
-            // correct item in the list of the selection dialog
-            int dvrConfigNameValue = 0;
-            DatabaseHelper databaseHelper = DatabaseHelper.getInstance(getActivity().getApplicationContext());
-            final Connection conn = databaseHelper.getSelectedConnection();
-            final Profile p = databaseHelper.getProfile(conn.recording_profile_id);
-            if (p != null) {
-                for (int i = 0; i < dvrConfigList.length; i++) {
-                    if (dvrConfigList[i].equals(p.name)) {
-                        dvrConfigNameValue = i;
-                        break;
-                    }
-                }
-            }
-
-            // Create new variables because the dialog needs them as final
-            final String[] dcList = dvrConfigList;
-
-            // Create the dialog to show the available profiles
-            new MaterialDialog.Builder(activity)
-            .title(R.string.select_dvr_config)
-            .items(dvrConfigList)
-            .itemsCallbackSingleChoice(dvrConfigNameValue, new MaterialDialog.ListCallbackSingleChoice() {
-                @Override
-                public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
-                    // Pass over the
-                    Intent intent = new Intent(activity, HTSService.class);
-                    intent.setAction("addDvrEntry");
-                    intent.putExtra("eventId", program.eventId);
-                    Channel channel = DataStorage.getInstance().getChannelFromArray(program.channelId);
-                    intent.putExtra("channelId", channel.channelId);
-                    intent.putExtra("configName", dcList[which]);
-                    activity.startService(intent);
-                    return true;
-                }
-            })
-            .show();
-            return true;
-
-        case R.id.menu_record_series:
-            menuUtils.handleMenuSeriesRecordSelection(program.title);
-            return true;
-
-        case R.id.menu_play:
-            Channel channel = DataStorage.getInstance().getChannelFromArray(program.channelId);
-            menuUtils.handleMenuPlaySelection(channel.channelId, -1);
-            return true;
-
-        default:
-            return super.onContextItemSelected(item);
-        }
-    }
-
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-        activity.getMenuInflater().inflate(R.menu.program_context_menu, menu);
-
-        // Get the currently selected program from the list where the context
-        // menu has been triggered
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-        Program program = adapter.getItem(info.position);
-
-        // Set the title of the context menu and show or hide 
-        // the menu items depending on the program state
-        if (program != null) {
-            menu.setHeaderTitle(program.title);
-            //Utils.setProgramMenu(app, menu, program);
-        }
     }
 
     @Override
@@ -508,5 +363,61 @@ public class ProgramListFragment extends ListFragment implements HTSListener, Fr
     @Override
     public int getItemCount() {
         return adapter.getCount();
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+        if (fragmentStatusInterface != null) {
+            fragmentStatusInterface.onListItemSelected(position, adapter.getItem(position), TAG);
+        }
+    }
+
+    @Override
+    public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
+        PopupMenu popupMenu = new PopupMenu(getActivity(), view);
+        popupMenu.getMenuInflater().inflate(R.menu.program_context_menu, popupMenu.getMenu());
+        final Program program = adapter.getItem(position);
+
+        menuUtils.onPreparePopupMenu(popupMenu.getMenu(), program);
+
+        popupMenu.setOnMenuItemClickListener(item -> {
+            switch (item.getItemId()) {
+                case R.id.menu_search_imdb:
+                    menuUtils.handleMenuSearchWebSelection(program.title);
+                    return true;
+                case R.id.menu_search_epg:
+                    menuUtils.handleMenuSearchEpgSelection(program.title, channel.channelId);
+                    return true;
+                case R.id.menu_record_remove:
+                    Recording rec = DataStorage.getInstance().getRecordingFromArray(program.dvrId);
+                    if (rec != null) {
+                        if (rec.isRecording()) {
+                            menuUtils.handleMenuStopRecordingSelection(rec.id, rec.title);
+                        } else if (rec.isScheduled()) {
+                            menuUtils.handleMenuCancelRecordingSelection(rec.id, rec.title);
+                        } else {
+                            menuUtils.handleMenuRemoveRecordingSelection(rec.id, rec.title);
+                        }
+                    }
+                    return true;
+                case R.id.menu_record_once:
+                    menuUtils.handleMenuRecordSelection(program.eventId);
+                    return true;
+                case R.id.menu_record_once_custom_profile:
+                    menuUtils.handleMenuCustomRecordSelection(program.eventId, channel.channelId);
+                    return true;
+                case R.id.menu_record_series:
+                    menuUtils.handleMenuSeriesRecordSelection(program.title);
+                    return true;
+                case R.id.menu_play:
+                    // Open a new activity to stream the current program to this device
+                    menuUtils.handleMenuPlaySelection(channel.channelId, -1);
+                    return true;
+                default:
+                    return false;
+            }
+        });
+        popupMenu.show();
+        return true;
     }
 }

@@ -8,8 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ListFragment;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
+import android.support.v7.widget.PopupMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -41,7 +40,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-public class ChannelListFragment extends ListFragment implements HTSListener, FragmentControlInterface, MenuTimeSelectionCallback, MenuTagSelectionCallback {
+public class ChannelListFragment extends ListFragment implements HTSListener, FragmentControlInterface, MenuTimeSelectionCallback, MenuTagSelectionCallback, AdapterView.OnItemLongClickListener, OnItemClickListener {
 
     private final static String TAG = ChannelListFragment.class.getSimpleName();
 
@@ -91,27 +90,11 @@ public class ChannelListFragment extends ListFragment implements HTSListener, Fr
         adapter = new ChannelListAdapter(activity, new ArrayList<>());
         setListAdapter(adapter);
         getListView().setFastScrollEnabled(true);
+        getListView().setOnItemClickListener(this);
+        getListView().setOnItemLongClickListener(this);
         getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
         menuUtils = new MenuUtils(getActivity());
-
-        // Inform the activity when a channel has been selected.
-        getListView().setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                final Channel ch = adapter.getItem(position);
-                if (fragmentStatusInterface != null) {
-                    fragmentStatusInterface.onListItemSelected(position, ch, TAG);
-                }
-                adapter.setPosition(position);
-                adapter.notifyDataSetChanged();
-            }
-        });
-
-        // Disable the context menu when the channels are shown only. The
-        // functionality behind the context menu shall not be available when the
-        // program guide is displayed
-        registerForContextMenu(getListView());
 
         // Enable the action bar menu
         setHasOptionsMenu(true);
@@ -183,177 +166,6 @@ public class ChannelListFragment extends ListFragment implements HTSListener, Fr
 
             default:
                 return super.onOptionsItemSelected(item);
-        }
-    }
-
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        if (!getUserVisibleHint()) {
-            return false;
-        }
-
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-
-        // Check for a valid adapter, its size and if the context menu call came
-        // from the list in this fragment (needed to support multiple fragments
-        // in one screen)
-        if (info == null || adapter == null || (adapter.getCount() <= info.position)
-                || (getView() != null && info.targetView.getParent() != getView().findViewById(R.id.item_list))) {
-            return super.onContextItemSelected(item);
-        }
-
-        // Add all programs to a list
-        Program program = null;
-        final Channel channel = adapter.getItem(info.position);
-        for (Program p : DataStorage.getInstance().getProgramsFromArray().values()) {
-            if (p.channelId == channel.channelId) {
-                if (p.start <= showProgramsFromTime && p.stop > showProgramsFromTime) {
-                    program = p;
-                    break;
-                }
-            }
-        }
-
-
-        // Return if the program is null. This is just a precaution and should
-        // not happen because the user has selected the context menu of an
-        // available program.
-        if (program == null) {
-            return super.onContextItemSelected(item);
-        }
-
-        switch (item.getItemId()) {
-            case R.id.menu_search_imdb:
-                menuUtils.handleMenuSearchWebSelection(program.title);
-                return true;
-
-            case R.id.menu_search_epg:
-                menuUtils.handleMenuSearchEpgSelection(program.title, channel.channelId);
-                return true;
-
-            case R.id.menu_record_remove:
-                Recording rec = DataStorage.getInstance().getRecordingFromArray(program.dvrId);
-                if (rec != null) {
-                    if (rec.isRecording()) {
-                        menuUtils.handleMenuStopRecordingSelection(rec.id, rec.title);
-                    } else if (rec.isScheduled()) {
-                        menuUtils.handleMenuCancelRecordingSelection(rec.id, rec.title);
-                    } else {
-                        menuUtils.handleMenuRemoveRecordingSelection(rec.id, rec.title);
-                    }
-                }
-                return true;
-
-            case R.id.menu_record_once:
-                menuUtils.handleMenuRecordSelection(program.eventId);
-                return true;
-
-            case R.id.menu_record_once_custom_profile:
-                menuUtils.handleMenuCustomRecordSelection(program.eventId, channel.channelId);
-                return true;
-
-            case R.id.menu_record_series:
-                menuUtils.handleMenuSeriesRecordSelection(program.title);
-                return true;
-
-            case R.id.menu_play:
-                // Open a new activity to stream the current program to this device
-                menuUtils.handleMenuPlaySelection(channel.channelId, -1);
-                return true;
-
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-        activity.getMenuInflater().inflate(R.menu.program_context_menu, menu);
-
-        // Get the currently selected channel. Also get the program that is
-        // currently being transmitting by this channel.
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-        final Channel channel = adapter.getItem(info.position);
-
-        Program p = null;
-        for (Program program : DataStorage.getInstance().getProgramsFromArray().values()) {
-            if (program.channelId == channel.channelId) {
-                if (program.start <= showProgramsFromTime && program.stop > showProgramsFromTime) {
-                    p = program;
-                    break;
-                }
-            }
-        }
-
-        if (p != null) {
-            menu.setHeaderTitle(p.title);
-            setProgramMenu(menu, p);
-        }
-    }
-
-    /**
-     * Shows or hides certain items from the program menu. This depends on the
-     * current state of the program.
-     *
-     * @param menu    Menu with all menu items
-     * @param program Program
-     */
-    public void setProgramMenu(final Menu menu, final Program program) {
-        MenuItem recordOnceMenuItem = menu.findItem(R.id.menu_record_once);
-        MenuItem recordOnceCustomProfileMenuItem = menu.findItem(R.id.menu_record_once_custom_profile);
-        MenuItem recordSeriesMenuItem = menu.findItem(R.id.menu_record_series);
-        MenuItem recordRemoveMenuItem = menu.findItem(R.id.menu_record_remove);
-        MenuItem playMenuItem = menu.findItem(R.id.menu_play);
-        MenuItem searchMenuItemEpg = menu.findItem(R.id.menu_search_epg);
-        MenuItem searchMenuItemImdb = menu.findItem(R.id.menu_search_imdb);
-
-        // Disable these menus as a default
-        recordOnceMenuItem.setVisible(false);
-        recordOnceCustomProfileMenuItem.setVisible(false);
-        recordSeriesMenuItem.setVisible(false);
-        recordRemoveMenuItem.setVisible(false);
-        searchMenuItemEpg.setVisible(false);
-        searchMenuItemImdb.setVisible(false);
-        playMenuItem.setVisible(false);
-
-        // Exit if the recording is not valid
-        if (program == null) {
-            return;
-        }
-
-        // Allow searching the program
-        searchMenuItemEpg.setVisible(true);
-        searchMenuItemImdb.setVisible(true);
-
-        // Show the play menu item when the current
-        // time is between the program start and end time
-        long currentTime = new Date().getTime();
-        if (currentTime > program.start && currentTime < program.stop) {
-            playMenuItem.setVisible(true);
-        }
-        Recording rec = DataStorage.getInstance().getRecordingFromArray(program.dvrId);
-        if (rec == null || (rec != null && !rec.isRecording() && !rec.isScheduled())) {
-            // Show the record menu
-            recordOnceMenuItem.setVisible(true);
-            recordOnceCustomProfileMenuItem.setVisible(TVHClientApplication.getInstance().isUnlocked());
-            if (DataStorage.getInstance().getProtocolVersion() >= Constants.MIN_API_VERSION_SERIES_RECORDINGS) {
-                recordSeriesMenuItem.setVisible(true);
-            }
-        } else if (rec.isRecording()) {
-            // Show the play and stop menu
-            playMenuItem.setVisible(true);
-            recordRemoveMenuItem.setTitle(R.string.stop);
-            recordRemoveMenuItem.setVisible(true);
-
-        } else if (rec.isScheduled()) {
-            recordRemoveMenuItem.setTitle(R.string.cancel);
-            recordRemoveMenuItem.setVisible(true);
-
-        } else {
-            // Show the delete menu
-            recordRemoveMenuItem.setTitle(R.string.remove);
-            recordRemoveMenuItem.setVisible(true);
         }
     }
 
@@ -578,5 +390,76 @@ public class ChannelListFragment extends ListFragment implements HTSListener, Fr
         if (fragmentStatusInterface != null) {
             fragmentStatusInterface.channelTagChanged(TAG);
         }
+    }
+
+    @Override
+    public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
+        PopupMenu popupMenu = new PopupMenu(getActivity(), view);
+        popupMenu.getMenuInflater().inflate(R.menu.program_context_menu, popupMenu.getMenu());
+
+        // Pass over all information required to show of hide the menus
+        final Channel channel = adapter.getItem(position);
+        Program program2 = null;
+        for (Program p : DataStorage.getInstance().getProgramsFromArray().values()) {
+            if (p.channelId == channel.channelId) {
+                if (p.start <= showProgramsFromTime && p.stop > showProgramsFromTime) {
+                    program2 = p;
+                    break;
+                }
+            }
+        }
+
+        final Program program = program2;
+        menuUtils.onPreparePopupMenu(popupMenu.getMenu(), program);
+
+        popupMenu.setOnMenuItemClickListener(item -> {
+            switch (item.getItemId()) {
+                case R.id.menu_search_imdb:
+                    menuUtils.handleMenuSearchWebSelection(program.title);
+                    return true;
+                case R.id.menu_search_epg:
+                    menuUtils.handleMenuSearchEpgSelection(program.title, channel.channelId);
+                    return true;
+                case R.id.menu_record_remove:
+                    Recording rec = DataStorage.getInstance().getRecordingFromArray(program.dvrId);
+                    if (rec != null) {
+                        if (rec.isRecording()) {
+                            menuUtils.handleMenuStopRecordingSelection(rec.id, rec.title);
+                        } else if (rec.isScheduled()) {
+                            menuUtils.handleMenuCancelRecordingSelection(rec.id, rec.title);
+                        } else {
+                            menuUtils.handleMenuRemoveRecordingSelection(rec.id, rec.title);
+                        }
+                    }
+                    return true;
+                case R.id.menu_record_once:
+                    menuUtils.handleMenuRecordSelection(program.eventId);
+                    return true;
+                case R.id.menu_record_once_custom_profile:
+                    menuUtils.handleMenuCustomRecordSelection(program.eventId, channel.channelId);
+                    return true;
+                case R.id.menu_record_series:
+                    menuUtils.handleMenuSeriesRecordSelection(program.title);
+                    return true;
+                case R.id.menu_play:
+                    // Open a new activity to stream the current program to this device
+                    menuUtils.handleMenuPlaySelection(channel.channelId, -1);
+                    return true;
+                default:
+                    return false;
+            }
+        });
+        popupMenu.show();
+        return true;
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+        final Channel ch = adapter.getItem(position);
+        if (fragmentStatusInterface != null) {
+            fragmentStatusInterface.onListItemSelected(position, ch, TAG);
+        }
+        adapter.setPosition(position);
+        adapter.notifyDataSetChanged();
     }
 }

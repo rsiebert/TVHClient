@@ -8,6 +8,8 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.afollestad.materialdialogs.DialogAction;
@@ -27,6 +29,7 @@ import org.tvheadend.tvhclient.model.ChannelTag;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.GenreColorDialogItem;
 import org.tvheadend.tvhclient.model.Profile;
+import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.model.SeriesRecording;
 import org.tvheadend.tvhclient.model.TimerRecording;
@@ -38,6 +41,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -513,5 +517,44 @@ public class MenuUtils {
                     }
                 })
                 .show();
+    }
+
+    public void onPreparePopupMenu(Menu menu, Program program) {
+        MenuItem recordOnceMenuItem = menu.findItem(R.id.menu_record_once);
+        MenuItem recordOnceCustomProfileMenuItem = menu.findItem(R.id.menu_record_once_custom_profile);
+        MenuItem recordSeriesMenuItem = menu.findItem(R.id.menu_record_series);
+        MenuItem recordRemoveMenuItem = menu.findItem(R.id.menu_record_remove);
+        MenuItem playMenuItem = menu.findItem(R.id.menu_play);
+
+        // Disable these menus as a default
+        recordOnceMenuItem.setVisible(false);
+        recordOnceCustomProfileMenuItem.setVisible(false);
+        recordSeriesMenuItem.setVisible(false);
+        recordRemoveMenuItem.setVisible(false);
+        playMenuItem.setVisible(false);
+
+        // Show the play menu item when the current
+        // time is between the program start and end time
+        long currentTime = new Date().getTime();
+        if (currentTime > program.start && currentTime < program.stop) {
+            playMenuItem.setVisible(true);
+        }
+
+        Recording rec = DataStorage.getInstance().getRecordingFromArray(program.dvrId);
+        if (rec == null || !rec.isRecording() && !rec.isScheduled()) {
+            recordOnceMenuItem.setVisible(true);
+            recordOnceCustomProfileMenuItem.setVisible(mIsUnlocked);
+            recordSeriesMenuItem.setVisible(mHtspVersion >= 13);
+        } else if (rec.isRecording()) {
+            playMenuItem.setVisible(true);
+            recordRemoveMenuItem.setTitle(R.string.stop);
+            recordRemoveMenuItem.setVisible(true);
+        } else if (rec.isScheduled()) {
+            recordRemoveMenuItem.setTitle(R.string.cancel);
+            recordRemoveMenuItem.setVisible(true);
+        } else {
+            recordRemoveMenuItem.setTitle(R.string.remove);
+            recordRemoveMenuItem.setVisible(true);
+        }
     }
 }
