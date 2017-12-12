@@ -7,7 +7,6 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.ListFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.PopupMenu;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -295,31 +294,32 @@ public class SeriesRecordingListFragment extends ListFragment implements HTSList
 
     @Override
     public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
-        Log.d(TAG, "onItemLongClick() called with: adapterView = [" + adapterView + "], view = [" + view + "], position = [" + position + "], id = [" + id + "]");
+        final SeriesRecording seriesRecording = adapter.getItem(position);
+        if (getActivity() == null || seriesRecording == null) {
+            return true;
+        }
         PopupMenu popupMenu = new PopupMenu(getActivity(), view);
         popupMenu.getMenuInflater().inflate(R.menu.series_recording_context_menu, popupMenu.getMenu());
-        if (!isUnlocked) {
-            (popupMenu.getMenu().findItem(R.id.menu_edit)).setVisible(false);
-        }
-        final SeriesRecording srec = adapter.getItem(position);
+        (popupMenu.getMenu().findItem(R.id.menu_edit)).setVisible(isUnlocked);
+
         popupMenu.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {
                 case R.id.menu_edit:
                     // Create the fragment and show it as a dialog.
                     DialogFragment editFragment = SeriesRecordingAddFragment.newInstance();
                     Bundle bundle = new Bundle();
-                    bundle.putString("id", srec.id);
+                    bundle.putString("id", seriesRecording.id);
                     editFragment.setArguments(bundle);
                     editFragment.show(activity.getSupportFragmentManager(), "dialog");
                     return true;
                 case R.id.menu_search_imdb:
-                    menuUtils.handleMenuSearchWebSelection(srec.title);
+                    menuUtils.handleMenuSearchWebSelection(seriesRecording.title);
                     return true;
                 case R.id.menu_search_epg:
-                    menuUtils.handleMenuSearchEpgSelection(srec.title);
+                    menuUtils.handleMenuSearchEpgSelection(seriesRecording.title);
                     return true;
                 case R.id.menu_record_remove:
-                    menuUtils.handleMenuRemoveSeriesRecordingSelection(srec.id, srec.title);
+                    menuUtils.handleMenuRemoveSeriesRecordingSelection(seriesRecording.id, seriesRecording.title);
                     return true;
                 default:
                     return false;

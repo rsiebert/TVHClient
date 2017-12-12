@@ -7,7 +7,6 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.ListFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.PopupMenu;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -289,30 +288,33 @@ public class TimerRecordingListFragment extends ListFragment implements HTSListe
 
     @Override
     public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
-        Log.d(TAG, "onItemLongClick() called with: adapterView = [" + adapterView + "], view = [" + view + "], position = [" + position + "], id = [" + id + "]");
+        final TimerRecording timerRecording = adapter.getItem(position);
+        if (getActivity() == null || timerRecording == null) {
+            return true;
+        }
         PopupMenu popupMenu = new PopupMenu(getActivity(), view);
         popupMenu.getMenuInflater().inflate(R.menu.timer_recording_context_menu, popupMenu.getMenu());
-        final TimerRecording trec = adapter.getItem(position);
+
         popupMenu.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {
                 case R.id.menu_edit:
                     // Create the fragment and show it as a dialog.
                     DialogFragment editFragment = TimerRecordingAddFragment.newInstance();
                     Bundle bundle = new Bundle();
-                    bundle.putString("id", trec.id);
+                    bundle.putString("id", timerRecording.id);
                     editFragment.setArguments(bundle);
                     editFragment.show(activity.getSupportFragmentManager(), "dialog");
                     return true;
                 case R.id.menu_search_imdb:
-                    menuUtils.handleMenuSearchWebSelection(trec.title);
+                    menuUtils.handleMenuSearchWebSelection(timerRecording.title);
                     return true;
                 case R.id.menu_search_epg:
-                    menuUtils.handleMenuSearchEpgSelection(trec.title);
+                    menuUtils.handleMenuSearchEpgSelection(timerRecording.title);
                     return true;
                 case R.id.menu_record_remove:
-                    final String name = (trec.name != null && trec.name.length() > 0) ? trec.name : "";
-                    final String title = trec.title != null ? trec.title : "";
-                    menuUtils.handleMenuRemoveTimerRecordingSelection(trec.id, (name.length() > 0 ? name : title));
+                    final String name = (timerRecording.name != null && timerRecording.name.length() > 0) ? timerRecording.name : "";
+                    final String title = timerRecording.title != null ? timerRecording.title : "";
+                    menuUtils.handleMenuRemoveTimerRecordingSelection(timerRecording.id, (name.length() > 0 ? name : title));
                     return true;
                 default:
                     return false;

@@ -374,10 +374,12 @@ public class ProgramListFragment extends ListFragment implements HTSListener, Fr
 
     @Override
     public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
+        final Program program = adapter.getItem(position);
+        if (getActivity() == null || program == null) {
+            return true;
+        }
         PopupMenu popupMenu = new PopupMenu(getActivity(), view);
         popupMenu.getMenuInflater().inflate(R.menu.program_context_menu, popupMenu.getMenu());
-        final Program program = adapter.getItem(position);
-
         menuUtils.onPreparePopupMenu(popupMenu.getMenu(), program);
 
         popupMenu.setOnMenuItemClickListener(item -> {
@@ -410,7 +412,6 @@ public class ProgramListFragment extends ListFragment implements HTSListener, Fr
                     menuUtils.handleMenuSeriesRecordSelection(program.title);
                     return true;
                 case R.id.menu_play:
-                    // Open a new activity to stream the current program to this device
                     menuUtils.handleMenuPlaySelection(channel.channelId, -1);
                     return true;
                 default:

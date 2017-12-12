@@ -394,22 +394,13 @@ public class ChannelListFragment extends ListFragment implements HTSListener, Fr
 
     @Override
     public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
+        final Channel channel = adapter.getItem(position);
+        final Program program = getCurrentProgram(channel);
+        if (getActivity() == null || program == null) {
+            return true;
+        }
         PopupMenu popupMenu = new PopupMenu(getActivity(), view);
         popupMenu.getMenuInflater().inflate(R.menu.program_context_menu, popupMenu.getMenu());
-
-        // Pass over all information required to show of hide the menus
-        final Channel channel = adapter.getItem(position);
-        Program program2 = null;
-        for (Program p : DataStorage.getInstance().getProgramsFromArray().values()) {
-            if (p.channelId == channel.channelId) {
-                if (p.start <= showProgramsFromTime && p.stop > showProgramsFromTime) {
-                    program2 = p;
-                    break;
-                }
-            }
-        }
-
-        final Program program = program2;
         menuUtils.onPreparePopupMenu(popupMenu.getMenu(), program);
 
         popupMenu.setOnMenuItemClickListener(item -> {
@@ -451,6 +442,20 @@ public class ChannelListFragment extends ListFragment implements HTSListener, Fr
         });
         popupMenu.show();
         return true;
+    }
+
+    private Program getCurrentProgram(Channel channel) {
+        if (channel == null) {
+            return null;
+        }
+        for (Program program : DataStorage.getInstance().getProgramsFromArray().values()) {
+            if (program.channelId == channel.channelId) {
+                if (program.start <= showProgramsFromTime && program.stop > showProgramsFromTime) {
+                    return program;
+                }
+            }
+        }
+        return null;
     }
 
     @Override
