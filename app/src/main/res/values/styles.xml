@@ -135,10 +135,12 @@
     </style>
 
     <!-- Styles that will be used for the dark holo theme -->
-    <style name="CustomTheme" parent="Theme.AppCompat.NoActionBar">
+    <style name="CustomTheme" parent="Theme.AppCompat">
         <item name="windowActionModeOverlay">true</item>
         <item name="android:actionModeBackground">@android:color/background_dark</item>
         <item name="actionModeBackground">@android:color/background_dark</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
 
         <item name="ic_menu_search">@drawable/ic_menu_search_dark</item>
         <item name="ic_menu_save">@drawable/ic_menu_save_dark</item>
@@ -173,12 +175,13 @@
         <item name="ProgramGuideContentFont">@style/ProgramGuideContentFont.Dark</item>
         <item name="TimelineItemLayoutStyle">@drawable/timeline_item_dark</item>
         <item name="TimelineHeaderLayoutStyle">@drawable/timeline_header_dark</item>
+        <!--
         <item name="menu_text_selector">@color/menu_text_selector_dark</item>
         <item name="menu_background_selector">@drawable/menu_background_selector_dark</item>
         <item name="android:windowBackground">@color/window_background_color_dark</item>
-        <item name="FragmentDividerLayoutStyle">@drawable/fragment_divider_dark</item>
         <item name="toolbar_background_color">@color/toolbar_background_color_dark</item>
-
+        -->
+        <item name="FragmentDividerLayoutStyle">@drawable/fragment_divider_dark</item>
         <item name="ic_menu_channels">@drawable/ic_menu_channels_dark</item>
         <item name="ic_menu_program_guide">@drawable/ic_menu_program_guide_dark</item>
         <item name="ic_menu_completed_recordings">@drawable/ic_menu_completed_recordings_dark</item>
@@ -197,13 +200,27 @@
         <item name="android:spinnerDropDownItemStyle">@style/spinnerDropDownItemStyle.Dark</item>
 
         <item name="borderless_button">@style/Button.Borderless.Dark</item>
+
+        <!-- MaterialDrawer specific values -->
+        <item name="material_drawer_badge">@color/material_drawer_badge_dark</item>
+        <item name="material_drawer_background">@color/material_drawer_background_dark</item>
+        <item name="material_drawer_primary_text">@color/material_drawer_primary_text_dark</item>
+        <item name="material_drawer_primary_icon">@color/material_drawer_primary_icon_dark</item>
+        <item name="material_drawer_secondary_text">@color/material_drawer_secondary_text_dark</item>
+        <item name="material_drawer_hint_text">@color/material_drawer_hint_text_dark</item>
+        <item name="material_drawer_divider">@color/material_drawer_divider_dark</item>
+        <item name="material_drawer_selected">@color/material_drawer_selected_dark</item>
+        <item name="material_drawer_selected_text">@color/material_drawer_selected_text_dark</item>
+        <item name="material_drawer_header_selection_text">@color/material_drawer_header_selection_text_dark</item>
     </style>
 
     <!-- Styles that will be used for the light holo theme -->
-    <style name="CustomTheme.Light" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="CustomTheme.Light" parent="Theme.AppCompat.Light">
         <item name="windowActionModeOverlay">true</item>
         <item name="android:actionModeBackground">@android:color/background_light</item>
         <item name="actionModeBackground">@android:color/background_light</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
 
         <item name="ic_menu_search">@drawable/ic_menu_search_light</item>
         <item name="ic_menu_save">@drawable/ic_menu_save_light</item>
@@ -238,12 +255,14 @@
         <item name="ProgramGuideContentFont">@style/ProgramGuideContentFont.Light</item>
         <item name="TimelineItemLayoutStyle">@drawable/timeline_item_light</item>
         <item name="TimelineHeaderLayoutStyle">@drawable/timeline_header_light</item>
+        <!--
         <item name="menu_text_selector">@color/menu_text_selector_light</item>
         <item name="menu_background_selector">@drawable/menu_background_selector_light</item>
         <item name="android:windowBackground">@color/window_background_color_light</item>
-        <item name="FragmentDividerLayoutStyle">@drawable/fragment_divider_light</item>
         <item name="toolbar_background_color">@color/toolbar_background_color_light</item>
+        -->
 
+        <item name="FragmentDividerLayoutStyle">@drawable/fragment_divider_light</item>
         <item name="ic_menu_channels">@drawable/ic_menu_channels_light</item>
         <item name="ic_menu_program_guide">@drawable/ic_menu_program_guide_light</item>
         <item name="ic_menu_completed_recordings">@drawable/ic_menu_completed_recordings_light</item>
@@ -262,6 +281,18 @@
         <item name="android:spinnerDropDownItemStyle">@style/spinnerDropDownItemStyle.Light</item>
 
         <item name="borderless_button">@style/Button.Borderless.Light</item>
+
+        <!-- MaterialDrawer specific values -->
+        <item name="material_drawer_badge">@color/material_drawer_badge_light</item>
+        <item name="material_drawer_background">@color/material_drawer_background_light</item>
+        <item name="material_drawer_primary_text">@color/material_drawer_primary_text_light</item>
+        <item name="material_drawer_primary_icon">@color/material_drawer_primary_icon_light</item>
+        <item name="material_drawer_secondary_text">@color/material_drawer_secondary_text_light</item>
+        <item name="material_drawer_hint_text">@color/material_drawer_hint_text_light</item>
+        <item name="material_drawer_divider">@color/material_drawer_divider_light</item>
+        <item name="material_drawer_selected">@color/material_drawer_selected_light</item>
+        <item name="material_drawer_selected_text">@color/material_drawer_selected_text_light</item>
+        <item name="material_drawer_header_selection_text">@color/material_drawer_header_selection_text_light</item>
     </style>
 
 </resources>
