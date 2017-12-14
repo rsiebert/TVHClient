@@ -78,7 +78,7 @@ public class RecordingListFragment extends ListFragment implements OnItemClickLi
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        final Recording rec = adapter.getSelectedItem();
+        final Recording rec = adapter.getItem(selectedListPosition);
         switch (item.getItemId()) {
             case R.id.menu_play:
                 menuUtils.handleMenuPlaySelection(-1, rec.id);
@@ -97,7 +97,7 @@ public class RecordingListFragment extends ListFragment implements OnItemClickLi
                 // Create the fragment and show it as a dialog.
                 DialogFragment editFragment = RecordingAddFragment.newInstance();
                 Bundle bundle = new Bundle();
-                bundle.putInt("dvrId", adapter.getSelectedItem().id);
+                bundle.putInt("dvrId", rec.id);
                 editFragment.setArguments(bundle);
                 editFragment.show(activity.getSupportFragmentManager(), "dialog");
                 return true;
