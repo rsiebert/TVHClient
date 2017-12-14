@@ -68,7 +68,6 @@ import org.tvheadend.tvhclient.fragments.ProgramListFragment;
 import org.tvheadend.tvhclient.fragments.StatusFragment;
 import org.tvheadend.tvhclient.fragments.recordings.CompletedRecordingListFragment;
 import org.tvheadend.tvhclient.fragments.recordings.FailedRecordingListFragment;
-import org.tvheadend.tvhclient.fragments.recordings.RecordingDetailsFragment;
 import org.tvheadend.tvhclient.fragments.recordings.RecordingListFragment;
 import org.tvheadend.tvhclient.fragments.recordings.RemovedRecordingListFragment;
 import org.tvheadend.tvhclient.fragments.recordings.ScheduledRecordingListFragment;
@@ -1306,6 +1305,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 // show its details. In dual mode these are shown in a separate fragment
                 // to the right of the recording list, otherwise replace the recording
                 // list with the details fragment.
+                /*
                 Bundle args = new Bundle();
                 args.putInt("dvrId", recording.id);
                 args.putBoolean(Constants.BUNDLE_SHOW_CONTROLS, !isDualPane);
@@ -1316,6 +1316,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                     DialogFragment newFragment = RecordingDetailsFragment.newInstance(args);
                     newFragment.show(getSupportFragmentManager(), "dialog");
                 }
+                */
             }
         }
     }

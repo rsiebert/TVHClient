@@ -6,21 +6,25 @@
         android:id="@+id/menu_play"
         android:icon="?attr/ic_menu_play"
         android:title="@string/play"
+        android:visible="false"
         app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/menu_download"
         android:icon="?attr/ic_menu_download"
         android:title="@string/download"
+        android:visible="false"
         app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/menu_edit"
         android:icon="?attr/ic_menu_edit"
         android:title="@string/edit"
+        android:visible="false"
         app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/menu_record_remove"
         android:icon="?attr/ic_menu_record_remove"
         android:title="@string/remove"
+        android:visible="false"
         app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/menu_search_imdb"

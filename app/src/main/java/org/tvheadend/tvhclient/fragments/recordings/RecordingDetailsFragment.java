@@ -1,9 +1,6 @@
 package org.tvheadend.tvhclient.fragments.recordings;
 
-import android.app.Dialog;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -12,7 +9,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -26,7 +22,6 @@ import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.utils.MenuUtils;
-import org.tvheadend.tvhclient.utils.MiscUtils;
 import org.tvheadend.tvhclient.utils.Utils;
 
 public class RecordingDetailsFragment extends DialogFragment implements HTSListener {
@@ -76,31 +71,14 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
     private TextView statusLabel;
     private DataStorage dataStorage;
     private MenuUtils menuUtils;
+    private int dvrId;
 
-    public static RecordingDetailsFragment newInstance(Bundle args) {
+    public static RecordingDetailsFragment newInstance(int dvrId) {
         RecordingDetailsFragment f = new RecordingDetailsFragment();
+        Bundle args = new Bundle();
+        args.putInt("dvrId", dvrId);
         f.setArguments(args);
         return f;
-    }
-
-    @NonNull
-    @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        Dialog dialog = super.onCreateDialog(savedInstanceState);
-        if (dialog.getWindow() != null) {
-            dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-        }
-        return dialog;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        if (getDialog() != null && getDialog().getWindow() != null) {
-            getDialog().getWindow().getAttributes().windowAnimations = R.style.dialog_animation_fade;
-            setStyle(DialogFragment.STYLE_NO_TITLE, MiscUtils.getThemeId(activity));
-        }
     }
 
     @Override
@@ -157,30 +135,17 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
         dataStorage = DataStorage.getInstance();
         menuUtils = new MenuUtils(getActivity());
 
-        int recId = 0;
         Bundle bundle = getArguments();
         if (bundle != null) {
-            recId = bundle.getInt("dvrId", 0);
+            dvrId = bundle.getInt("dvrId", 0);
             showControls = bundle.getBoolean(Constants.BUNDLE_SHOW_CONTROLS, false);
+        }
+        if (savedInstanceState != null) {
+            dvrId = savedInstanceState.getInt("dvrId", 0);
         }
 
         // Get the recording so we can show its details
-        rec = dataStorage.getRecordingFromArray(recId);
-
-        // If the recording is null exit
-        if (rec == null) {
-            return;
-        }
-
-        if (toolbar != null) {
-            toolbar.setVisibility(getDialog() != null ? View.VISIBLE : View.GONE);
-        }
-        if (toolbarShadow != null) {
-            toolbarShadow.setVisibility(getDialog() != null ? View.VISIBLE : View.GONE);
-        }
-        if (getDialog() != null && toolbarTitle != null) {
-            toolbarTitle.setText(rec.title);
-        }
+        rec = dataStorage.getRecordingFromArray(dvrId);
 
         // Show the player controls
         if (showControls) {
@@ -239,6 +204,7 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
             data_size.setVisibility(View.GONE);
         }
 
+        /*
         if (getDialog() != null && Build.VERSION.SDK_INT >= 21) {
             // Inflate a menu to be displayed in the toolbar
             toolbar.inflateMenu(R.menu.search_info_menu);
@@ -252,6 +218,13 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
                         }
                     });
         }
+        */
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("dvrId", dvrId);
     }
 
     boolean onToolbarItemSelected(MenuItem item) {
@@ -399,5 +372,9 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
                 }
             });
         }
+    }
+
+    public int getShownDvrId() {
+        return dvrId;
     }
 }

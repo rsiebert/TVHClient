@@ -1,26 +1,23 @@
 package org.tvheadend.tvhclient.fragments.recordings;
 
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
+import android.os.Bundle;
 import android.view.Menu;
 
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
+import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Recording;
 
 import java.util.Map;
 
-public class ScheduledRecordingListFragment extends RecordingListFragment {
+public class ScheduledRecordingListFragment extends RecordingListFragment implements HTSListener {
 
-    /**
-     * Sets the correct tag. This is required for logging and especially for the
-     * main activity so it knows what action shall be executed depending on the
-     * recording fragment type.
-     */
-    public ScheduledRecordingListFragment() {
-        TAG = ScheduledRecordingListFragment.class.getSimpleName();
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        toolbarInterface.setActionBarTitle(getString(R.string.scheduled_recordings));
     }
 
     @Override
@@ -29,6 +26,11 @@ public class ScheduledRecordingListFragment extends RecordingListFragment {
         TVHClientApplication.getInstance().addListener(this);
         if (!DataStorage.getInstance().isLoading()) {
             populateList();
+            // In dual-pane mode the list of programs of the selected
+            // channel will be shown additionally in the details view
+            if (isDualPane && adapter.getCount() > 0) {
+                showRecordingDetails(selectedListPosition);
+            }
         }
     }
 
@@ -41,50 +43,22 @@ public class ScheduledRecordingListFragment extends RecordingListFragment {
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-
-        // Do not show this menu in single mode. No recording is
-        // preselected which could be removed.
-        if (!isDualPane || adapter.getCount() == 0) {
-            (menu.findItem(R.id.menu_record_remove)).setVisible(false);
-        }
-
-        (menu.findItem(R.id.menu_play)).setVisible(false);
-        (menu.findItem(R.id.menu_edit)).setVisible(false);
-        (menu.findItem(R.id.menu_add)).setVisible(false);
-        (menu.findItem(R.id.menu_download)).setVisible(false);
-
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-        if (prefs.getBoolean("hideMenuCancelAllRecordingsPref", false) || adapter.getCount() <= 1) {
-            (menu.findItem(R.id.menu_record_remove_all)).setVisible(false);
-        }
-
-        // Show the add button to create a custom recording only when the
-        // application is unlocked
-        (menu.findItem(R.id.menu_add)).setVisible(isUnlocked);
-
-        // Show the edit button only when the application is unlocked and a
-        // recording was selected. Additionally the HTSP version must be at
-        // least 20 to assume the server is up to date and contains the required
-        // fixes to support this feature.    
-        if (!isDualPane || adapter.getCount() == 0 || !isUnlocked) {
-            (menu.findItem(R.id.menu_edit)).setVisible(false);
-        }
-
-        // Show the play button if the selected recording in dual pane
-        // mode is currently recording
+        // Do not show these menus in single mode.
+        // No recording is preselected which could be removed.
         if (isDualPane && adapter.getCount() > 0) {
-            Recording rec = adapter.getSelectedItem();
-            if (rec == null || !rec.isRecording()) {
-                (menu.findItem(R.id.menu_play)).setVisible(false);
-            }
+            menu.findItem(R.id.menu_record_remove).setVisible(true);
+            menu.findItem(R.id.menu_play).setVisible(adapter.getSelectedItem().isRecording());
+            menu.findItem(R.id.menu_edit).setVisible(isUnlocked);
         }
+        if (!sharedPreferences.getBoolean("hideMenuCancelAllRecordingsPref", false) && adapter.getCount() > 1) {
+            menu.findItem(R.id.menu_record_remove_all).setVisible(true);
+        }
+        // Show the add button to create a custom recording only when the application is unlocked
+        menu.findItem(R.id.menu_add).setVisible(isUnlocked);
     }
 
-    /**
-     * Fills the list with the available recordings. Only the recordings that
-     * are scheduled are added to the list.
-     */
-    private void populateList() {
+    @Override
+    protected void populateList() {
         // Clear the list and add the recordings
         adapter.clear();
         Map<Integer, Recording> map = DataStorage.getInstance().getRecordingsFromArray();
@@ -93,53 +67,30 @@ public class ScheduledRecordingListFragment extends RecordingListFragment {
                 adapter.add(recording);
             }
         }
-
-        // Show the newest scheduled recordings first 
-        adapter.sort(Constants.RECORDING_SORT_DESCENDING);
-        adapter.notifyDataSetChanged();
-
-        // Shows the currently visible number of recordings of the type  
-        if (toolbarInterface != null) {
-            toolbarInterface.setActionBarTitle(getString(R.string.scheduled_recordings));
-            String items = getResources().getQuantityString(R.plurals.recordings, adapter.getCount(), adapter.getCount());
-            toolbarInterface.setActionBarSubtitle(items);
-            toolbarInterface.setActionBarIcon(R.mipmap.ic_launcher);
-        }
-
-        // Inform the activity that the channel list has been populated. It will
-        // then select a list item if dual pane mode is active.
-        if (fragmentStatusInterface != null) {
-            fragmentStatusInterface.onListPopulated(TAG);
-        }
+        super.populateList();
     }
-    
-    /**
-     * This method is part of the HTSListener interface. Whenever a recording
-     * was added, updated or removed the view with the recordings will be
-     * refreshed. The adding, updating and removing of the recordings in the
-     * adapter itself is done in the parent class because the parent class has
-     * no access to the methods of the child class.
-     */
+
     @Override
     public void onMessage(String action, final Object obj) {
         if (action.equals(Constants.ACTION_LOADING)) {
             activity.runOnUiThread(new Runnable() {
                 public void run() {
                     boolean loading = (Boolean) obj;
-                    if (loading) {
-                        adapter.clear();
-                        adapter.notifyDataSetChanged();
-                    } else {
+                    setListShown(!loading);
+                    if (!loading) {
                         populateList();
                     }
                 }
             });
         } else if (action.equals("dvrEntryAdd")
-                || action.equals("dvrEntryDelete")
-                || action.equals("dvrEntryUpdate")) {
+                || action.equals("dvrEntryUpdate")
+                || action.equals("dvrEntryDelete")) {
             activity.runOnUiThread(new Runnable() {
                 public void run() {
-                    populateList();
+                    Recording recording = (Recording) obj;
+                    if (recording.isScheduled() || recording.isRecording()) {
+                        handleAdapterChanges(action, recording);
+                    }
                 }
             });
         }
