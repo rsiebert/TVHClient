@@ -42,6 +42,7 @@ import org.tvheadend.tvhclient.model.Recording;
 
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.Locale;
 
@@ -188,9 +189,11 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
         dataStorage = DataStorage.getInstance();
 
         // Create the list of channels that the user can select
-        channelList = new String[dataStorage.getChannelsFromArray().size()];
-        for (int i = 0; i < dataStorage.getChannelsFromArray().size(); i++) {
-            channelList[i] = dataStorage.getChannelsFromArray().get(i).channelName;
+        Collection<Channel> collection = dataStorage.getChannelsFromArray().values();
+        channelList = new String[collection.size()];
+        int count = 0;
+        for (Channel channel : collection) {
+            channelList[count++] = channel.channelName;
         }
 
         // Sort the channels in the list by name
