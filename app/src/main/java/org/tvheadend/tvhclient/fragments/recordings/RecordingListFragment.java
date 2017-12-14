@@ -1,10 +1,10 @@
 package org.tvheadend.tvhclient.fragments.recordings;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
 import android.support.v7.app.AppCompatActivity;
@@ -20,6 +20,8 @@ import android.widget.ListView;
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
+import org.tvheadend.tvhclient.activities.RecordingAddEditActivity;
+import org.tvheadend.tvhclient.activities.RecordingDetailsActivity;
 import org.tvheadend.tvhclient.adapter.RecordingListAdapter;
 import org.tvheadend.tvhclient.interfaces.ToolbarInterface;
 import org.tvheadend.tvhclient.model.Recording;
@@ -89,17 +91,14 @@ public class RecordingListFragment extends ListFragment implements OnItemClickLi
                 return true;
 
             case R.id.menu_add:
-                DialogFragment addFragment = RecordingAddFragment.newInstance();
-                addFragment.show(activity.getSupportFragmentManager(), "dialog");
+                Intent addIntent = new Intent(getActivity(), RecordingAddEditActivity.class);
+                getActivity().startActivity(addIntent);
                 return true;
 
             case R.id.menu_edit:
-                // Create the fragment and show it as a dialog.
-                DialogFragment editFragment = RecordingAddFragment.newInstance();
-                Bundle bundle = new Bundle();
-                bundle.putInt("dvrId", rec.id);
-                editFragment.setArguments(bundle);
-                editFragment.show(activity.getSupportFragmentManager(), "dialog");
+                Intent editIntent = new Intent(getActivity(), RecordingAddEditActivity.class);
+                editIntent.putExtra("dvrId", rec.id);
+                getActivity().startActivity(editIntent);
                 return true;
 
             case R.id.menu_record_remove:
@@ -141,9 +140,9 @@ public class RecordingListFragment extends ListFragment implements OnItemClickLi
 
         if (!isDualPane) {
             // Launch a new activity to display the program list of the selected channel.
-            /*Intent intent = new Intent(getActivity(), ProgramDetailsActivity.class);
-            intent.putExtra("event_id", eventId);
-            getActivity().startActivity(intent);*/
+            Intent intent = new Intent(getActivity(), RecordingDetailsActivity.class);
+            intent.putExtra("dvrId", recording.id);
+            getActivity().startActivity(intent);
         } else {
             // We can display everything in-place with fragments, so update
             // the list to highlight the selected item and show the program details fragment.
@@ -217,12 +216,9 @@ public class RecordingListFragment extends ListFragment implements OnItemClickLi
                     menuUtils.handleMenuDownloadSelection(recording.id);
                     return true;
                 case R.id.menu_edit:
-                    // Create the fragment to edit a recording but show it as a dialog.
-                    DialogFragment df = RecordingAddFragment.newInstance();
-                    Bundle bundle = new Bundle();
-                    bundle.putInt("dvrType", recording.id);
-                    df.setArguments(bundle);
-                    df.show(activity.getSupportFragmentManager(), "dialog");
+                    Intent editIntent = new Intent(getActivity(), RecordingAddEditActivity.class);
+                    editIntent.putExtra("dvrId", recording.id);
+                    getActivity().startActivity(editIntent);
                     return true;
                 default:
                     return false;

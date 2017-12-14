@@ -1,21 +1,17 @@
 package org.tvheadend.tvhclient.fragments.recordings;
 
-import android.app.Dialog;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnKeyListener;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -34,7 +30,8 @@ import org.tvheadend.tvhclient.Logger;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.htsp.HTSService;
-import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
+import org.tvheadend.tvhclient.interfaces.BackPressedInterface;
+import org.tvheadend.tvhclient.interfaces.ToolbarInterface;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.Profile;
@@ -46,13 +43,12 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Locale;
 
-public class RecordingAddFragment extends DialogFragment implements OnClickListener {
+public class RecordingAddFragment extends Fragment implements OnClickListener, BackPressedInterface {
 
     private final static String TAG = RecordingAddFragment.class.getSimpleName();
 
     private AppCompatActivity activity;
     private Recording rec;
-    private Toolbar toolbar;
 
     private TextView startTime;
     private TextView stopTime;
@@ -101,46 +97,7 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
     private static final int DEFAULT_STOP_EXTRA = 2;
     private Logger logger;
     private DataStorage dataStorage;
-
-    public static RecordingAddFragment newInstance() {
-        return new RecordingAddFragment();
-    }
-
-    @NonNull
-    @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        Dialog dialog = super.onCreateDialog(savedInstanceState);
-        if (dialog.getWindow() != null) {
-            dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-        }
-        return dialog;
-    }
-
-    @Override
-    public void onCreate(final Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        if (getDialog() != null && getDialog().getWindow() != null) {
-            getDialog().getWindow().getAttributes().windowAnimations = R.style.dialog_animation_fade;
-        }
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        getValues();
-        outState.putLong("priorityValue", priorityValue);
-        outState.putLong("startTimeValue", startValue.getTimeInMillis());
-        outState.putLong("stopTimeValue", stopValue.getTimeInMillis());
-        outState.putLong("startExtraValue", startExtraValue);
-        outState.putLong("stopExtraValue", stopExtraValue);
-        outState.putString("titleValue", titleValue);
-        outState.putString("subtitleValue", subtitleValue);
-        outState.putString("descriptionValue", descriptionValue);
-        outState.putInt("channelNameValue", channelSelectionValue);
-        outState.putInt("configNameValue", dvrConfigNameValue);
-        outState.putBoolean("enabledValue", enabledValue);
-        super.onSaveInstanceState(outState);
-    }
+    private ToolbarInterface toolbarInterface;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -151,7 +108,8 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
         // recorded show only the title, stop and extra stop times.
         int layout = R.layout.recording_add_layout;
         if (rec != null) {
-            layout = (rec.isRecording() ? R.layout.recording_edit_recording_layout
+            layout = (rec.isRecording()
+                    ? R.layout.recording_edit_recording_layout
                     : R.layout.recording_edit_scheduled_layout);
         }
         View v = inflater.inflate(layout, container, false);
@@ -174,7 +132,6 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
         priority = v.findViewById(R.id.priority);
         dvrConfigName = v.findViewById(R.id.dvr_config);
         dvrConfigNameLabel = v.findViewById(R.id.dvr_config_label);
-        toolbar = v.findViewById(R.id.toolbar);
         return v;
     }
 
@@ -183,6 +140,9 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
         super.onActivityCreated(savedInstanceState);
 
         activity = (AppCompatActivity) getActivity();
+        if (activity instanceof ToolbarInterface) {
+            toolbarInterface = (ToolbarInterface) activity;
+        }
         app = TVHClientApplication.getInstance();
         databaseHelper = DatabaseHelper.getInstance(getActivity().getApplicationContext());
         logger = Logger.getInstance();
@@ -295,6 +255,12 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
             dvrConfigNameValue = savedInstanceState.getInt("configNameValue");
             enabledValue = savedInstanceState.getBoolean("enabledValue");
         }
+
+        int titleId = rec != null ? R.string.edit_recording : R.string.add_recording;
+        toolbarInterface.setActionBarTitle(getString(titleId));
+        toolbarInterface.setActionBarSubtitle("");
+        // Enable the action bar menu
+        setHasOptionsMenu(true);
 
         if (isEnabled != null) {
             isEnabled.setChecked(enabledValue);
@@ -422,57 +388,43 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
         if (stopExtra != null) {
             stopExtra.setText(String.valueOf(stopExtraValue));
         }
-
-        // Add the title and menu items to the toolbar
-        if (toolbar != null) {
-            toolbar.setTitle(rec != null ? R.string.edit_recording : R.string.add_recording);
-            toolbar.inflateMenu(R.menu.save_cancel_menu);
-            toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem item) {
-                    return onToolbarItemSelected(item);
-                }
-            });
-        }
-
-        // Prevent the dialog from closing if the user clicks outside of it 
-        if (getDialog() != null) {
-            getDialog().setCanceledOnTouchOutside(false);
-        }
     }
 
     @Override
-	public void onResume() {
-		super.onResume();
-		getDialog().setOnKeyListener(new OnKeyListener() {
-			@Override
-			public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
-				if ((keyCode == android.view.KeyEvent.KEYCODE_BACK)) {
-					getDialog().setOnKeyListener(null);
-					cancel();
-				}
-				return false;
-			}
-		});
-	}
+    public void onSaveInstanceState(Bundle outState) {
+        getValues();
+        outState.putLong("priorityValue", priorityValue);
+        outState.putLong("startTimeValue", startValue.getTimeInMillis());
+        outState.putLong("stopTimeValue", stopValue.getTimeInMillis());
+        outState.putLong("startExtraValue", startExtraValue);
+        outState.putLong("stopExtraValue", stopExtraValue);
+        outState.putString("titleValue", titleValue);
+        outState.putString("subtitleValue", subtitleValue);
+        outState.putString("descriptionValue", descriptionValue);
+        outState.putInt("channelNameValue", channelSelectionValue);
+        outState.putInt("configNameValue", dvrConfigNameValue);
+        outState.putBoolean("enabledValue", enabledValue);
+        super.onSaveInstanceState(outState);
+    }
 
-    /**
-     * Called when the user has selected a menu item in the toolbar
-     *
-     * @param item Selected menu item
-     * @return True if selection was handled, otherwise false
-     */
-    private boolean onToolbarItemSelected(MenuItem item) {
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.save_cancel_menu, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-        case R.id.menu_save:
-            save();
-            return true;
-
-        case R.id.menu_cancel:
-            cancel();
-            return true;
+            case R.id.menu_save:
+                save();
+                return true;
+            case R.id.menu_cancel:
+                cancel();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-        return false;
     }
 
     /**
@@ -579,11 +531,7 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
         }
 
         activity.startService(intent);
-
-        if (getDialog() != null) {
-            ((FragmentStatusInterface) activity).listDataInvalid(TAG);
-            getDialog().dismiss();
-        }
+        activity.finish();
     }
 
     /**
@@ -600,9 +548,7 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        if (getDialog() != null) {
-                            getDialog().dismiss();
-                        }
+                        activity.finish();
                     }
                 })
                 .onNegative(new MaterialDialog.SingleButtonCallback() {
@@ -715,5 +661,10 @@ public class RecordingAddFragment extends DialogFragment implements OnClickListe
         String text = ((hour < 10) ? "0" + hour : hour) + ":"
                 + ((minute < 10) ? "0" + minute : minute);
         v.setText(text);
+    }
+
+    @Override
+    public void onBackPressed() {
+        cancel();
     }
 }

@@ -83,6 +83,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".activities.SettingsManageConnectionActivity" />
+        <activity android:name=".activities.RecordingAddEditActivity" />
+        <activity android:name=".activities.RecordingDetailsActivity" />
 
         <service android:name="com.google.android.libraries.cast.companionlibrary.notification.VideoCastNotificationService" />
         <service android:name="com.google.android.libraries.cast.companionlibrary.cast.reconnection.ReconnectionService"/>

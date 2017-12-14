@@ -1,9 +1,9 @@
 package org.tvheadend.tvhclient.fragments.recordings;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,7 +18,9 @@ import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
+import org.tvheadend.tvhclient.activities.RecordingAddEditActivity;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
+import org.tvheadend.tvhclient.interfaces.ToolbarInterface;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.utils.MenuUtils;
@@ -55,9 +57,6 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
     private Button removeRecordingButton;
     private Button downloadRecordingButton;
 
-    private Toolbar toolbar;
-    private TextView toolbarTitle;
-    private View toolbarShadow;
     private TVHClientApplication app;
 
     private TextView episode;
@@ -72,6 +71,7 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
     private DataStorage dataStorage;
     private MenuUtils menuUtils;
     private int dvrId;
+    private ToolbarInterface toolbarInterface;
 
     public static RecordingDetailsFragment newInstance(int dvrId) {
         RecordingDetailsFragment f = new RecordingDetailsFragment();
@@ -102,9 +102,6 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
         is_series_recording = v.findViewById(R.id.is_series_recording);
         is_timer_recording = v.findViewById(R.id.is_timer_recording);
         isEnabled = v.findViewById(R.id.is_enabled);
-        toolbar = v.findViewById(R.id.toolbar);
-        toolbarTitle = v.findViewById(R.id.toolbar_title);
-        toolbarShadow = v.findViewById(R.id.toolbar_shadow);
 
         episode = v.findViewById(R.id.episode);
         episodeLabel = v.findViewById(R.id.episode_label);
@@ -131,6 +128,9 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
         super.onActivityCreated(savedInstanceState);
 
         activity = (AppCompatActivity) getActivity();
+        if (activity instanceof ToolbarInterface) {
+            toolbarInterface = (ToolbarInterface) activity;
+        }
         app = TVHClientApplication.getInstance();
         dataStorage = DataStorage.getInstance();
         menuUtils = new MenuUtils(getActivity());
@@ -146,6 +146,12 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
 
         // Get the recording so we can show its details
         rec = dataStorage.getRecordingFromArray(dvrId);
+
+        toolbarInterface.setActionBarTitle(rec.title);
+        toolbarInterface.setActionBarSubtitle("");
+        // Enable the action bar menu
+        setHasOptionsMenu(true);
+
 
         // Show the player controls
         if (showControls) {
@@ -302,11 +308,9 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
             public void onClick(View v) {
                 // Open a new activity that starts playing the program
                 if (rec != null) {
-                    DialogFragment editFragment = RecordingAddFragment.newInstance();
-                    Bundle bundle = new Bundle();
-                    bundle.putInt("dvrId", rec.id);
-                    editFragment.setArguments(bundle);
-                    editFragment.show(activity.getSupportFragmentManager(), "dialog");
+                    Intent editIntent = new Intent(getActivity(), RecordingAddEditActivity.class);
+                    editIntent.putExtra("dvrId", rec.id);
+                    getActivity().startActivity(editIntent);
                 }
                 if (getDialog() != null) {
                     getDialog().dismiss();
