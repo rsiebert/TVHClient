@@ -175,12 +175,12 @@
         <item name="ProgramGuideContentFont">@style/ProgramGuideContentFont.Dark</item>
         <item name="TimelineItemLayoutStyle">@drawable/timeline_item_dark</item>
         <item name="TimelineHeaderLayoutStyle">@drawable/timeline_header_dark</item>
-        <!--
+
         <item name="menu_text_selector">@color/menu_text_selector_dark</item>
         <item name="menu_background_selector">@drawable/menu_background_selector_dark</item>
         <item name="android:windowBackground">@color/window_background_color_dark</item>
         <item name="toolbar_background_color">@color/toolbar_background_color_dark</item>
-        -->
+
         <item name="FragmentDividerLayoutStyle">@drawable/fragment_divider_dark</item>
         <item name="ic_menu_channels">@drawable/ic_menu_channels_dark</item>
         <item name="ic_menu_program_guide">@drawable/ic_menu_program_guide_dark</item>
@@ -255,12 +255,11 @@
         <item name="ProgramGuideContentFont">@style/ProgramGuideContentFont.Light</item>
         <item name="TimelineItemLayoutStyle">@drawable/timeline_item_light</item>
         <item name="TimelineHeaderLayoutStyle">@drawable/timeline_header_light</item>
-        <!--
+
         <item name="menu_text_selector">@color/menu_text_selector_light</item>
         <item name="menu_background_selector">@drawable/menu_background_selector_light</item>
         <item name="android:windowBackground">@color/window_background_color_light</item>
         <item name="toolbar_background_color">@color/toolbar_background_color_light</item>
-        -->
 
         <item name="FragmentDividerLayoutStyle">@drawable/fragment_divider_light</item>
         <item name="ic_menu_channels">@drawable/ic_menu_channels_light</item>
