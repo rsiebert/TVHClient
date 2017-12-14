@@ -416,6 +416,9 @@ public class RecordingAddFragment extends Fragment implements OnClickListener, B
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case android.R.id.home:
+                cancel();
+                return true;
             case R.id.menu_save:
                 save();
                 return true;

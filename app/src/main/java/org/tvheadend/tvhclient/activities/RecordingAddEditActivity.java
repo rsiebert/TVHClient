@@ -35,7 +35,7 @@ public class RecordingAddEditActivity extends AppCompatActivity implements Toolb
         setSupportActionBar(toolbar);
         actionBar = getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setHomeButtonEnabled(true);
+            actionBar.setDisplayHomeAsUpEnabled(true);
         }
         // Get the widgets so we can use them later and do not need to inflate again
         actionBarTitle = toolbar.findViewById(R.id.actionbar_title);
