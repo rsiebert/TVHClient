@@ -243,7 +243,7 @@ public class RecordingListFragment extends ListFragment implements OnItemClickLi
                 adapter.add(recording);
                 adapter.notifyDataSetChanged();
                 break;
-            case "dvrEntryUpdate":
+            case "dvrEntryDelete":
                 // Get the position of the recording that is to be
                 // deleted so the previous one can be selected
                 if (--selectedListPosition < 0) {
@@ -259,8 +259,8 @@ public class RecordingListFragment extends ListFragment implements OnItemClickLi
                     showRecordingDetails(selectedListPosition);
                 }
                 break;
-            case "dvrEntryDelete":
-                adapter.remove(recording);
+            case "dvrEntryUpdate":
+                adapter.update(recording);
                 adapter.notifyDataSetChanged();
                 break;
         }
