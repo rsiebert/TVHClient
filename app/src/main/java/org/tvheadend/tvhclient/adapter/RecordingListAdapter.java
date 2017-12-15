@@ -5,9 +5,9 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
@@ -16,25 +16,30 @@ import android.widget.TextView;
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Recording;
+import org.tvheadend.tvhclient.utils.MenuUtils;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 import org.tvheadend.tvhclient.utils.Utils;
 
 import java.util.Comparator;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class RecordingListAdapter extends ArrayAdapter<Recording> {
 
     private final Activity context;
     private final List<Recording> list;
+    private final SharedPreferences sharedPreferences;
     private int selectedPosition = 0;
 
     public RecordingListAdapter(Activity context, List<Recording> list) {
         super(context, R.layout.recording_list_widget, list);
         this.context = context;
         this.list = list;
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
     public void sort(final int type) {
@@ -77,60 +82,75 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
     }
 
     static class ViewHolder {
-        public ImageView icon;
-        public TextView icon_text;
-        public TextView title;
-        public TextView subtitle;
-        public ImageView state;
-        public TextView is_series_recording;
-        public TextView is_timer_recording;
-        public TextView channel;
-        public TextView time;
-        public TextView date;
-        public TextView duration;
-        public TextView summary;
-        public TextView description;
-        public TextView failed_reason;
-        public TextView isEnabled;
-        public ImageView dual_pane_list_item_selection;
+        @BindView(R.id.icon)
+        ImageView icon;
+        @BindView(R.id.icon_text)
+        TextView icon_text;
+        @BindView(R.id.title)
+        TextView title;
+        @BindView(R.id.subtitle)
+        TextView subtitle;
+        @BindView(R.id.summary)
+        TextView summary;
+        @BindView(R.id.is_series_recording)
+        TextView is_series_recording;
+        @BindView(R.id.is_timer_recording)
+        TextView is_timer_recording;
+        @BindView(R.id.channel)
+        TextView channel;
+        @BindView(R.id.time)
+        TextView time;
+        @BindView(R.id.date)
+        TextView date;
+        @BindView(R.id.duration)
+        TextView duration;
+        @Nullable
+        @BindView(R.id.state)
+        ImageView state;
+        @BindView(R.id.description)
+        TextView description;
+        @BindView(R.id.failed_reason)
+        TextView failed_reason;
+        @BindView(R.id.enabled)
+        TextView isEnabled;
+        @Nullable
+        @BindView(R.id.dual_pane_list_item_selection)
+        ImageView dual_pane_list_item_selection;
+
+        public ViewHolder(View view) {
+            ButterKnife.bind(this, view);
+        }
     }
+
 
     @NonNull
     @Override
-    public View getView(final int position, View convertView, @NonNull ViewGroup parent) {
-        View view = convertView;
+    public View getView(final int position, View view, @NonNull ViewGroup parent) {
         ViewHolder holder;
-
-        if (view == null) {
-            view = context.getLayoutInflater().inflate(R.layout.recording_list_widget, parent, false);
-            holder = new ViewHolder();
-            holder.icon = view.findViewById(R.id.icon);
-            holder.icon_text = view.findViewById(R.id.icon_text);
-            holder.title = view.findViewById(R.id.title);
-            holder.subtitle = view.findViewById(R.id.subtitle);
-            holder.state = view.findViewById(R.id.state);
-            holder.is_series_recording = view.findViewById(R.id.is_series_recording);
-            holder.is_timer_recording = view.findViewById(R.id.is_timer_recording);
-            holder.channel = view.findViewById(R.id.channel);
-            holder.time = view.findViewById(R.id.time);
-            holder.date = view.findViewById(R.id.date);
-            holder.duration = view.findViewById(R.id.duration);
-            holder.summary = view.findViewById(R.id.summary);
-            holder.description = view.findViewById(R.id.description);
-            holder.failed_reason = view.findViewById(R.id.failed_reason);
-            holder.isEnabled = view.findViewById(R.id.enabled);
-            holder.dual_pane_list_item_selection = view.findViewById(R.id.dual_pane_list_item_selection);
-            view.setTag(holder);
-        } else {
+        if (view != null) {
             holder = (ViewHolder) view.getTag();
+        } else {
+            view = context.getLayoutInflater().inflate(R.layout.recording_list_widget, parent, false);
+            holder = new ViewHolder(view);
+            view.setTag(holder);
         }
 
+        holder.icon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (sharedPreferences.getBoolean("playWhenChannelIconSelectedPref", true)) {
+                    Recording recording = getSelectedItem();
+                    if (recording.isCompleted() || recording.isRecording()) {
+                        new MenuUtils(context).handleMenuPlaySelection(-1, recording.id);
+                    }
+                }
+            }
+        });
         if (holder.dual_pane_list_item_selection != null) {
             // Set the correct indication when the dual pane mode is active
             // If the item is selected the the arrow will be shown, otherwise
             // only a vertical separation line is displayed.                
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-            final boolean lightTheme = prefs.getBoolean("lightThemePref", true);
+            final boolean lightTheme = sharedPreferences.getBoolean("lightThemePref", true);
 
             if (selectedPosition == position) {
                 final int icon = (lightTheme) ? R.drawable.dual_pane_selector_active_light : R.drawable.dual_pane_selector_active_dark;
@@ -159,9 +179,7 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
 
             // Show the channel icon if available and set in the preferences.
             // If not chosen, hide the imageView and show the channel name.
-
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-            boolean showChannelIcons = prefs.getBoolean("showIconPref", true);
+            boolean showChannelIcons = sharedPreferences.getBoolean("showIconPref", true);
 
             Bitmap iconBitmap = MiscUtils.getCachedIcon(context, channel.channelIcon);
             // Show the icon or a blank one if it does not exist
@@ -199,21 +217,6 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
                 holder.is_timer_recording.setVisibility(ImageView.VISIBLE);
             } else {
                 holder.is_timer_recording.setVisibility(ImageView.GONE);
-            }
-
-
-            // If activated in the settings allow playing the recording by  
-            // selecting the channel icon if the recording is completed or currently
-            // being recorded
-            if ((rec.isCompleted() || rec.isRecording())) {
-                holder.icon.setOnClickListener(new OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (context instanceof FragmentStatusInterface) {
-                            ((FragmentStatusInterface) context).onListItemSelected(position, rec, Constants.TAG_CHANNEL_ICON);
-                        }
-                    }
-                });
             }
 
             holder.isEnabled.setVisibility((DataStorage.getInstance().getProtocolVersion() >= Constants.MIN_API_VERSION_DVR_FIELD_ENABLED && rec.enabled > 0) ? View.VISIBLE : View.GONE);

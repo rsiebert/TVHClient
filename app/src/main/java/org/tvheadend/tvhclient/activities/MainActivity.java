@@ -1286,53 +1286,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     }
 
     @Override
-    public void onListItemSelected(final int position, final Recording recording, final String tag) {
-        // Save the position of the selected recording type so it can be
-        // restored after an orientation change
-        switch (selectedNavigationMenuId) {
-            case MENU_COMPLETED_RECORDINGS:
-                completedRecordingListPosition = position;
-                break;
-            case MENU_SCHEDULED_RECORDINGS:
-                scheduledRecordingListPosition = position;
-                break;
-            case MENU_FAILED_RECORDINGS:
-                failedRecordingListPosition = position;
-                break;
-            case MENU_REMOVED_RECORDINGS:
-                removedRecordingListPosition = position;
-                break;
-        }
-
-        if (recording != null) {
-            // If the channel icon of a recording was selected and the setting 
-            // is activated play the recording instead of showing its details
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-            if (prefs.getBoolean("playWhenChannelIconSelectedPref", true) &&
-                    tag.equals(Constants.TAG_CHANNEL_ICON)) {
-                menuUtils.handleMenuPlaySelection(-1, recording.id);
-            } else {
-                // When a recording has been selected from the recording list fragment,
-                // show its details. In dual mode these are shown in a separate fragment
-                // to the right of the recording list, otherwise replace the recording
-                // list with the details fragment.
-                /*
-                Bundle args = new Bundle();
-                args.putInt("dvrId", recording.id);
-                args.putBoolean(Constants.BUNDLE_SHOW_CONTROLS, !isDualPane);
-
-                if (isDualPane) {
-                    showFragment(RecordingDetailsFragment.class.getName(), R.id.right_fragment, args);
-                } else {
-                    DialogFragment newFragment = RecordingDetailsFragment.newInstance(args);
-                    newFragment.show(getSupportFragmentManager(), "dialog");
-                }
-                */
-            }
-        }
-    }
-
-    @Override
     public void onListItemSelected(final int position, final SeriesRecording seriesRecording, final String tag) {
         // Save the position of the selected recording type so it can be
         // restored after an orientation change
