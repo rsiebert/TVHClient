@@ -117,26 +117,24 @@ public class RecordingListFragment extends ListFragment implements OnItemClickLi
     protected void showRecordingDetails(int position) {
         selectedListPosition = position;
         Recording recording = adapter.getItem(position);
-
+        if (recording == null) {
+            return;
+        }
         if (!isDualPane) {
             // Launch a new activity to display the program list of the selected channel.
             Intent intent = new Intent(getActivity(), RecordingDetailsActivity.class);
             intent.putExtra("dvrId", recording.id);
-            getActivity().startActivity(intent);
+            activity.startActivity(intent);
         } else {
             // We can display everything in-place with fragments, so update
             // the list to highlight the selected item and show the program details fragment.
             getListView().setItemChecked(position, true);
-
             // Check what fragment is currently shown, replace if needed.
             RecordingDetailsFragment recordingDetailsFragment = (RecordingDetailsFragment) getFragmentManager().findFragmentById(R.id.right_fragment);
             if (recordingDetailsFragment == null || recordingDetailsFragment.getShownDvrId() != recording.id) {
                 // Make new fragment to show this selection.
                 recordingDetailsFragment = RecordingDetailsFragment.newInstance(recording.id);
-
-                // Execute a transaction, replacing any existing fragment
-                // with this one inside the frame.
-                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                FragmentTransaction ft = getFragmentManager().beginTransaction();
                 ft.replace(R.id.right_fragment, recordingDetailsFragment);
                 ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
                 ft.commit();
@@ -163,8 +161,7 @@ public class RecordingListFragment extends ListFragment implements OnItemClickLi
             popupMenu.getMenu().findItem(R.id.menu_edit).setVisible(isUnlocked);
 
         } else if (recording.isRecording()) {
-            popupMenu.getMenu().findItem(R.id.menu_record_remove).setTitle(R.string.stop);
-            popupMenu.getMenu().findItem(R.id.menu_record_remove).setVisible(true);
+            popupMenu.getMenu().findItem(R.id.menu_record_stop).setVisible(true);
             popupMenu.getMenu().findItem(R.id.menu_play).setVisible(true);
             popupMenu.getMenu().findItem(R.id.menu_edit).setVisible(isUnlocked);
 
@@ -180,10 +177,11 @@ public class RecordingListFragment extends ListFragment implements OnItemClickLi
                 case R.id.menu_search_epg:
                     menuUtils.handleMenuSearchEpgSelection(recording.title);
                     return true;
+                case R.id.menu_record_stop:
+                    menuUtils.handleMenuStopRecordingSelection(recording.id, recording.title);
+                    return true;
                 case R.id.menu_record_remove:
-                    if (recording.isRecording()) {
-                        menuUtils.handleMenuStopRecordingSelection(recording.id, recording.title);
-                    } else if (recording.isScheduled()) {
+                    if (recording.isScheduled()) {
                         menuUtils.handleMenuCancelRecordingSelection(recording.id, recording.title);
                     } else {
                         menuUtils.handleMenuRemoveRecordingSelection(recording.id, recording.title);

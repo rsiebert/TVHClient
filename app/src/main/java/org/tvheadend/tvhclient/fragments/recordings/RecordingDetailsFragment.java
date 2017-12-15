@@ -197,8 +197,7 @@ public class RecordingDetailsFragment extends DialogFragment  {
             menu.findItem(R.id.menu_edit).setVisible(isUnlocked);
 
         } else if (recording.isRecording()) {
-            menu.findItem(R.id.menu_record_remove).setTitle(R.string.stop);
-            menu.findItem(R.id.menu_record_remove).setVisible(true);
+            menu.findItem(R.id.menu_record_stop).setVisible(true);
             menu.findItem(R.id.menu_play).setVisible(true);
             menu.findItem(R.id.menu_edit).setVisible(isUnlocked);
 
@@ -240,10 +239,11 @@ public class RecordingDetailsFragment extends DialogFragment  {
                 editIntent.putExtra("dvrId", recording.id);
                 getActivity().startActivity(editIntent);
                 return true;
+            case R.id.menu_record_stop:
+                menuUtils.handleMenuStopRecordingSelection(recording.id, recording.title);
+                return true;
             case R.id.menu_record_remove:
-                if (recording.isRecording()) {
-                    menuUtils.handleMenuStopRecordingSelection(recording.id, recording.title);
-                } else if (recording.isScheduled()) {
+                if (recording.isScheduled()) {
                     menuUtils.handleMenuCancelRecordingSelection(recording.id, recording.title);
                 } else {
                     menuUtils.handleMenuRemoveRecordingSelection(recording.id, recording.title);
