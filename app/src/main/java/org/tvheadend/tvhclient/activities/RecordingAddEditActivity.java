@@ -12,7 +12,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.fragments.recordings.RecordingAddFragment;
+import org.tvheadend.tvhclient.fragments.recordings.RecordingAddEditFragment;
 import org.tvheadend.tvhclient.interfaces.BackPressedInterface;
 import org.tvheadend.tvhclient.interfaces.ToolbarInterface;
 import org.tvheadend.tvhclient.utils.MiscUtils;
@@ -42,7 +42,7 @@ public class RecordingAddEditActivity extends AppCompatActivity implements Toolb
         actionBarSubtitle = toolbar.findViewById(R.id.actionbar_subtitle);
 
         if (savedInstanceState == null) {
-            RecordingAddFragment fragment = new RecordingAddFragment();
+            RecordingAddEditFragment fragment = new RecordingAddEditFragment();
             fragment.setArguments(getIntent().getExtras());
             getSupportFragmentManager().beginTransaction().add(R.id.main_fragment, fragment).commit();
         }

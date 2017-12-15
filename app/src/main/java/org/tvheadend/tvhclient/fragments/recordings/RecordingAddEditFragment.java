@@ -43,9 +43,9 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Locale;
 
-public class RecordingAddFragment extends Fragment implements OnClickListener, BackPressedInterface {
+public class RecordingAddEditFragment extends Fragment implements OnClickListener, BackPressedInterface {
 
-    private final static String TAG = RecordingAddFragment.class.getSimpleName();
+    private final static String TAG = RecordingAddEditFragment.class.getSimpleName();
 
     private AppCompatActivity activity;
     private Recording rec;
