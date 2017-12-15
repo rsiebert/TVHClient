@@ -71,9 +71,7 @@ import org.tvheadend.tvhclient.fragments.recordings.FailedRecordingListFragment;
 import org.tvheadend.tvhclient.fragments.recordings.RecordingListFragment;
 import org.tvheadend.tvhclient.fragments.recordings.RemovedRecordingListFragment;
 import org.tvheadend.tvhclient.fragments.recordings.ScheduledRecordingListFragment;
-import org.tvheadend.tvhclient.fragments.recordings.SeriesRecordingDetailsFragment;
 import org.tvheadend.tvhclient.fragments.recordings.SeriesRecordingListFragment;
-import org.tvheadend.tvhclient.fragments.recordings.TimerRecordingDetailsFragment;
 import org.tvheadend.tvhclient.fragments.recordings.TimerRecordingListFragment;
 import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.interfaces.ChangeLogDialogInterface;
@@ -87,8 +85,6 @@ import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.Profile;
 import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
-import org.tvheadend.tvhclient.model.SeriesRecording;
-import org.tvheadend.tvhclient.model.TimerRecording;
 import org.tvheadend.tvhclient.tasks.WakeOnLanTask;
 import org.tvheadend.tvhclient.tasks.WakeOnLanTaskCallback;
 import org.tvheadend.tvhclient.utils.MenuUtils;
@@ -1282,60 +1278,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 // playing the selected channel
                 menuUtils.handleMenuPlaySelection(channel.channelId, -1);
                 break;
-        }
-    }
-
-    @Override
-    public void onListItemSelected(final int position, final SeriesRecording seriesRecording, final String tag) {
-        // Save the position of the selected recording type so it can be
-        // restored after an orientation change
-        switch (selectedNavigationMenuId) {
-            case MENU_SERIES_RECORDINGS:
-                seriesRecordingListPosition = position;
-                break;
-        }
-        // When a series recording has been selected from the recording list fragment,
-        // show its details. In dual mode these are shown in a separate fragment
-        // to the right of the series recording list, otherwise replace the recording
-        // list with the details fragment.
-        if (seriesRecording != null) {
-            Bundle args = new Bundle();
-            args.putString("id", seriesRecording.id);
-            args.putBoolean(Constants.BUNDLE_SHOW_CONTROLS, !isDualPane);
-
-            if (isDualPane) {
-                showFragment(SeriesRecordingDetailsFragment.class.getName(), R.id.right_fragment, args);
-            } else {
-                DialogFragment newFragment = SeriesRecordingDetailsFragment.newInstance(args);
-                newFragment.show(getSupportFragmentManager(), "dialog");
-            }
-        }
-    }
-
-    @Override
-    public void onListItemSelected(final int position, final TimerRecording timerRecording, final String tag) {
-        // Save the position of the selected recording type so it can be
-        // restored after an orientation change
-        switch (selectedNavigationMenuId) {
-            case MENU_TIMER_RECORDINGS:
-                timerRecordingListPosition = position;
-                break;
-        }
-        // When a timer recording has been selected from the recording list fragment,
-        // show its details. In dual mode these are shown in a separate fragment
-        // to the right of the series recording list, otherwise replace the recording
-        // list with the details fragment.
-        if (timerRecording != null) {
-            Bundle args = new Bundle();
-            args.putString("id", timerRecording.id);
-            args.putBoolean(Constants.BUNDLE_SHOW_CONTROLS, !isDualPane);
-
-            if (isDualPane) {
-                showFragment(TimerRecordingDetailsFragment.class.getName(), R.id.right_fragment, args);
-            } else {
-                DialogFragment newFragment = TimerRecordingDetailsFragment.newInstance(args);
-                newFragment.show(getSupportFragmentManager(), "dialog");
-            }
         }
     }
 
