@@ -80,7 +80,6 @@ public class RecordingListFragment extends ListFragment implements OnItemClickLi
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        final Recording recording = adapter.getItem(selectedListPosition);
         switch (item.getItemId()) {
             case R.id.menu_add:
                 Intent addIntent = new Intent(getActivity(), RecordingAddEditActivity.class);
