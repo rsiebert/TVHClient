@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,9 @@ import org.tvheadend.tvhclient.utils.Utils;
 
 import java.util.Comparator;
 import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class SeriesRecordingListAdapter extends ArrayAdapter<SeriesRecording> {
 
@@ -65,34 +69,30 @@ public class SeriesRecordingListAdapter extends ArrayAdapter<SeriesRecording> {
     }
 
     static class ViewHolder {
-        public ImageView icon;
-        public TextView title;
-        public TextView name;
-        public TextView channel;
-        public TextView daysOfWeek;
-        public TextView isEnabled;
-        public ImageView dual_pane_list_item_selection;
+        @BindView(R.id.icon) ImageView icon;
+        @BindView(R.id.title) TextView title;
+        @BindView(R.id.name) TextView name;
+        @BindView(R.id.channel) TextView channel;
+        @BindView(R.id.daysOfWeek) TextView daysOfWeek;
+        @BindView(R.id.enabled) TextView isEnabled;
+        @Nullable
+        @BindView(R.id.dual_pane_list_item_selection) ImageView dual_pane_list_item_selection;
+
+        public ViewHolder(View view) {
+            ButterKnife.bind(this, view);
+        }
     }
 
     @NonNull
     @Override
-    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
-        View view = convertView;
+    public View getView(final int position, View view, @NonNull ViewGroup parent) {
         ViewHolder holder;
-
-        if (view == null) {
-            view = context.getLayoutInflater().inflate(R.layout.series_recording_list_widget, parent, false);
-            holder = new ViewHolder();
-            holder.icon = view.findViewById(R.id.icon);
-            holder.title = view.findViewById(R.id.title);
-            holder.name = view.findViewById(R.id.name);
-            holder.channel = view.findViewById(R.id.channel);
-            holder.daysOfWeek = view.findViewById(R.id.daysOfWeek);
-            holder.isEnabled = view.findViewById(R.id.enabled);
-            holder.dual_pane_list_item_selection = view.findViewById(R.id.dual_pane_list_item_selection);
-            view.setTag(holder);
-        } else {
+        if (view != null) {
             holder = (ViewHolder) view.getTag();
+        } else {
+            view = context.getLayoutInflater().inflate(R.layout.series_recording_list_widget, parent, false);
+            holder = new ViewHolder(view);
+            view.setTag(holder);
         }
 
         if (holder.dual_pane_list_item_selection != null) {

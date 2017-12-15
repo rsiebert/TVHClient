@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +24,9 @@ import org.tvheadend.tvhclient.utils.Utils;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class TimerRecordingListAdapter extends ArrayAdapter<TimerRecording> {
 
@@ -65,35 +70,31 @@ public class TimerRecordingListAdapter extends ArrayAdapter<TimerRecording> {
     }
 
     static class ViewHolder {
-        public ImageView icon;
-        public TextView title;
-        public TextView channel;
-        public TextView daysOfWeek;
-        public TextView time;
-        public TextView duration;
-        public TextView isEnabled;
-        public ImageView dual_pane_list_item_selection;
+        @BindView(R.id.icon) ImageView icon;
+        @BindView(R.id.title) TextView title;
+        @BindView(R.id.channel) TextView channel;
+        @BindView(R.id.daysOfWeek) TextView daysOfWeek;
+        @BindView(R.id.time) TextView time;
+        @BindView(R.id.duration) TextView duration;
+        @BindView(R.id.enabled) TextView isEnabled;
+        @Nullable
+        @BindView(R.id.dual_pane_list_item_selection) ImageView dual_pane_list_item_selection;
+
+        public ViewHolder(View view) {
+            ButterKnife.bind(this, view);
+        }
     }
 
+    @NonNull
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        View view = convertView;
+    public View getView(final int position, View view, @NonNull ViewGroup parent) {
         ViewHolder holder;
-
-        if (view == null) {
-            view = context.getLayoutInflater().inflate(R.layout.timer_recording_list_widget, parent, false);
-            holder = new ViewHolder();
-            holder.icon = view.findViewById(R.id.icon);
-            holder.title = view.findViewById(R.id.title);
-            holder.channel = view.findViewById(R.id.channel);
-            holder.daysOfWeek = view.findViewById(R.id.daysOfWeek);
-            holder.time = view.findViewById(R.id.time);
-            holder.duration = view.findViewById(R.id.duration);
-            holder.isEnabled = view.findViewById(R.id.enabled);
-            holder.dual_pane_list_item_selection = view.findViewById(R.id.dual_pane_list_item_selection);
-            view.setTag(holder);
-        } else {
+        if (view != null) {
             holder = (ViewHolder) view.getTag();
+        } else {
+            view = context.getLayoutInflater().inflate(R.layout.timer_recording_list_widget, parent, false);
+            holder = new ViewHolder(view);
+            view.setTag(holder);
         }
 
         if (holder.dual_pane_list_item_selection != null) {

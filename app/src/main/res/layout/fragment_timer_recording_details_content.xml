@@ -23,36 +23,6 @@
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp" >
 
-                <LinearLayout
-                    android:id="@+id/player_layout"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:paddingBottom="8dp"
-                    android:paddingTop="16dp"
-                    android:visibility="gone" >
-
-                    <Button
-                        android:id="@+id/menu_record_remove"
-                        android:layout_width="wrap_content"
-                        android:layout_height="fill_parent"
-                        android:layout_marginEnd="16dp"
-                        android:layout_marginRight="16dp"
-                        android:padding="8dp"
-                        android:text="@string/remove"
-                        android:visibility="gone"
-                        style="?attr/borderless_button"/>
-
-                    <Button
-                        android:id="@+id/menu_record_edit"
-                        android:layout_width="wrap_content"
-                        android:layout_height="fill_parent"
-                        android:padding="8dp"
-                        android:text="@string/edit"
-                        android:visibility="gone"
-                        style="?attr/borderless_button"/>
-                </LinearLayout>
-
                 <TextView
                     android:id="@+id/is_enabled"
                     style="?attr/ContentFont"
@@ -61,22 +31,6 @@
                     android:paddingBottom="16dp"
                     android:paddingTop="16dp"
                     android:text="@null" />
-
-                <TextView
-                    android:id="@+id/name_label"
-                    style="?attr/TitleFont"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="16dp"
-                    android:text="@string/name" />
-
-                <TextView
-                    android:id="@+id/name"
-                    style="?attr/ContentFont"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/add_title"
-                    android:paddingBottom="16dp" />
 
                 <TextView
                     android:id="@+id/channel_label"
@@ -95,90 +49,36 @@
                     android:text="@string/channel" />
 
                 <TextView
-                    android:id="@+id/time_window_label"
+                    android:id="@+id/recording_time_label"
                     style="?attr/TitleFont"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingTop="16dp"
-                    android:text="@string/time_window" />
-
-                <LinearLayout
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal" >
-
-                    <TextView
-                        android:id="@+id/start_after_label"
-                        style="?attr/ContentFont"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="8dp"
-                        android:layout_marginRight="8dp"
-                        android:text="@string/start_after_time" />
-
-                    <TextView
-                        android:id="@+id/start_after_time"
-                        style="?attr/ContentFont"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/not_set" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal" >
-
-                    <TextView
-                        android:id="@+id/start_before_label"
-                        style="?attr/ContentFont"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="8dp"
-                        android:layout_marginRight="8dp"
-                        android:paddingBottom="16dp"
-                        android:text="@string/start_before_time" />
-
-                    <TextView
-                        android:id="@+id/start_before_time"
-                        style="?attr/ContentFont"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:paddingBottom="16dp"
-                        android:text="@string/not_set" />
-                </LinearLayout>
+                    android:text="@string/recording_time" />
 
                 <TextView
-                    android:id="@+id/minimum_duration_label"
-                    style="?attr/TitleFont"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="16dp"
-                    android:text="@string/min_duration" />
-
-                <TextView
-                    android:id="@+id/minimum_duration"
+                    android:id="@+id/time"
                     style="?attr/ContentFont"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingBottom="16dp"
-                    android:text="@string/not_set" />
+                    android:text="@string/recording_time" />
 
                 <TextView
-                    android:id="@+id/maximum_duration_label"
+                    android:id="@+id/duration_label"
                     style="?attr/TitleFont"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingTop="16dp"
-                    android:text="@string/max_duration" />
+                    android:text="@string/duration" />
 
                 <TextView
-                    android:id="@+id/maximum_duration"
+                    android:id="@+id/duration"
                     style="?attr/ContentFont"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingBottom="16dp"
-                    android:text="@string/not_set" />
+                    android:text="@string/duration" />
 
                 <TextView
                     android:id="@+id/days_of_week_label"

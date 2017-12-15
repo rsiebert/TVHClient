@@ -1,215 +1,189 @@
 package org.tvheadend.tvhclient.fragments.recordings;
 
-import android.app.Dialog;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
-import android.support.v7.app.AppCompatActivity;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.TVHClientApplication;
+import org.tvheadend.tvhclient.activities.ToolbarInterfaceLight;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.SeriesRecording;
 import org.tvheadend.tvhclient.utils.MenuUtils;
 import org.tvheadend.tvhclient.utils.Utils;
 
-public class SeriesRecordingDetailsFragment extends DialogFragment {
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
-    @SuppressWarnings("unused")
-    private final static String TAG = SeriesRecordingDetailsFragment.class.getSimpleName();
+public class SeriesRecordingDetailsFragment extends Fragment {
 
-    private AppCompatActivity activity;
-    private boolean showControls = false;
-    private SeriesRecording srec;
+    @BindView(R.id.is_enabled) TextView isEnabled;
+    @BindView(R.id.directory_label) TextView directoryLabel;
+    @BindView(R.id.directory) TextView directory;
+    @BindView(R.id.minimum_duration) TextView minDuration;
+    @BindView(R.id.maximum_duration) TextView maxDuration;
+    @BindView(R.id.start_after_time) TextView startTime;
+    @BindView(R.id.start_before_time) TextView startWindowTime;
+    @BindView(R.id.days_of_week) TextView daysOfWeek;
+    @BindView(R.id.channel) TextView channelName;
+    @BindView(R.id.name_label) TextView nameLabel;
+    @BindView(R.id.name) TextView name;
+    @BindView(R.id.priority) TextView priority;
 
-    private TextView isEnabled;
-    private TextView directoryLabel;
-    private TextView directory;
-    private TextView minDuration;
-    private TextView maxDuration;
-    private TextView startTime;
-    private TextView startWindowTime;
-    private TextView daysOfWeek;
-    private TextView channelName;
-    private TextView nameLabel;
-    private TextView name;
-    private TextView priority;
+    @Nullable
+    @BindView(R.id.nested_toolbar)
+    Toolbar nestedToolbar;
 
-    private LinearLayout playerLayout;
-    private Button recordRemoveButton;
-    private Button recordEditButton;
-
-    private Toolbar toolbar;
-    private TextView toolbarTitle;
-    private View toolbarShadow;
-    private TVHClientApplication app;
-    private DataStorage dataStorage;
+    private ToolbarInterfaceLight toolbarInterface;
+    private SeriesRecording recording;
     private MenuUtils menuUtils;
+    private String id;
+    private Unbinder unbinder;
 
-    public static SeriesRecordingDetailsFragment newInstance(Bundle args) {
+    public static SeriesRecordingDetailsFragment newInstance(String id) {
         SeriesRecordingDetailsFragment f = new SeriesRecordingDetailsFragment();
+        Bundle args = new Bundle();
+        args.putString("id", id);
         f.setArguments(args);
         return f;
-    }
-
-    @NonNull
-    @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        Dialog dialog = super.onCreateDialog(savedInstanceState);
-        if (dialog.getWindow() != null) {
-            dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-        }
-        return dialog;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        if (getDialog() != null && getDialog().getWindow() != null) {
-            getDialog().getWindow().getAttributes().windowAnimations = R.style.dialog_animation_fade;
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
+        View view = inflater.inflate(R.layout.fragment_series_recording_details, container, false);
+        unbinder = ButterKnife.bind(this, view);
+        return view;
+    }
 
-        // Initialize all the widgets from the layout
-        View v = inflater.inflate(R.layout.series_recording_details_layout, container, false);
-        channelName = v.findViewById(R.id.channel);
-        isEnabled = v.findViewById(R.id.is_enabled);
-        directoryLabel = v.findViewById(R.id.directory_label);
-        directory = v.findViewById(R.id.directory);
-        nameLabel = v.findViewById(R.id.name_label);
-        name = v.findViewById(R.id.name);
-        minDuration = v.findViewById(R.id.minimum_duration);
-        maxDuration = v.findViewById(R.id.maximum_duration);
-        startTime = v.findViewById(R.id.start_after_time);
-        startWindowTime = v.findViewById(R.id.start_before_time);
-        daysOfWeek = v.findViewById(R.id.days_of_week);
-        priority = v.findViewById(R.id.priority);
-        toolbar = v.findViewById(R.id.toolbar);
-        toolbarTitle = v.findViewById(R.id.toolbar_title);
-        toolbarShadow = v.findViewById(R.id.toolbar_shadow);
-
-        // Initialize the player layout
-        playerLayout = v.findViewById(R.id.player_layout);
-        recordRemoveButton = v.findViewById(R.id.menu_record_remove);
-        recordEditButton = v.findViewById(R.id.menu_record_edit);
-
-        return v;
+    @Override public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        activity = (AppCompatActivity) getActivity();
-        app = TVHClientApplication.getInstance();
-        dataStorage = DataStorage.getInstance();
+        if (getActivity() instanceof ToolbarInterfaceLight) {
+            toolbarInterface = (ToolbarInterfaceLight) getActivity();
+            toolbarInterface.setTitle("Details");
+        }
         menuUtils = new MenuUtils(getActivity());
+        setHasOptionsMenu(true);
 
-        String srecId = "";
         Bundle bundle = getArguments();
         if (bundle != null) {
-            srecId = bundle.getString("id");
-            showControls = bundle.getBoolean(Constants.BUNDLE_SHOW_CONTROLS, false);
+            id = bundle.getString("id");
+        }
+        if (savedInstanceState != null) {
+            id = savedInstanceState.getString("id");
         }
 
         // Get the recording so we can show its details
-        srec = dataStorage.getSeriesRecordingFromArray(srecId);
+        recording = DataStorage.getInstance().getSeriesRecordingFromArray(id);
 
-        // If the recording is null exit
-        if (srec == null) {
-            return;
+        if (nestedToolbar != null) {
+            nestedToolbar.inflateMenu(R.menu.recording_toolbar_menu);
+            nestedToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem menuItem) {
+                    return onOptionsItemSelected(menuItem);
+                }
+            });
         }
 
-        if (toolbar != null) {
-            toolbar.setVisibility(getDialog() != null ? View.VISIBLE : View.GONE);
-        }
-        if (toolbarShadow != null) {
-            toolbarShadow.setVisibility(getDialog() != null ? View.VISIBLE : View.GONE);
-        }
-        if (getDialog() != null && toolbarTitle != null) {
-            toolbarTitle.setText(srec.title);
-        }
+        isEnabled.setVisibility(DataStorage.getInstance().getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED ? View.VISIBLE : View.GONE);
+        isEnabled.setText(recording.enabled > 0 ? R.string.recording_enabled : R.string.recording_disabled);
 
-        // Show the player controls
-        if (showControls) {
-            addPlayerControlListeners();
-            playerLayout.setVisibility(View.VISIBLE);
-            recordRemoveButton.setVisibility(View.VISIBLE);
-            recordEditButton.setVisibility(app.isUnlocked() ? View.VISIBLE : View.GONE);
-        }
+        directoryLabel.setVisibility(DataStorage.getInstance().getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_DIRECTORY ? View.VISIBLE : View.GONE);
+        directory.setVisibility(DataStorage.getInstance().getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_DIRECTORY ? View.VISIBLE : View.GONE);
+        directory.setText(recording.directory);
 
-        isEnabled.setVisibility(dataStorage.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED ? View.VISIBLE : View.GONE);
-        isEnabled.setText(srec.enabled > 0 ? R.string.recording_enabled : R.string.recording_disabled);
-
-        directoryLabel.setVisibility(dataStorage.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_DIRECTORY ? View.VISIBLE : View.GONE);
-        directory.setVisibility(dataStorage.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_DIRECTORY ? View.VISIBLE : View.GONE);
-        directory.setText(srec.directory);
-
-        Channel channel = dataStorage.getChannelFromArray(srec.channel);
+        Channel channel = DataStorage.getInstance().getChannelFromArray(recording.channel);
         channelName.setText(channel != null ? channel.channelName : getString(R.string.all_channels));
 
-        Utils.setDescription(nameLabel, name, srec.name);
-        Utils.setDaysOfWeek(activity, null, daysOfWeek, srec.daysOfWeek);
+        Utils.setDescription(nameLabel, name, recording.name);
+        Utils.setDaysOfWeek(getActivity(), null, daysOfWeek, recording.daysOfWeek);
 
         String[] priorityItems = getResources().getStringArray(R.array.dvr_priorities);
-        if (srec.priority >= 0 && srec.priority < priorityItems.length) {
-            priority.setText(priorityItems[srec.priority]);
+        if (recording.priority >= 0 && recording.priority < priorityItems.length) {
+            priority.setText(priorityItems[recording.priority]);
         }
-        if (srec.minDuration > 0) {
+        if (recording.minDuration > 0) {
             // The minimum time is given in seconds, but we want to show it in minutes
-            minDuration.setText(getString(R.string.minutes, (int) (srec.minDuration / 60)));
+            minDuration.setText(getString(R.string.minutes, (int) (recording.minDuration / 60)));
         }
-        if (srec.maxDuration > 0) {
+        if (recording.maxDuration > 0) {
             // The maximum time is given in seconds, but we want to show it in minutes
-            maxDuration.setText(getString(R.string.minutes, (int) (srec.maxDuration / 60)));
+            maxDuration.setText(getString(R.string.minutes, (int) (recording.maxDuration / 60)));
         }
-        startTime.setText(Utils.getTimeStringFromValue(activity, srec.start));
-        startWindowTime.setText(Utils.getTimeStringFromValue(activity, srec.startWindow));
+        startTime.setText(Utils.getTimeStringFromValue(getActivity(), recording.start));
+        startWindowTime.setText(Utils.getTimeStringFromValue(getActivity(), recording.startWindow));
     }
 
-    /**
-     * 
-     */
-    private void addPlayerControlListeners() {
-        recordRemoveButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                menuUtils.handleMenuRemoveSeriesRecordingSelection(srec.id, srec.title);
-                if (getDialog() != null) {
-                    getDialog().dismiss();
-                }
-            }
-        });
-        recordEditButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Create the fragment and show it as a dialog.
-                DialogFragment editFragment = SeriesRecordingAddFragment.newInstance();
-                Bundle bundle = new Bundle();
-                bundle.putString("id", srec.id);
-                editFragment.setArguments(bundle);
-                editFragment.show(activity.getSupportFragmentManager(), "dialog");
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        //
+        if (nestedToolbar != null) {
+            menu = nestedToolbar.getMenu();
+        }
+        menu.findItem(R.id.menu_edit).setVisible(true);
+        menu.findItem(R.id.menu_record_remove).setVisible(true);
+    }
 
-                if (getDialog() != null) {
-                    getDialog().dismiss();
-                }
-            }
-        });
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("id", id);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        if (nestedToolbar == null) {
+            inflater.inflate(R.menu.recording_context_menu, menu);
+        } else {
+            inflater.inflate(R.menu.search_info_menu, menu);
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                getActivity().finish();
+                return true;
+            case R.id.menu_edit:
+                /*Intent editIntent = new Intent(getActivity(), SeriesRecordingAddActivity.class);
+                editIntent.putExtra("id", recording.id);
+                getActivity().startActivity(editIntent);*/
+                return true;
+            case R.id.menu_record_remove:
+                menuUtils.handleMenuRemoveSeriesRecordingSelection(recording.id, recording.title);
+                return true;
+            case R.id.menu_search_imdb:
+                menuUtils.handleMenuSearchWebSelection(recording.title);
+                return true;
+            case R.id.menu_search_epg:
+                menuUtils.handleMenuSearchEpgSelection(recording.title);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    public String getShownId() {
+        return id;
     }
 }
