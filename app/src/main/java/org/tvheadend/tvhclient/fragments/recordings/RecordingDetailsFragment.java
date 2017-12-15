@@ -2,76 +2,80 @@ package org.tvheadend.tvhclient.fragments.recordings;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.activities.RecordingAddEditActivity;
-import org.tvheadend.tvhclient.interfaces.HTSListener;
-import org.tvheadend.tvhclient.interfaces.ToolbarInterface;
+import org.tvheadend.tvhclient.activities.ToolbarInterfaceLight;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.utils.MenuUtils;
 import org.tvheadend.tvhclient.utils.Utils;
 
-public class RecordingDetailsFragment extends DialogFragment implements HTSListener {
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
+
+public class RecordingDetailsFragment extends DialogFragment  {
 
     @SuppressWarnings("unused")
     private final static String TAG = RecordingDetailsFragment.class.getSimpleName();
 
-    private AppCompatActivity activity;
-    private boolean showControls = false;
-    private Recording rec;
+    private Recording recording;
 
-    private TextView summaryLabel;
-    private TextView summary;
-    private TextView descLabel;
-    private TextView desc;
-    private TextView subtitleLabel;
-    private TextView subtitle;
-    private TextView channelLabel;
-    private TextView channelName;
-    private TextView date;
-    private TextView time;
-    private TextView duration;
-    private TextView failed_reason;
-    private TextView is_series_recording;
-    private TextView is_timer_recording;
-    private TextView isEnabled;
+    @BindView(R.id.summary_label) TextView summaryLabel;
+    @BindView(R.id.summary) TextView summary;
+    @BindView(R.id.description_label) TextView descLabel;
+    @BindView(R.id.description) TextView desc;
+    @BindView(R.id.title_label) TextView titleLabel;
+    @BindView(R.id.title) TextView title;
+    @BindView(R.id.subtitle_label) TextView subtitleLabel;
+    @BindView(R.id.subtitle) TextView subtitle;
+    @BindView(R.id.channel_label) TextView channelLabel;
+    @BindView(R.id.channel) TextView channelName;
+    @BindView(R.id.date) TextView date;
+    @BindView(R.id.time) TextView time;
+    @BindView(R.id.duration) TextView duration;
 
-    private LinearLayout playerLayout;
-    private Button playRecordingButton;
-    private Button editRecordingButton;
-    private Button removeRecordingButton;
-    private Button downloadRecordingButton;
+    @Nullable
+    @BindView(R.id.failed_reason) TextView failed_reason;
+    @BindView(R.id.is_series_recording) TextView is_series_recording;
+    @BindView(R.id.is_timer_recording) TextView is_timer_recording;
+    @BindView(R.id.is_enabled) TextView isEnabled;
 
-    private TVHClientApplication app;
+    @BindView(R.id.episode) TextView episode;
+    @BindView(R.id.episode_label) TextView episodeLabel;
+    @BindView(R.id.comment) TextView comment;
+    @BindView(R.id.comment_label) TextView commentLabel;
+    @BindView(R.id.subscription_error) TextView subscription_error;
+    @BindView(R.id.stream_errors) TextView stream_errors;
+    @BindView(R.id.data_errors) TextView data_errors;
+    @BindView(R.id.data_size) TextView data_size;
+    @BindView(R.id.status_label) TextView statusLabel;
 
-    private TextView episode;
-    private TextView episodeLabel;
-    private TextView comment;
-    private TextView commentLabel;
-    private TextView subscription_error;
-    private TextView stream_errors;
-    private TextView data_errors;
-    private TextView data_size;
-    private TextView statusLabel;
-    private DataStorage dataStorage;
+    @Nullable
+    @BindView(R.id.nested_toolbar) Toolbar nestedToolbar;
+
+    private ToolbarInterfaceLight toolbarInterface;
     private MenuUtils menuUtils;
     private int dvrId;
-    private ToolbarInterface toolbarInterface;
+    private boolean isUnlocked;
+    private int htspVersion;
+
+    private Unbinder unbinder;
+
 
     public static RecordingDetailsFragment newInstance(int dvrId) {
         RecordingDetailsFragment f = new RecordingDetailsFragment();
@@ -84,123 +88,89 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
+        View view = inflater.inflate(R.layout.fragment_recording_details, container, false);
+        unbinder = ButterKnife.bind(this, view);
+        return view;
+    }
 
-        // Initialize all the widgets from the layout
-        View v = inflater.inflate(R.layout.recording_details_layout, container, false);
-        summaryLabel = v.findViewById(R.id.summary_label);
-        summary = v.findViewById(R.id.summary);
-        descLabel = v.findViewById(R.id.description_label);
-        desc = v.findViewById(R.id.description);
-        subtitleLabel = v.findViewById(R.id.subtitle_label);
-        subtitle = v.findViewById(R.id.subtitle);
-        channelLabel = v.findViewById(R.id.channel_label);
-        channelName = v.findViewById(R.id.channel);
-        date = v.findViewById(R.id.date);
-        time = v.findViewById(R.id.time);
-        duration = v.findViewById(R.id.duration);
-        failed_reason = v.findViewById(R.id.failed_reason);
-        is_series_recording = v.findViewById(R.id.is_series_recording);
-        is_timer_recording = v.findViewById(R.id.is_timer_recording);
-        isEnabled = v.findViewById(R.id.is_enabled);
-
-        episode = v.findViewById(R.id.episode);
-        episodeLabel = v.findViewById(R.id.episode_label);
-        comment = v.findViewById(R.id.comment);
-        commentLabel = v.findViewById(R.id.comment_label);
-        statusLabel = v.findViewById(R.id.status_label);
-        subscription_error = v.findViewById(R.id.subscription_error);
-        stream_errors = v.findViewById(R.id.stream_errors);
-        data_errors = v.findViewById(R.id.data_errors);
-        data_size = v.findViewById(R.id.data_size);
-
-        // Initialize the player layout
-        playerLayout = v.findViewById(R.id.player_layout);
-        playRecordingButton = v.findViewById(R.id.menu_play);
-        editRecordingButton = v.findViewById(R.id.menu_edit);
-        removeRecordingButton = v.findViewById(R.id.menu_record_remove);
-        downloadRecordingButton = v.findViewById(R.id.menu_download);
-
-        return v;
+    @Override public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        activity = (AppCompatActivity) getActivity();
-        if (activity instanceof ToolbarInterface) {
-            toolbarInterface = (ToolbarInterface) activity;
+        if (getActivity() instanceof ToolbarInterfaceLight) {
+            toolbarInterface = (ToolbarInterfaceLight) getActivity();
+            toolbarInterface.setTitle("Details");
         }
-        app = TVHClientApplication.getInstance();
-        dataStorage = DataStorage.getInstance();
         menuUtils = new MenuUtils(getActivity());
+        isUnlocked = TVHClientApplication.getInstance().isUnlocked();
+        htspVersion = DataStorage.getInstance().getProtocolVersion();
+        setHasOptionsMenu(true);
 
         Bundle bundle = getArguments();
         if (bundle != null) {
             dvrId = bundle.getInt("dvrId", 0);
-            showControls = bundle.getBoolean(Constants.BUNDLE_SHOW_CONTROLS, false);
         }
         if (savedInstanceState != null) {
             dvrId = savedInstanceState.getInt("dvrId", 0);
         }
-
         // Get the recording so we can show its details
-        rec = dataStorage.getRecordingFromArray(dvrId);
+        recording = DataStorage.getInstance().getRecordingFromArray(dvrId);
 
-        toolbarInterface.setActionBarTitle(rec.title);
-        toolbarInterface.setActionBarSubtitle("");
-        // Enable the action bar menu
-        setHasOptionsMenu(true);
-
-
-        // Show the player controls
-        if (showControls) {
-            addPlayerControlListeners();
-            playerLayout.setVisibility(View.VISIBLE);
-            showPlayerControls();
+        if (nestedToolbar != null) {
+            nestedToolbar.inflateMenu(R.menu.recording_toolbar_menu);
+            nestedToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem menuItem) {
+                    return onOptionsItemSelected(menuItem);
+                }
+            });
         }
 
-        Utils.setDate(date, rec.start);
-        Utils.setTime(time, rec.start, rec.stop);
-        Utils.setDuration(duration, rec.start, rec.stop);
+        Utils.setDate(date, recording.start);
+        Utils.setTime(time, recording.start, recording.stop);
+        Utils.setDuration(duration, recording.start, recording.stop);
 
-        Channel channel = dataStorage.getChannelFromArray(rec.channel);
+        Channel channel = DataStorage.getInstance().getChannelFromArray(recording.channel);
         Utils.setDescription(channelLabel, channelName, ((channel != null) ? channel.channelName : ""));
-        Utils.setDescription(summaryLabel, summary, rec.summary);
-        Utils.setDescription(descLabel, desc, rec.description);
-        Utils.setDescription(subtitleLabel, subtitle, rec.subtitle);
-        Utils.setDescription(episodeLabel, episode, rec.episode);
-        Utils.setDescription(commentLabel, comment, rec.comment);
-
-        Utils.setFailedReason(failed_reason, rec);
+        Utils.setDescription(summaryLabel, summary, recording.summary);
+        Utils.setDescription(descLabel, desc, recording.description);
+        Utils.setDescription(titleLabel, title, recording.title);
+        Utils.setDescription(subtitleLabel, subtitle, recording.subtitle);
+        Utils.setDescription(episodeLabel, episode, recording.episode);
+        Utils.setDescription(commentLabel, comment, recording.comment);
+        Utils.setFailedReason(failed_reason, recording);
 
         // Show the information if the recording belongs to a series recording
         // only when no dual pane is active (the controls shall be shown)
-        is_series_recording.setVisibility((rec.autorecId != null && showControls) ? ImageView.VISIBLE : ImageView.GONE);
-        is_timer_recording.setVisibility((rec.timerecId != null && showControls) ? ImageView.VISIBLE : ImageView.GONE);
+        is_series_recording.setVisibility((recording.autorecId != null) ? ImageView.VISIBLE : ImageView.GONE);
+        is_timer_recording.setVisibility((recording.timerecId != null) ? ImageView.VISIBLE : ImageView.GONE);
 
-        isEnabled.setVisibility((dataStorage.getProtocolVersion() >= Constants.MIN_API_VERSION_DVR_FIELD_ENABLED && rec.enabled == 0) ? View.VISIBLE : View.GONE);
-        isEnabled.setText(rec.enabled > 0 ? R.string.recording_enabled : R.string.recording_disabled);
+        isEnabled.setVisibility((htspVersion >= 23 && recording.enabled == 0) ? View.VISIBLE : View.GONE);
+        isEnabled.setText(recording.enabled > 0 ? R.string.recording_enabled : R.string.recording_disabled);
 
         // Only show the status details in the 
         // completed and failed details screens
-        if (!rec.isScheduled()) {
-            if (rec.subscriptionError != null && rec.subscriptionError.length() > 0) {
+        if (!recording.isScheduled()) {
+            if (recording.subscriptionError != null && recording.subscriptionError.length() > 0) {
                 subscription_error.setVisibility(View.VISIBLE);
                 subscription_error.setText(getResources().getString(
-                        R.string.subscription_error, rec.subscriptionError));
+                        R.string.subscription_error, recording.subscriptionError));
             } else {
                 subscription_error.setVisibility(View.GONE);
             }
 
+            stream_errors.setText(getResources().getString(R.string.stream_errors, recording.streamErrors == null ? "0" : recording.streamErrors));
+            data_errors.setText(getResources().getString(R.string.data_errors, recording.dataErrors == null ? "0" : recording.dataErrors));
 
-            stream_errors.setText(getResources().getString(R.string.stream_errors, rec.streamErrors == null ? "0" : rec.streamErrors));
-            data_errors.setText(getResources().getString(R.string.data_errors, rec.dataErrors == null ? "0" : rec.dataErrors));
-    
-            if (rec.dataSize > 1048576) {
-                data_size.setText(getResources().getString(R.string.data_size, rec.dataSize / 1048576, "MB"));
+            if (recording.dataSize > 1048576) {
+                data_size.setText(getResources().getString(R.string.data_size, recording.dataSize / 1048576, "MB"));
             } else {
-                data_size.setText(getResources().getString(R.string.data_size, rec.dataSize / 1024, "KB"));
+                data_size.setText(getResources().getString(R.string.data_size, recording.dataSize / 1024, "KB"));
             }
         } else {
             statusLabel.setVisibility(View.GONE);
@@ -209,22 +179,32 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
             data_errors.setVisibility(View.GONE);
             data_size.setVisibility(View.GONE);
         }
+    }
 
-        /*
-        if (getDialog() != null && Build.VERSION.SDK_INT >= 21) {
-            // Inflate a menu to be displayed in the toolbar
-            toolbar.inflateMenu(R.menu.search_info_menu);
-
-            // Set an OnMenuItemClickListener to handle menu item clicks
-            toolbar.setOnMenuItemClickListener(
-                    new Toolbar.OnMenuItemClickListener() {
-                        @Override
-                        public boolean onMenuItemClick(MenuItem item) {
-                            return onToolbarItemSelected(item);
-                        }
-                    });
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        //
+        if (nestedToolbar != null) {
+            menu = nestedToolbar.getMenu();
         }
-        */
+        if (recording.isCompleted()) {
+            menu.findItem(R.id.menu_record_remove).setVisible(true);
+            menu.findItem(R.id.menu_play).setVisible(true);
+            menu.findItem(R.id.menu_download).setVisible(isUnlocked);
+
+        } else if (recording.isScheduled() && !recording.isRecording()) {
+            menu.findItem(R.id.menu_record_remove).setVisible(true);
+            menu.findItem(R.id.menu_edit).setVisible(isUnlocked);
+
+        } else if (recording.isRecording()) {
+            menu.findItem(R.id.menu_record_remove).setTitle(R.string.stop);
+            menu.findItem(R.id.menu_record_remove).setVisible(true);
+            menu.findItem(R.id.menu_play).setVisible(true);
+            menu.findItem(R.id.menu_edit).setVisible(isUnlocked);
+
+        } else if (recording.isFailed() || recording.isRemoved() || recording.isMissed() || recording.isAborted()) {
+            menu.findItem(R.id.menu_record_remove).setVisible(true);
+        }
     }
 
     @Override
@@ -233,148 +213,50 @@ public class RecordingDetailsFragment extends DialogFragment implements HTSListe
         outState.putInt("dvrId", dvrId);
     }
 
-    boolean onToolbarItemSelected(MenuItem item) {
-        if (rec == null) {
-            return false;
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        if (nestedToolbar == null) {
+            inflater.inflate(R.menu.recording_context_menu, menu);
+        } else {
+            inflater.inflate(R.menu.search_info_menu, menu);
         }
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case android.R.id.home:
+                getActivity().finish();
+                return true;
+            case R.id.menu_play:
+                menuUtils.handleMenuPlaySelection(-1, recording.id);
+                return true;
+            case R.id.menu_download:
+                menuUtils.handleMenuDownloadSelection(recording.id);
+                return true;
+            case R.id.menu_edit:
+                Intent editIntent = new Intent(getActivity(), RecordingAddEditActivity.class);
+                editIntent.putExtra("dvrId", recording.id);
+                getActivity().startActivity(editIntent);
+                return true;
+            case R.id.menu_record_remove:
+                if (recording.isRecording()) {
+                    menuUtils.handleMenuStopRecordingSelection(recording.id, recording.title);
+                } else if (recording.isScheduled()) {
+                    menuUtils.handleMenuCancelRecordingSelection(recording.id, recording.title);
+                } else {
+                    menuUtils.handleMenuRemoveRecordingSelection(recording.id, recording.title);
+                }
+                return true;
             case R.id.menu_search_imdb:
-                menuUtils.handleMenuSearchWebSelection(rec.title);
+                menuUtils.handleMenuSearchWebSelection(recording.title);
                 return true;
-
             case R.id.menu_search_epg:
-                menuUtils.handleMenuSearchEpgSelection(rec.title);
+                menuUtils.handleMenuSearchEpgSelection(recording.title);
                 return true;
-
             default:
-                return false;
-        }
-    }
-
-    /**
-     * Shows certain menu items depending on the recording state, the server
-     * capabilities and if the application is unlocked
-     */
-    private void showPlayerControls() {
-        // Hide all buttons as a default
-        playRecordingButton.setVisibility(View.GONE);
-        editRecordingButton.setVisibility(View.GONE);
-        removeRecordingButton.setVisibility(View.GONE);
-        downloadRecordingButton.setVisibility(View.GONE);
-
-        if (rec != null) {
-            if (rec.isCompleted()) {
-                // The recording is available, it can be played and removed
-                removeRecordingButton.setVisibility(View.VISIBLE);
-                playRecordingButton.setVisibility(View.VISIBLE);
-                if (app.isUnlocked()) {
-                    downloadRecordingButton.setVisibility(View.VISIBLE);
-                }
-
-                // The recording is recording it can be played or cancelled
-                removeRecordingButton.setText(getString(R.string.stop));
-                removeRecordingButton.setVisibility(View.VISIBLE);
-                playRecordingButton.setVisibility(View.VISIBLE);
-                if (app.isUnlocked()) {
-                    editRecordingButton.setVisibility(View.VISIBLE);
-                }
-            } else if (rec.isScheduled()) {
-                // The recording is scheduled, it can only be cancelled
-                removeRecordingButton.setVisibility(View.VISIBLE);
-                if (app.isUnlocked()) {
-                    editRecordingButton.setVisibility(View.VISIBLE);
-                }
-            } else if (rec.isMissed() || rec.isFailed() || rec.isAborted() || rec.isRemoved()) {
-                // The recording has failed or has been missed, allow removing it
-                removeRecordingButton.setVisibility(View.VISIBLE);
-            }
-        }
-    }
-
-    /**
-     * 
-     */
-    private void addPlayerControlListeners() {
-        playRecordingButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Open a new activity that starts playing the program
-                menuUtils.handleMenuPlaySelection(-1, rec.id);
-            }
-        });
-        editRecordingButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Open a new activity that starts playing the program
-                if (rec != null) {
-                    Intent editIntent = new Intent(getActivity(), RecordingAddEditActivity.class);
-                    editIntent.putExtra("dvrId", rec.id);
-                    getActivity().startActivity(editIntent);
-                }
-                if (getDialog() != null) {
-                    getDialog().dismiss();
-                }
-            }
-        });
-        removeRecordingButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (rec != null) {
-                    if (rec.isRecording()) {
-                        menuUtils.handleMenuStopRecordingSelection(rec.id, rec.title);
-                    } else if (rec.isScheduled()) {
-                        menuUtils.handleMenuCancelRecordingSelection(rec.id, rec.title);
-                    } else {
-                        menuUtils.handleMenuRemoveRecordingSelection(rec.id, rec.title);
-                    }
-                }
-                if (getDialog() != null) {
-                    getDialog().dismiss();
-                }
-            }
-        });
-        downloadRecordingButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                menuUtils.handleMenuDownloadSelection(rec.id);
-                if (getDialog() != null) {
-                    getDialog().dismiss();
-                }
-            }
-        });
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        app.addListener(this);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        app.removeListener(this);
-    }
-
-    /**
-     * This method is part of the HTSListener interface. Whenever the HTSService
-     * sends a new message the correct action will then be executed here.
-     */
-    @Override
-    public void onMessage(String action, Object obj) {
-        // An existing recording has been updated, this is valid for all menu options
-        if (action.equals("eventUpdate")
-                || action.equals("dvrEntryAdd")
-                || action.equals("dvrEntryDelete")
-                || action.equals("dvrEntryUpdate")) {
-            activity.runOnUiThread(new Runnable() {
-                public void run() {
-                    if (showControls) {
-                        showPlayerControls();
-                    }
-                }
-            });
+                return super.onOptionsItemSelected(item);
         }
     }
 
