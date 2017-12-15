@@ -84,7 +84,6 @@
         </activity>
         <activity android:name=".activities.SettingsManageConnectionActivity" />
         <activity android:name=".activities.RecordingAddEditActivity" />
-        <activity android:name=".activities.RecordingDetailsActivity" />
         <activity android:name=".activities.DetailsActivity" />
 
         <service android:name="com.google.android.libraries.cast.companionlibrary.notification.VideoCastNotificationService" />

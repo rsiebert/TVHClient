@@ -20,8 +20,8 @@ import android.widget.ListView;
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
+import org.tvheadend.tvhclient.activities.DetailsActivity;
 import org.tvheadend.tvhclient.activities.RecordingAddEditActivity;
-import org.tvheadend.tvhclient.activities.RecordingDetailsActivity;
 import org.tvheadend.tvhclient.adapter.RecordingListAdapter;
 import org.tvheadend.tvhclient.interfaces.ToolbarInterface;
 import org.tvheadend.tvhclient.model.Recording;
@@ -121,8 +121,9 @@ public class RecordingListFragment extends ListFragment implements OnItemClickLi
         }
         if (!isDualPane) {
             // Launch a new activity to display the program list of the selected channel.
-            Intent intent = new Intent(getActivity(), RecordingDetailsActivity.class);
+            Intent intent = new Intent(getActivity(), DetailsActivity.class);
             intent.putExtra("dvrId", recording.id);
+            intent.putExtra("type", "recording");
             activity.startActivity(intent);
         } else {
             // We can display everything in-place with fragments, so update
