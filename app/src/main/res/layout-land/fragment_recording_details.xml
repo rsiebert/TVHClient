@@ -4,6 +4,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <!-- TODO This layout is only for testing purposes -->
+
     <android.support.v7.widget.Toolbar
         android:id="@+id/nested_toolbar"
         android:layout_width="match_parent"

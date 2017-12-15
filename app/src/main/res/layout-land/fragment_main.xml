@@ -5,6 +5,8 @@
     android:baselineAligned="false"
     android:orientation="horizontal">
 
+    <!-- TODO This layout is only for testing purposes -->
+
     <FrameLayout
         android:id="@+id/main_fragment"
         android:layout_width="match_parent"
