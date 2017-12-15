@@ -80,44 +80,16 @@ public class RecordingListFragment extends ListFragment implements OnItemClickLi
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        final Recording rec = adapter.getItem(selectedListPosition);
+        final Recording recording = adapter.getItem(selectedListPosition);
         switch (item.getItemId()) {
-            case R.id.menu_play:
-                menuUtils.handleMenuPlaySelection(-1, rec.id);
-                return true;
-
-            case R.id.menu_download:
-                menuUtils.handleMenuDownloadSelection(rec.id);
-                return true;
-
             case R.id.menu_add:
                 Intent addIntent = new Intent(getActivity(), RecordingAddEditActivity.class);
                 getActivity().startActivity(addIntent);
                 return true;
-
-            case R.id.menu_edit:
-                Intent editIntent = new Intent(getActivity(), RecordingAddEditActivity.class);
-                editIntent.putExtra("dvrId", rec.id);
-                getActivity().startActivity(editIntent);
-                return true;
-
-            case R.id.menu_record_remove:
-                if (rec != null) {
-                    if (rec.isRecording()) {
-                        menuUtils.handleMenuStopRecordingSelection(rec.id, rec.title);
-                    } else if (rec.isScheduled()) {
-                        menuUtils.handleMenuCancelRecordingSelection(rec.id, rec.title);
-                    } else {
-                        menuUtils.handleMenuRemoveRecordingSelection(rec.id, rec.title);
-                    }
-                }
-                return true;
-
             case R.id.menu_record_remove_all:
                 CopyOnWriteArrayList<Recording> list = new CopyOnWriteArrayList<>(adapter.getAllItems());
                 menuUtils.handleMenuRemoveAllRecordingsSelection(list);
                 return true;
-
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -126,7 +98,15 @@ public class RecordingListFragment extends ListFragment implements OnItemClickLi
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.recording_menu, menu);
+        inflater.inflate(R.menu.recording_list_menu, menu);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        if (!sharedPreferences.getBoolean("hideMenuDeleteAllRecordingsPref", false) && adapter.getCount() > 1) {
+            menu.findItem(R.id.menu_record_remove_all).setVisible(true);
+        }
     }
 
     @Override

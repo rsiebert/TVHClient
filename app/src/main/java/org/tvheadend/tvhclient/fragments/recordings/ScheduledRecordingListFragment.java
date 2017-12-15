@@ -43,17 +43,6 @@ public class ScheduledRecordingListFragment extends RecordingListFragment implem
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        // Do not show these menus in single mode.
-        // No recording is preselected which could be removed.
-        if (isDualPane && adapter.getCount() > 0) {
-            menu.findItem(R.id.menu_record_remove).setVisible(true);
-            menu.findItem(R.id.menu_play).setVisible(adapter.getSelectedItem().isRecording());
-            menu.findItem(R.id.menu_edit).setVisible(isUnlocked);
-        }
-        if (!sharedPreferences.getBoolean("hideMenuCancelAllRecordingsPref", false) && adapter.getCount() > 1) {
-            menu.findItem(R.id.menu_record_remove_all).setVisible(true);
-        }
-        // Show the add button to create a custom recording only when the application is unlocked
         menu.findItem(R.id.menu_add).setVisible(isUnlocked);
     }
 

@@ -1,7 +1,6 @@
 package org.tvheadend.tvhclient.fragments.recordings;
 
 import android.os.Bundle;
-import android.view.Menu;
 
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DataStorage;
@@ -38,23 +37,6 @@ public class CompletedRecordingListFragment extends RecordingListFragment implem
     public void onPause() {
         super.onPause();
         TVHClientApplication.getInstance().removeListener(this);
-    }
-
-    @Override
-    public void onPrepareOptionsMenu(Menu menu) {
-        super.onPrepareOptionsMenu(menu);
-
-        // Do not show this menu in single mode. No recording is
-        // preselected which could be removed.
-        if (isDualPane && adapter.getCount() > 0) {
-            menu.findItem(R.id.menu_record_remove).setVisible(true);
-            menu.findItem(R.id.menu_play).setVisible(true);
-            menu.findItem(R.id.menu_download).setVisible(true);
-            menu.findItem(R.id.menu_download).setVisible(isUnlocked);
-        }
-        if (!sharedPreferences.getBoolean("hideMenuDeleteAllRecordingsPref", false) && adapter.getCount() > 1) {
-            menu.findItem(R.id.menu_record_remove_all).setVisible(true);
-        }
     }
 
     @Override
