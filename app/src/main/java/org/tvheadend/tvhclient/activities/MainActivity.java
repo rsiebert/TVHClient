@@ -360,7 +360,18 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
      * @param position Selected position within the menu array
      */
     private void handleDrawerItemSelected(int position) {
-        setLayoutWeights(position);
+        //setLayoutWeights(position);
+
+        FrameLayout rightLayout = findViewById(R.id.right_fragment);
+        if (rightLayout != null) {
+            if (position == MENU_PROGRAM_GUIDE
+                    || position == MENU_STATUS
+                    || position == MENU_UNLOCKER) {
+                rightLayout.setVisibility(View.GONE);
+            } else {
+                rightLayout.setVisibility(View.VISIBLE);
+            }
+        }
 
         // Remove the current fragment on the right side in case dual pane mode
         // is active. In case the connection can't be established the area on

@@ -9,13 +9,13 @@
         android:id="@+id/main_fragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="0.65" />
+        android:layout_weight="0.7" />
 
     <FrameLayout
         android:id="@+id/right_fragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="0.35"
+        android:layout_weight="0.3"
         android:background="?attr/FragmentDividerLayoutStyle" />
 
 </LinearLayout>

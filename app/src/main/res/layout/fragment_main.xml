@@ -2,27 +2,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:baselineAligned="false"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:baselineAligned="false">
 
     <FrameLayout
         android:id="@+id/main_fragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-<!--
-    <FrameLayout
-        android:id="@+id/main_fragment"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1" />
-
-    <FrameLayout
-        android:id="@+id/right_fragment"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="0"
-        android:background="?attr/FragmentDividerLayoutStyle" />
- -->
-    <!-- android:background="?android:attr/detailsElementBackground" -->
 </LinearLayout>
