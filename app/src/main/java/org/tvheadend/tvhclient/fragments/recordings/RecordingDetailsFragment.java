@@ -3,7 +3,7 @@ package org.tvheadend.tvhclient.fragments.recordings;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -28,7 +28,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-public class RecordingDetailsFragment extends DialogFragment  {
+public class RecordingDetailsFragment extends Fragment {
 
     @SuppressWarnings("unused")
     private final static String TAG = RecordingDetailsFragment.class.getSimpleName();
