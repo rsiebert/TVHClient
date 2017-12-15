@@ -11,6 +11,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewStub;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -89,6 +90,9 @@ public class RecordingDetailsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_recording_details, container, false);
+        ViewStub stub = view.findViewById(R.id.stub);
+        stub.setLayoutResource(R.layout.fragment_recording_details_content);
+        stub.inflate();
         unbinder = ButterKnife.bind(this, view);
         return view;
     }
