@@ -1,120 +1,113 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:background="?attr/FragmentDividerLayoutStyle"
-    android:minWidth="330dp">
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp">
 
-    <LinearLayout
-        android:layout_width="fill_parent"
+    <TextView
+        android:id="@+id/is_enabled"
+        style="?attr/ContentFont"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp">
+        android:paddingBottom="16dp"
+        android:paddingTop="16dp"
+        android:text="@null" />
 
-        <TextView
-            android:id="@+id/is_enabled"
-            style="?attr/ContentFont"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingBottom="16dp"
-            android:paddingTop="16dp"
-            android:text="@null" />
+    <TextView
+        android:id="@+id/channel_label"
+        style="?attr/TitleFont"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="16dp"
+        android:text="@string/channel" />
 
-        <TextView
-            android:id="@+id/channel_label"
-            style="?attr/TitleFont"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingTop="16dp"
-            android:text="@string/channel" />
+    <TextView
+        android:id="@+id/channel"
+        style="?attr/ContentFont"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="16dp"
+        android:text="@string/channel" />
 
-        <TextView
-            android:id="@+id/channel"
-            style="?attr/ContentFont"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingBottom="16dp"
-            android:text="@string/channel" />
+    <TextView
+        android:id="@+id/recording_time_label"
+        style="?attr/TitleFont"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="16dp"
+        android:text="@string/recording_time" />
 
-        <TextView
-            android:id="@+id/recording_time_label"
-            style="?attr/TitleFont"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingTop="16dp"
-            android:text="@string/recording_time" />
+    <TextView
+        android:id="@+id/time"
+        style="?attr/ContentFont"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="16dp"
+        android:text="@string/recording_time" />
 
-        <TextView
-            android:id="@+id/time"
-            style="?attr/ContentFont"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingBottom="16dp"
-            android:text="@string/recording_time" />
+    <TextView
+        android:id="@+id/duration_label"
+        style="?attr/TitleFont"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="16dp"
+        android:text="@string/duration" />
 
-        <TextView
-            android:id="@+id/duration_label"
-            style="?attr/TitleFont"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingTop="16dp"
-            android:text="@string/duration" />
+    <TextView
+        android:id="@+id/duration"
+        style="?attr/ContentFont"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="16dp"
+        android:text="@string/duration" />
 
-        <TextView
-            android:id="@+id/duration"
-            style="?attr/ContentFont"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingBottom="16dp"
-            android:text="@string/duration" />
+    <TextView
+        android:id="@+id/days_of_week_label"
+        style="?attr/TitleFont"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="16dp"
+        android:text="@string/days_of_week" />
 
-        <TextView
-            android:id="@+id/days_of_week_label"
-            style="?attr/TitleFont"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingTop="16dp"
-            android:text="@string/days_of_week" />
+    <TextView
+        android:id="@+id/days_of_week"
+        style="?attr/ContentFont"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="16dp"
+        android:text="@string/days_of_week" />
 
-        <TextView
-            android:id="@+id/days_of_week"
-            style="?attr/ContentFont"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingBottom="16dp"
-            android:text="@string/days_of_week" />
+    <TextView
+        android:id="@+id/priority_label"
+        style="?attr/TitleFont"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="16dp"
+        android:text="@string/priority" />
 
-        <TextView
-            android:id="@+id/priority_label"
-            style="?attr/TitleFont"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingTop="16dp"
-            android:text="@string/priority" />
+    <TextView
+        android:id="@+id/priority"
+        style="?attr/ContentFont"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="16dp"
+        android:text="@string/priority" />
 
-        <TextView
-            android:id="@+id/priority"
-            style="?attr/ContentFont"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingBottom="16dp"
-            android:text="@string/priority" />
+    <TextView
+        android:id="@+id/directory_label"
+        style="?attr/TitleFont"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="16dp"
+        android:text="@string/directory" />
 
-        <TextView
-            android:id="@+id/directory_label"
-            style="?attr/TitleFont"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingTop="16dp"
-            android:text="@string/directory" />
-
-        <TextView
-            android:id="@+id/directory"
-            style="?attr/ContentFont"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:hint="@string/add_recording_directory"
-            android:paddingBottom="16dp" />
-    </LinearLayout>
-</ScrollView>
+    <TextView
+        android:id="@+id/directory"
+        style="?attr/ContentFont"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="@string/add_recording_directory"
+        android:paddingBottom="16dp" />
+</LinearLayout>
