@@ -526,13 +526,6 @@ public class MenuUtils {
         MenuItem recordRemoveMenuItem = menu.findItem(R.id.menu_record_remove);
         MenuItem playMenuItem = menu.findItem(R.id.menu_play);
 
-        // Disable these menus as a default
-        recordOnceMenuItem.setVisible(false);
-        recordOnceCustomProfileMenuItem.setVisible(false);
-        recordSeriesMenuItem.setVisible(false);
-        recordRemoveMenuItem.setVisible(false);
-        playMenuItem.setVisible(false);
-
         // Show the play menu item when the current
         // time is between the program start and end time
         long currentTime = new Date().getTime();
