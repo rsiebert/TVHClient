@@ -24,7 +24,7 @@
 
                 <include layout="@layout/toolbar" />
 
-                <include layout="@layout/fragment_main" />
+                <include layout="@layout/main_fragment" />
             </LinearLayout>
             <!--
                         <android.support.design.widget.FloatingActionButton

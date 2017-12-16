@@ -74,9 +74,7 @@ public class RecordingDetailsFragment extends Fragment {
     private int dvrId;
     private boolean isUnlocked;
     private int htspVersion;
-
     private Unbinder unbinder;
-
 
     public static RecordingDetailsFragment newInstance(int dvrId) {
         RecordingDetailsFragment f = new RecordingDetailsFragment();
@@ -89,9 +87,9 @@ public class RecordingDetailsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        View view = inflater.inflate(R.layout.fragment_recording_details, container, false);
+        View view = inflater.inflate(R.layout.recording_details_fragment, container, false);
         ViewStub stub = view.findViewById(R.id.stub);
-        stub.setLayoutResource(R.layout.fragment_recording_details_content);
+        stub.setLayoutResource(R.layout.recording_details_content_fragment);
         stub.inflate();
         unbinder = ButterKnife.bind(this, view);
         return view;
@@ -187,7 +185,6 @@ public class RecordingDetailsFragment extends Fragment {
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
-        //
         if (nestedToolbar != null) {
             menu = nestedToolbar.getMenu();
         }

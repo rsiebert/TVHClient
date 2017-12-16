@@ -19,7 +19,7 @@ public class SettingsManageConnectionActivity extends AppCompatActivity implemen
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(MiscUtils.getThemeId(this));
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_settings);
+        setContentView(R.layout.settings_activity);
         Utils.setLanguage(this);
 
         Toolbar toolbar = findViewById(R.id.toolbar);

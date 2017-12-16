@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.fragments.ProgramDetailsFragment;
 import org.tvheadend.tvhclient.fragments.recordings.RecordingDetailsFragment;
 import org.tvheadend.tvhclient.fragments.recordings.SeriesRecordingDetailsFragment;
 import org.tvheadend.tvhclient.fragments.recordings.TimerRecordingDetailsFragment;
@@ -19,7 +20,7 @@ public class DetailsActivity extends AppCompatActivity implements ToolbarInterfa
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(MiscUtils.getThemeId(this));
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_recording_details);
+        setContentView(R.layout.recording_details_activity);
         Utils.setLanguage(this);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -32,6 +33,9 @@ public class DetailsActivity extends AppCompatActivity implements ToolbarInterfa
             Fragment fragment = null;
             String type = getIntent().getStringExtra("type");
             switch (type) {
+                case "program":
+                    fragment = new ProgramDetailsFragment();
+                    break;
                 case "recording":
                     fragment = new RecordingDetailsFragment();
                     break;
