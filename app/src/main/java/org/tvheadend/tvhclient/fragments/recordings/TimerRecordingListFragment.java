@@ -147,50 +147,57 @@ public class TimerRecordingListFragment extends ListFragment implements HTSListe
 
     @Override
     public void onMessage(String action, final Object obj) {
-        if (action.equals(Constants.ACTION_LOADING)) {
-            activity.runOnUiThread(new Runnable() {
-                public void run() {
-                    boolean loading = (Boolean) obj;
-                    setListShown(!loading);
-                    if (!loading) {
-                        populateList();
+        switch (action) {
+            case Constants.ACTION_LOADING:
+                activity.runOnUiThread(new Runnable() {
+                    public void run() {
+                        boolean loading = (Boolean) obj;
+                        setListShown(!loading);
+                        if (!loading) {
+                            populateList();
+                        }
                     }
-                }
-            });
-        } else if (action.equals("timerecEntryAdd")
-                || action.equals("timerecEntryUpdate")
-                || action.equals("timerecEntryDelete")) {
-            activity.runOnUiThread(new Runnable() {
-                public void run() {
-                    TimerRecording recording = (TimerRecording) obj;
-                    switch (action) {
-                        case "timerecEntryAdd":
-                            adapter.add(recording);
-                            adapter.notifyDataSetChanged();
-                            break;
-                        case "timerecEntryDelete":
-                            // Get the position of the recording that is to be
-                            // deleted so the previous one can be selected
-                            if (--selectedListPosition < 0) {
-                                selectedListPosition = 0;
-                            }
-                            adapter.remove(recording);
-                            adapter.notifyDataSetChanged();
-                            // Update the number of recordings
-                            String items = getResources().getQuantityString(R.plurals.recordings, adapter.getCount(), adapter.getCount());
-                            toolbarInterface.setActionBarSubtitle(items);
-                            // Select the previous recording to show its details
-                            if (isDualPane) {
-                                showRecordingDetails(selectedListPosition);
-                            }
-                            break;
-                        case "timerecEntryUpdate":
-                            adapter.update(recording);
-                            adapter.notifyDataSetChanged();
-                            break;
+                });
+                break;
+            case "timerecEntryAdd":
+                activity.runOnUiThread(new Runnable() {
+                    public void run() {
+                        TimerRecording recording = (TimerRecording) obj;
+                        adapter.add(recording);
+                        adapter.notifyDataSetChanged();
                     }
-                }
-            });
+                });
+                break;
+            case "timerecEntryDelete":
+                activity.runOnUiThread(new Runnable() {
+                    public void run() {
+                        TimerRecording recording = (TimerRecording) obj;
+                        // Get the position of the recording that is to be
+                        // deleted so the previous one can be selected
+                        if (--selectedListPosition < 0) {
+                            selectedListPosition = 0;
+                        }
+                        adapter.remove(recording);
+                        adapter.notifyDataSetChanged();
+                        // Update the number of recordings
+                        String items = getResources().getQuantityString(R.plurals.recordings, adapter.getCount(), adapter.getCount());
+                        toolbarInterface.setActionBarSubtitle(items);
+                        // Select the previous recording to show its details
+                        if (isDualPane) {
+                            showRecordingDetails(selectedListPosition);
+                        }
+                    }
+                });
+                break;
+            case "timerecEntryUpdate":
+                activity.runOnUiThread(new Runnable() {
+                    public void run() {
+                        TimerRecording recording = (TimerRecording) obj;
+                        adapter.update(recording);
+                        adapter.notifyDataSetChanged();
+                    }
+                });
+                break;
         }
     }
 
