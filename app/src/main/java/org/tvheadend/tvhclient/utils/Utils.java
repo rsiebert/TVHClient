@@ -6,13 +6,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.preference.PreferenceManager;
-import android.support.annotation.AttrRes;
-import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.util.SparseArray;
-import android.util.TypedValue;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -694,11 +691,5 @@ public class Utils {
             hours = "0" + hours;
         }
         return (hours + ":" + minutes);
-    }
-
-    public static int getResourceIdFromAttr(@NonNull Context ctx, @AttrRes int attr) {
-        final TypedValue typedValue = new TypedValue();
-        ctx.getTheme().resolveAttribute(attr, typedValue, true);
-        return typedValue.resourceId;
     }
 }
