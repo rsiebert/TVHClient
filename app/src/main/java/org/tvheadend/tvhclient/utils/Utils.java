@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.preference.PreferenceManager;
 import android.support.annotation.AttrRes;
@@ -662,21 +661,6 @@ public class Utils {
         return DataStorage.getInstance().getTagFromArray(getChannelTagId(activity));
     }
 
-	/**
-	 * Change the language to the defined setting. If the default is set then
-	 * let the application decide which language shall be used.
-	 *
-	 * @param context Activity context
-	 */
-	public static void setLanguage(final Activity context) {
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-		String locale = prefs.getString("languagePref", "default");
-		if (!locale.equals("default")) {
-			Configuration config = new Configuration(context.getResources().getConfiguration());
-			config.locale = new Locale(locale);
-			context.getResources().updateConfiguration(config, context.getResources().getDisplayMetrics());
-		}
-	}
 
     /**
      * Returns the type how the channels are sorted in the adapter and in which

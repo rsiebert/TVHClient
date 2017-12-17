@@ -23,7 +23,7 @@ public class InfoActivity extends AppCompatActivity {
         setTheme(MiscUtils.getThemeId(this));
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_layout);
-        Utils.setLanguage(this);
+        MiscUtils.setLanguage(this);
 
         // Setup the action bar and show the title
         Toolbar toolbar = findViewById(R.id.toolbar);

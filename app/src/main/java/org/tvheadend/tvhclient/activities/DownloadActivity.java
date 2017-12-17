@@ -49,7 +49,7 @@ public class DownloadActivity extends Activity implements OnRequestPermissionsRe
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(MiscUtils.getThemeId(this));
         super.onCreate(savedInstanceState);
-        Utils.setLanguage(this);
+        MiscUtils.setLanguage(this);
 
         dataStorage = DataStorage.getInstance();
         DatabaseHelper databaseHelper = DatabaseHelper.getInstance(getApplicationContext());

@@ -12,7 +12,6 @@ import org.tvheadend.tvhclient.fragments.recordings.SeriesRecordingDetailsFragme
 import org.tvheadend.tvhclient.fragments.recordings.TimerRecordingDetailsFragment;
 import org.tvheadend.tvhclient.interfaces.BackPressedInterface;
 import org.tvheadend.tvhclient.utils.MiscUtils;
-import org.tvheadend.tvhclient.utils.Utils;
 
 public class DetailsActivity extends AppCompatActivity implements ToolbarInterfaceLight {
 
@@ -21,7 +20,7 @@ public class DetailsActivity extends AppCompatActivity implements ToolbarInterfa
         setTheme(MiscUtils.getThemeId(this));
         super.onCreate(savedInstanceState);
         setContentView(R.layout.details_activity);
-        Utils.setLanguage(this);
+        MiscUtils.setLanguage(this);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

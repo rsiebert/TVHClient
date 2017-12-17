@@ -16,7 +16,6 @@ import org.tvheadend.tvhclient.fragments.recordings.RecordingAddEditFragment;
 import org.tvheadend.tvhclient.interfaces.BackPressedInterface;
 import org.tvheadend.tvhclient.interfaces.ToolbarInterface;
 import org.tvheadend.tvhclient.utils.MiscUtils;
-import org.tvheadend.tvhclient.utils.Utils;
 
 public class RecordingAddEditActivity extends AppCompatActivity implements ToolbarInterface {
 
@@ -29,7 +28,7 @@ public class RecordingAddEditActivity extends AppCompatActivity implements Toolb
         setTheme(MiscUtils.getThemeId(this));
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_layout);
-        Utils.setLanguage(this);
+        MiscUtils.setLanguage(this);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

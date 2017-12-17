@@ -11,7 +11,6 @@ import android.widget.TextView;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.fragments.UnlockerFragment;
 import org.tvheadend.tvhclient.utils.MiscUtils;
-import org.tvheadend.tvhclient.utils.Utils;
 
 public class UnlockerActivity extends AppCompatActivity {
 
@@ -20,7 +19,7 @@ public class UnlockerActivity extends AppCompatActivity {
         setTheme(MiscUtils.getThemeId(this));
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_layout);
-        Utils.setLanguage(this);
+        MiscUtils.setLanguage(this);
 
         // Setup the action bar and show the title
         Toolbar toolbar = findViewById(R.id.toolbar);

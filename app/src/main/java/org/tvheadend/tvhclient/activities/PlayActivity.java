@@ -63,7 +63,7 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(MiscUtils.getThemeId(this));
         super.onCreate(savedInstanceState);
-        Utils.setLanguage(this);
+        MiscUtils.setLanguage(this);
 
         app = TVHClientApplication.getInstance();
         logger = Logger.getInstance();

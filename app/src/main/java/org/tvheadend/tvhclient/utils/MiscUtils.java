@@ -1,7 +1,9 @@
 package org.tvheadend.tvhclient.utils;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -17,6 +19,7 @@ import org.tvheadend.tvhclient.R;
 import java.io.File;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Locale;
 
 public class MiscUtils {
 
@@ -80,6 +83,23 @@ public class MiscUtils {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         Boolean theme = prefs.getBoolean("lightThemePref", true);
         return (theme ? R.style.CustomTheme_Light : R.style.CustomTheme);
+    }
+
+
+    /**
+     * Change the language to the defined setting. If the default is set then
+     * let the application decide which language shall be used.
+     *
+     * @param context Activity context
+     */
+    public static void setLanguage(final Activity context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        String locale = prefs.getString("languagePref", "default");
+        if (!locale.equals("default")) {
+            Configuration config = new Configuration(context.getResources().getConfiguration());
+            config.locale = new Locale(locale);
+            context.getResources().updateConfiguration(config, context.getResources().getDisplayMetrics());
+        }
     }
 
     /**

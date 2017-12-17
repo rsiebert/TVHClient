@@ -188,7 +188,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         setTheme(MiscUtils.getThemeId(this));
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_layout);
-        Utils.setLanguage(this);
+        MiscUtils.setLanguage(this);
 
         VideoCastManager.checkGooglePlayServices(this);
 
