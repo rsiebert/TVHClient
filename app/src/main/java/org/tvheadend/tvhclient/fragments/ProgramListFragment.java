@@ -1,13 +1,13 @@
 package org.tvheadend.tvhclient.fragments;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ListFragment;
 import android.support.v7.widget.PopupMenu;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -22,31 +22,26 @@ import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
+import org.tvheadend.tvhclient.activities.DetailsActivity;
 import org.tvheadend.tvhclient.adapter.ProgramListAdapter;
-import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
-import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
+import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.interfaces.ToolbarInterface;
-import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.utils.MenuUtils;
-import org.tvheadend.tvhclient.utils.MiscUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
-public class ProgramListFragment extends ListFragment implements HTSListener, FragmentControlInterface, OnItemClickListener, AdapterView.OnItemLongClickListener {
+public class ProgramListFragment extends ListFragment implements HTSListener, OnItemClickListener, AdapterView.OnItemLongClickListener, OnScrollListener {
 
     private final static String TAG = ProgramListFragment.class.getSimpleName();
 
     private Activity activity;
     private ToolbarInterface toolbarInterface;
-    private FragmentStatusInterface fragmentStatusInterface;
     private ProgramListAdapter adapter;
-    private Channel channel;
-    private boolean isDualPane = false;
+    private boolean isDualPane;
     private long showProgramsFromTime;
 
     // Prevents loading more data on each scroll event. Only when scrolling has
@@ -54,7 +49,8 @@ public class ProgramListFragment extends ListFragment implements HTSListener, Fr
     private boolean allowLoading = false;
 
     private MenuUtils menuUtils;
-    private SharedPreferences sharedPreferences;
+    private int selectedListPosition;
+    private int channelId;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -64,167 +60,38 @@ public class ProgramListFragment extends ListFragment implements HTSListener, Fr
         if (activity instanceof ToolbarInterface) {
             toolbarInterface = (ToolbarInterface) activity;
         }
-        if (activity instanceof FragmentStatusInterface) {
-            fragmentStatusInterface = (FragmentStatusInterface) activity;
-        }
+        menuUtils = new MenuUtils(getActivity());
 
         // Check to see if we have a frame in which to embed the details
         // fragment directly in the containing UI.
         View detailsFrame = getActivity().findViewById(R.id.right_fragment);
         isDualPane = detailsFrame != null && detailsFrame.getVisibility() == View.VISIBLE;
+        setHasOptionsMenu(true);
 
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         Bundle bundle = getArguments();
         if (bundle != null) {
-            channel = DataStorage.getInstance().getChannelFromArray(bundle.getInt("channelId", 0));
+            channelId = bundle.getInt("channelId", 0);
             showProgramsFromTime = bundle.getLong("show_programs_from_time", new Date().getTime());
         }
-
-        // If the channel is null exit
-        if (channel == null) {
-            activity.finish();
-            return;
+        if (savedInstanceState != null) {
+            channelId = savedInstanceState.getInt("channelId", 0);
+            showProgramsFromTime = bundle.getLong("show_programs_from_time", new Date().getTime());
+            selectedListPosition = savedInstanceState.getInt("list_position", 0);
         }
 
-        menuUtils = new MenuUtils(getActivity());
-
-        List<Program> list = new ArrayList<>();
-        adapter = new ProgramListAdapter(activity, list);
+        adapter = new ProgramListAdapter(activity, new ArrayList<>());
         setListAdapter(adapter);
         getListView().setFastScrollEnabled(true);
         getListView().setOnItemClickListener(this);
         getListView().setOnItemLongClickListener(this);
+        getListView().setOnScrollListener(this);
         getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-
-        setHasOptionsMenu(true);
-    }
-
-    /**
-     * Activated the scroll listener to more programs can be loaded when the end
-     * of the program list has been reached.
-     */
-    private void enableScrollListener() {
-        getListView().setOnScrollListener(new OnScrollListener() {
-            @Override
-            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                // Enable loading when the user has scrolled pretty much to the end of the list
-                if ((++firstVisibleItem + visibleItemCount) > totalItemCount) {
-                    allowLoading = true;
-                }
-            }
-
-            @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState) {
-                // If loading is allowed and the scrolling has stopped, load more data 
-                if (scrollState == SCROLL_STATE_IDLE && allowLoading) {
-                    allowLoading = false;
-                    if (fragmentStatusInterface != null) {
-                        fragmentStatusInterface.moreDataRequired(channel, TAG);
-                    }
-                }
-            }
-        });
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        TVHClientApplication.getInstance().addListener(this);
-        if (!DataStorage.getInstance().isLoading()) {
-            populateList();
-        }
-    }
-
-    /**
-     * Fills the adapter with all program that are part of the given channel
-     */
-    private void populateList() {
-        // This is required because addAll is only available in API 11 and higher
-        if (channel != null) {
-
-            int availableProgramCount = 0;
-            boolean currentProgramFound = false;
-
-            Log.d(TAG, "populateList: channel " + channel.channelName + ", showProgramsFromTime " + showProgramsFromTime);
-            int nextId = 0;
-            for (Program program : DataStorage.getInstance().getProgramsFromArray().values()) {
-                if (program.channelId == channel.channelId) {
-                    if (program.start <= showProgramsFromTime && program.stop > showProgramsFromTime) {
-                        Log.d(TAG, "populateList: adding program " + program.title);
-                        adapter.add(program);
-                        nextId = program.nextEventId;
-                        currentProgramFound = true;
-                        availableProgramCount++;
-                        break;
-                    }
-                }
-            }
-
-            while (nextId != 0) {
-                Log.d(TAG, "populateList: nextid " + nextId);
-                Program p = DataStorage.getInstance().getProgramFromArray(nextId);
-                if (p != null && p.nextEventId > 0) {
-                    adapter.add(p);
-                    availableProgramCount++;
-                    nextId = p.nextEventId;
-                } else {
-                    nextId = 0;
-                }
-            }
-
-            Log.d(TAG, "populateList: currentProgramFound " + currentProgramFound + ", availableProgramCount " + availableProgramCount);
-            if (!currentProgramFound || availableProgramCount < Constants.PROGRAMS_VISIBLE_BEFORE_LOADING_MORE) {
-                if (fragmentStatusInterface != null) {
-                    fragmentStatusInterface.moreDataRequired(channel, TAG);
-                }
-            }
-        }
-
-        adapter.sort();
-        adapter.notifyDataSetChanged();
-
-        // Inform the activity to show the currently visible number of the
-        // programs and that the program list has been filled with data.
-        if (toolbarInterface != null && channel != null) {
-            toolbarInterface.setActionBarTitle(channel.channelName);
-            String items = getResources().getQuantityString(R.plurals.programs, adapter.getCount(), adapter.getCount());
-            toolbarInterface.setActionBarSubtitle(items);
-            if (!isDualPane) {
-                if (sharedPreferences.getBoolean("showIconPref", true)) {
-                    Bitmap iconBitmap = MiscUtils.getCachedIcon(activity, channel.channelIcon);
-                    toolbarInterface.setActionBarIcon(iconBitmap);
-                } else {
-                    toolbarInterface.setActionBarIcon(R.mipmap.ic_launcher);
-                }
-            }
-        }
-        if (fragmentStatusInterface != null) {
-            fragmentStatusInterface.onListPopulated(TAG);
-        }
-        enableScrollListener();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        TVHClientApplication.getInstance().removeListener(this);
-        getListView().setOnScrollListener(null);
-    }
-
-    @Override
-    public void onDestroy() {
-        fragmentStatusInterface = null;
-        toolbarInterface = null;
-        super.onDestroy();
-    }
-
-    @Override
-    public void onPrepareOptionsMenu(Menu menu) {
-        // Hide the genre color menu in dual pane mode or if no genre colors shall be shown
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-        final boolean showGenreColors = prefs.getBoolean("showGenreColorsProgramsPref", false);
-        (menu.findItem(R.id.menu_genre_color_info_programs)).setVisible(!isDualPane && showGenreColors);
-        (menu.findItem(R.id.menu_play)).setVisible(!isDualPane);
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("list_position", selectedListPosition);
     }
 
     @Override
@@ -234,21 +101,78 @@ public class ProgramListFragment extends ListFragment implements HTSListener, Fr
     }
 
     @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        // Hide the genre color menu in dual pane mode or if no genre colors shall be shown
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
+        final boolean showGenreColors = prefs.getBoolean("showGenreColorsProgramsPref", false);
+        menu.findItem(R.id.menu_genre_color_info_programs).setVisible(!isDualPane && showGenreColors);
+        menu.findItem(R.id.menu_play).setVisible(!isDualPane);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-        case R.id.menu_play:
-            // Open a new activity that starts playing the first program that is
-            // currently transmitted over this channel
-            menuUtils.handleMenuPlaySelection(channel.channelId, -1);
-            return true;
-
-        case R.id.menu_genre_color_info_programs:
-            menuUtils.handleMenuGenreColorSelection();
-            return true;
-
-        default:
-            return super.onOptionsItemSelected(item);
+            case R.id.menu_play:
+                // Open a new activity that starts playing the first program that is
+                // currently transmitted over this channel
+                menuUtils.handleMenuPlaySelection(channelId, -1);
+                return true;
+            case R.id.menu_genre_color_info_programs:
+                menuUtils.handleMenuGenreColorSelection();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        TVHClientApplication.getInstance().addListener(this);
+        if (!DataStorage.getInstance().isLoading()) {
+            populateList();
+            if (adapter.getCount() < 15) {
+                getMorePrograms();
+            }
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        TVHClientApplication.getInstance().removeListener(this);
+    }
+
+    private void populateList() {
+        // Clear the list and add the recordings
+        adapter.clear();
+        // Get all programs that belong to the given channel
+        int nextId = 0;
+        for (Program program : DataStorage.getInstance().getProgramsFromArray().values()) {
+            if (program.channelId == channelId) {
+                if (program.start <= showProgramsFromTime && program.stop > showProgramsFromTime) {
+                    // Add the program that shall be shown first
+                    adapter.add(program);
+                    nextId = program.nextEventId;
+                    break;
+                }
+            }
+        }
+        // Add the program with the given nextEventId to the adapter.
+        // Do this in a loop until no nextEventId is available
+        while (nextId != 0) {
+            Program p = DataStorage.getInstance().getProgramFromArray(nextId);
+            if (p != null && p.nextEventId > 0) {
+                adapter.add(p);
+                nextId = p.nextEventId;
+            } else {
+                nextId = 0;
+            }
+        }
+        adapter.notifyDataSetChanged();
+        // Show the number of recordings
+        String items = getResources().getQuantityString(R.plurals.programs, adapter.getCount(), adapter.getCount());
+        toolbarInterface.setActionBarSubtitle(items);
     }
 
     /**
@@ -262,10 +186,8 @@ public class ProgramListFragment extends ListFragment implements HTSListener, Fr
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
                         boolean loading = (Boolean) obj;
-                        if (loading) {
-                            adapter.clear();
-                            adapter.notifyDataSetChanged();
-                        } else {
+                        setListShown(!loading);
+                        if (!loading) {
                             populateList();
                         }
                     }
@@ -275,15 +197,12 @@ public class ProgramListFragment extends ListFragment implements HTSListener, Fr
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
                         Program p = (Program) obj;
-                        Channel channel = DataStorage.getInstance().getChannelFromArray(p.channelId);
-                        if (channel != null) {
+                        if (p.channelId == channelId) {
                             adapter.add(p);
-                            adapter.notifyDataSetChanged();
                             adapter.sort();
-                            if (toolbarInterface != null) {
-                                String items = getResources().getQuantityString(R.plurals.programs, adapter.getCount(), adapter.getCount());
-                                toolbarInterface.setActionBarSubtitle(items);
-                            }
+                            adapter.notifyDataSetChanged();
+                            String items = getResources().getQuantityString(R.plurals.programs, adapter.getCount(), adapter.getCount());
+                            toolbarInterface.setActionBarSubtitle(items);
                         }
                     }
                 });
@@ -291,11 +210,19 @@ public class ProgramListFragment extends ListFragment implements HTSListener, Fr
             case "eventDelete":
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
-                        adapter.remove((Program) obj);
+                        Program p = (Program) obj;
+                        // Get the position of the recording that is to be
+                        // deleted so the previous one can be selected
+                        if (--selectedListPosition < 0) {
+                            selectedListPosition = 0;
+                        }
+                        adapter.remove(p);
                         adapter.notifyDataSetChanged();
-                        if (toolbarInterface != null) {
-                            String items = getResources().getQuantityString(R.plurals.programs, adapter.getCount(), adapter.getCount());
-                            toolbarInterface.setActionBarSubtitle(items);
+                        String items = getResources().getQuantityString(R.plurals.programs, adapter.getCount(), adapter.getCount());
+                        toolbarInterface.setActionBarSubtitle(items);
+                        // Select the previous recording to show its details
+                        if (isDualPane) {
+                            showProgramDetails(selectedListPosition);
                         }
                     }
                 });
@@ -303,73 +230,31 @@ public class ProgramListFragment extends ListFragment implements HTSListener, Fr
             case "eventUpdate":
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
-                        adapter.update((Program) obj);
-                        adapter.notifyDataSetChanged();
-                    }
-                });
-                break;
-            case "dvrEntryUpdate":
-                activity.runOnUiThread(new Runnable() {
-                    public void run() {
-                        Recording rec = (Recording) obj;
-                        for (Program p : adapter.getList()) {
-                            if (rec != null && rec.isRecording() && rec.id == p.dvrId) {
-                                adapter.update(p);
-                                adapter.notifyDataSetChanged();
-                                return;
-                            }
-                        }
-                    }
-                });
-                break;
-            case "dvrEntryAdd":
-                activity.runOnUiThread(new Runnable() {
-                    public void run() {
+                        Program p = (Program) obj;
+                        adapter.update(p);
                         adapter.notifyDataSetChanged();
                     }
                 });
                 break;
         }
-    }
-
-    @Override
-    public void reloadData() {
-        // NOP
-    }
-    @Override
-    public void setSelection(int position, int index) {
-        if (getListView().getCount() > position && position >= 0) {
-            getListView().setSelectionFromTop(position, index);
-        }
-    }
-
-    @Override
-    public void setInitialSelection(int position) {
-        setSelection(position, 0);
-        // Simulate a click in the list item to inform the activity
-        if (adapter != null && adapter.getCount() > position) {
-            Program p = adapter.getItem(position);
-            if (fragmentStatusInterface != null) {
-                fragmentStatusInterface.onListItemSelected(position, p, TAG);
-            }
-        }
-    }
-
-    @Override
-    public Object getSelectedItem() {
-        return channel;
-    }
-
-    @Override
-    public int getItemCount() {
-        return adapter.getCount();
     }
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-        if (fragmentStatusInterface != null) {
-            fragmentStatusInterface.onListItemSelected(position, adapter.getItem(position), TAG);
+        showProgramDetails(position);
+    }
+
+    protected void showProgramDetails(int position) {
+        selectedListPosition = position;
+        Program program = adapter.getItem(position);
+        if (program == null) {
+            return;
         }
+        // Launch a new activity to display the program list of the selected channel.
+        Intent intent = new Intent(getActivity(), DetailsActivity.class);
+        intent.putExtra("eventId", program.eventId);
+        intent.putExtra("type", "program");
+        activity.startActivity(intent);
     }
 
     @Override
@@ -388,7 +273,7 @@ public class ProgramListFragment extends ListFragment implements HTSListener, Fr
                     menuUtils.handleMenuSearchWebSelection(program.title);
                     return true;
                 case R.id.menu_search_epg:
-                    menuUtils.handleMenuSearchEpgSelection(program.title, channel.channelId);
+                    menuUtils.handleMenuSearchEpgSelection(program.title, channelId);
                     return true;
                 case R.id.menu_record_remove:
                     Recording rec = DataStorage.getInstance().getRecordingFromArray(program.dvrId);
@@ -406,13 +291,13 @@ public class ProgramListFragment extends ListFragment implements HTSListener, Fr
                     menuUtils.handleMenuRecordSelection(program.eventId);
                     return true;
                 case R.id.menu_record_once_custom_profile:
-                    menuUtils.handleMenuCustomRecordSelection(program.eventId, channel.channelId);
+                    menuUtils.handleMenuCustomRecordSelection(program.eventId, channelId);
                     return true;
                 case R.id.menu_record_series:
                     menuUtils.handleMenuSeriesRecordSelection(program.title);
                     return true;
                 case R.id.menu_play:
-                    menuUtils.handleMenuPlaySelection(channel.channelId, -1);
+                    menuUtils.handleMenuPlaySelection(channelId, -1);
                     return true;
                 default:
                     return false;
@@ -420,5 +305,33 @@ public class ProgramListFragment extends ListFragment implements HTSListener, Fr
         });
         popupMenu.show();
         return true;
+    }
+
+    @Override
+    public void onScrollStateChanged(AbsListView view, int scrollState) {
+        // If loading is allowed and the scrolling has stopped, load more data
+        if (scrollState == SCROLL_STATE_IDLE && allowLoading) {
+            toolbarInterface.setActionBarSubtitle(getString(R.string.loading));
+            getMorePrograms();
+            allowLoading = false;
+        }
+    }
+
+    private void getMorePrograms() {
+        Program lastProgram = adapter.getItem(adapter.getCount()-1);
+        Intent intent = new Intent(getActivity(), HTSService.class);
+        intent.setAction("getEvents");
+        intent.putExtra("eventId", lastProgram.nextEventId);
+        intent.putExtra("channelId", lastProgram.channelId);
+        intent.putExtra("count", 15);
+        getActivity().startService(intent);
+    }
+
+    @Override
+    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+        // Enable loading when the user has scrolled pretty much to the end of the list
+        if ((++firstVisibleItem + visibleItemCount) > totalItemCount) {
+            allowLoading = true;
+        }
     }
 }
