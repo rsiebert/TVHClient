@@ -20,7 +20,7 @@ public class DetailsActivity extends AppCompatActivity implements ToolbarInterfa
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(MiscUtils.getThemeId(this));
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.recording_details_activity);
+        setContentView(R.layout.details_activity);
         Utils.setLanguage(this);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
