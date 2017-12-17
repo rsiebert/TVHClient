@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp">
+
+    <ImageView
+        android:id="@+id/image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@null"
+        android:paddingBottom="16dp"
+        android:paddingTop="16dp"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/title_label"
+        style="?attr/TitleFont"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="16dp"
+        android:text="@string/title" />
+
+    <TextView
+        android:id="@+id/title"
+        style="?attr/ContentFont"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="16dp"
+        android:text="@string/title" />
+
+    <TextView
+        android:id="@+id/summary_label"
+        style="?attr/TitleFont"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="16dp"
+        android:text="@string/summary" />
+
+    <TextView
+        android:id="@+id/summary"
+        style="?attr/ContentFont"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="16dp"
+        android:text="@string/summary" />
+
+    <TextView
+        android:id="@+id/series_info_label"
+        style="?attr/TitleFont"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="16dp"
+        android:text="@string/series_information" />
+
+    <TextView
+        android:id="@+id/series_info"
+        style="?attr/ContentFont"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="16dp"
+        android:text="@string/series_information" />
+
+    <TextView
+        android:id="@+id/description_label"
+        style="?attr/TitleFont"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="16dp"
+        android:text="@string/description" />
+
+    <TextView
+        android:id="@+id/description"
+        style="?attr/ContentFont"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="16dp"
+        android:text="@string/description" />
+
+    <TextView
+        android:id="@+id/time_date_label"
+        style="?attr/TitleFont"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="16dp"
+        android:text="@string/airing" />
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingBottom="16dp">
+
+        <TextView
+            android:id="@+id/date"
+            style="?attr/ContentFont"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingEnd="16dp"
+            android:paddingLeft="0dp"
+            android:paddingRight="16dp"
+            android:paddingStart="0dp"
+            android:text="@string/date" />
+
+        <TextView
+            android:id="@+id/time"
+            style="?attr/ContentFont"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/time" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/duration_label"
+        style="?attr/TitleFont"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="16dp"
+        android:text="@string/duration" />
+
+    <TextView
+        android:id="@+id/duration"
+        style="?attr/ContentFont"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="16dp"
+        android:text="@string/duration" />
+
+    <TextView
+        android:id="@+id/progress"
+        style="?attr/ContentFont"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="16dp"
+        android:text="@string/progress" />
+
+    <TextView
+        android:id="@+id/channel_label"
+        style="?attr/TitleFont"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="16dp"
+        android:text="@string/channel" />
+
+    <TextView
+        android:id="@+id/channel"
+        style="?attr/ContentFont"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="16dp"
+        android:text="@string/channel" />
+
+    <TextView
+        android:id="@+id/content_type_label"
+        style="?attr/TitleFont"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="16dp"
+        android:text="@string/content_type" />
+
+    <TextView
+        android:id="@+id/content_type"
+        style="?attr/ContentFont"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="16dp"
+        android:text="@string/content_type" />
+
+    <TextView
+        android:id="@+id/star_rating_label"
+        style="?attr/TitleFont"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="16dp"
+        android:text="@string/rating" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingBottom="16dp">
+
+        <RatingBar
+            android:id="@+id/star_rating"
+            style="?android:attr/ratingBarStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:isIndicator="true"
+            android:max="10"
+            android:numStars="10"
+            android:stepSize="1" />
+
+        <TextView
+            android:id="@+id/star_rating_text"
+            style="?attr/ContentFont"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+</LinearLayout>

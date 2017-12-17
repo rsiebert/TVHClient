@@ -1,33 +1,29 @@
 package org.tvheadend.tvhclient.fragments;
 
-import android.app.Activity;
-import android.app.Dialog;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.widget.Button;
+import android.view.ViewStub;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
-import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.interfaces.HTSListener;
+import org.tvheadend.tvhclient.activities.ToolbarInterfaceLight;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
@@ -38,167 +34,113 @@ import org.tvheadend.tvhclient.utils.Utils;
 
 import java.util.Date;
 
-public class ProgramDetailsFragment extends DialogFragment implements HTSListener, ImageDownloadTaskCallback {
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
-    @SuppressWarnings("unused")
-    private final static String TAG = ProgramDetailsFragment.class.getSimpleName();
+public class ProgramDetailsFragment extends Fragment implements ImageDownloadTaskCallback {
 
-    private Activity activity;
-    private boolean showControls = false;
+    @Nullable
+    @BindView(R.id.state) ImageView state;
+    @BindView(R.id.title) TextView title;
+    @BindView(R.id.title_label) TextView titleLabel;
+    @BindView(R.id.summary_label) TextView summaryLabel;
+    @BindView(R.id.summary) TextView summary;
+    @BindView(R.id.description_label) TextView descLabel;
+    @BindView(R.id.description) TextView desc;
+    @BindView(R.id.channel_label) TextView channelLabel;
+    @BindView(R.id.channel) TextView channelName;
+    @BindView(R.id.date) TextView date;
+    @BindView(R.id.time) TextView time;
+    @BindView(R.id.duration) TextView duration;
+    @BindView(R.id.progress) TextView progress;
+    @BindView(R.id.content_type_label) TextView contentTypeLabel;
+    @BindView(R.id.content_type) TextView contentType;
+    @BindView(R.id.series_info_label) TextView seriesInfoLabel;
+    @BindView(R.id.series_info) TextView seriesInfo;
+    @BindView(R.id.star_rating_label) TextView ratingBarLabel;
+    @BindView(R.id.star_rating_text) TextView ratingBarText;
+    @BindView(R.id.star_rating) RatingBar ratingBar;
+    @Nullable
+    @BindView(R.id.nested_toolbar) Toolbar nestedToolbar;
+    @Nullable
+    @BindView(R.id.image) ImageView imageView;
+
+    private int eventId;
+    private boolean isUnlocked;
+    private int htspVersion;
     private Program program;
-    private Channel channel;
-
-    private ImageView state;
-    private TextView summaryLabel;
-    private TextView summary;
-    private TextView descLabel;
-    private TextView desc;
-    private TextView channelLabel;
-    private TextView channelName;
-    private TextView date;
-    private TextView time;
-    private TextView duration;
-    private TextView progress;
-    private TextView contentTypeLabel;
-    private TextView contentType;
-    private TextView seriesInfoLabel;
-    private TextView seriesInfo;
-    private TextView ratingBarLabel;
-    private TextView ratingBarText;
-    private RatingBar ratingBar;
-
-    private LinearLayout playerLayout;
-    private Button playButton;
-    private Button recordOnceButton;
-    private Button recordSeriesButton;
-    private Button recordRemoveButton;
-
-    private Toolbar toolbar;
-    private TextView toolbarTitle;
-    private View toolbarShadow;
-    private TVHClientApplication app;
-    private ImageView imageView;
-    private DataStorage dataStorage;
     private MenuUtils menuUtils;
+    private Unbinder unbinder;
+    private ToolbarInterfaceLight toolbarInterface;
 
-    public static ProgramDetailsFragment newInstance(Bundle args) {
+    public static ProgramDetailsFragment newInstance(int eventId) {
         ProgramDetailsFragment f = new ProgramDetailsFragment();
+        Bundle args = new Bundle();
+        args.putInt("eventId", eventId);
         f.setArguments(args);
         return f;
-    }
-
-    @NonNull
-    @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        Dialog dialog = super.onCreateDialog(savedInstanceState);
-        if (dialog.getWindow() != null) {
-            dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-        }
-        return dialog;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        if (getDialog() != null && getDialog().getWindow() != null) {
-            getDialog().getWindow().getAttributes().windowAnimations = R.style.dialog_animation_fade;
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
+        View view = inflater.inflate(R.layout.recording_details_fragment, container, false);
+        ViewStub stub = view.findViewById(R.id.stub);
+        stub.setLayoutResource(R.layout.program_details_content_fragment);
+        stub.inflate();
+        unbinder = ButterKnife.bind(this, view);
+        return view;
+    }
 
-        // Initialize all the widgets from the layout
-        final View v = inflater.inflate(R.layout.program_details_layout, container, false);
-        state = v.findViewById(R.id.state);
-        summaryLabel = v.findViewById(R.id.summary_label);
-        summary = v.findViewById(R.id.summary);
-        descLabel = v.findViewById(R.id.description_label);
-        desc = v.findViewById(R.id.description);
-        channelLabel = v.findViewById(R.id.channel_label);
-        channelName = v.findViewById(R.id.channel);
-        date = v.findViewById(R.id.date);
-        time = v.findViewById(R.id.time);
-        duration = v.findViewById(R.id.duration);
-        progress = v.findViewById(R.id.progress);
-        contentTypeLabel = v.findViewById(R.id.content_type_label);
-        contentType = v.findViewById(R.id.content_type);
-        seriesInfoLabel = v.findViewById(R.id.series_info_label);
-        seriesInfo = v.findViewById(R.id.series_info);
-        ratingBarLabel = v.findViewById(R.id.star_rating_label);
-        ratingBarText = v.findViewById(R.id.star_rating_text);
-        ratingBar = v.findViewById(R.id.star_rating);
-        toolbar = v.findViewById(R.id.toolbar);
-        toolbarTitle = v.findViewById(R.id.toolbar_title);
-        toolbarShadow = v.findViewById(R.id.toolbar_shadow);
-        imageView = v.findViewById(R.id.image);
-        
-        // Initialize the player layout
-        playerLayout = v.findViewById(R.id.player_layout);
-        playButton = v.findViewById(R.id.menu_play);
-        recordOnceButton = v.findViewById(R.id.menu_record_once);
-        recordSeriesButton = v.findViewById(R.id.menu_record_series);
-        recordRemoveButton = v.findViewById(R.id.menu_record_remove);
-
-        return v;
+    @Override public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
-        activity = getActivity();
-        app = TVHClientApplication.getInstance();
-        dataStorage = DataStorage.getInstance();
+        if (getActivity() instanceof ToolbarInterfaceLight) {
+            toolbarInterface = (ToolbarInterfaceLight) getActivity();
+            toolbarInterface.setTitle("Details");
+        }
         menuUtils = new MenuUtils(getActivity());
-
-        if (toolbarTitle != null) {
-            toolbarTitle.setVisibility(getDialog() != null ? View.VISIBLE : View.GONE);
-        }
-        if (toolbarShadow != null) {
-            toolbarShadow.setVisibility(getDialog() != null ? View.VISIBLE : View.GONE);
-        }
-
-        int channelId = 0;
-        int programId = 0;
+        isUnlocked = TVHClientApplication.getInstance().isUnlocked();
+        htspVersion = DataStorage.getInstance().getProtocolVersion();
+        setHasOptionsMenu(true);
 
         Bundle bundle = getArguments();
         if (bundle != null) {
-            channelId = bundle.getInt("channelId", 0);
-            programId = bundle.getInt("eventId", 0);
-            showControls = bundle.getBoolean(Constants.BUNDLE_SHOW_CONTROLS, false);
+            eventId = bundle.getInt("eventId", 0);
         }
-
-        // Get the channel of the program
-        channel = dataStorage.getChannelFromArray(channelId);
-        program = dataStorage.getProgramFromArray(programId);
-
-        // If the channel or program is null exit
-        if (channel == null || program == null) {
-            return;
+        if (savedInstanceState != null) {
+            eventId = savedInstanceState.getInt("eventId", 0);
         }
+        // Get the recording so we can show its details
+        program = DataStorage.getInstance().getProgramFromArray(eventId);
+        Channel channel = DataStorage.getInstance().getChannelFromArray(program.channelId);
 
-        if (getDialog() != null && toolbarTitle != null) {
-            toolbarTitle.setText(program.title);
-        }
-
-        // Show the player controls
-        playerLayout.setVisibility(showControls ? View.VISIBLE : View.GONE);
-        if (showControls) {
-            addPlayerControlListeners();
-            showPlayerControls();
+        if (nestedToolbar != null) {
+            nestedToolbar.inflateMenu(R.menu.program_toolbar_menu);
+            nestedToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem menuItem) {
+                    return onOptionsItemSelected(menuItem);
+                }
+            });
         }
 
         // Show the program information        
-        Utils.setState(activity, state, program);
+        Utils.setState(getActivity(), state, program);
         Utils.setDate(date, program.start);
         Utils.setTime(time, program.start, program.stop);
         Utils.setDuration(duration, program.start, program.stop);
         Utils.setProgressText(progress, program.start, program.stop);
         Utils.setDescription(descLabel, desc, program.description);
+        Utils.setDescription(titleLabel, title, program.title);
         Utils.setDescription(summaryLabel, summary, program.summary);
+
         Utils.setDescription(channelLabel, channelName, channel.channelName);
         Utils.setDescription(descLabel, desc, program.description);
         Utils.setSeriesInfo(getContext(), seriesInfoLabel, seriesInfo, program);
@@ -217,173 +159,9 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
 
         // Show the program image if one exists
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        if (app.isUnlocked() && prefs.getBoolean("pref_show_program_artwork", false)) {
+        if (isUnlocked && prefs.getBoolean("pref_show_program_artwork", false)) {
             ImageDownloadTask dt = new ImageDownloadTask(this);
             dt.execute(program.image, String.valueOf(program.eventId));
-        }
-
-        if (getDialog() != null && Build.VERSION.SDK_INT >= 21) {
-            // Inflate a menu to be displayed in the toolbar
-            toolbar.inflateMenu(R.menu.search_info_menu);
-
-            // Set an OnMenuItemClickListener to handle menu item clicks
-            toolbar.setOnMenuItemClickListener(
-                    new Toolbar.OnMenuItemClickListener() {
-                        @Override
-                        public boolean onMenuItemClick(MenuItem item) {
-                            return onToolbarItemSelected(item);
-                        }
-                    });
-        }
-    }
-
-    private boolean onToolbarItemSelected(MenuItem item) {
-        if (program == null) {
-            return false;
-        }
-
-        switch (item.getItemId()) {
-            case R.id.menu_search_imdb:
-                menuUtils.handleMenuSearchWebSelection(program.title);
-                return true;
-
-            case R.id.menu_search_epg:
-                menuUtils.handleMenuSearchEpgSelection(program.title);
-                return true;
-
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * 
-     */
-    private void showPlayerControls() {
-        if (program == null || activity == null) {
-            return;
-        }
-
-        playButton.setVisibility(View.VISIBLE);
-        recordOnceButton.setVisibility(View.VISIBLE);
-        recordRemoveButton.setVisibility(View.VISIBLE);
-
-        if (dataStorage.getProtocolVersion() >= Constants.MIN_API_VERSION_SERIES_RECORDINGS) {
-            recordSeriesButton.setVisibility(View.VISIBLE);
-        } else {
-            recordSeriesButton.setVisibility(View.GONE);
-        }
-
-        // Show the play menu item when the current 
-        // time is between the program start and end time
-        long currentTime = new Date().getTime();
-        if (currentTime > program.start && currentTime < program.stop) {
-            playButton.setVisibility(View.VISIBLE);
-        } else {
-            playButton.setVisibility(View.GONE);
-        }
-
-        Recording rec = dataStorage.getRecordingFromArray(program.dvrId);
-        if (rec == null) {
-            // Show the record menu
-            recordRemoveButton.setVisibility(View.GONE);
-        } else if (rec.isRecording()) {
-            // Show the cancel menu
-            recordOnceButton.setVisibility(View.GONE);
-            recordSeriesButton.setVisibility(View.GONE);
-            recordRemoveButton.setText(R.string.stop);
-        } else if (rec.isScheduled()) {
-            // Show the cancel and play menu
-            recordOnceButton.setVisibility(View.GONE);
-            recordSeriesButton.setVisibility(View.GONE);
-            recordRemoveButton.setText(R.string.remove);
-        } else {
-            // Show the delete menu
-            recordRemoveButton.setVisibility(View.GONE);
-        }
-    }
-
-    /**
-     * 
-     */
-    private void addPlayerControlListeners() {
-        if (playButton != null) {
-            playButton.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Channel channel = dataStorage.getChannelFromArray(program.channelId);
-                    menuUtils.handleMenuPlaySelection(channel.channelId, -1);
-                }
-            });
-        }
-        if (recordOnceButton != null) {
-            recordOnceButton.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    menuUtils.handleMenuRecordSelection(program.eventId);
-                    if (getDialog() != null) {
-                        getDialog().dismiss();
-                    }
-                }
-            });
-        }
-        if (recordSeriesButton != null) {
-            recordSeriesButton.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    menuUtils.handleMenuSeriesRecordSelection(program.title);
-                    if (getDialog() != null) {
-                        getDialog().dismiss();
-                    }
-                }
-            });
-        }
-        if (recordRemoveButton != null) {
-            recordRemoveButton.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Recording rec = dataStorage.getRecordingFromArray(program.dvrId);
-                    if (rec != null) {
-                        if (rec.isRecording()) {
-                            menuUtils.handleMenuStopRecordingSelection(rec.id, rec.title);
-                        } else if (rec.isScheduled()) {
-                            menuUtils.handleMenuCancelRecordingSelection(rec.id, rec.title);
-                        } else {
-                            menuUtils.handleMenuRemoveRecordingSelection(rec.id, rec.title);
-                        }
-                    }
-                    if (getDialog() != null) {
-                        getDialog().dismiss();
-                    }
-                }
-            });
-        }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        app.addListener(this);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        app.removeListener(this);
-    }
-
-    @Override
-    public void onMessage(String action, Object obj) {
-        // An existing program has been updated, this is valid for all menu options. 
-        if (action.equals("eventUpdate")
-                || action.equals("dvrEntryAdd")
-                || action.equals("dvrEntryDelete")
-                || action.equals("dvrEntryUpdate")) {
-            activity.runOnUiThread(new Runnable() {
-                public void run() {
-                    showPlayerControls();
-                }
-            });
         }
     }
 
@@ -408,6 +186,95 @@ public class ProgramDetailsFragment extends DialogFragment implements HTSListene
                 imageView.setLayoutParams(layoutParams);
             }
         }
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        if (nestedToolbar != null) {
+            menu = nestedToolbar.getMenu();
+        }
+        // Show the play menu item when the current
+        // time is between the program start and end time
+        long currentTime = new Date().getTime();
+        if (currentTime > program.start && currentTime < program.stop) {
+            menu.findItem(R.id.menu_play).setVisible(true);
+        }
+
+        Recording recording = DataStorage.getInstance().getRecordingFromArray(program.dvrId);
+        if (recording == null || (!recording.isRecording()
+                && !recording.isScheduled())) {
+            menu.findItem(R.id.menu_record_once).setVisible(true);
+            menu.findItem(R.id.menu_record_once_custom_profile).setVisible(isUnlocked);
+            menu.findItem(R.id.menu_record_series).setVisible(htspVersion >= 13);
+
+        } else if (recording.isCompleted()) {
+            menu.findItem(R.id.menu_record_remove).setVisible(true);
+            menu.findItem(R.id.menu_play).setVisible(true);
+
+        } else if (recording.isScheduled() && !recording.isRecording()) {
+            menu.findItem(R.id.menu_record_remove).setVisible(true);
+
+        } else if (recording.isRecording()) {
+            menu.findItem(R.id.menu_record_stop).setVisible(true);
+
+        } else if (recording.isFailed() || recording.isRemoved() || recording.isMissed() || recording.isAborted()) {
+            menu.findItem(R.id.menu_record_remove).setVisible(true);
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("eventId", eventId);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        if (nestedToolbar == null) {
+            inflater.inflate(R.menu.program_context_menu, menu);
+        } else {
+            inflater.inflate(R.menu.search_info_menu, menu);
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                getActivity().finish();
+                return true;
+            case R.id.menu_record_remove:
+                Recording rec = DataStorage.getInstance().getRecordingFromArray(program.dvrId);
+                if (rec != null) {
+                    if (rec.isRecording()) {
+                        menuUtils.handleMenuStopRecordingSelection(rec.id, rec.title);
+                    } else if (rec.isScheduled()) {
+                        menuUtils.handleMenuCancelRecordingSelection(rec.id, rec.title);
+                    } else {
+                        menuUtils.handleMenuRemoveRecordingSelection(rec.id, rec.title);
+                    }
+                }
+                return true;
+            case R.id.menu_record_once:
+                menuUtils.handleMenuRecordSelection(program.eventId);
+                return true;
+            case R.id.menu_record_once_custom_profile:
+                menuUtils.handleMenuCustomRecordSelection(program.eventId, program.channelId);
+                return true;
+            case R.id.menu_record_series:
+                menuUtils.handleMenuSeriesRecordSelection(program.title);
+                return true;
+            case R.id.menu_play:
+                menuUtils.handleMenuPlaySelection(program.channelId, -1);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    public int getShownEventId() {
+        return eventId;
     }
 }
 

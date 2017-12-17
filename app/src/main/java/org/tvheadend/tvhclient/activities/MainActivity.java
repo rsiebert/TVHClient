@@ -16,7 +16,6 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
@@ -60,7 +59,6 @@ import org.tvheadend.tvhclient.Logger;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.fragments.ChannelListFragment;
-import org.tvheadend.tvhclient.fragments.ProgramDetailsFragment;
 import org.tvheadend.tvhclient.fragments.ProgramGuideChannelListFragment;
 import org.tvheadend.tvhclient.fragments.ProgramGuideListFragment;
 import org.tvheadend.tvhclient.fragments.ProgramGuidePagerFragment;
@@ -1287,14 +1285,11 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         // show its details. In single or dual pane mode these are shown in a
         // separate dialog fragment
         if (program != null) {
-            Bundle args = new Bundle();
-            args.putInt("eventId", program.eventId);
-            Channel channel = dataStorage.getChannelFromArray(program.channelId);
-            args.putInt("channelId", channel.channelId);
-            args.putBoolean(Constants.BUNDLE_SHOW_CONTROLS, true);
-
-            DialogFragment newFragment = ProgramDetailsFragment.newInstance(args);
-            newFragment.show(getSupportFragmentManager(), "dialog");
+            Intent intent = new Intent(this, DetailsActivity.class);
+            intent.putExtra("eventId", program.eventId);
+            intent.putExtra("channelId", program.channelId);
+            intent.putExtra("type", "program");
+            startActivity(intent);
         }
     }
 

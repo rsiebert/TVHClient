@@ -29,7 +29,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.provider.SearchRecentSuggestions;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
@@ -44,13 +43,11 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.SuggestionProvider;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.adapter.SearchResultAdapter;
-import org.tvheadend.tvhclient.fragments.ProgramDetailsFragment;
 import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Channel;
@@ -119,6 +116,7 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
                     // Show the program details dialog
                     //if (model instanceof Program) {
                     //final Program program = (Program) model;
+                    /*
                     Bundle args = new Bundle();
                     args.putLong("eventId", program.eventId);
                     Channel channel = dataStorage.getChannelFromArray(program.channelId);
@@ -128,6 +126,11 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
                     DialogFragment newFragment = ProgramDetailsFragment.newInstance(args);
                     newFragment.show(getSupportFragmentManager(), "dialog");
                     //}
+*/
+                    Intent intent = new Intent(SearchResultActivity.this, DetailsActivity.class);
+                    intent.putExtra("eventId", program.eventId);
+                    intent.putExtra("type", "program");
+                    startActivity(intent);
 
                     // Show the recording details dialog
                     /*if (model instanceof Recording) {
