@@ -65,7 +65,6 @@ import org.tvheadend.tvhclient.fragments.ProgramGuideChannelListFragment;
 import org.tvheadend.tvhclient.fragments.ProgramGuideListFragment;
 import org.tvheadend.tvhclient.fragments.ProgramGuidePagerFragment;
 import org.tvheadend.tvhclient.fragments.ProgramListFragment;
-import org.tvheadend.tvhclient.fragments.StatusFragment;
 import org.tvheadend.tvhclient.fragments.recordings.CompletedRecordingListFragment;
 import org.tvheadend.tvhclient.fragments.recordings.FailedRecordingListFragment;
 import org.tvheadend.tvhclient.fragments.recordings.RecordingListFragment;
@@ -467,8 +466,10 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 showFragment(RemovedRecordingListFragment.class.getName(), R.id.main_fragment, bundle);
                 break;
             case MENU_STATUS:
-                bundle.putString("connection_status", connectionStatus);
-                showFragment(StatusFragment.class.getName(), R.id.main_fragment, bundle);
+                selectedNavigationMenuId = defaultMenuPosition;
+                Intent statusIntent = new Intent(this, StatusActivity.class);
+                statusIntent.putExtra("connection_status", connectionStatus);
+                startActivity(statusIntent);
                 break;
             case MENU_INFORMATION:
                 selectedNavigationMenuId = defaultMenuPosition;
