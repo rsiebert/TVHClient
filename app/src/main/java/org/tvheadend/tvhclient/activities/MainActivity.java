@@ -13,6 +13,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.support.annotation.AttrRes;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
@@ -23,6 +24,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -231,19 +233,52 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 .withSavedInstance(savedInstanceState)
                 .build();
 
-        BadgeStyle badgeStyle = new BadgeStyle().withColorRes(Utils.getResourceIdFromAttr(this, R.attr.material_drawer_badge));
-        PrimaryDrawerItem channelItem = new PrimaryDrawerItem().withIdentifier(MENU_CHANNELS).withName(R.string.channels).withIcon(Utils.getResourceIdFromAttr(this, R.attr.ic_menu_channels)).withBadgeStyle(badgeStyle);
-        PrimaryDrawerItem programGuideItem = new PrimaryDrawerItem().withIdentifier(MENU_PROGRAM_GUIDE).withName(R.string.pref_program_guide).withIcon(Utils.getResourceIdFromAttr(this, R.attr.ic_menu_program_guide));
-        PrimaryDrawerItem completedRecordingsItem = new PrimaryDrawerItem().withIdentifier(MENU_COMPLETED_RECORDINGS).withName(R.string.completed_recordings).withIcon(Utils.getResourceIdFromAttr(this, R.attr.ic_menu_completed_recordings)).withBadgeStyle(badgeStyle);
-        PrimaryDrawerItem scheduledRecordingsItem = new PrimaryDrawerItem().withIdentifier(MENU_SCHEDULED_RECORDINGS).withName(R.string.scheduled_recordings).withIcon(Utils.getResourceIdFromAttr(this, R.attr.ic_menu_scheduled_recordings)).withBadgeStyle(badgeStyle);
-        PrimaryDrawerItem seriesRecordingsItem = new PrimaryDrawerItem().withIdentifier(MENU_SERIES_RECORDINGS).withName(R.string.series_recordings).withIcon(Utils.getResourceIdFromAttr(this, R.attr.ic_menu_scheduled_recordings)).withBadgeStyle(badgeStyle);
-        PrimaryDrawerItem timerRecordingsItem = new PrimaryDrawerItem().withIdentifier(MENU_TIMER_RECORDINGS).withName(R.string.timer_recordings).withIcon(Utils.getResourceIdFromAttr(this, R.attr.ic_menu_scheduled_recordings)).withBadgeStyle(badgeStyle);
-        PrimaryDrawerItem failedRecordingsItem = new PrimaryDrawerItem().withIdentifier(MENU_FAILED_RECORDINGS).withName(R.string.failed_recordings).withIcon(Utils.getResourceIdFromAttr(this, R.attr.ic_menu_failed_recordings)).withBadgeStyle(badgeStyle);
-        PrimaryDrawerItem removedRecordingsItem = new PrimaryDrawerItem().withIdentifier(MENU_REMOVED_RECORDINGS).withName(R.string.removed_recordings).withIcon(Utils.getResourceIdFromAttr(this, R.attr.ic_menu_failed_recordings)).withBadgeStyle(badgeStyle);
-        PrimaryDrawerItem statusItem = new PrimaryDrawerItem().withIdentifier(MENU_STATUS).withName(R.string.status).withIcon(Utils.getResourceIdFromAttr(this, R.attr.ic_menu_status));
-        PrimaryDrawerItem informationItem = new PrimaryDrawerItem().withIdentifier(MENU_INFORMATION).withName(R.string.pref_information).withIcon(Utils.getResourceIdFromAttr(this, R.attr.ic_menu_info));
-        PrimaryDrawerItem settingsItem = new PrimaryDrawerItem().withIdentifier(MENU_SETTINGS).withName(R.string.settings).withIcon(Utils.getResourceIdFromAttr(this, R.attr.ic_menu_settings));
-        PrimaryDrawerItem extrasItem = new PrimaryDrawerItem().withIdentifier(MENU_UNLOCKER).withName(R.string.pref_unlocker).withIcon(Utils.getResourceIdFromAttr(this, R.attr.ic_menu_extras));
+        BadgeStyle badgeStyle = new BadgeStyle()
+                .withColorRes(getResourceIdFromAttr(this, R.attr.material_drawer_badge));
+
+        PrimaryDrawerItem channelItem = new PrimaryDrawerItem()
+                .withIdentifier(MENU_CHANNELS).withName(R.string.channels)
+                .withIcon(getResourceIdFromAttr(this, R.attr.ic_menu_channels))
+                .withBadgeStyle(badgeStyle);
+        PrimaryDrawerItem programGuideItem = new PrimaryDrawerItem()
+                .withIdentifier(MENU_PROGRAM_GUIDE).withName(R.string.pref_program_guide)
+                .withIcon(getResourceIdFromAttr(this, R.attr.ic_menu_program_guide));
+        PrimaryDrawerItem completedRecordingsItem = new PrimaryDrawerItem()
+                .withIdentifier(MENU_COMPLETED_RECORDINGS).withName(R.string.completed_recordings)
+                .withIcon(getResourceIdFromAttr(this, R.attr.ic_menu_completed_recordings))
+                .withBadgeStyle(badgeStyle);
+        PrimaryDrawerItem scheduledRecordingsItem = new PrimaryDrawerItem()
+                .withIdentifier(MENU_SCHEDULED_RECORDINGS).withName(R.string.scheduled_recordings)
+                .withIcon(getResourceIdFromAttr(this, R.attr.ic_menu_scheduled_recordings))
+                .withBadgeStyle(badgeStyle);
+        PrimaryDrawerItem seriesRecordingsItem = new PrimaryDrawerItem()
+                .withIdentifier(MENU_SERIES_RECORDINGS).withName(R.string.series_recordings)
+                .withIcon(getResourceIdFromAttr(this, R.attr.ic_menu_scheduled_recordings))
+                .withBadgeStyle(badgeStyle);
+        PrimaryDrawerItem timerRecordingsItem = new PrimaryDrawerItem()
+                .withIdentifier(MENU_TIMER_RECORDINGS).withName(R.string.timer_recordings)
+                .withIcon(getResourceIdFromAttr(this, R.attr.ic_menu_scheduled_recordings))
+                .withBadgeStyle(badgeStyle);
+        PrimaryDrawerItem failedRecordingsItem = new PrimaryDrawerItem()
+                .withIdentifier(MENU_FAILED_RECORDINGS).withName(R.string.failed_recordings)
+                .withIcon(getResourceIdFromAttr(this, R.attr.ic_menu_failed_recordings))
+                .withBadgeStyle(badgeStyle);
+        PrimaryDrawerItem removedRecordingsItem = new PrimaryDrawerItem()
+                .withIdentifier(MENU_REMOVED_RECORDINGS).withName(R.string.removed_recordings)
+                .withIcon(getResourceIdFromAttr(this, R.attr.ic_menu_failed_recordings))
+                .withBadgeStyle(badgeStyle);
+        PrimaryDrawerItem statusItem = new PrimaryDrawerItem()
+                .withIdentifier(MENU_STATUS).withName(R.string.status)
+                .withIcon(getResourceIdFromAttr(this, R.attr.ic_menu_status));
+        PrimaryDrawerItem informationItem = new PrimaryDrawerItem()
+                .withIdentifier(MENU_INFORMATION).withName(R.string.pref_information)
+                .withIcon(getResourceIdFromAttr(this, R.attr.ic_menu_info));
+        PrimaryDrawerItem settingsItem = new PrimaryDrawerItem()
+                .withIdentifier(MENU_SETTINGS).withName(R.string.settings)
+                .withIcon(getResourceIdFromAttr(this, R.attr.ic_menu_settings));
+        PrimaryDrawerItem extrasItem = new PrimaryDrawerItem()
+                .withIdentifier(MENU_UNLOCKER).withName(R.string.pref_unlocker)
+                .withIcon(getResourceIdFromAttr(this, R.attr.ic_menu_extras));
 
         result = new DrawerBuilder()
                 .withActivity(this)
@@ -328,6 +363,12 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             }
         };
         initCasting();
+    }
+
+    public int getResourceIdFromAttr(@NonNull Context ctx, @AttrRes int attr) {
+        final TypedValue typedValue = new TypedValue();
+        ctx.getTheme().resolveAttribute(attr, typedValue, true);
+        return typedValue.resourceId;
     }
 
     private void handleDrawerProfileSelected(IProfile profile) {
