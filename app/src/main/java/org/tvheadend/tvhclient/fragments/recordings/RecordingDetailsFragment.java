@@ -29,6 +29,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
+// TODO improve layout, more info, title, subtitle,... without header label
+// TODO update icons (same color...)
+
 public class RecordingDetailsFragment extends Fragment {
 
     @SuppressWarnings("unused")

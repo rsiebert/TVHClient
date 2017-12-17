@@ -38,6 +38,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
+// TODO improve layout, more info, title, subtitle,... without header label
+// TODO update icons (same color, record with profile must differ from regular record...)
+
 public class ProgramDetailsFragment extends Fragment implements ImageDownloadTaskCallback {
 
     @Nullable
