@@ -871,7 +871,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 // Clear all available data and all channels that are currently
                 // loading, reconnect to the server and reload all data
                 channelLoadingList.clear();
-                Utils.connect(this, true);
+                menuUtils.handleMenuReconnectSelection();
                 return true;
 
             case R.id.menu_wol:

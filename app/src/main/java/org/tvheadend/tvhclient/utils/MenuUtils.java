@@ -120,7 +120,6 @@ public class MenuUtils {
     }
 
     /**
-     *
      * @param selectedTagId
      * @param callback
      */
@@ -549,5 +548,22 @@ public class MenuUtils {
             recordRemoveMenuItem.setTitle(R.string.remove);
             recordRemoveMenuItem.setVisible(true);
         }
+    }
+
+    public void handleMenuReconnectSelection() {
+        Activity activity = this.activity.get();
+        if (activity == null) {
+            return;
+        }
+        new MaterialDialog.Builder(activity)
+                .title("Reconnect to server?")
+                .content("Do you want to reconnect to the server?\n" +
+                        "The application will be restarted and a new initial sync willbe performed.")
+                .negativeText(R.string.cancel)
+                .positiveText("Reconnect")
+                .onPositive((dialog, which) -> {
+                    Utils.connect(activity, true);
+                })
+                .show();
     }
 }
