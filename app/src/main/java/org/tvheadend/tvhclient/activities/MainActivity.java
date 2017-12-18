@@ -283,12 +283,20 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 .withActivity(this)
                 .withAccountHeader(headerResult)
                 .withToolbar(toolbar)
-                .addDrawerItems(channelItem, programGuideItem,
-                        completedRecordingsItem, scheduledRecordingsItem,
-                        seriesRecordingsItem, timerRecordingsItem,
-                        failedRecordingsItem, removedRecordingsItem,
+                .addDrawerItems(channelItem,
+                        programGuideItem,
                         new DividerDrawerItem(),
-                        statusItem, informationItem, settingsItem, extrasItem
+                        completedRecordingsItem,
+                        scheduledRecordingsItem,
+                        seriesRecordingsItem,
+                        timerRecordingsItem,
+                        failedRecordingsItem,
+                        removedRecordingsItem,
+                        new DividerDrawerItem(),
+                        statusItem,
+                        informationItem,
+                        settingsItem,
+                        extrasItem
                 )
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
