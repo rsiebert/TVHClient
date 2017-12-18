@@ -23,10 +23,10 @@ import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.activities.DetailsActivity;
+import org.tvheadend.tvhclient.activities.ToolbarInterfaceLight;
 import org.tvheadend.tvhclient.adapter.ProgramListAdapter;
 import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
-import org.tvheadend.tvhclient.interfaces.ToolbarInterface;
 import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.utils.MenuUtils;
@@ -37,7 +37,7 @@ import java.util.Date;
 public class ProgramListFragment extends ListFragment implements HTSListener, OnItemClickListener, AdapterView.OnItemLongClickListener, OnScrollListener {
 
     private Activity activity;
-    private ToolbarInterface toolbarInterface;
+    private ToolbarInterfaceLight toolbarInterface;
     private ProgramListAdapter adapter;
     private boolean isDualPane;
     private long showProgramsFromTime;
@@ -49,14 +49,25 @@ public class ProgramListFragment extends ListFragment implements HTSListener, On
     private MenuUtils menuUtils;
     private int selectedListPosition;
     private int channelId;
+    private String channelName;
+
+    public static ProgramListFragment newInstance(String channelName, int channelId, long showProgramsFromTime) {
+        ProgramListFragment f = new ProgramListFragment();
+        Bundle args = new Bundle();
+        args.putString("channelName", channelName);
+        args.putInt("channelId", channelId);
+        args.putLong("show_programs_from_time", showProgramsFromTime);
+        f.setArguments(args);
+        return f;
+    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
         activity = getActivity();
-        if (activity instanceof ToolbarInterface) {
-            toolbarInterface = (ToolbarInterface) activity;
+        if (activity instanceof ToolbarInterfaceLight) {
+            toolbarInterface = (ToolbarInterfaceLight) activity;
         }
         menuUtils = new MenuUtils(getActivity());
 
@@ -68,15 +79,18 @@ public class ProgramListFragment extends ListFragment implements HTSListener, On
 
         Bundle bundle = getArguments();
         if (bundle != null) {
+            channelName = bundle.getString("channelName");
             channelId = bundle.getInt("channelId", 0);
             showProgramsFromTime = bundle.getLong("show_programs_from_time", new Date().getTime());
         }
         if (savedInstanceState != null) {
+            channelName = savedInstanceState.getString("channelName");
             channelId = savedInstanceState.getInt("channelId", 0);
             showProgramsFromTime = bundle.getLong("show_programs_from_time", new Date().getTime());
             selectedListPosition = savedInstanceState.getInt("list_position", 0);
         }
 
+        toolbarInterface.setTitle(channelName);
         adapter = new ProgramListAdapter(activity, new ArrayList<>());
         setListAdapter(adapter);
         getListView().setFastScrollEnabled(true);
@@ -89,6 +103,9 @@ public class ProgramListFragment extends ListFragment implements HTSListener, On
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
+        outState.putString("channelName", channelName);
+        outState.putInt("channelId", channelId);
+        outState.putLong("show_programs_from_time", showProgramsFromTime);
         outState.putInt("list_position", selectedListPosition);
     }
 
@@ -110,6 +127,9 @@ public class ProgramListFragment extends ListFragment implements HTSListener, On
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case android.R.id.home:
+                getActivity().finish();
+                return true;
             case R.id.menu_play:
                 // Open a new activity that starts playing the first program that is
                 // currently transmitted over this channel
@@ -127,6 +147,8 @@ public class ProgramListFragment extends ListFragment implements HTSListener, On
     public void onResume() {
         super.onResume();
         TVHClientApplication.getInstance().addListener(this);
+        setListShown(!DataStorage.getInstance().isLoading());
+
         if (!DataStorage.getInstance().isLoading()) {
             populateList();
             if (adapter.getCount() < 15) {
@@ -170,7 +192,7 @@ public class ProgramListFragment extends ListFragment implements HTSListener, On
         adapter.notifyDataSetChanged();
         // Show the number of recordings
         String items = getResources().getQuantityString(R.plurals.programs, adapter.getCount(), adapter.getCount());
-        toolbarInterface.setActionBarSubtitle(items);
+        toolbarInterface.setSubtitle(items);
     }
 
     /**
@@ -200,7 +222,7 @@ public class ProgramListFragment extends ListFragment implements HTSListener, On
                             adapter.sort();
                             adapter.notifyDataSetChanged();
                             String items = getResources().getQuantityString(R.plurals.programs, adapter.getCount(), adapter.getCount());
-                            toolbarInterface.setActionBarSubtitle(items);
+                            toolbarInterface.setSubtitle(items);
                         }
                     }
                 });
@@ -217,7 +239,7 @@ public class ProgramListFragment extends ListFragment implements HTSListener, On
                         adapter.remove(p);
                         adapter.notifyDataSetChanged();
                         String items = getResources().getQuantityString(R.plurals.programs, adapter.getCount(), adapter.getCount());
-                        toolbarInterface.setActionBarSubtitle(items);
+                        toolbarInterface.setSubtitle(items);
                         // Select the previous recording to show its details
                         if (isDualPane) {
                             showProgramDetails(selectedListPosition);
@@ -309,20 +331,22 @@ public class ProgramListFragment extends ListFragment implements HTSListener, On
     public void onScrollStateChanged(AbsListView view, int scrollState) {
         // If loading is allowed and the scrolling has stopped, load more data
         if (scrollState == SCROLL_STATE_IDLE && allowLoading) {
-            toolbarInterface.setActionBarSubtitle(getString(R.string.loading));
+            toolbarInterface.setSubtitle(getString(R.string.loading));
             getMorePrograms();
             allowLoading = false;
         }
     }
 
     private void getMorePrograms() {
-        Program lastProgram = adapter.getItem(adapter.getCount()-1);
-        Intent intent = new Intent(getActivity(), HTSService.class);
-        intent.setAction("getEvents");
-        intent.putExtra("eventId", lastProgram.nextEventId);
-        intent.putExtra("channelId", lastProgram.channelId);
-        intent.putExtra("count", 15);
-        getActivity().startService(intent);
+        if (adapter.getCount() > 0) {
+            Program lastProgram = adapter.getItem(adapter.getCount() - 1);
+            Intent intent = new Intent(getActivity(), HTSService.class);
+            intent.setAction("getEvents");
+            intent.putExtra("eventId", lastProgram.nextEventId);
+            intent.putExtra("channelId", lastProgram.channelId);
+            intent.putExtra("count", 15);
+            getActivity().startService(intent);
+        }
     }
 
     @Override
@@ -331,5 +355,9 @@ public class ProgramListFragment extends ListFragment implements HTSListener, On
         if ((++firstVisibleItem + visibleItemCount) > totalItemCount) {
             allowLoading = true;
         }
+    }
+
+    public int getShownChannelId() {
+        return channelId;
     }
 }
