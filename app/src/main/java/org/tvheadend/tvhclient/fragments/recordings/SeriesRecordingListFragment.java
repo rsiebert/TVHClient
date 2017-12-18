@@ -88,6 +88,8 @@ public class SeriesRecordingListFragment extends ListFragment implements HTSList
     public void onResume() {
         super.onResume();
         TVHClientApplication.getInstance().addListener(this);
+        setListShown(!DataStorage.getInstance().isLoading());
+
         if (!DataStorage.getInstance().isLoading()) {
             populateList();
             // In dual-pane mode the list of programs of the selected
