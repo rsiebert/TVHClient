@@ -95,7 +95,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, ChangeLogDialogInterface, ToolbarInterface, FragmentStatusInterface, FragmentScrollInterface, HTSListener, WakeOnLanTaskCallback {
+public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, ChangeLogDialogInterface, ToolbarInterface, ToolbarInterfaceLight, FragmentStatusInterface, FragmentScrollInterface, HTSListener, WakeOnLanTaskCallback {
 
     private final static String TAG = MainActivity.class.getSimpleName();
 
@@ -795,18 +795,12 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         super.onSaveInstanceState(outState);
     }
 
-    @SuppressLint({"InlinedApi", "NewApi"})
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
+
+
 /*
-        // If the navigation drawer is open, hide all menu items
-        //boolean drawerOpen = drawerLayout.isDrawerOpen(drawerList);
-        boolean drawerOpen = drawerLayout.isDrawerOpen(GravityCompat.START);
-        for (int i = 0; i < menu.size(); i++) {
-            menu.getItem(i).setVisible(!drawerOpen);
-        }
-*/
         int completedRecordingCount = 0;
         Map<Integer, Recording> map = dataStorage.getRecordingsFromArray();
         for (Recording recording : map.values()) {
@@ -817,8 +811,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         }
 
         // Do not show the search menu on these screens
-        if (selectedNavigationMenuId == MENU_STATUS
-                || (selectedNavigationMenuId == MENU_COMPLETED_RECORDINGS && completedRecordingCount == 0)
+        if ((selectedNavigationMenuId == MENU_COMPLETED_RECORDINGS && completedRecordingCount == 0)
                 || selectedNavigationMenuId == MENU_SCHEDULED_RECORDINGS
                 || selectedNavigationMenuId == MENU_FAILED_RECORDINGS
                 || selectedNavigationMenuId == MENU_REMOVED_RECORDINGS
@@ -836,23 +829,13 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 (menu.findItem(R.id.menu_wol)).setVisible(true);
             }
         }
-
-        // Prevent the refresh menu item from going into the overlay menu when
-        // the status page is shown
-        if (selectedNavigationMenuId == MENU_STATUS) {
-            menu.findItem(R.id.menu_refresh).setShowAsActionFlags(
-                    MenuItem.SHOW_AS_ACTION_ALWAYS
-                            | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
-        }
-
+*/
         if (mMediaRouteMenuItem != null) {
             mMediaRouteMenuItem.setVisible(showCastMenuItem());
         }
-
         return true;
     }
 
-    @SuppressLint("NewApi")
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
@@ -869,7 +852,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         searchView.setIconifiedByDefault(true);
         searchView.setOnQueryTextListener(this);
         searchView.setOnSuggestionListener(this);
-
         return true;
     }
 
@@ -1621,6 +1603,20 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     public void notify(String message) {
         if (getCurrentFocus() != null) {
             Snackbar.make(getCurrentFocus(), message, Snackbar.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
+    public void setTitle(String title) {
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(title);
+        }
+    }
+
+    @Override
+    public void setSubtitle(String subtitle) {
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setSubtitle(subtitle);
         }
     }
 }

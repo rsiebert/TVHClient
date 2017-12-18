@@ -16,12 +16,6 @@
         app:actionViewClass="android.support.v7.widget.SearchView"
         app:showAsAction="ifRoom|collapseActionView"/>
     <item
-        android:id="@+id/menu_wol"
-        android:icon="?attr/ic_menu_wol"
-        android:orderInCategory="3"
-        android:title="@string/send_wol"
-        app:showAsAction="ifRoom|collapseActionView"/>
-    <item
         android:id="@+id/menu_refresh"
         android:icon="?attr/ic_menu_refresh"
         android:orderInCategory="10"
