@@ -3,6 +3,7 @@ package org.tvheadend.tvhclient.fragments;
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -10,7 +11,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.tvheadend.tvhclient.Constants;
@@ -18,6 +18,7 @@ import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
+import org.tvheadend.tvhclient.activities.ToolbarInterfaceLight;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Connection;
@@ -25,6 +26,7 @@ import org.tvheadend.tvhclient.model.DiscSpace;
 import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.tasks.WakeOnLanTask;
 import org.tvheadend.tvhclient.tasks.WakeOnLanTaskCallback;
+import org.tvheadend.tvhclient.utils.MenuUtils;
 
 import java.util.Map;
 
@@ -37,26 +39,50 @@ public class StatusFragment extends Fragment implements HTSListener, WakeOnLanTa
     private Activity activity;
 
     // This information is always available
-    @BindView(R.id.additional_information_layout) LinearLayout additionalInformationLayout;
-    @BindView(R.id.connection) TextView connection;
-    @BindView(R.id.status) TextView status;
-    @BindView(R.id.channel) TextView channels;
-    @BindView(R.id.currently_recording) TextView currentlyRec;
-    @BindView(R.id.completed_recordings) TextView completedRec;
-    @BindView(R.id.upcoming_recordings) TextView upcomingRec;
-    @BindView(R.id.failed_recordings) TextView failedRec;
-    @BindView(R.id.removed_recordings) TextView removedRec;
-    @BindView(R.id.series_recordings) TextView seriesRec;
-    @BindView(R.id.timer_recordings) TextView timerRec;
-    @BindView(R.id.free_discspace) TextView freediscspace;
-    @BindView(R.id.total_discspace) TextView totaldiscspace;
-    @BindView(R.id.server_api_version) TextView serverApiVersion;
+    @BindView(R.id.connection)
+    TextView connection;
+    @BindView(R.id.status)
+    TextView status;
+    @BindView(R.id.channels_label)
+    TextView channelsLabel;
+    @BindView(R.id.channels)
+    TextView channels;
+    @BindView(R.id.recording_label)
+    TextView recordingLabel;
+    @BindView(R.id.completed_recordings)
+    TextView completedRec;
+    @BindView(R.id.upcoming_recordings)
+    TextView upcomingRec;
+    @BindView(R.id.failed_recordings)
+    TextView failedRec;
+    @BindView(R.id.removed_recordings)
+    TextView removedRec;
+    @BindView(R.id.series_recordings)
+    TextView seriesRec;
+    @BindView(R.id.timer_recordings)
+    TextView timerRec;
+    @BindView(R.id.currently_recording_label)
+    TextView currentlyRecLabel;
+    @BindView(R.id.currently_recording)
+    TextView currentlyRec;
+    @BindView(R.id.discspace_label)
+    TextView discspaceLabel;
+    @BindView(R.id.free_discspace)
+    TextView freediscspace;
+    @BindView(R.id.total_discspace)
+    TextView totaldiscspace;
+    @BindView(R.id.server_api_version_label)
+    TextView serverApiVersionLabel;
+    @BindView(R.id.server_api_version)
+    TextView serverApiVersion;
 
     private String connectionStatus = "";
     private Unbinder unbinder;
     private DatabaseHelper databaseHelper;
     private int htspVersion;
     private boolean isUnlocked;
+    private MenuUtils menuUtils;
+    private boolean isLoading;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -76,9 +102,16 @@ public class StatusFragment extends Fragment implements HTSListener, WakeOnLanTa
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         activity = getActivity();
+        if (activity instanceof ToolbarInterfaceLight) {
+            ToolbarInterfaceLight toolbarInterface = (ToolbarInterfaceLight) activity;
+            toolbarInterface.setTitle(getString(R.string.status));
+        }
+        menuUtils = new MenuUtils(getActivity());
         databaseHelper = DatabaseHelper.getInstance(getActivity().getApplicationContext());
         htspVersion = DataStorage.getInstance().getProtocolVersion();
         isUnlocked = TVHClientApplication.getInstance().isUnlocked();
+        isLoading = DataStorage.getInstance().isLoading();
+        setHasOptionsMenu(true);
 
         Bundle bundle = getArguments();
         if (bundle != null) {
@@ -87,19 +120,16 @@ public class StatusFragment extends Fragment implements HTSListener, WakeOnLanTa
     }
 
     @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("connection_status", connectionStatus);
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         TVHClientApplication.getInstance().addListener(this);
-
-        // Upon resume show the actual status. If stuff is loading hide certain
-        // information, otherwise show the connection status and the cause of
-        // possible connection problems. 
-        additionalInformationLayout.setVisibility(View.GONE);
-        if (DataStorage.getInstance().isLoading()) {
-            onMessage(Constants.ACTION_LOADING, true);
-        } else {
-            onMessage(connectionStatus, false);
-        }
+        showStatus();
     }
 
     @Override
@@ -136,6 +166,9 @@ public class StatusFragment extends Fragment implements HTSListener, WakeOnLanTa
                     task.execute();
                 }
                 return true;
+            case R.id.menu_refresh:
+                menuUtils.handleMenuReconnectSelection();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -145,13 +178,6 @@ public class StatusFragment extends Fragment implements HTSListener, WakeOnLanTa
     public void onMessage(final String action, final Object obj) {
         switch (action) {
             case Constants.ACTION_CONNECTION_STATE_OK:
-                activity.runOnUiThread(new Runnable() {
-                    public void run() {
-                        connectionStatus = action;
-                        showCompleteStatus();
-                    }
-                });
-                break;
             case Constants.ACTION_CONNECTION_STATE_UNKNOWN:
             case Constants.ACTION_CONNECTION_STATE_SERVER_DOWN:
             case Constants.ACTION_CONNECTION_STATE_LOST:
@@ -163,63 +189,54 @@ public class StatusFragment extends Fragment implements HTSListener, WakeOnLanTa
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
                         connectionStatus = action;
-
-                        // Hide the additional status information because the
-                        // connection to the server is not OK
-                        additionalInformationLayout.setVisibility(View.GONE);
-                        showConnectionName();
-                        showConnectionStatus();
+                        showStatus();
                     }
                 });
                 break;
             case Constants.ACTION_LOADING:
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
-                        boolean loading = (Boolean) obj;
-
-                        // Show that data is being loaded from the server and hide
-                        // the additional information, because this information is
-                        // outdated. If the data has been loaded from the server,
-                        // show the additional status layout again and display the
-                        // available information.
-                        if (loading) {
-                            status.setText(R.string.loading);
-                            additionalInformationLayout.setVisibility(View.GONE);
-                            showConnectionName();
-
-                            freediscspace.setText(R.string.loading);
-                            totaldiscspace.setText(R.string.loading);
-                        } else {
-                            showCompleteStatus();
-                        }
+                        isLoading = (boolean) obj;
+                        showStatus();
                     }
                 });
-                break;
             case Constants.ACTION_DISC_SPACE:
                 activity.runOnUiThread(new Runnable() {
-                    @Override
                     public void run() {
-                        if (isAdded()) {
-                            showDiscSpace();
-                        }
+                        showStatus();
                     }
                 });
                 break;
         }
     }
 
-    /**
-     * Displays all available status information. This is the case
-     * when the loading is done and the connection is fine
-     */
-    private void showCompleteStatus() {
-        // The connection to the server is fine again, therefore
-        // show the additional information again
-        additionalInformationLayout.setVisibility(View.VISIBLE);
-        showConnectionName();
+    private void showStatus() {
+        boolean show = (connectionStatus.equals(
+                Constants.ACTION_CONNECTION_STATE_OK) && !isLoading);
+
+        // The connection is ok and not loading anymore, show all data
+        recordingLabel.setVisibility(show ? View.VISIBLE : View.GONE);
+        completedRec.setVisibility(show ? View.VISIBLE : View.GONE);
+        upcomingRec.setVisibility(show ? View.VISIBLE : View.GONE);
+        removedRec.setVisibility(show ? View.VISIBLE : View.GONE);
+        failedRec.setVisibility(show ? View.VISIBLE : View.GONE);
+        seriesRec.setVisibility((show && htspVersion >= 13) ? View.VISIBLE : View.GONE);
+        timerRec.setVisibility((show && htspVersion >= 18 && isUnlocked) ? View.VISIBLE : View.GONE);
+        channelsLabel.setVisibility(show ? View.VISIBLE : View.GONE);
+        channels.setVisibility(show ? View.VISIBLE : View.GONE);
+        currentlyRecLabel.setVisibility(show ? View.VISIBLE : View.GONE);
+        currentlyRec.setVisibility(show ? View.VISIBLE : View.GONE);
+        discspaceLabel.setVisibility(show ? View.VISIBLE : View.GONE);
+        freediscspace.setVisibility(show ? View.VISIBLE : View.GONE);
+        totaldiscspace.setVisibility(show ? View.VISIBLE : View.GONE);
+        serverApiVersionLabel.setVisibility(show ? View.VISIBLE : View.GONE);
+        serverApiVersion.setVisibility(show ? View.VISIBLE : View.GONE);
+
+        showConnectionDetails();
         showConnectionStatus();
         showRecordingStatus();
         showDiscSpace();
+        showServerStatus();
 
         // Show the number of available channels
         final String text = DataStorage.getInstance().getChannelsFromArray().size() + " " + getString(R.string.available);
@@ -230,26 +247,17 @@ public class StatusFragment extends Fragment implements HTSListener, WakeOnLanTa
      * Shows the name and address of a connection, otherwise shows an
      * information that no connection is selected or available.
      */
-    private void showConnectionName() {
-        // Get the currently selected connection
-        boolean noConnectionsDefined = false;
-        Connection conn = null;
-        if (databaseHelper != null) {
-            noConnectionsDefined = databaseHelper.getConnections().isEmpty();
-            conn = databaseHelper.getSelectedConnection();
-        }
-
-        // Show the details about the current connection or an information that
-        // none is selected or available
-        if (conn == null) {
-            if (noConnectionsDefined) {
-                connection.setText(R.string.no_connection_available_advice);
+    private void showConnectionDetails() {
+        Connection connection = databaseHelper.getSelectedConnection();
+        if (connection == null) {
+            if (databaseHelper.getConnections().isEmpty()) {
+                this.connection.setText(R.string.no_connection_available_advice);
             } else {
-                connection.setText(R.string.no_connection_active_advice);
+                this.connection.setText(R.string.no_connection_active_advice);
             }
         } else {
-            String text = conn.name + " (" + conn.address + ")";
-            connection.setText(text);
+            String text = connection.name + " (" + connection.address + ")";
+            this.connection.setText(text);
         }
     }
 
@@ -259,32 +267,36 @@ public class StatusFragment extends Fragment implements HTSListener, WakeOnLanTa
      */
     private void showConnectionStatus() {
         // Show a textual description about the connection state
-        switch (connectionStatus) {
-            case Constants.ACTION_CONNECTION_STATE_OK:
-                status.setText(R.string.ready);
-                break;
-            case Constants.ACTION_CONNECTION_STATE_SERVER_DOWN:
-                status.setText(R.string.err_connect);
-                break;
-            case Constants.ACTION_CONNECTION_STATE_LOST:
-                status.setText(R.string.err_con_lost);
-                break;
-            case Constants.ACTION_CONNECTION_STATE_TIMEOUT:
-                status.setText(R.string.err_con_timeout);
-                break;
-            case Constants.ACTION_CONNECTION_STATE_REFUSED:
-            case Constants.ACTION_CONNECTION_STATE_AUTH:
-                status.setText(R.string.err_auth);
-                break;
-            case Constants.ACTION_CONNECTION_STATE_NO_NETWORK:
-                status.setText(R.string.err_no_network);
-                break;
-            case Constants.ACTION_CONNECTION_STATE_NO_CONNECTION:
-                status.setText(R.string.no_connection_available);
-                break;
-            default:
-                status.setText(R.string.unknown);
-                break;
+        if (isLoading) {
+            status.setText(R.string.loading);
+        } else {
+            switch (connectionStatus) {
+                case Constants.ACTION_CONNECTION_STATE_OK:
+                    status.setText(R.string.ready);
+                    break;
+                case Constants.ACTION_CONNECTION_STATE_SERVER_DOWN:
+                    status.setText(R.string.err_connect);
+                    break;
+                case Constants.ACTION_CONNECTION_STATE_LOST:
+                    status.setText(R.string.err_con_lost);
+                    break;
+                case Constants.ACTION_CONNECTION_STATE_TIMEOUT:
+                    status.setText(R.string.err_con_timeout);
+                    break;
+                case Constants.ACTION_CONNECTION_STATE_REFUSED:
+                case Constants.ACTION_CONNECTION_STATE_AUTH:
+                    status.setText(R.string.err_auth);
+                    break;
+                case Constants.ACTION_CONNECTION_STATE_NO_NETWORK:
+                    status.setText(R.string.err_no_network);
+                    break;
+                case Constants.ACTION_CONNECTION_STATE_NO_CONNECTION:
+                    status.setText(R.string.no_connection_available);
+                    break;
+                default:
+                    status.setText(R.string.unknown);
+                    break;
+            }
         }
     }
 
@@ -322,6 +334,7 @@ public class StatusFragment extends Fragment implements HTSListener, WakeOnLanTa
             }
             freediscspace.setText(freeDiscSpace);
             totaldiscspace.setText(totalDiscSpace);
+
         } catch (Exception e) {
             freediscspace.setText(R.string.unknown);
             totaldiscspace.setText(R.string.unknown);
@@ -333,9 +346,9 @@ public class StatusFragment extends Fragment implements HTSListener, WakeOnLanTa
      * the available, scheduled and failed recordings.
      */
     private void showRecordingStatus() {
-        String currentRecText = "";
 
         // Get the programs that are currently being recorded
+        String currentRecText = "";
         Map<Integer, Recording> map = DataStorage.getInstance().getRecordingsFromArray();
         for (Recording rec : map.values()) {
             if (rec.isRecording()) {
@@ -355,6 +368,7 @@ public class StatusFragment extends Fragment implements HTSListener, WakeOnLanTa
         int scheduledRecCount = 0;
         int failedRecCount = 0;
         int removedRecCount = 0;
+
         for (Recording recording : map.values()) {
             if (recording.isCompleted()) {
                 completedRecCount++;
@@ -379,25 +393,16 @@ public class StatusFragment extends Fragment implements HTSListener, WakeOnLanTa
         removedRec.setText(getResources().getQuantityString(
                 R.plurals.removed_recordings, removedRecCount, removedRecCount));
 
-        // Show how many series recordings are available
-        if (htspVersion < Constants.MIN_API_VERSION_SERIES_RECORDINGS) {
-            seriesRec.setVisibility(View.GONE);
-        } else {
-            final int seriesRecCount = DataStorage.getInstance().getSeriesRecordingsFromArray().size();
-            seriesRec.setText(getResources().getQuantityString(
-                    R.plurals.series_recordings, seriesRecCount, seriesRecCount));
-        }
+        final int seriesRecCount = DataStorage.getInstance().getSeriesRecordingsFromArray().size();
+        seriesRec.setText(getResources().getQuantityString(
+                R.plurals.series_recordings, seriesRecCount, seriesRecCount));
 
-        // Show how many timer recordings are available if the server supports
-        // it and the application is unlocked
-        if (htspVersion < Constants.MIN_API_VERSION_TIMER_RECORDINGS || isUnlocked) {
-            timerRec.setVisibility(View.GONE);
-        } else {
-            final int timerRecCount = DataStorage.getInstance().getTimerRecordingsFromArray().size();
-            timerRec.setText(getResources().getQuantityString(
-                    R.plurals.timer_recordings, timerRecCount, timerRecCount));
-        }
+        final int timerRecCount = DataStorage.getInstance().getTimerRecordingsFromArray().size();
+        timerRec.setText(getResources().getQuantityString(
+                R.plurals.timer_recordings, timerRecCount, timerRecCount));
+    }
 
+    private void showServerStatus() {
         String version = String.valueOf(htspVersion)
                 + "   (" + getString(R.string.server) + ": "
                 + DataStorage.getInstance().getServerName() + " "
