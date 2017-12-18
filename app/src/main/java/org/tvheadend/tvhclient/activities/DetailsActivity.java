@@ -10,7 +10,6 @@ import org.tvheadend.tvhclient.fragments.ProgramDetailsFragment;
 import org.tvheadend.tvhclient.fragments.recordings.RecordingDetailsFragment;
 import org.tvheadend.tvhclient.fragments.recordings.SeriesRecordingDetailsFragment;
 import org.tvheadend.tvhclient.fragments.recordings.TimerRecordingDetailsFragment;
-import org.tvheadend.tvhclient.interfaces.BackPressedInterface;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
 public class DetailsActivity extends AppCompatActivity implements ToolbarInterfaceLight {
@@ -51,17 +50,6 @@ public class DetailsActivity extends AppCompatActivity implements ToolbarInterfa
                 getSupportFragmentManager().beginTransaction().add(R.id.content_frame, fragment).commit();
             }
         }
-    }
-
-    @Override
-    public void onBackPressed() {
-        // If a settings fragment is currently visible, let the fragment
-        // handle the back press, otherwise the setting activity.
-        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.content_frame);
-        if (fragment != null && fragment instanceof BackPressedInterface) {
-            ((BackPressedInterface) fragment).onBackPressed();
-        }
-        super.onBackPressed();
     }
 
     @Override
