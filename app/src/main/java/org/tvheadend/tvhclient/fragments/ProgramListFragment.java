@@ -36,16 +36,14 @@ import java.util.Date;
 
 public class ProgramListFragment extends ListFragment implements HTSListener, OnItemClickListener, AdapterView.OnItemLongClickListener, OnScrollListener {
 
-    private final static String TAG = ProgramListFragment.class.getSimpleName();
-
     private Activity activity;
     private ToolbarInterface toolbarInterface;
     private ProgramListAdapter adapter;
     private boolean isDualPane;
     private long showProgramsFromTime;
 
-    // Prevents loading more data on each scroll event. Only when scrolling has
-    // stopped loading shall be allowed
+    // Prevents loading more data on each scroll event.
+    // Only when scrolling has stopped loading shall be allowed
     private boolean allowLoading = false;
 
     private MenuUtils menuUtils;
