@@ -1,9 +1,10 @@
 package org.tvheadend.tvhclient.fragments;
 
 import android.app.Activity;
-import android.os.Bundle;
 import android.app.Fragment;
+import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -15,7 +16,6 @@ import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
-import org.tvheadend.tvhclient.interfaces.ToolbarInterface;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.DiscSpace;
@@ -23,80 +23,57 @@ import org.tvheadend.tvhclient.model.Recording;
 
 import java.util.Map;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
+
 public class StatusFragment extends Fragment implements HTSListener {
 
-    @SuppressWarnings("unused")
-    private final static String TAG = StatusFragment.class.getSimpleName();
-
     private Activity activity;
-    private ToolbarInterface toolbarInterface;
 
-    private LinearLayout additionalInformationLayout;
-
-	// This information is always available
-    private TextView connection;
-    private TextView status;
-    private TextView channels;
-	private TextView currentlyRec;
-	private TextView completedRec;
-	private TextView upcomingRec;
-	private TextView failedRec;
-    private TextView removedRec;
-    private TextView seriesRec;
-    private TextView timerRec;
-    private TextView freediscspace;
-    private TextView totaldiscspace;
-    private TextView serverApiVersion;
+    // This information is always available
+    @BindView(R.id.additional_information_layout) LinearLayout additionalInformationLayout;
+    @BindView(R.id.connection) TextView connection;
+    @BindView(R.id.status) TextView status;
+    @BindView(R.id.channel) TextView channels;
+    @BindView(R.id.currently_recording) TextView currentlyRec;
+    @BindView(R.id.completed_recordings) TextView completedRec;
+    @BindView(R.id.upcoming_recordings) TextView upcomingRec;
+    @BindView(R.id.failed_recordings) TextView failedRec;
+    @BindView(R.id.removed_recordings) TextView removedRec;
+    @BindView(R.id.series_recordings) TextView seriesRec;
+    @BindView(R.id.timer_recordings) TextView timerRec;
+    @BindView(R.id.free_discspace) TextView freediscspace;
+    @BindView(R.id.total_discspace) TextView totaldiscspace;
+    @BindView(R.id.server_api_version) TextView serverApiVersion;
     private String connectionStatus = "";
 
     private TVHClientApplication app;
     private DatabaseHelper databaseHelper;
     private DataStorage dataStorage;
+    private Unbinder unbinder;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        // If the view group does not exist, the fragment would not be shown. So
-        // we can return anyway.
-        if (container == null) {
-            return null;
-        }
+        View view = inflater.inflate(R.layout.status_fragment_layout, container, false);
+        unbinder = ButterKnife.bind(this, view);
+        return view;
+    }
 
-        View v = inflater.inflate(R.layout.status_fragment_layout, container, false);
-        connection = v.findViewById(R.id.connection);
-        status = v.findViewById(R.id.status);
-        additionalInformationLayout = v.findViewById(R.id.additional_information_layout);
-        channels = v.findViewById(R.id.channels);
-        currentlyRec = v.findViewById(R.id.currently_recording);
-        completedRec = v.findViewById(R.id.completed_recordings);
-        upcomingRec = v.findViewById(R.id.upcoming_recordings);
-        failedRec = v.findViewById(R.id.failed_recordings);
-        removedRec = v.findViewById(R.id.removed_recordings);
-        seriesRec = v.findViewById(R.id.series_recordings);
-        timerRec = v.findViewById(R.id.timer_recordings);
-        freediscspace = v.findViewById(R.id.free_discspace);
-        totaldiscspace = v.findViewById(R.id.total_discspace);
-        serverApiVersion = v.findViewById(R.id.server_api_version);
-
-        return v;
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
         activity = getActivity();
         databaseHelper = DatabaseHelper.getInstance(getActivity().getApplicationContext());
         app = TVHClientApplication.getInstance();
         dataStorage = DataStorage.getInstance();
-
-        if (activity instanceof ToolbarInterface) {
-            toolbarInterface = (ToolbarInterface) activity;
-        }
-        if (toolbarInterface != null) {
-            toolbarInterface.setActionBarTitle(getString(R.string.status));
-            toolbarInterface.setActionBarSubtitle("");
-        }
 
         Bundle bundle = getArguments();
         if (bundle != null) {
@@ -127,13 +104,18 @@ public class StatusFragment extends Fragment implements HTSListener {
     }
 
     @Override
-    public void onDestroy() {
-        toolbarInterface = null;
-        super.onDestroy();
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                getActivity().finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
-	@Override
-	public void onMessage(final String action, final Object obj) {
+    @Override
+    public void onMessage(final String action, final Object obj) {
         switch (action) {
             case Constants.ACTION_CONNECTION_STATE_OK:
                 activity.runOnUiThread(new Runnable() {
@@ -155,11 +137,6 @@ public class StatusFragment extends Fragment implements HTSListener {
                     public void run() {
                         connectionStatus = action;
 
-                        if (toolbarInterface != null) {
-                            toolbarInterface.setActionBarTitle(getString(R.string.status));
-                            toolbarInterface.setActionBarSubtitle("");
-                        }
-
                         // Hide the additional status information because the
                         // connection to the server is not OK
                         additionalInformationLayout.setVisibility(View.GONE);
@@ -172,10 +149,6 @@ public class StatusFragment extends Fragment implements HTSListener {
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
                         boolean loading = (Boolean) obj;
-                        if (toolbarInterface != null) {
-                            toolbarInterface.setActionBarTitle(getString(R.string.status));
-                            toolbarInterface.setActionBarSubtitle((loading ? getString(R.string.updating) : ""));
-                        }
 
                         // Show that data is being loaded from the server and hide
                         // the additional information, because this information is
@@ -206,7 +179,7 @@ public class StatusFragment extends Fragment implements HTSListener {
                 });
                 break;
         }
-	}
+    }
 
     /**
      * Displays all available status information. This is the case
@@ -227,11 +200,11 @@ public class StatusFragment extends Fragment implements HTSListener {
     }
 
     /**
-	 * Shows the name and address of a connection, otherwise shows an
-     * information that no connection is selected or available. 
-	 */
+     * Shows the name and address of a connection, otherwise shows an
+     * information that no connection is selected or available.
+     */
     private void showConnectionName() {
-	    // Get the currently selected connection
+        // Get the currently selected connection
         boolean noConnectionsDefined = false;
         Connection conn = null;
         if (databaseHelper != null) {
@@ -251,7 +224,7 @@ public class StatusFragment extends Fragment implements HTSListener {
             String text = conn.name + " (" + conn.address + ")";
             connection.setText(text);
         }
-	}
+    }
 
     /**
      * Shows the current connection status is displayed, this can be
