@@ -57,12 +57,6 @@ public class TimerRecordingDetailsFragment extends Fragment {
         return f;
     }
 
-    public static TimerRecordingDetailsFragment newInstance(Bundle args) {
-        TimerRecordingDetailsFragment f = new TimerRecordingDetailsFragment();
-        f.setArguments(args);
-        return f;
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
