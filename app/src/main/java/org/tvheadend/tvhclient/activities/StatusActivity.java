@@ -11,7 +11,7 @@ import org.tvheadend.tvhclient.utils.MiscUtils;
 
 // TODO extend activity that implements the drawer
 
-public class StatusActivity extends AppCompatActivity {
+public class StatusActivity extends AppCompatActivity implements ToolbarInterfaceLight {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -27,13 +27,26 @@ public class StatusActivity extends AppCompatActivity {
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setHomeButtonEnabled(true);
-            actionBar.setTitle(getString(R.string.status));
         }
 
         if (savedInstanceState == null) {
             StatusFragment fragment = new StatusFragment();
             fragment.setArguments(getIntent().getExtras());
             getFragmentManager().beginTransaction().add(R.id.main, fragment).commit();
+        }
+    }
+
+    @Override
+    public void setTitle(String title) {
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(title);
+        }
+    }
+
+    @Override
+    public void setSubtitle(String subtitle) {
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setSubtitle(subtitle);
         }
     }
 }
