@@ -53,19 +53,8 @@ public class Utils {
     public static void connect(final Context context, final boolean force) {
         // Create an intent and pass on the connection details
         Intent intent = new Intent(context, HTSService.class);
-        intent.setAction(Constants.ACTION_CONNECT);
-
-        final DatabaseHelper databaseHelper = DatabaseHelper.getInstance(context.getApplicationContext());
-        final Connection conn = databaseHelper.getSelectedConnection();
-        // If we got one connection, get the values
-        if (conn != null) {
-            intent.putExtra("hostname", conn.address);
-            intent.putExtra("port", conn.port);
-            intent.putExtra("username", conn.username);
-            intent.putExtra("password", conn.password);
-            intent.putExtra("force", force);
-        }
-        // Start the service with given action and data
+        intent.setAction("connect");
+        intent.putExtra("force", force);
         context.startService(intent);
     }
 

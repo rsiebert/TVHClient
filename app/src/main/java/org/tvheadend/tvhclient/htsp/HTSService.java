@@ -14,6 +14,7 @@ import android.util.Log;
 
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DataStorage;
+import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.Logger;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
@@ -21,6 +22,7 @@ import org.tvheadend.tvhclient.interfaces.HTSConnectionListener;
 import org.tvheadend.tvhclient.interfaces.HTSResponseHandler;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.ChannelTag;
+import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.DiscSpace;
 import org.tvheadend.tvhclient.model.DvrCutpoint;
 import org.tvheadend.tvhclient.model.HttpTicket;
@@ -85,14 +87,12 @@ public class HTSService extends Service implements HTSConnectionListener {
     public int onStartCommand(Intent intent, int flags, int startId) {
         final String action = intent.getAction();
 
-        if (action.equals(Constants.ACTION_CONNECT)) {
+        if (action.equals("connect")) {
             logger.log(TAG, "onStartCommand: Connection to server requested");
 
             boolean force = intent.getBooleanExtra("force", false);
-            final String hostname = intent.getStringExtra("hostname");
-            final int port = intent.getIntExtra("port", 9982);
-            final String username = intent.getStringExtra("username");
-            final String password = intent.getStringExtra("password");
+            final DatabaseHelper databaseHelper = DatabaseHelper.getInstance(getApplicationContext());
+            final Connection conn = databaseHelper.getSelectedConnection();
 
             if (connection != null && force) {
                 logger.log(TAG, "onStartCommand: Closing existing connection");
@@ -107,8 +107,10 @@ public class HTSService extends Service implements HTSConnectionListener {
                 // Since this is blocking, spawn to a new thread
                 execService.execute(new Runnable() {
                     public void run() {
-                        connection.open(hostname, port, TVHClientApplication.getInstance().isConnected());
-                        connection.authenticate(username, password);
+                       if (conn != null) {
+                            connection.open(conn.address, conn.port, TVHClientApplication.getInstance().isConnected());
+                            connection.authenticate(conn.username, conn.password);
+                        }
                     }
                 });
             }
