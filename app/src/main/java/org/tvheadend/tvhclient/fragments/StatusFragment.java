@@ -46,12 +46,12 @@ public class StatusFragment extends Fragment implements HTSListener {
     @BindView(R.id.free_discspace) TextView freediscspace;
     @BindView(R.id.total_discspace) TextView totaldiscspace;
     @BindView(R.id.server_api_version) TextView serverApiVersion;
-    private String connectionStatus = "";
 
-    private TVHClientApplication app;
-    private DatabaseHelper databaseHelper;
-    private DataStorage dataStorage;
+    private String connectionStatus = "";
     private Unbinder unbinder;
+    private DatabaseHelper databaseHelper;
+    private int htspVersion;
+    private boolean isUnlocked;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -72,8 +72,8 @@ public class StatusFragment extends Fragment implements HTSListener {
         super.onActivityCreated(savedInstanceState);
         activity = getActivity();
         databaseHelper = DatabaseHelper.getInstance(getActivity().getApplicationContext());
-        app = TVHClientApplication.getInstance();
-        dataStorage = DataStorage.getInstance();
+        htspVersion = DataStorage.getInstance().getProtocolVersion();
+        isUnlocked = TVHClientApplication.getInstance().isUnlocked();
 
         Bundle bundle = getArguments();
         if (bundle != null) {
@@ -84,13 +84,13 @@ public class StatusFragment extends Fragment implements HTSListener {
     @Override
     public void onResume() {
         super.onResume();
-        app.addListener(this);
+        TVHClientApplication.getInstance().addListener(this);
 
         // Upon resume show the actual status. If stuff is loading hide certain
         // information, otherwise show the connection status and the cause of
         // possible connection problems. 
         additionalInformationLayout.setVisibility(View.GONE);
-        if (dataStorage.isLoading()) {
+        if (DataStorage.getInstance().isLoading()) {
             onMessage(Constants.ACTION_LOADING, true);
         } else {
             onMessage(connectionStatus, false);
@@ -100,7 +100,7 @@ public class StatusFragment extends Fragment implements HTSListener {
     @Override
     public void onPause() {
         super.onPause();
-        app.removeListener(this);
+        TVHClientApplication.getInstance().removeListener(this);
     }
 
     @Override
@@ -195,7 +195,7 @@ public class StatusFragment extends Fragment implements HTSListener {
         showDiscSpace();
 
         // Show the number of available channels
-        final String text = dataStorage.getChannelsFromArray().size() + " " + getString(R.string.available);
+        final String text = DataStorage.getInstance().getChannelsFromArray().size() + " " + getString(R.string.available);
         channels.setText(text);
     }
 
@@ -266,7 +266,7 @@ public class StatusFragment extends Fragment implements HTSListener {
      * showing large numbers. This depends on the size of the value.
      */
     private void showDiscSpace() {
-        DiscSpace discSpace = dataStorage.getDiscSpace();
+        DiscSpace discSpace = DataStorage.getInstance().getDiscSpace();
         if (discSpace == null) {
             freediscspace.setText(R.string.unknown);
             totaldiscspace.setText(R.string.unknown);
@@ -309,11 +309,11 @@ public class StatusFragment extends Fragment implements HTSListener {
         String currentRecText = "";
 
         // Get the programs that are currently being recorded
-        Map<Integer, Recording> map = dataStorage.getRecordingsFromArray();
+        Map<Integer, Recording> map = DataStorage.getInstance().getRecordingsFromArray();
         for (Recording rec : map.values()) {
             if (rec.isRecording()) {
                 currentRecText += getString(R.string.currently_recording) + ": " + rec.title;
-                Channel channel = dataStorage.getChannelFromArray(rec.channel);
+                Channel channel = DataStorage.getInstance().getChannelFromArray(rec.channel);
                 if (channel != null) {
                     currentRecText += " (" + getString(R.string.channel) + " " + channel.channelName + ")\n";
                 }
@@ -353,27 +353,28 @@ public class StatusFragment extends Fragment implements HTSListener {
                 R.plurals.removed_recordings, removedRecCount, removedRecCount));
 
         // Show how many series recordings are available
-        if (dataStorage.getProtocolVersion() < Constants.MIN_API_VERSION_SERIES_RECORDINGS) {
+        if (htspVersion < Constants.MIN_API_VERSION_SERIES_RECORDINGS) {
             seriesRec.setVisibility(View.GONE);
         } else {
-            final int seriesRecCount = dataStorage.getSeriesRecordingsFromArray().size();
+            final int seriesRecCount = DataStorage.getInstance().getSeriesRecordingsFromArray().size();
             seriesRec.setText(getResources().getQuantityString(
                     R.plurals.series_recordings, seriesRecCount, seriesRecCount));
         }
 
         // Show how many timer recordings are available if the server supports
         // it and the application is unlocked
-        if (dataStorage.getProtocolVersion() < Constants.MIN_API_VERSION_TIMER_RECORDINGS || !app.isUnlocked()) {
+        if (htspVersion < Constants.MIN_API_VERSION_TIMER_RECORDINGS || isUnlocked) {
             timerRec.setVisibility(View.GONE);
         } else {
-            final int timerRecCount = dataStorage.getTimerRecordingsFromArray().size();
+            final int timerRecCount = DataStorage.getInstance().getTimerRecordingsFromArray().size();
             timerRec.setText(getResources().getQuantityString(
                     R.plurals.timer_recordings, timerRecCount, timerRecCount));
         }
 
-        String version = String.valueOf(dataStorage.getProtocolVersion())
+        String version = String.valueOf(htspVersion)
                 + "   (" + getString(R.string.server) + ": "
-                + dataStorage.getServerName() + " " + dataStorage.getServerVersion() + ")";
+                + DataStorage.getInstance().getServerName() + " "
+                + DataStorage.getInstance().getServerVersion() + ")";
         serverApiVersion.setText(version);
     }
 }
