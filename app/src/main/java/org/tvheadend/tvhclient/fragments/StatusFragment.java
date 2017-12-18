@@ -3,7 +3,10 @@ package org.tvheadend.tvhclient.fragments;
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +23,8 @@ import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.DiscSpace;
 import org.tvheadend.tvhclient.model.Recording;
+import org.tvheadend.tvhclient.tasks.WakeOnLanTask;
+import org.tvheadend.tvhclient.tasks.WakeOnLanTaskCallback;
 
 import java.util.Map;
 
@@ -27,7 +32,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-public class StatusFragment extends Fragment implements HTSListener {
+public class StatusFragment extends Fragment implements HTSListener, WakeOnLanTaskCallback {
 
     private Activity activity;
 
@@ -104,10 +109,32 @@ public class StatusFragment extends Fragment implements HTSListener {
     }
 
     @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.status_menu, menu);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        final Connection conn = databaseHelper.getSelectedConnection();
+        if (isUnlocked && conn != null && conn.wol_mac_address.length() > 0) {
+            menu.findItem(R.id.menu_wol).setVisible(true);
+        }
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 getActivity().finish();
+                return true;
+            case R.id.menu_wol:
+                final Connection connection = databaseHelper.getSelectedConnection();
+                if (connection != null) {
+                    WakeOnLanTask task = new WakeOnLanTask(getActivity(), this, connection);
+                    task.execute();
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -376,5 +403,12 @@ public class StatusFragment extends Fragment implements HTSListener {
                 + DataStorage.getInstance().getServerName() + " "
                 + DataStorage.getInstance().getServerVersion() + ")";
         serverApiVersion.setText(version);
+    }
+
+    @Override
+    public void notify(String message) {
+        if (getView() != null) {
+            Snackbar.make(getView(), message, Snackbar.LENGTH_LONG).show();
+        }
     }
 }
