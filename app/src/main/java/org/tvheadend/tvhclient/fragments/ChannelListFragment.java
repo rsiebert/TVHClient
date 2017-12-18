@@ -21,15 +21,16 @@ import android.widget.ListView;
 
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DataStorage;
+import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.activities.ProgramListActivity;
 import org.tvheadend.tvhclient.adapter.ChannelListAdapter;
-import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.interfaces.ToolbarInterface;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.ChannelTag;
+import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.utils.MenuTagSelectionCallback;
@@ -42,18 +43,17 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+// TODO show programs from time after orientation change
+// TODO show programs from time in dual pane, program list not updated
+
 public class ChannelListFragment extends ListFragment implements HTSListener, MenuTimeSelectionCallback, MenuTagSelectionCallback, AdapterView.OnItemLongClickListener, OnItemClickListener {
 
     private final static String TAG = ChannelListFragment.class.getSimpleName();
 
     private Activity activity;
-    private FragmentStatusInterface fragmentStatusInterface;
     private ToolbarInterface toolbarInterface;
     private ChannelListAdapter adapter;
 
-    // Enables scrolling when the user has touch the screen and starts
-    // scrolling. When the user is done, scrolling will be disabled to prevent
-    // unwanted calls to the interface.
     private boolean isDualPane = false;
     private Runnable channelUpdateTask;
     private final Handler channelUpdateHandler = new Handler();
@@ -202,8 +202,12 @@ public class ChannelListFragment extends ListFragment implements HTSListener, Me
      * Additionally some status information will be shown in the action bar.
      */
     private void populateList() {
-        // TODO Get the currently selected channel tag
-        ChannelTag currentTag = Utils.getChannelTag(activity);
+        ChannelTag currentTag = null;
+        Connection connection = DatabaseHelper.getInstance(getActivity().getApplicationContext()).getSelectedConnection();
+        if (connection != null) {
+            currentTag = DataStorage.getInstance().getTagFromArray(connection.channelTag);
+        }
+
         adapter.clear();
         for (Channel channel : DataStorage.getInstance().getChannelsFromArray().values()) {
             if (currentTag == null || channel.tags.contains(currentTag.tagId)) {
@@ -321,19 +325,16 @@ public class ChannelListFragment extends ListFragment implements HTSListener, Me
         showProgramsFromTime = c.getTimeInMillis();
         adapter.setTime(showProgramsFromTime);
         adapter.notifyDataSetChanged();
-
-        if (fragmentStatusInterface != null) {
-            fragmentStatusInterface.onChannelTimeSelected(channelTimeSelection, showProgramsFromTime);
-            fragmentStatusInterface.onListPopulated(TAG);
-        }
     }
 
     @Override
     public void menuTagSelected(int which) {
-        Utils.setChannelTagId(activity, which);
-        if (fragmentStatusInterface != null) {
-            fragmentStatusInterface.channelTagChanged(TAG);
+        Connection connection = DatabaseHelper.getInstance(getActivity().getApplicationContext()).getSelectedConnection();
+        if (connection != null) {
+            connection.channelTag = which;
+            DatabaseHelper.getInstance(getActivity().getApplicationContext()).updateConnection(connection);
         }
+        populateList();
     }
 
     @Override
