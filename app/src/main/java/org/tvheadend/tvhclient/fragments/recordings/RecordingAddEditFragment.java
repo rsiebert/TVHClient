@@ -29,9 +29,9 @@ import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.Logger;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
+import org.tvheadend.tvhclient.activities.ToolbarInterfaceLight;
 import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.interfaces.BackPressedInterface;
-import org.tvheadend.tvhclient.interfaces.ToolbarInterface;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.Profile;
@@ -97,7 +97,7 @@ public class RecordingAddEditFragment extends Fragment implements OnClickListene
     private static final int DEFAULT_STOP_EXTRA = 2;
     private Logger logger;
     private DataStorage dataStorage;
-    private ToolbarInterface toolbarInterface;
+    private ToolbarInterfaceLight toolbarInterface;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -140,8 +140,8 @@ public class RecordingAddEditFragment extends Fragment implements OnClickListene
         super.onActivityCreated(savedInstanceState);
 
         activity = (AppCompatActivity) getActivity();
-        if (activity instanceof ToolbarInterface) {
-            toolbarInterface = (ToolbarInterface) activity;
+        if (activity instanceof ToolbarInterfaceLight) {
+            toolbarInterface = (ToolbarInterfaceLight) activity;
         }
         app = TVHClientApplication.getInstance();
         databaseHelper = DatabaseHelper.getInstance(getActivity().getApplicationContext());
@@ -257,8 +257,7 @@ public class RecordingAddEditFragment extends Fragment implements OnClickListene
         }
 
         int titleId = rec != null ? R.string.edit_recording : R.string.add_recording;
-        toolbarInterface.setActionBarTitle(getString(titleId));
-        toolbarInterface.setActionBarSubtitle("");
+        toolbarInterface.setTitle(getString(titleId));
         // Enable the action bar menu
         setHasOptionsMenu(true);
 

@@ -1,28 +1,20 @@
 package org.tvheadend.tvhclient.fragments.recordings;
 
 import android.app.Activity;
-import android.app.Dialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnKeyListener;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
-import android.util.DisplayMetrics;
-import android.view.KeyEvent;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -37,8 +29,8 @@ import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
+import org.tvheadend.tvhclient.activities.ToolbarInterfaceLight;
 import org.tvheadend.tvhclient.htsp.HTSService;
-import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Connection;
@@ -51,26 +43,28 @@ import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Locale;
 
-public class TimerRecordingAddFragment extends DialogFragment implements HTSListener {
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
-    private final static String TAG = TimerRecordingAddFragment.class.getSimpleName();
+public class TimerRecordingAddFragment extends Fragment implements HTSListener {
 
     private Activity activity;
     private TimerRecording rec;
-    private Toolbar toolbar;
 
-    private CheckBox isEnabled;
-    private TextView priority;
+    @BindView(R.id.toolbar) Toolbar toolbar;
+    @BindView(R.id.is_enabled) CheckBox isEnabled;
+    @BindView(R.id.priority) TextView priority;
     private final ToggleButton[] daysOfWeekButtons = new ToggleButton[7];
-    private TextView startTime;
-    private TextView stopTime;
-    private EditText directory;
-    private TextView directoryLabel;
-    private EditText title;
-    private EditText name;
-    private TextView channelName;
-    private TextView dvrConfigName;
-    private TextView dvrConfigNameLabel;
+    @BindView(R.id.start_time) TextView startTime;
+    @BindView(R.id.stop_time) TextView stopTime;
+    @BindView(R.id.directory) EditText directory;
+    @BindView(R.id.directory_label) TextView directoryLabel;
+    @BindView(R.id.title) EditText title;
+    @BindView(R.id.name) EditText name;
+    @BindView(R.id.channel) TextView channelName;
+    @BindView(R.id.dvr_config) TextView dvrConfigName;
+    @BindView(R.id.dvr_config_label) TextView dvrConfigNameLabel;
 
     private long priorityValue;
     private long startTimeValue;
@@ -90,69 +84,26 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
     private String[] priorityList;
     private String[] dvrConfigList;
 
-    private TVHClientApplication app;
     private DatabaseHelper databaseHelper;
     private DataStorage dataStorage;
-    private Context mContext;
-
-    public static TimerRecordingAddFragment newInstance() {
-        return new TimerRecordingAddFragment();
-    }
-
-    @NonNull
-    @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        Dialog dialog = super.onCreateDialog(savedInstanceState);
-        if (dialog.getWindow() != null) {
-            dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-        }
-        return dialog;
-    }
-
-    @Override
-    public void onCreate(final Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        if (getDialog() != null && getDialog().getWindow() != null) {
-            getDialog().getWindow().getAttributes().windowAnimations = R.style.dialog_animation_fade;
-        }
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        getValues();
-        outState.putLong("priorityValue", priorityValue);
-        outState.putLong("startTimeValue", startTimeValue);
-        outState.putLong("stopTimeValue", stopTimeValue);
-        outState.putLong("daysOfWeekValue", daysOfWeekValue);
-        outState.putString("directoryValue", directoryValue);
-        outState.putString("titleValue", titleValue);
-        outState.putString("nameValue", nameValue);
-        outState.putBoolean("enabledValue", enabledValue);
-        outState.putInt("channelNameValue", channelSelectionValue);
-        outState.putInt("configNameValue", dvrConfigNameValue);
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        mContext = context;
-    }
+    private Unbinder unbinder;
+    private ToolbarInterfaceLight toolbarInterface;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
+        View view = inflater.inflate(R.layout.timer_recording_add_layout, container, false);
+        unbinder = ButterKnife.bind(this, view);
+        return view;
+    }
 
-        // Initialize all the widgets from the layout
-        View v = inflater.inflate(R.layout.timer_recording_add_layout, container, false);
-        channelName = v.findViewById(R.id.channel);
-        isEnabled = v.findViewById(R.id.is_enabled);
-        directoryLabel = v.findViewById(R.id.directory_label);
-        directory = v.findViewById(R.id.directory);
-        title = v.findViewById(R.id.title);
-        name = v.findViewById(R.id.name);
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
+    }
 
+        /*
         // For the shown days in each toggle button the array with the short
         // names is used. If the screen width is not large enough then the short
         // names of all seven days would not fit. Therefore reduce the number of
@@ -162,7 +113,7 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
         wm.getDefaultDisplay().getMetrics(displaymetrics);
         final int displayWidth = displaymetrics.widthPixels;
 
-        LinearLayout daysOfWeekLayout = v.findViewById(R.id.days_of_week_layout);
+        LinearLayout daysOfWeekLayout = view.findViewById(R.id.days_of_week_layout);
         String[] shortDays = getResources().getStringArray(R.array.day_short_names);
         for (int i = 0; i < 7; i++) {
             final ToggleButton dayButton = (ToggleButton) inflater.inflate(R.layout.day_toggle_button, daysOfWeekLayout, false);
@@ -185,27 +136,22 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
             daysOfWeekLayout.addView(dayButton);
             daysOfWeekButtons[i] = dayButton;
         }
+*/
 
-        startTime = v.findViewById(R.id.start_time);
-        stopTime = v.findViewById(R.id.stop_time);
-        priority = v.findViewById(R.id.priority);
-        dvrConfigName = v.findViewById(R.id.dvr_config);
-        dvrConfigNameLabel = v.findViewById(R.id.dvr_config_label);
-        toolbar = v.findViewById(R.id.toolbar);
-        return v;
-    }
-    
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
         activity = getActivity();
-        app = TVHClientApplication.getInstance();
+        if (activity instanceof ToolbarInterfaceLight) {
+            toolbarInterface = (ToolbarInterfaceLight) activity;
+            toolbarInterface.setTitle("Details");
+        }
+
         databaseHelper = DatabaseHelper.getInstance(getActivity().getApplicationContext());
         dataStorage = DataStorage.getInstance();
 
         // Determine if the server supports recording on all channels
-        boolean allowRecordingOnAllChannels = dataStorage.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_ALL_CHANNELS;
+        boolean allowRecordingOnAllChannels = dataStorage.getProtocolVersion() >= 21;
         final int offset = (allowRecordingOnAllChannels ? 1 : 0);
 
         // Create the list of channels that the user can select. If recording on
@@ -215,10 +161,12 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
         if (allowRecordingOnAllChannels) {
             channelList[0] = activity.getString(R.string.all_channels);
         }
-        int j = 0;
+
+        // counter variable
+        int i = 0;
         for (Channel channel : dataStorage.getChannelsFromArray().values()) {
-            channelList[j + offset] = channel.channelName;
-            j++;
+            channelList[i + offset] = channel.channelName;
+            i++;
         }
 
         // Sort the channels in the list by name
@@ -238,7 +186,7 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
 
         // Create the list of available configurations that the user can select from
         dvrConfigList = new String[dataStorage.getDvrConfigs().size()];
-        for (int i = 0; i < dataStorage.getDvrConfigs().size(); i++) {
+        for (i = 0; i < dataStorage.getDvrConfigs().size(); i++) {
             dvrConfigList[i] = dataStorage.getDvrConfigs().get(i).name;
         }
 
@@ -249,14 +197,16 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
         // create new one. Otherwise an orientation change has occurred and the
         // saved values must be applied to the user input elements.
         if (savedInstanceState == null) {
-            String recId = "";
+            String recId = null;
             Bundle bundle = getArguments();
             if (bundle != null) {
                 recId = bundle.getString("id");
             }
 
             // Get the recording so we can show its details
-            rec = dataStorage.getTimerRecordingFromArray(recId);
+            if (!TextUtils.isEmpty(recId)) {
+                rec = dataStorage.getTimerRecordingFromArray(recId);
+            }
             if (rec != null) {
                 priorityValue = rec.priority;
                 startTimeValue = rec.start;
@@ -272,7 +222,7 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
                 // Get the position of the given channel in the channelList
                 Channel channel = dataStorage.getChannelFromArray(rec.channel);
                 if (channel != null) {
-                    for (int i = 0; i < channelList.length; i++) {
+                    for (i = 0; i < channelList.length; i++) {
                         if (channelList[i].equals(channel.channelName)) {
                             // If all channels is available then all entries in the channel
                             // list are one index higher because all channels is index 0
@@ -309,7 +259,7 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
             final Connection conn = databaseHelper.getSelectedConnection();
             final Profile p = databaseHelper.getProfile(conn.recording_profile_id);
             if (p != null) {
-                for (int i = 0; i < dvrConfigList.length; i++) {
+                for (i = 0; i < dvrConfigList.length; i++) {
                     if (dvrConfigList[i].equals(p.name)) {
                         dvrConfigNameValue = i;
                         break;
@@ -457,7 +407,7 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
         // Set the correct days as checked or not depending on the given value.
         // For each day shift the daysOfWeekValue by one to the right and check
         // if the bit at this position is one. 
-        for (int i = 0; i < 7; i++) {
+        for (i = 0; i < 7; i++) {
             int checked = (((int) daysOfWeekValue >> i) & 1);
             daysOfWeekButtons[i].setChecked(checked == 1);
         }
@@ -472,9 +422,6 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
                 }
             });
         }
-        if (getDialog() != null) {
-            getDialog().setCanceledOnTouchOutside(false);
-        }
 
         addTask = new Runnable() {
             public void run() {
@@ -487,26 +434,33 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
         };
     }
 
-	@Override
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        getValues();
+        outState.putLong("priorityValue", priorityValue);
+        outState.putLong("startTimeValue", startTimeValue);
+        outState.putLong("stopTimeValue", stopTimeValue);
+        outState.putLong("daysOfWeekValue", daysOfWeekValue);
+        outState.putString("directoryValue", directoryValue);
+        outState.putString("titleValue", titleValue);
+        outState.putString("nameValue", nameValue);
+        outState.putBoolean("enabledValue", enabledValue);
+        outState.putInt("channelNameValue", channelSelectionValue);
+        outState.putInt("configNameValue", dvrConfigNameValue);
+        super.onSaveInstanceState(outState);
+    }
+
+
+    @Override
 	public void onResume() {
 		super.onResume();
-		getDialog().setOnKeyListener(new OnKeyListener() {
-			@Override
-			public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
-				if ((keyCode == android.view.KeyEvent.KEYCODE_BACK)) {
-					getDialog().setOnKeyListener(null);
-					cancel();
-				}
-				return false;
-			}
-		});
-		app.addListener(this);
+        TVHClientApplication.getInstance().addListener(this);
 	}
 
 	@Override
     public void onPause() {
         super.onPause();
-        app.removeListener(this);
+        TVHClientApplication.getInstance().removeListener(this);
     }
 
     /**
@@ -520,7 +474,6 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
         case R.id.menu_save:
             save();
             return true;
-
         case R.id.menu_cancel:
             cancel();
             return true;
@@ -603,9 +556,7 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        if (getDialog() != null) {
-                            getDialog().dismiss();
-                        }
+                        // TODO
                     }
                 })
                 .onNegative(new MaterialDialog.SingleButtonCallback() {
@@ -656,11 +607,6 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
         Intent intent = getIntentData();
         intent.setAction("addTimerecEntry");
         activity.startService(intent);
-
-        if (getDialog() != null) {
-            ((FragmentStatusInterface) activity).listDataInvalid(TAG);
-            getDialog().dismiss();
-        }
     }
     
     /**
@@ -671,11 +617,6 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
         intent.setAction("updateTimerecEntry");
         intent.putExtra("id", rec.id);
         activity.startService(intent);
-
-        if (getDialog() != null) {
-            ((FragmentStatusInterface) activity).listDataInvalid(TAG);
-            getDialog().dismiss();
-        }
     }
 
     /**
@@ -707,8 +648,7 @@ public class TimerRecordingAddFragment extends DialogFragment implements HTSList
         if (p != null 
                 && p.enabled
                 && (dvrConfigName.getText().length() > 0)
-                && dataStorage.getProtocolVersion() >= Constants.MIN_API_VERSION_PROFILES
-                && app.isUnlocked()) {
+                && dataStorage.getProtocolVersion() >= Constants.MIN_API_VERSION_PROFILES) {
             // Use the selected profile. If no change was done in the 
             // selection then the default one from the connection setting will be used
             intent.putExtra("configName", dvrConfigName.getText().toString());

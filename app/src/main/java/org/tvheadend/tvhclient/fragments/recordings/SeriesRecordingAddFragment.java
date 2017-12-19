@@ -1,23 +1,19 @@
 package org.tvheadend.tvhclient.fragments.recordings;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnKeyListener;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -37,7 +33,6 @@ import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.htsp.HTSService;
-import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Connection;
@@ -50,7 +45,7 @@ import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Locale;
 
-public class SeriesRecordingAddFragment extends DialogFragment implements HTSListener {
+public class SeriesRecordingAddFragment extends Fragment implements HTSListener {
 
     private final static String TAG = SeriesRecordingAddFragment.class.getSimpleName();
 
@@ -116,25 +111,6 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
     public static SeriesRecordingAddFragment newInstance() {
         SeriesRecordingAddFragment f = new SeriesRecordingAddFragment();
         return f;
-    }
-
-    @NonNull
-    @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        Dialog dialog = super.onCreateDialog(savedInstanceState);
-        if (dialog.getWindow() != null) {
-            dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-        }
-        return dialog;
-    }
-
-    @Override
-    public void onCreate(final Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        if (getDialog() != null && getDialog().getWindow() != null) {
-            getDialog().getWindow().getAttributes().windowAnimations = R.style.dialog_animation_fade;
-        }
     }
 
     @Override
@@ -286,14 +262,16 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
         // create new one. Otherwise an orientation change has occurred and the
         // saved values must be applied to the user input elements.
         if (savedInstanceState == null) {
-            String recId = "";
+            String recId = null;
             Bundle bundle = getArguments();
             if (bundle != null) {
                 recId = bundle.getString("id");
             }
 
             // Get the recording so we can show its details
-            rec = dataStorage.getSeriesRecordingFromArray(recId);
+            if (!TextUtils.isEmpty(recId)) {
+                rec = dataStorage.getSeriesRecordingFromArray(recId);
+            }
             if (rec != null) {
                 priorityValue = rec.priority;
                 minDurationValue = (rec.minDuration / 60);
@@ -590,24 +568,11 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
                 }
             });
         }
-        if (getDialog() != null) {
-            getDialog().setCanceledOnTouchOutside(false);
-        }
     }
 
 	@Override
 	public void onResume() {
 		super.onResume();
-		getDialog().setOnKeyListener(new OnKeyListener() {
-			@Override
-			public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
-				if ((keyCode == android.view.KeyEvent.KEYCODE_BACK)) {
-					getDialog().setOnKeyListener(null);
-					cancel();
-				}
-				return false;
-			}
-		});
 		app.addListener(this);
 	}
 
@@ -727,9 +692,7 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        if (getDialog() != null) {
-                            getDialog().dismiss();
-                        }
+                        // TODO
                     }
                 })
                 .onNegative(new MaterialDialog.SingleButtonCallback() {
@@ -778,10 +741,7 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
         intent.setAction("addAutorecEntry");
         activity.startService(intent);
 
-        if (getDialog() != null) {
-            ((FragmentStatusInterface) activity).listDataInvalid(TAG);
-            getDialog().dismiss();
-        }
+        // TODO ((FragmentStatusInterface) activity).listDataInvalid(TAG);
     }
     
     /**
@@ -793,10 +753,7 @@ public class SeriesRecordingAddFragment extends DialogFragment implements HTSLis
         intent.putExtra("id", rec.id);
         activity.startService(intent);
 
-        if (getDialog() != null) {
-            ((FragmentStatusInterface) activity).listDataInvalid(TAG);
-            getDialog().dismiss();
-        }
+        // TODO ((FragmentStatusInterface) activity).listDataInvalid(TAG);
     }
 
     /**
