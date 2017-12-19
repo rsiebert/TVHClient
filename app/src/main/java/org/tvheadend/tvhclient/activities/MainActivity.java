@@ -1322,24 +1322,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     }
 
     @Override
-    public void listDataInvalid(String tag) {
-        switch (selectedNavigationMenuId) {
-            case MENU_SERIES_RECORDINGS:
-            case MENU_TIMER_RECORDINGS:
-                // Inform the defined fragment to reload and update all data in its
-                // list view. This is currently only required in the timer and
-                // series recording fragments because there is no update service
-                // call. So the old recording needs to be removed before the new is
-                // added, to avoid having two identical entries the list.
-                final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
-                if (f instanceof SeriesRecordingListFragment || f instanceof TimerRecordingListFragment) {
-                    ((FragmentControlInterface) f).reloadData();
-                }
-                break;
-        }
-    }
-
-    @Override
     public boolean onQueryTextChange(String text) {
         return false;
     }
@@ -1404,12 +1386,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     @Override
     public boolean onSuggestionSelect(int position) {
         return false;
-    }
-
-    @Override
-    public void onChannelTimeSelected(int selection, long time) {
-        channelTimeSelection = selection;
-        showProgramsFromTime = time;
     }
 
     /**

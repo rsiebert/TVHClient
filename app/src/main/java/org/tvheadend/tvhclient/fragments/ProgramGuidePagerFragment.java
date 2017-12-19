@@ -307,11 +307,6 @@ public class ProgramGuidePagerFragment extends Fragment implements FragmentContr
     }
 
     @Override
-    public void setInitialSelection(final int position) {
-        // NOP
-    }
-
-    @Override
     public void setSelection(final int position, final int offset) {
         // The main activity has only access to this fragment, but not the child
         // fragments which this fragment is controlling. Forward the scrolling

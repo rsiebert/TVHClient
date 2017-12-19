@@ -40,22 +40,4 @@ public interface FragmentStatusInterface {
      * @param tag Tag of the calling class
      */
     void channelTagChanged(String tag);
-
-    /**
-     * Informs the activity that the data in the list view is not valid anymore.
-     * The main activity can then force a refresh or something else.
-     * 
-     * @param tag Tag of the calling class
-     */
-    void listDataInvalid(final String tag);
-
-    /**
-     * Informs the activity that a selection was made from the channel time dialog.
-     * This sets the start time for the programs that shall be shown in the channel 
-     * list and the associated program list.
-     * 
-     * @param selection Selected position in the list
-     * @param time Time in millis
-     */
-    void onChannelTimeSelected(int selection, long time);
 }

@@ -434,11 +434,6 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
     }
 
     @Override
-    public void setInitialSelection(final int position) {
-        setSelection(position, 0);
-    }
-
-    @Override
     public Object getSelectedItem() {
         return null;
     }
