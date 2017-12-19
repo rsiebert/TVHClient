@@ -1272,37 +1272,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     @Override
     public void onListItemSelected(final int position, final Channel channel, final String tag) {
         switch (selectedNavigationMenuId) {
-            case MENU_CHANNELS:
-                // Save the position of the selected channel so it can be restored
-                // after an orientation change
-                channelListPosition = position;
-
-                // Show the program list fragment. In dual pane mode the program
-                // list shall be shown on the right side of the channel list,
-                // otherwise replace the channel list.
-                if (channel != null) {
-                    // Play the channel when the channel icon has
-                    // been clicked, otherwise show the channel details
-                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-                    if (prefs.getBoolean("playWhenChannelIconSelectedPref", true)
-                            && tag.equals(Constants.TAG_CHANNEL_ICON)) {
-                        menuUtils.handleMenuPlaySelection(channel.channelId, -1);
-
-                    } else {
-                        Bundle bundle = new Bundle();
-                        bundle.putInt("channelId", channel.channelId);
-                        bundle.putBoolean("dual_pane", isDualPane);
-                        bundle.putLong("show_programs_from_time", showProgramsFromTime);
-
-                        if (isDualPane) {
-                            showFragment(ProgramListFragment.class.getName(), R.id.right_fragment, bundle);
-                        } else {
-                            showFragment(ProgramListFragment.class.getName(), R.id.main_fragment, bundle, true);
-                        }
-                    }
-                }
-                break;
-
             case MENU_PROGRAM_GUIDE:
                 // If a channel was selected in the program guide screen, start
                 // playing the selected channel
