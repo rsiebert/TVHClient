@@ -94,14 +94,6 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> implements OnClick
         }
     }
 
-    @Override
-    public void onClick(View view) {
-        if (sharedPreferences.getBoolean("playWhenChannelIconSelectedPref", true)) {
-            Channel channel = getSelectedItem();
-            new MenuUtils(context).handleMenuPlaySelection(channel.channelId, -1);
-        }
-    }
-
     static class ViewHolder {
         @BindView(R.id.icon)
         ImageView icon;
@@ -167,17 +159,21 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> implements OnClick
         final Channel c = getItem(position);
         if (c != null) {
 
+            boolean showChannelName = sharedPreferences.getBoolean("showChannelNamePref", true);
+            boolean showProgressbar = sharedPreferences.getBoolean("showProgramProgressbarPref", true);
+            boolean showSubtitle = sharedPreferences.getBoolean("showProgramSubtitlePref", true);
+            boolean showNextProgramTitle = sharedPreferences.getBoolean("showNextProgramPref", true);
+            boolean showChannelIcons = sharedPreferences.getBoolean("showIconPref", true);
+            boolean showLargeChannelIcons = sharedPreferences.getBoolean("showBigIconPref", false);
+
             // Set the initial values
             holder.progressbar.setProgress(0);
-            holder.progressbar.setVisibility(sharedPreferences.getBoolean("showProgramProgressbarPref", true) ? View.VISIBLE : View.GONE);
+            holder.progressbar.setVisibility(showProgressbar ? View.VISIBLE : View.GONE);
 
             holder.channel.setText(c.channelName);
-            holder.channel.setVisibility(sharedPreferences.getBoolean("showChannelNamePref", true) ? View.VISIBLE : View.GONE);
+            holder.channel.setVisibility(showChannelName ? View.VISIBLE : View.GONE);
 
             // Show the regular or large channel icons. Otherwise show the channel name only
-            boolean showChannelIcons = sharedPreferences.getBoolean("showIconPref", true);
-            boolean bigIcon = sharedPreferences.getBoolean("showBigIconPref", false);
-
             // Assign the channel icon image or a null image
             Bitmap iconBitmap = MiscUtils.getCachedIcon(context, c.channelIcon);
             holder.icon.setImageBitmap(iconBitmap);
@@ -186,10 +182,10 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> implements OnClick
             holder.icon_text_large.setText(c.channelName);
 
             // Show or hide the regular or large channel icon or name text views
-            holder.icon.setVisibility(showChannelIcons && !bigIcon ? ImageView.VISIBLE : ImageView.GONE);
-            holder.icon_text.setVisibility(!showChannelIcons && !bigIcon ? ImageView.VISIBLE : ImageView.GONE);
-            holder.icon_large.setVisibility(showChannelIcons && bigIcon ? ImageView.VISIBLE : ImageView.GONE);
-            holder.icon_text_large.setVisibility(!showChannelIcons && bigIcon ? ImageView.VISIBLE : ImageView.GONE);
+            holder.icon.setVisibility(showChannelIcons && !showLargeChannelIcons ? ImageView.VISIBLE : ImageView.GONE);
+            holder.icon_text.setVisibility(!showChannelIcons && !showLargeChannelIcons ? ImageView.VISIBLE : ImageView.GONE);
+            holder.icon_large.setVisibility(showChannelIcons && showLargeChannelIcons ? ImageView.VISIBLE : ImageView.GONE);
+            holder.icon_text_large.setVisibility(!showChannelIcons && showLargeChannelIcons ? ImageView.VISIBLE : ImageView.GONE);
 
             // If activated in the settings allow playing
             // the program by selecting the channel icon
@@ -235,16 +231,16 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> implements OnClick
             if (p != null) {
                 holder.title.setText(p.title);
                 holder.subtitle.setText(p.subtitle);
-                holder.subtitle.setVisibility(sharedPreferences.getBoolean("showProgramSubtitlePref", true) ? View.VISIBLE : View.GONE);
+                holder.subtitle.setVisibility(showSubtitle ? View.VISIBLE : View.GONE);
 
                 Utils.setTime(holder.time, p.start, p.stop);
                 Utils.setDuration(holder.duration, p.start, p.stop);
 
                 Utils.setProgress(holder.progressbar, p.start, p.stop);
-                holder.progressbar.setVisibility(sharedPreferences.getBoolean("showProgramProgressbarPref", true) ? View.VISIBLE : View.GONE);
+                holder.progressbar.setVisibility(showProgressbar ? View.VISIBLE : View.GONE);
 
                 if (np != null) {
-                    holder.nextTitle.setVisibility(sharedPreferences.getBoolean("showNextProgramPref", true) ? View.VISIBLE : View.GONE);
+                    holder.nextTitle.setVisibility(showNextProgramTitle ? View.VISIBLE : View.GONE);
                     holder.nextTitle.setText(context.getString(R.string.next_program, np.title));
                 }
                 MiscUtils.setGenreColor(context, holder.genre, p.contentType, TAG);
@@ -262,6 +258,14 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> implements OnClick
             }
         }
         return view;
+    }
+
+    @Override
+    public void onClick(View view) {
+        if (sharedPreferences.getBoolean("playWhenChannelIconSelectedPref", true)) {
+            Channel channel = getSelectedItem();
+            new MenuUtils(context).handleMenuPlaySelection(channel.channelId, -1);
+        }
     }
 
     public void update(Channel c) {
