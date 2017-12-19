@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -15,10 +16,10 @@ import android.widget.TextView;
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
+import org.tvheadend.tvhclient.utils.MenuUtils;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 import org.tvheadend.tvhclient.utils.Utils;
 
@@ -27,21 +28,24 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public class ChannelListAdapter extends ArrayAdapter<Channel> {
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
+public class ChannelListAdapter extends ArrayAdapter<Channel> implements OnClickListener {
 
     private final static String TAG = ChannelListAdapter.class.getSimpleName();
 
     private final Activity context;
     private final List<Channel> list;
     private int selectedPosition = 0;
-    private final SharedPreferences prefs;
+    private final SharedPreferences sharedPreferences;
     private long showProgramsFromTime;
 
     public ChannelListAdapter(Activity context, List<Channel> list) {
         super(context, R.layout.channel_list_widget, list);
         this.context = context;
         this.list = list;
-        this.prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
     public void setTime(final long time) {
@@ -90,60 +94,66 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
         }
     }
 
-    public void setPosition(int pos) {
-        selectedPosition = pos;
+    @Override
+    public void onClick(View view) {
+        if (sharedPreferences.getBoolean("playWhenChannelIconSelectedPref", true)) {
+            Channel channel = getSelectedItem();
+            new MenuUtils(context).handleMenuPlaySelection(channel.channelId, -1);
+        }
     }
 
     static class ViewHolder {
-        public ImageView icon;
-        public TextView icon_text;
-        public TextView title;
-        public TextView subtitle;
-        public TextView nextTitle;
-        public TextView channel;
-        public TextView time;
-        public TextView duration;
-        public ProgressBar progressbar;
-        public ImageView state;
-        public TextView genre;
-        public ImageView dual_pane_list_item_selection;
+        @BindView(R.id.icon)
+        ImageView icon;
+        @BindView(R.id.icon_text)
+        TextView icon_text;
+        @BindView(R.id.icon_large)
+        ImageView icon_large;
+        @BindView(R.id.icon_text_large)
+        TextView icon_text_large;
+        @BindView(R.id.title)
+        TextView title;
+        @BindView(R.id.subtitle)
+        TextView subtitle;
+        @BindView(R.id.next_title)
+        TextView nextTitle;
+        @BindView(R.id.channel)
+        TextView channel;
+        @BindView(R.id.time)
+        TextView time;
+        @BindView(R.id.duration)
+        TextView duration;
+        @BindView(R.id.progressbar)
+        ProgressBar progressbar;
+        @BindView(R.id.state)
+        ImageView state;
+        @BindView(R.id.genre)
+        TextView genre;
+        @Nullable
+        @BindView(R.id.dual_pane_list_item_selection)
+        ImageView dual_pane_list_item_selection;
+
+        public ViewHolder(View view) {
+            ButterKnife.bind(this, view);
+        }
     }
 
     @Override
-    public View getView(final int position, View convertView, ViewGroup parent) {
-        View view = convertView;
+    public View getView(final int position, View view, ViewGroup parent) {
         ViewHolder holder;
-
-        if (view == null) {
-            view = context.getLayoutInflater().inflate(R.layout.channel_list_widget, parent, false);
-            holder = new ViewHolder();
-
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-            final boolean bigIcon = prefs.getBoolean("showBigIconPref", false);
-            holder.icon = view.findViewById(bigIcon ? R.id.icon_large : R.id.icon);
-            holder.icon_text = view.findViewById(bigIcon ? R.id.icon_text_large : R.id.icon_text);
-            holder.title = view.findViewById(R.id.title);
-            holder.subtitle = view.findViewById(R.id.subtitle);
-            holder.nextTitle = view.findViewById(R.id.next_title);
-            holder.channel = view.findViewById(R.id.channel);
-            holder.progressbar = view.findViewById(R.id.progressbar);
-            holder.time = view.findViewById(R.id.time);
-            holder.duration = view.findViewById(R.id.duration);
-            holder.state = view.findViewById(R.id.state);
-            holder.genre = view.findViewById(R.id.genre);
-            holder.dual_pane_list_item_selection = view.findViewById(R.id.dual_pane_list_item_selection);
-            view.setTag(holder);
-        } else {
+        if (view != null) {
             holder = (ViewHolder) view.getTag();
+        } else {
+            view = context.getLayoutInflater().inflate(R.layout.channel_list_widget, parent, false);
+            holder = new ViewHolder(view);
+            view.setTag(holder);
         }
 
         // Sets the correct indication when the dual pane mode is active
         // If the item is selected the the arrow will be shown, otherwise
         // only a vertical separation line is displayed.
         if (holder.dual_pane_list_item_selection != null) {
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-            final boolean lightTheme = prefs.getBoolean("lightThemePref", true);
-
+            boolean lightTheme = sharedPreferences.getBoolean("lightThemePref", true);
             if (selectedPosition == position) {
                 final int icon = (lightTheme) ? R.drawable.dual_pane_selector_active_light : R.drawable.dual_pane_selector_active_dark;
                 holder.dual_pane_list_item_selection.setBackgroundResource(icon);
@@ -158,68 +168,53 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
         if (c != null) {
 
             // Set the initial values
-            if (holder.progressbar != null) {
-                holder.progressbar.setProgress(0);
-                holder.progressbar.setVisibility(prefs.getBoolean("showProgramProgressbarPref", true) ? View.VISIBLE : View.GONE);
-            }
-            if (holder.channel != null) {
-                holder.channel.setText(c.channelName);
-                holder.channel.setVisibility(prefs.getBoolean("showChannelNamePref", true) ? View.VISIBLE : View.GONE);
-            }
-            // Show the channel icon if available and set in the preferences.
-            // If not chosen, hide the imageView and show the channel name.
-            if (holder.icon != null && holder.icon_text != null) {
-                final boolean showChannelIcons = prefs.getBoolean("showIconPref", true);
-                Bitmap iconBitmap = MiscUtils.getCachedIcon(context, c.channelIcon);
-                // Show the icon or a blank one if it does not exist
-                holder.icon.setImageBitmap(iconBitmap);
-                holder.icon_text.setText(c.channelName);
-                // Show the channels icon if set in the preferences.
-                // If not then hide the icon and show the channel name as a placeholder
-                holder.icon.setVisibility(showChannelIcons ? ImageView.VISIBLE : ImageView.GONE);
-                holder.icon_text.setVisibility(showChannelIcons ? ImageView.GONE : ImageView.VISIBLE);
+            holder.progressbar.setProgress(0);
+            holder.progressbar.setVisibility(sharedPreferences.getBoolean("showProgramProgressbarPref", true) ? View.VISIBLE : View.GONE);
 
-                // If activated in the settings allow playing
-                // the program by selecting the channel icon
-                holder.icon.setOnClickListener(new OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (context instanceof FragmentStatusInterface) {
-                            ((FragmentStatusInterface) context).onListItemSelected(position, c, Constants.TAG_CHANNEL_ICON);
-                        }
-                    }
-                });
+            holder.channel.setText(c.channelName);
+            holder.channel.setVisibility(sharedPreferences.getBoolean("showChannelNamePref", true) ? View.VISIBLE : View.GONE);
 
-                // If activated in the settings allow playing
-                // the program by selecting the channel icon
-                holder.icon_text.setOnClickListener(new OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (context instanceof FragmentStatusInterface) {
-                            ((FragmentStatusInterface) context).onListItemSelected(position, c, Constants.TAG_CHANNEL_ICON);
-                        }
-                    }
-                });
-            }
+            // Show the regular or large channel icons. Otherwise show the channel name only
+            boolean showChannelIcons = sharedPreferences.getBoolean("showIconPref", true);
+            boolean bigIcon = sharedPreferences.getBoolean("showBigIconPref", false);
+
+            // Assign the channel icon image or a null image
+            Bitmap iconBitmap = MiscUtils.getCachedIcon(context, c.channelIcon);
+            holder.icon.setImageBitmap(iconBitmap);
+            holder.icon_large.setImageBitmap(iconBitmap);
+            holder.icon_text.setText(c.channelName);
+            holder.icon_text_large.setText(c.channelName);
+
+            // Show or hide the regular or large channel icon or name text views
+            holder.icon.setVisibility(showChannelIcons && !bigIcon ? ImageView.VISIBLE : ImageView.GONE);
+            holder.icon_text.setVisibility(!showChannelIcons && !bigIcon ? ImageView.VISIBLE : ImageView.GONE);
+            holder.icon_large.setVisibility(showChannelIcons && bigIcon ? ImageView.VISIBLE : ImageView.GONE);
+            holder.icon_text_large.setVisibility(!showChannelIcons && bigIcon ? ImageView.VISIBLE : ImageView.GONE);
+
+            // If activated in the settings allow playing
+            // the program by selecting the channel icon
+            holder.icon.setOnClickListener(this);
+            holder.icon_large.setOnClickListener(this);
+            holder.icon_text.setOnClickListener(this);
+            holder.icon_text_large.setOnClickListener(this);
 
             // Add a small recording icon above the channel icon, if we are
             // recording the current program.
-            if (holder.state != null) {
-                boolean isRecording = false;
-                Map<Integer, Recording> recMap = DataStorage.getInstance().getRecordingsFromArray();
-                for (Recording rec : recMap.values()) {
-                    if (rec.eventId == c.eventId) {
-                        isRecording = rec.isRecording();
-                        break;
-                    }
+            boolean isRecording = false;
+            Map<Integer, Recording> recMap = DataStorage.getInstance().getRecordingsFromArray();
+            for (Recording rec : recMap.values()) {
+                if (rec.eventId == c.eventId) {
+                    isRecording = rec.isRecording();
+                    break;
                 }
-                if (isRecording) {
-                    holder.state.setImageResource(R.drawable.ic_rec_small);
-                    holder.state.setVisibility(View.VISIBLE);
-                } else {
-                    holder.state.setImageDrawable(null);
-                    holder.state.setVisibility(View.GONE);
-                }
+            }
+
+            if (isRecording) {
+                holder.state.setImageResource(R.drawable.ic_rec_small);
+                holder.state.setVisibility(View.VISIBLE);
+            } else {
+                holder.state.setImageDrawable(null);
+                holder.state.setVisibility(View.GONE);
             }
 
             Program p = null;
@@ -240,19 +235,20 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> {
             if (p != null) {
                 holder.title.setText(p.title);
                 holder.subtitle.setText(p.subtitle);
-                holder.subtitle.setVisibility(prefs.getBoolean("showProgramSubtitlePref", true) ? View.VISIBLE : View.GONE);
+                holder.subtitle.setVisibility(sharedPreferences.getBoolean("showProgramSubtitlePref", true) ? View.VISIBLE : View.GONE);
 
                 Utils.setTime(holder.time, p.start, p.stop);
                 Utils.setDuration(holder.duration, p.start, p.stop);
 
                 Utils.setProgress(holder.progressbar, p.start, p.stop);
-                holder.progressbar.setVisibility(prefs.getBoolean("showProgramProgressbarPref", true) ? View.VISIBLE : View.GONE);
+                holder.progressbar.setVisibility(sharedPreferences.getBoolean("showProgramProgressbarPref", true) ? View.VISIBLE : View.GONE);
 
                 if (np != null) {
-                    holder.nextTitle.setVisibility(prefs.getBoolean("showNextProgramPref", true) ? View.VISIBLE : View.GONE);
+                    holder.nextTitle.setVisibility(sharedPreferences.getBoolean("showNextProgramPref", true) ? View.VISIBLE : View.GONE);
                     holder.nextTitle.setText(context.getString(R.string.next_program, np.title));
                 }
                 MiscUtils.setGenreColor(context, holder.genre, p.contentType, TAG);
+
             } else {
                 // The channel does not provide program data. Hide the progress
                 // bar,the time and duration texts.

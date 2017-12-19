@@ -17,6 +17,9 @@ import org.tvheadend.tvhclient.utils.Utils;
 import java.util.Comparator;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class ProgramListAdapter extends ArrayAdapter<Program> {
 
     private final static String TAG = ProgramListAdapter.class.getSimpleName();
@@ -49,43 +52,33 @@ public class ProgramListAdapter extends ArrayAdapter<Program> {
     }
 
     static class ViewHolder {
-        public TextView title;
-        public TextView time;
-        public TextView date;
-        public TextView duration;
-        public TextView progress;
-        public TextView summary;
-        public TextView description;
-        public TextView seriesInfo;
-        public TextView subtitle;
-        public TextView contentType;
-        public ImageView state;
-        public TextView genre;
+        @BindView(R.id.title) TextView title;
+        @BindView(R.id.time) TextView time;
+        @BindView(R.id.date) TextView date;
+        @BindView(R.id.duration) TextView duration;
+        @BindView(R.id.progress) TextView progress;
+        @BindView(R.id.summary) TextView summary;
+        @BindView(R.id.description) TextView description;
+        @BindView(R.id.series_info) TextView seriesInfo;
+        @BindView(R.id.subtitle) TextView subtitle;
+        @BindView(R.id.content_type) TextView contentType;
+        @BindView(R.id.state) ImageView state;
+        @BindView(R.id.genre) TextView genre;
+
+        public ViewHolder(View view) {
+            ButterKnife.bind(this, view);
+        }
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        View view = convertView;
+    public View getView(int position, View view, ViewGroup parent) {
         ViewHolder holder;
-
-        if (view == null) {
-            view = context.getLayoutInflater().inflate(R.layout.program_list_widget, parent, false);
-            holder = new ViewHolder();
-            holder.title = view.findViewById(R.id.title);
-            holder.state = view.findViewById(R.id.state);
-            holder.time = view.findViewById(R.id.time);
-            holder.date = view.findViewById(R.id.date);
-            holder.duration = view.findViewById(R.id.duration);
-            holder.progress = view.findViewById(R.id.progress);
-            holder.seriesInfo = view.findViewById(R.id.series_info);
-            holder.contentType = view.findViewById(R.id.content_type);
-            holder.summary = view.findViewById(R.id.summary);
-            holder.subtitle = view.findViewById(R.id.subtitle);
-            holder.description = view.findViewById(R.id.description);
-            holder.genre = view.findViewById(R.id.genre);
-            view.setTag(holder);
-        } else {
+        if (view != null) {
             holder = (ViewHolder) view.getTag();
+        } else {
+            view = context.getLayoutInflater().inflate(R.layout.program_list_widget, parent, false);
+            holder = new ViewHolder(view);
+            view.setTag(holder);
         }
 
         // Get the program and assign all the values
@@ -102,12 +95,8 @@ public class ProgramListAdapter extends ArrayAdapter<Program> {
             Utils.setDescription(null, holder.description, p.description);
             Utils.setContentType(null, holder.contentType, p.contentType);
             Utils.setSeriesInfo(getContext(), null, holder.seriesInfo, p);
-
             MiscUtils.setGenreColor(context, holder.genre, p.contentType, TAG);
-
-            if (holder.subtitle != null) {
-                holder.subtitle.setVisibility(prefs.getBoolean("showProgramSubtitlePref", true) ? View.VISIBLE : View.GONE);
-            }
+            holder.subtitle.setVisibility(prefs.getBoolean("showProgramSubtitlePref", true) ? View.VISIBLE : View.GONE);
         }
         return view;
     }
