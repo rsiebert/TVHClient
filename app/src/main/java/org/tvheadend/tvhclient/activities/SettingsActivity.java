@@ -23,7 +23,6 @@ import org.tvheadend.tvhclient.fragments.settings.SettingsTranscodingFragment;
 import org.tvheadend.tvhclient.fragments.settings.SettingsUserInterfaceFragment;
 import org.tvheadend.tvhclient.interfaces.BackPressedInterface;
 import org.tvheadend.tvhclient.utils.MiscUtils;
-import org.tvheadend.tvhclient.utils.Utils;
 
 import java.io.File;
 
