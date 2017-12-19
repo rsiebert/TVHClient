@@ -14,28 +14,31 @@ import android.widget.TextView;
 
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.model.Channel;
+import org.tvheadend.tvhclient.utils.MenuUtils;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
-public class ProgramGuideChannelListAdapter extends ArrayAdapter<Channel> {
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
+public class ProgramGuideChannelListAdapter extends ArrayAdapter<Channel> implements OnClickListener {
 
     private final static String TAG = ProgramGuideChannelListAdapter.class.getSimpleName();
 
     private final Activity context;
     private final List<Channel> list;
     private int selectedPosition = 0;
-    private final SharedPreferences prefs;
+    private final SharedPreferences sharedPreferences;
 
     public ProgramGuideChannelListAdapter(Activity context, List<Channel> list) {
         super(context, R.layout.program_guide_channel_item, list);
         this.context = context;
         this.list = list;
-        this.prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
     public void sort(final int type) {
@@ -85,67 +88,69 @@ public class ProgramGuideChannelListAdapter extends ArrayAdapter<Channel> {
     }
 
     static class ViewHolder {
-        public ImageView icon;
-        public TextView icon_text;
+        @BindView(R.id.icon)
+        ImageView icon;
+        @BindView(R.id.icon_text)
+        TextView icon_text;
+        @BindView(R.id.icon_large)
+        ImageView icon_large;
+        @BindView(R.id.icon_text_large)
+        TextView icon_text_large;
+
+        public ViewHolder(View view) {
+            ButterKnife.bind(this, view);
+        }
     }
 
     @NonNull
     @Override
-    public View getView(final int position, View convertView, @NonNull ViewGroup parent) {
-        View view = convertView;
+    public View getView(final int position, View view, ViewGroup parent) {
         ViewHolder holder;
-
-        if (view == null) {
-            view = context.getLayoutInflater().inflate(R.layout.program_guide_channel_item, parent, false);
-            holder = new ViewHolder();
-
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-            final boolean bigIcon = prefs.getBoolean("showBigIconPref", false);
-            holder.icon = view.findViewById(bigIcon ? R.id.icon_large : R.id.icon);
-            holder.icon_text = view.findViewById(bigIcon ? R.id.icon_text_large : R.id.icon_text);
-            view.setTag(holder);
-        } else {
+        if (view != null) {
             holder = (ViewHolder) view.getTag();
+        } else {
+            view = context.getLayoutInflater().inflate(R.layout.channel_list_widget, parent, false);
+            holder = new ViewHolder(view);
+            view.setTag(holder);
         }
 
         // Get the program and assign all the values
         final Channel c = getItem(position);
         if (c != null) {
-            // Show the channel icon if available and set in the preferences.
-            // If not chosen, hide the imageView and show the channel name.
-            final boolean showChannelIcons = prefs.getBoolean("showIconPref", true);
+
+            boolean showChannelIcons = sharedPreferences.getBoolean("showIconPref", true);
+            boolean showLargeChannelIcons = sharedPreferences.getBoolean("showBigIconPref", false);
+
+            // Show the regular or large channel icons. Otherwise show the channel name only
+            // Assign the channel icon image or a null image
             Bitmap iconBitmap = MiscUtils.getCachedIcon(context, c.channelIcon);
-            // Show the icon or a blank one if it does not exist
             holder.icon.setImageBitmap(iconBitmap);
+            holder.icon_large.setImageBitmap(iconBitmap);
             holder.icon_text.setText(c.channelName);
-            // Show the channels icon if set in the preferences.
-            // If not then hide the icon and show the channel name as a placeholder
-            holder.icon.setVisibility(showChannelIcons ? ImageView.VISIBLE : ImageView.GONE);
-            holder.icon_text.setVisibility(showChannelIcons ? ImageView.GONE : ImageView.VISIBLE);
+            holder.icon_text_large.setText(c.channelName);
+
+            // Show or hide the regular or large channel icon or name text views
+            holder.icon.setVisibility(showChannelIcons && !showLargeChannelIcons ? ImageView.VISIBLE : ImageView.GONE);
+            holder.icon_text.setVisibility(!showChannelIcons && !showLargeChannelIcons ? ImageView.VISIBLE : ImageView.GONE);
+            holder.icon_large.setVisibility(showChannelIcons && showLargeChannelIcons ? ImageView.VISIBLE : ImageView.GONE);
+            holder.icon_text_large.setVisibility(!showChannelIcons && showLargeChannelIcons ? ImageView.VISIBLE : ImageView.GONE);
 
             // If activated in the settings allow playing
             // the program by selecting the channel icon
-            holder.icon.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (context instanceof FragmentStatusInterface) {
-                        ((FragmentStatusInterface) context).onListItemSelected(position, c, Constants.TAG_CHANNEL_ICON);
-                    }
-                }
-            });
-
-            // If activated in the settings allow playing
-            // the program by selecting the channel icon
-            holder.icon_text.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (context instanceof FragmentStatusInterface) {
-                        ((FragmentStatusInterface) context).onListItemSelected(position, c, Constants.TAG_CHANNEL_ICON);
-                    }
-                }
-            });
+            holder.icon.setOnClickListener(this);
+            holder.icon_large.setOnClickListener(this);
+            holder.icon_text.setOnClickListener(this);
+            holder.icon_text_large.setOnClickListener(this);
         }
         return view;
+    }
+
+    @Override
+    public void onClick(View view) {
+        if (sharedPreferences.getBoolean("playWhenChannelIconSelectedPref", true)) {
+            Channel channel = getSelectedItem();
+            new MenuUtils(context).handleMenuPlaySelection(channel.channelId, -1);
+        }
     }
 
     public void update(Channel c) {
