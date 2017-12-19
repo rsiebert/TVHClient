@@ -34,7 +34,7 @@ public class InfoActivity extends AppCompatActivity {
         if (savedInstanceState == null) {
             InfoFragment fragment = new InfoFragment();
             fragment.setArguments(getIntent().getExtras());
-            getSupportFragmentManager().beginTransaction().add(R.id.main, fragment).commit();
+            getFragmentManager().beginTransaction().add(R.id.main, fragment).commit();
         }
     }
 }

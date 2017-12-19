@@ -34,7 +34,7 @@ public class UnlockerActivity extends AppCompatActivity {
         if (savedInstanceState == null) {
             UnlockerFragment fragment = new UnlockerFragment();
             fragment.setArguments(getIntent().getExtras());
-            getSupportFragmentManager().beginTransaction().add(R.id.main, fragment).commit();
+            getFragmentManager().beginTransaction().add(R.id.main, fragment).commit();
         }
     }
 }
