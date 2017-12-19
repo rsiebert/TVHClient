@@ -109,7 +109,7 @@ public class ProgramGuideChannelListAdapter extends ArrayAdapter<Channel> implem
         if (view != null) {
             holder = (ViewHolder) view.getTag();
         } else {
-            view = context.getLayoutInflater().inflate(R.layout.channel_list_widget, parent, false);
+            view = context.getLayoutInflater().inflate(R.layout.program_guide_channel_item, parent, false);
             holder = new ViewHolder(view);
             view.setTag(holder);
         }
