@@ -1270,17 +1270,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     }
 
     @Override
-    public void onListItemSelected(final int position, final Channel channel, final String tag) {
-        switch (selectedNavigationMenuId) {
-            case MENU_PROGRAM_GUIDE:
-                // If a channel was selected in the program guide screen, start
-                // playing the selected channel
-                menuUtils.handleMenuPlaySelection(channel.channelId, -1);
-                break;
-        }
-    }
-
-    @Override
     public void onListItemSelected(final int position, final Program program, final String tag) {
         // When a program has been selected from the program list fragment,
         // show its details. In single or dual pane mode these are shown in a
@@ -1296,133 +1285,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     @Override
     public void onListPopulated(final String tag) {
-
         switch (selectedNavigationMenuId) {
-            case MENU_CHANNELS:
-                // When the channel list fragment is done loading and dual pane is
-                // active, preselect a channel so that the program list on the right
-                // will be shown for that channel. If no dual pane is active scroll
-                // to the selected channel
-                if (tag.equals(ChannelListFragment.class.getSimpleName())) {
-                    final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
-                    if (f instanceof ChannelListFragment) {
-                        if (isDualPane) {
-                            ((FragmentControlInterface) f).setInitialSelection(channelListPosition);
-                        } else {
-                            ((FragmentControlInterface) f).setSelection(channelListPosition, 0);
-                        }
-                    }
-                }
-                break;
-
-            case MENU_COMPLETED_RECORDINGS:
-                // When the recording list fragment is done loading and dual pane is
-                // active, preselect a recording from the list to show the details
-                // of this recording on the right side. Before doing that remove the
-                // right fragment in case the list in the main fragment is
-                // empty to avoid showing invalid data.
-                if (isDualPane) {
-                    final Fragment rf = getSupportFragmentManager().findFragmentById(R.id.right_fragment);
-                    if (rf != null) {
-                        getSupportFragmentManager().beginTransaction().remove(rf).commit();
-                    }
-                    final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
-                    if (f instanceof CompletedRecordingListFragment) {
-                        ((FragmentControlInterface) f).setInitialSelection(completedRecordingListPosition);
-                    }
-                }
-                break;
-
-            case MENU_SCHEDULED_RECORDINGS:
-                // When the recording list fragment is done loading and dual pane is
-                // active, preselect a recording from the list to show the details
-                // of this recording on the right side. Before doing that remove the
-                // right fragment in case the list in the main fragment is
-                // empty to avoid showing invalid data.
-                if (isDualPane) {
-                    final Fragment rf = getSupportFragmentManager().findFragmentById(R.id.right_fragment);
-                    if (rf != null) {
-                        getSupportFragmentManager().beginTransaction().remove(rf).commit();
-                    }
-                    final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
-                    if (f instanceof ScheduledRecordingListFragment) {
-                        ((FragmentControlInterface) f).setInitialSelection(scheduledRecordingListPosition);
-                    }
-                }
-                break;
-
-            case MENU_SERIES_RECORDINGS:
-                // When the recording list fragment is done loading and dual pane is
-                // active, preselect a recording from the list to show the details
-                // of this recording on the right side. Before doing that remove the
-                // right fragment in case the list in the main fragment is
-                // empty to avoid showing invalid data.
-                if (isDualPane) {
-                    final Fragment rf = getSupportFragmentManager().findFragmentById(R.id.right_fragment);
-                    if (rf != null) {
-                        getSupportFragmentManager().beginTransaction().remove(rf).commit();
-                    }
-                    final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
-                    if (f instanceof SeriesRecordingListFragment) {
-                        ((FragmentControlInterface) f).setInitialSelection(seriesRecordingListPosition);
-                    }
-                }
-                break;
-
-            case MENU_TIMER_RECORDINGS:
-                // When the recording list fragment is done loading and dual pane is
-                // active, preselect a recording from the list to show the details
-                // of this recording on the right side. Before doing that remove the
-                // right fragment in case the list in the main fragment is
-                // empty to avoid showing invalid data.
-                if (isDualPane) {
-                    final Fragment rf = getSupportFragmentManager().findFragmentById(R.id.right_fragment);
-                    if (rf != null) {
-                        getSupportFragmentManager().beginTransaction().remove(rf).commit();
-                    }
-                    final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
-                    if (f instanceof TimerRecordingListFragment) {
-                        ((FragmentControlInterface) f).setInitialSelection(timerRecordingListPosition);
-                    }
-                }
-                break;
-
-            case MENU_FAILED_RECORDINGS:
-                // When the recording list fragment is done loading and dual pane is
-                // active, preselect a recording from the list to show the details
-                // of this recording on the right side. Before doing that remove the
-                // right fragment in case the list in the main fragment is
-                // empty to avoid showing invalid data.
-                if (isDualPane) {
-                    final Fragment rf = getSupportFragmentManager().findFragmentById(R.id.right_fragment);
-                    if (rf != null) {
-                        getSupportFragmentManager().beginTransaction().remove(rf).commit();
-                    }
-                    final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
-                    if (f instanceof FailedRecordingListFragment) {
-                        ((FragmentControlInterface) f).setInitialSelection(failedRecordingListPosition);
-                    }
-                }
-                break;
-
-            case MENU_REMOVED_RECORDINGS:
-                // When the recording list fragment is done loading and dual pane is
-                // active, preselect a recording from the list to show the details
-                // of this recording on the right side. Before doing that remove the
-                // right fragment in case the list in the main fragment is
-                // empty to avoid showing invalid data.
-                if (isDualPane) {
-                    final Fragment rf = getSupportFragmentManager().findFragmentById(R.id.right_fragment);
-                    if (rf != null) {
-                        getSupportFragmentManager().beginTransaction().remove(rf).commit();
-                    }
-                    final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
-                    if (f instanceof RemovedRecordingListFragment) {
-                        ((FragmentControlInterface) f).setInitialSelection(removedRecordingListPosition);
-                    }
-                }
-                break;
-
             case MENU_PROGRAM_GUIDE:
                 // When the program guide is done loading set the previously
                 // selected position of the program guide. The program guide
@@ -1440,15 +1303,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     @Override
     public void channelTagChanged(final String tag) {
         switch (selectedNavigationMenuId) {
-            case MENU_CHANNELS:
-                // Inform the channel list fragment to clear all data from its
-                // channel list and show only the channels with the selected tag
-                final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
-                if (f instanceof ChannelListFragment) {
-                    ((FragmentControlInterface) f).reloadData();
-                }
-                break;
-
             case MENU_PROGRAM_GUIDE:
                 // Inform the channel list fragment to clear all data from its
                 // channel list and show only the channels with the selected tag

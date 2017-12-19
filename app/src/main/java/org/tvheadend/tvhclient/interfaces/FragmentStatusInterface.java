@@ -15,17 +15,6 @@ public interface FragmentStatusInterface {
      * @param tag Tag of the calling class
      */
     void moreDataRequired(final Channel channel, final String tag);
-    
-    /**
-     * Informs the activity that user has selected a certain channel from the
-     * list of channels. The item position within the list from 
-     * which the programs shall be shown are also passed.
-     * 
-     * @param position Selected position in the list
-     * @param channel Selected channel
-     * @param tag Tag of the calling class
-     */
-    void onListItemSelected(final int position, final Channel channel, final String tag);
 
     /**
      * Informs the activity that user has selected a certain program from the
