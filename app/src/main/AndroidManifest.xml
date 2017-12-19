@@ -83,7 +83,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".activities.SettingsManageConnectionActivity" />
-        <activity android:name=".activities.RecordingAddEditActivity" />
+        <activity android:name=".activities.AddEditActivity" />
         <activity android:name=".activities.DetailsActivity" />
         <activity android:name=".activities.StatusActivity" />
         <activity android:name=".activities.ProgramListActivity" />

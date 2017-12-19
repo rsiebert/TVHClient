@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
 import android.support.v7.app.AppCompatActivity;
@@ -23,7 +22,7 @@ import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.activities.DetailsActivity;
-import org.tvheadend.tvhclient.activities.RecordingAddEditActivity;
+import org.tvheadend.tvhclient.activities.AddEditActivity;
 import org.tvheadend.tvhclient.adapter.SeriesRecordingListAdapter;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.interfaces.ToolbarInterface;
@@ -110,8 +109,9 @@ public class SeriesRecordingListFragment extends ListFragment implements HTSList
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_add:
-                Intent addIntent = new Intent(getActivity(), RecordingAddEditActivity.class);
-                getActivity().startActivity(addIntent);
+                Intent intent = new Intent(getActivity(), AddEditActivity.class);
+                intent.putExtra("type", "series_recording");
+                getActivity().startActivity(intent);
                 return true;
             case R.id.menu_record_remove_all:
                 CopyOnWriteArrayList<SeriesRecording> list = new CopyOnWriteArrayList<>(adapter.getAllItems());
@@ -252,12 +252,10 @@ public class SeriesRecordingListFragment extends ListFragment implements HTSList
         popupMenu.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {
                 case R.id.menu_edit:
-                    // Create the fragment and show it as a dialog.
-                    DialogFragment editFragment = SeriesRecordingAddFragment.newInstance();
-                    Bundle bundle = new Bundle();
-                    bundle.putString("id", seriesRecording.id);
-                    editFragment.setArguments(bundle);
-                    editFragment.show(activity.getSupportFragmentManager(), "dialog");
+                    Intent intent = new Intent(getActivity(), AddEditActivity.class);
+                    intent.putExtra("id", seriesRecording.id);
+                    intent.putExtra("type", "series_recording");
+                    getActivity().startActivity(intent);
                     return true;
                 case R.id.menu_search_imdb:
                     menuUtils.handleMenuSearchWebSelection(seriesRecording.title);

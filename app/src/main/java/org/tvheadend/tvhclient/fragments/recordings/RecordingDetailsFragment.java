@@ -18,7 +18,7 @@ import android.widget.TextView;
 import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.activities.RecordingAddEditActivity;
+import org.tvheadend.tvhclient.activities.AddEditActivity;
 import org.tvheadend.tvhclient.activities.ToolbarInterfaceLight;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Recording;
@@ -240,7 +240,7 @@ public class RecordingDetailsFragment extends Fragment {
                 menuUtils.handleMenuDownloadSelection(recording.id);
                 return true;
             case R.id.menu_edit:
-                Intent editIntent = new Intent(getActivity(), RecordingAddEditActivity.class);
+                Intent editIntent = new Intent(getActivity(), AddEditActivity.class);
                 editIntent.putExtra("dvrId", recording.id);
                 getActivity().startActivity(editIntent);
                 return true;

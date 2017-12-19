@@ -21,7 +21,7 @@ import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.activities.DetailsActivity;
-import org.tvheadend.tvhclient.activities.RecordingAddEditActivity;
+import org.tvheadend.tvhclient.activities.AddEditActivity;
 import org.tvheadend.tvhclient.adapter.RecordingListAdapter;
 import org.tvheadend.tvhclient.interfaces.ToolbarInterface;
 import org.tvheadend.tvhclient.model.Recording;
@@ -82,8 +82,9 @@ public class RecordingListFragment extends ListFragment implements OnItemClickLi
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_add:
-                Intent addIntent = new Intent(getActivity(), RecordingAddEditActivity.class);
-                getActivity().startActivity(addIntent);
+                Intent intent = new Intent(getActivity(), AddEditActivity.class);
+                intent.putExtra("type", "recording");
+                getActivity().startActivity(intent);
                 return true;
             case R.id.menu_record_remove_all:
                 CopyOnWriteArrayList<Recording> list = new CopyOnWriteArrayList<>(adapter.getAllItems());
@@ -194,9 +195,10 @@ public class RecordingListFragment extends ListFragment implements OnItemClickLi
                     menuUtils.handleMenuDownloadSelection(recording.id);
                     return true;
                 case R.id.menu_edit:
-                    Intent editIntent = new Intent(getActivity(), RecordingAddEditActivity.class);
-                    editIntent.putExtra("dvrId", recording.id);
-                    getActivity().startActivity(editIntent);
+                    Intent intent = new Intent(getActivity(), AddEditActivity.class);
+                    intent.putExtra("dvrId", recording.id);
+                    intent.putExtra("type", "recording");
+                    getActivity().startActivity(intent);
                     return true;
                 default:
                     return false;
