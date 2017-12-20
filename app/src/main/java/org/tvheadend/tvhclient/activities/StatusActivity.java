@@ -9,7 +9,7 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.fragments.StatusFragment;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
-// TODO extend activity that implements the drawer
+// TODO rename layout main_layout_light later
 
 public class StatusActivity extends AppCompatActivity implements ToolbarInterfaceLight {
 

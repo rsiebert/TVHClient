@@ -12,6 +12,8 @@ import org.tvheadend.tvhclient.fragments.recordings.SeriesRecordingDetailsFragme
 import org.tvheadend.tvhclient.fragments.recordings.TimerRecordingDetailsFragment;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
+// TODO combine with add edit activity?
+
 public class DetailsActivity extends AppCompatActivity implements ToolbarInterfaceLight {
 
     @Override

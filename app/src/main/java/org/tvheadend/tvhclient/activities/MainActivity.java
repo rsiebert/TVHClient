@@ -95,6 +95,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+// TODO hide unlocker menu if already unlocked
+// TODO move chromecast to another class
+// TODO move drawer init to another class
+// TODO remove remembering list positions
+
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, ChangeLogDialogInterface, ToolbarInterface, ToolbarInterfaceLight, FragmentStatusInterface, FragmentScrollInterface, HTSListener, WakeOnLanTaskCallback {
 
     private final static String TAG = MainActivity.class.getSimpleName();

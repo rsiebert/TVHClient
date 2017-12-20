@@ -10,7 +10,7 @@ import org.tvheadend.tvhclient.fragments.InfoFragment;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
 // TODO change title string resource
-// TODO extend activity that implements the drawer
+// TODO rename layout main_layout_light later
 
 public class InfoActivity extends AppCompatActivity {
 

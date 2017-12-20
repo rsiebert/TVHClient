@@ -34,6 +34,8 @@ import org.tvheadend.tvhclient.utils.MenuUtils;
 import java.util.ArrayList;
 import java.util.Date;
 
+// TODO search menu not shown in single pane list view, check dual pane
+
 public class ProgramListFragment extends ListFragment implements HTSListener, OnItemClickListener, AdapterView.OnItemLongClickListener, OnScrollListener {
 
     private Activity activity;

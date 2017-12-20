@@ -38,6 +38,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+// TODO scrolling from here does not update channel list
+
 public class ProgramGuidePagerFragment extends Fragment implements FragmentControlInterface, MenuTagSelectionCallback {
 
     @SuppressWarnings("unused")

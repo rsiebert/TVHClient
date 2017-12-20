@@ -59,6 +59,8 @@ import org.tvheadend.tvhclient.utils.MiscUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+// TODO search for recordings broken/missing
+
 public class SearchResultActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, HTSListener {
 
     private final static String TAG = SearchResultActivity.class.getSimpleName();

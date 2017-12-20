@@ -22,6 +22,8 @@ import org.tvheadend.tvhclient.utils.Utils;
 
 import java.util.ArrayList;
 
+// TODO header placeholder for current time is missing in layout
+
 public class ProgramGuideChannelListFragment extends ListFragment implements HTSListener, OnScrollListener {
 
     private final static String TAG = ProgramGuideChannelListFragment.class.getSimpleName();
