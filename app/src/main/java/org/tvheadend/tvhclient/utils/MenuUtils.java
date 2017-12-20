@@ -174,7 +174,7 @@ public class MenuUtils {
      * @param selectedChannelId
      * @param callback
      */
-    public void handleMenuChannelSelection(long selectedChannelId, MenuChannelSelectionCallback callback) {
+    public void handleMenuChannelSelection(long selectedChannelId, MenuChannelSelectionCallback callback, boolean showAllChannelsListEntry) {
         Activity activity = this.activity.get();
         if (activity == null) {
             return;
@@ -193,11 +193,14 @@ public class MenuUtils {
             }
         });
 
-        // Add the default channel (all channels) to the list after it has been sorted
-        Channel channel = new Channel();
-        channel.channelId = 0;
-        channel.channelName = activity.getString(R.string.all_channels);
-        channelList.add(0, channel);
+        // Add the default channel (all channels)
+        // to the list after it has been sorted
+        if (showAllChannelsListEntry) {
+            Channel channel = new Channel();
+            channel.channelId = 0;
+            channel.channelName = activity.getString(R.string.all_channels);
+            channelList.add(0, channel);
+        }
 
         final ChannelListSelectionAdapter channelListSelectionAdapter = new ChannelListSelectionAdapter(activity, channelList, selectedChannelId);
         // Show the dialog that shows all available channel tags. When the
