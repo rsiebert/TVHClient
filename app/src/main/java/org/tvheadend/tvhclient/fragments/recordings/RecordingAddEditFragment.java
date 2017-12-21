@@ -1,10 +1,12 @@
 package org.tvheadend.tvhclient.fragments.recordings;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -23,386 +25,285 @@ import com.fourmob.datetimepicker.date.DatePickerDialog;
 import com.sleepbot.datetimepicker.time.RadialPickerLayout;
 import com.sleepbot.datetimepicker.time.TimePickerDialog;
 
-import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.DatabaseHelper;
-import org.tvheadend.tvhclient.Logger;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.activities.ToolbarInterfaceLight;
 import org.tvheadend.tvhclient.htsp.HTSService;
-import org.tvheadend.tvhclient.interfaces.BackPressedInterface;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.Profile;
 import org.tvheadend.tvhclient.model.Recording;
+import org.tvheadend.tvhclient.utils.MenuChannelSelectionCallback;
+import org.tvheadend.tvhclient.utils.MenuUtils;
 
-import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Locale;
 
-public class RecordingAddEditFragment extends Fragment implements OnClickListener, BackPressedInterface {
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
-    private final static String TAG = RecordingAddEditFragment.class.getSimpleName();
+// TODO hide show layout stuff if editing scheduled or recording recordings
+// TODO updated getIntentData according to the previous todo
+// TODO preselect the first channel in the list
+// TODO extend from BaseRecordingAddEditFragment
 
-    private AppCompatActivity activity;
-    private Recording rec;
+public class RecordingAddEditFragment extends Fragment implements MenuChannelSelectionCallback {
 
-    private TextView startTime;
-    private TextView stopTime;
-    private TextView startDate;
-    private TextView stopDate;
-    private CheckBox isEnabled;
-    private TextView priority;
-    private EditText startExtra;
-    private EditText stopExtra;
-    private EditText title;
-    private TextView titelLabel;
-    private EditText subtitle;
-    private TextView subtitleLabel;
-    private EditText description;
-    private TextView descriptionLabel;
-    private TextView channelName;
-    private TextView dvrConfigName;
-    private TextView dvrConfigNameLabel;
+    @BindView(R.id.start_time)
+    TextView startTimeTextView;
+    @BindView(R.id.stop_time)
+    TextView stopTimeTextView;
+    @BindView(R.id.start_date)
+    TextView startDateTextView;
+    @BindView(R.id.stop_date)
+    TextView stopDateTextView;
+    @BindView(R.id.is_enabled)
+    CheckBox isEnabledCheckbox;
+    @BindView(R.id.priority)
+    TextView priorityTextView;
+    @BindView(R.id.start_extra)
+    EditText startExtraEditText;
+    @BindView(R.id.stop_extra)
+    EditText stopExtraEditText;
+    @BindView(R.id.title)
+    EditText titleEditText;
+    @BindView(R.id.title_label)
+    TextView titleLabelTextView;
+    @BindView(R.id.subtitle)
+    EditText subtitleEditText;
+    @BindView(R.id.subtitle_label)
+    TextView subtitleLabelTextView;
+    @BindView(R.id.description)
+    EditText descriptionEditText;
+    @BindView(R.id.description_label)
+    TextView descriptionLabelTextView;
+    @BindView(R.id.channel)
+    TextView channelNameTextView;
+    @BindView(R.id.dvr_config)
+    TextView recordingProfileNameTextView;
+    @BindView(R.id.dvr_config_label)
+    TextView recordingProfileLabelTextView;
 
-    // Extra pre- and postrecording times in seconds
-    private long startExtraValue;
-    private long stopExtraValue;
+    private int priority;
+    private String title;
+    private String subtitle;
+    private String description;
+    private Calendar startTime = Calendar.getInstance();
+    private Calendar stopTime = Calendar.getInstance();
+    private long startExtra;
+    private long stopExtra;
+    private boolean isEnabled;
+    private int channelId;
+    private int recordingProfileName;
 
-    // Start and end recording times. They are saved in the calendar object and
-    // will be converted to milliseconds when saved during an orientation change
-    // and converted to seconds before passed to the server.
-    private final Calendar startValue = Calendar.getInstance();
-    private final Calendar stopValue = Calendar.getInstance();
-
-    private long priorityValue;
-    private String titleValue;
-    private String subtitleValue;
-    private String descriptionValue;
-    private int channelSelectionValue;
-    private int dvrConfigNameValue;
-    private boolean enabledValue;
-
-    private String[] channelList;
     private String[] priorityList;
-    private String[] dvrConfigList;
+    private String[] recordingProfilesList;
 
-    private TVHClientApplication app;
-    private DatabaseHelper databaseHelper;
-
-    private static final int DEFAULT_START_EXTRA = 2;
-    private static final int DEFAULT_STOP_EXTRA = 2;
-    private Logger logger;
-    private DataStorage dataStorage;
+    private Activity activity;
     private ToolbarInterfaceLight toolbarInterface;
+    private DataStorage dataStorage;
+    private Unbinder unbinder;
+    private MenuUtils menuUtils;
+    private int htspVersion;
+    private boolean isUnlocked;
+    private Profile profile;
+    private int dvrId = 0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
+        View view = inflater.inflate(R.layout.recording_add_layout, container, false);
+        unbinder = ButterKnife.bind(this, view);
+        return view;
+    }
 
-        // Assume a new recording shall be added. If a recording was given then
-        // show the layouts to edit it. If the recording is already being
-        // recorded show only the title, stop and extra stop times.
-        int layout = R.layout.recording_add_layout;
-        if (rec != null) {
-            layout = (rec.isRecording()
-                    ? R.layout.recording_edit_recording_layout
-                    : R.layout.recording_edit_scheduled_layout);
-        }
-        View v = inflater.inflate(layout, container, false);
-
-        // Initialize all the widgets from the layout
-        isEnabled = v.findViewById(R.id.is_enabled);
-        title = v.findViewById(R.id.title);
-        titelLabel = v.findViewById(R.id.title_label);
-        subtitle = v.findViewById(R.id.subtitle);
-        subtitleLabel = v.findViewById(R.id.subtitle_label);
-        description = v.findViewById(R.id.description);
-        descriptionLabel = v.findViewById(R.id.description_label);
-        channelName = v.findViewById(R.id.channel);
-        startExtra = v.findViewById(R.id.start_extra);
-        stopExtra = v.findViewById(R.id.stop_extra);
-        startTime = v.findViewById(R.id.start_time);
-        stopTime = v.findViewById(R.id.stop_time);
-        startDate = v.findViewById(R.id.start_date);
-        stopDate = v.findViewById(R.id.stop_date);
-        priority = v.findViewById(R.id.priority);
-        dvrConfigName = v.findViewById(R.id.dvr_config);
-        dvrConfigNameLabel = v.findViewById(R.id.dvr_config_label);
-        return v;
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
-        activity = (AppCompatActivity) getActivity();
+        activity = getActivity();
         if (activity instanceof ToolbarInterfaceLight) {
             toolbarInterface = (ToolbarInterfaceLight) activity;
         }
-        app = TVHClientApplication.getInstance();
-        databaseHelper = DatabaseHelper.getInstance(getActivity().getApplicationContext());
-        logger = Logger.getInstance();
+
+        menuUtils = new MenuUtils(getActivity());
         dataStorage = DataStorage.getInstance();
-
-        // Create the list of channels that the user can select
-        Collection<Channel> collection = dataStorage.getChannelsFromArray().values();
-        channelList = new String[collection.size()];
-        int count = 0;
-        for (Channel channel : collection) {
-            channelList[count++] = channel.channelName;
-        }
-
-        // Sort the channels in the list by name
-        Arrays.sort(channelList, new Comparator<String>() {
-            public int compare(String x, String y) {
-                if (x != null && y != null) {
-                    if (y.equals(activity.getString(R.string.no_channel))) {
-                        return 1;
-                    } else {
-                        return x.toLowerCase(Locale.US).compareTo(
-                                y.toLowerCase(Locale.US));
-                    }
-                }
-                return 0;
-            }
-        });
+        htspVersion = dataStorage.getProtocolVersion();
+        isUnlocked = TVHClientApplication.getInstance().isUnlocked();
+        DatabaseHelper databaseHelper = DatabaseHelper.getInstance(getActivity().getApplicationContext());
+        Connection connection = databaseHelper.getSelectedConnection();
+        profile = databaseHelper.getProfile(connection.recording_profile_id);
+        setHasOptionsMenu(true);
 
         // Create the list of available configurations that the user can select from
-        dvrConfigList = new String[dataStorage.getDvrConfigs().size()];
+        recordingProfilesList = new String[dataStorage.getDvrConfigs().size()];
         for (int i = 0; i < dataStorage.getDvrConfigs().size(); i++) {
-            dvrConfigList[i] = dataStorage.getDvrConfigs().get(i).name;
+            recordingProfilesList[i] = dataStorage.getDvrConfigs().get(i).name;
         }
 
         priorityList = activity.getResources().getStringArray(R.array.dvr_priorities);
 
-        // If the savedInstanceState is null then the fragment was created for
-        // the first time. Either get the given id to edit the recording or
-        // create new one. Otherwise an orientation change has occurred and the
-        // saved values must be applied to the user input elements.
-        if (savedInstanceState == null) {
-            int recId = 0;
-            Bundle bundle = getArguments();
-            if (bundle != null) {
-                recId = bundle.getInt("dvrId");
-            }
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            dvrId = bundle.getInt("dvrId");
+        }
 
-            // Get the recording so we can show its detail
-            rec = dataStorage.getRecordingFromArray(recId);
-            if (rec != null) {
-                priorityValue = rec.priority;
-                startExtraValue = rec.startExtra;
-                stopExtraValue = rec.stopExtra;
-                startValue.setTimeInMillis(rec.start);
-                stopValue.setTimeInMillis(rec.stop);
-                titleValue = rec.title;
-                subtitleValue = rec.subtitle;
-                descriptionValue = rec.description;
-                enabledValue = rec.enabled > 0;
-
-                // The default value is the first one
-                channelSelectionValue = 0;
-                // Get the position of the given channel in the channelList
-                Channel channel = dataStorage.getChannelFromArray(rec.channel);
-                if (channel != null) {
-                    for (int i = 0; i < channelList.length; i++) {
-                        if (channelList[i].equals(channel.channelName)) {
-                            channelSelectionValue = i;
-                            break;
-                        }
-                    }
-                }
-
-            } else {
-                priorityValue = 2;
-                startExtraValue = 0;
-                stopExtraValue = 0;
-                stopValue.setTimeInMillis(startValue.getTimeInMillis() + 30 * 60000); // add 30 min
-                titleValue = "";
-                subtitleValue = "";
-                descriptionValue = "";
-                channelSelectionValue = 0;
-                enabledValue = true;
-            }
-
-            // Get the position of the selected profile in the dvrConfigList
-            dvrConfigNameValue = 0;
-            final Connection conn = databaseHelper.getSelectedConnection();
-            final Profile p = databaseHelper.getProfile(conn.recording_profile_id);
-            if (p != null) {
-                for (int i = 0; i < dvrConfigList.length; i++) {
-                    if (dvrConfigList[i].equals(p.name)) {
-                        dvrConfigNameValue = i;
-                        break;
-                    }
-                }
-            }
-
+        // Get the values from the recording otherwise use default values
+        Channel channel;
+        if (dvrId > 0) {
+            Recording recording = dataStorage.getRecordingFromArray(dvrId);
+            priority = recording.priority;
+            startExtra = recording.startExtra;
+            stopExtra = recording.stopExtra;
+            startTime.setTimeInMillis(recording.start);
+            stopTime.setTimeInMillis(recording.stop);
+            title = recording.title;
+            subtitle = recording.subtitle;
+            description = recording.description;
+            isEnabled = recording.enabled > 0;
+            channelId = recording.channel;
+            channel = dataStorage.getChannelFromArray(channelId);
         } else {
-            // Restore the values before the orientation change
-            priorityValue = savedInstanceState.getLong("priorityValue");
-            startExtraValue = savedInstanceState.getLong("startExtraValue");
-            stopExtraValue = savedInstanceState.getLong("stopExtraValue");
-            startValue.setTimeInMillis(savedInstanceState.getLong("startTimeValue"));
-            stopValue.setTimeInMillis(savedInstanceState.getLong("stopTimeValue"));
-            titleValue = savedInstanceState.getString("titleValue");
-            subtitleValue = savedInstanceState.getString("subtitleValue");
-            descriptionValue = savedInstanceState.getString("descriptionValue");
-            channelSelectionValue = savedInstanceState.getInt("channelNameValue");
-            dvrConfigNameValue = savedInstanceState.getInt("configNameValue");
-            enabledValue = savedInstanceState.getBoolean("enabledValue");
+            priority = 2;
+            startExtra = 0;
+            stopExtra = 0;
+            // The start time is already set during init
+            // From this time add 30 minutes to the stop time
+            stopTime.setTimeInMillis(startTime.getTimeInMillis() + 30 * 60 * 1000);
+            title = "";
+            subtitle = "";
+            description = "";
+            isEnabled = true;
+            channelId = 0;
+            channel = null;
         }
 
-        int titleId = rec != null ? R.string.edit_recording : R.string.add_recording;
-        toolbarInterface.setTitle(getString(titleId));
-        // Enable the action bar menu
-        setHasOptionsMenu(true);
+        toolbarInterface.setTitle(dvrId > 0 ?
+                getString(R.string.edit_recording) :
+                getString(R.string.add_recording));
 
-        if (isEnabled != null) {
-            isEnabled.setChecked(enabledValue);
-            isEnabled.setVisibility(dataStorage.getProtocolVersion() >= Constants.MIN_API_VERSION_DVR_FIELD_ENABLED ? View.VISIBLE : View.GONE);
-        }
-        if (title != null && titelLabel != null) {
-            title.setVisibility(dataStorage.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_TITLE ? View.VISIBLE : View.GONE);
-            titelLabel.setVisibility(dataStorage.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_TITLE ? View.VISIBLE : View.GONE);
-            title.setText(titleValue);
-        }
-        if (subtitle != null && subtitleLabel != null) {
-            subtitle.setVisibility(dataStorage.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_SUBTITLE ? View.VISIBLE : View.GONE);
-            subtitleLabel.setVisibility(dataStorage.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_SUBTITLE ? View.VISIBLE : View.GONE);
-            subtitle.setText(subtitleValue);
-        }
-        if (description != null && descriptionLabel != null) {
-            description.setVisibility(dataStorage.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_DESCRIPTION ? View.VISIBLE : View.GONE);
-            descriptionLabel.setVisibility(dataStorage.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_DESCRIPTION ? View.VISIBLE : View.GONE);
-            description.setText(descriptionValue);
-        }
-
-        if (channelName != null) {
-            channelName.setText(channelList[channelSelectionValue]);
-            channelName.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    new MaterialDialog.Builder(activity)
-                    .title(R.string.select_channel)
-                    .items(channelList)
-                    .itemsCallbackSingleChoice(channelSelectionValue, new MaterialDialog.ListCallbackSingleChoice() {
-                        @Override
-                        public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
-                            channelName.setText(channelList[which]);
-                            channelSelectionValue = which;
-                            return true;
-                        }
-                    })
-                    .show();
+        // Get the selected profile from the connection
+        // and select it from the recording config list
+        recordingProfileName = 0;
+        if (profile != null) {
+            for (int i = 0; i < recordingProfilesList.length; i++) {
+                if (recordingProfilesList[i].equals(profile.name)) {
+                    recordingProfileName = i;
+                    break;
                 }
-            });
-        }
-
-        if (priority != null) {
-            if (priorityValue < priorityList.length) {
-                priority.setText(priorityList[(int) priorityValue]);
-            } else {
-                logger.log(TAG, "Priority value '"
-                        + priorityValue + "' is larger then priority array size of '"
-                        + priorityList.length + "'. Using default of 2");
-                priority.setText(priorityList[2]);
-            }
-            priority.setText(priorityList[(int) priorityValue]);
-            priority.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View view) {
-					new MaterialDialog.Builder(activity)
-		            .title(R.string.select_priority)
-		            .items(priorityList)
-		            .itemsCallbackSingleChoice((int) priorityValue, new MaterialDialog.ListCallbackSingleChoice() {
-		                @Override
-		                public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
-		                	priority.setText(priorityList[which]);
-		                	priorityValue = which;
-		                    return true;
-		                }
-		            })
-		            .show();
-				}
-            });
-        }
-
-        if (dvrConfigName != null && dvrConfigNameLabel != null) {
-            if ((rec != null && rec.id > 0) || dvrConfigList.length == 0) {
-                dvrConfigName.setText("");
-                dvrConfigName.setVisibility(View.GONE);
-                dvrConfigNameLabel.setVisibility(View.GONE);
-            } else {
-                dvrConfigName.setVisibility(View.VISIBLE);
-                dvrConfigNameLabel.setVisibility(View.VISIBLE);
-                dvrConfigName.setText(dvrConfigList[dvrConfigNameValue]);
-                dvrConfigName.setOnClickListener(new OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        new MaterialDialog.Builder(activity)
-                        .title(R.string.select_dvr_config)
-                        .items(dvrConfigList)
-                        .itemsCallbackSingleChoice(dvrConfigNameValue, new MaterialDialog.ListCallbackSingleChoice() {
-                            @Override
-                            public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
-                                dvrConfigName.setText(dvrConfigList[which]);
-                                dvrConfigNameValue = which;
-                                return true;
-                            }
-                        })
-                        .show();
-                    }
-                });
             }
         }
 
-        // Set the start and stop times and dates. Get the correct values from
-        // the calendar object and add the listener that will show the required
-        // date or time pickers. 
-        if (startTime != null) {
-            setTimeStringFromDate(startTime, startValue);
-            startTime.setOnClickListener(this);
-        }
-        if (startDate != null) {
-            setDateStringFromDate(startDate, startValue);
-            startDate.setOnClickListener(this);
-        }
-        if (stopTime != null) {
-            setTimeStringFromDate(stopTime, stopValue);
-            stopTime.setOnClickListener(this);
-        }
-        if (stopDate != null) {
-            setDateStringFromDate(stopDate, stopValue);
-            stopDate.setOnClickListener(this);
+        // Restore the values before the orientation change
+        if (savedInstanceState != null) {
+            priority = savedInstanceState.getInt("priority");
+            startExtra = savedInstanceState.getLong("startExtra");
+            stopExtra = savedInstanceState.getLong("stopExtra");
+            startTime.setTimeInMillis(savedInstanceState.getLong("startTime"));
+            stopTime.setTimeInMillis(savedInstanceState.getLong("stopTime"));
+            title = savedInstanceState.getString("title");
+            subtitle = savedInstanceState.getString("subtitle");
+            description = savedInstanceState.getString("description");
+            channelId = savedInstanceState.getInt("channelId");
+            recordingProfileName = savedInstanceState.getInt("configName");
+            isEnabled = savedInstanceState.getBoolean("isEnabled");
         }
 
-        // Add the additional pre- and postrecording values in minutes
-        if (startExtra != null) {
-            startExtra.setText(String.valueOf(startExtraValue));
-        }
-        if (stopExtra != null) {
-            stopExtra.setText(String.valueOf(stopExtraValue));
-        }
+        isEnabledCheckbox.setVisibility(htspVersion >= 23 ? View.VISIBLE : View.GONE);
+        isEnabledCheckbox.setChecked(isEnabled);
+
+        titleLabelTextView.setVisibility(htspVersion >= 21 ? View.VISIBLE : View.GONE);
+        titleEditText.setVisibility(htspVersion >= 21 ? View.VISIBLE : View.GONE);
+        titleEditText.setText(title);
+        subtitleLabelTextView.setVisibility(htspVersion >= 21 ? View.VISIBLE : View.GONE);
+        subtitleEditText.setVisibility(htspVersion >= 21 ? View.VISIBLE : View.GONE);
+        subtitleEditText.setText(subtitle);
+        descriptionLabelTextView.setVisibility(htspVersion >= 21 ? View.VISIBLE : View.GONE);
+        descriptionEditText.setVisibility(htspVersion >= 21 ? View.VISIBLE : View.GONE);
+        descriptionEditText.setText(description);
+
+        channelNameTextView.setText(channel != null ? channel.channelName : getString(R.string.no_channel));
+        channelNameTextView.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                menuUtils.handleMenuChannelSelection(channelId, RecordingAddEditFragment.this, false);
+            }
+        });
+
+        priorityTextView.setText(priorityList[priority]);
+        priorityTextView.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                handlePrioritySelection();
+            }
+        });
+
+        recordingProfileNameTextView.setText(recordingProfilesList[recordingProfileName]);
+        recordingProfileNameTextView.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                handleRecordingProfileSelection();
+            }
+        });
+
+        startTimeTextView.setText(getTimeStringFromDate(startTime));
+        startTimeTextView.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                handleStartTimeSelection();
+            }
+        });
+
+        stopTimeTextView.setText(getTimeStringFromDate(stopTime));
+        stopTimeTextView.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                handleStopTimeSelection();
+            }
+        });
+
+        startDateTextView.setText(getDateStringFromDate(startTime));
+        startDateTextView.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                handleStartDateSelection();
+            }
+        });
+
+        stopDateTextView.setText(getDateStringFromDate(stopTime));
+        stopDateTextView.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                handleStopDateSelection();
+            }
+        });
+
+        // Add the additional pre- and post recording values in minutes
+        startExtraEditText.setText(String.valueOf(startExtra));
+        stopExtraEditText.setText(String.valueOf(stopExtra));
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        getValues();
-        outState.putLong("priorityValue", priorityValue);
-        outState.putLong("startTimeValue", startValue.getTimeInMillis());
-        outState.putLong("stopTimeValue", stopValue.getTimeInMillis());
-        outState.putLong("startExtraValue", startExtraValue);
-        outState.putLong("stopExtraValue", stopExtraValue);
-        outState.putString("titleValue", titleValue);
-        outState.putString("subtitleValue", subtitleValue);
-        outState.putString("descriptionValue", descriptionValue);
-        outState.putInt("channelNameValue", channelSelectionValue);
-        outState.putInt("configNameValue", dvrConfigNameValue);
-        outState.putBoolean("enabledValue", enabledValue);
+        saveWidgetValuesIntoVariables();
+        outState.putInt("priority", priority);
+        outState.putLong("startTime", startTime.getTimeInMillis());
+        outState.putLong("stopTime", stopTime.getTimeInMillis());
+        outState.putLong("startExtra", startExtra);
+        outState.putLong("stopExtra", stopExtra);
+        outState.putString("title", title);
+        outState.putString("subtitle", subtitle);
+        outState.putString("description", description);
+        outState.putInt("channelId", channelId);
+        outState.putInt("configName", recordingProfileName);
+        outState.putBoolean("isEnabled", isEnabled);
         super.onSaveInstanceState(outState);
     }
 
@@ -429,41 +330,128 @@ public class RecordingAddEditFragment extends Fragment implements OnClickListene
         }
     }
 
+    private void handleStartDateSelection() {
+        int year = startTime.get(Calendar.YEAR);
+        int month = startTime.get(Calendar.MONTH);
+        int day = startTime.get(Calendar.DAY_OF_MONTH);
+        DatePickerDialog datePicker = DatePickerDialog.newInstance(
+                new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePickerDialog datePickerDialog, int year, int month, int day) {
+                        startTime.set(Calendar.DAY_OF_MONTH, day);
+                        startTime.set(Calendar.MONTH, month);
+                        startTime.set(Calendar.YEAR, year);
+                        startDateTextView.setText(getDateStringFromDate(startTime));
+                    }
+                }, year, month, day, false);
+
+        datePicker.setCloseOnSingleTapDay(false);
+        datePicker.show(getChildFragmentManager(), "");
+    }
+
+    private void handleStopDateSelection() {
+        int year = stopTime.get(Calendar.YEAR);
+        int month = stopTime.get(Calendar.MONTH);
+        int day = stopTime.get(Calendar.DAY_OF_MONTH);
+        DatePickerDialog datePicker = DatePickerDialog.newInstance(
+                new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePickerDialog datePickerDialog, int year, int month, int day) {
+                        stopTime.set(Calendar.DAY_OF_MONTH, day);
+                        stopTime.set(Calendar.MONTH, month);
+                        stopTime.set(Calendar.YEAR, year);
+                        stopDateTextView.setText(getDateStringFromDate(stopTime));
+                    }
+                }, year, month, day, false);
+
+        datePicker.setCloseOnSingleTapDay(false);
+        datePicker.show(getChildFragmentManager(), "");
+    }
+
+    private void handleStopTimeSelection() {
+        int hour = stopTime.get(Calendar.HOUR_OF_DAY);
+        int minute = stopTime.get(Calendar.MINUTE);
+        TimePickerDialog timePickerDialog = TimePickerDialog.newInstance(
+                new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(RadialPickerLayout timePicker, int selectedHour, int selectedMinute) {
+                        stopTime.set(Calendar.HOUR_OF_DAY, selectedHour);
+                        stopTime.set(Calendar.MINUTE, selectedMinute);
+                        stopTimeTextView.setText(getTimeStringFromDate(stopTime));
+                    }
+                }, hour, minute, true, false);
+
+        timePickerDialog.setCloseOnSingleTapMinute(false);
+        timePickerDialog.show(getChildFragmentManager(), "");
+    }
+
+    private void handleStartTimeSelection() {
+        int hour = startTime.get(Calendar.HOUR_OF_DAY);
+        int minute = startTime.get(Calendar.MINUTE);
+        TimePickerDialog timePickerDialog = TimePickerDialog.newInstance(
+                new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(RadialPickerLayout timePicker, int selectedHour, int selectedMinute) {
+                        // Save the given value in seconds. This values will be passed to the server
+                        startTime.set(Calendar.HOUR_OF_DAY, selectedHour);
+                        startTime.set(Calendar.MINUTE, selectedMinute);
+                        startTimeTextView.setText(getTimeStringFromDate(startTime));
+                    }
+                }, hour, minute, true, false);
+
+        timePickerDialog.setCloseOnSingleTapMinute(false);
+        timePickerDialog.show(getChildFragmentManager(), "");
+    }
+
+    private void handleRecordingProfileSelection() {
+        new MaterialDialog.Builder(activity)
+                .title(R.string.select_dvr_config)
+                .items(recordingProfilesList)
+                .itemsCallbackSingleChoice(recordingProfileName, new MaterialDialog.ListCallbackSingleChoice() {
+                    @Override
+                    public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                        recordingProfileNameTextView.setText(recordingProfilesList[which]);
+                        recordingProfileName = which;
+                        return true;
+                    }
+                })
+                .show();
+    }
+
+    private void handlePrioritySelection() {
+        new MaterialDialog.Builder(activity)
+                .title(R.string.select_priority)
+                .items(priorityList)
+                .itemsCallbackSingleChoice(priority, new MaterialDialog.ListCallbackSingleChoice() {
+                    @Override
+                    public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                        priorityTextView.setText(priorityList[which]);
+                        priority = which;
+                        return true;
+                    }
+                })
+                .show();
+    }
+
     /**
      * Retrieves and checks the values from the user input elements and stores
      * them in internal variables. These are used to remember the values during
      * an orientation change or when the recording shall be saved.
      */
-    private void getValues() {
+    private void saveWidgetValuesIntoVariables() {
+        title = titleEditText.getText().toString();
+        subtitle = subtitleEditText.getText().toString();
+        description = descriptionEditText.getText().toString();
+        isEnabled = isEnabledCheckbox.isChecked();
         try {
-            if (startExtra != null && startExtra.getText() != null) {
-                startExtraValue = Long.valueOf(startExtra.getText().toString());
-            } else {
-                startExtraValue = DEFAULT_START_EXTRA;
-            }
+            startExtra = Long.valueOf(startExtraEditText.getText().toString());
         } catch (NumberFormatException ex) {
-            startExtraValue = DEFAULT_START_EXTRA;
+            startExtra = 2;
         }
         try {
-            if (stopExtra != null && stopExtra.getText() != null) {
-                stopExtraValue = Long.valueOf(stopExtra.getText().toString());
-            } else {
-                stopExtraValue = DEFAULT_STOP_EXTRA;
-            }
+            stopExtra = Long.valueOf(stopExtraEditText.getText().toString());
         } catch (NumberFormatException ex) {
-            stopExtraValue = DEFAULT_STOP_EXTRA;
-        }
-        if (title != null && title.getText() != null) {
-            titleValue = title.getText().toString();
-        }
-        if (subtitle != null && subtitle.getText() != null) {
-            subtitleValue = subtitle.getText().toString();
-        }
-        if (description != null && description.getText() != null) {
-            descriptionValue = description.getText().toString();
-        }
-        if (isEnabled != null) {
-            enabledValue = isEnabled.isChecked();
+            stopExtra = 2;
         }
     }
 
@@ -473,67 +461,60 @@ public class RecordingAddEditFragment extends Fragment implements OnClickListene
      * created recording.
      */
     private void save() {
-        getValues();
+        saveWidgetValuesIntoVariables();
 
-        // The title must not be empty
-        if (titleValue.length() == 0 && dataStorage.getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_TITLE) {
-            Toast.makeText(activity, getString(R.string.error_empty_title),
-                    Toast.LENGTH_SHORT).show();
+        if (TextUtils.isEmpty(title) && htspVersion >= 21) {
+            if (activity.getCurrentFocus() != null) {
+                Snackbar.make(activity.getCurrentFocus(), getString(R.string.error_empty_title), Toast.LENGTH_SHORT).show();
+            }
             return;
         }
+        if (dvrId > 0) {
+            updateRecording();
+        } else {
+            addRecording();
+        }
+    }
 
+    private void addRecording() {
+        Intent intent = getIntentData();
+        intent.setAction("addDvrEntry");
+        activity.startService(intent);
+    }
+
+    private void updateRecording() {
+        Intent intent = getIntentData();
+        intent.setAction("updateDvrEntry");
+        intent.putExtra("id", dvrId);
+        activity.startService(intent);
+    }
+
+    private Intent getIntentData() {
         Intent intent = new Intent(activity, HTSService.class);
 
-        // If the recording id was provided, then an existing recording was
-        // edited and not a new one was added
-        if (rec != null && rec.id > 0) {
-            intent.setAction("updateDvrEntry");
-            intent.putExtra("id", rec.id);
-        } else {
-            intent.setAction("addDvrEntry");
+        if (dvrId == 0) {
+            intent.putExtra("title", title);
+            intent.putExtra("subtitle", subtitle);
+            intent.putExtra("startTime", startTime); // Pass on seconds not milliseconds
+            intent.putExtra("stopTime", stopTime); // Pass on seconds not milliseconds
+            intent.putExtra("startExtra", startExtra);
+            intent.putExtra("stopExtra", stopExtra);
+            intent.putExtra("description", description);
+            intent.putExtra("priority", priority);
+            intent.putExtra("channelId", channelId);
+            intent.putExtra("enabled", (isEnabled ? 1 : 0));
 
             // Add the recording profile if available and enabled
-            final Connection conn = databaseHelper.getSelectedConnection();
-            final Profile p = databaseHelper.getProfile(conn.recording_profile_id);
-            if (p != null 
-                    && p.enabled
-                    && (dvrConfigName.getText().length() > 0) 
-                    && dataStorage.getProtocolVersion() >= Constants.MIN_API_VERSION_PROFILES
-                    && app.isUnlocked()) {
-                // Use the selected profile. If no change was done in the 
+            if (profile != null && profile.enabled
+                    && (recordingProfileNameTextView.getText().length() > 0)
+                    && htspVersion >= 16
+                    && isUnlocked) {
+                // Use the selected profile. If no change was done in the
                 // selection then the default one from the connection setting will be used
-                intent.putExtra("configName", dvrConfigName.getText().toString());
+                intent.putExtra("configName", recordingProfileNameTextView.getText().toString());
             }
         }
-
-        // The id must be passed on to the server, not the name. So go through
-        // all available channels and get the id for the selected channel name.
-        for (Channel c : dataStorage.getChannelsFromArray().values()) {
-            if (c.channelName.equals(channelList[channelSelectionValue])) {
-                intent.putExtra("channelId", c.channelId);
-                break;
-            }
-        }
-
-        intent.putExtra("title", titleValue);
-        intent.putExtra("subtitle", subtitleValue);
-        intent.putExtra("start", startValue.getTimeInMillis()); // Pass on seconds not milliseconds
-        intent.putExtra("stop", stopValue.getTimeInMillis()); // Pass on seconds not milliseconds
-        intent.putExtra("startExtra", startExtraValue);
-        intent.putExtra("stopExtra", stopExtraValue);
-        intent.putExtra("description", descriptionValue);
-        intent.putExtra("priority", priorityValue);
-        intent.putExtra("enabled", (long) (enabledValue ? 1 : 0));
-
-        // Pass on the information if a recording is already recording. When it
-        // is already being recorded only the title, stop and stopExtra will be
-        // accepted. All other entries will be ignored and not sent
-        if (rec != null) {
-            intent.putExtra("isRecording", rec.isRecording());
-        }
-
-        activity.startService(intent);
-        activity.finish();
+        return intent;
     }
 
     /**
@@ -561,112 +542,31 @@ public class RecordingAddEditFragment extends Fragment implements OnClickListene
                 }).show();
     }
 
-    @Override
-    public void onClick(View v) {
-        
-        DatePickerDialog datePicker;
-        TimePickerDialog timePicker;
-        
-        switch (v.getId()) {
-        case R.id.start_time:
-            timePicker = TimePickerDialog.newInstance(new TimePickerDialog.OnTimeSetListener() {
-                @Override
-                public void onTimeSet(RadialPickerLayout timePicker, int hour, int minute) {
-                    startValue.set(Calendar.HOUR_OF_DAY, hour);
-                    startValue.set(Calendar.MINUTE, minute);
-                    setTimeStringFromDate(startTime, startValue);
-                }
-            }, 
-            startValue.get(Calendar.HOUR_OF_DAY), 
-            startValue.get(Calendar.MINUTE), true, false);
-
-            timePicker.setCloseOnSingleTapMinute(false);
-            timePicker.show(getChildFragmentManager(), "");
-            break;
-
-        case R.id.start_date:
-            datePicker = DatePickerDialog.newInstance(new DatePickerDialog.OnDateSetListener() {
-                @Override
-                public void onDateSet(DatePickerDialog datePickerDialog, int year, int month, int day) {
-                    startValue.set(Calendar.DAY_OF_MONTH, day);
-                    startValue.set(Calendar.MONTH, month);
-                    startValue.set(Calendar.YEAR, year);
-                    setDateStringFromDate(startDate, startValue);
-                }
-            }, 
-            startValue.get(Calendar.YEAR), 
-            startValue.get(Calendar.MONTH), 
-            startValue.get(Calendar.DAY_OF_MONTH), false);
-
-            datePicker.setCloseOnSingleTapDay(false);
-            datePicker.show(getChildFragmentManager(), "");
-            break;
-
-        case R.id.stop_time:
-            timePicker = TimePickerDialog.newInstance(new TimePickerDialog.OnTimeSetListener() {
-                @Override
-                public void onTimeSet(RadialPickerLayout timePicker, int hour, int minute) {
-                    stopValue.set(Calendar.HOUR_OF_DAY, hour);
-                    stopValue.set(Calendar.MINUTE, minute);
-                    setTimeStringFromDate(stopTime, stopValue);
-                }
-            }, 
-            stopValue.get(Calendar.HOUR_OF_DAY), 
-            stopValue.get(Calendar.MINUTE), true, false);
-
-            timePicker.setCloseOnSingleTapMinute(false);
-            timePicker.show(getChildFragmentManager(), "");
-            break;
-
-        case R.id.stop_date:
-            datePicker = DatePickerDialog.newInstance(new DatePickerDialog.OnDateSetListener() {
-                @Override
-                public void onDateSet(DatePickerDialog datePickerDialog, int year, int month, int day) {
-                    stopValue.set(Calendar.DAY_OF_MONTH, day);
-                    stopValue.set(Calendar.MONTH, month);
-                    stopValue.set(Calendar.YEAR, year);
-                    setDateStringFromDate(stopDate, stopValue);
-                }
-            }, 
-            stopValue.get(Calendar.YEAR), 
-            stopValue.get(Calendar.MONTH), 
-            stopValue.get(Calendar.DAY_OF_MONTH), false);
-
-            datePicker.setCloseOnSingleTapDay(false);
-            datePicker.show(getChildFragmentManager(), "");
-            break;
-        }
-    }
-
-    /**
-     * 
-     * @param v TextView that shall display the datevalue
-     * @param cal Calendar
-     */
-    private void setDateStringFromDate(TextView v, Calendar cal) {
+    private String getDateStringFromDate(Calendar cal) {
         int day = cal.get(Calendar.DAY_OF_MONTH);
         int month = cal.get(Calendar.MONTH) + 1;
         int year = cal.get(Calendar.YEAR);
         String text = ((day < 10) ? "0" + day : day) + "."
                 + ((month < 10) ? "0" + month : month) + "." + year;
-        v.setText(text);
+        return text;
     }
 
-    /**
-     * 
-     * @param v TextView that shall display the time value
-     * @param cal Calendar
-     */
-    private void setTimeStringFromDate(TextView v, Calendar cal) {
+    private String getTimeStringFromDate(Calendar cal) {
         int hour = cal.get(Calendar.HOUR_OF_DAY);
         int minute = cal.get(Calendar.MINUTE);
         String text = ((hour < 10) ? "0" + hour : hour) + ":"
                 + ((minute < 10) ? "0" + minute : minute);
-        v.setText(text);
+        return text;
     }
 
     @Override
-    public void onBackPressed() {
-        cancel();
+    public void menuChannelSelected(int which) {
+        if (which > 0) {
+            channelId = which;
+            Channel channel = dataStorage.getChannelFromArray(which);
+            channelNameTextView.setText(channel.channelName);
+        } else {
+            channelNameTextView.setText(R.string.all_channels);
+        }
     }
 }
