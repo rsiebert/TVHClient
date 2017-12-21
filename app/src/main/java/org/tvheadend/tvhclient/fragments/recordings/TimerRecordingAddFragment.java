@@ -271,6 +271,7 @@ public class TimerRecordingAddFragment extends Fragment implements HTSListener, 
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
+        saveWidgetValuesIntoVariables();
         outState.putBoolean("isEnabled", isEnabled);
         outState.putString("title", title);
         outState.putString("name", name);
@@ -426,7 +427,16 @@ public class TimerRecordingAddFragment extends Fragment implements HTSListener, 
         daysOfWeekTextView.setText(text.toString());
     }
 
+    private void saveWidgetValuesIntoVariables() {
+        directory = directoryEditText.getText().toString();
+        title = titleEditText.getText().toString();
+        name = nameEditText.getText().toString();
+        isEnabled = isEnabledCheckbox.isChecked();
+    }
+
     private void save() {
+        saveWidgetValuesIntoVariables();
+
         if (TextUtils.isEmpty(title)) {
             if (activity.getCurrentFocus() != null) {
                 Snackbar.make(activity.getCurrentFocus(), getString(R.string.error_empty_title), Toast.LENGTH_SHORT).show();
@@ -466,8 +476,11 @@ public class TimerRecordingAddFragment extends Fragment implements HTSListener, 
         if (action.equals("timerecEntryDelete")) {
             activity.runOnUiThread(new Runnable() {
                 public void run() {
-                    // TODO get the id of the deleted recording, if it matches the edited one, add it
-                    addTimerRecording();
+                    TimerRecording timerRecording = (TimerRecording) obj;
+                    if (timerRecording.id.equals(id)) {
+                        addTimerRecording();
+                    }
+                    activity.finish();
                 }
             });
         }
@@ -497,6 +510,7 @@ public class TimerRecordingAddFragment extends Fragment implements HTSListener, 
             intent.setAction("updateTimerecEntry");
             intent.putExtra("id", id);
             activity.startService(intent);
+            activity.finish();
         } else {
             Intent intent = new Intent(activity, HTSService.class);
             intent.setAction("deleteTimerecEntry");

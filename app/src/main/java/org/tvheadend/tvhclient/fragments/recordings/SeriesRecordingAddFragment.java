@@ -344,7 +344,7 @@ public class SeriesRecordingAddFragment extends Fragment implements HTSListener,
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        gets();
+        saveWidgetValuesIntoVariables();
         outState.putLong("priority", priority);
         outState.putLong("minDuration", minDuration);
         outState.putLong("maxDuration", maxDuration);
@@ -526,7 +526,7 @@ public class SeriesRecordingAddFragment extends Fragment implements HTSListener,
      * them in internal variables. These are used to remember the values during
      * an orientation change or when the recording shall be saved.
      */
-    private void gets() {
+    private void saveWidgetValuesIntoVariables() {
         try {
             minDuration = Integer.valueOf(minDurationEditText.getText().toString());
         } catch (NumberFormatException ex) {
@@ -563,7 +563,7 @@ public class SeriesRecordingAddFragment extends Fragment implements HTSListener,
      * created recording.
      */
     private void save() {
-        gets();
+        saveWidgetValuesIntoVariables();
 
         if (TextUtils.isEmpty(title)) {
             if (activity.getCurrentFocus() != null) {
@@ -614,7 +614,11 @@ public class SeriesRecordingAddFragment extends Fragment implements HTSListener,
         if (action.equals("autorecEntryDelete")) {
             activity.runOnUiThread(new Runnable() {
                 public void run() {
-                    addSeriesRecording();
+                    SeriesRecording seriesRecording = (SeriesRecording) obj;
+                    if (seriesRecording.id.equals(id)) {
+                        addSeriesRecording();
+                    }
+                    activity.finish();
                 }
             });
         }
@@ -641,6 +645,7 @@ public class SeriesRecordingAddFragment extends Fragment implements HTSListener,
             intent.setAction("updateAutorecEntry");
             intent.putExtra("id", id);
             activity.startService(intent);
+            activity.finish();
         } else {
             Intent intent = new Intent(activity, HTSService.class);
             intent.setAction("deleteAutorecEntry");
