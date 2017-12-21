@@ -45,10 +45,9 @@ import java.util.Date;
 
 // TODO show programs from time after orientation change
 // TODO show programs from time in dual pane, program list not updated
+// TODO change getting channel tag
 
 public class ChannelListFragment extends ListFragment implements HTSListener, MenuTimeSelectionCallback, MenuTagSelectionCallback, AdapterView.OnItemLongClickListener, OnItemClickListener {
-
-    private final static String TAG = ChannelListFragment.class.getSimpleName();
 
     private Activity activity;
     private ToolbarInterface toolbarInterface;
