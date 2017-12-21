@@ -1,5 +1,6 @@
 package org.tvheadend.tvhclient.fragments.recordings;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.activities.AddEditActivity;
 import org.tvheadend.tvhclient.activities.ToolbarInterfaceLight;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.TimerRecording;
@@ -173,9 +175,10 @@ public class TimerRecordingDetailsFragment extends Fragment {
                 getActivity().finish();
                 return true;
             case R.id.menu_edit:
-                /*Intent editIntent = new Intent(getActivity(), TimerRecordingAddActivity.class);
-                editIntent.putExtra("id", timerRecording.id);
-                getActivity().startActivity(editIntent);*/
+                Intent intent = new Intent(getActivity(), AddEditActivity.class);
+                intent.putExtra("type", "timer_recording");
+                intent.putExtra("id", recording.id);
+                getActivity().startActivity(intent);
                 return true;
             case R.id.menu_record_remove:
                 menuUtils.handleMenuRemoveSeriesRecordingSelection(recording.id, recording.title);
