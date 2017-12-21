@@ -242,6 +242,7 @@ public class RecordingDetailsFragment extends Fragment {
             case R.id.menu_edit:
                 Intent editIntent = new Intent(getActivity(), AddEditActivity.class);
                 editIntent.putExtra("dvrId", recording.id);
+                editIntent.putExtra("type", "recording");
                 getActivity().startActivity(editIntent);
                 return true;
             case R.id.menu_record_stop:
