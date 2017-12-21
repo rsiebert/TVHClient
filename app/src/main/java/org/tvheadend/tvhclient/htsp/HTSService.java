@@ -817,13 +817,13 @@ public class HTSService extends Service implements HTSConnectionListener {
      */
     private void updateDvrEntry(final Intent intent) {
 
-        final long id = intent.getLongExtra("id", 0);
-        final long channelId = intent.getLongExtra("channelId", 0);
+        final int id = intent.getIntExtra("id", 0);
+        final int channelId = intent.getIntExtra("channelId", 0);
         final long start = intent.getLongExtra("start", 1) / 1000;
         final long stop = intent.getLongExtra("stop", 1) / 1000;
         final long retention = intent.getLongExtra("retention", 0);
-        final long priority = intent.getLongExtra("priority", 2);
-        final long enabled = intent.getLongExtra("enabled", 1);
+        final int priority = intent.getIntExtra("priority", 2);
+        final int enabled = intent.getIntExtra("enabled", 1);
         final long startExtra = intent.getLongExtra("startExtra", 0);
         final long stopExtra = intent.getLongExtra("stopExtra", 0);
         final String title = intent.getStringExtra("title");
@@ -918,14 +918,14 @@ public class HTSService extends Service implements HTSConnectionListener {
      */
     private void addDvrEntry(final Intent intent) {
 
-        final long eventId = intent.getLongExtra("eventId", 0);
-        final long channelId = intent.getLongExtra("channelId", 0);
+        final int eventId = intent.getIntExtra("eventId", 0);
+        final int channelId = intent.getIntExtra("channelId", 0);
         final long start = intent.getLongExtra("start", 1) / 1000;
         final long stop = intent.getLongExtra("stop", 1) / 1000;
         final long retention = intent.getLongExtra("retention", 0);
         final String creator = intent.getStringExtra("creator");
-        final long priority = intent.getLongExtra("priority", 2);
-        final long enabled = intent.getLongExtra("enabled", 1);
+        final int priority = intent.getIntExtra("priority", 2);
+        final int enabled = intent.getIntExtra("enabled", 1);
         final long startExtra = intent.getLongExtra("startExtra", 0);
         final long stopExtra = intent.getLongExtra("stopExtra", 0);
         final String title = intent.getStringExtra("title");
@@ -996,13 +996,13 @@ public class HTSService extends Service implements HTSConnectionListener {
     private void updateTimerRecEntry(final Intent intent) {
 
         final String id = intent.getStringExtra("id");
-        final long channelId = intent.getLongExtra("channelId", 0);
-        final long start = intent.getLongExtra("start", 0);
-        final long stop = intent.getLongExtra("stop", 0);
-        final long retention = intent.getLongExtra("retention", 0);
-        final long priority = intent.getLongExtra("priority", 2);
-        final long daysOfWeek = intent.getLongExtra("daysOfWeek", 0);
-        final long enabled = intent.getLongExtra("enabled", 1);
+        final int channelId = intent.getIntExtra("channelId", 0);
+        final int start = intent.getIntExtra("start", 0);
+        final int stop = intent.getIntExtra("stop", 0);
+        final int retention = intent.getIntExtra("retention", 0);
+        final int priority = intent.getIntExtra("priority", 2);
+        final int daysOfWeek = intent.getIntExtra("daysOfWeek", 0);
+        final int enabled = intent.getIntExtra("enabled", 1);
         final String directory = intent.getStringExtra("directory");
         final String title = intent.getStringExtra("title");
         final String name = intent.getStringExtra("name");
@@ -1075,13 +1075,13 @@ public class HTSService extends Service implements HTSConnectionListener {
      */
     private void addTimerRecEntry(final Intent intent) {
 
-        final long channelId = intent.getLongExtra("channelId", 0);
-        final long start = intent.getLongExtra("start", 0);
-        final long stop = intent.getLongExtra("stop", 0);
-        final long retention = intent.getLongExtra("retention", 0);
-        final long priority = intent.getLongExtra("priority", 2);
-        final long daysOfWeek = intent.getLongExtra("daysOfWeek", 0);
-        final long enabled = intent.getLongExtra("enabled", 1);
+        final int channelId = intent.getIntExtra("channelId", 0);
+        final int start = intent.getIntExtra("start", 0);
+        final int stop = intent.getIntExtra("stop", 0);
+        final int retention = intent.getIntExtra("retention", 0);
+        final int priority = intent.getIntExtra("priority", 2);
+        final int daysOfWeek = intent.getIntExtra("daysOfWeek", 0);
+        final int enabled = intent.getIntExtra("enabled", 1);
         final String directory = intent.getStringExtra("directory");
         final String title = intent.getStringExtra("title");
         final String name = intent.getStringExtra("name");
@@ -1264,19 +1264,19 @@ public class HTSService extends Service implements HTSConnectionListener {
         final String id = intent.getStringExtra("id");
         final String title = intent.getStringExtra("title");
         final String name = intent.getStringExtra("name");
-        final long channelId = intent.getLongExtra("channelId", 0);
-        final long maxDuration = intent.getLongExtra("maxDuration", 0);
-        final long minDuration = intent.getLongExtra("minDuration", 0);
-        final long retention = intent.getLongExtra("retention", 0);
-        final long daysOfWeek = intent.getLongExtra("daysOfWeek", 127);
-        final long priority = intent.getLongExtra("priority", 2);
-        final long enabled = intent.getLongExtra("enabled", 1);
+        final int channelId = intent.getIntExtra("channelId", 0);
+        final int maxDuration = intent.getIntExtra("maxDuration", 0);
+        final int minDuration = intent.getIntExtra("minDuration", 0);
+        final int retention = intent.getIntExtra("retention", 0);
+        final int daysOfWeek = intent.getIntExtra("daysOfWeek", 127);
+        final int priority = intent.getIntExtra("priority", 2);
+        final int enabled = intent.getIntExtra("enabled", 1);
         final String directory = intent.getStringExtra("directory");
         final long startExtra = intent.getLongExtra("startExtra", 0);
         final long stopExtra = intent.getLongExtra("stopExtra", 0);
-        final long dupDetect = intent.getLongExtra("dupDetect", 0);
-        final long start = intent.getLongExtra("start", -1);
-        final long startWindow = intent.getLongExtra("startWindow", -1);
+        final int dupDetect = intent.getIntExtra("dupDetect", 0);
+        final int start = intent.getIntExtra("start", -1);
+        final int startWindow = intent.getIntExtra("startWindow", -1);
         final String configName = intent.getStringExtra("configName");
 
         HTSMessage request = new HTSMessage();
@@ -1378,19 +1378,19 @@ public class HTSService extends Service implements HTSConnectionListener {
         final String title = intent.getStringExtra("title");
         final String fulltext = intent.getStringExtra("fulltext");
         final String name = intent.getStringExtra("name");
-        final long channelId = intent.getLongExtra("channelId", 0);
-        final long maxDuration = intent.getLongExtra("maxDuration", 0);
-        final long minDuration = intent.getLongExtra("minDuration", 0);
-        final long retention = intent.getLongExtra("retention", 0);
-        final long daysOfWeek = intent.getLongExtra("daysOfWeek", 127);
-        final long priority = intent.getLongExtra("priority", 2);
-        final long enabled = intent.getLongExtra("enabled", 1);
+        final int channelId = intent.getIntExtra("channelId", 0);
+        final int maxDuration = intent.getIntExtra("maxDuration", 0);
+        final int minDuration = intent.getIntExtra("minDuration", 0);
+        final int retention = intent.getIntExtra("retention", 0);
+        final int daysOfWeek = intent.getIntExtra("daysOfWeek", 127);
+        final int priority = intent.getIntExtra("priority", 2);
+        final int enabled = intent.getIntExtra("enabled", 1);
         final String directory = intent.getStringExtra("directory");
         final long startExtra = intent.getLongExtra("startExtra", 0);
         final long stopExtra = intent.getLongExtra("stopExtra", 0);
-        final long dupDetect = intent.getLongExtra("dupDetect", 0);
-        final long start = intent.getLongExtra("start", -1);
-        final long startWindow = intent.getLongExtra("startWindow", -1);
+        final int dupDetect = intent.getIntExtra("dupDetect", 0);
+        final int start = intent.getIntExtra("start", -1);
+        final int startWindow = intent.getIntExtra("startWindow", -1);
         final String configName = intent.getStringExtra("configName");
 
         HTSMessage request = new HTSMessage();
