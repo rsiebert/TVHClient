@@ -60,7 +60,7 @@ public class TimerRecordingAddFragment extends Fragment implements HTSListener, 
     @BindView(R.id.stop_time)
     TextView stopTimeTextView;
     @BindView(R.id.directory)
-    EditText directoryTextView;
+    EditText directoryEditText;
     @BindView(R.id.directory_label)
     TextView directoryLabelTextView;
     @BindView(R.id.title)
@@ -90,14 +90,13 @@ public class TimerRecordingAddFragment extends Fragment implements HTSListener, 
     private String[] daysOfWeekList;
 
     private Activity activity;
-    private DatabaseHelper databaseHelper;
+    private ToolbarInterfaceLight toolbarInterface;
     private DataStorage dataStorage;
     private Unbinder unbinder;
-    private ToolbarInterfaceLight toolbarInterface;
     private MenuUtils menuUtils;
     private int htspVersion;
-    private Channel channel;
     private String id;
+    private Profile profile;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -122,9 +121,11 @@ public class TimerRecordingAddFragment extends Fragment implements HTSListener, 
         }
 
         menuUtils = new MenuUtils(getActivity());
-        databaseHelper = DatabaseHelper.getInstance(getActivity().getApplicationContext());
         dataStorage = DataStorage.getInstance();
         htspVersion = dataStorage.getProtocolVersion();
+        DatabaseHelper databaseHelper = DatabaseHelper.getInstance(getActivity().getApplicationContext());
+        Connection connection = databaseHelper.getSelectedConnection();
+        profile = databaseHelper.getProfile(connection.recording_profile_id);
         setHasOptionsMenu(true);
 
         // Determine if the server supports recording on all channels
@@ -145,6 +146,7 @@ public class TimerRecordingAddFragment extends Fragment implements HTSListener, 
         }
 
         // Get the values from the recording otherwise use default values
+        Channel channel;
         if (!TextUtils.isEmpty(id)) {
             TimerRecording recording = dataStorage.getTimerRecordingFromArray(id);
             priority = recording.priority;
@@ -179,11 +181,9 @@ public class TimerRecordingAddFragment extends Fragment implements HTSListener, 
         // Get the selected profile from the connection
         // and select it from the recording config list
         recordingProfileName = 0;
-        final Connection conn = databaseHelper.getSelectedConnection();
-        final Profile p = databaseHelper.getProfile(conn.recording_profile_id);
-        if (p != null) {
+        if (profile != null) {
             for (int i = 0; i < recordingProfilesList.length; i++) {
-                if (recordingProfilesList[i].equals(p.name)) {
+                if (recordingProfilesList[i].equals(profile.name)) {
                     recordingProfileName = i;
                     break;
                 }
@@ -209,8 +209,8 @@ public class TimerRecordingAddFragment extends Fragment implements HTSListener, 
         titleEditText.setText(title);
         nameEditText.setText(name);
         directoryLabelTextView.setVisibility(htspVersion >= 19 ? View.VISIBLE : View.GONE);
-        directoryTextView.setVisibility(htspVersion >= 19 ? View.VISIBLE : View.GONE);
-        directoryTextView.setText(directory);
+        directoryEditText.setVisibility(htspVersion >= 19 ? View.VISIBLE : View.GONE);
+        directoryEditText.setText(directory);
 
         channelNameTextView.setText(channel != null ? channel.channelName : getString(R.string.all_channels));
         channelNameTextView.setOnClickListener(new OnClickListener() {
@@ -517,22 +517,14 @@ public class TimerRecordingAddFragment extends Fragment implements HTSListener, 
         intent.putExtra("stop", stopTime);
         intent.putExtra("daysOfWeek", daysOfWeek);
         intent.putExtra("priority", priority);
-        intent.putExtra("enabled", (long) (isEnabled ? 1 : 0));
+        intent.putExtra("enabled", (isEnabled ? 1 : 0));
 
-        // The id must be passed on to the server, not the nameEditText. So go through
-        // all available channels and get the id for the selected channel nameEditText.
-        for (Channel c : dataStorage.getChannelsFromArray().values()) {
-            if (c.channelName.equals(channelNameTextView.getText().toString())) {
-                intent.putExtra("channelId", c.channelId);
-                break;
-            }
+        if (channelId > 0) {
+            intent.putExtra("channelId", channelId);
         }
 
         // Add the recording profile if available and enabled
-        final Connection conn = databaseHelper.getSelectedConnection();
-        final Profile p = databaseHelper.getProfile(conn.recording_profile_id);
-        if (p != null
-                && p.enabled
+        if (profile != null && profile.enabled
                 && (recordingProfileNameTextView.getText().length() > 0)
                 && htspVersion >= 16) {
             // Use the selected profile. If no change was done in the 
@@ -545,6 +537,7 @@ public class TimerRecordingAddFragment extends Fragment implements HTSListener, 
     @Override
     public void menuChannelSelected(int which) {
         if (which > 0) {
+            channelId = which;
             Channel channel = dataStorage.getChannelFromArray(which);
             channelNameTextView.setText(channel.channelName);
         } else {
