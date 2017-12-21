@@ -1,11 +1,9 @@
 package org.tvheadend.tvhclient.fragments.recordings;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -21,14 +19,9 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.sleepbot.datetimepicker.time.RadialPickerLayout;
-import com.sleepbot.datetimepicker.time.TimePickerDialog;
 
-import org.tvheadend.tvhclient.DataStorage;
-import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.activities.ToolbarInterfaceLight;
 import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Channel;
@@ -36,8 +29,6 @@ import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.Profile;
 import org.tvheadend.tvhclient.model.SeriesRecording;
 import org.tvheadend.tvhclient.utils.MenuChannelSelectionCallback;
-import org.tvheadend.tvhclient.utils.MenuUtils;
-import org.tvheadend.tvhclient.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -47,12 +38,13 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-public class SeriesRecordingAddFragment extends Fragment implements HTSListener, MenuChannelSelectionCallback {
+// TODO convert handleStartTimeSelection and handleStopTimeSelection to use calendar
+// TODO extend from BaseRecordingAddEditFragment
+
+public class SeriesRecordingAddFragment extends BaseRecordingAddEditFragment implements HTSListener, MenuChannelSelectionCallback {
 
     @BindView(R.id.is_enabled)
     CheckBox isEnabledCheckbox;
-    @BindView(R.id.priority)
-    TextView priorityTextView;
     @BindView(R.id.days_of_week)
     TextView daysOfWeekTextView;
     @BindView(R.id.minimum_duration)
@@ -83,16 +75,17 @@ public class SeriesRecordingAddFragment extends Fragment implements HTSListener,
     EditText nameEditText;
     @BindView(R.id.channel)
     TextView channelNameTextView;
-    @BindView(R.id.dvr_config)
-    TextView recordingProfileNameTextView;
     @BindView(R.id.dvr_config_label)
     TextView recordingProfileLabelTextView;
+    @BindView(R.id.priority)
+    TextView priorityTextView;
+    @BindView(R.id.dvr_config)
+    TextView recordingProfileNameTextView;
 
-    private int priority;
     private int minDuration;
     private int maxDuration;
-    private int startTime;
-    private int startWindowTime;
+    private Calendar startTime = Calendar.getInstance();
+    private Calendar startWindowTime = Calendar.getInstance();
     private boolean timeEnabled;
     private long startExtraTime;
     private long stopExtraTime;
@@ -102,24 +95,13 @@ public class SeriesRecordingAddFragment extends Fragment implements HTSListener,
     private String title;
     private String name;
     private boolean isEnabled;
-    private int dvrConfigName;
     private int channelId;
-    private int recordingProfileName;
 
-    private String[] priorityList;
-    private String[] recordingProfilesList;
     private String[] duplicateDetectionList;
     private String[] daysOfWeekList;
 
-    private Activity activity;
-    private ToolbarInterfaceLight toolbarInterface;
-    private DataStorage dataStorage;
     private Unbinder unbinder;
-    private MenuUtils menuUtils;
-    private int htspVersion;
     private String id;
-    private boolean isUnlocked;
-    private Profile profile;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -138,19 +120,6 @@ public class SeriesRecordingAddFragment extends Fragment implements HTSListener,
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        activity = getActivity();
-        if (activity instanceof ToolbarInterfaceLight) {
-            toolbarInterface = (ToolbarInterfaceLight) activity;
-        }
-
-        menuUtils = new MenuUtils(getActivity());
-        dataStorage = DataStorage.getInstance();
-        htspVersion = dataStorage.getProtocolVersion();
-        isUnlocked = TVHClientApplication.getInstance().isUnlocked();
-        DatabaseHelper databaseHelper = DatabaseHelper.getInstance(getActivity().getApplicationContext());
-        Connection connection = databaseHelper.getSelectedConnection();
-        profile = databaseHelper.getProfile(connection.recording_profile_id);
-        setHasOptionsMenu(true);
 
         // Determine if the server supports recording on all channels
         boolean allowRecordingOnAllChannels = htspVersion >= 21;
@@ -178,8 +147,8 @@ public class SeriesRecordingAddFragment extends Fragment implements HTSListener,
             minDuration = (recording.minDuration / 60);
             maxDuration = (recording.maxDuration / 60);
             timeEnabled = (recording.start >= 0 || recording.startWindow >= 0);
-            startTime = recording.start;
-            startWindowTime = recording.startWindow;
+            startTime.setTimeInMillis(recording.start * 60 * 1000);
+            startWindowTime.setTimeInMillis(recording.startWindow * 60 * 1000);
             startExtraTime = recording.startExtra;
             stopExtraTime = recording.stopExtra;
             duplicateDetectionId = recording.dupDetect;
@@ -191,13 +160,11 @@ public class SeriesRecordingAddFragment extends Fragment implements HTSListener,
             channelId = recording.channel;
             channel = dataStorage.getChannelFromArray(channelId);
         } else {
-            Calendar cal = Calendar.getInstance();
+            Calendar calendar = Calendar.getInstance();
             priority = 2;
             minDuration = 0;
             maxDuration = 0;
             timeEnabled = true;
-            startTime = cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE);
-            startWindowTime = cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE);
             startExtraTime = 2;
             stopExtraTime = 2;
             duplicateDetectionId = 0;
@@ -235,8 +202,8 @@ public class SeriesRecordingAddFragment extends Fragment implements HTSListener,
             minDuration = savedInstanceState.getInt("minDuration");
             maxDuration = savedInstanceState.getInt("maxDuration");
             timeEnabled = savedInstanceState.getBoolean("timeEnabled");
-            startTime = savedInstanceState.getInt("startTime");
-            startWindowTime = savedInstanceState.getInt("startWindowTime");
+            startTime.setTimeInMillis(savedInstanceState.getLong("startTime"));
+            startWindowTime.setTimeInMillis(savedInstanceState.getLong("startWindowTime"));
             startExtraTime = savedInstanceState.getLong("startExtraTime");
             stopExtraTime = savedInstanceState.getLong("stopExtraTime");
             duplicateDetectionId = savedInstanceState.getInt("duplicateDetectionId");
@@ -246,7 +213,7 @@ public class SeriesRecordingAddFragment extends Fragment implements HTSListener,
             name = savedInstanceState.getString("name");
             isEnabled = savedInstanceState.getBoolean("enabled");
             channelId = savedInstanceState.getInt("channelId");
-            dvrConfigName = savedInstanceState.getInt("configName");
+            recordingProfileName = savedInstanceState.getInt("configName");
         }
 
         isEnabledCheckbox.setVisibility(htspVersion >= 19 ? View.VISIBLE : View.GONE);
@@ -269,7 +236,7 @@ public class SeriesRecordingAddFragment extends Fragment implements HTSListener,
         priorityTextView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                handlePrioritySelection();
+                handlePrioritySelection(priorityTextView);
             }
         });
 
@@ -285,26 +252,26 @@ public class SeriesRecordingAddFragment extends Fragment implements HTSListener,
         recordingProfileNameTextView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                handleRecordingProfileSelection();
+                handleRecordingProfileSelection(recordingProfileNameTextView);
             }
         });
 
         startExtraTimeTextView.setText(String.valueOf(startExtraTime));
         stopExtraTimeTextView.setText(String.valueOf(stopExtraTime));
 
-        startTimeTextView.setText(Utils.getTimeStringFromValue(activity, startTime));
+        startTimeTextView.setText(getTimeStringFromDate(startTime));
         startTimeTextView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                handleStartTimeSelection();
+                handleTimeSelection(startTime, startTimeTextView);
             }
         });
 
-        startWindowTimeTextView.setText(Utils.getTimeStringFromValue(activity, startWindowTime));
+        startWindowTimeTextView.setText(getTimeStringFromDate(startWindowTime));
         startWindowTimeTextView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                handleStartWindowTimeSelection();
+                handleTimeSelection(startWindowTime, startWindowTimeTextView);
             }
         });
 
@@ -325,9 +292,9 @@ public class SeriesRecordingAddFragment extends Fragment implements HTSListener,
             public void onClick(View view) {
                 boolean checked = timeEnabledCheckBox.isChecked();
                 startTimeTextView.setEnabled(checked);
-                startTimeTextView.setText(Utils.getTimeStringFromValue(activity, (checked ? startTime : -1)));
+                startTimeTextView.setText(checked ? getTimeStringFromDate(startTime) : "-");
                 startWindowTimeTextView.setEnabled(checked);
-                startWindowTimeTextView.setText(Utils.getTimeStringFromValue(activity, (checked ? startWindowTime : -1)));
+                startWindowTimeTextView.setText(checked ? getTimeStringFromDate(startWindowTime) : "-");
             }
         });
 
@@ -345,22 +312,22 @@ public class SeriesRecordingAddFragment extends Fragment implements HTSListener,
     @Override
     public void onSaveInstanceState(Bundle outState) {
         saveWidgetValuesIntoVariables();
-        outState.putLong("priority", priority);
-        outState.putLong("minDuration", minDuration);
-        outState.putLong("maxDuration", maxDuration);
-        outState.putLong("startTime", startTime);
-        outState.putLong("startWindowTime", startWindowTime);
+        outState.putInt("priority", priority);
+        outState.putInt("minDuration", minDuration);
+        outState.putInt("maxDuration", maxDuration);
+        outState.putLong("startTime", startTime.getTimeInMillis());
+        outState.putLong("startWindowTime", startWindowTime.getTimeInMillis());
         outState.putBoolean("timeEnabledCheckBox", timeEnabled);
         outState.putLong("startExtraTime", startExtraTime);
         outState.putLong("stopExtraTime", stopExtraTime);
-        outState.putLong("duplicateDetectionId", duplicateDetectionId);
-        outState.putLong("daysOfWeek", daysOfWeek);
+        outState.putInt("duplicateDetectionId", duplicateDetectionId);
+        outState.putInt("daysOfWeek", daysOfWeek);
         outState.putString("directory", directory);
         outState.putString("title", title);
         outState.putString("name", name);
         outState.putBoolean("isEnabled", isEnabled);
         outState.putInt("channelId", channelId);
-        outState.putInt("configName", dvrConfigName);
+        outState.putInt("configName", recordingProfileName);
         super.onSaveInstanceState(outState);
     }
 
@@ -414,21 +381,6 @@ public class SeriesRecordingAddFragment extends Fragment implements HTSListener,
                 .show();
     }
 
-    private void handleRecordingProfileSelection() {
-        new MaterialDialog.Builder(activity)
-                .title(R.string.select_dvr_config)
-                .items(recordingProfilesList)
-                .itemsCallbackSingleChoice(recordingProfileName, new MaterialDialog.ListCallbackSingleChoice() {
-                    @Override
-                    public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
-                        recordingProfileNameTextView.setText(recordingProfilesList[which]);
-                        recordingProfileName = which;
-                        return true;
-                    }
-                })
-                .show();
-    }
-
     private void handleDayOfWeekSelection() {
         // Get the selected indices by storing the bits with 1 positions in a list
         // This list then needs to be converted to an Integer[] because the
@@ -460,51 +412,6 @@ public class SeriesRecordingAddFragment extends Fragment implements HTSListener,
                     }
                 })
                 .positiveText(R.string.select)
-                .show();
-    }
-
-    private void handleStartWindowTimeSelection() {
-        int hour = startWindowTime / 60;
-        int minute = startWindowTime % 60;
-        TimePickerDialog timePickerDialog = TimePickerDialog.newInstance(new TimePickerDialog.OnTimeSetListener() {
-            @Override
-            public void onTimeSet(RadialPickerLayout timePicker, int selectedHour, int selectedMinute) {
-                // Save the given value in seconds. This values will be passed to the server
-                startWindowTime = (selectedHour * 60 + selectedMinute);
-                startWindowTimeTextView.setText(Utils.getTimeStringFromValue(activity, startWindowTime));
-            }
-        }, hour, minute, true, false);
-        timePickerDialog.setCloseOnSingleTapMinute(false);
-        timePickerDialog.show(getChildFragmentManager(), "");
-    }
-
-    private void handleStartTimeSelection() {
-        int hour = startTime / 60;
-        int minute = startTime % 60;
-        TimePickerDialog timePickerDialog = TimePickerDialog.newInstance(new TimePickerDialog.OnTimeSetListener() {
-            @Override
-            public void onTimeSet(RadialPickerLayout timePicker, int selectedHour, int selectedMinute) {
-                // Save the given value in seconds. This values will be passed to the server
-                startTime = (selectedHour * 60 + selectedMinute);
-                startTimeTextView.setText(Utils.getTimeStringFromValue(activity, startTime));
-            }
-        }, hour, minute, true, false);
-        timePickerDialog.setCloseOnSingleTapMinute(false);
-        timePickerDialog.show(getChildFragmentManager(), "");
-    }
-
-    private void handlePrioritySelection() {
-        new MaterialDialog.Builder(activity)
-                .title(R.string.select_priority)
-                .items(priorityList)
-                .itemsCallbackSingleChoice(priority, new MaterialDialog.ListCallbackSingleChoice() {
-                    @Override
-                    public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
-                        priorityTextView.setText(priorityList[which]);
-                        priority = which;
-                        return true;
-                    }
-                })
                 .show();
     }
 
@@ -667,8 +574,8 @@ public class SeriesRecordingAddFragment extends Fragment implements HTSListener,
 
         // Assume no start time is specified if 0:00 is selected
         if (timeEnabled) {
-            intent.putExtra("start", startTime);
-            intent.putExtra("startWindow", startWindowTime);
+            intent.putExtra("start", startTime.getTimeInMillis() / 60 / 1000);
+            intent.putExtra("startWindow", startWindowTime.getTimeInMillis() / 60 / 1000);
         }
 
         intent.putExtra("startExtra", startExtraTime);

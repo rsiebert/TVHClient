@@ -1,11 +1,9 @@
 package org.tvheadend.tvhclient.fragments.recordings;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -21,23 +19,14 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.sleepbot.datetimepicker.time.RadialPickerLayout;
-import com.sleepbot.datetimepicker.time.TimePickerDialog;
 
-import org.tvheadend.tvhclient.DataStorage;
-import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.activities.ToolbarInterfaceLight;
 import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.interfaces.HTSListener;
 import org.tvheadend.tvhclient.model.Channel;
-import org.tvheadend.tvhclient.model.Connection;
-import org.tvheadend.tvhclient.model.Profile;
 import org.tvheadend.tvhclient.model.TimerRecording;
 import org.tvheadend.tvhclient.utils.MenuChannelSelectionCallback;
-import org.tvheadend.tvhclient.utils.MenuUtils;
-import org.tvheadend.tvhclient.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -47,7 +36,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-public class TimerRecordingAddFragment extends Fragment implements HTSListener, MenuChannelSelectionCallback {
+// TODO convert handleStartTimeSelection and handleStopTimeSelection to use calendar
+// TODO extend from BaseRecordingAddEditFragment
+
+public class TimerRecordingAddFragment extends BaseRecordingAddEditFragment implements HTSListener, MenuChannelSelectionCallback {
 
     @BindView(R.id.is_enabled)
     CheckBox isEnabledCheckbox;
@@ -74,29 +66,18 @@ public class TimerRecordingAddFragment extends Fragment implements HTSListener, 
     @BindView(R.id.dvr_config_label)
     TextView recordingProfileLabelTextView;
 
-    private int priority;
-    private int startTime;
-    private int stopTime;
+    private Calendar startTime = Calendar.getInstance();
+    private Calendar stopTime = Calendar.getInstance();
     private int daysOfWeek;
     private String directory;
     private String title;
     private String name;
     private boolean isEnabled;
     private int channelId;
-    private int recordingProfileName;
-
-    private String[] priorityList;
-    private String[] recordingProfilesList;
     private String[] daysOfWeekList;
 
-    private Activity activity;
-    private ToolbarInterfaceLight toolbarInterface;
-    private DataStorage dataStorage;
     private Unbinder unbinder;
-    private MenuUtils menuUtils;
-    private int htspVersion;
     private String id;
-    private Profile profile;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -115,29 +96,10 @@ public class TimerRecordingAddFragment extends Fragment implements HTSListener, 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        activity = getActivity();
-        if (activity instanceof ToolbarInterfaceLight) {
-            toolbarInterface = (ToolbarInterfaceLight) activity;
-        }
-
-        menuUtils = new MenuUtils(getActivity());
-        dataStorage = DataStorage.getInstance();
-        htspVersion = dataStorage.getProtocolVersion();
-        DatabaseHelper databaseHelper = DatabaseHelper.getInstance(getActivity().getApplicationContext());
-        Connection connection = databaseHelper.getSelectedConnection();
-        profile = databaseHelper.getProfile(connection.recording_profile_id);
-        setHasOptionsMenu(true);
 
         // Determine if the server supports recording on all channels
         boolean allowRecordingOnAllChannels = htspVersion >= 21;
 
-        // Create the list of available configurations that the user can select from
-        recordingProfilesList = new String[dataStorage.getDvrConfigs().size()];
-        for (int i = 0; i < dataStorage.getDvrConfigs().size(); i++) {
-            recordingProfilesList[i] = dataStorage.getDvrConfigs().get(i).name;
-        }
-
-        priorityList = activity.getResources().getStringArray(R.array.dvr_priorities);
         daysOfWeekList = activity.getResources().getStringArray(R.array.day_short_names);
 
         Bundle bundle = getArguments();
@@ -150,8 +112,8 @@ public class TimerRecordingAddFragment extends Fragment implements HTSListener, 
         if (!TextUtils.isEmpty(id)) {
             TimerRecording recording = dataStorage.getTimerRecordingFromArray(id);
             priority = recording.priority;
-            startTime = recording.start;
-            stopTime = recording.stop;
+            startTime.setTimeInMillis(recording.start * 60 * 1000);
+            stopTime.setTimeInMillis(recording.stop * 60 * 1000);
             daysOfWeek = recording.daysOfWeek;
             directory = recording.directory;
             title = recording.title;
@@ -160,11 +122,10 @@ public class TimerRecordingAddFragment extends Fragment implements HTSListener, 
             channelId = recording.channel;
             channel = dataStorage.getChannelFromArray(channelId);
         } else {
-            Calendar cal = Calendar.getInstance();
-            int currentTime = cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE);
+            Calendar calendar = Calendar.getInstance();
             priority = 2;
-            startTime = currentTime;
-            stopTime = currentTime + 30;
+            startTime.setTimeInMillis(calendar.getTimeInMillis());
+            stopTime.setTimeInMillis(calendar.getTimeInMillis() + 30 * 60 * 1000);
             daysOfWeek = 127;
             directory = "";
             title = "";
@@ -196,8 +157,8 @@ public class TimerRecordingAddFragment extends Fragment implements HTSListener, 
             title = savedInstanceState.getString("title");
             name = savedInstanceState.getString("name");
             channelId = savedInstanceState.getInt("channelId");
-            startTime = savedInstanceState.getInt("startTime");
-            stopTime = savedInstanceState.getInt("stopTime");
+            startTime.setTimeInMillis(savedInstanceState.getLong("startTime"));
+            stopTime.setTimeInMillis(savedInstanceState.getLong("stopTime"));
             daysOfWeek = savedInstanceState.getInt("daysOfWeek");
             priority = savedInstanceState.getInt("priority");
             directory = savedInstanceState.getString("directory");
@@ -224,7 +185,7 @@ public class TimerRecordingAddFragment extends Fragment implements HTSListener, 
         priorityTextView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                handlePrioritySelection();
+                handlePrioritySelection(priorityTextView);
             }
         });
 
@@ -244,19 +205,19 @@ public class TimerRecordingAddFragment extends Fragment implements HTSListener, 
             }
         });
 
-        startTimeTextView.setText(Utils.getTimeStringFromValue(activity, startTime));
+        startTimeTextView.setText(getTimeStringFromDate(startTime));
         startTimeTextView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                handleStartTimeSelection();
+                handleTimeSelection(startTime, startTimeTextView);
             }
         });
 
-        stopTimeTextView.setText(Utils.getTimeStringFromValue(activity, stopTime));
+        stopTimeTextView.setText(getTimeStringFromDate(stopTime));
         stopTimeTextView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                handleStopTimeSelection();
+                handleTimeSelection(stopTime, stopTimeTextView);
             }
         });
 
@@ -276,8 +237,8 @@ public class TimerRecordingAddFragment extends Fragment implements HTSListener, 
         outState.putString("title", title);
         outState.putString("name", name);
         outState.putInt("channelId", channelId);
-        outState.putInt("startTime", startTime);
-        outState.putInt("stopTime", stopTime);
+        outState.putLong("startTime", startTime.getTimeInMillis() / 60 / 1000);
+        outState.putLong("stopTime", stopTime.getTimeInMillis() / 60 / 1000);
         outState.putInt("daysOfWeek", daysOfWeek);
         outState.putInt("priority", priority);
         outState.putString("directory", directory);
@@ -366,52 +327,6 @@ public class TimerRecordingAddFragment extends Fragment implements HTSListener, 
                     }
                 })
                 .positiveText(R.string.select)
-                .show();
-    }
-
-    private void handleStopTimeSelection() {
-        int hour = stopTime / 60;
-        int minute = stopTime % 60;
-        TimePickerDialog timePickerDialog = TimePickerDialog.newInstance(new TimePickerDialog.OnTimeSetListener() {
-            @Override
-            public void onTimeSet(RadialPickerLayout timePicker, int selectedHour, int selectedMinute) {
-                // Save the given value in seconds. This values will be passed to the server
-                stopTime = (selectedHour * 60 + selectedMinute);
-                stopTimeTextView.setText(Utils.getTimeStringFromValue(activity, stopTime));
-            }
-        }, hour, minute, true, false);
-
-        timePickerDialog.setCloseOnSingleTapMinute(false);
-        timePickerDialog.show(getChildFragmentManager(), "");
-    }
-
-    private void handleStartTimeSelection() {
-        int hour = startTime / 60;
-        int minute = startTime % 60;
-        TimePickerDialog timePickerDialog = TimePickerDialog.newInstance(new TimePickerDialog.OnTimeSetListener() {
-            @Override
-            public void onTimeSet(RadialPickerLayout timePicker, int selectedHour, int selectedMinute) {
-                // Save the given value in seconds. This values will be passed to the server
-                startTime = (selectedHour * 60 + selectedMinute);
-                startTimeTextView.setText(Utils.getTimeStringFromValue(activity, startTime));
-            }
-        }, hour, minute, true, false);
-        timePickerDialog.setCloseOnSingleTapMinute(false);
-        timePickerDialog.show(getChildFragmentManager(), "");
-    }
-
-    private void handlePrioritySelection() {
-        new MaterialDialog.Builder(activity)
-                .title(R.string.select_priority)
-                .items(priorityList)
-                .itemsCallbackSingleChoice(priority, new MaterialDialog.ListCallbackSingleChoice() {
-                    @Override
-                    public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
-                        priorityTextView.setText(priorityList[which]);
-                        priority = which;
-                        return true;
-                    }
-                })
                 .show();
     }
 

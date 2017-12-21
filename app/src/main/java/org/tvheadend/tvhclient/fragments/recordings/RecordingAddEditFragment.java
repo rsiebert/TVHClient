@@ -1,11 +1,9 @@
 package org.tvheadend.tvhclient.fragments.recordings;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -21,22 +19,12 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.fourmob.datetimepicker.date.DatePickerDialog;
-import com.sleepbot.datetimepicker.time.RadialPickerLayout;
-import com.sleepbot.datetimepicker.time.TimePickerDialog;
 
-import org.tvheadend.tvhclient.DataStorage;
-import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.activities.ToolbarInterfaceLight;
 import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.model.Channel;
-import org.tvheadend.tvhclient.model.Connection;
-import org.tvheadend.tvhclient.model.Profile;
 import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.utils.MenuChannelSelectionCallback;
-import org.tvheadend.tvhclient.utils.MenuUtils;
 
 import java.util.Calendar;
 
@@ -49,7 +37,7 @@ import butterknife.Unbinder;
 // TODO preselect the first channel in the list
 // TODO extend from BaseRecordingAddEditFragment
 
-public class RecordingAddEditFragment extends Fragment implements MenuChannelSelectionCallback {
+public class RecordingAddEditFragment extends BaseRecordingAddEditFragment implements MenuChannelSelectionCallback {
 
     @BindView(R.id.start_time)
     TextView startTimeTextView;
@@ -61,8 +49,6 @@ public class RecordingAddEditFragment extends Fragment implements MenuChannelSel
     TextView stopDateTextView;
     @BindView(R.id.is_enabled)
     CheckBox isEnabledCheckbox;
-    @BindView(R.id.priority)
-    TextView priorityTextView;
     @BindView(R.id.start_extra)
     EditText startExtraEditText;
     @BindView(R.id.stop_extra)
@@ -79,14 +65,17 @@ public class RecordingAddEditFragment extends Fragment implements MenuChannelSel
     EditText descriptionEditText;
     @BindView(R.id.description_label)
     TextView descriptionLabelTextView;
+    @BindView(R.id.channel_label)
+    TextView channelNameLabelTextView;
     @BindView(R.id.channel)
     TextView channelNameTextView;
-    @BindView(R.id.dvr_config)
-    TextView recordingProfileNameTextView;
     @BindView(R.id.dvr_config_label)
     TextView recordingProfileLabelTextView;
+    @BindView(R.id.priority)
+    TextView priorityTextView;
+    @BindView(R.id.dvr_config)
+    TextView recordingProfileNameTextView;
 
-    private int priority;
     private String title;
     private String subtitle;
     private String description;
@@ -96,20 +85,11 @@ public class RecordingAddEditFragment extends Fragment implements MenuChannelSel
     private long stopExtra;
     private boolean isEnabled;
     private int channelId;
-    private int recordingProfileName;
 
-    private String[] priorityList;
-    private String[] recordingProfilesList;
-
-    private Activity activity;
-    private ToolbarInterfaceLight toolbarInterface;
-    private DataStorage dataStorage;
     private Unbinder unbinder;
-    private MenuUtils menuUtils;
-    private int htspVersion;
-    private boolean isUnlocked;
-    private Profile profile;
     private int dvrId = 0;
+    private boolean isRecording;
+    private boolean isScheduled;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -128,19 +108,6 @@ public class RecordingAddEditFragment extends Fragment implements MenuChannelSel
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        activity = getActivity();
-        if (activity instanceof ToolbarInterfaceLight) {
-            toolbarInterface = (ToolbarInterfaceLight) activity;
-        }
-
-        menuUtils = new MenuUtils(getActivity());
-        dataStorage = DataStorage.getInstance();
-        htspVersion = dataStorage.getProtocolVersion();
-        isUnlocked = TVHClientApplication.getInstance().isUnlocked();
-        DatabaseHelper databaseHelper = DatabaseHelper.getInstance(getActivity().getApplicationContext());
-        Connection connection = databaseHelper.getSelectedConnection();
-        profile = databaseHelper.getProfile(connection.recording_profile_id);
-        setHasOptionsMenu(true);
 
         // Create the list of available configurations that the user can select from
         recordingProfilesList = new String[dataStorage.getDvrConfigs().size()];
@@ -170,6 +137,11 @@ public class RecordingAddEditFragment extends Fragment implements MenuChannelSel
             isEnabled = recording.enabled > 0;
             channelId = recording.channel;
             channel = dataStorage.getChannelFromArray(channelId);
+            // If the recording is already being recorded, show only the
+            // title, subtitle, description, stop and stop extra field
+            isRecording = recording.isRecording();
+            // If the recording is scheduled (regular edit mode, hide the channel selection)
+            isScheduled = recording.isScheduled();
         } else {
             priority = 2;
             startExtra = 0;
@@ -216,9 +188,6 @@ public class RecordingAddEditFragment extends Fragment implements MenuChannelSel
             isEnabled = savedInstanceState.getBoolean("isEnabled");
         }
 
-        isEnabledCheckbox.setVisibility(htspVersion >= 23 ? View.VISIBLE : View.GONE);
-        isEnabledCheckbox.setChecked(isEnabled);
-
         titleLabelTextView.setVisibility(htspVersion >= 21 ? View.VISIBLE : View.GONE);
         titleEditText.setVisibility(htspVersion >= 21 ? View.VISIBLE : View.GONE);
         titleEditText.setText(title);
@@ -229,51 +198,11 @@ public class RecordingAddEditFragment extends Fragment implements MenuChannelSel
         descriptionEditText.setVisibility(htspVersion >= 21 ? View.VISIBLE : View.GONE);
         descriptionEditText.setText(description);
 
-        channelNameTextView.setText(channel != null ? channel.channelName : getString(R.string.no_channel));
-        channelNameTextView.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                menuUtils.handleMenuChannelSelection(channelId, RecordingAddEditFragment.this, false);
-            }
-        });
-
-        priorityTextView.setText(priorityList[priority]);
-        priorityTextView.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                handlePrioritySelection();
-            }
-        });
-
-        recordingProfileNameTextView.setText(recordingProfilesList[recordingProfileName]);
-        recordingProfileNameTextView.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                handleRecordingProfileSelection();
-            }
-        });
-
-        startTimeTextView.setText(getTimeStringFromDate(startTime));
-        startTimeTextView.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                handleStartTimeSelection();
-            }
-        });
-
         stopTimeTextView.setText(getTimeStringFromDate(stopTime));
         stopTimeTextView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                handleStopTimeSelection();
-            }
-        });
-
-        startDateTextView.setText(getDateStringFromDate(startTime));
-        startDateTextView.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                handleStartDateSelection();
+                handleTimeSelection(stopTime, stopTimeTextView);
             }
         });
 
@@ -281,21 +210,75 @@ public class RecordingAddEditFragment extends Fragment implements MenuChannelSel
         stopDateTextView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                handleStopDateSelection();
+                handleDateSelection(stopTime, stopDateTextView);
+            }
+        });
+
+        stopExtraEditText.setText(String.valueOf(stopExtra));
+
+        if (isScheduled || isRecording) {
+            channelNameLabelTextView.setVisibility(View.GONE);
+            channelNameTextView.setVisibility(View.GONE);
+        } else {
+            channelNameTextView.setText(channel != null ? channel.channelName : getString(R.string.no_channel));
+            channelNameTextView.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    menuUtils.handleMenuChannelSelection(channelId, RecordingAddEditFragment.this, false);
+                }
+            });
+        }
+
+        isEnabledCheckbox.setVisibility(htspVersion >= 23 && !isRecording ? View.VISIBLE : View.GONE);
+        isEnabledCheckbox.setChecked(isEnabled);
+
+        priorityTextView.setVisibility(!isRecording ? View.VISIBLE : View.GONE);
+        priorityTextView.setText(priorityList[priority]);
+        priorityTextView.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                handlePrioritySelection(priorityTextView);
+            }
+        });
+
+        recordingProfileNameTextView.setVisibility(!isRecording ? View.VISIBLE : View.GONE);
+        recordingProfileNameTextView.setText(recordingProfilesList[recordingProfileName]);
+        recordingProfileNameTextView.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                handleRecordingProfileSelection(recordingProfileNameTextView);
+            }
+        });
+
+        startTimeTextView.setVisibility(!isRecording ? View.VISIBLE : View.GONE);
+        startTimeTextView.setText(getTimeStringFromDate(startTime));
+        startTimeTextView.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                handleTimeSelection(startTime, startTimeTextView);
+            }
+        });
+
+        startDateTextView.setVisibility(!isRecording ? View.VISIBLE : View.GONE);
+        startDateTextView.setText(getDateStringFromDate(startTime));
+        startDateTextView.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                handleDateSelection(startTime, startDateTextView);
             }
         });
 
         // Add the additional pre- and post recording values in minutes
+        startExtraEditText.setVisibility(!isRecording ? View.VISIBLE : View.GONE);
         startExtraEditText.setText(String.valueOf(startExtra));
-        stopExtraEditText.setText(String.valueOf(stopExtra));
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         saveWidgetValuesIntoVariables();
         outState.putInt("priority", priority);
-        outState.putLong("startTime", startTime.getTimeInMillis());
-        outState.putLong("stopTime", stopTime.getTimeInMillis());
+        outState.putLong("startTime", startTime.getTimeInMillis() / 60 / 1000);
+        outState.putLong("stopTime", stopTime.getTimeInMillis() / 60 / 1000);
         outState.putLong("startExtra", startExtra);
         outState.putLong("stopExtra", stopExtra);
         outState.putString("title", title);
@@ -328,109 +311,6 @@ public class RecordingAddEditFragment extends Fragment implements MenuChannelSel
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-    private void handleStartDateSelection() {
-        int year = startTime.get(Calendar.YEAR);
-        int month = startTime.get(Calendar.MONTH);
-        int day = startTime.get(Calendar.DAY_OF_MONTH);
-        DatePickerDialog datePicker = DatePickerDialog.newInstance(
-                new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(DatePickerDialog datePickerDialog, int year, int month, int day) {
-                        startTime.set(Calendar.DAY_OF_MONTH, day);
-                        startTime.set(Calendar.MONTH, month);
-                        startTime.set(Calendar.YEAR, year);
-                        startDateTextView.setText(getDateStringFromDate(startTime));
-                    }
-                }, year, month, day, false);
-
-        datePicker.setCloseOnSingleTapDay(false);
-        datePicker.show(getChildFragmentManager(), "");
-    }
-
-    private void handleStopDateSelection() {
-        int year = stopTime.get(Calendar.YEAR);
-        int month = stopTime.get(Calendar.MONTH);
-        int day = stopTime.get(Calendar.DAY_OF_MONTH);
-        DatePickerDialog datePicker = DatePickerDialog.newInstance(
-                new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(DatePickerDialog datePickerDialog, int year, int month, int day) {
-                        stopTime.set(Calendar.DAY_OF_MONTH, day);
-                        stopTime.set(Calendar.MONTH, month);
-                        stopTime.set(Calendar.YEAR, year);
-                        stopDateTextView.setText(getDateStringFromDate(stopTime));
-                    }
-                }, year, month, day, false);
-
-        datePicker.setCloseOnSingleTapDay(false);
-        datePicker.show(getChildFragmentManager(), "");
-    }
-
-    private void handleStopTimeSelection() {
-        int hour = stopTime.get(Calendar.HOUR_OF_DAY);
-        int minute = stopTime.get(Calendar.MINUTE);
-        TimePickerDialog timePickerDialog = TimePickerDialog.newInstance(
-                new TimePickerDialog.OnTimeSetListener() {
-                    @Override
-                    public void onTimeSet(RadialPickerLayout timePicker, int selectedHour, int selectedMinute) {
-                        stopTime.set(Calendar.HOUR_OF_DAY, selectedHour);
-                        stopTime.set(Calendar.MINUTE, selectedMinute);
-                        stopTimeTextView.setText(getTimeStringFromDate(stopTime));
-                    }
-                }, hour, minute, true, false);
-
-        timePickerDialog.setCloseOnSingleTapMinute(false);
-        timePickerDialog.show(getChildFragmentManager(), "");
-    }
-
-    private void handleStartTimeSelection() {
-        int hour = startTime.get(Calendar.HOUR_OF_DAY);
-        int minute = startTime.get(Calendar.MINUTE);
-        TimePickerDialog timePickerDialog = TimePickerDialog.newInstance(
-                new TimePickerDialog.OnTimeSetListener() {
-                    @Override
-                    public void onTimeSet(RadialPickerLayout timePicker, int selectedHour, int selectedMinute) {
-                        // Save the given value in seconds. This values will be passed to the server
-                        startTime.set(Calendar.HOUR_OF_DAY, selectedHour);
-                        startTime.set(Calendar.MINUTE, selectedMinute);
-                        startTimeTextView.setText(getTimeStringFromDate(startTime));
-                    }
-                }, hour, minute, true, false);
-
-        timePickerDialog.setCloseOnSingleTapMinute(false);
-        timePickerDialog.show(getChildFragmentManager(), "");
-    }
-
-    private void handleRecordingProfileSelection() {
-        new MaterialDialog.Builder(activity)
-                .title(R.string.select_dvr_config)
-                .items(recordingProfilesList)
-                .itemsCallbackSingleChoice(recordingProfileName, new MaterialDialog.ListCallbackSingleChoice() {
-                    @Override
-                    public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
-                        recordingProfileNameTextView.setText(recordingProfilesList[which]);
-                        recordingProfileName = which;
-                        return true;
-                    }
-                })
-                .show();
-    }
-
-    private void handlePrioritySelection() {
-        new MaterialDialog.Builder(activity)
-                .title(R.string.select_priority)
-                .items(priorityList)
-                .itemsCallbackSingleChoice(priority, new MaterialDialog.ListCallbackSingleChoice() {
-                    @Override
-                    public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
-                        priorityTextView.setText(priorityList[which]);
-                        priority = which;
-                        return true;
-                    }
-                })
-                .show();
     }
 
     /**
@@ -492,27 +372,30 @@ public class RecordingAddEditFragment extends Fragment implements MenuChannelSel
     private Intent getIntentData() {
         Intent intent = new Intent(activity, HTSService.class);
 
-        if (dvrId == 0) {
-            intent.putExtra("title", title);
-            intent.putExtra("subtitle", subtitle);
-            intent.putExtra("startTime", startTime); // Pass on seconds not milliseconds
-            intent.putExtra("stopTime", stopTime); // Pass on seconds not milliseconds
-            intent.putExtra("startExtra", startExtra);
-            intent.putExtra("stopExtra", stopExtra);
-            intent.putExtra("description", description);
-            intent.putExtra("priority", priority);
-            intent.putExtra("channelId", channelId);
-            intent.putExtra("enabled", (isEnabled ? 1 : 0));
 
-            // Add the recording profile if available and enabled
-            if (profile != null && profile.enabled
-                    && (recordingProfileNameTextView.getText().length() > 0)
-                    && htspVersion >= 16
-                    && isUnlocked) {
-                // Use the selected profile. If no change was done in the
-                // selection then the default one from the connection setting will be used
-                intent.putExtra("configName", recordingProfileNameTextView.getText().toString());
-            }
+        intent.putExtra("title", title);
+        intent.putExtra("subtitle", subtitle);
+        intent.putExtra("description", description);
+        intent.putExtra("stopTime", stopTime); // Pass on seconds not milliseconds
+        intent.putExtra("stopExtra", stopExtra);
+
+        if (!isScheduled) {
+            intent.putExtra("channelId", channelId);
+        }
+        if (!isRecording) {
+            intent.putExtra("startTime", startTime); // Pass on seconds not milliseconds
+            intent.putExtra("startExtra", startExtra);
+            intent.putExtra("priority", priority);
+            intent.putExtra("enabled", (isEnabled ? 1 : 0));
+        }
+        // Add the recording profile if available and enabled
+        if (profile != null && profile.enabled
+                && (recordingProfileNameTextView.getText().length() > 0)
+                && htspVersion >= 16
+                && isUnlocked) {
+            // Use the selected profile. If no change was done in the
+            // selection then the default one from the connection setting will be used
+            intent.putExtra("configName", recordingProfileNameTextView.getText().toString());
         }
         return intent;
     }
@@ -540,23 +423,6 @@ public class RecordingAddEditFragment extends Fragment implements MenuChannelSel
                         dialog.cancel();
                     }
                 }).show();
-    }
-
-    private String getDateStringFromDate(Calendar cal) {
-        int day = cal.get(Calendar.DAY_OF_MONTH);
-        int month = cal.get(Calendar.MONTH) + 1;
-        int year = cal.get(Calendar.YEAR);
-        String text = ((day < 10) ? "0" + day : day) + "."
-                + ((month < 10) ? "0" + month : month) + "." + year;
-        return text;
-    }
-
-    private String getTimeStringFromDate(Calendar cal) {
-        int hour = cal.get(Calendar.HOUR_OF_DAY);
-        int minute = cal.get(Calendar.MINUTE);
-        String text = ((hour < 10) ? "0" + hour : hour) + ":"
-                + ((minute < 10) ? "0" + minute : minute);
-        return text;
     }
 
     @Override
