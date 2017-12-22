@@ -35,7 +35,7 @@ import butterknife.Unbinder;
 // TODO hide show layout stuff if editing scheduled or recording recordings
 // TODO updated getIntentData according to the previous todo
 // TODO preselect the first channel in the list
-// TODO extend from BaseRecordingAddEditFragment
+// TODO orientation change when editing messed up the time
 
 public class RecordingAddEditFragment extends BaseRecordingAddEditFragment implements MenuChannelSelectionCallback {
 

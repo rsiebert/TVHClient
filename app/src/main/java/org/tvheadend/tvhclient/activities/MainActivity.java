@@ -99,6 +99,8 @@ import java.util.Map;
 // TODO move chromecast to another class
 // TODO move drawer init to another class
 // TODO remove remembering list positions
+// TODO when in dual pane and back edit menu is visible
+// TODO make nav image blasser
 
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, ChangeLogDialogInterface, ToolbarInterface, ToolbarInterfaceLight, FragmentStatusInterface, FragmentScrollInterface, HTSListener, WakeOnLanTaskCallback {
 

@@ -22,6 +22,10 @@ import org.tvheadend.tvhclient.utils.MenuUtils;
 
 import java.util.Calendar;
 
+// TODO move day of week into here
+// TODO Rename to recording utils maybe
+// TODO add title and full names to day of weeks list
+
 public class BaseRecordingAddEditFragment extends Fragment {
 
     protected Activity activity;
