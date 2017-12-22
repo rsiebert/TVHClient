@@ -13,7 +13,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.support.annotation.AttrRes;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
@@ -24,7 +23,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -41,16 +39,6 @@ import com.google.android.libraries.cast.companionlibrary.cast.VideoCastManager;
 import com.google.android.libraries.cast.companionlibrary.cast.callbacks.VideoCastConsumerImpl;
 import com.google.android.libraries.cast.companionlibrary.widgets.IntroductoryOverlay;
 import com.google.android.libraries.cast.companionlibrary.widgets.MiniController;
-import com.mikepenz.materialdrawer.AccountHeader;
-import com.mikepenz.materialdrawer.AccountHeaderBuilder;
-import com.mikepenz.materialdrawer.Drawer;
-import com.mikepenz.materialdrawer.DrawerBuilder;
-import com.mikepenz.materialdrawer.holder.BadgeStyle;
-import com.mikepenz.materialdrawer.holder.StringHolder;
-import com.mikepenz.materialdrawer.model.DividerDrawerItem;
-import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
-import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
-import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
 import org.tvheadend.tvhclient.ChangeLogDialog;
@@ -92,7 +80,20 @@ import org.tvheadend.tvhclient.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+
+import static org.tvheadend.tvhclient.activities.NavigationDrawer.MENU_CHANNELS;
+import static org.tvheadend.tvhclient.activities.NavigationDrawer.MENU_COMPLETED_RECORDINGS;
+import static org.tvheadend.tvhclient.activities.NavigationDrawer.MENU_FAILED_RECORDINGS;
+import static org.tvheadend.tvhclient.activities.NavigationDrawer.MENU_INFORMATION;
+import static org.tvheadend.tvhclient.activities.NavigationDrawer.MENU_PROGRAM_GUIDE;
+import static org.tvheadend.tvhclient.activities.NavigationDrawer.MENU_REMOVED_RECORDINGS;
+import static org.tvheadend.tvhclient.activities.NavigationDrawer.MENU_SCHEDULED_RECORDINGS;
+import static org.tvheadend.tvhclient.activities.NavigationDrawer.MENU_SERIES_RECORDINGS;
+import static org.tvheadend.tvhclient.activities.NavigationDrawer.MENU_SETTINGS;
+import static org.tvheadend.tvhclient.activities.NavigationDrawer.MENU_STATUS;
+import static org.tvheadend.tvhclient.activities.NavigationDrawer.MENU_TIMER_RECORDINGS;
+import static org.tvheadend.tvhclient.activities.NavigationDrawer.MENU_UNKNOWN;
+import static org.tvheadend.tvhclient.activities.NavigationDrawer.MENU_UNLOCKER;
 
 // TODO hide unlocker menu if already unlocked
 // TODO move chromecast to another class
@@ -101,7 +102,7 @@ import java.util.Map;
 // TODO make nav image blasser
 // TODO confirmation of added/edited recordings...
 
-public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, ChangeLogDialogInterface, ToolbarInterface, ToolbarInterfaceLight, FragmentStatusInterface, FragmentScrollInterface, HTSListener, WakeOnLanTaskCallback {
+public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, ChangeLogDialogInterface, ToolbarInterface, ToolbarInterfaceLight, FragmentStatusInterface, FragmentScrollInterface, HTSListener, WakeOnLanTaskCallback, NavigationDrawerCallback {
 
     private final static String TAG = MainActivity.class.getSimpleName();
 
@@ -118,21 +119,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private int defaultMenuPosition = MENU_UNKNOWN;
     private int programGuideListPosition = 0;
     private int programGuideListPositionOffset = 0;
-
-    // The index for the navigation drawer menus
-    private static final int MENU_UNKNOWN = -1;
-    private static final int MENU_CHANNELS = 0;
-    private static final int MENU_PROGRAM_GUIDE = 1;
-    private static final int MENU_COMPLETED_RECORDINGS = 2;
-    private static final int MENU_SCHEDULED_RECORDINGS = 3;
-    private static final int MENU_SERIES_RECORDINGS = 4;
-    private static final int MENU_TIMER_RECORDINGS = 5;
-    private static final int MENU_FAILED_RECORDINGS = 6;
-    private static final int MENU_REMOVED_RECORDINGS = 7;
-    private static final int MENU_STATUS = 8;
-    private static final int MENU_INFORMATION = 9;
-    private static final int MENU_SETTINGS = 10;
-    private static final int MENU_UNLOCKER = 11;
 
     // Holds the list of selected menu items so the previous fragment can be
     // shown again when the user has pressed the back key.
@@ -177,8 +163,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private MenuUtils menuUtils;
 
     private SharedPreferences sharedPreferences;
-    private Drawer result;
-    private AccountHeader headerResult;
+    private NavigationDrawer navigationDrawer;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -194,6 +179,11 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         View v = findViewById(R.id.right_fragment);
         isDualPane = v != null && v.getVisibility() == View.VISIBLE;
 
+        // Get the main toolbar and the floating action button (fab). The fab is
+        // hidden as a default and only visible when required for certain actions
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
         app = (TVHClientApplication) getApplication();
         logger = Logger.getInstance();
         databaseHelper = DatabaseHelper.getInstance(getApplicationContext());
@@ -203,110 +193,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         menuUtils = new MenuUtils(this);
 
-        // Get the main toolbar and the floating action button (fab). The fab is
-        // hidden as a default and only visible when required for certain actions
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        // Create the AccountHeader
-        headerResult = new AccountHeaderBuilder()
-                .withActivity(this)
-                .withCompactStyle(true)
-                .withSelectionListEnabledForSingleProfile(false)
-                .withProfileImagesVisible(false)
-                .withHeaderBackground(MiscUtils.getThemeId(this) == R.style.CustomTheme_Light ? R.drawable.header_light : R.drawable.header_dark)
-                .withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
-                    @Override
-                    public boolean onProfileChanged(View view, IProfile profile, boolean currentProfile) {
-                        result.closeDrawer();
-                        if (!currentProfile) {
-                            handleDrawerProfileSelected(profile);
-                        }
-                        return true;
-                    }
-                })
-                .withSavedInstance(savedInstanceState)
-                .build();
-
-        BadgeStyle badgeStyle = new BadgeStyle()
-                .withColorRes(getResourceIdFromAttr(this, R.attr.material_drawer_badge));
-
-        PrimaryDrawerItem channelItem = new PrimaryDrawerItem()
-                .withIdentifier(MENU_CHANNELS).withName(R.string.channels)
-                .withIcon(getResourceIdFromAttr(this, R.attr.ic_menu_channels))
-                .withBadgeStyle(badgeStyle);
-        PrimaryDrawerItem programGuideItem = new PrimaryDrawerItem()
-                .withIdentifier(MENU_PROGRAM_GUIDE).withName(R.string.pref_program_guide)
-                .withIcon(getResourceIdFromAttr(this, R.attr.ic_menu_program_guide));
-        PrimaryDrawerItem completedRecordingsItem = new PrimaryDrawerItem()
-                .withIdentifier(MENU_COMPLETED_RECORDINGS).withName(R.string.completed_recordings)
-                .withIcon(getResourceIdFromAttr(this, R.attr.ic_menu_completed_recordings))
-                .withBadgeStyle(badgeStyle);
-        PrimaryDrawerItem scheduledRecordingsItem = new PrimaryDrawerItem()
-                .withIdentifier(MENU_SCHEDULED_RECORDINGS).withName(R.string.scheduled_recordings)
-                .withIcon(getResourceIdFromAttr(this, R.attr.ic_menu_scheduled_recordings))
-                .withBadgeStyle(badgeStyle);
-        PrimaryDrawerItem seriesRecordingsItem = new PrimaryDrawerItem()
-                .withIdentifier(MENU_SERIES_RECORDINGS).withName(R.string.series_recordings)
-                .withIcon(getResourceIdFromAttr(this, R.attr.ic_menu_scheduled_recordings))
-                .withBadgeStyle(badgeStyle);
-        PrimaryDrawerItem timerRecordingsItem = new PrimaryDrawerItem()
-                .withIdentifier(MENU_TIMER_RECORDINGS).withName(R.string.timer_recordings)
-                .withIcon(getResourceIdFromAttr(this, R.attr.ic_menu_scheduled_recordings))
-                .withBadgeStyle(badgeStyle);
-        PrimaryDrawerItem failedRecordingsItem = new PrimaryDrawerItem()
-                .withIdentifier(MENU_FAILED_RECORDINGS).withName(R.string.failed_recordings)
-                .withIcon(getResourceIdFromAttr(this, R.attr.ic_menu_failed_recordings))
-                .withBadgeStyle(badgeStyle);
-        PrimaryDrawerItem removedRecordingsItem = new PrimaryDrawerItem()
-                .withIdentifier(MENU_REMOVED_RECORDINGS).withName(R.string.removed_recordings)
-                .withIcon(getResourceIdFromAttr(this, R.attr.ic_menu_failed_recordings))
-                .withBadgeStyle(badgeStyle);
-        PrimaryDrawerItem statusItem = new PrimaryDrawerItem()
-                .withIdentifier(MENU_STATUS).withName(R.string.status)
-                .withIcon(getResourceIdFromAttr(this, R.attr.ic_menu_status));
-        PrimaryDrawerItem informationItem = new PrimaryDrawerItem()
-                .withIdentifier(MENU_INFORMATION).withName(R.string.pref_information)
-                .withIcon(getResourceIdFromAttr(this, R.attr.ic_menu_info));
-        PrimaryDrawerItem settingsItem = new PrimaryDrawerItem()
-                .withIdentifier(MENU_SETTINGS).withName(R.string.settings)
-                .withIcon(getResourceIdFromAttr(this, R.attr.ic_menu_settings));
-        PrimaryDrawerItem extrasItem = new PrimaryDrawerItem()
-                .withIdentifier(MENU_UNLOCKER).withName(R.string.pref_unlocker)
-                .withIcon(getResourceIdFromAttr(this, R.attr.ic_menu_extras));
-
-        result = new DrawerBuilder()
-                .withActivity(this)
-                .withAccountHeader(headerResult)
-                .withToolbar(toolbar)
-                .addDrawerItems(channelItem,
-                        programGuideItem,
-                        new DividerDrawerItem(),
-                        completedRecordingsItem,
-                        scheduledRecordingsItem,
-                        seriesRecordingsItem,
-                        timerRecordingsItem,
-                        failedRecordingsItem,
-                        removedRecordingsItem,
-                        new DividerDrawerItem(),
-                        statusItem,
-                        informationItem,
-                        settingsItem,
-                        extrasItem
-                )
-                .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
-                    @Override
-                    public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
-                        result.closeDrawer();
-                        int id = (int) drawerItem.getIdentifier();
-                        if (selectedNavigationMenuId != id) {
-                            handleDrawerItemSelected(id);
-                        }
-                        return true;
-                    }
-                })
-                .withSavedInstance(savedInstanceState)
-                .build();
+        navigationDrawer = new NavigationDrawer(this, savedInstanceState, toolbar, this);
+        navigationDrawer.createHeader();
+        navigationDrawer.createMenu();
 
         actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -359,12 +248,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         initCasting();
     }
 
-    public int getResourceIdFromAttr(@NonNull Context ctx, @AttrRes int attr) {
-        final TypedValue typedValue = new TypedValue();
-        ctx.getTheme().resolveAttribute(attr, typedValue, true);
-        return typedValue.resourceId;
-    }
-
     private void handleDrawerProfileSelected(IProfile profile) {
         Connection oldConn = databaseHelper.getSelectedConnection();
         Connection newConn = databaseHelper.getConnection(profile.getIdentifier());
@@ -377,7 +260,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             databaseHelper.updateConnection(newConn);
             Utils.connect(MainActivity.this, true);
 
-            updateDrawerItemBadges();
+            navigationDrawer.updateDrawerItemBadges();
         }
     }
 
@@ -586,27 +469,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 || super.dispatchKeyEvent(event);
     }
 
-    private void updateDrawerHeader() {
-        // Remove old profiles from the header
-        List<Long> profileIdList = new ArrayList<>();
-        for (IProfile profile : headerResult.getProfiles()) {
-            profileIdList.add(profile.getIdentifier());
-        }
-        for (Long id : profileIdList) {
-            headerResult.removeProfileByIdentifier(id);
-        }
-        // Add the existing connections as new profiles
-        final List<Connection> connectionList = databaseHelper.getConnections();
-        if (connectionList.size() > 0) {
-            for (Connection c : connectionList) {
-                headerResult.addProfiles(new ProfileDrawerItem().withIdentifier(c.id).withName(c.name).withEmail(c.address));
-            }
-        } else {
-            headerResult.addProfiles(new ProfileDrawerItem().withName(R.string.no_connection_available));
-        }
-        headerResult.setActiveProfile(databaseHelper.getSelectedConnection().id);
-    }
-
     /**
      * Check if the current fragment is a program list fragment. In case single
      * mode is active we need to return to the channel list fragment otherwise
@@ -614,7 +476,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
      */
     @Override
     public void onBackPressed() {
-        result.closeDrawer();
+        navigationDrawer.getDrawer().closeDrawer();
         final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
         if (!isDualPane && (f instanceof ProgramListFragment)) {
             getSupportFragmentManager().popBackStack();
@@ -647,39 +509,11 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         // Update the drawer menu so that all available menu items are
         // shown in case the recording counts have changed or the user has
         // bought the unlocked version to enable all features
-        updateDrawerItemBadges();
-        updateDrawerHeader();
+        navigationDrawer.updateDrawerItemBadges();
+        navigationDrawer.updateDrawerHeader();
     }
 
-    private void updateDrawerItemBadges() {
-        int channelCount = dataStorage.getChannelsFromArray().size();
-        int completedRecordingCount = 0;
-        int scheduledRecordingCount = 0;
-        int failedRecordingCount = 0;
-        int removedRecordingCount = 0;
-        Map<Integer, Recording> map = dataStorage.getRecordingsFromArray();
-        for (Recording recording : map.values()) {
-            if (recording.isCompleted()) {
-                completedRecordingCount++;
-            } else if (recording.isScheduled()) {
-                scheduledRecordingCount++;
-            } else if (recording.isFailed()) {
-                failedRecordingCount++;
-            } else if (recording.isRemoved()) {
-                removedRecordingCount++;
-            }
-        }
-        int seriesRecordingCount = dataStorage.getSeriesRecordingsFromArray().size();
-        int timerRecordingCount = dataStorage.getTimerRecordingsFromArray().size();
 
-        result.updateBadge(MENU_CHANNELS, new StringHolder(channelCount + ""));
-        result.updateBadge(MENU_COMPLETED_RECORDINGS, new StringHolder(completedRecordingCount + ""));
-        result.updateBadge(MENU_SCHEDULED_RECORDINGS, new StringHolder(scheduledRecordingCount + ""));
-        result.updateBadge(MENU_SERIES_RECORDINGS, new StringHolder(seriesRecordingCount + ""));
-        result.updateBadge(MENU_TIMER_RECORDINGS, new StringHolder(timerRecordingCount + ""));
-        result.updateBadge(MENU_FAILED_RECORDINGS, new StringHolder(failedRecordingCount + ""));
-        result.updateBadge(MENU_REMOVED_RECORDINGS, new StringHolder(removedRecordingCount + ""));
-    }
 
     @Override
     public void onPostResume() {
@@ -763,10 +597,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         // add the values which need to be saved from the drawer to the bundle
-        outState = result.saveInstanceState(outState);
+        outState = navigationDrawer.getDrawer().saveInstanceState(outState);
         // add the values which need to be saved from the accountHeader to the bundle
-        outState = headerResult.saveInstanceState(outState);
-
+        outState = navigationDrawer.getHeader().saveInstanceState(outState);
         outState.putIntegerArrayList("menu_stack", menuStack);
         outState.putInt("navigation_menu_position", selectedNavigationMenuId);
         outState.putString("connection_status", connectionStatus);
@@ -1001,7 +834,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 connectionStatus = action;
                 runOnUiThread(new Runnable() {
                     public void run() {
-                        updateDrawerItemBadges();
+                        navigationDrawer.updateDrawerItemBadges();
                     }
                 });
             case "channelUpdate":
@@ -1064,7 +897,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                             connectionStatus = action;
                             handleDrawerItemSelected(MENU_STATUS);
 
-                            updateDrawerItemBadges();
+                            navigationDrawer.updateDrawerItemBadges();
                         }
                     });
                 }
@@ -1083,7 +916,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             case "timerecEntryDelete":
                 runOnUiThread(new Runnable() {
                     public void run() {
-                        updateDrawerItemBadges();
+                        navigationDrawer.updateDrawerItemBadges();
                     }
                 });
                 break;
@@ -1355,6 +1188,18 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     public void setSubtitle(String subtitle) {
         if (getSupportActionBar() != null) {
             getSupportActionBar().setSubtitle(subtitle);
+        }
+    }
+
+    @Override
+    public void onNavigationProfileSelected(IProfile profile) {
+        handleDrawerProfileSelected(profile);
+    }
+
+    @Override
+    public void onNavigationMenuSelected(int id) {
+        if (selectedNavigationMenuId != id) {
+            handleDrawerItemSelected(id);
         }
     }
 }
