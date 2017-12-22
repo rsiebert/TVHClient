@@ -101,6 +101,7 @@ import java.util.Map;
 // TODO remove remembering list positions
 // TODO when in dual pane and back edit menu is visible
 // TODO make nav image blasser
+// TODO confirmation of added/edited recordings...
 
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, ChangeLogDialogInterface, ToolbarInterface, ToolbarInterfaceLight, FragmentStatusInterface, FragmentScrollInterface, HTSListener, WakeOnLanTaskCallback {
 
@@ -117,13 +118,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     // Default navigation drawer menu position and the list positions
     private int selectedNavigationMenuId = MENU_UNKNOWN;
     private int defaultMenuPosition = MENU_UNKNOWN;
-    private int channelListPosition = 0;
-    private int completedRecordingListPosition = 0;
-    private int scheduledRecordingListPosition = 0;
-    private int seriesRecordingListPosition = 0;
-    private int timerRecordingListPosition = 0;
-    private int failedRecordingListPosition = 0;
-    private int removedRecordingListPosition = 0;
     private int programGuideListPosition = 0;
     private int programGuideListPositionOffset = 0;
 
@@ -349,13 +343,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             // counts. Also get any saved values from the bundle.
             menuStack = savedInstanceState.getIntegerArrayList("menu_stack");
             selectedNavigationMenuId = savedInstanceState.getInt("navigation_menu_position", MENU_CHANNELS);
-            channelListPosition = savedInstanceState.getInt("channel_list_position", 0);
-            completedRecordingListPosition = savedInstanceState.getInt("completed_recording_list_position", 0);
-            scheduledRecordingListPosition = savedInstanceState.getInt("scheduled_recording_list_position", 0);
-            seriesRecordingListPosition = savedInstanceState.getInt("series_recording_list_position", 0);
-            timerRecordingListPosition = savedInstanceState.getInt("timer_recording_list_position", 0);
-            failedRecordingListPosition = savedInstanceState.getInt("failed_recording_list_position", 0);
-            removedRecordingListPosition = savedInstanceState.getInt("removed_recording_list_position", 0);
             connectionStatus = savedInstanceState.getString("connection_status");
             connectionSettingsShown = savedInstanceState.getBoolean("connection_settings_shown");
             channelTimeSelection = savedInstanceState.getInt("channel_time_selection");
@@ -796,13 +783,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
         outState.putIntegerArrayList("menu_stack", menuStack);
         outState.putInt("navigation_menu_position", selectedNavigationMenuId);
-        outState.putInt("channel_list_position", channelListPosition);
-        outState.putInt("completed_recording_list_position", completedRecordingListPosition);
-        outState.putInt("scheduled_recording_list_position", scheduledRecordingListPosition);
-        outState.putInt("series_recording_list_position", seriesRecordingListPosition);
-        outState.putInt("timer_recording_list_position", timerRecordingListPosition);
-        outState.putInt("failed_recording_list_position", failedRecordingListPosition);
-        outState.putInt("removed_recording_list_position", removedRecordingListPosition);
         outState.putString("connection_status", connectionStatus);
         outState.putBoolean("connection_settings_shown", connectionSettingsShown);
         outState.putInt("channel_time_selection", channelTimeSelection);
@@ -990,37 +970,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         if (rightLayout != null) {
             LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) rightLayout.getLayoutParams();
             layoutParams.weight = rightLayoutWeight;
-        }
-    }
-
-    /**
-     * Called when an activity has quit that was called with the method
-     * startActivityForResult. Depending on the given request and result code
-     * certain action can be done.
-     */
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == Constants.RESULT_CODE_SETTINGS) {
-            if (resultCode == RESULT_OK) {
-                // Restart the activity when certain settings have changed
-                if (data.getBooleanExtra(Constants.BUNDLE_RESTART, false)) {
-                    Intent intent = getIntent();
-                    finish();
-                    startActivity(intent);
-                } else {
-                    // Reconnect to the server and reload all data if a
-                    // connection or certain settings have changed.
-                    if (data.getBooleanExtra(Constants.BUNDLE_RECONNECT, false)) {
-                        Utils.connect(this, true);
-                        Intent intent = getIntent();
-                        finish();
-                        startActivity(intent);
-                    }
-                }
-            }
-        } else {
-            // No custom request code was returned, nothing to to 
-            super.onActivityResult(requestCode, resultCode, data);
         }
     }
 
@@ -1220,12 +1169,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     @Override
     public void onScrollingChanged(final int position, final int offset, final String tag) {
         switch (selectedNavigationMenuId) {
-            case MENU_CHANNELS:
-                // Save the position of the selected channel so it can be restored
-                // after an orientation change
-                channelListPosition = position;
-                break;
-
             case MENU_PROGRAM_GUIDE:
                 // Save the scroll values so they can be reused after an orientation change.
                 programGuideListPosition = position;
@@ -1376,11 +1319,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         return true;
     }
 
-    @SuppressLint("NewApi")
     @Override
     public boolean onSuggestionClick(int position) {
         searchMenuItem.collapseActionView();
-
         // Set the search query and return true so that the
         // onQueryTextSubmit is called. This is required to pass additional
         // data to the search activity
@@ -1404,11 +1345,10 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
      * @return True if the cast icon shall be show
      */
     private boolean showCastMenuItem() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         Connection conn = databaseHelper.getSelectedConnection();
         Profile profile = (conn != null ? databaseHelper.getProfile(conn.cast_profile_id) : null);
         return (app.isUnlocked()
-                && prefs.getBoolean("pref_enable_casting", false)
+                && sharedPreferences.getBoolean("pref_enable_casting", false)
                 && profile != null
                 && profile.enabled);
     }

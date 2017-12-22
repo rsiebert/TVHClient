@@ -134,57 +134,6 @@ public class SettingsActivity extends AppCompatActivity implements SettingsToolb
         }
     }
 
-/*
-    @Override
-    public void onPostResume() {
-        super.onPostResume();
-        // When the orientation was changed the last visible fragment is
-        // available from the manager. If this is the case get it and show it
-        // again.
-        fragment = getFragmentManager().findFragmentById(R.id.main);
-        if (fragment == null) {
-            // Get the information if the connection fragment shall be shown.
-            // This is the case when the user has selected the connection menu
-            // from the navigation drawer.
-            Bundle bundle = getIntent().getExtras();
-            if (bundle != null) {
-                manageConnections = bundle.getBoolean(Constants.BUNDLE_MANAGE_CONNECTIONS, false);
-            }
-            // Now show the manage connection or the general settings fragment
-            if (manageConnections) {
-                showConnections();
-            } else {
-                mainSettings();
-            }
-        } else {
-            // Show the available fragment
-            getFragmentManager().beginTransaction()
-                    .replace(R.id.main, fragment)
-                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                    .commit();
-        }
-    }
-
-    @Override
-    public void restart() {
-        restart = true;
-    }
-
-    @Override
-    public void reconnect() {
-        reconnect = true;
-    }
-
-    @Override
-    public void restartNow() {
-        Intent intent = getIntent();
-        intent.putExtra(Constants.BUNDLE_RESTART, restart);
-        intent.putExtra(Constants.BUNDLE_RECONNECT, reconnect);
-        setResult(RESULT_OK, intent);
-        finish();
-    }
-
-*/
     @Override
     public void onFolderSelection(@NonNull FolderChooserDialog dialog, @NonNull File folder) {
         Fragment f = getFragmentManager().findFragmentById(R.id.main);
