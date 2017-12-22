@@ -18,7 +18,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.activities.SettingsToolbarInterface;
+import org.tvheadend.tvhclient.activities.ToolbarInterfaceLight;
 import org.tvheadend.tvhclient.interfaces.BackPressedInterface;
 import org.tvheadend.tvhclient.model.Connection;
 
@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
 
 public class SettingsManageConnectionFragment extends PreferenceFragment implements BackPressedInterface, Preference.OnPreferenceChangeListener {
 
-    private SettingsToolbarInterface toolbarInterface;
+    private ToolbarInterfaceLight toolbarInterface;
     private Connection connection;
     private boolean connectionValuesChanged;
 
@@ -47,8 +47,8 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
         super.onActivityCreated(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences_add_connection);
 
-        if (getActivity() instanceof SettingsToolbarInterface) {
-            toolbarInterface = (SettingsToolbarInterface) getActivity();
+        if (getActivity() instanceof ToolbarInterfaceLight) {
+            toolbarInterface = (ToolbarInterfaceLight) getActivity();
         }
         toolbarInterface.setTitle(getString(R.string.add_connection));
         setHasOptionsMenu(true);

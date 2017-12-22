@@ -31,12 +31,12 @@ import android.preference.PreferenceManager;
 
 import org.tvheadend.tvhclient.NotificationHandler;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.activities.SettingsToolbarInterface;
+import org.tvheadend.tvhclient.activities.ToolbarInterfaceLight;
 
 public class SettingsNotificationFragment extends PreferenceFragment implements OnPreferenceClickListener, OnPreferenceChangeListener {
 
     private Activity activity;
-    private SettingsToolbarInterface toolbarInterface;
+    private ToolbarInterfaceLight toolbarInterface;
     private CheckBoxPreference prefShowNotifications;
 
     @Override
@@ -51,8 +51,8 @@ public class SettingsNotificationFragment extends PreferenceFragment implements 
         addPreferencesFromResource(R.xml.preferences_notifications);
 
         activity = getActivity();
-        if (activity instanceof SettingsToolbarInterface) {
-            toolbarInterface = (SettingsToolbarInterface) activity;
+        if (activity instanceof ToolbarInterfaceLight) {
+            toolbarInterface = (ToolbarInterfaceLight) activity;
         }
         toolbarInterface.setTitle(getString(R.string.pref_notifications));
 

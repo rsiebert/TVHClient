@@ -34,7 +34,7 @@ import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.activities.SettingsToolbarInterface;
+import org.tvheadend.tvhclient.activities.ToolbarInterfaceLight;
 import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.interfaces.BackPressedInterface;
 import org.tvheadend.tvhclient.htsp.HTSListener;
@@ -47,7 +47,7 @@ import java.util.List;
 public class SettingsProfilesFragment extends PreferenceFragment implements OnPreferenceClickListener, HTSListener, BackPressedInterface {
 
     private Activity activity;
-    private SettingsToolbarInterface toolbarInterface;
+    private ToolbarInterfaceLight toolbarInterface;
 
     private Connection connection = null;
     private Profile playbackProfile = null;
@@ -64,8 +64,8 @@ public class SettingsProfilesFragment extends PreferenceFragment implements OnPr
         addPreferencesFromResource(R.xml.preferences_profiles);
 
         activity = getActivity();
-        if (activity instanceof SettingsToolbarInterface) {
-            toolbarInterface = (SettingsToolbarInterface) activity;
+        if (activity instanceof ToolbarInterfaceLight) {
+            toolbarInterface = (ToolbarInterfaceLight) activity;
         }
 
         connection = DatabaseHelper.getInstance(getActivity()).getSelectedConnection();

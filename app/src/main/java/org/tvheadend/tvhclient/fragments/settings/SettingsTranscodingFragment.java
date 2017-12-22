@@ -25,14 +25,14 @@ import android.preference.PreferenceFragment;
 
 import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.activities.SettingsToolbarInterface;
+import org.tvheadend.tvhclient.activities.ToolbarInterfaceLight;
 import org.tvheadend.tvhclient.interfaces.BackPressedInterface;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.Profile;
 
 public class SettingsTranscodingFragment extends PreferenceFragment implements BackPressedInterface {
 
-    private SettingsToolbarInterface toolbarInterface;
+    private ToolbarInterfaceLight toolbarInterface;
     private Connection connection = null;
     private Profile playbackProfile = null;
     private Profile recordingProfile = null;
@@ -69,8 +69,8 @@ public class SettingsTranscodingFragment extends PreferenceFragment implements B
         super.onActivityCreated(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences_transcoding);
 
-        if (getActivity() instanceof SettingsToolbarInterface) {
-            toolbarInterface = (SettingsToolbarInterface) getActivity();
+        if (getActivity() instanceof ToolbarInterfaceLight) {
+            toolbarInterface = (ToolbarInterfaceLight) getActivity();
         }
         connection = DatabaseHelper.getInstance(getActivity()).getSelectedConnection();
         toolbarInterface.setTitle(getString(R.string.pref_transcoding));

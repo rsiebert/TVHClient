@@ -41,7 +41,7 @@ import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.Logger;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.activities.SettingsToolbarInterface;
+import org.tvheadend.tvhclient.activities.ToolbarInterfaceLight;
 import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.interfaces.BackPressedInterface;
 import org.tvheadend.tvhclient.htsp.HTSListener;
@@ -57,7 +57,7 @@ public class SettingsCastingFragment extends PreferenceFragment implements HTSLi
     private final static String TAG = SettingsCastingFragment.class.getSimpleName();
 
     private Activity activity;
-    private SettingsToolbarInterface toolbarInterface;
+    private ToolbarInterfaceLight toolbarInterface;
     private Connection connection = null;
     private Profile castingProfile = null;
     private CheckBoxPreference castingEnabledPreference;
@@ -69,8 +69,8 @@ public class SettingsCastingFragment extends PreferenceFragment implements HTSLi
         addPreferencesFromResource(R.xml.preferences_casting);
 
         activity = getActivity();
-        if (activity instanceof SettingsToolbarInterface) {
-            toolbarInterface = (SettingsToolbarInterface) activity;
+        if (activity instanceof ToolbarInterfaceLight) {
+            toolbarInterface = (ToolbarInterfaceLight) activity;
         }
 
         connection = DatabaseHelper.getInstance(getActivity()).getSelectedConnection();

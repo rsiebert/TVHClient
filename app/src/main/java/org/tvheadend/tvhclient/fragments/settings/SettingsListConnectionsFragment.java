@@ -20,7 +20,7 @@ import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.activities.MainActivity;
 import org.tvheadend.tvhclient.activities.SettingsManageConnectionActivity;
-import org.tvheadend.tvhclient.activities.SettingsToolbarInterface;
+import org.tvheadend.tvhclient.activities.ToolbarInterfaceLight;
 import org.tvheadend.tvhclient.adapter.ConnectionListAdapter;
 import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.interfaces.BackPressedInterface;
@@ -33,7 +33,7 @@ import java.util.List;
 
 public class SettingsListConnectionsFragment extends ListFragment implements BackPressedInterface, ActionMode.Callback, WakeOnLanTaskCallback {
 
-    private SettingsToolbarInterface toolbarInterface;
+    private ToolbarInterfaceLight toolbarInterface;
     private ConnectionListAdapter connectionListAdapter;
     private List<Connection> connectionList;
     private ActionMode actionMode;
@@ -43,8 +43,8 @@ public class SettingsListConnectionsFragment extends ListFragment implements Bac
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        if (getActivity() instanceof SettingsToolbarInterface) {
-            toolbarInterface = (SettingsToolbarInterface) getActivity();
+        if (getActivity() instanceof ToolbarInterfaceLight) {
+            toolbarInterface = (ToolbarInterfaceLight) getActivity();
         }
         toolbarInterface.setTitle(getString(R.string.settings));
 

@@ -16,7 +16,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import org.tvheadend.tvhclient.BuildConfig;
 import org.tvheadend.tvhclient.Logger;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.activities.SettingsToolbarInterface;
+import org.tvheadend.tvhclient.activities.ToolbarInterfaceLight;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -26,7 +26,7 @@ import java.util.Locale;
 public class SettingsAdvancedFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener, SharedPreferences.OnSharedPreferenceChangeListener {
 
     private Activity activity;
-    private SettingsToolbarInterface toolbarInterface;
+    private ToolbarInterfaceLight toolbarInterface;
     private CheckBoxPreference prefDebugMode;
     private Preference prefSendLogfile;
     private SharedPreferences sharedPreferences;
@@ -37,8 +37,8 @@ public class SettingsAdvancedFragment extends PreferenceFragment implements Pref
         addPreferencesFromResource(R.xml.preferences_advanced);
 
         activity = getActivity();
-        if (activity instanceof SettingsToolbarInterface) {
-            toolbarInterface = (SettingsToolbarInterface) activity;
+        if (activity instanceof ToolbarInterfaceLight) {
+            toolbarInterface = (ToolbarInterfaceLight) activity;
         }
         if (toolbarInterface != null) {
             toolbarInterface.setTitle(getString(R.string.pref_advanced_settings));

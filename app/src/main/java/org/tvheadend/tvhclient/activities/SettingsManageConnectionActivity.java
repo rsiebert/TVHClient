@@ -12,7 +12,7 @@ import org.tvheadend.tvhclient.interfaces.BackPressedInterface;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 import org.tvheadend.tvhclient.utils.Utils;
 
-public class SettingsManageConnectionActivity extends AppCompatActivity implements SettingsToolbarInterface {
+public class SettingsManageConnectionActivity extends AppCompatActivity implements ToolbarInterfaceLight {
     private boolean initialSetup;
 
     @Override
