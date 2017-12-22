@@ -26,7 +26,7 @@ import org.tvheadend.tvhclient.activities.DetailsActivity;
 import org.tvheadend.tvhclient.activities.ToolbarInterfaceLight;
 import org.tvheadend.tvhclient.adapter.ProgramListAdapter;
 import org.tvheadend.tvhclient.htsp.HTSService;
-import org.tvheadend.tvhclient.interfaces.HTSListener;
+import org.tvheadend.tvhclient.htsp.HTSListener;
 import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.utils.MenuUtils;

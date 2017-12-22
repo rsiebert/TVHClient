@@ -7,8 +7,6 @@ import android.util.SparseArray;
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.Logger;
 import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.interfaces.HTSConnectionListener;
-import org.tvheadend.tvhclient.interfaces.HTSResponseHandler;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;

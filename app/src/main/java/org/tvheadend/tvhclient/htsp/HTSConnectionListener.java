@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.interfaces;
+package org.tvheadend.tvhclient.htsp;
 
 import org.tvheadend.tvhclient.htsp.HTSMessage;
 

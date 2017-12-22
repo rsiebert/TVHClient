@@ -37,7 +37,7 @@ import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.activities.SettingsToolbarInterface;
 import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.interfaces.BackPressedInterface;
-import org.tvheadend.tvhclient.interfaces.HTSListener;
+import org.tvheadend.tvhclient.htsp.HTSListener;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.Profile;
 import org.tvheadend.tvhclient.model.Profiles;

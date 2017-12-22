@@ -23,17 +23,17 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.htsp.HTSService;
-import org.tvheadend.tvhclient.interfaces.HTSListener;
+import org.tvheadend.tvhclient.htsp.HTSListener;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.Profile;
 import org.tvheadend.tvhclient.model.SeriesRecording;
-import org.tvheadend.tvhclient.utils.MenuChannelSelectionCallback;
-import org.tvheadend.tvhclient.utils.RecordingDateTimeCallback;
-import org.tvheadend.tvhclient.utils.RecordingDayOfWeekCallback;
-import org.tvheadend.tvhclient.utils.RecordingDuplicateCallback;
-import org.tvheadend.tvhclient.utils.RecordingPriorityCallback;
-import org.tvheadend.tvhclient.utils.RecordingProfileCallback;
+import org.tvheadend.tvhclient.callbacks.ChannelListSelectionCallback;
+import org.tvheadend.tvhclient.callbacks.DateTimePickerCallback;
+import org.tvheadend.tvhclient.callbacks.DaysOfWeekSelectionCallback;
+import org.tvheadend.tvhclient.callbacks.DuplicateDetectionListCallback;
+import org.tvheadend.tvhclient.callbacks.RecordingPriorityListCallback;
+import org.tvheadend.tvhclient.callbacks.RecordingProfileListCallback;
 
 import java.util.Calendar;
 
@@ -44,7 +44,7 @@ import butterknife.Unbinder;
 // TODO convert handleStartTimeSelection and handleStopTimeSelection to use calendar
 // TODO extend from BaseRecordingAddEditFragment
 
-public class SeriesRecordingAddFragment extends BaseRecordingAddEditFragment implements HTSListener, MenuChannelSelectionCallback, RecordingPriorityCallback, RecordingProfileCallback, RecordingDateTimeCallback, RecordingDayOfWeekCallback, RecordingDuplicateCallback {
+public class SeriesRecordingAddFragment extends BaseRecordingAddEditFragment implements HTSListener, ChannelListSelectionCallback, RecordingPriorityListCallback, RecordingProfileListCallback, DateTimePickerCallback, DaysOfWeekSelectionCallback, DuplicateDetectionListCallback {
 
     @BindView(R.id.is_enabled)
     CheckBox isEnabledCheckbox;
@@ -216,7 +216,7 @@ public class SeriesRecordingAddFragment extends BaseRecordingAddEditFragment imp
         channelNameTextView.setOnClickListener(view -> {
             // Determine if the server supports recording on all channels
             boolean allowRecordingOnAllChannels = htspVersion >= 21;
-            menuUtils.handleMenuChannelSelection(channelId, SeriesRecordingAddFragment.this, allowRecordingOnAllChannels);
+            recordingUtils.handleChannelListSelection(channelId, SeriesRecordingAddFragment.this, allowRecordingOnAllChannels);
         });
 
         priorityTextView.setText(priorityList[priority]);
@@ -496,7 +496,7 @@ public class SeriesRecordingAddFragment extends BaseRecordingAddEditFragment imp
     }
 
     @Override
-    public void menuChannelSelected(int which) {
+    public void onChannelIdSelected(int which) {
         if (which > 0) {
             channelId = which;
             Channel channel = dataStorage.getChannelFromArray(which);
@@ -507,19 +507,19 @@ public class SeriesRecordingAddFragment extends BaseRecordingAddEditFragment imp
     }
 
     @Override
-    public void prioritySelected(int which) {
+    public void onPrioritySelected(int which) {
         priorityTextView.setText(priorityList[which]);
         priority = which;
     }
 
     @Override
-    public void profileSelected(int which) {
+    public void onProfileSelected(int which) {
         recordingProfileNameTextView.setText(recordingProfilesList[which]);
         recordingProfileName = which;
     }
 
     @Override
-    public void timeSelected(int hour, int minute, String tag) {
+    public void onTimeSelected(int hour, int minute, String tag) {
         if (tag.equals("startTime")) {
             startTime.set(Calendar.HOUR_OF_DAY, hour);
             startTime.set(Calendar.MINUTE, minute);
@@ -532,18 +532,18 @@ public class SeriesRecordingAddFragment extends BaseRecordingAddEditFragment imp
     }
 
     @Override
-    public void dateSelected(int year, int month, int day, String tag) {
+    public void onDateSelected(int year, int month, int day, String tag) {
         // NOP
     }
 
     @Override
-    public void dayOfWeekSelected(int selectedDays) {
+    public void onDaysOfWeekSelected(int selectedDays) {
         daysOfWeek = selectedDays;
         daysOfWeekTextView.setText(getSelectedDaysOfWeek());
     }
 
     @Override
-    public void duplicateSelected(int which) {
+    public void onDuplicateDetectionValueSelected(int which) {
         duplicateDetectionId = which;
         duplicateDetectionTextView.setText(duplicateDetectionList[which]);
     }

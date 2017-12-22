@@ -12,11 +12,22 @@ import com.sleepbot.datetimepicker.time.TimePickerDialog;
 import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
+import org.tvheadend.tvhclient.adapter.ChannelListSelectionAdapter;
+import org.tvheadend.tvhclient.callbacks.ChannelListSelectionCallback;
+import org.tvheadend.tvhclient.callbacks.DateTimePickerCallback;
+import org.tvheadend.tvhclient.callbacks.DaysOfWeekSelectionCallback;
+import org.tvheadend.tvhclient.callbacks.DuplicateDetectionListCallback;
+import org.tvheadend.tvhclient.callbacks.RecordingPriorityListCallback;
+import org.tvheadend.tvhclient.callbacks.RecordingProfileListCallback;
+import org.tvheadend.tvhclient.model.Channel;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 public class RecordingUtils {
 
@@ -30,7 +41,7 @@ public class RecordingUtils {
         mIsUnlocked = TVHClientApplication.getInstance().isUnlocked();
     }
 
-    public void handleDateSelection(Calendar date, RecordingDateTimeCallback callback, String tag) {
+    public void handleDateSelection(Calendar date, DateTimePickerCallback callback, String tag) {
         AppCompatActivity activity = (AppCompatActivity) this.activity.get();
         if (activity == null) {
             return;
@@ -43,7 +54,7 @@ public class RecordingUtils {
                     @Override
                     public void onDateSet(DatePickerDialog datePickerDialog, int year, int month, int day) {
                         if (callback != null) {
-                            callback.dateSelected(year, month, day, tag);
+                            callback.onDateSelected(year, month, day, tag);
                         }
                     }
                 }, year, month, day, false);
@@ -52,7 +63,7 @@ public class RecordingUtils {
         datePicker.show(activity.getSupportFragmentManager(), "");
     }
 
-    public void handleTimeSelection(Calendar time, RecordingDateTimeCallback callback, String tag) {
+    public void handleTimeSelection(Calendar time, DateTimePickerCallback callback, String tag) {
         AppCompatActivity activity = (AppCompatActivity) this.activity.get();
         if (activity == null) {
             return;
@@ -64,7 +75,7 @@ public class RecordingUtils {
                     @Override
                     public void onTimeSet(RadialPickerLayout timePicker, int selectedHour, int selectedMinute) {
                         if (callback != null) {
-                            callback.timeSelected(selectedHour, selectedMinute, tag);
+                            callback.onTimeSelected(selectedHour, selectedMinute, tag);
                         }
                     }
                 }, hour, minute, true, false);
@@ -73,7 +84,7 @@ public class RecordingUtils {
         timePickerDialog.show(activity.getSupportFragmentManager(), "");
     }
 
-    public void handleRecordingProfileSelection(String[] recordingProfilesList, int selectedProfile, RecordingProfileCallback callback) {
+    public void handleRecordingProfileSelection(String[] recordingProfilesList, int selectedProfile, RecordingProfileListCallback callback) {
         Activity activity = this.activity.get();
         if (activity == null) {
             return;
@@ -85,7 +96,7 @@ public class RecordingUtils {
                     @Override
                     public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
                         if (callback != null) {
-                            callback.profileSelected(which);
+                            callback.onProfileSelected(which);
                         }
                         return true;
                     }
@@ -93,7 +104,7 @@ public class RecordingUtils {
                 .show();
     }
 
-    public void handlePrioritySelection(String[] priorityList, int selectedPriority, RecordingPriorityCallback callback) {
+    public void handlePrioritySelection(String[] priorityList, int selectedPriority, RecordingPriorityListCallback callback) {
         Activity activity = this.activity.get();
         if (activity == null) {
             return;
@@ -105,7 +116,7 @@ public class RecordingUtils {
                     @Override
                     public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
                         if (callback != null) {
-                            callback.prioritySelected(which);
+                            callback.onPrioritySelected(which);
                         }
                         return true;
                     }
@@ -113,7 +124,7 @@ public class RecordingUtils {
                 .show();
     }
 
-    public void handleDayOfWeekSelection(int daysOfWeek, RecordingDayOfWeekCallback callback) {
+    public void handleDayOfWeekSelection(int daysOfWeek, DaysOfWeekSelectionCallback callback) {
         Activity activity = this.activity.get();
         if (activity == null) {
             return;
@@ -143,7 +154,7 @@ public class RecordingUtils {
                             selectedDays += (1 << i);
                         }
                         if (callback != null) {
-                            callback.dayOfWeekSelected(selectedDays);
+                            callback.onDaysOfWeekSelected(selectedDays);
                         }
                         return true;
                     }
@@ -152,7 +163,7 @@ public class RecordingUtils {
                 .show();
     }
 
-    public void handleDuplicateDetectionSelection(String[] duplicateDetectionList, int duplicateDetectionId, RecordingDuplicateCallback callback) {
+    public void handleDuplicateDetectionSelection(String[] duplicateDetectionList, int duplicateDetectionId, DuplicateDetectionListCallback callback) {
         Activity activity = this.activity.get();
         if (activity == null) {
             return;
@@ -164,11 +175,59 @@ public class RecordingUtils {
                     @Override
                     public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
                         if (callback != null) {
-                            callback.duplicateSelected(which);
+                            callback.onDuplicateDetectionValueSelected(which);
                         }
                         return true;
                     }
                 })
                 .show();
+    }
+
+    public void handleChannelListSelection(long selectedChannelId, ChannelListSelectionCallback callback, boolean showAllChannelsListEntry) {
+        Activity activity = this.activity.get();
+        if (activity == null) {
+            return;
+        }
+
+        // Fill the channel tag adapter with the available channel tags
+        List<Channel> channelList = new ArrayList<>();
+        Map<Integer, Channel> map = DataStorage.getInstance().getChannelsFromArray();
+        channelList.addAll(map.values());
+
+        // Sort the channel tag list before showing it
+        Collections.sort(channelList, new Comparator<Channel>() {
+            @Override
+            public int compare(Channel o1, Channel o2) {
+                return o1.channelName.compareTo(o2.channelName);
+            }
+        });
+
+        // Add the default channel (all channels)
+        // to the list after it has been sorted
+        if (showAllChannelsListEntry) {
+            Channel channel = new Channel();
+            channel.channelId = 0;
+            channel.channelName = activity.getString(R.string.all_channels);
+            channelList.add(0, channel);
+        }
+
+        final ChannelListSelectionAdapter channelListSelectionAdapter = new ChannelListSelectionAdapter(activity, channelList, selectedChannelId);
+        // Show the dialog that shows all available channel tags. When the
+        // user has selected a tag, restart the loader to get the updated channel list
+        final MaterialDialog dialog = new MaterialDialog.Builder(activity)
+                .title(R.string.tags)
+                .adapter(channelListSelectionAdapter, null)
+                .build();
+        // Set the callback to handle clicks. This needs to be done after the
+        // dialog creation so that the inner method has access to the dialog variable
+        channelListSelectionAdapter.setCallback(which -> {
+            if (callback != null) {
+                callback.onChannelIdSelected(which);
+            }
+            if (dialog != null) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
     }
 }

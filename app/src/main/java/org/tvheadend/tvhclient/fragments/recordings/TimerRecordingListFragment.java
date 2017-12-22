@@ -24,7 +24,7 @@ import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.activities.DetailsActivity;
 import org.tvheadend.tvhclient.activities.AddEditActivity;
 import org.tvheadend.tvhclient.adapter.TimerRecordingListAdapter;
-import org.tvheadend.tvhclient.interfaces.HTSListener;
+import org.tvheadend.tvhclient.htsp.HTSListener;
 import org.tvheadend.tvhclient.interfaces.ToolbarInterface;
 import org.tvheadend.tvhclient.model.TimerRecording;
 import org.tvheadend.tvhclient.utils.MenuUtils;

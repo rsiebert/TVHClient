@@ -26,7 +26,7 @@ import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.SuggestionProvider;
 import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.activities.FolderChooserDialogCallback;
+import org.tvheadend.tvhclient.callbacks.FolderChooserDialogCallback;
 import org.tvheadend.tvhclient.activities.MainActivity;
 import org.tvheadend.tvhclient.activities.SettingsActivity;
 import org.tvheadend.tvhclient.activities.SettingsToolbarInterface;
@@ -328,7 +328,7 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
     }
 
     @Override
-    public void folderSelected(File folder) {
+    public void onFolderSelected(File folder) {
         String strippedPath = folder.getAbsolutePath().replace(Environment.getExternalStorageDirectory().getAbsolutePath(), "");
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         prefs.edit().putString("pref_download_directory", strippedPath).apply();

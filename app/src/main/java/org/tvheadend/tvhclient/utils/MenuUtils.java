@@ -22,11 +22,11 @@ import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.activities.DownloadActivity;
 import org.tvheadend.tvhclient.activities.PlayActivity;
 import org.tvheadend.tvhclient.activities.SearchResultActivity;
-import org.tvheadend.tvhclient.adapter.ChannelListSelectionAdapter;
 import org.tvheadend.tvhclient.adapter.ChannelTagListAdapter;
 import org.tvheadend.tvhclient.adapter.GenreColorDialogAdapter;
+import org.tvheadend.tvhclient.callbacks.ChannelTagSelectionCallback;
+import org.tvheadend.tvhclient.callbacks.ChannelTimeSelectionCallback;
 import org.tvheadend.tvhclient.htsp.HTSService;
-import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.ChannelTag;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.GenreColorDialogItem;
@@ -86,7 +86,7 @@ public class MenuUtils {
                 .show();
     }
 
-    public void handleMenuTimeSelection(int currentSelection, MenuTimeSelectionCallback callback) {
+    public void handleMenuTimeSelection(int currentSelection, ChannelTimeSelectionCallback callback) {
         Activity activity = this.activity.get();
         if (activity == null) {
             return;
@@ -112,7 +112,7 @@ public class MenuUtils {
                     // Convert the selected index into hours in seconds
                     // and reload the data with the given offset
                     if (callback != null) {
-                        callback.menuTimeSelected(which);
+                        callback.onTimeSelected(which);
                     }
                     return true;
                 })
@@ -125,7 +125,7 @@ public class MenuUtils {
      * @param selectedTagId
      * @param callback
      */
-    public void handleMenuTagsSelection(long selectedTagId, MenuTagSelectionCallback callback) {
+    public void handleMenuTagsSelection(long selectedTagId, ChannelTagSelectionCallback callback) {
         Activity activity = this.activity.get();
         if (activity == null) {
             return;
@@ -161,59 +161,7 @@ public class MenuUtils {
         // dialog creation so that the inner method has access to the dialog variable
         channelTagListAdapter.setCallback(which -> {
             if (callback != null) {
-                callback.menuTagSelected(which);
-            }
-            if (dialog != null) {
-                dialog.dismiss();
-            }
-        });
-        dialog.show();
-    }
-
-    /**
-     * @param selectedChannelId
-     * @param callback
-     */
-    public void handleMenuChannelSelection(long selectedChannelId, MenuChannelSelectionCallback callback, boolean showAllChannelsListEntry) {
-        Activity activity = this.activity.get();
-        if (activity == null) {
-            return;
-        }
-
-        // Fill the channel tag adapter with the available channel tags
-        List<Channel> channelList = new ArrayList<>();
-        Map<Integer, Channel> map = DataStorage.getInstance().getChannelsFromArray();
-        channelList.addAll(map.values());
-
-        // Sort the channel tag list before showing it
-        Collections.sort(channelList, new Comparator<Channel>() {
-            @Override
-            public int compare(Channel o1, Channel o2) {
-                return o1.channelName.compareTo(o2.channelName);
-            }
-        });
-
-        // Add the default channel (all channels)
-        // to the list after it has been sorted
-        if (showAllChannelsListEntry) {
-            Channel channel = new Channel();
-            channel.channelId = 0;
-            channel.channelName = activity.getString(R.string.all_channels);
-            channelList.add(0, channel);
-        }
-
-        final ChannelListSelectionAdapter channelListSelectionAdapter = new ChannelListSelectionAdapter(activity, channelList, selectedChannelId);
-        // Show the dialog that shows all available channel tags. When the
-        // user has selected a tag, restart the loader to get the updated channel list
-        final MaterialDialog dialog = new MaterialDialog.Builder(activity)
-                .title(R.string.tags)
-                .adapter(channelListSelectionAdapter, null)
-                .build();
-        // Set the callback to handle clicks. This needs to be done after the
-        // dialog creation so that the inner method has access to the dialog variable
-        channelListSelectionAdapter.setCallback(which -> {
-            if (callback != null) {
-                callback.menuChannelSelected(which);
+                callback.onChannelTagIdSelected(which);
             }
             if (dialog != null) {
                 dialog.dismiss();

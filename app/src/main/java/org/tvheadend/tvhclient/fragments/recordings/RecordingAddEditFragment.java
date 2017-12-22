@@ -23,10 +23,10 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Recording;
-import org.tvheadend.tvhclient.utils.MenuChannelSelectionCallback;
-import org.tvheadend.tvhclient.utils.RecordingDateTimeCallback;
-import org.tvheadend.tvhclient.utils.RecordingPriorityCallback;
-import org.tvheadend.tvhclient.utils.RecordingProfileCallback;
+import org.tvheadend.tvhclient.callbacks.ChannelListSelectionCallback;
+import org.tvheadend.tvhclient.callbacks.DateTimePickerCallback;
+import org.tvheadend.tvhclient.callbacks.RecordingPriorityListCallback;
+import org.tvheadend.tvhclient.callbacks.RecordingProfileListCallback;
 
 import java.util.Calendar;
 
@@ -39,7 +39,7 @@ import butterknife.Unbinder;
 // TODO preselect the first channel in the list
 // TODO orientation change when editing messed up the timeTextView
 
-public class RecordingAddEditFragment extends BaseRecordingAddEditFragment implements MenuChannelSelectionCallback, RecordingDateTimeCallback, RecordingPriorityCallback, RecordingProfileCallback {
+public class RecordingAddEditFragment extends BaseRecordingAddEditFragment implements ChannelListSelectionCallback, DateTimePickerCallback, RecordingPriorityListCallback, RecordingProfileListCallback {
 
     @BindView(R.id.start_time)
     TextView startTimeTextView;
@@ -216,7 +216,7 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
             channelNameTextView.setOnClickListener(view -> {
                 // Determine if the server supports recording on all channels
                 boolean allowRecordingOnAllChannels = htspVersion >= 21;
-                menuUtils.handleMenuChannelSelection(channelId, RecordingAddEditFragment.this, allowRecordingOnAllChannels);
+                recordingUtils.handleChannelListSelection(channelId, RecordingAddEditFragment.this, allowRecordingOnAllChannels);
             });
         }
 
@@ -397,7 +397,7 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
     }
 
     @Override
-    public void menuChannelSelected(int which) {
+    public void onChannelIdSelected(int which) {
         if (which > 0) {
             channelId = which;
             Channel channel = dataStorage.getChannelFromArray(which);
@@ -408,7 +408,7 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
     }
 
     @Override
-    public void timeSelected(int hour, int minute, String tag) {
+    public void onTimeSelected(int hour, int minute, String tag) {
         if (tag.equals("startTime")) {
             startTime.set(Calendar.HOUR_OF_DAY, hour);
             startTime.set(Calendar.MINUTE, minute);
@@ -421,7 +421,7 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
     }
 
     @Override
-    public void dateSelected(int year, int month, int day, String tag) {
+    public void onDateSelected(int year, int month, int day, String tag) {
         if (tag.equals("startDate")) {
             startTime.set(Calendar.DAY_OF_MONTH, day);
             startTime.set(Calendar.MONTH, month);
@@ -436,13 +436,13 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
     }
 
     @Override
-    public void prioritySelected(int which) {
+    public void onPrioritySelected(int which) {
         priorityTextView.setText(priorityList[which]);
         priority = which;
     }
 
     @Override
-    public void profileSelected(int which) {
+    public void onProfileSelected(int which) {
         recordingProfileNameTextView.setText(recordingProfilesList[which]);
         recordingProfileName = which;
     }

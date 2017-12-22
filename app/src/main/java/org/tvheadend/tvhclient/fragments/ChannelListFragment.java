@@ -26,15 +26,15 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.activities.ProgramListActivity;
 import org.tvheadend.tvhclient.adapter.ChannelListAdapter;
-import org.tvheadend.tvhclient.interfaces.HTSListener;
+import org.tvheadend.tvhclient.htsp.HTSListener;
 import org.tvheadend.tvhclient.interfaces.ToolbarInterface;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.ChannelTag;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
-import org.tvheadend.tvhclient.utils.MenuTagSelectionCallback;
-import org.tvheadend.tvhclient.utils.MenuTimeSelectionCallback;
+import org.tvheadend.tvhclient.callbacks.ChannelTagSelectionCallback;
+import org.tvheadend.tvhclient.callbacks.ChannelTimeSelectionCallback;
 import org.tvheadend.tvhclient.utils.MenuUtils;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 import org.tvheadend.tvhclient.utils.Utils;
@@ -47,7 +47,7 @@ import java.util.Date;
 // TODO show programs from time in dual pane, program list not updated
 // TODO change getting channel tag
 
-public class ChannelListFragment extends ListFragment implements HTSListener, MenuTimeSelectionCallback, MenuTagSelectionCallback, AdapterView.OnItemLongClickListener, OnItemClickListener {
+public class ChannelListFragment extends ListFragment implements HTSListener, ChannelTimeSelectionCallback, ChannelTagSelectionCallback, AdapterView.OnItemLongClickListener, OnItemClickListener {
 
     private Activity activity;
     private ToolbarInterface toolbarInterface;
@@ -307,7 +307,7 @@ public class ChannelListFragment extends ListFragment implements HTSListener, Me
     }
 
     @Override
-    public void menuTimeSelected(int which) {
+    public void onTimeSelected(int which) {
         channelTimeSelection = which;
 
         // Get the current time and create the new time from the selection value.
@@ -327,7 +327,7 @@ public class ChannelListFragment extends ListFragment implements HTSListener, Me
     }
 
     @Override
-    public void menuTagSelected(int which) {
+    public void onChannelTagIdSelected(int which) {
         Connection connection = DatabaseHelper.getInstance(getActivity().getApplicationContext()).getSelectedConnection();
         if (connection != null) {
             connection.channelTag = which;

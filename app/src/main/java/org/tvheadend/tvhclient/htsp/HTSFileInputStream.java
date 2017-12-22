@@ -3,8 +3,6 @@ package org.tvheadend.tvhclient.htsp;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import org.tvheadend.tvhclient.interfaces.HTSResponseHandler;
-
 import java.io.IOException;
 import java.io.InputStream;
 

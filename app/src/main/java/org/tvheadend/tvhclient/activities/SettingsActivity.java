@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import com.afollestad.materialdialogs.folderselector.FolderChooserDialog;
 
 import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.callbacks.FolderChooserDialogCallback;
 import org.tvheadend.tvhclient.fragments.ChangeLogFragment;
 import org.tvheadend.tvhclient.fragments.InfoFragment;
 import org.tvheadend.tvhclient.fragments.UnlockerFragment;
@@ -138,7 +139,7 @@ public class SettingsActivity extends AppCompatActivity implements SettingsToolb
     public void onFolderSelection(@NonNull FolderChooserDialog dialog, @NonNull File folder) {
         Fragment f = getFragmentManager().findFragmentById(R.id.main);
         if (f != null && f.isAdded() && f instanceof FolderChooserDialogCallback) {
-            ((FolderChooserDialogCallback) f).folderSelected(folder);
+            ((FolderChooserDialogCallback) f).onFolderSelected(folder);
         }
     }
 

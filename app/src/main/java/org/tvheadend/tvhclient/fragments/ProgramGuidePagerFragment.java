@@ -30,7 +30,7 @@ import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.model.ChannelTag;
 import org.tvheadend.tvhclient.model.ProgramGuideTimeDialogItem;
-import org.tvheadend.tvhclient.utils.MenuTagSelectionCallback;
+import org.tvheadend.tvhclient.callbacks.ChannelTagSelectionCallback;
 import org.tvheadend.tvhclient.utils.MenuUtils;
 import org.tvheadend.tvhclient.utils.Utils;
 
@@ -40,7 +40,7 @@ import java.util.List;
 
 // TODO scrolling from here does not update channel list
 
-public class ProgramGuidePagerFragment extends Fragment implements FragmentControlInterface, MenuTagSelectionCallback {
+public class ProgramGuidePagerFragment extends Fragment implements FragmentControlInterface, ChannelTagSelectionCallback {
 
     @SuppressWarnings("unused")
     private final static String TAG = ProgramGuidePagerFragment.class.getSimpleName();
@@ -342,7 +342,7 @@ public class ProgramGuidePagerFragment extends Fragment implements FragmentContr
     }
 
     @Override
-    public void menuTagSelected(int which) {
+    public void onChannelTagIdSelected(int which) {
         Utils.setChannelTagId(activity, which);
         if (fragmentStatusInterface != null) {
             fragmentStatusInterface.channelTagChanged(TAG);
