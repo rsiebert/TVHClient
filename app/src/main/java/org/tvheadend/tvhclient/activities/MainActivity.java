@@ -30,7 +30,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -272,7 +271,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
      * @param position Selected position within the menu array
      */
     private void handleDrawerItemSelected(int position) {
-        //setLayoutWeights(position);
 
         FrameLayout rightLayout = findViewById(R.id.right_fragment);
         if (rightLayout != null) {
@@ -726,68 +724,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
      */
     private void showFragment(String name, int layout, Bundle args) {
         showFragment(name, layout, args, false);
-    }
-
-    /**
-     * Sets the different weights of the three available layouts from the main
-     * layout file depending on the menu selection. The availability of the
-     * layouts depend on the on the screen size. This is determined
-     * automatically
-     *
-     * @param menuPosition Selected position within the menu array
-     */
-    private void setLayoutWeights(int menuPosition) {
-        // The default layout weights
-        float mainLayoutWeight = 0;
-        float rightLayoutWeight = 0;
-
-        switch (menuPosition) {
-            case MENU_CHANNELS:
-                if (isDualPane) {
-                    mainLayoutWeight = 4;
-                    rightLayoutWeight = 6;
-                } else {
-                    mainLayoutWeight = 1;
-                }
-                break;
-
-            case MENU_COMPLETED_RECORDINGS:
-            case MENU_SCHEDULED_RECORDINGS:
-            case MENU_SERIES_RECORDINGS:
-            case MENU_TIMER_RECORDINGS:
-            case MENU_FAILED_RECORDINGS:
-            case MENU_REMOVED_RECORDINGS:
-                if (isDualPane) {
-                    mainLayoutWeight = 6;
-                    rightLayoutWeight = 4;
-                } else {
-                    mainLayoutWeight = 1;
-                }
-                break;
-
-            case MENU_PROGRAM_GUIDE:
-            case MENU_STATUS:
-                mainLayoutWeight = 1;
-                break;
-
-            default:
-                break;
-        }
-
-        // This is the layout for the main content. It is always visible
-        FrameLayout mainLayout = findViewById(R.id.main_fragment);
-        if (mainLayout != null) {
-            LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) mainLayout.getLayoutParams();
-            layoutParams.weight = mainLayoutWeight;
-        }
-
-        // This is the layout for the details on the right side. It is only
-        // available on large tablets and on smaller tablets in landscape mode.
-        FrameLayout rightLayout = findViewById(R.id.right_fragment);
-        if (rightLayout != null) {
-            LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) rightLayout.getLayoutParams();
-            layoutParams.weight = rightLayoutWeight;
-        }
     }
 
     @Override
