@@ -32,12 +32,16 @@ public class TimerRecordingListAdapter extends ArrayAdapter<TimerRecording> {
 
     private final Activity context;
     private final List<TimerRecording> list;
+    private final int htspVersion;
+    private final SharedPreferences sharedPreferences;
     private int selectedPosition = 0;
 
     public TimerRecordingListAdapter(Activity context, List<TimerRecording> list) {
         super(context, 0);
         this.context = context;
         this.list = list;
+        this.htspVersion = DataStorage.getInstance().getProtocolVersion();
+        this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
     public void sort(final int type) {
@@ -70,13 +74,13 @@ public class TimerRecordingListAdapter extends ArrayAdapter<TimerRecording> {
     }
 
     static class ViewHolder {
-        @BindView(R.id.icon) ImageView icon;
-        @BindView(R.id.title) TextView title;
-        @BindView(R.id.channel) TextView channel;
-        @BindView(R.id.daysOfWeek) TextView daysOfWeek;
-        @BindView(R.id.time) TextView time;
-        @BindView(R.id.duration) TextView duration;
-        @BindView(R.id.enabled) TextView isEnabled;
+        @BindView(R.id.icon) ImageView iconImageView;
+        @BindView(R.id.title) TextView titleTextView;
+        @BindView(R.id.channel) TextView channelTextView;
+        @BindView(R.id.daysOfWeek) TextView daysOfWeekTextView;
+        @BindView(R.id.time) TextView timeTextView;
+        @BindView(R.id.duration) TextView durationTextView;
+        @BindView(R.id.enabled) TextView isEnabledTextView;
         @Nullable
         @BindView(R.id.dual_pane_list_item_selection) ImageView dual_pane_list_item_selection;
 
@@ -97,13 +101,13 @@ public class TimerRecordingListAdapter extends ArrayAdapter<TimerRecording> {
             view.setTag(holder);
         }
 
+        boolean lightTheme = sharedPreferences.getBoolean("lightThemePref", true);
+        boolean showChannelIcons = sharedPreferences.getBoolean("showIconPref", true);
+
         if (holder.dual_pane_list_item_selection != null) {
             // Set the correct indication when the dual pane mode is active
             // If the item is selected the the arrow will be shown, otherwise
             // only a vertical separation line is displayed.                
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-            final boolean lightTheme = prefs.getBoolean("lightThemePref", true);
-
             if (selectedPosition == position) {
                 final int icon = (lightTheme) ? R.drawable.dual_pane_selector_active_light : R.drawable.dual_pane_selector_active_dark;
                 holder.dual_pane_list_item_selection.setBackgroundResource(icon);
@@ -118,25 +122,22 @@ public class TimerRecordingListAdapter extends ArrayAdapter<TimerRecording> {
         if (trec != null) {
             Channel channel = DataStorage.getInstance().getChannelFromArray(trec.channel);
             if (!TextUtils.isEmpty(trec.title)) {
-                holder.title.setText(trec.title);
+                holder.titleTextView.setText(trec.title);
             } else {
-                holder.title.setText(trec.name);
+                holder.titleTextView.setText(trec.name);
             }
 
             if (channel != null) {
-                holder.channel.setText(channel.channelName);
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-                boolean showChannelIcons = prefs.getBoolean("showIconPref", true);
+                holder.channelTextView.setText(channel.channelName);
                 Bitmap iconBitmap = MiscUtils.getCachedIcon(context, channel.channelIcon);
-                holder.icon.setImageBitmap(iconBitmap);
-                holder.icon.setVisibility(showChannelIcons ? ImageView.VISIBLE : ImageView.GONE);
+                holder.iconImageView.setImageBitmap(iconBitmap);
+                holder.iconImageView.setVisibility(showChannelIcons ? ImageView.VISIBLE : ImageView.GONE);
             } else {
-                holder.channel.setText(R.string.all_channels);
+                holder.channelTextView.setText(R.string.all_channels);
             }
 
-            Utils.setDaysOfWeek(context, null, holder.daysOfWeek, trec.daysOfWeek);
+            Utils.setDaysOfWeek(context, null, holder.daysOfWeekTextView, trec.daysOfWeek);
 
-            // TODO multiple uses, consolidate
             Calendar startTime = Calendar.getInstance();
             startTime.set(Calendar.HOUR_OF_DAY, trec.start / 60);
             startTime.set(Calendar.MINUTE, trec.start % 60);
@@ -145,10 +146,10 @@ public class TimerRecordingListAdapter extends ArrayAdapter<TimerRecording> {
             endTime.set(Calendar.HOUR_OF_DAY, trec.stop / 60);
             endTime.set(Calendar.MINUTE, trec.stop % 60);
 
-            Utils.setTime(holder.time, startTime.getTimeInMillis(), endTime.getTimeInMillis());
-            holder.duration.setText(context.getString(R.string.minutes, (int) (trec.stop - trec.start)));
-            holder.isEnabled.setVisibility(DataStorage.getInstance().getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED ? View.VISIBLE : View.GONE);
-            holder.isEnabled.setText(trec.enabled > 0 ? R.string.recording_enabled : R.string.recording_disabled);
+            Utils.setTime(holder.timeTextView, startTime.getTimeInMillis(), endTime.getTimeInMillis());
+            holder.durationTextView.setText(context.getString(R.string.minutes, (trec.stop - trec.start)));
+            holder.isEnabledTextView.setVisibility(htspVersion >= 19 ? View.VISIBLE : View.GONE);
+            holder.isEnabledTextView.setText(trec.enabled > 0 ? R.string.recording_enabled : R.string.recording_disabled);
         }
         return view;
     }
@@ -163,13 +164,6 @@ public class TimerRecordingListAdapter extends ArrayAdapter<TimerRecording> {
                 break;
             }
         }
-    }
-
-    public TimerRecording getSelectedItem() {
-        if (list.size() > 0 && list.size() > selectedPosition) {
-            return list.get(selectedPosition);
-        }
-        return null;
     }
 
     public List<TimerRecording> getAllItems() {

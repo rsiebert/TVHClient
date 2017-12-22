@@ -25,13 +25,13 @@ public class ProgramListAdapter extends ArrayAdapter<Program> {
     private final static String TAG = ProgramListAdapter.class.getSimpleName();
     private final Activity context;
     private final List<Program> list;
-    private final SharedPreferences prefs;
+    private final SharedPreferences sharedPreferences;
 
     public ProgramListAdapter(Activity context, List<Program> list) {
         super(context, R.layout.program_list_widget, list);
         this.context = context;
         this.list = list;
-        this.prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
     public void sort() {
@@ -52,18 +52,18 @@ public class ProgramListAdapter extends ArrayAdapter<Program> {
     }
 
     static class ViewHolder {
-        @BindView(R.id.title) TextView title;
-        @BindView(R.id.time) TextView time;
-        @BindView(R.id.date) TextView date;
-        @BindView(R.id.duration) TextView duration;
-        @BindView(R.id.progress) TextView progress;
-        @BindView(R.id.summary) TextView summary;
-        @BindView(R.id.description) TextView description;
-        @BindView(R.id.series_info) TextView seriesInfo;
-        @BindView(R.id.subtitle) TextView subtitle;
-        @BindView(R.id.content_type) TextView contentType;
-        @BindView(R.id.state) ImageView state;
-        @BindView(R.id.genre) TextView genre;
+        @BindView(R.id.title) TextView titleTextView;
+        @BindView(R.id.time) TextView timeTextView;
+        @BindView(R.id.date) TextView dateTextView;
+        @BindView(R.id.duration) TextView durationTextView;
+        @BindView(R.id.progress) TextView progressTextView;
+        @BindView(R.id.summary) TextView summaryTextView;
+        @BindView(R.id.description) TextView descriptionTextView;
+        @BindView(R.id.series_info) TextView seriesInfoTextView;
+        @BindView(R.id.subtitle) TextView subtitleTextView;
+        @BindView(R.id.content_type) TextView contentTypeTextView;
+        @BindView(R.id.state) ImageView stateTextView;
+        @BindView(R.id.genre) TextView genreTextView;
 
         public ViewHolder(View view) {
             ButterKnife.bind(this, view);
@@ -81,22 +81,24 @@ public class ProgramListAdapter extends ArrayAdapter<Program> {
             view.setTag(holder);
         }
 
+        boolean showProgramSubtitle = sharedPreferences.getBoolean("showProgramSubtitlePref", true);
+
         // Get the program and assign all the values
         Program p = getItem(position);
         if (p != null) {
-            holder.title.setText(p.title);
-            Utils.setState(context, holder.state, p);
-            Utils.setDate(holder.date, p.start);
-            Utils.setTime(holder.time, p.start, p.stop);
-            Utils.setDuration(holder.duration, p.start, p.stop);
-            Utils.setProgressText(holder.progress, p.start, p.stop);
-            Utils.setDescription(null, holder.summary, p.summary);
-            Utils.setDescription(null, holder.subtitle, p.subtitle);
-            Utils.setDescription(null, holder.description, p.description);
-            Utils.setContentType(null, holder.contentType, p.contentType);
-            Utils.setSeriesInfo(getContext(), null, holder.seriesInfo, p);
-            MiscUtils.setGenreColor(context, holder.genre, p.contentType, TAG);
-            holder.subtitle.setVisibility(prefs.getBoolean("showProgramSubtitlePref", true) ? View.VISIBLE : View.GONE);
+            holder.titleTextView.setText(p.title);
+            Utils.setState(context, holder.stateTextView, p);
+            Utils.setDate(holder.dateTextView, p.start);
+            Utils.setTime(holder.timeTextView, p.start, p.stop);
+            Utils.setDuration(holder.durationTextView, p.start, p.stop);
+            Utils.setProgressText(holder.progressTextView, p.start, p.stop);
+            Utils.setDescription(null, holder.summaryTextView, p.summary);
+            Utils.setDescription(null, holder.subtitleTextView, p.subtitle);
+            Utils.setDescription(null, holder.descriptionTextView, p.description);
+            Utils.setContentType(null, holder.contentTypeTextView, p.contentType);
+            Utils.setSeriesInfo(getContext(), null, holder.seriesInfoTextView, p);
+            MiscUtils.setGenreColor(context, holder.genreTextView, p.contentType, TAG);
+            holder.subtitleTextView.setVisibility(showProgramSubtitle ? View.VISIBLE : View.GONE);
         }
         return view;
     }

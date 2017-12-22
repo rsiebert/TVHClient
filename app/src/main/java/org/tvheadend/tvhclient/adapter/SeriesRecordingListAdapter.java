@@ -31,12 +31,16 @@ public class SeriesRecordingListAdapter extends ArrayAdapter<SeriesRecording> {
 
     private final Activity context;
     private final List<SeriesRecording> list;
+    private final int htspVersion;
+    private final SharedPreferences sharedPreferences;
     private int selectedPosition = 0;
 
     public SeriesRecordingListAdapter(Activity context, List<SeriesRecording> list) {
         super(context, 0);
         this.context = context;
         this.list = list;
+        this.htspVersion = DataStorage.getInstance().getProtocolVersion();
+        this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
     public void sort(final int type) {
@@ -69,12 +73,12 @@ public class SeriesRecordingListAdapter extends ArrayAdapter<SeriesRecording> {
     }
 
     static class ViewHolder {
-        @BindView(R.id.icon) ImageView icon;
-        @BindView(R.id.title) TextView title;
-        @BindView(R.id.name) TextView name;
-        @BindView(R.id.channel) TextView channel;
-        @BindView(R.id.daysOfWeek) TextView daysOfWeek;
-        @BindView(R.id.enabled) TextView isEnabled;
+        @BindView(R.id.icon) ImageView iconImageView;
+        @BindView(R.id.title) TextView titleTextView;
+        @BindView(R.id.name) TextView nameTextView;
+        @BindView(R.id.channel) TextView channelTextView;
+        @BindView(R.id.daysOfWeek) TextView daysOfWeekTextView;
+        @BindView(R.id.enabled) TextView isEnabledTextView;
         @Nullable
         @BindView(R.id.dual_pane_list_item_selection) ImageView dual_pane_list_item_selection;
 
@@ -95,13 +99,13 @@ public class SeriesRecordingListAdapter extends ArrayAdapter<SeriesRecording> {
             view.setTag(holder);
         }
 
+        boolean lightTheme = sharedPreferences.getBoolean("lightThemePref", true);
+        boolean showChannelIcons = sharedPreferences.getBoolean("showIconPref", true);
+
         if (holder.dual_pane_list_item_selection != null) {
             // Set the correct indication when the dual pane mode is active
             // If the item is selected the the arrow will be shown, otherwise
-            // only a vertical separation line is displayed.                
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-            final boolean lightTheme = prefs.getBoolean("lightThemePref", true);
-
+            // only a vertical separation line is displayed.
             if (selectedPosition == position) {
                 final int icon = (lightTheme) ? R.drawable.dual_pane_selector_active_light : R.drawable.dual_pane_selector_active_dark;
                 holder.dual_pane_list_item_selection.setBackgroundResource(icon);
@@ -115,27 +119,26 @@ public class SeriesRecordingListAdapter extends ArrayAdapter<SeriesRecording> {
         SeriesRecording srec = getItem(position);
         if (srec != null) {
             Channel channel = DataStorage.getInstance().getChannelFromArray(srec.channel);
-            holder.title.setText(srec.title);
+            holder.titleTextView.setText(srec.title);
 
             if (!TextUtils.isEmpty(srec.name)) {
-                holder.name.setVisibility(View.VISIBLE);
-                holder.name.setText(srec.name);
+                holder.nameTextView.setVisibility(View.VISIBLE);
+                holder.nameTextView.setText(srec.name);
             } else {
-                holder.name.setVisibility(View.GONE);
+                holder.nameTextView.setVisibility(View.GONE);
             }
             if (channel != null) {
-                holder.channel.setText(channel.channelName);
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-                boolean showChannelIcons = prefs.getBoolean("showIconPref", true);
+                holder.channelTextView.setText(channel.channelName);
                 Bitmap iconBitmap = MiscUtils.getCachedIcon(context, channel.channelIcon);
-                holder.icon.setImageBitmap(iconBitmap);
-                holder.icon.setVisibility(showChannelIcons ? ImageView.VISIBLE : ImageView.GONE);
+                holder.iconImageView.setImageBitmap(iconBitmap);
+                holder.iconImageView.setVisibility(showChannelIcons ? ImageView.VISIBLE : ImageView.GONE);
             } else {
-                holder.channel.setText(R.string.all_channels);
+                holder.channelTextView.setText(R.string.all_channels);
             }
-            Utils.setDaysOfWeek(context, null, holder.daysOfWeek, srec.daysOfWeek);
-            holder.isEnabled.setVisibility(DataStorage.getInstance().getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED ? View.VISIBLE : View.GONE);
-            holder.isEnabled.setText(srec.enabled > 0 ? R.string.recording_enabled : R.string.recording_disabled);
+            // TODO change
+            Utils.setDaysOfWeek(context, null, holder.daysOfWeekTextView, srec.daysOfWeek);
+            holder.isEnabledTextView.setVisibility(htspVersion >= 19 ? View.VISIBLE : View.GONE);
+            holder.isEnabledTextView.setText(srec.enabled > 0 ? R.string.recording_enabled : R.string.recording_disabled);
         }
         return view;
     }
@@ -150,13 +153,6 @@ public class SeriesRecordingListAdapter extends ArrayAdapter<SeriesRecording> {
                 break;
             }
         }
-    }
-
-    public SeriesRecording getSelectedItem() {
-        if (list.size() > 0 && list.size() > selectedPosition) {
-            return list.get(selectedPosition);
-        }
-        return null;
     }
 
     public List<SeriesRecording> getAllItems() {

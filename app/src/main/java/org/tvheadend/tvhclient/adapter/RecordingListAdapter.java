@@ -33,13 +33,15 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
     private final Activity context;
     private final List<Recording> list;
     private final SharedPreferences sharedPreferences;
+    private final int htspVersion;
     private int selectedPosition = 0;
 
     public RecordingListAdapter(Activity context, List<Recording> list) {
         super(context, R.layout.recording_list_widget, list);
         this.context = context;
         this.list = list;
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        this.htspVersion = DataStorage.getInstance().getProtocolVersion();
+        this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
     public void sort(final int type) {
@@ -83,36 +85,36 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
 
     static class ViewHolder {
         @BindView(R.id.icon)
-        ImageView icon;
+        ImageView iconImageView;
         @BindView(R.id.icon_text)
-        TextView icon_text;
+        TextView iconTextView;
         @BindView(R.id.title)
-        TextView title;
+        TextView titleTextView;
         @BindView(R.id.subtitle)
-        TextView subtitle;
+        TextView subtitleTextView;
         @BindView(R.id.summary)
-        TextView summary;
+        TextView summaryTextView;
         @BindView(R.id.is_series_recording)
-        TextView is_series_recording;
+        TextView isSeriesRecordingTextView;
         @BindView(R.id.is_timer_recording)
-        TextView is_timer_recording;
+        TextView isTimerRecordingTextView;
         @BindView(R.id.channel)
-        TextView channel;
+        TextView channelTextView;
         @BindView(R.id.time)
-        TextView time;
+        TextView timeTextView;
         @BindView(R.id.date)
-        TextView date;
+        TextView dateTextView;
         @BindView(R.id.duration)
-        TextView duration;
+        TextView durationTextView;
         @Nullable
         @BindView(R.id.state)
-        ImageView state;
+        ImageView stateImageView;
         @BindView(R.id.description)
-        TextView description;
+        TextView descriptionTextView;
         @BindView(R.id.failed_reason)
-        TextView failed_reason;
+        TextView failedReasonTextView;
         @BindView(R.id.enabled)
-        TextView isEnabled;
+        TextView isEnabledTextView;
         @Nullable
         @BindView(R.id.dual_pane_list_item_selection)
         ImageView dual_pane_list_item_selection;
@@ -135,10 +137,14 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
             view.setTag(holder);
         }
 
-        holder.icon.setOnClickListener(new View.OnClickListener() {
+        boolean playOnChannelIcon = sharedPreferences.getBoolean("playWhenChannelIconSelectedPref", true);
+        boolean lightTheme = sharedPreferences.getBoolean("lightThemePref", true);
+        boolean showChannelIcons = sharedPreferences.getBoolean("showIconPref", true);
+
+        holder.iconImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (sharedPreferences.getBoolean("playWhenChannelIconSelectedPref", true)) {
+                if (playOnChannelIcon) {
                     Recording recording = getSelectedItem();
                     if (recording.isCompleted() || recording.isRecording()) {
                         new MenuUtils(context).handleMenuPlaySelection(-1, recording.id);
@@ -149,9 +155,7 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
         if (holder.dual_pane_list_item_selection != null) {
             // Set the correct indication when the dual pane mode is active
             // If the item is selected the the arrow will be shown, otherwise
-            // only a vertical separation line is displayed.                
-            final boolean lightTheme = sharedPreferences.getBoolean("lightThemePref", true);
-
+            // only a vertical separation line is displayed.
             if (selectedPosition == position) {
                 final int icon = (lightTheme) ? R.drawable.dual_pane_selector_active_light : R.drawable.dual_pane_selector_active_dark;
                 holder.dual_pane_list_item_selection.setBackgroundResource(icon);
@@ -165,62 +169,60 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
         final Recording rec = getItem(position);
         if (rec != null) {
             Channel channel = DataStorage.getInstance().getChannelFromArray(rec.channel);
-            holder.title.setText(rec.title);
+            holder.titleTextView.setText(rec.title);
             if (channel != null) {
-                holder.channel.setText(channel.channelName);
+                holder.channelTextView.setText(channel.channelName);
             }
 
             if (!TextUtils.isEmpty(rec.subtitle)) {
-                holder.subtitle.setVisibility(View.VISIBLE);
-                holder.subtitle.setText(rec.subtitle);
+                holder.subtitleTextView.setVisibility(View.VISIBLE);
+                holder.subtitleTextView.setText(rec.subtitle);
             } else {
-                holder.subtitle.setVisibility(View.GONE);
+                holder.subtitleTextView.setVisibility(View.GONE);
             }
 
             // Show the channel icon if available and set in the preferences.
             // If not chosen, hide the imageView and show the channel name.
-            boolean showChannelIcons = sharedPreferences.getBoolean("showIconPref", true);
-
             Bitmap iconBitmap = MiscUtils.getCachedIcon(context, channel.channelIcon);
             // Show the icon or a blank one if it does not exist
-            holder.icon.setImageBitmap(iconBitmap);
-            holder.icon_text.setText(channel.channelName);
+            holder.iconImageView.setImageBitmap(iconBitmap);
+            holder.iconTextView.setText(channel.channelName);
             // Show the channels icon if set in the preferences.
             // If not then hide the icon and show the channel name as a placeholder
-            holder.icon.setVisibility(showChannelIcons ? ImageView.VISIBLE : ImageView.GONE);
-            holder.icon_text.setVisibility(showChannelIcons ? ImageView.GONE : ImageView.VISIBLE);
+            holder.iconImageView.setVisibility(showChannelIcons ? ImageView.VISIBLE : ImageView.GONE);
+            holder.iconTextView.setVisibility(showChannelIcons ? ImageView.GONE : ImageView.VISIBLE);
 
-            Utils.setDate(holder.date, rec.start);
-            Utils.setTime(holder.time, rec.start, rec.stop);
-            Utils.setDuration(holder.duration, rec.start, rec.stop);
-            Utils.setDescription(null, holder.summary, rec.summary);
-            Utils.setDescription(null, holder.description, rec.description);
-            Utils.setFailedReason(holder.failed_reason, rec);
+            Utils.setDate(holder.dateTextView, rec.start);
+            Utils.setTime(holder.timeTextView, rec.start, rec.stop);
+            Utils.setDuration(holder.durationTextView, rec.start, rec.stop);
+            Utils.setDescription(null, holder.summaryTextView, rec.summary);
+            Utils.setDescription(null, holder.descriptionTextView, rec.description);
+            Utils.setFailedReason(holder.failedReasonTextView, rec);
 
             // Show only the recording icon
             if (rec.isRecording()) {
-                holder.state.setImageResource(R.drawable.ic_rec_small);
-                holder.state.setVisibility(ImageView.VISIBLE);
+                holder.stateImageView.setImageResource(R.drawable.ic_rec_small);
+                holder.stateImageView.setVisibility(ImageView.VISIBLE);
             } else {
-                holder.state.setVisibility(ImageView.GONE);
+                holder.stateImageView.setVisibility(ImageView.GONE);
             }
 
             // Show the information if the recording belongs to a series recording
             if (rec.autorecId != null) {
-                holder.is_series_recording.setVisibility(ImageView.VISIBLE);
+                holder.isSeriesRecordingTextView.setVisibility(ImageView.VISIBLE);
             } else {
-                holder.is_series_recording.setVisibility(ImageView.GONE);
+                holder.isSeriesRecordingTextView.setVisibility(ImageView.GONE);
             }
 
             // Show the information if the recording belongs to a series recording
             if (rec.timerecId != null) {
-                holder.is_timer_recording.setVisibility(ImageView.VISIBLE);
+                holder.isTimerRecordingTextView.setVisibility(ImageView.VISIBLE);
             } else {
-                holder.is_timer_recording.setVisibility(ImageView.GONE);
+                holder.isTimerRecordingTextView.setVisibility(ImageView.GONE);
             }
 
-            holder.isEnabled.setVisibility((DataStorage.getInstance().getProtocolVersion() >= Constants.MIN_API_VERSION_DVR_FIELD_ENABLED && rec.enabled > 0) ? View.VISIBLE : View.GONE);
-            holder.isEnabled.setText(rec.enabled > 0 ? R.string.recording_enabled : R.string.recording_disabled);
+            holder.isEnabledTextView.setVisibility((htspVersion >= 19 && rec.enabled > 0) ? View.VISIBLE : View.GONE);
+            holder.isEnabledTextView.setText(rec.enabled > 0 ? R.string.recording_enabled : R.string.recording_disabled);
         }
         return view;
     }

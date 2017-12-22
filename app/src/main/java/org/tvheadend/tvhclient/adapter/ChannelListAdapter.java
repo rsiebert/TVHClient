@@ -96,31 +96,31 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> implements OnClick
 
     static class ViewHolder {
         @BindView(R.id.icon)
-        ImageView icon;
+        ImageView iconImageView;
         @BindView(R.id.icon_text)
-        TextView icon_text;
+        TextView iconTextView;
         @BindView(R.id.icon_large)
-        ImageView icon_large;
+        ImageView iconLargeImageView;
         @BindView(R.id.icon_text_large)
-        TextView icon_text_large;
+        TextView iconLargeTextView;
         @BindView(R.id.title)
-        TextView title;
+        TextView titleTextView;
         @BindView(R.id.subtitle)
-        TextView subtitle;
+        TextView subtitleTextView;
         @BindView(R.id.next_title)
-        TextView nextTitle;
+        TextView nextTitleTextView;
         @BindView(R.id.channel)
-        TextView channel;
+        TextView channelTextView;
         @BindView(R.id.time)
-        TextView time;
+        TextView timeTextView;
         @BindView(R.id.duration)
-        TextView duration;
+        TextView durationTextView;
         @BindView(R.id.progressbar)
         ProgressBar progressbar;
         @BindView(R.id.state)
-        ImageView state;
+        ImageView stateImageView;
         @BindView(R.id.genre)
-        TextView genre;
+        TextView genreTextView;
         @Nullable
         @BindView(R.id.dual_pane_list_item_selection)
         ImageView dual_pane_list_item_selection;
@@ -170,29 +170,29 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> implements OnClick
             holder.progressbar.setProgress(0);
             holder.progressbar.setVisibility(showProgressbar ? View.VISIBLE : View.GONE);
 
-            holder.channel.setText(c.channelName);
-            holder.channel.setVisibility(showChannelName ? View.VISIBLE : View.GONE);
+            holder.channelTextView.setText(c.channelName);
+            holder.channelTextView.setVisibility(showChannelName ? View.VISIBLE : View.GONE);
 
             // Show the regular or large channel icons. Otherwise show the channel name only
             // Assign the channel icon image or a null image
             Bitmap iconBitmap = MiscUtils.getCachedIcon(context, c.channelIcon);
-            holder.icon.setImageBitmap(iconBitmap);
-            holder.icon_large.setImageBitmap(iconBitmap);
-            holder.icon_text.setText(c.channelName);
-            holder.icon_text_large.setText(c.channelName);
+            holder.iconImageView.setImageBitmap(iconBitmap);
+            holder.iconLargeImageView.setImageBitmap(iconBitmap);
+            holder.iconTextView.setText(c.channelName);
+            holder.iconLargeTextView.setText(c.channelName);
 
             // Show or hide the regular or large channel icon or name text views
-            holder.icon.setVisibility(showChannelIcons && !showLargeChannelIcons ? ImageView.VISIBLE : ImageView.GONE);
-            holder.icon_text.setVisibility(!showChannelIcons && !showLargeChannelIcons ? ImageView.VISIBLE : ImageView.GONE);
-            holder.icon_large.setVisibility(showChannelIcons && showLargeChannelIcons ? ImageView.VISIBLE : ImageView.GONE);
-            holder.icon_text_large.setVisibility(!showChannelIcons && showLargeChannelIcons ? ImageView.VISIBLE : ImageView.GONE);
+            holder.iconImageView.setVisibility(showChannelIcons && !showLargeChannelIcons ? ImageView.VISIBLE : ImageView.GONE);
+            holder.iconLargeImageView.setVisibility(!showChannelIcons && !showLargeChannelIcons ? ImageView.VISIBLE : ImageView.GONE);
+            holder.iconTextView.setVisibility(showChannelIcons && showLargeChannelIcons ? ImageView.VISIBLE : ImageView.GONE);
+            holder.iconLargeTextView.setVisibility(!showChannelIcons && showLargeChannelIcons ? ImageView.VISIBLE : ImageView.GONE);
 
             // If activated in the settings allow playing
             // the program by selecting the channel icon
-            holder.icon.setOnClickListener(this);
-            holder.icon_large.setOnClickListener(this);
-            holder.icon_text.setOnClickListener(this);
-            holder.icon_text_large.setOnClickListener(this);
+            holder.iconImageView.setOnClickListener(this);
+            holder.iconLargeImageView.setOnClickListener(this);
+            holder.iconTextView.setOnClickListener(this);
+            holder.iconLargeTextView.setOnClickListener(this);
 
             // Add a small recording icon above the channel icon, if we are
             // recording the current program.
@@ -206,11 +206,11 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> implements OnClick
             }
 
             if (isRecording) {
-                holder.state.setImageResource(R.drawable.ic_rec_small);
-                holder.state.setVisibility(View.VISIBLE);
+                holder.stateImageView.setImageResource(R.drawable.ic_rec_small);
+                holder.stateImageView.setVisibility(View.VISIBLE);
             } else {
-                holder.state.setImageDrawable(null);
-                holder.state.setVisibility(View.GONE);
+                holder.stateImageView.setImageDrawable(null);
+                holder.stateImageView.setVisibility(View.GONE);
             }
 
             Program p = null;
@@ -229,32 +229,32 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> implements OnClick
             // Check if the channel is actually transmitting
             // data and contains program data which can be shown.
             if (p != null) {
-                holder.title.setText(p.title);
-                holder.subtitle.setText(p.subtitle);
-                holder.subtitle.setVisibility(showSubtitle ? View.VISIBLE : View.GONE);
+                holder.titleTextView.setText(p.title);
+                holder.subtitleTextView.setText(p.subtitle);
+                holder.subtitleTextView.setVisibility(showSubtitle ? View.VISIBLE : View.GONE);
 
-                Utils.setTime(holder.time, p.start, p.stop);
-                Utils.setDuration(holder.duration, p.start, p.stop);
+                Utils.setTime(holder.timeTextView, p.start, p.stop);
+                Utils.setDuration(holder.durationTextView, p.start, p.stop);
 
                 Utils.setProgress(holder.progressbar, p.start, p.stop);
                 holder.progressbar.setVisibility(showProgressbar ? View.VISIBLE : View.GONE);
 
                 if (np != null) {
-                    holder.nextTitle.setVisibility(showNextProgramTitle ? View.VISIBLE : View.GONE);
-                    holder.nextTitle.setText(context.getString(R.string.next_program, np.title));
+                    holder.nextTitleTextView.setVisibility(showNextProgramTitle ? View.VISIBLE : View.GONE);
+                    holder.nextTitleTextView.setText(context.getString(R.string.next_program, np.title));
                 }
-                MiscUtils.setGenreColor(context, holder.genre, p.contentType, TAG);
+                MiscUtils.setGenreColor(context, holder.genreTextView, p.contentType, TAG);
 
             } else {
                 // The channel does not provide program data. Hide the progress
                 // bar,the time and duration texts.
-                holder.title.setText(R.string.no_data);
-                holder.subtitle.setVisibility(View.GONE);
+                holder.titleTextView.setText(R.string.no_data);
+                holder.subtitleTextView.setVisibility(View.GONE);
                 holder.progressbar.setVisibility(View.GONE);
-                holder.time.setVisibility(View.GONE);
-                holder.duration.setVisibility(View.GONE);
-                holder.genre.setVisibility(View.GONE);
-                holder.nextTitle.setVisibility(View.GONE);
+                holder.timeTextView.setVisibility(View.GONE);
+                holder.durationTextView.setVisibility(View.GONE);
+                holder.genreTextView.setVisibility(View.GONE);
+                holder.nextTitleTextView.setVisibility(View.GONE);
             }
         }
         return view;
