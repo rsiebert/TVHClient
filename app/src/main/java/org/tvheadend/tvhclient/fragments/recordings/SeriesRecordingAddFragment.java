@@ -29,10 +29,13 @@ import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.Profile;
 import org.tvheadend.tvhclient.model.SeriesRecording;
 import org.tvheadend.tvhclient.utils.MenuChannelSelectionCallback;
+import org.tvheadend.tvhclient.utils.RecordingDateTimeCallback;
+import org.tvheadend.tvhclient.utils.RecordingDayOfWeekCallback;
+import org.tvheadend.tvhclient.utils.RecordingDuplicateCallback;
+import org.tvheadend.tvhclient.utils.RecordingPriorityCallback;
+import org.tvheadend.tvhclient.utils.RecordingProfileCallback;
 
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -41,7 +44,7 @@ import butterknife.Unbinder;
 // TODO convert handleStartTimeSelection and handleStopTimeSelection to use calendar
 // TODO extend from BaseRecordingAddEditFragment
 
-public class SeriesRecordingAddFragment extends BaseRecordingAddEditFragment implements HTSListener, MenuChannelSelectionCallback {
+public class SeriesRecordingAddFragment extends BaseRecordingAddEditFragment implements HTSListener, MenuChannelSelectionCallback, RecordingPriorityCallback, RecordingProfileCallback, RecordingDateTimeCallback, RecordingDayOfWeekCallback, RecordingDuplicateCallback {
 
     @BindView(R.id.is_enabled)
     CheckBox isEnabledCheckbox;
@@ -90,7 +93,6 @@ public class SeriesRecordingAddFragment extends BaseRecordingAddEditFragment imp
     private long startExtraTime;
     private long stopExtraTime;
     private int duplicateDetectionId;
-    private int daysOfWeek;
     private String directory;
     private String title;
     private String name;
@@ -98,8 +100,6 @@ public class SeriesRecordingAddFragment extends BaseRecordingAddEditFragment imp
     private int channelId;
 
     private String[] duplicateDetectionList;
-    private String[] daysOfWeekList;
-
     private Unbinder unbinder;
     private String id;
 
@@ -121,17 +121,6 @@ public class SeriesRecordingAddFragment extends BaseRecordingAddEditFragment imp
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        // Determine if the server supports recording on all channels
-        boolean allowRecordingOnAllChannels = htspVersion >= 21;
-
-        // Create the list of available configurations that the user can select from
-        recordingProfilesList = new String[dataStorage.getDvrConfigs().size()];
-        for (int i = 0; i < dataStorage.getDvrConfigs().size(); i++) {
-            recordingProfilesList[i] = dataStorage.getDvrConfigs().get(i).name;
-        }
-
-        priorityList = activity.getResources().getStringArray(R.array.dvr_priorities);
-        daysOfWeekList = activity.getResources().getStringArray(R.array.day_short_names);
         duplicateDetectionList = activity.getResources().getStringArray(R.array.duplicate_detection_list);
 
         Bundle bundle = getArguments();
@@ -160,7 +149,6 @@ public class SeriesRecordingAddFragment extends BaseRecordingAddEditFragment imp
             channelId = recording.channel;
             channel = dataStorage.getChannelFromArray(channelId);
         } else {
-            Calendar calendar = Calendar.getInstance();
             priority = 2;
             minDuration = 0;
             maxDuration = 0;
@@ -198,7 +186,7 @@ public class SeriesRecordingAddFragment extends BaseRecordingAddEditFragment imp
         // Restore the values before the orientation change
         if (savedInstanceState != null) {
             // Restore the values before the orientation change
-            priority = savedInstanceState.getInt("priority");
+            priority = savedInstanceState.getInt("priorityTextView");
             minDuration = savedInstanceState.getInt("minDuration");
             maxDuration = savedInstanceState.getInt("maxDuration");
             timeEnabled = savedInstanceState.getBoolean("timeEnabled");
@@ -207,8 +195,8 @@ public class SeriesRecordingAddFragment extends BaseRecordingAddEditFragment imp
             startExtraTime = savedInstanceState.getLong("startExtraTime");
             stopExtraTime = savedInstanceState.getLong("stopExtraTime");
             duplicateDetectionId = savedInstanceState.getInt("duplicateDetectionId");
-            daysOfWeek = savedInstanceState.getInt("daysOfWeek");
-            directory = savedInstanceState.getString("directory");
+            daysOfWeek = savedInstanceState.getInt("daysOfWeekTextView");
+            directory = savedInstanceState.getString("directoryTextView");
             title = savedInstanceState.getString("title");
             name = savedInstanceState.getString("name");
             isEnabled = savedInstanceState.getBoolean("enabled");
@@ -225,20 +213,14 @@ public class SeriesRecordingAddFragment extends BaseRecordingAddEditFragment imp
         directoryEditText.setText(directory);
 
         channelNameTextView.setText(channel != null ? channel.channelName : getString(R.string.all_channels));
-        channelNameTextView.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                menuUtils.handleMenuChannelSelection(channelId, SeriesRecordingAddFragment.this, allowRecordingOnAllChannels);
-            }
+        channelNameTextView.setOnClickListener(view -> {
+            // Determine if the server supports recording on all channels
+            boolean allowRecordingOnAllChannels = htspVersion >= 21;
+            menuUtils.handleMenuChannelSelection(channelId, SeriesRecordingAddFragment.this, allowRecordingOnAllChannels);
         });
 
         priorityTextView.setText(priorityList[priority]);
-        priorityTextView.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                handlePrioritySelection(priorityTextView);
-            }
-        });
+        priorityTextView.setOnClickListener(view -> recordingUtils.handlePrioritySelection(priorityList, priority, SeriesRecordingAddFragment.this));
 
         if (TextUtils.isEmpty(id) || recordingProfilesList.length == 0) {
             recordingProfileNameTextView.setVisibility(View.GONE);
@@ -249,39 +231,19 @@ public class SeriesRecordingAddFragment extends BaseRecordingAddEditFragment imp
         }
 
         recordingProfileNameTextView.setText(recordingProfilesList[recordingProfileName]);
-        recordingProfileNameTextView.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                handleRecordingProfileSelection(recordingProfileNameTextView);
-            }
-        });
+        recordingProfileNameTextView.setOnClickListener(view -> recordingUtils.handleRecordingProfileSelection(recordingProfilesList, recordingProfileName, this));
+
+        startTimeTextView.setText(getTimeStringFromDate(startTime));
+        startTimeTextView.setOnClickListener(view -> recordingUtils.handleTimeSelection(startTime, SeriesRecordingAddFragment.this, "startTime"));
+
+        startWindowTimeTextView.setText(getTimeStringFromDate(startWindowTime));
+        startWindowTimeTextView.setOnClickListener(view -> recordingUtils.handleTimeSelection(startWindowTime, SeriesRecordingAddFragment.this, "startWindowTime"));
 
         startExtraTimeTextView.setText(String.valueOf(startExtraTime));
         stopExtraTimeTextView.setText(String.valueOf(stopExtraTime));
 
-        startTimeTextView.setText(getTimeStringFromDate(startTime));
-        startTimeTextView.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                handleTimeSelection(startTime, startTimeTextView);
-            }
-        });
-
-        startWindowTimeTextView.setText(getTimeStringFromDate(startWindowTime));
-        startWindowTimeTextView.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                handleTimeSelection(startWindowTime, startWindowTimeTextView);
-            }
-        });
-
-        showSelectedDaysOfWeek();
-        daysOfWeekTextView.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                handleDayOfWeekSelection();
-            }
-        });
+        daysOfWeekTextView.setText(getSelectedDaysOfWeek());
+        daysOfWeekTextView.setOnClickListener(view -> recordingUtils.handleDayOfWeekSelection(daysOfWeek, SeriesRecordingAddFragment.this));
 
         minDurationEditText.setText(minDuration > 0 ? String.valueOf(minDuration) : getString(R.string.duration_sum));
         maxDurationEditText.setText(maxDuration > 0 ? String.valueOf(maxDuration) : getString(R.string.duration_sum));
@@ -301,18 +263,13 @@ public class SeriesRecordingAddFragment extends BaseRecordingAddEditFragment imp
         duplicateDetectionLabelTextView.setVisibility(htspVersion >= 20 ? View.VISIBLE : View.GONE);
         duplicateDetectionTextView.setVisibility(htspVersion >= 20 ? View.VISIBLE : View.GONE);
         duplicateDetectionTextView.setText(duplicateDetectionList[duplicateDetectionId]);
-        duplicateDetectionTextView.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                handleDuplicateDetectionSelection();
-            }
-        });
+        duplicateDetectionTextView.setOnClickListener(view -> recordingUtils.handleDuplicateDetectionSelection(duplicateDetectionList, duplicateDetectionId, SeriesRecordingAddFragment.this));
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         saveWidgetValuesIntoVariables();
-        outState.putInt("priority", priority);
+        outState.putInt("priorityTextView", priority);
         outState.putInt("minDuration", minDuration);
         outState.putInt("maxDuration", maxDuration);
         outState.putLong("startTime", startTime.getTimeInMillis());
@@ -321,11 +278,11 @@ public class SeriesRecordingAddFragment extends BaseRecordingAddEditFragment imp
         outState.putLong("startExtraTime", startExtraTime);
         outState.putLong("stopExtraTime", stopExtraTime);
         outState.putInt("duplicateDetectionId", duplicateDetectionId);
-        outState.putInt("daysOfWeek", daysOfWeek);
-        outState.putString("directory", directory);
+        outState.putInt("daysOfWeekTextView", daysOfWeek);
+        outState.putString("directoryTextView", directory);
         outState.putString("title", title);
         outState.putString("name", name);
-        outState.putBoolean("isEnabled", isEnabled);
+        outState.putBoolean("isEnabledTextView", isEnabled);
         outState.putInt("channelId", channelId);
         outState.putInt("configName", recordingProfileName);
         super.onSaveInstanceState(outState);
@@ -365,67 +322,6 @@ public class SeriesRecordingAddFragment extends BaseRecordingAddEditFragment imp
         super.onPause();
         TVHClientApplication.getInstance().removeListener(this);
     }
-
-    private void handleDuplicateDetectionSelection() {
-        new MaterialDialog.Builder(activity)
-                .title(R.string.select_duplicate_detection)
-                .items(duplicateDetectionList)
-                .itemsCallbackSingleChoice(duplicateDetectionId, new MaterialDialog.ListCallbackSingleChoice() {
-                    @Override
-                    public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
-                        duplicateDetectionTextView.setText(duplicateDetectionList[which]);
-                        duplicateDetectionId = which;
-                        return true;
-                    }
-                })
-                .show();
-    }
-
-    private void handleDayOfWeekSelection() {
-        // Get the selected indices by storing the bits with 1 positions in a list
-        // This list then needs to be converted to an Integer[] because the
-        // material dialog requires this
-        List<Integer> list = new ArrayList<>();
-        for (int i = 0; i < 7; i++) {
-            Integer value = (daysOfWeek >> i) & 1;
-            if (value == 1) {
-                list.add(i);
-            }
-        }
-        Integer[] selectedIndices = new Integer[list.size()];
-        for (int i = 0; i < selectedIndices.length; i++) {
-            selectedIndices[i] = list.get(i);
-        }
-        new MaterialDialog.Builder(activity)
-                .title(R.string.days_of_week)
-                .items(R.array.day_long_names)
-                .itemsCallbackMultiChoice(selectedIndices, new MaterialDialog.ListCallbackMultiChoice() {
-                    @Override
-                    public boolean onSelection(MaterialDialog dialog, Integer[] which, CharSequence[] text) {
-                        daysOfWeek = 0;
-                        for (Integer i : which) {
-                            daysOfWeek += (1 << i);
-                        }
-                        showSelectedDaysOfWeek();
-                        return true;
-                    }
-                })
-                .positiveText(R.string.select)
-                .show();
-    }
-
-    private void showSelectedDaysOfWeek() {
-        StringBuilder text = new StringBuilder();
-        for (int i = 0; i < 7; i++) {
-            String s = (((daysOfWeek >> i) & 1) == 1) ? daysOfWeekList[i] : "";
-            if (text.length() > 0 && s.length() > 0) {
-                text.append(", ");
-            }
-            text.append(s);
-        }
-        daysOfWeekTextView.setText(text.toString());
-    }
-
 
     /**
      * Retrieves and checks the values from the user input elements and stores
@@ -478,7 +374,7 @@ public class SeriesRecordingAddFragment extends BaseRecordingAddEditFragment imp
             return;
         }
 
-        // The maximum duration must be at least the minimum duration
+        // The maximum durationTextView must be at least the minimum durationTextView
         if (minDuration > 0 && maxDuration > 0 && maxDuration < minDuration) {
             maxDuration = minDuration;
         }
@@ -573,10 +469,10 @@ public class SeriesRecordingAddFragment extends BaseRecordingAddEditFragment imp
 
         // Assume no start time is specified if 0:00 is selected
         if (timeEnabled) {
-            intent.putExtra("start", startTime.getTimeInMillis() / 60 / 1000);
-            intent.putExtra("startWindow", startWindowTime.getTimeInMillis() / 60 / 1000);
+            // Pass on minutes not milliseconds
+            intent.putExtra("start", (int)(startTime.getTimeInMillis() / 60 / 1000));
+            intent.putExtra("startWindow", (int)(startWindowTime.getTimeInMillis() / 60 / 1000));
         }
-
         intent.putExtra("startExtra", startExtraTime);
         intent.putExtra("stopExtra", stopExtraTime);
         intent.putExtra("dupDetect", duplicateDetectionId);
@@ -587,7 +483,6 @@ public class SeriesRecordingAddFragment extends BaseRecordingAddEditFragment imp
         if (channelId > 0) {
             intent.putExtra("channelId", channelId);
         }
-
         // Add the recording profile if available and enabled
         if (profile != null && profile.enabled
                 && (recordingProfileNameTextView.getText().length() > 0)
@@ -609,5 +504,47 @@ public class SeriesRecordingAddFragment extends BaseRecordingAddEditFragment imp
         } else {
             channelNameTextView.setText(R.string.all_channels);
         }
+    }
+
+    @Override
+    public void prioritySelected(int which) {
+        priorityTextView.setText(priorityList[which]);
+        priority = which;
+    }
+
+    @Override
+    public void profileSelected(int which) {
+        recordingProfileNameTextView.setText(recordingProfilesList[which]);
+        recordingProfileName = which;
+    }
+
+    @Override
+    public void timeSelected(int hour, int minute, String tag) {
+        if (tag.equals("startTime")) {
+            startTime.set(Calendar.HOUR_OF_DAY, hour);
+            startTime.set(Calendar.MINUTE, minute);
+            startTimeTextView.setText(getTimeStringFromDate(startTime));
+        } else if (tag.equals("startWindowTime")) {
+            startWindowTime.set(Calendar.HOUR_OF_DAY, hour);
+            startWindowTime.set(Calendar.MINUTE, minute);
+            startWindowTimeTextView.setText(getTimeStringFromDate(startWindowTime));
+        }
+    }
+
+    @Override
+    public void dateSelected(int year, int month, int day, String tag) {
+        // NOP
+    }
+
+    @Override
+    public void dayOfWeekSelected(int selectedDays) {
+        daysOfWeek = selectedDays;
+        daysOfWeekTextView.setText(getSelectedDaysOfWeek());
+    }
+
+    @Override
+    public void duplicateSelected(int which) {
+        duplicateDetectionId = which;
+        duplicateDetectionTextView.setText(duplicateDetectionList[which]);
     }
 }

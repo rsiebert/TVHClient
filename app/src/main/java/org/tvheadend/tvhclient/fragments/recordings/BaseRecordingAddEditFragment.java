@@ -3,13 +3,6 @@ package org.tvheadend.tvhclient.fragments.recordings;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.view.View;
-import android.widget.TextView;
-
-import com.afollestad.materialdialogs.MaterialDialog;
-import com.fourmob.datetimepicker.date.DatePickerDialog;
-import com.sleepbot.datetimepicker.time.RadialPickerLayout;
-import com.sleepbot.datetimepicker.time.TimePickerDialog;
 
 import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.DatabaseHelper;
@@ -19,6 +12,7 @@ import org.tvheadend.tvhclient.activities.ToolbarInterfaceLight;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.Profile;
 import org.tvheadend.tvhclient.utils.MenuUtils;
+import org.tvheadend.tvhclient.utils.RecordingUtils;
 
 import java.util.Calendar;
 
@@ -37,10 +31,13 @@ public class BaseRecordingAddEditFragment extends Fragment {
     protected Profile profile;
 
     protected int priority;
+    protected int daysOfWeek;
     protected int recordingProfileName;
+    protected String[] daysOfWeekList;
     protected String[] priorityList;
     protected String[] recordingProfilesList;
     protected DatabaseHelper databaseHelper;
+    protected RecordingUtils recordingUtils;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -51,6 +48,7 @@ public class BaseRecordingAddEditFragment extends Fragment {
         }
 
         menuUtils = new MenuUtils(getActivity());
+        recordingUtils = new RecordingUtils(getActivity());
         dataStorage = DataStorage.getInstance();
         htspVersion = dataStorage.getProtocolVersion();
         isUnlocked = TVHClientApplication.getInstance().isUnlocked();
@@ -59,6 +57,8 @@ public class BaseRecordingAddEditFragment extends Fragment {
         profile = databaseHelper.getProfile(connection.recording_profile_id);
         setHasOptionsMenu(true);
 
+        daysOfWeekList = activity.getResources().getStringArray(R.array.day_short_names);
+
         // Create the list of available configurations that the user can select from
         recordingProfilesList = new String[dataStorage.getDvrConfigs().size()];
         for (int i = 0; i < dataStorage.getDvrConfigs().size(); i++) {
@@ -66,73 +66,6 @@ public class BaseRecordingAddEditFragment extends Fragment {
         }
 
         priorityList = activity.getResources().getStringArray(R.array.dvr_priorities);
-    }
-
-    protected void handleDateSelection(Calendar time, TextView dateTextView) {
-        int year = time.get(Calendar.YEAR);
-        int month = time.get(Calendar.MONTH);
-        int day = time.get(Calendar.DAY_OF_MONTH);
-        DatePickerDialog datePicker = DatePickerDialog.newInstance(
-                new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(DatePickerDialog datePickerDialog, int year, int month, int day) {
-                        time.set(Calendar.DAY_OF_MONTH, day);
-                        time.set(Calendar.MONTH, month);
-                        time.set(Calendar.YEAR, year);
-                        dateTextView.setText(getDateStringFromDate(time));
-                    }
-                }, year, month, day, false);
-
-        datePicker.setCloseOnSingleTapDay(false);
-        datePicker.show(getChildFragmentManager(), "");
-    }
-
-    protected void handleTimeSelection(Calendar time, TextView timeTextView) {
-        int hour = time.get(Calendar.HOUR_OF_DAY);
-        int minute = time.get(Calendar.MINUTE);
-        TimePickerDialog timePickerDialog = TimePickerDialog.newInstance(
-                new TimePickerDialog.OnTimeSetListener() {
-                    @Override
-                    public void onTimeSet(RadialPickerLayout timePicker, int selectedHour, int selectedMinute) {
-                        // Save the given value in seconds. This values will be passed to the server
-                        time.set(Calendar.HOUR_OF_DAY, selectedHour);
-                        time.set(Calendar.MINUTE, selectedMinute);
-                        timeTextView.setText(getTimeStringFromDate(time));
-                    }
-                }, hour, minute, true, false);
-
-        timePickerDialog.setCloseOnSingleTapMinute(false);
-        timePickerDialog.show(getChildFragmentManager(), "");
-    }
-
-    protected void handleRecordingProfileSelection(TextView recordingProfileTextView) {
-        new MaterialDialog.Builder(activity)
-                .title(R.string.select_dvr_config)
-                .items(recordingProfilesList)
-                .itemsCallbackSingleChoice(recordingProfileName, new MaterialDialog.ListCallbackSingleChoice() {
-                    @Override
-                    public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
-                        recordingProfileTextView.setText(recordingProfilesList[which]);
-                        recordingProfileName = which;
-                        return true;
-                    }
-                })
-                .show();
-    }
-
-    protected void handlePrioritySelection(TextView priorityTextView) {
-        new MaterialDialog.Builder(activity)
-                .title(R.string.select_priority)
-                .items(priorityList)
-                .itemsCallbackSingleChoice(priority, new MaterialDialog.ListCallbackSingleChoice() {
-                    @Override
-                    public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
-                        priorityTextView.setText(priorityList[which]);
-                        priority = which;
-                        return true;
-                    }
-                })
-                .show();
     }
 
     protected String getDateStringFromDate(Calendar cal) {
@@ -150,5 +83,17 @@ public class BaseRecordingAddEditFragment extends Fragment {
         String text = ((hour < 10) ? "0" + hour : hour) + ":"
                 + ((minute < 10) ? "0" + minute : minute);
         return text;
+    }
+
+    protected String getSelectedDaysOfWeek() {
+        StringBuilder text = new StringBuilder();
+        for (int i = 0; i < 7; i++) {
+            String s = (((daysOfWeek >> i) & 1) == 1) ? daysOfWeekList[i] : "";
+            if (text.length() > 0 && s.length() > 0) {
+                text.append(", ");
+            }
+            text.append(s);
+        }
+        return text.toString();
     }
 }

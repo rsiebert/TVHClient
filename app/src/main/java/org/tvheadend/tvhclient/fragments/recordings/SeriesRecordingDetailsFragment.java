@@ -14,7 +14,6 @@ import android.view.ViewGroup;
 import android.view.ViewStub;
 import android.widget.TextView;
 
-import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.activities.AddEditActivity;
@@ -30,18 +29,18 @@ import butterknife.Unbinder;
 
 public class SeriesRecordingDetailsFragment extends Fragment {
 
-    @BindView(R.id.is_enabled) TextView isEnabled;
-    @BindView(R.id.directory_label) TextView directoryLabel;
-    @BindView(R.id.directory) TextView directory;
-    @BindView(R.id.minimum_duration) TextView minDuration;
-    @BindView(R.id.maximum_duration) TextView maxDuration;
-    @BindView(R.id.start_after_time) TextView startTime;
-    @BindView(R.id.start_before_time) TextView startWindowTime;
-    @BindView(R.id.days_of_week) TextView daysOfWeek;
-    @BindView(R.id.channel) TextView channelName;
-    @BindView(R.id.name_label) TextView nameLabel;
-    @BindView(R.id.name) TextView name;
-    @BindView(R.id.priority) TextView priority;
+    @BindView(R.id.is_enabled) TextView isEnabledTextView;
+    @BindView(R.id.directory_label) TextView directoryLabelTextView;
+    @BindView(R.id.directory) TextView directoryTextView;
+    @BindView(R.id.minimum_duration) TextView minDurationTextView;
+    @BindView(R.id.maximum_duration) TextView maxDurationTextView;
+    @BindView(R.id.start_after_time) TextView startTimeTextView;
+    @BindView(R.id.start_before_time) TextView startWindowTimeTextView;
+    @BindView(R.id.days_of_week) TextView daysOfWeekTextView;
+    @BindView(R.id.channel) TextView channelNameTextView;
+    @BindView(R.id.name_label) TextView nameLabelTextView;
+    @BindView(R.id.name) TextView nameTextView;
+    @BindView(R.id.priority) TextView priorityTextView;
 
     @Nullable
     @BindView(R.id.nested_toolbar)
@@ -52,6 +51,7 @@ public class SeriesRecordingDetailsFragment extends Fragment {
     private MenuUtils menuUtils;
     private String id;
     private Unbinder unbinder;
+    private int htspVersion;
 
     public static SeriesRecordingDetailsFragment newInstance(String id) {
         SeriesRecordingDetailsFragment f = new SeriesRecordingDetailsFragment();
@@ -84,9 +84,10 @@ public class SeriesRecordingDetailsFragment extends Fragment {
 
         if (getActivity() instanceof ToolbarInterfaceLight) {
             toolbarInterface = (ToolbarInterfaceLight) getActivity();
-            toolbarInterface.setTitle("Details");
+            toolbarInterface.setTitle(getString(R.string.details));
         }
         menuUtils = new MenuUtils(getActivity());
+        htspVersion = DataStorage.getInstance().getProtocolVersion();
         setHasOptionsMenu(true);
 
         Bundle bundle = getArguments();
@@ -110,38 +111,37 @@ public class SeriesRecordingDetailsFragment extends Fragment {
             });
         }
 
-        isEnabled.setVisibility(DataStorage.getInstance().getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED ? View.VISIBLE : View.GONE);
-        isEnabled.setText(recording.enabled > 0 ? R.string.recording_enabled : R.string.recording_disabled);
+        isEnabledTextView.setVisibility(htspVersion >= 19 ? View.VISIBLE : View.GONE);
+        isEnabledTextView.setText(recording.enabled > 0 ? R.string.recording_enabled : R.string.recording_disabled);
 
-        directoryLabel.setVisibility(DataStorage.getInstance().getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_DIRECTORY ? View.VISIBLE : View.GONE);
-        directory.setVisibility(DataStorage.getInstance().getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_DIRECTORY ? View.VISIBLE : View.GONE);
-        directory.setText(recording.directory);
+        directoryLabelTextView.setVisibility(htspVersion >= 19 ? View.VISIBLE : View.GONE);
+        directoryTextView.setVisibility(htspVersion >= 19 ? View.VISIBLE : View.GONE);
+        directoryTextView.setText(recording.directory);
 
         Channel channel = DataStorage.getInstance().getChannelFromArray(recording.channel);
-        channelName.setText(channel != null ? channel.channelName : getString(R.string.all_channels));
+        channelNameTextView.setText(channel != null ? channel.channelName : getString(R.string.all_channels));
 
-        Utils.setDescription(nameLabel, name, recording.name);
-        Utils.setDaysOfWeek(getActivity(), null, daysOfWeek, recording.daysOfWeek);
+        Utils.setDescription(nameLabelTextView, nameTextView, recording.name);
+        Utils.setDaysOfWeek(getActivity(), null, daysOfWeekTextView, recording.daysOfWeek);
 
-        String[] priorityItems = getResources().getStringArray(R.array.dvr_priorities);
-        if (recording.priority >= 0 && recording.priority < priorityItems.length) {
-            priority.setText(priorityItems[recording.priority]);
+        String[] priorityList = getResources().getStringArray(R.array.dvr_priorities);
+        if (recording.priority >= 0 && recording.priority < priorityList.length) {
+            priorityTextView.setText(priorityList[recording.priority]);
         }
         if (recording.minDuration > 0) {
-            // The minimum time is given in seconds, but we want to show it in minutes
-            minDuration.setText(getString(R.string.minutes, (int) (recording.minDuration / 60)));
+            // The minimum timeTextView is given in seconds, but we want to show it in minutes
+            minDurationTextView.setText(getString(R.string.minutes, (int) (recording.minDuration / 60)));
         }
         if (recording.maxDuration > 0) {
-            // The maximum time is given in seconds, but we want to show it in minutes
-            maxDuration.setText(getString(R.string.minutes, (int) (recording.maxDuration / 60)));
+            // The maximum timeTextView is given in seconds, but we want to show it in minutes
+            maxDurationTextView.setText(getString(R.string.minutes, (int) (recording.maxDuration / 60)));
         }
-        startTime.setText(Utils.getTimeStringFromValue(getActivity(), recording.start));
-        startWindowTime.setText(Utils.getTimeStringFromValue(getActivity(), recording.startWindow));
+        startTimeTextView.setText(Utils.getTimeStringFromValue(getActivity(), recording.start));
+        startWindowTimeTextView.setText(Utils.getTimeStringFromValue(getActivity(), recording.startWindow));
     }
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
-        //
         if (nestedToolbar != null) {
             menu = nestedToolbar.getMenu();
         }

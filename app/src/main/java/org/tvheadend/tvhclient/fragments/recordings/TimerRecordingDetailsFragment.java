@@ -14,7 +14,6 @@ import android.view.ViewGroup;
 import android.view.ViewStub;
 import android.widget.TextView;
 
-import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.activities.AddEditActivity;
@@ -32,14 +31,14 @@ import butterknife.Unbinder;
 
 public class TimerRecordingDetailsFragment extends Fragment {
 
-    @BindView(R.id.is_enabled) TextView isEnabled;
-    @BindView(R.id.directory_label) TextView directoryLabel;
-    @BindView(R.id.directory) TextView directory;
-    @BindView(R.id.time) TextView time;
-    @BindView(R.id.duration) TextView duration;
-    @BindView(R.id.days_of_week) TextView daysOfWeek;
-    @BindView(R.id.channel) TextView channelName;
-    @BindView(R.id.priority) TextView priority;
+    @BindView(R.id.is_enabled) TextView isEnabledTextView;
+    @BindView(R.id.directory_label) TextView directoryLabelTextView;
+    @BindView(R.id.directory) TextView directoryTextView;
+    @BindView(R.id.time) TextView timeTextView;
+    @BindView(R.id.duration) TextView durationTextView;
+    @BindView(R.id.days_of_week) TextView daysOfWeekTextView;
+    @BindView(R.id.channel) TextView channelNameTextView;
+    @BindView(R.id.priority) TextView priorityTextView;
 
     @Nullable
     @BindView(R.id.nested_toolbar)
@@ -50,6 +49,7 @@ public class TimerRecordingDetailsFragment extends Fragment {
     private MenuUtils menuUtils;
     private String id;
     private Unbinder unbinder;
+    private int htspVersion;
 
     public static TimerRecordingDetailsFragment newInstance(String id) {
         TimerRecordingDetailsFragment f = new TimerRecordingDetailsFragment();
@@ -82,9 +82,10 @@ public class TimerRecordingDetailsFragment extends Fragment {
 
         if (getActivity() instanceof ToolbarInterfaceLight) {
             toolbarInterface = (ToolbarInterfaceLight) getActivity();
-            toolbarInterface.setTitle("Details");
+            toolbarInterface.setTitle(getString(R.string.details));
         }
         menuUtils = new MenuUtils(getActivity());
+        htspVersion = DataStorage.getInstance().getProtocolVersion();
         setHasOptionsMenu(true);
 
         Bundle bundle = getArguments();
@@ -108,28 +109,23 @@ public class TimerRecordingDetailsFragment extends Fragment {
             });
         }
 
-        isEnabled.setVisibility((DataStorage.getInstance().getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_ENABLED) ? View.VISIBLE : View.GONE);
-        isEnabled.setText(recording.enabled > 0 ? R.string.recording_enabled : R.string.recording_disabled);
+        isEnabledTextView.setVisibility((htspVersion >= 19) ? View.VISIBLE : View.GONE);
+        isEnabledTextView.setText(recording.enabled > 0 ? R.string.recording_enabled : R.string.recording_disabled);
 
-        directoryLabel.setVisibility(DataStorage.getInstance().getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_DIRECTORY ? View.VISIBLE : View.GONE);
-        directory.setVisibility(DataStorage.getInstance().getProtocolVersion() >= Constants.MIN_API_VERSION_REC_FIELD_DIRECTORY ? View.VISIBLE : View.GONE);
-        directory.setText(recording.directory);
+        directoryLabelTextView.setVisibility(htspVersion >= 19 ? View.VISIBLE : View.GONE);
+        directoryTextView.setVisibility(htspVersion >= 19 ? View.VISIBLE : View.GONE);
+        directoryTextView.setText(recording.directory);
 
         Channel channel = DataStorage.getInstance().getChannelFromArray(recording.channel);
-        if (channel != null) {
-            channelName.setText(channel.channelName);
-        } else {
-            channelName.setText(R.string.all_channels);
-        }
+        channelNameTextView.setText(channel != null ? channel.channelName : getString(R.string.all_channels));
 
-        Utils.setDaysOfWeek(getActivity(), null, daysOfWeek, recording.daysOfWeek);
+        Utils.setDaysOfWeek(getActivity(), null, daysOfWeekTextView, recording.daysOfWeek);
 
         String[] priorityItems = getResources().getStringArray(R.array.dvr_priorities);
         if (recording.priority >= 0 && recording.priority < priorityItems.length) {
-            priority.setText(priorityItems[recording.priority]);
+            priorityTextView.setText(priorityItems[recording.priority]);
         }
 
-        // TODO multiple uses, consolidate
         Calendar startTime = Calendar.getInstance();
         startTime.set(Calendar.HOUR_OF_DAY, recording.start / 60);
         startTime.set(Calendar.MINUTE, recording.start % 60);
@@ -138,13 +134,13 @@ public class TimerRecordingDetailsFragment extends Fragment {
         endTime.set(Calendar.HOUR_OF_DAY, recording.stop / 60);
         endTime.set(Calendar.MINUTE, recording.stop % 60);
 
-        Utils.setTime(time, startTime.getTimeInMillis(), endTime.getTimeInMillis());
-        duration.setText(getString(R.string.minutes, (int) (recording.stop - recording.start)));
+        // TODO change
+        Utils.setTime(timeTextView, startTime.getTimeInMillis(), endTime.getTimeInMillis());
+        durationTextView.setText(getString(R.string.minutes, (recording.stop - recording.start)));
     }
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
-        //
         if (nestedToolbar != null) {
             menu = nestedToolbar.getMenu();
         }
