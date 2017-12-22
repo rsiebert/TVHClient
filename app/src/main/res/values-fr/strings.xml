@@ -20,6 +20,7 @@
     <string name="download_error_authentication_required">Erreur lors du téléchargement de l\'enregistrement \'%s\'. Authentification incorrect ou manquante.</string>
     <string name="no_external_storage_available">Le stockage externe n\'est pas accessible ou en lecture seul.</string>
 
+    <string name="details">Détails</string>
     <string name="settings">Paramètres</string>
     <string name="refresh">Rafraichir</string>
     <string name="tags">Etiquettes</string>

@@ -20,6 +20,7 @@
     <string name="download_error_authentication_required">Chyba počas sťahovania nahrávky \'%s\'. Autentifikácia zlyhala.</string>
     <string name="no_external_storage_available">Extérne úložisko nieje dostupné alebo je len na čítanie.</string>
 
+    <string name="details">Podrobnosti</string>
     <string name="settings">Nastavenia</string>
     <string name="refresh">Obnoviť</string>
     <string name="tags">Skupiny</string>

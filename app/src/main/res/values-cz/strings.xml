@@ -2,6 +2,7 @@
 <resources>
     <string name="app_name">TVHClient</string>
 
+    <string name="details">Podrobnosti</string>
     <string name="settings">Nastavení</string>
     <string name="refresh">Obnovit</string>
     <string name="tags">Štítky</string>

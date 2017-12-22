@@ -18,6 +18,7 @@
     <string name="download_error_authentication_required">Fehler beim Downloaden der Aufnahme \'%s\'. Authentifizierung war nicht korrekt bzw. fehlt.</string>
     <string name="no_external_storage_available">Der externe Speicher ist entweder nicht verfügbar oder nicht beschreibbar.</string>
 
+    <string name="details">Details</string>
     <string name="settings">Einstellungen</string>
     <string name="refresh">Aktualisieren</string>
     <string name="tags">Anzeige Filtern</string>

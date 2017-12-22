@@ -20,6 +20,7 @@
     <string name="download_error_authentication_required">Błąd pobierania nagrania \'%s\'. Uwierzytelnianie nieprawidłowe lub brakujące.</string>
     <string name="no_external_storage_available">Pamięć zewnętrzna jest nie dostępna lub jest tylko do odczytu.</string>
 
+    <string name="details">Szczegóły</string>
     <string name="settings">Ustawienia</string>
     <string name="refresh">Odśwież</string>
     <string name="tags">Tagi</string>

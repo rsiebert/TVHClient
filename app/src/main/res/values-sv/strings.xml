@@ -2,6 +2,7 @@
 <resources>
     <string name="app_name">TVHClient</string>
 
+    <string name="details">Detaljer</string>
     <string name="settings">Inställningar</string>
     <string name="refresh">Uppdatera</string>
     <string name="tags">Taggar</string>

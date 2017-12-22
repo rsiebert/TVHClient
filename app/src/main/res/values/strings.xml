@@ -20,6 +20,7 @@
     <string name="download_error_authentication_required">Error downloading the recording \'%s\'. Authentication not correct or missing.</string>
     <string name="no_external_storage_available">External storage is not available or read only.</string>
 
+    <string name="details">Details</string>
     <string name="settings">Settings</string>
     <string name="refresh">Refresh</string>
     <string name="tags">Tags</string>

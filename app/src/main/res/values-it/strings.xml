@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="details">Dettagli</string>
     <string name="add">Aggiungi</string>
     <string name="add_connection">Aggiungi connessione</string>
     <string name="add_recording">Aggiungi nuova registrazione</string>
