@@ -1,6 +1,7 @@
 package org.tvheadend.tvhclient.fragments;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -11,8 +12,8 @@ import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.ProgressBar;
 
-import org.tvheadend.tvhclient.ChangeLogDialog;
 import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.activities.ChangeLogActivity;
 import org.tvheadend.tvhclient.tasks.FileLoaderCallback;
 import org.tvheadend.tvhclient.tasks.HtmlFileLoaderTask;
 
@@ -58,8 +59,8 @@ public class InfoFragment extends Fragment implements FileLoaderCallback {
                 getActivity().finish();
                 return true;
             case R.id.menu_changelog:
-                final ChangeLogDialog cld = new ChangeLogDialog(getActivity());
-                cld.getFullLogDialog().show();
+                Intent intent = new Intent(getActivity(), ChangeLogActivity.class);
+                startActivity(intent);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

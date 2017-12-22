@@ -83,6 +83,9 @@ public class ChangeLogFragment extends android.app.Fragment implements BackPress
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case android.R.id.home:
+                getActivity().finish();
+                return true;
             case R.id.menu_full_changelog:
                 showChangelog(true);
                 return true;
