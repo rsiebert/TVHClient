@@ -23,6 +23,16 @@
         <item>Kanaal nummer</item>
     </string-array>
 
+    <string-array name="day_long_names">
+        <item>Maadaag</item>
+        <item>Dinsdag</item>
+        <item>Woensdag</item>
+        <item>Donderdag</item>
+        <item>Vrijdag</item>
+        <item>Zaterdag</item>
+        <item>Zondag</item>
+    </string-array>
+
     <string-array name="day_short_names">
         <item>Maa</item>
         <item>Din</item>

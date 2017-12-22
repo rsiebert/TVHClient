@@ -151,6 +151,16 @@
         <item>Sun</item>
     </string-array>
 
+    <string-array name="day_long_names">
+        <item>Monday</item>
+        <item>Tuesday</item>
+        <item>Wednesday</item>
+        <item>Thursday</item>
+        <item>Friday</item>
+        <item>Saturday</item>
+        <item>Sunday</item>
+    </string-array>
+
     <string-array name="dvr_priorities">
         <item>Important</item>
         <item>High</item>

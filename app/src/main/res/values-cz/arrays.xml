@@ -24,6 +24,16 @@
     </string-array>
 
     <string-array name="day_short_names">
+        <item>Pondělí</item>
+        <item>Úterý</item>
+        <item>Středa</item>
+        <item>Čtvrtek</item>
+        <item>Pátek</item>
+        <item>Sobota</item>
+        <item>Neděle</item>
+    </string-array>
+
+    <string-array name="day_long_names">
         <item>Pon</item>
         <item>Úte</item>
         <item>Stř</item>

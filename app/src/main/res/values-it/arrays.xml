@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <string-array name="day_short_names">
         <item>Lun</item>
         <item>Mar</item>
@@ -9,6 +10,17 @@
         <item>Sab</item>
         <item>Dom</item>
     </string-array>
+
+    <string-array name="day_long_names">
+        <item>Lunedi</item>
+        <item>Martedì</item>
+        <item>Mercoledì</item>
+        <item>Giovedi</item>
+        <item>Venerdì</item>
+        <item>Sabato</item>
+        <item>Domenica</item>
+    </string-array>
+
     <string-array name="dvr_priorities">
         <item>Molto alta</item>
         <item>Alta</item>

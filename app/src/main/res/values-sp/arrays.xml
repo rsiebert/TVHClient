@@ -33,6 +33,16 @@
         <item>Dom</item>
     </string-array>
 
+    <string-array name="day_long_names">
+        <item>Lunes</item>
+        <item>Martes</item>
+        <item>Miércoles</item>
+        <item>Jueves</item>
+        <item>Viernes</item>
+        <item>Sábato</item>
+        <item>Domingo</item>
+    </string-array>
+
     <string-array name="dvr_priorities">
         <item>Importante</item>
         <item>Alta</item>

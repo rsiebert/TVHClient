@@ -33,6 +33,16 @@
         <item>So</item>
     </string-array>
 
+    <string-array name="day_long_names">
+        <item>Montag</item>
+        <item>Dienstag</item>
+        <item>Mittwoch</item>
+        <item>Donnerstag</item>
+        <item>Freitag</item>
+        <item>Samstag</item>
+        <item>Sonntag</item>
+    </string-array>
+
     <string-array name="dvr_priorities">
         <item>Wichtig</item>
         <item>Hoch</item>
