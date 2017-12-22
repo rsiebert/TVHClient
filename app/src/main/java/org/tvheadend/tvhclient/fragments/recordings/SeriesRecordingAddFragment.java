@@ -397,9 +397,8 @@ public class SeriesRecordingAddFragment extends BaseRecordingAddEditFragment imp
             selectedIndices[i] = list.get(i);
         }
         new MaterialDialog.Builder(activity)
-                .title(R.string.title)
-                // TODO long names
-                .items(R.array.day_short_names)
+                .title(R.string.days_of_week)
+                .items(R.array.day_long_names)
                 .itemsCallbackMultiChoice(selectedIndices, new MaterialDialog.ListCallbackMultiChoice() {
                     @Override
                     public boolean onSelection(MaterialDialog dialog, Integer[] which, CharSequence[] text) {
