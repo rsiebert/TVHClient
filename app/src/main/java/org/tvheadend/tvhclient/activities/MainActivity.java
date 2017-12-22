@@ -512,7 +512,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     }
 
 
-
     @Override
     public void onPostResume() {
         super.onPostResume();
@@ -608,38 +607,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-
-
-/*
-        int completedRecordingCount = 0;
-        Map<Integer, Recording> map = dataStorage.getRecordingsFromArray();
-        for (Recording recording : map.values()) {
-            if (recording.isCompleted()) {
-                completedRecordingCount++;
-                break;
-            }
-        }
-
-        // Do not show the search menu on these screens
-        if ((selectedNavigationMenuId == MENU_COMPLETED_RECORDINGS && completedRecordingCount == 0)
-                || selectedNavigationMenuId == MENU_SCHEDULED_RECORDINGS
-                || selectedNavigationMenuId == MENU_FAILED_RECORDINGS
-                || selectedNavigationMenuId == MENU_REMOVED_RECORDINGS
-                || selectedNavigationMenuId == MENU_SERIES_RECORDINGS
-                || selectedNavigationMenuId == MENU_TIMER_RECORDINGS) {
-            (menu.findItem(R.id.menu_search)).setVisible(false);
-        }
-
-        // Hide the wake on lan menu from the status fragment. Only show it in
-        // the status screen and if the app is unlocked and an address is set
-        (menu.findItem(R.id.menu_wol)).setVisible(false);
-        if (selectedNavigationMenuId == MENU_STATUS) {
-            final Connection conn = databaseHelper.getSelectedConnection();
-            if (app.isUnlocked() && conn != null && conn.wol_mac_address.length() > 0) {
-                (menu.findItem(R.id.menu_wol)).setVisible(true);
-            }
-        }
-*/
         if (mMediaRouteMenuItem != null) {
             mMediaRouteMenuItem.setVisible(showCastMenuItem());
         }
@@ -693,37 +660,17 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
      * required the created fragment will be stored on the back stack so it can
      * be shown later when the user has pressed the back button.
      *
-     * @param name           Class name of the fragment
-     * @param layout         Layout that shall be used
-     * @param addToBackStack True to add the fragment to the back stack, false otherwise
+     * @param name   Class name of the fragment
+     * @param layout Layout that shall be used
      */
-    private void showFragment(String name, int layout, Bundle args, boolean addToBackStack) {
+    private void showFragment(String name, int layout, Bundle args) {
         Fragment f = Fragment.instantiate(this, name);
         if (args != null) {
             f.setArguments(args);
         }
-        if (addToBackStack) {
-            getSupportFragmentManager().beginTransaction().replace(layout, f)
-                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                    .addToBackStack(null)
-                    .commit();
-        } else {
-            getSupportFragmentManager().beginTransaction().replace(layout, f)
-                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                    .commit();
-        }
-    }
-
-    /**
-     * Creates the fragment with the given name and shows it on the given
-     * layout. If a bundle was given, it will be passed to the fragment.
-     *
-     * @param name   Class name of the fragment
-     * @param layout Layout that shall be used
-     * @param args   Additional arguments that can be passed to the fragment
-     */
-    private void showFragment(String name, int layout, Bundle args) {
-        showFragment(name, layout, args, false);
+        getSupportFragmentManager().beginTransaction().replace(layout, f)
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                .commit();
     }
 
     @Override
