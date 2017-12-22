@@ -97,6 +97,10 @@ public class ChannelListFragment extends ListFragment implements HTSListener, Ch
             selectedListPosition = savedInstanceState.getInt("list_position", 0);
             channelTimeSelection = savedInstanceState.getInt("channel_time_selection");
             showProgramsFromTime = savedInstanceState.getLong("show_programs_from_time");
+        } else {
+            selectedListPosition = 0;
+            channelTimeSelection = 0;
+            showProgramsFromTime = new Date().getTime();
         }
 
         setHasOptionsMenu(true);
