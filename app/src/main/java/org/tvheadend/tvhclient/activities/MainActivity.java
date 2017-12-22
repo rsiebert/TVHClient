@@ -72,12 +72,12 @@ import org.tvheadend.tvhclient.fragments.recordings.RemovedRecordingListFragment
 import org.tvheadend.tvhclient.fragments.recordings.ScheduledRecordingListFragment;
 import org.tvheadend.tvhclient.fragments.recordings.SeriesRecordingListFragment;
 import org.tvheadend.tvhclient.fragments.recordings.TimerRecordingListFragment;
+import org.tvheadend.tvhclient.htsp.HTSListener;
 import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.interfaces.ChangeLogDialogInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentScrollInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
-import org.tvheadend.tvhclient.htsp.HTSListener;
 import org.tvheadend.tvhclient.interfaces.ToolbarInterface;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Connection;
@@ -91,14 +91,12 @@ import org.tvheadend.tvhclient.utils.MiscUtils;
 import org.tvheadend.tvhclient.utils.Utils;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 // TODO hide unlocker menu if already unlocked
 // TODO move chromecast to another class
 // TODO move drawer init to another class
-// TODO remove remembering list positions
 // TODO when in dual pane and back edit menu is visible
 // TODO make nav image blasser
 // TODO confirmation of added/edited recordings...
@@ -168,9 +166,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     private TVHClientApplication app;
     private DatabaseHelper databaseHelper;
-
-    private int channelTimeSelection = 0;
-    private long showProgramsFromTime = new Date().getTime();
 
     private VideoCastManager mCastManager;
     private VideoCastConsumerImpl mCastConsumer;
@@ -345,8 +340,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             selectedNavigationMenuId = savedInstanceState.getInt("navigation_menu_position", MENU_CHANNELS);
             connectionStatus = savedInstanceState.getString("connection_status");
             connectionSettingsShown = savedInstanceState.getBoolean("connection_settings_shown");
-            channelTimeSelection = savedInstanceState.getInt("channel_time_selection");
-            showProgramsFromTime = savedInstanceState.getLong("show_programs_from_time");
         }
 
         // Resets the loading indication and updates the action 
@@ -440,8 +433,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 // Show the channel list fragment. If the information to show only
                 // the channels as required in the program guide is not passed then
                 // the full channel list fragment will be shown.
-                bundle.putInt("channel_time_selection", channelTimeSelection);
-                bundle.putLong("show_programs_from_time", showProgramsFromTime);
                 showFragment(ChannelListFragment.class.getName(), R.id.main_fragment, bundle);
                 break;
             case MENU_PROGRAM_GUIDE:
@@ -653,9 +644,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         connectionStatus = sharedPreferences.getString("last_connection_state", Constants.ACTION_CONNECTION_STATE_OK);
         connectionSettingsShown = sharedPreferences.getBoolean("last_connection_settings_shown", false);
 
-        // Update the time so that the correct programs are shown
-        showProgramsFromTime = new Date().getTime();
-
         // Update the drawer menu so that all available menu items are
         // shown in case the recording counts have changed or the user has
         // bought the unlocked version to enable all features
@@ -664,8 +652,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     }
 
     private void updateDrawerItemBadges() {
-        boolean show = connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_OK) && !dataStorage.isLoading();
-
         int channelCount = dataStorage.getChannelsFromArray().size();
         int completedRecordingCount = 0;
         int scheduledRecordingCount = 0;
@@ -785,8 +771,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         outState.putInt("navigation_menu_position", selectedNavigationMenuId);
         outState.putString("connection_status", connectionStatus);
         outState.putBoolean("connection_settings_shown", connectionSettingsShown);
-        outState.putInt("channel_time_selection", channelTimeSelection);
-        outState.putLong("show_programs_from_time", showProgramsFromTime);
         super.onSaveInstanceState(outState);
     }
 
