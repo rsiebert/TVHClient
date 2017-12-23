@@ -22,6 +22,7 @@ import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.utils.MiscUtils;
@@ -51,6 +52,7 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
     private final Activity activity;
     private final Toolbar toolbar;
     private final NavigationDrawerCallback callback;
+    private final boolean isUnlocked;
     private AccountHeader headerResult;
     private Drawer result;
 
@@ -59,6 +61,7 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
         this.savedInstanceState = savedInstanceState;
         this.toolbar = toolbar;
         this.callback = callback;
+        this.isUnlocked = TVHClientApplication.getInstance().isUnlocked();
     }
 
     public void createHeader() {
@@ -137,12 +140,15 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
                         new DividerDrawerItem(),
                         statusItem,
                         informationItem,
-                        settingsItem,
-                        extrasItem
+                        settingsItem
                 )
                 .withOnDrawerItemClickListener(this)
                 .withSavedInstance(savedInstanceState)
                 .build();
+
+        if (isUnlocked) {
+            result.addItem(extrasItem);
+        }
     }
 
     private int getResourceIdFromAttr(@AttrRes int attr) {

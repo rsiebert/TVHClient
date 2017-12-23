@@ -432,14 +432,4 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
             listView.setSelectionFromTop(position, offset);
         }
     }
-
-    @Override
-    public Object getSelectedItem() {
-        return null;
-    }
-
-    @Override
-    public int getItemCount() {
-        return adapter.getCount();
-    }
 }

@@ -13,8 +13,9 @@ import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.adapter.ProgramGuideChannelListAdapter;
-import org.tvheadend.tvhclient.interfaces.FragmentScrollInterface;
 import org.tvheadend.tvhclient.htsp.HTSListener;
+import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
+import org.tvheadend.tvhclient.interfaces.FragmentScrollInterface;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.ChannelTag;
 import org.tvheadend.tvhclient.model.Connection;
@@ -24,7 +25,7 @@ import java.util.ArrayList;
 
 // TODO header placeholder for current time is missing in layout
 
-public class ProgramGuideChannelListFragment extends ListFragment implements HTSListener, OnScrollListener {
+public class ProgramGuideChannelListFragment extends ListFragment implements HTSListener, OnScrollListener, FragmentControlInterface {
 
     private final static String TAG = ProgramGuideChannelListFragment.class.getSimpleName();
 
@@ -155,6 +156,18 @@ public class ProgramGuideChannelListFragment extends ListFragment implements HTS
             View v = view.getChildAt(0);
             int offset = (v == null) ? 0 : v.getTop();
             fragmentScrollInterface.onScrollingChanged(position, offset, TAG);
+        }
+    }
+
+    @Override
+    public void reloadData() {
+        populateList();
+    }
+
+    @Override
+    public void setSelection(final int position, final int offset) {
+        if (getListView().getCount() > position && position >= 0) {
+            getListView().setSelectionFromTop(position, offset);
         }
     }
 }

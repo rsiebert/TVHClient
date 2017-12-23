@@ -2,18 +2,41 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="horizontal" >
+    android:orientation="horizontal">
 
-    <FrameLayout
-        android:id="@+id/program_guide_channel_fragment"
+    <LinearLayout
         android:layout_width="72dp"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-    <android.support.v4.view.ViewPager
-        xmlns:android="http://schemas.android.com/apk/res/android"
+        <LinearLayout
+            android:id="@+id/pager_title"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/TimelineHeaderLayoutStyle"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/channel_title_date"
+                style="?attr/ProgramGuideTimelineFont"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="4dp"
+                android:paddingTop="4dp"
+                android:text="@null" />
+        </LinearLayout>
+
+        <FrameLayout
+            android:id="@+id/program_guide_channel_fragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </LinearLayout>
+
+
+    <android.support.v4.view.ViewPager xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/pager"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent" >
-    </android.support.v4.view.ViewPager>
+        android:layout_height="fill_parent" />
 
 </LinearLayout>

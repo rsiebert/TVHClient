@@ -87,6 +87,8 @@
         <activity android:name=".activities.DetailsActivity" />
         <activity android:name=".activities.StatusActivity" />
         <activity android:name=".activities.ProgramListActivity" />
+        <activity android:name=".activities.ChangeLogActivity" />
+        <activity android:name=".activities.ProgramGuideActivity" />
 
         <service android:name="com.google.android.libraries.cast.companionlibrary.notification.VideoCastNotificationService" />
         <service android:name="com.google.android.libraries.cast.companionlibrary.cast.reconnection.ReconnectionService"/>

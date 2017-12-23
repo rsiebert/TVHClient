@@ -327,25 +327,21 @@ public class ProgramGuidePagerFragment extends Fragment implements FragmentContr
     }
 
     @Override
-    public Object getSelectedItem() {
-        return null;
-    }
-
-    @Override
-    public int getItemCount() {
-        int count = 0;
-        final Fragment cf = getChildFragmentManager().findFragmentById(R.id.program_guide_channel_fragment);
-        if (cf instanceof ChannelListFragment) {
-            count = ((FragmentControlInterface) cf).getItemCount();
-        }
-        return count;
-    }
-
-    @Override
     public void onChannelTagIdSelected(int which) {
         Utils.setChannelTagId(activity, which);
-        if (fragmentStatusInterface != null) {
-            fragmentStatusInterface.channelTagChanged(TAG);
+
+        // Inform the channel list fragment to clear all data from its
+        // channel list and show only the channels with the selected tag
+        final Fragment cf = getActivity().getSupportFragmentManager().findFragmentById(R.id.program_guide_channel_fragment);
+        if (cf instanceof ProgramGuideChannelListFragment) {
+            ((FragmentControlInterface) cf).reloadData();
+        }
+        // Additionally inform the program guide fragment to clear all data
+        // from its list and show only the programs of the channels that are
+        // part of the selected tag
+        final Fragment pgf = getActivity().getSupportFragmentManager().findFragmentById(R.id.main_fragment);
+        if (pgf instanceof ProgramGuidePagerFragment) {
+            ((FragmentControlInterface) pgf).reloadData();
         }
     }
 }

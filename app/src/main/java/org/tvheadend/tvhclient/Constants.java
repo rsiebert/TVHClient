@@ -20,9 +20,6 @@ public class Constants {
     public static final int PROGRAMS_VISIBLE_BEFORE_LOADING_MORE = 15;
 
     // Strings used to identify the information passed via a bundle
-    public static final String BUNDLE_RECONNECT = "reconnect";
-    public static final String BUNDLE_RESTART = "reload";
-    public static final String BUNDLE_SHOW_CONTROLS = "showControls";
     public static final String BUNDLE_EPG_START_TIME = "epgStartTime";
     public static final String BUNDLE_EPG_END_TIME = "epgEndTime";
     public static final String BUNDLE_EPG_INDEX = "showControls";
@@ -82,22 +79,7 @@ public class Constants {
     // Minimum API version to enable or disable certain functionalities. The
     // features shall only be enabled if supported by the server. 
     public static final int MIN_API_VERSION_PROFILES = 16;
-    public static final int MIN_API_VERSION_TIMER_RECORDINGS = 18;
-    public static final int MIN_API_VERSION_SERIES_RECORDINGS = 13;
-    public static final int MIN_API_VERSION_UPDATE_TIMER_RECORDINGS = 25;
-    public static final int MIN_API_VERSION_UPDATE_SERIES_RECORDINGS = 25;
 
-    // Minimum API versions to enable or disable certain fields in the HTSP API
-    // methods. These fields shall only be visible and used if supported.
-    public static final int MIN_API_VERSION_REC_FIELD_ENABLED = 19;
-    public static final int MIN_API_VERSION_REC_FIELD_DIRECTORY = 19;
-    public static final int MIN_API_VERSION_REC_FIELD_DUPDETECT = 20;
-
-    public static final int MIN_API_VERSION_DVR_FIELD_ENABLED = 23;
-
-    // These constants are required to check if the server contains certain bug fixes
-    // Allow selecting 'All channels' for a series recording. (http://tvheadend.org/issues/2892)
-    public static final int MIN_API_VERSION_REC_ALL_CHANNELS = 21;
     // Allow editing the title of a recording. (http://tvheadend.org/issues/2893)
     public static final int MIN_API_VERSION_REC_FIELD_TITLE = 21;
     public static final int MIN_API_VERSION_REC_FIELD_SUBTITLE = 21;

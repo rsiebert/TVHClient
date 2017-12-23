@@ -2,6 +2,7 @@ package org.tvheadend.tvhclient;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -15,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import org.tvheadend.tvhclient.activities.DetailsActivity;
 import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Program;
@@ -423,9 +425,10 @@ public class ProgramGuideItemView extends LinearLayout {
                     // all program in the current channel until we find the one.
                     int id = (int) v.getTag();
                     Program program = DataStorage.getInstance().getProgramFromArray(id);
-                    if (fragmentStatusInterface != null && program != null) {
-                        fragmentStatusInterface.onListItemSelected(0, program, TAG);
-                    }
+                    Intent intent = new Intent(activity, DetailsActivity.class);
+                    intent.putExtra("eventId", program.eventId);
+                    intent.putExtra("type", "program");
+                    activity.startActivity(intent);
                 }
             });
         }

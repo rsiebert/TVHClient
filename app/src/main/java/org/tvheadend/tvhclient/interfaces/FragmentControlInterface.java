@@ -17,18 +17,4 @@ public interface FragmentControlInterface {
      * @param offset Offset in pixels from the top of edge
      */
     void setSelection(final int position, final int offset);
-
-    /**
-     * Returns the currently selected item from the adapter
-     * 
-     * @return Selected item
-     */
-    Object getSelectedItem();
-
-    /**
-     * Returns the number of items in the adapter
-     * 
-     * @return number of items
-     */
-    int getItemCount();
 }

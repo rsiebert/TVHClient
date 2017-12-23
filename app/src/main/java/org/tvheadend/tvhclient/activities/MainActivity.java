@@ -17,7 +17,6 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
@@ -28,7 +27,6 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -42,19 +40,14 @@ import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
 import org.tvheadend.tvhclient.ChangeLogDialog;
 import org.tvheadend.tvhclient.Constants;
-import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.Logger;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.fragments.ChannelListFragment;
-import org.tvheadend.tvhclient.fragments.ProgramGuideChannelListFragment;
-import org.tvheadend.tvhclient.fragments.ProgramGuideListFragment;
-import org.tvheadend.tvhclient.fragments.ProgramGuidePagerFragment;
 import org.tvheadend.tvhclient.fragments.ProgramListFragment;
 import org.tvheadend.tvhclient.fragments.recordings.CompletedRecordingListFragment;
 import org.tvheadend.tvhclient.fragments.recordings.FailedRecordingListFragment;
-import org.tvheadend.tvhclient.fragments.recordings.RecordingListFragment;
 import org.tvheadend.tvhclient.fragments.recordings.RemovedRecordingListFragment;
 import org.tvheadend.tvhclient.fragments.recordings.ScheduledRecordingListFragment;
 import org.tvheadend.tvhclient.fragments.recordings.SeriesRecordingListFragment;
@@ -62,15 +55,9 @@ import org.tvheadend.tvhclient.fragments.recordings.TimerRecordingListFragment;
 import org.tvheadend.tvhclient.htsp.HTSListener;
 import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.interfaces.ChangeLogDialogInterface;
-import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
-import org.tvheadend.tvhclient.interfaces.FragmentScrollInterface;
-import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.interfaces.ToolbarInterface;
-import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.Profile;
-import org.tvheadend.tvhclient.model.Program;
-import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.tasks.WakeOnLanTask;
 import org.tvheadend.tvhclient.tasks.WakeOnLanTaskCallback;
 import org.tvheadend.tvhclient.utils.MenuUtils;
@@ -78,7 +65,6 @@ import org.tvheadend.tvhclient.utils.MiscUtils;
 import org.tvheadend.tvhclient.utils.Utils;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import static org.tvheadend.tvhclient.activities.NavigationDrawer.MENU_CHANNELS;
 import static org.tvheadend.tvhclient.activities.NavigationDrawer.MENU_COMPLETED_RECORDINGS;
@@ -94,14 +80,13 @@ import static org.tvheadend.tvhclient.activities.NavigationDrawer.MENU_TIMER_REC
 import static org.tvheadend.tvhclient.activities.NavigationDrawer.MENU_UNKNOWN;
 import static org.tvheadend.tvhclient.activities.NavigationDrawer.MENU_UNLOCKER;
 
-// TODO hide unlocker menu if already unlocked
 // TODO move chromecast to another class
-// TODO move drawer init to another class
 // TODO when in dual pane and back edit menu is visible
 // TODO make nav image blasser
 // TODO confirmation of added/edited recordings...
+// TODO onQueryTextSubmit does nothing currently
 
-public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, ChangeLogDialogInterface, ToolbarInterface, ToolbarInterfaceLight, FragmentStatusInterface, FragmentScrollInterface, HTSListener, WakeOnLanTaskCallback, NavigationDrawerCallback {
+public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, ChangeLogDialogInterface, ToolbarInterface, ToolbarInterfaceLight, HTSListener, WakeOnLanTaskCallback, NavigationDrawerCallback {
 
     private final static String TAG = MainActivity.class.getSimpleName();
 
@@ -116,17 +101,10 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     // Default navigation drawer menu position and the list positions
     private int selectedNavigationMenuId = MENU_UNKNOWN;
     private int defaultMenuPosition = MENU_UNKNOWN;
-    private int programGuideListPosition = 0;
-    private int programGuideListPositionOffset = 0;
 
     // Holds the list of selected menu items so the previous fragment can be
     // shown again when the user has pressed the back key.
     private ArrayList<Integer> menuStack = new ArrayList<>();
-
-    // Holds a list of channels that are currently being loaded
-    private final List<Channel> channelLoadingList = new ArrayList<>();
-    private Runnable channelLoadingTask;
-    private final Handler channelLoadingHandler = new Handler();
 
     // Remember if the connection setting screen was already shown. When the
     // main activity starts for the first time and no connections are configured
@@ -158,7 +136,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private IntroductoryOverlay mOverlay;
     private MiniController mMiniController;
     private Logger logger;
-    private DataStorage dataStorage;
     private MenuUtils menuUtils;
 
     private SharedPreferences sharedPreferences;
@@ -186,7 +163,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         app = (TVHClientApplication) getApplication();
         logger = Logger.getInstance();
         databaseHelper = DatabaseHelper.getInstance(getApplicationContext());
-        dataStorage = DataStorage.getInstance();
         changeLogDialog = new ChangeLogDialog(this);
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -229,38 +205,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             connectionStatus = savedInstanceState.getString("connection_status");
             connectionSettingsShown = savedInstanceState.getBoolean("connection_settings_shown");
         }
-
-        // Resets the loading indication and updates the action 
-        // bar subtitle with the number of available channels
-        channelLoadingTask = new Runnable() {
-            public void run() {
-                // If the program guide is shown get the number of channels from the program guide
-                // pager fragment because it holds the channel fragment which in turn knows the channel count. 
-                Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
-                if (f != null && f instanceof ProgramGuidePagerFragment) {
-                    int count = ((FragmentControlInterface) f).getItemCount();
-                    String items = getResources().getQuantityString(R.plurals.items, count, count);
-                    setActionBarSubtitle(items);
-                }
-            }
-        };
         initCasting();
-    }
-
-    private void handleDrawerProfileSelected(IProfile profile) {
-        Connection oldConn = databaseHelper.getSelectedConnection();
-        Connection newConn = databaseHelper.getConnection(profile.getIdentifier());
-
-        // Switch the active connection and reconnect
-        if (oldConn != null && newConn != null) {
-            newConn.selected = true;
-            oldConn.selected = false;
-            databaseHelper.updateConnection(oldConn);
-            databaseHelper.updateConnection(newConn);
-            Utils.connect(MainActivity.this, true);
-
-            navigationDrawer.updateDrawerItemBadges();
-        }
     }
 
     /**
@@ -272,96 +217,62 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
      */
     private void handleDrawerItemSelected(int position) {
 
-        FrameLayout rightLayout = findViewById(R.id.right_fragment);
-        if (rightLayout != null) {
-            if (position == MENU_PROGRAM_GUIDE
-                    || position == MENU_STATUS
-                    || position == MENU_UNLOCKER) {
-                rightLayout.setVisibility(View.GONE);
-            } else {
-                rightLayout.setVisibility(View.VISIBLE);
-            }
-        }
-
-        // Remove the current fragment on the right side in case dual pane mode
-        // is active. In case the connection can't be established the area on
-        // the right side shall be blank, so that no invalid data is displayed.
-        // The main fragment does not need to be removed, because it will be
-        // replaced with a fragment from the selected menu.
-        if (isDualPane) {
-            Fragment rf = getSupportFragmentManager().findFragmentById(R.id.right_fragment);
-            if (rf != null) {
-                getSupportFragmentManager().beginTransaction().remove(rf).commit();
-            }
-        }
-
-        // Remove the channel list fragment that is shown on the left side when
-        // the program guide is visible. When another menu item is called the
-        // reserved layout space for the channel list fragment will be
-        // invisible.
-        Fragment cf = getSupportFragmentManager().findFragmentById(R.id.program_guide_channel_fragment);
-        if (cf != null) {
-            getSupportFragmentManager().beginTransaction().remove(cf).commit();
-        }
-
         // Save the menu position so we know which one was selected
         selectedNavigationMenuId = position;
 
-        Bundle bundle = new Bundle();
-        // Handle navigation view item clicks here.
+        Intent intent;
+        Fragment fragment = null;
         switch (position) {
             case MENU_CHANNELS:
-                // Show the channel list fragment. If the information to show only
-                // the channels as required in the program guide is not passed then
-                // the full channel list fragment will be shown.
-                showFragment(ChannelListFragment.class.getName(), R.id.main_fragment, bundle);
+                fragment = new ChannelListFragment();
                 break;
             case MENU_PROGRAM_GUIDE:
-                // Show the program guide. This fragment will then trigger the
-                // display of the channel list fragment on the left side.
-                showFragment(ProgramGuidePagerFragment.class.getName(), R.id.main_fragment, null);
+                intent = new Intent(this, ProgramGuideActivity.class);
+                startActivity(intent);
                 break;
             case MENU_COMPLETED_RECORDINGS:
-                showFragment(CompletedRecordingListFragment.class.getName(), R.id.main_fragment, bundle);
+                fragment = new CompletedRecordingListFragment();
                 break;
             case MENU_SCHEDULED_RECORDINGS:
-                showFragment(ScheduledRecordingListFragment.class.getName(), R.id.main_fragment, bundle);
+                fragment = new ScheduledRecordingListFragment();
                 break;
             case MENU_SERIES_RECORDINGS:
-                showFragment(SeriesRecordingListFragment.class.getName(), R.id.main_fragment, bundle);
+                fragment = new SeriesRecordingListFragment();
                 break;
             case MENU_TIMER_RECORDINGS:
-                showFragment(TimerRecordingListFragment.class.getName(), R.id.main_fragment, bundle);
+                fragment = new TimerRecordingListFragment();
                 break;
             case MENU_FAILED_RECORDINGS:
-                showFragment(FailedRecordingListFragment.class.getName(), R.id.main_fragment, bundle);
+                fragment = new FailedRecordingListFragment();
                 break;
             case MENU_REMOVED_RECORDINGS:
-                showFragment(RemovedRecordingListFragment.class.getName(), R.id.main_fragment, bundle);
+                fragment = new RemovedRecordingListFragment();
                 break;
             case MENU_STATUS:
                 selectedNavigationMenuId = defaultMenuPosition;
-                Intent statusIntent = new Intent(this, StatusActivity.class);
-                statusIntent.putExtra("connection_status", connectionStatus);
-                startActivity(statusIntent);
+                intent = new Intent(this, StatusActivity.class);
+                intent.putExtra("connection_status", connectionStatus);
+                startActivity(intent);
                 break;
             case MENU_INFORMATION:
                 selectedNavigationMenuId = defaultMenuPosition;
-                Intent infoIntent = new Intent(this, InfoActivity.class);
-                startActivity(infoIntent);
+                intent = new Intent(this, InfoActivity.class);
+                startActivity(intent);
                 break;
             case MENU_SETTINGS:
-                // Show the settings, but do not remember the selected position
-                // because it would trigger the settings fragment again
                 selectedNavigationMenuId = defaultMenuPosition;
-                Intent settingsIntent = new Intent(this, SettingsActivity.class);
-                startActivityForResult(settingsIntent, Constants.RESULT_CODE_SETTINGS);
+                intent = new Intent(this, SettingsActivity.class);
+                startActivity(intent);
                 break;
             case MENU_UNLOCKER:
                 selectedNavigationMenuId = defaultMenuPosition;
-                Intent unlockerIntent = new Intent(this, UnlockerActivity.class);
-                startActivity(unlockerIntent);
+                intent = new Intent(this, UnlockerActivity.class);
+                startActivity(intent);
                 break;
+        }
+        if (fragment != null) {
+            fragment.setArguments(getIntent().getExtras());
+            getSupportFragmentManager().beginTransaction().replace(R.id.main_fragment, fragment).commit();
         }
     }
 
@@ -544,9 +455,11 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
         } else {
             if (!app.isConnected()) {
+                Log.d(TAG, "reconnectAndResume() called, not connected");
                 connectionStatus = Constants.ACTION_CONNECTION_STATE_NO_NETWORK;
                 handleDrawerItemSelected(MENU_STATUS);
             } else {
+                Log.d(TAG, "reconnectAndResume() called, connected");
                 // Show the contents of the last selected menu position. In case it
                 // is not set, use the the default one defined in the settings
                 int pos = (selectedNavigationMenuId == MENU_UNKNOWN) ? defaultMenuPosition : selectedNavigationMenuId;
@@ -566,6 +479,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
                     // Show the defined fragment from the menu position or the
                     // status if the connection state is not fine
+                    Log.d(TAG, "reconnectAndResume() called connectionStatus " + connectionStatus + ", " + pos);
                     handleDrawerItemSelected((connectionStatus
                             .equals(Constants.ACTION_CONNECTION_STATE_OK)) ? pos
                             : MENU_STATUS);
@@ -616,6 +530,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
+        menu.clear();
         getMenuInflater().inflate(R.menu.main_menu, menu);
 
         if (showCastMenuItem()) {
@@ -637,12 +552,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         // Handle your other action bar items...
         switch (item.getItemId()) {
             case R.id.menu_refresh:
-                // Clear all available data and all channels that are currently
-                // loading, reconnect to the server and reload all data
-                channelLoadingList.clear();
                 menuUtils.handleMenuReconnectSelection();
                 return true;
-
             case R.id.menu_wol:
                 final Connection conn = databaseHelper.getSelectedConnection();
                 if (conn != null) {
@@ -652,25 +563,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    /**
-     * Creates the fragment with the given name and shows it on the given
-     * layout. If a bundle was given, it will be passed to the fragment. If
-     * required the created fragment will be stored on the back stack so it can
-     * be shown later when the user has pressed the back button.
-     *
-     * @param name   Class name of the fragment
-     * @param layout Layout that shall be used
-     */
-    private void showFragment(String name, int layout, Bundle args) {
-        Fragment f = Fragment.instantiate(this, name);
-        if (args != null) {
-            f.setArguments(args);
-        }
-        getSupportFragmentManager().beginTransaction().replace(layout, f)
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                .commit();
     }
 
     @Override
@@ -720,24 +612,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                         navigationDrawer.updateDrawerItemBadges();
                     }
                 });
-            case "channelUpdate":
-                runOnUiThread(new Runnable() {
-                    public void run() {
-                        final Channel ch = (Channel) obj;
-
-                        // The channel has been updated (usually by a call to load
-                        // more data) so remove it from the loading queue and
-                        // continue with the next one.
-                        channelLoadingList.remove(ch);
-
-                        // Reset the loading indication either instantly or with a
-                        // delay if there is still a channel in the loading queue
-                        channelLoadingHandler.removeCallbacks(channelLoadingTask);
-                        channelLoadingHandler.postDelayed(channelLoadingTask,
-                                (channelLoadingList.isEmpty() ? 10 : 2000));
-                    }
-                });
-                break;
             case Constants.ACTION_CONNECTION_STATE_SERVER_DOWN:
             case Constants.ACTION_CONNECTION_STATE_LOST:
             case Constants.ACTION_CONNECTION_STATE_TIMEOUT:
@@ -867,111 +741,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     }
 
     @Override
-    public void onScrollingChanged(final int position, final int offset, final String tag) {
-        switch (selectedNavigationMenuId) {
-            case MENU_PROGRAM_GUIDE:
-                // Save the scroll values so they can be reused after an orientation change.
-                programGuideListPosition = position;
-                programGuideListPositionOffset = offset;
-
-                if (tag.equals(ProgramGuideChannelListFragment.class.getSimpleName())
-                        || tag.equals(ProgramGuideListFragment.class.getSimpleName())) {
-                    // Scrolling was initiated by the channel or program guide list fragment. Keep
-                    // the currently visible program guide list in sync by scrolling it to the same position
-                    final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
-                    if (f instanceof FragmentControlInterface) {
-                        ((FragmentControlInterface) f).setSelection(position, offset);
-                    }
-                }
-                break;
-        }
-    }
-
-    @Override
-    public void onScrollStateIdle(final String tag) {
-        switch (selectedNavigationMenuId) {
-            case MENU_PROGRAM_GUIDE:
-                if (tag.equals(ProgramGuideListFragment.class.getSimpleName())
-                        || tag.equals(ProgramGuideChannelListFragment.class.getSimpleName())) {
-                    // Scrolling stopped by the program guide or the channel list
-                    // fragment. Scroll all program guide fragments in the current
-                    // view pager to the same position.
-                    final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
-                    if (f instanceof ProgramGuidePagerFragment) {
-                        ((FragmentControlInterface) f).setSelection(
-                                programGuideListPosition,
-                                programGuideListPositionOffset);
-                    }
-                }
-                break;
-        }
-    }
-
-    @Override
-    public void moreDataRequired(final Channel channel, final String tag) {
-        Log.d(TAG, "moreDataRequired() called with: channel = [" + channel + "], tag = [" + tag + "]");
-        if (dataStorage.isLoading() || channel == null) {
-            return;
-        }
-
-        channelLoadingList.add(channel);
-        setActionBarSubtitle(getString(R.string.loading));
-        Utils.loadMorePrograms(this, channel);
-    }
-
-    @Override
-    public void onListItemSelected(final int position, final Program program, final String tag) {
-        // When a program has been selected from the program list fragment,
-        // show its details. In single or dual pane mode these are shown in a
-        // separate dialog fragment
-        if (program != null) {
-            Intent intent = new Intent(this, DetailsActivity.class);
-            intent.putExtra("eventId", program.eventId);
-            intent.putExtra("channelId", program.channelId);
-            intent.putExtra("type", "program");
-            startActivity(intent);
-        }
-    }
-
-    @Override
-    public void onListPopulated(final String tag) {
-        switch (selectedNavigationMenuId) {
-            case MENU_PROGRAM_GUIDE:
-                // When the program guide is done loading set the previously
-                // selected position of the program guide. The program guide
-                // fragment will inform us via the scrolling interface methods where
-                // the channel list shall be scrolled to.
-                final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
-                if (f instanceof ProgramGuidePagerFragment) {
-                    ((FragmentControlInterface) f).setSelection(programGuideListPosition,
-                            programGuideListPositionOffset);
-                }
-                break;
-        }
-    }
-
-    @Override
-    public void channelTagChanged(final String tag) {
-        switch (selectedNavigationMenuId) {
-            case MENU_PROGRAM_GUIDE:
-                // Inform the channel list fragment to clear all data from its
-                // channel list and show only the channels with the selected tag
-                final Fragment cf = getSupportFragmentManager().findFragmentById(R.id.program_guide_channel_fragment);
-                if (cf instanceof ProgramGuideChannelListFragment) {
-                    ((FragmentControlInterface) cf).reloadData();
-                }
-                // Additionally inform the program guide fragment to clear all data
-                // from its list and show only the programs of the channels that are
-                // part of the selected tag
-                final Fragment pgf = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
-                if (pgf instanceof ProgramGuidePagerFragment) {
-                    ((FragmentControlInterface) pgf).reloadData();
-                }
-                break;
-        }
-    }
-
-    @Override
     public boolean onQueryTextChange(String text) {
         return false;
     }
@@ -989,7 +758,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
         Bundle bundle = new Bundle();
         final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
-
+/*
         // Pass on the channel id to search only in the selected channel.
         // This will only be the case if no dual pane is active. Otherwise a
         // full channel search would only be possible in the EPG view.
@@ -1013,7 +782,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 bundle.putLong("dvrId", rec.id);
             }
         }
-
+*/
         searchIntent.putExtra(SearchManager.APP_DATA, bundle);
         startActivity(searchIntent);
         return true;
@@ -1076,7 +845,19 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     @Override
     public void onNavigationProfileSelected(IProfile profile) {
-        handleDrawerProfileSelected(profile);
+        Connection oldConn = databaseHelper.getSelectedConnection();
+        Connection newConn = databaseHelper.getConnection(profile.getIdentifier());
+
+        // Switch the active connection and reconnect
+        if (oldConn != null && newConn != null) {
+            newConn.selected = true;
+            oldConn.selected = false;
+            databaseHelper.updateConnection(oldConn);
+            databaseHelper.updateConnection(newConn);
+            Utils.connect(MainActivity.this, true);
+
+            navigationDrawer.updateDrawerItemBadges();
+        }
     }
 
     @Override
