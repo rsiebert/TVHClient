@@ -17,7 +17,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.tvheadend.tvhclient.activities.DetailsActivity;
-import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.utils.MiscUtils;
@@ -48,7 +47,6 @@ public class ProgramGuideItemView extends LinearLayout {
     // The ratio how many minutes a pixel represents on the screen.
     private float pixelsPerMinute;
 
-    private FragmentStatusInterface fragmentStatusInterface;
     private ProgramContextMenuInterface fragmentInterface;
 
     // Status variables that define where the program is located within the given time.
@@ -75,11 +73,6 @@ public class ProgramGuideItemView extends LinearLayout {
         this.activity = activity;
         this.layout = layout;
         this.app = (TVHClientApplication) activity.getApplication();
-
-        // Create the interface so we can talk to the fragment
-        if (activity instanceof FragmentStatusInterface) {
-            fragmentStatusInterface = (FragmentStatusInterface) activity;
-        }
 
         fragmentInterface = (ProgramContextMenuInterface) fragment;
 
@@ -182,9 +175,7 @@ public class ProgramGuideItemView extends LinearLayout {
         // the last program in the guide then try to load more programs.
         // Also load programs when no program at all was added.
         if (!programAdded || lastProgramFound) {
-            if (fragmentStatusInterface != null) {
-                fragmentStatusInterface.moreDataRequired(channel, Constants.TAG_PROGRAM_GUIDE);
-            }
+            // TODO load more data for the channel
         }
     }
 

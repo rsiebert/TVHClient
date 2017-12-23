@@ -25,9 +25,7 @@ import org.tvheadend.tvhclient.fragments.ProgramGuideListFragment;
 import org.tvheadend.tvhclient.fragments.ProgramGuidePagerFragment;
 import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentScrollInterface;
-import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.interfaces.ToolbarInterface;
-import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 import org.tvheadend.tvhclient.utils.Utils;
@@ -38,7 +36,7 @@ import static org.tvheadend.tvhclient.activities.NavigationDrawer.MENU_PROGRAM_G
 // TODO search
 // TODO refresh
 
-public class ProgramGuideActivity extends AppCompatActivity implements FragmentStatusInterface, FragmentScrollInterface, ToolbarInterface, NavigationDrawerCallback {
+public class ProgramGuideActivity extends AppCompatActivity implements FragmentScrollInterface, ToolbarInterface, NavigationDrawerCallback {
 
     private SharedPreferences sharedPreferences;
     private NavigationDrawer navigationDrawer;
@@ -171,26 +169,6 @@ public class ProgramGuideActivity extends AppCompatActivity implements FragmentS
             intent.putExtra("navigation_menu_position", id);
             startActivity(intent);
             finish();
-        }
-    }
-
-    @Override
-    public void moreDataRequired(Channel channel, String tag) {
-        Log.d(TAG, "moreDataRequired() called with: channel = [" + channel + "], tag = [" + tag + "]");
-
-    }
-
-    @Override
-    public void onListPopulated(String tag) {
-        Log.d(TAG, "onListPopulated() called with: tag = [" + tag + "]");
-        // When the program guide is done loading set the previously
-        // selected position of the program guide. The program guide
-        // fragment will inform us via the scrolling interface methods where
-        // the channel list shall be scrolled to.
-        final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
-        if (f instanceof ProgramGuidePagerFragment) {
-            ((FragmentControlInterface) f).setSelection(programGuideListPosition,
-                    programGuideListPositionOffset);
         }
     }
 

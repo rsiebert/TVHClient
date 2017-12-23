@@ -27,10 +27,9 @@ import org.tvheadend.tvhclient.ProgramGuideItemView.ProgramContextMenuInterface;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.adapter.ProgramGuideListAdapter;
+import org.tvheadend.tvhclient.htsp.HTSListener;
 import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentScrollInterface;
-import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
-import org.tvheadend.tvhclient.htsp.HTSListener;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.ChannelTag;
 import org.tvheadend.tvhclient.model.Program;
@@ -47,7 +46,6 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
     private final static String TAG = ProgramGuideListFragment.class.getSimpleName();
 
     private FragmentActivity activity;
-    private FragmentStatusInterface fragmentStatusInterface;
     private FragmentScrollInterface fragmentScrollInterface;
     private ProgramGuideListAdapter adapter;
     private ListView listView;
@@ -106,9 +104,6 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
 
         menuUtils = new MenuUtils(getActivity());
 
-        if (activity instanceof FragmentStatusInterface) {
-            fragmentStatusInterface = (FragmentStatusInterface) activity;
-        }
         if (activity instanceof FragmentScrollInterface) {
             fragmentScrollInterface = (FragmentScrollInterface) activity;
         }
@@ -237,14 +232,6 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
         }
         adapter.sort(Utils.getChannelSortOrder(activity));
         startDelayedAdapterUpdate();
-
-        // Inform the activity that the program list has been populated. The
-        // activity will then inform the fragment to select the first item in
-        // the list or scroll to the previously selected one in case the
-        // orientation has changed
-        if (fragmentStatusInterface != null) {
-            fragmentStatusInterface.onListPopulated(TAG);
-        }
     }
 
     @Override
@@ -305,7 +292,6 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
         updateViewHandler.removeCallbacks(updateViewTask);
         updateTimeIndicationHandler.removeCallbacks(updateTimeIndicationTask);
 
-        fragmentStatusInterface = null;
         fragmentScrollInterface = null;
         super.onDestroy();
     }

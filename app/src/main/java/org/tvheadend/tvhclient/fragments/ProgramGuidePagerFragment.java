@@ -26,11 +26,10 @@ import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.adapter.ProgramGuideTimeDialogAdapter;
+import org.tvheadend.tvhclient.callbacks.ChannelTagSelectionCallback;
 import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
-import org.tvheadend.tvhclient.interfaces.FragmentStatusInterface;
 import org.tvheadend.tvhclient.model.ChannelTag;
 import org.tvheadend.tvhclient.model.ProgramGuideTimeDialogItem;
-import org.tvheadend.tvhclient.callbacks.ChannelTagSelectionCallback;
 import org.tvheadend.tvhclient.utils.MenuUtils;
 import org.tvheadend.tvhclient.utils.Utils;
 
@@ -65,7 +64,6 @@ public class ProgramGuidePagerFragment extends Fragment implements FragmentContr
     private static final List<Long> endTimes = new ArrayList<>();
     private static int hoursToShow;
     private static int fragmentCount;
-    private FragmentStatusInterface fragmentStatusInterface;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -87,10 +85,6 @@ public class ProgramGuidePagerFragment extends Fragment implements FragmentContr
         activity = getActivity();
 
         menuUtils = new MenuUtils(getActivity());
-
-        if (activity instanceof FragmentStatusInterface) {
-            fragmentStatusInterface = (FragmentStatusInterface) activity;
-        }
 
         // Calculate the max number of fragments in the view pager 
         calcFragmentCount();
