@@ -612,6 +612,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                         navigationDrawer.updateDrawerItemBadges();
                     }
                 });
+                break;
             case Constants.ACTION_CONNECTION_STATE_SERVER_DOWN:
             case Constants.ACTION_CONNECTION_STATE_LOST:
             case Constants.ACTION_CONNECTION_STATE_TIMEOUT:
@@ -653,12 +654,10 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                         public void run() {
                             connectionStatus = action;
                             handleDrawerItemSelected(MENU_STATUS);
-
                             navigationDrawer.updateDrawerItemBadges();
                         }
                     });
                 }
-
                 break;
             case Constants.ACTION_SHOW_MESSAGE:
                 final String msg = (String) obj;
