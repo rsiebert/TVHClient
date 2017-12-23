@@ -12,10 +12,13 @@ import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.ProgressBar;
 
+import org.tvheadend.tvhclient.BuildConfig;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.activities.ChangeLogActivity;
 import org.tvheadend.tvhclient.tasks.FileLoaderCallback;
 import org.tvheadend.tvhclient.tasks.HtmlFileLoaderTask;
+
+import java.util.regex.Pattern;
 
 public class InfoFragment extends Fragment implements FileLoaderCallback {
 
@@ -70,6 +73,10 @@ public class InfoFragment extends Fragment implements FileLoaderCallback {
     @Override
     public void notify(String content) {
         if (content != null) {
+            // Replace the placeholder in the html file with the real version
+            String version = BuildConfig.VERSION_NAME + " (" + BuildConfig.BUILD_VERSION + ")";
+            content = (Pattern.compile("APP_VERSION").matcher(content).replaceAll(version));
+
             webView.loadDataWithBaseURL("file:///android_asset/", content, "text/html", "utf-8", null);
             loadingProgressBar.setVisibility(View.GONE);
             webView.setVisibility(View.VISIBLE);
