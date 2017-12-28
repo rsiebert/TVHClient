@@ -35,13 +35,7 @@
                             android:layout_margin="@dimen/fab_margin"
                             app:srcCompat="@android:drawable/ic_dialog_email" />
             -->
-            <com.google.android.libraries.cast.companionlibrary.widgets.MiniController
-                android:id="@+id/miniController"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:visibility="gone"
-                app:auto_setup="true" />
+
         </RelativeLayout>
 
     </android.support.design.widget.CoordinatorLayout>

@@ -10,7 +10,6 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.fragments.settings.SettingsManageConnectionFragment;
 import org.tvheadend.tvhclient.interfaces.BackPressedInterface;
 import org.tvheadend.tvhclient.utils.MiscUtils;
-import org.tvheadend.tvhclient.utils.Utils;
 
 public class SettingsManageConnectionActivity extends AppCompatActivity implements ToolbarInterfaceLight {
     private boolean initialSetup;
@@ -45,7 +44,7 @@ public class SettingsManageConnectionActivity extends AppCompatActivity implemen
                 ((BackPressedInterface) fragment).onBackPressed();
             }
         } else {
-            Intent intent = new Intent(this, MainActivity.class);
+            Intent intent = new Intent(this, NavigationDrawerActivity.class);
             startActivity(intent);
             finish();
         }

@@ -165,7 +165,7 @@ public class ProgramGuideActivity extends AppCompatActivity implements FragmentS
     @Override
     public void onNavigationMenuSelected(int id) {
         if (id != MENU_PROGRAM_GUIDE) {
-            Intent intent = new Intent(this, MainActivity.class);
+            Intent intent = new Intent(this, NavigationDrawerActivity.class);
             intent.putExtra("navigation_menu_position", id);
             startActivity(intent);
             finish();

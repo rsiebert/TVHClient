@@ -18,7 +18,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.activities.MainActivity;
+import org.tvheadend.tvhclient.activities.NavigationDrawerActivity;
 import org.tvheadend.tvhclient.activities.SettingsManageConnectionActivity;
 import org.tvheadend.tvhclient.activities.ToolbarInterfaceLight;
 import org.tvheadend.tvhclient.adapter.ConnectionListAdapter;
@@ -230,7 +230,7 @@ public class SettingsListConnectionsFragment extends ListFragment implements Bac
         // If a new connection has been selected and it is
         // active restart the service to do a new initial sync
         if (newActiveConnectionSelected && DatabaseHelper.getInstance(getActivity()).getSelectedConnection() != null) {
-            Intent intent = new Intent(getActivity(), MainActivity.class);
+            Intent intent = new Intent(getActivity(), NavigationDrawerActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
         }
