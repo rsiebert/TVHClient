@@ -12,8 +12,9 @@ import android.util.Log;
 
 import com.anjlab.android.iab.v3.BillingProcessor;
 import com.anjlab.android.iab.v3.TransactionDetails;
-import com.google.android.libraries.cast.companionlibrary.cast.CastConfiguration;
-import com.google.android.libraries.cast.companionlibrary.cast.VideoCastManager;
+import com.google.android.gms.cast.framework.CastOptions;
+import com.google.android.gms.cast.framework.OptionsProvider;
+import com.google.android.gms.cast.framework.SessionProvider;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
 
@@ -28,9 +29,8 @@ import org.tvheadend.tvhclient.utils.MigrateUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
-public class TVHClientApplication extends Application implements BillingProcessor.IBillingHandler {
+public class TVHClientApplication extends Application implements BillingProcessor.IBillingHandler, OptionsProvider {
     private final static String TAG = TVHClientApplication.class.getSimpleName();
 
     private final List<HTSListener> listeners = new ArrayList<>();
@@ -117,24 +117,6 @@ public class TVHClientApplication extends Application implements BillingProcesso
                 logger.log(TAG, "onCreate: Could not load purchase information");
             }
         }
-
-        // Build a CastConfiguration object and initialize VideoCastManager
-        CastConfiguration options = new CastConfiguration.Builder(Constants.CAST_APPLICATION_ID)
-                .enableAutoReconnect()
-                .enableCaptionManagement()
-                .enableDebug()
-                .enableLockScreen()
-                .enableNotification()
-                .enableWifiReconnection()
-                .setCastControllerImmersive(true)
-                .setLaunchOptions(false, Locale.getDefault())
-                .setNextPrevVisibilityPolicy(CastConfiguration.NEXT_PREV_VISIBILITY_POLICY_HIDDEN)
-                .addNotificationAction(CastConfiguration.NOTIFICATION_ACTION_REWIND, false)
-                .addNotificationAction(CastConfiguration.NOTIFICATION_ACTION_PLAY_PAUSE, true)
-                .addNotificationAction(CastConfiguration.NOTIFICATION_ACTION_DISCONNECT, true)
-                .setForwardStep(10)
-                .build();
-        VideoCastManager.initialize(this, options);
     }
 
     @Override
@@ -241,4 +223,17 @@ public class TVHClientApplication extends Application implements BillingProcesso
         return (wifiConnected || mobileConnected || ethConnected);
     }
 
+    @Override
+    public CastOptions getCastOptions(Context context) {
+        String CAST_APPLICATION_ID = "0531DF56";
+        CastOptions castOptions = new CastOptions.Builder()
+                .setReceiverApplicationId(CAST_APPLICATION_ID)
+                .build();
+        return castOptions;
+    }
+
+    @Override
+    public List<SessionProvider> getAdditionalSessionProviders(Context context) {
+        return null;
+    }
 }

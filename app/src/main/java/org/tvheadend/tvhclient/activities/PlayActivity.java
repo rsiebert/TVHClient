@@ -12,8 +12,10 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.android.gms.cast.MediaInfo;
 import com.google.android.gms.cast.MediaMetadata;
+import com.google.android.gms.cast.framework.CastContext;
+import com.google.android.gms.cast.framework.CastSession;
+import com.google.android.gms.cast.framework.media.RemoteMediaClient;
 import com.google.android.gms.common.images.WebImage;
-import com.google.android.libraries.cast.companionlibrary.cast.VideoCastManager;
 
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DataStorage;
@@ -21,8 +23,8 @@ import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.Logger;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.htsp.HTSListener;
+import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.HttpTicket;
@@ -33,6 +35,10 @@ import org.tvheadend.tvhclient.utils.MiscUtils;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+
+// TODO rework playback
+// TODO rework casting
+
 
 public class PlayActivity extends Activity implements HTSListener, OnRequestPermissionsResultCallback {
 
@@ -57,6 +63,8 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
     private String title = "";
     private Logger logger;
     private DataStorage dataStorage;
+    private CastContext castContext;
+    private CastSession castSession;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,8 +93,14 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
             return;
         }
 
+        //castContext = CastContext.getSharedInstance(this);
         // If the cast menu button is connected then assume playing means casting
-        if (VideoCastManager.getInstance().isConnected()) {
+        //if (VideoCastManager.getInstance().isConnected()) {
+        //    action = ACTION_CAST;
+        //}
+        castContext = CastContext.getSharedInstance(this);
+        castSession = castContext.getSessionManager().getCurrentCastSession();
+        if (castSession != null) {
             action = ACTION_CAST;
         }
     }
@@ -175,7 +189,6 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
     @Override
     protected void onResume() {
         super.onResume();
-        VideoCastManager.getInstance().incrementUiCounter();
         app.addListener(this);
 
         initAction();
@@ -184,7 +197,6 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
     @Override
     protected void onPause() {
         super.onPause();
-        VideoCastManager.getInstance().decrementUiCounter();
         app.removeListener(this);
     }
 
@@ -367,7 +379,9 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
             .build();
 
         logger.log(TAG, "startCasting: Casting the following program: title [" + title + "], url [" + castUrl + "]");
-        VideoCastManager.getInstance().startVideoCastControllerActivity(this, mediaInfo, 0, true);
+
+        RemoteMediaClient remoteMediaClient = castSession.getRemoteMediaClient();
+        remoteMediaClient.load(mediaInfo, true, 0);
 
         logger.log(TAG, "startCasting() returned");
         finish();

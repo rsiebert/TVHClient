@@ -30,7 +30,7 @@
             android:value="2.1" />
         <meta-data
             android:name="com.google.android.gms.cast.framework.OPTIONS_PROVIDER_CLASS_NAME"
-            android:value=".activities.CastOptionsProvider" />
+            android:value=".TVHClientApplication" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
