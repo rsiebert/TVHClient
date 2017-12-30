@@ -1,7 +1,5 @@
 package org.tvheadend.tvhclient.activities;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -12,7 +10,6 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
@@ -20,7 +17,6 @@ import android.widget.TextView;
 
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
-import org.tvheadend.tvhclient.ChangeLogDialog;
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.Logger;
@@ -35,8 +31,6 @@ import org.tvheadend.tvhclient.fragments.recordings.ScheduledRecordingListFragme
 import org.tvheadend.tvhclient.fragments.recordings.SeriesRecordingListFragment;
 import org.tvheadend.tvhclient.fragments.recordings.TimerRecordingListFragment;
 import org.tvheadend.tvhclient.htsp.HTSListener;
-import org.tvheadend.tvhclient.htsp.HTSService;
-import org.tvheadend.tvhclient.interfaces.ChangeLogDialogInterface;
 import org.tvheadend.tvhclient.interfaces.ToolbarInterface;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.Profile;
@@ -60,18 +54,18 @@ import static org.tvheadend.tvhclient.activities.NavigationDrawer.MENU_TIMER_REC
 import static org.tvheadend.tvhclient.activities.NavigationDrawer.MENU_UNKNOWN;
 import static org.tvheadend.tvhclient.activities.NavigationDrawer.MENU_UNLOCKER;
 
-// TODO move chromecast to another class
 // TODO make nav image blasser
 // TODO confirmation of added/edited recordings...
 // TODO onQueryTextSubmit does nothing currently
+// TODO navigation menu marking (status, ...)
 
-public class NavigationDrawerActivity extends MainActivity implements /*SearchView.OnQueryTextListener, SearchView.OnSuggestionListener,*/ ChangeLogDialogInterface, ToolbarInterface, HTSListener, WakeOnLanTaskCallback, NavigationDrawerCallback {
+public class NavigationDrawerActivity extends MainActivity implements /*SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, ChangeLogDialogInterface, */ToolbarInterface, HTSListener, WakeOnLanTaskCallback, NavigationDrawerCallback {
 
     private final static String TAG = NavigationDrawerActivity.class.getSimpleName();
 
     private CoordinatorLayout coordinatorLayout;
     private ActionBar actionBar;
-    private ChangeLogDialog changeLogDialog;
+    //private ChangeLogDialog changeLogDialog;
 
     // Indication weather the layout supports two fragments. This is usually
     // only available on tablets.
@@ -92,7 +86,7 @@ public class NavigationDrawerActivity extends MainActivity implements /*SearchVi
 
     // Remember if the change log dialog was shown when the main activity has
     // started for the first time and the application version has changed.
-    private boolean changeLogDialogShown = false;
+    //private boolean changeLogDialogShown = false;
 
     // Contains the information about the current connection state.
     private String connectionStatus = Constants.ACTION_CONNECTION_STATE_UNKNOWN;
@@ -143,14 +137,16 @@ public class NavigationDrawerActivity extends MainActivity implements /*SearchVi
         app = (TVHClientApplication) getApplication();
         //logger = Logger.getInstance();
         databaseHelper = DatabaseHelper.getInstance(getApplicationContext());
-        changeLogDialog = new ChangeLogDialog(this);
+        //changeLogDialog = new ChangeLogDialog(this);
 
-        //sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         //menuUtils = new MenuUtils(this);
 
         navigationDrawer = new NavigationDrawer(this, savedInstanceState, toolbar, this);
         navigationDrawer.createHeader();
         navigationDrawer.createMenu();
+
+        coordinatorLayout = findViewById(R.id.coordinatorLayout);
 
         actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -158,13 +154,13 @@ public class NavigationDrawerActivity extends MainActivity implements /*SearchVi
             actionBar.setDisplayUseLogoEnabled(sharedPreferences.getBoolean("showIconPref", true));
         }
 
-        coordinatorLayout = findViewById(R.id.coordinatorLayout);
-
         // Get the widgets so we can use them later and do not need to inflate again
         actionBarTitle = toolbar.findViewById(R.id.actionbar_title);
         actionBarSubtitle = toolbar.findViewById(R.id.actionbar_subtitle);
         actionBarIcon = toolbar.findViewById(R.id.actionbar_icon);
-        actionBarIcon.setVisibility(View.GONE);
+        if (actionBarIcon != null) {
+            actionBarIcon.setVisibility(View.GONE);
+        }
 
         defaultMenuPosition = Integer.parseInt(sharedPreferences.getString("defaultMenuPositionPref", String.valueOf(MENU_STATUS)));
 
@@ -252,7 +248,7 @@ public class NavigationDrawerActivity extends MainActivity implements /*SearchVi
         }
         if (fragment != null) {
             fragment.setArguments(getIntent().getExtras());
-            getSupportFragmentManager().beginTransaction().replace(R.id.main_fragment, fragment).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.main, fragment).commit();
         }
     }
 /*
@@ -382,6 +378,15 @@ public class NavigationDrawerActivity extends MainActivity implements /*SearchVi
     @Override
     public void onResume() {
         super.onResume();
+
+        // A connection exists and is active, register to receive
+        // information from the server and connect to the server
+        app.addListener(this);
+        //Utils.connect(this, false);
+
+        // Show the defined fragment from the menu position or the
+        // status if the connection state is not fine
+        handleDrawerItemSelected(selectedNavigationMenuId);
 /*
         mCastManager = VideoCastManager.getInstance();
         if (null != mCastManager) {
@@ -402,7 +407,7 @@ public class NavigationDrawerActivity extends MainActivity implements /*SearchVi
         navigationDrawer.updateDrawerHeader();
     }
 
-
+/*
     @Override
     public void onPostResume() {
         super.onPostResume();
@@ -414,7 +419,7 @@ public class NavigationDrawerActivity extends MainActivity implements /*SearchVi
             changeLogDialogDismissed();
         }
     }
-
+*/
     /**
      * Determines what shall be done when the change log dialog has been closed
      * or the the application has been resumed. If no connection is available or
@@ -423,6 +428,7 @@ public class NavigationDrawerActivity extends MainActivity implements /*SearchVi
      * is not fine, check if the Internet access is available, if not go to the
      * status screen. Otherwise show the defined menu.
      */
+    /*
     private void reconnectAndResume() {
         if (!connectionSettingsShown
                 && (databaseHelper.getConnections().isEmpty()
@@ -467,7 +473,7 @@ public class NavigationDrawerActivity extends MainActivity implements /*SearchVi
             }
         }
     }
-
+*/
     @Override
     public void onPause() {
 //        mCastManager.decrementUiCounter();
@@ -544,23 +550,24 @@ public class NavigationDrawerActivity extends MainActivity implements /*SearchVi
         }
         return super.onOptionsItemSelected(item);
     }
-*/
+
     @Override
     public void changeLogDialogDismissed() {
         reconnectAndResume();
     }
-
+*/
     @Override
     public void onMessage(final String action, final Object obj) {
         switch (action) {
+            /*
             case Constants.ACTION_LOADING:
                 final Context ctx = this;
                 runOnUiThread(new Runnable() {
                     public void run() {
                         boolean loading = (Boolean) obj;
                         if (loading) {
-                            setActionBarTitle(getString(R.string.loading));
-                            setActionBarSubtitle("");
+                            //setActionBarTitle(getString(R.string.loading));
+                            //setActionBarSubtitle("");
                             // When in dual pane mode remove the fragment on the
                             // right to avoid seeing invalid data while the
                             // application is loading data from the server.
@@ -639,6 +646,7 @@ public class NavigationDrawerActivity extends MainActivity implements /*SearchVi
                     });
                 }
                 break;
+                */
             case Constants.ACTION_SHOW_MESSAGE:
                 final String msg = (String) obj;
                 showMessage(msg);
@@ -670,7 +678,6 @@ public class NavigationDrawerActivity extends MainActivity implements /*SearchVi
         }
     }
 
-    @SuppressLint("RtlHardcoded")
     @Override
     public void setActionBarSubtitle(final String subtitle) {
         if (actionBar != null && actionBarSubtitle != null) {
@@ -718,6 +725,7 @@ public class NavigationDrawerActivity extends MainActivity implements /*SearchVi
             }
         }
     }
+
 /*
     @Override
     public boolean onQueryTextChange(String text) {

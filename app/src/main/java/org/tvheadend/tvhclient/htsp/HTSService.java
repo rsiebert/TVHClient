@@ -10,6 +10,7 @@ import android.graphics.BitmapFactory;
 import android.os.Binder;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import org.tvheadend.tvhclient.Constants;
@@ -286,6 +287,11 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     private void onChannelAdd(HTSMessage msg) {
+
+        Intent intent = new Intent("service_status");
+        intent.putExtra("sync_status", "Receiving channels...");
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+
         dataStorage.addChannelToArray(HTSUtils.convertMessageToChannelModel(new Channel(), msg));
         final String icon = msg.getString("channelIcon");
         if (icon != null) {
@@ -327,6 +333,10 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     private void onDvrEntryAdd(HTSMessage msg) {
+        Intent intent = new Intent("service_status");
+        intent.putExtra("sync_status", "Receiving recordings...");
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+
         dataStorage.addRecordingToArray(HTSUtils.convertMessageToRecordingModel(new Recording(), msg));
     }
 
@@ -364,6 +374,10 @@ public class HTSService extends Service implements HTSConnectionListener {
         // Get some additional information after the initial loading has been finished
         getDiscSpace();
         getSystemTime();
+
+        Intent intent = new Intent("service_status");
+        intent.putExtra("sync_status", "done");
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
     private void onSubscriptionStart(HTSMessage msg) {
@@ -1520,6 +1534,10 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     private void onEventAdd(HTSMessage msg) {
+        Intent intent = new Intent("service_status");
+        intent.putExtra("sync_status", "Receiving epg data...");
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+
         dataStorage.addProgramToArray(HTSUtils.convertMessageToProgramModel(new Program(), msg));
     }
 

@@ -21,7 +21,7 @@
             android:value="@integer/google_play_services_version" />
         <meta-data
             android:name="android.app.default_searchable"
-            android:value=".SearchResultActivity" />
+            android:value=".activities.SearchResultActivity" />
         <meta-data
             android:name="android.app.searchable"
             android:resource="@xml/searchable" />
@@ -30,7 +30,7 @@
             android:value="2.1" />
         <meta-data
             android:name="com.google.android.gms.cast.framework.OPTIONS_PROVIDER_CLASS_NAME"
-            android:value=".TVHClientApplication" />
+            android:value="org.tvheadend.tvhclient.TVHClientApplication" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -42,7 +42,7 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <activity android:name="org.tvheadend.tvhclient.activities.NavigationDrawerActivity">
+        <activity android:name=".activities.StartupActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -93,6 +93,7 @@
         <activity android:name=".activities.ChangeLogActivity" />
         <activity android:name=".activities.ProgramGuideActivity" />
         <activity android:name=".activities.MainActivity" />
+        <activity android:name=".activities.NavigationDrawerActivity" />
 
     </application>
 </manifest>

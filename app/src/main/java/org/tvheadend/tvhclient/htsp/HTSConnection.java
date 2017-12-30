@@ -1,7 +1,10 @@
 package org.tvheadend.tvhclient.htsp;
 
+import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.SparseArray;
 
 import org.tvheadend.tvhclient.Constants;
@@ -25,6 +28,7 @@ public class HTSConnection extends Thread {
 
     private static final String TAG = HTSConnection.class.getSimpleName();
     private final Logger logger;
+    private final Context context;
     private volatile boolean running;
     private final Lock lock;
     private SocketChannel socketChannel;
@@ -45,8 +49,23 @@ public class HTSConnection extends Thread {
     private final TVHClientApplication app;
     private int connectionTimeout = 5000;
 
+    public enum State {
+        CLOSED,
+        CONNECTING,
+        CONNECTED,
+        CLOSING,
+        FAILED,
+        FAILED_INTERRUPTED,
+        FAILED_UNRESOLVED_ADDRESS,
+        FAILED_CONNECTING_TO_SERVER,
+        AUTHENTICATED,
+        AUTHENTICATING,
+        FAILED_EXCEPTION_OPENING_SOCKET
+    }
+
     public HTSConnection(TVHClientApplication app, HTSConnectionListener listener, String clientName, String clientVersion) {
         this.app = app;
+        this.context = app;
         logger = Logger.getInstance();
 
         // Disable the use of IPv6
@@ -81,15 +100,26 @@ public class HTSConnection extends Thread {
     public void open(String hostname, int port, boolean connected) {
         logger.log(TAG, "open() called with: hostname = [" + hostname + "], port = [" + port + "], connected = [" + connected + "]");
 
+        Intent intent = new Intent("service_status");
+        intent.putExtra("connection_status", State.CONNECTING);
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+
         if (running) {
             return;
         }
         if (!connected) {
             listener.onError(Constants.ACTION_CONNECTION_STATE_NO_NETWORK);
+
+            intent = new Intent("service_status");
+            intent.putExtra("connection_status", State.FAILED);
+            LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
             return;
         }
         if (hostname == null) {
             listener.onError(Constants.ACTION_CONNECTION_STATE_NO_CONNECTION);
+            intent = new Intent("service_status");
+            intent.putExtra("connection_status", State.FAILED);
+            LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
             return;
         }
 
@@ -105,10 +135,18 @@ public class HTSConnection extends Thread {
             socketChannel.register(selector, SelectionKey.OP_CONNECT, signal);
             socketChannel.connect(new InetSocketAddress(hostname, port));
             running = true;
+
+            intent = new Intent("service_status");
+            intent.putExtra("connection_status", State.CONNECTED);
+            LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+
             start();
         } catch (Exception e) {
             logger.log(TAG, "open: Could not open connection. " + e.getLocalizedMessage());
             listener.onError(Constants.ACTION_CONNECTION_STATE_REFUSED);
+            intent = new Intent("service_status");
+            intent.putExtra("connection_status", State.FAILED_EXCEPTION_OPENING_SOCKET);
+            LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
         } finally {
             lock.unlock();
         }
@@ -120,10 +158,16 @@ public class HTSConnection extends Thread {
                     if (socketChannel.isConnectionPending()) {
                         logger.log(TAG, "open: Timeout waiting for pending connection to server");
                         listener.onError(Constants.ACTION_CONNECTION_STATE_TIMEOUT);
+                        intent = new Intent("service_status");
+                        intent.putExtra("connection_status", State.FAILED_CONNECTING_TO_SERVER);
+                        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
                         close();
                     }
                 } catch (InterruptedException ex) {
                     logger.log(TAG, "open: Waiting for pending connection was interrupted. " + ex.getLocalizedMessage());
+                    intent = new Intent("service_status");
+                    intent.putExtra("connection_status", State.FAILED_INTERRUPTED);
+                    LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
                 }
             }
         }
@@ -146,6 +190,10 @@ public class HTSConnection extends Thread {
 
         auth = false;
 
+        Intent intent = new Intent("service_status");
+        intent.putExtra("sync_status", "Loading initial data...");
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+
         final HTSMessage authMessage = new HTSMessage();
         authMessage.setMethod("enableAsyncMetadata");
         authMessage.putField("username", username);
@@ -158,11 +206,19 @@ public class HTSConnection extends Thread {
         final HTSResponseHandler authHandler = new HTSResponseHandler() {
             public void handleResponse(HTSMessage response) {
                 logger.log(TAG, "handleResponse: Response to 'authenticate' message");
-                
+
                 auth = response.getInt("noaccess", 0) != 1;
                 logger.log(TAG, "handleResponse: Authentication successful: " + auth);
+
                 if (!auth) {
                     listener.onError(Constants.ACTION_CONNECTION_STATE_AUTH);
+                    Intent intent = new Intent("service_status");
+                    intent.putExtra("authentication_status", State.FAILED);
+                    LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+                } else {
+                    Intent intent = new Intent("service_status");
+                    intent.putExtra("authentication_status", State.AUTHENTICATED);
+                    LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
                 }
                 synchronized (authMessage) {
                     authMessage.notify();
@@ -171,6 +227,7 @@ public class HTSConnection extends Thread {
         };
 
         logger.log(TAG, "authenticate: Sending 'hello' message");
+
         HTSMessage helloMessage = new HTSMessage();
         helloMessage.setMethod("hello");
         helloMessage.putField("clientname", this.clientName);
@@ -193,6 +250,11 @@ public class HTSConnection extends Thread {
                     md.update(password.getBytes());
                     md.update(response.getByteArray("challenge"));
 
+
+                    Intent intent = new Intent("service_status");
+                    intent.putExtra("authentication_status", State.AUTHENTICATING);
+                    LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+
                     logger.log(TAG, "authenticate: Sending 'authenticate' message");
                     authMessage.putField("digest", md.digest());
                     sendMessage(authMessage, authHandler);
@@ -208,6 +270,9 @@ public class HTSConnection extends Thread {
                 if (!auth) {
                     logger.log(TAG, "authenticate: Timeout waiting for authentication response");
                     listener.onError(Constants.ACTION_CONNECTION_STATE_AUTH);
+                    intent = new Intent("service_status");
+                    intent.putExtra("authentication_status", State.FAILED);
+                    LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
                 }
             } catch (InterruptedException ex) {
                 logger.log(TAG, "authenticate: Waiting for authentication message was interrupted. " + ex.getLocalizedMessage());
@@ -240,6 +305,11 @@ public class HTSConnection extends Thread {
 
     public void close() {
         logger.log(TAG, "close() called");
+
+        Intent intent = new Intent("service_status");
+        intent.putExtra("connection_status", State.CLOSING);
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+
         lock.lock();
         try {
             responseHandlers.clear();
@@ -248,6 +318,11 @@ public class HTSConnection extends Thread {
             running = false;
             socketChannel.register(selector, 0);
             socketChannel.close();
+
+            intent = new Intent("service_status");
+            intent.putExtra("connection_status", State.CLOSED);
+            LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+
         } catch (Exception e) {
             logger.log(TAG, "close: Could not close connection. " + e.getLocalizedMessage());
         } finally {
@@ -337,17 +412,17 @@ public class HTSConnection extends Thread {
             responseHandlers.remove(respSeq);
 
             if (handler != null) {
-            	synchronized (handler) {
+                synchronized (handler) {
                     handler.handleResponse(msg);
-            	}
+                }
                 return;
             }
         }
         listener.onMessage(msg);
     }
-    
+
     public int getProtocolVersion() {
-    	return this.protocolVersion;
+        return this.protocolVersion;
     }
 
     public String getServerName() {
@@ -359,6 +434,6 @@ public class HTSConnection extends Thread {
     }
 
     public String getWebRoot() {
-    	return this.webRoot;
+        return this.webRoot;
     }
 }
