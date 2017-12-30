@@ -16,7 +16,7 @@ public class CompletedRecordingListFragment extends RecordingListFragment implem
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        toolbarInterface.setActionBarTitle(getString(R.string.completed_recordings));
+        toolbarInterface.setTitle(getString(R.string.completed_recordings));
     }
 
     @Override

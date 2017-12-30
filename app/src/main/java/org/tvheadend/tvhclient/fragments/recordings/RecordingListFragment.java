@@ -20,10 +20,10 @@ import android.widget.ListView;
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.activities.DetailsActivity;
 import org.tvheadend.tvhclient.activities.AddEditActivity;
+import org.tvheadend.tvhclient.activities.DetailsActivity;
+import org.tvheadend.tvhclient.activities.ToolbarInterfaceLight;
 import org.tvheadend.tvhclient.adapter.RecordingListAdapter;
-import org.tvheadend.tvhclient.interfaces.ToolbarInterface;
 import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.utils.MenuUtils;
 
@@ -33,7 +33,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class RecordingListFragment extends ListFragment implements OnItemClickListener, AdapterView.OnItemLongClickListener {
 
     protected AppCompatActivity activity;
-    protected ToolbarInterface toolbarInterface;
+    protected ToolbarInterfaceLight toolbarInterface;
     protected RecordingListAdapter adapter;
     boolean isUnlocked;
     protected boolean isDualPane;
@@ -46,8 +46,8 @@ public class RecordingListFragment extends ListFragment implements OnItemClickLi
         super.onActivityCreated(savedInstanceState);
 
         activity = (AppCompatActivity) getActivity();
-        if (activity instanceof ToolbarInterface) {
-            toolbarInterface = (ToolbarInterface) activity;
+        if (activity instanceof ToolbarInterfaceLight) {
+            toolbarInterface = (ToolbarInterfaceLight) activity;
         }
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         menuUtils = new MenuUtils(getActivity());
@@ -214,7 +214,7 @@ public class RecordingListFragment extends ListFragment implements OnItemClickLi
         adapter.notifyDataSetChanged();
         // Show the number of recordings
         String items = getResources().getQuantityString(R.plurals.recordings, adapter.getCount(), adapter.getCount());
-        toolbarInterface.setActionBarSubtitle(items);
+        toolbarInterface.setSubtitle(items);
     }
 
     protected void handleAdapterChanges(String action, Recording recording) {
@@ -233,7 +233,7 @@ public class RecordingListFragment extends ListFragment implements OnItemClickLi
                 adapter.notifyDataSetChanged();
                 // Update the number of recordings
                 String items = getResources().getQuantityString(R.plurals.recordings, adapter.getCount(), adapter.getCount());
-                toolbarInterface.setActionBarSubtitle(items);
+                toolbarInterface.setSubtitle(items);
                 // Select the previous recording to show its details
                 if (isDualPane) {
                     showRecordingDetails(selectedListPosition);

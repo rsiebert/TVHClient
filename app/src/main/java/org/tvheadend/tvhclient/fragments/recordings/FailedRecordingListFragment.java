@@ -16,7 +16,7 @@ public class FailedRecordingListFragment extends RecordingListFragment implement
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        toolbarInterface.setActionBarTitle(getString(R.string.failed_recordings));
+        toolbarInterface.setTitle(getString(R.string.failed_recordings));
     }
 
     @Override

@@ -2,19 +2,11 @@ package org.tvheadend.tvhclient.activities;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.Gravity;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
@@ -25,7 +17,6 @@ import org.tvheadend.tvhclient.fragments.ProgramGuideListFragment;
 import org.tvheadend.tvhclient.fragments.ProgramGuidePagerFragment;
 import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentScrollInterface;
-import org.tvheadend.tvhclient.interfaces.ToolbarInterface;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 import org.tvheadend.tvhclient.utils.Utils;
@@ -36,18 +27,13 @@ import static org.tvheadend.tvhclient.activities.NavigationDrawer.MENU_PROGRAM_G
 // TODO search
 // TODO refresh
 
-public class ProgramGuideActivity extends AppCompatActivity implements FragmentScrollInterface, ToolbarInterface, NavigationDrawerCallback {
+public class ProgramGuideActivity extends AppCompatActivity implements FragmentScrollInterface, ToolbarInterfaceLight, NavigationDrawerCallback {
 
     private SharedPreferences sharedPreferences;
     private NavigationDrawer navigationDrawer;
-    private ActionBar actionBar;
-    private TextView actionBarTitle;
-    private TextView actionBarSubtitle;
-    private ImageView actionBarIcon;
     private DatabaseHelper databaseHelper;
     private int programGuideListPosition = 0;
     private int programGuideListPositionOffset = 0;
-    private String TAG = ProgramGuideActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,18 +54,6 @@ public class ProgramGuideActivity extends AppCompatActivity implements FragmentS
         navigationDrawer.createMenu();
         navigationDrawer.getDrawer().setSelection(MENU_PROGRAM_GUIDE, false);
 
-        actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setHomeButtonEnabled(true);
-            actionBar.setDisplayUseLogoEnabled(sharedPreferences.getBoolean("showIconPref", true));
-        }
-
-        // Get the widgets so we can use them later and do not need to inflate again
-        actionBarTitle = toolbar.findViewById(R.id.actionbar_title);
-        actionBarSubtitle = toolbar.findViewById(R.id.actionbar_subtitle);
-        actionBarIcon = toolbar.findViewById(R.id.actionbar_icon);
-        actionBarIcon.setVisibility(View.GONE);
-
         if (savedInstanceState == null) {
             ProgramGuidePagerFragment fragment = new ProgramGuidePagerFragment();
             fragment.setArguments(getIntent().getExtras());
@@ -96,53 +70,6 @@ public class ProgramGuideActivity extends AppCompatActivity implements FragmentS
         // add the values which need to be saved from the accountHeader to the bundle
         outState = navigationDrawer.getHeader().saveInstanceState(outState);
         super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    public void setActionBarTitle(final String title) {
-        if (actionBar != null && actionBarTitle != null) {
-            actionBarTitle.setText(title);
-        }
-    }
-
-    @Override
-    public void setActionBarSubtitle(final String subtitle) {
-        if (actionBar != null && actionBarSubtitle != null) {
-            actionBarSubtitle.setText(subtitle);
-            // If no subtitle string is given hide it from the view and center
-            // the title vertically, otherwise place it below the title
-            if (subtitle.length() == 0) {
-                actionBarSubtitle.setVisibility(View.GONE);
-                actionBarTitle.setGravity(Gravity.START | Gravity.CENTER_VERTICAL);
-            } else {
-                actionBarSubtitle.setVisibility(View.VISIBLE);
-                actionBarTitle.setGravity(Gravity.START | Gravity.BOTTOM);
-            }
-        }
-    }
-
-    @Override
-    public void setActionBarIcon(final Bitmap bitmap) {
-        if (actionBarIcon != null && bitmap != null) {
-            // Only show the channel tag icon in the channel and program guide
-            // screens. In all other screens hide it because it makes no sense
-            // to show the tag icon. For example the completed recordings could
-            // be from channels from different channel tags.
-            actionBarIcon.setVisibility(sharedPreferences.getBoolean("showTagIconPref", false) ? View.VISIBLE : View.GONE);
-            actionBarIcon.setBackgroundDrawable(new BitmapDrawable(getResources(), bitmap));
-        }
-    }
-
-    @Override
-    public void setActionBarIcon(final int resource) {
-        if (actionBarIcon != null) {
-            // Only show the channel tag icon in the channel and program guide
-            // screens. In all other screens hide it because it makes no sense
-            // to show the tag icon. For example the completed recordings could
-            // be from channels from different channel tags.
-            actionBarIcon.setVisibility(sharedPreferences.getBoolean("showTagIconPref", false) ? View.VISIBLE : View.GONE);
-            actionBarIcon.setBackgroundResource(resource);
-        }
     }
 
     @Override
@@ -174,7 +101,6 @@ public class ProgramGuideActivity extends AppCompatActivity implements FragmentS
 
     @Override
     public void onScrollingChanged(final int position, final int offset, final String tag) {
-        Log.d(TAG, "onScrollingChanged() called with: position = [" + position + "], offset = [" + offset + "], tag = [" + tag + "]");
         // Save the scroll values so they can be reused after an orientation change.
         programGuideListPosition = position;
         programGuideListPositionOffset = offset;
@@ -192,7 +118,6 @@ public class ProgramGuideActivity extends AppCompatActivity implements FragmentS
 
     @Override
     public void onScrollStateIdle(final String tag) {
-        Log.d(TAG, "onScrollStateIdle() called with: tag = [" + tag + "]");
         if (tag.equals(ProgramGuideListFragment.class.getSimpleName())
                 || tag.equals(ProgramGuideChannelListFragment.class.getSimpleName())) {
             // Scrolling stopped by the program guide or the channel list
@@ -204,6 +129,20 @@ public class ProgramGuideActivity extends AppCompatActivity implements FragmentS
                         programGuideListPosition,
                         programGuideListPositionOffset);
             }
+        }
+    }
+
+    @Override
+    public void setTitle(String title) {
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(title);
+        }
+    }
+
+    @Override
+    public void setSubtitle(String subtitle) {
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setSubtitle(subtitle);
         }
     }
 }

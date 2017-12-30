@@ -21,11 +21,11 @@ import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.activities.DetailsActivity;
 import org.tvheadend.tvhclient.activities.AddEditActivity;
+import org.tvheadend.tvhclient.activities.DetailsActivity;
+import org.tvheadend.tvhclient.activities.ToolbarInterfaceLight;
 import org.tvheadend.tvhclient.adapter.TimerRecordingListAdapter;
 import org.tvheadend.tvhclient.htsp.HTSListener;
-import org.tvheadend.tvhclient.interfaces.ToolbarInterface;
 import org.tvheadend.tvhclient.model.TimerRecording;
 import org.tvheadend.tvhclient.utils.MenuUtils;
 
@@ -37,7 +37,7 @@ public class TimerRecordingListFragment extends ListFragment implements HTSListe
     private static final String TAG = TimerRecordingListFragment.class.getSimpleName();
 
     private AppCompatActivity activity;
-    private ToolbarInterface toolbarInterface;
+    private ToolbarInterfaceLight toolbarInterface;
     private TimerRecordingListAdapter adapter;
     private boolean isDualPane;
     private MenuUtils menuUtils;
@@ -49,9 +49,9 @@ public class TimerRecordingListFragment extends ListFragment implements HTSListe
         super.onActivityCreated(savedInstanceState);
 
         activity = (AppCompatActivity) getActivity();
-        if (activity instanceof ToolbarInterface) {
-            toolbarInterface = (ToolbarInterface) activity;
-            toolbarInterface.setActionBarTitle(getString(R.string.timer_recordings));
+        if (activity instanceof ToolbarInterfaceLight) {
+            toolbarInterface = (ToolbarInterfaceLight) activity;
+            toolbarInterface.setTitle(getString(R.string.timer_recordings));
         }
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         menuUtils = new MenuUtils(getActivity());
@@ -144,7 +144,7 @@ public class TimerRecordingListFragment extends ListFragment implements HTSListe
         adapter.notifyDataSetChanged();
         // Show the number of recordings
         String items = getResources().getQuantityString(R.plurals.recordings, adapter.getCount(), adapter.getCount());
-        toolbarInterface.setActionBarSubtitle(items);
+        toolbarInterface.setSubtitle(items);
     }
 
     @Override
@@ -183,7 +183,7 @@ public class TimerRecordingListFragment extends ListFragment implements HTSListe
                         adapter.notifyDataSetChanged();
                         // Update the number of recordings
                         String items = getResources().getQuantityString(R.plurals.recordings, adapter.getCount(), adapter.getCount());
-                        toolbarInterface.setActionBarSubtitle(items);
+                        toolbarInterface.setSubtitle(items);
                         // Select the previous recording to show its details
                         if (isDualPane) {
                             showRecordingDetails(selectedListPosition);

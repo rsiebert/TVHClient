@@ -16,7 +16,7 @@ public class RemovedRecordingListFragment extends RecordingListFragment implemen
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        toolbarInterface.setActionBarTitle(getString(R.string.removed_recordings));
+        toolbarInterface.setTitle(getString(R.string.removed_recordings));
     }
 
     @Override
