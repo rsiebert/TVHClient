@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.fragments;
+package org.tvheadend.tvhclient.fragments.epg;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -12,7 +12,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.text.format.Time;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -37,12 +36,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-// TODO scrolling from here does not update channel list
-
 public class ProgramGuidePagerFragment extends Fragment implements FragmentControlInterface, ChannelTagSelectionCallback {
-
-    @SuppressWarnings("unused")
-    private final static String TAG = ProgramGuidePagerFragment.class.getSimpleName();
 
     private Activity activity;
     private ViewPager viewPager = null;
@@ -223,7 +217,6 @@ public class ProgramGuidePagerFragment extends Fragment implements FragmentContr
         // Get the current time in milliseconds
         Time now = new Time(Time.getCurrentTimezone());
         now.setToNow();
-        Log.d(TAG, "calcProgramGuideTimeslots: time now " + now.hour + ":" + now.minute);
 
         // Get the current time in milliseconds without the seconds but in 30
         // minute slots. If the current time is later then 16:30 start from
@@ -237,7 +230,6 @@ public class ProgramGuidePagerFragment extends Fragment implements FragmentContr
         long offsetTime = hoursToShow * 60 * 60 * 1000;
 
         // Set the start and end times for each fragment
-        Log.d(TAG, "calcProgramGuideTimeslots: startTime " + startTime);
         for (int i = 0; i < fragmentCount; ++i) {
             startTimes.add(startTime);
             endTimes.add(startTime + offsetTime - 1);

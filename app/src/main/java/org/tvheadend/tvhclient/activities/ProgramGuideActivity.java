@@ -12,9 +12,9 @@ import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
 import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.fragments.ProgramGuideChannelListFragment;
-import org.tvheadend.tvhclient.fragments.ProgramGuideListFragment;
-import org.tvheadend.tvhclient.fragments.ProgramGuidePagerFragment;
+import org.tvheadend.tvhclient.fragments.epg.ProgramGuideChannelListFragment;
+import org.tvheadend.tvhclient.fragments.epg.ProgramGuideListFragment;
+import org.tvheadend.tvhclient.fragments.epg.ProgramGuidePagerFragment;
 import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
 import org.tvheadend.tvhclient.interfaces.FragmentScrollInterface;
 import org.tvheadend.tvhclient.model.Connection;
