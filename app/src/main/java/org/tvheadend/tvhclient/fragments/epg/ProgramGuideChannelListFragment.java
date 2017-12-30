@@ -11,7 +11,9 @@ import android.widget.ListView;
 import org.tvheadend.tvhclient.Constants;
 import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.DatabaseHelper;
+import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
+import org.tvheadend.tvhclient.activities.ToolbarInterfaceLight;
 import org.tvheadend.tvhclient.adapter.ProgramGuideChannelListAdapter;
 import org.tvheadend.tvhclient.htsp.HTSListener;
 import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
@@ -37,12 +39,18 @@ public class ProgramGuideChannelListFragment extends ListFragment implements HTS
     // scrolling. When the user is done, scrolling will be disabled to prevent
     // unwanted calls to the interface. 
     private boolean enableScrolling = false;
+    private ToolbarInterfaceLight toolbarInterface;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
         activity = getActivity();
+        activity = getActivity();
+        if (activity instanceof ToolbarInterfaceLight) {
+            toolbarInterface = (ToolbarInterfaceLight) activity;
+        }
+
         adapter = new ProgramGuideChannelListAdapter(activity, new ArrayList<>());
         setListAdapter(adapter);
         getListView().setFastScrollEnabled(true);
@@ -90,6 +98,11 @@ public class ProgramGuideChannelListFragment extends ListFragment implements HTS
         }
         adapter.sort(Utils.getChannelSortOrder(activity));
         adapter.notifyDataSetChanged();
+
+        // Show the name of the selected channel tag and the number of channels
+        // in the action bar. If enabled show also the channel tag icon.
+        toolbarInterface.setTitle(getString(R.string.pref_program_guide));
+        toolbarInterface.setSubtitle((currentTag == null) ? getString(R.string.all_channels) : currentTag.tagName);
     }
 
     @Override
