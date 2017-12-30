@@ -243,7 +243,7 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
 
         // If a profile was given, use it instead of the old values
         if (playbackProfile.enabled
-                && dataStorage.getProtocolVersion() >= Constants.MIN_API_VERSION_PROFILES
+                && dataStorage.getProtocolVersion() >= 16
                 && app.isUnlocked()) {
             playUrl += "&profile=" + playbackProfile.name;
         } else {
