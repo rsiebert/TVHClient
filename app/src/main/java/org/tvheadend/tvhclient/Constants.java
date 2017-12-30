@@ -5,25 +5,13 @@ public class Constants {
     // Product id for the in-app billing item to unlock the application
     public static final String UNLOCKER = "unlocker";
 
-    // Chromecast stuff
-    public static final String CAST_APPLICATION_ID = "0531DF56";
-    public static final double CAST_VOLUME_INCREMENT = 0.05;
-
     // Codes to identify the returning activity
-    public static final int RESULT_CODE_SETTINGS = 101;
     public static final int RESULT_CODE_START_PLAYER = 102;
-
-    // Amount of programs of a channel that shall be loaded from the server
-    public static final int PREF_PROGRAMS_TO_LOAD = 15;
-
-    // Amount of programs that must be visible before loading more programs
-    public static final int PROGRAMS_VISIBLE_BEFORE_LOADING_MORE = 15;
 
     // Strings used to identify the information passed via a bundle
     public static final String BUNDLE_EPG_START_TIME = "epgStartTime";
     public static final String BUNDLE_EPG_END_TIME = "epgEndTime";
     public static final String BUNDLE_EPG_INDEX = "showControls";
-    public static final String BUNDLE_MANAGE_CONNECTIONS = "manageConnections";
     public static final String BUNDLE_EPG_PIXELS_PER_MINUTE = "pixelsPerMinute";
     public static final String BUNDLE_EPG_DISPLAY_WIDTH = "displayWidth";
     public static final String BUNDLE_ACTION = "action";
@@ -65,20 +53,11 @@ public class Constants {
     public static final String ACTION_SHOW_MESSAGE = "SHOW_MESSAGE";
 
     // HTSP service actions that are called from the client to the server
-    public static final String ACTION_CONNECT = "CONNECT";
     public static final String ACTION_DISCONNECT = "DISCONNECT";
     // The default names for the playback and recording profiles
     public static final String PROG_PROFILE_DEFAULT = "htsp";
     public static final String CAST_PROFILE_DEFAULT = "webtv-vp8-vorbis-webm";
     public static final String REC_PROFILE_DEFAULT = "(Default Profile)";
-
-    // Identifier that can be passed to methods that support tags to differentiate the caller
-    public static final String TAG_CHANNEL_ICON = "tag_channel_icon";
-    public static final String TAG_PROGRAM_GUIDE = "tag_program_guide";
-
-    // Minimum API version to enable or disable certain functionalities. The
-    // features shall only be enabled if supported by the server. 
-    public static final int MIN_API_VERSION_PROFILES = 16;
 
     // Allow editing the title of a recording. (http://tvheadend.org/issues/2893)
     public static final int MIN_API_VERSION_REC_FIELD_TITLE = 21;
