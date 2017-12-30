@@ -39,7 +39,7 @@ public class ProgramGuideActivity extends AppCompatActivity implements FragmentS
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(MiscUtils.getThemeId(this));
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main_layout);
+        setContentView(R.layout.main_layout_light);
         MiscUtils.setLanguage(this);
 
         // Get the main toolbar and the floating action button (fab). The fab is
@@ -57,7 +57,7 @@ public class ProgramGuideActivity extends AppCompatActivity implements FragmentS
         if (savedInstanceState == null) {
             ProgramGuidePagerFragment fragment = new ProgramGuidePagerFragment();
             fragment.setArguments(getIntent().getExtras());
-            getSupportFragmentManager().beginTransaction().add(R.id.main_fragment, fragment).commit();
+            getSupportFragmentManager().beginTransaction().add(R.id.main, fragment).commit();
         }
 
         navigationDrawer.updateDrawerHeader();
