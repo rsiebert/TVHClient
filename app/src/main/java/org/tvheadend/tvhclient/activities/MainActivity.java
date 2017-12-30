@@ -103,7 +103,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     public void onCreate(Bundle savedInstanceState) {
         setTheme(MiscUtils.getThemeId(this));
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main_layout_light);
+        setContentView(R.layout.main_activity_layout);
         MiscUtils.setLanguage(this);
 
         castContext = CastContext.getSharedInstance(this);

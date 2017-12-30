@@ -9,7 +9,7 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.fragments.StatusFragment;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
-// TODO rename layout main_layout_light later
+// TODO rename layout main_activity_layout later
 
 public class StatusActivity extends AppCompatActivity implements ToolbarInterfaceLight {
 
@@ -17,7 +17,7 @@ public class StatusActivity extends AppCompatActivity implements ToolbarInterfac
     public void onCreate(Bundle savedInstanceState) {
         setTheme(MiscUtils.getThemeId(this));
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main_layout_light);
+        setContentView(R.layout.main_activity_layout);
         MiscUtils.setLanguage(this);
 
         // Setup the action bar and show the title

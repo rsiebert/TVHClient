@@ -14,7 +14,7 @@ public class ChangeLogActivity extends AppCompatActivity implements ToolbarInter
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(MiscUtils.getThemeId(this));
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main_layout_light);
+        setContentView(R.layout.main_activity_layout);
         MiscUtils.setLanguage(this);
 
         // Get the toolbar so that the fragments can set the title

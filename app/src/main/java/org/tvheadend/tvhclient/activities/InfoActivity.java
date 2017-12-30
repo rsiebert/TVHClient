@@ -10,7 +10,7 @@ import org.tvheadend.tvhclient.fragments.InfoFragment;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
 // TODO change title string resource
-// TODO rename layout main_layout_light later
+// TODO rename layout main_activity_layout later
 
 public class InfoActivity extends AppCompatActivity {
 
@@ -18,7 +18,7 @@ public class InfoActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         setTheme(MiscUtils.getThemeId(this));
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main_layout_light);
+        setContentView(R.layout.main_activity_layout);
         MiscUtils.setLanguage(this);
 
         // Setup the action bar and show the title

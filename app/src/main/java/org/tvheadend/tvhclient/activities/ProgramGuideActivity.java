@@ -23,9 +23,10 @@ import org.tvheadend.tvhclient.utils.Utils;
 
 import static org.tvheadend.tvhclient.activities.NavigationDrawer.MENU_PROGRAM_GUIDE;
 
-// TODO title
 // TODO search
 // TODO refresh
+// TODO extend draweractivity
+// TODO back press shows the same activity
 
 public class ProgramGuideActivity extends AppCompatActivity implements FragmentScrollInterface, ToolbarInterfaceLight, NavigationDrawerCallback {
 
@@ -39,7 +40,7 @@ public class ProgramGuideActivity extends AppCompatActivity implements FragmentS
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(MiscUtils.getThemeId(this));
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main_layout_light);
+        setContentView(R.layout.main_activity_layout);
         MiscUtils.setLanguage(this);
 
         // Get the main toolbar and the floating action button (fab). The fab is
