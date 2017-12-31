@@ -19,7 +19,7 @@ import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.activities.AddEditActivity;
-import org.tvheadend.tvhclient.activities.ToolbarInterfaceLight;
+import org.tvheadend.tvhclient.activities.ToolbarInterface;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.utils.MenuUtils;
@@ -72,7 +72,7 @@ public class RecordingDetailsFragment extends Fragment {
     @Nullable
     @BindView(R.id.nested_toolbar) Toolbar nestedToolbar;
 
-    private ToolbarInterfaceLight toolbarInterface;
+    private ToolbarInterface toolbarInterface;
     private MenuUtils menuUtils;
     private int dvrId;
     private boolean isUnlocked;
@@ -108,8 +108,8 @@ public class RecordingDetailsFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        if (getActivity() instanceof ToolbarInterfaceLight) {
-            toolbarInterface = (ToolbarInterfaceLight) getActivity();
+        if (getActivity() instanceof ToolbarInterface) {
+            toolbarInterface = (ToolbarInterface) getActivity();
             toolbarInterface.setTitle(getString(R.string.details));
         }
         menuUtils = new MenuUtils(getActivity());

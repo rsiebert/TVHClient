@@ -24,7 +24,7 @@ import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.activities.ProgramListActivity;
-import org.tvheadend.tvhclient.activities.ToolbarInterfaceLight;
+import org.tvheadend.tvhclient.activities.ToolbarInterface;
 import org.tvheadend.tvhclient.adapter.ChannelListAdapter;
 import org.tvheadend.tvhclient.callbacks.ChannelTagSelectionCallback;
 import org.tvheadend.tvhclient.callbacks.ChannelTimeSelectionCallback;
@@ -48,7 +48,7 @@ import java.util.Date;
 public class ChannelListFragment extends ListFragment implements HTSListener, ChannelTimeSelectionCallback, ChannelTagSelectionCallback, AdapterView.OnItemLongClickListener, OnItemClickListener {
 
     private Activity activity;
-    private ToolbarInterfaceLight toolbarInterface;
+    private ToolbarInterface toolbarInterface;
     private ChannelListAdapter adapter;
 
     private boolean isDualPane = false;
@@ -66,8 +66,8 @@ public class ChannelListFragment extends ListFragment implements HTSListener, Ch
         super.onActivityCreated(savedInstanceState);
 
         activity = getActivity();
-        if (activity instanceof ToolbarInterfaceLight) {
-            toolbarInterface = (ToolbarInterfaceLight) activity;
+        if (activity instanceof ToolbarInterface) {
+            toolbarInterface = (ToolbarInterface) activity;
         }
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         menuUtils = new MenuUtils(getActivity());

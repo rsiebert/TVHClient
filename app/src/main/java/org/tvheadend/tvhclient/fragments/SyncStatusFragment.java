@@ -22,7 +22,7 @@ import android.widget.TextView;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.activities.NavigationDrawerActivity;
 import org.tvheadend.tvhclient.activities.SettingsActivity;
-import org.tvheadend.tvhclient.activities.ToolbarInterfaceLight;
+import org.tvheadend.tvhclient.activities.ToolbarInterface;
 import org.tvheadend.tvhclient.htsp.HTSConnection;
 import org.tvheadend.tvhclient.htsp.HTSService;
 
@@ -57,8 +57,8 @@ public class SyncStatusFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (getActivity() instanceof ToolbarInterfaceLight) {
-            ToolbarInterfaceLight toolbarInterface = (ToolbarInterfaceLight) getActivity();
+        if (getActivity() instanceof ToolbarInterface) {
+            ToolbarInterface toolbarInterface = (ToolbarInterface) getActivity();
             toolbarInterface.setTitle("Sync Status");
         }
         // Allow showing the toolbar menu with the settings menu

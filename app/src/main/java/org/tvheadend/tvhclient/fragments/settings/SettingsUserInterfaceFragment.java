@@ -29,13 +29,13 @@ import android.support.v4.app.TaskStackBuilder;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.activities.NavigationDrawerActivity;
-import org.tvheadend.tvhclient.activities.ToolbarInterfaceLight;
+import org.tvheadend.tvhclient.activities.ToolbarInterface;
 
 public class SettingsUserInterfaceFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener {
 
     private CheckBoxPreference prefShowProgramArtwork;
     private CheckBoxPreference prefTheme;
-    private ToolbarInterfaceLight toolbarInterface;
+    private ToolbarInterface toolbarInterface;
     private boolean isUnlocked;
 
     @Override
@@ -43,8 +43,8 @@ public class SettingsUserInterfaceFragment extends PreferenceFragment implements
         super.onActivityCreated(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences_ui);
 
-        if (getActivity() instanceof ToolbarInterfaceLight) {
-            toolbarInterface = (ToolbarInterfaceLight) getActivity();
+        if (getActivity() instanceof ToolbarInterface) {
+            toolbarInterface = (ToolbarInterface) getActivity();
         }
         toolbarInterface.setTitle(getString(R.string.pref_user_interface));
         isUnlocked = TVHClientApplication.getInstance().isUnlocked();

@@ -29,14 +29,14 @@ import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.callbacks.FolderChooserDialogCallback;
 import org.tvheadend.tvhclient.activities.NavigationDrawerActivity;
 import org.tvheadend.tvhclient.activities.SettingsActivity;
-import org.tvheadend.tvhclient.activities.ToolbarInterfaceLight;
+import org.tvheadend.tvhclient.activities.ToolbarInterface;
 
 import java.io.File;
 
 public class SettingsFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener, SharedPreferences.OnSharedPreferenceChangeListener, ActivityCompat.OnRequestPermissionsResultCallback, FolderChooserDialogCallback {
     private final static String TAG = SettingsFragment.class.getSimpleName();
 
-    private ToolbarInterfaceLight toolbarInterface;
+    private ToolbarInterface toolbarInterface;
     private Preference prefDownloadDir;
     private boolean isUnlocked;
     private int htspVersion;
@@ -52,8 +52,8 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
         addPreferencesFromResource(R.xml.preferences);
 
         AppCompatActivity activity = (AppCompatActivity) getActivity();
-        if (activity instanceof ToolbarInterfaceLight) {
-            toolbarInterface = (ToolbarInterfaceLight) activity;
+        if (activity instanceof ToolbarInterface) {
+            toolbarInterface = (ToolbarInterface) activity;
         }
 
         toolbarInterface.setTitle(getString(R.string.settings));

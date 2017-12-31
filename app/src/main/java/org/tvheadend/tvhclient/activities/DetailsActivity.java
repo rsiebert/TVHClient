@@ -14,7 +14,7 @@ import org.tvheadend.tvhclient.utils.MiscUtils;
 
 // TODO combine with add edit activity?
 
-public class DetailsActivity extends AppCompatActivity implements ToolbarInterfaceLight {
+public class DetailsActivity extends AppCompatActivity implements ToolbarInterface {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

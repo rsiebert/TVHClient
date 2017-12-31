@@ -11,7 +11,7 @@ import org.tvheadend.tvhclient.fragments.recordings.SeriesRecordingAddFragment;
 import org.tvheadend.tvhclient.fragments.recordings.TimerRecordingAddFragment;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
-public class AddEditActivity extends AppCompatActivity implements ToolbarInterfaceLight {
+public class AddEditActivity extends AppCompatActivity implements ToolbarInterface {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

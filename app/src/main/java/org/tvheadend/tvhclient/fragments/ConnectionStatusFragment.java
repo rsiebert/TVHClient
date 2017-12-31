@@ -16,7 +16,7 @@ import android.widget.TextView;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.activities.SettingsActivity;
-import org.tvheadend.tvhclient.activities.ToolbarInterfaceLight;
+import org.tvheadend.tvhclient.activities.ToolbarInterface;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -48,8 +48,8 @@ public class ConnectionStatusFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        if (getActivity() instanceof ToolbarInterfaceLight) {
-            ToolbarInterfaceLight toolbarInterface = (ToolbarInterfaceLight) getActivity();
+        if (getActivity() instanceof ToolbarInterface) {
+            ToolbarInterface toolbarInterface = (ToolbarInterface) getActivity();
             toolbarInterface.setTitle("Connection Status");
         }
 

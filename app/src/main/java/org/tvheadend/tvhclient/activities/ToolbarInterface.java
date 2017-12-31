@@ -1,6 +1,6 @@
 package org.tvheadend.tvhclient.activities;
 
-public interface ToolbarInterfaceLight {
+public interface ToolbarInterface {
 
     void setTitle(String title);
 

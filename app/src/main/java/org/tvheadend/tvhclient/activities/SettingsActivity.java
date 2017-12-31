@@ -27,7 +27,7 @@ import org.tvheadend.tvhclient.utils.MiscUtils;
 
 import java.io.File;
 
-public class SettingsActivity extends AppCompatActivity implements ToolbarInterfaceLight, FolderChooserDialog.FolderCallback {
+public class SettingsActivity extends AppCompatActivity implements ToolbarInterface, FolderChooserDialog.FolderCallback {
 
     private String settingType;
 

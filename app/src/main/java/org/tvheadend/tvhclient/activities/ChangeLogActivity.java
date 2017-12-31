@@ -8,7 +8,7 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.fragments.ChangeLogFragment;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
-public class ChangeLogActivity extends AppCompatActivity implements ToolbarInterfaceLight {
+public class ChangeLogActivity extends AppCompatActivity implements ToolbarInterface {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

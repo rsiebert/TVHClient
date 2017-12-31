@@ -23,7 +23,7 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.activities.AddEditActivity;
 import org.tvheadend.tvhclient.activities.DetailsActivity;
-import org.tvheadend.tvhclient.activities.ToolbarInterfaceLight;
+import org.tvheadend.tvhclient.activities.ToolbarInterface;
 import org.tvheadend.tvhclient.adapter.SeriesRecordingListAdapter;
 import org.tvheadend.tvhclient.htsp.HTSListener;
 import org.tvheadend.tvhclient.model.SeriesRecording;
@@ -37,7 +37,7 @@ public class SeriesRecordingListFragment extends ListFragment implements HTSList
     private static final String TAG = SeriesRecordingListFragment.class.getSimpleName();
 
     private AppCompatActivity activity;
-    private ToolbarInterfaceLight toolbarInterface;
+    private ToolbarInterface toolbarInterface;
     private SeriesRecordingListAdapter adapter;
     private boolean isDualPane;
     private MenuUtils menuUtils;
@@ -50,8 +50,8 @@ public class SeriesRecordingListFragment extends ListFragment implements HTSList
         super.onActivityCreated(savedInstanceState);
 
         activity = (AppCompatActivity) getActivity();
-        if (activity instanceof ToolbarInterfaceLight) {
-            toolbarInterface = (ToolbarInterfaceLight) activity;
+        if (activity instanceof ToolbarInterface) {
+            toolbarInterface = (ToolbarInterface) activity;
             toolbarInterface.setTitle(getString(R.string.series_recordings));
         }
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());

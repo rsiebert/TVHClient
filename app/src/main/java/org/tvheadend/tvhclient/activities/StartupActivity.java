@@ -22,7 +22,7 @@ import org.tvheadend.tvhclient.utils.MiscUtils;
 
 import java.util.List;
 
-public class StartupActivity extends AppCompatActivity implements ToolbarInterfaceLight {
+public class StartupActivity extends AppCompatActivity implements ToolbarInterface {
 
     private SharedPreferences sharedPreferences;
 

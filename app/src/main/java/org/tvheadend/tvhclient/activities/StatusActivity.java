@@ -11,7 +11,7 @@ import org.tvheadend.tvhclient.utils.MiscUtils;
 
 // TODO rename layout main_activity_layout later
 
-public class StatusActivity extends AppCompatActivity implements ToolbarInterfaceLight {
+public class StatusActivity extends AppCompatActivity implements ToolbarInterface {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

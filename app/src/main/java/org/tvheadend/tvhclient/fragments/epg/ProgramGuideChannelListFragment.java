@@ -13,7 +13,7 @@ import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.activities.ToolbarInterfaceLight;
+import org.tvheadend.tvhclient.activities.ToolbarInterface;
 import org.tvheadend.tvhclient.adapter.ProgramGuideChannelListAdapter;
 import org.tvheadend.tvhclient.htsp.HTSListener;
 import org.tvheadend.tvhclient.interfaces.FragmentControlInterface;
@@ -39,7 +39,7 @@ public class ProgramGuideChannelListFragment extends ListFragment implements HTS
     // scrolling. When the user is done, scrolling will be disabled to prevent
     // unwanted calls to the interface. 
     private boolean enableScrolling = false;
-    private ToolbarInterfaceLight toolbarInterface;
+    private ToolbarInterface toolbarInterface;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -47,8 +47,8 @@ public class ProgramGuideChannelListFragment extends ListFragment implements HTS
 
         activity = getActivity();
         activity = getActivity();
-        if (activity instanceof ToolbarInterfaceLight) {
-            toolbarInterface = (ToolbarInterfaceLight) activity;
+        if (activity instanceof ToolbarInterface) {
+            toolbarInterface = (ToolbarInterface) activity;
         }
 
         adapter = new ProgramGuideChannelListAdapter(activity, new ArrayList<>());

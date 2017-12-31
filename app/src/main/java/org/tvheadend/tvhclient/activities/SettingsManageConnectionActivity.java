@@ -11,7 +11,7 @@ import org.tvheadend.tvhclient.fragments.settings.SettingsManageConnectionFragme
 import org.tvheadend.tvhclient.interfaces.BackPressedInterface;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
-public class SettingsManageConnectionActivity extends AppCompatActivity implements ToolbarInterfaceLight {
+public class SettingsManageConnectionActivity extends AppCompatActivity implements ToolbarInterface {
     private boolean initialSetup;
 
     @Override

@@ -28,7 +28,7 @@ import static org.tvheadend.tvhclient.activities.NavigationDrawer.MENU_PROGRAM_G
 // TODO extend draweractivity
 // TODO back press shows the same activity
 
-public class ProgramGuideActivity extends AppCompatActivity implements FragmentScrollInterface, ToolbarInterfaceLight, NavigationDrawerCallback {
+public class ProgramGuideActivity extends AppCompatActivity implements FragmentScrollInterface, ToolbarInterface, NavigationDrawerCallback {
 
     private SharedPreferences sharedPreferences;
     private NavigationDrawer navigationDrawer;

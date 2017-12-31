@@ -14,7 +14,7 @@ import android.widget.ProgressBar;
 
 import org.tvheadend.tvhclient.BuildConfig;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.activities.ToolbarInterfaceLight;
+import org.tvheadend.tvhclient.activities.ToolbarInterface;
 import org.tvheadend.tvhclient.interfaces.BackPressedInterface;
 import org.tvheadend.tvhclient.tasks.ChangeLogLoaderTask;
 import org.tvheadend.tvhclient.tasks.FileLoaderCallback;
@@ -38,8 +38,8 @@ public class ChangeLogFragment extends android.app.Fragment implements BackPress
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        if (getActivity() instanceof ToolbarInterfaceLight) {
-            ToolbarInterfaceLight toolbarInterface = (ToolbarInterfaceLight) getActivity();
+        if (getActivity() instanceof ToolbarInterface) {
+            ToolbarInterface toolbarInterface = (ToolbarInterface) getActivity();
             toolbarInterface.setTitle(getString(R.string.pref_changelog));
         }
 

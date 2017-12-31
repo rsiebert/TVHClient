@@ -33,7 +33,7 @@ import org.tvheadend.tvhclient.utils.MiscUtils;
 
 // TODO casting stuff
 
-public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, ToolbarInterfaceLight {
+public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, ToolbarInterface {
 
     protected MenuUtils menuUtils;
     private MenuItem searchMenuItem;

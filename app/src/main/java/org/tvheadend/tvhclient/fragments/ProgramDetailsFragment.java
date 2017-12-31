@@ -23,7 +23,7 @@ import android.widget.TextView;
 import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.activities.ToolbarInterfaceLight;
+import org.tvheadend.tvhclient.activities.ToolbarInterface;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Program;
 import org.tvheadend.tvhclient.model.Recording;
@@ -75,7 +75,7 @@ public class ProgramDetailsFragment extends Fragment implements ImageDownloadTas
     private Program program;
     private MenuUtils menuUtils;
     private Unbinder unbinder;
-    private ToolbarInterfaceLight toolbarInterface;
+    private ToolbarInterface toolbarInterface;
 
     public static ProgramDetailsFragment newInstance(int eventId) {
         ProgramDetailsFragment f = new ProgramDetailsFragment();
@@ -104,8 +104,8 @@ public class ProgramDetailsFragment extends Fragment implements ImageDownloadTas
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (getActivity() instanceof ToolbarInterfaceLight) {
-            toolbarInterface = (ToolbarInterfaceLight) getActivity();
+        if (getActivity() instanceof ToolbarInterface) {
+            toolbarInterface = (ToolbarInterface) getActivity();
             toolbarInterface.setTitle("Details");
         }
         menuUtils = new MenuUtils(getActivity());

@@ -8,7 +8,7 @@ import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.activities.ToolbarInterfaceLight;
+import org.tvheadend.tvhclient.activities.ToolbarInterface;
 import org.tvheadend.tvhclient.model.Connection;
 import org.tvheadend.tvhclient.model.Profile;
 import org.tvheadend.tvhclient.utils.MenuUtils;
@@ -23,7 +23,7 @@ import java.util.Calendar;
 public class BaseRecordingAddEditFragment extends Fragment {
 
     protected Activity activity;
-    protected ToolbarInterfaceLight toolbarInterface;
+    protected ToolbarInterface toolbarInterface;
     protected MenuUtils menuUtils;
     protected DataStorage dataStorage;
     protected int htspVersion;
@@ -43,8 +43,8 @@ public class BaseRecordingAddEditFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         activity = getActivity();
-        if (activity instanceof ToolbarInterfaceLight) {
-            toolbarInterface = (ToolbarInterfaceLight) activity;
+        if (activity instanceof ToolbarInterface) {
+            toolbarInterface = (ToolbarInterface) activity;
         }
 
         menuUtils = new MenuUtils(getActivity());

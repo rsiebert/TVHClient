@@ -22,7 +22,7 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.activities.AddEditActivity;
 import org.tvheadend.tvhclient.activities.DetailsActivity;
-import org.tvheadend.tvhclient.activities.ToolbarInterfaceLight;
+import org.tvheadend.tvhclient.activities.ToolbarInterface;
 import org.tvheadend.tvhclient.adapter.RecordingListAdapter;
 import org.tvheadend.tvhclient.model.Recording;
 import org.tvheadend.tvhclient.utils.MenuUtils;
@@ -33,7 +33,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class RecordingListFragment extends ListFragment implements OnItemClickListener, AdapterView.OnItemLongClickListener {
 
     protected AppCompatActivity activity;
-    protected ToolbarInterfaceLight toolbarInterface;
+    protected ToolbarInterface toolbarInterface;
     protected RecordingListAdapter adapter;
     boolean isUnlocked;
     protected boolean isDualPane;
@@ -46,8 +46,8 @@ public class RecordingListFragment extends ListFragment implements OnItemClickLi
         super.onActivityCreated(savedInstanceState);
 
         activity = (AppCompatActivity) getActivity();
-        if (activity instanceof ToolbarInterfaceLight) {
-            toolbarInterface = (ToolbarInterfaceLight) activity;
+        if (activity instanceof ToolbarInterface) {
+            toolbarInterface = (ToolbarInterface) activity;
         }
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         menuUtils = new MenuUtils(getActivity());

@@ -18,7 +18,7 @@ import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.activities.ToolbarInterfaceLight;
+import org.tvheadend.tvhclient.activities.ToolbarInterface;
 import org.tvheadend.tvhclient.htsp.HTSListener;
 import org.tvheadend.tvhclient.model.Channel;
 import org.tvheadend.tvhclient.model.Connection;
@@ -102,8 +102,8 @@ public class StatusFragment extends Fragment implements HTSListener, WakeOnLanTa
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         activity = getActivity();
-        if (activity instanceof ToolbarInterfaceLight) {
-            ToolbarInterfaceLight toolbarInterface = (ToolbarInterfaceLight) activity;
+        if (activity instanceof ToolbarInterface) {
+            ToolbarInterface toolbarInterface = (ToolbarInterface) activity;
             toolbarInterface.setTitle(getString(R.string.status));
         }
         menuUtils = new MenuUtils(getActivity());

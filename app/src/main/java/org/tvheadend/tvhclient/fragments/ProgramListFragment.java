@@ -23,7 +23,7 @@ import org.tvheadend.tvhclient.DataStorage;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.activities.DetailsActivity;
-import org.tvheadend.tvhclient.activities.ToolbarInterfaceLight;
+import org.tvheadend.tvhclient.activities.ToolbarInterface;
 import org.tvheadend.tvhclient.adapter.ProgramListAdapter;
 import org.tvheadend.tvhclient.htsp.HTSService;
 import org.tvheadend.tvhclient.htsp.HTSListener;
@@ -39,7 +39,7 @@ import java.util.Date;
 public class ProgramListFragment extends ListFragment implements HTSListener, OnItemClickListener, AdapterView.OnItemLongClickListener, OnScrollListener {
 
     private Activity activity;
-    private ToolbarInterfaceLight toolbarInterface;
+    private ToolbarInterface toolbarInterface;
     private ProgramListAdapter adapter;
     private boolean isDualPane;
     private long showProgramsFromTime;
@@ -68,8 +68,8 @@ public class ProgramListFragment extends ListFragment implements HTSListener, On
         super.onActivityCreated(savedInstanceState);
 
         activity = getActivity();
-        if (activity instanceof ToolbarInterfaceLight) {
-            toolbarInterface = (ToolbarInterfaceLight) activity;
+        if (activity instanceof ToolbarInterface) {
+            toolbarInterface = (ToolbarInterface) activity;
         }
         menuUtils = new MenuUtils(getActivity());
 
