@@ -117,7 +117,7 @@
             android:summary="@string/pref_genre_colors_search_results_sum"
             android:title="@string/pref_genre_colors_search_results" />
 
-        <org.tvheadend.tvhclient.SliderPreference
+        <org.tvheadend.tvhclient.ui.settings.SliderPreference
             android:defaultValue="70"
             android:dialogMessage="@string/pref_genre_colors_visibility_message"
             android:key="showGenreColorsVisibilityPref"

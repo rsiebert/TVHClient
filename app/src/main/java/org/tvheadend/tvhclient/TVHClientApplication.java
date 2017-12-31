@@ -23,7 +23,9 @@ import org.acra.config.ACRAConfiguration;
 import org.acra.config.ACRAConfigurationException;
 import org.acra.config.ConfigurationBuilder;
 import org.acra.sender.HttpSender;
-import org.tvheadend.tvhclient.htsp.HTSListener;
+import org.tvheadend.tvhclient.data.Constants;
+import org.tvheadend.tvhclient.data.local.Logger;
+import org.tvheadend.tvhclient.service.HTSListener;
 import org.tvheadend.tvhclient.utils.BillingUtils;
 import org.tvheadend.tvhclient.utils.MigrateUtils;
 

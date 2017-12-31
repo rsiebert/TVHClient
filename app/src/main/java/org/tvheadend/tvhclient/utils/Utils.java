@@ -15,16 +15,16 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import org.tvheadend.tvhclient.Constants;
-import org.tvheadend.tvhclient.DataStorage;
-import org.tvheadend.tvhclient.DatabaseHelper;
+import org.tvheadend.tvhclient.data.Constants;
+import org.tvheadend.tvhclient.data.DataStorage;
+import org.tvheadend.tvhclient.data.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.htsp.HTSService;
-import org.tvheadend.tvhclient.model.Channel;
-import org.tvheadend.tvhclient.model.ChannelTag;
-import org.tvheadend.tvhclient.model.Connection;
-import org.tvheadend.tvhclient.model.Program;
-import org.tvheadend.tvhclient.model.Recording;
+import org.tvheadend.tvhclient.service.HTSService;
+import org.tvheadend.tvhclient.data.model.Channel;
+import org.tvheadend.tvhclient.data.model.ChannelTag;
+import org.tvheadend.tvhclient.data.model.Connection;
+import org.tvheadend.tvhclient.data.model.Program;
+import org.tvheadend.tvhclient.data.model.Recording;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

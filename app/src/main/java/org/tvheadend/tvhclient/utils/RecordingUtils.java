@@ -9,17 +9,17 @@ import com.fourmob.datetimepicker.date.DatePickerDialog;
 import com.sleepbot.datetimepicker.time.RadialPickerLayout;
 import com.sleepbot.datetimepicker.time.TimePickerDialog;
 
-import org.tvheadend.tvhclient.DataStorage;
+import org.tvheadend.tvhclient.data.DataStorage;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.adapter.ChannelListSelectionAdapter;
-import org.tvheadend.tvhclient.callbacks.ChannelListSelectionCallback;
-import org.tvheadend.tvhclient.callbacks.DateTimePickerCallback;
-import org.tvheadend.tvhclient.callbacks.DaysOfWeekSelectionCallback;
-import org.tvheadend.tvhclient.callbacks.DuplicateDetectionListCallback;
-import org.tvheadend.tvhclient.callbacks.RecordingPriorityListCallback;
-import org.tvheadend.tvhclient.callbacks.RecordingProfileListCallback;
-import org.tvheadend.tvhclient.model.Channel;
+import org.tvheadend.tvhclient.ui.channels.ChannelListSelectionAdapter;
+import org.tvheadend.tvhclient.data.model.Channel;
+import org.tvheadend.tvhclient.utils.callbacks.ChannelListSelectionCallback;
+import org.tvheadend.tvhclient.utils.callbacks.DateTimePickerCallback;
+import org.tvheadend.tvhclient.utils.callbacks.DaysOfWeekSelectionCallback;
+import org.tvheadend.tvhclient.utils.callbacks.DuplicateDetectionListCallback;
+import org.tvheadend.tvhclient.utils.callbacks.RecordingPriorityListCallback;
+import org.tvheadend.tvhclient.utils.callbacks.RecordingProfileListCallback;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
