@@ -86,7 +86,7 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
     public void onCreate(Bundle savedInstanceState) {
         setTheme(MiscUtils.getThemeId(this));
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.x_list_layout);
+        //setContentView(R.layout.x_list_layout);
 
         app = TVHClientApplication.getInstance();
         dataStorage = DataStorage.getInstance();
@@ -100,8 +100,8 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
         }
         toolbar.setTitle(getString(R.string.search));
 
-        ListView listView = findViewById(R.id.item_list);
-        registerForContextMenu(listView);
+        ListView listView = null;//findViewById(R.id.item_list);
+        //registerForContextMenu(listView);
 
         menuUtils = new MenuUtils(this);
 
