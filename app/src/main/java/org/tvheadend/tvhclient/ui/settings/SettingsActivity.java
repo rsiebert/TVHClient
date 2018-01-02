@@ -45,6 +45,7 @@ public class SettingsActivity extends AppCompatActivity implements ToolbarInterf
                 getFragmentManager().beginTransaction().add(R.id.main, fragment).commit();
             } else {
                 Fragment fragment = null;
+                android.support.v4.app.Fragment supportFragment = null;
                 switch (settingType) {
                     case "list_connections":
                         fragment = new SettingsListConnectionsFragment();
@@ -68,10 +69,10 @@ public class SettingsActivity extends AppCompatActivity implements ToolbarInterf
                         fragment = new SettingsAdvancedFragment();
                         break;
                     case "information":
-                        fragment = new InfoFragment();
+                        supportFragment = new InfoFragment();
                         break;
                     case "unlocker":
-                        fragment = new UnlockerFragment();
+                        supportFragment = new UnlockerFragment();
                         break;
                     case "changelog":
                         fragment = new ChangeLogFragment();
@@ -80,6 +81,10 @@ public class SettingsActivity extends AppCompatActivity implements ToolbarInterf
                 if (fragment != null) {
                     fragment.setArguments(getIntent().getExtras());
                     getFragmentManager().beginTransaction().add(R.id.main, fragment).commit();
+                }
+                if (supportFragment != null) {
+                    supportFragment.setArguments(getIntent().getExtras());
+                    getSupportFragmentManager().beginTransaction().add(R.id.main, supportFragment).commit();
                 }
             }
         }
