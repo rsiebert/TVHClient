@@ -31,6 +31,8 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+// TODO lazy loading of images
+
 public class ChannelListAdapter extends ArrayAdapter<Channel> implements OnClickListener {
 
     private final static String TAG = ChannelListAdapter.class.getSimpleName();
