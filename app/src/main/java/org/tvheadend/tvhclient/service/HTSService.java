@@ -62,6 +62,7 @@ public class HTSService extends Service implements HTSConnectionListener {
     private PackageInfo packInfo;
     private DataStorage dataStorage;
     private Logger logger;
+    private SharedPreferences sharedPreferences;
 
     private class LocalBinder extends Binder {
         HTSService getService() {
@@ -74,6 +75,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         execService = Executors.newScheduledThreadPool(10);
         dataStorage = DataStorage.getInstance();
         logger = Logger.getInstance();
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         try {
             packInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
@@ -374,6 +376,10 @@ public class HTSService extends Service implements HTSConnectionListener {
         // Get some additional information after the initial loading has been finished
         getDiscSpace();
         getSystemTime();
+
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean("initial_sync_done", true);
+        editor.apply();
 
         Intent intent = new Intent("service_status");
         intent.putExtra("sync_status", "done");

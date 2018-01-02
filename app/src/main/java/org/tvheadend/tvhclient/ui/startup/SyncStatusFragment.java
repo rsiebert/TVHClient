@@ -31,7 +31,7 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
 public class SyncStatusFragment extends Fragment {
-    private String status;
+
     @BindView(R.id.progress_bar)
     ProgressBar progressBar;
     @BindView(R.id.status_text)
@@ -39,6 +39,7 @@ public class SyncStatusFragment extends Fragment {
     @BindView(R.id.status_background)
     ImageView statusImageView;
 
+    private String status;
     private Unbinder unbinder;
     private SharedPreferences sharedPreferences;
 
@@ -49,7 +50,8 @@ public class SyncStatusFragment extends Fragment {
         return view;
     }
 
-    @Override public void onDestroyView() {
+    @Override
+    public void onDestroyView() {
         super.onDestroyView();
         unbinder.unbind();
     }
@@ -76,9 +78,14 @@ public class SyncStatusFragment extends Fragment {
             //getActivity().stopService(intent);
             //getActivity().startService(intent);
 
-            Intent intent = new Intent(getActivity(), HTSService.class);
-            intent.setAction("connect");
-            getActivity().startService(intent);
+            boolean initialSyncDone = sharedPreferences.getBoolean("initial_sync_done", false);
+            if (!initialSyncDone) {
+                Intent intent = new Intent(getActivity(), HTSService.class);
+                intent.setAction("connect");
+                getActivity().startService(intent);
+            } else {
+                showContentScreen();
+            }
         }
         statusTextView.setText(status);
     }
@@ -201,8 +208,8 @@ public class SyncStatusFragment extends Fragment {
         int startScreen = Integer.parseInt(sharedPreferences.getString("defaultMenuPositionPref", "0"));
         Intent intent = new Intent(getActivity(), NavigationActivity.class);
         intent.putExtra("navigation_menu_position", startScreen);
-        startActivity(intent);
         getActivity().finish();
+        getActivity().startActivity(intent);
     }
 
     private void showSettingsActivity() {
