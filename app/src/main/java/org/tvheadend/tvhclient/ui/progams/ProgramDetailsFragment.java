@@ -88,9 +88,9 @@ public class ProgramDetailsFragment extends Fragment implements ImageDownloadTas
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        View view = inflater.inflate(R.layout.recording_details_fragment, container, false);
+        View view = inflater.inflate(R.layout.fragment_recording_details, container, false);
         ViewStub stub = view.findViewById(R.id.stub);
-        stub.setLayoutResource(R.layout.program_details_content_fragment);
+        stub.setLayoutResource(R.layout.viewstub_program_details_contents);
         stub.inflate();
         unbinder = ButterKnife.bind(this, view);
         return view;
@@ -125,7 +125,7 @@ public class ProgramDetailsFragment extends Fragment implements ImageDownloadTas
         Channel channel = DataStorage.getInstance().getChannelFromArray(program.channelId);
 
         if (nestedToolbar != null) {
-            nestedToolbar.inflateMenu(R.menu.program_toolbar_menu);
+            nestedToolbar.inflateMenu(R.menu.toolbar_menu_program_details);
             nestedToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem menuItem) {
@@ -235,9 +235,9 @@ public class ProgramDetailsFragment extends Fragment implements ImageDownloadTas
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         if (nestedToolbar == null) {
-            inflater.inflate(R.menu.program_context_menu, menu);
+            inflater.inflate(R.menu.popup_menu_channellist_program, menu);
         } else {
-            inflater.inflate(R.menu.search_info_menu, menu);
+            inflater.inflate(R.menu.options_menu_external_search, menu);
         }
     }
 

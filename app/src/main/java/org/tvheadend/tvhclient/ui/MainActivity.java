@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     public void onCreate(Bundle savedInstanceState) {
         setTheme(MiscUtils.getThemeId(this));
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main_activity_layout);
+        setContentView(R.layout.activity_main_layout);
         MiscUtils.setLanguage(this);
 
         castContext = CastContext.getSharedInstance(this);
@@ -186,7 +186,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-        getMenuInflater().inflate(R.menu.main_menu, menu);
+        getMenuInflater().inflate(R.menu.options_menu_main, menu);
 
         mediaRouteMenuItem = menu.findItem(R.id.media_route_menu_item);
         CastButtonFactory.setUpMediaRouteButton(getApplicationContext(), menu, R.id.media_route_menu_item);

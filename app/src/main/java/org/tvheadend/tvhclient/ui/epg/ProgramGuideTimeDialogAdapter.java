@@ -44,7 +44,7 @@ public class ProgramGuideTimeDialogAdapter extends RecyclerView.Adapter<ProgramG
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        final View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.program_guide_time_dialog, parent, false);
+        final View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_program_guide_time_selection_dialog, parent, false);
         return new ViewHolder(view, this);
     }
 

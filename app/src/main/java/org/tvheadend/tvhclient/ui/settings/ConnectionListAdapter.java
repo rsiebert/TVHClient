@@ -20,7 +20,7 @@ public class ConnectionListAdapter extends ArrayAdapter<Connection> {
     private final List<Connection> list;
 
     public ConnectionListAdapter(Activity context, List<Connection> list) {
-        super(context, R.layout.connection_list_widget, list);
+        super(context, R.layout.adapter_connection_list, list);
         this.context = context;
         this.list = list;
     }
@@ -45,7 +45,7 @@ public class ConnectionListAdapter extends ArrayAdapter<Connection> {
         ViewHolder holder;
 
         if (view == null) {
-            view = context.getLayoutInflater().inflate(R.layout.connection_list_widget, parent, false);
+            view = context.getLayoutInflater().inflate(R.layout.adapter_connection_list, parent, false);
             holder = new ViewHolder();
             holder.title = view.findViewById(R.id.title);
             holder.summary = view.findViewById(R.id.summary);

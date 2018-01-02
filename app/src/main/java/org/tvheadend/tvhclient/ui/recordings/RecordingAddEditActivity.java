@@ -15,7 +15,7 @@ public class RecordingAddEditActivity extends AppCompatActivity implements Toolb
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(MiscUtils.getThemeId(this));
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.details_activity);
+        setContentView(R.layout.activity_show_details);
         MiscUtils.setLanguage(this);
 
         Toolbar toolbar = findViewById(R.id.toolbar);

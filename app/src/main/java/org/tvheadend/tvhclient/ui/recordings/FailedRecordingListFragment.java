@@ -2,12 +2,11 @@ package org.tvheadend.tvhclient.ui.recordings;
 
 import android.os.Bundle;
 
-import org.tvheadend.tvhclient.data.Constants;
-import org.tvheadend.tvhclient.data.DataStorage;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.service.HTSListener;
+import org.tvheadend.tvhclient.data.DataStorage;
 import org.tvheadend.tvhclient.data.model.Recording;
+import org.tvheadend.tvhclient.service.HTSListener;
 
 import java.util.Map;
 
@@ -23,7 +22,6 @@ public class FailedRecordingListFragment extends RecordingListFragment implement
     public void onResume() {
         super.onResume();
         TVHClientApplication.getInstance().addListener(this);
-        setListShown(!DataStorage.getInstance().isLoading());
 
         if (!DataStorage.getInstance().isLoading()) {
             populateList();
@@ -56,27 +54,19 @@ public class FailedRecordingListFragment extends RecordingListFragment implement
 
     @Override
     public void onMessage(String action, final Object obj) {
-        if (action.equals(Constants.ACTION_LOADING)) {
-            activity.runOnUiThread(new Runnable() {
-                public void run() {
-                    boolean loading = (Boolean) obj;
-                    setListShown(!loading);
-                    if (!loading) {
-                        populateList();
+        switch (action) {
+            case "dvrEntryAdd":
+            case "dvrEntryUpdate":
+            case "dvrEntryDelete":
+                activity.runOnUiThread(new Runnable() {
+                    public void run() {
+                        Recording recording = (Recording) obj;
+                        if (recording.isFailed() || recording.isAborted() || recording.isMissed()) {
+                            handleAdapterChanges(action, recording);
+                        }
                     }
-                }
-            });
-        } else if (action.equals("dvrEntryAdd")
-                || action.equals("dvrEntryUpdate")
-                || action.equals("dvrEntryDelete")) {
-            activity.runOnUiThread(new Runnable() {
-                public void run() {
-                    Recording recording = (Recording) obj;
-                    if (recording.isFailed() || recording.isAborted() || recording.isMissed()) {
-                        handleAdapterChanges(action, recording);
-                    }
-                }
-            });
+                });
+                break;
         }
     }
 }

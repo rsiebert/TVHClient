@@ -28,23 +28,6 @@
             android:text="@string/connection" />
 
         <TextView
-            android:id="@+id/status_label"
-            style="?attr/TitleFont"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="16dp"
-            android:text="@string/status" />
-
-        <TextView
-            android:id="@+id/status"
-            style="?attr/ContentFont"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:paddingBottom="16dp"
-            android:text="@string/status" />
-
-
-        <TextView
             android:id="@+id/channels_label"
             style="?attr/TitleFont"
             android:layout_width="fill_parent"

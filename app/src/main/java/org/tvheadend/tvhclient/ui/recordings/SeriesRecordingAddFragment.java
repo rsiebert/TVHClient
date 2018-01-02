@@ -106,7 +106,7 @@ public class SeriesRecordingAddFragment extends BaseRecordingAddEditFragment imp
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        View view = inflater.inflate(R.layout.series_recording_add_layout, container, false);
+        View view = inflater.inflate(R.layout.fragment_add_edit_series_recording, container, false);
         unbinder = ButterKnife.bind(this, view);
         return view;
     }
@@ -291,7 +291,7 @@ public class SeriesRecordingAddFragment extends BaseRecordingAddEditFragment imp
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.save_cancel_menu, menu);
+        inflater.inflate(R.menu.options_menu_save_cancel, menu);
     }
 
     @Override

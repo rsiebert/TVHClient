@@ -60,13 +60,7 @@ public class ProgramGuidePagerFragment extends Fragment implements FragmentContr
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        // Return if frame for this fragment doesn't exist because the fragment
-        // will not be shown.
-        if (container == null) {
-            return null;
-        }
-
-        View v = inflater.inflate(R.layout.program_guide_pager, container, false);
+        View v = inflater.inflate(R.layout.fragment_program_guide_pager, container, false);
         viewPager = v.findViewById(R.id.pager);
         return v;
     }
@@ -131,7 +125,7 @@ public class ProgramGuidePagerFragment extends Fragment implements FragmentContr
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.epg_menu, menu);
+        inflater.inflate(R.menu.options_menu_program_guide, menu);
     }
 
     @Override

@@ -9,10 +9,12 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.PopupMenu;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
@@ -39,6 +41,12 @@ public class RecordingListFragment extends ListFragment implements OnItemClickLi
     protected SharedPreferences sharedPreferences;
 
     @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
+        return inflater.inflate(R.layout.fragment_main_list_layout, container, false);
+    }
+
+    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
@@ -52,7 +60,7 @@ public class RecordingListFragment extends ListFragment implements OnItemClickLi
 
         // Check to see if we have a frame in which to embed the details
         // fragment directly in the containing UI.
-        View detailsFrame = getActivity().findViewById(R.id.right_fragment);
+        View detailsFrame = getActivity().findViewById(R.id.details);
         isDualPane = detailsFrame != null && detailsFrame.getVisibility() == View.VISIBLE;
 
         adapter = new RecordingListAdapter(activity, new ArrayList<>());
@@ -95,7 +103,7 @@ public class RecordingListFragment extends ListFragment implements OnItemClickLi
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.recording_list_menu, menu);
+        inflater.inflate(R.menu.options_menu_recording_list, menu);
     }
 
     @Override
@@ -128,12 +136,12 @@ public class RecordingListFragment extends ListFragment implements OnItemClickLi
             // the list to highlight the selected item and show the program details fragment.
             getListView().setItemChecked(position, true);
             // Check what fragment is currently shown, replace if needed.
-            RecordingDetailsFragment recordingDetailsFragment = (RecordingDetailsFragment) getFragmentManager().findFragmentById(R.id.right_fragment);
+            RecordingDetailsFragment recordingDetailsFragment = (RecordingDetailsFragment) getFragmentManager().findFragmentById(R.id.details);
             if (recordingDetailsFragment == null || recordingDetailsFragment.getShownDvrId() != recording.id) {
                 // Make new fragment to show this selection.
                 recordingDetailsFragment = RecordingDetailsFragment.newInstance(recording.id);
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
-                ft.replace(R.id.right_fragment, recordingDetailsFragment);
+                ft.replace(R.id.details, recordingDetailsFragment);
                 ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
                 ft.commit();
             }
@@ -147,7 +155,7 @@ public class RecordingListFragment extends ListFragment implements OnItemClickLi
             return true;
         }
         PopupMenu popupMenu = new PopupMenu(getActivity(), view);
-        popupMenu.getMenuInflater().inflate(R.menu.recording_context_menu, popupMenu.getMenu());
+        popupMenu.getMenuInflater().inflate(R.menu.popup_menu_recordings, popupMenu.getMenu());
 
         if (recording.isCompleted()) {
             popupMenu.getMenu().findItem(R.id.menu_record_remove).setVisible(true);

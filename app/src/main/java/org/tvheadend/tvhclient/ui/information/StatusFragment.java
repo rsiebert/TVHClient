@@ -2,7 +2,6 @@ package org.tvheadend.tvhclient.ui.information;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -15,7 +14,6 @@ import android.widget.TextView;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.data.Constants;
 import org.tvheadend.tvhclient.data.DataStorage;
 import org.tvheadend.tvhclient.data.DatabaseHelper;
 import org.tvheadend.tvhclient.data.model.Channel;
@@ -24,7 +22,6 @@ import org.tvheadend.tvhclient.data.model.DiscSpace;
 import org.tvheadend.tvhclient.data.model.Recording;
 import org.tvheadend.tvhclient.data.tasks.WakeOnLanTask;
 import org.tvheadend.tvhclient.data.tasks.WakeOnLanTaskCallback;
-import org.tvheadend.tvhclient.service.HTSListener;
 import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
 import org.tvheadend.tvhclient.utils.MenuUtils;
 
@@ -34,15 +31,13 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-public class StatusFragment extends Fragment implements HTSListener, WakeOnLanTaskCallback {
+public class StatusFragment extends Fragment implements WakeOnLanTaskCallback {
 
     private Activity activity;
 
     // This information is always available
     @BindView(R.id.connection)
     TextView connection;
-    @BindView(R.id.status)
-    TextView status;
     @BindView(R.id.channels_label)
     TextView channelsLabel;
     @BindView(R.id.channels)
@@ -76,18 +71,16 @@ public class StatusFragment extends Fragment implements HTSListener, WakeOnLanTa
     @BindView(R.id.server_api_version)
     TextView serverApiVersion;
 
-    private String connectionStatus = "";
     private Unbinder unbinder;
     private DatabaseHelper databaseHelper;
     private int htspVersion;
     private boolean isUnlocked;
     private MenuUtils menuUtils;
-    private boolean isLoading;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        View view = inflater.inflate(R.layout.status_fragment_layout, container, false);
+        View view = inflater.inflate(R.layout.fragment_status_layout, container, false);
         unbinder = ButterKnife.bind(this, view);
         return view;
     }
@@ -110,38 +103,13 @@ public class StatusFragment extends Fragment implements HTSListener, WakeOnLanTa
         databaseHelper = DatabaseHelper.getInstance(getActivity().getApplicationContext());
         htspVersion = DataStorage.getInstance().getProtocolVersion();
         isUnlocked = TVHClientApplication.getInstance().isUnlocked();
-        isLoading = DataStorage.getInstance().isLoading();
         setHasOptionsMenu(true);
-
-        Bundle bundle = getArguments();
-        if (bundle != null) {
-            connectionStatus = bundle.getString("connection_status");
-        }
-    }
-
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putString("connection_status", connectionStatus);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        TVHClientApplication.getInstance().addListener(this);
-        showStatus();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        TVHClientApplication.getInstance().removeListener(this);
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.status_menu, menu);
+        inflater.inflate(R.menu.options_menu_status, menu);
     }
 
     @Override
@@ -175,65 +143,14 @@ public class StatusFragment extends Fragment implements HTSListener, WakeOnLanTa
     }
 
     @Override
-    public void onMessage(final String action, final Object obj) {
-        switch (action) {
-            case Constants.ACTION_CONNECTION_STATE_OK:
-            case Constants.ACTION_CONNECTION_STATE_UNKNOWN:
-            case Constants.ACTION_CONNECTION_STATE_SERVER_DOWN:
-            case Constants.ACTION_CONNECTION_STATE_LOST:
-            case Constants.ACTION_CONNECTION_STATE_TIMEOUT:
-            case Constants.ACTION_CONNECTION_STATE_REFUSED:
-            case Constants.ACTION_CONNECTION_STATE_AUTH:
-            case Constants.ACTION_CONNECTION_STATE_NO_CONNECTION:
-            case Constants.ACTION_CONNECTION_STATE_NO_NETWORK:
-                activity.runOnUiThread(new Runnable() {
-                    public void run() {
-                        connectionStatus = action;
-                        showStatus();
-                    }
-                });
-                break;
-            case Constants.ACTION_LOADING:
-                activity.runOnUiThread(new Runnable() {
-                    public void run() {
-                        isLoading = (boolean) obj;
-                        showStatus();
-                    }
-                });
-            case Constants.ACTION_DISC_SPACE:
-                activity.runOnUiThread(new Runnable() {
-                    public void run() {
-                        showStatus();
-                    }
-                });
-                break;
-        }
-    }
-
-    private void showStatus() {
-        boolean show = (connectionStatus.equals(
-                Constants.ACTION_CONNECTION_STATE_OK) && !isLoading);
+    public void onResume() {
+        super.onResume();
 
         // The connection is ok and not loading anymore, show all data
-        recordingLabel.setVisibility(show ? View.VISIBLE : View.GONE);
-        completedRec.setVisibility(show ? View.VISIBLE : View.GONE);
-        upcomingRec.setVisibility(show ? View.VISIBLE : View.GONE);
-        removedRec.setVisibility(show ? View.VISIBLE : View.GONE);
-        failedRec.setVisibility(show ? View.VISIBLE : View.GONE);
-        seriesRec.setVisibility((show && htspVersion >= 13) ? View.VISIBLE : View.GONE);
-        timerRec.setVisibility((show && htspVersion >= 18 && isUnlocked) ? View.VISIBLE : View.GONE);
-        channelsLabel.setVisibility(show ? View.VISIBLE : View.GONE);
-        channels.setVisibility(show ? View.VISIBLE : View.GONE);
-        currentlyRecLabel.setVisibility(show ? View.VISIBLE : View.GONE);
-        currentlyRec.setVisibility(show ? View.VISIBLE : View.GONE);
-        discspaceLabel.setVisibility(show ? View.VISIBLE : View.GONE);
-        freediscspace.setVisibility(show ? View.VISIBLE : View.GONE);
-        totaldiscspace.setVisibility(show ? View.VISIBLE : View.GONE);
-        serverApiVersionLabel.setVisibility(show ? View.VISIBLE : View.GONE);
-        serverApiVersion.setVisibility(show ? View.VISIBLE : View.GONE);
+        seriesRec.setVisibility((htspVersion >= 13) ? View.VISIBLE : View.GONE);
+        timerRec.setVisibility((htspVersion >= 18 && isUnlocked) ? View.VISIBLE : View.GONE);
 
         showConnectionDetails();
-        showConnectionStatus();
         showRecordingStatus();
         showDiscSpace();
         showServerStatus();
@@ -258,45 +175,6 @@ public class StatusFragment extends Fragment implements HTSListener, WakeOnLanTa
         } else {
             String text = connection.name + " (" + connection.address + ")";
             this.connection.setText(text);
-        }
-    }
-
-    /**
-     * Shows the current connection status is displayed, this can be
-     * authorization, timeouts or other errors.
-     */
-    private void showConnectionStatus() {
-        // Show a textual description about the connection state
-        if (isLoading) {
-            status.setText(R.string.loading);
-        } else {
-            switch (connectionStatus) {
-                case Constants.ACTION_CONNECTION_STATE_OK:
-                    status.setText(R.string.ready);
-                    break;
-                case Constants.ACTION_CONNECTION_STATE_SERVER_DOWN:
-                    status.setText(R.string.err_connect);
-                    break;
-                case Constants.ACTION_CONNECTION_STATE_LOST:
-                    status.setText(R.string.err_con_lost);
-                    break;
-                case Constants.ACTION_CONNECTION_STATE_TIMEOUT:
-                    status.setText(R.string.err_con_timeout);
-                    break;
-                case Constants.ACTION_CONNECTION_STATE_REFUSED:
-                case Constants.ACTION_CONNECTION_STATE_AUTH:
-                    status.setText(R.string.err_auth);
-                    break;
-                case Constants.ACTION_CONNECTION_STATE_NO_NETWORK:
-                    status.setText(R.string.err_no_network);
-                    break;
-                case Constants.ACTION_CONNECTION_STATE_NO_CONNECTION:
-                    status.setText(R.string.no_connection_available);
-                    break;
-                default:
-                    status.setText(R.string.unknown);
-                    break;
-            }
         }
     }
 
@@ -348,20 +226,20 @@ public class StatusFragment extends Fragment implements HTSListener, WakeOnLanTa
     private void showRecordingStatus() {
 
         // Get the programs that are currently being recorded
-        String currentRecText = "";
+        StringBuilder currentRecText = new StringBuilder();
         Map<Integer, Recording> map = DataStorage.getInstance().getRecordingsFromArray();
         for (Recording rec : map.values()) {
             if (rec.isRecording()) {
-                currentRecText += getString(R.string.currently_recording) + ": " + rec.title;
+                currentRecText.append(getString(R.string.currently_recording)).append(": ").append(rec.title);
                 Channel channel = DataStorage.getInstance().getChannelFromArray(rec.channel);
                 if (channel != null) {
-                    currentRecText += " (" + getString(R.string.channel) + " " + channel.channelName + ")\n";
+                    currentRecText.append(" (").append(getString(R.string.channel)).append(" ").append(channel.channelName).append(")\n");
                 }
             }
         }
 
         // Show which programs are being recorded
-        currentlyRec.setText(currentRecText.length() > 0 ? currentRecText
+        currentlyRec.setText(currentRecText.length() > 0 ? currentRecText.toString()
                 : getString(R.string.nothing));
 
         int completedRecCount = 0;

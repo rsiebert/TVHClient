@@ -31,8 +31,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class TimerRecordingListFragment extends ListFragment implements HTSListener, OnItemClickListener, AdapterView.OnItemLongClickListener {
 
-    private static final String TAG = TimerRecordingListFragment.class.getSimpleName();
-
     private AppCompatActivity activity;
     private ToolbarInterface toolbarInterface;
     private TimerRecordingListAdapter adapter;
@@ -82,7 +80,6 @@ public class TimerRecordingListFragment extends ListFragment implements HTSListe
     public void onResume() {
         super.onResume();
         TVHClientApplication.getInstance().addListener(this);
-        setListShown(!DataStorage.getInstance().isLoading());
 
         if (!DataStorage.getInstance().isLoading()) {
             populateList();
@@ -120,7 +117,7 @@ public class TimerRecordingListFragment extends ListFragment implements HTSListe
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.recording_list_menu, menu);
+        inflater.inflate(R.menu.options_menu_recording_list, menu);
     }
 
     @Override
@@ -147,17 +144,6 @@ public class TimerRecordingListFragment extends ListFragment implements HTSListe
     @Override
     public void onMessage(String action, final Object obj) {
         switch (action) {
-            case Constants.ACTION_LOADING:
-                activity.runOnUiThread(new Runnable() {
-                    public void run() {
-                        boolean loading = (Boolean) obj;
-                        setListShown(!loading);
-                        if (!loading) {
-                            populateList();
-                        }
-                    }
-                });
-                break;
             case "timerecEntryAdd":
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
@@ -241,7 +227,7 @@ public class TimerRecordingListFragment extends ListFragment implements HTSListe
             return true;
         }
         PopupMenu popupMenu = new PopupMenu(getActivity(), view);
-        popupMenu.getMenuInflater().inflate(R.menu.timer_recording_context_menu, popupMenu.getMenu());
+        popupMenu.getMenuInflater().inflate(R.menu.popup_menu_timer_recordings, popupMenu.getMenu());
 
         popupMenu.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {

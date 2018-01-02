@@ -31,8 +31,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class SeriesRecordingListFragment extends ListFragment implements HTSListener, OnItemClickListener, AdapterView.OnItemLongClickListener {
 
-    private static final String TAG = SeriesRecordingListFragment.class.getSimpleName();
-
     private AppCompatActivity activity;
     private ToolbarInterface toolbarInterface;
     private SeriesRecordingListAdapter adapter;
@@ -84,7 +82,6 @@ public class SeriesRecordingListFragment extends ListFragment implements HTSList
     public void onResume() {
         super.onResume();
         TVHClientApplication.getInstance().addListener(this);
-        setListShown(!DataStorage.getInstance().isLoading());
 
         if (!DataStorage.getInstance().isLoading()) {
             populateList();
@@ -122,7 +119,7 @@ public class SeriesRecordingListFragment extends ListFragment implements HTSList
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.recording_list_menu, menu);
+        inflater.inflate(R.menu.options_menu_recording_list, menu);
     }
 
     @Override
@@ -149,17 +146,6 @@ public class SeriesRecordingListFragment extends ListFragment implements HTSList
     @Override
     public void onMessage(String action, final Object obj) {
         switch (action) {
-            case Constants.ACTION_LOADING:
-                activity.runOnUiThread(new Runnable() {
-                    public void run() {
-                        boolean loading = (Boolean) obj;
-                        setListShown(!loading);
-                        if (!loading) {
-                            populateList();
-                        }
-                    }
-                });
-                break;
             case "autorecEntryAdd":
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
@@ -243,7 +229,7 @@ public class SeriesRecordingListFragment extends ListFragment implements HTSList
             return true;
         }
         PopupMenu popupMenu = new PopupMenu(getActivity(), view);
-        popupMenu.getMenuInflater().inflate(R.menu.series_recording_context_menu, popupMenu.getMenu());
+        popupMenu.getMenuInflater().inflate(R.menu.popup_menu_series_recordings, popupMenu.getMenu());
         (popupMenu.getMenu().findItem(R.id.menu_edit)).setVisible(isUnlocked);
 
         popupMenu.setOnMenuItemClickListener(item -> {

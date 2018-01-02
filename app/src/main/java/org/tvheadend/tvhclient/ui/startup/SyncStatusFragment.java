@@ -44,7 +44,7 @@ public class SyncStatusFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.startup_fragment_layout, null);
+        View view = inflater.inflate(R.layout.fragment_startup_layout, null);
         unbinder = ButterKnife.bind(this, view);
         return view;
     }
@@ -86,7 +86,7 @@ public class SyncStatusFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.startup_menu, menu);
+        inflater.inflate(R.menu.options_menu_startup, menu);
     }
 
     @Override

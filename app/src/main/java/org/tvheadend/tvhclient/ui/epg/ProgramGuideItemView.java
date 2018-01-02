@@ -347,7 +347,7 @@ public class ProgramGuideItemView extends LinearLayout {
      */
     private void addCurrentProgramToView(final Program p, final int layoutWidth, ViewGroup parent) {
 
-        View v = activity.getLayoutInflater().inflate(R.layout.program_guide_data_item, parent, false);
+        View v = activity.getLayoutInflater().inflate(R.layout.view_program_guide_program_layout, parent, false);
         final LinearLayout itemLayout = v.findViewById(R.id.timeline_item);
         final TextView title = v.findViewById(R.id.title);
         final ImageView state = v.findViewById(R.id.state);
@@ -383,7 +383,7 @@ public class ProgramGuideItemView extends LinearLayout {
             itemLayout.setOnCreateContextMenuListener((new OnCreateContextMenuListener() {
                 @Override
                 public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-                    activity.getMenuInflater().inflate(R.menu.program_context_menu, menu);
+                    activity.getMenuInflater().inflate(R.menu.popup_menu_channellist_program, menu);
                     // Set the title of the context menu and show or hide
                     // the menu items depending on the program state
                     fragmentInterface.setSelectedContextItem(p);
@@ -431,7 +431,7 @@ public class ProgramGuideItemView extends LinearLayout {
     }
 
     private void addEmptyProgramToView() {
-        View v = inflate(getContext(), R.layout.program_guide_data_item_empty, null);
+        View v = inflate(getContext(), R.layout.view_program_guide_empty_program_layout, null);
         final LinearLayout itemLayout = v.findViewById(R.id.timeline_item);
         LinearLayout.LayoutParams parms = new LinearLayout.LayoutParams(displayWidth, LayoutParams.MATCH_PARENT);
         itemLayout.setLayoutParams(parms);
@@ -439,7 +439,7 @@ public class ProgramGuideItemView extends LinearLayout {
     }
 
     private void addLoadingIndication() {
-        View v = inflate(getContext(), R.layout.program_guide_data_item_loading, null);
+        View v = inflate(getContext(), R.layout.view_program_guide_program_loading_layout, null);
         layout.addView(v);
     }
 

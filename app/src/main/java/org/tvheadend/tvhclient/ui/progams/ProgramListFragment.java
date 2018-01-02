@@ -18,15 +18,14 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
-import org.tvheadend.tvhclient.data.Constants;
-import org.tvheadend.tvhclient.data.DataStorage;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
-import org.tvheadend.tvhclient.service.HTSListener;
-import org.tvheadend.tvhclient.service.HTSService;
+import org.tvheadend.tvhclient.data.DataStorage;
 import org.tvheadend.tvhclient.data.model.Program;
 import org.tvheadend.tvhclient.data.model.Recording;
+import org.tvheadend.tvhclient.service.HTSListener;
+import org.tvheadend.tvhclient.service.HTSService;
+import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
 import org.tvheadend.tvhclient.utils.MenuUtils;
 
 import java.util.ArrayList;
@@ -73,7 +72,7 @@ public class ProgramListFragment extends ListFragment implements HTSListener, On
 
         // Check to see if we have a frame in which to embed the details
         // fragment directly in the containing UI.
-        View detailsFrame = getActivity().findViewById(R.id.right_fragment);
+        View detailsFrame = getActivity().findViewById(R.id.details);
         isDualPane = detailsFrame != null && detailsFrame.getVisibility() == View.VISIBLE;
         setHasOptionsMenu(true);
 
@@ -112,7 +111,7 @@ public class ProgramListFragment extends ListFragment implements HTSListener, On
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.program_menu, menu);
+        inflater.inflate(R.menu.options_menu_program, menu);
     }
 
     @Override
@@ -147,7 +146,6 @@ public class ProgramListFragment extends ListFragment implements HTSListener, On
     public void onResume() {
         super.onResume();
         TVHClientApplication.getInstance().addListener(this);
-        setListShown(!DataStorage.getInstance().isLoading());
 
         if (!DataStorage.getInstance().isLoading()) {
             populateList();
@@ -202,17 +200,6 @@ public class ProgramListFragment extends ListFragment implements HTSListener, On
     @Override
     public void onMessage(String action, final Object obj) {
         switch (action) {
-            case Constants.ACTION_LOADING:
-                activity.runOnUiThread(new Runnable() {
-                    public void run() {
-                        boolean loading = (Boolean) obj;
-                        setListShown(!loading);
-                        if (!loading) {
-                            populateList();
-                        }
-                    }
-                });
-                break;
             case "eventAdd":
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
@@ -283,7 +270,7 @@ public class ProgramListFragment extends ListFragment implements HTSListener, On
             return true;
         }
         PopupMenu popupMenu = new PopupMenu(getActivity(), view);
-        popupMenu.getMenuInflater().inflate(R.menu.program_context_menu, popupMenu.getMenu());
+        popupMenu.getMenuInflater().inflate(R.menu.popup_menu_channellist_program, popupMenu.getMenu());
         menuUtils.onPreparePopupMenu(popupMenu.getMenu(), program);
 
         popupMenu.setOnMenuItemClickListener(item -> {

@@ -44,7 +44,7 @@ public class ChannelTagListAdapter extends RecyclerView.Adapter<ChannelTagListAd
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(parent.getContext());
         mShowChannelTagIcons = prefs.getBoolean("showTagIconPref", true);
 
-        final View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.channeltag_list_item, parent, false);
+        final View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_channeltag_list_selection_dialog, parent, false);
         return new ViewHolder(view, this);
     }
 

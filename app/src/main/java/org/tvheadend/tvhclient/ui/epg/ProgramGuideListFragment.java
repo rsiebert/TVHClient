@@ -81,7 +81,7 @@ public class ProgramGuideListFragment extends Fragment implements HTSListener, F
             return null;
         }
 
-        View v = inflater.inflate(R.layout.program_guide_pager_list, container, false);
+        View v = inflater.inflate(R.layout.fragment_program_guide_pager_list, container, false);
         listView = v.findViewById(R.id.item_list);
         titleLayout = v.findViewById(R.id.pager_title);
         titleDateText = v.findViewById(R.id.pager_title_date_text);

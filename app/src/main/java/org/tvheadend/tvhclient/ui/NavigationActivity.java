@@ -1,19 +1,22 @@
 package org.tvheadend.tvhclient.ui;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.data.Constants;
-import org.tvheadend.tvhclient.data.DatabaseHelper;
 import org.tvheadend.tvhclient.data.tasks.WakeOnLanTaskCallback;
 import org.tvheadend.tvhclient.ui.channels.ChannelListFragment;
-import org.tvheadend.tvhclient.ui.epg.ProgramGuideActivity;
+import org.tvheadend.tvhclient.ui.epg.FragmentControlInterface;
+import org.tvheadend.tvhclient.ui.epg.FragmentScrollInterface;
+import org.tvheadend.tvhclient.ui.epg.ProgramGuideChannelListFragment;
+import org.tvheadend.tvhclient.ui.epg.ProgramGuideListFragment;
+import org.tvheadend.tvhclient.ui.epg.ProgramGuidePagerFragment;
 import org.tvheadend.tvhclient.ui.information.InfoFragment;
 import org.tvheadend.tvhclient.ui.information.StatusFragment;
 import org.tvheadend.tvhclient.ui.progams.ProgramListFragment;
@@ -33,39 +36,25 @@ import java.util.ArrayList;
 // TODO onQueryTextSubmit does nothing currently
 // TODO navigation menu marking (status, ...)
 
-public class NavigationActivity extends MainActivity implements WakeOnLanTaskCallback, NavigationDrawerCallback {
+public class NavigationActivity extends MainActivity implements FragmentScrollInterface, WakeOnLanTaskCallback, NavigationDrawerCallback {
 
+    private int programGuideListPosition = 0;
+    private int programGuideListPositionOffset = 0;
     // Default navigation drawer menu position and the list positions
     private int selectedNavigationMenuId = NavigationDrawer.MENU_UNKNOWN;
-    private int defaultMenuPosition = NavigationDrawer.MENU_UNKNOWN;
     // Holds the list of selected menu items so the previous fragment can be
     // shown again when the user has pressed the back key.
     private ArrayList<Integer> menuStack = new ArrayList<>();
-
-    // Remember if the connection setting screen was already shown. When the
-    // main activity starts for the first time and no connections are configured
-    // or active the connection settings activity will be shown once.
-    private boolean connectionSettingsShown = false;
-    // Contains the information about the current connection state.
-    private String connectionStatus = Constants.ACTION_CONNECTION_STATE_UNKNOWN;
-
-    private TVHClientApplication app;
-    private DatabaseHelper databaseHelper;
-    private SharedPreferences sharedPreferences;
     private NavigationDrawer navigationDrawer;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        app = (TVHClientApplication) getApplication();
 
-        databaseHelper = DatabaseHelper.getInstance(getApplicationContext());
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         navigationDrawer = new NavigationDrawer(this, savedInstanceState, toolbar, this);
         navigationDrawer.createHeader();
         navigationDrawer.createMenu();
-
-        defaultMenuPosition = Integer.parseInt(sharedPreferences.getString("defaultMenuPositionPref", String.valueOf(NavigationDrawer.MENU_STATUS)));
 
         if (savedInstanceState == null) {
             // When the activity is created it got called by the main activity. Get the initial
@@ -81,8 +70,6 @@ public class NavigationActivity extends MainActivity implements WakeOnLanTaskCal
             // counts. Also get any saved values from the bundle.
             menuStack = savedInstanceState.getIntegerArrayList("menu_stack");
             selectedNavigationMenuId = savedInstanceState.getInt("navigation_menu_position", NavigationDrawer.MENU_CHANNELS);
-            connectionStatus = savedInstanceState.getString("connection_status");
-            connectionSettingsShown = savedInstanceState.getBoolean("connection_settings_shown");
         }
     }
 
@@ -95,9 +82,6 @@ public class NavigationActivity extends MainActivity implements WakeOnLanTaskCal
      */
     private void handleDrawerItemSelected(int position) {
 
-        // Save the menu position so we know which one was selected
-        selectedNavigationMenuId = position;
-
         Intent intent;
         Fragment fragment = null;
         switch (position) {
@@ -105,8 +89,7 @@ public class NavigationActivity extends MainActivity implements WakeOnLanTaskCal
                 fragment = new ChannelListFragment();
                 break;
             case NavigationDrawer.MENU_PROGRAM_GUIDE:
-                intent = new Intent(this, ProgramGuideActivity.class);
-                startActivity(intent);
+                fragment = new ProgramGuidePagerFragment();
                 break;
             case NavigationDrawer.MENU_COMPLETED_RECORDINGS:
                 fragment = new CompletedRecordingListFragment();
@@ -128,14 +111,11 @@ public class NavigationActivity extends MainActivity implements WakeOnLanTaskCal
                 break;
             case NavigationDrawer.MENU_STATUS:
                 fragment = new StatusFragment();
-                //intent.putExtra("connection_status", connectionStatus);
-                //startActivity(intent);
                 break;
             case NavigationDrawer.MENU_INFORMATION:
                 fragment = new InfoFragment();
                 break;
             case NavigationDrawer.MENU_SETTINGS:
-                selectedNavigationMenuId = defaultMenuPosition;
                 intent = new Intent(this, SettingsActivity.class);
                 startActivity(intent);
                 break;
@@ -143,10 +123,39 @@ public class NavigationActivity extends MainActivity implements WakeOnLanTaskCal
                 fragment = new UnlockerFragment();
                 break;
         }
+
         if (fragment != null) {
+            // Save the menu position so we know which one was selected
+            selectedNavigationMenuId = position;
             fragment.setArguments(getIntent().getExtras());
             getSupportFragmentManager().beginTransaction().replace(R.id.main, fragment).commit();
         }
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+
+        switch (selectedNavigationMenuId) {
+            case NavigationDrawer.MENU_STATUS:
+            case NavigationDrawer.MENU_INFORMATION:
+            case NavigationDrawer.MENU_UNLOCKER:
+                MenuItem mediaRouteMenuItem = menu.findItem(R.id.media_route_menu_item);
+                if (mediaRouteMenuItem != null) {
+                    mediaRouteMenuItem.setVisible(false);
+                }
+                MenuItem searchMenuItem = menu.findItem(R.id.menu_search);
+                if (searchMenuItem != null) {
+                    searchMenuItem.setVisible(false);
+                }
+                MenuItem reconnectMenuItem = menu.findItem(R.id.menu_refresh);
+                if (reconnectMenuItem != null) {
+                    reconnectMenuItem.setVisible(false);
+                }
+                break;
+        }
+
+        return true;
     }
 
     /**
@@ -157,7 +166,7 @@ public class NavigationActivity extends MainActivity implements WakeOnLanTaskCal
     @Override
     public void onBackPressed() {
         navigationDrawer.getDrawer().closeDrawer();
-        final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment);
+        final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main);
         if (!isDualPane && (f instanceof ProgramListFragment)) {
             getSupportFragmentManager().popBackStack();
         } else {
@@ -175,13 +184,10 @@ public class NavigationActivity extends MainActivity implements WakeOnLanTaskCal
         super.onResume();
         // A connection exists and is active, register to receive
         // information from the server and connect to the server
-        app.addListener(navigationDrawer);
+        TVHClientApplication.getInstance().addListener(navigationDrawer);
         // Show the defined fragment from the menu position or the
         // status if the connection state is not fine
         handleDrawerItemSelected(selectedNavigationMenuId);
-
-        connectionStatus = sharedPreferences.getString("last_connection_state", Constants.ACTION_CONNECTION_STATE_OK);
-        connectionSettingsShown = sharedPreferences.getBoolean("last_connection_settings_shown", false);
 
         // Update the drawer menu so that all available menu items are
         // shown in case the recording counts have changed or the user has
@@ -193,15 +199,7 @@ public class NavigationActivity extends MainActivity implements WakeOnLanTaskCal
     @Override
     public void onPause() {
         super.onPause();
-        app.removeListener(navigationDrawer);
-
-        // Save the previously active connection status and if the connection
-        // settings have been already shown
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putString("last_connection_state", connectionStatus);
-        editor.putBoolean("last_connection_settings_shown", connectionSettingsShown);
-        editor.apply();
+        TVHClientApplication.getInstance().removeListener(navigationDrawer);
     }
 
     @Override
@@ -212,8 +210,6 @@ public class NavigationActivity extends MainActivity implements WakeOnLanTaskCal
         outState = navigationDrawer.getHeader().saveInstanceState(outState);
         outState.putIntegerArrayList("menu_stack", menuStack);
         outState.putInt("navigation_menu_position", selectedNavigationMenuId);
-        outState.putString("connection_status", connectionStatus);
-        outState.putBoolean("connection_settings_shown", connectionSettingsShown);
         super.onSaveInstanceState(outState);
     }
 
@@ -228,6 +224,39 @@ public class NavigationActivity extends MainActivity implements WakeOnLanTaskCal
     public void onNavigationMenuSelected(int id) {
         if (selectedNavigationMenuId != id) {
             handleDrawerItemSelected(id);
+        }
+    }
+
+    @Override
+    public void onScrollingChanged(final int position, final int offset, final String tag) {
+        // Save the scroll values so they can be reused after an orientation change.
+        programGuideListPosition = position;
+        programGuideListPositionOffset = offset;
+
+        if (tag.equals(ProgramGuideChannelListFragment.class.getSimpleName())
+                || tag.equals(ProgramGuideListFragment.class.getSimpleName())) {
+            // Scrolling was initiated by the channel or program guide list fragment. Keep
+            // the currently visible program guide list in sync by scrolling it to the same position
+            final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main);
+            if (f instanceof FragmentControlInterface) {
+                ((FragmentControlInterface) f).setSelection(position, offset);
+            }
+        }
+    }
+
+    @Override
+    public void onScrollStateIdle(final String tag) {
+        if (tag.equals(ProgramGuideListFragment.class.getSimpleName())
+                || tag.equals(ProgramGuideChannelListFragment.class.getSimpleName())) {
+            // Scrolling stopped by the program guide or the channel list
+            // fragment. Scroll all program guide fragments in the current
+            // view pager to the same position.
+            final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main);
+            if (f instanceof ProgramGuidePagerFragment) {
+                ((FragmentControlInterface) f).setSelection(
+                        programGuideListPosition,
+                        programGuideListPositionOffset);
+            }
         }
     }
 }

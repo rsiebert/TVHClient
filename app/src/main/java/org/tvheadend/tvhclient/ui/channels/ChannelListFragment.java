@@ -10,18 +10,18 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
 import android.support.v7.widget.PopupMenu;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
-import org.tvheadend.tvhclient.data.Constants;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.utils.callbacks.ChannelTagSelectionCallback;
 import org.tvheadend.tvhclient.data.DataStorage;
 import org.tvheadend.tvhclient.data.DatabaseHelper;
 import org.tvheadend.tvhclient.data.model.Channel;
@@ -33,9 +33,10 @@ import org.tvheadend.tvhclient.service.HTSListener;
 import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
 import org.tvheadend.tvhclient.ui.progams.ProgramListActivity;
 import org.tvheadend.tvhclient.ui.progams.ProgramListFragment;
-import org.tvheadend.tvhclient.utils.callbacks.ChannelTimeSelectionCallback;
 import org.tvheadend.tvhclient.utils.MenuUtils;
 import org.tvheadend.tvhclient.utils.Utils;
+import org.tvheadend.tvhclient.utils.callbacks.ChannelTagSelectionCallback;
+import org.tvheadend.tvhclient.utils.callbacks.ChannelTimeSelectionCallback;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -57,9 +58,14 @@ public class ChannelListFragment extends ListFragment implements HTSListener, Ch
     private int channelTimeSelection;
     private long showProgramsFromTime;
     private MenuUtils menuUtils;
-    private SharedPreferences sharedPreferences;
     private boolean isUnlocked;
     private int selectedListPosition;
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
+        return inflater.inflate(R.layout.fragment_main_list_layout, container, false);
+    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -69,13 +75,12 @@ public class ChannelListFragment extends ListFragment implements HTSListener, Ch
         if (activity instanceof ToolbarInterface) {
             toolbarInterface = (ToolbarInterface) activity;
         }
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         menuUtils = new MenuUtils(getActivity());
         isUnlocked = TVHClientApplication.getInstance().isUnlocked();
 
         // Check to see if we have a frame in which to embed the details
         // fragment directly in the containing UI.
-        View detailsFrame = getActivity().findViewById(R.id.right_fragment);
+        View detailsFrame = getActivity().findViewById(R.id.details);
         isDualPane = detailsFrame != null && detailsFrame.getVisibility() == View.VISIBLE;
 
         adapter = new ChannelListAdapter(activity, new ArrayList<>());
@@ -130,7 +135,7 @@ public class ChannelListFragment extends ListFragment implements HTSListener, Ch
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.channel_menu, menu);
+        inflater.inflate(R.menu.options_menu_channel_list, menu);
     }
 
     @Override
@@ -177,7 +182,6 @@ public class ChannelListFragment extends ListFragment implements HTSListener, Ch
     public void onResume() {
         super.onResume();
         TVHClientApplication.getInstance().addListener(this);
-        setListShown(!DataStorage.getInstance().isLoading());
 
         if (!DataStorage.getInstance().isLoading()) {
             populateList();
@@ -241,17 +245,6 @@ public class ChannelListFragment extends ListFragment implements HTSListener, Ch
     @Override
     public void onMessage(String action, final Object obj) {
         switch (action) {
-            case Constants.ACTION_LOADING:
-                activity.runOnUiThread(new Runnable() {
-                    public void run() {
-                        boolean loading = (Boolean) obj;
-                        setListShown(!loading);
-                        if (!loading) {
-                            populateList();
-                        }
-                    }
-                });
-                break;
             case "channelAdd":
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
@@ -362,12 +355,12 @@ public class ChannelListFragment extends ListFragment implements HTSListener, Ch
             // the list to highlight the selected item and show the program details fragment.
             getListView().setItemChecked(position, true);
             // Check what fragment is currently shown, replace if needed.
-            ProgramListFragment programListFragment = (ProgramListFragment) getFragmentManager().findFragmentById(R.id.right_fragment);
+            ProgramListFragment programListFragment = (ProgramListFragment) getFragmentManager().findFragmentById(R.id.details);
             if (programListFragment == null || programListFragment.getShownChannelId() != channel.channelId) {
                 // Make new fragment to show this selection.
                 programListFragment = ProgramListFragment.newInstance(channel.channelName, channel.channelId, showProgramsFromTime);
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
-                ft.replace(R.id.right_fragment, programListFragment);
+                ft.replace(R.id.details, programListFragment);
                 ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
                 ft.commit();
             }
@@ -382,7 +375,7 @@ public class ChannelListFragment extends ListFragment implements HTSListener, Ch
             return true;
         }
         PopupMenu popupMenu = new PopupMenu(getActivity(), view);
-        popupMenu.getMenuInflater().inflate(R.menu.program_context_menu, popupMenu.getMenu());
+        popupMenu.getMenuInflater().inflate(R.menu.popup_menu_channellist_program, popupMenu.getMenu());
         menuUtils.onPreparePopupMenu(popupMenu.getMenu(), program);
 
         popupMenu.setOnMenuItemClickListener(item -> {

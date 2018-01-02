@@ -13,7 +13,7 @@
         android:paddingBottom="20dp"
         android:paddingTop="16dp" >
 
-        <include layout="@layout/timer_recording_list_widget_item" />
+        <include layout="@layout/adapter_timer_recording_list_contents" />
     </LinearLayout>
 
     <LinearLayout

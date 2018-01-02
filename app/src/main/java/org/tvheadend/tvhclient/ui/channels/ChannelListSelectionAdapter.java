@@ -44,7 +44,7 @@ public class ChannelListSelectionAdapter extends RecyclerView.Adapter<ChannelLis
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(parent.getContext());
         showChannelIcons = prefs.getBoolean("showChannelIconPref", true);
 
-        final View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.channel_list_item, parent, false);
+        final View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_channel_list_selection_dialog, parent, false);
         return new ViewHolder(view, this);
     }
 

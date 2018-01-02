@@ -66,8 +66,6 @@
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
         </activity>
-        <activity android:name="org.tvheadend.tvhclient.ui.unlocker.UnlockerActivity" />
-        <activity android:name="org.tvheadend.tvhclient.ui.information.InfoActivity" />
         <activity android:name="org.tvheadend.tvhclient.ui.settings.SettingsActivity" />
         <activity
             android:name="org.tvheadend.tvhclient.data.remote.PlayActivity"
@@ -88,13 +86,12 @@
         <activity android:name=".ui.settings.SettingsManageConnectionActivity" />
         <activity android:name=".ui.recordings.RecordingAddEditActivity" />
         <activity android:name=".ui.recordings.RecordingDetailsActivity" />
-        <activity android:name=".ui.information.StatusActivity" />
         <activity android:name=".ui.progams.ProgramListActivity" />
         <activity android:name=".ui.information.ChangeLogActivity" />
-        <activity android:name=".ui.epg.ProgramGuideActivity" />
         <activity android:name=".ui.MainActivity" />
-        <activity android:name=".ui.NavigationDrawerActivity" />
+        <activity android:name=".ui.NavigationActivity" />
         <activity android:name=".ui.progams.ProgramDetailsActivity" />
+        <activity android:name=".ui.search.SearchActivity" />
 
     </application>
 </manifest>

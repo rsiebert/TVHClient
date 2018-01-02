@@ -54,7 +54,7 @@ public class SliderPreference extends DialogPreference {
      * @param attrs   Attributes
      */
     private void setup(Context context, AttributeSet attrs) {
-        setDialogLayoutResource(R.layout.slider_preference_dialog);
+        setDialogLayoutResource(R.layout.dialog_slider_preference);
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.SliderPreference);
         try {
             setSummary(getContext().getResources().getString(R.string.pref_genre_colors_visibility_value, mValue));

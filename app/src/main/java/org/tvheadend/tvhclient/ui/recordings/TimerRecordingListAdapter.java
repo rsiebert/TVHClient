@@ -96,7 +96,7 @@ public class TimerRecordingListAdapter extends ArrayAdapter<TimerRecording> {
         if (view != null) {
             holder = (ViewHolder) view.getTag();
         } else {
-            view = context.getLayoutInflater().inflate(R.layout.timer_recording_list_widget, parent, false);
+            view = context.getLayoutInflater().inflate(R.layout.adapter_timer_recording_list, parent, false);
             holder = new ViewHolder(view);
             view.setTag(holder);
         }

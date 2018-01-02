@@ -64,7 +64,6 @@ public class ProgramGuideChannelListFragment extends ListFragment implements HTS
     public void onResume() {
         super.onResume();
         TVHClientApplication.getInstance().addListener(this);
-        setListShown(!DataStorage.getInstance().isLoading());
 
         if (!DataStorage.getInstance().isLoading()) {
             populateList();
@@ -109,7 +108,6 @@ public class ProgramGuideChannelListFragment extends ListFragment implements HTS
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
                         boolean loading = (Boolean) obj;
-                        setListShown(!loading);
                         if (!loading) {
                             populateList();
                         }

@@ -87,7 +87,7 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
     public void onCreate(Bundle savedInstanceState) {
         setTheme(MiscUtils.getThemeId(this));
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.list_layout);
+        setContentView(R.layout.x_list_layout);
 
         app = TVHClientApplication.getInstance();
         dataStorage = DataStorage.getInstance();
@@ -313,7 +313,7 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-        getMenuInflater().inflate(R.menu.search_menu, menu);
+        getMenuInflater().inflate(R.menu.options_menu_search_results, menu);
 
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         searchMenuItem = menu.findItem(R.id.menu_search);
@@ -426,14 +426,14 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
         final Program program = adapter.getItem(info.position);
 
-        getMenuInflater().inflate(R.menu.program_context_menu, menu);
+        getMenuInflater().inflate(R.menu.popup_menu_channellist_program, menu);
         // Set the title of the context menu
         menu.setHeaderTitle(program.title);
         // Show or hide the menu items depending on the program state
         //Utils.setProgramMenu(app, menu, program);
 /*
         } else if (model instanceof Recording) {
-            getMenuInflater().inflate(R.menu.recording_context_menu, menu);
+            getMenuInflater().inflate(R.menu.popup_menu_recordings, menu);
             Recording rec = (Recording) model;
             menu.setHeaderTitle(rec.title);
             // Hide all menu entries before activating certain ones

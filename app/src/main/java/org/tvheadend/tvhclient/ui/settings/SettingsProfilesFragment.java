@@ -122,7 +122,7 @@ public class SettingsProfilesFragment extends PreferenceFragment implements OnPr
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.save_cancel_menu, menu);
+        inflater.inflate(R.menu.options_menu_save_cancel, menu);
     }
 
     private void saveRecordingProfile() {

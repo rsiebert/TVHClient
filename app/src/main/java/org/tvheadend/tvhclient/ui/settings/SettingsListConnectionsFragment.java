@@ -89,7 +89,7 @@ public class SettingsListConnectionsFragment extends ListFragment implements Bac
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.preference_connections, menu);
+        inflater.inflate(R.menu.option_menu_connection_list, menu);
     }
 
     @Override
@@ -191,7 +191,7 @@ public class SettingsListConnectionsFragment extends ListFragment implements Bac
     public boolean onCreateActionMode(ActionMode mode, Menu menu) {
         // Inflate a menu resource providing context menu items
         MenuInflater inflater = mode.getMenuInflater();
-        inflater.inflate(R.menu.connection_menu, menu);
+        inflater.inflate(R.menu.options_menu_connection_settings, menu);
         return true;
     }
 

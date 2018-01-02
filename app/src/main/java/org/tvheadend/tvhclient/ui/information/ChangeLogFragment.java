@@ -28,7 +28,7 @@ public class ChangeLogFragment extends android.app.Fragment implements BackPress
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.webview_layout, null);
+        View view = inflater.inflate(R.layout.fragment_webview_layout, null);
         webView = view.findViewById(R.id.webview);
         loadingProgressBar = view.findViewById(R.id.loading);
         return view;
@@ -77,7 +77,7 @@ public class ChangeLogFragment extends android.app.Fragment implements BackPress
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.menu_changelog, menu);
+        inflater.inflate(R.menu.options_menu_changelog, menu);
     }
 
     @Override

@@ -38,7 +38,7 @@ public class ProgramGuideListAdapter extends ArrayAdapter<Channel> {
     // private HashMap<Channel, Set<Program>> channelProgramList = new HashMap<Channel, Set<Program>>();
     
     public ProgramGuideListAdapter(Activity activity, Fragment fragment, List<Channel> list, Bundle bundle) {
-        super(activity, R.layout.program_guide_pager_list_item, list);
+        super(activity, R.layout.adapter_program_guide_pager_list, list);
         this.activity = activity;
         this.fragment = fragment;
         this.list = list;
@@ -94,7 +94,7 @@ public class ProgramGuideListAdapter extends ArrayAdapter<Channel> {
         View view = convertView;
 
         if (view == null) {
-            view = inflater.inflate(R.layout.program_guide_pager_list_item, parent, false);
+            view = inflater.inflate(R.layout.adapter_program_guide_pager_list, parent, false);
             holder = new ViewHolder();
             holder.timeline = view.findViewById(R.id.timeline);
             holder.item = new ProgramGuideItemView(activity, fragment, holder.timeline, bundle);
