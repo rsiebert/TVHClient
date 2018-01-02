@@ -20,11 +20,11 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.ui.NavigationActivity;
-import org.tvheadend.tvhclient.ui.settings.SettingsActivity;
-import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
 import org.tvheadend.tvhclient.service.HTSConnection;
 import org.tvheadend.tvhclient.service.HTSService;
+import org.tvheadend.tvhclient.ui.NavigationActivity;
+import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
+import org.tvheadend.tvhclient.ui.settings.SettingsActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -189,6 +189,10 @@ public class SyncStatusFragment extends Fragment {
         // The user needs to go to the settings and fix the login credentials.
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(messageReceiver);
         // TODO getActivity().stopService(new Intent(getActivity(), EpgSyncService.class));
+
+        Intent intent = new Intent(getActivity(), HTSService.class);
+        intent.setAction("disconnect");
+        getActivity().startService(intent);
     }
 
     private void showContentScreen() {

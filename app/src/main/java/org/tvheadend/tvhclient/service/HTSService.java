@@ -117,7 +117,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         } else if (connection == null || !connection.isConnected()) {
             logger.log(TAG, "onStartCommand: No connection to perform " + action);
 
-        } else if (action.equals(Constants.ACTION_DISCONNECT)) {
+        } else if (action.equals("disconnect")) {
             logger.log(TAG, "onStartCommand: Closing connection to server");
             connection.close();
 

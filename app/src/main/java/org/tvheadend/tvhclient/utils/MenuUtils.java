@@ -4,8 +4,10 @@ package org.tvheadend.tvhclient.utils;
 import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.Menu;
@@ -15,16 +17,10 @@ import android.view.View;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
-import org.tvheadend.tvhclient.data.DataStorage;
-import org.tvheadend.tvhclient.data.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.data.remote.DownloadActivity;
-import org.tvheadend.tvhclient.data.remote.PlayActivity;
-import org.tvheadend.tvhclient.ui.search.SearchResultActivity;
-import org.tvheadend.tvhclient.ui.common.ChannelTagListAdapter;
-import org.tvheadend.tvhclient.ui.common.GenreColorDialogAdapter;
-import org.tvheadend.tvhclient.service.HTSService;
+import org.tvheadend.tvhclient.data.DataStorage;
+import org.tvheadend.tvhclient.data.DatabaseHelper;
 import org.tvheadend.tvhclient.data.model.ChannelTag;
 import org.tvheadend.tvhclient.data.model.Connection;
 import org.tvheadend.tvhclient.data.model.GenreColorDialogItem;
@@ -33,6 +29,13 @@ import org.tvheadend.tvhclient.data.model.Program;
 import org.tvheadend.tvhclient.data.model.Recording;
 import org.tvheadend.tvhclient.data.model.SeriesRecording;
 import org.tvheadend.tvhclient.data.model.TimerRecording;
+import org.tvheadend.tvhclient.data.remote.DownloadActivity;
+import org.tvheadend.tvhclient.data.remote.PlayActivity;
+import org.tvheadend.tvhclient.service.HTSService;
+import org.tvheadend.tvhclient.ui.common.ChannelTagListAdapter;
+import org.tvheadend.tvhclient.ui.common.GenreColorDialogAdapter;
+import org.tvheadend.tvhclient.ui.search.SearchActivity;
+import org.tvheadend.tvhclient.ui.startup.StartupActivity;
 import org.tvheadend.tvhclient.utils.callbacks.ChannelTagSelectionCallback;
 import org.tvheadend.tvhclient.utils.callbacks.ChannelTimeSelectionCallback;
 
@@ -208,12 +211,10 @@ public class MenuUtils {
         if (activity == null) {
             return;
         }
-        Intent intent = new Intent(activity, SearchResultActivity.class);
+        Intent intent = new Intent(activity, SearchActivity.class);
         intent.setAction(Intent.ACTION_SEARCH);
         intent.putExtra(SearchManager.QUERY, title);
-        if (channelId > 0) {
-            intent.putExtra("channelId", channelId);
-        }
+        intent.putExtra("channelId", channelId);
         activity.startActivity(intent);
     }
 
@@ -564,7 +565,20 @@ public class MenuUtils {
                 .negativeText(R.string.cancel)
                 .positiveText("Reconnect")
                 .onPositive((dialog, which) -> {
-                    Utils.connect(activity, true);
+
+                    Intent intent = new Intent(activity, HTSService.class);
+                    intent.setAction("disconnect");
+                    activity.startService(intent);
+
+                    // Save the information that a new sync is required
+                    // Then restart the application to show the sync fragment
+                    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putBoolean("initial_sync_done", false);
+                    editor.apply();
+                    intent = new Intent(activity, StartupActivity.class);
+                    activity.startActivity(intent);
+                    activity.finish();
                 })
                 .show();
     }

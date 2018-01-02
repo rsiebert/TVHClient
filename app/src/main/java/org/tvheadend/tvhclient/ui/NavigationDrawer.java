@@ -1,7 +1,10 @@
 package org.tvheadend.tvhclient.ui;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.AttrRes;
 import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
@@ -19,15 +22,16 @@ import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
-import org.tvheadend.tvhclient.data.DataStorage;
-import org.tvheadend.tvhclient.data.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
+import org.tvheadend.tvhclient.data.DataStorage;
+import org.tvheadend.tvhclient.data.DatabaseHelper;
 import org.tvheadend.tvhclient.data.model.Connection;
 import org.tvheadend.tvhclient.data.model.Recording;
 import org.tvheadend.tvhclient.service.HTSListener;
+import org.tvheadend.tvhclient.service.HTSService;
+import org.tvheadend.tvhclient.ui.startup.StartupActivity;
 import org.tvheadend.tvhclient.utils.MiscUtils;
-import org.tvheadend.tvhclient.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -233,8 +237,20 @@ public class NavigationDrawer implements HTSListener, AccountHeader.OnAccountHea
             oldConn.selected = false;
             databaseHelper.updateConnection(oldConn);
             databaseHelper.updateConnection(newConn);
-            Utils.connect(activity, true);
-            updateDrawerItemBadges();
+
+            Intent intent = new Intent(activity, HTSService.class);
+            intent.setAction("disconnect");
+            activity.startService(intent);
+
+            // Save the information that a new sync is required
+            // Then restart the application to show the sync fragment
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putBoolean("initial_sync_done", false);
+            editor.apply();
+            intent = new Intent(activity, StartupActivity.class);
+            activity.finish();
+            activity.startActivity(intent);
         }
         return true;
     }
