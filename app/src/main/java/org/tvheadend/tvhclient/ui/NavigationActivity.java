@@ -17,8 +17,8 @@ import org.tvheadend.tvhclient.ui.epg.FragmentScrollInterface;
 import org.tvheadend.tvhclient.ui.epg.ProgramGuideChannelListFragment;
 import org.tvheadend.tvhclient.ui.epg.ProgramGuideListFragment;
 import org.tvheadend.tvhclient.ui.epg.ProgramGuidePagerFragment;
-import org.tvheadend.tvhclient.ui.information.InfoFragment;
-import org.tvheadend.tvhclient.ui.information.StatusFragment;
+import org.tvheadend.tvhclient.ui.misc.InfoFragment;
+import org.tvheadend.tvhclient.ui.misc.StatusFragment;
 import org.tvheadend.tvhclient.ui.programs.ProgramListFragment;
 import org.tvheadend.tvhclient.ui.recordings.CompletedRecordingListFragment;
 import org.tvheadend.tvhclient.ui.recordings.FailedRecordingListFragment;
@@ -27,7 +27,7 @@ import org.tvheadend.tvhclient.ui.recordings.ScheduledRecordingListFragment;
 import org.tvheadend.tvhclient.ui.recordings.SeriesRecordingListFragment;
 import org.tvheadend.tvhclient.ui.recordings.TimerRecordingListFragment;
 import org.tvheadend.tvhclient.ui.settings.SettingsActivity;
-import org.tvheadend.tvhclient.ui.unlocker.UnlockerFragment;
+import org.tvheadend.tvhclient.ui.misc.UnlockerFragment;
 
 import java.util.ArrayList;
 

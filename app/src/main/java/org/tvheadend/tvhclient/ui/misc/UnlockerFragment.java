@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.ui.unlocker;
+package org.tvheadend.tvhclient.ui.misc;
 
 import android.support.v4.app.Fragment;
 import android.content.Intent;

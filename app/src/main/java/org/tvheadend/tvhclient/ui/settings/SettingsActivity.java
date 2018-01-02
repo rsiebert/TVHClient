@@ -11,9 +11,9 @@ import com.afollestad.materialdialogs.folderselector.FolderChooserDialog;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
-import org.tvheadend.tvhclient.ui.information.ChangeLogFragment;
-import org.tvheadend.tvhclient.ui.information.InfoFragment;
-import org.tvheadend.tvhclient.ui.unlocker.UnlockerFragment;
+import org.tvheadend.tvhclient.ui.misc.ChangeLogFragment;
+import org.tvheadend.tvhclient.ui.misc.InfoFragment;
+import org.tvheadend.tvhclient.ui.misc.UnlockerFragment;
 import org.tvheadend.tvhclient.ui.common.BackPressedInterface;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 

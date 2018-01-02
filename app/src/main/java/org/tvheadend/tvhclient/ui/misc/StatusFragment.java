@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.ui.information;
+package org.tvheadend.tvhclient.ui.misc;
 
 import android.app.Activity;
 import android.os.Bundle;

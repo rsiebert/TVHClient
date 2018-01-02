@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.ui.recordings;
+package org.tvheadend.tvhclient.ui.recordings.base;
 
 import android.app.Activity;
 import android.os.Bundle;

@@ -86,11 +86,11 @@
         <activity android:name=".ui.settings.SettingsManageConnectionActivity" />
         <activity android:name=".ui.recordings.RecordingAddEditActivity" />
         <activity android:name=".ui.recordings.RecordingDetailsActivity" />
-        <activity android:name=".ui.progams.ProgramListActivity" />
-        <activity android:name=".ui.information.ChangeLogActivity" />
+        <activity android:name=".ui.programs.ProgramListActivity" />
+        <activity android:name=".ui.misc.ChangeLogActivity" />
         <activity android:name=".ui.MainActivity" />
         <activity android:name=".ui.NavigationActivity" />
-        <activity android:name=".ui.progams.ProgramDetailsActivity" />
+        <activity android:name=".ui.programs.ProgramDetailsActivity" />
         <activity android:name=".ui.search.SearchActivity" />
 
     </application>

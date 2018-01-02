@@ -14,7 +14,7 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.DatabaseHelper;
 import org.tvheadend.tvhclient.data.model.Connection;
 import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
-import org.tvheadend.tvhclient.ui.information.ChangeLogFragment;
+import org.tvheadend.tvhclient.ui.misc.ChangeLogFragment;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
 import java.util.List;
