@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.ui.progams;
+package org.tvheadend.tvhclient.ui.programs;
 
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;

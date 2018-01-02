@@ -19,7 +19,7 @@ import org.tvheadend.tvhclient.ui.epg.ProgramGuideListFragment;
 import org.tvheadend.tvhclient.ui.epg.ProgramGuidePagerFragment;
 import org.tvheadend.tvhclient.ui.information.InfoFragment;
 import org.tvheadend.tvhclient.ui.information.StatusFragment;
-import org.tvheadend.tvhclient.ui.progams.ProgramListFragment;
+import org.tvheadend.tvhclient.ui.programs.ProgramListFragment;
 import org.tvheadend.tvhclient.ui.recordings.CompletedRecordingListFragment;
 import org.tvheadend.tvhclient.ui.recordings.FailedRecordingListFragment;
 import org.tvheadend.tvhclient.ui.recordings.RemovedRecordingListFragment;

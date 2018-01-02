@@ -7,7 +7,7 @@ import android.support.v7.widget.Toolbar;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
-import org.tvheadend.tvhclient.ui.progams.ProgramDetailsFragment;
+import org.tvheadend.tvhclient.ui.programs.ProgramDetailsFragment;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
 public class RecordingDetailsActivity extends AppCompatActivity implements ToolbarInterface {

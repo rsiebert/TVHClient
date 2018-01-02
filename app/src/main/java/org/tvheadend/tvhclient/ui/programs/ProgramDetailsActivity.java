@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.ui.progams;
+package org.tvheadend.tvhclient.ui.programs;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
