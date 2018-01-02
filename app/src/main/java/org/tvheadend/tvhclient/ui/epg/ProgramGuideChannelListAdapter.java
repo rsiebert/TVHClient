@@ -33,7 +33,7 @@ public class ProgramGuideChannelListAdapter extends ArrayAdapter<Channel> implem
     private final SharedPreferences sharedPreferences;
 
     public ProgramGuideChannelListAdapter(Activity context, List<Channel> list) {
-        super(context, R.layout.adapter_program_guide_channel_list, list);
+        super(context, R.layout.program_guide_channel_list_adapter, list);
         this.context = context;
         this.list = list;
         this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -107,7 +107,7 @@ public class ProgramGuideChannelListAdapter extends ArrayAdapter<Channel> implem
         if (view != null) {
             holder = (ViewHolder) view.getTag();
         } else {
-            view = context.getLayoutInflater().inflate(R.layout.adapter_program_guide_channel_list, parent, false);
+            view = context.getLayoutInflater().inflate(R.layout.program_guide_channel_list_adapter, parent, false);
             holder = new ViewHolder(view);
             view.setTag(holder);
         }

@@ -80,7 +80,7 @@ public class TimerRecordingAddFragment extends BaseRecordingAddEditFragment impl
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        View view = inflater.inflate(R.layout.fragment_add_edit_timer_recording, container, false);
+        View view = inflater.inflate(R.layout.timer_recording_add_edit_fragment, container, false);
         unbinder = ButterKnife.bind(this, view);
         return view;
     }
@@ -216,7 +216,7 @@ public class TimerRecordingAddFragment extends BaseRecordingAddEditFragment impl
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.options_menu_save_cancel, menu);
+        inflater.inflate(R.menu.save_cancel_options_menu, menu);
     }
 
     @Override

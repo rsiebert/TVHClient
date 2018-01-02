@@ -119,7 +119,7 @@ public class SeriesRecordingListFragment extends ListFragment implements HTSList
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.options_menu_recording_list, menu);
+        inflater.inflate(R.menu.recording_list_options_menu, menu);
     }
 
     @Override
@@ -229,7 +229,7 @@ public class SeriesRecordingListFragment extends ListFragment implements HTSList
             return true;
         }
         PopupMenu popupMenu = new PopupMenu(getActivity(), view);
-        popupMenu.getMenuInflater().inflate(R.menu.popup_menu_series_recordings, popupMenu.getMenu());
+        popupMenu.getMenuInflater().inflate(R.menu.series_recordings_popup_menu, popupMenu.getMenu());
         (popupMenu.getMenu().findItem(R.id.menu_edit)).setVisible(isUnlocked);
 
         popupMenu.setOnMenuItemClickListener(item -> {

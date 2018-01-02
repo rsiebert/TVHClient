@@ -6,6 +6,6 @@
     android:paddingBottom="20dp"
     android:paddingTop="16dp" >
 
-    <include layout="@layout/adapter_series_recording_list_contents" />
+    <include layout="@layout/channel_list_adapter_contents" />
 
 </LinearLayout>

@@ -22,7 +22,7 @@ public class GenreColorDialogAdapter extends RecyclerView.Adapter<GenreColorDial
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        final View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_genre_color_dialog, parent, false);
+        final View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.genre_color_dialog_adapter, parent, false);
         return new ViewHolder(view, this);
     }
 

@@ -30,7 +30,7 @@ public class SearchResultAdapter extends ArrayAdapter<Program> implements Filter
     private final ItemFilter mFilter = new ItemFilter();
 
     public SearchResultAdapter(Activity context, List<Program> list) {
-        super(context, R.layout.adapter_search_results, list);
+        super(context, R.layout.search_result_adapter, list);
         this.context = context;
         originalData = list;
         filteredData = list;
@@ -192,7 +192,7 @@ public class SearchResultAdapter extends ArrayAdapter<Program> implements Filter
         ProgramViewHolder holder;
 
         if (view == null) {
-            view = context.getLayoutInflater().inflate(R.layout.adapter_search_results, parent, false);
+            view = context.getLayoutInflater().inflate(R.layout.search_result_adapter, parent, false);
             holder = new ProgramViewHolder();
             holder.icon = view.findViewById(R.id.icon);
             holder.icon_text = view.findViewById(R.id.icon_text);

@@ -114,7 +114,7 @@ public class ProgramListFragment extends ListFragment implements HTSListener, On
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.options_menu_program, menu);
+        inflater.inflate(R.menu.program_options_menu, menu);
     }
 
     @Override
@@ -273,7 +273,7 @@ public class ProgramListFragment extends ListFragment implements HTSListener, On
             return true;
         }
         PopupMenu popupMenu = new PopupMenu(getActivity(), view);
-        popupMenu.getMenuInflater().inflate(R.menu.popup_menu_channellist_program, popupMenu.getMenu());
+        popupMenu.getMenuInflater().inflate(R.menu.channel_list_program_popup_menu, popupMenu.getMenu());
         menuUtils.onPreparePopupMenu(popupMenu.getMenu(), program);
 
         popupMenu.setOnMenuItemClickListener(item -> {

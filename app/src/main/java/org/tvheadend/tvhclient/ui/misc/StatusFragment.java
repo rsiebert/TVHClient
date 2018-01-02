@@ -80,7 +80,7 @@ public class StatusFragment extends Fragment implements WakeOnLanTaskCallback {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        View view = inflater.inflate(R.layout.fragment_status_layout, container, false);
+        View view = inflater.inflate(R.layout.status_fragment, container, false);
         unbinder = ButterKnife.bind(this, view);
         return view;
     }
@@ -109,7 +109,7 @@ public class StatusFragment extends Fragment implements WakeOnLanTaskCallback {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.options_menu_status, menu);
+        inflater.inflate(R.menu.status_options_menu, menu);
     }
 
     @Override

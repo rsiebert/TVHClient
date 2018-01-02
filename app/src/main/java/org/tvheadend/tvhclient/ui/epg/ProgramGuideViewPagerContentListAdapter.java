@@ -40,7 +40,7 @@ public class ProgramGuideViewPagerContentListAdapter extends ArrayAdapter<Channe
     private final Fragment fragment;
 
     ProgramGuideViewPagerContentListAdapter(Activity activity, Fragment fragment, List<Channel> list, long startTime, long endTime, int displayWidth, float pixelsPerMinute) {
-        super(activity, R.layout.adapter_program_guide_viewpager_list, list);
+        super(activity, R.layout.program_guide_viewpager_list_adapter, list);
         this.activity = activity;
         this.fragment = fragment;
         this.list = list;
@@ -96,10 +96,10 @@ public class ProgramGuideViewPagerContentListAdapter extends ArrayAdapter<Channe
         View view = convertView;
 
         if (view == null) {
-            view = inflater.inflate(R.layout.adapter_program_guide_viewpager_list, parent, false);
+            view = inflater.inflate(R.layout.program_guide_viewpager_list_adapter, parent, false);
             holder = new ViewHolder();
             //holder.stub = view.findViewById(R.id.stub);
-            //holder.stub.setLayoutResource(R.layout.viewstub_recording_details_contents);
+            //holder.stub.setLayoutResource(R.layout.recording_details_contents);
             //stub.inflate();
 
             holder.timeline = view.findViewById(R.id.timeline);

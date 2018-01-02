@@ -37,7 +37,7 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
     private int selectedPosition = 0;
 
     public RecordingListAdapter(Activity context, List<Recording> list) {
-        super(context, R.layout.adapter_recording_list, list);
+        super(context, R.layout.recording_list_adapter, list);
         this.context = context;
         this.list = list;
         this.htspVersion = DataStorage.getInstance().getProtocolVersion();
@@ -132,7 +132,7 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
         if (view != null) {
             holder = (ViewHolder) view.getTag();
         } else {
-            view = context.getLayoutInflater().inflate(R.layout.adapter_recording_list, parent, false);
+            view = context.getLayoutInflater().inflate(R.layout.recording_list_adapter, parent, false);
             holder = new ViewHolder(view);
             view.setTag(holder);
         }

@@ -27,7 +27,7 @@ public class StartupActivity extends AppCompatActivity implements ToolbarInterfa
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(MiscUtils.getThemeId(this));
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main_layout);
+        setContentView(R.layout.main_activity);
         MiscUtils.setLanguage(this);
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);

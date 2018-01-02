@@ -310,7 +310,7 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-        getMenuInflater().inflate(R.menu.options_menu_search_results, menu);
+        getMenuInflater().inflate(R.menu.search_results_options_menu, menu);
 
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         searchMenuItem = menu.findItem(R.id.menu_search);
@@ -423,14 +423,14 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
         final Program program = adapter.getItem(info.position);
 
-        getMenuInflater().inflate(R.menu.popup_menu_channellist_program, menu);
+        getMenuInflater().inflate(R.menu.channel_list_program_popup_menu, menu);
         // Set the title of the context menu
         menu.setHeaderTitle(program.title);
         // Show or hide the menu items depending on the program state
         //Utils.setProgramMenu(app, menu, program);
 /*
         } else if (model instanceof Recording) {
-            getMenuInflater().inflate(R.menu.popup_menu_recordings, menu);
+            getMenuInflater().inflate(R.menu.recordings_popup_menu, menu);
             Recording rec = (Recording) model;
             menu.setHeaderTitle(rec.title);
             // Hide all menu entries before activating certain ones

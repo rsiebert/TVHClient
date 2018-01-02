@@ -94,7 +94,7 @@ public class SeriesRecordingListAdapter extends ArrayAdapter<SeriesRecording> {
         if (view != null) {
             holder = (ViewHolder) view.getTag();
         } else {
-            view = context.getLayoutInflater().inflate(R.layout.adapter_series_recording_list, parent, false);
+            view = context.getLayoutInflater().inflate(R.layout.series_recording_list_adapter, parent, false);
             holder = new ViewHolder(view);
             view.setTag(holder);
         }

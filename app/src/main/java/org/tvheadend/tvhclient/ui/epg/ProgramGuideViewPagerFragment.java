@@ -66,7 +66,7 @@ public class ProgramGuideViewPagerFragment extends Fragment implements ProgramGu
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        View v = inflater.inflate(R.layout.fragment_program_guide_viewpager, container, false);
+        View v = inflater.inflate(R.layout.program_guide_main_fragment, container, false);
         viewPager = v.findViewById(R.id.pager);
         return v;
     }
@@ -136,7 +136,7 @@ public class ProgramGuideViewPagerFragment extends Fragment implements ProgramGu
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.options_menu_program_guide, menu);
+        inflater.inflate(R.menu.program_guide_options_menu, menu);
     }
 
     @Override

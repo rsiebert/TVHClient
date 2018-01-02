@@ -117,7 +117,7 @@ public class TimerRecordingListFragment extends ListFragment implements HTSListe
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.options_menu_recording_list, menu);
+        inflater.inflate(R.menu.recording_list_options_menu, menu);
     }
 
     @Override
@@ -227,7 +227,7 @@ public class TimerRecordingListFragment extends ListFragment implements HTSListe
             return true;
         }
         PopupMenu popupMenu = new PopupMenu(getActivity(), view);
-        popupMenu.getMenuInflater().inflate(R.menu.popup_menu_timer_recordings, popupMenu.getMenu());
+        popupMenu.getMenuInflater().inflate(R.menu.timer_recordings_popup_menu, popupMenu.getMenu());
 
         popupMenu.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {

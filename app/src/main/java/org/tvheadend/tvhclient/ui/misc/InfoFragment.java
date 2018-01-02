@@ -29,7 +29,7 @@ public class InfoFragment extends Fragment implements FileLoaderCallback {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        View v = inflater.inflate(R.layout.fragment_webview_layout, container, false);
+        View v = inflater.inflate(R.layout.webview_fragment, container, false);
         webView = v.findViewById(R.id.webview);
         loadingProgressBar = v.findViewById(R.id.loading);
         return v;
@@ -56,7 +56,7 @@ public class InfoFragment extends Fragment implements FileLoaderCallback {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.options_menu_information, menu);
+        inflater.inflate(R.menu.information_options_menu, menu);
     }
 
     @Override

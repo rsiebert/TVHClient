@@ -89,9 +89,9 @@ public class RecordingDetailsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        View view = inflater.inflate(R.layout.fragment_recording_details, container, false);
+        View view = inflater.inflate(R.layout.recording_details_fragment, container, false);
         ViewStub stub = view.findViewById(R.id.stub);
-        stub.setLayoutResource(R.layout.viewstub_recording_details_contents);
+        stub.setLayoutResource(R.layout.recording_details_fragment_contents);
         stub.inflate();
         unbinder = ButterKnife.bind(this, view);
         return view;
@@ -127,7 +127,7 @@ public class RecordingDetailsFragment extends Fragment {
         recording = DataStorage.getInstance().getRecordingFromArray(dvrId);
 
         if (nestedToolbar != null) {
-            nestedToolbar.inflateMenu(R.menu.toolbar_menu_recording_details);
+            nestedToolbar.inflateMenu(R.menu.recording_details_toolbar_menu);
             nestedToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem menuItem) {
@@ -220,9 +220,9 @@ public class RecordingDetailsFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         if (nestedToolbar == null) {
-            inflater.inflate(R.menu.popup_menu_recordings, menu);
+            inflater.inflate(R.menu.recordings_popup_menu, menu);
         } else {
-            inflater.inflate(R.menu.options_menu_external_search, menu);
+            inflater.inflate(R.menu.external_search_options_menu, menu);
         }
     }
 

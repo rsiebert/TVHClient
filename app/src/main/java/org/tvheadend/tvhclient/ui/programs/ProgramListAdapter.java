@@ -28,7 +28,7 @@ public class ProgramListAdapter extends ArrayAdapter<Program> {
     private final SharedPreferences sharedPreferences;
 
     public ProgramListAdapter(Activity context, List<Program> list) {
-        super(context, R.layout.adapter_program_list, list);
+        super(context, R.layout.program_list_adapter, list);
         this.context = context;
         this.list = list;
         this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -76,7 +76,7 @@ public class ProgramListAdapter extends ArrayAdapter<Program> {
         if (view != null) {
             holder = (ViewHolder) view.getTag();
         } else {
-            view = context.getLayoutInflater().inflate(R.layout.adapter_program_list, parent, false);
+            view = context.getLayoutInflater().inflate(R.layout.program_list_adapter, parent, false);
             holder = new ViewHolder(view);
             view.setTag(holder);
         }

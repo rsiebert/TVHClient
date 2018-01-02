@@ -98,7 +98,7 @@ public class ProgramGuideViewPagerContentListFragment extends ListFragment imple
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        View view = inflater.inflate(R.layout.fragment_program_guide_program_list, container, false);
+        View view = inflater.inflate(R.layout.program_guide_viewpager_fragment, container, false);
         unbinder = ButterKnife.bind(this, view);
         return view;
     }

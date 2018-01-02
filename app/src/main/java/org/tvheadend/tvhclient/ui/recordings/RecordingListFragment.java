@@ -46,7 +46,7 @@ public class RecordingListFragment extends ListFragment implements OnItemClickLi
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        return inflater.inflate(R.layout.fragment_main_list_layout, container, false);
+        return inflater.inflate(R.layout.main_listfragment, container, false);
     }
 
     @Override
@@ -106,7 +106,7 @@ public class RecordingListFragment extends ListFragment implements OnItemClickLi
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.options_menu_recording_list, menu);
+        inflater.inflate(R.menu.recording_list_options_menu, menu);
     }
 
     @Override
@@ -158,7 +158,7 @@ public class RecordingListFragment extends ListFragment implements OnItemClickLi
             return true;
         }
         PopupMenu popupMenu = new PopupMenu(getActivity(), view);
-        popupMenu.getMenuInflater().inflate(R.menu.popup_menu_recordings, popupMenu.getMenu());
+        popupMenu.getMenuInflater().inflate(R.menu.recordings_popup_menu, popupMenu.getMenu());
 
         if (recording.isCompleted()) {
             popupMenu.getMenu().findItem(R.id.menu_record_remove).setVisible(true);

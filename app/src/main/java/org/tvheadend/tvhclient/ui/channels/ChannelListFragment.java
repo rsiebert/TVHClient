@@ -69,7 +69,7 @@ public class ChannelListFragment extends ListFragment implements HTSListener, Ch
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        return inflater.inflate(R.layout.fragment_main_list_layout, container, false);
+        return inflater.inflate(R.layout.main_listfragment, container, false);
     }
 
     @Override
@@ -140,7 +140,7 @@ public class ChannelListFragment extends ListFragment implements HTSListener, Ch
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.options_menu_channel_list, menu);
+        inflater.inflate(R.menu.channel_list_options_menu, menu);
     }
 
     @Override
@@ -380,7 +380,7 @@ public class ChannelListFragment extends ListFragment implements HTSListener, Ch
             return true;
         }
         PopupMenu popupMenu = new PopupMenu(getActivity(), view);
-        popupMenu.getMenuInflater().inflate(R.menu.popup_menu_channellist_program, popupMenu.getMenu());
+        popupMenu.getMenuInflater().inflate(R.menu.channel_list_program_popup_menu, popupMenu.getMenu());
         menuUtils.onPreparePopupMenu(popupMenu.getMenu(), program);
 
         popupMenu.setOnMenuItemClickListener(item -> {
