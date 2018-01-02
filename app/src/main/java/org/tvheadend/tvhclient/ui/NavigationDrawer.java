@@ -25,13 +25,15 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.data.model.Connection;
 import org.tvheadend.tvhclient.data.model.Recording;
+import org.tvheadend.tvhclient.service.HTSListener;
 import org.tvheadend.tvhclient.utils.MiscUtils;
+import org.tvheadend.tvhclient.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, Drawer.OnDrawerItemClickListener {
+public class NavigationDrawer implements HTSListener, AccountHeader.OnAccountHeaderListener, Drawer.OnDrawerItemClickListener {
 
     // The index for the navigation drawer menus
     public static final int MENU_UNKNOWN = -1;
@@ -53,6 +55,7 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
     private final Toolbar toolbar;
     private final NavigationDrawerCallback callback;
     private final boolean isUnlocked;
+    private final DatabaseHelper databaseHelper;
     private AccountHeader headerResult;
     private Drawer result;
 
@@ -62,6 +65,7 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
         this.toolbar = toolbar;
         this.callback = callback;
         this.isUnlocked = TVHClientApplication.getInstance().isUnlocked();
+        this.databaseHelper = DatabaseHelper.getInstance(activity.getApplicationContext());
     }
 
     public void createHeader() {
@@ -219,8 +223,18 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
     @Override
     public boolean onProfileChanged(View view, IProfile profile, boolean current) {
         result.closeDrawer();
-        if (!current && callback != null) {
-            callback.onNavigationProfileSelected(profile);
+
+        Connection oldConn = databaseHelper.getSelectedConnection();
+        Connection newConn = databaseHelper.getConnection(profile.getIdentifier());
+
+        // Switch the active connection and reconnect
+        if (oldConn != null && newConn != null) {
+            newConn.selected = true;
+            oldConn.selected = false;
+            databaseHelper.updateConnection(oldConn);
+            databaseHelper.updateConnection(newConn);
+            Utils.connect(activity, true);
+            updateDrawerItemBadges();
         }
         return true;
     }
@@ -233,5 +247,24 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
             callback.onNavigationMenuSelected(id);
         }
         return true;
+    }
+
+    @Override
+    public void onMessage(String action, Object obj) {
+        switch (action) {
+            case "dvrEntryAdd":
+            case "dvrEntryUpdate":
+            case "dvrEntryDelete":
+            case "autorecEntryAdd":
+            case "autorecEntryDelete":
+            case "timerecEntryAdd":
+            case "timerecEntryDelete":
+                activity.runOnUiThread(new Runnable() {
+                    public void run() {
+                        updateDrawerItemBadges();
+                    }
+                });
+                break;
+        }
     }
 }
