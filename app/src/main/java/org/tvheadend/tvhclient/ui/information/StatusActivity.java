@@ -31,7 +31,7 @@ public class StatusActivity extends AppCompatActivity implements ToolbarInterfac
         if (savedInstanceState == null) {
             StatusFragment fragment = new StatusFragment();
             fragment.setArguments(getIntent().getExtras());
-            getFragmentManager().beginTransaction().add(R.id.main, fragment).commit();
+            getSupportFragmentManager().beginTransaction().add(R.id.main, fragment).commit();
         }
     }
 

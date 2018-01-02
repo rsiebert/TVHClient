@@ -1,10 +1,10 @@
 package org.tvheadend.tvhclient.ui.information;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -13,19 +13,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.data.Constants;
 import org.tvheadend.tvhclient.data.DataStorage;
 import org.tvheadend.tvhclient.data.DatabaseHelper;
-import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
-import org.tvheadend.tvhclient.service.HTSListener;
 import org.tvheadend.tvhclient.data.model.Channel;
 import org.tvheadend.tvhclient.data.model.Connection;
 import org.tvheadend.tvhclient.data.model.DiscSpace;
 import org.tvheadend.tvhclient.data.model.Recording;
 import org.tvheadend.tvhclient.data.tasks.WakeOnLanTask;
 import org.tvheadend.tvhclient.data.tasks.WakeOnLanTaskCallback;
+import org.tvheadend.tvhclient.service.HTSListener;
+import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
 import org.tvheadend.tvhclient.utils.MenuUtils;
 
 import java.util.Map;
