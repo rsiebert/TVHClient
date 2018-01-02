@@ -12,13 +12,10 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.data.tasks.WakeOnLanTaskCallback;
 import org.tvheadend.tvhclient.ui.channels.ChannelListFragment;
-import org.tvheadend.tvhclient.ui.epg.FragmentControlInterface;
-import org.tvheadend.tvhclient.ui.epg.FragmentScrollInterface;
-import org.tvheadend.tvhclient.ui.epg.ProgramGuideChannelListFragment;
-import org.tvheadend.tvhclient.ui.epg.ProgramGuideListFragment;
-import org.tvheadend.tvhclient.ui.epg.ProgramGuidePagerFragment;
+import org.tvheadend.tvhclient.ui.epg.ProgramGuideViewPagerFragment;
 import org.tvheadend.tvhclient.ui.misc.InfoFragment;
 import org.tvheadend.tvhclient.ui.misc.StatusFragment;
+import org.tvheadend.tvhclient.ui.misc.UnlockerFragment;
 import org.tvheadend.tvhclient.ui.programs.ProgramListFragment;
 import org.tvheadend.tvhclient.ui.recordings.CompletedRecordingListFragment;
 import org.tvheadend.tvhclient.ui.recordings.FailedRecordingListFragment;
@@ -27,7 +24,6 @@ import org.tvheadend.tvhclient.ui.recordings.ScheduledRecordingListFragment;
 import org.tvheadend.tvhclient.ui.recordings.SeriesRecordingListFragment;
 import org.tvheadend.tvhclient.ui.recordings.TimerRecordingListFragment;
 import org.tvheadend.tvhclient.ui.settings.SettingsActivity;
-import org.tvheadend.tvhclient.ui.misc.UnlockerFragment;
 
 import java.util.ArrayList;
 
@@ -36,10 +32,8 @@ import java.util.ArrayList;
 // TODO onQueryTextSubmit does nothing currently
 // TODO navigation menu marking (status, ...)
 
-public class NavigationActivity extends MainActivity implements FragmentScrollInterface, WakeOnLanTaskCallback, NavigationDrawerCallback {
+public class NavigationActivity extends MainActivity implements WakeOnLanTaskCallback, NavigationDrawerCallback {
 
-    private int programGuideListPosition = 0;
-    private int programGuideListPositionOffset = 0;
     // Default navigation drawer menu position and the list positions
     private int selectedNavigationMenuId = NavigationDrawer.MENU_UNKNOWN;
     // Holds the list of selected menu items so the previous fragment can be
@@ -89,7 +83,7 @@ public class NavigationActivity extends MainActivity implements FragmentScrollIn
                 fragment = new ChannelListFragment();
                 break;
             case NavigationDrawer.MENU_PROGRAM_GUIDE:
-                fragment = new ProgramGuidePagerFragment();
+                fragment = new ProgramGuideViewPagerFragment();
                 break;
             case NavigationDrawer.MENU_COMPLETED_RECORDINGS:
                 fragment = new CompletedRecordingListFragment();
@@ -224,39 +218,6 @@ public class NavigationActivity extends MainActivity implements FragmentScrollIn
     public void onNavigationMenuSelected(int id) {
         if (selectedNavigationMenuId != id) {
             handleDrawerItemSelected(id);
-        }
-    }
-
-    @Override
-    public void onScrollingChanged(final int position, final int offset, final String tag) {
-        // Save the scroll values so they can be reused after an orientation change.
-        programGuideListPosition = position;
-        programGuideListPositionOffset = offset;
-
-        if (tag.equals(ProgramGuideChannelListFragment.class.getSimpleName())
-                || tag.equals(ProgramGuideListFragment.class.getSimpleName())) {
-            // Scrolling was initiated by the channel or program guide list fragment. Keep
-            // the currently visible program guide list in sync by scrolling it to the same position
-            final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main);
-            if (f instanceof FragmentControlInterface) {
-                ((FragmentControlInterface) f).setSelection(position, offset);
-            }
-        }
-    }
-
-    @Override
-    public void onScrollStateIdle(final String tag) {
-        if (tag.equals(ProgramGuideListFragment.class.getSimpleName())
-                || tag.equals(ProgramGuideChannelListFragment.class.getSimpleName())) {
-            // Scrolling stopped by the program guide or the channel list
-            // fragment. Scroll all program guide fragments in the current
-            // view pager to the same position.
-            final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main);
-            if (f instanceof ProgramGuidePagerFragment) {
-                ((FragmentControlInterface) f).setSelection(
-                        programGuideListPosition,
-                        programGuideListPositionOffset);
-            }
         }
     }
 }
