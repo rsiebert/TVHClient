@@ -1,6 +1,5 @@
 package org.tvheadend.tvhclient.ui;
 
-import android.app.Fragment;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -13,6 +12,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -29,6 +29,7 @@ import com.google.android.gms.cast.framework.SessionManagerListener;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
+import org.tvheadend.tvhclient.ui.search.SearchRequestInterface;
 import org.tvheadend.tvhclient.utils.MenuUtils;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
@@ -215,12 +216,13 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     @Override
     public boolean onQueryTextSubmit(String query) {
+        Log.d("X", "onQueryTextSubmit() called with: query = [" + query + "]");
         searchMenuItem.collapseActionView();
         searchMenuItem.collapseActionView();
-        final Fragment fragment = getFragmentManager().findFragmentById(R.id.main);
-        //if (fragment != null && fragment.isAdded() && fragment instanceof SearchRequestInterface) {
-        //    ((SearchRequestInterface)fragment).onSearchRequested(query);
-        //}
+        final android.support.v4.app.Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main);
+        if (fragment != null && fragment.isAdded() && fragment instanceof SearchRequestInterface) {
+            ((SearchRequestInterface)fragment).onSearchRequested(query);
+        }
         return true;
     }
 

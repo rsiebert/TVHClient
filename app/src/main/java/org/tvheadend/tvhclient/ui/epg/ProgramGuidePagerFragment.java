@@ -2,6 +2,8 @@ package org.tvheadend.tvhclient.ui.epg;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.SearchManager;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -24,6 +26,8 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import org.tvheadend.tvhclient.data.Constants;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
+import org.tvheadend.tvhclient.ui.search.SearchActivity;
+import org.tvheadend.tvhclient.ui.search.SearchRequestInterface;
 import org.tvheadend.tvhclient.utils.callbacks.ChannelTagSelectionCallback;
 import org.tvheadend.tvhclient.data.model.ChannelTag;
 import org.tvheadend.tvhclient.data.model.ProgramGuideTimeDialogItem;
@@ -34,7 +38,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-public class ProgramGuidePagerFragment extends Fragment implements FragmentControlInterface, ChannelTagSelectionCallback {
+public class ProgramGuidePagerFragment extends Fragment implements FragmentControlInterface, ChannelTagSelectionCallback, SearchRequestInterface {
 
     private Activity activity;
     private ViewPager viewPager = null;
@@ -227,6 +231,16 @@ public class ProgramGuidePagerFragment extends Fragment implements FragmentContr
             endTimes.add(startTime + offsetTime - 1);
             startTime += offsetTime;
         }
+    }
+
+    @Override
+    public void onSearchRequested(String query) {
+        // Start searching for programs on all channels
+        Intent searchIntent = new Intent(getActivity(), SearchActivity.class);
+        searchIntent.putExtra(SearchManager.QUERY, query);
+        searchIntent.setAction(Intent.ACTION_SEARCH);
+        searchIntent.putExtra("type", "programs");
+        startActivity(searchIntent);
     }
 
     /**

@@ -1,6 +1,7 @@
 package org.tvheadend.tvhclient.ui.channels;
 
 import android.app.Activity;
+import android.app.SearchManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
 import android.support.v7.widget.PopupMenu;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -33,6 +35,8 @@ import org.tvheadend.tvhclient.service.HTSListener;
 import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
 import org.tvheadend.tvhclient.ui.progams.ProgramListActivity;
 import org.tvheadend.tvhclient.ui.progams.ProgramListFragment;
+import org.tvheadend.tvhclient.ui.search.SearchActivity;
+import org.tvheadend.tvhclient.ui.search.SearchRequestInterface;
 import org.tvheadend.tvhclient.utils.MenuUtils;
 import org.tvheadend.tvhclient.utils.Utils;
 import org.tvheadend.tvhclient.utils.callbacks.ChannelTagSelectionCallback;
@@ -46,7 +50,7 @@ import java.util.Date;
 // TODO show programs from time in dual pane, program list not updated
 // TODO change getting channel tag
 
-public class ChannelListFragment extends ListFragment implements HTSListener, ChannelTimeSelectionCallback, ChannelTagSelectionCallback, AdapterView.OnItemLongClickListener, OnItemClickListener {
+public class ChannelListFragment extends ListFragment implements HTSListener, ChannelTimeSelectionCallback, ChannelTagSelectionCallback, AdapterView.OnItemLongClickListener, OnItemClickListener, SearchRequestInterface {
 
     private Activity activity;
     private ToolbarInterface toolbarInterface;
@@ -60,6 +64,7 @@ public class ChannelListFragment extends ListFragment implements HTSListener, Ch
     private MenuUtils menuUtils;
     private boolean isUnlocked;
     private int selectedListPosition;
+    private String searchQuery;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -431,5 +436,16 @@ public class ChannelListFragment extends ListFragment implements HTSListener, Ch
             }
         }
         return null;
+    }
+
+    @Override
+    public void onSearchRequested(String query) {
+        Log.d("X", "onSearchRequested() called with: query = [" + query + "]");
+        // Start searching for programs on all channels
+        Intent searchIntent = new Intent(getActivity(), SearchActivity.class);
+        searchIntent.putExtra(SearchManager.QUERY, query);
+        searchIntent.setAction(Intent.ACTION_SEARCH);
+        searchIntent.putExtra("type", "programs");
+        startActivity(searchIntent);
     }
 }

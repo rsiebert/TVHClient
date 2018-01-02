@@ -1,6 +1,7 @@
 package org.tvheadend.tvhclient.ui.progams;
 
 import android.app.Activity;
+import android.app.SearchManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -26,6 +27,8 @@ import org.tvheadend.tvhclient.data.model.Recording;
 import org.tvheadend.tvhclient.service.HTSListener;
 import org.tvheadend.tvhclient.service.HTSService;
 import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
+import org.tvheadend.tvhclient.ui.search.SearchActivity;
+import org.tvheadend.tvhclient.ui.search.SearchRequestInterface;
 import org.tvheadend.tvhclient.utils.MenuUtils;
 
 import java.util.ArrayList;
@@ -33,7 +36,7 @@ import java.util.Date;
 
 // TODO search menu not shown in single pane list view, check dual pane
 
-public class ProgramListFragment extends ListFragment implements HTSListener, OnItemClickListener, AdapterView.OnItemLongClickListener, OnScrollListener {
+public class ProgramListFragment extends ListFragment implements HTSListener, OnItemClickListener, AdapterView.OnItemLongClickListener, OnScrollListener, SearchRequestInterface {
 
     private Activity activity;
     private ToolbarInterface toolbarInterface;
@@ -345,5 +348,20 @@ public class ProgramListFragment extends ListFragment implements HTSListener, On
 
     public int getShownChannelId() {
         return channelId;
+    }
+
+    @Override
+    public void onSearchRequested(String query) {
+        // Start searching for programs on the given channel
+        Intent searchIntent = new Intent(getActivity(), SearchActivity.class);
+        searchIntent.putExtra(SearchManager.QUERY, query);
+        searchIntent.setAction(Intent.ACTION_SEARCH);
+        searchIntent.putExtra("type", "programs");
+        // Pass a the bundle. The contents will be forwarded to the
+        // fragment that is responsible for displaying the search results
+        Bundle bundle = new Bundle();
+        bundle.putLong("channel_id", channelId);
+        searchIntent.putExtra(SearchManager.APP_DATA, bundle);
+        startActivity(searchIntent);
     }
 }

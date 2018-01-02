@@ -41,18 +41,17 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
-import android.widget.TextView;
 
-import org.tvheadend.tvhclient.data.DataStorage;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.data.local.SuggestionProvider;
 import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.ui.recordings.RecordingDetailsActivity;
-import org.tvheadend.tvhclient.service.HTSService;
-import org.tvheadend.tvhclient.service.HTSListener;
+import org.tvheadend.tvhclient.data.DataStorage;
+import org.tvheadend.tvhclient.data.local.SuggestionProvider;
 import org.tvheadend.tvhclient.data.model.Channel;
 import org.tvheadend.tvhclient.data.model.Program;
 import org.tvheadend.tvhclient.data.model.Recording;
+import org.tvheadend.tvhclient.service.HTSListener;
+import org.tvheadend.tvhclient.service.HTSService;
+import org.tvheadend.tvhclient.ui.recordings.RecordingDetailsActivity;
 import org.tvheadend.tvhclient.utils.MenuUtils;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
@@ -98,10 +97,8 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
         actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setHomeButtonEnabled(true);
         }
-        TextView actionBarTitle = toolbar.findViewById(R.id.actionbar_title);
-        actionBarTitle.setText(getString(R.string.search));
+        toolbar.setTitle(getString(R.string.search));
 
         ListView listView = findViewById(R.id.item_list);
         registerForContextMenu(listView);

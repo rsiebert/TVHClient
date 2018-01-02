@@ -1,5 +1,6 @@
 package org.tvheadend.tvhclient.ui.recordings;
 
+import android.app.SearchManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -24,12 +25,14 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
 import org.tvheadend.tvhclient.data.model.Recording;
+import org.tvheadend.tvhclient.ui.search.SearchActivity;
+import org.tvheadend.tvhclient.ui.search.SearchRequestInterface;
 import org.tvheadend.tvhclient.utils.MenuUtils;
 
 import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class RecordingListFragment extends ListFragment implements OnItemClickListener, AdapterView.OnItemLongClickListener {
+public class RecordingListFragment extends ListFragment implements OnItemClickListener, AdapterView.OnItemLongClickListener, SearchRequestInterface {
 
     protected AppCompatActivity activity;
     protected ToolbarInterface toolbarInterface;
@@ -249,5 +252,15 @@ public class RecordingListFragment extends ListFragment implements OnItemClickLi
                 adapter.notifyDataSetChanged();
                 break;
         }
+    }
+
+    @Override
+    public void onSearchRequested(String query) {
+        // Start searching for recordings
+        Intent searchIntent = new Intent(getActivity(), SearchActivity.class);
+        searchIntent.putExtra(SearchManager.QUERY, query);
+        searchIntent.setAction(Intent.ACTION_SEARCH);
+        searchIntent.putExtra("type", "recordings");
+        startActivity(searchIntent);
     }
 }
