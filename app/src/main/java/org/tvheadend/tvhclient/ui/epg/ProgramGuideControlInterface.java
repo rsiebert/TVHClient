@@ -1,6 +1,6 @@
 package org.tvheadend.tvhclient.ui.epg;
 
-public interface FragmentControlInterface {
+public interface ProgramGuideControlInterface {
 
     /**
      * Reload all data and update the UI.

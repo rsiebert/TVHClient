@@ -1,8 +1,8 @@
 package org.tvheadend.tvhclient.ui.epg;
 
 import android.app.Activity;
-import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,9 +10,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.Constants;
 import org.tvheadend.tvhclient.data.DataStorage;
-import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.model.Channel;
 import org.tvheadend.tvhclient.data.model.Program;
 
@@ -23,27 +23,32 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public class ProgramGuideListAdapter extends ArrayAdapter<Channel> {
+public class ProgramGuideViewPagerContentListAdapter extends ArrayAdapter<Channel> {
 
     @SuppressWarnings("unused")
-    private final static String TAG = ProgramGuideListAdapter.class.getSimpleName();
+    private final static String TAG = ProgramGuideViewPagerContentListAdapter.class.getSimpleName();
 
     private final Activity activity;
     private final List<Channel> list;
+    private final long startTime;
+    private final long endTime;
+    private final int displayWidth;
+    private final float pixelsPerMinute;
     private ViewHolder holder = null;
-    private final Bundle bundle;
     final private LayoutInflater inflater;
 
     private final Fragment fragment;
-    // private HashMap<Channel, Set<Program>> channelProgramList = new HashMap<Channel, Set<Program>>();
-    
-    public ProgramGuideListAdapter(Activity activity, Fragment fragment, List<Channel> list, Bundle bundle) {
-        super(activity, R.layout.adapter_program_guide_pager_list, list);
+
+    ProgramGuideViewPagerContentListAdapter(Activity activity, Fragment fragment, List<Channel> list, long startTime, long endTime, int displayWidth, float pixelsPerMinute) {
+        super(activity, R.layout.adapter_program_guide_viewpager_list, list);
         this.activity = activity;
         this.fragment = fragment;
         this.list = list;
-        this.bundle = bundle;
         this.inflater = activity.getLayoutInflater();
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.displayWidth = displayWidth;
+        this.pixelsPerMinute = pixelsPerMinute;
     }
 
     public void sort(final int type) {
@@ -82,22 +87,23 @@ public class ProgramGuideListAdapter extends ArrayAdapter<Channel> {
     public static class ViewHolder {
         public ImageView icon;
         public LinearLayout timeline;
-        public ProgramGuideItemView item;
+        public ProgramGuideViewPagerContentListAdapterContentsView item;
     }
 
-    public ProgramGuideItemView getListItem() {
-        return holder.item;
-    }
-    
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
+        Log.d(TAG, "getView() called with: position = [" + position + "], convertView = [" + convertView + "], parent = [" + parent + "]");
         View view = convertView;
 
         if (view == null) {
-            view = inflater.inflate(R.layout.adapter_program_guide_pager_list, parent, false);
+            view = inflater.inflate(R.layout.adapter_program_guide_viewpager_list, parent, false);
             holder = new ViewHolder();
+            //holder.stub = view.findViewById(R.id.stub);
+            //holder.stub.setLayoutResource(R.layout.viewstub_recording_details_contents);
+            //stub.inflate();
+
             holder.timeline = view.findViewById(R.id.timeline);
-            holder.item = new ProgramGuideItemView(activity, fragment, holder.timeline, bundle);
+            holder.item = new ProgramGuideViewPagerContentListAdapterContentsView(activity, fragment, holder.timeline, startTime, endTime, displayWidth, pixelsPerMinute);
             view.setTag(holder);
         } else {
             holder = (ViewHolder) view.getTag();
@@ -106,13 +112,13 @@ public class ProgramGuideListAdapter extends ArrayAdapter<Channel> {
         // Adds the channel and shows the programs. Channel is
         // required to have access to the EPG data.
         // Go through all programs and add them to the view
+        //Log.d(TAG, "getView: get programs for view");
         Channel channel = getItem(position);
         int nextId = 0;
         List<Program> programList = new ArrayList<>();
 
         Map<Integer, Program> map = DataStorage.getInstance().getProgramsFromArray();
         Iterator mapIt = map.values().iterator();
-        long startTime = bundle.getLong(Constants.BUNDLE_EPG_START_TIME, 0);
         Program p;
         while (mapIt.hasNext()) {
             p = (Program) mapIt.next();
@@ -134,8 +140,13 @@ public class ProgramGuideListAdapter extends ArrayAdapter<Channel> {
                 nextId = 0;
             }
         }
+        //Log.d(TAG, "getView: get programs for view done");
 
+        //Log.d(TAG, "getView: start adding programs to view");
         holder.item.addPrograms(parent, programList, channel);
+        //Log.d(TAG, "getView: start adding programs to view done");
+
+        Log.d(TAG, "getView() returned: ");
         return view;
     }
     

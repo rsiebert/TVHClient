@@ -1,6 +1,6 @@
 package org.tvheadend.tvhclient.ui.epg;
 
-public interface FragmentScrollInterface {
+public interface ProgramGuideScrollInterface {
 
     /**
      * To keep two list views synchronized both lists need to be scrolled.
@@ -10,9 +10,8 @@ public interface FragmentScrollInterface {
      * 
      * @param position The first visible position of the list
      * @param offset The position in pixels from the top of the first item
-     * @param tag Identifier string to differentiate the caller
      */
-    void onScrollingChanged(final int position, final int offset, final String tag);
+    void onScroll(final int position, final int offset);
 
     /**
      * When the user has scrolled the visible program guide fragment, the other
@@ -20,8 +19,6 @@ public interface FragmentScrollInterface {
      * position so that their list elements are aligned when the user swipes the
      * view pager. To do this go through all program guide fragments that the
      * view pager contains and set the scrolling position.
-     * 
-     * @param tag Identifier string to differentiate the caller
      */
-    void onScrollStateIdle(final String tag);
+    void onScrollStateChanged();
 }

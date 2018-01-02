@@ -1,6 +1,5 @@
 package org.tvheadend.tvhclient.ui.epg;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Intent;
@@ -10,10 +9,10 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.text.format.Time;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -23,48 +22,51 @@ import android.view.ViewGroup;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 
-import org.tvheadend.tvhclient.data.Constants;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.ui.search.SearchActivity;
-import org.tvheadend.tvhclient.ui.search.SearchRequestInterface;
-import org.tvheadend.tvhclient.utils.callbacks.ChannelTagSelectionCallback;
+import org.tvheadend.tvhclient.data.Constants;
 import org.tvheadend.tvhclient.data.model.ChannelTag;
 import org.tvheadend.tvhclient.data.model.ProgramGuideTimeDialogItem;
+import org.tvheadend.tvhclient.ui.search.SearchActivity;
+import org.tvheadend.tvhclient.ui.search.SearchRequestInterface;
 import org.tvheadend.tvhclient.utils.MenuUtils;
 import org.tvheadend.tvhclient.utils.Utils;
+import org.tvheadend.tvhclient.utils.callbacks.ChannelTagSelectionCallback;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-public class ProgramGuidePagerFragment extends Fragment implements FragmentControlInterface, ChannelTagSelectionCallback, SearchRequestInterface {
+public class ProgramGuideViewPagerFragment extends Fragment implements ProgramGuideControlInterface, ProgramGuideScrollInterface, ChannelTagSelectionCallback, SearchRequestInterface {
 
     private Activity activity;
     private ViewPager viewPager = null;
-    private ProgramGuidePagerAdapter adapter = null;
+    private ProgramGuideViewPagerAdapter adapter = null;
     private MenuUtils menuUtils;
 
     // This is the width in pixels from the icon in the program_guide_list.xml
     // We need to subtract this value from the window width to get the real
     // usable width. The same values is also used in the
-    // ProgramGuideListFragment class.
+    // ProgramGuideViewPagerContentListFragment class.
     private final static int LAYOUT_ICON_OFFSET = 72;
 
     // The ratio how many minutes a pixel represents on the screen.
     private static float pixelsPerMinute;
     private static int displayWidth;
 
-    // The time frame (start and end times) that shall be shown in a single fragment.  
+    // The time frame (start and end times) that shall be shown in a single fragment.
     private static final List<Long> startTimes = new ArrayList<>();
     private static final List<Long> endTimes = new ArrayList<>();
     private static int hoursToShow;
     private static int fragmentCount;
+    private int programGuideListPosition = 0;
+    private int programGuideListPositionOffset = 0;
+    private String TAG = ProgramGuideViewPagerFragment.class.getSimpleName();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        View v = inflater.inflate(R.layout.fragment_program_guide_pager, container, false);
+        View v = inflater.inflate(R.layout.fragment_program_guide_viewpager, container, false);
         viewPager = v.findViewById(R.id.pager);
         return v;
     }
@@ -72,13 +74,17 @@ public class ProgramGuidePagerFragment extends Fragment implements FragmentContr
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        Log.d(TAG, "onActivityCreated() called with: savedInstanceState = [" + savedInstanceState + "]");
         activity = getActivity();
-
         menuUtils = new MenuUtils(getActivity());
 
-        // Calculate the max number of fragments in the view pager 
+        // Calculate the max number of fragments in the view pager
+        Log.d(TAG, "onActivityCreated: calcFragmentCount");
         calcFragmentCount();
+        Log.d(TAG, "onActivityCreated: calcFragmentCount done");
+        Log.d(TAG, "onActivityCreated: calcProgramGuideTimeslots");
         calcProgramGuideTimeslots();
+        Log.d(TAG, "onActivityCreated: calcProgramGuideTimeslots done");
 
         // Calculates the available display width of one minute in pixels. This
         // depends how wide the screen is and how many hours shall be shown in
@@ -89,23 +95,24 @@ public class ProgramGuidePagerFragment extends Fragment implements FragmentContr
         pixelsPerMinute = ((float) (displayWidth - LAYOUT_ICON_OFFSET) / (60.0f * (float) hoursToShow));
 
         // Show the list of channels on the left side
-        Bundle bundle = new Bundle();
-        Fragment f = Fragment.instantiate(getActivity(), ProgramGuideChannelListFragment.class.getName());
-        f.setArguments(bundle);
-        getChildFragmentManager().beginTransaction()
-                .replace(R.id.program_guide_channel_fragment, f)
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                .commit();
+        if (savedInstanceState == null) {
+            Log.d(TAG, "onActivityCreated: new channel list fragment");
+            ProgramGuideChannelListFragment fragment = new ProgramGuideChannelListFragment();
+            fragment.setArguments(getArguments());
+            getActivity().getSupportFragmentManager().beginTransaction().add(R.id.program_guide_channel_fragment, fragment).commit();
+        }
 
-        adapter = new ProgramGuidePagerAdapter(getChildFragmentManager(), activity, fragmentCount);
+        Log.d(TAG, "onActivityCreated: new adapter");
+        adapter = new ProgramGuideViewPagerAdapter(getChildFragmentManager(), fragmentCount);
         viewPager.setAdapter(adapter);
         viewPager.setOffscreenPageLimit(1);
+        Log.d(TAG, "onActivityCreated: adapter done");
         adapter.notifyDataSetChanged();
+        Log.d(TAG, "onActivityCreated: notify done");
 
         setHasOptionsMenu(true);
     }
 
-    @SuppressLint({ "InlinedApi", "NewApi" })
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
@@ -139,15 +146,12 @@ public class ProgramGuidePagerFragment extends Fragment implements FragmentContr
                 ChannelTag tag = Utils.getChannelTag(activity);
                 menuUtils.handleMenuTagsSelection((tag != null ? tag.tagId : -1), this);
                 return true;
-
             case R.id.menu_timeframe:
                 showProgramGuideTimeDialog();
                 return true;
-
             case R.id.menu_genre_color_info_channels:
                 menuUtils.handleMenuGenreColorSelection();
                 return true;
-
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -243,39 +247,45 @@ public class ProgramGuidePagerFragment extends Fragment implements FragmentContr
         startActivity(searchIntent);
     }
 
+    @Override
+    public void onScroll(int position, int offset) {
+        // Save the scroll values so they can be reused after an orientation change.
+        programGuideListPosition = position;
+        programGuideListPositionOffset = offset;
+        setSelection(position, offset);
+    }
+
+    @Override
+    public void onScrollStateChanged() {
+        setSelection(programGuideListPosition, programGuideListPositionOffset);
+    }
+
     /**
      * Pager adapter that is responsible for creating the fragments and passing
      * the required information to them when the user swipes the screen.
-     * 
+     *
      * @author rsiebert
-     * 
      */
-    private static class ProgramGuidePagerAdapter extends FragmentPagerAdapter {
+    private static class ProgramGuideViewPagerAdapter extends FragmentPagerAdapter {
+
         private int count = 0;
 
-        public ProgramGuidePagerAdapter(FragmentManager fm, Activity activity, int fragmentCount) {
-            super(fm);
+        ProgramGuideViewPagerAdapter(FragmentManager fragmentManager, int fragmentCount) {
+            super(fragmentManager);
             this.count = fragmentCount;
         }
 
         @Override
         public Fragment getItem(int position) {
-            Fragment fragment = new ProgramGuideListFragment();
-            Bundle bundle = new Bundle();
-            bundle.putLong(Constants.BUNDLE_EPG_START_TIME, startTimes.get(position));
-            bundle.putLong(Constants.BUNDLE_EPG_END_TIME, endTimes.get(position));
-            // Used to only show the vertical current time indication in the first fragment
-            bundle.putInt(Constants.BUNDLE_EPG_INDEX, position);
-            // Required to know how many pixels of the display are remaining
-            bundle.putInt(Constants.BUNDLE_EPG_DISPLAY_WIDTH, displayWidth);
-            // Required so that the correct width of each program guide entry
-            // can be calculated. Also used to determine the exact position of
-            // the vertical current time indication
-            bundle.putFloat(Constants.BUNDLE_EPG_PIXELS_PER_MINUTE, pixelsPerMinute);
-            fragment.setArguments(bundle);
-            return fragment;
+            boolean showTimeIndication = (position == 0);
+            return ProgramGuideViewPagerContentListFragment.newInstance(
+                    startTimes.get(position),
+                    endTimes.get(position),
+                    showTimeIndication,
+                    displayWidth,
+                    pixelsPerMinute);
         }
-        
+
         @Override
         public int getCount() {
             return count;
@@ -290,13 +300,13 @@ public class ProgramGuidePagerFragment extends Fragment implements FragmentContr
         // fragment.
         for (int i = 0; i < fragmentCount; ++i) {
             Fragment f = getChildFragmentManager().findFragmentByTag("android:switcher:" + viewPager.getId() + ":" + adapter.getItemId(i));
-            if (f instanceof ProgramGuideListFragment) {
-                ((FragmentControlInterface) f).reloadData();
+            if (f instanceof ProgramGuideViewPagerContentListFragment) {
+                ((ProgramGuideControlInterface) f).reloadData();
             }
         }
-        final Fragment cf = getChildFragmentManager().findFragmentById(R.id.program_guide_channel_fragment);
+        final Fragment cf = getActivity().getSupportFragmentManager().findFragmentById(R.id.program_guide_channel_fragment);
         if (cf instanceof ProgramGuideChannelListFragment) {
-            ((FragmentControlInterface) cf).reloadData();
+            ((ProgramGuideControlInterface) cf).reloadData();
         }
     }
 
@@ -308,13 +318,13 @@ public class ProgramGuidePagerFragment extends Fragment implements FragmentContr
         // channel list fragment.
         for (int i = 0; i < fragmentCount; ++i) {
             Fragment f = getChildFragmentManager().findFragmentByTag("android:switcher:" + viewPager.getId() + ":" + adapter.getItemId(i));
-            if (f instanceof FragmentControlInterface) {
-                ((FragmentControlInterface) f).setSelection(position, offset);
+            if (f != null && f.isVisible() && f instanceof ProgramGuideControlInterface) {
+                ((ProgramGuideControlInterface) f).setSelection(position, offset);
             }
         }
-        final Fragment cf = getChildFragmentManager().findFragmentById(R.id.program_guide_channel_fragment);
-        if (cf instanceof FragmentControlInterface) {
-            ((FragmentControlInterface) cf).setSelection(position, offset);
+        final Fragment cf = getActivity().getSupportFragmentManager().findFragmentById(R.id.program_guide_channel_fragment);
+        if (cf != null && cf.isVisible() && cf instanceof ProgramGuideControlInterface) {
+            ((ProgramGuideControlInterface) cf).setSelection(position, offset);
         }
     }
 
@@ -325,15 +335,15 @@ public class ProgramGuidePagerFragment extends Fragment implements FragmentContr
         // Inform the channel list fragment to clear all data from its
         // channel list and show only the channels with the selected tag
         final Fragment cf = getActivity().getSupportFragmentManager().findFragmentById(R.id.program_guide_channel_fragment);
-        if (cf instanceof ProgramGuideChannelListFragment) {
-            ((FragmentControlInterface) cf).reloadData();
+        if (cf != null && cf.isVisible() && cf instanceof ProgramGuideChannelListFragment) {
+            ((ProgramGuideControlInterface) cf).reloadData();
         }
         // Additionally inform the program guide fragment to clear all data
         // from its list and show only the programs of the channels that are
         // part of the selected tag
-        final Fragment pgf = getActivity().getSupportFragmentManager().findFragmentById(R.id.main_fragment);
-        if (pgf instanceof ProgramGuidePagerFragment) {
-            ((FragmentControlInterface) pgf).reloadData();
+        final Fragment pgf = getActivity().getSupportFragmentManager().findFragmentById(R.id.main);
+        if (pgf != null && pgf.isVisible() && pgf instanceof ProgramGuideViewPagerFragment) {
+            ((ProgramGuideControlInterface) pgf).reloadData();
         }
     }
 }

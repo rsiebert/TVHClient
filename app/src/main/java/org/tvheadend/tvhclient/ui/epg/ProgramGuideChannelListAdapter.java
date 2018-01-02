@@ -27,8 +27,6 @@ import butterknife.ButterKnife;
 
 public class ProgramGuideChannelListAdapter extends ArrayAdapter<Channel> implements OnClickListener {
 
-    private final static String TAG = ProgramGuideChannelListAdapter.class.getSimpleName();
-
     private final Activity context;
     private final List<Channel> list;
     private int selectedPosition = 0;

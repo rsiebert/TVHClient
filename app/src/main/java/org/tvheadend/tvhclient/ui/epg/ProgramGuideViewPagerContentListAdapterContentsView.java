@@ -3,7 +3,6 @@ package org.tvheadend.tvhclient.ui.epg;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -16,13 +15,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import org.tvheadend.tvhclient.data.Constants;
-import org.tvheadend.tvhclient.data.DataStorage;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.ui.recordings.RecordingDetailsActivity;
+import org.tvheadend.tvhclient.data.DataStorage;
 import org.tvheadend.tvhclient.data.model.Channel;
 import org.tvheadend.tvhclient.data.model.Program;
+import org.tvheadend.tvhclient.ui.recordings.RecordingDetailsActivity;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 import org.tvheadend.tvhclient.utils.Utils;
 
@@ -30,9 +27,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-public class ProgramGuideItemView extends LinearLayout {
+public class ProgramGuideViewPagerContentListAdapterContentsView extends LinearLayout {
 
-    private final static String TAG = ProgramGuideItemView.class.getSimpleName();
+    private final static String TAG = ProgramGuideViewPagerContentListAdapterContentsView.class.getSimpleName();
 
     private LinearLayout layout;
     private Activity activity;
@@ -62,32 +59,23 @@ public class ProgramGuideItemView extends LinearLayout {
     private final static int PROGRAM_BEFORE_TIMESLOT = 5;
     private final static int PROGRAM_AFTER_TIMESLOT = 6;
     private final static int PROGRAM_UNKNOWN_TIMESLOT = 7;
-
     private long startTime;
     private long endTime;
 
-    private TVHClientApplication app;
-
-    public ProgramGuideItemView(Context context) {
+    public ProgramGuideViewPagerContentListAdapterContentsView(Context context) {
         super(context);
     }
 
-    public ProgramGuideItemView(Activity activity, Fragment fragment, final LinearLayout layout, Bundle bundle) {
+    public ProgramGuideViewPagerContentListAdapterContentsView(Activity activity, Fragment fragment, final LinearLayout layout, long startTime, long endTime, int displayWidth, float pixelsPerMinute) {
         super(activity);
         this.activity = activity;
         this.layout = layout;
-        this.app = (TVHClientApplication) activity.getApplication();
-
-        fragmentInterface = (ProgramContextMenuInterface) fragment;
-
-        if (bundle != null) {
-            startTime = bundle.getLong(Constants.BUNDLE_EPG_START_TIME, 0);
-            endTime = bundle.getLong(Constants.BUNDLE_EPG_END_TIME, 0);
-            pixelsPerMinute = bundle.getFloat(Constants.BUNDLE_EPG_PIXELS_PER_MINUTE, 5.0f);
-            displayWidth = bundle.getInt(Constants.BUNDLE_EPG_DISPLAY_WIDTH, 400);
-        }
-        Log.d(TAG, "ProgramGuideItemView: startTime " + startTime + " endTime " + endTime);
-        displayWidthRemaining = displayWidth;
+        this.fragmentInterface = (ProgramContextMenuInterface) fragment;
+        this.displayWidthRemaining = displayWidth;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.displayWidth = displayWidth;
+        this.pixelsPerMinute = pixelsPerMinute;
     }
 
     /**
@@ -99,6 +87,7 @@ public class ProgramGuideItemView extends LinearLayout {
      * @param ch     Channel with the available EPG data
      */
     public void addPrograms(ViewGroup parent, List<Program> programList, Channel ch) {
+        Log.d(TAG, "addPrograms() called with: parent = [" + parent + "], programList = [" + programList + "], ch = [" + ch + "]");
         channel = ch;
         // Clear all previously shown programs
         layout.removeAllViews();

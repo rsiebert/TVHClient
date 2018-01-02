@@ -2,34 +2,30 @@ package org.tvheadend.tvhclient.ui.epg;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.ListView;
 
-import org.tvheadend.tvhclient.data.Constants;
-import org.tvheadend.tvhclient.data.DataStorage;
-import org.tvheadend.tvhclient.data.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
-import org.tvheadend.tvhclient.service.HTSListener;
+import org.tvheadend.tvhclient.data.DataStorage;
+import org.tvheadend.tvhclient.data.DatabaseHelper;
 import org.tvheadend.tvhclient.data.model.Channel;
 import org.tvheadend.tvhclient.data.model.ChannelTag;
 import org.tvheadend.tvhclient.data.model.Connection;
+import org.tvheadend.tvhclient.service.HTSListener;
+import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
 import org.tvheadend.tvhclient.utils.Utils;
 
 import java.util.ArrayList;
 
-// TODO header placeholder for current time is missing in layout
-
-public class ProgramGuideChannelListFragment extends ListFragment implements HTSListener, OnScrollListener, FragmentControlInterface {
-
-    private final static String TAG = ProgramGuideChannelListFragment.class.getSimpleName();
+public class ProgramGuideChannelListFragment extends ListFragment implements HTSListener, OnScrollListener, ProgramGuideControlInterface {
 
     private Activity activity;
-    private FragmentScrollInterface fragmentScrollInterface;
+    private ProgramGuideScrollInterface programGuideScrollInterface;
     private ProgramGuideChannelListAdapter adapter;
 
     // Enables scrolling when the user has touch the screen and starts
@@ -43,20 +39,18 @@ public class ProgramGuideChannelListFragment extends ListFragment implements HTS
         super.onActivityCreated(savedInstanceState);
 
         activity = getActivity();
-        activity = getActivity();
         if (activity instanceof ToolbarInterface) {
             toolbarInterface = (ToolbarInterface) activity;
         }
 
         adapter = new ProgramGuideChannelListAdapter(activity, new ArrayList<>());
         setListAdapter(adapter);
-        getListView().setFastScrollEnabled(true);
-        getListView().setVerticalScrollBarEnabled(false);
         getListView().setOnScrollListener(this);
         getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
-        if (activity instanceof FragmentScrollInterface) {
-            fragmentScrollInterface = (FragmentScrollInterface) activity;
+        Fragment fragment = getActivity().getSupportFragmentManager().findFragmentById(R.id.main);
+        if (fragment != null && fragment.isAdded() && fragment instanceof ProgramGuideScrollInterface) {
+            programGuideScrollInterface = (ProgramGuideScrollInterface) fragment;
         }
     }
 
@@ -104,16 +98,6 @@ public class ProgramGuideChannelListFragment extends ListFragment implements HTS
     @Override
     public void onMessage(String action, final Object obj) {
         switch (action) {
-            case Constants.ACTION_LOADING:
-                activity.runOnUiThread(new Runnable() {
-                    public void run() {
-                        boolean loading = (Boolean) obj;
-                        if (!loading) {
-                            populateList();
-                        }
-                    }
-                });
-                break;
             case "channelAdd":
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
@@ -150,20 +134,20 @@ public class ProgramGuideChannelListFragment extends ListFragment implements HTS
         if (scrollState == SCROLL_STATE_TOUCH_SCROLL) {
             enableScrolling = true;
         } else if (scrollState == SCROLL_STATE_IDLE && enableScrolling) {
-            if (fragmentScrollInterface != null) {
+            if (programGuideScrollInterface != null) {
                 enableScrolling = false;
-                fragmentScrollInterface.onScrollStateIdle(TAG);
+                programGuideScrollInterface.onScrollStateChanged();
             }
         }
     }
 
     @Override
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-        if (fragmentScrollInterface != null && enableScrolling) {
+        if (programGuideScrollInterface != null && enableScrolling) {
             int position = view.getFirstVisiblePosition();
             View v = view.getChildAt(0);
             int offset = (v == null) ? 0 : v.getTop();
-            fragmentScrollInterface.onScrollingChanged(position, offset, TAG);
+            programGuideScrollInterface.onScroll(position, offset);
         }
     }
 
