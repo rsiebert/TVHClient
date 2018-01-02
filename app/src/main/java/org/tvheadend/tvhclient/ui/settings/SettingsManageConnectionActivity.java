@@ -7,7 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.ui.NavigationDrawerActivity;
+import org.tvheadend.tvhclient.ui.NavigationActivity;
 import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
 import org.tvheadend.tvhclient.ui.common.BackPressedInterface;
 import org.tvheadend.tvhclient.utils.MiscUtils;
@@ -45,7 +45,7 @@ public class SettingsManageConnectionActivity extends AppCompatActivity implemen
                 ((BackPressedInterface) fragment).onBackPressed();
             }
         } else {
-            Intent intent = new Intent(this, NavigationDrawerActivity.class);
+            Intent intent = new Intent(this, NavigationActivity.class);
             startActivity(intent);
             finish();
         }

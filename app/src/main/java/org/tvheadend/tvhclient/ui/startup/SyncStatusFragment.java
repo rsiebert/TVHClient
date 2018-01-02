@@ -20,7 +20,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.ui.NavigationDrawerActivity;
+import org.tvheadend.tvhclient.ui.NavigationActivity;
 import org.tvheadend.tvhclient.ui.settings.SettingsActivity;
 import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
 import org.tvheadend.tvhclient.service.HTSConnection;
@@ -195,7 +195,7 @@ public class SyncStatusFragment extends Fragment {
         // Get the initial screen from the user preference.
         // This determines which screen shall be shown first
         int startScreen = Integer.parseInt(sharedPreferences.getString("defaultMenuPositionPref", "0"));
-        Intent intent = new Intent(getActivity(), NavigationDrawerActivity.class);
+        Intent intent = new Intent(getActivity(), NavigationActivity.class);
         intent.putExtra("navigation_menu_position", startScreen);
         startActivity(intent);
         getActivity().finish();

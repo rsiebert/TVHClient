@@ -4,21 +4,18 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 
-import com.mikepenz.materialdrawer.model.interfaces.IProfile;
-
-import org.tvheadend.tvhclient.data.Constants;
-import org.tvheadend.tvhclient.data.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
+import org.tvheadend.tvhclient.data.Constants;
+import org.tvheadend.tvhclient.data.DatabaseHelper;
+import org.tvheadend.tvhclient.data.tasks.WakeOnLanTaskCallback;
 import org.tvheadend.tvhclient.ui.channels.ChannelListFragment;
 import org.tvheadend.tvhclient.ui.epg.ProgramGuideActivity;
-import org.tvheadend.tvhclient.ui.unlocker.UnlockerActivity;
-import org.tvheadend.tvhclient.ui.information.InfoActivity;
-import org.tvheadend.tvhclient.ui.information.StatusActivity;
+import org.tvheadend.tvhclient.ui.information.InfoFragment;
+import org.tvheadend.tvhclient.ui.information.StatusFragment;
 import org.tvheadend.tvhclient.ui.progams.ProgramListFragment;
 import org.tvheadend.tvhclient.ui.recordings.CompletedRecordingListFragment;
 import org.tvheadend.tvhclient.ui.recordings.FailedRecordingListFragment;
@@ -27,10 +24,7 @@ import org.tvheadend.tvhclient.ui.recordings.ScheduledRecordingListFragment;
 import org.tvheadend.tvhclient.ui.recordings.SeriesRecordingListFragment;
 import org.tvheadend.tvhclient.ui.recordings.TimerRecordingListFragment;
 import org.tvheadend.tvhclient.ui.settings.SettingsActivity;
-import org.tvheadend.tvhclient.service.HTSListener;
-import org.tvheadend.tvhclient.data.model.Connection;
-import org.tvheadend.tvhclient.data.tasks.WakeOnLanTaskCallback;
-import org.tvheadend.tvhclient.utils.Utils;
+import org.tvheadend.tvhclient.ui.unlocker.UnlockerFragment;
 
 import java.util.ArrayList;
 
@@ -39,9 +33,8 @@ import java.util.ArrayList;
 // TODO onQueryTextSubmit does nothing currently
 // TODO navigation menu marking (status, ...)
 
-public class NavigationDrawerActivity extends MainActivity implements HTSListener, WakeOnLanTaskCallback, NavigationDrawerCallback {
+public class NavigationActivity extends MainActivity implements WakeOnLanTaskCallback, NavigationDrawerCallback {
 
-    private CoordinatorLayout coordinatorLayout;
     // Default navigation drawer menu position and the list positions
     private int selectedNavigationMenuId = NavigationDrawer.MENU_UNKNOWN;
     private int defaultMenuPosition = NavigationDrawer.MENU_UNKNOWN;
@@ -71,8 +64,6 @@ public class NavigationDrawerActivity extends MainActivity implements HTSListene
         navigationDrawer = new NavigationDrawer(this, savedInstanceState, toolbar, this);
         navigationDrawer.createHeader();
         navigationDrawer.createMenu();
-
-        coordinatorLayout = findViewById(R.id.coordinatorLayout);
 
         defaultMenuPosition = Integer.parseInt(sharedPreferences.getString("defaultMenuPositionPref", String.valueOf(NavigationDrawer.MENU_STATUS)));
 
@@ -136,15 +127,12 @@ public class NavigationDrawerActivity extends MainActivity implements HTSListene
                 fragment = new RemovedRecordingListFragment();
                 break;
             case NavigationDrawer.MENU_STATUS:
-                selectedNavigationMenuId = defaultMenuPosition;
-                intent = new Intent(this, StatusActivity.class);
-                intent.putExtra("connection_status", connectionStatus);
-                startActivity(intent);
+                fragment = new StatusFragment();
+                //intent.putExtra("connection_status", connectionStatus);
+                //startActivity(intent);
                 break;
             case NavigationDrawer.MENU_INFORMATION:
-                selectedNavigationMenuId = defaultMenuPosition;
-                intent = new Intent(this, InfoActivity.class);
-                startActivity(intent);
+                fragment = new InfoFragment();
                 break;
             case NavigationDrawer.MENU_SETTINGS:
                 selectedNavigationMenuId = defaultMenuPosition;
@@ -152,9 +140,7 @@ public class NavigationDrawerActivity extends MainActivity implements HTSListene
                 startActivity(intent);
                 break;
             case NavigationDrawer.MENU_UNLOCKER:
-                selectedNavigationMenuId = defaultMenuPosition;
-                intent = new Intent(this, UnlockerActivity.class);
-                startActivity(intent);
+                fragment = new UnlockerFragment();
                 break;
         }
         if (fragment != null) {
@@ -189,7 +175,7 @@ public class NavigationDrawerActivity extends MainActivity implements HTSListene
         super.onResume();
         // A connection exists and is active, register to receive
         // information from the server and connect to the server
-        app.addListener(this);
+        app.addListener(navigationDrawer);
         // Show the defined fragment from the menu position or the
         // status if the connection state is not fine
         handleDrawerItemSelected(selectedNavigationMenuId);
@@ -207,7 +193,7 @@ public class NavigationDrawerActivity extends MainActivity implements HTSListene
     @Override
     public void onPause() {
         super.onPause();
-        app.removeListener(this);
+        app.removeListener(navigationDrawer);
 
         // Save the previously active connection status and if the connection
         // settings have been already shown
@@ -232,109 +218,9 @@ public class NavigationDrawerActivity extends MainActivity implements HTSListene
     }
 
     @Override
-    public void onMessage(final String action, final Object obj) {
-        switch (action) {
-            /*
-            case Constants.ACTION_CONNECTION_STATE_OK:
-                connectionStatus = action;
-                runOnUiThread(new Runnable() {
-                    public void run() {
-                        navigationDrawer.updateDrawerItemBadges();
-                    }
-                });
-                break;
-            case Constants.ACTION_CONNECTION_STATE_SERVER_DOWN:
-            case Constants.ACTION_CONNECTION_STATE_LOST:
-            case Constants.ACTION_CONNECTION_STATE_TIMEOUT:
-            case Constants.ACTION_CONNECTION_STATE_REFUSED:
-            case Constants.ACTION_CONNECTION_STATE_AUTH:
-            case Constants.ACTION_CONNECTION_STATE_NO_NETWORK:
-            case Constants.ACTION_CONNECTION_STATE_NO_CONNECTION:
-
-                // Go to the status screen if an error has occurred from a previously
-                // working connection or no connection at all. Additionally show the
-                // error message
-                if (connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_OK) ||
-                        connectionStatus.equals(Constants.ACTION_CONNECTION_STATE_UNKNOWN)) {
-
-                    // Show a textual description about the connection state
-                    switch (connectionStatus) {
-                        case Constants.ACTION_CONNECTION_STATE_SERVER_DOWN:
-                            showMessage(getString(R.string.err_connect));
-                            break;
-                        case Constants.ACTION_CONNECTION_STATE_LOST:
-                            showMessage(getString(R.string.err_con_lost));
-                            break;
-                        case Constants.ACTION_CONNECTION_STATE_TIMEOUT:
-                            showMessage(getString(R.string.err_con_timeout));
-                            break;
-                        case Constants.ACTION_CONNECTION_STATE_REFUSED:
-                        case Constants.ACTION_CONNECTION_STATE_AUTH:
-                            showMessage(getString(R.string.err_auth));
-                            break;
-                        case Constants.ACTION_CONNECTION_STATE_NO_NETWORK:
-                            showMessage(getString(R.string.err_no_network));
-                            break;
-                        case Constants.ACTION_CONNECTION_STATE_NO_CONNECTION:
-                            showMessage(getString(R.string.no_connection_available));
-                            break;
-                    }
-
-                    runOnUiThread(new Runnable() {
-                        public void run() {
-                            connectionStatus = action;
-                            handleDrawerItemSelected(MENU_STATUS);
-                            navigationDrawer.updateDrawerItemBadges();
-                        }
-                    });
-                }
-                break;
-                */
-            case Constants.ACTION_SHOW_MESSAGE:
-                final String msg = (String) obj;
-                showMessage(msg);
-                break;
-            case "dvrEntryAdd":
-            case "dvrEntryUpdate":
-            case "dvrEntryDelete":
-            case "autorecEntryAdd":
-            case "autorecEntryDelete":
-            case "timerecEntryAdd":
-            case "timerecEntryDelete":
-                runOnUiThread(new Runnable() {
-                    public void run() {
-                        navigationDrawer.updateDrawerItemBadges();
-                    }
-                });
-                break;
-        }
-    }
-
-    private void showMessage(final String msg) {
-        Snackbar.make(coordinatorLayout, msg, Snackbar.LENGTH_SHORT).show();
-    }
-
-    @Override
     public void notify(String message) {
         if (getCurrentFocus() != null) {
             Snackbar.make(getCurrentFocus(), message, Snackbar.LENGTH_LONG).show();
-        }
-    }
-
-    @Override
-    public void onNavigationProfileSelected(IProfile profile) {
-        Connection oldConn = databaseHelper.getSelectedConnection();
-        Connection newConn = databaseHelper.getConnection(profile.getIdentifier());
-
-        // Switch the active connection and reconnect
-        if (oldConn != null && newConn != null) {
-            newConn.selected = true;
-            oldConn.selected = false;
-            databaseHelper.updateConnection(oldConn);
-            databaseHelper.updateConnection(newConn);
-            Utils.connect(NavigationDrawerActivity.this, true);
-
-            navigationDrawer.updateDrawerItemBadges();
         }
     }
 

@@ -14,7 +14,7 @@ import android.util.Log;
 import org.tvheadend.tvhclient.BuildConfig;
 import org.tvheadend.tvhclient.data.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.ui.NavigationDrawerActivity;
+import org.tvheadend.tvhclient.ui.NavigationActivity;
 import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
 import org.tvheadend.tvhclient.ui.information.ChangeLogFragment;
 import org.tvheadend.tvhclient.data.model.Connection;
@@ -102,7 +102,7 @@ public class StartupActivity extends AppCompatActivity implements ToolbarInterfa
         // Get the initial screen from the user preference.
         // This determines which screen shall be shown first
         int startScreen = Integer.parseInt(sharedPreferences.getString("defaultMenuPositionPref", "0"));
-        Intent intent = new Intent(this, NavigationDrawerActivity.class);
+        Intent intent = new Intent(this, NavigationActivity.class);
         intent.putExtra("navigation_menu_position", startScreen);
         startActivity(intent);
         finish();

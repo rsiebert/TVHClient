@@ -28,7 +28,7 @@ import android.support.v4.app.TaskStackBuilder;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.ui.NavigationDrawerActivity;
+import org.tvheadend.tvhclient.ui.NavigationActivity;
 import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
 
 public class SettingsUserInterfaceFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener {
@@ -78,7 +78,7 @@ public class SettingsUserInterfaceFragment extends PreferenceFragment implements
 
     private void handlePreferenceThemeSelected() {
         TaskStackBuilder.create(getActivity())
-                .addNextIntent(new Intent(getActivity(), NavigationDrawerActivity.class))
+                .addNextIntent(new Intent(getActivity(), NavigationActivity.class))
                 .addNextIntent(getActivity().getIntent())
                 .startActivities();
     }

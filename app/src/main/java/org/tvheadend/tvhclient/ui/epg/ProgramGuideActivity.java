@@ -8,17 +8,13 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
-import com.mikepenz.materialdrawer.model.interfaces.IProfile;
-
-import org.tvheadend.tvhclient.data.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.data.DatabaseHelper;
+import org.tvheadend.tvhclient.ui.NavigationActivity;
 import org.tvheadend.tvhclient.ui.NavigationDrawer;
-import org.tvheadend.tvhclient.ui.NavigationDrawerActivity;
 import org.tvheadend.tvhclient.ui.NavigationDrawerCallback;
 import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
-import org.tvheadend.tvhclient.data.model.Connection;
 import org.tvheadend.tvhclient.utils.MiscUtils;
-import org.tvheadend.tvhclient.utils.Utils;
 
 import static org.tvheadend.tvhclient.ui.NavigationDrawer.MENU_PROGRAM_GUIDE;
 
@@ -73,26 +69,9 @@ public class ProgramGuideActivity extends AppCompatActivity implements FragmentS
     }
 
     @Override
-    public void onNavigationProfileSelected(IProfile profile) {
-        Connection oldConn = databaseHelper.getSelectedConnection();
-        Connection newConn = databaseHelper.getConnection(profile.getIdentifier());
-
-        // Switch the active connection and reconnect
-        if (oldConn != null && newConn != null) {
-            newConn.selected = true;
-            oldConn.selected = false;
-            databaseHelper.updateConnection(oldConn);
-            databaseHelper.updateConnection(newConn);
-            Utils.connect(ProgramGuideActivity.this, true);
-
-            navigationDrawer.updateDrawerItemBadges();
-        }
-    }
-
-    @Override
     public void onNavigationMenuSelected(int id) {
         if (id != MENU_PROGRAM_GUIDE) {
-            Intent intent = new Intent(this, NavigationDrawerActivity.class);
+            Intent intent = new Intent(this, NavigationActivity.class);
             intent.putExtra("navigation_menu_position", id);
             startActivity(intent);
             finish();

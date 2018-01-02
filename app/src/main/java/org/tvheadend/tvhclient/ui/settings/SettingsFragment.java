@@ -26,7 +26,7 @@ import org.tvheadend.tvhclient.data.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.local.SuggestionProvider;
 import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.ui.NavigationDrawerActivity;
+import org.tvheadend.tvhclient.ui.NavigationActivity;
 import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
 
 import java.io.File;
@@ -143,7 +143,7 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
     public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
         switch (key) {
             case "languagePref":
-                Intent intent = new Intent(getActivity(), NavigationDrawerActivity.class);
+                Intent intent = new Intent(getActivity(), NavigationActivity.class);
                 getActivity().startActivity(intent);
                 break;
             case "defaultMenuPositionPref":
