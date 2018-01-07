@@ -127,7 +127,8 @@ public class NavigationDrawer implements HTSListener, AccountHeader.OnAccountHea
                 .withIcon(getResourceIdFromAttr(R.attr.ic_menu_info));
         PrimaryDrawerItem settingsItem = new PrimaryDrawerItem()
                 .withIdentifier(MENU_SETTINGS).withName(R.string.settings)
-                .withIcon(getResourceIdFromAttr(R.attr.ic_menu_settings));
+                .withIcon(getResourceIdFromAttr(R.attr.ic_menu_settings))
+                .withSelectable(false);
         PrimaryDrawerItem extrasItem = new PrimaryDrawerItem()
                 .withIdentifier(MENU_UNLOCKER).withName(R.string.pref_unlocker)
                 .withIcon(getResourceIdFromAttr(R.attr.ic_menu_extras));
