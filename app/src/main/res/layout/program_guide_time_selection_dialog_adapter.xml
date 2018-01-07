@@ -1,40 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/linearLayout"
     android:layout_width="fill_parent"
-    android:layout_height="72dp"
-    android:orientation="horizontal"
-    android:padding="16dp" >
+    android:layout_height="wrap_content">
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/date1"
+        style="?attr/TitleFont"
         android:layout_width="0dp"
-        android:layout_height="fill_parent"
-        android:layout_weight="0.5"
-        android:orientation="vertical" >
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="8dp"
+        android:gravity="start"
+        android:text="@string/date"
+        app:layout_constraintBottom_toTopOf="@+id/date2"
+        app:layout_constraintEnd_toStartOf="@+id/time"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed" />
 
-        <TextView
-            android:id="@+id/date1"
-            style="?attr/TitleFont"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:gravity="start"
-            android:text="@string/date" />
+    <TextView
+        android:id="@+id/date2"
+        style="?attr/SubtitleFont"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="32dp"
+        android:gravity="start"
+        android:text="@string/date"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/time"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/date1" />
 
-        <TextView
-            android:id="@+id/date2"
-            style="?attr/SubtitleFont"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:gravity="start"
-            android:text="@string/date" />
-    </LinearLayout>
 
     <TextView
         android:id="@+id/time"
         style="?attr/SubtitleFont"
         android:layout_width="0dp"
-        android:layout_height="fill_parent"
-        android:layout_weight="0.5"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginTop="8dp"
         android:gravity="center|end"
-        android:text="@string/time" />
+        android:text="@string/time"
+        app:layout_constraintBottom_toBottomOf="@+id/date2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/date1"
+        app:layout_constraintTop_toTopOf="@+id/date1" />
 
-</LinearLayout>
+</android.support.constraint.ConstraintLayout>
