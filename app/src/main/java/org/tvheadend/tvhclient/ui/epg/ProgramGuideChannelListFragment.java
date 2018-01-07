@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.ListView;
@@ -33,6 +35,12 @@ public class ProgramGuideChannelListFragment extends ListFragment implements HTS
     // unwanted calls to the interface. 
     private boolean enableScrolling = false;
     private ToolbarInterface toolbarInterface;
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
+        return inflater.inflate(R.layout.program_guide_channel_listfragment, container, false);
+    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {

@@ -1,9 +1,10 @@
 package org.tvheadend.tvhclient.ui.epg;
 
-import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
+import android.support.constraint.ConstraintSet;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.ListFragment;
@@ -15,10 +16,7 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.tvheadend.tvhclient.R;
@@ -42,10 +40,8 @@ import butterknife.Unbinder;
 
 public class ProgramGuideViewPagerContentListFragment extends ListFragment implements HTSListener, ProgramGuideControlInterface, ProgramContextMenuInterface, OnScrollListener {
 
-    @BindView(R.id.pager_title)
-    LinearLayout titleLayout;
-    @BindView(R.id.pager_title_date_text)
-    TextView titleDateText;
+    @BindView(R.id.constraint_layout)
+    ConstraintLayout constraintLayout;
     @BindView(R.id.pager_title_date)
     TextView titleDate;
     @BindView(R.id.pager_title_hours)
@@ -77,6 +73,7 @@ public class ProgramGuideViewPagerContentListFragment extends ListFragment imple
     private int displayWidth;
     private float pixelsPerMinute;
     private String TAG = ProgramGuideViewPagerContentListFragment.class.getSimpleName();
+    private ConstraintSet constraintSet;
 
     public static ProgramGuideViewPagerContentListFragment newInstance(Long startTime, Long endTime, boolean showTimeIndication, int displayWidth, float pixelsPerMinute) {
         ProgramGuideViewPagerContentListFragment fragment = new ProgramGuideViewPagerContentListFragment();
@@ -116,6 +113,9 @@ public class ProgramGuideViewPagerContentListFragment extends ListFragment imple
         activity = getActivity();
         menuUtils = new MenuUtils(getActivity());
 
+        constraintSet = new ConstraintSet();
+        constraintSet.clone(constraintLayout);
+
         Fragment fragment = getActivity().getSupportFragmentManager().findFragmentById(R.id.main);
         if (fragment != null && fragment.isAdded() && fragment instanceof ProgramGuideScrollInterface) {
             programGuideScrollInterface = (ProgramGuideScrollInterface) fragment;
@@ -131,15 +131,8 @@ public class ProgramGuideViewPagerContentListFragment extends ListFragment imple
             showTimeIndication = bundle.getBoolean("showTimeIndication", false);
         }
 
-        Utils.setDate(titleDateText, startTime);
         Utils.setDate(titleDate, startTime);
         Utils.setTime(titleHours, startTime, endTime);
-
-        // Hide the date text if it shows the date time or the display is too narrow.
-        // It is considered too narrow if the width falls below 400 pixels.
-        if (titleDateText.getText().equals(titleDate.getText()) || (displayWidth < 400)) {
-            titleDate.setVisibility(View.GONE);
-        }
 
         adapter = new ProgramGuideViewPagerContentListAdapter(activity, this, new ArrayList<>(), startTime, endTime, displayWidth, pixelsPerMinute);
         setListAdapter(adapter);
@@ -223,17 +216,12 @@ public class ProgramGuideViewPagerContentListFragment extends ListFragment imple
                 final long durationTime = (currentTime - startTime) / 1000 / 60;
                 final int offset = (int) (durationTime * pixelsPerMinute);
 
-                // Get the height of the title layout
-                Rect titleLayoutRect = new Rect();
-                titleLayout.getLocalVisibleRect(titleLayoutRect);
+                // Set the left constraint of the time indication so it shows the actual time
+                constraintSet.connect(currentTimeIndication.getId(), ConstraintSet.LEFT, constraintLayout.getId(), ConstraintSet.LEFT, offset);
+                constraintSet.connect(currentTimeIndication.getId(), ConstraintSet.START, constraintLayout.getId(), ConstraintSet.START, offset);
+                constraintSet.applyTo(constraintLayout);
 
-                // Set the left and top margins of the time indication so it
-                // starts in the actual program guide and not in the channel
-                // list or time line.
-                final int layout = LayoutParams.MATCH_PARENT;
-                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(3, layout);
-                params.setMargins(offset, titleLayoutRect.height(), 0, 0);
-                currentTimeIndication.setLayoutParams(params);
+                currentTimeIndication.setVisibility(View.VISIBLE);
             } else {
                 currentTimeIndication.setVisibility(View.GONE);
             }
