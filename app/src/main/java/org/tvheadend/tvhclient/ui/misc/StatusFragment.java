@@ -31,6 +31,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
+// TODO remove subtitle
+
 public class StatusFragment extends Fragment implements WakeOnLanTaskCallback {
 
     private Activity activity;
@@ -98,6 +100,7 @@ public class StatusFragment extends Fragment implements WakeOnLanTaskCallback {
         if (activity instanceof ToolbarInterface) {
             ToolbarInterface toolbarInterface = (ToolbarInterface) activity;
             toolbarInterface.setTitle(getString(R.string.status));
+            toolbarInterface.setSubtitle(null);
         }
         menuUtils = new MenuUtils(getActivity());
         databaseHelper = DatabaseHelper.getInstance(getActivity().getApplicationContext());

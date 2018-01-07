@@ -41,6 +41,7 @@ public class UnlockerFragment extends Fragment implements FileLoaderCallback {
         if (getActivity() instanceof ToolbarInterface) {
             ToolbarInterface toolbarInterface = (ToolbarInterface) getActivity();
             toolbarInterface.setTitle(getString(R.string.pref_unlocker));
+            toolbarInterface.setSubtitle(null);
         }
         setHasOptionsMenu(true);
         htmlFileLoaderTask = new HtmlFileLoaderTask(getActivity(), "features", "en", this);

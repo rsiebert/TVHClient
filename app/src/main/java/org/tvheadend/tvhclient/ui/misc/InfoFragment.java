@@ -20,6 +20,8 @@ import org.tvheadend.tvhclient.data.tasks.HtmlFileLoaderTask;
 
 import java.util.regex.Pattern;
 
+// TODO update used libraries
+
 public class InfoFragment extends Fragment implements FileLoaderCallback {
 
     private WebView webView;
@@ -41,6 +43,7 @@ public class InfoFragment extends Fragment implements FileLoaderCallback {
         if (getActivity() instanceof ToolbarInterface) {
             ToolbarInterface toolbarInterface = (ToolbarInterface) getActivity();
             toolbarInterface.setTitle(getString(R.string.pref_information));
+            toolbarInterface.setSubtitle(null);
         }
         setHasOptionsMenu(true);
         htmlFileLoaderTask = new HtmlFileLoaderTask(getActivity(), "info_help", "en", this);
