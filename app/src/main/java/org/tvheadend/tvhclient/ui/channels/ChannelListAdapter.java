@@ -32,6 +32,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 // TODO lazy loading of images
+// TODO move channel logo a bit down in the layout
 
 public class ChannelListAdapter extends ArrayAdapter<Channel> implements OnClickListener {
 
