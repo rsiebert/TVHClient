@@ -149,7 +149,8 @@
         <item name="ic_menu_download">@drawable/ic_menu_download_dark</item>
         <item name="ic_menu_tags">@drawable/ic_menu_tags_dark</item>
         <item name="ic_menu_record_once">@drawable/ic_menu_record_dark</item>
-        <item name="ic_menu_record_series">@drawable/ic_menu_record_once_dark</item>
+        <item name="ic_menu_record_custom">@drawable/ic_menu_record_custom_dark</item>
+        <item name="ic_menu_record_series">@drawable/ic_menu_record_series_dark</item>
         <item name="ic_menu_record_cancel">@drawable/ic_menu_cancel_dark</item>
         <item name="ic_menu_record_remove">@drawable/ic_menu_delete_dark</item>
         <item name="ic_menu_stop">@drawable/ic_menu_stop_dark</item>
@@ -230,7 +231,8 @@
         <item name="ic_menu_download">@drawable/ic_menu_download_light</item>
         <item name="ic_menu_tags">@drawable/ic_menu_tag_light</item>
         <item name="ic_menu_record_once">@drawable/ic_menu_record_light</item>
-        <item name="ic_menu_record_series">@drawable/ic_menu_record_once_light</item>
+        <item name="ic_menu_record_custom">@drawable/ic_menu_record_custom_light</item>
+        <item name="ic_menu_record_series">@drawable/ic_menu_record_series_light</item>
         <item name="ic_menu_record_cancel">@drawable/ic_menu_cancel_light</item>
         <item name="ic_menu_record_remove">@drawable/ic_menu_delete_light</item>
         <item name="ic_menu_stop">@drawable/ic_menu_stop_light</item>
