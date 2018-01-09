@@ -21,16 +21,12 @@ import java.util.List;
 
 public class StartupActivity extends AppCompatActivity implements ToolbarInterface {
 
-    private SharedPreferences sharedPreferences;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(MiscUtils.getThemeId(this));
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
         MiscUtils.setLanguage(this);
-
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         // Get the toolbar so that the fragments can set the title
         Toolbar toolbar = findViewById(R.id.toolbar);
