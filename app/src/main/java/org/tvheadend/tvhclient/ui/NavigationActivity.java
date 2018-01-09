@@ -16,29 +16,22 @@ import org.tvheadend.tvhclient.ui.epg.ProgramGuideViewPagerFragment;
 import org.tvheadend.tvhclient.ui.misc.InfoFragment;
 import org.tvheadend.tvhclient.ui.misc.StatusFragment;
 import org.tvheadend.tvhclient.ui.misc.UnlockerFragment;
-import org.tvheadend.tvhclient.ui.programs.ProgramListFragment;
-import org.tvheadend.tvhclient.ui.recordings.CompletedRecordingListFragment;
-import org.tvheadend.tvhclient.ui.recordings.FailedRecordingListFragment;
-import org.tvheadend.tvhclient.ui.recordings.RemovedRecordingListFragment;
-import org.tvheadend.tvhclient.ui.recordings.ScheduledRecordingListFragment;
-import org.tvheadend.tvhclient.ui.recordings.SeriesRecordingListFragment;
-import org.tvheadend.tvhclient.ui.recordings.TimerRecordingListFragment;
+import org.tvheadend.tvhclient.ui.dvr.recordings.CompletedRecordingListFragment;
+import org.tvheadend.tvhclient.ui.dvr.recordings.FailedRecordingListFragment;
+import org.tvheadend.tvhclient.ui.dvr.recordings.RemovedRecordingListFragment;
+import org.tvheadend.tvhclient.ui.dvr.recordings.ScheduledRecordingListFragment;
+import org.tvheadend.tvhclient.ui.dvr.series_recordings.SeriesRecordingListFragment;
+import org.tvheadend.tvhclient.ui.dvr.timer_recordings.TimerRecordingListFragment;
 import org.tvheadend.tvhclient.ui.settings.SettingsActivity;
 
-import java.util.ArrayList;
-
 // TODO make nav image blasser
-// TODO confirmation of added/edited recordings...
-// TODO onQueryTextSubmit does nothing currently
-// TODO navigation menu marking (status, ...)
+// TODO icons in dual pane mode
+// TODO show confirmation of added/edited recordings...
 
 public class NavigationActivity extends MainActivity implements WakeOnLanTaskCallback, NavigationDrawerCallback {
 
     // Default navigation drawer menu position and the list positions
     private int selectedNavigationMenuId = NavigationDrawer.MENU_UNKNOWN;
-    // Holds the list of selected menu items so the previous fragment can be
-    // shown again when the user has pressed the back key.
-    private ArrayList<Integer> menuStack = new ArrayList<>();
     private NavigationDrawer navigationDrawer;
 
     @Override
@@ -59,10 +52,6 @@ public class NavigationActivity extends MainActivity implements WakeOnLanTaskCal
                 handleDrawerItemSelected(selectedNavigationMenuId);
             }
         } else {
-            // If the saved instance is not null then we return from an orientation
-            // change. The drawer menu could be open, so update the recording
-            // counts. Also get any saved values from the bundle.
-            menuStack = savedInstanceState.getIntegerArrayList("menu_stack");
             selectedNavigationMenuId = savedInstanceState.getInt("navigation_menu_position", NavigationDrawer.MENU_CHANNELS);
         }
     }
@@ -152,27 +141,6 @@ public class NavigationActivity extends MainActivity implements WakeOnLanTaskCal
         return true;
     }
 
-    /**
-     * Check if the current fragment is a program list fragment. In case single
-     * mode is active we need to return to the channel list fragment otherwise
-     * show the fragment that belongs to the previously selected menu item.
-     */
-    @Override
-    public void onBackPressed() {
-        navigationDrawer.getDrawer().closeDrawer();
-        final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main);
-        if (!isDualPane && (f instanceof ProgramListFragment)) {
-            getSupportFragmentManager().popBackStack();
-        } else {
-            if (menuStack.size() > 0) {
-                handleDrawerItemSelected(menuStack.remove(menuStack.size() - 1));
-            } else {
-                super.onBackPressed();
-                finish();
-            }
-        }
-    }
-
     @Override
     public void onResume() {
         super.onResume();
@@ -202,7 +170,6 @@ public class NavigationActivity extends MainActivity implements WakeOnLanTaskCal
         outState = navigationDrawer.getDrawer().saveInstanceState(outState);
         // add the values which need to be saved from the accountHeader to the bundle
         outState = navigationDrawer.getHeader().saveInstanceState(outState);
-        outState.putIntegerArrayList("menu_stack", menuStack);
         outState.putInt("navigation_menu_position", selectedNavigationMenuId);
         super.onSaveInstanceState(outState);
     }
