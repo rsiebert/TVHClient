@@ -19,7 +19,7 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.DataStorage;
 import org.tvheadend.tvhclient.data.model.Channel;
 import org.tvheadend.tvhclient.data.model.Program;
-import org.tvheadend.tvhclient.ui.recordings.RecordingDetailsActivity;
+import org.tvheadend.tvhclient.ui.dvr.recordings.RecordingDetailsActivity;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 import org.tvheadend.tvhclient.utils.Utils;
 

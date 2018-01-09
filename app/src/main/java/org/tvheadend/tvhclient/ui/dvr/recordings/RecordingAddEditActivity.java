@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.ui.recordings;
+package org.tvheadend.tvhclient.ui.dvr.recordings;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -7,6 +7,8 @@ import android.support.v7.widget.Toolbar;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
+import org.tvheadend.tvhclient.ui.dvr.series_recordings.SeriesRecordingAddEditFragment;
+import org.tvheadend.tvhclient.ui.dvr.timer_recordings.TimerRecordingAddEditFragment;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
 public class RecordingAddEditActivity extends AppCompatActivity implements ToolbarInterface {
@@ -32,10 +34,10 @@ public class RecordingAddEditActivity extends AppCompatActivity implements Toolb
                     fragment = new RecordingAddEditFragment();
                     break;
                 case "series_recording":
-                    fragment = new SeriesRecordingAddFragment();
+                    fragment = new SeriesRecordingAddEditFragment();
                     break;
                 case "timer_recording":
-                    fragment = new TimerRecordingAddFragment();
+                    fragment = new TimerRecordingAddEditFragment();
                     break;
             }
 

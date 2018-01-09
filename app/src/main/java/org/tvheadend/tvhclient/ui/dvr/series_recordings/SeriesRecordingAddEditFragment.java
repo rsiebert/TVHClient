@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.ui.recordings;
+package org.tvheadend.tvhclient.ui.dvr.series_recordings;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -22,18 +22,18 @@ import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.service.HTSService;
-import org.tvheadend.tvhclient.service.HTSListener;
 import org.tvheadend.tvhclient.data.model.Channel;
 import org.tvheadend.tvhclient.data.model.Connection;
 import org.tvheadend.tvhclient.data.model.Profile;
 import org.tvheadend.tvhclient.data.model.SeriesRecording;
+import org.tvheadend.tvhclient.service.HTSListener;
+import org.tvheadend.tvhclient.service.HTSService;
+import org.tvheadend.tvhclient.ui.dvr.base.BaseRecordingAddEditFragment;
+import org.tvheadend.tvhclient.ui.dvr.common.DateTimePickerCallback;
+import org.tvheadend.tvhclient.ui.dvr.common.DaysOfWeekSelectionCallback;
+import org.tvheadend.tvhclient.ui.dvr.common.RecordingPriorityListCallback;
+import org.tvheadend.tvhclient.ui.dvr.common.RecordingProfileListCallback;
 import org.tvheadend.tvhclient.utils.callbacks.ChannelListSelectionCallback;
-import org.tvheadend.tvhclient.utils.callbacks.DateTimePickerCallback;
-import org.tvheadend.tvhclient.utils.callbacks.DaysOfWeekSelectionCallback;
-import org.tvheadend.tvhclient.utils.callbacks.DuplicateDetectionListCallback;
-import org.tvheadend.tvhclient.utils.callbacks.RecordingPriorityListCallback;
-import org.tvheadend.tvhclient.utils.callbacks.RecordingProfileListCallback;
 
 import java.util.Calendar;
 
@@ -41,10 +41,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-// TODO convert handleStartTimeSelection and handleStopTimeSelection to use calendar
-// TODO extend from BaseRecordingAddEditFragment
-
-public class SeriesRecordingAddFragment extends BaseRecordingAddEditFragment implements HTSListener, ChannelListSelectionCallback, RecordingPriorityListCallback, RecordingProfileListCallback, DateTimePickerCallback, DaysOfWeekSelectionCallback, DuplicateDetectionListCallback {
+public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment implements HTSListener, ChannelListSelectionCallback, RecordingPriorityListCallback, RecordingProfileListCallback, DateTimePickerCallback, DaysOfWeekSelectionCallback {
 
     @BindView(R.id.is_enabled)
     CheckBox isEnabledCheckbox;
@@ -104,7 +101,7 @@ public class SeriesRecordingAddFragment extends BaseRecordingAddEditFragment imp
     private String id;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.series_recording_add_edit_fragment, container, false);
         unbinder = ButterKnife.bind(this, view);
@@ -216,34 +213,34 @@ public class SeriesRecordingAddFragment extends BaseRecordingAddEditFragment imp
         channelNameTextView.setOnClickListener(view -> {
             // Determine if the server supports recording on all channels
             boolean allowRecordingOnAllChannels = htspVersion >= 21;
-            recordingUtils.handleChannelListSelection(channelId, SeriesRecordingAddFragment.this, allowRecordingOnAllChannels);
+            handleChannelListSelection(channelId, SeriesRecordingAddEditFragment.this, allowRecordingOnAllChannels);
         });
 
         priorityTextView.setText(priorityList[priority]);
-        priorityTextView.setOnClickListener(view -> recordingUtils.handlePrioritySelection(priorityList, priority, SeriesRecordingAddFragment.this));
+        priorityTextView.setOnClickListener(view -> handlePrioritySelection(priorityList, priority, SeriesRecordingAddEditFragment.this));
 
-        if (TextUtils.isEmpty(id) || recordingProfilesList.length == 0) {
+        if (recordingProfilesList.length == 0) {
             recordingProfileNameTextView.setVisibility(View.GONE);
             recordingProfileLabelTextView.setVisibility(View.GONE);
         } else {
             recordingProfileNameTextView.setVisibility(View.VISIBLE);
             recordingProfileLabelTextView.setVisibility(View.VISIBLE);
+
+            recordingProfileNameTextView.setText(recordingProfileName);
+            recordingProfileNameTextView.setOnClickListener(view -> handleRecordingProfileSelection(recordingProfilesList, recordingProfileName, this));
         }
 
-        recordingProfileNameTextView.setText(recordingProfilesList[recordingProfileName]);
-        recordingProfileNameTextView.setOnClickListener(view -> recordingUtils.handleRecordingProfileSelection(recordingProfilesList, recordingProfileName, this));
-
         startTimeTextView.setText(getTimeStringFromDate(startTime));
-        startTimeTextView.setOnClickListener(view -> recordingUtils.handleTimeSelection(startTime, SeriesRecordingAddFragment.this, "startTime"));
+        startTimeTextView.setOnClickListener(view -> handleTimeSelection(startTime, SeriesRecordingAddEditFragment.this, "startTime"));
 
         startWindowTimeTextView.setText(getTimeStringFromDate(startWindowTime));
-        startWindowTimeTextView.setOnClickListener(view -> recordingUtils.handleTimeSelection(startWindowTime, SeriesRecordingAddFragment.this, "startWindowTime"));
+        startWindowTimeTextView.setOnClickListener(view -> handleTimeSelection(startWindowTime, SeriesRecordingAddEditFragment.this, "startWindowTime"));
 
         startExtraTimeTextView.setText(String.valueOf(startExtraTime));
         stopExtraTimeTextView.setText(String.valueOf(stopExtraTime));
 
         daysOfWeekTextView.setText(getSelectedDaysOfWeek());
-        daysOfWeekTextView.setOnClickListener(view -> recordingUtils.handleDayOfWeekSelection(daysOfWeek, SeriesRecordingAddFragment.this));
+        daysOfWeekTextView.setOnClickListener(view -> handleDayOfWeekSelection(daysOfWeek, SeriesRecordingAddEditFragment.this));
 
         minDurationEditText.setText(minDuration > 0 ? String.valueOf(minDuration) : getString(R.string.duration_sum));
         maxDurationEditText.setText(maxDuration > 0 ? String.valueOf(maxDuration) : getString(R.string.duration_sum));
@@ -263,11 +260,11 @@ public class SeriesRecordingAddFragment extends BaseRecordingAddEditFragment imp
         duplicateDetectionLabelTextView.setVisibility(htspVersion >= 20 ? View.VISIBLE : View.GONE);
         duplicateDetectionTextView.setVisibility(htspVersion >= 20 ? View.VISIBLE : View.GONE);
         duplicateDetectionTextView.setText(duplicateDetectionList[duplicateDetectionId]);
-        duplicateDetectionTextView.setOnClickListener(view -> recordingUtils.handleDuplicateDetectionSelection(duplicateDetectionList, duplicateDetectionId, SeriesRecordingAddFragment.this));
+        duplicateDetectionTextView.setOnClickListener(view -> handleDuplicateDetectionSelection(duplicateDetectionList, duplicateDetectionId));
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         saveWidgetValuesIntoVariables();
         outState.putInt("priorityTextView", priority);
         outState.putInt("minDuration", minDuration);
@@ -542,9 +539,22 @@ public class SeriesRecordingAddFragment extends BaseRecordingAddEditFragment imp
         daysOfWeekTextView.setText(getSelectedDaysOfWeek());
     }
 
-    @Override
     public void onDuplicateDetectionValueSelected(int which) {
         duplicateDetectionId = which;
         duplicateDetectionTextView.setText(duplicateDetectionList[which]);
+    }
+
+    public void handleDuplicateDetectionSelection(String[] duplicateDetectionList, int duplicateDetectionId) {
+        new MaterialDialog.Builder(activity)
+                .title(R.string.select_duplicate_detection)
+                .items(duplicateDetectionList)
+                .itemsCallbackSingleChoice(duplicateDetectionId, new MaterialDialog.ListCallbackSingleChoice() {
+                    @Override
+                    public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                        onDuplicateDetectionValueSelected(which);
+                        return true;
+                    }
+                })
+                .show();
     }
 }

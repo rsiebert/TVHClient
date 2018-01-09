@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.ui.recordings;
+package org.tvheadend.tvhclient.ui.dvr.recordings;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
@@ -27,6 +27,8 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+// TODO move channel logo a bit down in the layout
 
 public class RecordingListAdapter extends ArrayAdapter<Recording> {
 

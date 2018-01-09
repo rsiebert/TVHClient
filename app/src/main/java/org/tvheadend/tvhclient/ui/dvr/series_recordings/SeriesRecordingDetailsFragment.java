@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.ui.recordings;
+package org.tvheadend.tvhclient.ui.dvr.series_recordings;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -19,6 +19,7 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
 import org.tvheadend.tvhclient.data.model.Channel;
 import org.tvheadend.tvhclient.data.model.SeriesRecording;
+import org.tvheadend.tvhclient.ui.dvr.recordings.RecordingAddEditActivity;
 import org.tvheadend.tvhclient.utils.MenuUtils;
 import org.tvheadend.tvhclient.utils.Utils;
 

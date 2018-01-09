@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.ui.recordings;
+package org.tvheadend.tvhclient.ui.dvr.recordings;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -32,11 +32,6 @@ import butterknife.Unbinder;
 // TODO update icons (same color...)
 
 public class RecordingDetailsFragment extends Fragment {
-
-    @SuppressWarnings("unused")
-    private final static String TAG = RecordingDetailsFragment.class.getSimpleName();
-
-    private Recording recording;
 
     @BindView(R.id.summary_label) TextView summaryLabelTextView;
     @BindView(R.id.summary) TextView summaryTextView;
@@ -73,6 +68,7 @@ public class RecordingDetailsFragment extends Fragment {
 
     private ToolbarInterface toolbarInterface;
     private MenuUtils menuUtils;
+    private Recording recording;
     private int dvrId;
     private boolean isUnlocked;
     private int htspVersion;

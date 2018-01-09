@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.ui.recordings;
+package org.tvheadend.tvhclient.ui.dvr.timer_recordings;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -24,6 +24,8 @@ import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
 import org.tvheadend.tvhclient.service.HTSListener;
 import org.tvheadend.tvhclient.data.model.TimerRecording;
+import org.tvheadend.tvhclient.ui.dvr.recordings.RecordingAddEditActivity;
+import org.tvheadend.tvhclient.ui.dvr.recordings.RecordingDetailsActivity;
 import org.tvheadend.tvhclient.utils.MenuUtils;
 
 import java.util.ArrayList;
