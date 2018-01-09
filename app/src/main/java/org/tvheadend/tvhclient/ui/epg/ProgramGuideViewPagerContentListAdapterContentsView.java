@@ -3,6 +3,11 @@ package org.tvheadend.tvhclient.ui.epg;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.LayerDrawable;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -19,9 +24,8 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.DataStorage;
 import org.tvheadend.tvhclient.data.model.Channel;
 import org.tvheadend.tvhclient.data.model.Program;
-import org.tvheadend.tvhclient.ui.dvr.recordings.RecordingDetailsActivity;
-import org.tvheadend.tvhclient.utils.MiscUtils;
-import org.tvheadend.tvhclient.utils.Utils;
+import org.tvheadend.tvhclient.ui.recordings.recordings.RecordingDetailsActivity;
+import org.tvheadend.tvhclient.utils.UIUtils;
 
 import java.util.Iterator;
 import java.util.List;
@@ -30,7 +34,7 @@ import java.util.NoSuchElementException;
 public class ProgramGuideViewPagerContentListAdapterContentsView extends LinearLayout {
 
     private final static String TAG = ProgramGuideViewPagerContentListAdapterContentsView.class.getSimpleName();
-
+    private SharedPreferences sharedPreferences;
     private LinearLayout layout;
     private Activity activity;
     private Channel channel;
@@ -76,6 +80,7 @@ public class ProgramGuideViewPagerContentListAdapterContentsView extends LinearL
         this.endTime = endTime;
         this.displayWidth = displayWidth;
         this.pixelsPerMinute = pixelsPerMinute;
+        this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity);
     }
 
     /**
@@ -348,6 +353,8 @@ public class ProgramGuideViewPagerContentListAdapterContentsView extends LinearL
             itemLayout.setLayoutParams(params);
         }
 
+        boolean showGenreColors = sharedPreferences.getBoolean("showGenreColorsGuidePref", false);
+
         // Show the placeholder if there is no program
         if (p == null) {
             title.setText(R.string.unknown);
@@ -356,14 +363,26 @@ public class ProgramGuideViewPagerContentListAdapterContentsView extends LinearL
         }
 
         if (p != null) {
-            MiscUtils.setGenreColor(activity, itemLayout, p.contentType, TAG);
+
+            if (showGenreColors) {
+                // Offset that reduces the visibility of the program guide colors a little
+                int color = UIUtils.getGenreColor(activity, p.contentType, 50);
+                LayerDrawable layers = (LayerDrawable) itemLayout.getBackground();
+                GradientDrawable shape = (GradientDrawable) (layers.findDrawableByLayerId(R.id.timeline_item_genre));
+                shape.setColor(color);
+            }
+
             itemLayout.setTag(p.eventId);
             title.setText(p.title);
-            Utils.setState(activity, state, p);
+
+            Drawable drawable = UIUtils.getRecordingState(activity, p.dvrId);
+            state.setVisibility(drawable != null ? View.VISIBLE : View.GONE);
+            state.setImageDrawable(drawable);
 
             // Only show the duration if the layout is wide enough
             if (layoutWidth >= MIN_DISPLAY_WIDTH_FOR_DETAILS) {
-                Utils.setDuration(duration, p.start, p.stop);
+                String durationTime = activity.getString(R.string.minutes, (int) ((p.stop - p.start) / 1000 / 60));
+                duration.setText(durationTime);
             } else {
                 duration.setVisibility(View.GONE);
             }
@@ -382,7 +401,7 @@ public class ProgramGuideViewPagerContentListAdapterContentsView extends LinearL
                     // Add a listener to each menu item. When the menu item is
                     // called the context handler method from the fragment will
                     // be called. Without this the context menu handler from the
-                    // channel list fragment was called (not clear why) which 
+                    // channel list fragment was called (not clear why) which
                     // resulted in a null pointer exception.
                     int size = menu.size();
                     for (int i = 0; i < size; ++i) {

@@ -29,6 +29,7 @@ import org.tvheadend.tvhclient.data.model.Recording;
 import org.tvheadend.tvhclient.service.HTSListener;
 import org.tvheadend.tvhclient.ui.epg.ProgramGuideViewPagerContentListAdapterContentsView.ProgramContextMenuInterface;
 import org.tvheadend.tvhclient.utils.MenuUtils;
+import org.tvheadend.tvhclient.utils.UIUtils;
 import org.tvheadend.tvhclient.utils.Utils;
 
 import java.util.ArrayList;
@@ -121,7 +122,7 @@ public class ProgramGuideViewPagerContentListFragment extends ListFragment imple
             programGuideScrollInterface = (ProgramGuideScrollInterface) fragment;
         }
 
-        // Set the date and the time slot hours in the title of the fragment
+        // Set the date and the time slot hours in the titleTextView of the fragment
         Bundle bundle = getArguments();
         if (bundle != null) {
             startTime = bundle.getLong("epgStartTime", 0);
@@ -131,8 +132,10 @@ public class ProgramGuideViewPagerContentListFragment extends ListFragment imple
             showTimeIndication = bundle.getBoolean("showTimeIndication", false);
         }
 
-        Utils.setDate(titleDate, startTime);
-        Utils.setTime(titleHours, startTime, endTime);
+        titleDate.setText(UIUtils.getDate(activity, startTime));
+
+        String time = UIUtils.getTime(activity, startTime) + " - " + UIUtils.getTime(activity, endTime);
+        titleHours.setText(time);
 
         adapter = new ProgramGuideViewPagerContentListAdapter(activity, this, new ArrayList<>(), startTime, endTime, displayWidth, pixelsPerMinute);
         setListAdapter(adapter);

@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.ui.dvr.series_recordings;
+package org.tvheadend.tvhclient.ui.recordings.timer_recordings;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
@@ -17,25 +17,27 @@ import org.tvheadend.tvhclient.data.Constants;
 import org.tvheadend.tvhclient.data.DataStorage;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.model.Channel;
-import org.tvheadend.tvhclient.data.model.SeriesRecording;
+import org.tvheadend.tvhclient.data.model.TimerRecording;
 import org.tvheadend.tvhclient.utils.MiscUtils;
+import org.tvheadend.tvhclient.utils.UIUtils;
 import org.tvheadend.tvhclient.utils.Utils;
 
+import java.util.Calendar;
 import java.util.Comparator;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class SeriesRecordingListAdapter extends ArrayAdapter<SeriesRecording> {
+public class TimerRecordingListAdapter extends ArrayAdapter<TimerRecording> {
 
     private final Activity context;
-    private final List<SeriesRecording> list;
+    private final List<TimerRecording> list;
     private final int htspVersion;
     private final SharedPreferences sharedPreferences;
     private int selectedPosition = 0;
 
-    public SeriesRecordingListAdapter(Activity context, List<SeriesRecording> list) {
+    public TimerRecordingListAdapter(Activity context, List<TimerRecording> list) {
         super(context, 0);
         this.context = context;
         this.list = list;
@@ -46,8 +48,8 @@ public class SeriesRecordingListAdapter extends ArrayAdapter<SeriesRecording> {
     public void sort(final int type) {
         switch (type) {
             case Constants.RECORDING_SORT_ASCENDING:
-                sort(new Comparator<SeriesRecording>() {
-                    public int compare(SeriesRecording x, SeriesRecording y) {
+                sort(new Comparator<TimerRecording>() {
+                    public int compare(TimerRecording x, TimerRecording y) {
                         if (x != null && y != null && x.title != null && y.title != null) {
                             return (y.title.compareTo(x.title));
                         }
@@ -56,8 +58,8 @@ public class SeriesRecordingListAdapter extends ArrayAdapter<SeriesRecording> {
                 });
                 break;
             case Constants.RECORDING_SORT_DESCENDING:
-                sort(new Comparator<SeriesRecording>() {
-                    public int compare(SeriesRecording x, SeriesRecording y) {
+                sort(new Comparator<TimerRecording>() {
+                    public int compare(TimerRecording x, TimerRecording y) {
                         if (x != null && y != null && x.title != null && y.title != null) {
                             return (x.title.compareTo(y.title));
                         }
@@ -75,9 +77,10 @@ public class SeriesRecordingListAdapter extends ArrayAdapter<SeriesRecording> {
     static class ViewHolder {
         @BindView(R.id.icon) ImageView iconImageView;
         @BindView(R.id.title) TextView titleTextView;
-        @BindView(R.id.name) TextView nameTextView;
         @BindView(R.id.channel) TextView channelTextView;
         @BindView(R.id.daysOfWeek) TextView daysOfWeekTextView;
+        @BindView(R.id.time) TextView timeTextView;
+        @BindView(R.id.duration) TextView durationTextView;
         @BindView(R.id.enabled) TextView isEnabledTextView;
         @Nullable
         @BindView(R.id.dual_pane_list_item_selection) ImageView dual_pane_list_item_selection;
@@ -94,7 +97,7 @@ public class SeriesRecordingListAdapter extends ArrayAdapter<SeriesRecording> {
         if (view != null) {
             holder = (ViewHolder) view.getTag();
         } else {
-            view = context.getLayoutInflater().inflate(R.layout.series_recording_list_adapter, parent, false);
+            view = context.getLayoutInflater().inflate(R.layout.timer_recording_list_adapter, parent, false);
             holder = new ViewHolder(view);
             view.setTag(holder);
         }
@@ -105,7 +108,7 @@ public class SeriesRecordingListAdapter extends ArrayAdapter<SeriesRecording> {
         if (holder.dual_pane_list_item_selection != null) {
             // Set the correct indication when the dual pane mode is active
             // If the item is selected the the arrow will be shown, otherwise
-            // only a vertical separation line is displayed.
+            // only a vertical separation line is displayed.                
             if (selectedPosition == position) {
                 final int icon = (lightTheme) ? R.drawable.dual_pane_selector_active_light : R.drawable.dual_pane_selector_active_dark;
                 holder.dual_pane_list_item_selection.setBackgroundResource(icon);
@@ -116,17 +119,15 @@ public class SeriesRecordingListAdapter extends ArrayAdapter<SeriesRecording> {
         }
 
         // Get the program and assign all the values
-        SeriesRecording srec = getItem(position);
-        if (srec != null) {
-            Channel channel = DataStorage.getInstance().getChannelFromArray(srec.channel);
-            holder.titleTextView.setText(srec.title);
-
-            if (!TextUtils.isEmpty(srec.name)) {
-                holder.nameTextView.setVisibility(View.VISIBLE);
-                holder.nameTextView.setText(srec.name);
+        TimerRecording trec = getItem(position);
+        if (trec != null) {
+            Channel channel = DataStorage.getInstance().getChannelFromArray(trec.channel);
+            if (!TextUtils.isEmpty(trec.title)) {
+                holder.titleTextView.setText(trec.title);
             } else {
-                holder.nameTextView.setVisibility(View.GONE);
+                holder.titleTextView.setText(trec.name);
             }
+
             if (channel != null) {
                 holder.channelTextView.setText(channel.channelName);
                 Bitmap iconBitmap = MiscUtils.getCachedIcon(context, channel.channelIcon);
@@ -135,27 +136,40 @@ public class SeriesRecordingListAdapter extends ArrayAdapter<SeriesRecording> {
             } else {
                 holder.channelTextView.setText(R.string.all_channels);
             }
-            // TODO change
-            Utils.setDaysOfWeek(context, null, holder.daysOfWeekTextView, srec.daysOfWeek);
+
+            Utils.setDaysOfWeek(context, null, holder.daysOfWeekTextView, trec.daysOfWeek);
+
+            Calendar startTime = Calendar.getInstance();
+            startTime.set(Calendar.HOUR_OF_DAY, trec.start / 60);
+            startTime.set(Calendar.MINUTE, trec.start % 60);
+
+            Calendar endTime = Calendar.getInstance();
+            endTime.set(Calendar.HOUR_OF_DAY, trec.stop / 60);
+            endTime.set(Calendar.MINUTE, trec.stop % 60);
+
+            String time = UIUtils.getTime(getContext(), startTime.getTimeInMillis()) + " - " + UIUtils.getTime(getContext(), endTime.getTimeInMillis());
+            holder.timeTextView.setText(time);
+
+            holder.durationTextView.setText(context.getString(R.string.minutes, (trec.stop - trec.start)));
             holder.isEnabledTextView.setVisibility(htspVersion >= 19 ? View.VISIBLE : View.GONE);
-            holder.isEnabledTextView.setText(srec.enabled > 0 ? R.string.recording_enabled : R.string.recording_disabled);
+            holder.isEnabledTextView.setText(trec.enabled > 0 ? R.string.recording_enabled : R.string.recording_disabled);
         }
         return view;
     }
 
-    public void update(SeriesRecording srec) {
+    public void update(TimerRecording trec) {
         int length = list.size();
         // Go through the list of programs and find the
         // one with the same id. If its been found, replace it.
         for (int i = 0; i < length; ++i) {
-            if (list.get(i).id.compareTo(srec.id) == 0) {
-                list.set(i, srec);
+            if (list.get(i).id.compareTo(trec.id) == 0) {
+                list.set(i, trec);
                 break;
             }
         }
     }
 
-    public List<SeriesRecording> getAllItems() {
+    public List<TimerRecording> getAllItems() {
         return list;
     }
 }

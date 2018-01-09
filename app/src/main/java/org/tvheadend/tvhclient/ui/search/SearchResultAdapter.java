@@ -1,6 +1,10 @@
 package org.tvheadend.tvhclient.ui.search;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -9,12 +13,12 @@ import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import org.tvheadend.tvhclient.data.DataStorage;
 import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.data.DataStorage;
 import org.tvheadend.tvhclient.data.model.Channel;
 import org.tvheadend.tvhclient.data.model.Program;
 import org.tvheadend.tvhclient.utils.MiscUtils;
-import org.tvheadend.tvhclient.utils.Utils;
+import org.tvheadend.tvhclient.utils.UIUtils;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -25,6 +29,7 @@ public class SearchResultAdapter extends ArrayAdapter<Program> implements Filter
 
     private final static String TAG = SearchResultAdapter.class.getSimpleName();
     private final Activity context;
+    private final SharedPreferences sharedPreferences;
     private List<Program> originalData = null;
     private List<Program> filteredData = null;
     private final ItemFilter mFilter = new ItemFilter();
@@ -34,6 +39,7 @@ public class SearchResultAdapter extends ArrayAdapter<Program> implements Filter
         this.context = context;
         originalData = list;
         filteredData = list;
+        this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
     public void sort() {
@@ -65,10 +71,10 @@ public class SearchResultAdapter extends ArrayAdapter<Program> implements Filter
     }
 
     static class ProgramViewHolder {
-        public ImageView icon;
-        public TextView icon_text;
-        public TextView title;
-        public TextView channel;
+        public ImageView iconImageView;
+        public TextView iconTextView;
+        public TextView titleTextView;
+        public TextView channelTextView;
         public TextView time;
         public TextView date;
         public TextView duration;
@@ -76,7 +82,7 @@ public class SearchResultAdapter extends ArrayAdapter<Program> implements Filter
         public TextView seriesInfo;
         public TextView contentType;
         public ImageView state;
-        public TextView genre;
+        public TextView genreTextView;
     }
 
     static class RecordingViewHolder {
@@ -115,14 +121,14 @@ public class SearchResultAdapter extends ArrayAdapter<Program> implements Filter
         if (view == null) {
             view = context.getLayoutInflater().inflate(R.layout.recording_list_widget, parent, false);
             holder = new RecordingViewHolder();
-            holder.icon = view.findViewById(R.id.icon);
-            holder.icon_text = view.findViewById(R.id.icon_text);
-            holder.title = view.findViewById(R.id.title);
+            holder.iconImageView = view.findViewById(R.id.iconImageView);
+            holder.iconTextView = view.findViewById(R.id.iconTextView);
+            holder.titleTextView = view.findViewById(R.id.titleTextView);
             holder.subtitle = view.findViewById(R.id.subtitle);
             holder.state = view.findViewById(R.id.state);
             holder.is_series_recording = view.findViewById(R.id.is_series_recording);
             holder.is_timer_recording = view.findViewById(R.id.is_timer_recording);
-            holder.channel = view.findViewById(R.id.channel);
+            holder.channelTextView = view.findViewById(R.id.channelTextView);
             holder.time = view.findViewById(R.id.time);
             holder.date = view.findViewById(R.id.date);
             holder.duration = view.findViewById(R.id.duration);
@@ -137,9 +143,9 @@ public class SearchResultAdapter extends ArrayAdapter<Program> implements Filter
         // Get the program and assign all the values
         Recording rec = (Recording) getItem(position);
         if (rec != null) {
-            holder.title.setText(rec.title);
-            if (holder.channel != null && rec.channel != null) {
-                holder.channel.setText(rec.channel.name);
+            holder.titleTextView.setText(rec.titleTextView);
+            if (holder.channelTextView != null && rec.channelTextView != null) {
+                holder.channelTextView.setText(rec.channelTextView.name);
             }
 
             if (rec.subtitle != null && rec.subtitle.length() > 0) {
@@ -149,7 +155,7 @@ public class SearchResultAdapter extends ArrayAdapter<Program> implements Filter
                 holder.subtitle.setVisibility(View.GONE);
             }
             
-            Utils.setChannelIcon(holder.icon, holder.icon_text, rec.channel);
+            Utils.setChannelIcon(holder.iconImageView, holder.iconTextView, rec.channelTextView);
             Utils.setDate(holder.date, rec.start);
             Utils.setTime(holder.time, rec.start, rec.stop);
             Utils.setDuration(holder.duration, rec.start, rec.stop);
@@ -194,10 +200,10 @@ public class SearchResultAdapter extends ArrayAdapter<Program> implements Filter
         if (view == null) {
             view = context.getLayoutInflater().inflate(R.layout.search_result_adapter, parent, false);
             holder = new ProgramViewHolder();
-            holder.icon = view.findViewById(R.id.icon);
-            holder.icon_text = view.findViewById(R.id.icon_text);
-            holder.title = view.findViewById(R.id.title);
-            holder.channel = view.findViewById(R.id.channel);
+            holder.iconImageView = view.findViewById(R.id.icon);
+            holder.iconTextView = view.findViewById(R.id.icon_text);
+            holder.titleTextView = view.findViewById(R.id.title);
+            holder.channelTextView = view.findViewById(R.id.channel);
             holder.state = view.findViewById(R.id.state);
             holder.time = view.findViewById(R.id.time);
             holder.date = view.findViewById(R.id.date);
@@ -205,29 +211,59 @@ public class SearchResultAdapter extends ArrayAdapter<Program> implements Filter
             holder.seriesInfo = view.findViewById(R.id.series_info);
             holder.contentType = view.findViewById(R.id.content_type);
             holder.description = view.findViewById(R.id.description);
-            holder.genre = view.findViewById(R.id.genre);
+            holder.genreTextView = view.findViewById(R.id.genre);
             view.setTag(holder);
         } else {
             holder = (ProgramViewHolder) view.getTag();
         }
 
+        boolean showChannelIcons = sharedPreferences.getBoolean("showIconPref", true);
+        boolean showChannelName = sharedPreferences.getBoolean("showChannelNamePref", true);
+        boolean showGenreColors = sharedPreferences.getBoolean("showGenreColorsSearchPref", false);
+
         // Get the program and assign all the values
         Program p = getItem(position);
         if (p != null) {
-            holder.title.setText(p.title);
+            holder.titleTextView.setText(p.title);
+
             Channel channel = DataStorage.getInstance().getChannelFromArray(p.channelId);
-            if (holder.channel != null && channel != null) {
-                holder.channel.setText(channel.channelName);
+            holder.channelTextView.setText(channel.channelName);
+            holder.channelTextView.setVisibility(showChannelName ? View.VISIBLE : View.GONE);
+
+            // Show the regular or large channel icons. Otherwise show the channel name only
+            // Assign the channel icon image or a null image
+            Bitmap iconBitmap = MiscUtils.getCachedIcon(context, channel.channelIcon);
+            holder.iconImageView.setImageBitmap(iconBitmap);
+            holder.iconTextView.setText(channel.channelName);
+
+            // Show or hide the regular or large channel icon or name text views
+            holder.iconImageView.setVisibility(showChannelIcons ? ImageView.VISIBLE : ImageView.GONE);
+            holder.iconTextView.setVisibility(showChannelIcons ? ImageView.VISIBLE : ImageView.GONE);
+
+            Drawable drawable = UIUtils.getRecordingState(context, p.dvrId);
+            holder.state.setVisibility(drawable != null ? View.VISIBLE : View.GONE);
+            holder.state.setImageDrawable(drawable);
+
+            holder.date.setText(UIUtils.getDate(getContext(), p.start));
+
+            String time = UIUtils.getTime(getContext(), p.start) + " - " + UIUtils.getTime(getContext(), p.stop);
+            holder.time.setText(time);
+
+            String durationTime = getContext().getString(R.string.minutes, (int) ((p.stop - p.start) / 1000 / 60));
+            holder.duration.setText(durationTime);
+
+            holder.description.setText(p.description);
+
+            holder.contentType.setText(UIUtils.getContentTypeText(getContext(), p.contentType));
+            holder.seriesInfo.setText(UIUtils.getSeriesInfo(getContext(), p));
+
+            if (showGenreColors) {
+                int color = UIUtils.getGenreColor(context, p.contentType, 0);
+                holder.genreTextView.setBackgroundColor(color);
+                holder.genreTextView.setVisibility(View.VISIBLE);
+            } else {
+                holder.genreTextView.setVisibility(View.GONE);
             }
-            Utils.setChannelIcon(context, holder.icon, holder.icon_text, channel);
-            //Utils.setState(context, holder.state, p);
-            Utils.setDate(holder.date, p.start);
-            Utils.setTime(holder.time, p.start, p.stop);
-            Utils.setDuration(holder.duration, p.start, p.stop);
-            Utils.setDescription(null, holder.description, p.description);
-            Utils.setContentType(null, holder.contentType, p.contentType);
-            Utils.setSeriesInfo(context, null, holder.seriesInfo, p);
-            MiscUtils.setGenreColor(context, holder.genre, p.contentType, TAG);
         }
         return view;
     }

@@ -79,7 +79,7 @@ public class MenuUtils {
         final List<GenreColorDialogItem> items = new ArrayList<>();
         for (int i = 0; i < s.length; ++i) {
             GenreColorDialogItem genreColor = new GenreColorDialogItem();
-            genreColor.color = MiscUtils.getGenreColor(activity, ((i + 1) * 16), 0);
+            genreColor.color = UIUtils.getGenreColor(activity, ((i + 1) * 16), 0);
             genreColor.genre = s[i];
             items.add(genreColor);
         }

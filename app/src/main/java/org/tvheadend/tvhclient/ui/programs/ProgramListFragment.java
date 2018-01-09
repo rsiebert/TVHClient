@@ -260,7 +260,7 @@ public class ProgramListFragment extends ListFragment implements HTSListener, On
         if (program == null) {
             return;
         }
-        // Launch a new activity to display the program list of the selected channel.
+        // Launch a new activity to display the program list of the selected channelTextView.
         Intent intent = new Intent(getActivity(), ProgramDetailsActivity.class);
         intent.putExtra("eventId", program.eventId);
         activity.startActivity(intent);
@@ -352,7 +352,7 @@ public class ProgramListFragment extends ListFragment implements HTSListener, On
 
     @Override
     public void onSearchRequested(String query) {
-        // Start searching for programs on the given channel
+        // Start searching for programs on the given channelTextView
         Intent searchIntent = new Intent(getActivity(), SearchActivity.class);
         searchIntent.putExtra(SearchManager.QUERY, query);
         searchIntent.setAction(Intent.ACTION_SEARCH);

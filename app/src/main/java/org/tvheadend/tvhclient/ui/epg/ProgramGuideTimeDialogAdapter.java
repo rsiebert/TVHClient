@@ -1,5 +1,6 @@
 package org.tvheadend.tvhclient.ui.epg;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -9,7 +10,7 @@ import android.widget.TextView;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.model.ProgramGuideTimeDialogItem;
-import org.tvheadend.tvhclient.utils.Utils;
+import org.tvheadend.tvhclient.utils.UIUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -27,6 +28,7 @@ import java.util.Locale;
  */
 public class ProgramGuideTimeDialogAdapter extends RecyclerView.Adapter<ProgramGuideTimeDialogAdapter.ViewHolder> {
 
+    private final Context context;
     private Callback mCallback;
     private List<ProgramGuideTimeDialogItem> list;
 
@@ -34,8 +36,9 @@ public class ProgramGuideTimeDialogAdapter extends RecyclerView.Adapter<ProgramG
         void onItemClicked(int index);
     }
 
-    public ProgramGuideTimeDialogAdapter(List<ProgramGuideTimeDialogItem> list) {
+    public ProgramGuideTimeDialogAdapter(Context context, List<ProgramGuideTimeDialogItem> list) {
         this.list = list;
+        this.context = context;
     }
 
     public void setCallback(Callback mCallback) {
@@ -62,7 +65,8 @@ public class ProgramGuideTimeDialogAdapter extends RecyclerView.Adapter<ProgramG
             holder.time.setText(time);
 
             final SimpleDateFormat sdf2 = new SimpleDateFormat("dd.MM.yyyy", Locale.US);
-            Utils.setDate(holder.date1, item.start);
+
+            holder.date1.setText(UIUtils.getDate(context, item.start));
             holder.date2.setText(sdf2.format(item.start));
 
             if (holder.date1.getText().equals(holder.date2.getText())) {

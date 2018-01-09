@@ -13,17 +13,18 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.Constants;
 import org.tvheadend.tvhclient.data.DataStorage;
-import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.model.Channel;
 import org.tvheadend.tvhclient.data.model.Program;
 import org.tvheadend.tvhclient.data.model.Recording;
 import org.tvheadend.tvhclient.utils.MenuUtils;
 import org.tvheadend.tvhclient.utils.MiscUtils;
-import org.tvheadend.tvhclient.utils.Utils;
+import org.tvheadend.tvhclient.utils.UIUtils;
 
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -168,6 +169,7 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> implements OnClick
             boolean showNextProgramTitle = sharedPreferences.getBoolean("showNextProgramPref", true);
             boolean showChannelIcons = sharedPreferences.getBoolean("showIconPref", true);
             boolean showLargeChannelIcons = sharedPreferences.getBoolean("showBigIconPref", false);
+            boolean showGenreColors = sharedPreferences.getBoolean("showGenreColorsChannelsPref", false);
 
             // Set the initial values
             holder.progressbar.setProgress(0);
@@ -236,17 +238,27 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> implements OnClick
                 holder.subtitleTextView.setText(p.subtitle);
                 holder.subtitleTextView.setVisibility(showSubtitle ? View.VISIBLE : View.GONE);
 
-                Utils.setTime(holder.timeTextView, p.start, p.stop);
-                Utils.setDuration(holder.durationTextView, p.start, p.stop);
+                String time = UIUtils.getTime(context, p.start) + " - " + UIUtils.getTime(context, p.stop);
+                holder.timeTextView.setText(time);
 
-                Utils.setProgress(holder.progressbar, p.start, p.stop);
+                String durationTime = context.getString(R.string.minutes, (int) ((p.stop - p.start) / 1000 / 60));
+                holder.durationTextView.setText(durationTime);
+
+                holder.progressbar.setProgress(getProgressPercentage(p.start, p.stop));
                 holder.progressbar.setVisibility(showProgressbar ? View.VISIBLE : View.GONE);
 
                 if (np != null) {
                     holder.nextTitleTextView.setVisibility(showNextProgramTitle ? View.VISIBLE : View.GONE);
                     holder.nextTitleTextView.setText(context.getString(R.string.next_program, np.title));
                 }
-                MiscUtils.setGenreColor(context, holder.genreTextView, p.contentType, TAG);
+
+                if (showGenreColors) {
+                    int color = UIUtils.getGenreColor(context, p.contentType, 0);
+                    holder.genreTextView.setBackgroundColor(color);
+                    holder.genreTextView.setVisibility(View.VISIBLE);
+                } else {
+                    holder.genreTextView.setVisibility(View.GONE);
+                }
 
             } else {
                 // The channel does not provide program data. Hide the progress
@@ -289,5 +301,18 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> implements OnClick
             return list.get(selectedPosition);
         }
         return null;
+    }
+
+    private int getProgressPercentage(long start, long stop) {
+        // Get the start and end times to calculate the progress.
+        double durationTime = (stop - start);
+        double elapsedTime = new Date().getTime() - start;
+
+        // Show the progress as a percentage
+        double percentage = 0;
+        if (durationTime > 0) {
+            percentage = elapsedTime / durationTime;
+        }
+        return (int) Math.floor(percentage * 100);
     }
 }

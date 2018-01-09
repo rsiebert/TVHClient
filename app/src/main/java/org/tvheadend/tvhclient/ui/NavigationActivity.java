@@ -16,12 +16,12 @@ import org.tvheadend.tvhclient.ui.epg.ProgramGuideViewPagerFragment;
 import org.tvheadend.tvhclient.ui.misc.InfoFragment;
 import org.tvheadend.tvhclient.ui.misc.StatusFragment;
 import org.tvheadend.tvhclient.ui.misc.UnlockerFragment;
-import org.tvheadend.tvhclient.ui.dvr.recordings.CompletedRecordingListFragment;
-import org.tvheadend.tvhclient.ui.dvr.recordings.FailedRecordingListFragment;
-import org.tvheadend.tvhclient.ui.dvr.recordings.RemovedRecordingListFragment;
-import org.tvheadend.tvhclient.ui.dvr.recordings.ScheduledRecordingListFragment;
-import org.tvheadend.tvhclient.ui.dvr.series_recordings.SeriesRecordingListFragment;
-import org.tvheadend.tvhclient.ui.dvr.timer_recordings.TimerRecordingListFragment;
+import org.tvheadend.tvhclient.ui.recordings.recordings.CompletedRecordingListFragment;
+import org.tvheadend.tvhclient.ui.recordings.recordings.FailedRecordingListFragment;
+import org.tvheadend.tvhclient.ui.recordings.recordings.RemovedRecordingListFragment;
+import org.tvheadend.tvhclient.ui.recordings.recordings.ScheduledRecordingListFragment;
+import org.tvheadend.tvhclient.ui.recordings.series_recordings.SeriesRecordingListFragment;
+import org.tvheadend.tvhclient.ui.recordings.timer_recordings.TimerRecordingListFragment;
 import org.tvheadend.tvhclient.ui.settings.SettingsActivity;
 
 // TODO make nav image blasser

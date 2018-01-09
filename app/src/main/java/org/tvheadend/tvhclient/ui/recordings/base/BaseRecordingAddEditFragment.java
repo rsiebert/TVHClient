@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.ui.dvr.base;
+package org.tvheadend.tvhclient.ui.recordings.base;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -19,10 +19,10 @@ import org.tvheadend.tvhclient.data.model.Connection;
 import org.tvheadend.tvhclient.data.model.Profile;
 import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
 import org.tvheadend.tvhclient.ui.channels.ChannelListSelectionAdapter;
-import org.tvheadend.tvhclient.ui.dvr.common.DateTimePickerCallback;
-import org.tvheadend.tvhclient.ui.dvr.common.DaysOfWeekSelectionCallback;
-import org.tvheadend.tvhclient.ui.dvr.common.RecordingPriorityListCallback;
-import org.tvheadend.tvhclient.ui.dvr.common.RecordingProfileListCallback;
+import org.tvheadend.tvhclient.ui.recordings.common.DateTimePickerCallback;
+import org.tvheadend.tvhclient.ui.recordings.common.DaysOfWeekSelectionCallback;
+import org.tvheadend.tvhclient.ui.recordings.common.RecordingPriorityListCallback;
+import org.tvheadend.tvhclient.ui.recordings.common.RecordingProfileListCallback;
 import org.tvheadend.tvhclient.utils.MenuUtils;
 import org.tvheadend.tvhclient.utils.callbacks.ChannelListSelectionCallback;
 

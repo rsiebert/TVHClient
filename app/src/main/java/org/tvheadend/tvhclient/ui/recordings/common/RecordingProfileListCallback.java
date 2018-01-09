@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.ui.dvr.common;
+package org.tvheadend.tvhclient.ui.recordings.common;
 
 public interface RecordingProfileListCallback {
 

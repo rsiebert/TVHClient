@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.ui.dvr.recordings;
+package org.tvheadend.tvhclient.ui.recordings.recordings;
 
 import android.app.SearchManager;
 import android.content.Intent;

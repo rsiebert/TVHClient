@@ -7,6 +7,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -20,17 +21,17 @@ import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
-import org.tvheadend.tvhclient.data.DataStorage;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
+import org.tvheadend.tvhclient.data.DataStorage;
 import org.tvheadend.tvhclient.data.model.Channel;
 import org.tvheadend.tvhclient.data.model.Program;
 import org.tvheadend.tvhclient.data.model.Recording;
 import org.tvheadend.tvhclient.data.tasks.ImageDownloadTask;
 import org.tvheadend.tvhclient.data.tasks.ImageDownloadTaskCallback;
+import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
 import org.tvheadend.tvhclient.utils.MenuUtils;
-import org.tvheadend.tvhclient.utils.Utils;
+import org.tvheadend.tvhclient.utils.UIUtils;
 
 import java.util.Date;
 
@@ -134,20 +135,55 @@ public class ProgramDetailsFragment extends Fragment implements ImageDownloadTas
             });
         }
 
-        // Show the program information        
-        Utils.setState(getActivity(), state, program);
-        Utils.setDate(date, program.start);
-        Utils.setTime(time, program.start, program.stop);
-        Utils.setDuration(duration, program.start, program.stop);
-        Utils.setProgressText(progress, program.start, program.stop);
-        Utils.setDescription(descLabel, desc, program.description);
-        Utils.setDescription(titleLabel, title, program.title);
-        Utils.setDescription(summaryLabel, summary, program.summary);
+        // Show the program information
+        if (state != null) {
+            Drawable drawable = UIUtils.getRecordingState(getActivity(), program.dvrId);
+            state.setVisibility(drawable != null ? View.VISIBLE : View.GONE);
+            state.setImageDrawable(drawable);
+        }
 
-        Utils.setDescription(channelLabel, channelName, channel.channelName);
-        Utils.setDescription(descLabel, desc, program.description);
-        Utils.setSeriesInfo(getContext(), seriesInfoLabel, seriesInfo, program);
-        Utils.setContentType(contentTypeLabel, contentType, program.contentType);
+        String timeStr = UIUtils.getTime(getContext(), program.start) + " - " + UIUtils.getTime(getContext(), program.stop);
+        time.setText(timeStr);
+        date.setText(UIUtils.getDate(getContext(), program.start));
+
+        String durationTime = getString(R.string.minutes, (int) ((program.stop - program.start) / 1000 / 60));
+        duration.setText(durationTime);
+
+        String progressText = UIUtils.getProgressText(getContext(), program.start, program.stop);
+        progress.setVisibility(!TextUtils.isEmpty(progressText) ? View.VISIBLE : View.GONE);
+        progress.setText(progressText);
+
+        titleLabel.setVisibility(!TextUtils.isEmpty(program.title) ? View.VISIBLE : View.GONE);
+        title.setVisibility(!TextUtils.isEmpty(program.title) ? View.VISIBLE : View.GONE);
+        title.setText(program.title);
+
+        summaryLabel.setVisibility(!TextUtils.isEmpty(program.summary) ? View.VISIBLE : View.GONE);
+        summary.setVisibility(!TextUtils.isEmpty(program.summary) ? View.VISIBLE : View.GONE);
+        summary.setText(program.summary);
+
+        descLabel.setVisibility(!TextUtils.isEmpty(program.description) ? View.VISIBLE : View.GONE);
+        desc.setVisibility(!TextUtils.isEmpty(program.description) ? View.VISIBLE : View.GONE);
+        desc.setText(program.description);
+
+        channelLabel.setVisibility(!TextUtils.isEmpty(channel.channelName) ? View.VISIBLE : View.GONE);
+        channelName.setVisibility(!TextUtils.isEmpty(channel.channelName) ? View.VISIBLE : View.GONE);
+        channelName.setText(channel.channelName);
+
+        String seriesInfoText = UIUtils.getSeriesInfo(getContext(), program);
+        if (TextUtils.isEmpty(seriesInfoText)) {
+            seriesInfoLabel.setVisibility(View.GONE);
+            seriesInfo.setVisibility(View.GONE);
+        } else {
+            seriesInfo.setText(seriesInfoText);
+        }
+
+        String ct = UIUtils.getContentTypeText(getContext(), program.contentType);
+        if (TextUtils.isEmpty(ct)) {
+            contentTypeLabel.setVisibility(View.GONE);
+            contentType.setVisibility(View.GONE);
+        } else {
+            contentType.setText(ct);
+        }
         
         // Show the rating information as starts
         if (program.starRating < 0) {
@@ -156,7 +192,7 @@ public class ProgramDetailsFragment extends Fragment implements ImageDownloadTas
             ratingBar.setVisibility(View.GONE);
         } else {
             ratingBar.setRating((float)program.starRating / 10.0f);
-            String value = "(" + program.starRating + "/" + 100 + ")";
+            String value = " (" + program.starRating + "/" + 10 + ")";
             ratingBarText.setText(value);
         }
 

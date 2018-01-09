@@ -84,8 +84,8 @@
         <receiver android:name=".data.local.NotificationReceiver" />
 
         <activity android:name=".ui.settings.SettingsManageConnectionActivity" />
-        <activity android:name=".ui.dvr.recordings.RecordingAddEditActivity" />
-        <activity android:name=".ui.dvr.recordings.RecordingDetailsActivity" />
+        <activity android:name=".ui.recordings.recordings.RecordingAddEditActivity" />
+        <activity android:name=".ui.recordings.recordings.RecordingDetailsActivity" />
         <activity android:name=".ui.programs.ProgramListActivity" />
         <activity android:name=".ui.misc.ChangeLogActivity" />
         <activity android:name=".ui.MainActivity" />

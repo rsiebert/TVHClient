@@ -1,7 +1,6 @@
-package org.tvheadend.tvhclient.ui.dvr.recordings;
+package org.tvheadend.tvhclient.ui.recordings.recordings;
 
 import android.os.Bundle;
-import android.view.Menu;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
@@ -11,12 +10,12 @@ import org.tvheadend.tvhclient.service.HTSListener;
 
 import java.util.Map;
 
-public class ScheduledRecordingListFragment extends RecordingListFragment implements HTSListener {
+public class CompletedRecordingListFragment extends RecordingListFragment implements HTSListener {
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        toolbarInterface.setTitle(getString(R.string.scheduled_recordings));
+        toolbarInterface.setTitle(getString(R.string.completed_recordings));
     }
 
     @Override
@@ -41,18 +40,12 @@ public class ScheduledRecordingListFragment extends RecordingListFragment implem
     }
 
     @Override
-    public void onPrepareOptionsMenu(Menu menu) {
-        super.onPrepareOptionsMenu(menu);
-        menu.findItem(R.id.menu_add).setVisible(isUnlocked);
-    }
-
-    @Override
     protected void populateList() {
         // Clear the list and add the recordings
         adapter.clear();
         Map<Integer, Recording> map = DataStorage.getInstance().getRecordingsFromArray();
         for (Recording recording : map.values()) {
-            if (recording.isScheduled()) {
+            if (recording.isCompleted()) {
                 adapter.add(recording);
             }
         }
@@ -68,7 +61,7 @@ public class ScheduledRecordingListFragment extends RecordingListFragment implem
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
                         Recording recording = (Recording) obj;
-                        if (recording.isScheduled() || recording.isRecording()) {
+                        if (recording.isCompleted()) {
                             handleAdapterChanges(action, recording);
                         }
                     }

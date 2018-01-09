@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.ui.dvr.recordings;
+package org.tvheadend.tvhclient.ui.recordings.recordings;
 
 import android.os.Bundle;
 
@@ -10,12 +10,12 @@ import org.tvheadend.tvhclient.service.HTSListener;
 
 import java.util.Map;
 
-public class CompletedRecordingListFragment extends RecordingListFragment implements HTSListener {
+public class FailedRecordingListFragment extends RecordingListFragment implements HTSListener {
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        toolbarInterface.setTitle(getString(R.string.completed_recordings));
+        toolbarInterface.setTitle(getString(R.string.failed_recordings));
     }
 
     @Override
@@ -45,7 +45,7 @@ public class CompletedRecordingListFragment extends RecordingListFragment implem
         adapter.clear();
         Map<Integer, Recording> map = DataStorage.getInstance().getRecordingsFromArray();
         for (Recording recording : map.values()) {
-            if (recording.isCompleted()) {
+            if (recording.isFailed() || recording.isAborted() || recording.isMissed()) {
                 adapter.add(recording);
             }
         }
@@ -61,7 +61,7 @@ public class CompletedRecordingListFragment extends RecordingListFragment implem
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
                         Recording recording = (Recording) obj;
-                        if (recording.isCompleted()) {
+                        if (recording.isFailed() || recording.isAborted() || recording.isMissed()) {
                             handleAdapterChanges(action, recording);
                         }
                     }

@@ -1,6 +1,7 @@
-package org.tvheadend.tvhclient.ui.dvr.recordings;
+package org.tvheadend.tvhclient.ui.recordings.recordings;
 
 import android.os.Bundle;
+import android.view.Menu;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
@@ -10,12 +11,12 @@ import org.tvheadend.tvhclient.service.HTSListener;
 
 import java.util.Map;
 
-public class FailedRecordingListFragment extends RecordingListFragment implements HTSListener {
+public class ScheduledRecordingListFragment extends RecordingListFragment implements HTSListener {
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        toolbarInterface.setTitle(getString(R.string.failed_recordings));
+        toolbarInterface.setTitle(getString(R.string.scheduled_recordings));
     }
 
     @Override
@@ -40,12 +41,18 @@ public class FailedRecordingListFragment extends RecordingListFragment implement
     }
 
     @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        menu.findItem(R.id.menu_add).setVisible(isUnlocked);
+    }
+
+    @Override
     protected void populateList() {
         // Clear the list and add the recordings
         adapter.clear();
         Map<Integer, Recording> map = DataStorage.getInstance().getRecordingsFromArray();
         for (Recording recording : map.values()) {
-            if (recording.isFailed() || recording.isAborted() || recording.isMissed()) {
+            if (recording.isScheduled()) {
                 adapter.add(recording);
             }
         }
@@ -61,7 +68,7 @@ public class FailedRecordingListFragment extends RecordingListFragment implement
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
                         Recording recording = (Recording) obj;
-                        if (recording.isFailed() || recording.isAborted() || recording.isMissed()) {
+                        if (recording.isScheduled() || recording.isRecording()) {
                             handleAdapterChanges(action, recording);
                         }
                     }

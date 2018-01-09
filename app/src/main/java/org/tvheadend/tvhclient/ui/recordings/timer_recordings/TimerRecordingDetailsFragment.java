@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.ui.dvr.series_recordings;
+package org.tvheadend.tvhclient.ui.recordings.timer_recordings;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,43 +18,42 @@ import org.tvheadend.tvhclient.data.DataStorage;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
 import org.tvheadend.tvhclient.data.model.Channel;
-import org.tvheadend.tvhclient.data.model.SeriesRecording;
-import org.tvheadend.tvhclient.ui.dvr.recordings.RecordingAddEditActivity;
+import org.tvheadend.tvhclient.data.model.TimerRecording;
+import org.tvheadend.tvhclient.ui.recordings.recordings.RecordingAddEditActivity;
 import org.tvheadend.tvhclient.utils.MenuUtils;
+import org.tvheadend.tvhclient.utils.UIUtils;
 import org.tvheadend.tvhclient.utils.Utils;
+
+import java.util.Calendar;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-public class SeriesRecordingDetailsFragment extends Fragment {
+public class TimerRecordingDetailsFragment extends Fragment {
 
     @BindView(R.id.is_enabled) TextView isEnabledTextView;
     @BindView(R.id.directory_label) TextView directoryLabelTextView;
     @BindView(R.id.directory) TextView directoryTextView;
-    @BindView(R.id.minimum_duration) TextView minDurationTextView;
-    @BindView(R.id.maximum_duration) TextView maxDurationTextView;
-    @BindView(R.id.start_after_time) TextView startTimeTextView;
-    @BindView(R.id.start_before_time) TextView startWindowTimeTextView;
+    @BindView(R.id.time) TextView timeTextView;
+    @BindView(R.id.duration) TextView durationTextView;
     @BindView(R.id.days_of_week) TextView daysOfWeekTextView;
     @BindView(R.id.channel) TextView channelNameTextView;
-    @BindView(R.id.name_label) TextView nameLabelTextView;
-    @BindView(R.id.name) TextView nameTextView;
     @BindView(R.id.priority) TextView priorityTextView;
 
     @Nullable
     @BindView(R.id.nested_toolbar)
     Toolbar nestedToolbar;
 
+    private TimerRecording recording;
     private ToolbarInterface toolbarInterface;
-    private SeriesRecording recording;
     private MenuUtils menuUtils;
     private String id;
     private Unbinder unbinder;
     private int htspVersion;
 
-    public static SeriesRecordingDetailsFragment newInstance(String id) {
-        SeriesRecordingDetailsFragment f = new SeriesRecordingDetailsFragment();
+    public static TimerRecordingDetailsFragment newInstance(String id) {
+        TimerRecordingDetailsFragment f = new TimerRecordingDetailsFragment();
         Bundle args = new Bundle();
         args.putString("id", id);
         f.setArguments(args);
@@ -66,7 +65,7 @@ public class SeriesRecordingDetailsFragment extends Fragment {
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.recording_details_fragment, container, false);
         ViewStub stub = view.findViewById(R.id.stub);
-        stub.setLayoutResource(R.layout.series_recording_details_fragment_contents);
+        stub.setLayoutResource(R.layout.timer_recording_details_fragment_contents);
         stub.inflate();
         unbinder = ButterKnife.bind(this, view);
         return view;
@@ -99,7 +98,7 @@ public class SeriesRecordingDetailsFragment extends Fragment {
         }
 
         // Get the recording so we can show its details
-        recording = DataStorage.getInstance().getSeriesRecordingFromArray(id);
+        recording = DataStorage.getInstance().getTimerRecordingFromArray(id);
 
         if (nestedToolbar != null) {
             nestedToolbar.inflateMenu(R.menu.recording_details_toolbar_menu);
@@ -111,7 +110,7 @@ public class SeriesRecordingDetailsFragment extends Fragment {
             });
         }
 
-        isEnabledTextView.setVisibility(htspVersion >= 19 ? View.VISIBLE : View.GONE);
+        isEnabledTextView.setVisibility((htspVersion >= 19) ? View.VISIBLE : View.GONE);
         isEnabledTextView.setText(recording.enabled > 0 ? R.string.recording_enabled : R.string.recording_disabled);
 
         directoryLabelTextView.setVisibility(htspVersion >= 19 ? View.VISIBLE : View.GONE);
@@ -121,23 +120,25 @@ public class SeriesRecordingDetailsFragment extends Fragment {
         Channel channel = DataStorage.getInstance().getChannelFromArray(recording.channel);
         channelNameTextView.setText(channel != null ? channel.channelName : getString(R.string.all_channels));
 
-        Utils.setDescription(nameLabelTextView, nameTextView, recording.name);
         Utils.setDaysOfWeek(getActivity(), null, daysOfWeekTextView, recording.daysOfWeek);
 
-        String[] priorityList = getResources().getStringArray(R.array.dvr_priorities);
-        if (recording.priority >= 0 && recording.priority < priorityList.length) {
-            priorityTextView.setText(priorityList[recording.priority]);
+        String[] priorityItems = getResources().getStringArray(R.array.dvr_priorities);
+        if (recording.priority >= 0 && recording.priority < priorityItems.length) {
+            priorityTextView.setText(priorityItems[recording.priority]);
         }
-        if (recording.minDuration > 0) {
-            // The minimum timeTextView is given in seconds, but we want to show it in minutes
-            minDurationTextView.setText(getString(R.string.minutes, (int) (recording.minDuration / 60)));
-        }
-        if (recording.maxDuration > 0) {
-            // The maximum timeTextView is given in seconds, but we want to show it in minutes
-            maxDurationTextView.setText(getString(R.string.minutes, (int) (recording.maxDuration / 60)));
-        }
-        startTimeTextView.setText(Utils.getTimeStringFromValue(getActivity(), recording.start));
-        startWindowTimeTextView.setText(Utils.getTimeStringFromValue(getActivity(), recording.startWindow));
+
+        Calendar startTime = Calendar.getInstance();
+        startTime.set(Calendar.HOUR_OF_DAY, recording.start / 60);
+        startTime.set(Calendar.MINUTE, recording.start % 60);
+
+        Calendar endTime = Calendar.getInstance();
+        endTime.set(Calendar.HOUR_OF_DAY, recording.stop / 60);
+        endTime.set(Calendar.MINUTE, recording.stop % 60);
+
+        String time = UIUtils.getTime(getContext(), startTime.getTimeInMillis()) + " - " + UIUtils.getTime(getContext(), endTime.getTimeInMillis());
+        timeTextView.setText(time);
+
+        durationTextView.setText(getString(R.string.minutes, (recording.stop - recording.start)));
     }
 
     @Override
@@ -173,7 +174,7 @@ public class SeriesRecordingDetailsFragment extends Fragment {
                 return true;
             case R.id.menu_edit:
                 Intent intent = new Intent(getActivity(), RecordingAddEditActivity.class);
-                intent.putExtra("type", "series_recording");
+                intent.putExtra("type", "timer_recording");
                 intent.putExtra("id", recording.id);
                 getActivity().startActivity(intent);
                 return true;

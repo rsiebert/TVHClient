@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.ui.dvr.recordings;
+package org.tvheadend.tvhclient.ui.recordings.recordings;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -23,10 +23,10 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.service.HTSService;
 import org.tvheadend.tvhclient.data.model.Channel;
 import org.tvheadend.tvhclient.data.model.Recording;
-import org.tvheadend.tvhclient.ui.dvr.base.BaseRecordingAddEditFragment;
-import org.tvheadend.tvhclient.ui.dvr.common.DateTimePickerCallback;
-import org.tvheadend.tvhclient.ui.dvr.common.RecordingPriorityListCallback;
-import org.tvheadend.tvhclient.ui.dvr.common.RecordingProfileListCallback;
+import org.tvheadend.tvhclient.ui.recordings.base.BaseRecordingAddEditFragment;
+import org.tvheadend.tvhclient.ui.recordings.common.DateTimePickerCallback;
+import org.tvheadend.tvhclient.ui.recordings.common.RecordingPriorityListCallback;
+import org.tvheadend.tvhclient.ui.recordings.common.RecordingProfileListCallback;
 import org.tvheadend.tvhclient.utils.callbacks.ChannelListSelectionCallback;
 
 import java.util.Calendar;
@@ -178,7 +178,7 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
 
         // Restore the values before the orientation change
         if (savedInstanceState != null) {
-            priority = savedInstanceState.getInt("priorityTextView");
+            priority = savedInstanceState.getInt("priority");
             startExtra = savedInstanceState.getLong("startExtra");
             stopExtra = savedInstanceState.getLong("stopExtra");
             startTime.setTimeInMillis(savedInstanceState.getLong("startTime"));
@@ -188,7 +188,7 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
             description = savedInstanceState.getString("description");
             channelId = savedInstanceState.getInt("channelId");
             recordingProfileName = savedInstanceState.getInt("configName");
-            isEnabled = savedInstanceState.getBoolean("isEnabledTextView");
+            isEnabled = savedInstanceState.getBoolean("isEnabled");
         }
 
         titleLabelTextView.setVisibility(htspVersion >= 21 ? View.VISIBLE : View.GONE);
@@ -255,7 +255,7 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         saveWidgetValuesIntoVariables();
-        outState.putInt("priorityTextView", priority);
+        outState.putInt("priority", priority);
         outState.putLong("startTime", startTime.getTimeInMillis() / 60 / 1000);
         outState.putLong("stopTime", stopTime.getTimeInMillis() / 60 / 1000);
         outState.putLong("startExtra", startExtra);
@@ -265,7 +265,7 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
         outState.putString("description", description);
         outState.putInt("channelId", channelId);
         outState.putInt("configName", recordingProfileName);
-        outState.putBoolean("isEnabledTextView", isEnabled);
+        outState.putBoolean("isEnabled", isEnabled);
         super.onSaveInstanceState(outState);
     }
 
@@ -350,7 +350,7 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
 
     private Intent getIntentData() {
         Intent intent = new Intent(activity, HTSService.class);
-        intent.putExtra("title", title);
+        intent.putExtra("titleTextView", title);
         intent.putExtra("subtitle", subtitle);
         intent.putExtra("description", description);
         // Pass on seconds not milliseconds

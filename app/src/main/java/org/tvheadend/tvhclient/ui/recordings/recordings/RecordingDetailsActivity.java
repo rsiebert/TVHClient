@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.ui.dvr.recordings;
+package org.tvheadend.tvhclient.ui.recordings.recordings;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -7,8 +7,8 @@ import android.support.v7.widget.Toolbar;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
-import org.tvheadend.tvhclient.ui.dvr.series_recordings.SeriesRecordingDetailsFragment;
-import org.tvheadend.tvhclient.ui.dvr.timer_recordings.TimerRecordingDetailsFragment;
+import org.tvheadend.tvhclient.ui.recordings.series_recordings.SeriesRecordingDetailsFragment;
+import org.tvheadend.tvhclient.ui.recordings.timer_recordings.TimerRecordingDetailsFragment;
 import org.tvheadend.tvhclient.ui.programs.ProgramDetailsFragment;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 

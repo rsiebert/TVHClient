@@ -51,7 +51,7 @@ import org.tvheadend.tvhclient.data.model.Program;
 import org.tvheadend.tvhclient.data.model.Recording;
 import org.tvheadend.tvhclient.service.HTSListener;
 import org.tvheadend.tvhclient.service.HTSService;
-import org.tvheadend.tvhclient.ui.dvr.recordings.RecordingDetailsActivity;
+import org.tvheadend.tvhclient.ui.recordings.recordings.RecordingDetailsActivity;
 import org.tvheadend.tvhclient.utils.MenuUtils;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 

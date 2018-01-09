@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.ui.dvr.recordings;
+package org.tvheadend.tvhclient.ui.recordings.recordings;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
@@ -13,14 +13,14 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.Constants;
 import org.tvheadend.tvhclient.data.DataStorage;
-import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.model.Channel;
 import org.tvheadend.tvhclient.data.model.Recording;
 import org.tvheadend.tvhclient.utils.MenuUtils;
 import org.tvheadend.tvhclient.utils.MiscUtils;
-import org.tvheadend.tvhclient.utils.Utils;
+import org.tvheadend.tvhclient.utils.UIUtils;
 
 import java.util.Comparator;
 import java.util.List;
@@ -28,7 +28,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-// TODO move channel logo a bit down in the layout
+// TODO move channelTextView logo a bit down in the layout
 
 public class RecordingListAdapter extends ArrayAdapter<Recording> {
 
@@ -194,12 +194,31 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
             holder.iconImageView.setVisibility(showChannelIcons ? ImageView.VISIBLE : ImageView.GONE);
             holder.iconTextView.setVisibility(showChannelIcons ? ImageView.GONE : ImageView.VISIBLE);
 
-            Utils.setDate(holder.dateTextView, rec.start);
-            Utils.setTime(holder.timeTextView, rec.start, rec.stop);
-            Utils.setDuration(holder.durationTextView, rec.start, rec.stop);
-            Utils.setDescription(null, holder.summaryTextView, rec.summary);
-            Utils.setDescription(null, holder.descriptionTextView, rec.description);
-            Utils.setFailedReason(holder.failedReasonTextView, rec);
+            holder.dateTextView.setText(UIUtils.getDate(getContext(), rec.start));
+
+            String time = UIUtils.getTime(context, rec.start) + " - " + UIUtils.getTime(context, rec.stop);
+            holder.timeTextView.setText(time);
+
+            String durationTime = getContext().getString(R.string.minutes, (int) ((rec.stop - rec.start) / 1000 / 60));
+            holder.durationTextView.setText(durationTime);
+
+            holder.summaryTextView.setVisibility(!TextUtils.isEmpty(rec.summary) ? View.VISIBLE : View.GONE);
+            holder.summaryTextView.setText(rec.summary);
+
+            holder.descriptionTextView.setVisibility(!TextUtils.isEmpty(rec.description) ? View.VISIBLE : View.GONE);
+            holder.descriptionTextView.setText(rec.description);
+
+            if (rec.isRemoved()) {
+                holder.failedReasonTextView.setVisibility(View.GONE);
+            } else if (rec.isAborted()) {
+                holder.failedReasonTextView.setText(context.getResources().getString(R.string.recording_canceled));
+            } else if (rec.isMissed()) {
+                holder.failedReasonTextView.setText(context.getResources().getString(R.string.recording_time_missed));
+            } else if (rec.isFailed()) {
+                holder.failedReasonTextView.setText(context.getResources().getString(R.string.recording_file_invalid));
+            } else {
+                holder.failedReasonTextView.setVisibility(View.GONE);
+            }
 
             // Show only the recording icon
             if (rec.isRecording()) {

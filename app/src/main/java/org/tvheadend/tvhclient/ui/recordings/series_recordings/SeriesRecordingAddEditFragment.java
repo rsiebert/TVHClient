@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.ui.dvr.series_recordings;
+package org.tvheadend.tvhclient.ui.recordings.series_recordings;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -28,11 +28,11 @@ import org.tvheadend.tvhclient.data.model.Profile;
 import org.tvheadend.tvhclient.data.model.SeriesRecording;
 import org.tvheadend.tvhclient.service.HTSListener;
 import org.tvheadend.tvhclient.service.HTSService;
-import org.tvheadend.tvhclient.ui.dvr.base.BaseRecordingAddEditFragment;
-import org.tvheadend.tvhclient.ui.dvr.common.DateTimePickerCallback;
-import org.tvheadend.tvhclient.ui.dvr.common.DaysOfWeekSelectionCallback;
-import org.tvheadend.tvhclient.ui.dvr.common.RecordingPriorityListCallback;
-import org.tvheadend.tvhclient.ui.dvr.common.RecordingProfileListCallback;
+import org.tvheadend.tvhclient.ui.recordings.base.BaseRecordingAddEditFragment;
+import org.tvheadend.tvhclient.ui.recordings.common.DateTimePickerCallback;
+import org.tvheadend.tvhclient.ui.recordings.common.DaysOfWeekSelectionCallback;
+import org.tvheadend.tvhclient.ui.recordings.common.RecordingPriorityListCallback;
+import org.tvheadend.tvhclient.ui.recordings.common.RecordingProfileListCallback;
 import org.tvheadend.tvhclient.utils.callbacks.ChannelListSelectionCallback;
 
 import java.util.Calendar;
@@ -183,7 +183,7 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
         // Restore the values before the orientation change
         if (savedInstanceState != null) {
             // Restore the values before the orientation change
-            priority = savedInstanceState.getInt("priorityTextView");
+            priority = savedInstanceState.getInt("priority");
             minDuration = savedInstanceState.getInt("minDuration");
             maxDuration = savedInstanceState.getInt("maxDuration");
             timeEnabled = savedInstanceState.getBoolean("timeEnabled");
@@ -192,8 +192,8 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
             startExtraTime = savedInstanceState.getLong("startExtraTime");
             stopExtraTime = savedInstanceState.getLong("stopExtraTime");
             duplicateDetectionId = savedInstanceState.getInt("duplicateDetectionId");
-            daysOfWeek = savedInstanceState.getInt("daysOfWeekTextView");
-            directory = savedInstanceState.getString("directoryTextView");
+            daysOfWeek = savedInstanceState.getInt("daysOfWeek");
+            directory = savedInstanceState.getString("directory");
             title = savedInstanceState.getString("title");
             name = savedInstanceState.getString("name");
             isEnabled = savedInstanceState.getBoolean("enabled");
@@ -266,20 +266,20 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         saveWidgetValuesIntoVariables();
-        outState.putInt("priorityTextView", priority);
+        outState.putInt("priority", priority);
         outState.putInt("minDuration", minDuration);
         outState.putInt("maxDuration", maxDuration);
         outState.putLong("startTime", startTime.getTimeInMillis());
         outState.putLong("startWindowTime", startWindowTime.getTimeInMillis());
-        outState.putBoolean("timeEnabledCheckBox", timeEnabled);
+        outState.putBoolean("timeEnabled", timeEnabled);
         outState.putLong("startExtraTime", startExtraTime);
         outState.putLong("stopExtraTime", stopExtraTime);
         outState.putInt("duplicateDetectionId", duplicateDetectionId);
-        outState.putInt("daysOfWeekTextView", daysOfWeek);
-        outState.putString("directoryTextView", directory);
+        outState.putInt("daysOfWeek", daysOfWeek);
+        outState.putString("directory", directory);
         outState.putString("title", title);
         outState.putString("name", name);
-        outState.putBoolean("isEnabledTextView", isEnabled);
+        outState.putBoolean("isEnabled", isEnabled);
         outState.putInt("channelId", channelId);
         outState.putInt("configName", recordingProfileName);
         super.onSaveInstanceState(outState);

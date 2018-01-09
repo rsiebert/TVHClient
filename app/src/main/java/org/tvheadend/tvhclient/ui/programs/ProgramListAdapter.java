@@ -2,7 +2,9 @@ package org.tvheadend.tvhclient.ui.programs;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -11,8 +13,7 @@ import android.widget.TextView;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.model.Program;
-import org.tvheadend.tvhclient.utils.MiscUtils;
-import org.tvheadend.tvhclient.utils.Utils;
+import org.tvheadend.tvhclient.utils.UIUtils;
 
 import java.util.Comparator;
 import java.util.List;
@@ -82,23 +83,48 @@ public class ProgramListAdapter extends ArrayAdapter<Program> {
         }
 
         boolean showProgramSubtitle = sharedPreferences.getBoolean("showProgramSubtitlePref", true);
+        boolean showGenreColors = sharedPreferences.getBoolean("showGenreColorsProgramsPref", false);
 
         // Get the program and assign all the values
         Program p = getItem(position);
         if (p != null) {
             holder.titleTextView.setText(p.title);
-            Utils.setState(context, holder.stateTextView, p);
-            Utils.setDate(holder.dateTextView, p.start);
-            Utils.setTime(holder.timeTextView, p.start, p.stop);
-            Utils.setDuration(holder.durationTextView, p.start, p.stop);
-            Utils.setProgressText(holder.progressTextView, p.start, p.stop);
-            Utils.setDescription(null, holder.summaryTextView, p.summary);
-            Utils.setDescription(null, holder.subtitleTextView, p.subtitle);
-            Utils.setDescription(null, holder.descriptionTextView, p.description);
-            Utils.setContentType(null, holder.contentTypeTextView, p.contentType);
-            Utils.setSeriesInfo(getContext(), null, holder.seriesInfoTextView, p);
-            MiscUtils.setGenreColor(context, holder.genreTextView, p.contentType, TAG);
-            holder.subtitleTextView.setVisibility(showProgramSubtitle ? View.VISIBLE : View.GONE);
+
+            Drawable drawable = UIUtils.getRecordingState(context, p.dvrId);
+            holder.stateTextView.setVisibility(drawable != null ? View.VISIBLE : View.GONE);
+            holder.stateTextView.setImageDrawable(drawable);
+
+            holder.dateTextView.setText(UIUtils.getDate(context, p.start));
+
+            String time = UIUtils.getTime(context, p.start) + " - " + UIUtils.getTime(context, p.stop);
+            holder.timeTextView.setText(time);
+
+            String durationTime = context.getString(R.string.minutes, (int) ((p.stop - p.start) / 1000 / 60));
+            holder.durationTextView.setText(durationTime);
+
+            String progressText = UIUtils.getProgressText(getContext(), p.start, p.stop);
+            holder.progressTextView.setVisibility(!TextUtils.isEmpty(progressText) ? View.VISIBLE : View.GONE);
+            holder.progressTextView.setText(progressText);
+
+            holder.contentTypeTextView.setText(UIUtils.getContentTypeText(getContext(), p.contentType));
+            holder.seriesInfoTextView.setText(UIUtils.getSeriesInfo(getContext(), p));
+
+            holder.subtitleTextView.setVisibility(showProgramSubtitle && !TextUtils.isEmpty(p.subtitle)? View.VISIBLE : View.GONE);
+            holder.subtitleTextView.setText(p.subtitle);
+
+            holder.descriptionTextView.setVisibility(!TextUtils.isEmpty(p.description)? View.VISIBLE : View.GONE);
+            holder.descriptionTextView.setText(p.description);
+
+            holder.summaryTextView.setVisibility(!TextUtils.isEmpty(p.summary)? View.VISIBLE : View.GONE);
+            holder.summaryTextView.setText(p.summary);
+
+            if (showGenreColors) {
+                int color = UIUtils.getGenreColor(context, p.contentType, 0);
+                holder.genreTextView.setBackgroundColor(color);
+                holder.genreTextView.setVisibility(View.VISIBLE);
+            } else {
+                holder.genreTextView.setVisibility(View.GONE);
+            }
         }
         return view;
     }

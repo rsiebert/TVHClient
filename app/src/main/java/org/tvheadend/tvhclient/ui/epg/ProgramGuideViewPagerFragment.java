@@ -25,7 +25,9 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.data.Constants;
+import org.tvheadend.tvhclient.data.DatabaseHelper;
 import org.tvheadend.tvhclient.data.model.ChannelTag;
+import org.tvheadend.tvhclient.data.model.Connection;
 import org.tvheadend.tvhclient.data.model.ProgramGuideTimeDialogItem;
 import org.tvheadend.tvhclient.ui.search.SearchActivity;
 import org.tvheadend.tvhclient.ui.search.SearchRequestInterface;
@@ -121,7 +123,7 @@ public class ProgramGuideViewPagerFragment extends Fragment implements ProgramGu
 
         (menu.findItem(R.id.menu_timeframe)).setVisible(TVHClientApplication.getInstance().isUnlocked());
 
-        // Prevent the channel tag menu item from going into the overlay menu
+        // Prevent the channelTextView tag menu item from going into the overlay menu
         if (prefs.getBoolean("visibleMenuIconTagsPref", true)) {
             menu.findItem(R.id.menu_tags).setShowAsActionFlags(
                     MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
@@ -172,7 +174,7 @@ public class ProgramGuideViewPagerFragment extends Fragment implements ProgramGu
             times.add(item);
         }
         // The dialog that allows the user to select a certain time frame
-        final ProgramGuideTimeDialogAdapter timeAdapter = new ProgramGuideTimeDialogAdapter(times);
+        final ProgramGuideTimeDialogAdapter timeAdapter = new ProgramGuideTimeDialogAdapter(getContext(), times);
         final MaterialDialog programGuideTimeDialog = new MaterialDialog.Builder(activity)
                 .title(R.string.tags)
                 .adapter(timeAdapter, null)
@@ -296,7 +298,7 @@ public class ProgramGuideViewPagerFragment extends Fragment implements ProgramGu
     public void reloadData() {
         // The main activity has only access to this fragment, but not the child
         // fragments which this fragment is controlling. Forward the reload
-        // command to all fragments in the pager and to the channel list
+        // command to all fragments in the pager and to the channelTextView list
         // fragment.
         for (int i = 0; i < fragmentCount; ++i) {
             Fragment f = getChildFragmentManager().findFragmentByTag("android:switcher:" + viewPager.getId() + ":" + adapter.getItemId(i));
@@ -315,7 +317,7 @@ public class ProgramGuideViewPagerFragment extends Fragment implements ProgramGu
         // The main activity has only access to this fragment, but not the child
         // fragments which this fragment is controlling. Forward the scrolling
         // positions and offsets to all fragments in the pager and to the
-        // channel list fragment.
+        // channelTextView list fragment.
         for (int i = 0; i < fragmentCount; ++i) {
             Fragment f = getChildFragmentManager().findFragmentByTag("android:switcher:" + viewPager.getId() + ":" + adapter.getItemId(i));
             if (f != null && f.isVisible() && f instanceof ProgramGuideControlInterface) {
@@ -330,10 +332,15 @@ public class ProgramGuideViewPagerFragment extends Fragment implements ProgramGu
 
     @Override
     public void onChannelTagIdSelected(int which) {
-        Utils.setChannelTagId(activity, which);
 
-        // Inform the channel list fragment to clear all data from its
-        // channel list and show only the channels with the selected tag
+        Connection connection = DatabaseHelper.getInstance(getActivity().getApplicationContext()).getSelectedConnection();
+        if (connection != null) {
+            connection.channelTag = which;
+            DatabaseHelper.getInstance(getActivity().getApplicationContext()).updateConnection(connection);
+        }
+
+        // Inform the channelTextView list fragment to clear all data from its
+        // channelTextView list and show only the channels with the selected tag
         final Fragment cf = getActivity().getSupportFragmentManager().findFragmentById(R.id.program_guide_channel_fragment);
         if (cf != null && cf.isVisible() && cf instanceof ProgramGuideChannelListFragment) {
             ((ProgramGuideControlInterface) cf).reloadData();

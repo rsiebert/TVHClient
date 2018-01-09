@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.ui.dvr.timer_recordings;
+package org.tvheadend.tvhclient.ui.recordings.timer_recordings;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -25,11 +25,11 @@ import org.tvheadend.tvhclient.service.HTSService;
 import org.tvheadend.tvhclient.service.HTSListener;
 import org.tvheadend.tvhclient.data.model.Channel;
 import org.tvheadend.tvhclient.data.model.TimerRecording;
-import org.tvheadend.tvhclient.ui.dvr.base.BaseRecordingAddEditFragment;
-import org.tvheadend.tvhclient.ui.dvr.common.DateTimePickerCallback;
-import org.tvheadend.tvhclient.ui.dvr.common.DaysOfWeekSelectionCallback;
-import org.tvheadend.tvhclient.ui.dvr.common.RecordingPriorityListCallback;
-import org.tvheadend.tvhclient.ui.dvr.common.RecordingProfileListCallback;
+import org.tvheadend.tvhclient.ui.recordings.base.BaseRecordingAddEditFragment;
+import org.tvheadend.tvhclient.ui.recordings.common.DateTimePickerCallback;
+import org.tvheadend.tvhclient.ui.recordings.common.DaysOfWeekSelectionCallback;
+import org.tvheadend.tvhclient.ui.recordings.common.RecordingPriorityListCallback;
+import org.tvheadend.tvhclient.ui.recordings.common.RecordingProfileListCallback;
 import org.tvheadend.tvhclient.utils.callbacks.ChannelListSelectionCallback;
 
 import java.util.Calendar;
@@ -145,15 +145,15 @@ public class TimerRecordingAddEditFragment extends BaseRecordingAddEditFragment 
 
         // Restore the values before the orientation change
         if (savedInstanceState != null) {
-            isEnabled = savedInstanceState.getBoolean("isEnabledTextView");
+            isEnabled = savedInstanceState.getBoolean("isEnabled");
             title = savedInstanceState.getString("title");
             name = savedInstanceState.getString("name");
             channelId = savedInstanceState.getInt("channelId");
             startTime.setTimeInMillis(savedInstanceState.getLong("startTime"));
             stopTime.setTimeInMillis(savedInstanceState.getLong("stopTime"));
-            daysOfWeek = savedInstanceState.getInt("daysOfWeekTextView");
-            priority = savedInstanceState.getInt("priorityTextView");
-            directory = savedInstanceState.getString("directoryTextView");
+            daysOfWeek = savedInstanceState.getInt("daysOfWee");
+            priority = savedInstanceState.getInt("priority");
+            directory = savedInstanceState.getString("directory");
             recordingProfileName = savedInstanceState.getInt("configName");
         }
 
@@ -200,15 +200,15 @@ public class TimerRecordingAddEditFragment extends BaseRecordingAddEditFragment 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         saveWidgetValuesIntoVariables();
-        outState.putBoolean("isEnabledTextView", isEnabled);
+        outState.putBoolean("isEnabled", isEnabled);
         outState.putString("title", title);
         outState.putString("name", name);
         outState.putInt("channelId", channelId);
         outState.putLong("startTime", startTime.getTimeInMillis() / 60 / 1000);
         outState.putLong("stopTime", stopTime.getTimeInMillis() / 60 / 1000);
-        outState.putInt("daysOfWeekTextView", daysOfWeek);
-        outState.putInt("priorityTextView", priority);
-        outState.putString("directoryTextView", directory);
+        outState.putInt("daysOfWeek", daysOfWeek);
+        outState.putInt("priority", priority);
+        outState.putString("directory", directory);
         outState.putInt("configName", recordingProfileName);
         super.onSaveInstanceState(outState);
     }

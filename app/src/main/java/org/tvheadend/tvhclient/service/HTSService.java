@@ -13,12 +13,12 @@ import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.data.Constants;
 import org.tvheadend.tvhclient.data.DataStorage;
 import org.tvheadend.tvhclient.data.DatabaseHelper;
 import org.tvheadend.tvhclient.data.local.Logger;
-import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.data.model.Channel;
 import org.tvheadend.tvhclient.data.model.ChannelTag;
 import org.tvheadend.tvhclient.data.model.Connection;
@@ -36,7 +36,6 @@ import org.tvheadend.tvhclient.data.model.Subscription;
 import org.tvheadend.tvhclient.data.model.SystemTime;
 import org.tvheadend.tvhclient.data.model.TimerRecording;
 import org.tvheadend.tvhclient.utils.MiscUtils;
-import org.tvheadend.tvhclient.utils.Utils;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -896,7 +895,12 @@ public class HTSService extends Service implements HTSConnectionListener {
 
                     // Force a reconnect. This is a workaround because no
                     // onDvrUpdate event is sent
-                    Utils.connect(TVHClientApplication.getInstance().getApplicationContext(), true);
+
+                    // Create an intent and pass on the connection details
+                    Intent intent = new Intent(HTSService.this, HTSService.class);
+                    intent.setAction("connect");
+                    intent.putExtra("force", true);
+                    startService(intent);
                 }
             }
         });

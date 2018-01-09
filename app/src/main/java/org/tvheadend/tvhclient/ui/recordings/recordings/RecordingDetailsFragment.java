@@ -1,10 +1,11 @@
-package org.tvheadend.tvhclient.ui.dvr.recordings;
+package org.tvheadend.tvhclient.ui.recordings.recordings;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -15,14 +16,14 @@ import android.view.ViewStub;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import org.tvheadend.tvhclient.data.DataStorage;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
+import org.tvheadend.tvhclient.data.DataStorage;
 import org.tvheadend.tvhclient.data.model.Channel;
 import org.tvheadend.tvhclient.data.model.Recording;
+import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
 import org.tvheadend.tvhclient.utils.MenuUtils;
-import org.tvheadend.tvhclient.utils.Utils;
+import org.tvheadend.tvhclient.utils.UIUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -132,19 +133,55 @@ public class RecordingDetailsFragment extends Fragment {
             });
         }
 
-        Utils.setDate(dateTextView, recording.start);
-        Utils.setTime(timeTextView, recording.start, recording.stop);
-        Utils.setDuration(durationTextView, recording.start, recording.stop);
+        dateTextView.setText(UIUtils.getDate(getContext(), recording.start));
+
+        String time = UIUtils.getTime(getContext(), recording.start) + " - " + UIUtils.getTime(getContext(), recording.stop);
+        timeTextView.setText(time);
+
+        String durationTime = getString(R.string.minutes, (int) ((recording.stop - recording.start) / 1000 / 60));
+        durationTextView.setText(durationTime);
 
         Channel channel = DataStorage.getInstance().getChannelFromArray(recording.channel);
-        Utils.setDescription(channelLabelTextView, channelNameTextView, ((channel != null) ? channel.channelName : ""));
-        Utils.setDescription(summaryLabelTextView, summaryTextView, recording.summary);
-        Utils.setDescription(descLabelTextView, descTextView, recording.description);
-        Utils.setDescription(titleLabelTextView, titleTextView, recording.title);
-        Utils.setDescription(subtitleLabelTextView, subtitleTextView, recording.subtitle);
-        Utils.setDescription(episodeLabelTextView, episodeTextView, recording.episode);
-        Utils.setDescription(commentLabelTextView, commentTextView, recording.comment);
-        Utils.setFailedReason(failedReasonTextView, recording);
+
+        channelNameTextView.setText(channel != null ? channel.channelName : getString(R.string.no_channel));
+
+        summaryLabelTextView.setVisibility(!TextUtils.isEmpty(recording.summary) ? View.VISIBLE : View.GONE);
+        summaryTextView.setVisibility(!TextUtils.isEmpty(recording.summary) ? View.VISIBLE : View.GONE);
+        summaryTextView.setText(recording.summary);
+
+        descLabelTextView.setVisibility(!TextUtils.isEmpty(recording.description) ? View.VISIBLE : View.GONE);
+        descTextView.setVisibility(!TextUtils.isEmpty(recording.description) ? View.VISIBLE : View.GONE);
+        descTextView.setText(recording.description);
+
+        titleLabelTextView.setVisibility(!TextUtils.isEmpty(recording.title) ? View.VISIBLE : View.GONE);
+        titleTextView.setVisibility(!TextUtils.isEmpty(recording.title) ? View.VISIBLE : View.GONE);
+        titleTextView.setText(recording.title);
+
+        subtitleLabelTextView.setVisibility(!TextUtils.isEmpty(recording.subtitle) ? View.VISIBLE : View.GONE);
+        subtitleTextView.setVisibility(!TextUtils.isEmpty(recording.subtitle) ? View.VISIBLE : View.GONE);
+        subtitleTextView.setText(recording.subtitle);
+
+        episodeLabelTextView.setVisibility(!TextUtils.isEmpty(recording.episode) ? View.VISIBLE : View.GONE);
+        episodeTextView.setVisibility(!TextUtils.isEmpty(recording.episode) ? View.VISIBLE : View.GONE);
+        episodeTextView.setText(recording.episode);
+
+        commentLabelTextView.setVisibility(!TextUtils.isEmpty(recording.comment) ? View.VISIBLE : View.GONE);
+        commentTextView.setVisibility(!TextUtils.isEmpty(recording.comment) ? View.VISIBLE : View.GONE);
+        commentTextView.setText(recording.comment);
+
+        if (failedReasonTextView != null) {
+            if (recording.isRemoved()) {
+                failedReasonTextView.setVisibility(View.GONE);
+            } else if (recording.isAborted()) {
+                failedReasonTextView.setText(getResources().getString(R.string.recording_canceled));
+            } else if (recording.isMissed()) {
+                failedReasonTextView.setText(getResources().getString(R.string.recording_time_missed));
+            } else if (recording.isFailed()) {
+                failedReasonTextView.setText(getResources().getString(R.string.recording_file_invalid));
+            } else {
+                failedReasonTextView.setVisibility(View.GONE);
+            }
+        }
 
         // Show the information if the recording belongs to a series recording
         // only when no dual pane is active (the controls shall be shown)
