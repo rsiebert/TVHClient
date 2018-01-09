@@ -117,7 +117,7 @@ public class NavigationDrawer implements HTSListener, AccountHeader.OnAccountHea
                 .withBadgeStyle(badgeStyle);
         PrimaryDrawerItem removedRecordingsItem = new PrimaryDrawerItem()
                 .withIdentifier(MENU_REMOVED_RECORDINGS).withName(R.string.removed_recordings)
-                .withIcon(getResourceIdFromAttr(R.attr.ic_menu_failed_recordings))
+                .withIcon(getResourceIdFromAttr(R.attr.ic_menu_removed_recordings))
                 .withBadgeStyle(badgeStyle);
         PrimaryDrawerItem statusItem = new PrimaryDrawerItem()
                 .withIdentifier(MENU_STATUS).withName(R.string.status)
@@ -214,7 +214,10 @@ public class NavigationDrawer implements HTSListener, AccountHeader.OnAccountHea
         } else {
             headerResult.addProfiles(new ProfileDrawerItem().withName(R.string.no_connection_available));
         }
-        headerResult.setActiveProfile(DatabaseHelper.getInstance(activity.getApplicationContext()).getSelectedConnection().id);
+        Connection connection = DatabaseHelper.getInstance(activity.getApplicationContext()).getSelectedConnection();
+        if (connection != null) {
+            headerResult.setActiveProfile(connection.id);
+        }
     }
 
     public Drawer getDrawer() {
