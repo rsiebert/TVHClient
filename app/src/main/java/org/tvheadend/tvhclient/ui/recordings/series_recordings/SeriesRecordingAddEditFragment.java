@@ -417,7 +417,6 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
                     if (seriesRecording.id.equals(id)) {
                         addSeriesRecording();
                     }
-                    activity.finish();
                 }
             });
         }
@@ -432,6 +431,7 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
         Intent intent = getIntentData();
         intent.setAction("addAutorecEntry");
         activity.startService(intent);
+        activity.finish();
     }
 
     /**
@@ -521,6 +521,7 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
             startTime.set(Calendar.HOUR_OF_DAY, hour);
             startTime.set(Calendar.MINUTE, minute);
             startTimeTextView.setText(getTimeStringFromDate(startTime));
+
         } else if (tag.equals("startWindowTime")) {
             startWindowTime.set(Calendar.HOUR_OF_DAY, hour);
             startWindowTime.set(Calendar.MINUTE, minute);

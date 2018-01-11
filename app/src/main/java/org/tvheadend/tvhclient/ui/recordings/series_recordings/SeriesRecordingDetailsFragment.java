@@ -24,11 +24,13 @@ import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
 import org.tvheadend.tvhclient.ui.recordings.recordings.RecordingAddEditActivity;
 import org.tvheadend.tvhclient.utils.MenuUtils;
 import org.tvheadend.tvhclient.utils.UIUtils;
-import org.tvheadend.tvhclient.utils.Utils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+
+// TODO recording on all channels shows empty channel logo
+// TODO when a recording is updated refresh
 
 public class SeriesRecordingDetailsFragment extends Fragment {
 
@@ -117,8 +119,8 @@ public class SeriesRecordingDetailsFragment extends Fragment {
         isEnabledTextView.setVisibility(htspVersion >= 19 ? View.VISIBLE : View.GONE);
         isEnabledTextView.setText(recording.enabled > 0 ? R.string.recording_enabled : R.string.recording_disabled);
 
-        directoryLabelTextView.setVisibility(htspVersion >= 19 ? View.VISIBLE : View.GONE);
-        directoryTextView.setVisibility(htspVersion >= 19 ? View.VISIBLE : View.GONE);
+        directoryLabelTextView.setVisibility(!TextUtils.isEmpty(recording.directory) && htspVersion >= 19 ? View.VISIBLE : View.GONE);
+        directoryTextView.setVisibility(!TextUtils.isEmpty(recording.directory) && htspVersion >= 19 ? View.VISIBLE : View.GONE);
         directoryTextView.setText(recording.directory);
 
         Channel channel = DataStorage.getInstance().getChannelFromArray(recording.channel);
@@ -128,7 +130,7 @@ public class SeriesRecordingDetailsFragment extends Fragment {
         nameTextView.setVisibility(!TextUtils.isEmpty(recording.name) ? View.VISIBLE : View.GONE);
         nameTextView.setText(recording.name);
 
-        Utils.setDaysOfWeek(getActivity(), null, daysOfWeekTextView, recording.daysOfWeek);
+        daysOfWeekTextView.setText(UIUtils.getDaysOfWeekText(getActivity(), recording.daysOfWeek));
 
         String[] priorityList = getResources().getStringArray(R.array.dvr_priorities);
         if (recording.priority >= 0 && recording.priority < priorityList.length) {
@@ -143,8 +145,9 @@ public class SeriesRecordingDetailsFragment extends Fragment {
             maxDurationTextView.setText(getString(R.string.minutes, (int) (recording.maxDuration / 60)));
         }
 
-        startTimeTextView.setText(UIUtils.getTime(getContext(), recording.start));
-        startWindowTimeTextView.setText(UIUtils.getTime(getContext(), recording.startWindow));
+        startTimeTextView.setText(UIUtils.getTime(getContext(), recording.start * 60 * 1000));
+
+        startWindowTimeTextView.setText(UIUtils.getTime(getContext(), recording.startWindow * 60 * 1000));
     }
 
     @Override

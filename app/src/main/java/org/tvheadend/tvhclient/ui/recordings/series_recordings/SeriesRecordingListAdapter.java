@@ -27,6 +27,8 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+// TODO time offset when adding / editing a recording
+
 public class SeriesRecordingListAdapter extends ArrayAdapter<SeriesRecording> {
 
     private final Activity context;

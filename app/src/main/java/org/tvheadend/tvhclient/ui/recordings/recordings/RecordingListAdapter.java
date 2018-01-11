@@ -126,7 +126,6 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
         }
     }
 
-
     @NonNull
     @Override
     public View getView(final int position, View view, @NonNull ViewGroup parent) {
@@ -154,6 +153,7 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
                 }
             }
         });
+
         if (holder.dual_pane_list_item_selection != null) {
             // Set the correct indication when the dual pane mode is active
             // If the item is selected the the arrow will be shown, otherwise
@@ -191,8 +191,8 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
             holder.iconTextView.setText(channel.channelName);
             // Show the channels icon if set in the preferences.
             // If not then hide the icon and show the channel name as a placeholder
-            holder.iconImageView.setVisibility(showChannelIcons ? ImageView.VISIBLE : ImageView.GONE);
-            holder.iconTextView.setVisibility(showChannelIcons ? ImageView.GONE : ImageView.VISIBLE);
+            holder.iconImageView.setVisibility(showChannelIcons ? ImageView.VISIBLE : ImageView.INVISIBLE);
+            holder.iconTextView.setVisibility(showChannelIcons ? ImageView.INVISIBLE : ImageView.VISIBLE);
 
             holder.dateTextView.setText(UIUtils.getDate(getContext(), rec.start));
 

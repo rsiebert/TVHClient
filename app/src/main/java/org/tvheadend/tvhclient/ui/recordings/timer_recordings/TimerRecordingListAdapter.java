@@ -28,6 +28,8 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+// TODO time offset when adding / editing a recording
+
 public class TimerRecordingListAdapter extends ArrayAdapter<TimerRecording> {
 
     private final Activity context;

@@ -301,7 +301,6 @@ public class TimerRecordingAddEditFragment extends BaseRecordingAddEditFragment 
                     if (timerRecording.id.equals(id)) {
                         addTimerRecording();
                     }
-                    activity.finish();
                 }
             });
         }
@@ -316,6 +315,7 @@ public class TimerRecordingAddEditFragment extends BaseRecordingAddEditFragment 
         Intent intent = getIntentData();
         intent.setAction("addTimerecEntry");
         activity.startService(intent);
+        activity.finish();
     }
 
     /**
@@ -398,6 +398,7 @@ public class TimerRecordingAddEditFragment extends BaseRecordingAddEditFragment 
             startTime.set(Calendar.HOUR_OF_DAY, hour);
             startTime.set(Calendar.MINUTE, minute);
             startTimeTextView.setText(getTimeStringFromDate(startTime));
+
         } else if (tag.equals("stopTime")) {
             stopTime.set(Calendar.HOUR_OF_DAY, hour);
             stopTime.set(Calendar.MINUTE, minute);

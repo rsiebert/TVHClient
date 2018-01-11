@@ -14,21 +14,22 @@ import android.view.ViewGroup;
 import android.view.ViewStub;
 import android.widget.TextView;
 
-import org.tvheadend.tvhclient.data.DataStorage;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
+import org.tvheadend.tvhclient.data.DataStorage;
 import org.tvheadend.tvhclient.data.model.Channel;
 import org.tvheadend.tvhclient.data.model.TimerRecording;
+import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
 import org.tvheadend.tvhclient.ui.recordings.recordings.RecordingAddEditActivity;
 import org.tvheadend.tvhclient.utils.MenuUtils;
 import org.tvheadend.tvhclient.utils.UIUtils;
-import org.tvheadend.tvhclient.utils.Utils;
 
 import java.util.Calendar;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+
+// TODO when a recording is updated refresh
 
 public class TimerRecordingDetailsFragment extends Fragment {
 
@@ -120,7 +121,7 @@ public class TimerRecordingDetailsFragment extends Fragment {
         Channel channel = DataStorage.getInstance().getChannelFromArray(recording.channel);
         channelNameTextView.setText(channel != null ? channel.channelName : getString(R.string.all_channels));
 
-        Utils.setDaysOfWeek(getActivity(), null, daysOfWeekTextView, recording.daysOfWeek);
+        daysOfWeekTextView.setText(UIUtils.getDaysOfWeekText(getActivity(), recording.daysOfWeek));
 
         String[] priorityItems = getResources().getStringArray(R.array.dvr_priorities);
         if (recording.priority >= 0 && recording.priority < priorityItems.length) {
@@ -130,11 +131,9 @@ public class TimerRecordingDetailsFragment extends Fragment {
         Calendar startTime = Calendar.getInstance();
         startTime.set(Calendar.HOUR_OF_DAY, recording.start / 60);
         startTime.set(Calendar.MINUTE, recording.start % 60);
-
         Calendar endTime = Calendar.getInstance();
         endTime.set(Calendar.HOUR_OF_DAY, recording.stop / 60);
         endTime.set(Calendar.MINUTE, recording.stop % 60);
-
         String time = UIUtils.getTime(getContext(), startTime.getTimeInMillis()) + " - " + UIUtils.getTime(getContext(), endTime.getTimeInMillis());
         timeTextView.setText(time);
 
