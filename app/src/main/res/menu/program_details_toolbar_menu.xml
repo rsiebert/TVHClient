@@ -18,12 +18,14 @@
         android:id="@+id/menu_record_once_custom_profile"
         android:icon="?attr/ic_menu_record_once"
         android:title="@string/record_once_custom_profile"
-        android:visible="false" />
+        android:visible="false"
+        app:showAsAction="never" />
     <item
         android:id="@+id/menu_record_series"
         android:icon="?attr/ic_menu_record_series"
         android:title="@string/record_series"
-        android:visible="false" />
+        android:visible="false"
+        app:showAsAction="never" />
     <item
         android:id="@+id/menu_record_remove"
         android:icon="?attr/ic_menu_record_remove"
@@ -36,4 +38,12 @@
         android:title="@string/stop"
         android:visible="false"
         app:showAsAction="ifRoom|withText" />
+    <item
+        android:id="@+id/menu_search_imdb"
+        android:title="@string/search_imdb"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/menu_search_epg"
+        android:title="@string/search_epg"
+        app:showAsAction="never" />
 </menu>

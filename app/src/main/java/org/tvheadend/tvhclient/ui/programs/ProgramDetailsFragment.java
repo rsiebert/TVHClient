@@ -4,6 +4,7 @@ import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
@@ -262,7 +263,7 @@ public class ProgramDetailsFragment extends Fragment implements ImageDownloadTas
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt("eventId", eventId);
     }
@@ -271,7 +272,7 @@ public class ProgramDetailsFragment extends Fragment implements ImageDownloadTas
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         if (nestedToolbar == null) {
-            inflater.inflate(R.menu.channel_list_program_popup_menu, menu);
+            inflater.inflate(R.menu.program_details_toolbar_menu, menu);
         } else {
             inflater.inflate(R.menu.external_search_options_menu, menu);
         }
@@ -279,20 +280,25 @@ public class ProgramDetailsFragment extends Fragment implements ImageDownloadTas
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Recording recording;
         switch (item.getItemId()) {
             case android.R.id.home:
                 getActivity().finish();
                 return true;
             case R.id.menu_record_remove:
-                Recording rec = DataStorage.getInstance().getRecordingFromArray(program.dvrId);
-                if (rec != null) {
-                    if (rec.isRecording()) {
-                        menuUtils.handleMenuStopRecordingSelection(rec.id, rec.title);
-                    } else if (rec.isScheduled()) {
-                        menuUtils.handleMenuCancelRecordingSelection(rec.id, rec.title);
+                recording = DataStorage.getInstance().getRecordingFromArray(program.dvrId);
+                if (recording != null) {
+                    if (recording.isScheduled()) {
+                        menuUtils.handleMenuCancelRecordingSelection(recording.id, recording.title);
                     } else {
-                        menuUtils.handleMenuRemoveRecordingSelection(rec.id, rec.title);
+                        menuUtils.handleMenuRemoveRecordingSelection(recording.id, recording.title);
                     }
+                }
+                return true;
+            case R.id.menu_record_stop:
+                recording = DataStorage.getInstance().getRecordingFromArray(program.dvrId);
+                if (recording != null && recording.isRecording()) {
+                    menuUtils.handleMenuStopRecordingSelection(recording.id, recording.title);
                 }
                 return true;
             case R.id.menu_record_once:
@@ -306,6 +312,12 @@ public class ProgramDetailsFragment extends Fragment implements ImageDownloadTas
                 return true;
             case R.id.menu_play:
                 menuUtils.handleMenuPlaySelection(program.channelId, -1);
+                return true;
+            case R.id.menu_search_imdb:
+                menuUtils.handleMenuSearchWebSelection(program.title);
+                return true;
+            case R.id.menu_search_epg:
+                menuUtils.handleMenuSearchEpgSelection(program.title, program.channelId);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
