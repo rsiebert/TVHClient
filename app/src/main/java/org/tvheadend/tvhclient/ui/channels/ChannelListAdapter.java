@@ -33,7 +33,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 // TODO lazy loading of images
-// TODO move channel logo a bit down in the layout
+// TODO remove setting for large channel icons
 
 public class ChannelListAdapter extends ArrayAdapter<Channel> implements OnClickListener {
 
@@ -103,10 +103,6 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> implements OnClick
         ImageView iconImageView;
         @BindView(R.id.icon_text)
         TextView iconTextView;
-        @BindView(R.id.icon_large)
-        ImageView iconLargeImageView;
-        @BindView(R.id.icon_text_large)
-        TextView iconLargeTextView;
         @BindView(R.id.title)
         TextView titleTextView;
         @BindView(R.id.subtitle)
@@ -168,7 +164,6 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> implements OnClick
             boolean showSubtitle = sharedPreferences.getBoolean("showProgramSubtitlePref", true);
             boolean showNextProgramTitle = sharedPreferences.getBoolean("showNextProgramPref", true);
             boolean showChannelIcons = sharedPreferences.getBoolean("showIconPref", true);
-            boolean showLargeChannelIcons = sharedPreferences.getBoolean("showBigIconPref", false);
             boolean showGenreColors = sharedPreferences.getBoolean("showGenreColorsChannelsPref", false);
 
             // Set the initial values
@@ -182,22 +177,19 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> implements OnClick
             // Assign the channel icon image or a null image
             Bitmap iconBitmap = MiscUtils.getCachedIcon(context, c.channelIcon);
             holder.iconImageView.setImageBitmap(iconBitmap);
-            holder.iconLargeImageView.setImageBitmap(iconBitmap);
             holder.iconTextView.setText(c.channelName);
-            holder.iconLargeTextView.setText(c.channelName);
 
-            // Show or hide the regular or large channel icon or name text views
-            holder.iconImageView.setVisibility(showChannelIcons && !showLargeChannelIcons ? ImageView.VISIBLE : ImageView.GONE);
-            holder.iconLargeImageView.setVisibility(!showChannelIcons && !showLargeChannelIcons ? ImageView.VISIBLE : ImageView.GONE);
-            holder.iconTextView.setVisibility(showChannelIcons && showLargeChannelIcons ? ImageView.VISIBLE : ImageView.GONE);
-            holder.iconLargeTextView.setVisibility(!showChannelIcons && showLargeChannelIcons ? ImageView.VISIBLE : ImageView.GONE);
-
+            if (showChannelIcons) {
+                holder.iconImageView.setVisibility(iconBitmap != null ? ImageView.VISIBLE : ImageView.INVISIBLE);
+                holder.iconTextView.setVisibility(iconBitmap == null ? ImageView.VISIBLE : ImageView.INVISIBLE);
+            } else {
+                holder.iconImageView.setVisibility(View.GONE);
+                holder.iconTextView.setVisibility(View.GONE);
+            }
             // If activated in the settings allow playing
             // the program by selecting the channel icon
             holder.iconImageView.setOnClickListener(this);
-            holder.iconLargeImageView.setOnClickListener(this);
             holder.iconTextView.setOnClickListener(this);
-            holder.iconLargeTextView.setOnClickListener(this);
 
             // Add a small recording icon above the channel icon, if we are
             // recording the current program.

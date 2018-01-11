@@ -87,13 +87,9 @@ public class ProgramGuideChannelListAdapter extends ArrayAdapter<Channel> implem
 
     static class ViewHolder {
         @BindView(R.id.icon)
-        ImageView icon;
+        ImageView iconImageView;
         @BindView(R.id.icon_text)
-        TextView icon_text;
-        @BindView(R.id.icon_large)
-        ImageView icon_large;
-        @BindView(R.id.icon_text_large)
-        TextView icon_text_large;
+        TextView iconTextView;
 
         public ViewHolder(View view) {
             ButterKnife.bind(this, view);
@@ -117,28 +113,20 @@ public class ProgramGuideChannelListAdapter extends ArrayAdapter<Channel> implem
         if (c != null) {
 
             boolean showChannelIcons = sharedPreferences.getBoolean("showIconPref", true);
-            boolean showLargeChannelIcons = sharedPreferences.getBoolean("showBigIconPref", false);
 
             // Show the regular or large channel icons. Otherwise show the channel name only
             // Assign the channel icon image or a null image
             Bitmap iconBitmap = MiscUtils.getCachedIcon(context, c.channelIcon);
-            holder.icon.setImageBitmap(iconBitmap);
-            holder.icon_large.setImageBitmap(iconBitmap);
-            holder.icon_text.setText(c.channelName);
-            holder.icon_text_large.setText(c.channelName);
+            holder.iconImageView.setImageBitmap(iconBitmap);
+            holder.iconTextView.setText(c.channelName);
 
-            // Show or hide the regular or large channel icon or name text views
-            holder.icon.setVisibility(showChannelIcons && !showLargeChannelIcons ? ImageView.VISIBLE : ImageView.GONE);
-            holder.icon_text.setVisibility(!showChannelIcons && !showLargeChannelIcons ? ImageView.VISIBLE : ImageView.GONE);
-            holder.icon_large.setVisibility(showChannelIcons && showLargeChannelIcons ? ImageView.VISIBLE : ImageView.GONE);
-            holder.icon_text_large.setVisibility(!showChannelIcons && showLargeChannelIcons ? ImageView.VISIBLE : ImageView.GONE);
+            holder.iconImageView.setVisibility(iconBitmap != null ? ImageView.VISIBLE : ImageView.INVISIBLE);
+            holder.iconTextView.setVisibility(iconBitmap == null ? ImageView.VISIBLE : ImageView.INVISIBLE);
 
             // If activated in the settings allow playing
             // the program by selecting the channel icon
-            holder.icon.setOnClickListener(this);
-            holder.icon_large.setOnClickListener(this);
-            holder.icon_text.setOnClickListener(this);
-            holder.icon_text_large.setOnClickListener(this);
+            holder.iconImageView.setOnClickListener(this);
+            holder.iconTextView.setOnClickListener(this);
         }
         return view;
     }

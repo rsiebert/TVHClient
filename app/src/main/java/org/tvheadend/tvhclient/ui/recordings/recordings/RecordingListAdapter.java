@@ -189,10 +189,14 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
             // Show the icon or a blank one if it does not exist
             holder.iconImageView.setImageBitmap(iconBitmap);
             holder.iconTextView.setText(channel.channelName);
-            // Show the channels icon if set in the preferences.
-            // If not then hide the icon and show the channel name as a placeholder
-            holder.iconImageView.setVisibility(showChannelIcons ? ImageView.VISIBLE : ImageView.INVISIBLE);
-            holder.iconTextView.setVisibility(showChannelIcons ? ImageView.INVISIBLE : ImageView.VISIBLE);
+
+            if (showChannelIcons) {
+                holder.iconImageView.setVisibility(iconBitmap != null ? ImageView.VISIBLE : ImageView.INVISIBLE);
+                holder.iconTextView.setVisibility(iconBitmap == null ? ImageView.VISIBLE : ImageView.INVISIBLE);
+            } else {
+                holder.iconImageView.setVisibility(View.GONE);
+                holder.iconTextView.setVisibility(View.GONE);
+            }
 
             holder.dateTextView.setText(UIUtils.getDate(getContext(), rec.start));
 
