@@ -322,4 +322,47 @@ public class UIUtils {
         // TODO change the default text
         return ret.get(ct, context.getString(R.string.no_data));
     }
+
+    public static String getDaysOfWeekText(Context context, long daysOfWeek) {
+        String[] daysOfWeekList = context.getResources().getStringArray(R.array.day_short_names);
+        StringBuilder text = new StringBuilder();
+        for (int i = 0; i < 7; i++) {
+            String s = (((daysOfWeek >> i) & 1) == 1) ? daysOfWeekList[i] : "";
+            if (text.length() > 0 && s.length() > 0) {
+                text.append(", ");
+            }
+            text.append(s);
+        }
+        return text.toString();
+        /*
+        StringBuilder dayOfWeeksText = new StringBuilder();
+
+        // Use different strings if either no days or all days are chosen. If
+        // certain days are selected check which ones.
+        if (dayOfWeek == 0) {
+            dayOfWeeksText = new StringBuilder(context.getString(R.string.no_days));
+        } else if (dayOfWeek == 127) {
+            dayOfWeeksText = new StringBuilder(context.getString(R.string.all_days));
+        } else {
+            String[] dayNames = context.getResources().getStringArray(R.array.day_short_names);
+
+            // Use bit shifting to check if the first bit it set. The values are:
+            // 0 = no days, 1 = Monday, 2 = Tuesday, 4 = Wednesday, 8 = Thursday,
+            // 16 = Friday, 32 = Saturday, 64 = Sunday
+            for (int i = 0; i < 7; ++i) {
+                if ((dayOfWeek & 1) == 1) {
+                    dayOfWeeksText.append(dayNames[i]).append(", ");
+                }
+                dayOfWeek = (dayOfWeek >> 1);
+            }
+            // Remove the last comma or set the default value
+            final int idx = dayOfWeeksText.toString().lastIndexOf(',');
+            if (idx > 0) {
+                dayOfWeeksText = new StringBuilder(dayOfWeeksText.substring(0, idx));
+            }
+        }
+
+        return dayOfWeeksText.toString();
+        */
+    }
 }
