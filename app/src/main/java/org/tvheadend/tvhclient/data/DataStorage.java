@@ -393,11 +393,12 @@ public class DataStorage {
     }
 
     public void removeRecordingFromArray(int id) {
+        Recording removedRecording = recordingArray.get(id);
         synchronized (recordingArray) {
             recordingArray.remove(id);
         }
         if (!loading) {
-            app.broadcastMessage("dvrEntryDelete", id);
+            app.broadcastMessage("dvrEntryDelete", removedRecording);
 
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(app);
             if (prefs.getBoolean("pref_show_notifications", false)) {
