@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="72dp"
-    android:paddingBottom="16dp">
+    android:paddingBottom="16dp"
+    android:background="@drawable/right_layout_border">
 
     <ImageView
         android:id="@+id/icon"
