@@ -6,5 +6,8 @@
         android:id="@+id/menu_settings"
         android:icon="?attr/ic_menu_settings"
         android:title="@string/settings" />
-
+    <item
+        android:id="@+id/menu_refresh"
+        android:icon="?attr/ic_menu_refresh"
+        android:title="@string/refresh" />
 </menu>

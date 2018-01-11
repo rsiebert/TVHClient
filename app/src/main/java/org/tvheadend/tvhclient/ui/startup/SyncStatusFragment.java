@@ -25,6 +25,7 @@ import org.tvheadend.tvhclient.service.HTSService;
 import org.tvheadend.tvhclient.ui.NavigationActivity;
 import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
 import org.tvheadend.tvhclient.ui.settings.SettingsActivity;
+import org.tvheadend.tvhclient.utils.MenuUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -42,6 +43,7 @@ public class SyncStatusFragment extends Fragment {
     private String status;
     private Unbinder unbinder;
     private SharedPreferences sharedPreferences;
+    private MenuUtils menuUtils;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -67,6 +69,7 @@ public class SyncStatusFragment extends Fragment {
         setHasOptionsMenu(true);
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        menuUtils = new MenuUtils(getActivity());
 
         // Restore the last shown state when an orientation change happened.
         // Otherwise start the service when the fragment was created first
@@ -101,6 +104,9 @@ public class SyncStatusFragment extends Fragment {
         switch (item.getItemId()) {
             case R.id.menu_settings:
                 showSettingsActivity();
+                return true;
+            case R.id.menu_refresh:
+                menuUtils.handleMenuReconnectSelection();
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -137,21 +143,21 @@ public class SyncStatusFragment extends Fragment {
                 if (state == HTSConnection.State.CLOSED) {
                     status = "Connection closed";
                 } else if (state == HTSConnection.State.CLOSING) {
-                    status = "Connection closing...";
+                    status = "Closing connection...";
                 } else if (state == HTSConnection.State.CONNECTED) {
-                    status = "Connection connected";
+                    status = "Connected";
                 } else if (state == HTSConnection.State.CONNECTING) {
-                    status = "Connection connecting...";
+                    status = "Connecting...";
                 } else if (state == HTSConnection.State.FAILED) {
                     status = "Connection failed";
                 } else if (state == HTSConnection.State.FAILED_UNRESOLVED_ADDRESS) {
-                    status = "Connection failed";
+                    status = "Could not resolve address";
                 } else if (state == HTSConnection.State.FAILED_INTERRUPTED) {
-                    status = "Connection failed";
+                    status = "Connection attempt was interrupted";
                 } else if (state == HTSConnection.State.FAILED_EXCEPTION_OPENING_SOCKET) {
-                    status = "Connection failed";
+                    status = "Connection failed, could not open socket";
                 } else if (state == HTSConnection.State.FAILED_CONNECTING_TO_SERVER) {
-                    status = "Connection failed";
+                    status = "Could not connect to server";
                 } else {
                     status = "Unknown connection state";
                     stopService();
