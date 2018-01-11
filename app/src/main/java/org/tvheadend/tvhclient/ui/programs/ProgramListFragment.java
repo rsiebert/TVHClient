@@ -220,13 +220,12 @@ public class ProgramListFragment extends ListFragment implements HTSListener, On
             case "eventDelete":
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
-                        Program p = (Program) obj;
                         // Get the position of the recording that is to be
                         // deleted so the previous one can be selected
                         if (--selectedListPosition < 0) {
                             selectedListPosition = 0;
                         }
-                        adapter.remove(p);
+                        adapter.remove((int) obj);
                         adapter.notifyDataSetChanged();
                         String items = getResources().getQuantityString(R.plurals.programs, adapter.getCount(), adapter.getCount());
                         toolbarInterface.setSubtitle(items);

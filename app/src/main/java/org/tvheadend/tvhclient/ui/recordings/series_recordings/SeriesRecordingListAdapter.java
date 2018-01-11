@@ -13,13 +13,13 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.Constants;
 import org.tvheadend.tvhclient.data.DataStorage;
-import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.model.Channel;
 import org.tvheadend.tvhclient.data.model.SeriesRecording;
 import org.tvheadend.tvhclient.utils.MiscUtils;
-import org.tvheadend.tvhclient.utils.Utils;
+import org.tvheadend.tvhclient.utils.UIUtils;
 
 import java.util.Comparator;
 import java.util.List;
@@ -77,7 +77,9 @@ public class SeriesRecordingListAdapter extends ArrayAdapter<SeriesRecording> {
         @BindView(R.id.title) TextView titleTextView;
         @BindView(R.id.name) TextView nameTextView;
         @BindView(R.id.channel) TextView channelTextView;
-        @BindView(R.id.daysOfWeek) TextView daysOfWeekTextView;
+        @BindView(R.id.days_of_week) TextView daysOfWeekTextView;
+        @BindView(R.id.time) TextView timeTextView;
+        @BindView(R.id.duration) TextView durationTextView;
         @BindView(R.id.enabled) TextView isEnabledTextView;
         @Nullable
         @BindView(R.id.dual_pane_list_item_selection) ImageView dual_pane_list_item_selection;
@@ -135,12 +137,27 @@ public class SeriesRecordingListAdapter extends ArrayAdapter<SeriesRecording> {
             } else {
                 holder.channelTextView.setText(R.string.all_channels);
             }
-            // TODO change
-            Utils.setDaysOfWeek(context, null, holder.daysOfWeekTextView, srec.daysOfWeek);
+
+            holder.daysOfWeekTextView.setText(UIUtils.getDaysOfWeekText(context, srec.daysOfWeek));
+
+            // Convert the minute from midnight into a time
+            holder.timeTextView.setText(UIUtils.getTime(context, srec.start * 60 * 1000));
+            // Show the duration
+            holder.durationTextView.setText(context.getString(R.string.minutes, (srec.startWindow - srec.start)));
+
             holder.isEnabledTextView.setVisibility(htspVersion >= 19 ? View.VISIBLE : View.GONE);
             holder.isEnabledTextView.setText(srec.enabled > 0 ? R.string.recording_enabled : R.string.recording_disabled);
         }
         return view;
+    }
+
+    public void remove(String id) {
+        for (int i = 0; i < list.size(); ++i) {
+            if (list.get(i).id.equals(id)) {
+                list.remove(i);
+                break;
+            }
+        }
     }
 
     public void update(SeriesRecording srec) {
@@ -148,7 +165,7 @@ public class SeriesRecordingListAdapter extends ArrayAdapter<SeriesRecording> {
         // Go through the list of programs and find the
         // one with the same id. If its been found, replace it.
         for (int i = 0; i < length; ++i) {
-            if (list.get(i).id.compareTo(srec.id) == 0) {
+            if (list.get(i).id.equals(srec.id)) {
                 list.set(i, srec);
                 break;
             }

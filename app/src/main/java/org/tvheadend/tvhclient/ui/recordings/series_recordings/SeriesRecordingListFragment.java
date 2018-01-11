@@ -160,13 +160,12 @@ public class SeriesRecordingListFragment extends ListFragment implements HTSList
             case "autorecEntryDelete":
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
-                        SeriesRecording recording = (SeriesRecording) obj;
                         // Get the position of the recording that is to be
                         // deleted so the previous one can be selected
                         if (--selectedListPosition < 0) {
                             selectedListPosition = 0;
                         }
-                        adapter.remove(recording);
+                        adapter.remove((String) obj);
                         adapter.notifyDataSetChanged();
                         // Update the number of recordings
                         String items = getResources().getQuantityString(R.plurals.recordings, adapter.getCount(), adapter.getCount());

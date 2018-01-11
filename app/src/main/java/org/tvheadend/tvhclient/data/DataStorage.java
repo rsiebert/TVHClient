@@ -353,7 +353,7 @@ public class DataStorage {
             programArray.remove(id);
         }
         if (!loading) {
-            app.broadcastMessage("eventDelete", null);
+            app.broadcastMessage("eventDelete", id);
         }
     }
 
@@ -397,7 +397,7 @@ public class DataStorage {
             recordingArray.remove(id);
         }
         if (!loading) {
-            app.broadcastMessage("dvrEntryDelete", null);
+            app.broadcastMessage("dvrEntryDelete", id);
 
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(app);
             if (prefs.getBoolean("pref_show_notifications", false)) {
@@ -442,7 +442,7 @@ public class DataStorage {
             channelArray.remove(id);
         }
         if (!loading) {
-            app.broadcastMessage("channelDelete", null);
+            app.broadcastMessage("channelDelete", id);
         }
     }
 
@@ -520,7 +520,7 @@ public class DataStorage {
             seriesRecordingArray.remove(id);
         }
         if (!loading) {
-            app.broadcastMessage("autorecEntryDelete", null);
+            app.broadcastMessage("autorecEntryDelete", id);
         }
     }
 
@@ -559,7 +559,7 @@ public class DataStorage {
             timerRecordingArray.remove(id);
         }
         if (!loading) {
-            app.broadcastMessage("timerecEntryDelete", null);
+            app.broadcastMessage("timerecEntryDelete", id);
         }
     }
 

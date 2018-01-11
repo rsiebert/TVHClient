@@ -17,13 +17,13 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
-import org.tvheadend.tvhclient.data.Constants;
-import org.tvheadend.tvhclient.data.DataStorage;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
-import org.tvheadend.tvhclient.service.HTSListener;
+import org.tvheadend.tvhclient.data.Constants;
+import org.tvheadend.tvhclient.data.DataStorage;
 import org.tvheadend.tvhclient.data.model.TimerRecording;
+import org.tvheadend.tvhclient.service.HTSListener;
+import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
 import org.tvheadend.tvhclient.ui.recordings.recordings.RecordingAddEditActivity;
 import org.tvheadend.tvhclient.ui.recordings.recordings.RecordingDetailsActivity;
 import org.tvheadend.tvhclient.utils.MenuUtils;
@@ -158,13 +158,12 @@ public class TimerRecordingListFragment extends ListFragment implements HTSListe
             case "timerecEntryDelete":
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
-                        TimerRecording recording = (TimerRecording) obj;
                         // Get the position of the recording that is to be
                         // deleted so the previous one can be selected
                         if (--selectedListPosition < 0) {
                             selectedListPosition = 0;
                         }
-                        adapter.remove(recording);
+                        adapter.remove((String) obj);
                         adapter.notifyDataSetChanged();
                         // Update the number of recordings
                         String items = getResources().getQuantityString(R.plurals.recordings, adapter.getCount(), adapter.getCount());

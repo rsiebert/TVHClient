@@ -13,14 +13,13 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.Constants;
 import org.tvheadend.tvhclient.data.DataStorage;
-import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.model.Channel;
 import org.tvheadend.tvhclient.data.model.TimerRecording;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 import org.tvheadend.tvhclient.utils.UIUtils;
-import org.tvheadend.tvhclient.utils.Utils;
 
 import java.util.Calendar;
 import java.util.Comparator;
@@ -78,7 +77,7 @@ public class TimerRecordingListAdapter extends ArrayAdapter<TimerRecording> {
         @BindView(R.id.icon) ImageView iconImageView;
         @BindView(R.id.title) TextView titleTextView;
         @BindView(R.id.channel) TextView channelTextView;
-        @BindView(R.id.daysOfWeek) TextView daysOfWeekTextView;
+        @BindView(R.id.days_of_week) TextView daysOfWeekTextView;
         @BindView(R.id.time) TextView timeTextView;
         @BindView(R.id.duration) TextView durationTextView;
         @BindView(R.id.enabled) TextView isEnabledTextView;
@@ -137,24 +136,32 @@ public class TimerRecordingListAdapter extends ArrayAdapter<TimerRecording> {
                 holder.channelTextView.setText(R.string.all_channels);
             }
 
-            Utils.setDaysOfWeek(context, null, holder.daysOfWeekTextView, trec.daysOfWeek);
+            holder.daysOfWeekTextView.setText(UIUtils.getDaysOfWeekText(context, trec.daysOfWeek));
 
             Calendar startTime = Calendar.getInstance();
             startTime.set(Calendar.HOUR_OF_DAY, trec.start / 60);
             startTime.set(Calendar.MINUTE, trec.start % 60);
-
             Calendar endTime = Calendar.getInstance();
             endTime.set(Calendar.HOUR_OF_DAY, trec.stop / 60);
             endTime.set(Calendar.MINUTE, trec.stop % 60);
-
             String time = UIUtils.getTime(getContext(), startTime.getTimeInMillis()) + " - " + UIUtils.getTime(getContext(), endTime.getTimeInMillis());
             holder.timeTextView.setText(time);
 
             holder.durationTextView.setText(context.getString(R.string.minutes, (trec.stop - trec.start)));
+
             holder.isEnabledTextView.setVisibility(htspVersion >= 19 ? View.VISIBLE : View.GONE);
             holder.isEnabledTextView.setText(trec.enabled > 0 ? R.string.recording_enabled : R.string.recording_disabled);
         }
         return view;
+    }
+
+    public void remove(String id) {
+        for (int i = 0; i < list.size(); ++i) {
+            if (list.get(i).id.equals(id)) {
+                list.remove(i);
+                break;
+            }
+        }
     }
 
     public void update(TimerRecording trec) {
@@ -162,7 +169,7 @@ public class TimerRecordingListAdapter extends ArrayAdapter<TimerRecording> {
         // Go through the list of programs and find the
         // one with the same id. If its been found, replace it.
         for (int i = 0; i < length; ++i) {
-            if (list.get(i).id.compareTo(trec.id) == 0) {
+            if (list.get(i).id.equals(trec.id)) {
                 list.set(i, trec);
                 break;
             }

@@ -106,8 +106,13 @@ public class ProgramListAdapter extends ArrayAdapter<Program> {
             holder.progressTextView.setVisibility(!TextUtils.isEmpty(progressText) ? View.VISIBLE : View.GONE);
             holder.progressTextView.setText(progressText);
 
-            holder.contentTypeTextView.setText(UIUtils.getContentTypeText(getContext(), p.contentType));
-            holder.seriesInfoTextView.setText(UIUtils.getSeriesInfo(getContext(), p));
+            String contentType = UIUtils.getContentTypeText(getContext(), p.contentType);
+            holder.contentTypeTextView.setVisibility(!TextUtils.isEmpty(contentType) ? View.VISIBLE : View.GONE);
+            holder.contentTypeTextView.setText(contentType);
+
+            String seriesInfo = UIUtils.getSeriesInfo(getContext(), p);
+            holder.seriesInfoTextView.setVisibility(!TextUtils.isEmpty(seriesInfo) ? View.VISIBLE : View.GONE);
+            holder.seriesInfoTextView.setText(seriesInfo);
 
             holder.subtitleTextView.setVisibility(showProgramSubtitle && !TextUtils.isEmpty(p.subtitle)? View.VISIBLE : View.GONE);
             holder.subtitleTextView.setText(p.subtitle);
@@ -127,6 +132,15 @@ public class ProgramListAdapter extends ArrayAdapter<Program> {
             }
         }
         return view;
+    }
+
+    public void remove(int id) {
+        for (int i = 0; i < list.size(); ++i) {
+            if (list.get(i).eventId == id) {
+                list.remove(i);
+                break;
+            }
+        }
     }
 
     public void update(Program p) {
