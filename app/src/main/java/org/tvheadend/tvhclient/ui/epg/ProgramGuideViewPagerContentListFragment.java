@@ -240,6 +240,7 @@ public class ProgramGuideViewPagerContentListFragment extends ListFragment imple
     @Override
     public void onDestroy() {
         super.onDestroy();
+        // TODO causes null pointer
         updateViewHandler.removeCallbacks(updateViewTask);
         updateTimeIndicationHandler.removeCallbacks(updateTimeIndicationTask);
     }
