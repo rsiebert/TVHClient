@@ -275,15 +275,6 @@ public class ChannelListAdapter extends ArrayAdapter<Channel> implements OnClick
         }
     }
 
-    public void remove(int id) {
-        for (int i = 0; i < list.size(); ++i) {
-            if (list.get(i).channelId == id) {
-                list.remove(i);
-                break;
-            }
-        }
-    }
-
     public void update(Channel c) {
         int length = list.size();
 

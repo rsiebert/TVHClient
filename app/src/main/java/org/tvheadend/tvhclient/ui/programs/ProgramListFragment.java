@@ -225,7 +225,8 @@ public class ProgramListFragment extends ListFragment implements HTSListener, On
                         if (--selectedListPosition < 0) {
                             selectedListPosition = 0;
                         }
-                        adapter.remove((int) obj);
+                        Program p = (Program) obj;
+                        adapter.remove(p);
                         adapter.notifyDataSetChanged();
                         String items = getResources().getQuantityString(R.plurals.programs, adapter.getCount(), adapter.getCount());
                         toolbarInterface.setSubtitle(items);

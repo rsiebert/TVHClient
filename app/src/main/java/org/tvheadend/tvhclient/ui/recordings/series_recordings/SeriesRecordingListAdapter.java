@@ -153,15 +153,6 @@ public class SeriesRecordingListAdapter extends ArrayAdapter<SeriesRecording> {
         return view;
     }
 
-    public void remove(String id) {
-        for (int i = 0; i < list.size(); ++i) {
-            if (list.get(i).id.equals(id)) {
-                list.remove(i);
-                break;
-            }
-        }
-    }
-
     public void update(SeriesRecording srec) {
         int length = list.size();
         // Go through the list of programs and find the

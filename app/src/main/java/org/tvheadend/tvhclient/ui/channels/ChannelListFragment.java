@@ -270,7 +270,8 @@ public class ChannelListFragment extends ListFragment implements HTSListener, Ch
                         if (--selectedListPosition < 0) {
                             selectedListPosition = 0;
                         }
-                        adapter.remove((int) obj);
+                        Channel channel = (Channel) obj;
+                        adapter.remove(channel);
                         adapter.notifyDataSetChanged();
                         String items = getResources().getQuantityString(R.plurals.programs, adapter.getCount(), adapter.getCount());
                         toolbarInterface.setSubtitle(items);

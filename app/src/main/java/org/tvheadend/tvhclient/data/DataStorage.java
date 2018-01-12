@@ -439,11 +439,12 @@ public class DataStorage {
     }
 
     public void removeChannelFromArray(int id) {
+        Channel removedChannel = channelArray.get(id);
         synchronized (channelArray) {
             channelArray.remove(id);
         }
         if (!loading) {
-            app.broadcastMessage("channelDelete", id);
+            app.broadcastMessage("channelDelete", removedChannel);
         }
     }
 
@@ -517,11 +518,12 @@ public class DataStorage {
     }
 
     public void removeSeriesRecordingFromArray(String id) {
+        SeriesRecording removedRecording = seriesRecordingArray.get(id);
         synchronized (seriesRecordingArray) {
             seriesRecordingArray.remove(id);
         }
         if (!loading) {
-            app.broadcastMessage("autorecEntryDelete", id);
+            app.broadcastMessage("autorecEntryDelete", removedRecording);
         }
     }
 
@@ -556,11 +558,12 @@ public class DataStorage {
     }
 
     public void removeTimerRecordingFromArray(String id) {
+        TimerRecording removedRecording = timerRecordingArray.get(id);
         synchronized (timerRecordingArray) {
             timerRecordingArray.remove(id);
         }
         if (!loading) {
-            app.broadcastMessage("timerecEntryDelete", id);
+            app.broadcastMessage("timerecEntryDelete", removedRecording);
         }
     }
 

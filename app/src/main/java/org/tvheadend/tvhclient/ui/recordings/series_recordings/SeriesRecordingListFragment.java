@@ -140,9 +140,8 @@ public class SeriesRecordingListFragment extends ListFragment implements HTSList
         // Show the newest recordings first
         adapter.sort(Constants.RECORDING_SORT_DESCENDING);
         adapter.notifyDataSetChanged();
-        // Show the number of recordings
-        String items = getResources().getQuantityString(R.plurals.recordings, adapter.getCount(), adapter.getCount());
-        toolbarInterface.setSubtitle(items);
+        // Update the number of recordings
+        toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.recordings, adapter.getCount(), adapter.getCount()));
     }
 
     @Override
@@ -154,6 +153,8 @@ public class SeriesRecordingListFragment extends ListFragment implements HTSList
                         SeriesRecording recording = (SeriesRecording) obj;
                         adapter.add(recording);
                         adapter.notifyDataSetChanged();
+                        // Update the number of recordings
+                        toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.recordings, adapter.getCount(), adapter.getCount()));
                     }
                 });
                 break;
@@ -165,11 +166,11 @@ public class SeriesRecordingListFragment extends ListFragment implements HTSList
                         if (--selectedListPosition < 0) {
                             selectedListPosition = 0;
                         }
-                        adapter.remove((String) obj);
+                        SeriesRecording recording = (SeriesRecording) obj;
+                        adapter.remove(recording);
                         adapter.notifyDataSetChanged();
                         // Update the number of recordings
-                        String items = getResources().getQuantityString(R.plurals.recordings, adapter.getCount(), adapter.getCount());
-                        toolbarInterface.setSubtitle(items);
+                        toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.recordings, adapter.getCount(), adapter.getCount()));
                         // Select the previous recording to show its details
                         if (isDualPane) {
                             showRecordingDetails(selectedListPosition);

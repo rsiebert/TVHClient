@@ -134,15 +134,6 @@ public class ProgramListAdapter extends ArrayAdapter<Program> {
         return view;
     }
 
-    public void remove(int id) {
-        for (int i = 0; i < list.size(); ++i) {
-            if (list.get(i).eventId == id) {
-                list.remove(i);
-                break;
-            }
-        }
-    }
-
     public void update(Program p) {
         int length = list.size();
 

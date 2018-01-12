@@ -21,6 +21,7 @@ import org.tvheadend.tvhclient.data.model.TimerRecording;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 import org.tvheadend.tvhclient.utils.UIUtils;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.List;
@@ -33,15 +34,14 @@ import butterknife.ButterKnife;
 public class TimerRecordingListAdapter extends ArrayAdapter<TimerRecording> {
 
     private final Activity context;
-    private final List<TimerRecording> list;
+    private final List<TimerRecording> list = new ArrayList<>();
     private final int htspVersion;
     private final SharedPreferences sharedPreferences;
     private int selectedPosition = 0;
 
-    public TimerRecordingListAdapter(Activity context, List<TimerRecording> list) {
+    TimerRecordingListAdapter(Activity context) {
         super(context, 0);
         this.context = context;
-        this.list = list;
         this.htspVersion = DataStorage.getInstance().getProtocolVersion();
         this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     }
@@ -157,15 +157,6 @@ public class TimerRecordingListAdapter extends ArrayAdapter<TimerRecording> {
         return view;
     }
 
-    public void remove(String id) {
-        for (int i = 0; i < list.size(); ++i) {
-            if (list.get(i).id.equals(id)) {
-                list.remove(i);
-                break;
-            }
-        }
-    }
-
     public void update(TimerRecording trec) {
         int length = list.size();
         // Go through the list of programs and find the
@@ -178,7 +169,7 @@ public class TimerRecordingListAdapter extends ArrayAdapter<TimerRecording> {
         }
     }
 
-    public List<TimerRecording> getAllItems() {
+    List<TimerRecording> getAllItems() {
         return list;
     }
 }

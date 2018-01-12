@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.PopupMenu;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -28,8 +29,9 @@ import org.tvheadend.tvhclient.ui.recordings.recordings.RecordingAddEditActivity
 import org.tvheadend.tvhclient.ui.recordings.recordings.RecordingDetailsActivity;
 import org.tvheadend.tvhclient.utils.MenuUtils;
 
-import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
+
+// TODO start and end time and duration not correct
 
 public class TimerRecordingListFragment extends ListFragment implements HTSListener, OnItemClickListener, AdapterView.OnItemLongClickListener {
 
@@ -58,7 +60,7 @@ public class TimerRecordingListFragment extends ListFragment implements HTSListe
         View detailsFrame = getActivity().findViewById(R.id.right_fragment);
         isDualPane = detailsFrame != null && detailsFrame.getVisibility() == View.VISIBLE;
 
-        adapter = new TimerRecordingListAdapter(activity, new ArrayList<>());
+        adapter = new TimerRecordingListAdapter(activity);
         setListAdapter(adapter);
         getListView().setFastScrollEnabled(true);
         getListView().setOnItemClickListener(this);
@@ -145,6 +147,7 @@ public class TimerRecordingListFragment extends ListFragment implements HTSListe
 
     @Override
     public void onMessage(String action, final Object obj) {
+        Log.d("XXX", "onMessage() called with: action = [" + action + "], obj = [" + obj + "]");
         switch (action) {
             case "timerecEntryAdd":
                 activity.runOnUiThread(new Runnable() {
@@ -152,6 +155,8 @@ public class TimerRecordingListFragment extends ListFragment implements HTSListe
                         TimerRecording recording = (TimerRecording) obj;
                         adapter.add(recording);
                         adapter.notifyDataSetChanged();
+                        // Show the number of recordings
+                        toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.recordings, adapter.getCount(), adapter.getCount()));
                     }
                 });
                 break;
@@ -163,11 +168,11 @@ public class TimerRecordingListFragment extends ListFragment implements HTSListe
                         if (--selectedListPosition < 0) {
                             selectedListPosition = 0;
                         }
-                        adapter.remove((String) obj);
+                        TimerRecording recording = (TimerRecording) obj;
+                        adapter.remove(recording);
                         adapter.notifyDataSetChanged();
                         // Update the number of recordings
-                        String items = getResources().getQuantityString(R.plurals.recordings, adapter.getCount(), adapter.getCount());
-                        toolbarInterface.setSubtitle(items);
+                        toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.recordings, adapter.getCount(), adapter.getCount()));
                         // Select the previous recording to show its details
                         if (isDualPane) {
                             showRecordingDetails(selectedListPosition);

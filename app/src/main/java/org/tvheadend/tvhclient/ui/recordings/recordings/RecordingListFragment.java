@@ -230,6 +230,8 @@ public class RecordingListFragment extends ListFragment implements OnItemClickLi
             case "dvrEntryAdd":
                 adapter.add(recording);
                 adapter.notifyDataSetChanged();
+                // Show the number of recordings
+                toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.recordings, adapter.getCount(), adapter.getCount()));
                 break;
             case "dvrEntryDelete":
                 // Get the position of the recording that is to be
@@ -240,8 +242,7 @@ public class RecordingListFragment extends ListFragment implements OnItemClickLi
                 adapter.remove(recording);
                 adapter.notifyDataSetChanged();
                 // Update the number of recordings
-                String items = getResources().getQuantityString(R.plurals.recordings, adapter.getCount(), adapter.getCount());
-                toolbarInterface.setSubtitle(items);
+                toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.recordings, adapter.getCount(), adapter.getCount()));
                 // Select the previous recording to show its details
                 if (isDualPane) {
                     showRecordingDetails(selectedListPosition);
