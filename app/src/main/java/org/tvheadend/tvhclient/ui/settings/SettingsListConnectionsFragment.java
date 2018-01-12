@@ -16,15 +16,15 @@ import android.widget.ListView;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
-import org.tvheadend.tvhclient.data.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.ui.NavigationActivity;
-import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
-import org.tvheadend.tvhclient.service.HTSService;
-import org.tvheadend.tvhclient.ui.common.BackPressedInterface;
+import org.tvheadend.tvhclient.data.DatabaseHelper;
 import org.tvheadend.tvhclient.data.model.Connection;
 import org.tvheadend.tvhclient.data.tasks.WakeOnLanTask;
 import org.tvheadend.tvhclient.data.tasks.WakeOnLanTaskCallback;
+import org.tvheadend.tvhclient.service.HTSService;
+import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
+import org.tvheadend.tvhclient.ui.common.BackPressedInterface;
+import org.tvheadend.tvhclient.ui.startup.StartupActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +37,8 @@ public class SettingsListConnectionsFragment extends ListFragment implements Bac
     private ConnectionListAdapter connectionListAdapter;
     private List<Connection> connectionList;
     private ActionMode actionMode;
-    private boolean newActiveConnectionSelected;
+    private boolean newConnectionSelected;
+    private DatabaseHelper databaseHelper;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -48,11 +49,21 @@ public class SettingsListConnectionsFragment extends ListFragment implements Bac
         }
         toolbarInterface.setTitle(getString(R.string.settings));
 
+        databaseHelper = DatabaseHelper.getInstance(getActivity().getApplicationContext());
         connectionList = new ArrayList<>();
         connectionListAdapter = new ConnectionListAdapter(getActivity(), connectionList);
         setListAdapter(connectionListAdapter);
         getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         setHasOptionsMenu(true);
+
+        if (savedInstanceState != null) {
+            newConnectionSelected = savedInstanceState.getBoolean("new_connection_selected");
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putBoolean("new_connection_selected", newConnectionSelected);
     }
 
     @Override
@@ -80,7 +91,7 @@ public class SettingsListConnectionsFragment extends ListFragment implements Bac
     private void showConnections() {
         // Add all connections to the list
         connectionList.clear();
-        connectionList.addAll(DatabaseHelper.getInstance(getActivity()).getConnections());
+        connectionList.addAll(databaseHelper.getConnections());
         connectionListAdapter.sort();
         connectionListAdapter.notifyDataSetChanged();
         showConnectionCount();
@@ -111,14 +122,14 @@ public class SettingsListConnectionsFragment extends ListFragment implements Bac
         // Set the new connection to active
         c.selected = active;
         if (c.selected) {
-            Connection previousConnection = DatabaseHelper.getInstance(getActivity()).getSelectedConnection();
+            Connection previousConnection = databaseHelper.getSelectedConnection();
             if (previousConnection != null) {
                 previousConnection.selected = false;
-                DatabaseHelper.getInstance(getActivity()).updateConnection(previousConnection);
+                databaseHelper.updateConnection(previousConnection);
             }
         }
         // Update the currently selected connection and refresh the display
-        DatabaseHelper.getInstance(getActivity()).updateConnection(c);
+        databaseHelper.updateConnection(c);
         showConnections();
     }
 
@@ -133,12 +144,12 @@ public class SettingsListConnectionsFragment extends ListFragment implements Bac
         switch (item.getItemId()) {
             case R.id.menu_set_active:
                 setConnectionStatus(connection, true);
-                newActiveConnectionSelected = true;
+                newConnectionSelected = true;
                 mode.finish();
                 return true;
             case R.id.menu_set_not_active:
                 setConnectionStatus(connection, false);
-                newActiveConnectionSelected = false;
+                newConnectionSelected = false;
                 mode.finish();
                 return true;
             case R.id.menu_edit:
@@ -160,7 +171,7 @@ public class SettingsListConnectionsFragment extends ListFragment implements Bac
                         .onPositive(new MaterialDialog.SingleButtonCallback() {
                             @Override
                             public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                if (DatabaseHelper.getInstance(getActivity()).removeConnection(connection.id)) {
+                                if (databaseHelper.removeConnection(connection.id)) {
                                     connectionListAdapter.remove(connection);
                                     connectionListAdapter.notifyDataSetChanged();
                                     showConnectionCount();
@@ -224,13 +235,13 @@ public class SettingsListConnectionsFragment extends ListFragment implements Bac
         }
     }
 
-
     @Override
     public void onBackPressed() {
-        // If a new connection has been selected and it is
-        // active restart the service to do a new initial sync
-        if (newActiveConnectionSelected && DatabaseHelper.getInstance(getActivity()).getSelectedConnection() != null) {
-            Intent intent = new Intent(getActivity(), NavigationActivity.class);
+        // If a new connection has been selected or no connection is active
+        // do a new initial sync. Otherwise nothing has changed.
+        if (newConnectionSelected
+                || databaseHelper.getSelectedConnection() == null) {
+            Intent intent = new Intent(getActivity(), StartupActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
         }
