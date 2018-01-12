@@ -232,6 +232,11 @@ public class NavigationDrawer implements HTSListener, AccountHeader.OnAccountHea
     public boolean onProfileChanged(View view, IProfile profile, boolean current) {
         result.closeDrawer();
 
+        // Do nothing if the same profile has been selected
+        if (current) {
+            return true;
+        }
+
         Connection oldConn = databaseHelper.getSelectedConnection();
         Connection newConn = databaseHelper.getConnection(profile.getIdentifier());
 
