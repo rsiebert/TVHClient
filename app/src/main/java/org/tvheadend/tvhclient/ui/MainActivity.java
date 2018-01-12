@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
@@ -28,6 +29,8 @@ import com.google.android.gms.cast.framework.SessionManagerListener;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
+import org.tvheadend.tvhclient.data.Constants;
+import org.tvheadend.tvhclient.service.HTSListener;
 import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
 import org.tvheadend.tvhclient.ui.search.SearchRequestInterface;
 import org.tvheadend.tvhclient.utils.MenuUtils;
@@ -35,7 +38,7 @@ import org.tvheadend.tvhclient.utils.MiscUtils;
 
 // TODO casting stuff
 
-public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, ToolbarInterface {
+public class MainActivity extends AppCompatActivity implements HTSListener, SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, ToolbarInterface {
 
     protected MenuUtils menuUtils;
     private MenuItem searchMenuItem;
@@ -53,6 +56,14 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private IntroductoryOverlay introductoryOverlay;
     private CastContext castContext;
     private CastStateListener castStateListener;
+
+    @Override
+    public void onMessage(String action, Object obj) {
+        switch (action) {
+            case Constants.ACTION_SHOW_MESSAGE:
+                Snackbar.make(getCurrentFocus(), (String) obj, Snackbar.LENGTH_SHORT).show();
+        }
+    }
 
     private class MySessionManagerListener implements SessionManagerListener<CastSession> {
 
@@ -154,6 +165,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             castSession = CastContext.getSharedInstance(this).getSessionManager().getCurrentCastSession();
         }
         super.onResume();
+        TVHClientApplication.getInstance().addListener(this);
     }
 
     @Override
@@ -161,6 +173,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         castContext.removeCastStateListener(castStateListener);
         castContext.getSessionManager().removeSessionManagerListener(mSessionManagerListener, CastSession.class);
         super.onPause();
+        TVHClientApplication.getInstance().removeListener(this);
     }
 
     @Override
