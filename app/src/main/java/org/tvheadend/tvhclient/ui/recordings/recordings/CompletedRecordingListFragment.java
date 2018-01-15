@@ -1,6 +1,8 @@
 package org.tvheadend.tvhclient.ui.recordings.recordings;
 
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
@@ -37,6 +39,16 @@ public class CompletedRecordingListFragment extends RecordingListFragment implem
     public void onPause() {
         super.onPause();
         TVHClientApplication.getInstance().removeListener(this);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        // Show the casting icon when finished recordings are available.
+        MenuItem mediaRouteMenuItem = menu.findItem(R.id.media_route_menu_item);
+        if (mediaRouteMenuItem != null && !adapter.isEmpty()) {
+            mediaRouteMenuItem.setVisible(true);
+        }
     }
 
     @Override

@@ -115,6 +115,16 @@ public class RecordingListFragment extends ListFragment implements OnItemClickLi
         if (!sharedPreferences.getBoolean("hideMenuDeleteAllRecordingsPref", false) && adapter.getCount() > 1) {
             menu.findItem(R.id.menu_record_remove_all).setVisible(true);
         }
+        // Hide the casting icon as a default.
+        MenuItem mediaRouteMenuItem = menu.findItem(R.id.media_route_menu_item);
+        if (mediaRouteMenuItem != null) {
+            mediaRouteMenuItem.setVisible(false);
+        }
+        // Do not show the search icon when no recordings are available
+        MenuItem searchMenuItem = menu.findItem(R.id.menu_search);
+        if (searchMenuItem != null && adapter.isEmpty()) {
+            searchMenuItem.setVisible(false);
+        }
     }
 
     @Override
