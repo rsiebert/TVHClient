@@ -31,6 +31,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
+// TODO loading initial data is shown before auth message
+
 public class SyncStatusFragment extends Fragment {
 
     @BindView(R.id.progress_bar)
@@ -81,14 +83,14 @@ public class SyncStatusFragment extends Fragment {
             //getActivity().stopService(intent);
             //getActivity().startService(intent);
 
-            boolean initialSyncDone = sharedPreferences.getBoolean("initial_sync_done", false);
-            if (!initialSyncDone) {
+            //boolean initialSyncDone = sharedPreferences.getBoolean("initial_sync_done", false);
+            //if (!initialSyncDone) {
                 Intent intent = new Intent(getActivity(), HTSService.class);
                 intent.setAction("connect");
                 getActivity().startService(intent);
-            } else {
-                showContentScreen();
-            }
+            //} else {
+            //    showContentScreen();
+            //}
         }
         statusTextView.setText(status);
     }
