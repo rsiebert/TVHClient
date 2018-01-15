@@ -836,8 +836,8 @@ public class HTSService extends Service implements HTSConnectionListener {
 
         final int id = intent.getIntExtra("id", 0);
         final int channelId = intent.getIntExtra("channelId", 0);
-        final long start = intent.getLongExtra("start", 1) / 1000;
-        final long stop = intent.getLongExtra("stop", 1) / 1000;
+        final long start = intent.getLongExtra("start", 1);
+        final long stop = intent.getLongExtra("stop", 1);
         final long retention = intent.getLongExtra("retention", 0);
         final int priority = intent.getIntExtra("priority", 2);
         final int enabled = intent.getIntExtra("enabled", 1);
@@ -852,13 +852,13 @@ public class HTSService extends Service implements HTSConnectionListener {
         HTSMessage request = new HTSMessage();
         request.setMethod("updateDvrEntry");
         request.putField("id", id);
-        request.putField("stop", stop);
+        request.putField("stop", stop / 1000);
         request.putField("stopExtra", stopExtra);
 
         // Only add these fields when the recording is only scheduled and not
         // being recorded
         if (!isRecording) {
-            request.putField("start", start);
+            request.putField("start", start / 1000);
             request.putField("retention", retention);
             request.putField("priority", priority);
             request.putField("startExtra", startExtra);
@@ -942,8 +942,8 @@ public class HTSService extends Service implements HTSConnectionListener {
 
         final int eventId = intent.getIntExtra("eventId", 0);
         final int channelId = intent.getIntExtra("channelId", 0);
-        final long start = intent.getLongExtra("start", 1) / 1000;
-        final long stop = intent.getLongExtra("stop", 1) / 1000;
+        final long start = intent.getLongExtra("start", 1);
+        final long stop = intent.getLongExtra("stop", 1);
         final long retention = intent.getLongExtra("retention", 0);
         final String creator = intent.getStringExtra("creator");
         final int priority = intent.getIntExtra("priority", 2);
@@ -963,8 +963,8 @@ public class HTSService extends Service implements HTSConnectionListener {
         // automatically.
         request.putField("eventId", eventId);        
         request.putField("channelId", channelId);
-        request.putField("start", start);
-        request.putField("stop", stop);
+        request.putField("start", start / 1000);
+        request.putField("stop", stop / 1000);
         request.putField("startExtra", startExtra);
         request.putField("stopExtra", stopExtra);
         request.putField("retention", retention);
@@ -1019,8 +1019,8 @@ public class HTSService extends Service implements HTSConnectionListener {
 
         final String id = intent.getStringExtra("id");
         final int channelId = intent.getIntExtra("channelId", 0);
-        final int start = intent.getIntExtra("start", 0);
-        final int stop = intent.getIntExtra("stop", 0);
+        final long start = intent.getLongExtra("start", 0);
+        final long stop = intent.getLongExtra("stop", 0);
         final int retention = intent.getIntExtra("retention", 0);
         final int priority = intent.getIntExtra("priority", 2);
         final int daysOfWeek = intent.getIntExtra("daysOfWeek", 0);
@@ -1035,8 +1035,8 @@ public class HTSService extends Service implements HTSConnectionListener {
         request.putField("id", id);
         request.putField("title", title);
         request.putField("name", name);
-        request.putField("start", start);
-        request.putField("stop", stop);
+        request.putField("start", start / 60 / 1000);
+        request.putField("stop", stop / 60 / 1000);
         request.putField("channelId", channelId);
         request.putField("retention", retention);
         request.putField("daysOfWeek", daysOfWeek);
@@ -1098,8 +1098,8 @@ public class HTSService extends Service implements HTSConnectionListener {
     private void addTimerRecEntry(final Intent intent) {
 
         final int channelId = intent.getIntExtra("channelId", 0);
-        final int start = intent.getIntExtra("start", 0);
-        final int stop = intent.getIntExtra("stop", 0);
+        final long start = intent.getLongExtra("start", 0);
+        final long stop = intent.getLongExtra("stop", 0);
         final int retention = intent.getIntExtra("retention", 0);
         final int priority = intent.getIntExtra("priority", 2);
         final int daysOfWeek = intent.getIntExtra("daysOfWeek", 0);
@@ -1113,8 +1113,8 @@ public class HTSService extends Service implements HTSConnectionListener {
         request.setMethod("addTimerecEntry");
         request.putField("title", title);
         request.putField("name", name);
-        request.putField("start", start);
-        request.putField("stop", stop);
+        request.putField("start", start / 60 / 1000);
+        request.putField("stop", stop / 60 / 1000);
         request.putField("channelId", channelId);
         request.putField("retention", retention);
         request.putField("daysOfWeek", daysOfWeek);
@@ -1297,8 +1297,8 @@ public class HTSService extends Service implements HTSConnectionListener {
         final long startExtra = intent.getLongExtra("startExtra", 0);
         final long stopExtra = intent.getLongExtra("stopExtra", 0);
         final int dupDetect = intent.getIntExtra("dupDetect", 0);
-        final int start = intent.getIntExtra("start", -1);
-        final int startWindow = intent.getIntExtra("startWindow", -1);
+        final long start = intent.getLongExtra("start", -1);
+        final long startWindow = intent.getLongExtra("startWindow", -1);
         final String configName = intent.getStringExtra("configName");
 
         HTSMessage request = new HTSMessage();
@@ -1327,13 +1327,13 @@ public class HTSService extends Service implements HTSConnectionListener {
         // window (including) (Added in version 18). Do not send the value
         // if the default of -1 (no time specified) was set
         if (start >= 0) {
-            request.putField("start", start);
+            request.putField("start", start / 60 / 1000);
         }
         // Minutes from midnight (up to 24*60) for the end of the time
         // window (including, cross-noon allowed) (Added in version 18). Do
         // not send the value if the default of -1 (no time specified) was set
         if (startWindow >= 0) {
-            request.putField("startWindow", startWindow);
+            request.putField("startWindow", startWindow / 60 / 1000);
         }
         // Minutes from midnight (up to 24*60) (window +- 15 minutes)
         // (Obsoleted from version 18). Do not send the value if the default
@@ -1411,8 +1411,8 @@ public class HTSService extends Service implements HTSConnectionListener {
         final long startExtra = intent.getLongExtra("startExtra", 0);
         final long stopExtra = intent.getLongExtra("stopExtra", 0);
         final int dupDetect = intent.getIntExtra("dupDetect", 0);
-        final int start = intent.getIntExtra("start", -1);
-        final int startWindow = intent.getIntExtra("startWindow", -1);
+        final long start = intent.getLongExtra("start", -1);
+        final long startWindow = intent.getLongExtra("startWindow", -1);
         final String configName = intent.getStringExtra("configName");
 
         HTSMessage request = new HTSMessage();
@@ -1440,13 +1440,13 @@ public class HTSService extends Service implements HTSConnectionListener {
         // window (including) (Added in version 18). Do not send the value
         // if the default of -1 (no time specified) was set
         if (start >= 0) {
-            request.putField("start", start);
+            request.putField("start", start / 60 / 1000);
         }
         // Minutes from midnight (up to 24*60) for the end of the time
         // window (including, cross-noon allowed) (Added in version 18). Do
         // not send the value if the default of -1 (no time specified) was set
         if (startWindow >= 0) {
-            request.putField("startWindow", startWindow);
+            request.putField("startWindow", startWindow / 60 / 1000);
         }
         // Minutes from midnight (up to 24*60) (window +- 15 minutes)
         // (Obsoleted from version 18). Do not send the value if the default

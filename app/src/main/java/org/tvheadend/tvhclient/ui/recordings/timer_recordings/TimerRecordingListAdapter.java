@@ -22,7 +22,6 @@ import org.tvheadend.tvhclient.utils.MiscUtils;
 import org.tvheadend.tvhclient.utils.UIUtils;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Comparator;
 import java.util.List;
 
@@ -120,13 +119,13 @@ public class TimerRecordingListAdapter extends ArrayAdapter<TimerRecording> {
         }
 
         // Get the program and assign all the values
-        TimerRecording trec = getItem(position);
-        if (trec != null) {
-            Channel channel = DataStorage.getInstance().getChannelFromArray(trec.channel);
-            if (!TextUtils.isEmpty(trec.title)) {
-                holder.titleTextView.setText(trec.title);
+        TimerRecording recording = getItem(position);
+        if (recording != null) {
+            Channel channel = DataStorage.getInstance().getChannelFromArray(recording.channel);
+            if (!TextUtils.isEmpty(recording.title)) {
+                holder.titleTextView.setText(recording.title);
             } else {
-                holder.titleTextView.setText(trec.name);
+                holder.titleTextView.setText(recording.name);
             }
 
             if (channel != null) {
@@ -138,21 +137,15 @@ public class TimerRecordingListAdapter extends ArrayAdapter<TimerRecording> {
                 holder.channelTextView.setText(R.string.all_channels);
             }
 
-            holder.daysOfWeekTextView.setText(UIUtils.getDaysOfWeekText(context, trec.daysOfWeek));
+            holder.daysOfWeekTextView.setText(UIUtils.getDaysOfWeekText(context, recording.daysOfWeek));
 
-            Calendar startTime = Calendar.getInstance();
-            startTime.set(Calendar.HOUR_OF_DAY, trec.start / 60);
-            startTime.set(Calendar.MINUTE, trec.start % 60);
-            Calendar endTime = Calendar.getInstance();
-            endTime.set(Calendar.HOUR_OF_DAY, trec.stop / 60);
-            endTime.set(Calendar.MINUTE, trec.stop % 60);
-            String time = UIUtils.getTime(getContext(), startTime.getTimeInMillis()) + " - " + UIUtils.getTime(getContext(), endTime.getTimeInMillis());
+            String time = UIUtils.getTime(getContext(), recording.start) + " - " + UIUtils.getTime(getContext(), recording.stop);
             holder.timeTextView.setText(time);
 
-            holder.durationTextView.setText(context.getString(R.string.minutes, (trec.stop - trec.start)));
+            holder.durationTextView.setText(context.getString(R.string.minutes, recording.getDuration()));
 
             holder.isEnabledTextView.setVisibility(htspVersion >= 19 ? View.VISIBLE : View.GONE);
-            holder.isEnabledTextView.setText(trec.enabled > 0 ? R.string.recording_enabled : R.string.recording_disabled);
+            holder.isEnabledTextView.setText(recording.enabled > 0 ? R.string.recording_enabled : R.string.recording_disabled);
         }
         return view;
     }

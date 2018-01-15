@@ -10,8 +10,8 @@ public class SeriesRecording {
     public int daysOfWeek;      // u32   required   Bitmask - Days of week (0x01 = Monday, 0x40 = Sunday, 0x7f = Whole Week, 0 = Not set).
     public int priority;        // u32   required   Priority (0 = Important, 1 = High, 2 = Normal, 3 = Low, 4 = Unimportant, 5 = Not set).
     public int approxTime;      // u32   required   Minutes from midnight (up to 24*60).
-    public int start;           // s32   required   Exact start time (minutes from midnight) (Added in version 18).
-    public int startWindow;     // s32   required   Exact stop time (minutes from midnight) (Added in version 18).
+    public long start;          // s32   required   Exact start time (minutes from midnight) (Added in version 18).
+    public long startWindow;    // s32   required   Exact stop time (minutes from midnight) (Added in version 18).
     public long startExtra;     // s64   required   Extra start minutes (pre-time).
     public long stopExtra;      // s64   required   Extra stop minutes (post-time).
     public String title;        // str   optional   Title.
@@ -21,4 +21,8 @@ public class SeriesRecording {
     public String owner;        // str   optional   Owner of this autorec entry (Added in version 18).
     public String creator;      // str   optional   Creator of this autorec entry (Added in version 18).
     public int dupDetect;       // u32   optional   Duplicate detection (see addAutorecEntry) (Added in version 20).
+
+    public int getDuration() {
+        return (int) ((startWindow - start) / 60 / 1000);
+    }
 }

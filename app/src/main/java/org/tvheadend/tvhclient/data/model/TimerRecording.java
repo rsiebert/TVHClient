@@ -10,9 +10,13 @@ public class TimerRecording {
     public int channel;         // u32   required   Channel ID.
     public int daysOfWeek;      // u32   optional   Bitmask - Days of week (0x01 = Monday, 0x40 = Sunday, 0x7f = Whole Week, 0 = Not set).
     public int priority;        // u32   optional   Priority (0 = Important, 1 = High, 2 = Normal, 3 = Low, 4 = Unimportant, 5 = Not set).
-    public int start;           // u32   required   Minutes from midnight (up to 24*60) for the start of the time window (including)
-    public int stop;            // u32   required   Minutes from modnight (up to 24*60) for the end of the time window (including, cross-noon allowed)
+    public long start;          // u32   required   Minutes from midnight (up to 24*60) for the start of the time window (including)
+    public long stop;           // u32   required   Minutes from modnight (up to 24*60) for the end of the time window (including, cross-noon allowed)
     public int retention;       // u32   optional   Retention in days.
     public String owner;        // str   optional   Owner of this timerec entry.
     public String creator;      // str   optional   Creator of this timerec entry.
+
+    public int getDuration() {
+        return (int) ((stop - start) / 60 / 1000);
+    }
 }

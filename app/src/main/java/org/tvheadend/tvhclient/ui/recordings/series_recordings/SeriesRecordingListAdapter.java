@@ -120,14 +120,14 @@ public class SeriesRecordingListAdapter extends ArrayAdapter<SeriesRecording> {
         }
 
         // Get the program and assign all the values
-        SeriesRecording srec = getItem(position);
-        if (srec != null) {
-            Channel channel = DataStorage.getInstance().getChannelFromArray(srec.channel);
-            holder.titleTextView.setText(srec.title);
+        SeriesRecording recording = getItem(position);
+        if (recording != null) {
+            Channel channel = DataStorage.getInstance().getChannelFromArray(recording.channel);
+            holder.titleTextView.setText(recording.title);
 
-            if (!TextUtils.isEmpty(srec.name)) {
+            if (!TextUtils.isEmpty(recording.name)) {
                 holder.nameTextView.setVisibility(View.VISIBLE);
-                holder.nameTextView.setText(srec.name);
+                holder.nameTextView.setText(recording.name);
             } else {
                 holder.nameTextView.setVisibility(View.GONE);
             }
@@ -140,15 +140,15 @@ public class SeriesRecordingListAdapter extends ArrayAdapter<SeriesRecording> {
                 holder.channelTextView.setText(R.string.all_channels);
             }
 
-            holder.daysOfWeekTextView.setText(UIUtils.getDaysOfWeekText(context, srec.daysOfWeek));
+            holder.daysOfWeekTextView.setText(UIUtils.getDaysOfWeekText(context, recording.daysOfWeek));
 
             // Convert the minute from midnight into a time
-            holder.timeTextView.setText(UIUtils.getTime(context, srec.start * 60 * 1000));
+            holder.timeTextView.setText(UIUtils.getTime(context, recording.start));
             // Show the duration
-            holder.durationTextView.setText(context.getString(R.string.minutes, (srec.startWindow - srec.start)));
+            holder.durationTextView.setText(context.getString(R.string.minutes, recording.getDuration()));
 
             holder.isEnabledTextView.setVisibility(htspVersion >= 19 ? View.VISIBLE : View.GONE);
-            holder.isEnabledTextView.setText(srec.enabled > 0 ? R.string.recording_enabled : R.string.recording_disabled);
+            holder.isEnabledTextView.setText(recording.enabled > 0 ? R.string.recording_enabled : R.string.recording_disabled);
         }
         return view;
     }

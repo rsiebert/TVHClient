@@ -81,17 +81,23 @@ public class BaseRecordingAddEditFragment extends Fragment {
         priorityList = activity.getResources().getStringArray(R.array.dvr_priorities);
     }
 
-    protected String getDateStringFromDate(Calendar cal) {
-        int day = cal.get(Calendar.DAY_OF_MONTH);
-        int month = cal.get(Calendar.MONTH) + 1;
-        int year = cal.get(Calendar.YEAR);
+    protected String getDateStringFromTimeInMillis(long milliSeconds) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(milliSeconds);
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        int month = calendar.get(Calendar.MONTH) + 1;
+        int year = calendar.get(Calendar.YEAR);
+
         return ((day < 10) ? "0" + day : day) + "."
                 + ((month < 10) ? "0" + month : month) + "." + year;
     }
 
-    protected String getTimeStringFromDate(Calendar cal) {
-        int hour = cal.get(Calendar.HOUR_OF_DAY);
-        int minute = cal.get(Calendar.MINUTE);
+    protected String getTimeStringFromTimeInMillis(long milliSeconds) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(milliSeconds);
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        int minute = calendar.get(Calendar.MINUTE);
+
         return ((hour < 10) ? "0" + hour : hour) + ":"
                 + ((minute < 10) ? "0" + minute : minute);
     }
@@ -218,16 +224,24 @@ public class BaseRecordingAddEditFragment extends Fragment {
                 .show();
     }
 
-    protected void handleDateSelection(Calendar date, DateTimePickerCallback callback, String tag) {
-        int year = date.get(Calendar.YEAR);
-        int month = date.get(Calendar.MONTH);
-        int day = date.get(Calendar.DAY_OF_MONTH);
+    protected void handleDateSelection(long milliSeconds, DateTimePickerCallback callback, String tag) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(milliSeconds);
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+
         DatePickerDialog datePicker = DatePickerDialog.newInstance(
                 new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePickerDialog datePickerDialog, int year, int month, int day) {
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.set(Calendar.YEAR, year);
+                        calendar.set(Calendar.MONTH, month);
+                        calendar.set(Calendar.DAY_OF_MONTH, day);
+
                         if (callback != null) {
-                            callback.onDateSelected(year, month, day, tag);
+                            callback.onDateSelected(calendar.getTimeInMillis(), tag);
                         }
                     }
                 }, year, month, day, false);
@@ -236,15 +250,21 @@ public class BaseRecordingAddEditFragment extends Fragment {
         datePicker.show(activity.getSupportFragmentManager(), "");
     }
 
-    protected void handleTimeSelection(Calendar time, DateTimePickerCallback callback, String tag) {
-        int hour = time.get(Calendar.HOUR_OF_DAY);
-        int minute = time.get(Calendar.MINUTE);
+    protected void handleTimeSelection(long milliSeconds, DateTimePickerCallback callback, String tag) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(milliSeconds);
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        int minute = calendar.get(Calendar.MINUTE);
+
         TimePickerDialog timePickerDialog = TimePickerDialog.newInstance(
                 new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(RadialPickerLayout timePicker, int selectedHour, int selectedMinute) {
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.set(Calendar.HOUR_OF_DAY, selectedHour);
+                        calendar.set(Calendar.MINUTE, selectedMinute);
                         if (callback != null) {
-                            callback.onTimeSelected(selectedHour, selectedMinute, tag);
+                            callback.onTimeSelected(calendar.getTimeInMillis(), tag);
                         }
                     }
                 }, hour, minute, true, false);

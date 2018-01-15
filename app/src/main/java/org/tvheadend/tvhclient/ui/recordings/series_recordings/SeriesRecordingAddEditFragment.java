@@ -84,8 +84,8 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
 
     private int minDuration;
     private int maxDuration;
-    private Calendar startTime = Calendar.getInstance();
-    private Calendar startWindowTime = Calendar.getInstance();
+    private long startTime;
+    private long startWindowTime;
     private boolean timeEnabled;
     private long startExtraTime;
     private long stopExtraTime;
@@ -133,8 +133,8 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
             minDuration = (recording.minDuration / 60);
             maxDuration = (recording.maxDuration / 60);
             timeEnabled = (recording.start >= 0 || recording.startWindow >= 0);
-            startTime.setTimeInMillis(recording.start * 60 * 1000);
-            startWindowTime.setTimeInMillis(recording.startWindow * 60 * 1000);
+            startTime = recording.start * 1000;
+            startWindowTime = recording.startWindow;
             startExtraTime = recording.startExtra;
             stopExtraTime = recording.stopExtra;
             duplicateDetectionId = recording.dupDetect;
@@ -150,6 +150,10 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
             minDuration = 0;
             maxDuration = 0;
             timeEnabled = true;
+            Calendar calendar = Calendar.getInstance();
+            startTime = calendar.getTimeInMillis();
+            // Add another 30 minutes
+            startWindowTime = calendar.getTimeInMillis() + (30 * 60 * 1000);
             startExtraTime = 2;
             stopExtraTime = 2;
             duplicateDetectionId = 0;
@@ -187,8 +191,8 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
             minDuration = savedInstanceState.getInt("minDuration");
             maxDuration = savedInstanceState.getInt("maxDuration");
             timeEnabled = savedInstanceState.getBoolean("timeEnabled");
-            startTime.setTimeInMillis(savedInstanceState.getLong("startTime"));
-            startWindowTime.setTimeInMillis(savedInstanceState.getLong("startWindowTime"));
+            startTime = savedInstanceState.getLong("startTime");
+            startWindowTime = savedInstanceState.getLong("startWindowTime");
             startExtraTime = savedInstanceState.getLong("startExtraTime");
             stopExtraTime = savedInstanceState.getLong("stopExtraTime");
             duplicateDetectionId = savedInstanceState.getInt("duplicateDetectionId");
@@ -230,10 +234,10 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
             recordingProfileNameTextView.setOnClickListener(view -> handleRecordingProfileSelection(recordingProfilesList, recordingProfileName, this));
         }
 
-        startTimeTextView.setText(getTimeStringFromDate(startTime));
+        startTimeTextView.setText(getTimeStringFromTimeInMillis(startTime));
         startTimeTextView.setOnClickListener(view -> handleTimeSelection(startTime, SeriesRecordingAddEditFragment.this, "startTime"));
 
-        startWindowTimeTextView.setText(getTimeStringFromDate(startWindowTime));
+        startWindowTimeTextView.setText(getTimeStringFromTimeInMillis(startWindowTime));
         startWindowTimeTextView.setOnClickListener(view -> handleTimeSelection(startWindowTime, SeriesRecordingAddEditFragment.this, "startWindowTime"));
 
         startExtraTimeTextView.setText(String.valueOf(startExtraTime));
@@ -251,9 +255,9 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
             public void onClick(View view) {
                 boolean checked = timeEnabledCheckBox.isChecked();
                 startTimeTextView.setEnabled(checked);
-                startTimeTextView.setText(checked ? getTimeStringFromDate(startTime) : "-");
+                startTimeTextView.setText(checked ? getTimeStringFromTimeInMillis(startTime) : "-");
                 startWindowTimeTextView.setEnabled(checked);
-                startWindowTimeTextView.setText(checked ? getTimeStringFromDate(startWindowTime) : "-");
+                startWindowTimeTextView.setText(checked ? getTimeStringFromTimeInMillis(startWindowTime) : "-");
             }
         });
 
@@ -269,8 +273,8 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
         outState.putInt("priority", priority);
         outState.putInt("minDuration", minDuration);
         outState.putInt("maxDuration", maxDuration);
-        outState.putLong("startTime", startTime.getTimeInMillis());
-        outState.putLong("startWindowTime", startWindowTime.getTimeInMillis());
+        outState.putLong("startTime", startTime);
+        outState.putLong("startWindowTime", startWindowTime);
         outState.putBoolean("timeEnabled", timeEnabled);
         outState.putLong("startExtraTime", startExtraTime);
         outState.putLong("stopExtraTime", stopExtraTime);
@@ -467,8 +471,8 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
         // Assume no start time is specified if 0:00 is selected
         if (timeEnabled) {
             // Pass on minutes not milliseconds
-            intent.putExtra("start", (int)(startTime.getTimeInMillis() / 60 / 1000));
-            intent.putExtra("startWindow", (int)(startWindowTime.getTimeInMillis() / 60 / 1000));
+            intent.putExtra("start", startTime);
+            intent.putExtra("startWindow", startWindowTime);
         }
         intent.putExtra("startExtra", startExtraTime);
         intent.putExtra("stopExtra", stopExtraTime);
@@ -516,21 +520,19 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
     }
 
     @Override
-    public void onTimeSelected(int hour, int minute, String tag) {
+    public void onTimeSelected(long milliSeconds, String tag) {
         if (tag.equals("startTime")) {
-            startTime.set(Calendar.HOUR_OF_DAY, hour);
-            startTime.set(Calendar.MINUTE, minute);
-            startTimeTextView.setText(getTimeStringFromDate(startTime));
+            startTime = milliSeconds;
+            startTimeTextView.setText(getTimeStringFromTimeInMillis(startTime));
 
         } else if (tag.equals("startWindowTime")) {
-            startWindowTime.set(Calendar.HOUR_OF_DAY, hour);
-            startWindowTime.set(Calendar.MINUTE, minute);
-            startWindowTimeTextView.setText(getTimeStringFromDate(startWindowTime));
+            startWindowTime = milliSeconds;
+            startWindowTimeTextView.setText(getTimeStringFromTimeInMillis(startWindowTime));
         }
     }
 
     @Override
-    public void onDateSelected(int year, int month, int day, String tag) {
+    public void onDateSelected(long milliSeconds, String tag) {
         // NOP
     }
 

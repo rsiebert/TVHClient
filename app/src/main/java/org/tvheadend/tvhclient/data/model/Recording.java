@@ -63,4 +63,8 @@ public class Recording {
     public boolean isRemoved() {
         return TextUtils.equals(error, "File missing") && TextUtils.equals(state, "completed");
     }
+
+    public int getDuration() {
+        return (int) ((stop - start) / 1000 / 60);
+    }
 }

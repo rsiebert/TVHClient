@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -65,8 +66,8 @@ public class TimerRecordingAddEditFragment extends BaseRecordingAddEditFragment 
     @BindView(R.id.dvr_config_label)
     TextView recordingProfileLabelTextView;
 
-    private Calendar startTime = Calendar.getInstance();
-    private Calendar stopTime = Calendar.getInstance();
+    private long startTime;
+    private long stopTime;
     private String directory;
     private String title;
     private String name;
@@ -104,8 +105,8 @@ public class TimerRecordingAddEditFragment extends BaseRecordingAddEditFragment 
         if (!TextUtils.isEmpty(id)) {
             TimerRecording recording = dataStorage.getTimerRecordingFromArray(id);
             priority = recording.priority;
-            startTime.setTimeInMillis(recording.start * 60 * 1000);
-            stopTime.setTimeInMillis(recording.stop * 60 * 1000);
+            startTime = recording.start;
+            stopTime = recording.stop;
             daysOfWeek = recording.daysOfWeek;
             directory = recording.directory;
             title = recording.title;
@@ -114,10 +115,11 @@ public class TimerRecordingAddEditFragment extends BaseRecordingAddEditFragment 
             channelId = recording.channel;
             channel = dataStorage.getChannelFromArray(channelId);
         } else {
-            Calendar calendar = Calendar.getInstance();
             priority = 2;
-            startTime.setTimeInMillis(calendar.getTimeInMillis());
-            stopTime.setTimeInMillis(calendar.getTimeInMillis() + 30 * 60 * 1000);
+            Calendar calendar = Calendar.getInstance();
+            startTime = calendar.getTimeInMillis();
+            // Add another 30 minutes
+            stopTime = calendar.getTimeInMillis() + (30 * 60 * 1000);
             daysOfWeek = 127;
             directory = "";
             title = "";
@@ -149,8 +151,8 @@ public class TimerRecordingAddEditFragment extends BaseRecordingAddEditFragment 
             title = savedInstanceState.getString("title");
             name = savedInstanceState.getString("name");
             channelId = savedInstanceState.getInt("channelId");
-            startTime.setTimeInMillis(savedInstanceState.getLong("startTime"));
-            stopTime.setTimeInMillis(savedInstanceState.getLong("stopTime"));
+            startTime = savedInstanceState.getLong("startTime");
+            stopTime = savedInstanceState.getLong("stopTime");
             daysOfWeek = savedInstanceState.getInt("daysOfWee");
             priority = savedInstanceState.getInt("priority");
             directory = savedInstanceState.getString("directory");
@@ -187,10 +189,10 @@ public class TimerRecordingAddEditFragment extends BaseRecordingAddEditFragment 
             recordingProfileNameTextView.setOnClickListener(view -> handleRecordingProfileSelection(recordingProfilesList, recordingProfileName, TimerRecordingAddEditFragment.this));
         }
 
-        startTimeTextView.setText(getTimeStringFromDate(startTime));
+        startTimeTextView.setText(getTimeStringFromTimeInMillis(startTime));
         startTimeTextView.setOnClickListener(view -> handleTimeSelection(startTime, TimerRecordingAddEditFragment.this, "startTime"));
 
-        stopTimeTextView.setText(getTimeStringFromDate(stopTime));
+        stopTimeTextView.setText(getTimeStringFromTimeInMillis(stopTime));
         stopTimeTextView.setOnClickListener(view -> handleTimeSelection(stopTime, TimerRecordingAddEditFragment.this, "stopTime"));
 
         daysOfWeekTextView.setText(getSelectedDaysOfWeek());
@@ -204,8 +206,8 @@ public class TimerRecordingAddEditFragment extends BaseRecordingAddEditFragment 
         outState.putString("title", title);
         outState.putString("name", name);
         outState.putInt("channelId", channelId);
-        outState.putLong("startTime", startTime.getTimeInMillis() / 60 / 1000);
-        outState.putLong("stopTime", stopTime.getTimeInMillis() / 60 / 1000);
+        outState.putLong("startTime", startTime);
+        outState.putLong("stopTime", stopTime);
         outState.putInt("daysOfWeek", daysOfWeek);
         outState.putInt("priority", priority);
         outState.putString("directory", directory);
@@ -348,9 +350,8 @@ public class TimerRecordingAddEditFragment extends BaseRecordingAddEditFragment 
         intent.putExtra("directory", directory);
         intent.putExtra("title", title);
         intent.putExtra("name", name);
-        // Pass on minutes not milliseconds
-        intent.putExtra("start", (int)(startTime.getTimeInMillis() / 60 / 1000));
-        intent.putExtra("stop", (int)(stopTime.getTimeInMillis() / 60 / 1000));
+        intent.putExtra("start", startTime);
+        intent.putExtra("stop", stopTime);
         intent.putExtra("daysOfWeek", daysOfWeek);
         intent.putExtra("priority", priority);
         intent.putExtra("enabled", (isEnabled ? 1 : 0));
@@ -393,21 +394,20 @@ public class TimerRecordingAddEditFragment extends BaseRecordingAddEditFragment 
     }
 
     @Override
-    public void onTimeSelected(int hour, int minute, String tag) {
+    public void onTimeSelected(long milliSeconds, String tag) {
+        Log.d("Y", "onTimeSelected() called with: milliSeconds = [" + milliSeconds + "], tag = [" + tag + "]");
         if (tag.equals("startTime")) {
-            startTime.set(Calendar.HOUR_OF_DAY, hour);
-            startTime.set(Calendar.MINUTE, minute);
-            startTimeTextView.setText(getTimeStringFromDate(startTime));
+            startTime = milliSeconds;
+            startTimeTextView.setText(getTimeStringFromTimeInMillis(startTime));
 
         } else if (tag.equals("stopTime")) {
-            stopTime.set(Calendar.HOUR_OF_DAY, hour);
-            stopTime.set(Calendar.MINUTE, minute);
-            stopTimeTextView.setText(getTimeStringFromDate(stopTime));
+            stopTime = milliSeconds;
+            stopTimeTextView.setText(getTimeStringFromTimeInMillis(stopTime));
         }
     }
 
     @Override
-    public void onDateSelected(int year, int month, int day, String tag) {
+    public void onDateSelected(long milliSeconds, String tag) {
         // NOP
     }
 

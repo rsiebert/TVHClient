@@ -23,8 +23,6 @@ import org.tvheadend.tvhclient.ui.recordings.recordings.RecordingAddEditActivity
 import org.tvheadend.tvhclient.utils.MenuUtils;
 import org.tvheadend.tvhclient.utils.UIUtils;
 
-import java.util.Calendar;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -128,16 +126,10 @@ public class TimerRecordingDetailsFragment extends Fragment {
             priorityTextView.setText(priorityItems[recording.priority]);
         }
 
-        Calendar startTime = Calendar.getInstance();
-        startTime.set(Calendar.HOUR_OF_DAY, recording.start / 60);
-        startTime.set(Calendar.MINUTE, recording.start % 60);
-        Calendar endTime = Calendar.getInstance();
-        endTime.set(Calendar.HOUR_OF_DAY, recording.stop / 60);
-        endTime.set(Calendar.MINUTE, recording.stop % 60);
-        String time = UIUtils.getTime(getContext(), startTime.getTimeInMillis()) + " - " + UIUtils.getTime(getContext(), endTime.getTimeInMillis());
+        String time = UIUtils.getTime(getContext(), recording.start) + " - " + UIUtils.getTime(getContext(), recording.stop);
         timeTextView.setText(time);
 
-        durationTextView.setText(getString(R.string.minutes, (recording.stop - recording.start)));
+        durationTextView.setText(getString(R.string.minutes, recording.getDuration()));
     }
 
     @Override

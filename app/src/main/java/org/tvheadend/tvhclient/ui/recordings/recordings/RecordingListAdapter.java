@@ -168,17 +168,17 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
         }
 
         // Get the program and assign all the values
-        final Recording rec = getItem(position);
-        if (rec != null) {
-            Channel channel = DataStorage.getInstance().getChannelFromArray(rec.channel);
-            holder.titleTextView.setText(rec.title);
+        final Recording recording = getItem(position);
+        if (recording != null) {
+            Channel channel = DataStorage.getInstance().getChannelFromArray(recording.channel);
+            holder.titleTextView.setText(recording.title);
             if (channel != null) {
                 holder.channelTextView.setText(channel.channelName);
             }
 
-            if (!TextUtils.isEmpty(rec.subtitle)) {
+            if (!TextUtils.isEmpty(recording.subtitle)) {
                 holder.subtitleTextView.setVisibility(View.VISIBLE);
-                holder.subtitleTextView.setText(rec.subtitle);
+                holder.subtitleTextView.setText(recording.subtitle);
             } else {
                 holder.subtitleTextView.setVisibility(View.GONE);
             }
@@ -198,34 +198,34 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
                 holder.iconTextView.setVisibility(View.GONE);
             }
 
-            holder.dateTextView.setText(UIUtils.getDate(getContext(), rec.start));
+            holder.dateTextView.setText(UIUtils.getDate(getContext(), recording.start));
 
-            String time = UIUtils.getTime(context, rec.start) + " - " + UIUtils.getTime(context, rec.stop);
+            String time = UIUtils.getTime(context, recording.start) + " - " + UIUtils.getTime(context, recording.stop);
             holder.timeTextView.setText(time);
 
-            String durationTime = getContext().getString(R.string.minutes, (int) ((rec.stop - rec.start) / 1000 / 60));
+            String durationTime = getContext().getString(R.string.minutes, recording.getDuration());
             holder.durationTextView.setText(durationTime);
 
-            holder.summaryTextView.setVisibility(!TextUtils.isEmpty(rec.summary) ? View.VISIBLE : View.GONE);
-            holder.summaryTextView.setText(rec.summary);
+            holder.summaryTextView.setVisibility(!TextUtils.isEmpty(recording.summary) ? View.VISIBLE : View.GONE);
+            holder.summaryTextView.setText(recording.summary);
 
-            holder.descriptionTextView.setVisibility(!TextUtils.isEmpty(rec.description) ? View.VISIBLE : View.GONE);
-            holder.descriptionTextView.setText(rec.description);
+            holder.descriptionTextView.setVisibility(!TextUtils.isEmpty(recording.description) ? View.VISIBLE : View.GONE);
+            holder.descriptionTextView.setText(recording.description);
 
-            if (rec.isRemoved()) {
+            if (recording.isRemoved()) {
                 holder.failedReasonTextView.setVisibility(View.GONE);
-            } else if (rec.isAborted()) {
+            } else if (recording.isAborted()) {
                 holder.failedReasonTextView.setText(context.getResources().getString(R.string.recording_canceled));
-            } else if (rec.isMissed()) {
+            } else if (recording.isMissed()) {
                 holder.failedReasonTextView.setText(context.getResources().getString(R.string.recording_time_missed));
-            } else if (rec.isFailed()) {
+            } else if (recording.isFailed()) {
                 holder.failedReasonTextView.setText(context.getResources().getString(R.string.recording_file_invalid));
             } else {
                 holder.failedReasonTextView.setVisibility(View.GONE);
             }
 
             // Show only the recording icon
-            if (rec.isRecording()) {
+            if (recording.isRecording()) {
                 holder.stateImageView.setImageResource(R.drawable.ic_rec_small);
                 holder.stateImageView.setVisibility(ImageView.VISIBLE);
             } else {
@@ -233,21 +233,21 @@ public class RecordingListAdapter extends ArrayAdapter<Recording> {
             }
 
             // Show the information if the recording belongs to a series recording
-            if (rec.autorecId != null) {
+            if (recording.autorecId != null) {
                 holder.isSeriesRecordingTextView.setVisibility(ImageView.VISIBLE);
             } else {
                 holder.isSeriesRecordingTextView.setVisibility(ImageView.GONE);
             }
 
             // Show the information if the recording belongs to a series recording
-            if (rec.timerecId != null) {
+            if (recording.timerecId != null) {
                 holder.isTimerRecordingTextView.setVisibility(ImageView.VISIBLE);
             } else {
                 holder.isTimerRecordingTextView.setVisibility(ImageView.GONE);
             }
 
-            holder.isEnabledTextView.setVisibility((htspVersion >= 19 && rec.enabled > 0) ? View.VISIBLE : View.GONE);
-            holder.isEnabledTextView.setText(rec.enabled > 0 ? R.string.recording_enabled : R.string.recording_disabled);
+            holder.isEnabledTextView.setVisibility((htspVersion >= 19 && recording.enabled > 0) ? View.VISIBLE : View.GONE);
+            holder.isEnabledTextView.setText(recording.enabled > 0 ? R.string.recording_enabled : R.string.recording_disabled);
         }
         return view;
     }

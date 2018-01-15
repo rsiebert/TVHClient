@@ -145,9 +145,9 @@ public class SeriesRecordingDetailsFragment extends Fragment {
             maxDurationTextView.setText(getString(R.string.minutes, (int) (recording.maxDuration / 60)));
         }
 
-        startTimeTextView.setText(UIUtils.getTime(getContext(), recording.start * 60 * 1000));
+        startTimeTextView.setText(UIUtils.getTime(getContext(), recording.start));
 
-        startWindowTimeTextView.setText(UIUtils.getTime(getContext(), recording.startWindow * 60 * 1000));
+        startWindowTimeTextView.setText(UIUtils.getTime(getContext(), recording.startWindow));
     }
 
     @Override

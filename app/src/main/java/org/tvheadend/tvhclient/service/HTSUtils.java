@@ -256,10 +256,10 @@ public class HTSUtils {
             seriesRecording.approxTime = msg.getInt("approxTime");
         }
         if (msg.containsKey("start")) {
-            seriesRecording.start = msg.getInt("start");
+            seriesRecording.start = msg.getLong("start") * 1000 * 60;
         }
         if (msg.containsKey("startWindow")) {
-            seriesRecording.startWindow = msg.getInt("startWindow");
+            seriesRecording.startWindow = msg.getLong("startWindow") * 1000 * 60;
         }
         if (msg.containsKey("startExtra")) {
             seriesRecording.startExtra = msg.getLong("startExtra");
@@ -321,10 +321,10 @@ public class HTSUtils {
             timerRecording.priority = msg.getInt("priority");
         }
         if (msg.containsKey("start")) {
-            timerRecording.start = msg.getInt("start");
+            timerRecording.start = msg.getLong("start") * 1000 * 60;
         }
         if (msg.containsKey("stop")) {
-            timerRecording.stop = msg.getInt("stop");
+            timerRecording.stop = msg.getLong("stop") * 1000 * 60;
         }
         if (msg.containsKey("retention")) {
             timerRecording.retention = msg.getInt("retention");

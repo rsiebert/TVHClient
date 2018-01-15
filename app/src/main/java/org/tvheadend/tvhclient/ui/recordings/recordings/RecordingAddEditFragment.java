@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -82,8 +83,8 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
     private String title;
     private String subtitle;
     private String description;
-    private Calendar startTime = Calendar.getInstance();
-    private Calendar stopTime = Calendar.getInstance();
+    private long startTime;
+    private long stopTime;
     private long startExtra;
     private long stopExtra;
     private boolean isEnabled;
@@ -132,8 +133,8 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
             priority = recording.priority;
             startExtra = recording.startExtra;
             stopExtra = recording.stopExtra;
-            startTime.setTimeInMillis(recording.start);
-            stopTime.setTimeInMillis(recording.stop);
+            startTime = recording.start;
+            stopTime = recording.stop;
             title = recording.title;
             subtitle = recording.subtitle;
             description = recording.description;
@@ -149,9 +150,10 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
             priority = 2;
             startExtra = 0;
             stopExtra = 0;
-            // The start timeTextView is already set during init
-            // From this timeTextView add 30 minutes to the stop timeTextView
-            stopTime.setTimeInMillis(startTime.getTimeInMillis() + 30 * 60 * 1000);
+            Calendar calendar = Calendar.getInstance();
+            startTime = calendar.getTimeInMillis();
+            // Let the stop time be 30 minutes after the start time
+            stopTime = calendar.getTimeInMillis() + (30 * 60 * 1000);
             title = "";
             subtitle = "";
             description = "";
@@ -181,8 +183,8 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
             priority = savedInstanceState.getInt("priority");
             startExtra = savedInstanceState.getLong("startExtra");
             stopExtra = savedInstanceState.getLong("stopExtra");
-            startTime.setTimeInMillis(savedInstanceState.getLong("startTime"));
-            stopTime.setTimeInMillis(savedInstanceState.getLong("stopTime"));
+            startTime = savedInstanceState.getLong("startTime");
+            stopTime = savedInstanceState.getLong("stopTime");
             title = savedInstanceState.getString("title");
             subtitle = savedInstanceState.getString("subtitle");
             description = savedInstanceState.getString("description");
@@ -201,10 +203,10 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
         descriptionEditText.setVisibility(htspVersion >= 21 ? View.VISIBLE : View.GONE);
         descriptionEditText.setText(description);
 
-        stopTimeTextView.setText(getTimeStringFromDate(stopTime));
+        stopTimeTextView.setText(getTimeStringFromTimeInMillis(stopTime));
         stopTimeTextView.setOnClickListener(view -> handleTimeSelection(stopTime, RecordingAddEditFragment.this, "stopTime"));
 
-        stopDateTextView.setText(getDateStringFromDate(stopTime));
+        stopDateTextView.setText(getDateStringFromTimeInMillis(stopTime));
         stopDateTextView.setOnClickListener(view -> handleDateSelection(stopTime, RecordingAddEditFragment.this, "stopDate"));
 
         stopExtraEditText.setText(String.valueOf(stopExtra));
@@ -240,11 +242,11 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
         }
 
         startTimeTextView.setVisibility(!isRecording ? View.VISIBLE : View.GONE);
-        startTimeTextView.setText(getTimeStringFromDate(startTime));
+        startTimeTextView.setText(getTimeStringFromTimeInMillis(startTime));
         startTimeTextView.setOnClickListener(view -> handleTimeSelection(startTime, RecordingAddEditFragment.this, "startTime"));
 
         startDateTextView.setVisibility(!isRecording ? View.VISIBLE : View.GONE);
-        startDateTextView.setText(getDateStringFromDate(startTime));
+        startDateTextView.setText(getDateStringFromTimeInMillis(startTime));
         startDateTextView.setOnClickListener(view -> handleDateSelection(startTime, RecordingAddEditFragment.this, "startDate"));
 
         // Add the additional pre- and post recording values in minutes
@@ -256,8 +258,8 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
     public void onSaveInstanceState(@NonNull Bundle outState) {
         saveWidgetValuesIntoVariables();
         outState.putInt("priority", priority);
-        outState.putLong("startTime", startTime.getTimeInMillis() / 60 / 1000);
-        outState.putLong("stopTime", stopTime.getTimeInMillis() / 60 / 1000);
+        outState.putLong("startTime", startTime);
+        outState.putLong("stopTime", stopTime);
         outState.putLong("startExtra", startExtra);
         outState.putLong("stopExtra", stopExtra);
         outState.putString("title", title);
@@ -336,9 +338,11 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
     }
 
     private void addRecording() {
+        Log.d("X", "addRecording() called");
         Intent intent = getIntentData();
         intent.setAction("addDvrEntry");
         activity.startService(intent);
+        activity.finish();
     }
 
     private void updateRecording() {
@@ -346,15 +350,16 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
         intent.setAction("updateDvrEntry");
         intent.putExtra("id", dvrId);
         activity.startService(intent);
+        activity.finish();
     }
 
     private Intent getIntentData() {
         Intent intent = new Intent(activity, HTSService.class);
-        intent.putExtra("titleTextView", title);
+        intent.putExtra("title", title);
         intent.putExtra("subtitle", subtitle);
         intent.putExtra("description", description);
         // Pass on seconds not milliseconds
-        intent.putExtra("stopTime", (int)(stopTime.getTimeInMillis() / 1000));
+        intent.putExtra("stopTime", stopTime);
         intent.putExtra("stopExtra", stopExtra);
 
         if (!isScheduled) {
@@ -362,9 +367,9 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
         }
         if (!isRecording) {
             // Pass on seconds not milliseconds
-            intent.putExtra("startTime", (int)(startTime.getTimeInMillis() / 1000));
+            intent.putExtra("startTime", startTime);
             intent.putExtra("startExtra", startExtra);
-            intent.putExtra("priorityTextView", priority);
+            intent.putExtra("priority", priority);
             intent.putExtra("enabled", (isEnabled ? 1 : 0));
         }
         // Add the recording profile if available and enabled
@@ -416,30 +421,24 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
     }
 
     @Override
-    public void onTimeSelected(int hour, int minute, String tag) {
+    public void onTimeSelected(long milliSeconds, String tag) {
         if (tag.equals("startTime")) {
-            startTime.set(Calendar.HOUR_OF_DAY, hour);
-            startTime.set(Calendar.MINUTE, minute);
-            startTimeTextView.setText(getTimeStringFromDate(startTime));
+            startTime = milliSeconds;
+            startTimeTextView.setText(getTimeStringFromTimeInMillis(startTime));
         } else if (tag.equals("stopTime")) {
-            stopTime.set(Calendar.HOUR_OF_DAY, hour);
-            stopTime.set(Calendar.MINUTE, minute);
-            stopTimeTextView.setText(getTimeStringFromDate(stopTime));
+            stopTime = milliSeconds;
+            stopTimeTextView.setText(getTimeStringFromTimeInMillis(stopTime));
         }
     }
 
     @Override
-    public void onDateSelected(int year, int month, int day, String tag) {
+    public void onDateSelected(long milliSeconds, String tag) {
         if (tag.equals("startDate")) {
-            startTime.set(Calendar.DAY_OF_MONTH, day);
-            startTime.set(Calendar.MONTH, month);
-            startTime.set(Calendar.YEAR, year);
-            startDateTextView.setText(getDateStringFromDate(startTime));
+            startTime = milliSeconds;
+            startDateTextView.setText(getDateStringFromTimeInMillis(startTime));
         } else if (tag.equals("stopDate")) {
-            stopTime.set(Calendar.DAY_OF_MONTH, day);
-            stopTime.set(Calendar.MONTH, month);
-            stopTime.set(Calendar.YEAR, year);
-            stopTimeTextView.setText(getDateStringFromDate(stopTime));
+            stopTime = milliSeconds;
+            stopTimeTextView.setText(getDateStringFromTimeInMillis(stopTime));
         }
     }
 
