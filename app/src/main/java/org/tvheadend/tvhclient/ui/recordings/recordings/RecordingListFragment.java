@@ -225,36 +225,6 @@ public class RecordingListFragment extends ListFragment implements OnItemClickLi
         toolbarInterface.setSubtitle(items);
     }
 
-    protected void handleAdapterChanges(String action, Recording recording) {
-        switch (action) {
-            case "dvrEntryAdd":
-                adapter.add(recording);
-                adapter.notifyDataSetChanged();
-                // Show the number of recordings
-                toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.recordings, adapter.getCount(), adapter.getCount()));
-                break;
-            case "dvrEntryDelete":
-                // Get the position of the recording that is to be
-                // deleted so the previous one can be selected
-                if (--selectedListPosition < 0) {
-                    selectedListPosition = 0;
-                }
-                adapter.remove(recording);
-                adapter.notifyDataSetChanged();
-                // Update the number of recordings
-                toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.recordings, adapter.getCount(), adapter.getCount()));
-                // Select the previous recording to show its details
-                if (isDualPane) {
-                    showRecordingDetails(selectedListPosition);
-                }
-                break;
-            case "dvrEntryUpdate":
-                adapter.update(recording);
-                adapter.notifyDataSetChanged();
-                break;
-        }
-    }
-
     @Override
     public void onSearchRequested(String query) {
         // Start searching for recordings

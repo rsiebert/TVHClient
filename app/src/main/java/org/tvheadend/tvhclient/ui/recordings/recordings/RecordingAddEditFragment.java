@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,9 +20,9 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.service.HTSService;
 import org.tvheadend.tvhclient.data.model.Channel;
 import org.tvheadend.tvhclient.data.model.Recording;
+import org.tvheadend.tvhclient.service.HTSService;
 import org.tvheadend.tvhclient.ui.recordings.base.BaseRecordingAddEditFragment;
 import org.tvheadend.tvhclient.ui.recordings.common.DateTimePickerCallback;
 import org.tvheadend.tvhclient.ui.recordings.common.RecordingPriorityListCallback;
@@ -183,8 +182,8 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
             priority = savedInstanceState.getInt("priority");
             startExtra = savedInstanceState.getLong("startExtra");
             stopExtra = savedInstanceState.getLong("stopExtra");
-            startTime = savedInstanceState.getLong("startTime");
-            stopTime = savedInstanceState.getLong("stopTime");
+            startTime = savedInstanceState.getLong("start");
+            stopTime = savedInstanceState.getLong("stop");
             title = savedInstanceState.getString("title");
             subtitle = savedInstanceState.getString("subtitle");
             description = savedInstanceState.getString("description");
@@ -258,8 +257,8 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
     public void onSaveInstanceState(@NonNull Bundle outState) {
         saveWidgetValuesIntoVariables();
         outState.putInt("priority", priority);
-        outState.putLong("startTime", startTime);
-        outState.putLong("stopTime", stopTime);
+        outState.putLong("start", startTime);
+        outState.putLong("stop", stopTime);
         outState.putLong("startExtra", startExtra);
         outState.putLong("stopExtra", stopExtra);
         outState.putString("title", title);
@@ -330,6 +329,12 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
             }
             return;
         }
+        if (channelId == 0) {
+            if (activity.getCurrentFocus() != null) {
+                Snackbar.make(activity.getCurrentFocus(), "Please select a channel", Toast.LENGTH_SHORT).show();
+            }
+            return;
+        }
         if (dvrId > 0) {
             updateRecording();
         } else {
@@ -338,7 +343,6 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
     }
 
     private void addRecording() {
-        Log.d("X", "addRecording() called");
         Intent intent = getIntentData();
         intent.setAction("addDvrEntry");
         activity.startService(intent);
@@ -359,7 +363,7 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
         intent.putExtra("subtitle", subtitle);
         intent.putExtra("description", description);
         // Pass on seconds not milliseconds
-        intent.putExtra("stopTime", stopTime);
+        intent.putExtra("stop", stopTime);
         intent.putExtra("stopExtra", stopExtra);
 
         if (!isScheduled) {
@@ -367,7 +371,7 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
         }
         if (!isRecording) {
             // Pass on seconds not milliseconds
-            intent.putExtra("startTime", startTime);
+            intent.putExtra("start", startTime);
             intent.putExtra("startExtra", startExtra);
             intent.putExtra("priority", priority);
             intent.putExtra("enabled", (isEnabled ? 1 : 0));

@@ -1,6 +1,7 @@
 package org.tvheadend.tvhclient.ui.recordings.recordings;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 
 import org.tvheadend.tvhclient.R;
@@ -52,7 +53,7 @@ public class ScheduledRecordingListFragment extends RecordingListFragment implem
         adapter.clear();
         Map<Integer, Recording> map = DataStorage.getInstance().getRecordingsFromArray();
         for (Recording recording : map.values()) {
-            if (recording.isScheduled()) {
+            if (recording.isScheduled() || recording.isRecording()) {
                 adapter.add(recording);
             }
         }
@@ -63,13 +64,45 @@ public class ScheduledRecordingListFragment extends RecordingListFragment implem
     public void onMessage(String action, final Object obj) {
         switch (action) {
             case "dvrEntryAdd":
-            case "dvrEntryUpdate":
-            case "dvrEntryDelete":
                 activity.runOnUiThread(new Runnable() {
+                    @Override
                     public void run() {
                         Recording recording = (Recording) obj;
                         if (recording.isScheduled() || recording.isRecording()) {
-                            handleAdapterChanges(action, recording);
+                            adapter.add(recording);
+                            adapter.notifyDataSetChanged();
+                            toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.recordings, adapter.getCount(), adapter.getCount()));
+                        }
+                    }
+                });
+                break;
+            case "dvrEntryUpdate":
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Recording recording = (Recording) obj;
+                        adapter.update(recording);
+                        adapter.notifyDataSetChanged();
+
+                    }
+                });
+                break;
+            case "dvrEntryDelete":
+                activity.runOnUiThread(new Runnable() {
+                    public void run() {
+                        // Get the position of the recording that is to be
+                        // deleted so the previous one can be selected
+                        if (--selectedListPosition < 0) {
+                            selectedListPosition = 0;
+                        }
+                        Recording recording = (Recording) obj;
+                        adapter.remove(recording);
+                        adapter.notifyDataSetChanged();
+                        // Update the number of recordings
+                        toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.recordings, adapter.getCount(), adapter.getCount()));
+                        // Select the previous recording to show its details
+                        if (isDualPane) {
+                            showRecordingDetails(selectedListPosition);
                         }
                     }
                 });
