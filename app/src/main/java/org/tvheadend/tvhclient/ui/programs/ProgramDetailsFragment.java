@@ -272,7 +272,7 @@ public class ProgramDetailsFragment extends Fragment implements ImageDownloadTas
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         if (nestedToolbar == null) {
-            inflater.inflate(R.menu.program_details_toolbar_menu, menu);
+            inflater.inflate(R.menu.program_details_options_menu, menu);
         } else {
             inflater.inflate(R.menu.external_search_options_menu, menu);
         }
