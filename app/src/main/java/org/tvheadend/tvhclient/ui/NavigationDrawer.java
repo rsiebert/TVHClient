@@ -178,7 +178,7 @@ public class NavigationDrawer implements HTSListener, AccountHeader.OnAccountHea
                 completedRecordingCount++;
             } else if (recording.isScheduled()) {
                 scheduledRecordingCount++;
-            } else if (recording.isFailed()) {
+            } else if (recording.isFailed() || recording.isAborted() || recording.isMissed()) {
                 failedRecordingCount++;
             } else if (recording.isRemoved()) {
                 removedRecordingCount++;
