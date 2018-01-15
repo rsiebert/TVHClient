@@ -9,11 +9,6 @@ public class Constants {
     public static final int RESULT_CODE_START_PLAYER = 102;
 
     // Strings used to identify the information passed via a bundle
-    public static final String BUNDLE_EPG_START_TIME = "epgStartTime";
-    public static final String BUNDLE_EPG_END_TIME = "epgEndTime";
-    public static final String BUNDLE_EPG_INDEX = "showControls";
-    public static final String BUNDLE_EPG_PIXELS_PER_MINUTE = "pixelsPerMinute";
-    public static final String BUNDLE_EPG_DISPLAY_WIDTH = "displayWidth";
     public static final String BUNDLE_ACTION = "action";
     public static final String BUNDLE_NOTIFICATION_MSG = "notificationMsg";
 
