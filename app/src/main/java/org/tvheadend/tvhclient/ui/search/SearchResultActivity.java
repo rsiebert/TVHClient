@@ -127,7 +127,7 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
                     //}
 */
                     Intent intent = new Intent(SearchResultActivity.this, RecordingDetailsActivity.class);
-                    intent.putExtra("eventId", program.eventId);
+                    intent.putExtra("eventId", program.getEventId());
                     intent.putExtra("type", "program");
                     startActivity(intent);
 
@@ -151,12 +151,12 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
 
         Intent intent = getIntent();
 
-        // Try to get the channel and recording id if given, to limit the search
+        // Try to loadRecording the channel and recording id if given, to limit the search
         // a single channel or the completed recordings.
         Bundle bundle = intent.getBundleExtra(SearchManager.APP_DATA);
         if (bundle != null) {
             channel = dataStorage.getChannelFromArray(bundle.getInt("channelId"));
-            //recording = dataStorage.getRecording(bundle.getLong("dvrId"));
+            //recording = dataStorage.getTimerRecording(bundle.getLong("dvrId"));
         } else {
             channel = null;
             //recording = null;
@@ -277,7 +277,7 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
         intent.setAction("epgQuery");
         intent.putExtra("query", query);
         if (channel != null) {
-            intent.putExtra("channelId", channel.channelId);
+            intent.putExtra("channelId", channel.getChannelId());
         }
         startService(intent);
         //}
@@ -355,26 +355,26 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
             return super.onContextItemSelected(item);
         }
 
-        Recording rec = dataStorage.getRecordingFromArray(program.dvrId);
-        Channel channel = dataStorage.getChannelFromArray(program.channelId);
+        Recording rec = dataStorage.getRecordingFromArray(program.getDvrId());
+        Channel channel = dataStorage.getChannelFromArray(program.getChannelId());
 
         switch (item.getItemId()) {
             case R.id.menu_search_epg:
-                menuUtils.handleMenuSearchEpgSelection(program.title);
+                menuUtils.handleMenuSearchEpgSelection(program.getTitle());
                 return true;
 
             case R.id.menu_search_imdb:
-                menuUtils.handleMenuSearchWebSelection(program.title);
+                menuUtils.handleMenuSearchWebSelection(program.getTitle());
                 return true;
 
             case R.id.menu_record_remove:
                 if (rec != null) {
                     if (rec.isRecording()) {
-                        menuUtils.handleMenuStopRecordingSelection(rec.id, rec.title);
+                        menuUtils.handleMenuStopRecordingSelection(rec.getId(), rec.getTitle());
                     } else if (rec.isScheduled()) {
-                        menuUtils.handleMenuCancelRecordingSelection(rec.id, rec.title);
+                        menuUtils.handleMenuCancelRecordingSelection(rec.getId(), rec.getTitle());
                     } else {
-                        menuUtils.handleMenuRemoveRecordingSelection(rec.id, rec.title);
+                        menuUtils.handleMenuRemoveRecordingSelection(rec.getId(), rec.getTitle());
                     }
                 }
             /*
@@ -386,26 +386,26 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
                 return true;
 
             case R.id.menu_record_once:
-                menuUtils.handleMenuRecordSelection(program.eventId);
+                menuUtils.handleMenuRecordSelection(program.getEventId());
                 return true;
 
             case R.id.menu_record_once_custom_profile:
                 // TODO hide this menu if no profiles are available
-                menuUtils.handleMenuCustomRecordSelection(program.eventId, channel.channelId);
+                menuUtils.handleMenuCustomRecordSelection(program.getEventId(), channel.getChannelId());
                 return true;
 
             case R.id.menu_record_series:
-                menuUtils.handleMenuSeriesRecordSelection(program.title);
+                menuUtils.handleMenuSeriesRecordSelection(program.getTitle());
                 return true;
 
             case R.id.menu_play:
-                menuUtils.handleMenuPlaySelection(channel.channelId, -1);
+                menuUtils.handleMenuPlaySelection(channel.getChannelId(), -1);
                 //menuUtils.handleMenuPlaySelection(-1, rec.id);
                 return true;
 
             case R.id.menu_download:
                 if (rec != null) {
-                    menuUtils.handleMenuDownloadSelection(rec.id);
+                    menuUtils.handleMenuDownloadSelection(rec.getId());
                 }
                 return true;
 
@@ -425,7 +425,7 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
 
         getMenuInflater().inflate(R.menu.channel_list_program_popup_menu, menu);
         // Set the title of the context menu
-        menu.setHeaderTitle(program.title);
+        menu.setHeaderTitle(program.getTitle());
         // Show or hide the menu items depending on the program state
         //Utils.setProgramMenu(app, menu, program);
 /*

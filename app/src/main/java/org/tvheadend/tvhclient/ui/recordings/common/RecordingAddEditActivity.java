@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.ui.recordings.recordings;
+package org.tvheadend.tvhclient.ui.recordings.common;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -7,6 +7,8 @@ import android.support.v7.widget.Toolbar;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
+import org.tvheadend.tvhclient.ui.common.BackPressedInterface;
+import org.tvheadend.tvhclient.ui.recordings.recordings.RecordingAddEditFragment;
 import org.tvheadend.tvhclient.ui.recordings.series_recordings.SeriesRecordingAddEditFragment;
 import org.tvheadend.tvhclient.ui.recordings.timer_recordings.TimerRecordingAddEditFragment;
 import org.tvheadend.tvhclient.utils.MiscUtils;
@@ -45,6 +47,16 @@ public class RecordingAddEditActivity extends AppCompatActivity implements Toolb
                 fragment.setArguments(getIntent().getExtras());
                 getSupportFragmentManager().beginTransaction().add(R.id.content_frame, fragment).commit();
             }
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.content_frame);
+        if (fragment != null && fragment instanceof BackPressedInterface) {
+            ((BackPressedInterface) fragment).onBackPressed();
+        } else {
+            super.onBackPressed();
         }
     }
 

@@ -1,5 +1,6 @@
 package org.tvheadend.tvhclient.ui.recordings.series_recordings;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -28,6 +29,7 @@ import org.tvheadend.tvhclient.data.model.Profile;
 import org.tvheadend.tvhclient.data.model.SeriesRecording;
 import org.tvheadend.tvhclient.service.HTSListener;
 import org.tvheadend.tvhclient.service.HTSService;
+import org.tvheadend.tvhclient.ui.common.BackPressedInterface;
 import org.tvheadend.tvhclient.ui.recordings.base.BaseRecordingAddEditFragment;
 import org.tvheadend.tvhclient.ui.recordings.common.DateTimePickerCallback;
 import org.tvheadend.tvhclient.ui.recordings.common.DaysOfWeekSelectionCallback;
@@ -41,7 +43,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment implements HTSListener, ChannelListSelectionCallback, RecordingPriorityListCallback, RecordingProfileListCallback, DateTimePickerCallback, DaysOfWeekSelectionCallback {
+public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment implements BackPressedInterface, HTSListener, ChannelListSelectionCallback, RecordingPriorityListCallback, RecordingProfileListCallback, DateTimePickerCallback, DaysOfWeekSelectionCallback {
 
     @BindView(R.id.is_enabled)
     CheckBox isEnabledCheckbox;
@@ -125,45 +127,70 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
             id = bundle.getString("id");
         }
 
-        // Get the values from the recording otherwise use default values
-        Channel channel;
-        if (!TextUtils.isEmpty(id)) {
-            SeriesRecording recording = dataStorage.getSeriesRecordingFromArray(id);
-            priority = recording.priority;
-            minDuration = (recording.minDuration / 60);
-            maxDuration = (recording.maxDuration / 60);
-            timeEnabled = (recording.start >= 0 || recording.startWindow >= 0);
-            startTime = recording.start * 1000;
-            startWindowTime = recording.startWindow;
-            startExtraTime = recording.startExtra;
-            stopExtraTime = recording.stopExtra;
-            duplicateDetectionId = recording.dupDetect;
-            daysOfWeek = recording.daysOfWeek;
-            directory = recording.directory;
-            title = recording.title;
-            name = recording.name;
-            isEnabled = recording.enabled > 0;
-            channelId = recording.channel;
-            channel = dataStorage.getChannelFromArray(channelId);
+        if (savedInstanceState == null) {
+            // Get the values from the recording otherwise use default values
+            if (!TextUtils.isEmpty(id)) {
+                SeriesRecordingViewModel viewModel = ViewModelProviders.of(this).get(SeriesRecordingViewModel.class);
+                viewModel.getRecording(id).observe(this, recording -> {
+                    if (recording != null) {
+                        priority = recording.getPriority();
+                        minDuration = (recording.getMinDuration() / 60);
+                        maxDuration = (recording.getMaxDuration() / 60);
+                        timeEnabled = (recording.getStart() >= 0 || recording.getStartWindow() >= 0);
+                        startTime = recording.getStart() * 1000;
+                        startWindowTime = recording.getStartWindow();
+                        startExtraTime = recording.getStartExtra();
+                        stopExtraTime = recording.getStopExtra();
+                        duplicateDetectionId = recording.getDupDetect();
+                        daysOfWeek = recording.getDaysOfWeek();
+                        directory = recording.getDirectory();
+                        title = recording.getTitle();
+                        name = recording.getName();
+                        isEnabled = recording.getEnabled() > 0;
+                        channelId = recording.getChannelId();
+                    }
+                    viewModel.getRecording(id).removeObservers(this);
+                    updateUI();
+                });
+            } else {
+                priority = 2;
+                minDuration = 0;
+                maxDuration = 0;
+                timeEnabled = true;
+                Calendar calendar = Calendar.getInstance();
+                startTime = calendar.getTimeInMillis();
+                // Add another 30 minutes
+                startWindowTime = calendar.getTimeInMillis() + (30 * 60 * 1000);
+                startExtraTime = 2;
+                stopExtraTime = 2;
+                duplicateDetectionId = 0;
+                daysOfWeek = 127;
+                directory = "";
+                title = "";
+                name = "";
+                isEnabled = true;
+                channelId = 0;
+                updateUI();
+            }
         } else {
-            priority = 2;
-            minDuration = 0;
-            maxDuration = 0;
-            timeEnabled = true;
-            Calendar calendar = Calendar.getInstance();
-            startTime = calendar.getTimeInMillis();
-            // Add another 30 minutes
-            startWindowTime = calendar.getTimeInMillis() + (30 * 60 * 1000);
-            startExtraTime = 2;
-            stopExtraTime = 2;
-            duplicateDetectionId = 0;
-            daysOfWeek = 127;
-            directory = "";
-            title = "";
-            name = "";
-            isEnabled = true;
-            channelId = 0;
-            channel = null;
+            // Restore the values before the orientation change
+            priority = savedInstanceState.getInt("priority");
+            minDuration = savedInstanceState.getInt("minDuration");
+            maxDuration = savedInstanceState.getInt("maxDuration");
+            timeEnabled = savedInstanceState.getBoolean("timeEnabled");
+            startTime = savedInstanceState.getLong("startTime");
+            startWindowTime = savedInstanceState.getLong("startWindowTime");
+            startExtraTime = savedInstanceState.getLong("startExtraTime");
+            stopExtraTime = savedInstanceState.getLong("stopExtraTime");
+            duplicateDetectionId = savedInstanceState.getInt("duplicateDetectionId");
+            daysOfWeek = savedInstanceState.getInt("daysOfWeek");
+            directory = savedInstanceState.getString("directory");
+            title = savedInstanceState.getString("title");
+            name = savedInstanceState.getString("name");
+            isEnabled = savedInstanceState.getBoolean("enabled");
+            channelId = savedInstanceState.getInt("channelId");
+            recordingProfileName = savedInstanceState.getInt("configName");
+            updateUI();
         }
 
         toolbarInterface.setTitle(!TextUtils.isEmpty(id) ?
@@ -183,27 +210,9 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
                 }
             }
         }
+    }
 
-        // Restore the values before the orientation change
-        if (savedInstanceState != null) {
-            // Restore the values before the orientation change
-            priority = savedInstanceState.getInt("priority");
-            minDuration = savedInstanceState.getInt("minDuration");
-            maxDuration = savedInstanceState.getInt("maxDuration");
-            timeEnabled = savedInstanceState.getBoolean("timeEnabled");
-            startTime = savedInstanceState.getLong("startTime");
-            startWindowTime = savedInstanceState.getLong("startWindowTime");
-            startExtraTime = savedInstanceState.getLong("startExtraTime");
-            stopExtraTime = savedInstanceState.getLong("stopExtraTime");
-            duplicateDetectionId = savedInstanceState.getInt("duplicateDetectionId");
-            daysOfWeek = savedInstanceState.getInt("daysOfWeek");
-            directory = savedInstanceState.getString("directory");
-            title = savedInstanceState.getString("title");
-            name = savedInstanceState.getString("name");
-            isEnabled = savedInstanceState.getBoolean("enabled");
-            channelId = savedInstanceState.getInt("channelId");
-            recordingProfileName = savedInstanceState.getInt("configName");
-        }
+    private void updateUI() {
 
         isEnabledCheckbox.setVisibility(htspVersion >= 19 ? View.VISIBLE : View.GONE);
         isEnabledCheckbox.setChecked(isEnabled);
@@ -213,7 +222,8 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
         directoryEditText.setVisibility(htspVersion >= 19 ? View.VISIBLE : View.GONE);
         directoryEditText.setText(directory);
 
-        channelNameTextView.setText(channel != null ? channel.channelName : getString(R.string.all_channels));
+        Channel channel = dataStorage.getChannelFromArray(channelId);
+        channelNameTextView.setText(channel != null ? channel.getChannelName() : getString(R.string.all_channels));
         channelNameTextView.setOnClickListener(view -> {
             // Determine if the server supports recording on all channels
             boolean allowRecordingOnAllChannels = htspVersion >= 21;
@@ -418,7 +428,7 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
             activity.runOnUiThread(new Runnable() {
                 public void run() {
                     SeriesRecording seriesRecording = (SeriesRecording) obj;
-                    if (seriesRecording.id.equals(id)) {
+                    if (seriesRecording.getId().equals(id)) {
                         addSeriesRecording();
                     }
                 }
@@ -450,6 +460,7 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
             activity.startService(intent);
             activity.finish();
         } else {
+            // TODO move the update logic into the service
             Intent intent = new Intent(activity, HTSService.class);
             intent.setAction("deleteAutorecEntry");
             intent.putExtra("id", id);
@@ -501,7 +512,7 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
         if (which > 0) {
             channelId = which;
             Channel channel = dataStorage.getChannelFromArray(which);
-            channelNameTextView.setText(channel.channelName);
+            channelNameTextView.setText(channel.getChannelName());
         } else {
             channelNameTextView.setText(R.string.all_channels);
         }
@@ -559,5 +570,10 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
                     }
                 })
                 .show();
+    }
+
+    @Override
+    public void onBackPressed() {
+        cancel();
     }
 }

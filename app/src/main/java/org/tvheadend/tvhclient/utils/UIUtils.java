@@ -234,31 +234,31 @@ public class UIUtils {
         }
     }
 
-    public static String getSeriesInfo(Context context, Program p) {
+    public static String getSeriesInfo(Context context, Program program) {
 
         final String season = context.getResources().getString(R.string.season);
         final String episode = context.getResources().getString(R.string.episode);
         final String part = context.getResources().getString(R.string.part);
 
         String seriesInfo = "";
-        if (!TextUtils.isEmpty(p.episodeOnscreen)) {
-            seriesInfo = p.episodeOnscreen;
+        if (!TextUtils.isEmpty(program.getEpisodeOnscreen())) {
+            seriesInfo = program.getEpisodeOnscreen();
         } else {
-            if (p.seasonNumber > 0) {
+            if (program.getSeasonNumber() > 0) {
                 seriesInfo += String.format(Locale.getDefault(), "%s %02d",
-                        season.toLowerCase(Locale.getDefault()), p.seasonNumber);
+                        season.toLowerCase(Locale.getDefault()), program.getSeasonNumber());
             }
-            if (p.episodeNumber > 0) {
+            if (program.getEpisodeNumber() > 0) {
                 if (seriesInfo.length() > 0)
                     seriesInfo += ", ";
                 seriesInfo += String.format(Locale.getDefault(), "%s %02d",
-                        episode.toLowerCase(Locale.getDefault()), p.episodeNumber);
+                        episode.toLowerCase(Locale.getDefault()), program.getEpisodeNumber());
             }
-            if (p.partNumber > 0) {
+            if (program.getPartNumber() > 0) {
                 if (seriesInfo.length() > 0)
                     seriesInfo += ", ";
                 seriesInfo += String.format(Locale.getDefault(), "%s %d",
-                        part.toLowerCase(Locale.getDefault()), p.partNumber);
+                        part.toLowerCase(Locale.getDefault()), program.getPartNumber());
             }
             if (seriesInfo.length() > 0) {
                 seriesInfo = seriesInfo.substring(0, 1).toUpperCase(

@@ -1,5 +1,6 @@
 package org.tvheadend.tvhclient.ui;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -9,7 +10,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.data.tasks.WakeOnLanTaskCallback;
 import org.tvheadend.tvhclient.ui.channels.ChannelListFragment;
 import org.tvheadend.tvhclient.ui.epg.ProgramGuideViewPagerFragment;
@@ -18,10 +18,13 @@ import org.tvheadend.tvhclient.ui.misc.StatusFragment;
 import org.tvheadend.tvhclient.ui.misc.UnlockerFragment;
 import org.tvheadend.tvhclient.ui.recordings.recordings.CompletedRecordingListFragment;
 import org.tvheadend.tvhclient.ui.recordings.recordings.FailedRecordingListFragment;
+import org.tvheadend.tvhclient.ui.recordings.recordings.RecordingViewModel;
 import org.tvheadend.tvhclient.ui.recordings.recordings.RemovedRecordingListFragment;
 import org.tvheadend.tvhclient.ui.recordings.recordings.ScheduledRecordingListFragment;
 import org.tvheadend.tvhclient.ui.recordings.series_recordings.SeriesRecordingListFragment;
+import org.tvheadend.tvhclient.ui.recordings.series_recordings.SeriesRecordingViewModel;
 import org.tvheadend.tvhclient.ui.recordings.timer_recordings.TimerRecordingListFragment;
+import org.tvheadend.tvhclient.ui.recordings.timer_recordings.TimerRecordingViewModel;
 import org.tvheadend.tvhclient.ui.settings.SettingsActivity;
 
 // TODO make nav image blasser
@@ -43,6 +46,8 @@ public class NavigationActivity extends MainActivity implements WakeOnLanTaskCal
         navigationDrawer.createHeader();
         navigationDrawer.createMenu();
 
+        startObservingViewModels();
+
         if (savedInstanceState == null) {
             // When the activity is created it got called by the main activity. Get the initial
             // navigation menu position and show the associated fragment with it. When the device
@@ -54,6 +59,45 @@ public class NavigationActivity extends MainActivity implements WakeOnLanTaskCal
         } else {
             selectedNavigationMenuId = savedInstanceState.getInt("navigation_menu_position", NavigationDrawer.MENU_CHANNELS);
         }
+    }
+
+    private void startObservingViewModels() {
+
+        SeriesRecordingViewModel seriesRecordingViewModel = ViewModelProviders.of(this).get(SeriesRecordingViewModel.class);
+        seriesRecordingViewModel.getRecordings().observe(this, recordings -> {
+            if (recordings != null) {
+                navigationDrawer.updateSeriesRecordingBadge(recordings.size());
+            }
+        });
+
+        TimerRecordingViewModel timerRecordingViewModel = ViewModelProviders.of(this).get(TimerRecordingViewModel.class);
+        timerRecordingViewModel.getRecordings().observe(this, recordings -> {
+            if (recordings != null) {
+                navigationDrawer.updateTimerRecordingBadge(recordings.size());
+            }
+        });
+
+        RecordingViewModel recordingViewModel = ViewModelProviders.of(this).get(RecordingViewModel.class);
+        recordingViewModel.getCompletedRecordings().observe(this, recordings -> {
+            if (recordings != null) {
+                navigationDrawer.updateCompletedRecordingBadge(recordings.size());
+            }
+        });
+        recordingViewModel.getScheduledRecordings().observe(this, recordings -> {
+            if (recordings != null) {
+                navigationDrawer.updateScheduledRecordingBadge(recordings.size());
+            }
+        });
+        recordingViewModel.getFailedRecordings().observe(this, recordings -> {
+            if (recordings != null) {
+                navigationDrawer.updateFailedRecordingBadge(recordings.size());
+            }
+        });
+        recordingViewModel.getRemovedRecordings().observe(this, recordings -> {
+            if (recordings != null) {
+                navigationDrawer.updateRemovedRecordingBadge(recordings.size());
+            }
+        });
     }
 
     /**
@@ -144,9 +188,6 @@ public class NavigationActivity extends MainActivity implements WakeOnLanTaskCal
     @Override
     public void onResume() {
         super.onResume();
-        // A connection exists and is active, register to receive
-        // information from the server and connect to the server
-        TVHClientApplication.getInstance().addListener(navigationDrawer);
         // Show the defined fragment from the menu position or the
         // status if the connection state is not fine
         handleDrawerItemSelected(selectedNavigationMenuId);
@@ -156,12 +197,6 @@ public class NavigationActivity extends MainActivity implements WakeOnLanTaskCal
         // bought the unlocked version to enable all features
         navigationDrawer.updateDrawerItemBadges();
         navigationDrawer.updateDrawerHeader();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        TVHClientApplication.getInstance().removeListener(navigationDrawer);
     }
 
     @Override

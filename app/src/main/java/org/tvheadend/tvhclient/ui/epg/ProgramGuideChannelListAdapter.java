@@ -45,7 +45,7 @@ public class ProgramGuideChannelListAdapter extends ArrayAdapter<Channel> implem
                 sort(new Comparator<Channel>() {
                     public int compare(Channel x, Channel y) {
                         if (x != null && y != null) {
-                            return x.channelName.compareTo(y.channelName);
+                            return x.getChannelName().compareTo(y.getChannelName());
                         }
                         return 0;
                     }
@@ -55,7 +55,7 @@ public class ProgramGuideChannelListAdapter extends ArrayAdapter<Channel> implem
                 sort(new Comparator<Channel>() {
                     public int compare(Channel x, Channel y) {
                         if (x != null && y != null) {
-                            return x.channelName.toLowerCase(Locale.US).compareTo(y.channelName.toLowerCase(Locale.US));
+                            return x.getChannelName().toLowerCase(Locale.US).compareTo(y.getChannelName().toLowerCase(Locale.US));
                         }
                         return 0;
                     }
@@ -66,9 +66,9 @@ public class ProgramGuideChannelListAdapter extends ArrayAdapter<Channel> implem
                     public int compare(Channel x, Channel y) {
                         if (x != null && y != null) {
 
-                            if (x.channelNumber > y.channelNumber) {
+                            if (x.getChannelNumber() > y.getChannelNumber()) {
                                 return 1;
-                            } else if (x.channelNumber < y.channelNumber) {
+                            } else if (x.getChannelNumber() < y.getChannelNumber()) {
                                 return -1;
                             } else {
                                 return 0;
@@ -116,9 +116,9 @@ public class ProgramGuideChannelListAdapter extends ArrayAdapter<Channel> implem
 
             // Show the regular or large channel icons. Otherwise show the channel name only
             // Assign the channel icon image or a null image
-            Bitmap iconBitmap = MiscUtils.getCachedIcon(context, c.channelIcon);
+            Bitmap iconBitmap = MiscUtils.getCachedIcon(context, c.getChannelIcon());
             holder.iconImageView.setImageBitmap(iconBitmap);
-            holder.iconTextView.setText(c.channelName);
+            holder.iconTextView.setText(c.getChannelName());
 
             holder.iconImageView.setVisibility(iconBitmap != null ? ImageView.VISIBLE : ImageView.INVISIBLE);
             holder.iconTextView.setVisibility(iconBitmap == null ? ImageView.VISIBLE : ImageView.INVISIBLE);
@@ -135,7 +135,7 @@ public class ProgramGuideChannelListAdapter extends ArrayAdapter<Channel> implem
     public void onClick(View view) {
         if (sharedPreferences.getBoolean("playWhenChannelIconSelectedPref", true)) {
             Channel channel = getSelectedItem();
-            new MenuUtils(context).handleMenuPlaySelection(channel.channelId, -1);
+            new MenuUtils(context).handleMenuPlaySelection(channel.getChannelId(), -1);
         }
     }
 
@@ -144,7 +144,7 @@ public class ProgramGuideChannelListAdapter extends ArrayAdapter<Channel> implem
         // Go through the list of channels and find the
         // one with the same id. If its been found, replace it.
         for (int i = 0; i < length; ++i) {
-            if (list.get(i).channelId == c.channelId) {
+            if (list.get(i).getChannelId() == c.getChannelId()) {
                 list.set(i, c);
                 break;
             }

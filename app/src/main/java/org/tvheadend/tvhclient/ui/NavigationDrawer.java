@@ -27,17 +27,14 @@ import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.data.DataStorage;
 import org.tvheadend.tvhclient.data.DatabaseHelper;
 import org.tvheadend.tvhclient.data.model.Connection;
-import org.tvheadend.tvhclient.data.model.Recording;
-import org.tvheadend.tvhclient.service.HTSListener;
 import org.tvheadend.tvhclient.service.HTSService;
 import org.tvheadend.tvhclient.ui.startup.StartupActivity;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-public class NavigationDrawer implements HTSListener, AccountHeader.OnAccountHeaderListener, Drawer.OnDrawerItemClickListener {
+public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, Drawer.OnDrawerItemClickListener {
 
     // The index for the navigation drawer menus
     public static final int MENU_UNKNOWN = -1;
@@ -63,7 +60,7 @@ public class NavigationDrawer implements HTSListener, AccountHeader.OnAccountHea
     private AccountHeader headerResult;
     private Drawer result;
 
-    public NavigationDrawer(Activity activity, Bundle savedInstanceState, Toolbar toolbar, NavigationDrawerCallback callback) {
+    NavigationDrawer(Activity activity, Bundle savedInstanceState, Toolbar toolbar, NavigationDrawerCallback callback) {
         this.activity = activity;
         this.savedInstanceState = savedInstanceState;
         this.toolbar = toolbar;
@@ -72,7 +69,7 @@ public class NavigationDrawer implements HTSListener, AccountHeader.OnAccountHea
         this.databaseHelper = DatabaseHelper.getInstance(activity.getApplicationContext());
     }
 
-    public void createHeader() {
+    void createHeader() {
         headerResult = new AccountHeaderBuilder()
                 .withActivity(activity)
                 .withCompactStyle(true)
@@ -84,7 +81,7 @@ public class NavigationDrawer implements HTSListener, AccountHeader.OnAccountHea
                 .build();
     }
 
-    public void createMenu() {
+    void createMenu() {
         BadgeStyle badgeStyle = new BadgeStyle()
                 .withColorRes(getResourceIdFromAttr(R.attr.material_drawer_badge));
 
@@ -166,37 +163,12 @@ public class NavigationDrawer implements HTSListener, AccountHeader.OnAccountHea
         return typedValue.resourceId;
     }
 
-    public void updateDrawerItemBadges() {
+    void updateDrawerItemBadges() {
         int channelCount = DataStorage.getInstance().getChannelsFromArray().size();
-        int completedRecordingCount = 0;
-        int scheduledRecordingCount = 0;
-        int failedRecordingCount = 0;
-        int removedRecordingCount = 0;
-        Map<Integer, Recording> map = DataStorage.getInstance().getRecordingsFromArray();
-        for (Recording recording : map.values()) {
-            if (recording.isCompleted()) {
-                completedRecordingCount++;
-            } else if (recording.isScheduled()) {
-                scheduledRecordingCount++;
-            } else if (recording.isFailed() || recording.isAborted() || recording.isMissed()) {
-                failedRecordingCount++;
-            } else if (recording.isRemoved()) {
-                removedRecordingCount++;
-            }
-        }
-        int seriesRecordingCount = DataStorage.getInstance().getSeriesRecordingsFromArray().size();
-        int timerRecordingCount = DataStorage.getInstance().getTimerRecordingsFromArray().size();
-
         result.updateBadge(MENU_CHANNELS, new StringHolder(channelCount + ""));
-        result.updateBadge(MENU_COMPLETED_RECORDINGS, new StringHolder(completedRecordingCount + ""));
-        result.updateBadge(MENU_SCHEDULED_RECORDINGS, new StringHolder(scheduledRecordingCount + ""));
-        result.updateBadge(MENU_SERIES_RECORDINGS, new StringHolder(seriesRecordingCount + ""));
-        result.updateBadge(MENU_TIMER_RECORDINGS, new StringHolder(timerRecordingCount + ""));
-        result.updateBadge(MENU_FAILED_RECORDINGS, new StringHolder(failedRecordingCount + ""));
-        result.updateBadge(MENU_REMOVED_RECORDINGS, new StringHolder(removedRecordingCount + ""));
     }
 
-    public void updateDrawerHeader() {
+    void updateDrawerHeader() {
         // Remove old profiles from the header
         List<Long> profileIdList = new ArrayList<>();
         for (IProfile profile : headerResult.getProfiles()) {
@@ -224,7 +196,7 @@ public class NavigationDrawer implements HTSListener, AccountHeader.OnAccountHea
         return result;
     }
 
-    public AccountHeader getHeader() {
+    AccountHeader getHeader() {
         return headerResult;
     }
 
@@ -274,22 +246,27 @@ public class NavigationDrawer implements HTSListener, AccountHeader.OnAccountHea
         return true;
     }
 
-    @Override
-    public void onMessage(String action, Object obj) {
-        switch (action) {
-            case "dvrEntryAdd":
-            case "dvrEntryUpdate":
-            case "dvrEntryDelete":
-            case "autorecEntryAdd":
-            case "autorecEntryDelete":
-            case "timerecEntryAdd":
-            case "timerecEntryDelete":
-                activity.runOnUiThread(new Runnable() {
-                    public void run() {
-                        updateDrawerItemBadges();
-                    }
-                });
-                break;
-        }
+    void updateSeriesRecordingBadge(int size) {
+        result.updateBadge(MENU_SERIES_RECORDINGS, new StringHolder(size + ""));
+    }
+
+    void updateTimerRecordingBadge(int size) {
+        result.updateBadge(MENU_TIMER_RECORDINGS, new StringHolder(size + ""));
+    }
+
+    void updateCompletedRecordingBadge(int size) {
+        result.updateBadge(MENU_COMPLETED_RECORDINGS, new StringHolder(size + ""));
+    }
+
+    void updateScheduledRecordingBadge(int size) {
+        result.updateBadge(MENU_SCHEDULED_RECORDINGS, new StringHolder(size + ""));
+    }
+
+    void updateFailedRecordingBadge(int size) {
+        result.updateBadge(MENU_FAILED_RECORDINGS, new StringHolder(size + ""));
+    }
+
+    void updateRemovedRecordingBadge(int size) {
+        result.updateBadge(MENU_REMOVED_RECORDINGS, new StringHolder(size + ""));
     }
 }

@@ -75,21 +75,21 @@ public class DownloadActivity extends Activity implements OnRequestPermissionsRe
      */
     private void prepareDownload() {
 
-        String downloadUrl = "http://" + conn.address + ":" + conn.streaming_port + "/dvrfile/" + rec.id;
+        String downloadUrl = "http://" + conn.address + ":" + conn.streaming_port + "/dvrfile/" + rec.getId();
         String auth = "Basic " + Base64.encodeToString((conn.username + ":" + conn.password).getBytes(), Base64.NO_WRAP);
 
         try {
             Request request = new Request(Uri.parse(downloadUrl));
             request.addRequestHeader("Authorization", auth);
             request.setTitle(getString(R.string.download));
-            request.setDescription(rec.title);
+            request.setDescription(rec.getTitle());
             request.setNotificationVisibility(Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
 
             // The path that can be specified is always in the external storage. Therefore the path
             // like /storage/emulated/0 is fixed, only the location within this folder can be changed
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
             final String path = prefs.getString("pref_download_directory", Environment.DIRECTORY_DOWNLOADS);
-            request.setDestinationInExternalPublicDir(path, rec.title + ".mkv");
+            request.setDestinationInExternalPublicDir(path, rec.getTitle() + ".mkv");
 
             logger.log(TAG, "prepareDownload: Saving download from url " + downloadUrl + " to " + path);
             startDownload(request);
@@ -132,10 +132,10 @@ public class DownloadActivity extends Activity implements OnRequestPermissionsRe
                         // Check the reason value if it is insufficient storage space
                         if (reason == 1006) {
                             logger.log(TAG, "startDownload: Download failed due to insufficient storage space");
-                            showErrorDialog(getString(R.string.download_error_insufficient_space, rec.title));
+                            showErrorDialog(getString(R.string.download_error_insufficient_space, rec.getTitle()));
                         } else if (reason == 407) {
                             logger.log(TAG, "startDownload: Download failed due to missing / wrong authentication");
-                            showErrorDialog(getString(R.string.download_error_authentication_required, rec.title));
+                            showErrorDialog(getString(R.string.download_error_authentication_required, rec.getTitle()));
                         } else {
                             finish();
                         }

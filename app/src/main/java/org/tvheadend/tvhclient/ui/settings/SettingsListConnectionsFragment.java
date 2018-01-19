@@ -22,6 +22,7 @@ import org.tvheadend.tvhclient.data.model.Connection;
 import org.tvheadend.tvhclient.data.tasks.WakeOnLanTask;
 import org.tvheadend.tvhclient.data.tasks.WakeOnLanTaskCallback;
 import org.tvheadend.tvhclient.service.HTSService;
+import org.tvheadend.tvhclient.sync.EpgSyncService;
 import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
 import org.tvheadend.tvhclient.ui.common.BackPressedInterface;
 import org.tvheadend.tvhclient.ui.startup.StartupActivity;
@@ -175,6 +176,9 @@ public class SettingsListConnectionsFragment extends ListFragment implements Bac
                                     connectionListAdapter.remove(connection);
                                     connectionListAdapter.notifyDataSetChanged();
                                     showConnectionCount();
+                                    // Stop the service because the connection is gone
+                                    Intent intent = new Intent(getActivity(), EpgSyncService.class);
+                                    getActivity().stopService(intent);
                                 }
                             }
                         })
@@ -241,7 +245,12 @@ public class SettingsListConnectionsFragment extends ListFragment implements Bac
         // do a new initial sync. Otherwise nothing has changed.
         if (newConnectionSelected
                 || databaseHelper.getSelectedConnection() == null) {
-            Intent intent = new Intent(getActivity(), StartupActivity.class);
+
+            // Stop the service before restarting
+            Intent intent = new Intent(getActivity(), EpgSyncService.class);
+            getActivity().stopService(intent);
+
+            intent = new Intent(getActivity(), StartupActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
         }

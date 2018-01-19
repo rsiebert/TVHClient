@@ -76,7 +76,11 @@
 
         <service
             android:name=".service.HTSService"
+            android:enabled="false" />
+        <service
+            android:name=".sync.EpgSyncService"
             android:enabled="true" />
+
         <provider
             android:name="org.tvheadend.tvhclient.data.local.SuggestionProvider"
             android:authorities="org.tvheadend.tvhclient.data.local.SuggestionProvider"
@@ -84,7 +88,7 @@
         <receiver android:name=".data.local.NotificationReceiver" />
 
         <activity android:name=".ui.settings.SettingsManageConnectionActivity" />
-        <activity android:name=".ui.recordings.recordings.RecordingAddEditActivity" />
+        <activity android:name=".ui.recordings.common.RecordingAddEditActivity" />
         <activity android:name=".ui.recordings.recordings.RecordingDetailsActivity" />
         <activity android:name=".ui.programs.ProgramListActivity" />
         <activity android:name=".ui.misc.ChangeLogActivity" />

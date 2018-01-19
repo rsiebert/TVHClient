@@ -186,8 +186,8 @@ public class ProgramGuideViewPagerContentListAdapterContentsView extends LinearL
      * @return Type of program
      */
     private int getProgramType(final Program p) {
-        final long programStartTime = p.start;
-        final long programEndTime = p.stop;
+        final long programStartTime = p.getStart();
+        final long programEndTime = p.getStop();
 
         if (programStartTime < startTime && programEndTime > startTime && programEndTime < endTime) {
             // The program starts on the previous day and goes over midnight
@@ -220,7 +220,7 @@ public class ProgramGuideViewPagerContentListAdapterContentsView extends LinearL
     }
 
     /**
-     * Depending on the given program type a call to the method to get the
+     * Depending on the given program type a call to the method to loadRecording the
      * required width of the program within the view is made. Then the method to
      * add the program is made and the remaining width for the other programs is
      * reduced.
@@ -245,7 +245,7 @@ public class ProgramGuideViewPagerContentListAdapterContentsView extends LinearL
                 // within the time slot it would start somewhere in the middle of
                 // the view. So we need to fill in a placeholder program.
                 if (programsAddedCounter == 0) {
-                    final double durationTime = ((program.start - startTime) / 1000 / 60);
+                    final double durationTime = ((program.getStart() - startTime) / 1000 / 60);
                     final int w = (int) (durationTime * pixelsPerMinute);
                     addCurrentProgramToView(null, w, parent);
                 }
@@ -258,7 +258,7 @@ public class ProgramGuideViewPagerContentListAdapterContentsView extends LinearL
                 // within the time slot it would start somewhere in the middle of
                 // the view. So we need to fill in a placeholder program.
                 if (programsAddedCounter == 0) {
-                    final double durationTime = ((program.start - startTime) / 1000 / 60);
+                    final double durationTime = ((program.getStart() - startTime) / 1000 / 60);
                     final int w = (int) (durationTime * pixelsPerMinute);
                     addCurrentProgramToView(null, w, parent);
                 }
@@ -300,9 +300,9 @@ public class ProgramGuideViewPagerContentListAdapterContentsView extends LinearL
      * @return Widht in pixels that a program shall take up in the EPG view
      */
     private int getProgramLayoutWidth(final Program p, final int programType) {
-        final long programStartTime = p.start;
-        final long programEndTime = p.stop;
-        final double durationTime = ((p.stop - p.start) / 1000 / 60);
+        final long programStartTime = p.getStart();
+        final long programEndTime = p.getStop();
+        final double durationTime = ((p.getStop() - p.getStart()) / 1000 / 60);
         int offset;
         int width = 0;
 
@@ -366,22 +366,22 @@ public class ProgramGuideViewPagerContentListAdapterContentsView extends LinearL
 
             if (showGenreColors) {
                 // Offset that reduces the visibility of the program guide colors a little
-                int color = UIUtils.getGenreColor(activity, p.contentType, 50);
+                int color = UIUtils.getGenreColor(activity, p.getContentType(), 50);
                 LayerDrawable layers = (LayerDrawable) itemLayout.getBackground();
                 GradientDrawable shape = (GradientDrawable) (layers.findDrawableByLayerId(R.id.timeline_item_genre));
                 shape.setColor(color);
             }
 
-            itemLayout.setTag(p.eventId);
-            title.setText(p.title);
+            itemLayout.setTag(p.getEventId());
+            title.setText(p.getTitle());
 
-            Drawable drawable = UIUtils.getRecordingState(activity, p.dvrId);
+            Drawable drawable = UIUtils.getRecordingState(activity, p.getDvrId());
             state.setVisibility(drawable != null ? View.VISIBLE : View.GONE);
             state.setImageDrawable(drawable);
 
             // Only show the duration if the layout is wide enough
             if (layoutWidth >= MIN_DISPLAY_WIDTH_FOR_DETAILS) {
-                String durationTime = activity.getString(R.string.minutes, (int) ((p.stop - p.start) / 1000 / 60));
+                String durationTime = activity.getString(R.string.minutes, (int) ((p.getStop() - p.getStart()) / 1000 / 60));
                 duration.setText(durationTime);
             } else {
                 duration.setVisibility(View.GONE);
@@ -395,7 +395,7 @@ public class ProgramGuideViewPagerContentListAdapterContentsView extends LinearL
                     // Set the title of the context menu and show or hide
                     // the menu items depending on the program state
                     fragmentInterface.setSelectedContextItem(p);
-                    menu.setHeaderTitle(p.title);
+                    menu.setHeaderTitle(p.getTitle());
                     //Utils.setProgramMenu(app, menu, p);
 
                     // Add a listener to each menu item. When the menu item is
@@ -429,7 +429,7 @@ public class ProgramGuideViewPagerContentListAdapterContentsView extends LinearL
                     int id = (int) v.getTag();
                     Program program = DataStorage.getInstance().getProgramFromArray(id);
                     Intent intent = new Intent(activity, RecordingDetailsActivity.class);
-                    intent.putExtra("eventId", program.eventId);
+                    intent.putExtra("eventId", program.getEventId());
                     intent.putExtra("type", "program");
                     activity.startActivity(intent);
                 }

@@ -124,7 +124,7 @@ public class ProgramDetailsFragment extends Fragment implements ImageDownloadTas
         }
         // Get the recording so we can show its details
         program = DataStorage.getInstance().getProgramFromArray(eventId);
-        Channel channel = DataStorage.getInstance().getChannelFromArray(program.channelId);
+        Channel channel = DataStorage.getInstance().getChannelFromArray(program.getChannelId());
 
         if (nestedToolbar != null) {
             nestedToolbar.inflateMenu(R.menu.program_details_toolbar_menu);
@@ -138,37 +138,37 @@ public class ProgramDetailsFragment extends Fragment implements ImageDownloadTas
 
         // Show the program information
         if (state != null) {
-            Drawable drawable = UIUtils.getRecordingState(getActivity(), program.dvrId);
+            Drawable drawable = UIUtils.getRecordingState(getActivity(), program.getDvrId());
             state.setVisibility(drawable != null ? View.VISIBLE : View.GONE);
             state.setImageDrawable(drawable);
         }
 
-        String timeStr = UIUtils.getTime(getContext(), program.start) + " - " + UIUtils.getTime(getContext(), program.stop);
+        String timeStr = UIUtils.getTime(getContext(), program.getStart()) + " - " + UIUtils.getTime(getContext(), program.getStop());
         time.setText(timeStr);
-        date.setText(UIUtils.getDate(getContext(), program.start));
+        date.setText(UIUtils.getDate(getContext(), program.getStart()));
 
-        String durationTime = getString(R.string.minutes, (int) ((program.stop - program.start) / 1000 / 60));
+        String durationTime = getString(R.string.minutes, (int) ((program.getStop() - program.getStart()) / 1000 / 60));
         duration.setText(durationTime);
 
-        String progressText = UIUtils.getProgressText(getContext(), program.start, program.stop);
+        String progressText = UIUtils.getProgressText(getContext(), program.getStart(), program.getStop());
         progress.setVisibility(!TextUtils.isEmpty(progressText) ? View.VISIBLE : View.GONE);
         progress.setText(progressText);
 
-        titleLabel.setVisibility(!TextUtils.isEmpty(program.title) ? View.VISIBLE : View.GONE);
-        title.setVisibility(!TextUtils.isEmpty(program.title) ? View.VISIBLE : View.GONE);
-        title.setText(program.title);
+        titleLabel.setVisibility(!TextUtils.isEmpty(program.getTitle()) ? View.VISIBLE : View.GONE);
+        title.setVisibility(!TextUtils.isEmpty(program.getTitle()) ? View.VISIBLE : View.GONE);
+        title.setText(program.getTitle());
 
-        summaryLabel.setVisibility(!TextUtils.isEmpty(program.summary) ? View.VISIBLE : View.GONE);
-        summary.setVisibility(!TextUtils.isEmpty(program.summary) ? View.VISIBLE : View.GONE);
-        summary.setText(program.summary);
+        summaryLabel.setVisibility(!TextUtils.isEmpty(program.getSummary()) ? View.VISIBLE : View.GONE);
+        summary.setVisibility(!TextUtils.isEmpty(program.getSummary()) ? View.VISIBLE : View.GONE);
+        summary.setText(program.getSummary());
 
-        descLabel.setVisibility(!TextUtils.isEmpty(program.description) ? View.VISIBLE : View.GONE);
-        desc.setVisibility(!TextUtils.isEmpty(program.description) ? View.VISIBLE : View.GONE);
-        desc.setText(program.description);
+        descLabel.setVisibility(!TextUtils.isEmpty(program.getDescription()) ? View.VISIBLE : View.GONE);
+        desc.setVisibility(!TextUtils.isEmpty(program.getDescription()) ? View.VISIBLE : View.GONE);
+        desc.setText(program.getDescription());
 
-        channelLabel.setVisibility(!TextUtils.isEmpty(channel.channelName) ? View.VISIBLE : View.GONE);
-        channelName.setVisibility(!TextUtils.isEmpty(channel.channelName) ? View.VISIBLE : View.GONE);
-        channelName.setText(channel.channelName);
+        channelLabel.setVisibility(!TextUtils.isEmpty(channel.getChannelName()) ? View.VISIBLE : View.GONE);
+        channelName.setVisibility(!TextUtils.isEmpty(channel.getChannelName()) ? View.VISIBLE : View.GONE);
+        channelName.setText(channel.getChannelName());
 
         String seriesInfoText = UIUtils.getSeriesInfo(getContext(), program);
         if (TextUtils.isEmpty(seriesInfoText)) {
@@ -178,7 +178,7 @@ public class ProgramDetailsFragment extends Fragment implements ImageDownloadTas
             seriesInfo.setText(seriesInfoText);
         }
 
-        String ct = UIUtils.getContentTypeText(getContext(), program.contentType);
+        String ct = UIUtils.getContentTypeText(getContext(), program.getContentType());
         if (TextUtils.isEmpty(ct)) {
             contentTypeLabel.setVisibility(View.GONE);
             contentType.setVisibility(View.GONE);
@@ -187,13 +187,13 @@ public class ProgramDetailsFragment extends Fragment implements ImageDownloadTas
         }
         
         // Show the rating information as starts
-        if (program.starRating < 0) {
+        if (program.getStarRating() < 0) {
             ratingBarLabel.setVisibility(View.GONE);
             ratingBarText.setVisibility(View.GONE);
             ratingBar.setVisibility(View.GONE);
         } else {
-            ratingBar.setRating((float)program.starRating / 10.0f);
-            String value = " (" + program.starRating + "/" + 10 + ")";
+            ratingBar.setRating((float)program.getStarRating() / 10.0f);
+            String value = " (" + program.getStarRating() + "/" + 10 + ")";
             ratingBarText.setText(value);
         }
 
@@ -201,7 +201,7 @@ public class ProgramDetailsFragment extends Fragment implements ImageDownloadTas
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         if (isUnlocked && prefs.getBoolean("pref_show_program_artwork", false)) {
             ImageDownloadTask dt = new ImageDownloadTask(this);
-            dt.execute(program.image, String.valueOf(program.eventId));
+            dt.execute(program.getImage(), String.valueOf(program.getEventId()));
         }
     }
 
@@ -236,11 +236,11 @@ public class ProgramDetailsFragment extends Fragment implements ImageDownloadTas
         // Show the play menu item when the current
         // time is between the program start and end time
         long currentTime = new Date().getTime();
-        if (currentTime > program.start && currentTime < program.stop) {
+        if (currentTime > program.getStart() && currentTime < program.getStop()) {
             menu.findItem(R.id.menu_play).setVisible(true);
         }
 
-        Recording recording = DataStorage.getInstance().getRecordingFromArray(program.dvrId);
+        Recording recording = DataStorage.getInstance().getRecordingFromArray(program.getDvrId());
         if (recording == null || (!recording.isRecording()
                 && !recording.isScheduled())) {
             menu.findItem(R.id.menu_record_once).setVisible(true);
@@ -286,38 +286,38 @@ public class ProgramDetailsFragment extends Fragment implements ImageDownloadTas
                 getActivity().finish();
                 return true;
             case R.id.menu_record_remove:
-                recording = DataStorage.getInstance().getRecordingFromArray(program.dvrId);
+                recording = DataStorage.getInstance().getRecordingFromArray(program.getDvrId());
                 if (recording != null) {
                     if (recording.isScheduled()) {
-                        menuUtils.handleMenuCancelRecordingSelection(recording.id, recording.title);
+                        menuUtils.handleMenuCancelRecordingSelection(recording.getId(), recording.getTitle());
                     } else {
-                        menuUtils.handleMenuRemoveRecordingSelection(recording.id, recording.title);
+                        menuUtils.handleMenuRemoveRecordingSelection(recording.getId(), recording.getTitle());
                     }
                 }
                 return true;
             case R.id.menu_record_stop:
-                recording = DataStorage.getInstance().getRecordingFromArray(program.dvrId);
+                recording = DataStorage.getInstance().getRecordingFromArray(program.getDvrId());
                 if (recording != null && recording.isRecording()) {
-                    menuUtils.handleMenuStopRecordingSelection(recording.id, recording.title);
+                    menuUtils.handleMenuStopRecordingSelection(recording.getId(), recording.getTitle());
                 }
                 return true;
             case R.id.menu_record_once:
-                menuUtils.handleMenuRecordSelection(program.eventId);
+                menuUtils.handleMenuRecordSelection(program.getEventId());
                 return true;
             case R.id.menu_record_once_custom_profile:
-                menuUtils.handleMenuCustomRecordSelection(program.eventId, program.channelId);
+                menuUtils.handleMenuCustomRecordSelection(program.getEventId(), program.getChannelId());
                 return true;
             case R.id.menu_record_series:
-                menuUtils.handleMenuSeriesRecordSelection(program.title);
+                menuUtils.handleMenuSeriesRecordSelection(program.getTitle());
                 return true;
             case R.id.menu_play:
-                menuUtils.handleMenuPlaySelection(program.channelId, -1);
+                menuUtils.handleMenuPlaySelection(program.getChannelId(), -1);
                 return true;
             case R.id.menu_search_imdb:
-                menuUtils.handleMenuSearchWebSelection(program.title);
+                menuUtils.handleMenuSearchWebSelection(program.getTitle());
                 return true;
             case R.id.menu_search_epg:
-                menuUtils.handleMenuSearchEpgSelection(program.title, program.channelId);
+                menuUtils.handleMenuSearchEpgSelection(program.getTitle(), program.getChannelId());
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

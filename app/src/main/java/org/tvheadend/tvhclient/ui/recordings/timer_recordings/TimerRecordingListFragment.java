@@ -1,47 +1,59 @@
 package org.tvheadend.tvhclient.ui.recordings.timer_recordings;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.ListFragment;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
-import android.util.Log;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ListView;
+import android.view.ViewGroup;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.data.Constants;
-import org.tvheadend.tvhclient.data.DataStorage;
 import org.tvheadend.tvhclient.data.model.TimerRecording;
-import org.tvheadend.tvhclient.service.HTSListener;
 import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
-import org.tvheadend.tvhclient.ui.recordings.recordings.RecordingAddEditActivity;
+import org.tvheadend.tvhclient.ui.common.RecyclerViewClickCallback;
+import org.tvheadend.tvhclient.ui.recordings.common.RecordingAddEditActivity;
 import org.tvheadend.tvhclient.ui.recordings.recordings.RecordingDetailsActivity;
 import org.tvheadend.tvhclient.utils.MenuUtils;
 
+import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-// TODO start and end time and duration not correct
+// TODO start and end time no correct (gmt offset?)
 
-public class TimerRecordingListFragment extends ListFragment implements HTSListener, OnItemClickListener, AdapterView.OnItemLongClickListener {
+public class TimerRecordingListFragment extends Fragment implements RecyclerViewClickCallback {
 
     private AppCompatActivity activity;
     private ToolbarInterface toolbarInterface;
-    private TimerRecordingListAdapter adapter;
+    private TimerRecordingRecyclerViewAdapter recyclerViewAdapter;
+    private RecyclerView recyclerView;
     private boolean isDualPane;
     private MenuUtils menuUtils;
     protected int selectedListPosition;
     private SharedPreferences sharedPreferences;
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
+        View view = inflater.inflate(R.layout.recyclerview_fragment, container, false);
+        recyclerView = view.findViewById(R.id.recycler_view);
+        return view;
+    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -52,26 +64,35 @@ public class TimerRecordingListFragment extends ListFragment implements HTSListe
             toolbarInterface = (ToolbarInterface) activity;
             toolbarInterface.setTitle(getString(R.string.timer_recordings));
         }
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        menuUtils = new MenuUtils(getActivity());
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity);
+        menuUtils = new MenuUtils(activity);
 
         // Check to see if we have a frame in which to embed the details
         // fragment directly in the containing UI.
-        View detailsFrame = getActivity().findViewById(R.id.right_fragment);
+        View detailsFrame = activity.findViewById(R.id.right_fragment);
         isDualPane = detailsFrame != null && detailsFrame.getVisibility() == View.VISIBLE;
-
-        adapter = new TimerRecordingListAdapter(activity);
-        setListAdapter(adapter);
-        getListView().setFastScrollEnabled(true);
-        getListView().setOnItemClickListener(this);
-        getListView().setOnItemLongClickListener(this);
-        getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
         if (savedInstanceState != null) {
             selectedListPosition = savedInstanceState.getInt("list_position", 0);
         }
 
         setHasOptionsMenu(true);
+
+        recyclerViewAdapter = new TimerRecordingRecyclerViewAdapter(getContext(), new ArrayList<>(), this);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(recyclerViewAdapter);
+
+        TimerRecordingViewModel viewModel = ViewModelProviders.of(this).get(TimerRecordingViewModel.class);
+        viewModel.getRecordings().observe(this, recordings -> {
+            recyclerViewAdapter.addItems(recordings);
+            toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.recordings, recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
+
+            if (isDualPane && recyclerViewAdapter.getItemCount() > 0) {
+                showRecordingDetails(selectedListPosition);
+            }
+        });
     }
 
     @Override
@@ -81,36 +102,15 @@ public class TimerRecordingListFragment extends ListFragment implements HTSListe
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        TVHClientApplication.getInstance().addListener(this);
-
-        if (!DataStorage.getInstance().isLoading()) {
-            populateList();
-            // In dual-pane mode the list of programs of the selected
-            // channel will be shown additionally in the details view
-            if (isDualPane && adapter.getCount() > 0) {
-                showRecordingDetails(selectedListPosition);
-            }
-        }
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        TVHClientApplication.getInstance().removeListener(this);
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_add:
-                Intent intent = new Intent(getActivity(), RecordingAddEditActivity.class);
+                Intent intent = new Intent(activity, RecordingAddEditActivity.class);
                 intent.putExtra("type", "timer_recording");
-                getActivity().startActivity(intent);
+                activity.startActivity(intent);
                 return true;
             case R.id.menu_record_remove_all:
-                CopyOnWriteArrayList<TimerRecording> list = new CopyOnWriteArrayList<>(adapter.getAllItems());
+                CopyOnWriteArrayList<TimerRecording> list = new CopyOnWriteArrayList<>(recyclerViewAdapter.getItems());
                 menuUtils.handleMenuRemoveAllTimerRecordingSelection(list);
                 return true;
             default:
@@ -127,97 +127,34 @@ public class TimerRecordingListFragment extends ListFragment implements HTSListe
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        if (!sharedPreferences.getBoolean("hideMenuDeleteAllRecordingsPref", false) && adapter.getCount() > 1) {
+        if (!sharedPreferences.getBoolean("hideMenuDeleteAllRecordingsPref", false) && recyclerViewAdapter.getItemCount() > 1) {
             menu.findItem(R.id.menu_record_remove_all).setVisible(true);
         }
         menu.findItem(R.id.menu_add).setVisible(true);
     }
 
-    private void populateList() {
-        // Clear the list and add the recordings
-        adapter.clear();
-        adapter.addAll(DataStorage.getInstance().getTimerRecordingsFromArray().values());
-        // Show the newest recordings first
-        adapter.sort(Constants.RECORDING_SORT_DESCENDING);
-        adapter.notifyDataSetChanged();
-        // Show the number of recordings
-        String items = getResources().getQuantityString(R.plurals.recordings, adapter.getCount(), adapter.getCount());
-        toolbarInterface.setSubtitle(items);
-    }
-
-    @Override
-    public void onMessage(String action, final Object obj) {
-        Log.d("XXX", "onMessage() called with: action = [" + action + "], obj = [" + obj + "]");
-        switch (action) {
-            case "timerecEntryAdd":
-                activity.runOnUiThread(new Runnable() {
-                    public void run() {
-                        TimerRecording recording = (TimerRecording) obj;
-                        adapter.add(recording);
-                        adapter.notifyDataSetChanged();
-                        // Show the number of recordings
-                        toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.recordings, adapter.getCount(), adapter.getCount()));
-                    }
-                });
-                break;
-            case "timerecEntryDelete":
-                activity.runOnUiThread(new Runnable() {
-                    public void run() {
-                        // Get the position of the recording that is to be
-                        // deleted so the previous one can be selected
-                        if (--selectedListPosition < 0) {
-                            selectedListPosition = 0;
-                        }
-                        TimerRecording recording = (TimerRecording) obj;
-                        adapter.remove(recording);
-                        adapter.notifyDataSetChanged();
-                        // Update the number of recordings
-                        toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.recordings, adapter.getCount(), adapter.getCount()));
-                        // Select the previous recording to show its details
-                        if (isDualPane) {
-                            showRecordingDetails(selectedListPosition);
-                        }
-                    }
-                });
-                break;
-            case "timerecEntryUpdate":
-                activity.runOnUiThread(new Runnable() {
-                    public void run() {
-                        TimerRecording recording = (TimerRecording) obj;
-                        adapter.update(recording);
-                        adapter.notifyDataSetChanged();
-                    }
-                });
-                break;
-        }
-    }
-
-    @Override
-    public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-        showRecordingDetails(position);
-    }
-
     protected void showRecordingDetails(int position) {
         selectedListPosition = position;
-        TimerRecording recording = adapter.getItem(position);
+        TimerRecording recording = recyclerViewAdapter.getItem(position);
         if (recording == null) {
             return;
         }
         if (!isDualPane) {
             // Launch a new activity to display the program list of the selected channel.
-            Intent intent = new Intent(getActivity(), RecordingDetailsActivity.class);
-            intent.putExtra("id", recording.id);
+            Intent intent = new Intent(activity, RecordingDetailsActivity.class);
+            intent.putExtra("id", recording.getId());
             intent.putExtra("type", "timer_recording");
             activity.startActivity(intent);
         } else {
             // We can display everything in-place with fragments, so update
             // the list to highlight the selected item and show the program details fragment.
-            getListView().setItemChecked(position, true);
+
+            // TODO getListView().setItemChecked(position, true);
             // Check what fragment is currently shown, replace if needed.
             TimerRecordingDetailsFragment recordingDetailsFragment = (TimerRecordingDetailsFragment) getFragmentManager().findFragmentById(R.id.right_fragment);
-            if (recordingDetailsFragment == null || !recordingDetailsFragment.getShownId().equals(recording.id)) {
+            if (recordingDetailsFragment == null || !recordingDetailsFragment.getShownId().equals(recording.getId())) {
                 // Make new fragment to show this selection.
-                recordingDetailsFragment = TimerRecordingDetailsFragment.newInstance(recording.id);
+                recordingDetailsFragment = TimerRecordingDetailsFragment.newInstance(recording.getId());
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
                 ft.replace(R.id.right_fragment, recordingDetailsFragment);
                 ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
@@ -227,32 +164,32 @@ public class TimerRecordingListFragment extends ListFragment implements HTSListe
     }
 
     @Override
-    public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
-        final TimerRecording timerRecording = adapter.getItem(position);
-        if (getActivity() == null || timerRecording == null) {
+    public boolean onLongClick(View view) {
+        final TimerRecording timerRecording = (TimerRecording) view.getTag();
+        if (activity == null || timerRecording == null) {
             return true;
         }
-        PopupMenu popupMenu = new PopupMenu(getActivity(), view);
+        PopupMenu popupMenu = new PopupMenu(activity, view);
         popupMenu.getMenuInflater().inflate(R.menu.timer_recordings_popup_menu, popupMenu.getMenu());
 
         popupMenu.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {
                 case R.id.menu_edit:
-                    Intent intent = new Intent(getActivity(), RecordingAddEditActivity.class);
-                    intent.putExtra("id", timerRecording.id);
+                    Intent intent = new Intent(activity, RecordingAddEditActivity.class);
+                    intent.putExtra("id", timerRecording.getId());
                     intent.putExtra("type", "timer_recording");
-                    getActivity().startActivity(intent);
+                    activity.startActivity(intent);
                     return true;
                 case R.id.menu_search_imdb:
-                    menuUtils.handleMenuSearchWebSelection(timerRecording.title);
+                    menuUtils.handleMenuSearchWebSelection(timerRecording.getTitle());
                     return true;
                 case R.id.menu_search_epg:
-                    menuUtils.handleMenuSearchEpgSelection(timerRecording.title);
+                    menuUtils.handleMenuSearchEpgSelection(timerRecording.getTitle());
                     return true;
                 case R.id.menu_record_remove:
-                    final String name = (timerRecording.name != null && timerRecording.name.length() > 0) ? timerRecording.name : "";
-                    final String title = timerRecording.title != null ? timerRecording.title : "";
-                    menuUtils.handleMenuRemoveTimerRecordingSelection(timerRecording.id, (name.length() > 0 ? name : title));
+                    final String name = (timerRecording.getName() != null && timerRecording.getName().length() > 0) ? timerRecording.getName() : "";
+                    final String title = timerRecording.getTitle() != null ? timerRecording.getTitle() : "";
+                    menuUtils.handleMenuRemoveTimerRecordingSelection(timerRecording.getId(), (name.length() > 0 ? name : title));
                     return true;
                 default:
                     return false;
@@ -260,5 +197,10 @@ public class TimerRecordingListFragment extends ListFragment implements HTSListe
         });
         popupMenu.show();
         return true;
+    }
+
+    @Override
+    public void onClick(View view, int position) {
+        showRecordingDetails(position);
     }
 }

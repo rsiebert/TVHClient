@@ -57,12 +57,12 @@ public class ChannelTagListAdapter extends RecyclerView.Adapter<ChannelTagListAd
             // TODO highlight the selected tag using mSelectedTagId, its -1 if not set
 
             if (holder.icon != null) {
-                Bitmap iconBitmap = MiscUtils.getCachedIcon(context, item.tagIcon);
+                Bitmap iconBitmap = MiscUtils.getCachedIcon(context, item.getTagIcon());
                 holder.icon.setImageBitmap(iconBitmap);
                 holder.icon.setVisibility(iconBitmap != null && mShowChannelTagIcons ? ImageView.VISIBLE : ImageView.GONE);
             }
             if (holder.title != null) {
-                holder.title.setText(item.tagName);
+                holder.title.setText(item.getTagName());
                 holder.title.setTag(position);
             }
         }
@@ -92,7 +92,7 @@ public class ChannelTagListAdapter extends RecyclerView.Adapter<ChannelTagListAd
         @Override
         public void onClick(View view) {
             if (channelTagListAdapter != null && channelTagListAdapter.mCallback != null) {
-                int id = channelTagListAdapter.mTagList.get(getAdapterPosition()).tagId;
+                int id = channelTagListAdapter.mTagList.get(getAdapterPosition()).getTagId();
                 channelTagListAdapter.mCallback.onItemClicked(id);
             }
         }

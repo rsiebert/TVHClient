@@ -90,7 +90,7 @@ public class ProgramGuideChannelListFragment extends ListFragment implements HTS
         }
         adapter.clear();
         for (Channel channel : DataStorage.getInstance().getChannelsFromArray().values()) {
-            if (currentTag == null || channel.tags.contains(currentTag.tagId)) {
+            if (currentTag == null || channel.getTags().contains(currentTag.getTagId())) {
                 adapter.add(channel);
             }
         }
@@ -100,7 +100,7 @@ public class ProgramGuideChannelListFragment extends ListFragment implements HTS
         // Show the name of the selected channel tag and the number of channels
         // in the action bar. If enabled show also the channel tag icon.
         toolbarInterface.setTitle(getString(R.string.pref_program_guide));
-        toolbarInterface.setSubtitle((currentTag == null) ? getString(R.string.all_channels) : currentTag.tagName);
+        toolbarInterface.setSubtitle((currentTag == null) ? getString(R.string.all_channels) : currentTag.getTagName());
     }
 
     @Override

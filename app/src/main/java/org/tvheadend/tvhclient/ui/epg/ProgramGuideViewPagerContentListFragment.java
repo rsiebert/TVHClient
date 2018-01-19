@@ -185,7 +185,7 @@ public class ProgramGuideViewPagerContentListFragment extends ListFragment imple
         // Make a copy of the channel list before iterating over it
         adapter.clear();
         for (Channel channel : DataStorage.getInstance().getChannelsFromArray().values()) {
-            if (currentTag == null || channel.tags.contains(currentTag.tagId)) {
+            if (currentTag == null || channel.getTags().contains(currentTag.getTagId())) {
                 adapter.add(channel);
             }
         }
@@ -252,28 +252,28 @@ public class ProgramGuideViewPagerContentListFragment extends ListFragment imple
         }
         switch (item.getItemId()) {
             case R.id.menu_search_imdb:
-                menuUtils.handleMenuSearchWebSelection(selectedProgram.title);
+                menuUtils.handleMenuSearchWebSelection(selectedProgram.getTitle());
                 return true;
             case R.id.menu_search_epg:
-                menuUtils.handleMenuSearchEpgSelection(selectedProgram.title);
+                menuUtils.handleMenuSearchEpgSelection(selectedProgram.getTitle());
                 return true;
             case R.id.menu_record_remove:
-                Recording rec = DataStorage.getInstance().getRecordingFromArray(selectedProgram.dvrId);
+                Recording rec = DataStorage.getInstance().getRecordingFromArray(selectedProgram.getDvrId());
                 if (rec != null) {
                     if (rec.isRecording()) {
-                        menuUtils.handleMenuStopRecordingSelection(rec.id, rec.title);
+                        menuUtils.handleMenuStopRecordingSelection(rec.getId(), rec.getTitle());
                     } else if (rec.isScheduled()) {
-                        menuUtils.handleMenuCancelRecordingSelection(rec.id, rec.title);
+                        menuUtils.handleMenuCancelRecordingSelection(rec.getId(), rec.getTitle());
                     } else {
-                        menuUtils.handleMenuRemoveRecordingSelection(rec.id, rec.title);
+                        menuUtils.handleMenuRemoveRecordingSelection(rec.getId(), rec.getTitle());
                     }
                 }
                 return true;
             case R.id.menu_record_once:
-                menuUtils.handleMenuRecordSelection(selectedProgram.eventId);
+                menuUtils.handleMenuRecordSelection(selectedProgram.getEventId());
                 return true;
             case R.id.menu_record_series:
-                menuUtils.handleMenuSeriesRecordSelection(selectedProgram.title);
+                menuUtils.handleMenuSeriesRecordSelection(selectedProgram.getTitle());
                 return true;
             default:
                 return super.onContextItemSelected(item);

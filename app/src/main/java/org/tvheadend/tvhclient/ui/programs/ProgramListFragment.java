@@ -2,31 +2,35 @@ package org.tvheadend.tvhclient.ui.programs;
 
 import android.app.Activity;
 import android.app.SearchManager;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ListFragment;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ListView;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.data.DataStorage;
 import org.tvheadend.tvhclient.data.model.Program;
 import org.tvheadend.tvhclient.data.model.Recording;
-import org.tvheadend.tvhclient.service.HTSListener;
 import org.tvheadend.tvhclient.service.HTSService;
 import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
+import org.tvheadend.tvhclient.ui.common.RecyclerViewClickCallback;
 import org.tvheadend.tvhclient.ui.search.SearchActivity;
 import org.tvheadend.tvhclient.ui.search.SearchRequestInterface;
 import org.tvheadend.tvhclient.utils.MenuUtils;
@@ -36,11 +40,12 @@ import java.util.Date;
 
 // TODO search menu not shown in single pane list view, check dual pane
 
-public class ProgramListFragment extends ListFragment implements HTSListener, OnItemClickListener, AdapterView.OnItemLongClickListener, OnScrollListener, SearchRequestInterface {
+public class ProgramListFragment extends Fragment implements RecyclerViewClickCallback, OnScrollListener, SearchRequestInterface {
 
     private Activity activity;
     private ToolbarInterface toolbarInterface;
-    private ProgramListAdapter adapter;
+    private ProgramRecyclerViewAdapter recyclerViewAdapter;
+    private RecyclerView recyclerView;
     private boolean isDualPane;
     private long showProgramsFromTime;
 
@@ -61,6 +66,15 @@ public class ProgramListFragment extends ListFragment implements HTSListener, On
         args.putLong("show_programs_from_time", showProgramsFromTime);
         f.setArguments(args);
         return f;
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
+        View view = inflater.inflate(R.layout.recyclerview_fragment, container, false);
+        recyclerView = view.findViewById(R.id.recycler_view);
+        return view;
     }
 
     @Override
@@ -93,13 +107,22 @@ public class ProgramListFragment extends ListFragment implements HTSListener, On
         }
 
         toolbarInterface.setTitle(channelName);
-        adapter = new ProgramListAdapter(activity, new ArrayList<>());
-        setListAdapter(adapter);
-        getListView().setFastScrollEnabled(true);
-        getListView().setOnItemClickListener(this);
-        getListView().setOnItemLongClickListener(this);
-        getListView().setOnScrollListener(this);
-        getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+
+        recyclerViewAdapter = new ProgramRecyclerViewAdapter(getContext(), new ArrayList<>(), this);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(recyclerViewAdapter);
+
+        ProgramViewModel viewModel = ViewModelProviders.of(this).get(ProgramViewModel.class);
+        viewModel.getPrograms().observe(this, programs -> {
+            recyclerViewAdapter.addItems(programs);
+            toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.programs, recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
+
+            if (isDualPane && recyclerViewAdapter.getItemCount() > 0) {
+                showProgramDetails(selectedListPosition);
+            }
+        });
     }
 
     @Override
@@ -144,26 +167,7 @@ public class ProgramListFragment extends ListFragment implements HTSListener, On
                 return super.onOptionsItemSelected(item);
         }
     }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        TVHClientApplication.getInstance().addListener(this);
-
-        if (!DataStorage.getInstance().isLoading()) {
-            populateList();
-            if (adapter.getCount() < 15) {
-                getMorePrograms();
-            }
-        }
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        TVHClientApplication.getInstance().removeListener(this);
-    }
-
+    /*
     private void populateList() {
         // Clear the list and add the recordings
         adapter.clear();
@@ -191,84 +195,24 @@ public class ProgramListFragment extends ListFragment implements HTSListener, On
             }
         }
         adapter.notifyDataSetChanged();
-        // Show the number of recordings
-        String items = getResources().getQuantityString(R.plurals.programs, adapter.getCount(), adapter.getCount());
-        toolbarInterface.setSubtitle(items);
     }
-
-    /**
-     * This method is part of the HTSListener interface. Whenever the HTSService
-     * sends a new message the specified action will be executed here.
-     */
-    @Override
-    public void onMessage(String action, final Object obj) {
-        switch (action) {
-            case "eventAdd":
-                activity.runOnUiThread(new Runnable() {
-                    public void run() {
-                        Program p = (Program) obj;
-                        if (p.channelId == channelId) {
-                            adapter.add(p);
-                            adapter.sort();
-                            adapter.notifyDataSetChanged();
-                            String items = getResources().getQuantityString(R.plurals.programs, adapter.getCount(), adapter.getCount());
-                            toolbarInterface.setSubtitle(items);
-                        }
-                    }
-                });
-                break;
-            case "eventDelete":
-                activity.runOnUiThread(new Runnable() {
-                    public void run() {
-                        // Get the position of the recording that is to be
-                        // deleted so the previous one can be selected
-                        if (--selectedListPosition < 0) {
-                            selectedListPosition = 0;
-                        }
-                        Program p = (Program) obj;
-                        adapter.remove(p);
-                        adapter.notifyDataSetChanged();
-                        String items = getResources().getQuantityString(R.plurals.programs, adapter.getCount(), adapter.getCount());
-                        toolbarInterface.setSubtitle(items);
-                        // Select the previous recording to show its details
-                        if (isDualPane) {
-                            showProgramDetails(selectedListPosition);
-                        }
-                    }
-                });
-                break;
-            case "eventUpdate":
-                activity.runOnUiThread(new Runnable() {
-                    public void run() {
-                        Program p = (Program) obj;
-                        adapter.update(p);
-                        adapter.notifyDataSetChanged();
-                    }
-                });
-                break;
-        }
-    }
-
-    @Override
-    public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-        showProgramDetails(position);
-    }
+*/
 
     protected void showProgramDetails(int position) {
         selectedListPosition = position;
-        Program program = adapter.getItem(position);
+        Program program = recyclerViewAdapter.getItem(position);
         if (program == null) {
             return;
         }
         // Launch a new activity to display the program list of the selected channelTextView.
         Intent intent = new Intent(getActivity(), ProgramDetailsActivity.class);
-        intent.putExtra("eventId", program.eventId);
+        intent.putExtra("eventId", program.getEventId());
         activity.startActivity(intent);
     }
 
     @Override
-    public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
-        final Program program = adapter.getItem(position);
+    public boolean onLongClick(View view) {
+        final Program program = (Program) view.getTag();
         if (getActivity() == null || program == null) {
             return true;
         }
@@ -279,31 +223,31 @@ public class ProgramListFragment extends ListFragment implements HTSListener, On
         popupMenu.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {
                 case R.id.menu_search_imdb:
-                    menuUtils.handleMenuSearchWebSelection(program.title);
+                    menuUtils.handleMenuSearchWebSelection(program.getTitle());
                     return true;
                 case R.id.menu_search_epg:
-                    menuUtils.handleMenuSearchEpgSelection(program.title, channelId);
+                    menuUtils.handleMenuSearchEpgSelection(program.getTitle(), channelId);
                     return true;
                 case R.id.menu_record_remove:
-                    Recording rec = DataStorage.getInstance().getRecordingFromArray(program.dvrId);
+                    Recording rec = DataStorage.getInstance().getRecordingFromArray(program.getDvrId());
                     if (rec != null) {
                         if (rec.isRecording()) {
-                            menuUtils.handleMenuStopRecordingSelection(rec.id, rec.title);
+                            menuUtils.handleMenuStopRecordingSelection(rec.getId(), rec.getTitle());
                         } else if (rec.isScheduled()) {
-                            menuUtils.handleMenuCancelRecordingSelection(rec.id, rec.title);
+                            menuUtils.handleMenuCancelRecordingSelection(rec.getId(), rec.getTitle());
                         } else {
-                            menuUtils.handleMenuRemoveRecordingSelection(rec.id, rec.title);
+                            menuUtils.handleMenuRemoveRecordingSelection(rec.getId(), rec.getTitle());
                         }
                     }
                     return true;
                 case R.id.menu_record_once:
-                    menuUtils.handleMenuRecordSelection(program.eventId);
+                    menuUtils.handleMenuRecordSelection(program.getEventId());
                     return true;
                 case R.id.menu_record_once_custom_profile:
-                    menuUtils.handleMenuCustomRecordSelection(program.eventId, channelId);
+                    menuUtils.handleMenuCustomRecordSelection(program.getEventId(), channelId);
                     return true;
                 case R.id.menu_record_series:
-                    menuUtils.handleMenuSeriesRecordSelection(program.title);
+                    menuUtils.handleMenuSeriesRecordSelection(program.getTitle());
                     return true;
                 case R.id.menu_play:
                     menuUtils.handleMenuPlaySelection(channelId, -1);
@@ -317,6 +261,11 @@ public class ProgramListFragment extends ListFragment implements HTSListener, On
     }
 
     @Override
+    public void onClick(View view, int position) {
+        showProgramDetails(position);
+    }
+
+    @Override
     public void onScrollStateChanged(AbsListView view, int scrollState) {
         // If loading is allowed and the scrolling has stopped, load more data
         if (scrollState == SCROLL_STATE_IDLE && allowLoading) {
@@ -327,12 +276,12 @@ public class ProgramListFragment extends ListFragment implements HTSListener, On
     }
 
     private void getMorePrograms() {
-        if (adapter.getCount() > 0) {
-            Program lastProgram = adapter.getItem(adapter.getCount() - 1);
+        if (recyclerViewAdapter.getItemCount() > 0) {
+            Program lastProgram = recyclerViewAdapter.getItem(recyclerViewAdapter.getItemCount() - 1);
             Intent intent = new Intent(getActivity(), HTSService.class);
             intent.setAction("getEvents");
-            intent.putExtra("eventId", lastProgram.nextEventId);
-            intent.putExtra("channelId", lastProgram.channelId);
+            intent.putExtra("eventId", lastProgram.getNextEventId());
+            intent.putExtra("channelId", lastProgram.getChannelId());
             intent.putExtra("count", 15);
             getActivity().startService(intent);
         }

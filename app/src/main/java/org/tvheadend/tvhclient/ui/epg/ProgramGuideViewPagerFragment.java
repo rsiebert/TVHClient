@@ -47,7 +47,7 @@ public class ProgramGuideViewPagerFragment extends Fragment implements ProgramGu
     private MenuUtils menuUtils;
 
     // This is the width in pixels from the icon in the program_guide_list.xml
-    // We need to subtract this value from the window width to get the real
+    // We need to subtract this value from the window width to loadRecording the real
     // usable width. The same values is also used in the
     // ProgramGuideViewPagerContentListFragment class.
     private final static int LAYOUT_ICON_OFFSET = 72;
@@ -146,7 +146,7 @@ public class ProgramGuideViewPagerFragment extends Fragment implements ProgramGu
         switch (item.getItemId()) {
             case R.id.menu_tags:
                 ChannelTag tag = Utils.getChannelTag(activity);
-                menuUtils.handleMenuTagsSelection((tag != null ? tag.tagId : -1), this);
+                menuUtils.handleMenuTagsSelection((tag != null ? tag.getTagId() : -1), this);
                 return true;
             case R.id.menu_timeframe:
                 showProgramGuideTimeDialog();

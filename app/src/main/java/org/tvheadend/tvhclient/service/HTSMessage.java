@@ -334,7 +334,7 @@ public class HTSMessage extends HashMap<String, Object> {
             datalen = uIntToLong(buf.get(), buf.get(), buf.get(), buf.get());
 
             if (datalen > Integer.MAX_VALUE) {
-                throw new IOException("Would get precision losses, datalen " + datalen + ", max int " + Integer.MAX_VALUE);
+                throw new IOException("Would loadRecording precision losses, datalen " + datalen + ", max int " + Integer.MAX_VALUE);
             }
             if (buf.limit() < namelen + datalen) {
                 throw new IOException("Buffer limit exceeded, limit " + buf.limit() + ", namelen " + namelen + ", datalen " + datalen);

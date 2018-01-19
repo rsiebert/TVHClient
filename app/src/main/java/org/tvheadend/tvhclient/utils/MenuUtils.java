@@ -143,19 +143,19 @@ public class MenuUtils {
         Collections.sort(channelTagList, new Comparator<ChannelTag>() {
             @Override
             public int compare(ChannelTag o1, ChannelTag o2) {
-                return o1.tagName.compareTo(o2.tagName);
+                return o1.getTagName().compareTo(o2.getTagName());
             }
         });
 
         // Add the default tag (all channels) to the list after it has been sorted
         ChannelTag tag = new ChannelTag();
-        tag.tagId = 0;
-        tag.tagName = activity.getString(R.string.all_channels);
+        tag.setTagId(0);
+        tag.setTagName(activity.getString(R.string.all_channels));
         channelTagList.add(0, tag);
 
         final ChannelTagListAdapter channelTagListAdapter = new ChannelTagListAdapter(activity, channelTagList, selectedTagId);
         // Show the dialog that shows all available channel tags. When the
-        // user has selected a tag, restart the loader to get the updated channel list
+        // user has selected a tag, restart the loader to loadRecording the updated channel list
         final MaterialDialog dialog = new MaterialDialog.Builder(activity)
                 .title(R.string.tags)
                 .adapter(channelTagListAdapter, null)
@@ -389,7 +389,7 @@ public class MenuUtils {
                             public void run() {
                                 for (Recording item : items) {
                                     final Intent intent = new Intent(activity, HTSService.class);
-                                    intent.putExtra("id", item.id);
+                                    intent.putExtra("id", item.getId());
                                     if (item.isRecording() || item.isScheduled()) {
                                         intent.setAction("cancelDvrEntry");
                                     } else {
@@ -426,7 +426,7 @@ public class MenuUtils {
                                 for (SeriesRecording item : items) {
                                     final Intent intent = new Intent(activity, HTSService.class);
                                     intent.setAction("deleteAutorecEntry");
-                                    intent.putExtra("id", item.id);
+                                    intent.putExtra("id", item.getId());
                                     activity.startService(intent);
                                     try {
                                         sleep(500);
@@ -458,7 +458,7 @@ public class MenuUtils {
                                 for (TimerRecording item : items) {
                                     final Intent intent = new Intent(activity, HTSService.class);
                                     intent.setAction("deleteTimerecEntry");
-                                    intent.putExtra("id", item.id);
+                                    intent.putExtra("id", item.getId());
                                     activity.startService(intent);
                                     try {
                                         sleep(500);
@@ -531,11 +531,11 @@ public class MenuUtils {
         // Show the play menu item when the current
         // time is between the program start and end time
         long currentTime = new Date().getTime();
-        if (currentTime > program.start && currentTime < program.stop) {
+        if (currentTime > program.getStart() && currentTime < program.getStop()) {
             playMenuItem.setVisible(true);
         }
 
-        Recording rec = DataStorage.getInstance().getRecordingFromArray(program.dvrId);
+        Recording rec = DataStorage.getInstance().getRecordingFromArray(program.getDvrId());
         if (rec == null || !rec.isRecording() && !rec.isScheduled()) {
             recordOnceMenuItem.setVisible(true);
             recordOnceCustomProfileMenuItem.setVisible(mIsUnlocked);
@@ -566,9 +566,9 @@ public class MenuUtils {
                 .positiveText("Reconnect")
                 .onPositive((dialog, which) -> {
 
-                    Intent intent = new Intent(activity, HTSService.class);
-                    intent.setAction("disconnect");
-                    activity.startService(intent);
+                    //Intent intent = new Intent(activity, HTSService.class);
+                    //intent.setAction("disconnect");
+                    //activity.startService(intent);
 
                     // Save the information that a new sync is required
                     // Then restart the application to show the sync fragment
@@ -576,7 +576,7 @@ public class MenuUtils {
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.putBoolean("initial_sync_done", false);
                     editor.apply();
-                    intent = new Intent(activity, StartupActivity.class);
+                    Intent intent = new Intent(activity, StartupActivity.class);
                     activity.startActivity(intent);
                     activity.finish();
                 })

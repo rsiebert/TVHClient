@@ -85,9 +85,9 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
 
         // Get the title from either the channel or recording
         if (ch != null) {
-            title = ch.channelName;
+            title = ch.getChannelName();
         } else if (rec != null) {
-            title = rec.title;
+            title = rec.getTitle();
         } else {
             logger.log(TAG, "onCreate: No channel or recording provided, exiting");
             return;
@@ -156,7 +156,7 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
             // stream it from the server
             if (rec != null && app.isUnlocked()) {
                 File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-                File file = new File(path, rec.title + ".mkv");
+                File file = new File(path, rec.getTitle() + ".mkv");
                 logger.log(TAG, "initAction: Downloaded recording can be played from '" + file.getAbsolutePath()  + "': " + file.exists());
                 if (file.exists()) {
                     startPlayback(file.getAbsolutePath(), "video/x-matroska");
@@ -165,7 +165,7 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
             }
 
             // No downloaded recording exists, so continue starting the service
-            // to get the url that shall be played. This could either be a
+            // to loadRecording the url that shall be played. This could either be a
             // channel or a recording.
             Intent intent = new Intent(PlayActivity.this, HTSService.class);
             intent.setAction("getTicket");
@@ -174,11 +174,11 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
             break;
 
         case ACTION_CAST:
-            if (ch != null && ch.channelNumber > 0) {
-                logger.log(TAG, "initAction: Starting to cast channel '" + ch.channelName + "'");
+            if (ch != null && ch.getChannelNumber() > 0) {
+                logger.log(TAG, "initAction: Starting to cast channel '" + ch.getChannelName() + "'");
                 startCasting();
             } else if (rec != null) {
-                logger.log(TAG, "initAction: Starting to cast recording '" + rec.title + "'");
+                logger.log(TAG, "initAction: Starting to cast recording '" + rec.getTitle() + "'");
                 startCasting();
             }
             break;
@@ -237,7 +237,7 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
                 break;
         }
 
-        // Create the URL for the external media player that is required to get
+        // Create the URL for the external media player that is required to loadRecording
         // the stream from the server
         String playUrl = baseUrl + path + "?ticket=" + ticket;
 
@@ -343,19 +343,19 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
         int streamType = MediaInfo.STREAM_TYPE_NONE;
 
         if (ch != null) {
-            castUrl += "/stream/channelnumber/" + ch.channelNumber;
-            iconUrl += "/" + ch.channelIcon;
+            castUrl += "/stream/channelnumber/" + ch.getChannelNumber();
+            iconUrl += "/" + ch.getChannelIcon();
             streamType = MediaInfo.STREAM_TYPE_LIVE;
         } else if (rec != null) {
-            castUrl += "/dvrfile/" + rec.id;
-            Channel channel = dataStorage.getChannelFromArray(rec.channel);
-            iconUrl += "/" + (channel != null ? channel.channelIcon : "");
+            castUrl += "/dvrfile/" + rec.getId();
+            Channel channel = dataStorage.getChannelFromArray(rec.getChannelId());
+            iconUrl += "/" + (channel != null ? channel.getChannelIcon() : "");
             streamType = MediaInfo.STREAM_TYPE_BUFFERED;
 
-            if (rec.subtitle != null) {
-                subtitle = (rec.subtitle.length() > 0 ? rec.subtitle : rec.summary);
+            if (rec.getSubtitle() != null) {
+                subtitle = (rec.getSubtitle().length() > 0 ? rec.getSubtitle() : rec.getSummary());
             }
-            duration = rec.stop - rec.start;
+            duration = rec.getStop() - rec.getStart();
         }
 
         MediaMetadata movieMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE);

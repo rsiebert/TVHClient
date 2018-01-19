@@ -1,5 +1,7 @@
 package org.tvheadend.tvhclient.ui.recordings.timer_recordings;
 
+import android.app.Activity;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -19,7 +21,7 @@ import org.tvheadend.tvhclient.data.DataStorage;
 import org.tvheadend.tvhclient.data.model.Channel;
 import org.tvheadend.tvhclient.data.model.TimerRecording;
 import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
-import org.tvheadend.tvhclient.ui.recordings.recordings.RecordingAddEditActivity;
+import org.tvheadend.tvhclient.ui.recordings.common.RecordingAddEditActivity;
 import org.tvheadend.tvhclient.utils.MenuUtils;
 import org.tvheadend.tvhclient.utils.UIUtils;
 
@@ -28,6 +30,7 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
 // TODO when a recording is updated refresh
+// TODO use viewmodel
 
 public class TimerRecordingDetailsFragment extends Fragment {
 
@@ -50,6 +53,7 @@ public class TimerRecordingDetailsFragment extends Fragment {
     private String id;
     private Unbinder unbinder;
     private int htspVersion;
+    private Activity activity;
 
     public static TimerRecordingDetailsFragment newInstance(String id) {
         TimerRecordingDetailsFragment f = new TimerRecordingDetailsFragment();
@@ -80,11 +84,12 @@ public class TimerRecordingDetailsFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        if (getActivity() instanceof ToolbarInterface) {
-            toolbarInterface = (ToolbarInterface) getActivity();
+        activity = getActivity();
+        if (activity instanceof ToolbarInterface) {
+            toolbarInterface = (ToolbarInterface) activity;
             toolbarInterface.setTitle(getString(R.string.details));
         }
-        menuUtils = new MenuUtils(getActivity());
+        menuUtils = new MenuUtils(activity);
         htspVersion = DataStorage.getInstance().getProtocolVersion();
         setHasOptionsMenu(true);
 
@@ -96,8 +101,11 @@ public class TimerRecordingDetailsFragment extends Fragment {
             id = savedInstanceState.getString("id");
         }
 
-        // Get the recording so we can show its details
-        recording = DataStorage.getInstance().getTimerRecordingFromArray(id);
+        TimerRecordingViewModel viewModel = ViewModelProviders.of(this).get(TimerRecordingViewModel.class);
+        viewModel.getRecording(id).observe(this, rec -> {
+            recording = rec;
+            updateUI();
+        });
 
         if (nestedToolbar != null) {
             nestedToolbar.inflateMenu(R.menu.recording_details_toolbar_menu);
@@ -108,25 +116,27 @@ public class TimerRecordingDetailsFragment extends Fragment {
                 }
             });
         }
+    }
 
+    private void updateUI() {
         isEnabledTextView.setVisibility((htspVersion >= 19) ? View.VISIBLE : View.GONE);
-        isEnabledTextView.setText(recording.enabled > 0 ? R.string.recording_enabled : R.string.recording_disabled);
+        isEnabledTextView.setText(recording.getEnabled() > 0 ? R.string.recording_enabled : R.string.recording_disabled);
 
         directoryLabelTextView.setVisibility(htspVersion >= 19 ? View.VISIBLE : View.GONE);
         directoryTextView.setVisibility(htspVersion >= 19 ? View.VISIBLE : View.GONE);
-        directoryTextView.setText(recording.directory);
+        directoryTextView.setText(recording.getDirectory());
 
-        Channel channel = DataStorage.getInstance().getChannelFromArray(recording.channel);
-        channelNameTextView.setText(channel != null ? channel.channelName : getString(R.string.all_channels));
+        Channel channel = DataStorage.getInstance().getChannelFromArray(recording.getChannelId());
+        channelNameTextView.setText(channel != null ? channel.getChannelName() : getString(R.string.all_channels));
 
-        daysOfWeekTextView.setText(UIUtils.getDaysOfWeekText(getActivity(), recording.daysOfWeek));
+        daysOfWeekTextView.setText(UIUtils.getDaysOfWeekText(activity, recording.getDaysOfWeek()));
 
         String[] priorityItems = getResources().getStringArray(R.array.dvr_priorities);
-        if (recording.priority >= 0 && recording.priority < priorityItems.length) {
-            priorityTextView.setText(priorityItems[recording.priority]);
+        if (recording.getPriority() >= 0 && recording.getPriority() < priorityItems.length) {
+            priorityTextView.setText(priorityItems[recording.getPriority()]);
         }
 
-        String time = UIUtils.getTime(getContext(), recording.start) + " - " + UIUtils.getTime(getContext(), recording.stop);
+        String time = UIUtils.getTime(getContext(), recording.getStart()) + " - " + UIUtils.getTime(getContext(), recording.getStop());
         timeTextView.setText(time);
 
         durationTextView.setText(getString(R.string.minutes, recording.getDuration()));
@@ -161,22 +171,22 @@ public class TimerRecordingDetailsFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                getActivity().finish();
+                activity.finish();
                 return true;
             case R.id.menu_edit:
-                Intent intent = new Intent(getActivity(), RecordingAddEditActivity.class);
+                Intent intent = new Intent(activity, RecordingAddEditActivity.class);
                 intent.putExtra("type", "timer_recording");
-                intent.putExtra("id", recording.id);
-                getActivity().startActivity(intent);
+                intent.putExtra("id", recording.getId());
+                activity.startActivity(intent);
                 return true;
             case R.id.menu_record_remove:
-                menuUtils.handleMenuRemoveSeriesRecordingSelection(recording.id, recording.title);
+                menuUtils.handleMenuRemoveSeriesRecordingSelection(recording.getId(), recording.getTitle());
                 return true;
             case R.id.menu_search_imdb:
-                menuUtils.handleMenuSearchWebSelection(recording.title);
+                menuUtils.handleMenuSearchWebSelection(recording.getTitle());
                 return true;
             case R.id.menu_search_epg:
-                menuUtils.handleMenuSearchEpgSelection(recording.title);
+                menuUtils.handleMenuSearchEpgSelection(recording.getTitle());
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

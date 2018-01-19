@@ -234,7 +234,7 @@ public class MainActivity extends AppCompatActivity implements HTSListener, Sear
         searchMenuItem.collapseActionView();
         final android.support.v4.app.Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main);
         if (fragment != null && fragment.isAdded() && fragment instanceof SearchRequestInterface) {
-            ((SearchRequestInterface)fragment).onSearchRequested(query);
+            ((SearchRequestInterface) fragment).onSearchRequested(query);
         }
         return true;
     }

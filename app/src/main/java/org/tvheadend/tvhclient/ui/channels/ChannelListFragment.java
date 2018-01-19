@@ -2,15 +2,21 @@ package org.tvheadend.tvhclient.ui.channels;
 
 import android.app.Activity;
 import android.app.SearchManager;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.ListFragment;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -18,9 +24,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ListView;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
@@ -31,8 +34,8 @@ import org.tvheadend.tvhclient.data.model.ChannelTag;
 import org.tvheadend.tvhclient.data.model.Connection;
 import org.tvheadend.tvhclient.data.model.Program;
 import org.tvheadend.tvhclient.data.model.Recording;
-import org.tvheadend.tvhclient.service.HTSListener;
 import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
+import org.tvheadend.tvhclient.ui.common.RecyclerViewClickCallback;
 import org.tvheadend.tvhclient.ui.programs.ProgramListActivity;
 import org.tvheadend.tvhclient.ui.programs.ProgramListFragment;
 import org.tvheadend.tvhclient.ui.search.SearchActivity;
@@ -50,26 +53,31 @@ import java.util.Date;
 // TODO show programs from time in dual pane, program list not updated
 // TODO change getting channel tag
 
-public class ChannelListFragment extends ListFragment implements HTSListener, ChannelTimeSelectionCallback, ChannelTagSelectionCallback, AdapterView.OnItemLongClickListener, OnItemClickListener, SearchRequestInterface {
+public class ChannelListFragment extends Fragment implements RecyclerViewClickCallback, ChannelClickCallback, ChannelTimeSelectionCallback, ChannelTagSelectionCallback, SearchRequestInterface {
 
     private Activity activity;
     private ToolbarInterface toolbarInterface;
-    private ChannelListAdapter adapter;
+    protected ChannelRecyclerViewAdapter recyclerViewAdapter;
+    protected RecyclerView recyclerView;
 
     private boolean isDualPane = false;
     private Runnable channelUpdateTask;
     private final Handler channelUpdateHandler = new Handler();
     private int channelTimeSelection;
-    private long showProgramsFromTime;
+    //private long showProgramsFromTime;
     private MenuUtils menuUtils;
     private boolean isUnlocked;
     private int selectedListPosition;
     private String searchQuery;
+    private ChannelViewModel viewModel;
 
+    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        return inflater.inflate(R.layout.main_listfragment, container, false);
+        View view = inflater.inflate(R.layout.recyclerview_fragment, container, false);
+        recyclerView = view.findViewById(R.id.recycler_view);
+        return view;
     }
 
     @Override
@@ -88,30 +96,39 @@ public class ChannelListFragment extends ListFragment implements HTSListener, Ch
         View detailsFrame = getActivity().findViewById(R.id.details);
         isDualPane = detailsFrame != null && detailsFrame.getVisibility() == View.VISIBLE;
 
-        adapter = new ChannelListAdapter(activity, new ArrayList<>());
-        setListAdapter(adapter);
-        getListView().setFastScrollEnabled(true);
-        getListView().setOnItemClickListener(this);
-        getListView().setOnItemLongClickListener(this);
-        getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-
         Bundle bundle = getArguments();
         if (bundle != null) {
             channelTimeSelection = bundle.getInt("channel_time_selection");
-            showProgramsFromTime = bundle.getLong("show_programs_from_time");
+            //showProgramsFromTime = bundle.getLong("show_programs_from_time");
         }
 
         if (savedInstanceState != null) {
             selectedListPosition = savedInstanceState.getInt("list_position", 0);
             channelTimeSelection = savedInstanceState.getInt("channel_time_selection");
-            showProgramsFromTime = savedInstanceState.getLong("show_programs_from_time");
+            //showProgramsFromTime = savedInstanceState.getLong("show_programs_from_time");
         } else {
             selectedListPosition = 0;
             channelTimeSelection = 0;
-            showProgramsFromTime = new Date().getTime();
+            //showProgramsFromTime = new Date().getTime();
         }
 
         setHasOptionsMenu(true);
+
+        recyclerViewAdapter = new ChannelRecyclerViewAdapter(activity, new ArrayList<>(), this, this);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(recyclerViewAdapter);
+
+        viewModel = ViewModelProviders.of(this).get(ChannelViewModel.class);
+        viewModel.getChannels().observe(this, channels -> {
+            recyclerViewAdapter.addItems(channels);
+            toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.items, recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
+
+            if (isDualPane && recyclerViewAdapter.getItemCount() > 0) {
+                showChannelDetails(selectedListPosition);
+            }
+        });
 
         // Initiate a timer that will update the adapter every minute
         // so that the progress bars will be displayed correctly
@@ -121,9 +138,8 @@ public class ChannelListFragment extends ListFragment implements HTSListener, Ch
         channelUpdateTask = new Runnable() {
             public void run() {
                 if (channelTimeSelection == 0) {
-                    adapter.setTime(new Date().getTime());
+                    viewModel.setTime(new Date().getTime());
                 }
-                adapter.notifyDataSetChanged();
                 channelUpdateHandler.postDelayed(channelUpdateTask, 60000);
             }
         };
@@ -134,7 +150,7 @@ public class ChannelListFragment extends ListFragment implements HTSListener, Ch
         super.onSaveInstanceState(outState);
         outState.putInt("list_position", selectedListPosition);
         outState.putInt("channel_time_selection", channelTimeSelection);
-        outState.putLong("show_programs_from_time", showProgramsFromTime);
+        //outState.putLong("show_programs_from_time", showProgramsFromTime);
     }
 
     @Override
@@ -166,11 +182,11 @@ public class ChannelListFragment extends ListFragment implements HTSListener, Ch
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_play:
-                menuUtils.handleMenuPlaySelection(adapter.getSelectedItem().channelId, -1);
+                menuUtils.handleMenuPlaySelection(recyclerViewAdapter.getSelectedItem().getChannelId(), -1);
                 return true;
             case R.id.menu_tags:
                 ChannelTag tag = Utils.getChannelTag(activity);
-                menuUtils.handleMenuTagsSelection((tag != null ? tag.tagId : -1), this);
+                menuUtils.handleMenuTagsSelection((tag != null ? tag.getTagId() : -1), this);
                 return true;
             case R.id.menu_timeframe:
                 menuUtils.handleMenuTimeSelection(channelTimeSelection, this);
@@ -186,14 +202,14 @@ public class ChannelListFragment extends ListFragment implements HTSListener, Ch
     @Override
     public void onResume() {
         super.onResume();
-        TVHClientApplication.getInstance().addListener(this);
+        /*TVHClientApplication.getInstance().addListener(this);
 
         if (!DataStorage.getInstance().isLoading()) {
             populateList();
             if (isDualPane) {
                 showChannelDetails(selectedListPosition);
             }
-        }
+        }*/
         // Start the timer that updates the adapter so
         // it only shows programs within the current time
         channelUpdateHandler.post(channelUpdateTask);
@@ -202,7 +218,7 @@ public class ChannelListFragment extends ListFragment implements HTSListener, Ch
     @Override
     public void onPause() {
         super.onPause();
-        TVHClientApplication.getInstance().removeListener(this);
+        //TVHClientApplication.getInstance().removeListener(this);
         channelUpdateHandler.removeCallbacks(channelUpdateTask);
     }
 
@@ -211,6 +227,7 @@ public class ChannelListFragment extends ListFragment implements HTSListener, Ch
      * will be added to the adapter that contain the selected channel tag.
      * Additionally some status information will be shown in the action bar.
      */
+    /*
     private void populateList() {
         ChannelTag currentTag = null;
         Connection connection = DatabaseHelper.getInstance(getActivity().getApplicationContext()).getSelectedConnection();
@@ -220,7 +237,7 @@ public class ChannelListFragment extends ListFragment implements HTSListener, Ch
 
         adapter.clear();
         for (Channel channel : DataStorage.getInstance().getChannelsFromArray().values()) {
-            if (currentTag == null || channel.tags.contains(currentTag.tagId)) {
+            if (currentTag == null || channel.getTags().contains(currentTag.getTagId())) {
                 adapter.add(channel);
             }
         }
@@ -231,9 +248,10 @@ public class ChannelListFragment extends ListFragment implements HTSListener, Ch
 
         // Show the name of the selected channel tag and the number of channels
         // in the action bar. If enabled show also the channel tag icon.
-        toolbarInterface.setTitle((currentTag == null) ? getString(R.string.all_channels) : currentTag.tagName);
+        toolbarInterface.setTitle((currentTag == null) ? getString(R.string.all_channels) : currentTag.getTagName());
         String items = getResources().getQuantityString(R.plurals.items, adapter.getCount(), adapter.getCount());
         toolbarInterface.setSubtitle(items);
+        */
 /*
         if (sharedPreferences.getBoolean("showIconPref", true)
                 && sharedPreferences.getBoolean("showTagIconPref", false)
@@ -244,68 +262,8 @@ public class ChannelListFragment extends ListFragment implements HTSListener, Ch
         } else {
             toolbarInterface.setActionBarIcon(R.mipmap.ic_launcher);
         }
-        */
     }
-
-    @Override
-    public void onMessage(String action, final Object obj) {
-        switch (action) {
-            case "channelAdd":
-                activity.runOnUiThread(new Runnable() {
-                    public void run() {
-                        Channel channel = (Channel) obj;
-                        adapter.add(channel);
-                        adapter.sort(Utils.getChannelSortOrder(activity));
-                        adapter.notifyDataSetChanged();
-                        String items = getResources().getQuantityString(R.plurals.programs, adapter.getCount(), adapter.getCount());
-                        toolbarInterface.setSubtitle(items);
-                    }
-                });
-                break;
-            case "channelDelete":
-                activity.runOnUiThread(new Runnable() {
-                    public void run() {
-                        // Get the position of the recording that is to be
-                        // deleted so the previous one can be selected
-                        if (--selectedListPosition < 0) {
-                            selectedListPosition = 0;
-                        }
-                        Channel channel = (Channel) obj;
-                        adapter.remove(channel);
-                        adapter.notifyDataSetChanged();
-                        String items = getResources().getQuantityString(R.plurals.programs, adapter.getCount(), adapter.getCount());
-                        toolbarInterface.setSubtitle(items);
-                        // Select the previous recording to show its details
-                        if (isDualPane) {
-                            showChannelDetails(selectedListPosition);
-                        }
-                    }
-                });
-                break;
-            case "channelUpdate":
-                activity.runOnUiThread(new Runnable() {
-                    public void run() {
-                        Channel channel = (Channel) obj;
-                        adapter.update(channel);
-                        adapter.notifyDataSetChanged();
-                    }
-                });
-                break;
-            case "eventUpdate":
-            case "eventDelete":
-            case "dvrEntryAdd":
-            case "dvrEntryUpdate":
-            case "dvrEntryDelete":
-                // An existing program or recording has been updated
-                // Show the recording status in the channel list
-                activity.runOnUiThread(new Runnable() {
-                    public void run() {
-                        adapter.notifyDataSetChanged();
-                    }
-                });
-                break;
-        }
-    }
+*/
 
     @Override
     public void onTimeSelected(int which) {
@@ -322,9 +280,10 @@ public class ChannelListFragment extends ListFragment implements HTSListener, Ch
             }
         }
 
-        showProgramsFromTime = c.getTimeInMillis();
-        adapter.setTime(showProgramsFromTime);
-        adapter.notifyDataSetChanged();
+        viewModel.setTime(c.getTimeInMillis());
+        //showProgramsFromTime = c.getTimeInMillis();
+        //adapter.setTime(showProgramsFromTime);
+        //adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -334,36 +293,36 @@ public class ChannelListFragment extends ListFragment implements HTSListener, Ch
             connection.channelTag = which;
             DatabaseHelper.getInstance(getActivity().getApplicationContext()).updateConnection(connection);
         }
-        populateList();
+        //populateList();
     }
 
     @Override
-    public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+    public void onClick(View view, int position) {
         showChannelDetails(position);
     }
 
     protected void showChannelDetails(int position) {
         selectedListPosition = position;
-        Channel channel = adapter.getItem(position);
+        Channel channel = recyclerViewAdapter.getItem(position);
         if (channel == null) {
             return;
         }
         if (!isDualPane) {
             // Launch a new activity to display the program list of the selected channel.
             Intent intent = new Intent(getActivity(), ProgramListActivity.class);
-            intent.putExtra("channelName", channel.channelName);
-            intent.putExtra("channelId", channel.channelId);
-            intent.putExtra("show_programs_from_time", showProgramsFromTime);
+            intent.putExtra("channelName", channel.getChannelName());
+            intent.putExtra("channelId", channel.getChannelId());
+            intent.putExtra("show_programs_from_time", viewModel.getTime());
             activity.startActivity(intent);
         } else {
             // We can display everything in-place with fragments, so update
             // the list to highlight the selected item and show the program details fragment.
-            getListView().setItemChecked(position, true);
+            // TODO getListView().setItemChecked(position, true);
             // Check what fragment is currently shown, replace if needed.
             ProgramListFragment programListFragment = (ProgramListFragment) getFragmentManager().findFragmentById(R.id.details);
-            if (programListFragment == null || programListFragment.getShownChannelId() != channel.channelId) {
+            if (programListFragment == null || programListFragment.getShownChannelId() != channel.getChannelId()) {
                 // Make new fragment to show this selection.
-                programListFragment = ProgramListFragment.newInstance(channel.channelName, channel.channelId, showProgramsFromTime);
+                programListFragment = ProgramListFragment.newInstance(channel.getChannelName(), channel.getChannelId(), viewModel.getTime());
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
                 ft.replace(R.id.details, programListFragment);
                 ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
@@ -373,8 +332,8 @@ public class ChannelListFragment extends ListFragment implements HTSListener, Ch
     }
 
     @Override
-    public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
-        final Channel channel = adapter.getItem(position);
+    public boolean onLongClick(View view) {
+        final Channel channel = (Channel) view.getTag();
         final Program program = getCurrentProgram(channel);
         if (getActivity() == null || program == null) {
             return true;
@@ -386,35 +345,35 @@ public class ChannelListFragment extends ListFragment implements HTSListener, Ch
         popupMenu.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {
                 case R.id.menu_search_imdb:
-                    menuUtils.handleMenuSearchWebSelection(program.title);
+                    menuUtils.handleMenuSearchWebSelection(program.getTitle());
                     return true;
                 case R.id.menu_search_epg:
-                    menuUtils.handleMenuSearchEpgSelection(program.title, channel.channelId);
+                    menuUtils.handleMenuSearchEpgSelection(program.getTitle(), channel.getChannelId());
                     return true;
                 case R.id.menu_record_remove:
-                    Recording rec = DataStorage.getInstance().getRecordingFromArray(program.dvrId);
+                    Recording rec = DataStorage.getInstance().getRecordingFromArray(program.getDvrId());
                     if (rec != null) {
                         if (rec.isRecording()) {
-                            menuUtils.handleMenuStopRecordingSelection(rec.id, rec.title);
+                            menuUtils.handleMenuStopRecordingSelection(rec.getId(), rec.getTitle());
                         } else if (rec.isScheduled()) {
-                            menuUtils.handleMenuCancelRecordingSelection(rec.id, rec.title);
+                            menuUtils.handleMenuCancelRecordingSelection(rec.getId(), rec.getTitle());
                         } else {
-                            menuUtils.handleMenuRemoveRecordingSelection(rec.id, rec.title);
+                            menuUtils.handleMenuRemoveRecordingSelection(rec.getId(), rec.getTitle());
                         }
                     }
                     return true;
                 case R.id.menu_record_once:
-                    menuUtils.handleMenuRecordSelection(program.eventId);
+                    menuUtils.handleMenuRecordSelection(program.getEventId());
                     return true;
                 case R.id.menu_record_once_custom_profile:
-                    menuUtils.handleMenuCustomRecordSelection(program.eventId, channel.channelId);
+                    menuUtils.handleMenuCustomRecordSelection(program.getEventId(), channel.getChannelId());
                     return true;
                 case R.id.menu_record_series:
-                    menuUtils.handleMenuSeriesRecordSelection(program.title);
+                    menuUtils.handleMenuSeriesRecordSelection(program.getTitle());
                     return true;
                 case R.id.menu_play:
                     // Open a new activity to stream the current program to this device
-                    menuUtils.handleMenuPlaySelection(channel.channelId, -1);
+                    menuUtils.handleMenuPlaySelection(channel.getChannelId(), -1);
                     return true;
                 default:
                     return false;
@@ -429,8 +388,8 @@ public class ChannelListFragment extends ListFragment implements HTSListener, Ch
             return null;
         }
         for (Program program : DataStorage.getInstance().getProgramsFromArray().values()) {
-            if (program.channelId == channel.channelId) {
-                if (program.start <= showProgramsFromTime && program.stop > showProgramsFromTime) {
+            if (program.getChannelId() == channel.getChannelId()) {
+                if (program.getStart() <= viewModel.getTime() && program.getStop() > viewModel.getTime()) {
                     return program;
                 }
             }
@@ -447,5 +406,10 @@ public class ChannelListFragment extends ListFragment implements HTSListener, Ch
         searchIntent.setAction(Intent.ACTION_SEARCH);
         searchIntent.putExtra("type", "programs");
         startActivity(searchIntent);
+    }
+
+    @Override
+    public void onChannelClick(int id) {
+        new MenuUtils(activity).handleMenuPlaySelection(id, -1);
     }
 }

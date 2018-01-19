@@ -13,6 +13,7 @@ public class HTSUtils {
     }
 
     public static ChannelTag convertMessageToChannelTagModel(ChannelTag tag, HTSMessage msg) {
+        /*
         if (msg.containsKey("tagId")) {
             tag.tagId = msg.getInt("tagId");
         }
@@ -31,10 +32,12 @@ public class HTSUtils {
         if (msg.containsKey("members")) {
             tag.members = msg.getIntList("members", tag.members);
         }
+        */
         return tag;
     }
 
     public static Channel convertMessageToChannelModel(Channel channel, HTSMessage msg) {
+        /*
         if (msg.containsKey("channelId")) {
             channel.channelId = msg.getInt("channelId");
         }
@@ -59,93 +62,94 @@ public class HTSUtils {
         if (msg.containsKey("tags")) {
             channel.tags = msg.getIntList("tags", channel.tags);
         }
+        */
         return channel;
     }
 
     public static Recording convertMessageToRecordingModel(Recording recording, HTSMessage msg) {
         if (msg.containsKey("id")) {
-            recording.id = msg.getInt("id");
+            recording.setId(msg.getInt("id"));
         }
         if (msg.containsKey("channel")) {
-            recording.channel = msg.getInt("channel");
+            recording.setChannelId(msg.getInt("channel"));
         }
         if (msg.containsKey("start")) {
-            recording.start = msg.getLong("start") * 1000;
+            recording.setStart(msg.getLong("start") * 1000);
         }
         if (msg.containsKey("stop")) {
-            recording.stop = msg.getLong("stop") * 1000;
+            recording.setStop(msg.getLong("stop") * 1000);
         }
         if (msg.containsKey("startExtra")) {
-            recording.startExtra = msg.getLong("startExtra");
+            recording.setStartExtra(msg.getLong("startExtra"));
         }
         if (msg.containsKey("stopExtra")) {
-            recording.stopExtra = msg.getLong("stopExtra");
+            recording.setStopExtra(msg.getLong("stopExtra"));
         }
         if (msg.containsKey("retention")) {
-            recording.retention = msg.getLong("retention");
+            recording.setRetention(msg.getLong("retention"));
         }
         if (msg.containsKey("priority")) {
-            recording.priority = msg.getInt("priority");
+            recording.setPriority(msg.getInt("priority"));
         }
         if (msg.containsKey("eventId")) {
-            recording.eventId = msg.getInt("eventId");
+            recording.setEventId(msg.getInt("eventId"));
         }
         if (msg.containsKey("autorecId")) {
-            recording.autorecId = msg.getString("autorecId");
+            recording.setAutorecId(msg.getString("autorecId"));
         }
         if (msg.containsKey("timerecId")) {
-            recording.timerecId = msg.getString("timerecId");
+            recording.setTimerecId(msg.getString("timerecId"));
         }
         if (msg.containsKey("contentType")) {
-            recording.contentType = msg.getInt("contentType");
+            recording.setContentType(msg.getInt("contentType"));
         }
         if (msg.containsKey("title")) {
-            recording.title = msg.getString("title");
+            recording.setTitle(msg.getString("title"));
         }
         if (msg.containsKey("subtitle")) {
-            recording.subtitle = msg.getString("subtitle");
+            recording.setSubtitle(msg.getString("subtitle"));
         }
         if (msg.containsKey("summary")) {
-            recording.summary = msg.getString("summary");
+            recording.setSummary(msg.getString("summary"));
         }
         if (msg.containsKey("description")) {
-            recording.description = msg.getString("description");
+            recording.setDescription(msg.getString("description"));
         }
         if (msg.containsKey("state")) {
-            recording.state = msg.getString("state");
+            recording.setState(msg.getString("state"));
         }
         if (msg.containsKey("error")) {
-            recording.error = msg.getString("error");
+            recording.setError(msg.getString("error"));
         }
         if (msg.containsKey("owner")) {
-            recording.owner = msg.getString("owner");
+            recording.setOwner(msg.getString("owner"));
         }
         if (msg.containsKey("creator")) {
-            recording.creator = msg.getString("creator");
+            recording.setCreator(msg.getString("creator"));
         }
         if (msg.containsKey("subscriptionError")) {
-            recording.subscriptionError = msg.getString("subscriptionError");
+            recording.setSubscriptionError(msg.getString("subscriptionError"));
         }
         if (msg.containsKey("streamErrors")) {
-            recording.streamErrors = msg.getString("streamErrors");
+            recording.setStreamErrors(msg.getString("streamErrors"));
         }
         if (msg.containsKey("dataErrors")) {
-            recording.dataErrors = msg.getString("dataErrors");
+            recording.setDataErrors(msg.getString("dataErrors"));
         }
         if (msg.containsKey("path")) {
-            recording.path = msg.getString("path");
+            recording.setPath(msg.getString("path"));
         }
         if (msg.containsKey("dataSize")) {
-            recording.dataSize = msg.getLong("dataSize");
+            recording.setDataSize(msg.getLong("dataSize"));
         }
         if (msg.containsKey("enabled")) {
-            recording.enabled = msg.getInt("enabled");
+            recording.setEnabled(msg.getInt("enabled"));
         }
         return recording;
     }
 
     public static Program convertMessageToProgramModel(Program program, HTSMessage msg) {
-
+/*
         if (msg.containsKey("eventId")) {
             program.eventId = msg.getInt("eventId");
         }
@@ -224,69 +228,70 @@ public class HTSUtils {
         if (msg.containsKey("nextEventId")) {
             program.nextEventId = msg.getInt("nextEventId");
         }
+        */
         return program;
     }
 
     public static SeriesRecording convertMessageToSeriesRecordingModel(SeriesRecording seriesRecording, HTSMessage msg) {
         if (msg.containsKey("id")) {
-            seriesRecording.id = msg.getString("id");
+            seriesRecording.setId(msg.getString("id"));
         }
         if (msg.containsKey("enabled")) {
-            seriesRecording.enabled = msg.getInt("enabled");
+            seriesRecording.setEnabled(msg.getInt("enabled"));
         }
         if (msg.containsKey("name")) {
-            seriesRecording.name = msg.getString("name");
+            seriesRecording.setName(msg.getString("name"));
         }
         if (msg.containsKey("minDuration")) {
-            seriesRecording.minDuration = msg.getInt("minDuration");
+            seriesRecording.setMinDuration(msg.getInt("minDuration"));
         }
         if (msg.containsKey("maxDuration")) {
-            seriesRecording.maxDuration = msg.getInt("maxDuration");
+            seriesRecording.setMaxDuration(msg.getInt("maxDuration"));
         }
         if (msg.containsKey("retention")) {
-            seriesRecording.retention = msg.getInt("retention");
+            seriesRecording.setRetention(msg.getInt("retention"));
         }
         if (msg.containsKey("daysOfWeek")) {
-            seriesRecording.daysOfWeek = msg.getInt("daysOfWeek");
+            seriesRecording.setDaysOfWeek(msg.getInt("daysOfWeek"));
         }
         if (msg.containsKey("priority")) {
-            seriesRecording.priority = msg.getInt("priority");
+            seriesRecording.setPriority(msg.getInt("priority"));
         }
         if (msg.containsKey("approxTime")) {
-            seriesRecording.approxTime = msg.getInt("approxTime");
+            seriesRecording.setApproxTime(msg.getInt("approxTime"));
         }
         if (msg.containsKey("start")) {
-            seriesRecording.start = msg.getLong("start") * 1000 * 60;
+            seriesRecording.setStart(msg.getLong("start") * 1000 * 60);
         }
         if (msg.containsKey("startWindow")) {
-            seriesRecording.startWindow = msg.getLong("startWindow") * 1000 * 60;
+            seriesRecording.setStartWindow(msg.getLong("startWindow") * 1000 * 60);
         }
         if (msg.containsKey("startExtra")) {
-            seriesRecording.startExtra = msg.getLong("startExtra");
+            seriesRecording.setStartExtra(msg.getLong("startExtra"));
         }
         if (msg.containsKey("stopExtra")) {
-            seriesRecording.stopExtra = msg.getLong("stopExtra");
+            seriesRecording.setStopExtra(msg.getLong("stopExtra"));
         }
         if (msg.containsKey("title")) {
-            seriesRecording.title = msg.getString("title");
+            seriesRecording.setTitle(msg.getString("title"));
         }
         if (msg.containsKey("fulltext")) {
-            seriesRecording.fulltext = msg.getInt("fulltext");
+            seriesRecording.setFulltext(msg.getInt("fulltext"));
         }
         if (msg.containsKey("directory")) {
-            seriesRecording.directory = msg.getString("directory");
+            seriesRecording.setDirectory(msg.getString("directory"));
         }
         if (msg.containsKey("channel")) {
-            seriesRecording.channel = msg.getInt("channel");
+            seriesRecording.setChannelId(msg.getInt("channel"));
         }
         if (msg.containsKey("owner")) {
-            seriesRecording.owner = msg.getString("owner");
+            seriesRecording.setOwner(msg.getString("owner"));
         }
         if (msg.containsKey("creator")) {
-            seriesRecording.creator = msg.getString("creator");
+            seriesRecording.setCreator(msg.getString("creator"));
         }
         if (msg.containsKey("dupDetect")) {
-            seriesRecording.dupDetect = msg.getInt("dupDetect");
+            seriesRecording.setDupDetect(msg.getInt("dupDetect"));
         }
         return seriesRecording;
     }
@@ -294,46 +299,46 @@ public class HTSUtils {
 
     public static TimerRecording convertMessageToTimerRecordingModel(TimerRecording timerRecording, HTSMessage msg) {
         if (msg.containsKey("id")) {
-            timerRecording.id = msg.getString("id");
+            timerRecording.setId(msg.getString("id"));
         }
         if (msg.containsKey("title")) {
-            timerRecording.title = msg.getString("title");
+            timerRecording.setTitle(msg.getString("title"));
         }
         if (msg.containsKey("directory")) {
-            timerRecording.directory = msg.getString("directory", null);
+            timerRecording.setDirectory(msg.getString("directory", null));
         }
         if (msg.containsKey("enabled")) {
-            timerRecording.enabled = msg.getInt("enabled");
+            timerRecording.setEnabled(msg.getInt("enabled"));
         }
         if (msg.containsKey("name")) {
-            timerRecording.name = msg.getString("name");
+            timerRecording.setName(msg.getString("name"));
         }
         if (msg.containsKey("configName")) {
-            timerRecording.configName = msg.getString("configName");
+            timerRecording.setConfigName(msg.getString("configName"));
         }
         if (msg.containsKey("channel")) {
-            timerRecording.channel = msg.getInt("channel");
+            timerRecording.setChannelId(msg.getInt("channel"));
         }
         if (msg.containsKey("daysOfWeek")) {
-            timerRecording.daysOfWeek = msg.getInt("daysOfWeek");
+            timerRecording.setDaysOfWeek(msg.getInt("daysOfWeek"));
         }
         if (msg.containsKey("priority")) {
-            timerRecording.priority = msg.getInt("priority");
+            timerRecording.setPriority(msg.getInt("priority"));
         }
         if (msg.containsKey("start")) {
-            timerRecording.start = msg.getLong("start") * 1000 * 60;
+            timerRecording.setStart(msg.getLong("start") * 1000 * 60);
         }
         if (msg.containsKey("stop")) {
-            timerRecording.stop = msg.getLong("stop") * 1000 * 60;
+            timerRecording.setStop(msg.getLong("stop") * 1000 * 60);
         }
         if (msg.containsKey("retention")) {
-            timerRecording.retention = msg.getInt("retention");
+            timerRecording.setRetention(msg.getInt("retention"));
         }
         if (msg.containsKey("owner")) {
-            timerRecording.owner = msg.getString("owner");
+            timerRecording.setOwner(msg.getString("owner"));
         }
         if (msg.containsKey("creator")) {
-            timerRecording.creator = msg.getString("creator");
+            timerRecording.setCreator(msg.getString("creator"));
         }
         return timerRecording;
     }

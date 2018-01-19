@@ -16,10 +16,16 @@ import java.util.List;
 public interface SeriesRecordingDao {
 
     @Query("SELECT * FROM series_recordings")
-    LiveData<List<SeriesRecording>> getAll();
+    LiveData<List<SeriesRecording>> loadAllRecordings();
 
     @Query("SELECT * FROM series_recordings WHERE id = :id")
-    LiveData<SeriesRecording> get(String id);
+    LiveData<SeriesRecording> loadRecording(String id);
+
+    @Query("SELECT * FROM series_recordings WHERE id = :id")
+    SeriesRecording loadRecordingSync(String id);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertAll(List<SeriesRecording> recordings);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(SeriesRecording recording);
@@ -29,4 +35,7 @@ public interface SeriesRecordingDao {
 
     @Delete
     void delete(SeriesRecording recording);
+
+    @Query("DELETE FROM series_recordings")
+    void deleteAll();
 }

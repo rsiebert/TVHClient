@@ -1,6 +1,7 @@
 package org.tvheadend.tvhclient.ui.misc;
 
 import android.app.Activity;
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -23,6 +24,9 @@ import org.tvheadend.tvhclient.data.model.Recording;
 import org.tvheadend.tvhclient.data.tasks.WakeOnLanTask;
 import org.tvheadend.tvhclient.data.tasks.WakeOnLanTaskCallback;
 import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
+import org.tvheadend.tvhclient.ui.recordings.recordings.RecordingViewModel;
+import org.tvheadend.tvhclient.ui.recordings.series_recordings.SeriesRecordingViewModel;
+import org.tvheadend.tvhclient.ui.recordings.timer_recordings.TimerRecordingViewModel;
 import org.tvheadend.tvhclient.utils.MenuUtils;
 
 import java.util.Map;
@@ -102,11 +106,55 @@ public class StatusFragment extends Fragment implements WakeOnLanTaskCallback {
             toolbarInterface.setTitle(getString(R.string.status));
             toolbarInterface.setSubtitle(null);
         }
+
         menuUtils = new MenuUtils(getActivity());
         databaseHelper = DatabaseHelper.getInstance(getActivity().getApplicationContext());
         htspVersion = DataStorage.getInstance().getProtocolVersion();
         isUnlocked = TVHClientApplication.getInstance().isUnlocked();
+
         setHasOptionsMenu(true);
+
+        SeriesRecordingViewModel seriesRecordingViewModel = ViewModelProviders.of(this).get(SeriesRecordingViewModel.class);
+        seriesRecordingViewModel.getRecordings().observe(this, recordings -> {
+            if (recordings != null) {
+                seriesRec.setText(getResources().getQuantityString(
+                        R.plurals.series_recordings, recordings.size(), recordings.size()));
+            }
+        });
+
+        TimerRecordingViewModel timerRecordingViewModel = ViewModelProviders.of(this).get(TimerRecordingViewModel.class);
+        timerRecordingViewModel.getRecordings().observe(this, recordings -> {
+            if (recordings != null) {
+                timerRec.setText(getResources().getQuantityString(
+                        R.plurals.timer_recordings, recordings.size(), recordings.size()));
+            }
+        });
+
+        RecordingViewModel recordingViewModel = ViewModelProviders.of(this).get(RecordingViewModel.class);
+        recordingViewModel.getCompletedRecordings().observe(this, recordings -> {
+            if (recordings != null) {
+                completedRec.setText(getResources().getQuantityString(
+                        R.plurals.completed_recordings, recordings.size(), recordings.size()));
+            }
+        });
+        recordingViewModel.getScheduledRecordings().observe(this, recordings -> {
+            if (recordings != null) {
+                upcomingRec.setText(getResources().getQuantityString(
+                        R.plurals.upcoming_recordings, recordings.size(), recordings.size()));
+            }
+        });
+        recordingViewModel.getFailedRecordings().observe(this, recordings -> {
+            if (recordings != null) {
+                failedRec.setText(getResources().getQuantityString(
+                        R.plurals.failed_recordings, recordings.size(), recordings.size()));
+            }
+        });
+        recordingViewModel.getRemovedRecordings().observe(this, recordings -> {
+            if (recordings != null) {
+                removedRec.setText(getResources().getQuantityString(
+                        R.plurals.removed_recordings, recordings.size(), recordings.size()));
+            }
+        });
     }
 
     @Override
@@ -233,10 +281,10 @@ public class StatusFragment extends Fragment implements WakeOnLanTaskCallback {
         Map<Integer, Recording> map = DataStorage.getInstance().getRecordingsFromArray();
         for (Recording rec : map.values()) {
             if (rec.isRecording()) {
-                currentRecText.append(getString(R.string.currently_recording)).append(": ").append(rec.title);
-                Channel channel = DataStorage.getInstance().getChannelFromArray(rec.channel);
+                currentRecText.append(getString(R.string.currently_recording)).append(": ").append(rec.getTitle());
+                Channel channel = DataStorage.getInstance().getChannelFromArray(rec.getChannelId());
                 if (channel != null) {
-                    currentRecText.append(" (").append(getString(R.string.channel)).append(" ").append(channel.channelName).append(")\n");
+                    currentRecText.append(" (").append(getString(R.string.channel)).append(" ").append(channel.getChannelName()).append(")\n");
                 }
             }
         }
@@ -244,43 +292,6 @@ public class StatusFragment extends Fragment implements WakeOnLanTaskCallback {
         // Show which programs are being recorded
         currentlyRec.setText(currentRecText.length() > 0 ? currentRecText.toString()
                 : getString(R.string.nothing));
-
-        int completedRecCount = 0;
-        int scheduledRecCount = 0;
-        int failedRecCount = 0;
-        int removedRecCount = 0;
-
-        for (Recording recording : map.values()) {
-            if (recording.isCompleted()) {
-                completedRecCount++;
-            } else if (recording.isScheduled()) {
-                scheduledRecCount++;
-            } else if (recording.isFailed()) {
-                failedRecCount++;
-            } else if (recording.isRemoved()) {
-                removedRecCount++;
-            }
-        }
-
-        // Show how many different recordings are available
-        completedRec.setText(getResources().getQuantityString(
-                R.plurals.completed_recordings, completedRecCount,
-                completedRecCount));
-        upcomingRec.setText(getResources().getQuantityString(
-                R.plurals.upcoming_recordings, scheduledRecCount,
-                scheduledRecCount));
-        failedRec.setText(getResources().getQuantityString(
-                R.plurals.failed_recordings, failedRecCount, failedRecCount));
-        removedRec.setText(getResources().getQuantityString(
-                R.plurals.removed_recordings, removedRecCount, removedRecCount));
-
-        final int seriesRecCount = DataStorage.getInstance().getSeriesRecordingsFromArray().size();
-        seriesRec.setText(getResources().getQuantityString(
-                R.plurals.series_recordings, seriesRecCount, seriesRecCount));
-
-        final int timerRecCount = DataStorage.getInstance().getTimerRecordingsFromArray().size();
-        timerRec.setText(getResources().getQuantityString(
-                R.plurals.timer_recordings, timerRecCount, timerRecCount));
     }
 
     private void showServerStatus() {

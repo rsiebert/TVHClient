@@ -15,11 +15,17 @@ import java.util.List;
 @Dao
 public interface  TimerRecordingDao {
 
-    @Query("SELECT * FROM TimerRecording")
-    LiveData<List<TimerRecording>> getAll();
+    @Query("SELECT * FROM timer_recordings")
+    LiveData<List<TimerRecording>> loadAllRecordings();
 
-    @Query("SELECT * FROM TimerRecording WHERE id = :id")
-    LiveData<TimerRecording> get(String id);
+    @Query("SELECT * FROM timer_recordings WHERE id = :id")
+    LiveData<TimerRecording> loadRecording(String id);
+
+    @Query("SELECT * FROM timer_recordings WHERE id = :id")
+    TimerRecording loadRecordingSync(String id);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertAll(List<TimerRecording> recordings);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(TimerRecording recording);
@@ -29,4 +35,7 @@ public interface  TimerRecordingDao {
 
     @Delete
     void delete(TimerRecording recording);
+
+    @Query("DELETE FROM timer_recordings")
+    void deleteAll();
 }

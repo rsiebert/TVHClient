@@ -13,10 +13,8 @@ import org.tvheadend.tvhclient.data.model.Packet;
 import org.tvheadend.tvhclient.data.model.Profiles;
 import org.tvheadend.tvhclient.data.model.Program;
 import org.tvheadend.tvhclient.data.model.Recording;
-import org.tvheadend.tvhclient.data.model.SeriesRecording;
 import org.tvheadend.tvhclient.data.model.Subscription;
 import org.tvheadend.tvhclient.data.model.SystemTime;
-import org.tvheadend.tvhclient.data.model.TimerRecording;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,8 +33,6 @@ public class DataStorage {
     private final Map<Integer, Recording> recordingArray = new ConcurrentHashMap<>();
     private final Map<Integer, Channel> channelArray = new ConcurrentHashMap<>();
     private final Map<Integer, ChannelTag> tagArray = new ConcurrentHashMap<>();
-    private final Map<String, SeriesRecording> seriesRecordingArray = new ConcurrentHashMap<>();
-    private final Map<String, TimerRecording> timerRecordingArray = new ConcurrentHashMap<>();
 
     private final TVHClientApplication app;
     private SystemTime systemTime = new SystemTime();
@@ -108,8 +104,6 @@ public class DataStorage {
     public void clearAll() {
         tagArray.clear();
         recordingArray.clear();
-        seriesRecordingArray.clear();
-        timerRecordingArray.clear();
         channelArray.clear();
 
         for (Subscription s : subscriptions) {
@@ -341,7 +335,7 @@ public class DataStorage {
 
     public void addProgramToArray(Program program) {
         synchronized (programArray) {
-            programArray.put(program.eventId, program);
+            programArray.put(program.getEventId(), program);
         }
         if (!loading) {
             app.broadcastMessage("eventAdd", program);
@@ -359,7 +353,7 @@ public class DataStorage {
 
     public void updateProgramInArray(Program program) {
         synchronized (programArray) {
-            programArray.put(program.eventId, program);
+            programArray.put(program.getEventId(), program);
         }
         if (!loading) {
             app.broadcastMessage("eventUpdate", program);
@@ -378,45 +372,6 @@ public class DataStorage {
         }
     }
 
-    public void addRecordingToArray(Recording recording) {
-        synchronized (recordingArray) {
-            recordingArray.put(recording.id, recording);
-        }
-        if (!loading) {
-            app.broadcastMessage("dvrEntryAdd", recording);
-            // Add a notification for scheduled recordings
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(app);
-            if (prefs.getBoolean("pref_show_notifications", false) && recording.isScheduled()) {
-                NotificationHandler.getInstance().addNotification(recording.id);
-            }
-        }
-    }
-
-    public void removeRecordingFromArray(int id) {
-        Recording removedRecording = recordingArray.get(id);
-        synchronized (recordingArray) {
-            recordingArray.remove(id);
-        }
-        if (!loading) {
-            app.broadcastMessage("dvrEntryDelete", removedRecording);
-
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(app);
-            if (prefs.getBoolean("pref_show_notifications", false)) {
-                NotificationHandler.getInstance().cancelNotification(id);
-            }
-        }
-    }
-
-    public void updateRecordingInArray(Recording recording) {
-        synchronized (recordingArray) {
-            recordingArray.put(recording.id, recording);
-        }
-        if (!loading) {
-            app.broadcastMessage("dvrEntryUpdate", recording);
-        }
-    }
-
-
     public Channel getChannelFromArray(int id) {
         synchronized (channelArray) {
             return channelArray.get(id);
@@ -431,7 +386,7 @@ public class DataStorage {
 
     public void addChannelToArray(Channel channel) {
         synchronized (channelArray) {
-            channelArray.put(channel.channelId, channel);
+            channelArray.put(channel.getChannelId(), channel);
         }
         if (!loading) {
             app.broadcastMessage("channelAdd", channel);
@@ -450,7 +405,7 @@ public class DataStorage {
 
     public void updateChannelInArray(Channel channel) {
         synchronized (channelArray) {
-            channelArray.put(channel.channelId, channel);
+            channelArray.put(channel.getChannelId(), channel);
         }
         if (!loading) {
             app.broadcastMessage("channelUpdate", channel);
@@ -471,7 +426,7 @@ public class DataStorage {
 
     public void addTagToArray(ChannelTag tag) {
         synchronized (tagArray) {
-            tagArray.put(tag.tagId, tag);
+            tagArray.put(tag.getTagId(), tag);
         }
         if (!loading) {
             app.broadcastMessage("tagAdd", tag);
@@ -489,90 +444,10 @@ public class DataStorage {
 
     public void updateTagInArray(ChannelTag tag) {
         synchronized (tagArray) {
-            tagArray.put(tag.tagId, tag);
+            tagArray.put(tag.getTagId(), tag);
         }
         if (!loading) {
             app.broadcastMessage("tagUpdate", tag);
-        }
-    }
-
-    public SeriesRecording getSeriesRecordingFromArray(String id) {
-        synchronized (seriesRecordingArray) {
-            return seriesRecordingArray.get(id);
-        }
-    }
-
-    public Map<String, SeriesRecording> getSeriesRecordingsFromArray() {
-        synchronized (seriesRecordingArray) {
-            return seriesRecordingArray;
-        }
-    }
-
-    public void addSeriesRecordingToArray(SeriesRecording seriesRecording) {
-        synchronized (seriesRecordingArray) {
-            seriesRecordingArray.put(seriesRecording.id, seriesRecording);
-        }
-        if (!loading) {
-            app.broadcastMessage("autorecEntryAdd", seriesRecording);
-        }
-    }
-
-    public void removeSeriesRecordingFromArray(String id) {
-        SeriesRecording removedRecording = seriesRecordingArray.get(id);
-        synchronized (seriesRecordingArray) {
-            seriesRecordingArray.remove(id);
-        }
-        if (!loading) {
-            app.broadcastMessage("autorecEntryDelete", removedRecording);
-        }
-    }
-
-    public void updateSeriesRecordingInArray(SeriesRecording seriesRecording) {
-        synchronized (seriesRecordingArray) {
-            seriesRecordingArray.put(seriesRecording.id, seriesRecording);
-        }
-        if (!loading) {
-            app.broadcastMessage("autorecEntryUpdate", seriesRecording);
-        }
-    }
-
-    public TimerRecording getTimerRecordingFromArray(String id) {
-        synchronized (timerRecordingArray) {
-            return timerRecordingArray.get(id);
-        }
-    }
-
-    public Map<String, TimerRecording> getTimerRecordingsFromArray() {
-        synchronized (timerRecordingArray) {
-            return timerRecordingArray;
-        }
-    }
-
-    public void addTimerRecordingToArray(TimerRecording timerRecording) {
-        synchronized (timerRecordingArray) {
-            timerRecordingArray.put(timerRecording.id, timerRecording);
-        }
-        if (!loading) {
-            app.broadcastMessage("timerecEntryAdd", timerRecording);
-        }
-    }
-
-    public void removeTimerRecordingFromArray(String id) {
-        TimerRecording removedRecording = timerRecordingArray.get(id);
-        synchronized (timerRecordingArray) {
-            timerRecordingArray.remove(id);
-        }
-        if (!loading) {
-            app.broadcastMessage("timerecEntryDelete", removedRecording);
-        }
-    }
-
-    public void updateTimerRecordingInArray(TimerRecording timerRecording) {
-        synchronized (timerRecordingArray) {
-            timerRecordingArray.put(timerRecording.id, timerRecording);
-        }
-        if (!loading) {
-            app.broadcastMessage("timerecEntryUpdate", timerRecording);
         }
     }
 }

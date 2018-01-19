@@ -18,6 +18,7 @@ import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.data.Constants;
 import org.tvheadend.tvhclient.data.DataStorage;
 import org.tvheadend.tvhclient.data.DatabaseHelper;
+import org.tvheadend.tvhclient.data.AppDatabase;
 import org.tvheadend.tvhclient.data.local.Logger;
 import org.tvheadend.tvhclient.data.model.Channel;
 import org.tvheadend.tvhclient.data.model.ChannelTag;
@@ -197,7 +198,7 @@ public class HTSService extends Service implements HTSConnectionListener {
             subscriptionFilterStream();
             
         } else if (action.equals("getDvrCutpoints")) {
-            //Recording rec = dataStorage.getRecording(intent.getLongExtra("dvrId", 0));
+            //Recording rec = dataStorage.getTimerRecording(intent.getLongExtra("dvrId", 0));
             //if (rec != null) {
             //    getDvrCutpoints(rec);
             //}
@@ -334,33 +335,47 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     private void onDvrEntryAdd(HTSMessage msg) {
+        Log.d(TAG, "onDvrEntryAdd() called with: msg = [" + msg + "]");
         Intent intent = new Intent("service_status");
         intent.putExtra("sync_status", "Receiving recordings...");
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
 
-        dataStorage.addRecordingToArray(HTSUtils.convertMessageToRecordingModel(new Recording(), msg));
+        Recording recording = HTSUtils.convertMessageToRecordingModel(new Recording(), msg);
+        AppDatabase.getInstance(this.getApplicationContext()).recordingDao().insert(recording);
     }
 
     private void onDvrEntryUpdate(HTSMessage msg) {
-        Recording rec = dataStorage.getRecordingFromArray(msg.getInt("id"));
-        dataStorage.updateRecordingInArray(HTSUtils.convertMessageToRecordingModel(rec, msg));
+        Log.d(TAG, "onDvrEntryUpdate() called with: msg = [" + msg + "]");
+        Recording[] recordings = new Recording[1];
+        recordings[0] = HTSUtils.convertMessageToRecordingModel(new Recording(), msg);
+        AppDatabase.getInstance(this.getApplicationContext()).recordingDao().update(recordings[0]);
     }
 
     private void onDvrEntryDelete(HTSMessage msg) {
-        dataStorage.removeRecordingFromArray(msg.getInt("id"));
+        Log.d(TAG, "onDvrEntryDelete() called with: msg = [" + msg + "]");
+        Recording recording = new Recording();
+        recording.setId(msg.getInt("id"));
+        AppDatabase.getInstance(this.getApplicationContext()).recordingDao().delete(recording);
     }
 
     private void onTimerRecEntryAdd(HTSMessage msg) {
-        dataStorage.addTimerRecordingToArray(HTSUtils.convertMessageToTimerRecordingModel(new TimerRecording(), msg));
+        Log.d(TAG, "onTimerRecEntryAdd() called with: msg = [" + msg + "]");
+        TimerRecording recording = HTSUtils.convertMessageToTimerRecordingModel(new TimerRecording(), msg);
+        AppDatabase.getInstance(this.getApplicationContext()).timerRecordingDao().insert(recording);
     }
 
     private void onTimerRecEntryUpdate(HTSMessage msg) {
-        TimerRecording rec = dataStorage.getTimerRecordingFromArray(msg.getString("id"));
-        dataStorage.updateTimerRecordingInArray(HTSUtils.convertMessageToTimerRecordingModel(rec, msg));
+        Log.d(TAG, "onTimerRecEntryUpdate() called with: msg = [" + msg + "]");
+        TimerRecording[] timerRecordings = new TimerRecording[1];
+        timerRecordings[0] = HTSUtils.convertMessageToTimerRecordingModel(new TimerRecording(), msg);
+        AppDatabase.getInstance(this.getApplicationContext()).timerRecordingDao().update(timerRecordings[0]);
     }
 
     private void onTimerRecEntryDelete(HTSMessage msg) {
-        dataStorage.removeTimerRecordingFromArray(msg.getString("id"));
+        Log.d(TAG, "onTimerRecEntryDelete() called with: msg = [" + msg + "]");
+        TimerRecording timerRecording = new TimerRecording();
+        timerRecording.setId(msg.getString("id"));
+        AppDatabase.getInstance(this.getApplicationContext()).timerRecordingDao().delete(timerRecording);
     }
 
     private void onInitialSyncCompleted() {
@@ -512,16 +527,23 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     private void onAutorecEntryDelete(HTSMessage msg) {
-        dataStorage.removeSeriesRecordingFromArray(msg.getString("id"));
+        Log.d(TAG, "onAutorecEntryDelete() called with: msg = [" + msg + "]");
+        SeriesRecording seriesRecording = new SeriesRecording();
+        seriesRecording.setId(msg.getString("id"));
+        AppDatabase.getInstance(this.getApplicationContext()).seriesRecordingDao().delete(seriesRecording);
     }
 
     private void onAutorecEntryUpdate(HTSMessage msg) {
-        SeriesRecording rec = dataStorage.getSeriesRecordingFromArray(msg.getString("id"));
-        dataStorage.updateSeriesRecordingInArray(HTSUtils.convertMessageToSeriesRecordingModel(rec, msg));
+        Log.d(TAG, "onAutorecEntryUpdate() called with: msg = [" + msg + "]");
+        SeriesRecording[] seriesRecordings = new SeriesRecording[1];
+        seriesRecordings[0] = HTSUtils.convertMessageToSeriesRecordingModel(new SeriesRecording(), msg);
+        AppDatabase.getInstance(this.getApplicationContext()).seriesRecordingDao().update(seriesRecordings[0]);
     }
 
     private void onAutorecEntryAdd(HTSMessage msg) {
-        dataStorage.addSeriesRecordingToArray(HTSUtils.convertMessageToSeriesRecordingModel(new SeriesRecording(), msg));
+        Log.d(TAG, "onAutorecEntryAdd() called with: msg = [" + msg + "]");
+        SeriesRecording seriesRecording = HTSUtils.convertMessageToSeriesRecordingModel(new SeriesRecording(), msg);
+        AppDatabase.getInstance(this.getApplicationContext()).seriesRecordingDao().insert(seriesRecording);
     }
 
     public void onMessage(HTSMessage msg) {
@@ -758,8 +780,8 @@ public class HTSService extends Service implements HTSConnectionListener {
         request.putField("minduration", 0);
         request.putField("maxduration", Integer.MAX_VALUE);
 
-        if (ch != null && ch.channelId > 0) {
-            request.putField("channelId", ch.channelId);
+        if (ch != null && ch.getChannelId() > 0) {
+            request.putField("channelId", ch.getChannelId());
         }
         if (tagId > 0) {
             request.putField("tagId", tagId);
@@ -1189,7 +1211,7 @@ public class HTSService extends Service implements HTSConnectionListener {
     private void getTicket(Channel ch) {
         HTSMessage request = new HTSMessage();
         request.setMethod("getTicket");
-        request.putField("channelId", ch.channelId);
+        request.putField("channelId", ch.getChannelId());
         connection.sendMessage(request, new HTSResponseHandler() {
             public void handleResponse(HTSMessage response) {
                 String path = response.getString("path", null);
@@ -1206,7 +1228,7 @@ public class HTSService extends Service implements HTSConnectionListener {
     private void getTicket(Recording rec) {
         HTSMessage request = new HTSMessage();
         request.setMethod("getTicket");
-        request.putField("dvrId", rec.id);
+        request.putField("dvrId", rec.getId());
         connection.sendMessage(request, new HTSResponseHandler() {
             public void handleResponse(HTSMessage response) {
                 String path = response.getString("path", null);
@@ -1484,7 +1506,7 @@ public class HTSService extends Service implements HTSConnectionListener {
 
         HTSMessage request = new HTSMessage();
         request.setMethod("getDvrCutpoints");
-        request.putField("id", rec.id);
+        request.putField("id", rec.getId());
         connection.sendMessage(request, new HTSResponseHandler() {
             public void handleResponse(HTSMessage response) {
                 if (!response.containsKey("cutpoints")) {
@@ -1512,7 +1534,7 @@ public class HTSService extends Service implements HTSConnectionListener {
     private void getChannel(final Channel ch) {
         HTSMessage request = new HTSMessage();
         request.setMethod("getChannel");
-        request.putField("channelId", ch.channelId);
+        request.putField("channelId", ch.getChannelId());
         connection.sendMessage(request, new HTSResponseHandler() {
             public void handleResponse(HTSMessage response) {
                 // NOP

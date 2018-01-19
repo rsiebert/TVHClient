@@ -20,8 +20,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.service.HTSConnection;
-import org.tvheadend.tvhclient.service.HTSService;
+import org.tvheadend.tvhclient.htsp.HtspConnection;
+import org.tvheadend.tvhclient.htsp.tasks.Authenticator;
+import org.tvheadend.tvhclient.sync.EpgSyncService;
 import org.tvheadend.tvhclient.ui.NavigationActivity;
 import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
 import org.tvheadend.tvhclient.ui.settings.SettingsActivity;
@@ -78,16 +79,15 @@ public class SyncStatusFragment extends Fragment {
         if (savedInstanceState != null) {
             status = savedInstanceState.getString("status");
         } else {
-            // TODO
-            //Intent intent = new Intent(getActivity(), EpgSyncService.class);
-            //getActivity().stopService(intent);
-            //getActivity().startService(intent);
+            Intent intent = new Intent(getActivity(), EpgSyncService.class);
+            getActivity().stopService(intent);
+            getActivity().startService(intent);
 
             //boolean initialSyncDone = sharedPreferences.getBoolean("initial_sync_done", false);
             //if (!initialSyncDone) {
-                Intent intent = new Intent(getActivity(), HTSService.class);
-                intent.setAction("connect");
-                getActivity().startService(intent);
+                //Intent intent = new Intent(getActivity(), HTSService.class);
+                //intent.setAction("connect");
+                //getActivity().startService(intent);
             //} else {
             //    showContentScreen();
             //}
@@ -138,9 +138,9 @@ public class SyncStatusFragment extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
             // Get the connection status from the local broadcast
-
             if (intent.hasExtra("connection_status")) {
                 progressBar.setVisibility(View.GONE);
+                /*
                 HTSConnection.State state = (HTSConnection.State) intent.getSerializableExtra("connection_status");
                 if (state == HTSConnection.State.CLOSED) {
                     status = "Connection closed";
@@ -163,11 +163,36 @@ public class SyncStatusFragment extends Fragment {
                 } else {
                     status = "Unknown connection state";
                     stopService();
+                }*/
+                HtspConnection.State state = (HtspConnection.State)
+                        intent.getSerializableExtra("connection_status");
+                if (state == HtspConnection.State.CLOSED) {
+                    status = "Connection closed";
+                } else if (state == HtspConnection.State.CLOSING) {
+                    status = "Connection closing...";
+                } else if (state == HtspConnection.State.CONNECTED) {
+                    status = "Connection connected";
+                } else if (state == HtspConnection.State.CONNECTING) {
+                    status = "Connection connecting...";
+                } else if (state == HtspConnection.State.FAILED) {
+                    status = "Connection failed";
+                } else if (state == HtspConnection.State.FAILED_UNRESOLVED_ADDRESS) {
+                    status = "Connection failed";
+                } else if (state == HtspConnection.State.FAILED_INTERRUPTED) {
+                    status = "Connection failed";
+                } else if (state == HtspConnection.State.FAILED_EXCEPTION_OPENING_SOCKET) {
+                    status = "Connection failed";
+                } else if (state == HtspConnection.State.FAILED_CONNECTING_TO_SERVER) {
+                    status = "Connection failed";
+                } else {
+                    status = "Unknown connection state";
+                    stopService();
                 }
             }
             // Get the current authentication status from the local broadcast
             if (intent.hasExtra("authentication_status")) {
                 progressBar.setVisibility(View.GONE);
+                /*
                 HTSConnection.State state = (HTSConnection.State) intent.getSerializableExtra("authentication_status");
                 if (state == HTSConnection.State.AUTHENTICATING) {
                     status = "Authenticating...";
@@ -179,9 +204,23 @@ public class SyncStatusFragment extends Fragment {
                 } else {
                     status = "Unknown authentication state";
                     stopService();
+                }*/
+                Authenticator.State state = (Authenticator.State)
+                        intent.getSerializableExtra("authentication_status");
+                if (state == Authenticator.State.IDLE) {
+                    status = "Authenticating idle";
+                } else if (state == Authenticator.State.AUTHENTICATING) {
+                    status = "Authenticating...";
+                } else if (state == Authenticator.State.AUTHENTICATED) {
+                    status = "Authenticated";
+                } else if (state == Authenticator.State.FAILED) {
+                    status = "Authentication failed";
+                    stopService();
+                } else {
+                    status = "Unknown authentication state";
+                    stopService();
                 }
             }
-
             // Inform the fragment about the current sync status
             if (intent.hasExtra("sync_status")) {
                 progressBar.setVisibility(View.VISIBLE);
@@ -193,7 +232,6 @@ public class SyncStatusFragment extends Fragment {
                     showContentScreen();
                 }
             }
-
             statusTextView.setText(status);
         }
     };
@@ -203,11 +241,11 @@ public class SyncStatusFragment extends Fragment {
         // state changes when the service is stopped and the connection gets closed.
         // The user needs to go to the settings and fix the login credentials.
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(messageReceiver);
-        // TODO getActivity().stopService(new Intent(getActivity(), EpgSyncService.class));
+        getActivity().stopService(new Intent(getActivity(), EpgSyncService.class));
 
-        Intent intent = new Intent(getActivity(), HTSService.class);
-        intent.setAction("disconnect");
-        getActivity().startService(intent);
+        //Intent intent = new Intent(getActivity(), HTSService.class);
+        //intent.setAction("disconnect");
+        //getActivity().startService(intent);
     }
 
     private void showContentScreen() {

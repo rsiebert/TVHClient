@@ -55,12 +55,12 @@ public class ChannelListSelectionAdapter extends RecyclerView.Adapter<ChannelLis
             // TODO highlight the selected tag using selectedChannelId, its -1 if not set
 
             if (holder.icon != null) {
-                Bitmap iconBitmap = MiscUtils.getCachedIcon(context, item.channelIcon);
+                Bitmap iconBitmap = MiscUtils.getCachedIcon(context, item.getChannelIcon());
                 holder.icon.setImageBitmap(iconBitmap);
                 holder.icon.setVisibility(iconBitmap != null && showChannelIcons ? ImageView.VISIBLE : ImageView.GONE);
             }
             if (holder.title != null) {
-                holder.title.setText(item.channelName);
+                holder.title.setText(item.getChannelName());
                 holder.title.setTag(position);
             }
         }
@@ -90,7 +90,7 @@ public class ChannelListSelectionAdapter extends RecyclerView.Adapter<ChannelLis
         @Override
         public void onClick(View view) {
             if (channelListAdapter != null && channelListAdapter.callback != null) {
-                int id = channelListAdapter.channelList.get(getAdapterPosition()).channelId;
+                int id = channelListAdapter.channelList.get(getAdapterPosition()).getChannelId();
                 channelListAdapter.callback.onItemClicked(id);
             }
         }

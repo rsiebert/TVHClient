@@ -1,5 +1,6 @@
 package org.tvheadend.tvhclient.ui.recordings.recordings;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -21,8 +22,8 @@ import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.model.Channel;
-import org.tvheadend.tvhclient.data.model.Recording;
 import org.tvheadend.tvhclient.service.HTSService;
+import org.tvheadend.tvhclient.ui.common.BackPressedInterface;
 import org.tvheadend.tvhclient.ui.recordings.base.BaseRecordingAddEditFragment;
 import org.tvheadend.tvhclient.ui.recordings.common.DateTimePickerCallback;
 import org.tvheadend.tvhclient.ui.recordings.common.RecordingPriorityListCallback;
@@ -40,7 +41,7 @@ import butterknife.Unbinder;
 // TODO preselect the first channel in the list
 // TODO orientation change when editing messed up the timeTextView
 
-public class RecordingAddEditFragment extends BaseRecordingAddEditFragment implements ChannelListSelectionCallback, DateTimePickerCallback, RecordingPriorityListCallback, RecordingProfileListCallback {
+public class RecordingAddEditFragment extends BaseRecordingAddEditFragment implements BackPressedInterface, ChannelListSelectionCallback, DateTimePickerCallback, RecordingPriorityListCallback, RecordingProfileListCallback {
 
     @BindView(R.id.start_time)
     TextView startTimeTextView;
@@ -125,40 +126,61 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
             dvrId = bundle.getInt("dvrId");
         }
 
-        // Get the values from the recording otherwise use default values
-        Channel channel;
-        if (dvrId > 0) {
-            Recording recording = dataStorage.getRecordingFromArray(dvrId);
-            priority = recording.priority;
-            startExtra = recording.startExtra;
-            stopExtra = recording.stopExtra;
-            startTime = recording.start;
-            stopTime = recording.stop;
-            title = recording.title;
-            subtitle = recording.subtitle;
-            description = recording.description;
-            isEnabled = recording.enabled > 0;
-            channelId = recording.channel;
-            channel = dataStorage.getChannelFromArray(channelId);
-            // If the recording is already being recorded, show only the
-            // title, subtitle, description, stop and stop extra field
-            isRecording = recording.isRecording();
-            // If the recording is scheduled (regular edit mode, hide the channel selection)
-            isScheduled = recording.isScheduled();
+        if (savedInstanceState == null) {
+            // Get the values from the recording otherwise use default values
+            if (dvrId > 0) {
+                RecordingViewModel viewModel = ViewModelProviders.of(this).get(RecordingViewModel.class);
+                viewModel.getRecording(dvrId).observe(this, recording -> {
+                    if (recording != null) {
+                        priority = recording.getPriority();
+                        startExtra = recording.getStartExtra();
+                        stopExtra = recording.getStopExtra();
+                        startTime = recording.getStart();
+                        stopTime = recording.getStop();
+                        title = recording.getTitle();
+                        subtitle = recording.getSubtitle();
+                        description = recording.getDescription();
+                        isEnabled = recording.getEnabled() > 0;
+                        channelId = recording.getChannelId();
+
+                        // If the recording is already being recorded, show only the
+                        // title, subtitle, description, stop and stop extra field
+                        isRecording = recording.isRecording();
+                        // If the recording is scheduled (regular edit mode, hide the channel selection)
+                        isScheduled = recording.isScheduled();
+                    }
+                    viewModel.getRecording(dvrId).removeObservers(this);
+                    updateUI();
+                });
+            } else {
+                priority = 2;
+                startExtra = 0;
+                stopExtra = 0;
+                Calendar calendar = Calendar.getInstance();
+                startTime = calendar.getTimeInMillis();
+                // Let the stop time be 30 minutes after the start time
+                stopTime = calendar.getTimeInMillis() + (30 * 60 * 1000);
+                title = "";
+                subtitle = "";
+                description = "";
+                isEnabled = true;
+                channelId = 0;
+                updateUI();
+            }
         } else {
-            priority = 2;
-            startExtra = 0;
-            stopExtra = 0;
-            Calendar calendar = Calendar.getInstance();
-            startTime = calendar.getTimeInMillis();
-            // Let the stop time be 30 minutes after the start time
-            stopTime = calendar.getTimeInMillis() + (30 * 60 * 1000);
-            title = "";
-            subtitle = "";
-            description = "";
-            isEnabled = true;
-            channelId = 0;
-            channel = null;
+            // Restore the values before the orientation change
+            priority = savedInstanceState.getInt("priority");
+            startExtra = savedInstanceState.getLong("startExtra");
+            stopExtra = savedInstanceState.getLong("stopExtra");
+            startTime = savedInstanceState.getLong("start");
+            stopTime = savedInstanceState.getLong("stop");
+            title = savedInstanceState.getString("title");
+            subtitle = savedInstanceState.getString("subtitle");
+            description = savedInstanceState.getString("description");
+            channelId = savedInstanceState.getInt("channelId");
+            recordingProfileName = savedInstanceState.getInt("configName");
+            isEnabled = savedInstanceState.getBoolean("isEnabled");
+            updateUI();
         }
 
         toolbarInterface.setTitle(dvrId > 0 ?
@@ -176,21 +198,9 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
                 }
             }
         }
+    }
 
-        // Restore the values before the orientation change
-        if (savedInstanceState != null) {
-            priority = savedInstanceState.getInt("priority");
-            startExtra = savedInstanceState.getLong("startExtra");
-            stopExtra = savedInstanceState.getLong("stopExtra");
-            startTime = savedInstanceState.getLong("start");
-            stopTime = savedInstanceState.getLong("stop");
-            title = savedInstanceState.getString("title");
-            subtitle = savedInstanceState.getString("subtitle");
-            description = savedInstanceState.getString("description");
-            channelId = savedInstanceState.getInt("channelId");
-            recordingProfileName = savedInstanceState.getInt("configName");
-            isEnabled = savedInstanceState.getBoolean("isEnabled");
-        }
+    private void updateUI() {
 
         titleLabelTextView.setVisibility(htspVersion >= 21 ? View.VISIBLE : View.GONE);
         titleEditText.setVisibility(htspVersion >= 21 ? View.VISIBLE : View.GONE);
@@ -214,7 +224,8 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
             channelNameLabelTextView.setVisibility(View.GONE);
             channelNameTextView.setVisibility(View.GONE);
         } else {
-            channelNameTextView.setText(channel != null ? channel.channelName : getString(R.string.no_channel));
+            Channel channel = dataStorage.getChannelFromArray(channelId);
+            channelNameTextView.setText(channel != null ? channel.getChannelName() : getString(R.string.no_channel));
             channelNameTextView.setOnClickListener(view -> {
                 // Determine if the server supports recording on all channels
                 boolean allowRecordingOnAllChannels = htspVersion >= 21;
@@ -418,7 +429,7 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
         if (which > 0) {
             channelId = which;
             Channel channel = dataStorage.getChannelFromArray(which);
-            channelNameTextView.setText(channel.channelName);
+            channelNameTextView.setText(channel.getChannelName());
         } else {
             channelNameTextView.setText(R.string.all_channels);
         }
@@ -456,5 +467,10 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
     public void onProfileSelected(int which) {
         recordingProfileNameTextView.setText(recordingProfilesList[which]);
         recordingProfileName = which;
+    }
+
+    @Override
+    public void onBackPressed() {
+        cancel();
     }
 }

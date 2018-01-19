@@ -1,5 +1,6 @@
 package org.tvheadend.tvhclient.ui.recordings.series_recordings;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -21,7 +22,7 @@ import org.tvheadend.tvhclient.data.DataStorage;
 import org.tvheadend.tvhclient.data.model.Channel;
 import org.tvheadend.tvhclient.data.model.SeriesRecording;
 import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
-import org.tvheadend.tvhclient.ui.recordings.recordings.RecordingAddEditActivity;
+import org.tvheadend.tvhclient.ui.recordings.common.RecordingAddEditActivity;
 import org.tvheadend.tvhclient.utils.MenuUtils;
 import org.tvheadend.tvhclient.utils.UIUtils;
 
@@ -103,8 +104,11 @@ public class SeriesRecordingDetailsFragment extends Fragment {
             id = savedInstanceState.getString("id");
         }
 
-        // Get the recording so we can show its details
-        recording = DataStorage.getInstance().getSeriesRecordingFromArray(id);
+        SeriesRecordingViewModel viewModel = ViewModelProviders.of(this).get(SeriesRecordingViewModel.class);
+        viewModel.getRecording(id).observe(this, rec -> {
+            recording = rec;
+            updateUI();
+        });
 
         if (nestedToolbar != null) {
             nestedToolbar.inflateMenu(R.menu.recording_details_toolbar_menu);
@@ -115,39 +119,42 @@ public class SeriesRecordingDetailsFragment extends Fragment {
                 }
             });
         }
+    }
+
+    private void updateUI() {
 
         isEnabledTextView.setVisibility(htspVersion >= 19 ? View.VISIBLE : View.GONE);
-        isEnabledTextView.setText(recording.enabled > 0 ? R.string.recording_enabled : R.string.recording_disabled);
+        isEnabledTextView.setText(recording.getEnabled() > 0 ? R.string.recording_enabled : R.string.recording_disabled);
 
-        directoryLabelTextView.setVisibility(!TextUtils.isEmpty(recording.directory) && htspVersion >= 19 ? View.VISIBLE : View.GONE);
-        directoryTextView.setVisibility(!TextUtils.isEmpty(recording.directory) && htspVersion >= 19 ? View.VISIBLE : View.GONE);
-        directoryTextView.setText(recording.directory);
+        directoryLabelTextView.setVisibility(!TextUtils.isEmpty(recording.getDirectory()) && htspVersion >= 19 ? View.VISIBLE : View.GONE);
+        directoryTextView.setVisibility(!TextUtils.isEmpty(recording.getDirectory()) && htspVersion >= 19 ? View.VISIBLE : View.GONE);
+        directoryTextView.setText(recording.getDirectory());
 
-        Channel channel = DataStorage.getInstance().getChannelFromArray(recording.channel);
-        channelNameTextView.setText(channel != null ? channel.channelName : getString(R.string.all_channels));
+        Channel channel = DataStorage.getInstance().getChannelFromArray(recording.getChannelId());
+        channelNameTextView.setText(channel != null ? channel.getChannelName() : getString(R.string.all_channels));
 
-        nameLabelTextView.setVisibility(!TextUtils.isEmpty(recording.name) ? View.VISIBLE : View.GONE);
-        nameTextView.setVisibility(!TextUtils.isEmpty(recording.name) ? View.VISIBLE : View.GONE);
-        nameTextView.setText(recording.name);
+        nameLabelTextView.setVisibility(!TextUtils.isEmpty(recording.getName()) ? View.VISIBLE : View.GONE);
+        nameTextView.setVisibility(!TextUtils.isEmpty(recording.getName()) ? View.VISIBLE : View.GONE);
+        nameTextView.setText(recording.getName());
 
-        daysOfWeekTextView.setText(UIUtils.getDaysOfWeekText(getActivity(), recording.daysOfWeek));
+        daysOfWeekTextView.setText(UIUtils.getDaysOfWeekText(getActivity(), recording.getDaysOfWeek()));
 
         String[] priorityList = getResources().getStringArray(R.array.dvr_priorities);
-        if (recording.priority >= 0 && recording.priority < priorityList.length) {
-            priorityTextView.setText(priorityList[recording.priority]);
+        if (recording.getPriority() >= 0 && recording.getPriority() < priorityList.length) {
+            priorityTextView.setText(priorityList[recording.getPriority()]);
         }
-        if (recording.minDuration > 0) {
+        if (recording.getMinDuration() > 0) {
             // The minimum timeTextView is given in seconds, but we want to show it in minutes
-            minDurationTextView.setText(getString(R.string.minutes, (int) (recording.minDuration / 60)));
+            minDurationTextView.setText(getString(R.string.minutes, (int) (recording.getMinDuration() / 60)));
         }
-        if (recording.maxDuration > 0) {
+        if (recording.getMaxDuration() > 0) {
             // The maximum timeTextView is given in seconds, but we want to show it in minutes
-            maxDurationTextView.setText(getString(R.string.minutes, (int) (recording.maxDuration / 60)));
+            maxDurationTextView.setText(getString(R.string.minutes, (int) (recording.getMaxDuration() / 60)));
         }
 
-        startTimeTextView.setText(UIUtils.getTime(getContext(), recording.start));
+        startTimeTextView.setText(UIUtils.getTime(getContext(), recording.getStart()));
 
-        startWindowTimeTextView.setText(UIUtils.getTime(getContext(), recording.startWindow));
+        startWindowTimeTextView.setText(UIUtils.getTime(getContext(), recording.getStartWindow()));
     }
 
     @Override
@@ -184,17 +191,17 @@ public class SeriesRecordingDetailsFragment extends Fragment {
             case R.id.menu_edit:
                 Intent intent = new Intent(getActivity(), RecordingAddEditActivity.class);
                 intent.putExtra("type", "series_recording");
-                intent.putExtra("id", recording.id);
+                intent.putExtra("id", recording.getId());
                 getActivity().startActivity(intent);
                 return true;
             case R.id.menu_record_remove:
-                menuUtils.handleMenuRemoveSeriesRecordingSelection(recording.id, recording.title);
+                menuUtils.handleMenuRemoveSeriesRecordingSelection(recording.getId(), recording.getTitle());
                 return true;
             case R.id.menu_search_imdb:
-                menuUtils.handleMenuSearchWebSelection(recording.title);
+                menuUtils.handleMenuSearchWebSelection(recording.getTitle());
                 return true;
             case R.id.menu_search_epg:
-                menuUtils.handleMenuSearchEpgSelection(recording.title);
+                menuUtils.handleMenuSearchEpgSelection(recording.getTitle());
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

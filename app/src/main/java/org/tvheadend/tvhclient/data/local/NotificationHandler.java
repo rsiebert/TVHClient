@@ -80,7 +80,7 @@ public class NotificationHandler {
 
         // The start time when the notification shall be shown
         String msg = app.getString(R.string.recording_started);
-        long time = rec.start;
+        long time = rec.getStart();
         if (time > (new Date()).getTime()) {
             logger.log(TAG, "addNotification: Recording added");
             if (offset > 0) {
@@ -90,8 +90,8 @@ public class NotificationHandler {
             }
 
             // Create the intent for the start and stop notifications
-            createNotification(rec.id, time, msg);
-            createNotification(rec.id * 100, rec.stop, app.getString(R.string.recording_completed));
+            createNotification(rec.getId(), time, msg);
+            createNotification(rec.getId() * 100, rec.getStop(), app.getString(R.string.recording_completed));
         } else {
             logger.log(TAG, "addNotification: Recording not added, start time is in the past");
         }
@@ -141,7 +141,7 @@ public class NotificationHandler {
         Map<Integer, Recording> map = dataStorage.getRecordingsFromArray();
         for (Recording rec : map.values()) {
             if (rec.isScheduled()) {
-                addNotification(rec.id, offset);
+                addNotification(rec.getId(), offset);
             }
         }
     }
@@ -152,7 +152,7 @@ public class NotificationHandler {
     public void cancelNotifications() {
         Map<Integer, Recording> map = dataStorage.getRecordingsFromArray();
         for (Recording rec : map.values()) {
-            cancelNotification(rec.id);
+            cancelNotification(rec.getId());
         }
     }
 }

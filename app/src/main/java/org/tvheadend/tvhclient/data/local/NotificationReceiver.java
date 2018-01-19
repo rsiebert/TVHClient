@@ -26,13 +26,13 @@ public class NotificationReceiver extends BroadcastReceiver {
         if (rec != null) {
             NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
                     context).setSmallIcon(R.drawable.ic_notification)
-                    .setContentTitle(rec.title)
+                    .setContentTitle(rec.getTitle())
                     .setContentText(msg)
                     .setGroup(GROUP_KEY)
                     .setAutoCancel(true);
 
             NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-            nm.notify(rec.id, mBuilder.build());
+            nm.notify(rec.getId(), mBuilder.build());
         }
     }
 }

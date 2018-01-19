@@ -3,27 +3,29 @@ package org.tvheadend.tvhclient.data.model;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
+import android.support.annotation.NonNull;
 
 @Entity(tableName = "timer_recordings")
 public class TimerRecording {
 
     @PrimaryKey
-    public String id;           // str   required   ID (string!) of dvrTimerecEntry.
-    public String title;        // str   required   Title for the recordings.
-    public String directory;    // str   optional   Forced directory name (Added in version 19).
-    public int enabled;         // u32   required   Title for the recordings.
-    public String name;         // str   required   Name for this timerec entry.
+    @NonNull
+    private String id;           // str   required   ID (string!) of dvrTimerecEntry.
+    private String title;        // str   required   Title for the recordings.
+    private String directory;    // str   optional   Forced directory name (Added in version 19).
+    private int enabled;         // u32   required   Title for the recordings.
+    private String name;         // str   required   Name for this timerec entry.
     @ColumnInfo(name = "config_name")
-    public String configName;   // str   required   DVR Configuration Name / UUID.
-    public int channel;         // u32   required   Channel ID.
+    private String configName;   // str   required   DVR Configuration Name / UUID.
+    private int channelId;         // u32   required   Channel ID.
     @ColumnInfo(name = "days_of_week")
-    public int daysOfWeek;      // u32   optional   Bitmask - Days of week (0x01 = Monday, 0x40 = Sunday, 0x7f = Whole Week, 0 = Not set).
-    public int priority;        // u32   optional   Priority (0 = Important, 1 = High, 2 = Normal, 3 = Low, 4 = Unimportant, 5 = Not set).
-    public long start;          // u32   required   Minutes from midnight (up to 24*60) for the start of the time window (including)
-    public long stop;           // u32   required   Minutes from modnight (up to 24*60) for the end of the time window (including, cross-noon allowed)
-    public int retention;       // u32   optional   Retention in days.
-    public String owner;        // str   optional   Owner of this timerec entry.
-    public String creator;      // str   optional   Creator of this timerec entry.
+    private int daysOfWeek;      // u32   optional   Bitmask - Days of week (0x01 = Monday, 0x40 = Sunday, 0x7f = Whole Week, 0 = Not set).
+    private int priority;        // u32   optional   Priority (0 = Important, 1 = High, 2 = Normal, 3 = Low, 4 = Unimportant, 5 = Not set).
+    private long start;          // u32   required   Minutes from midnight (up to 24*60) for the start of the time window (including)
+    private long stop;           // u32   required   Minutes from modnight (up to 24*60) for the end of the time window (including, cross-noon allowed)
+    private int retention;       // u32   optional   Retention in days.
+    private String owner;        // str   optional   Owner of this timerec entry.
+    private String creator;      // str   optional   Creator of this timerec entry.
 
     public String getId() {
         return id;
@@ -73,12 +75,12 @@ public class TimerRecording {
         this.configName = configName;
     }
 
-    public int getChannel() {
-        return channel;
+    public int getChannelId() {
+        return channelId;
     }
 
-    public void setChannel(int channel) {
-        this.channel = channel;
+    public void setChannelId(int channelId) {
+        this.channelId = channelId;
     }
 
     public int getDaysOfWeek() {
@@ -94,6 +96,9 @@ public class TimerRecording {
     }
 
     public void setPriority(int priority) {
+        if (priority > 5) {
+            priority = 5;
+        }
         this.priority = priority;
     }
 

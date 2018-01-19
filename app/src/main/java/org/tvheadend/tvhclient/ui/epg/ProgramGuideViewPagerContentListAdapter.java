@@ -57,23 +57,23 @@ public class ProgramGuideViewPagerContentListAdapter extends ArrayAdapter<Channe
             sort(new Comparator<Channel>() {
                 public int compare(Channel x, Channel y) {
                     // return x.compareTo(y);
-                    return x.channelName.toLowerCase(Locale.US).compareTo(y.channelName.toLowerCase(Locale.US));
+                    return x.getChannelName().toLowerCase(Locale.US).compareTo(y.getChannelName().toLowerCase(Locale.US));
                 }
             });
             break;
         case Constants.CHANNEL_SORT_BY_NAME:
             sort(new Comparator<Channel>() {
                 public int compare(Channel x, Channel y) {
-                    return x.channelName.toLowerCase(Locale.US).compareTo(y.channelName.toLowerCase(Locale.US));
+                    return x.getChannelName().toLowerCase(Locale.US).compareTo(y.getChannelName().toLowerCase(Locale.US));
                 }
             });
             break;
         case Constants.CHANNEL_SORT_BY_NUMBER:
             sort(new Comparator<Channel>() {
                 public int compare(Channel x, Channel y) {
-                    if (x.channelNumber > y.channelNumber) {
+                    if (x.getChannelNumber() > y.getChannelNumber()) {
                         return 1;
-                    } else if (x.channelNumber < y.channelNumber) {
+                    } else if (x.getChannelNumber() < y.getChannelNumber()) {
                         return -1;
                     } else {
                         return 0;
@@ -112,7 +112,7 @@ public class ProgramGuideViewPagerContentListAdapter extends ArrayAdapter<Channe
         // Adds the channel and shows the programs. Channel is
         // required to have access to the EPG data.
         // Go through all programs and add them to the view
-        //Log.d(TAG, "getView: get programs for view");
+        //Log.d(TAG, "getView: loadRecording programs for view");
         Channel channel = getItem(position);
         int nextId = 0;
         List<Program> programList = new ArrayList<>();
@@ -122,10 +122,10 @@ public class ProgramGuideViewPagerContentListAdapter extends ArrayAdapter<Channe
         Program p;
         while (mapIt.hasNext()) {
             p = (Program) mapIt.next();
-            if (p.channelId == channel.channelId) {
-                if (p.start <= startTime && p.stop > startTime) {
+            if (p.getChannelId() == channel.getChannelId()) {
+                if (p.getStart() <= startTime && p.getStop() > startTime) {
                     programList.add(p);
-                    nextId = p.nextEventId;
+                    nextId = p.getNextEventId();
                     break;
                 }
             }
@@ -133,14 +133,14 @@ public class ProgramGuideViewPagerContentListAdapter extends ArrayAdapter<Channe
 
         while (nextId != 0) {
             p = DataStorage.getInstance().getProgramFromArray(nextId);
-            if (p != null && p.nextEventId > 0) {
+            if (p != null && p.getNextEventId() > 0) {
                 programList.add(p);
-                nextId = p.nextEventId;
+                nextId = p.getNextEventId();
             } else {
                 nextId = 0;
             }
         }
-        //Log.d(TAG, "getView: get programs for view done");
+        //Log.d(TAG, "getView: loadRecording programs for view done");
 
         //Log.d(TAG, "getView: start adding programs to view");
         holder.item.addPrograms(parent, programList, channel);
@@ -155,7 +155,7 @@ public class ProgramGuideViewPagerContentListAdapter extends ArrayAdapter<Channe
         // Go through the list of programs and find the
         // one with the same id. If its been found, replace it.
         for (int i = 0; i < length; ++i) {
-            if (list.get(i).channelId == c.channelId) {
+            if (list.get(i).getChannelId() == c.getChannelId()) {
                 list.set(i, c);
                 break;
             }

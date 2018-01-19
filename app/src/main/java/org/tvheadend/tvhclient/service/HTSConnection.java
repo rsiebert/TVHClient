@@ -200,8 +200,8 @@ public class HTSConnection extends Thread {
 
         // Sync the defined number of hours of epg data from the current time
         long epgMaxTime = (3600) + (System.currentTimeMillis() / 1000L);
-        authMessage.putField("epg", 1);
-        authMessage.putField("epgMaxTime", epgMaxTime);
+        //authMessage.putField("epg", 1);
+        //authMessage.putField("epgMaxTime", epgMaxTime);
 
         final HTSResponseHandler authHandler = new HTSResponseHandler() {
             public void handleResponse(HTSMessage response) {

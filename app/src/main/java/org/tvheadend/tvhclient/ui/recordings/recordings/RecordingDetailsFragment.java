@@ -1,5 +1,6 @@
 package org.tvheadend.tvhclient.ui.recordings.recordings;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -22,6 +23,7 @@ import org.tvheadend.tvhclient.data.DataStorage;
 import org.tvheadend.tvhclient.data.model.Channel;
 import org.tvheadend.tvhclient.data.model.Recording;
 import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
+import org.tvheadend.tvhclient.ui.recordings.common.RecordingAddEditActivity;
 import org.tvheadend.tvhclient.utils.MenuUtils;
 import org.tvheadend.tvhclient.utils.UIUtils;
 
@@ -34,38 +36,65 @@ import butterknife.Unbinder;
 
 public class RecordingDetailsFragment extends Fragment {
 
-    @BindView(R.id.summary_label) TextView summaryLabelTextView;
-    @BindView(R.id.summary) TextView summaryTextView;
-    @BindView(R.id.description_label) TextView descLabelTextView;
-    @BindView(R.id.description) TextView descTextView;
-    @BindView(R.id.title_label) TextView titleLabelTextView;
-    @BindView(R.id.title) TextView titleTextView;
-    @BindView(R.id.subtitle_label) TextView subtitleLabelTextView;
-    @BindView(R.id.subtitle) TextView subtitleTextView;
-    @BindView(R.id.channel_label) TextView channelLabelTextView;
-    @BindView(R.id.channel) TextView channelNameTextView;
-    @BindView(R.id.date) TextView dateTextView;
-    @BindView(R.id.time) TextView timeTextView;
-    @BindView(R.id.duration) TextView durationTextView;
+    @BindView(R.id.summary_label)
+    TextView summaryLabelTextView;
+    @BindView(R.id.summary)
+    TextView summaryTextView;
+    @BindView(R.id.description_label)
+    TextView descLabelTextView;
+    @BindView(R.id.description)
+    TextView descTextView;
+    @BindView(R.id.title_label)
+    TextView titleLabelTextView;
+    @BindView(R.id.title)
+    TextView titleTextView;
+    @BindView(R.id.subtitle_label)
+    TextView subtitleLabelTextView;
+    @BindView(R.id.subtitle)
+    TextView subtitleTextView;
+    @BindView(R.id.channel_label)
+    TextView channelLabelTextView;
+    @BindView(R.id.channel)
+    TextView channelNameTextView;
+    @BindView(R.id.date)
+    TextView dateTextView;
+    @BindView(R.id.time)
+    TextView timeTextView;
+    @BindView(R.id.duration)
+    TextView durationTextView;
 
     @Nullable
-    @BindView(R.id.failed_reason) TextView failedReasonTextView;
-    @BindView(R.id.is_series_recording) TextView isSeriesRecordingTextView;
-    @BindView(R.id.is_timer_recording) TextView isTimerRecordingTextView;
-    @BindView(R.id.is_enabled) TextView isEnabledTextView;
+    @BindView(R.id.failed_reason)
+    TextView failedReasonTextView;
+    @BindView(R.id.is_series_recording)
+    TextView isSeriesRecordingTextView;
+    @BindView(R.id.is_timer_recording)
+    TextView isTimerRecordingTextView;
+    @BindView(R.id.is_enabled)
+    TextView isEnabledTextView;
 
-    @BindView(R.id.episode) TextView episodeTextView;
-    @BindView(R.id.episode_label) TextView episodeLabelTextView;
-    @BindView(R.id.comment) TextView commentTextView;
-    @BindView(R.id.comment_label) TextView commentLabelTextView;
-    @BindView(R.id.subscription_error) TextView subscriptionErrorTextView;
-    @BindView(R.id.stream_errors) TextView streamErrorsTextView;
-    @BindView(R.id.data_errors) TextView dataErrorsTextView;
-    @BindView(R.id.data_size) TextView dataSizeTextView;
-    @BindView(R.id.status_label) TextView statusLabelTextView;
+    @BindView(R.id.episode)
+    TextView episodeTextView;
+    @BindView(R.id.episode_label)
+    TextView episodeLabelTextView;
+    @BindView(R.id.comment)
+    TextView commentTextView;
+    @BindView(R.id.comment_label)
+    TextView commentLabelTextView;
+    @BindView(R.id.subscription_error)
+    TextView subscriptionErrorTextView;
+    @BindView(R.id.stream_errors)
+    TextView streamErrorsTextView;
+    @BindView(R.id.data_errors)
+    TextView dataErrorsTextView;
+    @BindView(R.id.data_size)
+    TextView dataSizeTextView;
+    @BindView(R.id.status_label)
+    TextView statusLabelTextView;
 
     @Nullable
-    @BindView(R.id.nested_toolbar) Toolbar nestedToolbar;
+    @BindView(R.id.nested_toolbar)
+    Toolbar nestedToolbar;
 
     private ToolbarInterface toolbarInterface;
     private MenuUtils menuUtils;
@@ -120,8 +149,12 @@ public class RecordingDetailsFragment extends Fragment {
         if (savedInstanceState != null) {
             dvrId = savedInstanceState.getInt("dvrId", 0);
         }
-        // Get the recording so we can show its details
-        recording = DataStorage.getInstance().getRecordingFromArray(dvrId);
+
+        RecordingViewModel viewModel = ViewModelProviders.of(this).get(RecordingViewModel.class);
+        viewModel.getRecording(dvrId).observe(this, rec -> {
+            recording = rec;
+            updateUI();
+        });
 
         if (nestedToolbar != null) {
             nestedToolbar.inflateMenu(R.menu.recording_details_toolbar_menu);
@@ -132,42 +165,45 @@ public class RecordingDetailsFragment extends Fragment {
                 }
             });
         }
+    }
 
-        dateTextView.setText(UIUtils.getDate(getContext(), recording.start));
+    private void updateUI() {
 
-        String time = UIUtils.getTime(getContext(), recording.start) + " - " + UIUtils.getTime(getContext(), recording.stop);
+        dateTextView.setText(UIUtils.getDate(getContext(), recording.getStart()));
+
+        String time = UIUtils.getTime(getContext(), recording.getStart()) + " - " + UIUtils.getTime(getContext(), recording.getStop());
         timeTextView.setText(time);
 
-        String durationTime = getString(R.string.minutes, (int) ((recording.stop - recording.start) / 1000 / 60));
+        String durationTime = getString(R.string.minutes, (int) ((recording.getStop() - recording.getStart()) / 1000 / 60));
         durationTextView.setText(durationTime);
 
-        Channel channel = DataStorage.getInstance().getChannelFromArray(recording.channel);
+        Channel channel = DataStorage.getInstance().getChannelFromArray(recording.getChannelId());
 
-        channelNameTextView.setText(channel != null ? channel.channelName : getString(R.string.no_channel));
+        channelNameTextView.setText(channel != null ? channel.getChannelName() : getString(R.string.no_channel));
 
-        summaryLabelTextView.setVisibility(!TextUtils.isEmpty(recording.summary) ? View.VISIBLE : View.GONE);
-        summaryTextView.setVisibility(!TextUtils.isEmpty(recording.summary) ? View.VISIBLE : View.GONE);
-        summaryTextView.setText(recording.summary);
+        summaryLabelTextView.setVisibility(!TextUtils.isEmpty(recording.getSummary()) ? View.VISIBLE : View.GONE);
+        summaryTextView.setVisibility(!TextUtils.isEmpty(recording.getSummary()) ? View.VISIBLE : View.GONE);
+        summaryTextView.setText(recording.getSummary());
 
-        descLabelTextView.setVisibility(!TextUtils.isEmpty(recording.description) ? View.VISIBLE : View.GONE);
-        descTextView.setVisibility(!TextUtils.isEmpty(recording.description) ? View.VISIBLE : View.GONE);
-        descTextView.setText(recording.description);
+        descLabelTextView.setVisibility(!TextUtils.isEmpty(recording.getDescription()) ? View.VISIBLE : View.GONE);
+        descTextView.setVisibility(!TextUtils.isEmpty(recording.getDescription()) ? View.VISIBLE : View.GONE);
+        descTextView.setText(recording.getDescription());
 
-        titleLabelTextView.setVisibility(!TextUtils.isEmpty(recording.title) ? View.VISIBLE : View.GONE);
-        titleTextView.setVisibility(!TextUtils.isEmpty(recording.title) ? View.VISIBLE : View.GONE);
-        titleTextView.setText(recording.title);
+        titleLabelTextView.setVisibility(!TextUtils.isEmpty(recording.getTitle()) ? View.VISIBLE : View.GONE);
+        titleTextView.setVisibility(!TextUtils.isEmpty(recording.getTitle()) ? View.VISIBLE : View.GONE);
+        titleTextView.setText(recording.getTitle());
 
-        subtitleLabelTextView.setVisibility(!TextUtils.isEmpty(recording.subtitle) ? View.VISIBLE : View.GONE);
-        subtitleTextView.setVisibility(!TextUtils.isEmpty(recording.subtitle) ? View.VISIBLE : View.GONE);
-        subtitleTextView.setText(recording.subtitle);
+        subtitleLabelTextView.setVisibility(!TextUtils.isEmpty(recording.getSubtitle()) ? View.VISIBLE : View.GONE);
+        subtitleTextView.setVisibility(!TextUtils.isEmpty(recording.getSubtitle()) ? View.VISIBLE : View.GONE);
+        subtitleTextView.setText(recording.getSubtitle());
 
-        episodeLabelTextView.setVisibility(!TextUtils.isEmpty(recording.episode) ? View.VISIBLE : View.GONE);
-        episodeTextView.setVisibility(!TextUtils.isEmpty(recording.episode) ? View.VISIBLE : View.GONE);
-        episodeTextView.setText(recording.episode);
+        episodeLabelTextView.setVisibility(!TextUtils.isEmpty(recording.getEpisode()) ? View.VISIBLE : View.GONE);
+        episodeTextView.setVisibility(!TextUtils.isEmpty(recording.getEpisode()) ? View.VISIBLE : View.GONE);
+        episodeTextView.setText(recording.getEpisode());
 
-        commentLabelTextView.setVisibility(!TextUtils.isEmpty(recording.comment) ? View.VISIBLE : View.GONE);
-        commentTextView.setVisibility(!TextUtils.isEmpty(recording.comment) ? View.VISIBLE : View.GONE);
-        commentTextView.setText(recording.comment);
+        commentLabelTextView.setVisibility(!TextUtils.isEmpty(recording.getComment()) ? View.VISIBLE : View.GONE);
+        commentTextView.setVisibility(!TextUtils.isEmpty(recording.getComment()) ? View.VISIBLE : View.GONE);
+        commentTextView.setText(recording.getComment());
 
         if (failedReasonTextView != null) {
             if (recording.isRemoved()) {
@@ -185,30 +221,30 @@ public class RecordingDetailsFragment extends Fragment {
 
         // Show the information if the recording belongs to a series recording
         // only when no dual pane is active (the controls shall be shown)
-        isSeriesRecordingTextView.setVisibility((recording.autorecId != null) ? ImageView.VISIBLE : ImageView.GONE);
-        isTimerRecordingTextView.setVisibility((recording.timerecId != null) ? ImageView.VISIBLE : ImageView.GONE);
+        isSeriesRecordingTextView.setVisibility((recording.getAutorecId() != null) ? ImageView.VISIBLE : ImageView.GONE);
+        isTimerRecordingTextView.setVisibility((recording.getTimerecId() != null) ? ImageView.VISIBLE : ImageView.GONE);
 
-        isEnabledTextView.setVisibility((htspVersion >= 23 && recording.enabled == 0) ? View.VISIBLE : View.GONE);
-        isEnabledTextView.setText(recording.enabled > 0 ? R.string.recording_enabled : R.string.recording_disabled);
+        isEnabledTextView.setVisibility((htspVersion >= 23 && recording.getEnabled() == 0) ? View.VISIBLE : View.GONE);
+        isEnabledTextView.setText(recording.getEnabled() > 0 ? R.string.recording_enabled : R.string.recording_disabled);
 
         // Only show the status details in the 
         // completed and failed details screens
         if (!recording.isScheduled()) {
-            if (recording.subscriptionError != null && recording.subscriptionError.length() > 0) {
+            if (recording.getSubscriptionError() != null && recording.getSubscriptionError().length() > 0) {
                 subscriptionErrorTextView.setVisibility(View.VISIBLE);
                 subscriptionErrorTextView.setText(getResources().getString(
-                        R.string.subscription_error, recording.subscriptionError));
+                        R.string.subscription_error, recording.getSubscriptionError()));
             } else {
                 subscriptionErrorTextView.setVisibility(View.GONE);
             }
 
-            streamErrorsTextView.setText(getResources().getString(R.string.stream_errors, recording.streamErrors == null ? "0" : recording.streamErrors));
-            dataErrorsTextView.setText(getResources().getString(R.string.data_errors, recording.dataErrors == null ? "0" : recording.dataErrors));
+            streamErrorsTextView.setText(getResources().getString(R.string.stream_errors, recording.getStreamErrors() == null ? "0" : recording.getStreamErrors()));
+            dataErrorsTextView.setText(getResources().getString(R.string.data_errors, recording.getDataErrors() == null ? "0" : recording.getDataErrors()));
 
-            if (recording.dataSize > 1048576) {
-                dataSizeTextView.setText(getResources().getString(R.string.data_size, recording.dataSize / 1048576, "MB"));
+            if (recording.getDataSize() > 1048576) {
+                dataSizeTextView.setText(getResources().getString(R.string.data_size, recording.getDataSize() / 1048576, "MB"));
             } else {
-                dataSizeTextView.setText(getResources().getString(R.string.data_size, recording.dataSize / 1024, "KB"));
+                dataSizeTextView.setText(getResources().getString(R.string.data_size, recording.getDataSize() / 1024, "KB"));
             }
         } else {
             statusLabelTextView.setVisibility(View.GONE);
@@ -266,32 +302,32 @@ public class RecordingDetailsFragment extends Fragment {
                 getActivity().finish();
                 return true;
             case R.id.menu_play:
-                menuUtils.handleMenuPlaySelection(-1, recording.id);
+                menuUtils.handleMenuPlaySelection(-1, recording.getId());
                 return true;
             case R.id.menu_download:
-                menuUtils.handleMenuDownloadSelection(recording.id);
+                menuUtils.handleMenuDownloadSelection(recording.getId());
                 return true;
             case R.id.menu_edit:
                 Intent editIntent = new Intent(getActivity(), RecordingAddEditActivity.class);
-                editIntent.putExtra("dvrId", recording.id);
+                editIntent.putExtra("dvrId", recording.getId());
                 editIntent.putExtra("type", "recording");
                 getActivity().startActivity(editIntent);
                 return true;
             case R.id.menu_record_stop:
-                menuUtils.handleMenuStopRecordingSelection(recording.id, recording.title);
+                menuUtils.handleMenuStopRecordingSelection(recording.getId(), recording.getTitle());
                 return true;
             case R.id.menu_record_remove:
                 if (recording.isScheduled()) {
-                    menuUtils.handleMenuCancelRecordingSelection(recording.id, recording.title);
+                    menuUtils.handleMenuCancelRecordingSelection(recording.getId(), recording.getTitle());
                 } else {
-                    menuUtils.handleMenuRemoveRecordingSelection(recording.id, recording.title);
+                    menuUtils.handleMenuRemoveRecordingSelection(recording.getId(), recording.getTitle());
                 }
                 return true;
             case R.id.menu_search_imdb:
-                menuUtils.handleMenuSearchWebSelection(recording.title);
+                menuUtils.handleMenuSearchWebSelection(recording.getTitle());
                 return true;
             case R.id.menu_search_epg:
-                menuUtils.handleMenuSearchEpgSelection(recording.title);
+                menuUtils.handleMenuSearchEpgSelection(recording.getTitle());
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

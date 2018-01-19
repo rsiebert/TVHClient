@@ -46,9 +46,9 @@ public class SearchResultAdapter extends ArrayAdapter<Program> implements Filter
         sort(new Comparator<Program>() {
             public int compare(Program x, Program y) {
                 if (x != null && y != null) {
-                    if (x.start > y.start) {
+                    if (x.getStart() > y.getStart()) {
                         return 1;
-                    } else if (x.start < y.start) {
+                    } else if (x.getStart() < y.getStart()) {
                         return -1;
                     } else {
                         return 0;
@@ -222,43 +222,43 @@ public class SearchResultAdapter extends ArrayAdapter<Program> implements Filter
         boolean showGenreColors = sharedPreferences.getBoolean("showGenreColorsSearchPref", false);
 
         // Get the program and assign all the values
-        Program p = getItem(position);
-        if (p != null) {
-            holder.titleTextView.setText(p.title);
+        Program program = getItem(position);
+        if (program != null) {
+            holder.titleTextView.setText(program.getTitle());
 
-            Channel channel = DataStorage.getInstance().getChannelFromArray(p.channelId);
-            holder.channelTextView.setText(channel.channelName);
+            Channel channel = DataStorage.getInstance().getChannelFromArray(program.getChannelId());
+            holder.channelTextView.setText(channel.getChannelName());
             holder.channelTextView.setVisibility(showChannelName ? View.VISIBLE : View.GONE);
 
             // Show the regular or large channel icons. Otherwise show the channel name only
             // Assign the channel icon image or a null image
-            Bitmap iconBitmap = MiscUtils.getCachedIcon(context, channel.channelIcon);
+            Bitmap iconBitmap = MiscUtils.getCachedIcon(context, channel.getChannelIcon());
             holder.iconImageView.setImageBitmap(iconBitmap);
-            holder.iconTextView.setText(channel.channelName);
+            holder.iconTextView.setText(channel.getChannelName());
 
             // Show or hide the regular or large channel icon or name text views
             holder.iconImageView.setVisibility(showChannelIcons ? ImageView.VISIBLE : ImageView.GONE);
             holder.iconTextView.setVisibility(showChannelIcons ? ImageView.VISIBLE : ImageView.GONE);
 
-            Drawable drawable = UIUtils.getRecordingState(context, p.dvrId);
+            Drawable drawable = UIUtils.getRecordingState(context, program.getDvrId());
             holder.state.setVisibility(drawable != null ? View.VISIBLE : View.GONE);
             holder.state.setImageDrawable(drawable);
 
-            holder.date.setText(UIUtils.getDate(getContext(), p.start));
+            holder.date.setText(UIUtils.getDate(getContext(), program.getStart()));
 
-            String time = UIUtils.getTime(getContext(), p.start) + " - " + UIUtils.getTime(getContext(), p.stop);
+            String time = UIUtils.getTime(getContext(), program.getStart()) + " - " + UIUtils.getTime(getContext(), program.getStop());
             holder.time.setText(time);
 
-            String durationTime = getContext().getString(R.string.minutes, (int) ((p.stop - p.start) / 1000 / 60));
+            String durationTime = getContext().getString(R.string.minutes, (int) ((program.getStop() - program.getStart()) / 1000 / 60));
             holder.duration.setText(durationTime);
 
-            holder.description.setText(p.description);
+            holder.description.setText(program.getDescription());
 
-            holder.contentType.setText(UIUtils.getContentTypeText(getContext(), p.contentType));
-            holder.seriesInfo.setText(UIUtils.getSeriesInfo(getContext(), p));
+            holder.contentType.setText(UIUtils.getContentTypeText(getContext(), program.getContentType()));
+            holder.seriesInfo.setText(UIUtils.getSeriesInfo(getContext(), program));
 
             if (showGenreColors) {
-                int color = UIUtils.getGenreColor(context, p.contentType, 0);
+                int color = UIUtils.getGenreColor(context, program.getContentType(), 0);
                 holder.genreTextView.setBackgroundColor(color);
                 holder.genreTextView.setVisibility(View.VISIBLE);
             } else {
@@ -273,7 +273,7 @@ public class SearchResultAdapter extends ArrayAdapter<Program> implements Filter
         // Go through the list of programs and find the
         // one with the same id. If its been found, replace it.
         for (int i = 0; i < length; ++i) {
-            if (originalData.get(i).eventId == p.eventId) {
+            if (originalData.get(i).getEventId() == p.getEventId()) {
                 originalData.set(i, p);
                 break;
             }
@@ -323,7 +323,7 @@ public class SearchResultAdapter extends ArrayAdapter<Program> implements Filter
             Program p;
             for (int i = 0; i < count; i++) {
                 p = originalData.get(i);
-                if (p.title.toLowerCase(Locale.getDefault()).contains(filterString)) {
+                if (p.getTitle().toLowerCase(Locale.getDefault()).contains(filterString)) {
                     newList.add(p);
                 }
 

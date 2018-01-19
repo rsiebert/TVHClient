@@ -159,7 +159,7 @@ public class BaseRecordingAddEditFragment extends Fragment {
         Collections.sort(channelList, new Comparator<Channel>() {
             @Override
             public int compare(Channel o1, Channel o2) {
-                return o1.channelName.compareTo(o2.channelName);
+                return o1.getChannelName().compareTo(o2.getChannelName());
             }
         });
 
@@ -167,14 +167,14 @@ public class BaseRecordingAddEditFragment extends Fragment {
         // to the list after it has been sorted
         if (showAllChannelsListEntry) {
             Channel channel = new Channel();
-            channel.channelId = 0;
-            channel.channelName = activity.getString(R.string.all_channels);
+            channel.setChannelId(0);
+            channel.setChannelName(activity.getString(R.string.all_channels));
             channelList.add(0, channel);
         }
 
         final ChannelListSelectionAdapter channelListSelectionAdapter = new ChannelListSelectionAdapter(activity, channelList, selectedChannelId);
         // Show the dialog that shows all available channel tags. When the
-        // user has selected a tag, restart the loader to get the updated channel list
+        // user has selected a tag, restart the loader to loadRecording the updated channel list
         final MaterialDialog dialog = new MaterialDialog.Builder(activity)
                 .title(R.string.tags)
                 .adapter(channelListSelectionAdapter, null)
