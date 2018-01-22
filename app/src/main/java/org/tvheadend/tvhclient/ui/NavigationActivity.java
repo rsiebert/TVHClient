@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.tasks.WakeOnLanTaskCallback;
 import org.tvheadend.tvhclient.ui.channels.ChannelListFragment;
+import org.tvheadend.tvhclient.ui.channels.ChannelViewModel;
 import org.tvheadend.tvhclient.ui.epg.ProgramGuideViewPagerFragment;
 import org.tvheadend.tvhclient.ui.misc.InfoFragment;
 import org.tvheadend.tvhclient.ui.misc.StatusFragment;
@@ -96,6 +97,13 @@ public class NavigationActivity extends MainActivity implements WakeOnLanTaskCal
         recordingViewModel.getRemovedRecordings().observe(this, recordings -> {
             if (recordings != null) {
                 navigationDrawer.updateRemovedRecordingBadge(recordings.size());
+            }
+        });
+
+        ChannelViewModel channelViewModel = ViewModelProviders.of(this).get(ChannelViewModel.class);
+        channelViewModel.getChannels().observe(this, channels -> {
+            if (channels != null) {
+                navigationDrawer.updateChannelBadge(channels.size());
             }
         });
     }

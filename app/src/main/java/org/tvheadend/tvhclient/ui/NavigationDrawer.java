@@ -269,4 +269,8 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
     void updateRemovedRecordingBadge(int size) {
         result.updateBadge(MENU_REMOVED_RECORDINGS, new StringHolder(size + ""));
     }
+
+    void updateChannelBadge(int size) {
+        result.updateBadge(MENU_CHANNELS, new StringHolder(size + ""));
+    }
 }
