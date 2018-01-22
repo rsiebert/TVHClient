@@ -68,7 +68,7 @@ public class SyncStatusFragment extends Fragment {
             ToolbarInterface toolbarInterface = (ToolbarInterface) getActivity();
             toolbarInterface.setTitle("Sync Status");
         }
-        // Allow showing the toolbar menu with the settings menu
+
         setHasOptionsMenu(true);
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
@@ -82,15 +82,6 @@ public class SyncStatusFragment extends Fragment {
             Intent intent = new Intent(getActivity(), EpgSyncService.class);
             getActivity().stopService(intent);
             getActivity().startService(intent);
-
-            //boolean initialSyncDone = sharedPreferences.getBoolean("initial_sync_done", false);
-            //if (!initialSyncDone) {
-                //Intent intent = new Intent(getActivity(), HTSService.class);
-                //intent.setAction("connect");
-                //getActivity().startService(intent);
-            //} else {
-            //    showContentScreen();
-            //}
         }
         statusTextView.setText(status);
     }
@@ -140,30 +131,6 @@ public class SyncStatusFragment extends Fragment {
             // Get the connection status from the local broadcast
             if (intent.hasExtra("connection_status")) {
                 progressBar.setVisibility(View.GONE);
-                /*
-                HTSConnection.State state = (HTSConnection.State) intent.getSerializableExtra("connection_status");
-                if (state == HTSConnection.State.CLOSED) {
-                    status = "Connection closed";
-                } else if (state == HTSConnection.State.CLOSING) {
-                    status = "Closing connection...";
-                } else if (state == HTSConnection.State.CONNECTED) {
-                    status = "Connected";
-                } else if (state == HTSConnection.State.CONNECTING) {
-                    status = "Connecting...";
-                } else if (state == HTSConnection.State.FAILED) {
-                    status = "Connection failed";
-                } else if (state == HTSConnection.State.FAILED_UNRESOLVED_ADDRESS) {
-                    status = "Could not resolve address";
-                } else if (state == HTSConnection.State.FAILED_INTERRUPTED) {
-                    status = "Connection attempt was interrupted";
-                } else if (state == HTSConnection.State.FAILED_EXCEPTION_OPENING_SOCKET) {
-                    status = "Connection failed, could not open socket";
-                } else if (state == HTSConnection.State.FAILED_CONNECTING_TO_SERVER) {
-                    status = "Could not connect to server";
-                } else {
-                    status = "Unknown connection state";
-                    stopService();
-                }*/
                 HtspConnection.State state = (HtspConnection.State)
                         intent.getSerializableExtra("connection_status");
                 if (state == HtspConnection.State.CLOSED) {
@@ -171,9 +138,9 @@ public class SyncStatusFragment extends Fragment {
                 } else if (state == HtspConnection.State.CLOSING) {
                     status = "Connection closing...";
                 } else if (state == HtspConnection.State.CONNECTED) {
-                    status = "Connection connected";
+                    status = "Connected";
                 } else if (state == HtspConnection.State.CONNECTING) {
-                    status = "Connection connecting...";
+                    status = "Connecting...";
                 } else if (state == HtspConnection.State.FAILED) {
                     status = "Connection failed";
                 } else if (state == HtspConnection.State.FAILED_UNRESOLVED_ADDRESS) {
@@ -192,19 +159,6 @@ public class SyncStatusFragment extends Fragment {
             // Get the current authentication status from the local broadcast
             if (intent.hasExtra("authentication_status")) {
                 progressBar.setVisibility(View.GONE);
-                /*
-                HTSConnection.State state = (HTSConnection.State) intent.getSerializableExtra("authentication_status");
-                if (state == HTSConnection.State.AUTHENTICATING) {
-                    status = "Authenticating...";
-                } else if (state == HTSConnection.State.AUTHENTICATED) {
-                    status = "Authenticated";
-                } else if (state == HTSConnection.State.FAILED) {
-                    status = "Authentication failed";
-                    stopService();
-                } else {
-                    status = "Unknown authentication state";
-                    stopService();
-                }*/
                 Authenticator.State state = (Authenticator.State)
                         intent.getSerializableExtra("authentication_status");
                 if (state == Authenticator.State.IDLE) {
@@ -242,10 +196,6 @@ public class SyncStatusFragment extends Fragment {
         // The user needs to go to the settings and fix the login credentials.
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(messageReceiver);
         getActivity().stopService(new Intent(getActivity(), EpgSyncService.class));
-
-        //Intent intent = new Intent(getActivity(), HTSService.class);
-        //intent.setAction("disconnect");
-        //getActivity().startService(intent);
     }
 
     private void showContentScreen() {

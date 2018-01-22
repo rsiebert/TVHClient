@@ -52,6 +52,7 @@ public class ConnectionStatusFragment extends Fragment {
             ToolbarInterface toolbarInterface = (ToolbarInterface) getActivity();
             toolbarInterface.setTitle("Connection Status");
         }
+        setHasOptionsMenu(true);
 
         // The connection status that was passed to this fragment
         String status = getArguments().getString("type");
@@ -79,9 +80,6 @@ public class ConnectionStatusFragment extends Fragment {
                     break;
             }
         }
-
-        // Allow showing the toolbar menu with the settings menu
-        setHasOptionsMenu(true);
     }
 
     @Override
