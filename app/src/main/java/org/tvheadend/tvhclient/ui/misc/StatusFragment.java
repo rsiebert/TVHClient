@@ -24,6 +24,7 @@ import org.tvheadend.tvhclient.data.model.Recording;
 import org.tvheadend.tvhclient.data.tasks.WakeOnLanTask;
 import org.tvheadend.tvhclient.data.tasks.WakeOnLanTaskCallback;
 import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
+import org.tvheadend.tvhclient.ui.channels.ChannelViewModel;
 import org.tvheadend.tvhclient.ui.recordings.recordings.RecordingViewModel;
 import org.tvheadend.tvhclient.ui.recordings.series_recordings.SeriesRecordingViewModel;
 import org.tvheadend.tvhclient.ui.recordings.timer_recordings.TimerRecordingViewModel;
@@ -45,37 +46,37 @@ public class StatusFragment extends Fragment implements WakeOnLanTaskCallback {
     @BindView(R.id.connection)
     TextView connection;
     @BindView(R.id.channels_label)
-    TextView channelsLabel;
+    TextView channelsLabelTextView;
     @BindView(R.id.channels)
-    TextView channels;
+    TextView channelsTextView;
     @BindView(R.id.recording_label)
-    TextView recordingLabel;
+    TextView recordingsLabelTextView;
     @BindView(R.id.completed_recordings)
-    TextView completedRec;
+    TextView completedRecordingsTextView;
     @BindView(R.id.upcoming_recordings)
-    TextView upcomingRec;
+    TextView upcomingRecordingsTextView;
     @BindView(R.id.failed_recordings)
-    TextView failedRec;
+    TextView failedRecordingsTextView;
     @BindView(R.id.removed_recordings)
-    TextView removedRec;
+    TextView removedRecordingsTextView;
     @BindView(R.id.series_recordings)
-    TextView seriesRec;
+    TextView seriesRecordingsTextView;
     @BindView(R.id.timer_recordings)
-    TextView timerRec;
+    TextView timerRecordingsTextView;
     @BindView(R.id.currently_recording_label)
-    TextView currentlyRecLabel;
+    TextView currentlyRecordingLabelTextView;
     @BindView(R.id.currently_recording)
-    TextView currentlyRec;
+    TextView currentlyRecordingTextView;
     @BindView(R.id.discspace_label)
-    TextView discspaceLabel;
+    TextView discSpaceLabelTextView;
     @BindView(R.id.free_discspace)
-    TextView freediscspace;
+    TextView freeDiscSpaceTextView;
     @BindView(R.id.total_discspace)
-    TextView totaldiscspace;
+    TextView totalDiscSpaceTextView;
     @BindView(R.id.server_api_version_label)
-    TextView serverApiVersionLabel;
+    TextView serverApiVersionLabelTextView;
     @BindView(R.id.server_api_version)
-    TextView serverApiVersion;
+    TextView serverApiVersionTextView;
 
     private Unbinder unbinder;
     private DatabaseHelper databaseHelper;
@@ -108,7 +109,7 @@ public class StatusFragment extends Fragment implements WakeOnLanTaskCallback {
         }
 
         menuUtils = new MenuUtils(getActivity());
-        databaseHelper = DatabaseHelper.getInstance(getActivity().getApplicationContext());
+        databaseHelper = DatabaseHelper.getInstance(activity.getApplicationContext());
         htspVersion = DataStorage.getInstance().getProtocolVersion();
         isUnlocked = TVHClientApplication.getInstance().isUnlocked();
 
@@ -117,7 +118,7 @@ public class StatusFragment extends Fragment implements WakeOnLanTaskCallback {
         SeriesRecordingViewModel seriesRecordingViewModel = ViewModelProviders.of(this).get(SeriesRecordingViewModel.class);
         seriesRecordingViewModel.getRecordings().observe(this, recordings -> {
             if (recordings != null) {
-                seriesRec.setText(getResources().getQuantityString(
+                seriesRecordingsTextView.setText(getResources().getQuantityString(
                         R.plurals.series_recordings, recordings.size(), recordings.size()));
             }
         });
@@ -125,7 +126,7 @@ public class StatusFragment extends Fragment implements WakeOnLanTaskCallback {
         TimerRecordingViewModel timerRecordingViewModel = ViewModelProviders.of(this).get(TimerRecordingViewModel.class);
         timerRecordingViewModel.getRecordings().observe(this, recordings -> {
             if (recordings != null) {
-                timerRec.setText(getResources().getQuantityString(
+                timerRecordingsTextView.setText(getResources().getQuantityString(
                         R.plurals.timer_recordings, recordings.size(), recordings.size()));
             }
         });
@@ -133,26 +134,35 @@ public class StatusFragment extends Fragment implements WakeOnLanTaskCallback {
         RecordingViewModel recordingViewModel = ViewModelProviders.of(this).get(RecordingViewModel.class);
         recordingViewModel.getCompletedRecordings().observe(this, recordings -> {
             if (recordings != null) {
-                completedRec.setText(getResources().getQuantityString(
+                completedRecordingsTextView.setText(getResources().getQuantityString(
                         R.plurals.completed_recordings, recordings.size(), recordings.size()));
             }
         });
         recordingViewModel.getScheduledRecordings().observe(this, recordings -> {
             if (recordings != null) {
-                upcomingRec.setText(getResources().getQuantityString(
+                upcomingRecordingsTextView.setText(getResources().getQuantityString(
                         R.plurals.upcoming_recordings, recordings.size(), recordings.size()));
             }
         });
         recordingViewModel.getFailedRecordings().observe(this, recordings -> {
             if (recordings != null) {
-                failedRec.setText(getResources().getQuantityString(
+                failedRecordingsTextView.setText(getResources().getQuantityString(
                         R.plurals.failed_recordings, recordings.size(), recordings.size()));
             }
         });
         recordingViewModel.getRemovedRecordings().observe(this, recordings -> {
             if (recordings != null) {
-                removedRec.setText(getResources().getQuantityString(
+                removedRecordingsTextView.setText(getResources().getQuantityString(
                         R.plurals.removed_recordings, recordings.size(), recordings.size()));
+            }
+        });
+
+        ChannelViewModel channelViewModel = ViewModelProviders.of(this).get(ChannelViewModel.class);
+        channelViewModel.getChannels().observe(this, channels -> {
+            if (channels != null) {
+                // Show the number of available channelTextView
+                final String text = channels.size() + " " + getString(R.string.available);
+                channelsTextView.setText(text);
             }
         });
     }
@@ -198,17 +208,13 @@ public class StatusFragment extends Fragment implements WakeOnLanTaskCallback {
         super.onResume();
 
         // The connection is ok and not loading anymore, show all data
-        seriesRec.setVisibility((htspVersion >= 13) ? View.VISIBLE : View.GONE);
-        timerRec.setVisibility((htspVersion >= 18 && isUnlocked) ? View.VISIBLE : View.GONE);
+        seriesRecordingsTextView.setVisibility((htspVersion >= 13) ? View.VISIBLE : View.GONE);
+        timerRecordingsTextView.setVisibility((htspVersion >= 18 && isUnlocked) ? View.VISIBLE : View.GONE);
 
         showConnectionDetails();
         showRecordingStatus();
         showDiscSpace();
         showServerStatus();
-
-        // Show the number of available channels
-        final String text = DataStorage.getInstance().getChannelsFromArray().size() + " " + getString(R.string.available);
-        channels.setText(text);
     }
 
     /**
@@ -236,8 +242,8 @@ public class StatusFragment extends Fragment implements WakeOnLanTaskCallback {
     private void showDiscSpace() {
         DiscSpace discSpace = DataStorage.getInstance().getDiscSpace();
         if (discSpace == null) {
-            freediscspace.setText(R.string.unknown);
-            totaldiscspace.setText(R.string.unknown);
+            freeDiscSpaceTextView.setText(R.string.unknown);
+            totalDiscSpaceTextView.setText(R.string.unknown);
             return;
         }
 
@@ -261,12 +267,12 @@ public class StatusFragment extends Fragment implements WakeOnLanTaskCallback {
             } else {
                 totalDiscSpace = total + " MB " + getString(R.string.total);
             }
-            freediscspace.setText(freeDiscSpace);
-            totaldiscspace.setText(totalDiscSpace);
+            freeDiscSpaceTextView.setText(freeDiscSpace);
+            totalDiscSpaceTextView.setText(totalDiscSpace);
 
         } catch (Exception e) {
-            freediscspace.setText(R.string.unknown);
-            totaldiscspace.setText(R.string.unknown);
+            freeDiscSpaceTextView.setText(R.string.unknown);
+            totalDiscSpaceTextView.setText(R.string.unknown);
         }
     }
 
@@ -290,7 +296,7 @@ public class StatusFragment extends Fragment implements WakeOnLanTaskCallback {
         }
 
         // Show which programs are being recorded
-        currentlyRec.setText(currentRecText.length() > 0 ? currentRecText.toString()
+        currentlyRecordingTextView.setText(currentRecText.length() > 0 ? currentRecText.toString()
                 : getString(R.string.nothing));
     }
 
@@ -299,7 +305,7 @@ public class StatusFragment extends Fragment implements WakeOnLanTaskCallback {
                 + "   (" + getString(R.string.server) + ": "
                 + DataStorage.getInstance().getServerName() + " "
                 + DataStorage.getInstance().getServerVersion() + ")";
-        serverApiVersion.setText(version);
+        currentlyRecordingTextView.setText(version);
     }
 
     @Override
