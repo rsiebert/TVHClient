@@ -14,8 +14,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.data.model.Channel;
-import org.tvheadend.tvhclient.data.model.Program;
+import org.tvheadend.tvhclient.data.entity.Channel;
+import org.tvheadend.tvhclient.data.entity.Program;
 import org.tvheadend.tvhclient.ui.common.RecyclerViewClickCallback;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 import org.tvheadend.tvhclient.utils.UIUtils;
@@ -127,7 +127,7 @@ public class ChannelRecyclerViewAdapter extends RecyclerView.Adapter<ChannelRecy
             }
         }
 
-        Program program = null;
+        Program program = channel.getProgram();
         if (program != null) {
             holder.titleTextView.setText(program.getTitle());
             holder.subtitleTextView.setText(program.getSubtitle());
@@ -135,9 +135,11 @@ public class ChannelRecyclerViewAdapter extends RecyclerView.Adapter<ChannelRecy
 
             String time = UIUtils.getTime(context, program.getStart()) + " - " + UIUtils.getTime(context, program.getStop());
             holder.timeTextView.setText(time);
+            holder.timeTextView.setVisibility(View.VISIBLE);
 
             String durationTime = context.getString(R.string.minutes, (int) ((program.getStop() - program.getStart()) / 1000 / 60));
             holder.durationTextView.setText(durationTime);
+            holder.durationTextView.setVisibility(View.VISIBLE);
 
             holder.progressbar.setProgress(getProgressPercentage(program.getStart(), program.getStop()));
             holder.progressbar.setVisibility(showProgressbar ? View.VISIBLE : View.GONE);
@@ -160,7 +162,7 @@ public class ChannelRecyclerViewAdapter extends RecyclerView.Adapter<ChannelRecy
             holder.nextTitleTextView.setVisibility(View.GONE);
         }
 
-        Program nextProgram = null;
+        Program nextProgram = channel.getNextProgram();
         if (nextProgram != null) {
             holder.nextTitleTextView.setVisibility(showNextProgramTitle ? View.VISIBLE : View.GONE);
             holder.nextTitleTextView.setText(context.getString(R.string.next_program, nextProgram.getTitle()));
@@ -169,7 +171,6 @@ public class ChannelRecyclerViewAdapter extends RecyclerView.Adapter<ChannelRecy
 
     void addItems(List<Channel> channelList) {
         this.channelList = channelList;
-        notifyDataSetChanged();
     }
 
     @Override
@@ -183,11 +184,6 @@ public class ChannelRecyclerViewAdapter extends RecyclerView.Adapter<ChannelRecy
 
     public Channel getItem(int position) {
         return channelList.get(position);
-    }
-
-    public Channel getSelectedItem() {
-        // TODO
-        return channelList.get(selectedPosition);
     }
 
     public List<Channel> getItems() {

@@ -1,12 +1,12 @@
 package org.tvheadend.tvhclient.ui.programs;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Gravity;
@@ -23,16 +23,14 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.data.DataStorage;
-import org.tvheadend.tvhclient.data.model.Channel;
-import org.tvheadend.tvhclient.data.model.Program;
-import org.tvheadend.tvhclient.data.model.Recording;
+import org.tvheadend.tvhclient.data.entity.Channel;
+import org.tvheadend.tvhclient.data.entity.Program;
+import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.data.tasks.ImageDownloadTask;
 import org.tvheadend.tvhclient.data.tasks.ImageDownloadTaskCallback;
-import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
-import org.tvheadend.tvhclient.utils.MenuUtils;
+import org.tvheadend.tvhclient.ui.base.BaseFragment;
 import org.tvheadend.tvhclient.utils.UIUtils;
+import org.tvheadend.tvhclient.utils.callbacks.RecordingRemovedCallback;
 
 import java.util.Date;
 
@@ -42,42 +40,63 @@ import butterknife.Unbinder;
 
 // TODO improve layout, more info, title, subtitle,... without header label
 // TODO update icons (same color, record with profile must differ from regular record...)
+// TODO use contraintlayout
 
-public class ProgramDetailsFragment extends Fragment implements ImageDownloadTaskCallback {
+public class ProgramDetailsFragment extends BaseFragment implements ImageDownloadTaskCallback, RecordingRemovedCallback {
 
     @Nullable
-    @BindView(R.id.state) ImageView state;
-    @BindView(R.id.title) TextView title;
-    @BindView(R.id.title_label) TextView titleLabel;
-    @BindView(R.id.summary_label) TextView summaryLabel;
-    @BindView(R.id.summary) TextView summary;
-    @BindView(R.id.description_label) TextView descLabel;
-    @BindView(R.id.description) TextView desc;
-    @BindView(R.id.channel_label) TextView channelLabel;
-    @BindView(R.id.channel) TextView channelName;
-    @BindView(R.id.date) TextView date;
-    @BindView(R.id.time) TextView time;
-    @BindView(R.id.duration) TextView duration;
-    @BindView(R.id.progress) TextView progress;
-    @BindView(R.id.content_type_label) TextView contentTypeLabel;
-    @BindView(R.id.content_type) TextView contentType;
-    @BindView(R.id.series_info_label) TextView seriesInfoLabel;
-    @BindView(R.id.series_info) TextView seriesInfo;
-    @BindView(R.id.star_rating_label) TextView ratingBarLabel;
-    @BindView(R.id.star_rating_text) TextView ratingBarText;
-    @BindView(R.id.star_rating) RatingBar ratingBar;
+    @BindView(R.id.state)
+    ImageView state;
+    @BindView(R.id.title)
+    TextView title;
+    @BindView(R.id.title_label)
+    TextView titleLabel;
+    @BindView(R.id.summary_label)
+    TextView summaryLabel;
+    @BindView(R.id.summary)
+    TextView summary;
+    @BindView(R.id.description_label)
+    TextView descLabel;
+    @BindView(R.id.description)
+    TextView desc;
+    @BindView(R.id.channel_label)
+    TextView channelLabel;
+    @BindView(R.id.channel)
+    TextView channelName;
+    @BindView(R.id.date)
+    TextView date;
+    @BindView(R.id.time)
+    TextView time;
+    @BindView(R.id.duration)
+    TextView duration;
+    @BindView(R.id.progress)
+    TextView progress;
+    @BindView(R.id.content_type_label)
+    TextView contentTypeLabel;
+    @BindView(R.id.content_type)
+    TextView contentType;
+    @BindView(R.id.series_info_label)
+    TextView seriesInfoLabel;
+    @BindView(R.id.series_info)
+    TextView seriesInfo;
+    @BindView(R.id.star_rating_label)
+    TextView ratingBarLabel;
+    @BindView(R.id.star_rating_text)
+    TextView ratingBarText;
+    @BindView(R.id.star_rating)
+    RatingBar ratingBar;
     @Nullable
-    @BindView(R.id.nested_toolbar) Toolbar nestedToolbar;
+    @BindView(R.id.nested_toolbar)
+    Toolbar nestedToolbar;
     @Nullable
-    @BindView(R.id.image) ImageView imageView;
+    @BindView(R.id.image)
+    ImageView imageView;
 
     private int eventId;
-    private boolean isUnlocked;
-    private int htspVersion;
-    private Program program;
-    private MenuUtils menuUtils;
     private Unbinder unbinder;
-    private ToolbarInterface toolbarInterface;
+    private Program program;
+    private Channel channel;
+    private Recording recording;
 
     public static ProgramDetailsFragment newInstance(int eventId) {
         ProgramDetailsFragment f = new ProgramDetailsFragment();
@@ -88,7 +107,7 @@ public class ProgramDetailsFragment extends Fragment implements ImageDownloadTas
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.recording_details_fragment, container, false);
         ViewStub stub = view.findViewById(R.id.stub);
@@ -98,7 +117,8 @@ public class ProgramDetailsFragment extends Fragment implements ImageDownloadTas
         return view;
     }
 
-    @Override public void onDestroyView() {
+    @Override
+    public void onDestroyView() {
         super.onDestroyView();
         unbinder.unbind();
     }
@@ -106,14 +126,8 @@ public class ProgramDetailsFragment extends Fragment implements ImageDownloadTas
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (getActivity() instanceof ToolbarInterface) {
-            toolbarInterface = (ToolbarInterface) getActivity();
-            toolbarInterface.setTitle("Details");
-        }
-        menuUtils = new MenuUtils(getActivity());
-        isUnlocked = TVHClientApplication.getInstance().isUnlocked();
-        htspVersion = DataStorage.getInstance().getProtocolVersion();
-        setHasOptionsMenu(true);
+
+        toolbarInterface.setTitle(getString(R.string.details));
 
         Bundle bundle = getArguments();
         if (bundle != null) {
@@ -122,9 +136,6 @@ public class ProgramDetailsFragment extends Fragment implements ImageDownloadTas
         if (savedInstanceState != null) {
             eventId = savedInstanceState.getInt("eventId", 0);
         }
-        // Get the recording so we can show its details
-        program = DataStorage.getInstance().getProgramFromArray(eventId);
-        Channel channel = DataStorage.getInstance().getChannelFromArray(program.getChannelId());
 
         if (nestedToolbar != null) {
             nestedToolbar.inflateMenu(R.menu.program_details_toolbar_menu);
@@ -136,9 +147,23 @@ public class ProgramDetailsFragment extends Fragment implements ImageDownloadTas
             });
         }
 
+        ProgramViewModel viewModel = ViewModelProviders.of(activity).get(ProgramViewModel.class);
+        viewModel.getProgram(eventId).observe(this, p -> {
+            if (p != null) {
+                program = p.getProgram();
+                channel = p.getChannels() != null ? p.getChannels().get(0) : null;
+                recording = p.getRecordings() != null ? p.getRecordings().get(0) : null;
+                updateUI();
+                activity.invalidateOptionsMenu();
+            }
+        });
+    }
+
+    private void updateUI() {
+
         // Show the program information
         if (state != null) {
-            Drawable drawable = UIUtils.getRecordingState(getActivity(), program.getDvrId());
+            Drawable drawable = UIUtils.getRecordingState(activity, program.getDvrId());
             state.setVisibility(drawable != null ? View.VISIBLE : View.GONE);
             state.setImageDrawable(drawable);
         }
@@ -185,20 +210,20 @@ public class ProgramDetailsFragment extends Fragment implements ImageDownloadTas
         } else {
             contentType.setText(ct);
         }
-        
+
         // Show the rating information as starts
         if (program.getStarRating() < 0) {
             ratingBarLabel.setVisibility(View.GONE);
             ratingBarText.setVisibility(View.GONE);
             ratingBar.setVisibility(View.GONE);
         } else {
-            ratingBar.setRating((float)program.getStarRating() / 10.0f);
+            ratingBar.setRating((float) program.getStarRating() / 10.0f);
             String value = " (" + program.getStarRating() + "/" + 10 + ")";
             ratingBarText.setText(value);
         }
 
         // Show the program image if one exists
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
         if (isUnlocked && prefs.getBoolean("pref_show_program_artwork", false)) {
             ImageDownloadTask dt = new ImageDownloadTask(this);
             dt.execute(program.getImage(), String.valueOf(program.getEventId()));
@@ -221,7 +246,7 @@ public class ProgramDetailsFragment extends Fragment implements ImageDownloadTas
                 final float scale = h / w;
                 final float vw = imageView.getRootView().getWidth() - 128;
                 final float vh = vw * scale;
-                final LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams((int)vw, (int)vh);
+                final LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams((int) vw, (int) vh);
                 layoutParams.gravity = Gravity.CENTER;
                 imageView.setLayoutParams(layoutParams);
             }
@@ -230,9 +255,13 @@ public class ProgramDetailsFragment extends Fragment implements ImageDownloadTas
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
+        if (program == null) {
+            return;
+        }
         if (nestedToolbar != null) {
             menu = nestedToolbar.getMenu();
         }
+
         // Show the play menu item when the current
         // time is between the program start and end time
         long currentTime = new Date().getTime();
@@ -240,7 +269,6 @@ public class ProgramDetailsFragment extends Fragment implements ImageDownloadTas
             menu.findItem(R.id.menu_play).setVisible(true);
         }
 
-        Recording recording = DataStorage.getInstance().getRecordingFromArray(program.getDvrId());
         if (recording == null || (!recording.isRecording()
                 && !recording.isScheduled())) {
             menu.findItem(R.id.menu_record_once).setVisible(true);
@@ -280,23 +308,21 @@ public class ProgramDetailsFragment extends Fragment implements ImageDownloadTas
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Recording recording;
+
         switch (item.getItemId()) {
             case android.R.id.home:
-                getActivity().finish();
+                activity.finish();
                 return true;
             case R.id.menu_record_remove:
-                recording = DataStorage.getInstance().getRecordingFromArray(program.getDvrId());
                 if (recording != null) {
                     if (recording.isScheduled()) {
-                        menuUtils.handleMenuCancelRecordingSelection(recording.getId(), recording.getTitle());
+                        menuUtils.handleMenuCancelRecordingSelection(recording.getId(), recording.getTitle(), this);
                     } else {
-                        menuUtils.handleMenuRemoveRecordingSelection(recording.getId(), recording.getTitle());
+                        menuUtils.handleMenuRemoveRecordingSelection(recording.getId(), recording.getTitle(), this);
                     }
                 }
                 return true;
             case R.id.menu_record_stop:
-                recording = DataStorage.getInstance().getRecordingFromArray(program.getDvrId());
                 if (recording != null && recording.isRecording()) {
                     menuUtils.handleMenuStopRecordingSelection(recording.getId(), recording.getTitle());
                 }
@@ -324,8 +350,9 @@ public class ProgramDetailsFragment extends Fragment implements ImageDownloadTas
         }
     }
 
-    public int getShownEventId() {
-        return eventId;
+    @Override
+    public void onRecordingRemoved() {
+        activity.finish();
     }
 }
 

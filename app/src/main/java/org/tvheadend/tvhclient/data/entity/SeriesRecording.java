@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.data.model;
+package org.tvheadend.tvhclient.data.entity;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
@@ -10,7 +10,7 @@ public class SeriesRecording {
 
     @PrimaryKey
     @NonNull
-    private String id;           // str   required   ID (string!) of dvrAutorecEntry.
+    private String id = "";      // str   required   ID (string!) of dvrAutorecEntry.
     private int enabled;         // u32   required   If autorec entry is enabled (activated).
     private String name;         // str   required   Name of the autorec entry (Added in version 18).
     @ColumnInfo(name = "min_duration")
@@ -33,17 +33,40 @@ public class SeriesRecording {
     private String title;        // str   optional   Title.
     private int fulltext;        // u32   optional   Fulltext flag (Added in version 20).
     private String directory;    // str   optional   Forced directory name (Added in version 19).
+    @ColumnInfo(name = "channel_id")
     private int channelId;         // u32   optional   Channel ID.
     private String owner;        // str   optional   Owner of this autorec entry (Added in version 18).
     private String creator;      // str   optional   Creator of this autorec entry (Added in version 18).
     @ColumnInfo(name = "dup_detect")
     private int dupDetect;       // u32   optional   Duplicate detection (see addAutorecEntry) (Added in version 20).
 
+    @ColumnInfo(name = "channel_name")
+    private String channelName;
+    @ColumnInfo(name = "channel_icon")
+    private String channelIcon;
+
+    public String getChannelName() {
+        return channelName;
+    }
+
+    public void setChannelName(String channelName) {
+        this.channelName = channelName;
+    }
+
+    public String getChannelIcon() {
+        return channelIcon;
+    }
+
+    public void setChannelIcon(String channelIcon) {
+        this.channelIcon = channelIcon;
+    }
+
+    @NonNull
     public String getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(@NonNull String id) {
         this.id = id;
     }
 

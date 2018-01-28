@@ -27,7 +27,6 @@ import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.data.DataStorage;
 import org.tvheadend.tvhclient.data.DatabaseHelper;
 import org.tvheadend.tvhclient.data.model.Connection;
-import org.tvheadend.tvhclient.service.HTSService;
 import org.tvheadend.tvhclient.ui.startup.StartupActivity;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
@@ -37,19 +36,19 @@ import java.util.List;
 public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, Drawer.OnDrawerItemClickListener {
 
     // The index for the navigation drawer menus
-    public static final int MENU_UNKNOWN = -1;
-    public static final int MENU_CHANNELS = 0;
-    public static final int MENU_PROGRAM_GUIDE = 1;
-    public static final int MENU_COMPLETED_RECORDINGS = 2;
-    public static final int MENU_SCHEDULED_RECORDINGS = 3;
-    public static final int MENU_SERIES_RECORDINGS = 4;
-    public static final int MENU_TIMER_RECORDINGS = 5;
-    public static final int MENU_FAILED_RECORDINGS = 6;
-    public static final int MENU_REMOVED_RECORDINGS = 7;
-    public static final int MENU_STATUS = 8;
-    public static final int MENU_INFORMATION = 9;
-    public static final int MENU_SETTINGS = 10;
-    public static final int MENU_UNLOCKER = 11;
+    static final int MENU_UNKNOWN = -1;
+    static final int MENU_CHANNELS = 0;
+    static final int MENU_PROGRAM_GUIDE = 1;
+    static final int MENU_COMPLETED_RECORDINGS = 2;
+    static final int MENU_SCHEDULED_RECORDINGS = 3;
+    static final int MENU_SERIES_RECORDINGS = 4;
+    static final int MENU_TIMER_RECORDINGS = 5;
+    static final int MENU_FAILED_RECORDINGS = 6;
+    static final int MENU_REMOVED_RECORDINGS = 7;
+    static final int MENU_STATUS = 8;
+    static final int MENU_INFORMATION = 9;
+    static final int MENU_SETTINGS = 10;
+    static final int MENU_UNLOCKER = 11;
 
     private final Bundle savedInstanceState;
     private final Activity activity;
@@ -219,17 +218,13 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
             databaseHelper.updateConnection(oldConn);
             databaseHelper.updateConnection(newConn);
 
-            Intent intent = new Intent(activity, HTSService.class);
-            intent.setAction("disconnect");
-            activity.startService(intent);
-
             // Save the information that a new sync is required
             // Then restart the application to show the sync fragment
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity);
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putBoolean("initial_sync_done", false);
             editor.apply();
-            intent = new Intent(activity, StartupActivity.class);
+            Intent intent = new Intent(activity, StartupActivity.class);
             activity.finish();
             activity.startActivity(intent);
         }

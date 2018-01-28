@@ -9,7 +9,6 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
 import org.tvheadend.tvhclient.ui.recordings.series_recordings.SeriesRecordingDetailsFragment;
 import org.tvheadend.tvhclient.ui.recordings.timer_recordings.TimerRecordingDetailsFragment;
-import org.tvheadend.tvhclient.ui.programs.ProgramDetailsFragment;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
 public class RecordingDetailsActivity extends AppCompatActivity implements ToolbarInterface {
@@ -31,9 +30,6 @@ public class RecordingDetailsActivity extends AppCompatActivity implements Toolb
             Fragment fragment = null;
             String type = getIntent().getStringExtra("type");
             switch (type) {
-                case "program":
-                    fragment = new ProgramDetailsFragment();
-                    break;
                 case "recording":
                     fragment = new RecordingDetailsFragment();
                     break;

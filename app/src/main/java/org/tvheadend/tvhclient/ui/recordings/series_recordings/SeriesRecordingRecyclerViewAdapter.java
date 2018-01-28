@@ -14,9 +14,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.data.DataStorage;
-import org.tvheadend.tvhclient.data.model.Channel;
-import org.tvheadend.tvhclient.data.model.SeriesRecording;
+import org.tvheadend.tvhclient.data.DataRepository;
+import org.tvheadend.tvhclient.data.entity.SeriesRecording;
 import org.tvheadend.tvhclient.ui.common.RecyclerViewClickCallback;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 import org.tvheadend.tvhclient.utils.UIUtils;
@@ -27,7 +26,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class SeriesRecordingRecyclerViewAdapter extends RecyclerView.Adapter<SeriesRecordingRecyclerViewAdapter.RecyclerViewHolder> {
-    private String TAG = this.getClass().getSimpleName();
 
     private List<SeriesRecording> seriesRecordingList;
     private RecyclerViewClickCallback clickCallback;
@@ -38,7 +36,7 @@ public class SeriesRecordingRecyclerViewAdapter extends RecyclerView.Adapter<Ser
 
     SeriesRecordingRecyclerViewAdapter(Context context, List<SeriesRecording> seriesRecordingList, RecyclerViewClickCallback clickCallback) {
         this.context = context;
-        this.htspVersion = DataStorage.getInstance().getProtocolVersion();
+        this.htspVersion = new DataRepository(context).getHtspVersion();
         this.seriesRecordingList = seriesRecordingList;
         this.clickCallback = clickCallback;
         this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -84,7 +82,6 @@ public class SeriesRecordingRecyclerViewAdapter extends RecyclerView.Adapter<Ser
         }
 
         if (recording != null) {
-            Channel channel = DataStorage.getInstance().getChannelFromArray(recording.getChannelId());
             holder.titleTextView.setText(recording.getTitle());
 
             if (!TextUtils.isEmpty(recording.getName())) {
@@ -93,9 +90,9 @@ public class SeriesRecordingRecyclerViewAdapter extends RecyclerView.Adapter<Ser
             } else {
                 holder.nameTextView.setVisibility(View.GONE);
             }
-            if (channel != null) {
-                holder.channelTextView.setText(channel.getChannelName());
-                Bitmap iconBitmap = MiscUtils.getCachedIcon(context, channel.getChannelIcon());
+            if (recording.getChannelIcon() != null) {
+                holder.channelTextView.setText(recording.getChannelName());
+                Bitmap iconBitmap = MiscUtils.getCachedIcon(context, recording.getChannelIcon());
                 holder.iconImageView.setImageBitmap(iconBitmap);
                 holder.iconImageView.setVisibility(showChannelIcons ? ImageView.VISIBLE : ImageView.GONE);
             } else {
@@ -105,7 +102,8 @@ public class SeriesRecordingRecyclerViewAdapter extends RecyclerView.Adapter<Ser
             holder.daysOfWeekTextView.setText(UIUtils.getDaysOfWeekText(context, recording.getDaysOfWeek()));
 
             // Convert the minute from midnight into a time
-            holder.timeTextView.setText(UIUtils.getTime(context, recording.getStart()));
+            String time = UIUtils.getTime(context, recording.getStart()) + " - " + UIUtils.getTime(context, recording.getStartWindow());
+            holder.timeTextView.setText(time);
             // Show the duration
             holder.durationTextView.setText(context.getString(R.string.minutes, recording.getDuration()));
 

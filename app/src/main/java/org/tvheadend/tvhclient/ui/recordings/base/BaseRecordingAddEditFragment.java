@@ -1,8 +1,6 @@
 package org.tvheadend.tvhclient.ui.recordings.base;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -12,36 +10,29 @@ import com.sleepbot.datetimepicker.time.TimePickerDialog;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
+import org.tvheadend.tvhclient.data.DataRepository;
 import org.tvheadend.tvhclient.data.DataStorage;
 import org.tvheadend.tvhclient.data.DatabaseHelper;
-import org.tvheadend.tvhclient.data.model.Channel;
+import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.data.model.Connection;
 import org.tvheadend.tvhclient.data.model.Profile;
-import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
+import org.tvheadend.tvhclient.ui.base.BaseFragment;
 import org.tvheadend.tvhclient.ui.channels.ChannelListSelectionAdapter;
 import org.tvheadend.tvhclient.ui.recordings.common.DateTimePickerCallback;
 import org.tvheadend.tvhclient.ui.recordings.common.DaysOfWeekSelectionCallback;
 import org.tvheadend.tvhclient.ui.recordings.common.RecordingPriorityListCallback;
 import org.tvheadend.tvhclient.ui.recordings.common.RecordingProfileListCallback;
-import org.tvheadend.tvhclient.utils.MenuUtils;
 import org.tvheadend.tvhclient.utils.callbacks.ChannelListSelectionCallback;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 
 // TODO add title and full names to day of weeks list
 
-public class BaseRecordingAddEditFragment extends Fragment {
+public class BaseRecordingAddEditFragment extends BaseFragment {
 
-    protected AppCompatActivity activity;
-    protected ToolbarInterface toolbarInterface;
-    protected MenuUtils menuUtils;
     protected DataStorage dataStorage;
-    protected int htspVersion;
     protected boolean isUnlocked;
     protected Profile profile;
 
@@ -52,18 +43,14 @@ public class BaseRecordingAddEditFragment extends Fragment {
     protected String[] priorityList;
     protected String[] recordingProfilesList;
     protected DatabaseHelper databaseHelper;
+    protected List<Channel> channelList;
+    protected DataRepository repository;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        activity = (AppCompatActivity) getActivity();
-        if (activity instanceof ToolbarInterface) {
-            toolbarInterface = (ToolbarInterface) activity;
-        }
 
-        menuUtils = new MenuUtils(getActivity());
         dataStorage = DataStorage.getInstance();
-        htspVersion = dataStorage.getProtocolVersion();
         isUnlocked = TVHClientApplication.getInstance().isUnlocked();
         databaseHelper = DatabaseHelper.getInstance(activity.getApplicationContext());
         Connection connection = databaseHelper.getSelectedConnection();
@@ -79,6 +66,7 @@ public class BaseRecordingAddEditFragment extends Fragment {
         }
 
         priorityList = activity.getResources().getStringArray(R.array.dvr_priorities);
+        channelList = new DataRepository(getActivity()).getAllChannelsSync();
     }
 
     protected String getDateStringFromTimeInMillis(long milliSeconds) {
@@ -90,6 +78,14 @@ public class BaseRecordingAddEditFragment extends Fragment {
 
         return ((day < 10) ? "0" + day : day) + "."
                 + ((month < 10) ? "0" + month : month) + "." + year;
+    }
+
+    protected long getMinutesFromTimeInMillis(long milliSeconds) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(milliSeconds);
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        int minute = calendar.get(Calendar.MINUTE);
+        return (long) (hour * 60 + minute);
     }
 
     protected String getTimeStringFromTimeInMillis(long milliSeconds) {
@@ -151,17 +147,7 @@ public class BaseRecordingAddEditFragment extends Fragment {
 
     protected void handleChannelListSelection(long selectedChannelId, ChannelListSelectionCallback callback, boolean showAllChannelsListEntry) {
         // Fill the channel tag adapter with the available channel tags
-        List<Channel> channelList = new ArrayList<>();
-        Map<Integer, Channel> map = DataStorage.getInstance().getChannelsFromArray();
-        channelList.addAll(map.values());
-
-        // Sort the channel tag list before showing it
-        Collections.sort(channelList, new Comparator<Channel>() {
-            @Override
-            public int compare(Channel o1, Channel o2) {
-                return o1.getChannelName().compareTo(o2.getChannelName());
-            }
-        });
+        List<Channel> channels = channelList;
 
         // Add the default channel (all channels)
         // to the list after it has been sorted
@@ -169,10 +155,10 @@ public class BaseRecordingAddEditFragment extends Fragment {
             Channel channel = new Channel();
             channel.setChannelId(0);
             channel.setChannelName(activity.getString(R.string.all_channels));
-            channelList.add(0, channel);
+            channels.add(0, channel);
         }
 
-        final ChannelListSelectionAdapter channelListSelectionAdapter = new ChannelListSelectionAdapter(activity, channelList, selectedChannelId);
+        final ChannelListSelectionAdapter channelListSelectionAdapter = new ChannelListSelectionAdapter(activity, channels, selectedChannelId);
         // Show the dialog that shows all available channel tags. When the
         // user has selected a tag, restart the loader to loadRecording the updated channel list
         final MaterialDialog dialog = new MaterialDialog.Builder(activity)

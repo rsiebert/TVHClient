@@ -1,19 +1,21 @@
 package org.tvheadend.tvhclient.sync;
 
-import org.tvheadend.tvhclient.data.model.Channel;
-import org.tvheadend.tvhclient.data.model.ChannelTag;
-import org.tvheadend.tvhclient.data.model.Program;
-import org.tvheadend.tvhclient.data.model.Recording;
-import org.tvheadend.tvhclient.data.model.SeriesRecording;
-import org.tvheadend.tvhclient.data.model.TimerRecording;
+import android.util.Log;
+
+import org.tvheadend.tvhclient.data.entity.Channel;
+import org.tvheadend.tvhclient.data.entity.ChannelTag;
+import org.tvheadend.tvhclient.data.entity.Program;
+import org.tvheadend.tvhclient.data.entity.Recording;
+import org.tvheadend.tvhclient.data.entity.SeriesRecording;
+import org.tvheadend.tvhclient.data.entity.TimerRecording;
 import org.tvheadend.tvhclient.htsp.HtspMessage;
 
-public class SyncUtils {
+class SyncUtils {
     private SyncUtils() {
         throw new IllegalAccessError("Utility class");
     }
 
-    public static ChannelTag convertMessageToChannelTagModel(ChannelTag tag, HtspMessage msg) {
+    static ChannelTag convertMessageToChannelTagModel(ChannelTag tag, HtspMessage msg) {
         if (msg.containsKey("tagId")) {
             tag.setTagId(msg.getInteger("tagId"));
         }
@@ -35,7 +37,7 @@ public class SyncUtils {
         return tag;
     }
 
-    public static Channel convertMessageToChannelModel(Channel channel, HtspMessage msg) {
+    static Channel convertMessageToChannelModel(Channel channel, HtspMessage msg) {
         if (msg.containsKey("channelId")) {
             channel.setChannelId(msg.getInteger("channelId"));
         }
@@ -57,13 +59,10 @@ public class SyncUtils {
         if (msg.containsKey("nextEventId")) {
             channel.setNextEventId(msg.getInteger("nextEventId"));
         }
-        if (msg.containsKey("tags")) {
-            channel.setTags(msg.getIntegerList("tags"));
-        }
         return channel;
     }
 
-    public static Recording convertMessageToRecordingModel(Recording recording, HtspMessage msg) {
+    static Recording convertMessageToRecordingModel(Recording recording, HtspMessage msg) {
         if (msg.containsKey("id")) {
             recording.setId(msg.getInteger("id"));
         }
@@ -145,7 +144,7 @@ public class SyncUtils {
         return recording;
     }
 
-    public static Program convertMessageToProgramModel(Program program, HtspMessage msg) {
+    static Program convertMessageToProgramModel(Program program, HtspMessage msg) {
 
         if (msg.containsKey("eventId")) {
             program.setEventId(msg.getInteger("eventId"));
@@ -228,7 +227,8 @@ public class SyncUtils {
         return program;
     }
 
-    public static SeriesRecording convertMessageToSeriesRecordingModel(SeriesRecording seriesRecording, HtspMessage msg) {
+    static SeriesRecording convertMessageToSeriesRecordingModel(SeriesRecording seriesRecording, HtspMessage msg) {
+        Log.d("X", "convertMessageToSeriesRecordingModel() called with: seriesRecording = [" + seriesRecording + "], msg = [" + msg + "]");
         if (msg.containsKey("id")) {
             seriesRecording.setId(msg.getString("id"));
         }
@@ -293,7 +293,7 @@ public class SyncUtils {
     }
 
 
-    public static TimerRecording convertMessageToTimerRecordingModel(TimerRecording timerRecording, HtspMessage msg) {
+    static TimerRecording convertMessageToTimerRecordingModel(TimerRecording timerRecording, HtspMessage msg) {
         if (msg.containsKey("id")) {
             timerRecording.setId(msg.getString("id"));
         }
@@ -322,9 +322,11 @@ public class SyncUtils {
             timerRecording.setPriority(msg.getInteger("priority"));
         }
         if (msg.containsKey("start")) {
+            Log.d("X", "convertMessageToTimerRecordingModel: start " + msg.getLong("start"));
             timerRecording.setStart(msg.getLong("start") * 1000 * 60);
         }
         if (msg.containsKey("stop")) {
+            Log.d("X", "convertMessageToTimerRecordingModel: stop " + msg.getLong("stop"));
             timerRecording.setStop(msg.getLong("stop") * 1000 * 60);
         }
         if (msg.containsKey("retention")) {

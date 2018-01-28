@@ -8,32 +8,38 @@ import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
 
-import org.tvheadend.tvhclient.data.model.Recording;
+import org.tvheadend.tvhclient.data.entity.Recording;
 
 import java.util.List;
 
 @Dao
 public interface RecordingDao {
 
-    @Query("SELECT * FROM recordings WHERE error IS NULL AND state = 'completed'")
+    String query = "SELECT rec.*, " +
+            "c.channel_name AS channel_name, " +
+            "c.channel_icon AS channel_icon " +
+            "FROM recordings AS rec " +
+            "LEFT JOIN channels AS c ON  c.id = rec.channel_id ";
+
+    @Query(query + "WHERE rec.error IS NULL AND rec.state = 'completed'")
     LiveData<List<Recording>> loadAllCompletedRecordings();
 
-    @Query("SELECT * FROM recordings WHERE error IS NULL AND (state = 'recording' OR state = 'scheduled')")
+    @Query(query + "WHERE rec.error IS NULL AND (rec.state = 'recording' OR rec.state = 'scheduled')")
     LiveData<List<Recording>> loadAllScheduledRecordings();
 
-    @Query("SELECT * FROM recordings WHERE " +
-            "(error IS NOT NULL AND (state='missed'  OR state='invalid')) " +
-            " OR (error IS NULL  AND state='missed') " +
-            " OR (error='Aborted by user' AND state='completed')")
+    @Query(query + "WHERE " +
+            "(rec.error IS NOT NULL AND (rec.state='missed'  OR rec.state='invalid')) " +
+            " OR (rec.error IS NULL  AND rec.state='missed') " +
+            " OR (rec.error='Aborted by user' AND rec.state='completed')")
     LiveData<List<Recording>> loadAllFailedRecordings();
 
-    @Query("SELECT * FROM recordings WHERE error = 'File missing' AND state = 'completed'")
+    @Query(query + "WHERE rec.error = 'File missing' AND rec.state = 'completed'")
     LiveData<List<Recording>> loadAllRemovedRecordings();
 
-    @Query("SELECT * FROM recordings WHERE id = :id")
+    @Query(query + "WHERE rec.id = :id")
     LiveData<Recording> loadRecording(int id);
 
-    @Query("SELECT * FROM recordings WHERE id = :id")
+    @Query(query + "WHERE rec.id = :id")
     Recording loadRecordingSync(int id);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -47,6 +53,9 @@ public interface RecordingDao {
 
     @Delete
     void delete(Recording recording);
+
+    @Query("DELETE FROM recordings WHERE id = :id")
+    void deleteById(int id);
 
     @Query("DELETE FROM recordings")
     void deleteAll();

@@ -26,7 +26,7 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.data.Constants;
 import org.tvheadend.tvhclient.data.DatabaseHelper;
-import org.tvheadend.tvhclient.data.model.ChannelTag;
+import org.tvheadend.tvhclient.data.entity.ChannelTag;
 import org.tvheadend.tvhclient.data.model.Connection;
 import org.tvheadend.tvhclient.data.model.ProgramGuideTimeDialogItem;
 import org.tvheadend.tvhclient.ui.search.SearchActivity;

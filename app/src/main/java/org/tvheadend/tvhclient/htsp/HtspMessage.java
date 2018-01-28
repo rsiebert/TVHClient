@@ -124,7 +124,8 @@ public class HtspMessage extends HashMap<String, Object> {
          *
          * @return The next message to send
          */
-        @NonNull HtspMessage getMessage();
+        @NonNull
+        HtspMessage getMessage();
     }
 
     /**
@@ -142,7 +143,7 @@ public class HtspMessage extends HashMap<String, Object> {
         /**
          * Serializes a message onto a buffer
          *
-         * @param buffer The buffer to serialize to
+         * @param buffer  The buffer to serialize to
          * @param message The message to serialize
          */
         void write(@NonNull ByteBuffer buffer, @NonNull HtspMessage message);
@@ -192,7 +193,7 @@ public class HtspMessage extends HashMap<String, Object> {
     public int getInteger(String key) {
         Object obj = get(key);
         if (obj == null) {
-            throw new RuntimeException("Attempted to getInteger("+key+") on non-existent key");
+            throw new RuntimeException("Attempted to getInteger(" + key + ") on non-existent key");
         }
         if (obj instanceof BigInteger) {
             return ((BigInteger) obj).intValue();
@@ -212,7 +213,7 @@ public class HtspMessage extends HashMap<String, Object> {
     public long getLong(String key) {
         Object obj = get(key);
         if (obj == null) {
-            throw new RuntimeException("Attempted to getLong("+key+") on non-existent key");
+            throw new RuntimeException("Attempted to getLong(" + key + ") on non-existent key");
         }
 
         if (obj instanceof BigInteger) {

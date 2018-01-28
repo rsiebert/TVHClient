@@ -1,23 +1,20 @@
-package org.tvheadend.tvhclient.data.model;
+package org.tvheadend.tvhclient.data.entity;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
-import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import java.util.List;
-
-// TODO isRecording... not required anymore or change
 
 @Entity(tableName = "recordings")
 public class Recording {
 
     @PrimaryKey
-    @NonNull
     private int id;                      // u32   required   ID of dvrEntry.
-    private int channelId;                 // u32   optional   Channel of dvrEntry.
+    @ColumnInfo(name = "channel_id")
+    private int channelId;               // u32   optional   Channel of dvrEntry.
     private long start;                  // s64   required   Time of when this entry was scheduled to start recording.
     private long stop;                   // s64   required   Time of when this entry was scheduled to stop recording.
     @ColumnInfo(name = "start_extra")
@@ -56,6 +53,27 @@ public class Recording {
     @Ignore
     private List<String> files;          // msg   optional   All recorded files for playback (Added in version 21).
 
+    @ColumnInfo(name = "channel_name")
+    private String channelName;
+    @ColumnInfo(name = "channel_icon")
+    private String channelIcon;
+
+    public String getChannelName() {
+        return channelName;
+    }
+
+    public void setChannelName(String channelName) {
+        this.channelName = channelName;
+    }
+
+    public String getChannelIcon() {
+        return channelIcon;
+    }
+
+    public void setChannelIcon(String channelIcon) {
+        this.channelIcon = channelIcon;
+    }
+
     public boolean isCompleted() {
         return error == null && TextUtils.equals(state, "completed");
     }
@@ -88,12 +106,11 @@ public class Recording {
         return (int) ((stop - start) / 1000 / 60);
     }
 
-    @NonNull
     public int getId() {
         return id;
     }
 
-    public void setId(@NonNull int id) {
+    public void setId(int id) {
         this.id = id;
     }
 

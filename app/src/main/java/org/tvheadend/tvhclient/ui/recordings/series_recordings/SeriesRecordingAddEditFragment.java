@@ -1,11 +1,11 @@
 package org.tvheadend.tvhclient.ui.recordings.series_recordings;
 
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,13 +22,11 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.data.model.Channel;
+import org.tvheadend.tvhclient.data.entity.Channel;
+import org.tvheadend.tvhclient.data.entity.SeriesRecording;
 import org.tvheadend.tvhclient.data.model.Connection;
 import org.tvheadend.tvhclient.data.model.Profile;
-import org.tvheadend.tvhclient.data.model.SeriesRecording;
-import org.tvheadend.tvhclient.service.HTSListener;
-import org.tvheadend.tvhclient.service.HTSService;
+import org.tvheadend.tvhclient.sync.EpgSyncService;
 import org.tvheadend.tvhclient.ui.common.BackPressedInterface;
 import org.tvheadend.tvhclient.ui.recordings.base.BaseRecordingAddEditFragment;
 import org.tvheadend.tvhclient.ui.recordings.common.DateTimePickerCallback;
@@ -43,7 +41,12 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment implements BackPressedInterface, HTSListener, ChannelListSelectionCallback, RecordingPriorityListCallback, RecordingProfileListCallback, DateTimePickerCallback, DaysOfWeekSelectionCallback {
+// TODO use contraintlayout
+// TODO replace savedinstance bundle with viewmodel
+// TODO use default recording from viewmodel when no id is available
+
+public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment implements BackPressedInterface, ChannelListSelectionCallback, RecordingPriorityListCallback, RecordingProfileListCallback, DateTimePickerCallback, DaysOfWeekSelectionCallback {
+    private String TAG = getClass().getSimpleName();
 
     @BindView(R.id.is_enabled)
     CheckBox isEnabledCheckbox;
@@ -130,28 +133,26 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
         if (savedInstanceState == null) {
             // Get the values from the recording otherwise use default values
             if (!TextUtils.isEmpty(id)) {
-                SeriesRecordingViewModel viewModel = ViewModelProviders.of(this).get(SeriesRecordingViewModel.class);
-                viewModel.getRecording(id).observe(this, recording -> {
-                    if (recording != null) {
-                        priority = recording.getPriority();
-                        minDuration = (recording.getMinDuration() / 60);
-                        maxDuration = (recording.getMaxDuration() / 60);
-                        timeEnabled = (recording.getStart() >= 0 || recording.getStartWindow() >= 0);
-                        startTime = recording.getStart() * 1000;
-                        startWindowTime = recording.getStartWindow();
-                        startExtraTime = recording.getStartExtra();
-                        stopExtraTime = recording.getStopExtra();
-                        duplicateDetectionId = recording.getDupDetect();
-                        daysOfWeek = recording.getDaysOfWeek();
-                        directory = recording.getDirectory();
-                        title = recording.getTitle();
-                        name = recording.getName();
-                        isEnabled = recording.getEnabled() > 0;
-                        channelId = recording.getChannelId();
-                    }
-                    viewModel.getRecording(id).removeObservers(this);
-                    updateUI();
-                });
+                SeriesRecording recording = repository.getSeriesRecordingSync(id);
+                if (recording != null) {
+                    priority = recording.getPriority();
+                    minDuration = (recording.getMinDuration() / 60);
+                    maxDuration = (recording.getMaxDuration() / 60);
+                    timeEnabled = (recording.getStart() >= 0 || recording.getStartWindow() >= 0);
+                    startTime = recording.getStart();
+                    startWindowTime = recording.getStartWindow();
+                    startExtraTime = recording.getStartExtra();
+                    stopExtraTime = recording.getStopExtra();
+                    duplicateDetectionId = recording.getDupDetect();
+                    daysOfWeek = recording.getDaysOfWeek();
+                    directory = recording.getDirectory();
+                    title = recording.getTitle();
+                    name = recording.getName();
+                    isEnabled = recording.getEnabled() > 0;
+                    channelId = recording.getChannelId();
+                }
+
+                updateUI();
             } else {
                 priority = 2;
                 minDuration = 0;
@@ -222,7 +223,7 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
         directoryEditText.setVisibility(htspVersion >= 19 ? View.VISIBLE : View.GONE);
         directoryEditText.setText(directory);
 
-        Channel channel = dataStorage.getChannelFromArray(channelId);
+        Channel channel = repository.getChannelSync(channelId);
         channelNameTextView.setText(channel != null ? channel.getChannelName() : getString(R.string.all_channels));
         channelNameTextView.setOnClickListener(view -> {
             // Determine if the server supports recording on all channels
@@ -322,18 +323,6 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
         }
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        TVHClientApplication.getInstance().addListener(this);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        TVHClientApplication.getInstance().removeListener(this);
-    }
-
     /**
      * Retrieves and checks the values from the user input elements and stores
      * them in internal variables. These are used to remember the values during
@@ -422,26 +411,13 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
                 .show();
     }
 
-    @Override
-    public void onMessage(String action, Object obj) {
-        if (action.equals("autorecEntryDelete")) {
-            activity.runOnUiThread(new Runnable() {
-                public void run() {
-                    SeriesRecording seriesRecording = (SeriesRecording) obj;
-                    if (seriesRecording.getId().equals(id)) {
-                        addSeriesRecording();
-                    }
-                }
-            });
-        }
-    }
-
     /**
      * Adds a new series recording with the given values. This method is also
      * called when a recording is being edited. It adds a recording with edited
      * values which was previously removed.
      */
     private void addSeriesRecording() {
+        Log.d(TAG, "addSeriesRecording() called");
         Intent intent = getIntentData();
         intent.setAction("addAutorecEntry");
         activity.startService(intent);
@@ -452,27 +428,19 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
      * Update the series recording with the given values.
      */
     private void updateSeriesRecording() {
-        if (htspVersion >= 25) {
-            // If the API version supports it, use the native service call method
-            Intent intent = getIntentData();
-            intent.setAction("updateAutorecEntry");
-            intent.putExtra("id", id);
-            activity.startService(intent);
-            activity.finish();
-        } else {
-            // TODO move the update logic into the service
-            Intent intent = new Intent(activity, HTSService.class);
-            intent.setAction("deleteAutorecEntry");
-            intent.putExtra("id", id);
-            activity.startService(intent);
-        }
+        Log.d(TAG, "updateSeriesRecording() called");
+        Intent intent = getIntentData();
+        intent.setAction("updateAutorecEntry");
+        intent.putExtra("id", id);
+        activity.startService(intent);
+        activity.finish();
     }
 
     /**
      * Returns an intent with the recording data
      */
     private Intent getIntentData() {
-        Intent intent = new Intent(activity, HTSService.class);
+        Intent intent = new Intent(activity, EpgSyncService.class);
         intent.putExtra("title", title);
         intent.putExtra("name", name);
         intent.putExtra("directory", directory);
@@ -482,8 +450,9 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
         // Assume no start time is specified if 0:00 is selected
         if (timeEnabled) {
             // Pass on minutes not milliseconds
-            intent.putExtra("start", startTime);
-            intent.putExtra("startWindow", startWindowTime);
+            Log.d(TAG, "getIntentData: start " + getMinutesFromTimeInMillis(startTime));
+            intent.putExtra("start", getMinutesFromTimeInMillis(startTime));
+            intent.putExtra("startWindow", getMinutesFromTimeInMillis(startWindowTime));
         }
         intent.putExtra("startExtra", startExtraTime);
         intent.putExtra("stopExtra", stopExtraTime);
@@ -511,7 +480,7 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
     public void onChannelIdSelected(int which) {
         if (which > 0) {
             channelId = which;
-            Channel channel = dataStorage.getChannelFromArray(which);
+            Channel channel = repository.getChannelSync(channelId);
             channelNameTextView.setText(channel.getChannelName());
         } else {
             channelNameTextView.setText(R.string.all_channels);

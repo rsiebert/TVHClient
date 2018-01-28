@@ -1,18 +1,17 @@
-package org.tvheadend.tvhclient.data.model;
+package org.tvheadend.tvhclient.data.entity;
 
 import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Embedded;
 import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
-import android.support.annotation.NonNull;
+import android.arch.persistence.room.RoomWarnings;
 
-import java.util.List;
 
+@SuppressWarnings(RoomWarnings.PRIMARY_KEY_FROM_EMBEDDED_IS_DROPPED)
 @Entity(tableName = "channels")
 public class Channel {
 
     @PrimaryKey
-    @NonNull
     @ColumnInfo(name = "id")
     private int channelId;             // u32   required   ID of channel.
     @ColumnInfo(name = "channel_number")
@@ -27,16 +26,43 @@ public class Channel {
     private int eventId;               // u32   optional   ID of the current event on this channel.
     @ColumnInfo(name = "next_event_id")
     private int nextEventId;           // u32   optional   ID of the next event on the channel.
-    @Ignore
-    private List<Integer> tags;        // u32[] optional   Tags this channel is mapped to.
-    //services           msg[] optional   List of available services (Added in version 5)
 
-    @NonNull
+    @Embedded(prefix = "program_")
+    private Program program;
+    @Embedded(prefix = "next_program_")
+    private Program nextProgram;
+    @Embedded(prefix = "recording_")
+    private Recording recording;
+
+    public Recording getRecording() {
+        return recording;
+    }
+
+    public void setRecording(Recording recording) {
+        this.recording = recording;
+    }
+
+    public Program getProgram() {
+        return program;
+    }
+
+    public void setProgram(Program program) {
+        this.program = program;
+    }
+
+    public Program getNextProgram() {
+        return nextProgram;
+    }
+
+    public void setNextProgram(Program nextProgram) {
+        this.nextProgram = nextProgram;
+    }
+
     public int getChannelId() {
         return channelId;
     }
 
-    public void setChannelId(@NonNull int channelId) {
+    public void setChannelId(int channelId) {
         this.channelId = channelId;
     }
 
@@ -86,13 +112,5 @@ public class Channel {
 
     public void setNextEventId(int nextEventId) {
         this.nextEventId = nextEventId;
-    }
-
-    public List<Integer> getTags() {
-        return tags;
-    }
-
-    public void setTags(List<Integer> tags) {
-        this.tags = tags;
     }
 }

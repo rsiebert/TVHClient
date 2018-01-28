@@ -13,8 +13,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.data.DataStorage;
-import org.tvheadend.tvhclient.data.model.Program;
+import org.tvheadend.tvhclient.data.entity.Program;
+import org.tvheadend.tvhclient.data.entity.ProgramWithRecordingsAndChannels;
 import org.tvheadend.tvhclient.ui.common.RecyclerViewClickCallback;
 import org.tvheadend.tvhclient.utils.UIUtils;
 
@@ -25,19 +25,18 @@ import butterknife.ButterKnife;
 
 public class ProgramRecyclerViewAdapter extends RecyclerView.Adapter<ProgramRecyclerViewAdapter.RecyclerViewHolder> {
 
-    private List<Program> programList;
+    private final BottomReachedListener onBottomReachedListener;
+    private List<ProgramWithRecordingsAndChannels> programList;
     private RecyclerViewClickCallback clickCallback;
-    private int htspVersion;
     private SharedPreferences sharedPreferences;
     private Context context;
-    private int selectedPosition = 0;
 
-    ProgramRecyclerViewAdapter(Context context, List<Program> programList, RecyclerViewClickCallback clickCallback) {
+    ProgramRecyclerViewAdapter(Context context, List<ProgramWithRecordingsAndChannels> programList, RecyclerViewClickCallback clickCallback, BottomReachedListener onBottomReachedListener) {
         this.context = context;
-        this.htspVersion = DataStorage.getInstance().getProtocolVersion();
         this.programList = programList;
         this.clickCallback = clickCallback;
         this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        this.onBottomReachedListener = onBottomReachedListener;
     }
 
     @Override
@@ -48,9 +47,13 @@ public class ProgramRecyclerViewAdapter extends RecyclerView.Adapter<ProgramRecy
 
     @Override
     public void onBindViewHolder(RecyclerViewHolder holder, int position) {
-        Program program = programList.get(position);
+        ProgramWithRecordingsAndChannels programWithRecordingsAndChannels = programList.get(position);
 
-        holder.itemView.setTag(program);
+        if (position == programList.size() - 1){
+            onBottomReachedListener.onBottomReached(position);
+        }
+
+        holder.itemView.setTag(programWithRecordingsAndChannels);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -67,6 +70,7 @@ public class ProgramRecyclerViewAdapter extends RecyclerView.Adapter<ProgramRecy
         boolean showProgramSubtitle = sharedPreferences.getBoolean("showProgramSubtitlePref", true);
         boolean showGenreColors = sharedPreferences.getBoolean("showGenreColorsProgramsPref", false);
 
+        Program program = programWithRecordingsAndChannels.getProgram();
         if (program != null) {
             holder.titleTextView.setText(program.getTitle());
 
@@ -113,7 +117,7 @@ public class ProgramRecyclerViewAdapter extends RecyclerView.Adapter<ProgramRecy
         }
     }
 
-    void addItems(List<Program> programList) {
+    void addItems(List<ProgramWithRecordingsAndChannels> programList) {
         this.programList = programList;
         notifyDataSetChanged();
     }
@@ -123,7 +127,7 @@ public class ProgramRecyclerViewAdapter extends RecyclerView.Adapter<ProgramRecy
         return programList.size();
     }
 
-    public Program getItem(int position) {
+    public ProgramWithRecordingsAndChannels getItem(int position) {
         return programList.get(position);
     }
 

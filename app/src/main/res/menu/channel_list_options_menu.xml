@@ -3,12 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto" >
 
     <item
-        android:id="@+id/menu_play"
-        android:icon="?attr/ic_menu_play"
-        android:orderInCategory="2"
-        android:title="@string/play"
-        app:showAsAction="ifRoom|collapseActionView|withText"/>
-    <item
         android:id="@+id/menu_tags"
         android:icon="?attr/ic_menu_tags"
         android:orderInCategory="5"

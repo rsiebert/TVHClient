@@ -1,10 +1,9 @@
-package org.tvheadend.tvhclient.data.model;
+package org.tvheadend.tvhclient.data.entity;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
-import android.support.annotation.NonNull;
 
 import java.util.List;
 
@@ -12,7 +11,6 @@ import java.util.List;
 public class ChannelTag {
 
     @PrimaryKey
-    @NonNull
     @ColumnInfo(name = "id")
     private int tagId;               // u32   required   ID of tag.
     @ColumnInfo(name = "tag_name")
@@ -26,12 +24,11 @@ public class ChannelTag {
     @Ignore
     private List<Integer> members;   // u32[] optional   Channel IDs of those that belong to the tag
 
-    @NonNull
     public int getTagId() {
         return tagId;
     }
 
-    public void setTagId(@NonNull int tagId) {
+    public void setTagId(int tagId) {
         this.tagId = tagId;
     }
 

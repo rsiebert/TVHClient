@@ -12,7 +12,7 @@ public class RemovedRecordingListFragment extends RecordingListFragment {
         super.onActivityCreated(savedInstanceState);
         toolbarInterface.setTitle(getString(R.string.removed_recordings));
 
-        RecordingViewModel viewModel = ViewModelProviders.of(this).get(RecordingViewModel.class);
+        RecordingViewModel viewModel = ViewModelProviders.of(activity).get(RecordingViewModel.class);
         viewModel.getRemovedRecordings().observe(this, recordings -> {
             recyclerViewAdapter.addItems(recordings);
             toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.recordings, recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));

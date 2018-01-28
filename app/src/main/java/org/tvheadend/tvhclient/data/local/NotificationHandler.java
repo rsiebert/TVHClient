@@ -14,7 +14,7 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.data.Constants;
 import org.tvheadend.tvhclient.data.DataStorage;
-import org.tvheadend.tvhclient.data.model.Recording;
+import org.tvheadend.tvhclient.data.entity.Recording;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

@@ -30,7 +30,7 @@ import org.tvheadend.tvhclient.data.DatabaseHelper;
 import org.tvheadend.tvhclient.data.local.Logger;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.model.Connection;
-import org.tvheadend.tvhclient.data.model.Recording;
+import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
 public class DownloadActivity extends Activity implements OnRequestPermissionsResultCallback {

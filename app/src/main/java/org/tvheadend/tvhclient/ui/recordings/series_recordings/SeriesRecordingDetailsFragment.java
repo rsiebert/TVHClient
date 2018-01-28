@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -19,21 +18,22 @@ import android.widget.TextView;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.DataStorage;
-import org.tvheadend.tvhclient.data.model.Channel;
-import org.tvheadend.tvhclient.data.model.SeriesRecording;
-import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
+import org.tvheadend.tvhclient.data.entity.Channel;
+import org.tvheadend.tvhclient.data.entity.SeriesRecording;
+import org.tvheadend.tvhclient.ui.base.BaseFragment;
 import org.tvheadend.tvhclient.ui.recordings.common.RecordingAddEditActivity;
-import org.tvheadend.tvhclient.utils.MenuUtils;
 import org.tvheadend.tvhclient.utils.UIUtils;
+import org.tvheadend.tvhclient.utils.callbacks.RecordingRemovedCallback;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
 // TODO recording on all channels shows empty channel logo
-// TODO when a recording is updated refresh
+// TODO use contraintlayout
+// TODO split start stop time in the layout
 
-public class SeriesRecordingDetailsFragment extends Fragment {
+public class SeriesRecordingDetailsFragment extends BaseFragment implements RecordingRemovedCallback {
 
     @BindView(R.id.is_enabled) TextView isEnabledTextView;
     @BindView(R.id.directory_label) TextView directoryLabelTextView;
@@ -52,12 +52,9 @@ public class SeriesRecordingDetailsFragment extends Fragment {
     @BindView(R.id.nested_toolbar)
     Toolbar nestedToolbar;
 
-    private ToolbarInterface toolbarInterface;
     private SeriesRecording recording;
-    private MenuUtils menuUtils;
     private String id;
     private Unbinder unbinder;
-    private int htspVersion;
 
     public static SeriesRecordingDetailsFragment newInstance(String id) {
         SeriesRecordingDetailsFragment f = new SeriesRecordingDetailsFragment();
@@ -68,7 +65,7 @@ public class SeriesRecordingDetailsFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.recording_details_fragment, container, false);
         ViewStub stub = view.findViewById(R.id.stub);
@@ -88,13 +85,7 @@ public class SeriesRecordingDetailsFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        if (getActivity() instanceof ToolbarInterface) {
-            toolbarInterface = (ToolbarInterface) getActivity();
-            toolbarInterface.setTitle(getString(R.string.details));
-        }
-        menuUtils = new MenuUtils(getActivity());
-        htspVersion = DataStorage.getInstance().getProtocolVersion();
-        setHasOptionsMenu(true);
+        toolbarInterface.setTitle(getString(R.string.details));
 
         Bundle bundle = getArguments();
         if (bundle != null) {
@@ -104,7 +95,7 @@ public class SeriesRecordingDetailsFragment extends Fragment {
             id = savedInstanceState.getString("id");
         }
 
-        SeriesRecordingViewModel viewModel = ViewModelProviders.of(this).get(SeriesRecordingViewModel.class);
+        SeriesRecordingViewModel viewModel = ViewModelProviders.of(activity).get(SeriesRecordingViewModel.class);
         viewModel.getRecording(id).observe(this, rec -> {
             recording = rec;
             updateUI();
@@ -137,7 +128,7 @@ public class SeriesRecordingDetailsFragment extends Fragment {
         nameTextView.setVisibility(!TextUtils.isEmpty(recording.getName()) ? View.VISIBLE : View.GONE);
         nameTextView.setText(recording.getName());
 
-        daysOfWeekTextView.setText(UIUtils.getDaysOfWeekText(getActivity(), recording.getDaysOfWeek()));
+        daysOfWeekTextView.setText(UIUtils.getDaysOfWeekText(activity, recording.getDaysOfWeek()));
 
         String[] priorityList = getResources().getStringArray(R.array.dvr_priorities);
         if (recording.getPriority() >= 0 && recording.getPriority() < priorityList.length) {
@@ -186,16 +177,17 @@ public class SeriesRecordingDetailsFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                getActivity().finish();
+                activity.finish();
                 return true;
             case R.id.menu_edit:
-                Intent intent = new Intent(getActivity(), RecordingAddEditActivity.class);
+                Intent intent = new Intent(activity, RecordingAddEditActivity.class);
                 intent.putExtra("type", "series_recording");
                 intent.putExtra("id", recording.getId());
-                getActivity().startActivity(intent);
+                activity.startActivity(intent);
+                activity.finish();
                 return true;
             case R.id.menu_record_remove:
-                menuUtils.handleMenuRemoveSeriesRecordingSelection(recording.getId(), recording.getTitle());
+                menuUtils.handleMenuRemoveSeriesRecordingSelection(recording.getId(), recording.getTitle(), this);
                 return true;
             case R.id.menu_search_imdb:
                 menuUtils.handleMenuSearchWebSelection(recording.getTitle());
@@ -212,25 +204,8 @@ public class SeriesRecordingDetailsFragment extends Fragment {
         return id;
     }
 
-    /**
-     * Converts the given time in milliseconds to a human readable time value.
-     * Adds leading zeros to the hour or minute values in case they are lower
-     * then ten.
-     *
-     * @return time in hh:mm format
-     */
-    private String getTimeStringFromValue(long time) {
-        if (time < 0) {
-            return getString(R.string.not_set);
-        }
-        String minutes = String.valueOf(time % 60);
-        if (minutes.length() == 1) {
-            minutes = "0" + minutes;
-        }
-        String hours = String.valueOf(time / 60);
-        if (hours.length() == 1) {
-            hours = "0" + hours;
-        }
-        return (hours + ":" + minutes);
+    @Override
+    public void onRecordingRemoved() {
+        activity.finish();
     }
 }

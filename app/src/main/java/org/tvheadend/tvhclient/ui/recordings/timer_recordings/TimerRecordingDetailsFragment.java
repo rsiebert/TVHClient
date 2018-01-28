@@ -1,11 +1,10 @@
 package org.tvheadend.tvhclient.ui.recordings.timer_recordings;
 
-import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -17,43 +16,45 @@ import android.view.ViewStub;
 import android.widget.TextView;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.data.DataStorage;
-import org.tvheadend.tvhclient.data.model.Channel;
-import org.tvheadend.tvhclient.data.model.TimerRecording;
-import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
+import org.tvheadend.tvhclient.data.entity.TimerRecording;
+import org.tvheadend.tvhclient.ui.base.BaseFragment;
 import org.tvheadend.tvhclient.ui.recordings.common.RecordingAddEditActivity;
-import org.tvheadend.tvhclient.utils.MenuUtils;
 import org.tvheadend.tvhclient.utils.UIUtils;
+import org.tvheadend.tvhclient.utils.callbacks.RecordingRemovedCallback;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-// TODO when a recording is updated refresh
-// TODO use viewmodel
+// TODO use contraintlayout
+// TODO split start stop time in the layout
 
-public class TimerRecordingDetailsFragment extends Fragment {
+public class TimerRecordingDetailsFragment extends BaseFragment implements RecordingRemovedCallback {
 
-    @BindView(R.id.is_enabled) TextView isEnabledTextView;
-    @BindView(R.id.directory_label) TextView directoryLabelTextView;
-    @BindView(R.id.directory) TextView directoryTextView;
-    @BindView(R.id.time) TextView timeTextView;
-    @BindView(R.id.duration) TextView durationTextView;
-    @BindView(R.id.days_of_week) TextView daysOfWeekTextView;
-    @BindView(R.id.channel) TextView channelNameTextView;
-    @BindView(R.id.priority) TextView priorityTextView;
+    @BindView(R.id.is_enabled)
+    TextView isEnabledTextView;
+    @BindView(R.id.directory_label)
+    TextView directoryLabelTextView;
+    @BindView(R.id.directory)
+    TextView directoryTextView;
+    @BindView(R.id.time)
+    TextView timeTextView;
+    @BindView(R.id.duration)
+    TextView durationTextView;
+    @BindView(R.id.days_of_week)
+    TextView daysOfWeekTextView;
+    @BindView(R.id.channel)
+    TextView channelNameTextView;
+    @BindView(R.id.priority)
+    TextView priorityTextView;
 
     @Nullable
     @BindView(R.id.nested_toolbar)
     Toolbar nestedToolbar;
 
     private TimerRecording recording;
-    private ToolbarInterface toolbarInterface;
-    private MenuUtils menuUtils;
     private String id;
     private Unbinder unbinder;
-    private int htspVersion;
-    private Activity activity;
 
     public static TimerRecordingDetailsFragment newInstance(String id) {
         TimerRecordingDetailsFragment f = new TimerRecordingDetailsFragment();
@@ -64,7 +65,7 @@ public class TimerRecordingDetailsFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.recording_details_fragment, container, false);
         ViewStub stub = view.findViewById(R.id.stub);
@@ -84,14 +85,7 @@ public class TimerRecordingDetailsFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        activity = getActivity();
-        if (activity instanceof ToolbarInterface) {
-            toolbarInterface = (ToolbarInterface) activity;
-            toolbarInterface.setTitle(getString(R.string.details));
-        }
-        menuUtils = new MenuUtils(activity);
-        htspVersion = DataStorage.getInstance().getProtocolVersion();
-        setHasOptionsMenu(true);
+        toolbarInterface.setTitle(getString(R.string.details));
 
         Bundle bundle = getArguments();
         if (bundle != null) {
@@ -101,7 +95,7 @@ public class TimerRecordingDetailsFragment extends Fragment {
             id = savedInstanceState.getString("id");
         }
 
-        TimerRecordingViewModel viewModel = ViewModelProviders.of(this).get(TimerRecordingViewModel.class);
+        TimerRecordingViewModel viewModel = ViewModelProviders.of(activity).get(TimerRecordingViewModel.class);
         viewModel.getRecording(id).observe(this, rec -> {
             recording = rec;
             updateUI();
@@ -119,6 +113,7 @@ public class TimerRecordingDetailsFragment extends Fragment {
     }
 
     private void updateUI() {
+
         isEnabledTextView.setVisibility((htspVersion >= 19) ? View.VISIBLE : View.GONE);
         isEnabledTextView.setText(recording.getEnabled() > 0 ? R.string.recording_enabled : R.string.recording_disabled);
 
@@ -126,8 +121,7 @@ public class TimerRecordingDetailsFragment extends Fragment {
         directoryTextView.setVisibility(htspVersion >= 19 ? View.VISIBLE : View.GONE);
         directoryTextView.setText(recording.getDirectory());
 
-        Channel channel = DataStorage.getInstance().getChannelFromArray(recording.getChannelId());
-        channelNameTextView.setText(channel != null ? channel.getChannelName() : getString(R.string.all_channels));
+        channelNameTextView.setText(recording.getChannelName() != null ? recording.getChannelName() : getString(R.string.all_channels));
 
         daysOfWeekTextView.setText(UIUtils.getDaysOfWeekText(activity, recording.getDaysOfWeek()));
 
@@ -136,7 +130,7 @@ public class TimerRecordingDetailsFragment extends Fragment {
             priorityTextView.setText(priorityItems[recording.getPriority()]);
         }
 
-        String time = UIUtils.getTime(getContext(), recording.getStart()) + " - " + UIUtils.getTime(getContext(), recording.getStop());
+        String time = UIUtils.getTime(activity, recording.getStart()) + " - " + UIUtils.getTime(activity, recording.getStop());
         timeTextView.setText(time);
 
         durationTextView.setText(getString(R.string.minutes, recording.getDuration()));
@@ -152,7 +146,7 @@ public class TimerRecordingDetailsFragment extends Fragment {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString("id", id);
     }
@@ -180,7 +174,7 @@ public class TimerRecordingDetailsFragment extends Fragment {
                 activity.startActivity(intent);
                 return true;
             case R.id.menu_record_remove:
-                menuUtils.handleMenuRemoveSeriesRecordingSelection(recording.getId(), recording.getTitle());
+                menuUtils.handleMenuRemoveTimerRecordingSelection(recording.getId(), recording.getTitle(), this);
                 return true;
             case R.id.menu_search_imdb:
                 menuUtils.handleMenuSearchWebSelection(recording.getTitle());
@@ -195,5 +189,10 @@ public class TimerRecordingDetailsFragment extends Fragment {
 
     public String getShownId() {
         return id;
+    }
+
+    @Override
+    public void onRecordingRemoved() {
+        activity.finish();
     }
 }

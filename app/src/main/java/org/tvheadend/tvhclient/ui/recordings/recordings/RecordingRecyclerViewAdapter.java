@@ -14,9 +14,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.data.DataStorage;
-import org.tvheadend.tvhclient.data.model.Channel;
-import org.tvheadend.tvhclient.data.model.Recording;
+import org.tvheadend.tvhclient.data.DataRepository;
+import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.ui.common.RecyclerViewClickCallback;
 import org.tvheadend.tvhclient.utils.MenuUtils;
 import org.tvheadend.tvhclient.utils.MiscUtils;
@@ -28,7 +27,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class RecordingRecyclerViewAdapter extends RecyclerView.Adapter<RecordingRecyclerViewAdapter.RecyclerViewHolder> {
-    private String TAG = this.getClass().getSimpleName();
 
     private List<Recording> recordingList;
     private RecyclerViewClickCallback clickCallback;
@@ -39,7 +37,7 @@ public class RecordingRecyclerViewAdapter extends RecyclerView.Adapter<Recording
 
     RecordingRecyclerViewAdapter(Activity activity, List<Recording> recordingList, RecyclerViewClickCallback clickCallback) {
         this.activity = activity;
-        this.htspVersion = DataStorage.getInstance().getProtocolVersion();
+        this.htspVersion = new DataRepository(activity).getHtspVersion();
         this.recordingList = recordingList;
         this.clickCallback = clickCallback;
         this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity);
@@ -97,10 +95,9 @@ public class RecordingRecyclerViewAdapter extends RecyclerView.Adapter<Recording
         }
 
         if (recording != null) {
-            Channel channel = DataStorage.getInstance().getChannelFromArray(recording.getChannelId());
             holder.titleTextView.setText(recording.getTitle());
-            if (channel != null) {
-                holder.channelTextView.setText(channel.getChannelName());
+            if (recording.getChannelIcon() != null) {
+                holder.channelTextView.setText(recording.getChannelName());
             }
 
             if (!TextUtils.isEmpty(recording.getSubtitle())) {
@@ -113,11 +110,11 @@ public class RecordingRecyclerViewAdapter extends RecyclerView.Adapter<Recording
             // Show the channel icon if available and set in the preferences.
             // If not chosen, hide the imageView and show the channel name.
             Bitmap iconBitmap = null;
-            if (channel != null) {
-                iconBitmap = MiscUtils.getCachedIcon(activity, channel.getChannelIcon());
+            if (recording.getChannelIcon() != null) {
+                iconBitmap = MiscUtils.getCachedIcon(activity, recording.getChannelIcon());
                 // Show the icon or a blank one if it does not exist
                 holder.iconImageView.setImageBitmap(iconBitmap);
-                holder.iconTextView.setText(channel.getChannelName());
+                holder.iconTextView.setText(recording.getChannelName());
             }
 
             if (showChannelIcons) {
@@ -155,11 +152,13 @@ public class RecordingRecyclerViewAdapter extends RecyclerView.Adapter<Recording
             }
 
             // Show only the recording icon
-            if (recording.isRecording()) {
-                holder.stateImageView.setImageResource(R.drawable.ic_rec_small);
-                holder.stateImageView.setVisibility(ImageView.VISIBLE);
-            } else {
-                holder.stateImageView.setVisibility(ImageView.GONE);
+            if (holder.stateImageView != null) {
+                if (recording.isRecording()) {
+                    holder.stateImageView.setImageResource(R.drawable.ic_rec_small);
+                    holder.stateImageView.setVisibility(ImageView.VISIBLE);
+                } else {
+                    holder.stateImageView.setVisibility(ImageView.GONE);
+                }
             }
 
             // Show the information if the recording belongs to a series recording

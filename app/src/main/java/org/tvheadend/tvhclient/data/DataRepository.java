@@ -1,232 +1,171 @@
 package org.tvheadend.tvhclient.data;
 
-import android.app.Application;
 import android.arch.lifecycle.LiveData;
+import android.content.Context;
 import android.os.AsyncTask;
 
+import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.data.dao.ChannelDao;
-import org.tvheadend.tvhclient.data.dao.ProgramDao;
 import org.tvheadend.tvhclient.data.dao.RecordingDao;
 import org.tvheadend.tvhclient.data.dao.SeriesRecordingDao;
 import org.tvheadend.tvhclient.data.dao.TimerRecordingDao;
-import org.tvheadend.tvhclient.data.model.Channel;
-import org.tvheadend.tvhclient.data.model.Program;
-import org.tvheadend.tvhclient.data.model.Recording;
-import org.tvheadend.tvhclient.data.model.SeriesRecording;
-import org.tvheadend.tvhclient.data.model.TimerRecording;
+import org.tvheadend.tvhclient.data.entity.Channel;
+import org.tvheadend.tvhclient.data.entity.Recording;
+import org.tvheadend.tvhclient.data.entity.SeriesRecording;
+import org.tvheadend.tvhclient.data.entity.TimerRecording;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class DataRepository {
 
-    private static DataRepository instance;
-    private final AppDatabase appDatabase;
-    private final TimerRecordingDao timerRecordingDao;
-    private final SeriesRecordingDao seriesRecordingDao;
-    private final RecordingDao recordingDao;
-    private final ProgramDao programDao;
-    private final ChannelDao channelDao;
+    private AppDatabase db;
 
-    private LiveData<List<TimerRecording>> timerRecordings;
-    private LiveData<List<SeriesRecording>> seriesRecordings;
-    private LiveData<List<Recording>> completedRecordings;
-    private LiveData<List<Recording>> scheduledRecordings;
-    private LiveData<List<Recording>> failedRecordings;
-    private LiveData<List<Recording>> removedRecordings;
-    private LiveData<List<Program>> programs;
-    private LiveData<List<Channel>> channels;
-
-    public static DataRepository getInstance(final Application application) {
-        if (instance == null) {
-            synchronized (DataRepository.class) {
-                if (instance == null) {
-                    instance = new DataRepository(application);
-                }
-            }
-        }
-        return instance;
+    public DataRepository(Context context) {
+        this.db = AppDatabase.getInstance(context.getApplicationContext());
     }
 
-    private DataRepository(Application application) {
-        appDatabase = AppDatabase.getInstance(application.getApplicationContext());
-
-        timerRecordingDao = appDatabase.timerRecordingDao();
-        seriesRecordingDao = appDatabase.seriesRecordingDao();
-        recordingDao = appDatabase.recordingDao();
-        programDao = appDatabase.programDao();
-        channelDao = appDatabase.channelDao();
-
-        timerRecordings = timerRecordingDao.loadAllRecordings();
-        seriesRecordings = seriesRecordingDao.loadAllRecordings();
-        completedRecordings = recordingDao.loadAllCompletedRecordings();
-        scheduledRecordings = recordingDao.loadAllScheduledRecordings();
-        failedRecordings = recordingDao.loadAllFailedRecordings();
-        removedRecordings = recordingDao.loadAllRemovedRecordings();
-        programs = programDao.loadAllPrograms();
-        channels = channelDao.loadAllChannels();
-    }
-
-    public LiveData<List<TimerRecording>> getTimerRecordings() {
-        return timerRecordings;
-    }
-
-    public LiveData<List<SeriesRecording>> getSeriesRecordings() {
-        return seriesRecordings;
-    }
-
-    public LiveData<List<Recording>> getCompletedRecordings() {
-        return completedRecordings;
-    }
-
-    public LiveData<List<Recording>> getScheduledRecordings() {
-        return scheduledRecordings;
-    }
-
-    public LiveData<List<Recording>> getFailedRecordings() {
-        return failedRecordings;
-    }
-
-    public LiveData<List<Recording>> getRemovedRecordings() {
-        return removedRecordings;
-    }
-
-    public LiveData<List<Program>> getPrograms() {
-        return programs;
-    }
-
-    public LiveData<List<Channel>> getChannels() {
-        return channels;
-    }
-
-    public LiveData<Program> getProgram(int id) {
-        return programDao.loadProgram(id);
-    }
-
-    public LiveData<Recording> getRecording(int id) {
-        return recordingDao.loadRecording(id);
+    public LiveData<List<TimerRecording>> getAllTimerRecordings() {
+        return db.timerRecordingDao().loadAllRecordings();
     }
 
     public LiveData<TimerRecording> getTimerRecording(String id) {
-        return timerRecordingDao.loadRecording(id);
+        return db.timerRecordingDao().loadRecording(id);
+    }
+
+    public TimerRecording getTimerRecordingSync(String id) {
+        try {
+            return new LoadTimerRecordingTask(db.timerRecordingDao(), id).execute().get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public List<Channel> getAllChannelsSync() {
+        try {
+            return new LoadAllChannelsTask(db.channelDao()).execute().get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public Channel getChannelSync(int id) {
+        try {
+            return new LoadChannelTask(db.channelDao(), id).execute().get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public SeriesRecording getSeriesRecordingSync(String id) {
+        try {
+            return new LoadSeriesRecordingTask(db.seriesRecordingDao(), id).execute().get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public LiveData<SeriesRecording> getSeriesRecording(String id) {
-        return seriesRecordingDao.loadRecording(id);
+        return db.seriesRecordingDao().loadRecording(id);
     }
 
-    public TimerRecording getTimerRecordingFromDatabase(String id) {
+    public LiveData<List<SeriesRecording>> getAllSeriesRecordings() {
+        return db.seriesRecordingDao().loadAllRecordings();
+    }
+
+    public int getHtspVersion() {
+        // TODO
+        return 30;
+    }
+
+    public Recording getRecordingSync(int id) {
         try {
-            return new LoadTimerRecordingAsyncTask(appDatabase).execute(id).get();
+            return new LoadRecordingTask(db.recordingDao(), id).execute().get();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    public SeriesRecording getSeriesRecordingFromDatabase(String id) {
-        try {
-            return new LoadSeriesRecordingAsyncTask(appDatabase).execute(id).get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-        return null;
+    public boolean getIsUnlocked() {
+        // TODO use room database
+        return TVHClientApplication.getInstance().isUnlocked();
     }
 
-    public Program getProgramFromDatabase(int id) {
-        try {
-            return new LoadProgramAsyncTask(appDatabase).execute(id).get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
+    protected static class LoadRecordingTask extends AsyncTask<Void, Void, Recording> {
+        private final RecordingDao dao;
+        private final int id;
 
-    public LiveData<Channel> getChannel(int id) {
-        return channelDao.loadChannel(id);
-    }
-
-    public Channel getChannelFromDatabase(int id) {
-        try {
-            return new LoadChannelAsyncTask(appDatabase).execute(id).get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public void clearTables() {
-        new ClearTablesAsyncTask(appDatabase).execute();
-    }
-
-    private static class ClearTablesAsyncTask extends AsyncTask<Void, Void, Void> {
-        private AppDatabase db;
-
-        ClearTablesAsyncTask(AppDatabase db) {
-            this.db = db;
+        LoadRecordingTask(RecordingDao dao, int id) {
+            this.dao = dao;
+            this.id = id;
         }
 
         @Override
-        protected Void doInBackground(Void... voids) {
-            db.channelDao().deleteAll();
-            db.channelTagDao().deleteAll();
-            db.programDao().deleteAll();
-            db.recordingDao().deleteAll();
-            db.seriesRecordingDao().deleteAll();
-            db.timerRecordingDao().deleteAll();
-            return null;
+        protected Recording doInBackground(Void... voids) {
+            return dao.loadRecordingSync(id);
         }
     }
 
-    private static class LoadTimerRecordingAsyncTask extends AsyncTask<String, Void, TimerRecording> {
-        private AppDatabase db;
+    protected static class LoadTimerRecordingTask extends AsyncTask<Void, Void, TimerRecording> {
+        private final TimerRecordingDao dao;
+        private final String id;
 
-        LoadTimerRecordingAsyncTask(AppDatabase db) {
-            this.db = db;
+        LoadTimerRecordingTask(TimerRecordingDao dao, String id) {
+            this.dao = dao;
+            this.id = id;
         }
 
         @Override
-        protected TimerRecording doInBackground(String... strings) {
-            return db.timerRecordingDao().loadRecordingSync(strings[0]);
+        protected TimerRecording doInBackground(Void... voids) {
+            return dao.loadRecordingSync(id);
         }
     }
 
-    private static class LoadSeriesRecordingAsyncTask extends AsyncTask<String, Void, SeriesRecording> {
-        private AppDatabase db;
+    protected static class LoadSeriesRecordingTask extends AsyncTask<Void, Void, SeriesRecording> {
+        private final SeriesRecordingDao dao;
+        private final String id;
 
-        LoadSeriesRecordingAsyncTask(AppDatabase db) {
-            this.db = db;
+        LoadSeriesRecordingTask(SeriesRecordingDao dao, String id) {
+            this.dao = dao;
+            this.id = id;
         }
 
         @Override
-        protected SeriesRecording doInBackground(String... strings) {
-            return db.seriesRecordingDao().loadRecordingSync(strings[0]);
+        protected SeriesRecording doInBackground(Void... voids) {
+            return dao.loadRecordingSync(id);
         }
     }
 
-    private static class LoadProgramAsyncTask extends AsyncTask<Integer, Void, Program> {
-        private AppDatabase db;
+    protected static class LoadChannelTask extends AsyncTask<Void, Void, Channel> {
+        private final ChannelDao dao;
+        private final int id;
 
-        LoadProgramAsyncTask(AppDatabase db) {
-            this.db = db;
+        LoadChannelTask(ChannelDao dao, int id) {
+            this.dao = dao;
+            this.id = id;
         }
 
         @Override
-        protected Program doInBackground(Integer... integers) {
-            return db.programDao().loadProgramSync(integers[0]);
+        protected Channel doInBackground(Void... voids) {
+            return dao.loadChannelSync(id);
         }
     }
 
-    private static class LoadChannelAsyncTask extends AsyncTask<Integer, Void, Channel> {
-        private AppDatabase db;
+    protected static class LoadAllChannelsTask extends AsyncTask<Void, Void, List<Channel>> {
+        private final ChannelDao dao;
 
-        LoadChannelAsyncTask(AppDatabase db) {
-            this.db = db;
+        LoadAllChannelsTask(ChannelDao dao) {
+            this.dao = dao;
         }
 
         @Override
-        protected Channel doInBackground(Integer... integers) {
-            return db.channelDao().loadChannelSync(integers[0]);
+        protected List<Channel> doInBackground(Void... voids) {
+            return dao.loadAllChannelsSync();
         }
     }
 }

@@ -29,18 +29,18 @@ import android.preference.PreferenceFragment;
 import android.view.Menu;
 import android.view.MenuInflater;
 
+import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.data.Constants;
 import org.tvheadend.tvhclient.data.DataStorage;
 import org.tvheadend.tvhclient.data.DatabaseHelper;
-import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
-import org.tvheadend.tvhclient.service.HTSService;
-import org.tvheadend.tvhclient.ui.common.BackPressedInterface;
-import org.tvheadend.tvhclient.service.HTSListener;
 import org.tvheadend.tvhclient.data.model.Connection;
 import org.tvheadend.tvhclient.data.model.Profile;
 import org.tvheadend.tvhclient.data.model.Profiles;
+import org.tvheadend.tvhclient.service.HTSListener;
+import org.tvheadend.tvhclient.sync.EpgSyncService;
+import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
+import org.tvheadend.tvhclient.ui.common.BackPressedInterface;
 
 import java.util.List;
 
@@ -165,7 +165,7 @@ public class SettingsProfilesFragment extends PreferenceFragment implements OnPr
         recordingProfileEnabledPreference.setEnabled(false);
         recordingProfileListPreference.setEnabled(false);
 
-        final Intent intent = new Intent(activity, HTSService.class);
+        final Intent intent = new Intent(activity, EpgSyncService.class);
         intent.setAction("getDvrConfigs");
         activity.startService(intent);
 
@@ -177,7 +177,7 @@ public class SettingsProfilesFragment extends PreferenceFragment implements OnPr
         playbackProfileEnabledPreference.setEnabled(false);
         playbackProfileListPreference.setEnabled(false);
 
-        Intent intent = new Intent(activity, HTSService.class);
+        Intent intent = new Intent(activity, EpgSyncService.class);
         intent.setAction("getProfiles");
         activity.startService(intent);
     }

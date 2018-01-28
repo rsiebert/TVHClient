@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -31,8 +32,10 @@ import org.tvheadend.tvhclient.ui.settings.SettingsActivity;
 // TODO make nav image blasser
 // TODO icons in dual pane mode
 // TODO show confirmation of added/edited recordings...
+// TODO use one viewmodel for all item counts
 
 public class NavigationActivity extends MainActivity implements WakeOnLanTaskCallback, NavigationDrawerCallback {
+    private String TAG = getClass().getSimpleName();
 
     // Default navigation drawer menu position and the list positions
     private int selectedNavigationMenuId = NavigationDrawer.MENU_UNKNOWN;
@@ -46,8 +49,6 @@ public class NavigationActivity extends MainActivity implements WakeOnLanTaskCal
         navigationDrawer = new NavigationDrawer(this, savedInstanceState, toolbar, this);
         navigationDrawer.createHeader();
         navigationDrawer.createMenu();
-
-        startObservingViewModels();
 
         if (savedInstanceState == null) {
             // When the activity is created it got called by the main activity. Get the initial
@@ -63,6 +64,7 @@ public class NavigationActivity extends MainActivity implements WakeOnLanTaskCal
     }
 
     private void startObservingViewModels() {
+        Log.d("NavigationActivity", "startObservingViewModels() called");
 
         SeriesRecordingViewModel seriesRecordingViewModel = ViewModelProviders.of(this).get(SeriesRecordingViewModel.class);
         seriesRecordingViewModel.getRecordings().observe(this, recordings -> {
@@ -101,7 +103,7 @@ public class NavigationActivity extends MainActivity implements WakeOnLanTaskCal
         });
 
         ChannelViewModel channelViewModel = ViewModelProviders.of(this).get(ChannelViewModel.class);
-        channelViewModel.getChannels().observe(this, channels -> {
+        channelViewModel.getAllChannels().observe(this, channels -> {
             if (channels != null) {
                 navigationDrawer.updateChannelBadge(channels.size());
             }
@@ -116,7 +118,6 @@ public class NavigationActivity extends MainActivity implements WakeOnLanTaskCal
      * @param position Selected position within the menu array
      */
     private void handleDrawerItemSelected(int position) {
-
         Intent intent;
         Fragment fragment = null;
         switch (position) {
@@ -163,7 +164,11 @@ public class NavigationActivity extends MainActivity implements WakeOnLanTaskCal
             // Save the menu position so we know which one was selected
             selectedNavigationMenuId = position;
             fragment.setArguments(getIntent().getExtras());
-            getSupportFragmentManager().beginTransaction().replace(R.id.main, fragment).commit();
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.main, fragment)
+                    .addToBackStack(null)
+                    .commit();
         }
     }
 
@@ -189,13 +194,13 @@ public class NavigationActivity extends MainActivity implements WakeOnLanTaskCal
                 }
                 break;
         }
-
         return true;
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        Log.d(TAG, "onResume() called");
         // Show the defined fragment from the menu position or the
         // status if the connection state is not fine
         handleDrawerItemSelected(selectedNavigationMenuId);
@@ -205,6 +210,8 @@ public class NavigationActivity extends MainActivity implements WakeOnLanTaskCal
         // bought the unlocked version to enable all features
         navigationDrawer.updateDrawerItemBadges();
         navigationDrawer.updateDrawerHeader();
+
+        startObservingViewModels();
     }
 
     @Override

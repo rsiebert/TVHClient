@@ -1,10 +1,11 @@
 package org.tvheadend.tvhclient.ui.misc;
 
-import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -15,12 +16,13 @@ import android.widget.TextView;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
+import org.tvheadend.tvhclient.data.DataRepository;
 import org.tvheadend.tvhclient.data.DataStorage;
 import org.tvheadend.tvhclient.data.DatabaseHelper;
-import org.tvheadend.tvhclient.data.model.Channel;
+import org.tvheadend.tvhclient.data.entity.Channel;
+import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.data.model.Connection;
 import org.tvheadend.tvhclient.data.model.DiscSpace;
-import org.tvheadend.tvhclient.data.model.Recording;
 import org.tvheadend.tvhclient.data.tasks.WakeOnLanTask;
 import org.tvheadend.tvhclient.data.tasks.WakeOnLanTaskCallback;
 import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
@@ -40,7 +42,7 @@ import butterknife.Unbinder;
 
 public class StatusFragment extends Fragment implements WakeOnLanTaskCallback {
 
-    private Activity activity;
+    private AppCompatActivity activity;
 
     // This information is always available
     @BindView(R.id.connection)
@@ -83,9 +85,10 @@ public class StatusFragment extends Fragment implements WakeOnLanTaskCallback {
     private int htspVersion;
     private boolean isUnlocked;
     private MenuUtils menuUtils;
+    private DataRepository repository;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.status_fragment, container, false);
         unbinder = ButterKnife.bind(this, view);
@@ -101,21 +104,22 @@ public class StatusFragment extends Fragment implements WakeOnLanTaskCallback {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        activity = getActivity();
+        activity = (AppCompatActivity) getActivity();
         if (activity instanceof ToolbarInterface) {
             ToolbarInterface toolbarInterface = (ToolbarInterface) activity;
             toolbarInterface.setTitle(getString(R.string.status));
             toolbarInterface.setSubtitle(null);
         }
 
+        repository = new DataRepository(activity);
         menuUtils = new MenuUtils(getActivity());
         databaseHelper = DatabaseHelper.getInstance(activity.getApplicationContext());
-        htspVersion = DataStorage.getInstance().getProtocolVersion();
+        htspVersion = repository.getHtspVersion();
         isUnlocked = TVHClientApplication.getInstance().isUnlocked();
 
         setHasOptionsMenu(true);
 
-        SeriesRecordingViewModel seriesRecordingViewModel = ViewModelProviders.of(this).get(SeriesRecordingViewModel.class);
+        SeriesRecordingViewModel seriesRecordingViewModel = ViewModelProviders.of(activity).get(SeriesRecordingViewModel.class);
         seriesRecordingViewModel.getRecordings().observe(this, recordings -> {
             if (recordings != null) {
                 seriesRecordingsTextView.setText(getResources().getQuantityString(
@@ -123,7 +127,7 @@ public class StatusFragment extends Fragment implements WakeOnLanTaskCallback {
             }
         });
 
-        TimerRecordingViewModel timerRecordingViewModel = ViewModelProviders.of(this).get(TimerRecordingViewModel.class);
+        TimerRecordingViewModel timerRecordingViewModel = ViewModelProviders.of(activity).get(TimerRecordingViewModel.class);
         timerRecordingViewModel.getRecordings().observe(this, recordings -> {
             if (recordings != null) {
                 timerRecordingsTextView.setText(getResources().getQuantityString(
@@ -131,7 +135,7 @@ public class StatusFragment extends Fragment implements WakeOnLanTaskCallback {
             }
         });
 
-        RecordingViewModel recordingViewModel = ViewModelProviders.of(this).get(RecordingViewModel.class);
+        RecordingViewModel recordingViewModel = ViewModelProviders.of(activity).get(RecordingViewModel.class);
         recordingViewModel.getCompletedRecordings().observe(this, recordings -> {
             if (recordings != null) {
                 completedRecordingsTextView.setText(getResources().getQuantityString(
@@ -157,8 +161,8 @@ public class StatusFragment extends Fragment implements WakeOnLanTaskCallback {
             }
         });
 
-        ChannelViewModel channelViewModel = ViewModelProviders.of(this).get(ChannelViewModel.class);
-        channelViewModel.getChannels().observe(this, channels -> {
+        ChannelViewModel channelViewModel = ViewModelProviders.of(activity).get(ChannelViewModel.class);
+        channelViewModel.getChannelsByTime().observe(this, channels -> {
             if (channels != null) {
                 // Show the number of available channelTextView
                 final String text = channels.size() + " " + getString(R.string.available);

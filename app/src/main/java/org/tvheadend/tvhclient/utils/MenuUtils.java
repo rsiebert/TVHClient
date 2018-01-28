@@ -21,23 +21,24 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.data.DataStorage;
 import org.tvheadend.tvhclient.data.DatabaseHelper;
-import org.tvheadend.tvhclient.data.model.ChannelTag;
+import org.tvheadend.tvhclient.data.entity.ChannelTag;
+import org.tvheadend.tvhclient.data.entity.Program;
+import org.tvheadend.tvhclient.data.entity.Recording;
+import org.tvheadend.tvhclient.data.entity.SeriesRecording;
+import org.tvheadend.tvhclient.data.entity.TimerRecording;
 import org.tvheadend.tvhclient.data.model.Connection;
 import org.tvheadend.tvhclient.data.model.GenreColorDialogItem;
 import org.tvheadend.tvhclient.data.model.Profile;
-import org.tvheadend.tvhclient.data.model.Program;
-import org.tvheadend.tvhclient.data.model.Recording;
-import org.tvheadend.tvhclient.data.model.SeriesRecording;
-import org.tvheadend.tvhclient.data.model.TimerRecording;
 import org.tvheadend.tvhclient.data.remote.DownloadActivity;
 import org.tvheadend.tvhclient.data.remote.PlayActivity;
-import org.tvheadend.tvhclient.service.HTSService;
+import org.tvheadend.tvhclient.sync.EpgSyncService;
 import org.tvheadend.tvhclient.ui.common.ChannelTagListAdapter;
 import org.tvheadend.tvhclient.ui.common.GenreColorDialogAdapter;
 import org.tvheadend.tvhclient.ui.search.SearchActivity;
 import org.tvheadend.tvhclient.ui.startup.StartupActivity;
 import org.tvheadend.tvhclient.utils.callbacks.ChannelTagSelectionCallback;
 import org.tvheadend.tvhclient.utils.callbacks.ChannelTimeSelectionCallback;
+import org.tvheadend.tvhclient.utils.callbacks.RecordingRemovedCallback;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
@@ -124,11 +125,7 @@ public class MenuUtils {
 
     }
 
-    /**
-     * @param selectedTagId
-     * @param callback
-     */
-    public void handleMenuTagsSelection(long selectedTagId, ChannelTagSelectionCallback callback) {
+    public void handleMenuTagsSelection(int selectedTagId, ChannelTagSelectionCallback callback) {
         Activity activity = this.activity.get();
         if (activity == null) {
             return;
@@ -173,7 +170,7 @@ public class MenuUtils {
         dialog.show();
     }
 
-    public void handleMenuDownloadSelection(long recId) {
+    public void handleMenuDownloadSelection(int recId) {
         Activity activity = this.activity.get();
         if (activity == null) {
             return;
@@ -197,6 +194,7 @@ public class MenuUtils {
                 intent.setData(Uri.parse("http://www.imdb.org/find?s=tt&q=" + url));
             }
             activity.startActivity(intent);
+            activity.finish();
         } catch (UnsupportedEncodingException e) {
             // NOP
         }
@@ -206,7 +204,7 @@ public class MenuUtils {
         handleMenuSearchEpgSelection(title, 0);
     }
 
-    public void handleMenuSearchEpgSelection(String title, long channelId) {
+    public void handleMenuSearchEpgSelection(String title, int channelId) {
         Activity activity = this.activity.get();
         if (activity == null) {
             return;
@@ -216,15 +214,16 @@ public class MenuUtils {
         intent.putExtra(SearchManager.QUERY, title);
         intent.putExtra("channelId", channelId);
         activity.startActivity(intent);
+        activity.finish();
     }
 
-    public void handleMenuRecordSelection(long eventId) {
+    public void handleMenuRecordSelection(int eventId) {
         Activity activity = this.activity.get();
         if (activity == null) {
             return;
         }
         Log.d(TAG, "handleMenuRecordSelection() called with: eventId = [" + eventId + "]");
-        final Intent intent = new Intent(activity, HTSService.class);
+        final Intent intent = new Intent(activity, EpgSyncService.class);
         intent.setAction("addDvrEntry");
         intent.putExtra("eventId", eventId);
 
@@ -244,7 +243,7 @@ public class MenuUtils {
         if (activity == null) {
             return;
         }
-        final Intent intent = new Intent(activity, HTSService.class);
+        final Intent intent = new Intent(activity, EpgSyncService.class);
         intent.setAction("addAutorecEntry");
         intent.putExtra("title", title);
 
@@ -270,7 +269,7 @@ public class MenuUtils {
         activity.startActivity(intent);
     }
 
-    public void handleMenuStopRecordingSelection(long dvrId, String title) {
+    public void handleMenuStopRecordingSelection(int dvrId, String title) {
         Activity activity = this.activity.get();
         if (activity == null) {
             return;
@@ -282,7 +281,7 @@ public class MenuUtils {
                 .negativeText(R.string.cancel)
                 .positiveText(R.string.stop)
                 .onPositive((dialog, which) -> {
-                    final Intent intent = new Intent(activity, HTSService.class);
+                    final Intent intent = new Intent(activity, EpgSyncService.class);
                     intent.setAction("stopDvrEntry");
                     intent.putExtra("id", dvrId);
                     activity.startService(intent);
@@ -290,7 +289,7 @@ public class MenuUtils {
                 .show();
     }
 
-    public void handleMenuRemoveRecordingSelection(long dvrId, String title) {
+    public void handleMenuRemoveRecordingSelection(int dvrId, String title, RecordingRemovedCallback callback) {
         Log.d(TAG, "handleMenuRemoveRecordingSelection() called with: dvrId = [" + dvrId + "], title = [" + title + "]");
         Activity activity = this.activity.get();
         if (activity == null) {
@@ -304,15 +303,18 @@ public class MenuUtils {
                 .negativeText(R.string.cancel)
                 .positiveText(R.string.remove)
                 .onPositive((dialog, which) -> {
-                    final Intent intent = new Intent(activity, HTSService.class);
+                    final Intent intent = new Intent(activity, EpgSyncService.class);
                     intent.setAction("deleteDvrEntry");
                     intent.putExtra("id", dvrId);
                     activity.startService(intent);
+                    if (callback != null) {
+                        callback.onRecordingRemoved();
+                    }
                 })
                 .show();
     }
 
-    public void handleMenuCancelRecordingSelection(long dvrId, String title) {
+    public void handleMenuCancelRecordingSelection(int dvrId, String title, RecordingRemovedCallback callback) {
         Activity activity = this.activity.get();
         if (activity == null) {
             return;
@@ -324,15 +326,18 @@ public class MenuUtils {
                 .negativeText(R.string.discard)
                 .positiveText(R.string.cancel)
                 .onPositive((dialog, which) -> {
-                    final Intent intent = new Intent(activity, HTSService.class);
+                    final Intent intent = new Intent(activity, EpgSyncService.class);
                     intent.setAction("cancelDvrEntry");
                     intent.putExtra("id", dvrId);
                     activity.startService(intent);
+                    if (callback != null) {
+                        callback.onRecordingRemoved();
+                    }
                 })
                 .show();
     }
 
-    public void handleMenuRemoveSeriesRecordingSelection(String id, String title) {
+    public void handleMenuRemoveSeriesRecordingSelection(String id, String title, RecordingRemovedCallback callback) {
         Activity activity = this.activity.get();
         if (activity == null) {
             return;
@@ -344,15 +349,19 @@ public class MenuUtils {
                 .negativeText(R.string.cancel)
                 .positiveText(R.string.remove)
                 .onPositive((dialog, which) -> {
-                    final Intent intent = new Intent(activity, HTSService.class);
+                    final Intent intent = new Intent(activity, EpgSyncService.class);
                     intent.setAction("deleteAutorecEntry");
                     intent.putExtra("id", id);
                     activity.startService(intent);
+                    if (callback != null) {
+                        callback.onRecordingRemoved();
+                    }
                 })
                 .show();
     }
 
-    public void handleMenuRemoveTimerRecordingSelection(String id, String title) {
+    public void handleMenuRemoveTimerRecordingSelection(String id, String title, RecordingRemovedCallback callback) {
+        Log.d(TAG, "handleMenuRemoveTimerRecordingSelection() called with: id = [" + id + "], title = [" + title + "], callback = [" + callback + "]");
         Activity activity = this.activity.get();
         if (activity == null) {
             return;
@@ -364,10 +373,13 @@ public class MenuUtils {
                 .negativeText(R.string.cancel)
                 .positiveText(R.string.remove)
                 .onPositive((dialog, which) -> {
-                    final Intent intent = new Intent(activity, HTSService.class);
+                    final Intent intent = new Intent(activity, EpgSyncService.class);
                     intent.setAction("deleteTimerecEntry");
                     intent.putExtra("id", id);
                     activity.startService(intent);
+                    if (callback != null) {
+                        callback.onRecordingRemoved();
+                    }
                 })
                 .show();
     }
@@ -388,7 +400,7 @@ public class MenuUtils {
                         new Thread() {
                             public void run() {
                                 for (Recording item : items) {
-                                    final Intent intent = new Intent(activity, HTSService.class);
+                                    final Intent intent = new Intent(activity, EpgSyncService.class);
                                     intent.putExtra("id", item.getId());
                                     if (item.isRecording() || item.isScheduled()) {
                                         intent.setAction("cancelDvrEntry");
@@ -424,7 +436,7 @@ public class MenuUtils {
                         new Thread() {
                             public void run() {
                                 for (SeriesRecording item : items) {
-                                    final Intent intent = new Intent(activity, HTSService.class);
+                                    final Intent intent = new Intent(activity, EpgSyncService.class);
                                     intent.setAction("deleteAutorecEntry");
                                     intent.putExtra("id", item.getId());
                                     activity.startService(intent);
@@ -456,7 +468,7 @@ public class MenuUtils {
                         new Thread() {
                             public void run() {
                                 for (TimerRecording item : items) {
-                                    final Intent intent = new Intent(activity, HTSService.class);
+                                    final Intent intent = new Intent(activity, EpgSyncService.class);
                                     intent.setAction("deleteTimerecEntry");
                                     intent.putExtra("id", item.getId());
                                     activity.startService(intent);
@@ -472,7 +484,7 @@ public class MenuUtils {
                 }).show();
     }
 
-    public void handleMenuCustomRecordSelection(final long eventId, final long channelId) {
+    public void handleMenuCustomRecordSelection(final int eventId, final int channelId) {
         Activity activity = this.activity.get();
         if (activity == null) {
             return;
@@ -509,7 +521,7 @@ public class MenuUtils {
                     @Override
                     public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
                         // Pass over the
-                        Intent intent = new Intent(activity, HTSService.class);
+                        Intent intent = new Intent(activity, EpgSyncService.class);
                         intent.setAction("addDvrEntry");
                         intent.putExtra("eventId", eventId);
                         intent.putExtra("channelId", channelId);
@@ -566,7 +578,7 @@ public class MenuUtils {
                 .positiveText("Reconnect")
                 .onPositive((dialog, which) -> {
 
-                    //Intent intent = new Intent(activity, HTSService.class);
+                    //Intent intent = new Intent(activity, EpgSyncService.class);
                     //intent.setAction("disconnect");
                     //activity.startService(intent);
 

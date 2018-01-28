@@ -17,19 +17,19 @@ import com.google.android.gms.cast.framework.CastSession;
 import com.google.android.gms.cast.framework.media.RemoteMediaClient;
 import com.google.android.gms.common.images.WebImage;
 
+import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.data.Constants;
 import org.tvheadend.tvhclient.data.DataStorage;
 import org.tvheadend.tvhclient.data.DatabaseHelper;
+import org.tvheadend.tvhclient.data.entity.Channel;
+import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.data.local.Logger;
-import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.service.HTSListener;
-import org.tvheadend.tvhclient.service.HTSService;
-import org.tvheadend.tvhclient.data.model.Channel;
 import org.tvheadend.tvhclient.data.model.Connection;
 import org.tvheadend.tvhclient.data.model.HttpTicket;
 import org.tvheadend.tvhclient.data.model.Profile;
-import org.tvheadend.tvhclient.data.model.Recording;
+import org.tvheadend.tvhclient.service.HTSListener;
+import org.tvheadend.tvhclient.sync.EpgSyncService;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
 import java.io.File;
@@ -167,7 +167,7 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
             // No downloaded recording exists, so continue starting the service
             // to loadRecording the url that shall be played. This could either be a
             // channel or a recording.
-            Intent intent = new Intent(PlayActivity.this, HTSService.class);
+            Intent intent = new Intent(PlayActivity.this, EpgSyncService.class);
             intent.setAction("getTicket");
             intent.putExtras(getIntent().getExtras());
             this.startService(intent);

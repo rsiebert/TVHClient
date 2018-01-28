@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.data.model;
+package org.tvheadend.tvhclient.data.entity;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
@@ -10,13 +10,14 @@ public class TimerRecording {
 
     @PrimaryKey
     @NonNull
-    private String id;           // str   required   ID (string!) of dvrTimerecEntry.
+    private String id = "";           // str   required   ID (string!) of dvrTimerecEntry.
     private String title;        // str   required   Title for the recordings.
     private String directory;    // str   optional   Forced directory name (Added in version 19).
     private int enabled;         // u32   required   Title for the recordings.
     private String name;         // str   required   Name for this timerec entry.
     @ColumnInfo(name = "config_name")
     private String configName;   // str   required   DVR Configuration Name / UUID.
+    @ColumnInfo(name = "channel_id")
     private int channelId;         // u32   required   Channel ID.
     @ColumnInfo(name = "days_of_week")
     private int daysOfWeek;      // u32   optional   Bitmask - Days of week (0x01 = Monday, 0x40 = Sunday, 0x7f = Whole Week, 0 = Not set).
@@ -27,11 +28,33 @@ public class TimerRecording {
     private String owner;        // str   optional   Owner of this timerec entry.
     private String creator;      // str   optional   Creator of this timerec entry.
 
+    @ColumnInfo(name = "channel_name")
+    private String channelName;
+    @ColumnInfo(name = "channel_icon")
+    private String channelIcon;
+
+    public String getChannelName() {
+        return channelName;
+    }
+
+    public void setChannelName(String channelName) {
+        this.channelName = channelName;
+    }
+
+    public String getChannelIcon() {
+        return channelIcon;
+    }
+
+    public void setChannelIcon(String channelIcon) {
+        this.channelIcon = channelIcon;
+    }
+
+    @NonNull
     public String getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(@NonNull String id) {
         this.id = id;
     }
 

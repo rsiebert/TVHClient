@@ -14,9 +14,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.data.DataStorage;
-import org.tvheadend.tvhclient.data.model.Channel;
-import org.tvheadend.tvhclient.data.model.TimerRecording;
+import org.tvheadend.tvhclient.data.DataRepository;
+import org.tvheadend.tvhclient.data.entity.TimerRecording;
 import org.tvheadend.tvhclient.ui.common.RecyclerViewClickCallback;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 import org.tvheadend.tvhclient.utils.UIUtils;
@@ -27,7 +26,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class TimerRecordingRecyclerViewAdapter extends RecyclerView.Adapter<TimerRecordingRecyclerViewAdapter.RecyclerViewHolder> {
-    private String TAG = this.getClass().getSimpleName();
 
     private List<TimerRecording> timerRecordingList;
     private RecyclerViewClickCallback clickCallback;
@@ -38,7 +36,7 @@ public class TimerRecordingRecyclerViewAdapter extends RecyclerView.Adapter<Time
 
     TimerRecordingRecyclerViewAdapter(Context context, List<TimerRecording> timerRecordingList, RecyclerViewClickCallback clickCallback) {
         this.context = context;
-        this.htspVersion = DataStorage.getInstance().getProtocolVersion();
+        this.htspVersion = new DataRepository(context).getHtspVersion();
         this.timerRecordingList = timerRecordingList;
         this.clickCallback = clickCallback;
         this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -53,6 +51,7 @@ public class TimerRecordingRecyclerViewAdapter extends RecyclerView.Adapter<Time
     @Override
     public void onBindViewHolder(RecyclerViewHolder holder, int position) {
         TimerRecording recording = timerRecordingList.get(position);
+
         holder.itemView.setTag(recording);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,10 +86,9 @@ public class TimerRecordingRecyclerViewAdapter extends RecyclerView.Adapter<Time
             String title = !TextUtils.isEmpty(recording.getTitle()) ? recording.getTitle() : recording.getName();
             holder.titleTextView.setText(title);
 
-            Channel channel = DataStorage.getInstance().getChannelFromArray(recording.getChannelId());
-            if (channel != null) {
-                holder.channelTextView.setText(channel.getChannelName());
-                Bitmap iconBitmap = MiscUtils.getCachedIcon(context, channel.getChannelIcon());
+            if (recording.getChannelIcon() != null) {
+                holder.channelTextView.setText(recording.getChannelName());
+                Bitmap iconBitmap = MiscUtils.getCachedIcon(context, recording.getChannelIcon());
                 holder.iconImageView.setImageBitmap(iconBitmap);
                 holder.iconImageView.setVisibility(showChannelIcons ? ImageView.VISIBLE : ImageView.GONE);
             } else {

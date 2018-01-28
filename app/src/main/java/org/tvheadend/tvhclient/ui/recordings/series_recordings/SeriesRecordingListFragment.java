@@ -2,14 +2,10 @@ package org.tvheadend.tvhclient.ui.recordings.series_recordings;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -23,28 +19,22 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.data.model.SeriesRecording;
-import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
+import org.tvheadend.tvhclient.data.entity.SeriesRecording;
+import org.tvheadend.tvhclient.ui.base.BaseFragment;
 import org.tvheadend.tvhclient.ui.common.RecyclerViewClickCallback;
 import org.tvheadend.tvhclient.ui.recordings.common.RecordingAddEditActivity;
 import org.tvheadend.tvhclient.ui.recordings.recordings.RecordingDetailsActivity;
-import org.tvheadend.tvhclient.utils.MenuUtils;
 
 import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class SeriesRecordingListFragment extends Fragment implements RecyclerViewClickCallback {
+// TODO start and end time not correct (gmt offset?)
 
-    private AppCompatActivity activity;
-    private ToolbarInterface toolbarInterface;
+public class SeriesRecordingListFragment extends BaseFragment implements RecyclerViewClickCallback {
+
     private SeriesRecordingRecyclerViewAdapter recyclerViewAdapter;
     private RecyclerView recyclerView;
-    private boolean isDualPane;
-    private MenuUtils menuUtils;
-    private boolean isUnlocked;
     protected int selectedListPosition;
-    private SharedPreferences sharedPreferences;
 
     @Nullable
     @Override
@@ -59,24 +49,11 @@ public class SeriesRecordingListFragment extends Fragment implements RecyclerVie
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        activity = (AppCompatActivity) getActivity();
-        if (activity instanceof ToolbarInterface) {
-            toolbarInterface = (ToolbarInterface) activity;
-            toolbarInterface.setTitle(getString(R.string.series_recordings));
-        }
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        menuUtils = new MenuUtils(getActivity());
-        isUnlocked = TVHClientApplication.getInstance().isUnlocked();
-
-        // Check to see if we have a frame in which to embed the details
-        // fragment directly in the containing UI.
-        View detailsFrame = getActivity().findViewById(R.id.right_fragment);
-        isDualPane = detailsFrame != null && detailsFrame.getVisibility() == View.VISIBLE;
+        toolbarInterface.setTitle(getString(R.string.series_recordings));
 
         if (savedInstanceState != null) {
             selectedListPosition = savedInstanceState.getInt("list_position", 0);
         }
-        setHasOptionsMenu(true);
 
         recyclerViewAdapter = new SeriesRecordingRecyclerViewAdapter(getContext(), new ArrayList<>(), this);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -84,7 +61,7 @@ public class SeriesRecordingListFragment extends Fragment implements RecyclerVie
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(recyclerViewAdapter);
 
-        SeriesRecordingViewModel viewModel = ViewModelProviders.of(this).get(SeriesRecordingViewModel.class);
+        SeriesRecordingViewModel viewModel = ViewModelProviders.of(activity).get(SeriesRecordingViewModel.class);
         viewModel.getRecordings().observe(this, recordings -> {
             recyclerViewAdapter.addItems(recordings);
             toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.recordings, recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
@@ -187,7 +164,7 @@ public class SeriesRecordingListFragment extends Fragment implements RecyclerVie
                     menuUtils.handleMenuSearchEpgSelection(seriesRecording.getTitle());
                     return true;
                 case R.id.menu_record_remove:
-                    menuUtils.handleMenuRemoveSeriesRecordingSelection(seriesRecording.getId(), seriesRecording.getTitle());
+                    menuUtils.handleMenuRemoveSeriesRecordingSelection(seriesRecording.getId(), seriesRecording.getTitle(), null);
                     return true;
                 default:
                     return false;

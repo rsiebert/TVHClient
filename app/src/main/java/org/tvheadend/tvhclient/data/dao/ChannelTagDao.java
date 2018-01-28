@@ -8,7 +8,7 @@ import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
 
-import org.tvheadend.tvhclient.data.model.ChannelTag;
+import org.tvheadend.tvhclient.data.entity.ChannelTag;
 
 import java.util.List;
 
@@ -17,9 +17,6 @@ public interface ChannelTagDao {
 
     @Query("SELECT * FROM channel_tags")
     LiveData<List<ChannelTag>> loadAllChannelTags();
-
-    @Query("SELECT * FROM channel_tags WHERE id = :id")
-    LiveData<ChannelTag> loadChannelTag(int id);
 
     @Query("SELECT * FROM channel_tags WHERE id = :id")
     ChannelTag loadChannelTagSync(int id);

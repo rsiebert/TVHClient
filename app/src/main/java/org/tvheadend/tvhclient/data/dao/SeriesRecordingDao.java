@@ -8,20 +8,26 @@ import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
 
-import org.tvheadend.tvhclient.data.model.SeriesRecording;
+import org.tvheadend.tvhclient.data.entity.SeriesRecording;
 
 import java.util.List;
 
 @Dao
 public interface SeriesRecordingDao {
 
-    @Query("SELECT * FROM series_recordings")
+    String query = "SELECT rec.*, " +
+            "c.channel_name AS channel_name, " +
+            "c.channel_icon AS channel_icon " +
+            "FROM series_recordings AS rec " +
+            "LEFT JOIN channels AS c ON  c.id = rec.channel_id ";
+
+    @Query(query)
     LiveData<List<SeriesRecording>> loadAllRecordings();
 
-    @Query("SELECT * FROM series_recordings WHERE id = :id")
+    @Query(query + "WHERE rec.id = :id")
     LiveData<SeriesRecording> loadRecording(String id);
 
-    @Query("SELECT * FROM series_recordings WHERE id = :id")
+    @Query(query + "WHERE rec.id = :id")
     SeriesRecording loadRecordingSync(String id);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -35,6 +41,9 @@ public interface SeriesRecordingDao {
 
     @Delete
     void delete(SeriesRecording recording);
+
+    @Query("DELETE FROM series_recordings WHERE id = :id")
+    void deleteById(String id);
 
     @Query("DELETE FROM series_recordings")
     void deleteAll();

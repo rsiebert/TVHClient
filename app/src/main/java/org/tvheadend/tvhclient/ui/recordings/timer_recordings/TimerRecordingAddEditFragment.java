@@ -1,6 +1,5 @@
 package org.tvheadend.tvhclient.ui.recordings.timer_recordings;
 
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -22,11 +21,9 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.data.model.Channel;
-import org.tvheadend.tvhclient.data.model.TimerRecording;
-import org.tvheadend.tvhclient.service.HTSListener;
-import org.tvheadend.tvhclient.service.HTSService;
+import org.tvheadend.tvhclient.data.entity.Channel;
+import org.tvheadend.tvhclient.data.entity.TimerRecording;
+import org.tvheadend.tvhclient.sync.EpgSyncService;
 import org.tvheadend.tvhclient.ui.common.BackPressedInterface;
 import org.tvheadend.tvhclient.ui.recordings.base.BaseRecordingAddEditFragment;
 import org.tvheadend.tvhclient.ui.recordings.common.DateTimePickerCallback;
@@ -41,7 +38,11 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-public class TimerRecordingAddEditFragment extends BaseRecordingAddEditFragment implements BackPressedInterface, HTSListener, ChannelListSelectionCallback, RecordingPriorityListCallback, RecordingProfileListCallback, DateTimePickerCallback, DaysOfWeekSelectionCallback {
+// TODO use contraintlayout
+// TODO replace savedinstance bundle with viewmodel
+// TODO use default recording from viewmodel when no id is available
+
+public class TimerRecordingAddEditFragment extends BaseRecordingAddEditFragment implements BackPressedInterface, ChannelListSelectionCallback, RecordingPriorityListCallback, RecordingProfileListCallback, DateTimePickerCallback, DaysOfWeekSelectionCallback {
     private String TAG = getClass().getSimpleName();
 
     @BindView(R.id.is_enabled)
@@ -106,22 +107,19 @@ public class TimerRecordingAddEditFragment extends BaseRecordingAddEditFragment 
         if (savedInstanceState == null) {
             // Get the values from the recording otherwise use default values
             if (!TextUtils.isEmpty(id)) {
-                TimerRecordingViewModel viewModel = ViewModelProviders.of(this).get(TimerRecordingViewModel.class);
-                viewModel.getRecording(id).observe(this, recording -> {
-                    if (recording != null) {
-                        priority = recording.getPriority();
-                        startTime = recording.getStart();
-                        stopTime = recording.getStop();
-                        daysOfWeek = recording.getDaysOfWeek();
-                        directory = recording.getDirectory();
-                        title = recording.getTitle();
-                        name = recording.getName();
-                        isEnabled = (recording.getEnabled() > 0);
-                        channelId = recording.getChannelId();
-                    }
-                    viewModel.getRecording(id).removeObservers(this);
-                    updateUI();
-                });
+                TimerRecording recording = repository.getTimerRecordingSync(id);
+                if (recording != null) {
+                    priority = recording.getPriority();
+                    startTime = recording.getStart();
+                    stopTime = recording.getStop();
+                    daysOfWeek = recording.getDaysOfWeek();
+                    directory = recording.getDirectory();
+                    title = recording.getTitle();
+                    name = recording.getName();
+                    isEnabled = (recording.getEnabled() > 0);
+                    channelId = recording.getChannelId();
+                }
+                updateUI();
             } else {
                 priority = 2;
                 Calendar calendar = Calendar.getInstance();
@@ -179,7 +177,7 @@ public class TimerRecordingAddEditFragment extends BaseRecordingAddEditFragment 
         directoryEditText.setVisibility(htspVersion >= 19 ? View.VISIBLE : View.GONE);
         directoryEditText.setText(directory);
 
-        Channel channel = dataStorage.getChannelFromArray(channelId);
+        Channel channel = repository.getChannelSync(channelId);
         channelNameTextView.setText(channel != null ? channel.getChannelName() : getString(R.string.all_channels));
         channelNameTextView.setOnClickListener(view -> {
             // Determine if the server supports recording on all channels
@@ -213,8 +211,6 @@ public class TimerRecordingAddEditFragment extends BaseRecordingAddEditFragment 
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
-        Log.d(TAG, "onSaveInstanceState() called with: outState = [" + outState + "]");
-
         saveWidgetValuesIntoVariables();
         outState.putBoolean("isEnabled", isEnabled);
         outState.putString("title", title);
@@ -252,18 +248,6 @@ public class TimerRecordingAddEditFragment extends BaseRecordingAddEditFragment 
         }
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        TVHClientApplication.getInstance().addListener(this);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        TVHClientApplication.getInstance().removeListener(this);
-    }
-
     private void saveWidgetValuesIntoVariables() {
         directory = directoryEditText.getText().toString();
         title = titleEditText.getText().toString();
@@ -272,6 +256,7 @@ public class TimerRecordingAddEditFragment extends BaseRecordingAddEditFragment 
     }
 
     private void save() {
+        Log.d(TAG, "save() called");
         saveWidgetValuesIntoVariables();
 
         if (TextUtils.isEmpty(title)) {
@@ -308,26 +293,13 @@ public class TimerRecordingAddEditFragment extends BaseRecordingAddEditFragment 
                 .show();
     }
 
-    @Override
-    public void onMessage(String action, Object obj) {
-        if (action.equals("timerecEntryDelete")) {
-            activity.runOnUiThread(new Runnable() {
-                public void run() {
-                    TimerRecording timerRecording = (TimerRecording) obj;
-                    if (timerRecording.getId().equals(id)) {
-                        addTimerRecording();
-                    }
-                }
-            });
-        }
-    }
-
     /**
      * Adds a new timer recording with the given values. This method is also
      * called when a recording is being edited. It adds a recording with edited
      * values which was previously removed.
      */
     private void addTimerRecording() {
+        Log.d(TAG, "addTimerRecording() called");
         Intent intent = getIntentData();
         intent.setAction("addTimerecEntry");
         activity.startService(intent);
@@ -338,35 +310,27 @@ public class TimerRecordingAddEditFragment extends BaseRecordingAddEditFragment 
      * Updates the timer recording with the given values.
      * If the API version supports it, use the native service call method
      * otherwise the old recording is removed and a new one with the
-     * edited values is added afterwards
+     * edited values is added afterwards. This is done in the service
      */
     private void updateTimerRecording() {
-        if (htspVersion >= 25) {
-            // If the API version supports it, use the native service call method
-            Intent intent = getIntentData();
-            intent.setAction("updateTimerecEntry");
-            intent.putExtra("id", id);
-            activity.startService(intent);
-            activity.finish();
-        } else {
-            // TODO move the update logic into the service
-            Intent intent = new Intent(activity, HTSService.class);
-            intent.setAction("deleteTimerecEntry");
-            intent.putExtra("id", id);
-            activity.startService(intent);
-        }
+        Log.d(TAG, "updateTimerRecording() called");
+        Intent intent = getIntentData();
+        intent.setAction("updateTimerecEntry");
+        intent.putExtra("id", id);
+        activity.startService(intent);
+        activity.finish();
     }
 
     /**
      * Returns an intent with the recording data
      */
     private Intent getIntentData() {
-        Intent intent = new Intent(activity, HTSService.class);
+        Intent intent = new Intent(activity, EpgSyncService.class);
         intent.putExtra("directory", directory);
         intent.putExtra("title", title);
         intent.putExtra("name", name);
-        intent.putExtra("start", startTime);
-        intent.putExtra("stop", stopTime);
+        intent.putExtra("start", getMinutesFromTimeInMillis(startTime));
+        intent.putExtra("stop", getMinutesFromTimeInMillis(stopTime));
         intent.putExtra("daysOfWeek", daysOfWeek);
         intent.putExtra("priority", priority);
         intent.putExtra("enabled", (isEnabled ? 1 : 0));
@@ -389,7 +353,7 @@ public class TimerRecordingAddEditFragment extends BaseRecordingAddEditFragment 
     public void onChannelIdSelected(int which) {
         if (which > 0) {
             channelId = which;
-            Channel channel = dataStorage.getChannelFromArray(which);
+            Channel channel = repository.getChannelSync(channelId);
             channelNameTextView.setText(channel.getChannelName());
         } else {
             channelNameTextView.setText(R.string.all_channels);

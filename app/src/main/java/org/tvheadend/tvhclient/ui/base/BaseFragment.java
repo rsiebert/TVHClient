@@ -1,29 +1,45 @@
 package org.tvheadend.tvhclient.ui.base;
 
-import android.app.Activity;
-import android.app.Fragment;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.data.DataRepository;
+import org.tvheadend.tvhclient.utils.MenuUtils;
 
 public class BaseFragment extends Fragment {
 
-
-    protected Activity activity;
+    protected AppCompatActivity activity;
     protected ToolbarInterface toolbarInterface;
     protected boolean isDualPane;
+    protected DataRepository repository;
+    protected int htspVersion;
+    protected SharedPreferences sharedPreferences;
+    protected MenuUtils menuUtils;
+    protected boolean isUnlocked;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        activity = getActivity();
+
+        activity = (AppCompatActivity) getActivity();
         if (activity instanceof ToolbarInterface) {
             toolbarInterface = (ToolbarInterface) activity;
         }
+
+        repository = new DataRepository(getActivity());
+        htspVersion = new DataRepository(activity).getHtspVersion();
+        isUnlocked = new DataRepository(activity).getIsUnlocked();
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity);
+        menuUtils = new MenuUtils(activity);
+
         // Check to see if we have a frame in which to embed the details
         // fragment directly in the containing UI.
-        View detailsFrame = getActivity().findViewById(R.id.right_fragment);
+        View detailsFrame = activity.findViewById(R.id.right_fragment);
         isDualPane = detailsFrame != null && detailsFrame.getVisibility() == View.VISIBLE;
         setHasOptionsMenu(true);
     }

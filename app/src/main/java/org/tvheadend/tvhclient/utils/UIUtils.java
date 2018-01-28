@@ -11,8 +11,8 @@ import android.util.SparseArray;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.DataStorage;
-import org.tvheadend.tvhclient.data.model.Program;
-import org.tvheadend.tvhclient.data.model.Recording;
+import org.tvheadend.tvhclient.data.entity.Program;
+import org.tvheadend.tvhclient.data.entity.Recording;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

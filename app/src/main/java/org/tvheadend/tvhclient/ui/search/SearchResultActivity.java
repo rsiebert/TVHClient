@@ -45,12 +45,12 @@ import android.widget.ListView;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.data.DataStorage;
+import org.tvheadend.tvhclient.data.entity.Channel;
+import org.tvheadend.tvhclient.data.entity.Program;
+import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.data.local.SuggestionProvider;
-import org.tvheadend.tvhclient.data.model.Channel;
-import org.tvheadend.tvhclient.data.model.Program;
-import org.tvheadend.tvhclient.data.model.Recording;
 import org.tvheadend.tvhclient.service.HTSListener;
-import org.tvheadend.tvhclient.service.HTSService;
+import org.tvheadend.tvhclient.sync.EpgSyncService;
 import org.tvheadend.tvhclient.ui.recordings.recordings.RecordingDetailsActivity;
 import org.tvheadend.tvhclient.utils.MenuUtils;
 import org.tvheadend.tvhclient.utils.MiscUtils;
@@ -273,7 +273,7 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
         // available already and not only the ones that would be been loaded if
         // the query would have been passed to the server.
         //if (recording == null) {
-        intent = new Intent(this, HTSService.class);
+        intent = new Intent(this, EpgSyncService.class);
         intent.setAction("epgQuery");
         intent.putExtra("query", query);
         if (channel != null) {
@@ -372,9 +372,9 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
                     if (rec.isRecording()) {
                         menuUtils.handleMenuStopRecordingSelection(rec.getId(), rec.getTitle());
                     } else if (rec.isScheduled()) {
-                        menuUtils.handleMenuCancelRecordingSelection(rec.getId(), rec.getTitle());
+                        menuUtils.handleMenuCancelRecordingSelection(rec.getId(), rec.getTitle(), null);
                     } else {
-                        menuUtils.handleMenuRemoveRecordingSelection(rec.getId(), rec.getTitle());
+                        menuUtils.handleMenuRemoveRecordingSelection(rec.getId(), rec.getTitle(), null);
                     }
                 }
             /*
@@ -576,6 +576,6 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
     public void onBackPressed() {
         super.onBackPressed();
         // Stop the service to stop loading any EPG data.
-        stopService(new Intent(this, HTSService.class));
+        stopService(new Intent(this, EpgSyncService.class));
     }
 }

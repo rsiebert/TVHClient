@@ -118,7 +118,7 @@ public class SettingsListConnectionsFragment extends ListFragment implements Bac
 
     private void setConnectionStatus(Connection c, boolean active) {
         // Stop the service
-        Intent intent = new Intent(getActivity(), HTSService.class);
+        Intent intent = new Intent(getActivity(), EpgSyncService.class);
         getActivity().stopService(intent);
         // Set the new connection to active
         c.selected = active;

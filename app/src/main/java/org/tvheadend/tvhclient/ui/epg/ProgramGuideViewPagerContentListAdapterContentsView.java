@@ -22,9 +22,9 @@ import android.widget.TextView;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.DataStorage;
-import org.tvheadend.tvhclient.data.model.Channel;
-import org.tvheadend.tvhclient.data.model.Program;
-import org.tvheadend.tvhclient.ui.recordings.recordings.RecordingDetailsActivity;
+import org.tvheadend.tvhclient.data.entity.Channel;
+import org.tvheadend.tvhclient.data.entity.Program;
+import org.tvheadend.tvhclient.ui.programs.ProgramDetailsActivity;
 import org.tvheadend.tvhclient.utils.UIUtils;
 
 import java.util.Iterator;
@@ -428,7 +428,7 @@ public class ProgramGuideViewPagerContentListAdapterContentsView extends LinearL
                     // all program in the current channel until we find the one.
                     int id = (int) v.getTag();
                     Program program = DataStorage.getInstance().getProgramFromArray(id);
-                    Intent intent = new Intent(activity, RecordingDetailsActivity.class);
+                    Intent intent = new Intent(activity, ProgramDetailsActivity.class);
                     intent.putExtra("eventId", program.getEventId());
                     intent.putExtra("type", "program");
                     activity.startActivity(intent);

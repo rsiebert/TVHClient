@@ -1,7 +1,10 @@
 package org.tvheadend.tvhclient.ui;
 
 import android.app.SearchManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -9,6 +12,7 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
@@ -29,8 +33,6 @@ import com.google.android.gms.cast.framework.SessionManagerListener;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.data.Constants;
-import org.tvheadend.tvhclient.service.HTSListener;
 import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
 import org.tvheadend.tvhclient.ui.search.SearchRequestInterface;
 import org.tvheadend.tvhclient.utils.MenuUtils;
@@ -38,7 +40,7 @@ import org.tvheadend.tvhclient.utils.MiscUtils;
 
 // TODO casting stuff
 
-public class MainActivity extends AppCompatActivity implements HTSListener, SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, ToolbarInterface {
+public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, ToolbarInterface {
 
     protected MenuUtils menuUtils;
     private MenuItem searchMenuItem;
@@ -56,14 +58,6 @@ public class MainActivity extends AppCompatActivity implements HTSListener, Sear
     private IntroductoryOverlay introductoryOverlay;
     private CastContext castContext;
     private CastStateListener castStateListener;
-
-    @Override
-    public void onMessage(String action, Object obj) {
-        switch (action) {
-            case Constants.ACTION_SHOW_MESSAGE:
-                Snackbar.make(getCurrentFocus(), (String) obj, Snackbar.LENGTH_SHORT).show();
-        }
-    }
 
     private class MySessionManagerListener implements SessionManagerListener<CastSession> {
 
@@ -112,6 +106,17 @@ public class MainActivity extends AppCompatActivity implements HTSListener, Sear
         }
     }
 
+    private BroadcastReceiver messageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.hasExtra("message")) {
+                if (getCurrentFocus() != null) {
+                    Snackbar.make(getCurrentFocus(), intent.getStringExtra("message"), Snackbar.LENGTH_SHORT).show();
+                }
+            }
+        }
+    };
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         setTheme(MiscUtils.getThemeId(this));
@@ -129,8 +134,6 @@ public class MainActivity extends AppCompatActivity implements HTSListener, Sear
             }
         };
 
-        // Check if dual pane mode shall be activated (two fragments at the same
-        // time). This is usually available on tablets
         View v = findViewById(R.id.right_fragment);
         isDualPane = v != null && v.getVisibility() == View.VISIBLE;
 
@@ -165,7 +168,6 @@ public class MainActivity extends AppCompatActivity implements HTSListener, Sear
             castSession = CastContext.getSharedInstance(this).getSessionManager().getCurrentCastSession();
         }
         super.onResume();
-        TVHClientApplication.getInstance().addListener(this);
     }
 
     @Override
@@ -173,7 +175,20 @@ public class MainActivity extends AppCompatActivity implements HTSListener, Sear
         castContext.removeCastStateListener(castStateListener);
         castContext.getSessionManager().removeSessionManagerListener(mSessionManagerListener, CastSession.class);
         super.onPause();
-        TVHClientApplication.getInstance().removeListener(this);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("message");
+        LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, intentFilter);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(messageReceiver);
     }
 
     @Override

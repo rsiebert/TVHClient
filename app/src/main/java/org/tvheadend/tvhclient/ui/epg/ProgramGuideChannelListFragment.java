@@ -14,10 +14,7 @@ import android.widget.ListView;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.data.DataStorage;
-import org.tvheadend.tvhclient.data.DatabaseHelper;
-import org.tvheadend.tvhclient.data.model.Channel;
-import org.tvheadend.tvhclient.data.model.ChannelTag;
-import org.tvheadend.tvhclient.data.model.Connection;
+import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.service.HTSListener;
 import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
 import org.tvheadend.tvhclient.utils.Utils;
@@ -68,7 +65,7 @@ public class ProgramGuideChannelListFragment extends ListFragment implements HTS
         TVHClientApplication.getInstance().addListener(this);
 
         if (!DataStorage.getInstance().isLoading()) {
-            populateList();
+            //populateList();
         }
     }
 
@@ -82,6 +79,7 @@ public class ProgramGuideChannelListFragment extends ListFragment implements HTS
      * Fills the adapter with the available channel data. Only those channels
      * will be added to the adapter that contain the selected channel tag.
      */
+    /*
     private void populateList() {
         ChannelTag currentTag = null;
         Connection connection = DatabaseHelper.getInstance(getActivity().getApplicationContext()).getSelectedConnection();
@@ -102,7 +100,7 @@ public class ProgramGuideChannelListFragment extends ListFragment implements HTS
         toolbarInterface.setTitle(getString(R.string.pref_program_guide));
         toolbarInterface.setSubtitle((currentTag == null) ? getString(R.string.all_channels) : currentTag.getTagName());
     }
-
+*/
     @Override
     public void onMessage(String action, final Object obj) {
         switch (action) {
@@ -161,7 +159,7 @@ public class ProgramGuideChannelListFragment extends ListFragment implements HTS
 
     @Override
     public void reloadData() {
-        populateList();
+        //populateList();
     }
 
     @Override

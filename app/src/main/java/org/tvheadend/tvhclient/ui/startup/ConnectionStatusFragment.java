@@ -22,6 +22,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
+// TODO reconnect status not shown
+
 public class ConnectionStatusFragment extends Fragment {
 
     @BindView(R.id.status_text)

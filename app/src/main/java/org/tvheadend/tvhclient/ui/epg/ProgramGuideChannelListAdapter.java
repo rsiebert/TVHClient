@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 import org.tvheadend.tvhclient.data.Constants;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.data.model.Channel;
+import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.utils.MenuUtils;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 

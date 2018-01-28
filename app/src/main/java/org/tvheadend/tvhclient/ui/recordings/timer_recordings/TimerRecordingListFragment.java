@@ -2,14 +2,10 @@ package org.tvheadend.tvhclient.ui.recordings.timer_recordings;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -23,28 +19,22 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.data.model.TimerRecording;
-import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
+import org.tvheadend.tvhclient.data.entity.TimerRecording;
+import org.tvheadend.tvhclient.ui.base.BaseFragment;
 import org.tvheadend.tvhclient.ui.common.RecyclerViewClickCallback;
 import org.tvheadend.tvhclient.ui.recordings.common.RecordingAddEditActivity;
 import org.tvheadend.tvhclient.ui.recordings.recordings.RecordingDetailsActivity;
-import org.tvheadend.tvhclient.utils.MenuUtils;
 
 import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-// TODO start and end time no correct (gmt offset?)
+// TODO start and end time not correct (gmt offset?)
 
-public class TimerRecordingListFragment extends Fragment implements RecyclerViewClickCallback {
+public class TimerRecordingListFragment extends BaseFragment implements RecyclerViewClickCallback {
 
-    private AppCompatActivity activity;
-    private ToolbarInterface toolbarInterface;
     private TimerRecordingRecyclerViewAdapter recyclerViewAdapter;
     private RecyclerView recyclerView;
-    private boolean isDualPane;
-    private MenuUtils menuUtils;
     protected int selectedListPosition;
-    private SharedPreferences sharedPreferences;
 
     @Nullable
     @Override
@@ -59,33 +49,20 @@ public class TimerRecordingListFragment extends Fragment implements RecyclerView
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        activity = (AppCompatActivity) getActivity();
-        if (activity instanceof ToolbarInterface) {
-            toolbarInterface = (ToolbarInterface) activity;
-            toolbarInterface.setTitle(getString(R.string.timer_recordings));
-        }
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity);
-        menuUtils = new MenuUtils(activity);
-
-        // Check to see if we have a frame in which to embed the details
-        // fragment directly in the containing UI.
-        View detailsFrame = activity.findViewById(R.id.right_fragment);
-        isDualPane = detailsFrame != null && detailsFrame.getVisibility() == View.VISIBLE;
+        toolbarInterface.setTitle(getString(R.string.timer_recordings));
 
         if (savedInstanceState != null) {
             selectedListPosition = savedInstanceState.getInt("list_position", 0);
         }
 
-        setHasOptionsMenu(true);
-
-        recyclerViewAdapter = new TimerRecordingRecyclerViewAdapter(getContext(), new ArrayList<>(), this);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
+        recyclerViewAdapter = new TimerRecordingRecyclerViewAdapter(activity, new ArrayList<>(), this);
+        recyclerView.setLayoutManager(new LinearLayoutManager(activity));
+        recyclerView.addItemDecoration(new DividerItemDecoration(activity, LinearLayoutManager.VERTICAL));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(recyclerViewAdapter);
 
-        TimerRecordingViewModel viewModel = ViewModelProviders.of(this).get(TimerRecordingViewModel.class);
-        viewModel.getRecordings().observe(this, recordings -> {
+        TimerRecordingViewModel viewModel = ViewModelProviders.of(activity).get(TimerRecordingViewModel.class);
+        viewModel.getRecordings().observe(activity, recordings -> {
             recyclerViewAdapter.addItems(recordings);
             toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.recordings, recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
 
@@ -189,7 +166,7 @@ public class TimerRecordingListFragment extends Fragment implements RecyclerView
                 case R.id.menu_record_remove:
                     final String name = (timerRecording.getName() != null && timerRecording.getName().length() > 0) ? timerRecording.getName() : "";
                     final String title = timerRecording.getTitle() != null ? timerRecording.getTitle() : "";
-                    menuUtils.handleMenuRemoveTimerRecordingSelection(timerRecording.getId(), (name.length() > 0 ? name : title));
+                    menuUtils.handleMenuRemoveTimerRecordingSelection(timerRecording.getId(), (name.length() > 0 ? name : title), null);
                     return true;
                 default:
                     return false;

@@ -5,14 +5,14 @@ import android.preference.PreferenceManager;
 
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.data.local.NotificationHandler;
-import org.tvheadend.tvhclient.data.model.Channel;
-import org.tvheadend.tvhclient.data.model.ChannelTag;
+import org.tvheadend.tvhclient.data.entity.Channel;
+import org.tvheadend.tvhclient.data.entity.ChannelTag;
 import org.tvheadend.tvhclient.data.model.DiscSpace;
 import org.tvheadend.tvhclient.data.model.HttpTicket;
 import org.tvheadend.tvhclient.data.model.Packet;
 import org.tvheadend.tvhclient.data.model.Profiles;
-import org.tvheadend.tvhclient.data.model.Program;
-import org.tvheadend.tvhclient.data.model.Recording;
+import org.tvheadend.tvhclient.data.entity.Program;
+import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.data.model.Subscription;
 import org.tvheadend.tvhclient.data.model.SystemTime;
 

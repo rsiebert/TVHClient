@@ -13,8 +13,8 @@ import android.widget.LinearLayout;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.Constants;
 import org.tvheadend.tvhclient.data.DataStorage;
-import org.tvheadend.tvhclient.data.model.Channel;
-import org.tvheadend.tvhclient.data.model.Program;
+import org.tvheadend.tvhclient.data.entity.Channel;
+import org.tvheadend.tvhclient.data.entity.Program;
 
 import java.util.ArrayList;
 import java.util.Comparator;

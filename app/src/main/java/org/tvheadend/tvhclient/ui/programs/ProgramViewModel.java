@@ -4,31 +4,27 @@ import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 
-import org.tvheadend.tvhclient.data.DataRepository;
-import org.tvheadend.tvhclient.data.model.Program;
+import org.tvheadend.tvhclient.data.AppDatabase;
+import org.tvheadend.tvhclient.data.dao.ProgramDao;
+import org.tvheadend.tvhclient.data.entity.ProgramWithRecordingsAndChannels;
 
 import java.util.List;
 
 public class ProgramViewModel extends AndroidViewModel {
 
-    private final DataRepository repository;
-    private LiveData<List<Program>> programs;
+    private final ProgramDao dao;
 
     public ProgramViewModel(Application application) {
         super(application);
-        repository = DataRepository.getInstance(application);
-        programs = repository.getPrograms();
+        AppDatabase db = AppDatabase.getInstance(application.getApplicationContext());
+        dao = db.programDao();
     }
 
-    public LiveData<List<Program>> getPrograms() {
-        return programs;
+    LiveData<List<ProgramWithRecordingsAndChannels>> getPrograms(int channelId, long time) {
+        return dao.loadProgramsByChannel(channelId, time);
     }
 
-    public LiveData<Program> getProgram(int id) {
-        return repository.getProgram(id);
-    }
-
-    public Program getProgramSync(int id) {
-        return repository.getProgramFromDatabase(id);
+    LiveData<ProgramWithRecordingsAndChannels> getProgram(int id) {
+        return dao.loadProgram(id);
     }
 }

@@ -6,23 +6,26 @@ import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
+import android.arch.persistence.room.Transaction;
 import android.arch.persistence.room.Update;
 
-import org.tvheadend.tvhclient.data.model.Program;
+import org.tvheadend.tvhclient.data.entity.Program;
+import org.tvheadend.tvhclient.data.entity.ProgramWithRecordingsAndChannels;
 
 import java.util.List;
 
 @Dao
 public interface ProgramDao {
 
-    @Query("SELECT * FROM programs")
-    LiveData<List<Program>> loadAllPrograms();
+    @Transaction
+    @Query("SELECT * FROM programs " +
+            "WHERE channel_id = :channelId AND ((start >= :time) OR (start <= :time AND stop >= :time)) " +
+            "ORDER BY start ASC")
+    LiveData<List<ProgramWithRecordingsAndChannels>> loadProgramsByChannel(int channelId, long time);
 
+    @Transaction
     @Query("SELECT * FROM programs WHERE id = :id")
-    LiveData<Program> loadProgram(int id);
-
-    @Query("SELECT * FROM programs WHERE id = :id")
-    Program loadProgramSync(int id);
+    LiveData<ProgramWithRecordingsAndChannels> loadProgram(int id);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAll(List<Program> programs);
@@ -31,10 +34,13 @@ public interface ProgramDao {
     void insert(Program program);
 
     @Update
-    void update(Program... programs);
+    void update(Program... program);
 
     @Delete
     void delete(Program program);
+
+    @Query("DELETE FROM programs WHERE id = :id")
+    void deleteById(int id);
 
     @Query("DELETE FROM programs")
     void deleteAll();

@@ -1,15 +1,13 @@
-package org.tvheadend.tvhclient.data.model;
+package org.tvheadend.tvhclient.data.entity;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
-import android.support.annotation.NonNull;
 
 @Entity(tableName = "programs")
 public class Program {
 
     @PrimaryKey
-    @NonNull
     @ColumnInfo(name = "id")
     private int eventId;             // u32   required   Event ID
     @ColumnInfo(name = "channel_id")
@@ -56,12 +54,11 @@ public class Program {
     @ColumnInfo(name = "next_event_id")
     private int nextEventId;         // u32   optional   ID of next event on the same channel.
 
-    @NonNull
     public int getEventId() {
         return eventId;
     }
 
-    public void setEventId(@NonNull int eventId) {
+    public void setEventId(int eventId) {
         this.eventId = eventId;
     }
 

@@ -3,13 +3,14 @@ package org.tvheadend.tvhclient.sync;
 import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import org.tvheadend.tvhclient.data.DataRepository;
+import org.tvheadend.tvhclient.data.AppDatabase;
 import org.tvheadend.tvhclient.data.DatabaseHelper;
 import org.tvheadend.tvhclient.data.model.Connection;
 import org.tvheadend.tvhclient.htsp.SimpleHtspConnection;
@@ -85,14 +86,35 @@ public class EpgSyncService extends Service {
         long id = sharedPreferences.getLong("previous_connection_id", -1);
         if (id != connection.id) {
 
-            DataRepository.getInstance(getApplication()).clearTables();
-
+            AppDatabase appDatabase = AppDatabase.getInstance(this.getApplicationContext());
+            new ClearTablesAsyncTask(appDatabase).execute();
+            
             SharedPreferences.Editor editor = sharedPreferences.edit();
             // Save the id of the new connection in the preferences.
             editor.putLong("previous_connection_id", connection.id);
             // Save the status of the initial sync in the preferences.
             editor.putBoolean("initial_sync_done", false);
             editor.apply();
+        }
+    }
+
+    private static class ClearTablesAsyncTask extends AsyncTask<Void, Void, Void> {
+        private AppDatabase db;
+
+        ClearTablesAsyncTask(AppDatabase db) {
+            this.db = db;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            db.channelDao().deleteAll();
+            db.channelTagDao().deleteAll();
+            db.tagAndChannelDao().deleteAll();
+            db.programDao().deleteAll();
+            db.recordingDao().deleteAll();
+            db.seriesRecordingDao().deleteAll();
+            db.timerRecordingDao().deleteAll();
+            return null;
         }
     }
 

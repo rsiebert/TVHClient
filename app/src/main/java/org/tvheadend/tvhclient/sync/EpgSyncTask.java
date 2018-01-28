@@ -12,15 +12,17 @@ import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.AppDatabase;
 import org.tvheadend.tvhclient.data.DatabaseHelper;
-import org.tvheadend.tvhclient.data.model.Channel;
-import org.tvheadend.tvhclient.data.model.ChannelTag;
+import org.tvheadend.tvhclient.data.entity.Channel;
+import org.tvheadend.tvhclient.data.entity.ChannelTag;
+import org.tvheadend.tvhclient.data.entity.Program;
+import org.tvheadend.tvhclient.data.entity.Recording;
+import org.tvheadend.tvhclient.data.entity.SeriesRecording;
+import org.tvheadend.tvhclient.data.entity.TagAndChannel;
+import org.tvheadend.tvhclient.data.entity.TimerRecording;
 import org.tvheadend.tvhclient.data.model.Connection;
-import org.tvheadend.tvhclient.data.model.Program;
-import org.tvheadend.tvhclient.data.model.Recording;
-import org.tvheadend.tvhclient.data.model.SeriesRecording;
-import org.tvheadend.tvhclient.data.model.TimerRecording;
 import org.tvheadend.tvhclient.htsp.HtspFileInputStream;
 import org.tvheadend.tvhclient.htsp.HtspMessage;
 import org.tvheadend.tvhclient.htsp.HtspNotConnectedException;
@@ -83,34 +85,47 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         // Continue with processing like getting all
         // initial data only if we are authenticated
         if (state == Authenticator.State.AUTHENTICATED) {
-            if (sharedPreferences.getBoolean("initial_sync_done", false)) {
-                handleInitialSyncDone();
-                return;
-            }
-            // Send the first sync message to any broadcast listeners
-            intent.putExtra("sync_status", "Loading initial data...");
-            LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+            Log.d(TAG, "onAuthenticationStateChange: authenticated, starting initial sync");
 
-            // Reset the InitialSyncCompleted flag
-            initialSyncCompleted = false;
+            boolean initialSyncDone = sharedPreferences.getBoolean("initial_sync_done", false);
+            // Connect to the server by fetching all data to get notified about
+            // any changes on the server side. Disable fetching epg data for this
+            // and skip showing the sync status screen
             HtspMessage enableAsyncMetadataRequest = new HtspMessage();
             enableAsyncMetadataRequest.put("method", "enableAsyncMetadata");
-            enableAsyncMetadataRequest.put("epg", 1);
 
-            // Sync the defined number of hours of epg data from the current time
-            long epgMaxTime = (1 * 3600) + (System.currentTimeMillis() / 1000L);
-            enableAsyncMetadataRequest.put("epgMaxTime", epgMaxTime);
+            if (!initialSyncDone) {
+                Log.d(TAG, "onAuthenticationStateChange: authenticated, adding info to fetch epg data");
+                initialSyncCompleted = false;
 
-            // Only provide metadata that has changed since this time.
-            // Whenever the message eventUpdate is received from the server
-            // the current time will be stored in the preferences.
-            final long lastUpdate = sharedPreferences.getLong("last_update", 0);
-            enableAsyncMetadataRequest.put("lastUpdate", lastUpdate);
+                // Send the first sync message to any broadcast listeners
+                intent.putExtra("sync_status", "Loading initial data...");
+                LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 
+                enableAsyncMetadataRequest.put("epg", 1);
+                // Sync the defined number of hours of epg data from the current time
+                long epgMaxTime = (1 * 3600) + (System.currentTimeMillis() / 1000L);
+                enableAsyncMetadataRequest.put("epgMaxTime", epgMaxTime);
+                // Only provide metadata that has changed since this time.
+                // Whenever the message eventUpdate is received from the server
+                // the current time will be stored in the preferences.
+                final long lastUpdate = sharedPreferences.getLong("last_update", 0);
+                enableAsyncMetadataRequest.put("lastUpdate", lastUpdate);
+            }
+
+            Log.d(TAG, "onAuthenticationStateChange: sending initial sync message");
             try {
                 dispatcher.sendMessage(enableAsyncMetadataRequest);
             } catch (HtspNotConnectedException e) {
                 Log.d(TAG, "Failed to enable async metadata, HTSP not connected", e);
+            }
+
+            if (initialSyncDone) {
+                Log.d(TAG, "onAuthenticationStateChange: initialSyncDone");
+                // Send a broadcast to the listeners
+                intent = new Intent("service_status");
+                intent.putExtra("sync_status", "done");
+                LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
             }
         }
     }
@@ -124,6 +139,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     @Override
     public void onMessage(@NonNull HtspMessage message) {
         final String method = message.getString("method");
+        Log.d(TAG, "onMessage() called with: message = [" + method + "]");
         switch (method) {
             case "hello":
                 handleInitialServerResponse(message);
@@ -193,6 +209,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         if (intent == null || intent.getAction() == null) {
             return;
         }
+        Log.d(TAG, "handleIntent() called with: intent = [" + intent.getAction() + "]");
         switch (intent.getAction()) {
             case "getDiskSpace":
                 getDiscSpace();
@@ -280,8 +297,21 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
      * @param msg The message with the new tag data
      */
     private void handleTagAdd(HtspMessage msg) {
+        Log.d(TAG, "handleTagAdd() called with: msg = [" + msg + "]");
         ChannelTag tag = SyncUtils.convertMessageToChannelTagModel(new ChannelTag(), msg);
         db.channelTagDao().insert(tag);
+
+        // Get the tag id and all channel ids of the tag so that
+        // new entries where the tagId is present can be added to the database
+        List<Integer> channelIds = tag.getMembers();
+        if (channelIds != null) {
+            for (Integer channelId : channelIds) {
+                TagAndChannel tagAndChannel = new TagAndChannel();
+                tagAndChannel.setTagId(tag.getTagId());
+                tagAndChannel.setChannelId(channelId);
+                db.tagAndChannelDao().insert(tagAndChannel);
+            }
+        }
 
         // Update the icon if required
         final String icon = msg.getString("tagIcon", null);
@@ -301,9 +331,24 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
      * @param msg The message with the updated tag data
      */
     private void handleTagUpdate(HtspMessage msg) {
-        ChannelTag[] tag = new ChannelTag[1];
-        tag[0] = SyncUtils.convertMessageToChannelTagModel(new ChannelTag(), msg);
-        db.channelTagDao().update(tag);
+        ChannelTag[] tags = new ChannelTag[1];
+        tags[0] = SyncUtils.convertMessageToChannelTagModel(new ChannelTag(), msg);
+        db.channelTagDao().update(tags);
+
+        // Get the tag the shall be updated
+        ChannelTag tag = tags[0];
+        // Remove all entries of this tag from the database before
+        // adding new ones which are defined in the members variable
+        db.tagAndChannelDao().deleteByTagId(tag.getTagId());
+        List<Integer> channelIds = tag.getMembers();
+        if (channelIds != null) {
+            for (Integer channelId : channelIds) {
+                TagAndChannel tagAndChannel = new TagAndChannel();
+                tagAndChannel.setTagId(tag.getTagId());
+                tagAndChannel.setChannelId(channelId);
+                db.tagAndChannelDao().update(tagAndChannel);
+            }
+        }
 
         // Update the icon if required
         final String icon = msg.getString("tagIcon");
@@ -326,6 +371,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         ChannelTag tag = db.channelTagDao().loadChannelTagSync(msg.getInteger("tagId"));
         deleteIconFileFromCache(tag.getTagIcon());
         db.channelTagDao().delete(tag);
+        db.tagAndChannelDao().deleteByTagId(tag.getTagId());
     }
 
     /**
@@ -475,8 +521,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
      * @param msg The message with the series recording id that was deleted
      */
     private void handleAutorecEntryDelete(HtspMessage msg) {
-        SeriesRecording seriesRecording = db.seriesRecordingDao().loadRecordingSync(msg.getString("id"));
-        db.seriesRecordingDao().delete(seriesRecording);
+        db.seriesRecordingDao().deleteById(msg.getString("id"));
     }
 
     /**
@@ -509,8 +554,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
      * @param msg The message with the recording id that was deleted
      */
     private void handleTimerRecEntryDelete(HtspMessage msg) {
-        TimerRecording timerRecording = db.timerRecordingDao().loadRecordingSync(msg.getString("id"));
-        db.timerRecordingDao().delete(timerRecording);
+        db.timerRecordingDao().deleteById(msg.getString("id"));
     }
 
     /**
@@ -556,8 +600,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
      * @param msg The message with the epg event id that was deleted
      */
     private void handleEventDelete(HtspMessage msg) {
-        Program program = db.programDao().loadProgramSync(msg.getInteger("id"));
-        db.programDao().delete(program);
+        db.programDao().deleteById(msg.getInteger("id"));
     }
 
     private void handleInitialSyncCompleted() {
@@ -576,18 +619,18 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         getDvrConfigs();
 
         initialSyncCompleted = true;
-        handleInitialSyncDone();
-    }
 
-    private void handleInitialSyncDone() {
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean("initial_sync_done", true);
-        editor.apply();
+        boolean initialSyncDone = sharedPreferences.getBoolean("initial_sync_done", false);
+        if (!initialSyncDone) {
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putBoolean("initial_sync_done", true);
+            editor.apply();
 
-        // Send a broadcast to the listeners
-        Intent intent = new Intent("service_status");
-        intent.putExtra("sync_status", "done");
-        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+            // Send a broadcast to the listeners
+            Intent intent = new Intent("service_status");
+            intent.putExtra("sync_status", "done");
+            LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+        }
     }
 
     private void flushPendingChannelOps() {
@@ -599,7 +642,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         intent.putExtra("sync_status", "saving channels");
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 
-        final int steps = 10;
+        final int steps = 25;
         final int listSize = pendingChannelOps.size();
         int fromIndex = 0;
         while (fromIndex < listSize) {
@@ -647,7 +690,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         intent.putExtra("sync_status", "saving recordings");
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 
-        final int steps = 10;
+        final int steps = 25;
         final int listSize = pendingRecordedProgramOps.size();
         int fromIndex = 0;
         while (fromIndex < listSize) {
@@ -673,7 +716,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 
         // Apply the batch of Operations
-        final int steps = 10;
+        final int steps = 50;
         final int listSize = pendingEventOps.size();
         int fromIndex = 0;
         while (fromIndex < listSize) {
@@ -812,7 +855,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     private void getChannel(final Intent intent) {
         final HtspMessage request = new HtspMessage();
         request.put("method", "getChannel");
-        request.put("channelId", intent.getLongExtra("channelId", 0));
+        request.put("channelId", intent.getIntExtra("channelId", 0));
 
         HtspMessage response = null;
         try {
@@ -842,7 +885,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     private void getEvent(Intent intent) {
         final HtspMessage request = new HtspMessage();
         request.put("method", "getEvent");
-        request.put("eventId", intent.getLongExtra("eventId", 0));
+        request.put("eventId", intent.getIntExtra("eventId", 0));
 
         HtspMessage response = null;
         try {
@@ -852,18 +895,17 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         }
 
         if (response != null) {
-            /*
-            ContentValues values = EpgSyncUtils.convertProgramToContentValues(response);
-            values.put(DataContract.Programs.ID, response.getInteger("eventId"));
-            contentResolver.insert(DataContract.Programs.URI_SINGLE_PROGRAM, values);
-            */
+            Program program = SyncUtils.convertMessageToProgramModel(new Program(), response);
+            db.programDao().insert(program);
         }
     }
 
     private void getEvents(Intent intent) {
+        Log.d(TAG, "getEvents() called with: intent = [" + intent + "]");
+
         final HtspMessage request = new HtspMessage();
         request.put("method", "getEvents");
-        request.put("eventId", intent.getLongExtra("eventId", 0));
+        request.put("eventId", intent.getIntExtra("eventId", 0));
         request.put("numFollowing", intent.getIntExtra("numFollowing", 10));
 
         HtspMessage response = null;
@@ -879,12 +921,9 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
             if (response.containsKey("events")) {
                 Log.d(TAG, "getEvents: contains key events");
                 for (HtspMessage msg : response.getHtspMessageArray("events")) {
-                    /*
-                    ContentValues values = EpgSyncUtils.convertProgramToContentValues(msg);
-                    values.put(DataContract.Programs.ID, msg.getInteger("eventId"));
-                    pendingEventOps.add(ContentProviderOperation.newInsert(
-                            DataContract.Programs.URI_SINGLE_PROGRAM).withValues(values).build());
-                            */
+                    List<Program> programList = new ArrayList<>();
+                    programList.add(SyncUtils.convertMessageToProgramModel(new Program(), msg));
+                    db.programDao().insertAll(programList);
                 }
                 flushPendingEventOps();
             }
@@ -893,8 +932,8 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
 
     private void getEpgQuery(final Intent intent) {
         final String query = intent.getStringExtra("query");
-        final long channelId = intent.getLongExtra("channelId", 0);
-        final long tagId = intent.getLongExtra("tagId", 0);
+        final long channelId = intent.getIntExtra("channelId", 0);
+        final long tagId = intent.getIntExtra("tagId", 0);
         final int contentType = intent.getIntExtra("contentType", 0);
         final int minDuration = intent.getIntExtra("minduration", 0);
         final int maxDuration = intent.getIntExtra("maxduration", 0);
@@ -955,21 +994,21 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     private void addDvrEntry(final Intent intent) {
         Log.d(TAG, "addDvrEntry() called with: intent = [" + intent + "]");
 
-        final long eventId = intent.getLongExtra("eventId", 0);
+        final long eventId = intent.getIntExtra("eventId", 0);
         Log.d(TAG, "addDvrEntry: event id " + eventId);
 
-        final long channelId = intent.getLongExtra("channelId", 0);
+        final long channelId = intent.getIntExtra("channelId", 0);
         final long start = intent.getLongExtra("start", 0);
         final long stop = intent.getLongExtra("stop", 0);
         final long retention = intent.getLongExtra("retention", 0);
-        final long priority = intent.getLongExtra("priority", 2);
+        final long priority = intent.getIntExtra("priority", 2);
         final long startExtra = intent.getLongExtra("startExtra", 0);
         final long stopExtra = intent.getLongExtra("stopExtra", 0);
         final String title = intent.getStringExtra("title");
         final String subtitle = intent.getStringExtra("subtitle");
         final String description = intent.getStringExtra("description");
         final String configName = intent.getStringExtra("configName");
-        final long enabled = intent.getLongExtra("enabled", 1);
+        final long enabled = intent.getIntExtra("enabled", 1);
 
         final HtspMessage request = new HtspMessage();
         request.put("method", "addDvrEntry");
@@ -1024,16 +1063,25 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         // success            u32   required   1 if entry was added, 0 otherwise
         // id                 u32   optional   ID of created DVR entry
         // error              str   optional   English clear text of error message
+        HtspMessage response = null;
         try {
-            dispatcher.sendMessage(request);
+            response = dispatcher.sendMessage(request, 5000);
         } catch (HtspNotConnectedException e) {
             Log.e(TAG, "Failed to send addDvrEntry - not connected", e);
+        }
+
+        if (response != null) {
+            if (response.getInteger("success", 0) == 1) {
+                sendMessage(context.getString(R.string.success_adding_recording));
+            } else {
+                sendMessage(context.getString(R.string.error_adding_recording, response.getString("error", "")));
+            }
         }
     }
 
     private void updateDvrEntry(final Intent intent) {
-        final long id = intent.getLongExtra("id", 0);
-        final long channelId = intent.getLongExtra("channelId", 0);
+        final long id = intent.getIntExtra("id", 0);
+        final long channelId = intent.getIntExtra("channelId", 0);
         final long start = intent.getLongExtra("start", 0);
         final long stop = intent.getLongExtra("stop", 0);
         final String title = intent.getStringExtra("title");
@@ -1043,8 +1091,8 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         final long stopExtra = intent.getLongExtra("stopExtra", 0);
         final String configName = intent.getStringExtra("configName");
         final long retention = intent.getLongExtra("retention", 0);
-        final long priority = intent.getLongExtra("priority", 2);
-        final long enabled = intent.getLongExtra("enabled", 1);
+        final long priority = intent.getIntExtra("priority", 2);
+        final long enabled = intent.getIntExtra("enabled", 1);
 
         // Controls that certain fields will only be added when the recording
         // is only scheduled and not being recorded
@@ -1093,10 +1141,19 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         // Reply message fields:
         // success            u32   required   1 if update as successful, otherwise 0
         // error              str   optional   Error message if update failed
+        HtspMessage response = null;
         try {
-            dispatcher.sendMessage(request);
+            response = dispatcher.sendMessage(request, 5000);
         } catch (HtspNotConnectedException e) {
             Log.e(TAG, "Failed to send updateDvrEntry - not connected", e);
+        }
+
+        if (response != null) {
+            if (response.getInteger("success", 0) == 1) {
+                sendMessage(context.getString(R.string.success_updating_recording));
+            } else {
+                sendMessage(context.getString(R.string.error_updating_recording, response.getString("error", "")));
+            }
         }
     }
 
@@ -1104,33 +1161,42 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         Log.d(TAG, "removeDvrEntry() called with: intent action = [" + intent.getAction() + "]");
         final HtspMessage request = new HtspMessage();
         request.put("method", intent.getAction());
-        request.put("id", intent.getLongExtra("id", 0));
+        request.put("id", intent.getIntExtra("id", 0));
 
-        Log.d(TAG, "removeDvrEntry: event id " + intent.getLongExtra("id", 0));
+        Log.d(TAG, "removeDvrEntry: event id " + intent.getIntExtra("id", 0));
+        HtspMessage response = null;
         try {
-            dispatcher.sendMessage(request);
+            response = dispatcher.sendMessage(request, 5000);
         } catch (HtspNotConnectedException e) {
             Log.e(TAG, "Failed to send " + intent.getAction() + " - not connected", e);
+        }
+
+        if (response != null) {
+            if (response.getInteger("success", 0) == 1) {
+                sendMessage(context.getString(R.string.success_removing_recording));
+            } else {
+                sendMessage(context.getString(R.string.error_removing_recording, response.getString("error", "")));
+            }
         }
     }
 
     private void addAutorecEntry(final Intent intent) {
-        final long enabled = intent.getLongExtra("enabled", 1);
+        final long enabled = intent.getIntExtra("enabled", 1);
         final String title = intent.getStringExtra("title");
         final String fulltext = intent.getStringExtra("fulltext");
         final String directory = intent.getStringExtra("directory");
         final String name = intent.getStringExtra("name");
         final String configName = intent.getStringExtra("configName");
-        final long channelId = intent.getLongExtra("channelId", 0);
-        final long minDuration = intent.getLongExtra("minDuration", 0);
-        final long maxDuration = intent.getLongExtra("maxDuration", 0);
-        final long daysOfWeek = intent.getLongExtra("daysOfWeek", 127);
-        final long priority = intent.getLongExtra("priority", 2);
+        final long channelId = intent.getIntExtra("channelId", 0);
+        final long minDuration = intent.getIntExtra("minDuration", 0);
+        final long maxDuration = intent.getIntExtra("maxDuration", 0);
+        final long daysOfWeek = intent.getIntExtra("daysOfWeek", 127);
+        final long priority = intent.getIntExtra("priority", 2);
         final long start = intent.getLongExtra("start", -1);
         final long startWindow = intent.getLongExtra("startWindow", -1);
         final long startExtra = intent.getLongExtra("startExtra", 0);
         final long stopExtra = intent.getLongExtra("stopExtra", 0);
-        final long dupDetect = intent.getLongExtra("dupDetect", 0);
+        final long dupDetect = intent.getIntExtra("dupDetect", 0);
         final String comment = intent.getStringExtra("comment");
 
         final HtspMessage request = new HtspMessage();
@@ -1193,16 +1259,102 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         // success            u32   required   1 if entry was added, 0 otherwise
         // id                 str   optional   ID (string!) of created autorec DVR entry
         // error              str   optional   English clear text of error message
+        HtspMessage response = null;
         try {
-            dispatcher.sendMessage(request);
+            response = dispatcher.sendMessage(request, 5000);
         } catch (HtspNotConnectedException e) {
             Log.e(TAG, "Failed to send addAutorecEntry - not connected", e);
+        }
+
+        if (response != null) {
+            if (response.getInteger("success", 0) == 1) {
+                sendMessage(context.getString(R.string.success_adding_recording));
+            } else {
+                sendMessage(context.getString(R.string.error_adding_recording, response.getString("error", "")));
+            }
         }
     }
 
     private void updateAutorecEntry(final Intent intent) {
+        Log.d(TAG, "updateAutorecEntry() called with: intent = [" + intent + "]");
         final HtspMessage request = new HtspMessage();
-        request.put("method", "deleteAutorecEntry");
+
+        if (htspVersion >= 25) {
+            final long enabled = intent.getIntExtra("enabled", 1);
+            final String title = intent.getStringExtra("title");
+            final String fulltext = intent.getStringExtra("fulltext");
+            final String directory = intent.getStringExtra("directory");
+            final String name = intent.getStringExtra("name");
+            final String configName = intent.getStringExtra("configName");
+            final long channelId = intent.getIntExtra("channelId", 0);
+            final long minDuration = intent.getIntExtra("minDuration", 0);
+            final long maxDuration = intent.getIntExtra("maxDuration", 0);
+            final long daysOfWeek = intent.getIntExtra("daysOfWeek", 127);
+            final long priority = intent.getIntExtra("priority", 2);
+            final long start = intent.getLongExtra("start", -1);
+            final long startWindow = intent.getLongExtra("startWindow", -1);
+            final long startExtra = intent.getLongExtra("startExtra", 0);
+            final long stopExtra = intent.getLongExtra("stopExtra", 0);
+            final long dupDetect = intent.getIntExtra("dupDetect", 0);
+            final String comment = intent.getStringExtra("comment");
+
+            request.put("method", "updateAutorecEntry");
+            if (htspVersion >= 19) {
+                request.put("enabled", enabled);
+            }
+            request.put("title", title);
+            if (fulltext != null && htspVersion >= 20) {
+                request.put("fulltext", fulltext);
+            }
+            if (directory != null) {
+                request.put("directory", directory);
+            }
+            if (name != null) {
+                request.put("name", name);
+            }
+            if (configName != null) {
+                request.put("configName", configName);
+            }
+            // Don't add the channel id if none was given.
+            // Assume the user wants to record on all channels
+            if (channelId > 0) {
+                request.put("channelId", channelId);
+            }
+            // Minimal duration in seconds (0 = Any)
+            request.put("minDuration", minDuration);
+            // Maximal duration in seconds (0 = Any)
+            request.put("maxDuration", maxDuration);
+            request.put("daysOfWeek", daysOfWeek);
+            request.put("priority", priority);
+
+            // Minutes from midnight (up to 24*60) (window +- 15 minutes) (Obsoleted from version 18)
+            // Do not send the value if the default of -1 (no time specified) was set
+            if (start >= 0 && htspVersion < 18) {
+                request.put("approxTime", start);
+            }
+            // Minutes from midnight (up to 24*60) for the start of the time window.
+            // Do not send the value if the default of -1 (no time specified) was set
+            if (start >= 0 && htspVersion >= 18) {
+                request.put("start", start);
+            }
+            // Minutes from midnight (up to 24*60) for the end of the time window (including, cross-noon allowed).
+            // Do not send the value if the default of -1 (no time specified) was set
+            if (startWindow >= 0 && htspVersion >= 18) {
+                request.put("startWindow", startWindow);
+            }
+            request.put("startExtra", startExtra);
+            request.put("stopExtra", stopExtra);
+
+            if (htspVersion >= 20) {
+                request.put("dupDetect", dupDetect);
+            }
+            if (comment != null) {
+                request.put("comment", comment);
+            }
+        } else {
+            request.put("method", "deleteAutorecEntry");
+        }
+
         request.put("id", intent.getStringExtra("id"));
         HtspMessage response = null;
         try {
@@ -1216,8 +1368,14 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
             // not exist on the server. First delete the entry and if this was
             // successful add a new entry with the new values.
             final boolean success = (response.getInteger("success", 0) == 1);
-            if (success) {
+            if (htspVersion < 25 && success) {
                 addAutorecEntry(intent);
+            } else {
+                if (success) {
+                    sendMessage(context.getString(R.string.success_updating_recording));
+                } else {
+                    sendMessage(context.getString(R.string.error_updating_recording, response.getString("error", "")));
+                }
             }
         }
     }
@@ -1227,25 +1385,34 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         request.put("method", "deleteAutorecEntry");
         request.put("id", intent.getStringExtra("id"));
 
+        HtspMessage response = null;
         try {
-            dispatcher.sendMessage(request);
+            response = dispatcher.sendMessage(request, 5000);
         } catch (HtspNotConnectedException e) {
             Log.e(TAG, "Failed to send deleteAutorecEntry - not connected", e);
+        }
+
+        if (response != null) {
+            if (response.getInteger("success", 0) == 1) {
+                sendMessage(context.getString(R.string.success_removing_recording));
+            } else {
+                sendMessage(context.getString(R.string.error_removing_recording, response.getString("error", "")));
+            }
         }
     }
 
     private void addTimerrecEntry(final Intent intent) {
-        final long enabled = intent.getLongExtra("enabled", 1);
+        final long enabled = intent.getIntExtra("enabled", 1);
         final String title = intent.getStringExtra("title");
         final String directory = intent.getStringExtra("directory");
         final String name = intent.getStringExtra("name");
         final String configName = intent.getStringExtra("configName");
-        final long channelId = intent.getLongExtra("channelId", 0);
-        final long daysOfWeek = intent.getLongExtra("daysOfWeek", 0);
-        final long priority = intent.getLongExtra("priority", 2);
+        final long channelId = intent.getIntExtra("channelId", 0);
+        final long daysOfWeek = intent.getIntExtra("daysOfWeek", 0);
+        final long priority = intent.getIntExtra("priority", 2);
         final long start = intent.getLongExtra("start", -1);
         final long stop = intent.getLongExtra("stop", -1);
-        final long retention = intent.getLongExtra("retention", -1);
+        final long retention = intent.getIntExtra("retention", -1);
         final String comment = intent.getStringExtra("comment");
 
         final HtspMessage request = new HtspMessage();
@@ -1287,16 +1454,75 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         // success            u32   required   1 if entry was added, 0 otherwise
         // id                 str   optional   ID (string!) of created timerec DVR entry
         // error              str   optional   English clear text of error message
+        HtspMessage response = null;
         try {
-            dispatcher.sendMessage(request);
+            response = dispatcher.sendMessage(request, 5000);
         } catch (HtspNotConnectedException e) {
             Log.e(TAG, "Failed to send addTimerecEntry - not connected", e);
+        }
+
+        if (response != null) {
+            if (response.getInteger("success", 0) == 1) {
+                sendMessage(context.getString(R.string.success_adding_recording));
+            } else {
+                sendMessage(context.getString(R.string.error_adding_recording, response.getString("error", "")));
+            }
         }
     }
 
     private void updateTimerrecEntry(final Intent intent) {
         final HtspMessage request = new HtspMessage();
-        request.put("method", "deleteTimerecEntry");
+
+        if (htspVersion >= 25) {
+            final long enabled = intent.getIntExtra("enabled", 1);
+            final String title = intent.getStringExtra("title");
+            final String directory = intent.getStringExtra("directory");
+            final String name = intent.getStringExtra("name");
+            final String configName = intent.getStringExtra("configName");
+            final long channelId = intent.getIntExtra("channelId", 0);
+            final long daysOfWeek = intent.getIntExtra("daysOfWeek", 0);
+            final long priority = intent.getIntExtra("priority", 2);
+            final long start = intent.getLongExtra("start", -1);
+            final long stop = intent.getLongExtra("stop", -1);
+            final long retention = intent.getIntExtra("retention", -1);
+            final String comment = intent.getStringExtra("comment");
+
+            request.put("method", "updateTimerecEntry");
+            if (htspVersion >= 19) {
+                request.put("enabled", enabled);
+            }
+            request.put("title", title);
+            if (directory != null) {
+                request.put("directory", directory);
+            }
+            if (name != null) {
+                request.put("name", name);
+            }
+            if (configName != null) {
+                request.put("configName", configName);
+            }
+            if (channelId > 0) {
+                request.put("channelId", channelId);
+            }
+            request.put("daysOfWeek", daysOfWeek);
+            request.put("priority", priority);
+
+            if (start >= 0) {
+                request.put("start", start);
+            }
+            if (stop >= 0) {
+                request.put("stop", stop);
+            }
+            if (retention > 0) {
+                request.put("retention", retention);
+            }
+            if (comment != null) {
+                request.put("comment", comment);
+            }
+        } else {
+            request.put("method", "deleteTimerecEntry");
+        }
+
         request.put("id", intent.getStringExtra("id"));
         HtspMessage response = null;
         try {
@@ -1310,8 +1536,14 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
             // not exist on the server. First delete the entry and if this was
             // successful add a new entry with the new values.
             final boolean success = response.getInteger("success", 0) == 1;
-            if (success) {
+            if (htspVersion < 25 && success) {
                 addTimerrecEntry(intent);
+            } else {
+                if (success) {
+                    sendMessage(context.getString(R.string.success_updating_recording));
+                } else {
+                    sendMessage(context.getString(R.string.error_updating_recording, response.getString("error", "")));
+                }
             }
         }
     }
@@ -1321,16 +1553,25 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         request.put("method", "deleteTimerecEntry");
         request.put("id", intent.getStringExtra("id"));
 
+        HtspMessage response = null;
         try {
-            dispatcher.sendMessage(request);
+            response = dispatcher.sendMessage(request, 5000);
         } catch (HtspNotConnectedException e) {
             Log.e(TAG, "Failed to send deleteTimerecEntry - not connected", e);
+        }
+
+        if (response != null) {
+            if (response.getInteger("success", 0) == 1) {
+                sendMessage(context.getString(R.string.success_removing_recording));
+            } else {
+                sendMessage(context.getString(R.string.error_removing_recording, response.getString("error", "")));
+            }
         }
     }
 
     private void getTicket(Intent intent) {
-        final long channelId = intent.getLongExtra("channelId", 0);
-        final long dvrId = intent.getLongExtra("dvrId", 0);
+        final long channelId = intent.getIntExtra("channelId", 0);
+        final long dvrId = intent.getIntExtra("dvrId", 0);
 
         final HtspMessage request = new HtspMessage();
         request.put("method", "getTicket");
@@ -1407,5 +1648,12 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
                 }
             }
         }
+    }
+
+    private void sendMessage(String text) {
+        Log.d(TAG, "sendMessage() called with: text = [" + text + "]");
+        Intent intent = new Intent("message");
+        intent.putExtra("message", text);
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 }

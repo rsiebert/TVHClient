@@ -2,14 +2,10 @@ package org.tvheadend.tvhclient.ui.recordings.recordings;
 
 import android.app.SearchManager;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -23,29 +19,21 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.data.model.Recording;
-import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
+import org.tvheadend.tvhclient.data.entity.Recording;
+import org.tvheadend.tvhclient.ui.base.BaseFragment;
 import org.tvheadend.tvhclient.ui.common.RecyclerViewClickCallback;
 import org.tvheadend.tvhclient.ui.recordings.common.RecordingAddEditActivity;
 import org.tvheadend.tvhclient.ui.search.SearchActivity;
 import org.tvheadend.tvhclient.ui.search.SearchRequestInterface;
-import org.tvheadend.tvhclient.utils.MenuUtils;
 
 import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class RecordingListFragment extends Fragment implements RecyclerViewClickCallback, SearchRequestInterface {
+public class RecordingListFragment extends BaseFragment implements RecyclerViewClickCallback, SearchRequestInterface {
 
-    protected AppCompatActivity activity;
-    protected ToolbarInterface toolbarInterface;
     protected RecordingRecyclerViewAdapter recyclerViewAdapter;
     protected RecyclerView recyclerView;
-    boolean isUnlocked;
-    protected boolean isDualPane;
-    private MenuUtils menuUtils;
     protected int selectedListPosition;
-    protected SharedPreferences sharedPreferences;
 
     @Nullable
     @Override
@@ -60,24 +48,9 @@ public class RecordingListFragment extends Fragment implements RecyclerViewClick
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        activity = (AppCompatActivity) getActivity();
-        if (activity instanceof ToolbarInterface) {
-            toolbarInterface = (ToolbarInterface) activity;
-        }
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity);
-        menuUtils = new MenuUtils(activity);
-        isUnlocked = TVHClientApplication.getInstance().isUnlocked();
-
-        // Check to see if we have a frame in which to embed the details
-        // fragment directly in the containing UI.
-        View detailsFrame = activity.findViewById(R.id.details);
-        isDualPane = detailsFrame != null && detailsFrame.getVisibility() == View.VISIBLE;
-
         if (savedInstanceState != null) {
             selectedListPosition = savedInstanceState.getInt("list_position", 0);
         }
-
-        setHasOptionsMenu(true);
 
         recyclerViewAdapter = new RecordingRecyclerViewAdapter(activity, new ArrayList<>(), this);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -207,9 +180,9 @@ public class RecordingListFragment extends Fragment implements RecyclerViewClick
                     return true;
                 case R.id.menu_record_remove:
                     if (recording.isScheduled()) {
-                        menuUtils.handleMenuCancelRecordingSelection(recording.getId(), recording.getTitle());
+                        menuUtils.handleMenuCancelRecordingSelection(recording.getId(), recording.getTitle(), null);
                     } else {
-                        menuUtils.handleMenuRemoveRecordingSelection(recording.getId(), recording.getTitle());
+                        menuUtils.handleMenuRemoveRecordingSelection(recording.getId(), recording.getTitle(), null);
                     }
                     return true;
                 case R.id.menu_play:

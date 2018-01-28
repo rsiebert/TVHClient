@@ -3,32 +3,29 @@ package org.tvheadend.tvhclient.ui.recordings.timer_recordings;
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
 
-import org.tvheadend.tvhclient.data.model.TimerRecording;
 import org.tvheadend.tvhclient.data.DataRepository;
+import org.tvheadend.tvhclient.data.entity.TimerRecording;
 
 import java.util.List;
 
 public class TimerRecordingViewModel extends AndroidViewModel {
 
     private final DataRepository repository;
-    private LiveData<List<TimerRecording>> recordings;
+    private LiveData<List<TimerRecording>> recordings = new MutableLiveData<>();
 
     public TimerRecordingViewModel(Application application) {
         super(application);
-        repository = DataRepository.getInstance(application);
-        recordings = repository.getTimerRecordings();
+        repository = new DataRepository(application);
+        recordings = repository.getAllTimerRecordings();
     }
 
     public LiveData<List<TimerRecording>> getRecordings() {
         return recordings;
     }
 
-    public LiveData<TimerRecording> getRecording(String id) {
+    LiveData<TimerRecording> getRecording(String id) {
         return repository.getTimerRecording(id);
-    }
-
-    public TimerRecording getRecordingSync(String id) {
-        return repository.getTimerRecordingFromDatabase(id);
     }
 }

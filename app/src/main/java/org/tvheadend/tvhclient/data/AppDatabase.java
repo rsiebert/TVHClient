@@ -10,13 +10,15 @@ import org.tvheadend.tvhclient.data.dao.ChannelTagDao;
 import org.tvheadend.tvhclient.data.dao.ProgramDao;
 import org.tvheadend.tvhclient.data.dao.RecordingDao;
 import org.tvheadend.tvhclient.data.dao.SeriesRecordingDao;
+import org.tvheadend.tvhclient.data.dao.TagAndChannelDao;
 import org.tvheadend.tvhclient.data.dao.TimerRecordingDao;
-import org.tvheadend.tvhclient.data.model.Channel;
-import org.tvheadend.tvhclient.data.model.ChannelTag;
-import org.tvheadend.tvhclient.data.model.Program;
-import org.tvheadend.tvhclient.data.model.Recording;
-import org.tvheadend.tvhclient.data.model.SeriesRecording;
-import org.tvheadend.tvhclient.data.model.TimerRecording;
+import org.tvheadend.tvhclient.data.entity.Channel;
+import org.tvheadend.tvhclient.data.entity.ChannelTag;
+import org.tvheadend.tvhclient.data.entity.Program;
+import org.tvheadend.tvhclient.data.entity.Recording;
+import org.tvheadend.tvhclient.data.entity.SeriesRecording;
+import org.tvheadend.tvhclient.data.entity.TagAndChannel;
+import org.tvheadend.tvhclient.data.entity.TimerRecording;
 
 @Database(
         entities = {
@@ -25,9 +27,11 @@ import org.tvheadend.tvhclient.data.model.TimerRecording;
                 Recording.class,
                 Program.class,
                 Channel.class,
-                ChannelTag.class
+                ChannelTag.class,
+                TagAndChannel.class
         },
-        version = 4, exportSchema = false)
+        version = 11,
+        exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
 
     private static AppDatabase instance;
@@ -48,9 +52,11 @@ public abstract class AppDatabase extends RoomDatabase {
 
     public abstract RecordingDao recordingDao();
 
-    public abstract ProgramDao programDao();
-
     public abstract ChannelDao channelDao();
 
     public abstract ChannelTagDao channelTagDao();
+
+    public abstract TagAndChannelDao tagAndChannelDao();
+
+    public abstract ProgramDao programDao();
 }

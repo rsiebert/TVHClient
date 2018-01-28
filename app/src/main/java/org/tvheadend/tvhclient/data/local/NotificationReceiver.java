@@ -9,7 +9,7 @@ import android.support.v4.app.NotificationCompat;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.Constants;
 import org.tvheadend.tvhclient.data.DataStorage;
-import org.tvheadend.tvhclient.data.model.Recording;
+import org.tvheadend.tvhclient.data.entity.Recording;
 
 public class NotificationReceiver extends BroadcastReceiver {
 

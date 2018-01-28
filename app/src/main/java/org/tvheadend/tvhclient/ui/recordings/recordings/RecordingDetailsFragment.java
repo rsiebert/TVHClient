@@ -3,8 +3,8 @@ package org.tvheadend.tvhclient.ui.recordings.recordings;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -18,14 +18,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.data.DataStorage;
-import org.tvheadend.tvhclient.data.model.Channel;
-import org.tvheadend.tvhclient.data.model.Recording;
-import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
+import org.tvheadend.tvhclient.data.entity.Channel;
+import org.tvheadend.tvhclient.data.entity.Recording;
+import org.tvheadend.tvhclient.ui.base.BaseFragment;
 import org.tvheadend.tvhclient.ui.recordings.common.RecordingAddEditActivity;
-import org.tvheadend.tvhclient.utils.MenuUtils;
 import org.tvheadend.tvhclient.utils.UIUtils;
+import org.tvheadend.tvhclient.utils.callbacks.RecordingRemovedCallback;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -33,8 +31,9 @@ import butterknife.Unbinder;
 
 // TODO improve layout, more info, title, subtitle,... without header label
 // TODO update icons (same color...)
+// TODO convert to ConstraintLayout
 
-public class RecordingDetailsFragment extends Fragment {
+public class RecordingDetailsFragment extends BaseFragment implements RecordingRemovedCallback {
 
     @BindView(R.id.summary_label)
     TextView summaryLabelTextView;
@@ -96,12 +95,8 @@ public class RecordingDetailsFragment extends Fragment {
     @BindView(R.id.nested_toolbar)
     Toolbar nestedToolbar;
 
-    private ToolbarInterface toolbarInterface;
-    private MenuUtils menuUtils;
     private Recording recording;
     private int dvrId;
-    private boolean isUnlocked;
-    private int htspVersion;
     private Unbinder unbinder;
 
     public static RecordingDetailsFragment newInstance(int dvrId) {
@@ -113,7 +108,7 @@ public class RecordingDetailsFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.recording_details_fragment, container, false);
         ViewStub stub = view.findViewById(R.id.stub);
@@ -133,14 +128,7 @@ public class RecordingDetailsFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        if (getActivity() instanceof ToolbarInterface) {
-            toolbarInterface = (ToolbarInterface) getActivity();
-            toolbarInterface.setTitle(getString(R.string.details));
-        }
-        menuUtils = new MenuUtils(getActivity());
-        isUnlocked = TVHClientApplication.getInstance().isUnlocked();
-        htspVersion = DataStorage.getInstance().getProtocolVersion();
-        setHasOptionsMenu(true);
+        toolbarInterface.setTitle(getString(R.string.details));
 
         Bundle bundle = getArguments();
         if (bundle != null) {
@@ -150,7 +138,7 @@ public class RecordingDetailsFragment extends Fragment {
             dvrId = savedInstanceState.getInt("dvrId", 0);
         }
 
-        RecordingViewModel viewModel = ViewModelProviders.of(this).get(RecordingViewModel.class);
+        RecordingViewModel viewModel = ViewModelProviders.of(activity).get(RecordingViewModel.class);
         viewModel.getRecording(dvrId).observe(this, rec -> {
             recording = rec;
             updateUI();
@@ -169,16 +157,17 @@ public class RecordingDetailsFragment extends Fragment {
 
     private void updateUI() {
 
+        // TODO use start tmie and date
         dateTextView.setText(UIUtils.getDate(getContext(), recording.getStart()));
 
+        // TODO use stop tmie and date
         String time = UIUtils.getTime(getContext(), recording.getStart()) + " - " + UIUtils.getTime(getContext(), recording.getStop());
         timeTextView.setText(time);
 
         String durationTime = getString(R.string.minutes, (int) ((recording.getStop() - recording.getStart()) / 1000 / 60));
         durationTextView.setText(durationTime);
 
-        Channel channel = DataStorage.getInstance().getChannelFromArray(recording.getChannelId());
-
+        Channel channel = repository.getChannelSync(recording.getChannelId());
         channelNameTextView.setText(channel != null ? channel.getChannelName() : getString(R.string.no_channel));
 
         summaryLabelTextView.setVisibility(!TextUtils.isEmpty(recording.getSummary()) ? View.VISIBLE : View.GONE);
@@ -280,7 +269,7 @@ public class RecordingDetailsFragment extends Fragment {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt("dvrId", dvrId);
     }
@@ -299,7 +288,7 @@ public class RecordingDetailsFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                getActivity().finish();
+                activity.finish();
                 return true;
             case R.id.menu_play:
                 menuUtils.handleMenuPlaySelection(-1, recording.getId());
@@ -308,19 +297,19 @@ public class RecordingDetailsFragment extends Fragment {
                 menuUtils.handleMenuDownloadSelection(recording.getId());
                 return true;
             case R.id.menu_edit:
-                Intent editIntent = new Intent(getActivity(), RecordingAddEditActivity.class);
+                Intent editIntent = new Intent(activity, RecordingAddEditActivity.class);
                 editIntent.putExtra("dvrId", recording.getId());
                 editIntent.putExtra("type", "recording");
-                getActivity().startActivity(editIntent);
+                activity.startActivity(editIntent);
                 return true;
             case R.id.menu_record_stop:
                 menuUtils.handleMenuStopRecordingSelection(recording.getId(), recording.getTitle());
                 return true;
             case R.id.menu_record_remove:
                 if (recording.isScheduled()) {
-                    menuUtils.handleMenuCancelRecordingSelection(recording.getId(), recording.getTitle());
+                    menuUtils.handleMenuCancelRecordingSelection(recording.getId(), recording.getTitle(), this);
                 } else {
-                    menuUtils.handleMenuRemoveRecordingSelection(recording.getId(), recording.getTitle());
+                    menuUtils.handleMenuRemoveRecordingSelection(recording.getId(), recording.getTitle(), this);
                 }
                 return true;
             case R.id.menu_search_imdb:
@@ -336,5 +325,10 @@ public class RecordingDetailsFragment extends Fragment {
 
     public int getShownDvrId() {
         return dvrId;
+    }
+
+    @Override
+    public void onRecordingRemoved() {
+        activity.finish();
     }
 }

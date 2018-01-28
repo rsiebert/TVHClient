@@ -22,10 +22,9 @@ import android.widget.TextView;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.data.DataStorage;
-import org.tvheadend.tvhclient.data.model.Channel;
-import org.tvheadend.tvhclient.data.model.ChannelTag;
-import org.tvheadend.tvhclient.data.model.Program;
-import org.tvheadend.tvhclient.data.model.Recording;
+import org.tvheadend.tvhclient.data.entity.Channel;
+import org.tvheadend.tvhclient.data.entity.Program;
+import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.service.HTSListener;
 import org.tvheadend.tvhclient.ui.epg.ProgramGuideViewPagerContentListAdapterContentsView.ProgramContextMenuInterface;
 import org.tvheadend.tvhclient.utils.MenuUtils;
@@ -178,6 +177,7 @@ public class ProgramGuideViewPagerContentListFragment extends ListFragment imple
      * channels. Only the programs of those channels will be added to the
      * adapter that contain the selected channel tag.
      */
+    /*
     private void populateList() {
         ChannelTag currentTag = Utils.getChannelTag(activity);
         adapter.clear();
@@ -192,13 +192,13 @@ public class ProgramGuideViewPagerContentListFragment extends ListFragment imple
         adapter.sort(Utils.getChannelSortOrder(activity));
         adapter.notifyDataSetChanged();
     }
-
+*/
     @Override
     public void onResume() {
         super.onResume();
         TVHClientApplication.getInstance().addListener(this);
         if (!DataStorage.getInstance().isLoading()) {
-            populateList();
+            //populateList();
         }
     }
 
@@ -263,9 +263,9 @@ public class ProgramGuideViewPagerContentListFragment extends ListFragment imple
                     if (rec.isRecording()) {
                         menuUtils.handleMenuStopRecordingSelection(rec.getId(), rec.getTitle());
                     } else if (rec.isScheduled()) {
-                        menuUtils.handleMenuCancelRecordingSelection(rec.getId(), rec.getTitle());
+                        menuUtils.handleMenuCancelRecordingSelection(rec.getId(), rec.getTitle(), null);
                     } else {
-                        menuUtils.handleMenuRemoveRecordingSelection(rec.getId(), rec.getTitle());
+                        menuUtils.handleMenuRemoveRecordingSelection(rec.getId(), rec.getTitle(), null);
                     }
                 }
                 return true;
@@ -339,7 +339,7 @@ public class ProgramGuideViewPagerContentListFragment extends ListFragment imple
 
     @Override
     public void reloadData() {
-        populateList();
+        //populateList();
     }
 
     @Override

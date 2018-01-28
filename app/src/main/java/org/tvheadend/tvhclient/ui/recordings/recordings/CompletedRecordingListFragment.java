@@ -14,7 +14,7 @@ public class CompletedRecordingListFragment extends RecordingListFragment {
         super.onActivityCreated(savedInstanceState);
         toolbarInterface.setTitle(getString(R.string.completed_recordings));
 
-        RecordingViewModel viewModel = ViewModelProviders.of(this).get(RecordingViewModel.class);
+        RecordingViewModel viewModel = ViewModelProviders.of(activity).get(RecordingViewModel.class);
         viewModel.getCompletedRecordings().observe(this, recordings -> {
             recyclerViewAdapter.addItems(recordings);
             toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.recordings, recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
