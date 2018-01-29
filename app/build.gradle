@@ -42,7 +42,7 @@ android {
             }
             // Disable the unlocked features when the app is released.
             // This must be done by the in-app purchase
-            buildConfigField "Boolean", "DEBUG_MODE", "true"
+            buildConfigField "Boolean", "DEBUG_MODE", "false"
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
