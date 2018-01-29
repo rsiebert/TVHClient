@@ -292,8 +292,8 @@ public class MenuUtils {
         new MaterialDialog.Builder(activity)
                 .title(R.string.record_cancel)
                 .content(activity.getString(R.string.cancel_recording, title))
-                .negativeText(R.string.discard)
-                .positiveText(R.string.cancel)
+                .negativeText(android.R.string.no)
+                .positiveText(android.R.string.yes)
                 .onPositive((dialog, which) -> {
                     final Intent intent = new Intent(activity, HTSService.class);
                     intent.setAction("cancelDvrEntry");
