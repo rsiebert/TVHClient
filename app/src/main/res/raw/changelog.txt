@@ -1,8 +1,12 @@
-$ 1.10.0
-  % VERSION 1.10.0
-  _ 15.12.2017
-    * New navigation menu
-    * New look when showing, editing or adding recordings
+$ 2.0.0
+  % VERSION 2.0.0
+  _ 29.01.2018
+    * Added material design navigation menu
+    * UI improvements according to the material design guidelines
+    * New UI on tablets when showing, editing or adding recordings
+    * New material icon set
+    * Added internal database to store and cache epg data
+    * Improved the performance of the program guide screen a bit
     * Many internal changes to the code to improve speed and stability
 $ 1.9.11
   % VERSION 1.9.11
