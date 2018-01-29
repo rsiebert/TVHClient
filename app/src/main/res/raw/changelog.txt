@@ -1,3 +1,8 @@
+$ 1.9.12
+  % VERSION 1.9.12
+  _ 29.01.2018
+    * Updated spanish translation
+    * Fixed showing full the version without purchase of the unlocker
 $ 1.9.11
   % VERSION 1.9.11
   _ 29.11.2017
