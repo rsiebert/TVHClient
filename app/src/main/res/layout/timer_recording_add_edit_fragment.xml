@@ -1,230 +1,279 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
 
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp">
+    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
         <CheckBox
             android:id="@+id/is_enabled"
             style="?attr/SubtitleFont"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            android:text="@string/activate_recording" />
+            android:text="@string/activate_recording"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/title_label"
             style="?attr/TitleFont"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:paddingTop="16dp"
-            android:text="@string/title" />
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/title"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/is_enabled" />
 
         <EditText
             android:id="@+id/title"
             style="?attr/ContentFont"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
             android:hint="@string/add_title"
             android:inputType="text"
-            android:paddingBottom="16dp" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/title_label" />
 
         <TextView
             android:id="@+id/name_label"
             style="?attr/TitleFont"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:paddingTop="16dp"
-            android:text="@string/name" />
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/name"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/title" />
 
         <EditText
             android:id="@+id/name"
             style="?attr/ContentFont"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
             android:hint="@string/add_name"
             android:inputType="text"
-            android:paddingBottom="16dp" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/name_label" />
 
         <TextView
             android:id="@+id/channel_label"
             style="?attr/TitleFont"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:paddingTop="16dp"
-            android:text="@string/channel" />
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/channel"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/name" />
 
         <TextView
             android:id="@+id/channel"
             style="?attr/ContentFont"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
             android:drawableEnd="?attr/ic_arrow_drop_down_like_spinner"
             android:drawablePadding="4dp"
             android:drawableRight="?attr/ic_arrow_drop_down_like_spinner"
-            android:paddingBottom="16dp"
-            android:paddingEnd="4dp"
-            android:paddingLeft="4dp"
-            android:paddingRight="4dp"
-            android:paddingStart="4dp"
-            android:paddingTop="4dp"
-            android:text="@string/not_set" />
+            android:text="@string/not_set"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/channel_label" />
 
-        <RelativeLayout
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent">
+        <TextView
+            android:id="@+id/start_time_label"
+            style="?attr/TitleFont"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/start_time"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/channel" />
 
-            <TextView
-                android:id="@+id/start_time_label"
-                style="?attr/TitleFont"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingTop="16dp"
-                android:text="@string/start_time" />
+        <TextView
+            android:id="@+id/start_time"
+            style="?attr/ContentFont"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:drawableEnd="?attr/ic_arrow_drop_down_like_spinner"
+            android:drawablePadding="4dp"
+            android:drawableRight="?attr/ic_arrow_drop_down_like_spinner"
+            android:text="@string/not_set"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/start_time_label" />
 
-            <TextView
-                android:id="@+id/stop_time_label"
-                style="?attr/TitleFont"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="32dp"
-                android:layout_marginStart="32dp"
-                android:layout_toEndOf="@+id/start_time_label"
-                android:layout_toRightOf="@+id/start_time_label"
-                android:paddingTop="16dp"
-                android:text="@string/stop_time" />
+        <TextView
+            android:id="@+id/stop_time_label"
+            style="?attr/TitleFont"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/stop_time"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/start_time" />
 
-            <TextView
-                android:id="@+id/start_time"
-                style="?attr/ContentFont"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/start_time_label"
-                android:drawableEnd="?attr/ic_arrow_drop_down_like_spinner"
-                android:drawablePadding="4dp"
-                android:drawableRight="?attr/ic_arrow_drop_down_like_spinner"
-                android:paddingBottom="16dp"
-                android:paddingEnd="4dp"
-                android:paddingLeft="4dp"
-                android:paddingRight="4dp"
-                android:paddingStart="4dp"
-                android:paddingTop="4dp"
-                android:text="@string/not_set" />
-
-            <TextView
-                android:id="@+id/stop_time"
-                style="?attr/ContentFont"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/stop_time_label"
-                android:layout_alignStart="@+id/stop_time_label"
-                android:layout_below="@+id/stop_time_label"
-                android:drawableEnd="?attr/ic_arrow_drop_down_like_spinner"
-                android:drawablePadding="4dp"
-                android:drawableRight="?attr/ic_arrow_drop_down_like_spinner"
-                android:paddingBottom="16dp"
-                android:paddingEnd="4dp"
-                android:paddingLeft="4dp"
-                android:paddingRight="4dp"
-                android:paddingStart="4dp"
-                android:paddingTop="4dp"
-                android:text="@string/not_set" />
-        </RelativeLayout>
+        <TextView
+            android:id="@+id/stop_time"
+            style="?attr/ContentFont"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:drawableEnd="?attr/ic_arrow_drop_down_like_spinner"
+            android:drawablePadding="4dp"
+            android:drawableRight="?attr/ic_arrow_drop_down_like_spinner"
+            android:text="@string/not_set"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/stop_time_label" />
 
         <TextView
             android:id="@+id/days_of_week_label"
             style="?attr/TitleFont"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:paddingTop="16dp"
-            android:text="@string/days_of_week" />
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/days_of_week"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/stop_time" />
 
         <TextView
             android:id="@+id/days_of_week"
             style="?attr/ContentFont"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
             android:drawableEnd="?attr/ic_arrow_drop_down_like_spinner"
             android:drawablePadding="4dp"
             android:drawableRight="?attr/ic_arrow_drop_down_like_spinner"
-            android:paddingBottom="16dp"
-            android:paddingEnd="4dp"
-            android:paddingLeft="4dp"
-            android:paddingRight="4dp"
-            android:paddingStart="4dp"
-            android:paddingTop="4dp"
-            android:text="@string/days_of_week" />
+            android:text="@string/days_of_week"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/days_of_week_label" />
 
         <TextView
             android:id="@+id/priority_label"
             style="?attr/TitleFont"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:paddingTop="16dp"
-            android:text="@string/priority" />
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/priority"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/days_of_week" />
 
         <TextView
             android:id="@+id/priority"
             style="?attr/ContentFont"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
             android:drawableEnd="?attr/ic_arrow_drop_down_like_spinner"
             android:drawablePadding="4dp"
             android:drawableRight="?attr/ic_arrow_drop_down_like_spinner"
-            android:paddingBottom="16dp"
-            android:paddingEnd="4dp"
-            android:paddingLeft="4dp"
-            android:paddingRight="4dp"
-            android:paddingStart="4dp"
-            android:paddingTop="4dp"
-            android:text="@string/not_set" />
+            android:text="@string/not_set"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/priority_label" />
 
         <TextView
             android:id="@+id/dvr_config_label"
             style="?attr/TitleFont"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:paddingTop="16dp"
-            android:text="@string/dvr_config" />
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/dvr_config"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/priority" />
 
         <TextView
             android:id="@+id/dvr_config"
             style="?attr/ContentFont"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
             android:drawableEnd="?attr/ic_arrow_drop_down_like_spinner"
             android:drawablePadding="4dp"
             android:drawableRight="?attr/ic_arrow_drop_down_like_spinner"
-            android:paddingBottom="16dp"
-            android:paddingEnd="4dp"
-            android:paddingLeft="4dp"
-            android:paddingRight="4dp"
-            android:paddingStart="4dp"
-            android:paddingTop="4dp"
-            android:text="@string/not_set" />
+            android:text="@string/not_set"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/dvr_config_label" />
 
         <TextView
             android:id="@+id/directory_label"
             style="?attr/TitleFont"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:paddingTop="16dp"
-            android:text="@string/directory" />
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/directory"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/dvr_config" />
 
         <EditText
             android:id="@+id/directory"
             style="?attr/ContentFont"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
             android:hint="@string/add_recording_directory"
             android:inputType="text"
-            android:paddingBottom="16dp" />
-    </LinearLayout>
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/directory_label" />
+    </android.support.constraint.ConstraintLayout>
 </ScrollView>
