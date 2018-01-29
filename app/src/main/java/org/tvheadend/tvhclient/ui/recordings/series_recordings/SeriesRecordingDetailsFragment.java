@@ -30,8 +30,6 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
 // TODO recording on all channels shows empty channel logo
-// TODO use contraintlayout
-// TODO split start stop time in the layout
 
 public class SeriesRecordingDetailsFragment extends BaseFragment implements RecordingRemovedCallback {
 
@@ -144,7 +142,6 @@ public class SeriesRecordingDetailsFragment extends BaseFragment implements Reco
         }
 
         startTimeTextView.setText(UIUtils.getTime(getContext(), recording.getStart()));
-
         startWindowTimeTextView.setText(UIUtils.getTime(getContext(), recording.getStartWindow()));
     }
 
