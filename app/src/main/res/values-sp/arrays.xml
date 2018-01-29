@@ -45,7 +45,7 @@
         <item>Sin importancia</item>
         <item>Sin ajustar</item>
     </string-array>
-    
+
     <string-array name="pr_content_type0">
         <item>Película/Drama</item>
         <item>Noticias/Actualidad</item>
@@ -86,7 +86,7 @@
         <item>Variedades</item>
         <item>Talk show</item>
     </string-array>
-    
+
     <string-array name="pr_content_type4">
         <item>Deportes</item>
         <item>Eventos especiales</item>
@@ -110,7 +110,7 @@
         <item>Informativo/Educativo/Escolar</item>
         <item>Dibujos animados/Marionetas</item>
     </string-array>
-    
+
     <string-array name="pr_content_type6">
         <item>Música/Ballet/Danza</item>
         <item>Rock/Pop</item>
@@ -142,9 +142,9 @@
         <item>Ciencias económicas/Asesor social</item>
         <item>Personas notables</item>
     </string-array>
- 
+
     <string-array name="pr_content_type9">
-        <item>Educación/Ciencia/Hechos</item>        
+        <item>Educación/Ciencia/Hechos</item>
         <item>Naturaleza/Animales/Entorno</item>
         <item>Tecnología/Ciencias naturales</item>
         <item>Medicina/Fisiología/Psicología</item>

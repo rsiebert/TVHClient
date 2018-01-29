@@ -1,0 +1,376 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingTranslation">
+    <string name="app_name">TVHClient</string>
+
+    <string name="media_route_menu_title">Play on&#8230;</string>
+    <string name="intro_overlay_text">Touch to cast Live TV or recordings to your TV\n\nPlease check that you meet the requirements described in the casting settings.</string>
+    <string name="connection_temp_lost">Connection to the cast device is temporarily lost</string>
+    <string name="connection_recovered">Connection to the cast device is recovered</string>
+    <string name="cast_profile_not_set">No casting profile was selected in the settings. This is required before casting can be used.</string>
+    <string name="cast_profile_invalid">The selected profile \'%1$s\' is not the recommended \'%2$s\' profile. Please note that casting might not work correctly.</string>
+    <string name="pref_casting">Casting</string>
+    <string name="pref_casting_sum">Settings to enable and configure casting Live-TV or recordings to your TV. Please note that this requires tvheadend with transcoding enabled and a server which is powerful enough to transcode the data in realtime.</string>
+    <string name="pref_enable_casting">Enable casting</string>
+    <string name="pref_enable_casting_sum">Only enable this feature if tvheadend is able to transcode and your server is powerful enough to convert the data in realtime.</string>
+    <string name="pref_show_cast_minicontroller">Cast controls</string>
+    <string name="pref_show_cast_minicontroller_sum">Show a cast minicontroller at the bottom of the screen to display some information about the current cast.</string>
+    <string name="download_error_insufficient_space">Error downloading the recording \'%s\'. Not sufficient space on the device.</string>
+    <string name="download_error_authentication_required">Error downloading the recording \'%s\'. Authentication not correct or missing.</string>
+    <string name="no_external_storage_available">External storage is not available or read only.</string>
+
+    <string name="settings">Ajustes</string>
+    <string name="refresh">Actualizar</string>
+    <string name="tags">Etiquetas</string>
+    <string name="play">Reproducir</string>
+    <string name="download">Descargar</string>
+    <string name="search">Buscar</string>
+    <string name="record_once">Grabar</string>
+    <string name="record_once_custom_profile">Grabar con perfil diferente</string>
+    <string name="record_series">Grabar serie de grabaciones</string>
+    <string name="record_stop">Parar grabación</string>
+    <string name="record_remove">Eliminar grabación</string>
+    <string name="record_remove_all">Eliminar todas las grabaciones</string>
+    <string name="confirm_remove_all">¿Estas seguro que quieres eliminar todas las grabaciones?</string>
+    <string name="search_imdb">Buscar en IMDB</string>
+    <string name="search_epg">Search the program guide</string>
+    <string name="add">Añadir</string>
+    <string name="save">Guardar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="stop">Detener</string>
+    <string name="set_active">Activar</string>
+    <string name="set_not_active">Desactivar</string>
+    <string name="edit">Editar</string>
+    <string name="delete">Eliminar</string>
+    <string name="timeframe">Timeframe</string>
+    <string name="genre_color_info">Explain genre colors</string>
+    <string name="send_wol">Wake up</string>
+    <string name="select_connection">Select connection</string>
+    <string name="add_connection">Add connection</string>
+    <string name="edit_connection">Edit connection</string>
+    <string name="remove">Borrar</string>
+    <string name="discard">Descartar</string>
+    <string name="confirm_discard_connection">Discard connection values? All changes will be lost.</string>
+    <string name="delete_connection">Do you really want to remove the connection \'%s\'?</string>
+    <string name="remove_recording">Do you really want to remove the recording \'%s\'?</string>
+    <string name="remove_series_recording">Do you really want to remove the series recording \'%s\'? This will remove all scheduled recordings that are affected by this series recording rule.</string>
+    <string name="remove_timer_recording">Do you really want to remove the timer recording \'%s\'?</string>
+    <string name="remove_all_recordings">Do you really want to remove ALL recordings?</string>
+    <string name="cancel_recording">Do you really want to remove the scheduled recording \'%s\'?</string>
+    <string name="stop_recording">Do you really want to stop the running recording \'%s\'?</string>
+    <string name="add_title">The title for the recording</string>
+    <string name="add_name">Nombre para esta entrada</string>
+    <string name="add_recording">Añadir nueva grabación</string>
+    <string name="edit_recording">Edit recording</string>
+    <string name="cancel_add_recording">Cancel adding a new recording? All values will be lost.</string>
+    <string name="cancel_edit_recording">Cancel editing existing recording? All values will be lost.</string>
+    <string name="add_series_recording">Add new series recording</string>
+    <string name="add_timer_recording">Add new manual recording</string>
+    <string name="edit_series_recording">Edit series recording</string>
+    <string name="edit_timer_recording">Edit manual recording</string>
+    <string name="activate_recording">Activate recording</string>
+    <string name="selected_directory">Selected directory:</string>
+    <string name="select">Seleccionar</string>
+
+    <string name="pref_manage_connections">Manage connections</string>
+    <string name="pref_manage_connections_sum">Select your active connection to a TVHeadend server or add, edit or remove connections.</string>
+    <string name="pref_connections">Connections</string>
+    <string name="pref_name">Connection name</string>
+    <string name="pref_name_sum">Enter a unique name of the connection</string>
+    <string name="pref_name_error_empty">The name must not be empty.</string>
+    <string name="pref_name_error_invalid">The name must only contain letters, numbers, minus and underscore.</string>
+    <string name="pref_selected">Default connection</string>
+    <string name="pref_selected_sum">Select to make this the default connection and use it after the application has started.</string>
+    <string name="pref_host">Hostname</string>
+    <string name="pref_host_sum">Enter the server hostname</string>
+    <string name="pref_host_error_empty">The IP-address or hostname must not be empty.</string>
+    <string name="pref_host_error_invalid">The IP-address is not valid.</string>
+    <string name="pref_port">Port</string>
+    <string name="pref_port_sum">Enter the server port</string>
+    <string name="pref_port_error_empty">The port number must not be empty.</string>
+    <string name="pref_port_error_invalid">The port number is not valid. Specify a number between 1 and 65535.</string>
+    <string name="pref_streaming_port">Port for media streaming</string>
+    <string name="pref_streaming_port_sum" tools:ignore="PluralsCandidate">Port %d will be used for media streaming. The default port is 9981 which is usually fine to use.</string>
+    <string name="pref_user">Username</string>
+    <string name="pref_user_sum">Enter username</string>
+    <string name="pref_pass">Password</string>
+    <string name="pref_pass_sum">Enter password</string>
+    <string name="pref_pass_set_sum">Password is set but is not displayed.</string>
+    <string name="pref_wol_address">MAC address</string>
+    <string name="pref_wol_address_sum">Enter the MAC address of the host (e.g. 00:ef:aa:dc:09:45)</string>
+    <string name="pref_wol_port">Wake on LAN Port</string>
+    <string name="pref_wol_port_sum" tools:ignore="PluralsCandidate">Port %d will be used to wake up the server. The default is 9.</string>
+    <string name="pref_wol_broadcast">Use Broadcast</string>
+    <string name="pref_wol_broadcast_sum">Send the WOL packet as a broadcast. Some routers do not allow this kind of WOL.</string>
+    <string name="pref_wol_address_invalid">The MAC address is invalid.\nIt must have the pattern \'01:24:67:9a:cd:ef\'.</string>
+
+    <string name="pref_user_interface">User interface</string>
+    <string name="pref_channels">Channels</string>
+    <string name="pref_icons">Channel icons</string>
+    <string name="pref_icons_sum">Show the channel icons.</string>
+    <string name="pref_big_icons">Big channel icon</string>
+    <string name="pref_big_icons_sum">Show a larger version of the channel icon.</string>
+    <string name="pref_tag_icon">Channel tag icon</string>
+    <string name="pref_tag_icon_sum">Show the icon for a channel tag instead of the application logo.</string>
+    <string name="pref_theme">Light theme</string>
+    <string name="pref_theme_sum">Use a light theme</string>
+    <string name="pref_language">Language</string>
+    <string name="pref_language_sum">Choose the language that shall be used by the application.</string>
+    <string name="pref_default_menu">Startscreen</string>
+    <string name="pref_default_menu_sum">Choose the screen that will be shown when the application starts.</string>
+    <string name="pref_sort_channels">Channel Order</string>
+    <string name="pref_sort_channels_sum">Choose in which order the channels will be displayed.</string>
+    <string name="pref_res">Resolution</string>
+    <string name="pref_res_sum">Specify the maximum resolution that the transcoder shall use.</string>
+    <string name="pref_acodec">Audio codec</string>
+    <string name="pref_acodec_sum">Define the type of audio that the transcoder shall use.</string>
+    <string name="pref_vcodec">Video codec</string>
+    <string name="pref_vcodec_sum">Define the type of video that the transcoder shall use.</string>
+    <string name="pref_scodec">Subtitle codec</string>
+    <string name="pref_scodec_sum">Define the subtitle type that the transcoder shall use.</string>
+    <string name="pref_container">Media container</string>
+    <string name="pref_container_sum">Define the media container that shall be used to transport the audio and video streams. Matroshka is usually the preferred choice.</string>
+    <string name="pref_transcode">Transcode stream</string>
+    <string name="pref_transcode_sum">Convert the program or recording into another format during playback. (This must be supported by the TVHeadend server)</string>
+    <string name="pref_information">Information</string>
+    <string name="pref_changelog">Changelog</string>
+    <string name="pref_changelog_sum">Show a list of features and changes of the different application versions.</string>
+    <string name="pref_program_guide">Program guide</string>
+    <string name="pref_program_guide_sum">Configure the program guide screen and how the data shall be displayed.</string>
+    <string name="pref_epg_hours_visible">Hours visible</string>
+    <string name="pref_epg_hours_visible_sum">Define how many hours of the program guide shall be shown on one screen. Too many hours will display too many programs and thus clutters the screen and decrease the readability.</string>
+    <string name="pref_epg_max_days">Maximum days to show</string>
+    <string name="pref_epg_max_days_sum">Define the maxmimum number of days of program guide data that shall be shown.</string>
+    <string name="pref_genre_colors">Genre colors</string>
+    <string name="pref_genre_colors_sum">Specify on which screens the genre color shall be shown.</string>
+    <string name="pref_genre_colors_channels">Channels</string>
+    <string name="pref_genre_colors_channels_sum">The genre color will be shown as a vertical line on the left side of the channel list screen.</string>
+    <string name="pref_genre_colors_programs">Programs</string>
+    <string name="pref_genre_colors_programs_sum">The genre color will be shown as a vertical line on the left side of the program lists and the program details screen.</string>
+    <string name="pref_genre_colors_epg">Program guide</string>
+    <string name="pref_genre_colors_epg_sum">Shows the genre color in the background of each program guide item.</string>
+    <string name="pref_genre_colors_search_results">Search results</string>
+    <string name="pref_genre_colors_search_results_sum">The genre color will be shown as a vertical line on the left side of the search result list.</string>
+    <string name="pref_genre_colors_visibility_message">Set the visibility of the colors. Higher values mean stronger colors.</string>
+    <string name="pref_genre_colors_visibility">Genre color visibility</string>
+    <string name="pref_genre_colors_visibility_value">%1$d%% visible</string>
+    <string name="pref_misc">Miscellaneous</string>
+    <string name="pref_clear_search_history">Clear search history</string>
+    <string name="pref_clear_icon_cache">Clear channel icon cache</string>
+    <string name="pref_unlocker">Additional features</string>
+    <string name="pref_unlocker_sum">Enable access to additional features and support further development by buying the unlocked version of TVHClient.</string>
+    <string name="pref_menu_visibility">Menu visibility</string>
+    <string name="pref_menu_visibility_sum">Hide or show certain menu items.</string>
+    <string name="pref_hide_menu_delete_all_recordings">Hide the \'Delete all recordings\' menu</string>
+    <string name="pref_hide_menu_delete_all_recordings_sum">Do not show this menu to prevent an accidental deletion of all recorded programs.</string>
+    <string name="pref_hide_menu_cancel_all_recordings">Hide the \'Cancel all recordings\' menu</string>
+    <string name="pref_hide_menu_cancel_all_recordings_sum">Do not show this menu to accidentally prevent cancelling all scheduled programs.</string>
+    <string name="pref_visible_menu_icon_tags">Always show the \'Channel Tags\' menu</string>
+    <string name="pref_visible_menu_icon_tags_sum">Keep the channel tag menu visible in the action bar. Prevents the menu from being moved into the three dot menu if there is not enough space.</string>
+    <string name="pref_profiles">Profiles</string>
+    <string name="pref_profiles_sum">Define the parameters or the profiles (if supported) how programs shall be recorded or how recordings shall be played.</string>
+    <string name="pref_recording_profiles">Recording profiles</string>
+    <string name="pref_recording_profiles_sum">Select a profile that the server shall use to record a scheduled program.</string>
+    <string name="pref_playback_profiles">Playback profiles</string>
+    <string name="pref_playback_profiles_sum">Select a profile that shall be used to play a recorded program.</string>
+    <string name="pref_cast_profiles">Cast playback profiles</string>
+    <string name="pref_cast_profiles_sum">Select a profile that shall be used to cast a channel or recorded program to a chromecast or similar device.</string>
+    <string name="pref_enable_recording_profiles">Enable recording profiles</string>
+    <string name="pref_enable_recording_profiles_sum">Use the newer server profile functionality for recordings. This overrides any defined video and audio parameters for recording a scheduled program.</string>
+    <string name="pref_enable_playback_profiles">Enable playback profiles</string>
+    <string name="pref_enable_playback_profiles_sum">Use the newer server profile functionality for programs. This overrides any defined video and audio parameters for playing a program.</string>
+    <string name="pref_notifications">Notifications</string>
+    <string name="pref_download_directory">Download directory</string>
+    <string name="pref_download_directory_sum">Recordings will be downloaded into the following directory: \'%s\'</string>
+    <string name="pref_show_notifications">Show notifications</string>
+    <string name="pref_show_notifications_sum">Informs the user whenever a recording has started or has been completed.</string>
+    <string name="pref_show_notification_offset">Notification time </string>
+    <string name="pref_show_notification_offset_sum">Define the time that a notification shall be shown in advance before the actual start of a recording.</string>
+    <string name="pref_show_next_program">Show next program in channel list</string>
+    <string name="pref_show_next_program_sum">The name of the program coming up next is displayed in the channel list. It is shown below the progress indicator.</string>
+    <string name="pref_play_when_channel_icon_selected">Channel icon plays TV or recording</string>
+    <string name="pref_play_when_channel_icon_selected_sum">Start playing the current program or recording when the channel icon is selected in the channel list, program guide or recording list screen.</string>
+    <string name="pref_programs">Programs</string>
+    <string name="pref_playback_and_recording">Playback and recording</string>
+    <string name="pref_transcoding">Video and audio parameters</string>
+    <string name="pref_transcoding_sum">Defines the video and audio parameters how programs shall be recorded or how recordings shall be played.</string>
+
+    <string name="pref_advanced_settings">Advanced settings</string>
+    <string name="pref_debug_mode">Debug Mode</string>
+    <string name="pref_debug_mode_sum">Write detailed information into a log file on the internal storage. Could slow down the app a bit if enabled.</string>
+    <string name="pref_send_logfile">Send log to developer</string>
+    <string name="pref_send_logfile_sum">Mail the log file to the developer to support him improving the program. Only status information from TVHClient is sent!</string>
+    <string name="pref_connection_timeout">Connection Timeout</string>
+    <string name="pref_connection_timeout_sum">Defines the time in seconds until the connection with the server must be fully established. Increasing the value can improve the connectivity on slow networks.</string>
+    <string name="pref_buffer_size">Message buffer size</string>
+    <string name="pref_buffer_size_sum">Size in MB of the buffer that stores the received data from the server. Default is 4 MB. If sometimes no data could be loaded a larger buffer size might solve the problem. Please not that a larger buffer size might lead to low memory on older devices.</string>
+
+    <string name="feature_not_supported_by_server">The TVHeadend server does not supported this feature. A newer version is required.</string>
+    <string name="loading_profiles">Loading profiles</string>
+
+    <string name="clear_search_history">Clear search history?</string>
+    <string name="clear_search_history_sum">Are you sure you want to remove all entries from the search history?</string>
+    <string name="clear_search_history_done">Search history cleared</string>
+    <string name="clear_icon_cache">Clear channel icon cache?</string>
+    <string name="clear_icon_cache_sum">Are you sure you want to remove all channel icons? You can do this to fetch updated icons from the server.</string>
+    <string name="clear_icon_cache_done">Channel icon cache cleared</string>
+
+    <string name="err_auth">Access denied</string>
+    <string name="err_connect">Can\'t connect to server</string>
+    <string name="err_con_lost">Lost connection to server</string>
+    <string name="err_con_timeout">Connection timeout</string>
+    <string name="err_no_network">No network connection active</string>
+    <string name="error_adding_recording">Recording was not added! %s</string>
+    <string name="error_removing_recording">Recording was not removed! %s</string>
+    <string name="error_updating_recording">Recording was not updated! %s</string>
+    <string name="success_adding_recording">Recording has been added.</string>
+    <string name="success_removing_recording">Recording has been removed.</string>
+    <string name="success_updating_recording">Recording has been updated.</string>
+
+    <string name="recording_file_missing">Recorded file is missing</string>
+    <string name="recording_time_missed">Scheduled recording was missed</string>
+    <string name="recording_file_invalid">Recording is invalid</string>
+    <string name="recording_canceled">Recording has been canceled</string>
+    <string name="recording_started">Recording started</string>
+    <string name="recording_starts_in">Recording starts in %d min.</string>
+    <string name="recording_completed">Recording completed</string>
+
+    <string name="wol_send">Successfully sent wake on LAN packet to \'%s\'</string>
+    <string name="wol_send_broadcast">Successfully sent wake on LAN packet as a broadcast to \'%s\'</string>
+    <string name="wol_address_invalid">The MAC-address is not valid. Please check your settings.</string>
+    <string name="wol_error">Error sending wake on LAN packet to \'%1$s\'.\n Error message: %2$s</string>
+
+    <string name="no_transmission">No transmission</string>
+    <string name="no_data">No program data available</string>
+    <string name="minutes">%d min</string>
+
+    <string name="not_set">Not set</string>
+
+    <string name="search_hint">Buscar el EPG</string>
+    <string name="two_days_ago">Hace dos dias</string>
+    <string name="yesterday">Ayer</string>
+    <string name="today">Hoy</string>
+    <string name="tomorrow">Mañana</string>
+    <string name="in_2_days">En 2 dias</string>
+    <string name="monday">Lunes</string>
+    <string name="tuesday">Martes</string>
+    <string name="wednesday">Miercoles</string>
+    <string name="thursday">Jueves</string>
+    <string name="friday">Viernes</string>
+    <string name="saturday">Sabado</string>
+    <string name="sunday">Domingo</string>
+    <string name="all_days">Todos los dias</string>
+    <string name="no_days">Sin dias</string>
+
+    <string name="completed_recordings">Completed recordings</string>
+    <string name="scheduled_recordings">Scheduled recordings</string>
+    <string name="failed_recordings">Failed recordings</string>
+    <string name="series_recordings">Series recordings</string>
+    <string name="timer_recordings">Timer recordings</string>
+    <string name="is_series_recording">This recording is part of a series recording</string>
+    <string name="is_timer_recording">This recording was created by a timer</string>
+
+    <string name="recording_enabled">Esta grabaión está habilitada</string>
+    <string name="recording_disabled">Esta grabación está deshabilitada</string>
+    <string name="days_of_week">Dias de la semana</string>
+    <string name="comment">Comentario</string>
+    <string name="name">Nombre</string>
+
+    <string name="channels">Canales</string>
+    <string name="recordings">Grabaciones</string>
+    <string name="status">Estado</string>
+
+    <string name="status_icon">Status icon</string>
+    <string name="title">Title</string>
+    <string name="subtitle">Subtitle</string>
+    <string name="channel">Channel</string>
+    <string name="time">Time</string>
+    <string name="date">Date</string>
+    <string name="summary">Summary</string>
+    <string name="description">Description</string>
+    <string name="duration">Duration</string>
+    <string name="airing">Airing</string>
+    <string name="rating">Rating</string>
+    <string name="content_type">Content type</string>
+    <string name="series_information">Series information</string>
+    <string name="genre_color_list">List of genre colors and their meaning.</string>
+    <string name="priority">Priority</string>
+    <string name="dvr_config">Recording profile</string>
+
+    <string name="current_time">Current time</string>
+    <string name="start_time">Start time</string>
+    <string name="stop_time">Stop time</string>
+    <string name="time_window">Time window to start recording</string>
+    <string name="enable_time_window">Activate times for recording</string>
+    <string name="start_after_time">Beginn</string>
+    <string name="start_before_time">End</string>
+    <string name="extra_start_time">Extra start minutes (pre-time)</string>
+    <string name="extra_stop_time">Extra stop minutes (post-time)</string>
+    <string name="min_duration">Minimum duration of the program</string>
+    <string name="max_duration">Maximum duration of the program</string>
+    <string name="duration_sum">Duration in minutes (0 = any)</string>
+    <string name="from_to_time">From %1$s to %2$s</string>
+    <string name="recording_time">Recording Time</string>
+    <string name="error_empty_title">The title must no be empty!</string>
+    <string name="duplicate_detection">Detect duplicate shows</string>
+
+    <string name="subscription_error">Subscription error: %1$s</string>
+    <string name="stream_errors">Stream errors: %1$d</string>
+    <string name="data_errors">Data errors: %1$d</string>
+    <string name="data_size">File size: %1$d %2$s</string>
+
+    <string name="nothing">Nothing</string>
+    <string name="loading">Loading&#8230;</string>
+    <string name="updating">Updating&#8230;</string>
+    <string name="all_channels">All channels</string>
+    <string name="no_channel">No channel</string>
+    <string name="season">Season</string>
+    <string name="episode">Episode</string>
+    <string name="part">Part</string>
+    <string name="progress">%1$d%% of the show already shown</string>
+    <string name="next_program">Next: %s</string>
+
+    <string name="server">Servidor</string>
+    <string name="connection">Conexión</string>
+    <string name="disc_space">Espacio en disco</string>
+    <string name="server_api_version">Versión del servidor API</string>
+    <string name="total">Total</string>
+    <string name="available">Disponible</string>
+    <string name="unknown">Desconocido</string>
+    <string name="ready">Preparado</string>
+    <string name="select_time">Show programs that are running at the selected time.</string>
+    <string name="select_timeframe">Show the program guide for the selected date and time.</string>
+    <string name="currently_recording">Actualmente grabando</string>
+    <string name="select_channel">Seleccionar canal</string>
+    <string name="select_priority">Seleccionar prioridad</string>
+    <string name="select_dvr_config">Selecionar perfil de grabación</string>
+    <string name="select_log_file">Seleccionar fichero de log</string>
+    <string name="select_duplicate_detection">Select duplicate detection method</string>
+
+    <!-- Connection related -->
+    <string name="no_connection_available">No connection available</string>
+    <string name="no_connection_available_advice">No connection available. At least one is required.</string>
+    <string name="no_connection_active">No connection activated</string>
+    <string name="no_connection_active_advice">At least one connection is defined, but not activated.</string>
+
+    <!-- Unlcoker related -->
+    <string name="unlocker_purchase_successful">Purchase successful! Thank you for support! All features are now available.</string>
+    <string name="unlocker_purchase_not_successful">Unfortunately the purchase was not successful. Please contact the developer.</string>
+    <string name="feature_not_available_in_free_version">This feature is not available in the free version!</string>
+    <string name="unlocker_already_purchased">All additional features are available! Thank you for your support!</string>
+    <string name="purchase">Purchase</string>
+
+    <string name="no_media_player">No media player found</string>
+    <string name="show_play_store">Do you want to go to the Google Play Store and search for available media players?</string>
+
+    <!-- Optional strings for the navigation drawer -->
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+
+    <string name="parent_directory">Parent directory</string>
+
+    <string name="pref_show_program_artwork_sum">Displays the artwork/poster image to the current program. The server must provide the information.</string>
+    <string name="pref_show_program_artwork">Show program artwork/poster</string>
+
+</resources>
