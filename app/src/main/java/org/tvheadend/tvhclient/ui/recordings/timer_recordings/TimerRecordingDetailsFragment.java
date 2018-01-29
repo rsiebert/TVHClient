@@ -26,9 +26,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-// TODO use contraintlayout
-// TODO split start stop time in the layout
-
 public class TimerRecordingDetailsFragment extends BaseFragment implements RecordingRemovedCallback {
 
     @BindView(R.id.is_enabled)
@@ -37,8 +34,10 @@ public class TimerRecordingDetailsFragment extends BaseFragment implements Recor
     TextView directoryLabelTextView;
     @BindView(R.id.directory)
     TextView directoryTextView;
-    @BindView(R.id.time)
-    TextView timeTextView;
+    @BindView(R.id.start_time)
+    TextView startTimeTextView;
+    @BindView(R.id.stop_time)
+    TextView stopTimeTextView;
     @BindView(R.id.duration)
     TextView durationTextView;
     @BindView(R.id.days_of_week)
@@ -130,8 +129,8 @@ public class TimerRecordingDetailsFragment extends BaseFragment implements Recor
             priorityTextView.setText(priorityItems[recording.getPriority()]);
         }
 
-        String time = UIUtils.getTime(activity, recording.getStart()) + " - " + UIUtils.getTime(activity, recording.getStop());
-        timeTextView.setText(time);
+        startTimeTextView.setText(UIUtils.getTime(activity, recording.getStart()));
+        stopTimeTextView.setText(UIUtils.getTime(activity, recording.getStop()));
 
         durationTextView.setText(getString(R.string.minutes, recording.getDuration()));
     }
