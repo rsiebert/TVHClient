@@ -22,7 +22,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
-import org.tvheadend.tvhclient.data.model.Connection;
+import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.htsp.tasks.Authenticator;
 
 // TODO preference: reconnect retries
@@ -31,31 +31,25 @@ import org.tvheadend.tvhclient.htsp.tasks.Authenticator;
 public class SimpleHtspConnection implements HtspMessage.Dispatcher, HtspConnection.Listener {
     private static final String TAG = SimpleHtspConnection.class.getSimpleName();
 
-    private final HtspMessageSerializer messageSerializer;
     private final HtspMessageDispatcher messageDispatcher;
-    private final HtspDataHandler htspDataHandler;
-    private final Connection connectionInfo;
     private final Authenticator authenticator;
-
     private final HtspConnection htspConnection;
     private final Context context;
     private Thread connectionThread;
 
     private boolean enableReconnect = false;
-    private int retryCount = 0;
+    private int retryCount = 3;
     private int retryDelay = 0;
 
     public SimpleHtspConnection(Context context, Connection connectionInfo) {
         this.context = context;
-        this.connectionInfo = connectionInfo;
 
-        messageSerializer = new HtspMessageSerializer();
         messageDispatcher = new HtspMessageDispatcher();
 
-        htspDataHandler = new HtspDataHandler(messageSerializer, messageDispatcher);
-        authenticator = new Authenticator(messageDispatcher, this.connectionInfo);
+        HtspDataHandler htspDataHandler = new HtspDataHandler(new HtspMessageSerializer(), messageDispatcher);
+        authenticator = new Authenticator(messageDispatcher, connectionInfo);
 
-        htspConnection = new HtspConnection(this.connectionInfo, htspDataHandler, htspDataHandler);
+        htspConnection = new HtspConnection(connectionInfo, htspDataHandler, htspDataHandler);
         htspConnection.addConnectionListener(this);
         htspConnection.addConnectionListener(messageDispatcher);
         htspConnection.addConnectionListener(htspDataHandler);

@@ -24,20 +24,18 @@ import android.util.Base64;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
-import org.tvheadend.tvhclient.data.Constants;
-import org.tvheadend.tvhclient.data.DataStorage;
-import org.tvheadend.tvhclient.data.DatabaseHelper;
-import org.tvheadend.tvhclient.data.local.Logger;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.data.model.Connection;
+import org.tvheadend.tvhclient.data.Constants;
+import org.tvheadend.tvhclient.data.DataRepository;
+import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.entity.Recording;
+import org.tvheadend.tvhclient.data.local.Logger;
+import org.tvheadend.tvhclient.data.repository.ConnectionDataRepository;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
 public class DownloadActivity extends Activity implements OnRequestPermissionsResultCallback {
-
     private final static String TAG = DownloadActivity.class.getSimpleName();
 
-    private DataStorage dataStorage;
     private Connection conn;
     private DownloadManager dm;
 
@@ -50,11 +48,8 @@ public class DownloadActivity extends Activity implements OnRequestPermissionsRe
         super.onCreate(savedInstanceState);
         MiscUtils.setLanguage(this);
 
-        dataStorage = DataStorage.getInstance();
-        DatabaseHelper databaseHelper = DatabaseHelper.getInstance(getApplicationContext());
-        conn = databaseHelper.getSelectedConnection();
-        // Check that a valid channel or recording was specified
-        rec = dataStorage.getRecordingFromArray(getIntent().getIntExtra("dvrId", 0));
+        rec = new DataRepository(this).getRecordingSync(getIntent().getIntExtra("dvrId", 0));
+        conn = new ConnectionDataRepository(this).getActiveConnectionSync();
         logger = Logger.getInstance();
     }
 
@@ -75,8 +70,8 @@ public class DownloadActivity extends Activity implements OnRequestPermissionsRe
      */
     private void prepareDownload() {
 
-        String downloadUrl = "http://" + conn.address + ":" + conn.streaming_port + "/dvrfile/" + rec.getId();
-        String auth = "Basic " + Base64.encodeToString((conn.username + ":" + conn.password).getBytes(), Base64.NO_WRAP);
+        String downloadUrl = "http://" + conn.getHostname() + ":" + conn.getStreamingPort() + "/dvrfile/" + rec.getId();
+        String auth = "Basic " + Base64.encodeToString((conn.getUsername() + ":" + conn.getPassword()).getBytes(), Base64.NO_WRAP);
 
         try {
             Request request = new Request(Uri.parse(downloadUrl));

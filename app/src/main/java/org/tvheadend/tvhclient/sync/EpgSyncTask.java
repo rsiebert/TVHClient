@@ -14,7 +14,6 @@ import android.util.Log;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.AppDatabase;
-import org.tvheadend.tvhclient.data.DatabaseHelper;
 import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.data.entity.ChannelTag;
 import org.tvheadend.tvhclient.data.entity.Program;
@@ -22,7 +21,6 @@ import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.data.entity.SeriesRecording;
 import org.tvheadend.tvhclient.data.entity.TagAndChannel;
 import org.tvheadend.tvhclient.data.entity.TimerRecording;
-import org.tvheadend.tvhclient.data.model.Connection;
 import org.tvheadend.tvhclient.htsp.HtspFileInputStream;
 import org.tvheadend.tvhclient.htsp.HtspMessage;
 import org.tvheadend.tvhclient.htsp.HtspNotConnectedException;
@@ -49,7 +47,6 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     private static final String TAG = EpgSyncTask.class.getSimpleName();
     private final AppDatabase db;
 
-    private Connection connection;
     private int htspVersion = 9;
     private boolean initialSyncCompleted = false;
 
@@ -67,7 +64,6 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         this.context = context;
         this.dispatcher = dispatcher;
         this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        this.connection = DatabaseHelper.getInstance(context.getApplicationContext()).getSelectedConnection();
         this.db = AppDatabase.getInstance(context.getApplicationContext());
         HandlerThread mHandlerThread = new HandlerThread("EpgSyncTask Handler Thread");
         mHandlerThread.start();

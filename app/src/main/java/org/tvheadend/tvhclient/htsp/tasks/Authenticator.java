@@ -20,7 +20,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import org.tvheadend.tvhclient.BuildConfig;
-import org.tvheadend.tvhclient.data.model.Connection;
+import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.htsp.HtspConnection;
 import org.tvheadend.tvhclient.htsp.HtspMessage;
 import org.tvheadend.tvhclient.htsp.HtspNotConnectedException;
@@ -199,7 +199,7 @@ public class Authenticator implements HtspMessage.Listener, HtspConnection.Liste
         HtspMessage message = new HtspMessage();
 
         message.put("method", "authenticate");
-        message.put("username", connection.username);
+        message.put("username", connection.getUsername());
         message.put("digest", calculateDigest(responseMessage.getByteArray("challenge")));
 
         try {
@@ -241,7 +241,7 @@ public class Authenticator implements HtspMessage.Listener, HtspConnection.Liste
         }
 
         try {
-            md.update(connection.password.getBytes("utf8"));
+            md.update(connection.getPassword().getBytes("utf8"));
             md.update(challenge);
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException("Your platform doesn't support UTF-8");

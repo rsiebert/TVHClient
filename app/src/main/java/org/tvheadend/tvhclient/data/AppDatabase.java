@@ -7,6 +7,7 @@ import android.content.Context;
 
 import org.tvheadend.tvhclient.data.dao.ChannelDao;
 import org.tvheadend.tvhclient.data.dao.ChannelTagDao;
+import org.tvheadend.tvhclient.data.dao.ConnectionDao;
 import org.tvheadend.tvhclient.data.dao.ProgramDao;
 import org.tvheadend.tvhclient.data.dao.RecordingDao;
 import org.tvheadend.tvhclient.data.dao.SeriesRecordingDao;
@@ -14,6 +15,7 @@ import org.tvheadend.tvhclient.data.dao.TagAndChannelDao;
 import org.tvheadend.tvhclient.data.dao.TimerRecordingDao;
 import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.data.entity.ChannelTag;
+import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.entity.Program;
 import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.data.entity.SeriesRecording;
@@ -28,9 +30,10 @@ import org.tvheadend.tvhclient.data.entity.TimerRecording;
                 Program.class,
                 Channel.class,
                 ChannelTag.class,
-                TagAndChannel.class
+                TagAndChannel.class,
+                Connection.class
         },
-        version = 11,
+        version = 12,
         exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
 
@@ -59,4 +62,6 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract TagAndChannelDao tagAndChannelDao();
 
     public abstract ProgramDao programDao();
+
+    public abstract ConnectionDao connectionDao();
 }

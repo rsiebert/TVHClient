@@ -5,7 +5,7 @@ import android.os.AsyncTask;
 
 import org.tvheadend.tvhclient.data.local.Logger;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.data.model.Connection;
+import org.tvheadend.tvhclient.data.entity.Connection;
 
 import java.lang.ref.WeakReference;
 import java.net.DatagramPacket;
@@ -39,11 +39,11 @@ public class WakeOnLanTask extends AsyncTask<String, Void, Integer> {
     protected Integer doInBackground(String... params) {
         // Exit if the MAC address is not ok, this should never happen because
         // it is already validated in the settings
-        if (!validateMacAddress(connection.wol_mac_address)) {
+        if (!validateMacAddress(connection.getWolMacAddress())) {
             return WOL_INVALID_MAC;
         }
         // Get the MAC address parts from the string
-        byte[] macBytes = getMacBytes(connection.wol_mac_address);
+        byte[] macBytes = getMacBytes(connection.getWolMacAddress());
 
         // Assemble the byte array that the WOL consists of
         byte[] bytes = new byte[6 + 16 * macBytes.length];
@@ -57,23 +57,23 @@ public class WakeOnLanTask extends AsyncTask<String, Void, Integer> {
 
         try {
             InetAddress address;
-            if (!connection.wol_broadcast) {
-                address = InetAddress.getByName(connection.address);
+            if (!connection.isWolUseBroadcast()) {
+                address = InetAddress.getByName(connection.getHostname());
                 logger.log(TAG, "doInBackground: Sending WOL packet to " + address);
             } else {
                 // Replace the last number by 255 to send the packet as a broadcast
-                byte[] ipAddress = InetAddress.getByName(connection.address).getAddress();
+                byte[] ipAddress = InetAddress.getByName(connection.getHostname()).getAddress();
                 ipAddress[3] = (byte) 255;
                 address = InetAddress.getByAddress(ipAddress);
                 logger.log(TAG, "doInBackground: Sending WOL packet as broadcast to " + address.toString());
             }
-            DatagramPacket packet = new DatagramPacket(bytes, bytes.length, address, connection.wol_port);
+            DatagramPacket packet = new DatagramPacket(bytes, bytes.length, address, connection.getWolPort());
             DatagramSocket socket = new DatagramSocket();
             socket.send(packet);
             socket.close();
 
             logger.log(TAG, "doInBackground: Datagram packet was sent");
-            if (!connection.wol_broadcast) {
+            if (!connection.isWolUseBroadcast()) {
                 return WOL_SEND;
             } else {
                 return WOL_SEND_BROADCAST;
@@ -128,13 +128,13 @@ public class WakeOnLanTask extends AsyncTask<String, Void, Integer> {
         Context ctx = context.get();
         if (ctx != null) {
             if (result == WOL_SEND) {
-                message = ctx.getString(R.string.wol_send, connection.address);
+                message = ctx.getString(R.string.wol_send, connection.getHostname());
             } else if (result == WOL_SEND_BROADCAST) {
-                message = ctx.getString(R.string.wol_send_broadcast, connection.address);
+                message = ctx.getString(R.string.wol_send_broadcast, connection.getHostname());
             } else if (result == WOL_INVALID_MAC) {
                 message = ctx.getString(R.string.wol_address_invalid);
             } else {
-                message = ctx.getString(R.string.wol_error, connection.address, exception.getLocalizedMessage());
+                message = ctx.getString(R.string.wol_error, connection.getHostname(), exception.getLocalizedMessage());
             }
         }
         callback.notify(message);

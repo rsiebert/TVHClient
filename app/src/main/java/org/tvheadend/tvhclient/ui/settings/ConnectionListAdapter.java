@@ -1,6 +1,7 @@
 package org.tvheadend.tvhclient.ui.settings;
 
 import android.app.Activity;
+import android.support.annotation.NonNull;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -8,7 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.data.model.Connection;
+import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
 import java.util.Comparator;
@@ -19,7 +20,7 @@ public class ConnectionListAdapter extends ArrayAdapter<Connection> {
     private final Activity context;
     private final List<Connection> list;
 
-    public ConnectionListAdapter(Activity context, List<Connection> list) {
+    ConnectionListAdapter(Activity context, List<Connection> list) {
         super(context, R.layout.connection_list_adapter, list);
         this.context = context;
         this.list = list;
@@ -28,7 +29,7 @@ public class ConnectionListAdapter extends ArrayAdapter<Connection> {
     public void sort() {
         sort(new Comparator<Connection>() {
             public int compare(Connection x, Connection y) {
-                return (x.name.equals(y.name)) ? 0 : 1;
+                return (x.getName().equals(y.getName())) ? 0 : 1;
             }
         });
     }
@@ -39,8 +40,9 @@ public class ConnectionListAdapter extends ArrayAdapter<Connection> {
         public ImageView selected;
     }
 
+    @NonNull
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
         View view = convertView;
         ViewHolder holder;
 
@@ -58,15 +60,15 @@ public class ConnectionListAdapter extends ArrayAdapter<Connection> {
         // Get the connection and assign all the values
         Connection c = getItem(position);
         if (c != null) {
-            holder.title.setText(c.name);
-            String summary = c.address + ":" + c.port;
+            holder.title.setText(c.getName());
+            String summary = c.getHostname() + ":" + c.getPort();
             holder.summary.setText(summary);
             
            // Set the active / inactive icon depending on the theme and selection status
            if (MiscUtils.getThemeId(context) == R.style.CustomTheme_Light) {
-               holder.selected.setImageResource(c.selected ? R.drawable.item_active_light : R.drawable.item_not_active_light);
+               holder.selected.setImageResource(c.isActive() ? R.drawable.item_active_light : R.drawable.item_not_active_light);
            } else {
-               holder.selected.setImageResource(c.selected ? R.drawable.item_active_dark : R.drawable.item_not_active_dark);
+               holder.selected.setImageResource(c.isActive() ? R.drawable.item_active_dark : R.drawable.item_not_active_dark);
            }
         }
         return view;
@@ -78,7 +80,7 @@ public class ConnectionListAdapter extends ArrayAdapter<Connection> {
         // Go through the list of programs and find the
         // one with the same id. If its been found, replace it.
         for (int i = 0; i < length; ++i) {
-            if (list.get(i).id == c.id) {
+            if (list.get(i).getId() == c.getId()) {
                 list.set(i, c);
                 break;
             }

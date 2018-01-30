@@ -19,7 +19,7 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import org.tvheadend.tvhclient.data.model.Connection;
+import org.tvheadend.tvhclient.data.entity.Connection;
 
 import java.io.IOException;
 import java.net.ConnectException;
@@ -395,7 +395,7 @@ public class HtspConnection implements Runnable {
             try {
                 mSocketChannel = SocketChannel.open();
                 mSocketChannel.configureBlocking(false);
-                mSocketChannel.connect(new InetSocketAddress(connection.address, connection.port));
+                mSocketChannel.connect(new InetSocketAddress(connection.getHostname(), connection.getPort()));
                 mSelector = Selector.open();
             } catch (ClosedByInterruptException e) {
                 Log.e(TAG, "Failed to open HTSP connection, interrupted");

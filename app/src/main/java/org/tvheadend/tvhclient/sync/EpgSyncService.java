@@ -11,12 +11,12 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import org.tvheadend.tvhclient.data.AppDatabase;
-import org.tvheadend.tvhclient.data.DatabaseHelper;
-import org.tvheadend.tvhclient.data.model.Connection;
+import org.tvheadend.tvhclient.data.entity.Connection;
+import org.tvheadend.tvhclient.data.repository.ConnectionDataRepository;
 import org.tvheadend.tvhclient.htsp.SimpleHtspConnection;
 
-// TODO add clearing outdated data
-// TODO add task to periodically fetch epg data
+// TODO add removing data older that x days
+// TODO add task to periodically fetch epg data for all channels
 
 public class EpgSyncService extends Service {
     private static final String TAG = EpgSyncService.class.getSimpleName();
@@ -41,7 +41,7 @@ public class EpgSyncService extends Service {
         handlerThread.start();
         new Handler(handlerThread.getLooper());
 
-        connection = DatabaseHelper.getInstance(this.getApplicationContext()).getSelectedConnection();
+        connection = new ConnectionDataRepository(this).getActiveConnectionSync();
         if (connection == null) {
             Log.i(TAG, "No account configured, aborting startup of EPG Sync Service");
             stopSelf();
@@ -84,14 +84,14 @@ public class EpgSyncService extends Service {
     private void maybeClearDatabaseTablesDueToNewConnection() {
         // Get the id of the previously used connection
         long id = sharedPreferences.getLong("previous_connection_id", -1);
-        if (id != connection.id) {
+        if (id != connection.getId()) {
 
             AppDatabase appDatabase = AppDatabase.getInstance(this.getApplicationContext());
             new ClearTablesAsyncTask(appDatabase).execute();
             
             SharedPreferences.Editor editor = sharedPreferences.edit();
             // Save the id of the new connection in the preferences.
-            editor.putLong("previous_connection_id", connection.id);
+            editor.putLong("previous_connection_id", connection.getId());
             // Save the status of the initial sync in the preferences.
             editor.putBoolean("initial_sync_done", false);
             editor.apply();

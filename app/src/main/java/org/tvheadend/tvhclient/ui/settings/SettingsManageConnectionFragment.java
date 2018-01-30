@@ -7,6 +7,7 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Patterns;
 import android.view.Menu;
@@ -16,11 +17,11 @@ import android.view.MenuItem;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
-import org.tvheadend.tvhclient.data.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.data.entity.Connection;
+import org.tvheadend.tvhclient.data.repository.ConnectionDataRepository;
 import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
 import org.tvheadend.tvhclient.ui.common.BackPressedInterface;
-import org.tvheadend.tvhclient.data.model.Connection;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -30,6 +31,8 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
     private ToolbarInterface toolbarInterface;
     private Connection connection;
     private boolean connectionValuesChanged;
+    private ConnectionDataRepository repository;
+    private AppCompatActivity activity;
 
     private EditTextPreference prefName;
     private EditTextPreference prefAddress;
@@ -47,11 +50,14 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
         super.onActivityCreated(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences_add_connection);
 
-        if (getActivity() instanceof ToolbarInterface) {
-            toolbarInterface = (ToolbarInterface) getActivity();
+        activity = (AppCompatActivity) getActivity();
+        if (activity instanceof ToolbarInterface) {
+            toolbarInterface = (ToolbarInterface) activity;
         }
         toolbarInterface.setTitle(getString(R.string.add_connection));
         setHasOptionsMenu(true);
+
+        repository = new ConnectionDataRepository(activity);
 
         // Get the connectivity preferences for later usage
         prefName = (EditTextPreference) findPreference("pref_name");
@@ -83,16 +89,16 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
         // Restore the added connection information after an orientation change
         if (savedInstanceState != null) {
             connection = new Connection();
-            connection.id = savedInstanceState.getLong("id");
-            connection.name = savedInstanceState.getString("name");
-            connection.address = savedInstanceState.getString("address");
-            connection.port = savedInstanceState.getInt("port");
-            connection.streaming_port = savedInstanceState.getInt("streaming_port");
-            connection.username = savedInstanceState.getString("username");
-            connection.password = savedInstanceState.getString("password");
-            connection.wol_mac_address = savedInstanceState.getString("wol_address");
-            connection.wol_port = savedInstanceState.getInt("wol_port");
-            connection.wol_broadcast = savedInstanceState.getBoolean("wol_use_broadcast");
+            connection.setId(savedInstanceState.getInt("id"));
+            connection.setName(savedInstanceState.getString("name"));
+            connection.setHostname(savedInstanceState.getString("address"));
+            connection.setPort(savedInstanceState.getInt("port"));
+            connection.setStreamingPort(savedInstanceState.getInt("streaming_port"));
+            connection.setUsername(savedInstanceState.getString("username"));
+            connection.setPassword(savedInstanceState.getString("password"));
+            connection.setWolMacAddress(savedInstanceState.getString("wol_address"));
+            connection.setWolPort(savedInstanceState.getInt("wol_port"));
+            connection.setWolUseBroadcast(savedInstanceState.getBoolean("wol_use_broadcast"));
             connectionValuesChanged = savedInstanceState.getBoolean("connection_changed");
         } else {
             // If the bundle is null then a new connection shall be added.
@@ -101,28 +107,28 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
             if (bundle == null) {
                 connection = new Connection();
             } else {
-                long connectionId = bundle.getLong("connection_id", 0);
-                connection = DatabaseHelper.getInstance(getActivity()).getConnection(connectionId);
+                int connectionId = bundle.getInt("connection_id", 0);
+                connection = repository.getConnectionSync(connectionId);
             }
         }
 
-        toolbarInterface.setTitle(connection.id > 0 ?
+        toolbarInterface.setTitle(connection.getId() > 0 ?
                 getString(R.string.edit_connection) :
                 getString(R.string.add_connection));
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putLong("id", connection.id);
-        outState.putString("name", connection.name);
-        outState.putString("address", connection.address);
-        outState.putInt("port", connection.port);
-        outState.putInt("streaming_port", connection.streaming_port);
-        outState.putString("username", connection.username);
-        outState.putString("password", connection.password);
-        outState.putString("wol_address", connection.wol_mac_address);
-        outState.putInt("wol_port", connection.wol_port);
-        outState.putBoolean("wol_use_broadcast", connection.wol_broadcast);
+        outState.putInt("id", connection.getId());
+        outState.putString("name", connection.getName());
+        outState.putString("address", connection.getHostname());
+        outState.putInt("port", connection.getPort());
+        outState.putInt("streaming_port", connection.getStreamingPort());
+        outState.putString("username", connection.getUsername());
+        outState.putString("password", connection.getPassword());
+        outState.putString("wol_address", connection.getWolMacAddress());
+        outState.putInt("wol_port", connection.getWolPort());
+        outState.putBoolean("wol_use_broadcast", connection.isWolUseBroadcast());
         outState.putBoolean("connection_changed", connectionValuesChanged);
         super.onSaveInstanceState(outState);
     }
@@ -134,16 +140,16 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
     }
 
     private void showPreferenceValues() {
-        onPreferenceChange(prefName, connection.name);
-        onPreferenceChange(prefAddress, connection.address);
-        onPreferenceChange(prefPort, String.valueOf(connection.port));
-        onPreferenceChange(prefStreamingPort, String.valueOf(connection.streaming_port));
-        onPreferenceChange(prefUsername, connection.username);
-        onPreferenceChange(prefPassword, connection.password);
-        onPreferenceChange(prefSelected, connection.selected);
-        onPreferenceChange(prefWolAddress, connection.wol_mac_address);
-        onPreferenceChange(prefWolPort, connection.wol_port);
-        onPreferenceChange(prefWolBroadcast, connection.wol_broadcast);
+        onPreferenceChange(prefName, connection.getName());
+        onPreferenceChange(prefAddress, connection.getHostname());
+        onPreferenceChange(prefPort, String.valueOf(connection.getPort()));
+        onPreferenceChange(prefStreamingPort, String.valueOf(connection.getStreamingPort()));
+        onPreferenceChange(prefUsername, connection.getUsername());
+        onPreferenceChange(prefPassword, connection.getPassword());
+        onPreferenceChange(prefSelected, connection.isActive());
+        onPreferenceChange(prefWolAddress, connection.getWolMacAddress());
+        onPreferenceChange(prefWolPort, connection.getWolPort());
+        onPreferenceChange(prefWolBroadcast, connection.isWolUseBroadcast());
     }
 
     @Override
@@ -159,7 +165,8 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
                 onBackPressed();
                 return true;
             case R.id.menu_save:
-                save();
+                repository.updateConnectionSync(connection);
+                activity.finish();
                 return true;
             case R.id.menu_cancel:
                 cancel();
@@ -176,17 +183,17 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
      */
     private void cancel() {
         if (!connectionValuesChanged) {
-            getActivity().finish();
+            activity.finish();
         } else {
             // Show confirmation dialog to cancel
-            new MaterialDialog.Builder(getActivity())
+            new MaterialDialog.Builder(activity)
                     .content(R.string.confirm_discard_connection)
                     .positiveText(getString(R.string.discard))
                     .negativeText(getString(R.string.cancel))
                     .onPositive(new MaterialDialog.SingleButtonCallback() {
                         @Override
                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            getActivity().finish();
+                            activity.finish();
                         }
                     })
                     .onNegative(new MaterialDialog.SingleButtonCallback() {
@@ -196,25 +203,6 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
                         }
                     }).show();
         }
-    }
-
-    private void save() {
-        // If the current connection is set as selected
-        // we need to unselect the previous one.
-        if (prefSelected.isChecked()) {
-            Connection previousSelectedConnection = DatabaseHelper.getInstance(getActivity()).getSelectedConnection();
-            if (previousSelectedConnection != null) {
-                previousSelectedConnection.selected = false;
-                DatabaseHelper.getInstance(getActivity()).updateConnection(previousSelectedConnection);
-            }
-        }
-        // If we have an id then the connection shall be updated
-        if (connection.id > 0) {
-            DatabaseHelper.getInstance(getActivity()).updateConnection(connection);
-        } else {
-            DatabaseHelper.getInstance(getActivity()).addConnection(connection);
-        }
-        getActivity().finish();
     }
 
     @Override
@@ -230,14 +218,14 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
         switch (preference.getKey()) {
             case "pref_name":
                 if (validateName(value)) {
-                    connection.name = value;
+                    connection.setName(value);
                     prefName.setSummary(value.isEmpty() ?
                             getString(R.string.pref_name_sum) : value);
                 }
                 break;
             case "pref_address":
                 if (validateIpAddress(value)) {
-                    connection.address = value;
+                    connection.setHostname(value);
                     prefAddress.setSummary(value.isEmpty() ?
                             getString(R.string.pref_host_sum) : value);
                 }
@@ -246,7 +234,7 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
                 try {
                     int port = Integer.parseInt(value);
                     if (validatePort(port)) {
-                        connection.port = Integer.parseInt(value);
+                        connection.setPort(Integer.parseInt(value));
                         prefPort.setSummary(value.isEmpty() ?
                                 getString(R.string.pref_port_sum) : value);
                     }
@@ -258,7 +246,7 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
                 try {
                     int port = Integer.parseInt(value);
                     if (validatePort(port)) {
-                        connection.streaming_port = Integer.parseInt(value);
+                        connection.setStreamingPort(Integer.parseInt(value));
                         prefStreamingPort.setSummary(getString(R.string.pref_streaming_port_sum,
                                 Integer.valueOf(value)));
                     }
@@ -267,22 +255,22 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
                 }
                 break;
             case "pref_username":
-                connection.username = value;
+                connection.setUsername(value);
                 prefUsername.setSummary(value.isEmpty() ?
                         getString(R.string.pref_user_sum) : value);
                 break;
             case "pref_password":
-                connection.password = value;
+                connection.setPassword(value);
                 prefPassword.setSummary(value.isEmpty() ?
                         getString(R.string.pref_pass_sum) :
                         getString(R.string.pref_pass_set_sum));
                 break;
             case "pref_selected":
-                connection.selected = Boolean.valueOf(value);
+                connection.setActive(Boolean.valueOf(value));
                 break;
             case "pref_wol_address":
                 if (validateMacAddress(value)) {
-                    connection.wol_mac_address = value;
+                    connection.setWolMacAddress(value);
                     prefWolAddress.setSummary(value.isEmpty() ?
                             getString(R.string.pref_wol_address_sum) : value);
                 }
@@ -291,7 +279,7 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
                 try {
                     int port = Integer.parseInt(value);
                     if (validatePort(port)) {
-                        connection.wol_port = port;
+                        connection.setWolPort(port);
                         prefWolPort.setSummary(getString(R.string.pref_wol_port_sum,
                                 Integer.valueOf(value)));
                     }
@@ -300,7 +288,7 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
                 }
                 break;
             case "pref_wol_broadcast":
-                connection.wol_broadcast = Boolean.valueOf(value);
+                connection.setWolUseBroadcast(Boolean.valueOf(value));
                 break;
         }
         return true;

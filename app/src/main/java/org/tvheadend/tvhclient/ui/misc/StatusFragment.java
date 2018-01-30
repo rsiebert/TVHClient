@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -18,11 +19,11 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.data.DataRepository;
 import org.tvheadend.tvhclient.data.DataStorage;
-import org.tvheadend.tvhclient.data.DatabaseHelper;
 import org.tvheadend.tvhclient.data.entity.Channel;
+import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.entity.Recording;
-import org.tvheadend.tvhclient.data.model.Connection;
 import org.tvheadend.tvhclient.data.model.DiscSpace;
+import org.tvheadend.tvhclient.data.repository.ConnectionDataRepository;
 import org.tvheadend.tvhclient.data.tasks.WakeOnLanTask;
 import org.tvheadend.tvhclient.data.tasks.WakeOnLanTaskCallback;
 import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
@@ -38,7 +39,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-// TODO remove subtitle
+// TODO use combined model like the one for the navigation drawer
 
 public class StatusFragment extends Fragment implements WakeOnLanTaskCallback {
 
@@ -46,7 +47,7 @@ public class StatusFragment extends Fragment implements WakeOnLanTaskCallback {
 
     // This information is always available
     @BindView(R.id.connection)
-    TextView connection;
+    TextView connectionTextView;
     @BindView(R.id.channels_label)
     TextView channelsLabelTextView;
     @BindView(R.id.channels)
@@ -81,11 +82,11 @@ public class StatusFragment extends Fragment implements WakeOnLanTaskCallback {
     TextView serverApiVersionTextView;
 
     private Unbinder unbinder;
-    private DatabaseHelper databaseHelper;
     private int htspVersion;
     private boolean isUnlocked;
     private MenuUtils menuUtils;
-    private DataRepository repository;
+    private Connection connection;
+    private ConnectionDataRepository connectionRepository;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -104,6 +105,7 @@ public class StatusFragment extends Fragment implements WakeOnLanTaskCallback {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
         activity = (AppCompatActivity) getActivity();
         if (activity instanceof ToolbarInterface) {
             ToolbarInterface toolbarInterface = (ToolbarInterface) activity;
@@ -111,9 +113,10 @@ public class StatusFragment extends Fragment implements WakeOnLanTaskCallback {
             toolbarInterface.setSubtitle(null);
         }
 
-        repository = new DataRepository(activity);
-        menuUtils = new MenuUtils(getActivity());
-        databaseHelper = DatabaseHelper.getInstance(activity.getApplicationContext());
+        connectionRepository = new ConnectionDataRepository(activity);
+        connection = connectionRepository.getActiveConnectionSync();
+        DataRepository repository = new DataRepository(activity);
+        menuUtils = new MenuUtils(activity);
         htspVersion = repository.getHtspVersion();
         isUnlocked = TVHClientApplication.getInstance().isUnlocked();
 
@@ -180,8 +183,7 @@ public class StatusFragment extends Fragment implements WakeOnLanTaskCallback {
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        final Connection conn = databaseHelper.getSelectedConnection();
-        if (isUnlocked && conn != null && conn.wol_mac_address.length() > 0) {
+        if (isUnlocked && connection != null && !TextUtils.isEmpty(connection.getWolMacAddress())) {
             menu.findItem(R.id.menu_wol).setVisible(true);
         }
     }
@@ -190,12 +192,11 @@ public class StatusFragment extends Fragment implements WakeOnLanTaskCallback {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                getActivity().finish();
+                activity.finish();
                 return true;
             case R.id.menu_wol:
-                final Connection connection = databaseHelper.getSelectedConnection();
                 if (connection != null) {
-                    WakeOnLanTask task = new WakeOnLanTask(getActivity(), this, connection);
+                    WakeOnLanTask task = new WakeOnLanTask(activity, this, connection);
                     task.execute();
                 }
                 return true;
@@ -226,16 +227,15 @@ public class StatusFragment extends Fragment implements WakeOnLanTaskCallback {
      * information that no connection is selected or available.
      */
     private void showConnectionDetails() {
-        Connection connection = databaseHelper.getSelectedConnection();
         if (connection == null) {
-            if (databaseHelper.getConnections().isEmpty()) {
-                this.connection.setText(R.string.no_connection_available_advice);
+            if (connectionRepository.getAllConnectionsSync() == null) {
+                connectionTextView.setText(R.string.no_connection_available_advice);
             } else {
-                this.connection.setText(R.string.no_connection_active_advice);
+                connectionTextView.setText(R.string.no_connection_active_advice);
             }
         } else {
-            String text = connection.name + " (" + connection.address + ")";
-            this.connection.setText(text);
+            String text = connection.getName() + " (" + connection.getHostname() + ")";
+            connectionTextView.setText(text);
         }
     }
 
