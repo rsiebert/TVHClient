@@ -161,7 +161,7 @@ public class RecordingDetailsFragment extends BaseFragment implements RecordingR
         dateTextView.setText(UIUtils.getDate(getContext(), recording.getStart()));
 
         // TODO use stop tmie and date
-        String time = UIUtils.getTime(getContext(), recording.getStart()) + " - " + UIUtils.getTime(getContext(), recording.getStop());
+        String time = UIUtils.getTimeText(getContext(), recording.getStart()) + " - " + UIUtils.getTimeText(getContext(), recording.getStop());
         timeTextView.setText(time);
 
         String durationTime = getString(R.string.minutes, (int) ((recording.getStop() - recording.getStart()) / 1000 / 60));

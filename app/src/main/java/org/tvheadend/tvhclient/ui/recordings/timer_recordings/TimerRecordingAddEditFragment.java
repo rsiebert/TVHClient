@@ -38,9 +38,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-// TODO use contraintlayout
 // TODO replace savedinstance bundle with viewmodel
 // TODO use default recording from viewmodel when no id is available
+// TODO use getter and setting in the model from here and the service
 
 public class TimerRecordingAddEditFragment extends BaseRecordingAddEditFragment implements BackPressedInterface, ChannelListSelectionCallback, RecordingPriorityListCallback, RecordingProfileListCallback, DateTimePickerCallback, DaysOfWeekSelectionCallback {
     private String TAG = getClass().getSimpleName();

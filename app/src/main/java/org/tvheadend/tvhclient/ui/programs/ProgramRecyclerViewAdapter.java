@@ -80,7 +80,7 @@ public class ProgramRecyclerViewAdapter extends RecyclerView.Adapter<ProgramRecy
 
             holder.dateTextView.setText(UIUtils.getDate(context, program.getStart()));
 
-            String time = UIUtils.getTime(context, program.getStart()) + " - " + UIUtils.getTime(context, program.getStop());
+            String time = UIUtils.getTimeText(context, program.getStart()) + " - " + UIUtils.getTimeText(context, program.getStop());
             holder.timeTextView.setText(time);
 
             String durationTime = context.getString(R.string.minutes, (int) ((program.getStop() - program.getStart()) / 1000 / 60));

@@ -133,7 +133,7 @@ public class ProgramGuideViewPagerContentListFragment extends ListFragment imple
 
         titleDate.setText(UIUtils.getDate(activity, startTime));
 
-        String time = UIUtils.getTime(activity, startTime) + " - " + UIUtils.getTime(activity, endTime);
+        String time = UIUtils.getTimeText(activity, startTime) + " - " + UIUtils.getTimeText(activity, endTime);
         titleHours.setText(time);
 
         adapter = new ProgramGuideViewPagerContentListAdapter(activity, this, new ArrayList<>(), startTime, endTime, displayWidth, pixelsPerMinute);

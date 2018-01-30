@@ -187,7 +187,7 @@ public class UIUtils {
         return localizedDate;
     }
 
-    public static String getTime(Context context, long time) {
+    public static String getTimeText(Context context, long time) {
         String localizedTime = "";
 
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);

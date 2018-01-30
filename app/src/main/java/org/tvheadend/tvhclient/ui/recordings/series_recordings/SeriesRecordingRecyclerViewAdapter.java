@@ -102,7 +102,7 @@ public class SeriesRecordingRecyclerViewAdapter extends RecyclerView.Adapter<Ser
             holder.daysOfWeekTextView.setText(UIUtils.getDaysOfWeekText(context, recording.getDaysOfWeek()));
 
             // Convert the minute from midnight into a time
-            String time = UIUtils.getTime(context, recording.getStart()) + " - " + UIUtils.getTime(context, recording.getStartWindow());
+            String time = UIUtils.getTimeText(context, recording.getStart()) + " - " + UIUtils.getTimeText(context, recording.getStartWindow());
             holder.timeTextView.setText(time);
             // Show the duration
             holder.durationTextView.setText(context.getString(R.string.minutes, recording.getDuration()));

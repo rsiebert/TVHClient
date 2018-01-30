@@ -168,7 +168,7 @@ public class ProgramDetailsFragment extends BaseFragment implements ImageDownloa
             state.setImageDrawable(drawable);
         }
 
-        String timeStr = UIUtils.getTime(getContext(), program.getStart()) + " - " + UIUtils.getTime(getContext(), program.getStop());
+        String timeStr = UIUtils.getTimeText(getContext(), program.getStart()) + " - " + UIUtils.getTimeText(getContext(), program.getStop());
         time.setText(timeStr);
         date.setText(UIUtils.getDate(getContext(), program.getStart()));
 

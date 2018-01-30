@@ -133,7 +133,7 @@ public class ChannelRecyclerViewAdapter extends RecyclerView.Adapter<ChannelRecy
             holder.subtitleTextView.setText(program.getSubtitle());
             holder.subtitleTextView.setVisibility(showSubtitle ? View.VISIBLE : View.GONE);
 
-            String time = UIUtils.getTime(context, program.getStart()) + " - " + UIUtils.getTime(context, program.getStop());
+            String time = UIUtils.getTimeText(context, program.getStart()) + " - " + UIUtils.getTimeText(context, program.getStop());
             holder.timeTextView.setText(time);
             holder.timeTextView.setVisibility(View.VISIBLE);
 

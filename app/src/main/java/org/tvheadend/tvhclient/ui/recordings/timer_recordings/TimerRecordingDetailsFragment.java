@@ -129,8 +129,8 @@ public class TimerRecordingDetailsFragment extends BaseFragment implements Recor
             priorityTextView.setText(priorityItems[recording.getPriority()]);
         }
 
-        startTimeTextView.setText(UIUtils.getTime(activity, recording.getStart()));
-        stopTimeTextView.setText(UIUtils.getTime(activity, recording.getStop()));
+        startTimeTextView.setText(UIUtils.getTimeText(activity, recording.getStart()));
+        stopTimeTextView.setText(UIUtils.getTimeText(activity, recording.getStop()));
 
         durationTextView.setText(getString(R.string.minutes, recording.getDuration()));
     }

@@ -127,7 +127,7 @@ public class RecordingRecyclerViewAdapter extends RecyclerView.Adapter<Recording
 
             holder.dateTextView.setText(UIUtils.getDate(activity, recording.getStart()));
 
-            String time = UIUtils.getTime(activity, recording.getStart()) + " - " + UIUtils.getTime(activity, recording.getStop());
+            String time = UIUtils.getTimeText(activity, recording.getStart()) + " - " + UIUtils.getTimeText(activity, recording.getStop());
             holder.timeTextView.setText(time);
 
             String durationTime = activity.getString(R.string.minutes, recording.getDuration());

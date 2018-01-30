@@ -38,9 +38,9 @@ import butterknife.Unbinder;
 
 // TODO hide show layout stuff if editing scheduled or recording recordings
 // TODO updated getIntentData according to the previous todo
-// TODO use contraintlayout
 // TODO replace savedinstance bundle with viewmodel
 // TODO use default recording from viewmodel when no id is available
+// TODO use getter and setting in the model from here and the service
 
 public class RecordingAddEditFragment extends BaseRecordingAddEditFragment implements BackPressedInterface, ChannelListSelectionCallback, DateTimePickerCallback, RecordingPriorityListCallback, RecordingProfileListCallback {
 

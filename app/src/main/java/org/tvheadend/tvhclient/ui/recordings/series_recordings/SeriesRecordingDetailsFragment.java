@@ -141,8 +141,8 @@ public class SeriesRecordingDetailsFragment extends BaseFragment implements Reco
             maxDurationTextView.setText(getString(R.string.minutes, (int) (recording.getMaxDuration() / 60)));
         }
 
-        startTimeTextView.setText(UIUtils.getTime(getContext(), recording.getStart()));
-        startWindowTimeTextView.setText(UIUtils.getTime(getContext(), recording.getStartWindow()));
+        startTimeTextView.setText(UIUtils.getTimeText(getContext(), recording.getStart()));
+        startWindowTimeTextView.setText(UIUtils.getTimeText(getContext(), recording.getStartWindow()));
     }
 
     @Override

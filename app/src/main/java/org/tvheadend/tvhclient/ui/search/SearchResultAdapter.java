@@ -246,7 +246,7 @@ public class SearchResultAdapter extends ArrayAdapter<Program> implements Filter
 
             holder.date.setText(UIUtils.getDate(getContext(), program.getStart()));
 
-            String time = UIUtils.getTime(getContext(), program.getStart()) + " - " + UIUtils.getTime(getContext(), program.getStop());
+            String time = UIUtils.getTimeText(getContext(), program.getStart()) + " - " + UIUtils.getTimeText(getContext(), program.getStop());
             holder.time.setText(time);
 
             String durationTime = getContext().getString(R.string.minutes, (int) ((program.getStop() - program.getStart()) / 1000 / 60));

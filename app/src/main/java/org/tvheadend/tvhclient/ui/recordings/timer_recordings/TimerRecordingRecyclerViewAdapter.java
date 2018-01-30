@@ -98,7 +98,7 @@ public class TimerRecordingRecyclerViewAdapter extends RecyclerView.Adapter<Time
             String daysOfWeek = UIUtils.getDaysOfWeekText(context, recording.getDaysOfWeek());
             holder.daysOfWeekTextView.setText(daysOfWeek);
 
-            String time = UIUtils.getTime(context, recording.getStart()) + " - " + UIUtils.getTime(context, recording.getStop());
+            String time = UIUtils.getTimeText(context, recording.getStart()) + " - " + UIUtils.getTimeText(context, recording.getStop());
             holder.timeTextView.setText(time);
 
             String duration = context.getString(R.string.minutes, recording.getDuration());
