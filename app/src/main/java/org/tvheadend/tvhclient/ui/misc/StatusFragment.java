@@ -4,8 +4,6 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -16,24 +14,23 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.data.DataRepository;
-import org.tvheadend.tvhclient.data.DataStorage;
 import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.entity.Recording;
-import org.tvheadend.tvhclient.data.model.DiscSpace;
+import org.tvheadend.tvhclient.data.entity.ServerStatus;
+import org.tvheadend.tvhclient.data.repository.ChannelAndProgramRepository;
 import org.tvheadend.tvhclient.data.repository.ConnectionDataRepository;
+import org.tvheadend.tvhclient.data.repository.RecordingRepository;
+import org.tvheadend.tvhclient.data.repository.ServerDataRepository;
 import org.tvheadend.tvhclient.data.tasks.WakeOnLanTask;
 import org.tvheadend.tvhclient.data.tasks.WakeOnLanTaskCallback;
-import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
+import org.tvheadend.tvhclient.ui.base.BaseFragment;
 import org.tvheadend.tvhclient.ui.channels.ChannelViewModel;
 import org.tvheadend.tvhclient.ui.recordings.recordings.RecordingViewModel;
 import org.tvheadend.tvhclient.ui.recordings.series_recordings.SeriesRecordingViewModel;
 import org.tvheadend.tvhclient.ui.recordings.timer_recordings.TimerRecordingViewModel;
-import org.tvheadend.tvhclient.utils.MenuUtils;
 
-import java.util.Map;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -41,11 +38,8 @@ import butterknife.Unbinder;
 
 // TODO use combined model like the one for the navigation drawer
 
-public class StatusFragment extends Fragment implements WakeOnLanTaskCallback {
+public class StatusFragment extends BaseFragment implements WakeOnLanTaskCallback {
 
-    private AppCompatActivity activity;
-
-    // This information is always available
     @BindView(R.id.connection)
     TextView connectionTextView;
     @BindView(R.id.channels_label)
@@ -82,11 +76,9 @@ public class StatusFragment extends Fragment implements WakeOnLanTaskCallback {
     TextView serverApiVersionTextView;
 
     private Unbinder unbinder;
-    private int htspVersion;
-    private boolean isUnlocked;
-    private MenuUtils menuUtils;
     private Connection connection;
     private ConnectionDataRepository connectionRepository;
+    private ServerStatus serverStatus;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -106,21 +98,12 @@ public class StatusFragment extends Fragment implements WakeOnLanTaskCallback {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        activity = (AppCompatActivity) getActivity();
-        if (activity instanceof ToolbarInterface) {
-            ToolbarInterface toolbarInterface = (ToolbarInterface) activity;
-            toolbarInterface.setTitle(getString(R.string.status));
-            toolbarInterface.setSubtitle(null);
-        }
+        toolbarInterface.setTitle(getString(R.string.status));
+        toolbarInterface.setSubtitle(null);
 
         connectionRepository = new ConnectionDataRepository(activity);
         connection = connectionRepository.getActiveConnectionSync();
-        DataRepository repository = new DataRepository(activity);
-        menuUtils = new MenuUtils(activity);
-        htspVersion = repository.getHtspVersion();
-        isUnlocked = TVHClientApplication.getInstance().isUnlocked();
-
-        setHasOptionsMenu(true);
+        serverStatus = new ServerDataRepository(activity).loadServerStatus();
 
         SeriesRecordingViewModel seriesRecordingViewModel = ViewModelProviders.of(activity).get(SeriesRecordingViewModel.class);
         seriesRecordingViewModel.getRecordings().observe(this, recordings -> {
@@ -213,8 +196,8 @@ public class StatusFragment extends Fragment implements WakeOnLanTaskCallback {
         super.onResume();
 
         // The connection is ok and not loading anymore, show all data
-        seriesRecordingsTextView.setVisibility((htspVersion >= 13) ? View.VISIBLE : View.GONE);
-        timerRecordingsTextView.setVisibility((htspVersion >= 18 && isUnlocked) ? View.VISIBLE : View.GONE);
+        seriesRecordingsTextView.setVisibility((serverStatus.getHtspVersion() >= 13) ? View.VISIBLE : View.GONE);
+        timerRecordingsTextView.setVisibility((serverStatus.getHtspVersion() >= 18 && isUnlocked) ? View.VISIBLE : View.GONE);
 
         showConnectionDetails();
         showRecordingStatus();
@@ -244,17 +227,10 @@ public class StatusFragment extends Fragment implements WakeOnLanTaskCallback {
      * showing large numbers. This depends on the size of the value.
      */
     private void showDiscSpace() {
-        DiscSpace discSpace = DataStorage.getInstance().getDiscSpace();
-        if (discSpace == null) {
-            freeDiscSpaceTextView.setText(R.string.unknown);
-            totalDiscSpaceTextView.setText(R.string.unknown);
-            return;
-        }
-
         try {
             // Get the disc space values and convert them to megabytes
-            long free = Long.valueOf(discSpace.freediskspace) / 1000000;
-            long total = Long.valueOf(discSpace.totaldiskspace) / 1000000;
+            long free = serverStatus.getFreeDiskSpace() / 1000000;
+            long total = serverStatus.getTotalDiskSpace() / 1000000;
 
             String freeDiscSpace;
             String totalDiscSpace;
@@ -285,14 +261,13 @@ public class StatusFragment extends Fragment implements WakeOnLanTaskCallback {
      * the available, scheduled and failed recordings.
      */
     private void showRecordingStatus() {
-
         // Get the programs that are currently being recorded
         StringBuilder currentRecText = new StringBuilder();
-        Map<Integer, Recording> map = DataStorage.getInstance().getRecordingsFromArray();
-        for (Recording rec : map.values()) {
+        List<Recording> recordingList = new RecordingRepository(activity).getAllRecordingsSync();
+        for (Recording rec : recordingList) {
             if (rec.isRecording()) {
                 currentRecText.append(getString(R.string.currently_recording)).append(": ").append(rec.getTitle());
-                Channel channel = DataStorage.getInstance().getChannelFromArray(rec.getChannelId());
+                Channel channel = new ChannelAndProgramRepository(activity).getChannelByIdSync(rec.getChannelId());
                 if (channel != null) {
                     currentRecText.append(" (").append(getString(R.string.channel)).append(" ").append(channel.getChannelName()).append(")\n");
                 }
@@ -300,15 +275,14 @@ public class StatusFragment extends Fragment implements WakeOnLanTaskCallback {
         }
 
         // Show which programs are being recorded
-        currentlyRecordingTextView.setText(currentRecText.length() > 0 ? currentRecText.toString()
-                : getString(R.string.nothing));
+        currentlyRecordingTextView.setText(currentRecText.length() > 0 ? currentRecText.toString() : getString(R.string.nothing));
     }
 
     private void showServerStatus() {
-        String version = String.valueOf(htspVersion)
+        String version = String.valueOf(serverStatus.getHtspVersion())
                 + "   (" + getString(R.string.server) + ": "
-                + DataStorage.getInstance().getServerName() + " "
-                + DataStorage.getInstance().getServerVersion() + ")";
+                + serverStatus.getServerName() + " "
+                + serverStatus.getServerVersion() + ")";
         currentlyRecordingTextView.setText(version);
     }
 

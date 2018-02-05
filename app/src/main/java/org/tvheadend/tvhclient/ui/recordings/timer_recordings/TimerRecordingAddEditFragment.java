@@ -22,8 +22,9 @@ import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Channel;
+import org.tvheadend.tvhclient.data.entity.ServerProfile;
 import org.tvheadend.tvhclient.data.entity.TimerRecording;
-import org.tvheadend.tvhclient.sync.EpgSyncService;
+import org.tvheadend.tvhclient.service.EpgSyncService;
 import org.tvheadend.tvhclient.ui.common.BackPressedInterface;
 import org.tvheadend.tvhclient.ui.recordings.base.BaseRecordingAddEditFragment;
 import org.tvheadend.tvhclient.ui.recordings.common.DateTimePickerCallback;
@@ -155,10 +156,11 @@ public class TimerRecordingAddEditFragment extends BaseRecordingAddEditFragment 
 
         // Get the selected profile from the connection
         // and select it from the recording config list
+        ServerProfile profile = profileRepository.getRecordingServerProfile();
         recordingProfileName = 0;
         if (profile != null) {
             for (int i = 0; i < recordingProfilesList.length; i++) {
-                if (recordingProfilesList[i].equals(profile.name)) {
+                if (recordingProfilesList[i].equals(profile.getName())) {
                     recordingProfileName = i;
                     break;
                 }
@@ -168,20 +170,20 @@ public class TimerRecordingAddEditFragment extends BaseRecordingAddEditFragment 
 
     private void updateUI() {
 
-        isEnabledCheckbox.setVisibility(htspVersion >= 19 ? View.VISIBLE : View.GONE);
+        isEnabledCheckbox.setVisibility(serverStatus.getHtspVersion() >= 19 ? View.VISIBLE : View.GONE);
         isEnabledCheckbox.setChecked(isEnabled);
         titleEditText.setText(title);
         nameEditText.setText(name);
 
-        directoryLabelTextView.setVisibility(htspVersion >= 19 ? View.VISIBLE : View.GONE);
-        directoryEditText.setVisibility(htspVersion >= 19 ? View.VISIBLE : View.GONE);
+        directoryLabelTextView.setVisibility(serverStatus.getHtspVersion() >= 19 ? View.VISIBLE : View.GONE);
+        directoryEditText.setVisibility(serverStatus.getHtspVersion() >= 19 ? View.VISIBLE : View.GONE);
         directoryEditText.setText(directory);
 
         Channel channel = repository.getChannelSync(channelId);
         channelNameTextView.setText(channel != null ? channel.getChannelName() : getString(R.string.all_channels));
         channelNameTextView.setOnClickListener(view -> {
             // Determine if the server supports recording on all channels
-            boolean allowRecordingOnAllChannels = htspVersion >= 21;
+            boolean allowRecordingOnAllChannels = serverStatus.getHtspVersion() >= 21;
             handleChannelListSelection(channelId, TimerRecordingAddEditFragment.this, allowRecordingOnAllChannels);
         });
 
@@ -339,9 +341,10 @@ public class TimerRecordingAddEditFragment extends BaseRecordingAddEditFragment 
             intent.putExtra("channelId", channelId);
         }
         // Add the recording profile if available and enabled
-        if (profile != null && profile.enabled
+        ServerProfile profile = profileRepository.getRecordingServerProfile();
+        if (profile != null && profile.isEnabled()
                 && (recordingProfileNameTextView.getText().length() > 0)
-                && htspVersion >= 16) {
+                && serverStatus.getHtspVersion() >= 16) {
             // Use the selected profile. If no change was done in the 
             // selection then the default one from the connection setting will be used
             intent.putExtra("configName", recordingProfileNameTextView.getText().toString());

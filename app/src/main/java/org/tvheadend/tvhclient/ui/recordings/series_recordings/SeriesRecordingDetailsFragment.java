@@ -17,7 +17,6 @@ import android.view.ViewStub;
 import android.widget.TextView;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.data.DataStorage;
 import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.data.entity.SeriesRecording;
 import org.tvheadend.tvhclient.ui.base.BaseFragment;
@@ -112,14 +111,14 @@ public class SeriesRecordingDetailsFragment extends BaseFragment implements Reco
 
     private void updateUI() {
 
-        isEnabledTextView.setVisibility(htspVersion >= 19 ? View.VISIBLE : View.GONE);
+        isEnabledTextView.setVisibility(serverStatus.getHtspVersion() >= 19 ? View.VISIBLE : View.GONE);
         isEnabledTextView.setText(recording.getEnabled() > 0 ? R.string.recording_enabled : R.string.recording_disabled);
 
-        directoryLabelTextView.setVisibility(!TextUtils.isEmpty(recording.getDirectory()) && htspVersion >= 19 ? View.VISIBLE : View.GONE);
-        directoryTextView.setVisibility(!TextUtils.isEmpty(recording.getDirectory()) && htspVersion >= 19 ? View.VISIBLE : View.GONE);
+        directoryLabelTextView.setVisibility(!TextUtils.isEmpty(recording.getDirectory()) && serverStatus.getHtspVersion() >= 19 ? View.VISIBLE : View.GONE);
+        directoryTextView.setVisibility(!TextUtils.isEmpty(recording.getDirectory()) && serverStatus.getHtspVersion() >= 19 ? View.VISIBLE : View.GONE);
         directoryTextView.setText(recording.getDirectory());
 
-        Channel channel = DataStorage.getInstance().getChannelFromArray(recording.getChannelId());
+        Channel channel = repository.getChannelSync(recording.getChannelId());
         channelNameTextView.setText(channel != null ? channel.getChannelName() : getString(R.string.all_channels));
 
         nameLabelTextView.setVisibility(!TextUtils.isEmpty(recording.getName()) ? View.VISIBLE : View.GONE);

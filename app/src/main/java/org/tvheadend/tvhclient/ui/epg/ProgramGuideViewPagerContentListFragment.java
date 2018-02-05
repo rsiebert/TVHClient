@@ -20,12 +20,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.data.DataStorage;
 import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.data.entity.Program;
 import org.tvheadend.tvhclient.data.entity.Recording;
-import org.tvheadend.tvhclient.service.HTSListener;
 import org.tvheadend.tvhclient.ui.epg.ProgramGuideViewPagerContentListAdapterContentsView.ProgramContextMenuInterface;
 import org.tvheadend.tvhclient.utils.MenuUtils;
 import org.tvheadend.tvhclient.utils.UIUtils;
@@ -38,7 +35,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-public class ProgramGuideViewPagerContentListFragment extends ListFragment implements HTSListener, ProgramGuideControlInterface, ProgramContextMenuInterface, OnScrollListener {
+public class ProgramGuideViewPagerContentListFragment extends ListFragment implements ProgramGuideControlInterface, ProgramContextMenuInterface, OnScrollListener {
 
     @BindView(R.id.constraint_layout)
     ConstraintLayout constraintLayout;
@@ -193,15 +190,6 @@ public class ProgramGuideViewPagerContentListFragment extends ListFragment imple
         adapter.notifyDataSetChanged();
     }
 */
-    @Override
-    public void onResume() {
-        super.onResume();
-        TVHClientApplication.getInstance().addListener(this);
-        if (!DataStorage.getInstance().isLoading()) {
-            //populateList();
-        }
-    }
-
     /**
      * Shows a vertical line in the program guide to indicate the current time.
      * This line is only visible in the first screen where the current time is
@@ -232,12 +220,6 @@ public class ProgramGuideViewPagerContentListFragment extends ListFragment imple
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        TVHClientApplication.getInstance().removeListener(this);
-    }
-
-    @Override
     public void onDestroy() {
         super.onDestroy();
         // TODO causes null pointer
@@ -258,7 +240,7 @@ public class ProgramGuideViewPagerContentListFragment extends ListFragment imple
                 menuUtils.handleMenuSearchEpgSelection(selectedProgram.getTitle());
                 return true;
             case R.id.menu_record_remove:
-                Recording rec = DataStorage.getInstance().getRecordingFromArray(selectedProgram.getDvrId());
+                Recording rec = null; // TODO DataStorage.getInstance().getRecordingFromArray(selectedProgram.getDvrId());
                 if (rec != null) {
                     if (rec.isRecording()) {
                         menuUtils.handleMenuStopRecordingSelection(rec.getId(), rec.getTitle());

@@ -25,9 +25,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.data.Constants;
-import org.tvheadend.tvhclient.data.DatabaseHelper;
 import org.tvheadend.tvhclient.data.entity.ChannelTag;
-import org.tvheadend.tvhclient.data.model.Connection;
 import org.tvheadend.tvhclient.data.model.ProgramGuideTimeDialogItem;
 import org.tvheadend.tvhclient.ui.search.SearchActivity;
 import org.tvheadend.tvhclient.ui.search.SearchRequestInterface;
@@ -47,7 +45,7 @@ public class ProgramGuideViewPagerFragment extends Fragment implements ProgramGu
     private MenuUtils menuUtils;
 
     // This is the width in pixels from the icon in the program_guide_list.xml
-    // We need to subtract this value from the window width to loadRecording the real
+    // We need to subtract this value from the window width to loadRecordingById the real
     // usable width. The same values is also used in the
     // ProgramGuideViewPagerContentListFragment class.
     private final static int LAYOUT_ICON_OFFSET = 72;
@@ -333,11 +331,14 @@ public class ProgramGuideViewPagerFragment extends Fragment implements ProgramGu
     @Override
     public void onChannelTagIdSelected(int which) {
 
+        // TODO
+        /*
         Connection connection = DatabaseHelper.getInstance(getActivity().getApplicationContext()).getSelectedConnection();
         if (connection != null) {
             connection.channelTag = which;
             DatabaseHelper.getInstance(getActivity().getApplicationContext()).updateConnection(connection);
         }
+        */
 
         // Inform the channelTextView list fragment to clear all data from its
         // channelTextView list and show only the channels with the selected tag

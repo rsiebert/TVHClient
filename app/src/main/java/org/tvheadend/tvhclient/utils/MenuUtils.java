@@ -19,19 +19,20 @@ import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.data.DataStorage;
-import org.tvheadend.tvhclient.data.DatabaseHelper;
 import org.tvheadend.tvhclient.data.entity.ChannelTag;
-import org.tvheadend.tvhclient.data.entity.Program;
 import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.data.entity.SeriesRecording;
+import org.tvheadend.tvhclient.data.entity.ServerProfile;
 import org.tvheadend.tvhclient.data.entity.TimerRecording;
-import org.tvheadend.tvhclient.data.model.Connection;
 import org.tvheadend.tvhclient.data.model.GenreColorDialogItem;
-import org.tvheadend.tvhclient.data.model.Profile;
 import org.tvheadend.tvhclient.data.remote.DownloadActivity;
 import org.tvheadend.tvhclient.data.remote.PlayActivity;
-import org.tvheadend.tvhclient.sync.EpgSyncService;
+import org.tvheadend.tvhclient.data.repository.ChannelAndProgramRepository;
+import org.tvheadend.tvhclient.data.repository.ConnectionDataRepository;
+import org.tvheadend.tvhclient.data.repository.ProfileDataRepository;
+import org.tvheadend.tvhclient.data.repository.RecordingRepository;
+import org.tvheadend.tvhclient.data.repository.ServerDataRepository;
+import org.tvheadend.tvhclient.service.EpgSyncService;
 import org.tvheadend.tvhclient.ui.common.ChannelTagListAdapter;
 import org.tvheadend.tvhclient.ui.common.GenreColorDialogAdapter;
 import org.tvheadend.tvhclient.ui.search.SearchActivity;
@@ -45,23 +46,31 @@ import java.lang.ref.WeakReference;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
+
+// TODO rename repositories
+// TODO get recording directly from program
 
 public class MenuUtils {
     private final static String TAG = MiscUtils.class.getSimpleName();
 
-    private final int mHtspVersion;
-    private final boolean mIsUnlocked;
+    private final int htspVersion;
+    private final boolean isUnlocked;
+    private final ConnectionDataRepository connectionRepository;
+    private final ChannelAndProgramRepository channelAndProgramRepository;
+    private final ProfileDataRepository profileRepository;
+    private final RecordingRepository repository;
     private WeakReference<Activity> activity;
 
     public MenuUtils(Activity activity) {
         this.activity = new WeakReference<>(activity);
-        mHtspVersion = DataStorage.getInstance().getProtocolVersion();
-        mIsUnlocked = TVHClientApplication.getInstance().isUnlocked();
+        this.htspVersion = new ServerDataRepository(activity).loadServerStatus().getHtspVersion();
+        this.isUnlocked = TVHClientApplication.getInstance().isUnlocked();
+        this.connectionRepository = new ConnectionDataRepository(activity);
+        this.channelAndProgramRepository = new ChannelAndProgramRepository(activity);
+        this.profileRepository = new ProfileDataRepository(activity);
+        this.repository = new RecordingRepository(activity);
     }
 
     /**
@@ -130,19 +139,8 @@ public class MenuUtils {
         if (activity == null) {
             return;
         }
-
         // Fill the channel tag adapter with the available channel tags
-        List<ChannelTag> channelTagList = new ArrayList<>();
-        Map<Integer, ChannelTag> map = DataStorage.getInstance().getTagsFromArray();
-        channelTagList.addAll(map.values());
-
-        // Sort the channel tag list before showing it
-        Collections.sort(channelTagList, new Comparator<ChannelTag>() {
-            @Override
-            public int compare(ChannelTag o1, ChannelTag o2) {
-                return o1.getTagName().compareTo(o2.getTagName());
-            }
-        });
+        List<ChannelTag> channelTagList = channelAndProgramRepository.getAllChannelTags();
 
         // Add the default tag (all channels) to the list after it has been sorted
         ChannelTag tag = new ChannelTag();
@@ -152,7 +150,7 @@ public class MenuUtils {
 
         final ChannelTagListAdapter channelTagListAdapter = new ChannelTagListAdapter(activity, channelTagList, selectedTagId);
         // Show the dialog that shows all available channel tags. When the
-        // user has selected a tag, restart the loader to loadRecording the updated channel list
+        // user has selected a tag, restart the loader to loadRecordingById the updated channel list
         final MaterialDialog dialog = new MaterialDialog.Builder(activity)
                 .title(R.string.tags)
                 .adapter(channelTagListAdapter, null)
@@ -227,13 +225,12 @@ public class MenuUtils {
         intent.setAction("addDvrEntry");
         intent.putExtra("eventId", eventId);
 
-        final Connection connection = DatabaseHelper.getInstance(activity.getApplicationContext()).getSelectedConnection();
-        final Profile profile = DatabaseHelper.getInstance(activity.getApplicationContext()).getProfile(connection.recording_profile_id);
+        ServerProfile profile = profileRepository.getRecordingServerProfile();
         if (profile != null
-                && profile.enabled
-                && mHtspVersion >= 16
-                && mIsUnlocked) {
-            intent.putExtra("configName", profile.name);
+                && profile.isEnabled()
+                && htspVersion >= 16
+                && isUnlocked) {
+            intent.putExtra("configName", profile.getName());
         }
         activity.startService(intent);
     }
@@ -247,13 +244,12 @@ public class MenuUtils {
         intent.setAction("addAutorecEntry");
         intent.putExtra("title", title);
 
-        final Connection connection = DatabaseHelper.getInstance(activity.getApplicationContext()).getSelectedConnection();
-        final Profile profile = DatabaseHelper.getInstance(activity.getApplicationContext()).getProfile(connection.recording_profile_id);
+        ServerProfile profile = profileRepository.getRecordingServerProfile();
         if (profile != null
-                && profile.enabled
-                && mHtspVersion >= 16
-                && mIsUnlocked) {
-            intent.putExtra("configName", profile.name);
+                && profile.isEnabled()
+                && htspVersion >= 16
+                && isUnlocked) {
+            intent.putExtra("configName", profile.getName());
         }
         activity.startService(intent);
     }
@@ -489,21 +485,16 @@ public class MenuUtils {
         if (activity == null) {
             return;
         }
-        DataStorage dataStorage = DataStorage.getInstance();
-        String[] dvrConfigList = new String[dataStorage.getDvrConfigs().size()];
-        for (int i = 0; i < dataStorage.getDvrConfigs().size(); i++) {
-            dvrConfigList[i] = dataStorage.getDvrConfigs().get(i).name;
-        }
+
+        String[] dvrConfigList = profileRepository.getAllRecordingServerProfileNames();
 
         // Get the selected recording profile to highlight the
         // correct item in the list of the selection dialog
         int dvrConfigNameValue = 0;
-        DatabaseHelper databaseHelper = DatabaseHelper.getInstance(activity.getApplicationContext());
-        final Connection conn = databaseHelper.getSelectedConnection();
-        final Profile p = databaseHelper.getProfile(conn.recording_profile_id);
-        if (p != null) {
+        ServerProfile serverProfile = profileRepository.getRecordingServerProfile();
+        if (serverProfile != null) {
             for (int i = 0; i < dvrConfigList.length; i++) {
-                if (dvrConfigList[i].equals(p.name)) {
+                if (dvrConfigList[i].equals(serverProfile.getName())) {
                     dvrConfigNameValue = i;
                     break;
                 }
@@ -533,7 +524,7 @@ public class MenuUtils {
                 .show();
     }
 
-    public void onPreparePopupMenu(Menu menu, Program program) {
+    public void onPreparePopupMenu(Menu menu, long start, long stop, int dvrId) {
         MenuItem recordOnceMenuItem = menu.findItem(R.id.menu_record_once);
         MenuItem recordOnceCustomProfileMenuItem = menu.findItem(R.id.menu_record_once_custom_profile);
         MenuItem recordSeriesMenuItem = menu.findItem(R.id.menu_record_series);
@@ -543,15 +534,16 @@ public class MenuUtils {
         // Show the play menu item when the current
         // time is between the program start and end time
         long currentTime = new Date().getTime();
-        if (currentTime > program.getStart() && currentTime < program.getStop()) {
+        if (currentTime > start && currentTime < stop) {
             playMenuItem.setVisible(true);
         }
 
-        Recording rec = DataStorage.getInstance().getRecordingFromArray(program.getDvrId());
+        Recording rec = repository.getRecordingSync(dvrId);
+
         if (rec == null || !rec.isRecording() && !rec.isScheduled()) {
             recordOnceMenuItem.setVisible(true);
-            recordOnceCustomProfileMenuItem.setVisible(mIsUnlocked);
-            recordSeriesMenuItem.setVisible(mHtspVersion >= 13);
+            recordOnceCustomProfileMenuItem.setVisible(isUnlocked);
+            recordSeriesMenuItem.setVisible(htspVersion >= 13);
         } else if (rec.isRecording()) {
             playMenuItem.setVisible(true);
             recordRemoveMenuItem.setTitle(R.string.stop);

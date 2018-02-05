@@ -75,10 +75,7 @@
             android:theme="@android:style/Theme.NoTitleBar" />
 
         <service
-            android:name=".service.HTSService"
-            android:enabled="false" />
-        <service
-            android:name=".sync.EpgSyncService"
+            android:name=".service.EpgSyncService"
             android:enabled="true" />
 
         <provider

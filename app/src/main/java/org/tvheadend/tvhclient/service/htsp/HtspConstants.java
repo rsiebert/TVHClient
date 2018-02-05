@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tvheadend.tvhclient.htsp;
+package org.tvheadend.tvhclient.service.htsp;
 
 public class HtspConstants {
     static final boolean DEBUG = false;

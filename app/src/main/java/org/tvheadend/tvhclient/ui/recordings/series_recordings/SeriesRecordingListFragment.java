@@ -55,7 +55,7 @@ public class SeriesRecordingListFragment extends BaseFragment implements Recycle
             selectedListPosition = savedInstanceState.getInt("list_position", 0);
         }
 
-        recyclerViewAdapter = new SeriesRecordingRecyclerViewAdapter(getContext(), new ArrayList<>(), this);
+        recyclerViewAdapter = new SeriesRecordingRecyclerViewAdapter(getContext(), new ArrayList<>(), serverStatus.getHtspVersion(), this);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
         recyclerView.setItemAnimator(new DefaultItemAnimator());

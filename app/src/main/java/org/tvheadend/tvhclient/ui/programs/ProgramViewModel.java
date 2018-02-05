@@ -21,10 +21,10 @@ public class ProgramViewModel extends AndroidViewModel {
     }
 
     LiveData<List<ProgramWithRecordingsAndChannels>> getPrograms(int channelId, long time) {
-        return dao.loadProgramsByChannel(channelId, time);
+        return dao.loadProgramsFromChannelWithinTime(channelId, time);
     }
 
     LiveData<ProgramWithRecordingsAndChannels> getProgram(int id) {
-        return dao.loadProgram(id);
+        return dao.loadProgramById(id);
     }
 }

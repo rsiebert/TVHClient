@@ -21,11 +21,11 @@ public interface ProgramDao {
     @Query("SELECT * FROM programs " +
             "WHERE channel_id = :channelId AND ((start >= :time) OR (start <= :time AND stop >= :time)) " +
             "ORDER BY start ASC")
-    LiveData<List<ProgramWithRecordingsAndChannels>> loadProgramsByChannel(int channelId, long time);
+    LiveData<List<ProgramWithRecordingsAndChannels>> loadProgramsFromChannelWithinTime(int channelId, long time);
 
     @Transaction
     @Query("SELECT * FROM programs WHERE id = :id")
-    LiveData<ProgramWithRecordingsAndChannels> loadProgram(int id);
+    LiveData<ProgramWithRecordingsAndChannels> loadProgramById(int id);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAll(List<Program> programs);

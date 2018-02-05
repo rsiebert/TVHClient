@@ -20,9 +20,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.htsp.HtspConnection;
-import org.tvheadend.tvhclient.htsp.tasks.Authenticator;
-import org.tvheadend.tvhclient.sync.EpgSyncService;
+import org.tvheadend.tvhclient.service.htsp.HtspConnection;
+import org.tvheadend.tvhclient.service.htsp.tasks.Authenticator;
+import org.tvheadend.tvhclient.service.EpgSyncService;
 import org.tvheadend.tvhclient.ui.NavigationActivity;
 import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
 import org.tvheadend.tvhclient.ui.settings.SettingsActivity;

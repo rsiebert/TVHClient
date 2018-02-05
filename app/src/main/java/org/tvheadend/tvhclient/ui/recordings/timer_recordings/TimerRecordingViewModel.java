@@ -5,19 +5,19 @@ import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 
-import org.tvheadend.tvhclient.data.DataRepository;
+import org.tvheadend.tvhclient.data.repository.RecordingRepository;
 import org.tvheadend.tvhclient.data.entity.TimerRecording;
 
 import java.util.List;
 
 public class TimerRecordingViewModel extends AndroidViewModel {
 
-    private final DataRepository repository;
+    private final RecordingRepository repository;
     private LiveData<List<TimerRecording>> recordings = new MutableLiveData<>();
 
     public TimerRecordingViewModel(Application application) {
         super(application);
-        repository = new DataRepository(application);
+        repository = new RecordingRepository(application);
         recordings = repository.getAllTimerRecordings();
     }
 

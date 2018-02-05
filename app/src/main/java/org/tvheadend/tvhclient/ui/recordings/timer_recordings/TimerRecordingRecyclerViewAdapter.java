@@ -14,7 +14,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.data.DataRepository;
 import org.tvheadend.tvhclient.data.entity.TimerRecording;
 import org.tvheadend.tvhclient.ui.common.RecyclerViewClickCallback;
 import org.tvheadend.tvhclient.utils.MiscUtils;
@@ -34,9 +33,9 @@ public class TimerRecordingRecyclerViewAdapter extends RecyclerView.Adapter<Time
     private Context context;
     private int selectedPosition = 0;
 
-    TimerRecordingRecyclerViewAdapter(Context context, List<TimerRecording> timerRecordingList, RecyclerViewClickCallback clickCallback) {
+    TimerRecordingRecyclerViewAdapter(Context context, List<TimerRecording> timerRecordingList, int htspVersion, RecyclerViewClickCallback clickCallback) {
         this.context = context;
-        this.htspVersion = new DataRepository(context).getHtspVersion();
+        this.htspVersion = htspVersion;
         this.timerRecordingList = timerRecordingList;
         this.clickCallback = clickCallback;
         this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);

@@ -24,12 +24,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.data.DatabaseHelper;
 import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.data.entity.ChannelTag;
-import org.tvheadend.tvhclient.data.entity.Program;
 import org.tvheadend.tvhclient.data.entity.Recording;
-import org.tvheadend.tvhclient.data.model.Connection;
 import org.tvheadend.tvhclient.ui.base.BaseFragment;
 import org.tvheadend.tvhclient.ui.common.RecyclerViewClickCallback;
 import org.tvheadend.tvhclient.ui.programs.ProgramListActivity;
@@ -49,6 +46,9 @@ import java.util.Date;
 // TODO show programs from time in dual pane, program list not updated
 // TODO change getting channel tag
 // TODO use contraintlayout
+// TODO periodic task could update channel table with current time (transaction), this would reload live data
+// TODO use recyclerview filter for channeltags or search by channel name
+// TODO sorting should consider minor major channel numbers
 
 public class ChannelListFragment extends BaseFragment implements RecyclerViewClickCallback, ChannelClickCallback, ChannelTimeSelectionCallback, ChannelTagSelectionCallback, SearchRequestInterface {
     private String TAG = getClass().getSimpleName();
@@ -205,11 +205,13 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
     public void onChannelTagIdSelected(int which) {
         Log.d(TAG, "onChannelTagIdSelected() called with: which = [" + which + "]");
         // TODO update the channel tag stuff
+        /*
         Connection connection = DatabaseHelper.getInstance(activity.getApplicationContext()).getSelectedConnection();
         if (connection != null) {
             connection.channelTag = which;
             DatabaseHelper.getInstance(activity.getApplicationContext()).updateConnection(connection);
         }
+        */
     }
 
     @Override
@@ -250,21 +252,20 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
     @Override
     public boolean onLongClick(View view) {
         final Channel channel = (Channel) view.getTag();
-        final Program program = channel.getProgram();
-        if (activity == null || program == null) {
+        if (activity == null) {
             return true;
         }
         PopupMenu popupMenu = new PopupMenu(activity, view);
         popupMenu.getMenuInflater().inflate(R.menu.channel_list_program_popup_menu, popupMenu.getMenu());
-        menuUtils.onPreparePopupMenu(popupMenu.getMenu(), program);
+        menuUtils.onPreparePopupMenu(popupMenu.getMenu(), channel.getProgramStart(), channel.getProgramStop(), channel.getRecordingId());
 
         popupMenu.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {
                 case R.id.menu_search_imdb:
-                    menuUtils.handleMenuSearchWebSelection(program.getTitle());
+                    menuUtils.handleMenuSearchWebSelection(channel.getProgramTitle());
                     return true;
                 case R.id.menu_search_epg:
-                    menuUtils.handleMenuSearchEpgSelection(program.getTitle(), channel.getChannelId());
+                    menuUtils.handleMenuSearchEpgSelection(channel.getProgramTitle(), channel.getChannelId());
                     return true;
                 case R.id.menu_record_remove:
                     final Recording recording = channel.getRecording();
@@ -279,13 +280,13 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
                     }
                     return true;
                 case R.id.menu_record_once:
-                    menuUtils.handleMenuRecordSelection(program.getEventId());
+                    menuUtils.handleMenuRecordSelection(channel.getProgramId());
                     return true;
                 case R.id.menu_record_once_custom_profile:
-                    menuUtils.handleMenuCustomRecordSelection(program.getEventId(), channel.getChannelId());
+                    menuUtils.handleMenuCustomRecordSelection(channel.getProgramId(), channel.getChannelId());
                     return true;
                 case R.id.menu_record_series:
-                    menuUtils.handleMenuSeriesRecordSelection(program.getTitle());
+                    menuUtils.handleMenuSeriesRecordSelection(channel.getProgramTitle());
                     return true;
                 case R.id.menu_play:
                     // Open a new activity to stream the current program to this device

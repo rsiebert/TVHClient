@@ -179,9 +179,9 @@
     <string name="pref_playback_profiles_sum">Wybierz profil, który będzie używany do odtwarzania nagranego programu.</string>
     <string name="pref_cast_profiles">Profile odtwarzania Cast</string>
     <string name="pref_cast_profiles_sum">Wybierz profil, który zostanie użyty do rzucania kanału lub nagranego programu do Chromecast lub podobnego urządzenia.</string>
-    <string name="pref_enable_recording_profiles">Włącz profile nagrywania</string>
+    <string name="pref_enable_recording_profiles">Włącz serverProfile nagrywania</string>
     <string name="pref_enable_recording_profiles_sum">Użyj nowej funkcjonalności serwera profili dla nagrywania. To zastępuje dowolne parametry video i audio dla nagrań i zaplanowanych programów.</string>
-    <string name="pref_enable_playback_profiles">Włącz profile odtwarzania</string>
+    <string name="pref_enable_playback_profiles">Włącz serverProfile odtwarzania</string>
     <string name="pref_enable_playback_profiles_sum">Użyj nowej funkcjonalności serwera profili dla programów. To zastępuje dowolne parametry video i audio dla odtwarzanych programów.</string>
     <string name="pref_notifications">Powiadomienia</string>
      <string name="pref_download_directory">Katalog pobierania</string>

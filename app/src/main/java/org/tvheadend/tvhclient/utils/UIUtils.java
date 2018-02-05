@@ -10,9 +10,9 @@ import android.text.format.DateUtils;
 import android.util.SparseArray;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.data.DataStorage;
 import org.tvheadend.tvhclient.data.entity.Program;
 import org.tvheadend.tvhclient.data.entity.Recording;
+import org.tvheadend.tvhclient.data.repository.RecordingRepository;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -84,7 +84,7 @@ public class UIUtils {
     }
 
     public static Drawable getRecordingState(Context context, int dvrId) {
-        Recording recording = DataStorage.getInstance().getRecordingFromArray(dvrId);
+        final Recording recording = new RecordingRepository(context).getRecordingSync(dvrId);
         if (recording == null) {
             return null;
         } else if (recording.isFailed()) {

@@ -21,6 +21,9 @@ public interface RecordingDao {
             "FROM recordings AS rec " +
             "LEFT JOIN channels AS c ON  c.id = rec.channel_id ";
 
+    @Query(query)
+    List<Recording> loadAllRecordings();
+
     @Query(query + "WHERE rec.error IS NULL AND rec.state = 'completed'")
     LiveData<List<Recording>> loadAllCompletedRecordings();
 
@@ -37,10 +40,10 @@ public interface RecordingDao {
     LiveData<List<Recording>> loadAllRemovedRecordings();
 
     @Query(query + "WHERE rec.id = :id")
-    LiveData<Recording> loadRecording(int id);
+    LiveData<Recording> loadRecordingById(int id);
 
     @Query(query + "WHERE rec.id = :id")
-    Recording loadRecordingSync(int id);
+    Recording loadRecordingByIdSync(int id);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAll(List<Recording> recordings);

@@ -208,9 +208,7 @@ public class NavigationActivity extends MainActivity implements WakeOnLanTaskCal
         // Update the drawer menu so that all available menu items are
         // shown in case the recording counts have changed or the user has
         // bought the unlocked version to enable all features
-        navigationDrawer.updateDrawerItemBadges();
         navigationDrawer.updateDrawerHeader();
-
         startObservingViewModels();
     }
 

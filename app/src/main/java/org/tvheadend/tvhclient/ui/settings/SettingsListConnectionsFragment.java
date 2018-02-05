@@ -18,12 +18,11 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.data.DatabaseHelper;
 import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.repository.ConnectionDataRepository;
 import org.tvheadend.tvhclient.data.tasks.WakeOnLanTask;
 import org.tvheadend.tvhclient.data.tasks.WakeOnLanTaskCallback;
-import org.tvheadend.tvhclient.sync.EpgSyncService;
+import org.tvheadend.tvhclient.service.EpgSyncService;
 import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
 import org.tvheadend.tvhclient.ui.common.BackPressedInterface;
 import org.tvheadend.tvhclient.ui.startup.StartupActivity;
@@ -128,17 +127,6 @@ public class SettingsListConnectionsFragment extends ListFragment implements Bac
         // Set the new connection to active
         c.setActive(active);
         repository.updateConnectionSync(c);
-        /*
-        if (c.selected) {
-            Connection previousConnection = databaseHelper.getSelectedConnection();
-            if (previousConnection != null) {
-                previousConnection.selected = false;
-                databaseHelper.updateConnection(previousConnection);
-            }
-        }
-        // Update the currently selected connection and refresh the display
-        databaseHelper.updateConnection(c);
-        */
         showConnections();
     }
 

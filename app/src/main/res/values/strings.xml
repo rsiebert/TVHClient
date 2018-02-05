@@ -8,8 +8,8 @@
     <string name="intro_overlay_text">Touch to cast Live TV or recordings to your TV\n\nPlease check that you meet the requirements described in the casting settings.</string>
     <string name="connection_temp_lost">Connection to the cast device is temporarily lost</string>
     <string name="connection_recovered">Connection to the cast device is recovered</string>
-    <string name="cast_profile_not_set">No casting profile was selected in the settings. This is required before casting can be used.</string>
-    <string name="cast_profile_invalid">The selected profile \'%1$s\' is not the recommended \'%2$s\' profile. Please note that casting might not work correctly.</string>
+    <string name="cast_profile_not_set">No casting serverProfile was selected in the settings. This is required before casting can be used.</string>
+    <string name="cast_profile_invalid">The selected serverProfile \'%1$s\' is not the recommended \'%2$s\' serverProfile. Please note that casting might not work correctly.</string>
     <string name="pref_casting">Casting</string>
     <string name="pref_casting_sum">Settings to enable and configure casting Live-TV or recordings to your TV. Please note that this requires tvheadend with transcoding enabled and a server which is powerful enough to transcode the data in realtime.</string>
     <string name="pref_enable_casting">Enable casting</string>
@@ -28,7 +28,7 @@
     <string name="download">Download</string>
     <string name="search">Search</string>
     <string name="record_once">Record</string>
-    <string name="record_once_custom_profile">Record with different profile</string>
+    <string name="record_once_custom_profile">Record with different serverProfile</string>
     <string name="record_series">Record as series recording</string>
     <string name="record_stop">Stop recording</string>
     <string name="record_cancel">Cancel recording</string>
@@ -174,15 +174,15 @@
     <string name="pref_profiles">Profiles</string>
     <string name="pref_profiles_sum">Define the parameters or the profiles (if supported) how programs shall be recorded or how recordings shall be played.</string>
     <string name="pref_recording_profiles">Recording profiles</string>
-    <string name="pref_recording_profiles_sum">Select a profile that the server shall use to record a scheduled program.</string>
+    <string name="pref_recording_profiles_sum">Select a serverProfile that the server shall use to record a scheduled program.</string>
     <string name="pref_playback_profiles">Playback profiles</string>
-    <string name="pref_playback_profiles_sum">Select a profile that shall be used to play a recorded program.</string>
+    <string name="pref_playback_profiles_sum">Select a serverProfile that shall be used to play a recorded program.</string>
     <string name="pref_cast_profiles">Cast playback profiles</string>
-    <string name="pref_cast_profiles_sum">Select a profile that shall be used to cast a channel or recorded program to a chromecast or similar device.</string>
+    <string name="pref_cast_profiles_sum">Select a serverProfile that shall be used to cast a channel or recorded program to a chromecast or similar device.</string>
     <string name="pref_enable_recording_profiles">Enable recording profiles</string>
-    <string name="pref_enable_recording_profiles_sum">Use the newer server profile functionality for recordings. This overrides any defined video and audio parameters for recording a scheduled program.</string>
+    <string name="pref_enable_recording_profiles_sum">Use the newer server serverProfile functionality for recordings. This overrides any defined video and audio parameters for recording a scheduled program.</string>
     <string name="pref_enable_playback_profiles">Enable playback profiles</string>
-    <string name="pref_enable_playback_profiles_sum">Use the newer server profile functionality for programs. This overrides any defined video and audio parameters for playing a program.</string>
+    <string name="pref_enable_playback_profiles_sum">Use the newer server serverProfile functionality for programs. This overrides any defined video and audio parameters for playing a program.</string>
     <string name="pref_notifications">Notifications</string>
     <string name="pref_download_directory">Download directory</string>
     <string name="pref_download_directory_sum">Recordings will be downloaded into the following directory: \'%s\'</string>
@@ -301,7 +301,7 @@
     <string name="series_information">Series information</string>
     <string name="genre_color_list">List of genre colors and their meaning.</string>
     <string name="priority">Priority</string>
-    <string name="dvr_config">Recording profile</string>
+    <string name="dvr_config">Recording serverProfile</string>
 
     <string name="current_time">Current time</string>
     <string name="start_time">Start time</string>
@@ -349,7 +349,7 @@
     <string name="currently_recording">Currently recording</string>
     <string name="select_channel">Select channel</string>
     <string name="select_priority">Select priority</string>
-    <string name="select_dvr_config">Select recording profile</string>
+    <string name="select_dvr_config">Select recording serverProfile</string>
     <string name="select_log_file">Select logfile</string>
     <string name="select_duplicate_detection">Select duplicate detection method</string>
 

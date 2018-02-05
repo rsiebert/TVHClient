@@ -25,19 +25,16 @@ import org.acra.config.ConfigurationBuilder;
 import org.acra.sender.HttpSender;
 import org.tvheadend.tvhclient.data.Constants;
 import org.tvheadend.tvhclient.data.local.Logger;
-import org.tvheadend.tvhclient.service.HTSListener;
 import org.tvheadend.tvhclient.utils.BillingUtils;
 import org.tvheadend.tvhclient.utils.MigrateUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class TVHClientApplication extends Application implements BillingProcessor.IBillingHandler, OptionsProvider {
     private final static String TAG = TVHClientApplication.class.getSimpleName();
 
-    private final List<HTSListener> listeners = new ArrayList<>();
-    // This handles all billing related activities like purchasing and checking
-    // if a purchase was made 
+    // This handles all billing related activities like
+    // purchasing and checking if a purchase was made
     private BillingProcessor billingProcessor;
 
     private Logger logger = null;
@@ -45,44 +42,6 @@ public class TVHClientApplication extends Application implements BillingProcesso
 
     public static synchronized TVHClientApplication getInstance() {
         return instance;
-    }
-
-    /**
-     * Adds a single listener to the list.
-     *
-     * @param listener Listener class
-     */
-    public void addListener(HTSListener listener) {
-        synchronized (listeners) {
-            listeners.add(listener);
-        }
-    }
-
-    /**
-     * Removes a single listener from the list.
-     *
-     * @param listener Listener class
-     */
-    public void removeListener(HTSListener listener) {
-        synchronized (listeners) {
-            listeners.remove(listener);
-        }
-    }
-
-
-    /**
-     * Sends the given action and possible object with the data to all
-     * registered listeners.
-     *
-     * @param action String that defines the action
-     * @param obj Object that contains data
-     */
-    public void broadcastMessage(final String action, final Object obj) {
-        synchronized (listeners) {
-            for (HTSListener l : listeners) {
-                l.onMessage(action, obj);
-            }
-        }
     }
 
     private RefWatcher refWatcher;
@@ -141,6 +100,7 @@ public class TVHClientApplication extends Application implements BillingProcesso
                 Log.d(TAG, "attachBaseContext: Failed to init ACRA " + e.getLocalizedMessage());
             }
         }
+
         // Migrate existing preferences or remove old
         // ones before starting the actual application
         MigrateUtils.doMigrate(getBaseContext());

@@ -1,8 +1,8 @@
 package org.tvheadend.tvhclient.data.entity;
 
 import android.arch.persistence.room.ColumnInfo;
-import android.arch.persistence.room.Embedded;
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.RoomWarnings;
 
@@ -27,36 +27,31 @@ public class Channel {
     @ColumnInfo(name = "next_event_id")
     private int nextEventId;           // u32   optional   ID of the next event on the channel.
 
-    @Embedded(prefix = "program_")
-    private Program program;
-    @Embedded(prefix = "next_program_")
-    private Program nextProgram;
-    @Embedded(prefix = "recording_")
+    @ColumnInfo(name = "program_id")
+    private int programId;
+    @ColumnInfo(name = "program_title")
+    private String programTitle;
+    @ColumnInfo(name = "program_subtitle")
+    private String programSubtitle;
+    @ColumnInfo(name = "program_start")
+    private long programStart;
+    @ColumnInfo(name = "program_stop")
+    private long programStop;
+    @ColumnInfo(name = "program_content_type")
+    private int programContentType;
+    @ColumnInfo(name = "next_program_title")
+    private String nextProgramTitle;
+    @ColumnInfo(name = "recording_id")
+    private int recordingId;
+    @ColumnInfo(name = "recording_title")
+    private String recordingTitle;
+    @ColumnInfo(name = "recording_state")
+    private String recordingState;
+    @ColumnInfo(name = "recording_error")
+    private String recordingError;
+
+    @Ignore
     private Recording recording;
-
-    public Recording getRecording() {
-        return recording;
-    }
-
-    public void setRecording(Recording recording) {
-        this.recording = recording;
-    }
-
-    public Program getProgram() {
-        return program;
-    }
-
-    public void setProgram(Program program) {
-        this.program = program;
-    }
-
-    public Program getNextProgram() {
-        return nextProgram;
-    }
-
-    public void setNextProgram(Program nextProgram) {
-        this.nextProgram = nextProgram;
-    }
 
     public int getChannelId() {
         return channelId;
@@ -112,5 +107,101 @@ public class Channel {
 
     public void setNextEventId(int nextEventId) {
         this.nextEventId = nextEventId;
+    }
+
+    public int getProgramId() {
+        return programId;
+    }
+
+    public void setProgramId(int programId) {
+        this.programId = programId;
+    }
+
+    public String getProgramTitle() {
+        return programTitle;
+    }
+
+    public void setProgramTitle(String programTitle) {
+        this.programTitle = programTitle;
+    }
+
+    public String getProgramSubtitle() {
+        return programSubtitle;
+    }
+
+    public void setProgramSubtitle(String programSubtitle) {
+        this.programSubtitle = programSubtitle;
+    }
+
+    public long getProgramStart() {
+        return programStart;
+    }
+
+    public void setProgramStart(long programStart) {
+        this.programStart = programStart;
+    }
+
+    public long getProgramStop() {
+        return programStop;
+    }
+
+    public void setProgramStop(long programStop) {
+        this.programStop = programStop;
+    }
+
+    public int getProgramContentType() {
+        return programContentType;
+    }
+
+    public void setProgramContentType(int programContentType) {
+        this.programContentType = programContentType;
+    }
+
+    public String getNextProgramTitle() {
+        return nextProgramTitle;
+    }
+
+    public void setNextProgramTitle(String nextProgramTitle) {
+        this.nextProgramTitle = nextProgramTitle;
+    }
+
+    public int getRecordingId() {
+        return recordingId;
+    }
+
+    public void setRecordingId(int recordingId) {
+        this.recordingId = recordingId;
+    }
+
+    public String getRecordingTitle() {
+        return recordingTitle;
+    }
+
+    public void setRecordingTitle(String recordingTitle) {
+        this.recordingTitle = recordingTitle;
+    }
+
+    public String getRecordingState() {
+        return recordingState;
+    }
+
+    public void setRecordingState(String recordingState) {
+        this.recordingState = recordingState;
+    }
+
+    public String getRecordingError() {
+        return recordingError;
+    }
+
+    public void setRecordingError(String recordingError) {
+        this.recordingError = recordingError;
+    }
+
+    public Recording getRecording() {
+        return new Recording(recordingId, recordingTitle, recordingState, recordingError);
+    }
+
+    public void setRecording(Recording recording) {
+        this.recording = recording;
     }
 }

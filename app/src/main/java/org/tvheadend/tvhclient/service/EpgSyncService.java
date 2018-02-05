@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.sync;
+package org.tvheadend.tvhclient.service;
 
 import android.app.Service;
 import android.content.Intent;
@@ -13,7 +13,7 @@ import android.util.Log;
 import org.tvheadend.tvhclient.data.AppDatabase;
 import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.repository.ConnectionDataRepository;
-import org.tvheadend.tvhclient.htsp.SimpleHtspConnection;
+import org.tvheadend.tvhclient.service.htsp.SimpleHtspConnection;
 
 // TODO add removing data older that x days
 // TODO add task to periodically fetch epg data for all channels

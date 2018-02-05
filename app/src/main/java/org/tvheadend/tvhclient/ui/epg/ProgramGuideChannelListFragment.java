@@ -12,16 +12,13 @@ import android.widget.AbsListView.OnScrollListener;
 import android.widget.ListView;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.data.DataStorage;
 import org.tvheadend.tvhclient.data.entity.Channel;
-import org.tvheadend.tvhclient.service.HTSListener;
 import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
 import org.tvheadend.tvhclient.utils.Utils;
 
 import java.util.ArrayList;
 
-public class ProgramGuideChannelListFragment extends ListFragment implements HTSListener, OnScrollListener, ProgramGuideControlInterface {
+public class ProgramGuideChannelListFragment extends ListFragment implements OnScrollListener, ProgramGuideControlInterface {
 
     private Activity activity;
     private ProgramGuideScrollInterface programGuideScrollInterface;
@@ -59,22 +56,6 @@ public class ProgramGuideChannelListFragment extends ListFragment implements HTS
         }
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        TVHClientApplication.getInstance().addListener(this);
-
-        if (!DataStorage.getInstance().isLoading()) {
-            //populateList();
-        }
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        TVHClientApplication.getInstance().removeListener(this);
-    }
-
     /**
      * Fills the adapter with the available channel data. Only those channels
      * will be added to the adapter that contain the selected channel tag.
@@ -101,7 +82,7 @@ public class ProgramGuideChannelListFragment extends ListFragment implements HTS
         toolbarInterface.setSubtitle((currentTag == null) ? getString(R.string.all_channels) : currentTag.getTagName());
     }
 */
-    @Override
+
     public void onMessage(String action, final Object obj) {
         switch (action) {
             case "channelAdd":

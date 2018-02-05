@@ -44,13 +44,11 @@ import android.widget.ListView;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.data.DataStorage;
 import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.data.entity.Program;
 import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.data.local.SuggestionProvider;
-import org.tvheadend.tvhclient.service.HTSListener;
-import org.tvheadend.tvhclient.sync.EpgSyncService;
+import org.tvheadend.tvhclient.service.EpgSyncService;
 import org.tvheadend.tvhclient.ui.recordings.recordings.RecordingDetailsActivity;
 import org.tvheadend.tvhclient.utils.MenuUtils;
 import org.tvheadend.tvhclient.utils.MiscUtils;
@@ -60,7 +58,7 @@ import java.util.List;
 
 // TODO search for recordings broken/missing
 
-public class SearchResultActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, HTSListener {
+public class SearchResultActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SearchView.OnSuggestionListener {
 
     private final static String TAG = SearchResultActivity.class.getSimpleName();
 
@@ -79,7 +77,6 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
 
     private SearchView searchView;
     private TVHClientApplication app;
-    private DataStorage dataStorage;
     private MenuUtils menuUtils;
 
     @Override
@@ -89,7 +86,6 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
         //setContentView(R.layout.x_list_layout);
 
         app = TVHClientApplication.getInstance();
-        dataStorage = DataStorage.getInstance();
 
         // Setup the action bar and show the title
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -151,11 +147,11 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
 
         Intent intent = getIntent();
 
-        // Try to loadRecording the channel and recording id if given, to limit the search
+        // Try to loadRecordingById the channel and recording id if given, to limit the search
         // a single channel or the completed recordings.
         Bundle bundle = intent.getBundleExtra(SearchManager.APP_DATA);
         if (bundle != null) {
-            channel = dataStorage.getChannelFromArray(bundle.getInt("channelId"));
+            channel = null; // TODO dataStorage.getChannelFromArray(bundle.getInt("channelId"));
             //recording = dataStorage.getTimerRecording(bundle.getLong("dvrId"));
         } else {
             channel = null;
@@ -286,18 +282,6 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        app.addListener(this);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        app.removeListener(this);
-    }
-
-    @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         // Hide the genre color menu if no genre colors shall be shown
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -355,8 +339,8 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
             return super.onContextItemSelected(item);
         }
 
-        Recording rec = dataStorage.getRecordingFromArray(program.getDvrId());
-        Channel channel = dataStorage.getChannelFromArray(program.getChannelId());
+        Recording rec = null; // TODO dataStorage.getRecordingFromArray(program.getDvrId());
+        Channel channel = null; // TODO dataStorage.getChannelFromArray(program.getChannelId());
 
         switch (item.getItemId()) {
             case R.id.menu_search_epg:
@@ -474,60 +458,6 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
      */
     private void startDelayedAdapterUpdate() {
         startAdapterUpdate(1000, 3000);
-    }
-
-    /**
-     * This method is part of the HTSListener interface. Whenever the HTSService
-     * sends a new message the correct action will then be executed here.
-     */
-    @Override
-    public void onMessage(final String action, final Object obj) {
-        switch (action) {
-            case "eventAdd":
-                runOnUiThread(new Runnable() {
-                    public void run() {
-                        Program m = (Program) obj;
-                        adapter.remove(m);
-                        adapter.add(m);
-                        startDelayedAdapterUpdate();
-                    }
-                });
-                break;
-            case "eventDelete":
-                runOnUiThread(new Runnable() {
-                    public void run() {
-                        Program m = (Program) obj;
-                        adapter.remove(m);
-                        startDelayedAdapterUpdate();
-                    }
-                });
-                break;
-            case "eventUpdate":
-                runOnUiThread(new Runnable() {
-                    public void run() {
-                        adapter.update((Program) obj);
-                        startDelayedAdapterUpdate();
-                    }
-                });
-                break;
-            case "dvrEntryDelete":
-                runOnUiThread(new Runnable() {
-                    public void run() {
-                        Program m = (Program) obj;
-                        adapter.remove(m);
-                        startDelayedAdapterUpdate();
-                    }
-                });
-                break;
-            case "dvrEntryUpdate":
-                runOnUiThread(new Runnable() {
-                    public void run() {
-                        adapter.update((Program) obj);
-                        startDelayedAdapterUpdate();
-                    }
-                });
-                break;
-        }
     }
 
     @Override

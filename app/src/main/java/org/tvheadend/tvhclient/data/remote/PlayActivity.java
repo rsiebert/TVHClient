@@ -20,16 +20,18 @@ import com.google.android.gms.common.images.WebImage;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.data.Constants;
-import org.tvheadend.tvhclient.data.DataStorage;
-import org.tvheadend.tvhclient.data.DatabaseHelper;
 import org.tvheadend.tvhclient.data.entity.Channel;
+import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.entity.Recording;
+import org.tvheadend.tvhclient.data.entity.ServerProfile;
+import org.tvheadend.tvhclient.data.entity.ServerStatus;
 import org.tvheadend.tvhclient.data.local.Logger;
-import org.tvheadend.tvhclient.data.model.Connection;
 import org.tvheadend.tvhclient.data.model.HttpTicket;
-import org.tvheadend.tvhclient.data.model.Profile;
-import org.tvheadend.tvhclient.service.HTSListener;
-import org.tvheadend.tvhclient.sync.EpgSyncService;
+import org.tvheadend.tvhclient.data.repository.ConnectionDataRepository;
+import org.tvheadend.tvhclient.data.repository.ProfileDataRepository;
+import org.tvheadend.tvhclient.data.repository.RecordingRepository;
+import org.tvheadend.tvhclient.data.repository.ServerDataRepository;
+import org.tvheadend.tvhclient.service.EpgSyncService;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
 import java.io.File;
@@ -38,9 +40,9 @@ import java.net.URLEncoder;
 
 // TODO rework playback
 // TODO rework casting
+// TODO using the ticket url is enough to play
 
-
-public class PlayActivity extends Activity implements HTSListener, OnRequestPermissionsResultCallback {
+public class PlayActivity extends Activity implements OnRequestPermissionsResultCallback {
 
     private final static String TAG = PlayActivity.class.getSimpleName();
 
@@ -54,17 +56,17 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
     private Channel ch;
     private Recording rec;
     private String baseUrl;
-    private Profile playbackProfile;
-    private Profile castingProfile;
     private String username;
     private String password;
     private String address;
     private int streamingPort;
     private String title = "";
     private Logger logger;
-    private DataStorage dataStorage;
     private CastContext castContext;
     private CastSession castSession;
+    private ServerStatus serverStatus;
+    private RecordingRepository repository;
+    private ConnectionDataRepository connectionRepostory;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,14 +76,17 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
 
         app = TVHClientApplication.getInstance();
         logger = Logger.getInstance();
-        dataStorage = DataStorage.getInstance();
+
+        serverStatus = new ServerDataRepository(this).loadServerStatus();
         
         // If a play intent was sent no action is given, so default to play
         action = getIntent().getIntExtra(Constants.BUNDLE_ACTION, ACTION_PLAY);
 
         // Check that a valid channel or recording was specified
-        ch = dataStorage.getChannelFromArray(getIntent().getIntExtra("channelId", 0));
-        rec = dataStorage.getRecordingFromArray(getIntent().getIntExtra("dvrId", 0));
+        connectionRepostory = new ConnectionDataRepository(this);
+        repository = new RecordingRepository(this);
+        ch = repository.getChannelSync(getIntent().getIntExtra("channelId", 0));
+        rec = repository.getRecordingSync(getIntent().getIntExtra("dvrId", 0));
 
         // Get the title from either the channel or recording
         if (ch != null) {
@@ -113,15 +118,12 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
 
         // Create the url with the credentials and the host and  
         // port configuration. This one is fixed for all actions
-        DatabaseHelper databaseHelper = DatabaseHelper.getInstance(getApplicationContext());
-        Connection conn = databaseHelper.getSelectedConnection();
+        Connection conn = connectionRepostory.getActiveConnectionSync();
         if (conn != null) {
-            username = conn.username;
-            password = conn.password;
-            address = conn.address;
-            streamingPort = conn.streaming_port;
-            playbackProfile = databaseHelper.getProfile(conn.playback_profile_id);
-            castingProfile = databaseHelper.getProfile(conn.cast_profile_id);
+            username = conn.getUsername();
+            password = conn.getPassword();
+            address = conn.getHostname();
+            streamingPort = conn.getStreamingPort();
         }
 
         String encodedUsername = "";
@@ -165,7 +167,7 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
             }
 
             // No downloaded recording exists, so continue starting the service
-            // to loadRecording the url that shall be played. This could either be a
+            // to loadRecordingById the url that shall be played. This could either be a
             // channel or a recording.
             Intent intent = new Intent(PlayActivity.this, EpgSyncService.class);
             intent.setAction("getTicket");
@@ -189,15 +191,8 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
     @Override
     protected void onResume() {
         super.onResume();
-        app.addListener(this);
 
         initAction();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        app.removeListener(this);
     }
 
     /**
@@ -210,16 +205,17 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
      */
     private void initPlayback(String path, String ticket) {
         logger.log(TAG, "initPlayback() called with: path = [" + path + "], ticket = [" + ticket + "]");
-
+/*
+        ServerProfile playbackProfile = new ProfileDataRepository(this).getPlaybackServerProfile();
         // Set default values if no profile was specified
         if (playbackProfile == null) {
             logger.log(TAG, "initPlayback: no profile defined, creating default profile");
-            playbackProfile = new Profile();
+            playbackProfile = new OldProfile();
         }
 
         // Set the correct MIME type. For 'pass' we assume MPEG-TS
         String mime = "application/octet-stream";
-        switch (playbackProfile.container) {
+        switch (playbackTranscodingProfile.getContainer()) {
             case "mpegps":
                 mime = "video/mp2p";
                 break;
@@ -237,15 +233,16 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
                 break;
         }
 
-        // Create the URL for the external media player that is required to loadRecording
+        // Create the URL for the external media player that is required to loadRecordingById
         // the stream from the server
         String playUrl = baseUrl + path + "?ticket=" + ticket;
 
         // If a profile was given, use it instead of the old values
-        if (playbackProfile.enabled
-                && dataStorage.getProtocolVersion() >= 16
+        if (playbackProfile != null
+                && playbackProfile.isEnabled()
+                && serverStatus.getHtspVersion() >= 16
                 && app.isUnlocked()) {
-            playUrl += "&profile=" + playbackProfile.name;
+            playUrl += "&profile=" + playbackProfile.getName();
         } else {
             playUrl += "&mux=" + playbackProfile.container;
             if (playbackProfile.transcode) {
@@ -258,6 +255,8 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
         }
         startPlayback(playUrl, mime);
         logger.log(TAG, "initPlayback() returned");
+
+        */
     }
 
     /**
@@ -336,8 +335,8 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
     private void startCasting() {
         logger.log(TAG, "startCasting() called");
 
-        String iconUrl = baseUrl + dataStorage.getWebRoot();
-        String castUrl = baseUrl + dataStorage.getWebRoot();
+        String iconUrl = baseUrl + serverStatus.getWebroot();
+        String castUrl = baseUrl + serverStatus.getWebroot();
         String subtitle = "";
         long duration = 0;
         int streamType = MediaInfo.STREAM_TYPE_NONE;
@@ -348,7 +347,7 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
             streamType = MediaInfo.STREAM_TYPE_LIVE;
         } else if (rec != null) {
             castUrl += "/dvrfile/" + rec.getId();
-            Channel channel = dataStorage.getChannelFromArray(rec.getChannelId());
+            Channel channel = repository.getChannelSync(rec.getChannelId());
             iconUrl += "/" + (channel != null ? channel.getChannelIcon() : "");
             streamType = MediaInfo.STREAM_TYPE_BUFFERED;
 
@@ -365,10 +364,11 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
         movieMetadata.addImage(new WebImage(Uri.parse(iconUrl)));   // large background icon
 
         // Check if the correct profile was set, if not use the default
+        ServerProfile castingProfile = new ProfileDataRepository(this).getCastingServerProfile();
         if (castingProfile == null) {
             castUrl += "?profile=" + Constants.CAST_PROFILE_DEFAULT;
         } else {
-            castUrl += "?profile=" + castingProfile.name;
+            castUrl += "?profile=" + castingProfile.getName();
         }
 
         MediaInfo mediaInfo = new MediaInfo.Builder(castUrl)
@@ -399,11 +399,6 @@ public class PlayActivity extends Activity implements HTSListener, OnRequestPerm
         }
     }
 
-    /**
-     * This method is part of the HTSListener interface. Whenever the HTSService
-     * sends a new message the correct action will then be executed here.
-     */
-    @Override
     public void onMessage(String action, final Object obj) {
         if (action.equals(Constants.ACTION_TICKET_ADD)) {
             HttpTicket t = (HttpTicket) obj;

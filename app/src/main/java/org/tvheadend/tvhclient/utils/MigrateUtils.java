@@ -9,7 +9,7 @@ import org.tvheadend.tvhclient.BuildConfig;
 
 public class MigrateUtils {
     private static final String TAG = MigrateUtils.class.getSimpleName();
-    private static final int VERSION_100 = 100;
+    private static final int VERSION_101 = 101;
 
     private MigrateUtils() {
         throw new IllegalAccessError("Utility class");
@@ -19,18 +19,18 @@ public class MigrateUtils {
         // Lookup the current version and the last migrated version
         int currentApplicationVersion = BuildConfig.BUILD_VERSION;
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        int lastInstalledApplicationVersion = sharedPreferences.getInt("app_version", 0);
+        int lastInstalledApplicationVersion = sharedPreferences.getInt("build_version_for_migration", 0);
         Log.i(TAG, "Migrating from " + lastInstalledApplicationVersion + " to " + currentApplicationVersion);
 
         if (currentApplicationVersion != lastInstalledApplicationVersion) {
-            if (lastInstalledApplicationVersion < VERSION_100) {
+            if (lastInstalledApplicationVersion < VERSION_101) {
                 migrateConvertStartScreenPreference(context);
             }
         }
 
         // Store the current version as the last installed version
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putInt("app_version", currentApplicationVersion);
+        editor.putInt("build_version_for_migration", currentApplicationVersion);
         editor.apply();
     }
 

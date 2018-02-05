@@ -26,7 +26,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.Constants;
-import org.tvheadend.tvhclient.data.DataRepository;
+import org.tvheadend.tvhclient.data.repository.RecordingRepository;
 import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.data.local.Logger;
@@ -48,7 +48,7 @@ public class DownloadActivity extends Activity implements OnRequestPermissionsRe
         super.onCreate(savedInstanceState);
         MiscUtils.setLanguage(this);
 
-        rec = new DataRepository(this).getRecordingSync(getIntent().getIntExtra("dvrId", 0));
+        rec = new RecordingRepository(this).getRecordingSync(getIntent().getIntExtra("dvrId", 0));
         conn = new ConnectionDataRepository(this).getActiveConnectionSync();
         logger = Logger.getInstance();
     }

@@ -1,25 +1,32 @@
 package org.tvheadend.tvhclient.ui.startup;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.MenuItem;
 
 import org.tvheadend.tvhclient.BuildConfig;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.data.DatabaseHelper;
-import org.tvheadend.tvhclient.data.model.Connection;
+import org.tvheadend.tvhclient.data.entity.Connection;
+import org.tvheadend.tvhclient.data.repository.ConnectionDataRepository;
 import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
+import org.tvheadend.tvhclient.ui.common.BackPressedInterface;
 import org.tvheadend.tvhclient.ui.misc.ChangeLogFragment;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
 import java.util.List;
 
 public class StartupActivity extends AppCompatActivity implements ToolbarInterface {
+    private String TAG = getClass().getSimpleName();
+    private ConnectionDataRepository repository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,16 +35,23 @@ public class StartupActivity extends AppCompatActivity implements ToolbarInterfa
         setContentView(R.layout.main_activity);
         MiscUtils.setLanguage(this);
 
+        Log.d(TAG, "onCreate() called with: savedInstanceState = [" + savedInstanceState + "]");
+
         // Get the toolbar so that the fragments can set the title
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        repository = new ConnectionDataRepository(this);
+
         if (savedInstanceState == null) {
             if (isShowChangelogRequired()) {
+                if (getSupportActionBar() != null) {
+                    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                }
                 // Show certain fragment depending on the current status.
                 ChangeLogFragment fragment = new ChangeLogFragment();
                 fragment.setArguments(getIntent().getExtras());
-                getFragmentManager().beginTransaction().add(R.id.main, fragment).commit();
+                getSupportFragmentManager().beginTransaction().add(R.id.main, fragment).commit();
 
             } else if (!isConnectionDefined()
                     || !isActiveConnectionDefined()
@@ -51,17 +65,40 @@ public class StartupActivity extends AppCompatActivity implements ToolbarInterfa
                 } else if (!isNetworkAvailable()) {
                     bundle.putString("type", "no_network");
                 }
+                Log.d(TAG, "onCreate: showing connection fragment");
                 ConnectionStatusFragment fragment = new ConnectionStatusFragment();
                 fragment.setArguments(bundle);
                 getFragmentManager().beginTransaction().add(R.id.main, fragment).commit();
 
             } else {
+                Log.d(TAG, "onCreate: showing sync fragment");
                 // connect to the server and show the sync status if required
                 SyncStatusFragment fragment = new SyncStatusFragment();
                 fragment.setArguments(getIntent().getExtras());
                 getFragmentManager().beginTransaction().add(R.id.main, fragment).commit();
             }
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main);
+        if (fragment != null && fragment instanceof BackPressedInterface) {
+            ((BackPressedInterface) fragment).onBackPressed();
+        }
+        Intent intent = new Intent(this, StartupActivity.class);
+        startActivity(intent);
+        super.onBackPressed();
     }
 
     private boolean isNetworkAvailable() {
@@ -74,18 +111,18 @@ public class StartupActivity extends AppCompatActivity implements ToolbarInterfa
     }
 
     private boolean isConnectionDefined() {
-        List<Connection> connectionList = DatabaseHelper.getInstance(getApplicationContext()).getConnections();
+        List<Connection> connectionList = repository.getAllConnectionsSync();
         return connectionList != null && connectionList.size() > 0;
     }
 
     private boolean isActiveConnectionDefined() {
-        return DatabaseHelper.getInstance(getApplicationContext()).getSelectedConnection() != null;
+        return repository.getActiveConnectionSync() != null;
     }
 
     private boolean isShowChangelogRequired() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        String appVersionName = sharedPreferences.getString("app_version_name_for_changelog", "");
-        return (!BuildConfig.VERSION_NAME.equals(appVersionName));
+        String versionName = sharedPreferences.getString("version_name_for_changelog", "");
+        return (!BuildConfig.VERSION_NAME.equals(versionName));
     }
 
     @Override

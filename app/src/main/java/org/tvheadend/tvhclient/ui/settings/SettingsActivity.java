@@ -75,7 +75,7 @@ public class SettingsActivity extends AppCompatActivity implements ToolbarInterf
                         supportFragment = new UnlockerFragment();
                         break;
                     case "changelog":
-                        fragment = new ChangeLogFragment();
+                        supportFragment = new ChangeLogFragment();
                         break;
                 }
                 if (fragment != null) {

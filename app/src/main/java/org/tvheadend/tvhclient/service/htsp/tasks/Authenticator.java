@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tvheadend.tvhclient.htsp.tasks;
+package org.tvheadend.tvhclient.service.htsp.tasks;
 
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -21,9 +21,9 @@ import android.util.Log;
 
 import org.tvheadend.tvhclient.BuildConfig;
 import org.tvheadend.tvhclient.data.entity.Connection;
-import org.tvheadend.tvhclient.htsp.HtspConnection;
-import org.tvheadend.tvhclient.htsp.HtspMessage;
-import org.tvheadend.tvhclient.htsp.HtspNotConnectedException;
+import org.tvheadend.tvhclient.service.htsp.HtspConnection;
+import org.tvheadend.tvhclient.service.htsp.HtspMessage;
+import org.tvheadend.tvhclient.service.htsp.HtspNotConnectedException;
 
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;

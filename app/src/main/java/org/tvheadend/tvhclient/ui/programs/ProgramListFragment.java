@@ -22,11 +22,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.data.DataStorage;
 import org.tvheadend.tvhclient.data.entity.Program;
 import org.tvheadend.tvhclient.data.entity.ProgramWithRecordingsAndChannels;
 import org.tvheadend.tvhclient.data.entity.Recording;
-import org.tvheadend.tvhclient.sync.EpgSyncService;
+import org.tvheadend.tvhclient.data.repository.RecordingRepository;
+import org.tvheadend.tvhclient.service.EpgSyncService;
 import org.tvheadend.tvhclient.ui.base.BaseFragment;
 import org.tvheadend.tvhclient.ui.common.RecyclerViewClickCallback;
 import org.tvheadend.tvhclient.ui.search.SearchActivity;
@@ -167,7 +167,7 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
         }
         PopupMenu popupMenu = new PopupMenu(activity, view);
         popupMenu.getMenuInflater().inflate(R.menu.channel_list_program_popup_menu, popupMenu.getMenu());
-        menuUtils.onPreparePopupMenu(popupMenu.getMenu(), program);
+        menuUtils.onPreparePopupMenu(popupMenu.getMenu(), program.getStart(), program.getStop(), program.getDvrId());
 
         popupMenu.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {
@@ -178,7 +178,7 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
                     menuUtils.handleMenuSearchEpgSelection(program.getTitle(), channelId);
                     return true;
                 case R.id.menu_record_remove:
-                    Recording rec = DataStorage.getInstance().getRecordingFromArray(program.getDvrId());
+                    final Recording rec = new RecordingRepository(activity).getRecordingSync(program.getDvrId());
                     if (rec != null) {
                         if (rec.isRecording()) {
                             menuUtils.handleMenuStopRecordingSelection(rec.getId(), rec.getTitle());

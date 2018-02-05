@@ -14,9 +14,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.data.DataStorage;
 import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.data.entity.Program;
+import org.tvheadend.tvhclient.data.repository.ChannelAndProgramRepository;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 import org.tvheadend.tvhclient.utils.UIUtils;
 
@@ -226,7 +226,7 @@ public class SearchResultAdapter extends ArrayAdapter<Program> implements Filter
         if (program != null) {
             holder.titleTextView.setText(program.getTitle());
 
-            Channel channel = DataStorage.getInstance().getChannelFromArray(program.getChannelId());
+            Channel channel = new ChannelAndProgramRepository(context).getChannelByIdSync(program.getChannelId());
             holder.channelTextView.setText(channel.getChannelName());
             holder.channelTextView.setVisibility(showChannelName ? View.VISIBLE : View.GONE);
 

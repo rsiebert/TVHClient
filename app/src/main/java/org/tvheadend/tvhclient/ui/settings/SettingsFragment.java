@@ -21,11 +21,10 @@ import android.util.Log;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.folderselector.FolderChooserDialog;
 
-import org.tvheadend.tvhclient.data.DataStorage;
-import org.tvheadend.tvhclient.data.DatabaseHelper;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.data.local.SuggestionProvider;
 import org.tvheadend.tvhclient.TVHClientApplication;
+import org.tvheadend.tvhclient.data.local.SuggestionProvider;
+import org.tvheadend.tvhclient.data.repository.ServerDataRepository;
 import org.tvheadend.tvhclient.ui.NavigationActivity;
 import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
 
@@ -59,7 +58,7 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         isUnlocked = TVHClientApplication.getInstance().isUnlocked();
-        htspVersion = DataStorage.getInstance().getProtocolVersion();
+        htspVersion = new ServerDataRepository(activity).loadServerStatus().getHtspVersion();
 
         Preference prefManageConnections = findPreference("pref_manage_connections");
         Preference prefMenuUserInterface = findPreference("pref_menu_user_interface");
@@ -171,7 +170,7 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
                 handlePreferenceCastingSelected();
                 break;
             case "pref_menu_transcoding":
-                handlePreferenceMenuTranscodingSelected();
+                showSelectedSettingsFragment("transcoding");
                 break;
             case "pref_advanced":
                 showSelectedSettingsFragment("advanced");
@@ -208,10 +207,7 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
 
     private void handlePreferenceProfilesSelected() {
         if (getView() != null) {
-            if (DatabaseHelper.getInstance(getActivity()).getSelectedConnection() == null) {
-                Snackbar.make(getView(), R.string.no_connection_available_advice,
-                        Snackbar.LENGTH_SHORT).show();
-            } else if (htspVersion < 16) {
+            if (htspVersion < 16) {
                 Snackbar.make(getView(), R.string.feature_not_supported_by_server,
                         Snackbar.LENGTH_SHORT).show();
             } else if (!isUnlocked) {
@@ -225,10 +221,7 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
 
     private void handlePreferenceCastingSelected() {
         if (getView() != null) {
-            if (DatabaseHelper.getInstance(getActivity()).getSelectedConnection() == null) {
-                Snackbar.make(getView(), R.string.no_connection_available_advice,
-                        Snackbar.LENGTH_SHORT).show();
-            } else if (htspVersion < 16) {
+            if (htspVersion < 16) {
                 Snackbar.make(getView(), R.string.feature_not_supported_by_server,
                         Snackbar.LENGTH_SHORT).show();
             } else if (!isUnlocked) {
@@ -236,17 +229,6 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
                         Snackbar.LENGTH_SHORT).show();
             } else {
                 showSelectedSettingsFragment("casting");
-            }
-        }
-    }
-
-    private void handlePreferenceMenuTranscodingSelected() {
-        if (getView() != null) {
-            if (DatabaseHelper.getInstance(getActivity()).getSelectedConnection() == null) {
-                Snackbar.make(getView(), getString(R.string.no_connection_available_advice),
-                        Snackbar.LENGTH_SHORT).show();
-            } else {
-                showSelectedSettingsFragment("transcoding");
             }
         }
     }

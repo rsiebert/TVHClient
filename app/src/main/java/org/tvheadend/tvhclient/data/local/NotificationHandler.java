@@ -13,13 +13,13 @@ import android.preference.PreferenceManager;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.data.Constants;
-import org.tvheadend.tvhclient.data.DataStorage;
 import org.tvheadend.tvhclient.data.entity.Recording;
+import org.tvheadend.tvhclient.data.repository.RecordingRepository;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 public class NotificationHandler {
 
@@ -28,12 +28,10 @@ public class NotificationHandler {
     private static NotificationHandler mInstance;
     private final Logger logger;
     private final TVHClientApplication app;
-    private final DataStorage dataStorage;
 
     public NotificationHandler() {
         logger = Logger.getInstance();
         app = TVHClientApplication.getInstance();
-        dataStorage = DataStorage.getInstance();
     }
 
     public static synchronized NotificationHandler getInstance() {
@@ -73,10 +71,7 @@ public class NotificationHandler {
         Logger logger = Logger.getInstance();
         logger.log(TAG, "addNotification() called with: id = [" + id + "], offset = [" + offset + "]");
 
-        final Recording rec = dataStorage.getRecordingFromArray(id);
-        if (dataStorage.isLoading() || rec == null) {
-            return;
-        }
+        final Recording rec = new RecordingRepository(app.getApplicationContext()).getRecordingSync(id);
 
         // The start time when the notification shall be shown
         String msg = app.getString(R.string.recording_started);
@@ -138,8 +133,8 @@ public class NotificationHandler {
      * @param offset Time in minutes that the notification shall be shown earlier
      */
     public void addNotifications(final long offset) {
-        Map<Integer, Recording> map = dataStorage.getRecordingsFromArray();
-        for (Recording rec : map.values()) {
+        List<Recording> recordingList = new RecordingRepository(app.getApplicationContext()).getAllRecordingsSync();
+        for (Recording rec : recordingList) {
             if (rec.isScheduled()) {
                 addNotification(rec.getId(), offset);
             }
@@ -150,8 +145,8 @@ public class NotificationHandler {
      * Cancels all pending notifications related to recordings
      */
     public void cancelNotifications() {
-        Map<Integer, Recording> map = dataStorage.getRecordingsFromArray();
-        for (Recording rec : map.values()) {
+        List<Recording> recordingList = new RecordingRepository(app.getApplicationContext()).getAllRecordingsSync();
+        for (Recording rec : recordingList) {
             cancelNotification(rec.getId());
         }
     }

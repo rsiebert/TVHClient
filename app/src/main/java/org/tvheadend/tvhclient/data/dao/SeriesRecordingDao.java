@@ -25,10 +25,10 @@ public interface SeriesRecordingDao {
     LiveData<List<SeriesRecording>> loadAllRecordings();
 
     @Query(query + "WHERE rec.id = :id")
-    LiveData<SeriesRecording> loadRecording(String id);
+    LiveData<SeriesRecording> loadRecordingById(String id);
 
     @Query(query + "WHERE rec.id = :id")
-    SeriesRecording loadRecordingSync(String id);
+    SeriesRecording loadRecordingByIdSync(String id);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAll(List<SeriesRecording> recordings);

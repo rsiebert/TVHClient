@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package org.tvheadend.tvhclient.htsp.tasks;
+package org.tvheadend.tvhclient.service.htsp.tasks;
 
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import org.tvheadend.tvhclient.htsp.HtspMessage;
-import org.tvheadend.tvhclient.htsp.HtspNotConnectedException;
+import org.tvheadend.tvhclient.service.htsp.HtspMessage;
+import org.tvheadend.tvhclient.service.htsp.HtspNotConnectedException;
 
 import java.util.Arrays;
 import java.util.HashSet;

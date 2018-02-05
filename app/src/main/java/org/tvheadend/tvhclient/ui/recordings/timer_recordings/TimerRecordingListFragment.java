@@ -55,7 +55,7 @@ public class TimerRecordingListFragment extends BaseFragment implements Recycler
             selectedListPosition = savedInstanceState.getInt("list_position", 0);
         }
 
-        recyclerViewAdapter = new TimerRecordingRecyclerViewAdapter(activity, new ArrayList<>(), this);
+        recyclerViewAdapter = new TimerRecordingRecyclerViewAdapter(activity, new ArrayList<>(), serverStatus.getHtspVersion(), this);
         recyclerView.setLayoutManager(new LinearLayoutManager(activity));
         recyclerView.addItemDecoration(new DividerItemDecoration(activity, LinearLayoutManager.VERTICAL));
         recyclerView.setItemAnimator(new DefaultItemAnimator());

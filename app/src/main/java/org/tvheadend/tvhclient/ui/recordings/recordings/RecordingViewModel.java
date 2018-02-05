@@ -5,15 +5,14 @@ import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 
-import org.tvheadend.tvhclient.data.AppDatabase;
-import org.tvheadend.tvhclient.data.dao.RecordingDao;
 import org.tvheadend.tvhclient.data.entity.Recording;
+import org.tvheadend.tvhclient.data.repository.RecordingRepository;
 
 import java.util.List;
 
 public class RecordingViewModel extends AndroidViewModel {
 
-    private final RecordingDao dao;
+    private final RecordingRepository repository;
     private LiveData<List<Recording>> completedRecordings = new MutableLiveData<>();
     private LiveData<List<Recording>> scheduledRecordings = new MutableLiveData<>();
     private LiveData<List<Recording>> failedRecordings = new MutableLiveData<>();
@@ -21,12 +20,11 @@ public class RecordingViewModel extends AndroidViewModel {
 
     public RecordingViewModel(Application application) {
         super(application);
-        AppDatabase db = AppDatabase.getInstance(application.getApplicationContext());
-        dao = db.recordingDao();
-        completedRecordings = dao.loadAllCompletedRecordings();
-        scheduledRecordings = dao.loadAllScheduledRecordings();
-        failedRecordings = dao.loadAllFailedRecordings();
-        removedRecordings = dao.loadAllRemovedRecordings();
+        repository = new RecordingRepository(application);
+        completedRecordings = repository.getAllCompletedRecordings();
+        scheduledRecordings = repository.getAllScheduledRecordings();
+        failedRecordings = repository.getAllFailedRecordings();
+        removedRecordings = repository.getAllRemovedRecordings();
     }
 
     public LiveData<List<Recording>> getCompletedRecordings() {
@@ -46,6 +44,6 @@ public class RecordingViewModel extends AndroidViewModel {
     }
 
     public LiveData<Recording> getRecording(int id) {
-        return dao.loadRecording(id);
+        return repository.getRecording(id);
     }
 }

@@ -10,12 +10,9 @@ import com.sleepbot.datetimepicker.time.TimePickerDialog;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.data.DataRepository;
-import org.tvheadend.tvhclient.data.DataStorage;
-import org.tvheadend.tvhclient.data.DatabaseHelper;
 import org.tvheadend.tvhclient.data.entity.Channel;
-import org.tvheadend.tvhclient.data.model.Connection;
-import org.tvheadend.tvhclient.data.model.Profile;
+import org.tvheadend.tvhclient.data.repository.ChannelAndProgramRepository;
+import org.tvheadend.tvhclient.data.repository.ProfileDataRepository;
 import org.tvheadend.tvhclient.ui.base.BaseFragment;
 import org.tvheadend.tvhclient.ui.channels.ChannelListSelectionAdapter;
 import org.tvheadend.tvhclient.ui.recordings.common.DateTimePickerCallback;
@@ -32,41 +29,30 @@ import java.util.List;
 
 public class BaseRecordingAddEditFragment extends BaseFragment {
 
-    protected DataStorage dataStorage;
     protected boolean isUnlocked;
-    protected Profile profile;
-
     protected int priority;
     protected int daysOfWeek;
     protected int recordingProfileName;
     protected String[] daysOfWeekList;
     protected String[] priorityList;
     protected String[] recordingProfilesList;
-    protected DatabaseHelper databaseHelper;
     protected List<Channel> channelList;
-    protected DataRepository repository;
+    protected ChannelAndProgramRepository channelAndProgramRepository;
+    protected ProfileDataRepository profileRepository;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        dataStorage = DataStorage.getInstance();
         isUnlocked = TVHClientApplication.getInstance().isUnlocked();
-        databaseHelper = DatabaseHelper.getInstance(activity.getApplicationContext());
-        Connection connection = databaseHelper.getSelectedConnection();
-        profile = databaseHelper.getProfile(connection.recording_profile_id);
-        setHasOptionsMenu(true);
+        profileRepository = new ProfileDataRepository(activity);
 
         daysOfWeekList = activity.getResources().getStringArray(R.array.day_short_names);
-
-        // Create the list of available configurations that the user can select from
-        recordingProfilesList = new String[dataStorage.getDvrConfigs().size()];
-        for (int i = 0; i < dataStorage.getDvrConfigs().size(); i++) {
-            recordingProfilesList[i] = dataStorage.getDvrConfigs().get(i).name;
-        }
-
+        recordingProfilesList = profileRepository.getAllRecordingServerProfileNames();
         priorityList = activity.getResources().getStringArray(R.array.dvr_priorities);
-        channelList = new DataRepository(getActivity()).getAllChannelsSync();
+        channelList = channelAndProgramRepository.getAllChannelsSync();
+
+        setHasOptionsMenu(true);
     }
 
     protected String getDateStringFromTimeInMillis(long milliSeconds) {
@@ -160,7 +146,7 @@ public class BaseRecordingAddEditFragment extends BaseFragment {
 
         final ChannelListSelectionAdapter channelListSelectionAdapter = new ChannelListSelectionAdapter(activity, channels, selectedChannelId);
         // Show the dialog that shows all available channel tags. When the
-        // user has selected a tag, restart the loader to loadRecording the updated channel list
+        // user has selected a tag, restart the loader to loadRecordingById the updated channel list
         final MaterialDialog dialog = new MaterialDialog.Builder(activity)
                 .title(R.string.tags)
                 .adapter(channelListSelectionAdapter, null)

@@ -12,16 +12,13 @@ import android.widget.LinearLayout;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.Constants;
-import org.tvheadend.tvhclient.data.DataStorage;
 import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.data.entity.Program;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 public class ProgramGuideViewPagerContentListAdapter extends ArrayAdapter<Channel> {
 
@@ -112,11 +109,11 @@ public class ProgramGuideViewPagerContentListAdapter extends ArrayAdapter<Channe
         // Adds the channel and shows the programs. Channel is
         // required to have access to the EPG data.
         // Go through all programs and add them to the view
-        //Log.d(TAG, "getView: loadRecording programs for view");
+        //Log.d(TAG, "getView: loadRecordingById programs for view");
         Channel channel = getItem(position);
         int nextId = 0;
         List<Program> programList = new ArrayList<>();
-
+/*
         Map<Integer, Program> map = DataStorage.getInstance().getProgramsFromArray();
         Iterator mapIt = map.values().iterator();
         Program p;
@@ -140,7 +137,8 @@ public class ProgramGuideViewPagerContentListAdapter extends ArrayAdapter<Channe
                 nextId = 0;
             }
         }
-        //Log.d(TAG, "getView: loadRecording programs for view done");
+        */
+        //Log.d(TAG, "getView: loadRecordingById programs for view done");
 
         //Log.d(TAG, "getView: start adding programs to view");
         holder.item.addPrograms(parent, programList, channel);

@@ -3,6 +3,10 @@ package org.tvheadend.tvhclient.ui.misc;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -14,20 +18,23 @@ import android.widget.ProgressBar;
 
 import org.tvheadend.tvhclient.BuildConfig;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.ui.common.BackPressedInterface;
 import org.tvheadend.tvhclient.data.tasks.ChangeLogLoaderTask;
 import org.tvheadend.tvhclient.data.tasks.FileLoaderCallback;
 import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
+import org.tvheadend.tvhclient.ui.common.BackPressedInterface;
 
-public class ChangeLogFragment extends android.app.Fragment implements BackPressedInterface, FileLoaderCallback {
+public class ChangeLogFragment extends Fragment implements BackPressedInterface, FileLoaderCallback {
+    private String TAG = getClass().getSimpleName();
 
     private WebView webView;
     private boolean showFullChangeLog = false;
     private ChangeLogLoaderTask changeLogLoaderTask;
     private ProgressBar loadingProgressBar;
+    private AppCompatActivity activity;
+    private String versionName;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.webview_fragment, null);
         webView = view.findViewById(R.id.webview);
         loadingProgressBar = view.findViewById(R.id.loading);
@@ -38,34 +45,39 @@ public class ChangeLogFragment extends android.app.Fragment implements BackPress
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        if (getActivity() instanceof ToolbarInterface) {
-            ToolbarInterface toolbarInterface = (ToolbarInterface) getActivity();
+        activity = (AppCompatActivity) getActivity();
+        if (activity instanceof ToolbarInterface) {
+            ToolbarInterface toolbarInterface = (ToolbarInterface) activity;
             toolbarInterface.setTitle(getString(R.string.pref_changelog));
         }
 
         setHasOptionsMenu(true);
 
         // Get the build version where the changelog was last shown
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String lastAppVersion = sharedPreferences.getString("app_version_name_for_changelog", "");
-        changeLogLoaderTask = new ChangeLogLoaderTask(getActivity(), lastAppVersion, this);
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity);
+        versionName = sharedPreferences.getString("version_name_for_changelog", "");
+        Log.d(TAG, "onActivityCreated: saved build version " + versionName + ", current " + BuildConfig.VERSION_NAME);
 
         // Show the full changelog if the changelog was never shown before (app version
         // name is empty) or if it was already shown and the version name is the same as
         // the one in the preferences. Otherwise show the changelog of the newest app version.
-        showFullChangeLog = (lastAppVersion.isEmpty() || lastAppVersion.equals(BuildConfig.VERSION_NAME));
+        showFullChangeLog = versionName.isEmpty();
+        Log.d(TAG, "onActivityCreated: showing full changelog " + showFullChangeLog);
         showChangelog(showFullChangeLog);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        changeLogLoaderTask.cancel(true);
+        if (changeLogLoaderTask != null) {
+            changeLogLoaderTask.cancel(true);
+        }
     }
 
     private void showChangelog(boolean showFullChangeLog) {
         webView.setVisibility(View.GONE);
         loadingProgressBar.setVisibility(View.VISIBLE);
+        changeLogLoaderTask = new ChangeLogLoaderTask(activity, versionName, this);
         changeLogLoaderTask.execute(showFullChangeLog);
     }
 
@@ -82,12 +94,11 @@ public class ChangeLogFragment extends android.app.Fragment implements BackPress
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Log.d(TAG, "onOptionsItemSelected() called with: item = [" + item + "]");
         switch (item.getItemId()) {
-            case android.R.id.home:
-                getActivity().finish();
-                return true;
             case R.id.menu_full_changelog:
-                showChangelog(true);
+                changeLogLoaderTask = new ChangeLogLoaderTask(activity, versionName, this);
+                changeLogLoaderTask.execute(true);
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -95,10 +106,11 @@ public class ChangeLogFragment extends android.app.Fragment implements BackPress
 
     @Override
     public void onBackPressed() {
+        Log.d(TAG, "onBackPressed() called");
         // Save the information that the changelog was shown
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("app_version_name_for_changelog", BuildConfig.VERSION_NAME);
+        editor.putString("version_name_for_changelog", BuildConfig.VERSION_NAME);
         editor.apply();
     }
 

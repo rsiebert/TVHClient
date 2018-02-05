@@ -10,7 +10,7 @@ public class TimerRecording {
 
     @PrimaryKey
     @NonNull
-    private String id = "";           // str   required   ID (string!) of dvrTimerecEntry.
+    private String id = "";      // str   required   ID (string!) of dvrTimerecEntry.
     private String title;        // str   required   Title for the recordings.
     private String directory;    // str   optional   Forced directory name (Added in version 19).
     private int enabled;         // u32   required   Title for the recordings.

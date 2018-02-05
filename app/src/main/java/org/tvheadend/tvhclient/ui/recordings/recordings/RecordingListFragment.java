@@ -52,7 +52,7 @@ public class RecordingListFragment extends BaseFragment implements RecyclerViewC
             selectedListPosition = savedInstanceState.getInt("list_position", 0);
         }
 
-        recyclerViewAdapter = new RecordingRecyclerViewAdapter(activity, new ArrayList<>(), this);
+        recyclerViewAdapter = new RecordingRecyclerViewAdapter(activity, new ArrayList<>(), serverStatus.getHtspVersion(), this);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
         recyclerView.setItemAnimator(new DefaultItemAnimator());

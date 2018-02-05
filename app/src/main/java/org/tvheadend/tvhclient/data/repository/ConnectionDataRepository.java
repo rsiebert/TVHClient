@@ -5,7 +5,10 @@ import android.os.AsyncTask;
 
 import org.tvheadend.tvhclient.data.AppDatabase;
 import org.tvheadend.tvhclient.data.dao.ConnectionDao;
+import org.tvheadend.tvhclient.data.dao.ServerStatusDao;
+import org.tvheadend.tvhclient.data.dao.TranscodingProfileDao;
 import org.tvheadend.tvhclient.data.entity.Connection;
+import org.tvheadend.tvhclient.data.entity.ServerStatus;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -33,7 +36,7 @@ public class ConnectionDataRepository {
             new DisableActiveConnectionTask(db.connectionDao()).execute();
         }
         // Insert or update the connection
-        new UpdateConnectionTask(db.connectionDao(), connection).execute();
+        new InsertUpdateConnectionTask(db.connectionDao(), db.serverStatusDao(), connection).execute();
     }
 
     public Connection getActiveConnectionSync() {
@@ -46,7 +49,7 @@ public class ConnectionDataRepository {
     }
 
     public void removeConnectionSync(int id) {
-        new DeleteConnectionTask(db.connectionDao(), id).execute();
+        new DeleteConnectionTask(db.connectionDao(), db.serverStatusDao(), db.transcodingProfileDao(), id).execute();
     }
 
     public List<Connection> getAllConnectionsSync() {
@@ -59,17 +62,23 @@ public class ConnectionDataRepository {
     }
 
     protected static class DeleteConnectionTask extends AsyncTask<Void, Void, Void> {
-        private final ConnectionDao dao;
+        private final ConnectionDao connectionDao;
         private final int id;
+        private final ServerStatusDao serverStatusDao;
+        private final TranscodingProfileDao profileDao;
 
-        DeleteConnectionTask(ConnectionDao dao, int id) {
-            this.dao = dao;
+        DeleteConnectionTask(ConnectionDao connectionDao, ServerStatusDao serverStatusDao, TranscodingProfileDao profileDao, int id) {
+            this.connectionDao = connectionDao;
             this.id = id;
+            this.serverStatusDao = serverStatusDao;
+            this.profileDao = profileDao;
         }
 
         @Override
         protected Void doInBackground(Void... voids) {
-            dao.deleteById(id);
+            connectionDao.deleteById(id);
+            serverStatusDao.deleteByConnectionId(id);
+            profileDao.deleteByConnectionId(id);
             return null;
         }
     }
@@ -100,21 +109,27 @@ public class ConnectionDataRepository {
         }
     }
 
-    protected static class UpdateConnectionTask extends AsyncTask<Void, Void, Void> {
-        private final ConnectionDao dao;
+    protected static class InsertUpdateConnectionTask extends AsyncTask<Void, Void, Void> {
+        private final ConnectionDao connectionDao;
         private final Connection connection;
+        private final ServerStatusDao serverStatusDao;
 
-        UpdateConnectionTask(ConnectionDao dao, Connection connection) {
-            this.dao = dao;
+        InsertUpdateConnectionTask(ConnectionDao connectionDao, ServerStatusDao serverStatusDao, Connection connection) {
+            this.connectionDao = connectionDao;
             this.connection = connection;
+            this.serverStatusDao = serverStatusDao;
         }
 
         @Override
         protected Void doInBackground(Void... voids) {
             if (connection.getId() > 0) {
-                dao.update(connection);
+                connectionDao.update(connection);
             } else {
-                dao.insert(connection);
+                long id = connectionDao.insert(connection);
+                // Create a new server status table row that is linked to the newly added connection
+                ServerStatus serverStatus = new ServerStatus();
+                serverStatus.setConnectionId((int) id);
+                serverStatusDao.insert(serverStatus);
             }
             return null;
         }
@@ -145,7 +160,7 @@ public class ConnectionDataRepository {
 
         @Override
         protected Connection doInBackground(Void... voids) {
-            return dao.loadConnectionSync(id);
+            return dao.loadConnectionByIdSync(id);
         }
     }
 }

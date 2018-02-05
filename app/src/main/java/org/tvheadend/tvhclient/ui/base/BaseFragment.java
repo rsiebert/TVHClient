@@ -8,7 +8,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.data.DataRepository;
+import org.tvheadend.tvhclient.TVHClientApplication;
+import org.tvheadend.tvhclient.data.entity.ServerStatus;
+import org.tvheadend.tvhclient.data.repository.RecordingRepository;
+import org.tvheadend.tvhclient.data.repository.ServerDataRepository;
 import org.tvheadend.tvhclient.utils.MenuUtils;
 
 public class BaseFragment extends Fragment {
@@ -16,11 +19,11 @@ public class BaseFragment extends Fragment {
     protected AppCompatActivity activity;
     protected ToolbarInterface toolbarInterface;
     protected boolean isDualPane;
-    protected DataRepository repository;
-    protected int htspVersion;
+    protected RecordingRepository repository;
     protected SharedPreferences sharedPreferences;
     protected MenuUtils menuUtils;
     protected boolean isUnlocked;
+    protected ServerStatus serverStatus;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -31,9 +34,9 @@ public class BaseFragment extends Fragment {
             toolbarInterface = (ToolbarInterface) activity;
         }
 
-        repository = new DataRepository(getActivity());
-        htspVersion = new DataRepository(activity).getHtspVersion();
-        isUnlocked = new DataRepository(activity).getIsUnlocked();
+        repository = new RecordingRepository(activity);
+        serverStatus = new ServerDataRepository(activity).loadServerStatus();
+        isUnlocked = TVHClientApplication.getInstance().isUnlocked();
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity);
         menuUtils = new MenuUtils(activity);
 

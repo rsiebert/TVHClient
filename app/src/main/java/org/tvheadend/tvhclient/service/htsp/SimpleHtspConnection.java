@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tvheadend.tvhclient.htsp;
+package org.tvheadend.tvhclient.service.htsp;
 
 import android.content.Context;
 import android.content.Intent;
@@ -23,7 +23,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import org.tvheadend.tvhclient.data.entity.Connection;
-import org.tvheadend.tvhclient.htsp.tasks.Authenticator;
+import org.tvheadend.tvhclient.service.htsp.tasks.Authenticator;
 
 // TODO preference: reconnect retries
 // TODO preference: reconnect timeout

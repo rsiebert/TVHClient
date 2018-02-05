@@ -13,21 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tvheadend.tvhclient.htsp;
 
-public class HtspException extends Exception {
-    public HtspException() {
+package org.tvheadend.tvhclient.service.htsp;
+
+public class HtspNotConnectedException extends HtspException {
+    public HtspNotConnectedException() {
     }
 
-    public HtspException(String message) {
+    public HtspNotConnectedException(String message) {
         super(message);
     }
 
-    public HtspException(String message, Throwable cause) {
+    public HtspNotConnectedException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public HtspException(Throwable cause) {
+    public HtspNotConnectedException(Throwable cause) {
         super(cause);
     }
 }

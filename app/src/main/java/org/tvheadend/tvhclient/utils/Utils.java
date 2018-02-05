@@ -5,10 +5,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 import org.tvheadend.tvhclient.data.Constants;
-import org.tvheadend.tvhclient.data.DataStorage;
-import org.tvheadend.tvhclient.data.DatabaseHelper;
 import org.tvheadend.tvhclient.data.entity.ChannelTag;
-import org.tvheadend.tvhclient.data.model.Connection;
 
 public class Utils {
 
@@ -19,10 +16,12 @@ public class Utils {
      * @return Channel tag
      */
     public static ChannelTag getChannelTag(final Activity activity) {
+        /*
         Connection connection = DatabaseHelper.getInstance(activity.getApplicationContext()).getSelectedConnection();
         if (connection != null) {
             return DataStorage.getInstance().getTagFromArray(connection.channelTag);
         }
+        */
         return null;
     }
 

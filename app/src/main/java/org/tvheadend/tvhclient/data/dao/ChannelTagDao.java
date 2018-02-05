@@ -1,6 +1,5 @@
 package org.tvheadend.tvhclient.data.dao;
 
-import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
@@ -16,10 +15,10 @@ import java.util.List;
 public interface ChannelTagDao {
 
     @Query("SELECT * FROM channel_tags")
-    LiveData<List<ChannelTag>> loadAllChannelTags();
+    List<ChannelTag> loadAllChannelTagsSync();
 
     @Query("SELECT * FROM channel_tags WHERE id = :id")
-    ChannelTag loadChannelTagSync(int id);
+    ChannelTag loadChannelTagByIdSync(int id);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAll(List<ChannelTag> channelTags);

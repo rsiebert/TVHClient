@@ -25,10 +25,10 @@ public interface  TimerRecordingDao {
     LiveData<List<TimerRecording>> loadAllRecordings();
 
     @Query(query + "WHERE rec.id = :id")
-    LiveData<TimerRecording> loadRecording(String id);
+    LiveData<TimerRecording> loadRecordingById(String id);
 
     @Query(query + "WHERE rec.id = :id")
-    TimerRecording loadRecordingSync(String id);
+    TimerRecording loadRecordingByIdSync(String id);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAll(List<TimerRecording> recordings);

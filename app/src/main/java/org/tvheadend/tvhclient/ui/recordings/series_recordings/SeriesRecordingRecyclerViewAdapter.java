@@ -14,7 +14,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.data.DataRepository;
 import org.tvheadend.tvhclient.data.entity.SeriesRecording;
 import org.tvheadend.tvhclient.ui.common.RecyclerViewClickCallback;
 import org.tvheadend.tvhclient.utils.MiscUtils;
@@ -34,9 +33,9 @@ public class SeriesRecordingRecyclerViewAdapter extends RecyclerView.Adapter<Ser
     private Context context;
     private int selectedPosition = 0;
 
-    SeriesRecordingRecyclerViewAdapter(Context context, List<SeriesRecording> seriesRecordingList, RecyclerViewClickCallback clickCallback) {
+    SeriesRecordingRecyclerViewAdapter(Context context, List<SeriesRecording> seriesRecordingList, int htspVersion, RecyclerViewClickCallback clickCallback) {
         this.context = context;
-        this.htspVersion = new DataRepository(context).getHtspVersion();
+        this.htspVersion = htspVersion;
         this.seriesRecordingList = seriesRecordingList;
         this.clickCallback = clickCallback;
         this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);

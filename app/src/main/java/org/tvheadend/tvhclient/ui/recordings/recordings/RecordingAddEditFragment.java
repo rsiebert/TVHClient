@@ -22,7 +22,8 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.data.entity.Recording;
-import org.tvheadend.tvhclient.sync.EpgSyncService;
+import org.tvheadend.tvhclient.data.entity.ServerProfile;
+import org.tvheadend.tvhclient.service.EpgSyncService;
 import org.tvheadend.tvhclient.ui.common.BackPressedInterface;
 import org.tvheadend.tvhclient.ui.recordings.base.BaseRecordingAddEditFragment;
 import org.tvheadend.tvhclient.ui.recordings.common.DateTimePickerCallback;
@@ -114,14 +115,6 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        // Create the list of available configurations that the user can select from
-        recordingProfilesList = new String[dataStorage.getDvrConfigs().size()];
-        for (int i = 0; i < dataStorage.getDvrConfigs().size(); i++) {
-            recordingProfilesList[i] = dataStorage.getDvrConfigs().get(i).name;
-        }
-
-        priorityList = activity.getResources().getStringArray(R.array.dvr_priorities);
-
         Bundle bundle = getArguments();
         if (bundle != null) {
             dvrId = bundle.getInt("dvrId");
@@ -188,9 +181,10 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
         // Get the selected profile from the connection
         // and select it from the recording config list
         recordingProfileName = 0;
+        ServerProfile profile = profileRepository.getRecordingServerProfile();
         if (profile != null) {
             for (int i = 0; i < recordingProfilesList.length; i++) {
-                if (recordingProfilesList[i].equals(profile.name)) {
+                if (recordingProfilesList[i].equals(profile.getName())) {
                     recordingProfileName = i;
                     break;
                 }
@@ -200,16 +194,16 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
 
     private void updateUI() {
 
-        titleLabelTextView.setVisibility(htspVersion >= 21 ? View.VISIBLE : View.GONE);
-        titleEditText.setVisibility(htspVersion >= 21 ? View.VISIBLE : View.GONE);
+        titleLabelTextView.setVisibility(serverStatus.getHtspVersion() >= 21 ? View.VISIBLE : View.GONE);
+        titleEditText.setVisibility(serverStatus.getHtspVersion() >= 21 ? View.VISIBLE : View.GONE);
         titleEditText.setText(title);
 
-        subtitleLabelTextView.setVisibility(htspVersion >= 21 ? View.VISIBLE : View.GONE);
-        subtitleEditText.setVisibility(htspVersion >= 21 ? View.VISIBLE : View.GONE);
+        subtitleLabelTextView.setVisibility(serverStatus.getHtspVersion() >= 21 ? View.VISIBLE : View.GONE);
+        subtitleEditText.setVisibility(serverStatus.getHtspVersion() >= 21 ? View.VISIBLE : View.GONE);
         subtitleEditText.setText(subtitle);
 
-        descriptionLabelTextView.setVisibility(htspVersion >= 21 ? View.VISIBLE : View.GONE);
-        descriptionEditText.setVisibility(htspVersion >= 21 ? View.VISIBLE : View.GONE);
+        descriptionLabelTextView.setVisibility(serverStatus.getHtspVersion() >= 21 ? View.VISIBLE : View.GONE);
+        descriptionEditText.setVisibility(serverStatus.getHtspVersion() >= 21 ? View.VISIBLE : View.GONE);
         descriptionEditText.setText(description);
 
         stopTimeTextView.setText(getTimeStringFromTimeInMillis(stopTime));
@@ -228,12 +222,12 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
             channelNameTextView.setText(channel != null ? channel.getChannelName() : getString(R.string.no_channel));
             channelNameTextView.setOnClickListener(view -> {
                 // Determine if the server supports recording on all channels
-                boolean allowRecordingOnAllChannels = htspVersion >= 21;
+                boolean allowRecordingOnAllChannels = serverStatus.getHtspVersion() >= 21;
                 handleChannelListSelection(channelId, RecordingAddEditFragment.this, allowRecordingOnAllChannels);
             });
         }
 
-        isEnabledCheckbox.setVisibility(htspVersion >= 23 && !isRecording ? View.VISIBLE : View.GONE);
+        isEnabledCheckbox.setVisibility(serverStatus.getHtspVersion() >= 23 && !isRecording ? View.VISIBLE : View.GONE);
         isEnabledCheckbox.setChecked(isEnabled);
 
         priorityTextView.setVisibility(!isRecording ? View.VISIBLE : View.GONE);
@@ -334,7 +328,7 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
     private void save() {
         saveWidgetValuesIntoVariables();
 
-        if (TextUtils.isEmpty(title) && htspVersion >= 21) {
+        if (TextUtils.isEmpty(title) && serverStatus.getHtspVersion() >= 21) {
             if (activity.getCurrentFocus() != null) {
                 Snackbar.make(activity.getCurrentFocus(), getString(R.string.error_empty_title), Toast.LENGTH_SHORT).show();
             }
@@ -388,9 +382,10 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
             intent.putExtra("enabled", (isEnabled ? 1 : 0));
         }
         // Add the recording profile if available and enabled
-        if (profile != null && profile.enabled
+        ServerProfile profile = profileRepository.getRecordingServerProfile();
+        if (profile != null && profile.isEnabled()
                 && (recordingProfileNameTextView.getText().length() > 0)
-                && htspVersion >= 16
+                && serverStatus.getHtspVersion() >= 16
                 && isUnlocked) {
             // Use the selected profile. If no change was done in the
             // selection then the default one from the connection setting will be used

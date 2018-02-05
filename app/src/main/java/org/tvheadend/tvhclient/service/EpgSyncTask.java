@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.sync;
+package org.tvheadend.tvhclient.service;
 
 import android.content.Context;
 import android.content.Intent;
@@ -19,12 +19,14 @@ import org.tvheadend.tvhclient.data.entity.ChannelTag;
 import org.tvheadend.tvhclient.data.entity.Program;
 import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.data.entity.SeriesRecording;
+import org.tvheadend.tvhclient.data.entity.ServerProfile;
+import org.tvheadend.tvhclient.data.entity.ServerStatus;
 import org.tvheadend.tvhclient.data.entity.TagAndChannel;
 import org.tvheadend.tvhclient.data.entity.TimerRecording;
-import org.tvheadend.tvhclient.htsp.HtspFileInputStream;
-import org.tvheadend.tvhclient.htsp.HtspMessage;
-import org.tvheadend.tvhclient.htsp.HtspNotConnectedException;
-import org.tvheadend.tvhclient.htsp.tasks.Authenticator;
+import org.tvheadend.tvhclient.service.htsp.HtspFileInputStream;
+import org.tvheadend.tvhclient.service.htsp.HtspMessage;
+import org.tvheadend.tvhclient.service.htsp.HtspNotConnectedException;
+import org.tvheadend.tvhclient.service.htsp.tasks.Authenticator;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
 import java.io.BufferedInputStream;
@@ -273,17 +275,17 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     }
 
     private void handleInitialServerResponse(HtspMessage response) {
-/*        ContentValues values = new ContentValues();
-        values.put(DataContract.Connections.HTSP_VERSION, response.getInteger("htspversion", 0));
-        values.put(DataContract.Connections.SERVER_NAME, response.getString("servername"));
-        values.put(DataContract.Connections.SERVER_VERSION, response.getString("serverversion"));
-        values.put(DataContract.Connections.WEB_ROOT, response.getString("webroot"));
-        contentResolver.update(DataContract.Connections.URI_CONNECTIONS, values,
-                DataContract.Connections.ID + "=?", new String[]{String.valueOf(connection.id)});
-*/
+        Log.d(TAG, "handleInitialServerResponse() called with: response = [" + response + "]");
         // Get the values from the database to have access
         // to them later without querying the db too often
         htspVersion = response.getInteger("htspversion", 9);
+
+        ServerStatus serverStatus = db.serverStatusDao().loadServerStatusSync();
+        serverStatus.setHtspVersion(htspVersion);
+        serverStatus.setServerName(response.getString("servername"));
+        serverStatus.setServerVersion(response.getString("serverversion"));
+        serverStatus.setWebroot(response.getString("webroot"));
+        db.serverStatusDao().update(serverStatus);
     }
 
     /**
@@ -364,7 +366,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
      * @param msg The message with the tag id that was deleted
      */
     private void handleTagDelete(HtspMessage msg) {
-        ChannelTag tag = db.channelTagDao().loadChannelTagSync(msg.getInteger("tagId"));
+        ChannelTag tag = db.channelTagDao().loadChannelTagByIdSync(msg.getInteger("tagId"));
         deleteIconFileFromCache(tag.getTagIcon());
         db.channelTagDao().delete(tag);
         db.tagAndChannelDao().deleteByTagId(tag.getTagId());
@@ -435,7 +437,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
      * @param msg The message with the channel id that was deleted
      */
     private void handleChannelDelete(HtspMessage msg) {
-        Channel channel = db.channelDao().loadChannelSync(msg.getInteger("channelId"));
+        Channel channel = db.channelDao().loadChannelByIdSync(msg.getInteger("channelId"));
         deleteIconFileFromCache(channel.getChannelIcon());
         db.channelDao().delete(channel);
     }
@@ -483,7 +485,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
      * @param msg The message with the recording id that was deleted
      */
     private void handleDvrEntryDelete(HtspMessage msg) {
-        Recording recording = db.recordingDao().loadRecordingSync(msg.getInteger("id"));
+        Recording recording = db.recordingDao().loadRecordingByIdSync(msg.getInteger("id"));
         db.recordingDao().delete(recording);
     }
 
@@ -816,13 +818,10 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         }
 
         if (response != null) {
-            /*
-            ContentValues values = new ContentValues();
-            values.put(DataContract.Connections.FREE_DISC_SPACE, response.getLong("freediskspace", 0));
-            values.put(DataContract.Connections.TOTAL_DISC_SPACE, response.getLong("totaldiskspace", 0));
-            contentResolver.update(DataContract.Connections.URI_CONNECTIONS, values,
-                    DataContract.Connections.ID + "=?", new String[]{String.valueOf(connection.id)});
-            */
+            ServerStatus serverStatus = db.serverStatusDao().loadServerStatusSync();
+            serverStatus.setFreeDiskSpace(response.getLong("freediskspace", 0));
+            serverStatus.setTotalDiskSpace(response.getLong("totaldiskspace", 0));
+            db.serverStatusDao().update(serverStatus);
         }
     }
 
@@ -838,13 +837,10 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         }
 
         if (response != null) {
-            /*
-            ContentValues values = new ContentValues();
-            values.put(DataContract.Connections.TIME, response.getLong("time", 0));
-            values.put(DataContract.Connections.GMT_OFFSET, response.getInteger("gmtoffset", 0));
-            contentResolver.update(DataContract.Connections.URI_CONNECTIONS, values,
-                    DataContract.Connections.ID + "=?", new String[]{String.valueOf(connection.id)});
-                    */
+            ServerStatus serverStatus = db.serverStatusDao().loadServerStatusSync();
+            serverStatus.setGmtoffset(response.getInteger("gmtoffset", 0));
+            serverStatus.setTime(response.getLong("time", 0));
+            db.serverStatusDao().update(serverStatus);
         }
     }
 
@@ -861,11 +857,8 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         }
 
         if (response != null) {
-            /*
-            ContentValues values = EpgSyncUtils.convertChannelToContentValues(response);
-            values.put(DataContract.Channels.ID, response.getInteger("channelId"));
-            contentResolver.insert(DataContract.Channels.URI_SINGLE_CHANNEL, values);
-            */
+            // TODO
+
             // Update the icon if required
             final String icon = response.getString("channelIcon", null);
             if (icon != null) {
@@ -1606,15 +1599,15 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
 
         if (response != null) {
             if (response.containsKey("profiles")) {
+                ServerStatus serverStatus = db.serverStatusDao().loadServerStatusSync();
                 for (HtspMessage msg : response.getHtspMessageArray("profiles")) {
-                    /*
-                    ContentValues values = new ContentValues();
-                    values.put(DataContract.Profiles.ID, msg.getString("uuid"));
-                    values.put(DataContract.Profiles.NAME, msg.getString("name"));
-                    values.put(DataContract.Profiles.COMMENT, msg.getString("comment"));
-                    values.put(DataContract.Profiles.TYPE, "profile");
-                    contentResolver.insert(DataContract.Profiles.URI_PROFILES, values);
-                    */
+                    ServerProfile serverProfile = new ServerProfile();
+                    serverProfile.setConnectionId(serverStatus.getConnectionId());
+                    serverProfile.setUuid(msg.getString("uuid"));
+                    serverProfile.setName(msg.getString("name"));
+                    serverProfile.setComment(msg.getString("comment"));
+                    serverProfile.setType(msg.getString("playback"));
+                    db.serverProfileDao().insert(serverProfile);
                 }
             }
         }
@@ -1632,15 +1625,15 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
 
         if (response != null) {
             if (response.containsKey("dvrconfigs")) {
+                ServerStatus serverStatus = db.serverStatusDao().loadServerStatusSync();
                 for (HtspMessage msg : response.getHtspMessageArray("dvrconfigs")) {
-                    /*
-                    ContentValues values = new ContentValues();
-                    values.put(DataContract.Profiles.ID, msg.getString("uuid"));
-                    values.put(DataContract.Profiles.NAME, msg.getString("name", "(Default Profile)"));
-                    values.put(DataContract.Profiles.COMMENT, msg.getString("comment"));
-                    values.put(DataContract.Profiles.TYPE, "dvrconfig");
-                    contentResolver.insert(DataContract.Profiles.URI_PROFILES, values);
-                    */
+                    ServerProfile serverProfile = new ServerProfile();
+                    serverProfile.setConnectionId(serverStatus.getConnectionId());
+                    serverProfile.setUuid(msg.getString("uuid"));
+                    serverProfile.setName(msg.getString("name", "(Default OldProfile)"));
+                    serverProfile.setComment(msg.getString("comment"));
+                    serverProfile.setType(msg.getString("recording"));
+                    db.serverProfileDao().insert(serverProfile);
                 }
             }
         }

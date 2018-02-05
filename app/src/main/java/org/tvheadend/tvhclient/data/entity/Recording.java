@@ -46,6 +46,7 @@ public class Recording {
     @ColumnInfo(name = "data_errors")
     private String dataErrors;           // str   optional   Number of stream data errors (Added in version 20).
     private String path;                 // str   optional   Recording path for playback.
+    @ColumnInfo(name = "data_size")
     private long dataSize;               // s64   optional   Actual file size of the last recordings (Added in version 21).
     private int enabled;                 // u32   optional   Enabled flag (Added in version 23).
     private String episode;              // str   optional   Episode (Added in version 18).
@@ -57,6 +58,18 @@ public class Recording {
     private String channelName;
     @ColumnInfo(name = "channel_icon")
     private String channelIcon;
+
+    @Ignore
+    public Recording(int id, String title, String state, String error) {
+        this.id = id;
+        this.title = title;
+        this.state = state;
+        this.error = error;
+    }
+
+    public Recording() {
+        // NOP
+    }
 
     public String getChannelName() {
         return channelName;

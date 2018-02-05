@@ -24,9 +24,8 @@ import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.data.DataStorage;
-import org.tvheadend.tvhclient.data.DatabaseHelper;
-import org.tvheadend.tvhclient.data.model.Connection;
+import org.tvheadend.tvhclient.data.entity.Connection;
+import org.tvheadend.tvhclient.data.repository.ConnectionDataRepository;
 import org.tvheadend.tvhclient.ui.startup.StartupActivity;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
@@ -55,9 +54,9 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
     private final Toolbar toolbar;
     private final NavigationDrawerCallback callback;
     private final boolean isUnlocked;
-    private final DatabaseHelper databaseHelper;
     private AccountHeader headerResult;
     private Drawer result;
+    private ConnectionDataRepository connectionDataRepository;
 
     NavigationDrawer(Activity activity, Bundle savedInstanceState, Toolbar toolbar, NavigationDrawerCallback callback) {
         this.activity = activity;
@@ -65,7 +64,7 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
         this.toolbar = toolbar;
         this.callback = callback;
         this.isUnlocked = TVHClientApplication.getInstance().isUnlocked();
-        this.databaseHelper = DatabaseHelper.getInstance(activity.getApplicationContext());
+        this.connectionDataRepository = new ConnectionDataRepository(activity);
     }
 
     void createHeader() {
@@ -90,7 +89,7 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
                 .withBadgeStyle(badgeStyle);
         PrimaryDrawerItem programGuideItem = new PrimaryDrawerItem()
                 .withIdentifier(MENU_PROGRAM_GUIDE).withName(R.string.pref_program_guide)
-                .withIcon(getResourceIdFromAttr( R.attr.ic_menu_program_guide));
+                .withIcon(getResourceIdFromAttr(R.attr.ic_menu_program_guide));
         PrimaryDrawerItem completedRecordingsItem = new PrimaryDrawerItem()
                 .withIdentifier(MENU_COMPLETED_RECORDINGS).withName(R.string.completed_recordings)
                 .withIcon(getResourceIdFromAttr(R.attr.ic_menu_completed_recordings))
@@ -162,11 +161,6 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
         return typedValue.resourceId;
     }
 
-    void updateDrawerItemBadges() {
-        int channelCount = DataStorage.getInstance().getChannelsFromArray().size();
-        result.updateBadge(MENU_CHANNELS, new StringHolder(channelCount + ""));
-    }
-
     void updateDrawerHeader() {
         // Remove old profiles from the header
         List<Long> profileIdList = new ArrayList<>();
@@ -177,17 +171,17 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
             headerResult.removeProfileByIdentifier(id);
         }
         // Add the existing connections as new profiles
-        final List<Connection> connectionList = DatabaseHelper.getInstance(activity.getApplicationContext()).getConnections();
+        final List<Connection> connectionList = connectionDataRepository.getAllConnectionsSync();
         if (connectionList.size() > 0) {
             for (Connection c : connectionList) {
-                headerResult.addProfiles(new ProfileDrawerItem().withIdentifier(c.id).withName(c.name).withEmail(c.address));
+                headerResult.addProfiles(new ProfileDrawerItem().withIdentifier(c.getId()).withName(c.getName()).withEmail(c.getHostname()));
             }
         } else {
             headerResult.addProfiles(new ProfileDrawerItem().withName(R.string.no_connection_available));
         }
-        Connection connection = DatabaseHelper.getInstance(activity.getApplicationContext()).getSelectedConnection();
+        Connection connection = connectionDataRepository.getActiveConnectionSync();
         if (connection != null) {
-            headerResult.setActiveProfile(connection.id);
+            headerResult.setActiveProfile(connection.getId());
         }
     }
 
@@ -208,26 +202,20 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
             return true;
         }
 
-        Connection oldConn = databaseHelper.getSelectedConnection();
-        Connection newConn = databaseHelper.getConnection(profile.getIdentifier());
+        Connection connection = connectionDataRepository.getConnectionSync((int) profile.getIdentifier());
+        connection.setActive(true);
+        connectionDataRepository.updateConnectionSync(connection);
 
-        // Switch the active connection and reconnect
-        if (oldConn != null && newConn != null) {
-            newConn.selected = true;
-            oldConn.selected = false;
-            databaseHelper.updateConnection(oldConn);
-            databaseHelper.updateConnection(newConn);
+        // Save the information that a new sync is required
+        // Then restart the application to show the sync fragment
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean("initial_sync_done", false);
+        editor.apply();
 
-            // Save the information that a new sync is required
-            // Then restart the application to show the sync fragment
-            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity);
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putBoolean("initial_sync_done", false);
-            editor.apply();
-            Intent intent = new Intent(activity, StartupActivity.class);
-            activity.finish();
-            activity.startActivity(intent);
-        }
+        Intent intent = new Intent(activity, StartupActivity.class);
+        activity.finish();
+        activity.startActivity(intent);
         return true;
     }
 

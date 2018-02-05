@@ -21,6 +21,7 @@ public interface ChannelDao {
             "program.subtitle AS program_subtitle, " +
             "program.start AS program_start, " +
             "program.stop AS program_stop, " +
+            "program.content_type AS program_content_type, " +
             "next_program.title AS next_program_title, " +
             "recording.id AS recording_id, " +
             "recording.title AS recording_title, " +
@@ -38,21 +39,9 @@ public interface ChannelDao {
 
     @Query("SELECT * FROM channels")
     LiveData<List<Channel>> loadAllChannels();
-/*
-    @Transaction
-    @Query("SELECT c.*, " +
-            "program.id AS program_id, " +
-            "next_program.* " +
-            //"recording.* " +
-            "FROM channels AS channel " +
-            "LEFT JOIN programs AS program ON program.start <= :time AND program.stop > :time AND program.channel_id = channel.id " +
-            "LEFT JOIN programs AS next_program ON next_program.id = program.id AND next_program.channel_id = channel.id " +
-            //"LEFT JOIN recordings AS recording ON recording.id = program.dvr_id " +
-            "ORDER BY channel.channel_name ASC")
-    LiveData<List<ChannelWithPrograms>> loadAllChannelsWithPrograms(long time);
-*/
+
     @Query("SELECT * FROM channels WHERE id = :id")
-    Channel loadChannelSync(int id);
+    Channel loadChannelByIdSync(int id);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAll(List<Channel> channels);

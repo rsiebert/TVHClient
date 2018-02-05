@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +16,6 @@ import android.widget.TextView;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Channel;
-import org.tvheadend.tvhclient.data.entity.Program;
 import org.tvheadend.tvhclient.ui.common.RecyclerViewClickCallback;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 import org.tvheadend.tvhclient.utils.UIUtils;
@@ -127,25 +127,25 @@ public class ChannelRecyclerViewAdapter extends RecyclerView.Adapter<ChannelRecy
             }
         }
 
-        Program program = channel.getProgram();
-        if (program != null) {
-            holder.titleTextView.setText(program.getTitle());
-            holder.subtitleTextView.setText(program.getSubtitle());
+
+        if (channel.getProgramId() > 0) {
+            holder.titleTextView.setText(channel.getProgramTitle());
+            holder.subtitleTextView.setText(channel.getProgramSubtitle());
             holder.subtitleTextView.setVisibility(showSubtitle ? View.VISIBLE : View.GONE);
 
-            String time = UIUtils.getTimeText(context, program.getStart()) + " - " + UIUtils.getTimeText(context, program.getStop());
+            String time = UIUtils.getTimeText(context, channel.getProgramStart()) + " - " + UIUtils.getTimeText(context, channel.getProgramStop());
             holder.timeTextView.setText(time);
             holder.timeTextView.setVisibility(View.VISIBLE);
 
-            String durationTime = context.getString(R.string.minutes, (int) ((program.getStop() - program.getStart()) / 1000 / 60));
+            String durationTime = context.getString(R.string.minutes, (int) ((channel.getProgramStop() - channel.getProgramStart()) / 1000 / 60));
             holder.durationTextView.setText(durationTime);
             holder.durationTextView.setVisibility(View.VISIBLE);
 
-            holder.progressbar.setProgress(getProgressPercentage(program.getStart(), program.getStop()));
+            holder.progressbar.setProgress(getProgressPercentage(channel.getProgramStart(), channel.getProgramStop()));
             holder.progressbar.setVisibility(showProgressbar ? View.VISIBLE : View.GONE);
 
             if (showGenreColors) {
-                int color = UIUtils.getGenreColor(context, program.getContentType(), 0);
+                int color = UIUtils.getGenreColor(context, channel.getProgramContentType(), 0);
                 holder.genreTextView.setBackgroundColor(color);
                 holder.genreTextView.setVisibility(View.VISIBLE);
             } else {
@@ -162,11 +162,8 @@ public class ChannelRecyclerViewAdapter extends RecyclerView.Adapter<ChannelRecy
             holder.nextTitleTextView.setVisibility(View.GONE);
         }
 
-        Program nextProgram = channel.getNextProgram();
-        if (nextProgram != null) {
-            holder.nextTitleTextView.setVisibility(showNextProgramTitle ? View.VISIBLE : View.GONE);
-            holder.nextTitleTextView.setText(context.getString(R.string.next_program, nextProgram.getTitle()));
-        }
+        holder.nextTitleTextView.setVisibility(showNextProgramTitle && TextUtils.isEmpty(channel.getNextProgramTitle())? View.VISIBLE : View.GONE);
+        holder.nextTitleTextView.setText(context.getString(R.string.next_program, channel.getNextProgramTitle()));
     }
 
     void addItems(List<Channel> channelList) {

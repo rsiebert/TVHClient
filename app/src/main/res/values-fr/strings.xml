@@ -175,7 +175,7 @@
     <string name="pref_playback_profiles">Profils de lecture</string>
     <string name="pref_playback_profiles_sum">Choisir un profil qui doit utiliser pour lire un enregistrement.</string>
 	<string name="pref_cast_profiles">Profiles de diffusion</string>
-    <string name="pref_cast_profiles_sum">Sélectionner un profile à utiliser pour diffuser une chaine ou un enregistrement vers un équipement de type chromecast.</string>
+    <string name="pref_cast_profiles_sum">Sélectionner un serverProfile à utiliser pour diffuser une chaine ou un enregistrement vers un équipement de type chromecast.</string>
     <string name="pref_enable_recording_profiles">Active les profils d\'enregistrements</string>
     <string name="pref_enable_recording_profiles_sum">Utilise les fonctionnalités du serveur de profil le plus récent pour les enregistrements. Ceci écrase tous les paramètres audio et vidéo pour enregistrer un programme paramétré.</string>
     <string name="pref_enable_playback_profiles">Activer les profils de lecture</string>
