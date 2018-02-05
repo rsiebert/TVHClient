@@ -24,6 +24,13 @@ android {
         buildConfigField "Integer", "BUILD_VERSION", "$versionCode"
 
         vectorDrawables.useSupportLibrary = true
+
+        // used by Room, to test migrations
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
+            }
+        }
     }
 
     buildTypes {
