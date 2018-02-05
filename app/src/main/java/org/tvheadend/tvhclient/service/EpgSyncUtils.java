@@ -1,5 +1,6 @@
 package org.tvheadend.tvhclient.service;
 
+import android.content.Intent;
 import android.util.Log;
 
 import org.tvheadend.tvhclient.data.entity.Channel;
@@ -10,8 +11,8 @@ import org.tvheadend.tvhclient.data.entity.SeriesRecording;
 import org.tvheadend.tvhclient.data.entity.TimerRecording;
 import org.tvheadend.tvhclient.service.htsp.HtspMessage;
 
-class SyncUtils {
-    private SyncUtils() {
+class EpgSyncUtils {
+    private EpgSyncUtils() {
         throw new IllegalAccessError("Utility class");
     }
 
@@ -339,5 +340,196 @@ class SyncUtils {
             timerRecording.setCreator(msg.getString("creator"));
         }
         return timerRecording;
+    }
+
+    static HtspMessage convertIntentToAutorecMessage(Intent intent, int htspVersion) {
+        final long enabled = intent.getIntExtra("enabled", 1);
+        final String title = intent.getStringExtra("title");
+        final String fulltext = intent.getStringExtra("fulltext");
+        final String directory = intent.getStringExtra("directory");
+        final String name = intent.getStringExtra("name");
+        final String configName = intent.getStringExtra("configName");
+        final long channelId = intent.getIntExtra("channelId", 0);
+        final long minDuration = intent.getIntExtra("minDuration", 0);
+        final long maxDuration = intent.getIntExtra("maxDuration", 0);
+        final long daysOfWeek = intent.getIntExtra("daysOfWeek", 127);
+        final long priority = intent.getIntExtra("priority", 2);
+        final long start = intent.getLongExtra("start", -1);
+        final long startWindow = intent.getLongExtra("startWindow", -1);
+        final long startExtra = intent.getLongExtra("startExtra", 0);
+        final long stopExtra = intent.getLongExtra("stopExtra", 0);
+        final long dupDetect = intent.getIntExtra("dupDetect", 0);
+        final String comment = intent.getStringExtra("comment");
+
+        final HtspMessage request = new HtspMessage();
+        if (htspVersion >= 19) {
+            request.put("enabled", enabled);
+        }
+        request.put("title", title);
+        if (fulltext != null && htspVersion >= 20) {
+            request.put("fulltext", fulltext);
+        }
+        if (directory != null) {
+            request.put("directory", directory);
+        }
+        if (name != null) {
+            request.put("name", name);
+        }
+        if (configName != null) {
+            request.put("configName", configName);
+        }
+        // Don't add the channel id if none was given.
+        // Assume the user wants to record on all channels
+        if (channelId > 0) {
+            request.put("channelId", channelId);
+        }
+        // Minimal duration in seconds (0 = Any)
+        request.put("minDuration", minDuration);
+        // Maximal duration in seconds (0 = Any)
+        request.put("maxDuration", maxDuration);
+        request.put("daysOfWeek", daysOfWeek);
+        request.put("priority", priority);
+
+        // Minutes from midnight (up to 24*60) (window +- 15 minutes) (Obsoleted from version 18)
+        // Do not send the value if the default of -1 (no time specified) was set
+        if (start >= 0 && htspVersion < 18) {
+            request.put("approxTime", start);
+        }
+        // Minutes from midnight (up to 24*60) for the start of the time window.
+        // Do not send the value if the default of -1 (no time specified) was set
+        if (start >= 0 && htspVersion >= 18) {
+            request.put("start", start);
+        }
+        // Minutes from midnight (up to 24*60) for the end of the time window (including, cross-noon allowed).
+        // Do not send the value if the default of -1 (no time specified) was set
+        if (startWindow >= 0 && htspVersion >= 18) {
+            request.put("startWindow", startWindow);
+        }
+        request.put("startExtra", startExtra);
+        request.put("stopExtra", stopExtra);
+
+        if (htspVersion >= 20) {
+            request.put("dupDetect", dupDetect);
+        }
+        if (comment != null) {
+            request.put("comment", comment);
+        }
+        return request;
+    }
+
+    static HtspMessage convertIntentToDvrMessage(Intent intent, int htspVersion) {
+        final long eventId = intent.getIntExtra("eventId", 0);
+        final long channelId = intent.getIntExtra("channelId", 0);
+        final long start = intent.getLongExtra("start", 0);
+        final long stop = intent.getLongExtra("stop", 0);
+        final long retention = intent.getLongExtra("retention", 0);
+        final long priority = intent.getIntExtra("priority", 2);
+        final long startExtra = intent.getLongExtra("startExtra", 0);
+        final long stopExtra = intent.getLongExtra("stopExtra", 0);
+        final String title = intent.getStringExtra("title");
+        final String subtitle = intent.getStringExtra("subtitle");
+        final String description = intent.getStringExtra("description");
+        final String configName = intent.getStringExtra("configName");
+        final long enabled = intent.getIntExtra("enabled", 1);
+        // Controls that certain fields will only be added when the recording
+        // is only scheduled and not being recorded
+        final boolean isRecording = intent.getBooleanExtra("isRecording", false);
+
+        final HtspMessage request = new HtspMessage();
+        // If the eventId is set then an existing program from the program guide
+        // shall be recorded. The server will then ignore the other fields
+        // automatically.
+        if (eventId > 0) {
+            request.put("eventId", eventId);
+        }
+        if (channelId > 0 && htspVersion >= 22) {
+            request.put("channelId", channelId);
+        }
+        if (!isRecording && start > 0) {
+            request.put("start", start);
+        }
+        if (stop > 0) {
+            request.put("stop", stop);
+        }
+        if (!isRecording && retention > 0) {
+            request.put("retention", retention);
+        }
+        if (!isRecording && priority > 0) {
+            request.put("priority", priority);
+        }
+        if (!isRecording && startExtra > 0) {
+            request.put("startExtra", startExtra);
+        }
+        if (stopExtra > 0) {
+            request.put("stopExtra", stopExtra);
+        }
+        // Only add the text fields if no event id was given
+        if (eventId == 0) {
+            if (title != null) {
+                request.put("title", title);
+            }
+            if (subtitle != null && htspVersion >= 21) {
+                request.put("subtitle", subtitle);
+            }
+            if (description != null) {
+                request.put("description", description);
+            }
+        }
+        if (configName != null) {
+            request.put("configName", configName);
+        }
+        if (htspVersion >= 23) {
+            request.put("enabled", enabled);
+        }
+        return request;
+    }
+
+    static HtspMessage convertIntentToTimerecMessage(Intent intent, int htspVersion) {
+        final long enabled = intent.getIntExtra("enabled", 1);
+        final String title = intent.getStringExtra("title");
+        final String directory = intent.getStringExtra("directory");
+        final String name = intent.getStringExtra("name");
+        final String configName = intent.getStringExtra("configName");
+        final long channelId = intent.getIntExtra("channelId", 0);
+        final long daysOfWeek = intent.getIntExtra("daysOfWeek", 0);
+        final long priority = intent.getIntExtra("priority", 2);
+        final long start = intent.getLongExtra("start", -1);
+        final long stop = intent.getLongExtra("stop", -1);
+        final long retention = intent.getIntExtra("retention", -1);
+        final String comment = intent.getStringExtra("comment");
+
+        final HtspMessage request = new HtspMessage();
+        if (htspVersion >= 19) {
+            request.put("enabled", enabled);
+        }
+        request.put("title", title);
+        if (directory != null) {
+            request.put("directory", directory);
+        }
+        if (name != null) {
+            request.put("name", name);
+        }
+        if (configName != null) {
+            request.put("configName", configName);
+        }
+        if (channelId > 0) {
+            request.put("channelId", channelId);
+        }
+        request.put("daysOfWeek", daysOfWeek);
+        request.put("priority", priority);
+
+        if (start >= 0) {
+            request.put("start", start);
+        }
+        if (stop >= 0) {
+            request.put("stop", stop);
+        }
+        if (retention > 0) {
+            request.put("retention", retention);
+        }
+        if (comment != null) {
+            request.put("comment", comment);
+        }
+        return request;
     }
 }
