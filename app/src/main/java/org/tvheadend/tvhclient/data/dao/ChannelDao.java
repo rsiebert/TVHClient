@@ -22,6 +22,7 @@ public interface ChannelDao {
             "program.start AS program_start, " +
             "program.stop AS program_stop, " +
             "program.content_type AS program_content_type, " +
+            "next_program.id AS next_program_id, " +
             "next_program.title AS next_program_title, " +
             "recording.id AS recording_id, " +
             "recording.title AS recording_title, " +

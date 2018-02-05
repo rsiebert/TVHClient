@@ -310,6 +310,7 @@ public abstract class AppDatabase extends RoomDatabase {
                     "program_title TEXT, " +
                     "program_subtitle TEXT, " +
                     "program_content_type INTEGER NOT NULL, " +
+                    "next_program_id INTEGER NOT NULL, " +
                     "next_program_title TEXT, " +
                     "recording_id INTEGER NOT NULL, " +
                     "recording_title TEXT, " +

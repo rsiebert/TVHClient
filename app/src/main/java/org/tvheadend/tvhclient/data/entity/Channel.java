@@ -39,6 +39,8 @@ public class Channel {
     private long programStop;
     @ColumnInfo(name = "program_content_type")
     private int programContentType;
+    @ColumnInfo(name = "next_program_id")
+    private int nextProgramId;
     @ColumnInfo(name = "next_program_title")
     private String nextProgramTitle;
     @ColumnInfo(name = "recording_id")
@@ -155,6 +157,14 @@ public class Channel {
 
     public void setProgramContentType(int programContentType) {
         this.programContentType = programContentType;
+    }
+
+    public int getNextProgramId() {
+        return nextProgramId;
+    }
+
+    public void setNextProgramId(int nextProgramId) {
+        this.nextProgramId = nextProgramId;
     }
 
     public String getNextProgramTitle() {
