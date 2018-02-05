@@ -46,7 +46,7 @@ import org.tvheadend.tvhclient.data.entity.TranscodingProfile;
                 TranscodingProfile.class,
                 ServerStatus.class
         },
-        version = 10)
+        version = 11)
 public abstract class AppDatabase extends RoomDatabase {
 
     private static AppDatabase instance;
@@ -64,6 +64,7 @@ public abstract class AppDatabase extends RoomDatabase {
                         .addMigrations(MIGRATION_7_8)
                         .addMigrations(MIGRATION_8_9)
                         .addMigrations(MIGRATION_9_10)
+                        .addMigrations(MIGRATION_10_11)
                         .fallbackToDestructiveMigration()
                         .build();
             }
@@ -397,6 +398,13 @@ public abstract class AppDatabase extends RoomDatabase {
                     "0, 0, 0, 9, 0, 0, 0, 0, 0, 0, 0)");
             // Delete the old connections table
             database.execSQL("DROP TABLE connections_old");
+        }
+    };
+
+    private static final Migration MIGRATION_10_11 = new Migration(10, 11) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            database.execSQL("ALTER TABLE server_status ADD COLUMN channel_tag_id INTEGER DEFAULT 0;");
         }
     };
 

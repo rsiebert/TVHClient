@@ -28,6 +28,8 @@ public class ServerStatus {
     private long freeDiskSpace = 0;
     @ColumnInfo(name = "total_disc_space")
     private long totalDiskSpace = 0;
+    @ColumnInfo(name = "channel_tag_id")
+    private int channelTagId = 0;
     @ColumnInfo(name = "playback_server_profile_id")
     private int playbackServerProfileId = 0;
     @ColumnInfo(name = "recording_server_profile_id")
@@ -109,6 +111,14 @@ public class ServerStatus {
 
     public void setTotalDiskSpace(long totalDiskSpace) {
         this.totalDiskSpace = totalDiskSpace;
+    }
+
+    public int getChannelTagId() {
+        return channelTagId;
+    }
+
+    public void setChannelTagId(int channelTagId) {
+        this.channelTagId = channelTagId;
     }
 
     public int getPlaybackServerProfileId() {
