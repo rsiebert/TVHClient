@@ -1,8 +1,7 @@
 package org.tvheadend.tvhclient.ui.misc;
 
-
-import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -12,9 +11,7 @@ import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
 import org.tvheadend.tvhclient.ui.common.BackPressedInterface;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
-public class ChangeLogActivity extends AppCompatActivity implements ToolbarInterface {
-    @SuppressWarnings("unused")
-    private String TAG = getClass().getSimpleName();
+public class InfoActivity extends AppCompatActivity implements ToolbarInterface {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,7 +25,7 @@ public class ChangeLogActivity extends AppCompatActivity implements ToolbarInter
         setSupportActionBar(toolbar);
 
         if (savedInstanceState == null) {
-            ChangeLogFragment fragment = new ChangeLogFragment();
+            InfoFragment fragment = new InfoFragment();
             fragment.setArguments(getIntent().getExtras());
             getSupportFragmentManager().beginTransaction().add(R.id.main, fragment).commit();
         }

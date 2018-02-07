@@ -93,6 +93,8 @@
         <activity android:name=".ui.NavigationActivity" />
         <activity android:name=".ui.programs.ProgramDetailsActivity" />
         <activity android:name=".ui.search.SearchActivity" />
+        <activity android:name=".ui.misc.InfoActivity" />
+        <activity android:name=".ui.misc.UnlockerActivity" />
 
     </application>
 </manifest>

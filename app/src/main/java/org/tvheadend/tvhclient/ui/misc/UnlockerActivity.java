@@ -1,8 +1,7 @@
 package org.tvheadend.tvhclient.ui.misc;
 
-
-import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -12,7 +11,7 @@ import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
 import org.tvheadend.tvhclient.ui.common.BackPressedInterface;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
-public class ChangeLogActivity extends AppCompatActivity implements ToolbarInterface {
+public class UnlockerActivity extends AppCompatActivity implements ToolbarInterface {
     @SuppressWarnings("unused")
     private String TAG = getClass().getSimpleName();
 
@@ -23,12 +22,11 @@ public class ChangeLogActivity extends AppCompatActivity implements ToolbarInter
         setContentView(R.layout.main_activity);
         MiscUtils.setLanguage(this);
 
-        // Get the toolbar so that the fragments can set the title
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         if (savedInstanceState == null) {
-            ChangeLogFragment fragment = new ChangeLogFragment();
+            UnlockerFragment fragment = new UnlockerFragment();
             fragment.setArguments(getIntent().getExtras());
             getSupportFragmentManager().beginTransaction().add(R.id.main, fragment).commit();
         }

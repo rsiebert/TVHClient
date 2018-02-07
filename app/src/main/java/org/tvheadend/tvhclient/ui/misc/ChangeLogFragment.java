@@ -6,7 +6,6 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -24,6 +23,7 @@ import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
 import org.tvheadend.tvhclient.ui.common.BackPressedInterface;
 
 public class ChangeLogFragment extends Fragment implements BackPressedInterface, FileLoaderCallback {
+    @SuppressWarnings("unused")
     private String TAG = getClass().getSimpleName();
 
     private WebView webView;
@@ -56,13 +56,11 @@ public class ChangeLogFragment extends Fragment implements BackPressedInterface,
         // Get the build version where the changelog was last shown
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity);
         versionName = sharedPreferences.getString("version_name_for_changelog", "");
-        Log.d(TAG, "onActivityCreated: saved build version " + versionName + ", current " + BuildConfig.VERSION_NAME);
 
         // Show the full changelog if the changelog was never shown before (app version
         // name is empty) or if it was already shown and the version name is the same as
         // the one in the preferences. Otherwise show the changelog of the newest app version.
         showFullChangeLog = versionName.isEmpty();
-        Log.d(TAG, "onActivityCreated: showing full changelog " + showFullChangeLog);
         showChangelog(showFullChangeLog);
     }
 
@@ -94,7 +92,6 @@ public class ChangeLogFragment extends Fragment implements BackPressedInterface,
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Log.d(TAG, "onOptionsItemSelected() called with: item = [" + item + "]");
         switch (item.getItemId()) {
             case R.id.menu_full_changelog:
                 changeLogLoaderTask = new ChangeLogLoaderTask(activity, versionName, this);
@@ -106,12 +103,12 @@ public class ChangeLogFragment extends Fragment implements BackPressedInterface,
 
     @Override
     public void onBackPressed() {
-        Log.d(TAG, "onBackPressed() called");
         // Save the information that the changelog was shown
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("version_name_for_changelog", BuildConfig.VERSION_NAME);
         editor.apply();
+        activity.finish();
     }
 
     @Override

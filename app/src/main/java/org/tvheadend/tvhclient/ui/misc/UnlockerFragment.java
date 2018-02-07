@@ -1,9 +1,11 @@
 package org.tvheadend.tvhclient.ui.misc;
 
-import android.support.v4.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -13,21 +15,27 @@ import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.ProgressBar;
 
-import org.tvheadend.tvhclient.data.Constants;
+import com.anjlab.android.iab.v3.BillingProcessor;
+
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
+import org.tvheadend.tvhclient.data.Constants;
 import org.tvheadend.tvhclient.data.tasks.FileLoaderCallback;
 import org.tvheadend.tvhclient.data.tasks.HtmlFileLoaderTask;
 import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
 
 public class UnlockerFragment extends Fragment implements FileLoaderCallback {
+    @SuppressWarnings("unused")
+    private String TAG = getClass().getSimpleName();
 
     private WebView webView;
     private ProgressBar loadingProgressBar;
     private HtmlFileLoaderTask htmlFileLoaderTask;
+    private AppCompatActivity activity;
+    private BillingProcessor billingProcessor;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View v = inflater.inflate(R.layout.webview_fragment, container, false);
         webView = v.findViewById(R.id.webview);
@@ -38,13 +46,16 @@ public class UnlockerFragment extends Fragment implements FileLoaderCallback {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (getActivity() instanceof ToolbarInterface) {
-            ToolbarInterface toolbarInterface = (ToolbarInterface) getActivity();
+
+        activity = (AppCompatActivity) getActivity();
+        if (activity instanceof ToolbarInterface) {
+            ToolbarInterface toolbarInterface = (ToolbarInterface) activity;
             toolbarInterface.setTitle(getString(R.string.pref_unlocker));
             toolbarInterface.setSubtitle(null);
         }
         setHasOptionsMenu(true);
-        htmlFileLoaderTask = new HtmlFileLoaderTask(getActivity(), "features", "en", this);
+        billingProcessor = TVHClientApplication.getInstance().getBillingProcessor();
+        htmlFileLoaderTask = new HtmlFileLoaderTask(activity, "features", "en", this);
         htmlFileLoaderTask.execute();
     }
 
@@ -64,22 +75,22 @@ public class UnlockerFragment extends Fragment implements FileLoaderCallback {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                getActivity().finish();
+                activity.finish();
                 return true;
             case R.id.menu_purchase:
                 // Open the activity where the user can actually make the purchase
-                if (TVHClientApplication.getInstance().getBillingProcessor().isInitialized()) {
-                    TVHClientApplication.getInstance().getBillingProcessor().purchase(getActivity(), Constants.UNLOCKER);
+                if (billingProcessor.isInitialized()) {
+                    billingProcessor.purchase(activity, Constants.UNLOCKER);
                 }
                 // Check if the user has already made the purchase. We check this
                 // here because this activity is not information about any changes
                 // via the billing event interface.
-                if (TVHClientApplication.getInstance().getBillingProcessor().isPurchased(Constants.UNLOCKER)) {
+                if (billingProcessor.isPurchased(Constants.UNLOCKER)) {
                     if (getView() != null) {
                         Snackbar.make(getView(), getString(R.string.unlocker_already_purchased),
                                 Snackbar.LENGTH_SHORT).show();
                     }
-                    getActivity().finish();
+                    activity.finish();
                 }
                 return true;
             default:
@@ -89,11 +100,11 @@ public class UnlockerFragment extends Fragment implements FileLoaderCallback {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (!TVHClientApplication.getInstance().getBillingProcessor().handleActivityResult(requestCode, resultCode, data)) {
+        if (!billingProcessor.handleActivityResult(requestCode, resultCode, data)) {
             // The billing activity was not shown or did nothing. Nothing needs to be done
             super.onActivityResult(requestCode, resultCode, data);
         }
-        getActivity().finish();
+        activity.finish();
     }
 
     @Override

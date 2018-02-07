@@ -1,8 +1,10 @@
 package org.tvheadend.tvhclient.ui.misc;
 
-import android.support.v4.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -14,9 +16,9 @@ import android.widget.ProgressBar;
 
 import org.tvheadend.tvhclient.BuildConfig;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
 import org.tvheadend.tvhclient.data.tasks.FileLoaderCallback;
 import org.tvheadend.tvhclient.data.tasks.HtmlFileLoaderTask;
+import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
 
 import java.util.regex.Pattern;
 
@@ -27,9 +29,10 @@ public class InfoFragment extends Fragment implements FileLoaderCallback {
     private WebView webView;
     private HtmlFileLoaderTask htmlFileLoaderTask;
     private ProgressBar loadingProgressBar;
+    private AppCompatActivity activity;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View v = inflater.inflate(R.layout.webview_fragment, container, false);
         webView = v.findViewById(R.id.webview);
@@ -40,13 +43,15 @@ public class InfoFragment extends Fragment implements FileLoaderCallback {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (getActivity() instanceof ToolbarInterface) {
-            ToolbarInterface toolbarInterface = (ToolbarInterface) getActivity();
+
+        activity = (AppCompatActivity) getActivity();
+        if (activity instanceof ToolbarInterface) {
+            ToolbarInterface toolbarInterface = (ToolbarInterface) activity;
             toolbarInterface.setTitle(getString(R.string.pref_information));
             toolbarInterface.setSubtitle(null);
         }
         setHasOptionsMenu(true);
-        htmlFileLoaderTask = new HtmlFileLoaderTask(getActivity(), "info_help", "en", this);
+        htmlFileLoaderTask = new HtmlFileLoaderTask(activity, "info_help", "en", this);
         htmlFileLoaderTask.execute();
     }
 
@@ -66,10 +71,10 @@ public class InfoFragment extends Fragment implements FileLoaderCallback {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                getActivity().finish();
+                activity.finish();
                 return true;
             case R.id.menu_changelog:
-                Intent intent = new Intent(getActivity(), ChangeLogActivity.class);
+                Intent intent = new Intent(activity, ChangeLogActivity.class);
                 startActivity(intent);
                 return true;
             default:
