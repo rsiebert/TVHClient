@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -87,50 +88,47 @@ public class ChannelRecyclerViewAdapter extends RecyclerView.Adapter<ChannelRecy
             }
         }
 
-        if (channel != null) {
+        // Set the initial values
+        holder.progressbar.setProgress(0);
+        holder.progressbar.setVisibility(showProgressbar ? View.VISIBLE : View.GONE);
 
-            // Set the initial values
-            holder.progressbar.setProgress(0);
-            holder.progressbar.setVisibility(showProgressbar ? View.VISIBLE : View.GONE);
+        holder.channelTextView.setText(channel.getChannelName());
+        holder.channelTextView.setVisibility(showChannelName ? View.VISIBLE : View.GONE);
 
-            holder.channelTextView.setText(channel.getChannelName());
-            holder.channelTextView.setVisibility(showChannelName ? View.VISIBLE : View.GONE);
+        // Show the regular or large channel icons. Otherwise show the channel name only
+        // Assign the channel icon image or a null image
+        Bitmap iconBitmap = MiscUtils.getCachedIcon(context, channel.getChannelIcon());
+        holder.iconImageView.setImageBitmap(iconBitmap);
+        holder.iconTextView.setText(channel.getChannelName());
 
-            // Show the regular or large channel icons. Otherwise show the channel name only
-            // Assign the channel icon image or a null image
-            Bitmap iconBitmap = MiscUtils.getCachedIcon(context, channel.getChannelIcon());
-            holder.iconImageView.setImageBitmap(iconBitmap);
-            holder.iconTextView.setText(channel.getChannelName());
-
-            if (showChannelIcons) {
-                holder.iconImageView.setVisibility(iconBitmap != null ? ImageView.VISIBLE : ImageView.INVISIBLE);
-                holder.iconTextView.setVisibility(iconBitmap == null ? ImageView.VISIBLE : ImageView.INVISIBLE);
-            } else {
-                holder.iconImageView.setVisibility(View.GONE);
-                holder.iconTextView.setVisibility(View.GONE);
-            }
-
-            if (playUponChannelClick) {
-                holder.iconImageView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        channelClickCallback.onChannelClick(channel.getChannelId());
-                    }
-                });
-                holder.iconTextView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        channelClickCallback.onChannelClick(channel.getChannelId());
-                    }
-                });
-            }
+        if (showChannelIcons) {
+            holder.iconImageView.setVisibility(iconBitmap != null ? ImageView.VISIBLE : ImageView.INVISIBLE);
+            holder.iconTextView.setVisibility(iconBitmap == null ? ImageView.VISIBLE : ImageView.INVISIBLE);
+        } else {
+            holder.iconImageView.setVisibility(View.GONE);
+            holder.iconTextView.setVisibility(View.GONE);
         }
 
+        if (playUponChannelClick) {
+            holder.iconImageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    channelClickCallback.onChannelClick(channel.getChannelId());
+                }
+            });
+            holder.iconTextView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    channelClickCallback.onChannelClick(channel.getChannelId());
+                }
+            });
+        }
 
         if (channel.getProgramId() > 0) {
             holder.titleTextView.setText(channel.getProgramTitle());
+
             holder.subtitleTextView.setText(channel.getProgramSubtitle());
-            holder.subtitleTextView.setVisibility(showSubtitle ? View.VISIBLE : View.GONE);
+            holder.subtitleTextView.setVisibility(showSubtitle && !TextUtils.isEmpty(channel.getProgramSubtitle()) ? View.VISIBLE : View.GONE);
 
             String time = UIUtils.getTimeText(context, channel.getProgramStart()) + " - " + UIUtils.getTimeText(context, channel.getProgramStop());
             holder.timeTextView.setText(time);
