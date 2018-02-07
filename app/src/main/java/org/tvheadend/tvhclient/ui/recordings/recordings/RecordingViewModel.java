@@ -17,6 +17,7 @@ public class RecordingViewModel extends AndroidViewModel {
     private LiveData<List<Recording>> scheduledRecordings = new MutableLiveData<>();
     private LiveData<List<Recording>> failedRecordings = new MutableLiveData<>();
     private LiveData<List<Recording>> removedRecordings = new MutableLiveData<>();
+    private Recording recording;
 
     public RecordingViewModel(Application application) {
         super(application);
@@ -44,6 +45,17 @@ public class RecordingViewModel extends AndroidViewModel {
     }
 
     public LiveData<Recording> getRecording(int id) {
-        return repository.getRecording(id);
+        return repository.getRecordingById(id);
+    }
+
+    public Recording getRecordingByIdSync(int dvrId) {
+        if (recording == null) {
+            if (dvrId > 0) {
+                recording = repository.getRecordingByIdSync(dvrId);
+            } else {
+                recording = new Recording();
+            }
+        }
+        return recording;
     }
 }

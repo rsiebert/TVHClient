@@ -167,7 +167,7 @@ public class RecordingDetailsFragment extends BaseFragment implements RecordingR
         String durationTime = getString(R.string.minutes, (int) ((recording.getStop() - recording.getStart()) / 1000 / 60));
         durationTextView.setText(durationTime);
 
-        Channel channel = repository.getChannelSync(recording.getChannelId());
+        Channel channel = repository.getChannelByIdSync(recording.getChannelId());
         channelNameTextView.setText(channel != null ? channel.getChannelName() : getString(R.string.no_channel));
 
         summaryLabelTextView.setVisibility(!TextUtils.isEmpty(recording.getSummary()) ? View.VISIBLE : View.GONE);

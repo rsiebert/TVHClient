@@ -6,29 +6,30 @@ import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.text.TextUtils;
 
+import java.util.Calendar;
 import java.util.List;
 
 @Entity(tableName = "recordings")
 public class Recording {
 
     @PrimaryKey
-    private int id;                      // u32   required   ID of dvrEntry.
+    private int id = 0;                  // u32   required   ID of dvrEntry.
     @ColumnInfo(name = "channel_id")
-    private int channelId;               // u32   optional   Channel of dvrEntry.
-    private long start;                  // s64   required   Time of when this entry was scheduled to start recording.
-    private long stop;                   // s64   required   Time of when this entry was scheduled to stop recording.
+    private int channelId = 0;               // u32   optional   Channel of dvrEntry.
+    private long start = Calendar.getInstance().getTimeInMillis();                  // s64   required   Time of when this entry was scheduled to start recording.
+    private long stop = Calendar.getInstance().getTimeInMillis() + (30 * 60 * 1000);                   // s64   required   Time of when this entry was scheduled to stop recording.
     @ColumnInfo(name = "start_extra")
-    private long startExtra;             // s64   required   Extra start time (pre-time) in minutes (Added in version 13).
+    private long startExtra = 0;             // s64   required   Extra start time (pre-time) in minutes (Added in version 13).
     @ColumnInfo(name = "stop_extra")
-    private long stopExtra;              // s64   required   Extra stop time (post-time) in minutes (Added in version 13).
-    private long retention;              // s64   required   DVR Entry retention time in days (Added in version 13).
-    private int priority;                // u32   required   Priority (0 = Important, 1 = High, 2 = Normal, 3 = Low, 4 = Unimportant, 5 = Not set) (Added in version 13).
+    private long stopExtra = 0;          // s64   required   Extra stop time (post-time) in minutes (Added in version 13).
+    private long retention = 0;              // s64   required   DVR Entry retention time in days (Added in version 13).
+    private int priority = 0;                // u32   required   Priority (0 = Important, 1 = High, 2 = Normal, 3 = Low, 4 = Unimportant, 5 = Not set) (Added in version 13).
     @ColumnInfo(name = "event_id")
-    private int eventId;                 // u32   optional   Associated EPG Event ID (Added in version 13).
+    private int eventId = 0;                 // u32   optional   Associated EPG Event ID (Added in version 13).
     @ColumnInfo(name = "autorec_id")
-    private String autorecId;            // str   optional   Associated Autorec UUID (Added in version 13).
+    private String autorecId = "";            // str   optional   Associated Autorec UUID (Added in version 13).
     @ColumnInfo(name = "timerec_id")
-    private String timerecId;            // str   optional   Associated Timerec UUID (Added in version 18).
+    private String timerecId = "";            // str   optional   Associated Timerec UUID (Added in version 18).
     @ColumnInfo(name = "content_type")
     private int contentType;             // u32   optional   Content Type (like in the DVB standard) (Added in version 13).
     private String title;                // str   optional   Title of recording
@@ -48,7 +49,7 @@ public class Recording {
     private String path;                 // str   optional   Recording path for playback.
     @ColumnInfo(name = "data_size")
     private long dataSize;               // s64   optional   Actual file size of the last recordings (Added in version 21).
-    private int enabled;                 // u32   optional   Enabled flag (Added in version 23).
+    private int enabled = 1;                 // u32   optional   Enabled flag (Added in version 23).
     private String episode;              // str   optional   Episode (Added in version 18).
     private String comment;              // str   optional   Comment (Added in version 18).
     @Ignore

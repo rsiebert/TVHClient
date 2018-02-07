@@ -93,7 +93,7 @@ public class SeriesRecordingDetailsFragment extends BaseFragment implements Reco
         }
 
         SeriesRecordingViewModel viewModel = ViewModelProviders.of(activity).get(SeriesRecordingViewModel.class);
-        viewModel.getRecording(id).observe(this, rec -> {
+        viewModel.getRecordingById(id).observe(this, rec -> {
             recording = rec;
             updateUI();
         });
@@ -118,7 +118,7 @@ public class SeriesRecordingDetailsFragment extends BaseFragment implements Reco
         directoryTextView.setVisibility(!TextUtils.isEmpty(recording.getDirectory()) && serverStatus.getHtspVersion() >= 19 ? View.VISIBLE : View.GONE);
         directoryTextView.setText(recording.getDirectory());
 
-        Channel channel = repository.getChannelSync(recording.getChannelId());
+        Channel channel = repository.getChannelByIdSync(recording.getChannelId());
         channelNameTextView.setText(channel != null ? channel.getChannelName() : getString(R.string.all_channels));
 
         nameLabelTextView.setVisibility(!TextUtils.isEmpty(recording.getName()) ? View.VISIBLE : View.GONE);

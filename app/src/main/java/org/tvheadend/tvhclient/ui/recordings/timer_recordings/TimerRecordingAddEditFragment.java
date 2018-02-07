@@ -1,5 +1,6 @@
 package org.tvheadend.tvhclient.ui.recordings.timer_recordings;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -13,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,14 +35,12 @@ import org.tvheadend.tvhclient.ui.recordings.common.RecordingPriorityListCallbac
 import org.tvheadend.tvhclient.ui.recordings.common.RecordingProfileListCallback;
 import org.tvheadend.tvhclient.utils.callbacks.ChannelListSelectionCallback;
 
-import java.util.Calendar;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnCheckedChanged;
+import butterknife.OnTextChanged;
 import butterknife.Unbinder;
 
-// TODO replace savedinstance bundle with viewmodel
-// TODO use default recording from viewmodel when no id is available
 // TODO use getter and setting in the model from here and the service
 
 public class TimerRecordingAddEditFragment extends BaseRecordingAddEditFragment implements BackPressedInterface, ChannelListSelectionCallback, RecordingPriorityListCallback, RecordingProfileListCallback, DateTimePickerCallback, DaysOfWeekSelectionCallback {
@@ -71,16 +71,10 @@ public class TimerRecordingAddEditFragment extends BaseRecordingAddEditFragment 
     @BindView(R.id.dvr_config_label)
     TextView recordingProfileLabelTextView;
 
-    private long startTime;
-    private long stopTime;
-    private String directory;
-    private String title;
-    private String name;
-    private boolean isEnabled;
-    private int channelId;
-
     private Unbinder unbinder;
     private String id;
+    private TimerRecording recording;
+    private int recordingProfileName;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -100,64 +94,8 @@ public class TimerRecordingAddEditFragment extends BaseRecordingAddEditFragment 
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        Bundle bundle = getArguments();
-        if (bundle != null) {
-            id = bundle.getString("id");
-        }
-
-        if (savedInstanceState == null) {
-            // Get the values from the recording otherwise use default values
-            if (!TextUtils.isEmpty(id)) {
-                TimerRecording recording = repository.getTimerRecordingSync(id);
-                if (recording != null) {
-                    priority = recording.getPriority();
-                    startTime = recording.getStart();
-                    stopTime = recording.getStop();
-                    daysOfWeek = recording.getDaysOfWeek();
-                    directory = recording.getDirectory();
-                    title = recording.getTitle();
-                    name = recording.getName();
-                    isEnabled = (recording.getEnabled() > 0);
-                    channelId = recording.getChannelId();
-                }
-                updateUI();
-            } else {
-                priority = 2;
-                Calendar calendar = Calendar.getInstance();
-                startTime = calendar.getTimeInMillis();
-                // Add another 30 minutes
-                stopTime = calendar.getTimeInMillis() + (30 * 60 * 1000);
-                daysOfWeek = 127;
-                directory = "";
-                title = "";
-                name = "";
-                isEnabled = true;
-                channelId = 0;
-                updateUI();
-            }
-        } else {
-            // Restore the values before the orientation change
-            isEnabled = savedInstanceState.getBoolean("isEnabled");
-            title = savedInstanceState.getString("title");
-            name = savedInstanceState.getString("name");
-            channelId = savedInstanceState.getInt("channelId");
-            startTime = savedInstanceState.getLong("startTime");
-            stopTime = savedInstanceState.getLong("stopTime");
-            daysOfWeek = savedInstanceState.getInt("daysOfWee");
-            priority = savedInstanceState.getInt("priority");
-            directory = savedInstanceState.getString("directory");
-            recordingProfileName = savedInstanceState.getInt("configName");
-            updateUI();
-        }
-
-        toolbarInterface.setTitle(!TextUtils.isEmpty(id) ?
-                getString(R.string.edit_recording) :
-                getString(R.string.add_recording));
-
-        // Get the selected profile from the connection
-        // and select it from the recording config list
+        // Get the selected profile from the connection and select it from the recording config list
         ServerProfile profile = profileRepository.getRecordingServerProfile();
-        recordingProfileName = 0;
         if (profile != null) {
             for (int i = 0; i < recordingProfilesList.length; i++) {
                 if (recordingProfilesList[i].equals(profile.getName())) {
@@ -166,29 +104,48 @@ public class TimerRecordingAddEditFragment extends BaseRecordingAddEditFragment 
                 }
             }
         }
+
+        if (savedInstanceState == null) {
+            Bundle bundle = getArguments();
+            if (bundle != null) {
+                id = bundle.getString("id");
+            }
+        } else {
+            id = savedInstanceState.getString("id");
+            recordingProfileName = savedInstanceState.getInt("configName");
+        }
+
+        // Create the view model that stores the connection model
+        TimerRecordingViewModel viewModel = ViewModelProviders.of(activity).get(TimerRecordingViewModel.class);
+        recording = viewModel.getRecordingByIdSync(id);
+        updateUI();
+
+        toolbarInterface.setTitle(!TextUtils.isEmpty(id) ?
+                getString(R.string.edit_recording) :
+                getString(R.string.add_recording));
     }
 
     private void updateUI() {
 
         isEnabledCheckbox.setVisibility(serverStatus.getHtspVersion() >= 19 ? View.VISIBLE : View.GONE);
-        isEnabledCheckbox.setChecked(isEnabled);
-        titleEditText.setText(title);
-        nameEditText.setText(name);
+        isEnabledCheckbox.setChecked(recording.getEnabled() == 1);
+        titleEditText.setText(recording.getTitle());
+        nameEditText.setText(recording.getName());
 
         directoryLabelTextView.setVisibility(serverStatus.getHtspVersion() >= 19 ? View.VISIBLE : View.GONE);
         directoryEditText.setVisibility(serverStatus.getHtspVersion() >= 19 ? View.VISIBLE : View.GONE);
-        directoryEditText.setText(directory);
+        directoryEditText.setText(recording.getDirectory());
 
-        Channel channel = repository.getChannelSync(channelId);
+        Channel channel = repository.getChannelByIdSync(recording.getChannelId());
         channelNameTextView.setText(channel != null ? channel.getChannelName() : getString(R.string.all_channels));
         channelNameTextView.setOnClickListener(view -> {
             // Determine if the server supports recording on all channels
             boolean allowRecordingOnAllChannels = serverStatus.getHtspVersion() >= 21;
-            handleChannelListSelection(channelId, TimerRecordingAddEditFragment.this, allowRecordingOnAllChannels);
+            handleChannelListSelection(recording.getChannelId(), TimerRecordingAddEditFragment.this, allowRecordingOnAllChannels);
         });
 
-        priorityTextView.setText(priorityList[priority]);
-        priorityTextView.setOnClickListener(view -> handlePrioritySelection(priorityList, priority, TimerRecordingAddEditFragment.this));
+        priorityTextView.setText(priorityList[recording.getPriority()]);
+        priorityTextView.setOnClickListener(view -> handlePrioritySelection(priorityList, recording.getPriority(), TimerRecordingAddEditFragment.this));
 
         if (recordingProfilesList.length == 0) {
             recordingProfileNameTextView.setVisibility(View.GONE);
@@ -201,28 +158,19 @@ public class TimerRecordingAddEditFragment extends BaseRecordingAddEditFragment 
             recordingProfileNameTextView.setOnClickListener(view -> handleRecordingProfileSelection(recordingProfilesList, recordingProfileName, TimerRecordingAddEditFragment.this));
         }
 
-        startTimeTextView.setText(getTimeStringFromTimeInMillis(startTime));
-        startTimeTextView.setOnClickListener(view -> handleTimeSelection(startTime, TimerRecordingAddEditFragment.this, "startTime"));
+        startTimeTextView.setText(getTimeStringFromTimeInMillis(recording.getStart()));
+        startTimeTextView.setOnClickListener(view -> handleTimeSelection(recording.getStart(), TimerRecordingAddEditFragment.this, "startTime"));
 
-        stopTimeTextView.setText(getTimeStringFromTimeInMillis(stopTime));
-        stopTimeTextView.setOnClickListener(view -> handleTimeSelection(stopTime, TimerRecordingAddEditFragment.this, "stopTime"));
+        stopTimeTextView.setText(getTimeStringFromTimeInMillis(recording.getStop()));
+        stopTimeTextView.setOnClickListener(view -> handleTimeSelection(recording.getStop(), TimerRecordingAddEditFragment.this, "stopTime"));
 
-        daysOfWeekTextView.setText(getSelectedDaysOfWeek());
-        daysOfWeekTextView.setOnClickListener(view -> handleDayOfWeekSelection(daysOfWeek, TimerRecordingAddEditFragment.this));
+        daysOfWeekTextView.setText(getSelectedDaysOfWeekText(recording.getDaysOfWeek()));
+        daysOfWeekTextView.setOnClickListener(view -> handleDayOfWeekSelection(recording.getDaysOfWeek(), TimerRecordingAddEditFragment.this));
     }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
-        saveWidgetValuesIntoVariables();
-        outState.putBoolean("isEnabled", isEnabled);
-        outState.putString("title", title);
-        outState.putString("name", name);
-        outState.putInt("channelId", channelId);
-        outState.putLong("startTime", startTime);
-        outState.putLong("stopTime", stopTime);
-        outState.putInt("daysOfWeek", daysOfWeek);
-        outState.putInt("priority", priority);
-        outState.putString("directory", directory);
+        outState.putString("id", id);
         outState.putInt("configName", recordingProfileName);
         super.onSaveInstanceState(outState);
     }
@@ -250,18 +198,8 @@ public class TimerRecordingAddEditFragment extends BaseRecordingAddEditFragment 
         }
     }
 
-    private void saveWidgetValuesIntoVariables() {
-        directory = directoryEditText.getText().toString();
-        title = titleEditText.getText().toString();
-        name = nameEditText.getText().toString();
-        isEnabled = isEnabledCheckbox.isChecked();
-    }
-
     private void save() {
-        Log.d(TAG, "save() called");
-        saveWidgetValuesIntoVariables();
-
-        if (TextUtils.isEmpty(title)) {
+        if (TextUtils.isEmpty(recording.getTitle())) {
             if (activity.getCurrentFocus() != null) {
                 Snackbar.make(activity.getCurrentFocus(), getString(R.string.error_empty_title), Toast.LENGTH_SHORT).show();
             }
@@ -328,17 +266,17 @@ public class TimerRecordingAddEditFragment extends BaseRecordingAddEditFragment 
      */
     private Intent getIntentData() {
         Intent intent = new Intent(activity, EpgSyncService.class);
-        intent.putExtra("directory", directory);
-        intent.putExtra("title", title);
-        intent.putExtra("name", name);
-        intent.putExtra("start", getMinutesFromTimeInMillis(startTime));
-        intent.putExtra("stop", getMinutesFromTimeInMillis(stopTime));
-        intent.putExtra("daysOfWeek", daysOfWeek);
-        intent.putExtra("priority", priority);
-        intent.putExtra("enabled", (isEnabled ? 1 : 0));
+        intent.putExtra("directory", recording.getDirectory());
+        intent.putExtra("title", recording.getTitle());
+        intent.putExtra("name", recording.getName());
+        intent.putExtra("start", getMinutesFromTimeInMillis(recording.getStart()));
+        intent.putExtra("stop", getMinutesFromTimeInMillis(recording.getStop()));
+        intent.putExtra("daysOfWeek", recording.getDaysOfWeek());
+        intent.putExtra("priority", recording.getPriority());
+        intent.putExtra("enabled", recording.getEnabled());
 
-        if (channelId > 0) {
-            intent.putExtra("channelId", channelId);
+        if (recording.getChannelId() > 0) {
+            intent.putExtra("channelId", recording.getChannelId());
         }
         // Add the recording profile if available and enabled
         ServerProfile profile = profileRepository.getRecordingServerProfile();
@@ -355,8 +293,8 @@ public class TimerRecordingAddEditFragment extends BaseRecordingAddEditFragment 
     @Override
     public void onChannelIdSelected(int which) {
         if (which > 0) {
-            channelId = which;
-            Channel channel = repository.getChannelSync(channelId);
+            recording.setChannelId(which);
+            Channel channel = repository.getChannelByIdSync(which);
             channelNameTextView.setText(channel.getChannelName());
         } else {
             channelNameTextView.setText(R.string.all_channels);
@@ -366,7 +304,7 @@ public class TimerRecordingAddEditFragment extends BaseRecordingAddEditFragment 
     @Override
     public void onPrioritySelected(int which) {
         priorityTextView.setText(priorityList[which]);
-        priority = which;
+        recording.setPriority(which);
     }
 
     @Override
@@ -377,14 +315,13 @@ public class TimerRecordingAddEditFragment extends BaseRecordingAddEditFragment 
 
     @Override
     public void onTimeSelected(long milliSeconds, String tag) {
-        Log.d("Y", "onTimeSelected() called with: milliSeconds = [" + milliSeconds + "], tag = [" + tag + "]");
         if (tag.equals("startTime")) {
-            startTime = milliSeconds;
-            startTimeTextView.setText(getTimeStringFromTimeInMillis(startTime));
+            recording.setStart(milliSeconds);
+            startTimeTextView.setText(getTimeStringFromTimeInMillis(milliSeconds));
 
         } else if (tag.equals("stopTime")) {
-            stopTime = milliSeconds;
-            stopTimeTextView.setText(getTimeStringFromTimeInMillis(stopTime));
+            recording.setStop(milliSeconds);
+            stopTimeTextView.setText(getTimeStringFromTimeInMillis(milliSeconds));
         }
     }
 
@@ -395,13 +332,32 @@ public class TimerRecordingAddEditFragment extends BaseRecordingAddEditFragment 
 
     @Override
     public void onDaysOfWeekSelected(int selectedDays) {
-        daysOfWeek = selectedDays;
-        daysOfWeekTextView.setText(getSelectedDaysOfWeek());
+        recording.setDaysOfWeek(selectedDays);
+        daysOfWeekTextView.setText(getSelectedDaysOfWeekText(selectedDays));
     }
 
     @Override
     public void onBackPressed() {
-        Log.d(TAG, "onBackPressed() called");
         cancel();
+    }
+
+    @OnTextChanged(R.id.title)
+    void onTitleTextChanged(CharSequence text, int start, int count, int after) {
+        recording.setTitle(text.toString());
+    }
+
+    @OnTextChanged(R.id.name)
+    void onNameTextChanged(CharSequence text, int start, int count, int after) {
+        recording.setName(text.toString());
+    }
+
+    @OnTextChanged(R.id.directory)
+    void onDirectoryTextChanged(CharSequence text, int start, int count, int after) {
+        recording.setDirectory(text.toString());
+    }
+
+    @OnCheckedChanged(R.id.is_enabled)
+    void onEnabledCheckboxChanged(CompoundButton buttonView, boolean isChecked) {
+        recording.setEnabled(isChecked ? 1 : 0);
     }
 }

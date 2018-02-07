@@ -1,5 +1,6 @@
 package org.tvheadend.tvhclient.ui.recordings.series_recordings;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -14,6 +15,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,14 +36,12 @@ import org.tvheadend.tvhclient.ui.recordings.common.RecordingPriorityListCallbac
 import org.tvheadend.tvhclient.ui.recordings.common.RecordingProfileListCallback;
 import org.tvheadend.tvhclient.utils.callbacks.ChannelListSelectionCallback;
 
-import java.util.Calendar;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnCheckedChanged;
+import butterknife.OnTextChanged;
 import butterknife.Unbinder;
 
-// TODO replace savedinstance bundle with viewmodel
-// TODO use default recording from viewmodel when no id is available
 // TODO use getter and setting in the model from here and the service
 
 public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment implements BackPressedInterface, ChannelListSelectionCallback, RecordingPriorityListCallback, RecordingProfileListCallback, DateTimePickerCallback, DaysOfWeekSelectionCallback {
@@ -86,23 +86,11 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
     @BindView(R.id.dvr_config)
     TextView recordingProfileNameTextView;
 
-    private int minDuration;
-    private int maxDuration;
-    private long startTime;
-    private long startWindowTime;
-    private boolean timeEnabled;
-    private long startExtraTime;
-    private long stopExtraTime;
-    private int duplicateDetectionId;
-    private String directory;
-    private String title;
-    private String name;
-    private boolean isEnabled;
-    private int channelId;
-
     private String[] duplicateDetectionList;
     private Unbinder unbinder;
     private String id;
+    private int recordingProfileName;
+    private SeriesRecording recording;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -124,114 +112,57 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
 
         duplicateDetectionList = activity.getResources().getStringArray(R.array.duplicate_detection_list);
 
-        Bundle bundle = getArguments();
-        if (bundle != null) {
-            id = bundle.getString("id");
-        }
-
-        if (savedInstanceState == null) {
-            // Get the values from the recording otherwise use default values
-            if (!TextUtils.isEmpty(id)) {
-                SeriesRecording recording = repository.getSeriesRecordingSync(id);
-                if (recording != null) {
-                    priority = recording.getPriority();
-                    minDuration = (recording.getMinDuration() / 60);
-                    maxDuration = (recording.getMaxDuration() / 60);
-                    timeEnabled = (recording.getStart() >= 0 || recording.getStartWindow() >= 0);
-                    startTime = recording.getStart();
-                    startWindowTime = recording.getStartWindow();
-                    startExtraTime = recording.getStartExtra();
-                    stopExtraTime = recording.getStopExtra();
-                    duplicateDetectionId = recording.getDupDetect();
-                    daysOfWeek = recording.getDaysOfWeek();
-                    directory = recording.getDirectory();
-                    title = recording.getTitle();
-                    name = recording.getName();
-                    isEnabled = recording.getEnabled() > 0;
-                    channelId = recording.getChannelId();
-                }
-
-                updateUI();
-            } else {
-                priority = 2;
-                minDuration = 0;
-                maxDuration = 0;
-                timeEnabled = true;
-                Calendar calendar = Calendar.getInstance();
-                startTime = calendar.getTimeInMillis();
-                // Add another 30 minutes
-                startWindowTime = calendar.getTimeInMillis() + (30 * 60 * 1000);
-                startExtraTime = 2;
-                stopExtraTime = 2;
-                duplicateDetectionId = 0;
-                daysOfWeek = 127;
-                directory = "";
-                title = "";
-                name = "";
-                isEnabled = true;
-                channelId = 0;
-                updateUI();
-            }
-        } else {
-            // Restore the values before the orientation change
-            priority = savedInstanceState.getInt("priority");
-            minDuration = savedInstanceState.getInt("minDuration");
-            maxDuration = savedInstanceState.getInt("maxDuration");
-            timeEnabled = savedInstanceState.getBoolean("timeEnabled");
-            startTime = savedInstanceState.getLong("startTime");
-            startWindowTime = savedInstanceState.getLong("startWindowTime");
-            startExtraTime = savedInstanceState.getLong("startExtraTime");
-            stopExtraTime = savedInstanceState.getLong("stopExtraTime");
-            duplicateDetectionId = savedInstanceState.getInt("duplicateDetectionId");
-            daysOfWeek = savedInstanceState.getInt("daysOfWeek");
-            directory = savedInstanceState.getString("directory");
-            title = savedInstanceState.getString("title");
-            name = savedInstanceState.getString("name");
-            isEnabled = savedInstanceState.getBoolean("enabled");
-            channelId = savedInstanceState.getInt("channelId");
-            recordingProfileName = savedInstanceState.getInt("configName");
-            updateUI();
-        }
-
-        toolbarInterface.setTitle(!TextUtils.isEmpty(id) ?
-                getString(R.string.edit_recording) :
-                getString(R.string.add_recording));
-
-        // Get the selected profile from the connection
-        // and select it from the recording config list
-        recordingProfileName = 0;
-
-        final ServerProfile serverProfile = profileRepository.getRecordingServerProfile();
-        if (serverProfile != null) {
+        // Get the selected profile from the connection and select it from the recording config list
+        ServerProfile profile = profileRepository.getRecordingServerProfile();
+        if (profile != null) {
             for (int i = 0; i < recordingProfilesList.length; i++) {
-                if (recordingProfilesList[i].equals(serverProfile.getName())) {
+                if (recordingProfilesList[i].equals(profile.getName())) {
                     recordingProfileName = i;
                     break;
                 }
             }
         }
+
+        if (savedInstanceState == null) {
+            Bundle bundle = getArguments();
+            if (bundle != null) {
+                id = bundle.getString("id");
+            }
+        } else {
+            id = savedInstanceState.getString("id");
+            recordingProfileName = savedInstanceState.getInt("configName");
+        }
+
+        // Create the view model that stores the connection model
+        SeriesRecordingViewModel viewModel = ViewModelProviders.of(activity).get(SeriesRecordingViewModel.class);
+        recording = viewModel.getRecordingByIdSync(id);
+        updateUI();
+
+        toolbarInterface.setTitle(!TextUtils.isEmpty(id) ?
+                getString(R.string.edit_recording) :
+                getString(R.string.add_recording));
     }
 
     private void updateUI() {
 
         isEnabledCheckbox.setVisibility(serverStatus.getHtspVersion() >= 19 ? View.VISIBLE : View.GONE);
-        isEnabledCheckbox.setChecked(isEnabled);
-        titleEditText.setText(title);
-        nameEditText.setText(name);
+        isEnabledCheckbox.setChecked(recording.getEnabled() == 1);
+        titleEditText.setText(recording.getTitle());
+        nameEditText.setText(recording.getName());
         directoryLabelTextView.setVisibility(serverStatus.getHtspVersion() >= 19 ? View.VISIBLE : View.GONE);
         directoryEditText.setVisibility(serverStatus.getHtspVersion() >= 19 ? View.VISIBLE : View.GONE);
-        directoryEditText.setText(directory);
+        directoryEditText.setText(recording.getDirectory());
 
-        Channel channel = repository.getChannelSync(channelId);
+        Channel channel = repository.getChannelByIdSync(recording.getChannelId());
         channelNameTextView.setText(channel != null ? channel.getChannelName() : getString(R.string.all_channels));
         channelNameTextView.setOnClickListener(view -> {
             // Determine if the server supports recording on all channels
             boolean allowRecordingOnAllChannels = serverStatus.getHtspVersion() >= 21;
-            handleChannelListSelection(channelId, SeriesRecordingAddEditFragment.this, allowRecordingOnAllChannels);
+            handleChannelListSelection(recording.getChannelId(), SeriesRecordingAddEditFragment.this, allowRecordingOnAllChannels);
         });
 
-        priorityTextView.setText(priorityList[priority]);
-        priorityTextView.setOnClickListener(view -> handlePrioritySelection(priorityList, priority, SeriesRecordingAddEditFragment.this));
+        priorityTextView.setText(priorityList[recording.getPriority()]);
+        priorityTextView.setOnClickListener(view -> handlePrioritySelection(priorityList, recording.getPriority(), SeriesRecordingAddEditFragment.this));
 
         if (recordingProfilesList.length == 0) {
             recordingProfileNameTextView.setVisibility(View.GONE);
@@ -244,57 +175,42 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
             recordingProfileNameTextView.setOnClickListener(view -> handleRecordingProfileSelection(recordingProfilesList, recordingProfileName, this));
         }
 
-        startTimeTextView.setText(getTimeStringFromTimeInMillis(startTime));
-        startTimeTextView.setOnClickListener(view -> handleTimeSelection(startTime, SeriesRecordingAddEditFragment.this, "startTime"));
+        startTimeTextView.setText(getTimeStringFromTimeInMillis(recording.getStart()));
+        startTimeTextView.setOnClickListener(view -> handleTimeSelection(recording.getStart(), SeriesRecordingAddEditFragment.this, "startTime"));
 
-        startWindowTimeTextView.setText(getTimeStringFromTimeInMillis(startWindowTime));
-        startWindowTimeTextView.setOnClickListener(view -> handleTimeSelection(startWindowTime, SeriesRecordingAddEditFragment.this, "startWindowTime"));
+        startWindowTimeTextView.setText(getTimeStringFromTimeInMillis(recording.getStartWindow()));
+        startWindowTimeTextView.setOnClickListener(view -> handleTimeSelection(recording.getStartWindow(), SeriesRecordingAddEditFragment.this, "startWindowTime"));
 
-        startExtraTimeTextView.setText(String.valueOf(startExtraTime));
-        stopExtraTimeTextView.setText(String.valueOf(stopExtraTime));
+        startExtraTimeTextView.setText(String.valueOf(recording.getStartExtra()));
+        stopExtraTimeTextView.setText(String.valueOf(recording.getStopExtra()));
 
-        daysOfWeekTextView.setText(getSelectedDaysOfWeek());
-        daysOfWeekTextView.setOnClickListener(view -> handleDayOfWeekSelection(daysOfWeek, SeriesRecordingAddEditFragment.this));
+        daysOfWeekTextView.setText(getSelectedDaysOfWeekText(recording.getDaysOfWeek()));
+        daysOfWeekTextView.setOnClickListener(view -> handleDayOfWeekSelection(recording.getDaysOfWeek(), SeriesRecordingAddEditFragment.this));
 
-        minDurationEditText.setText(minDuration > 0 ? String.valueOf(minDuration) : getString(R.string.duration_sum));
-        maxDurationEditText.setText(maxDuration > 0 ? String.valueOf(maxDuration) : getString(R.string.duration_sum));
+        minDurationEditText.setText(recording.getMinDuration() > 0 ? String.valueOf(recording.getMinDuration()) : getString(R.string.duration_sum));
+        maxDurationEditText.setText(recording.getMaxDuration() > 0 ? String.valueOf(recording.getMaxDuration()) : getString(R.string.duration_sum));
 
-        timeEnabledCheckBox.setChecked(timeEnabled);
+        timeEnabledCheckBox.setChecked(recording.isTimeEnabled());
         timeEnabledCheckBox.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
                 boolean checked = timeEnabledCheckBox.isChecked();
                 startTimeTextView.setEnabled(checked);
-                startTimeTextView.setText(checked ? getTimeStringFromTimeInMillis(startTime) : "-");
+                startTimeTextView.setText(checked ? getTimeStringFromTimeInMillis(recording.getStart()) : "-");
                 startWindowTimeTextView.setEnabled(checked);
-                startWindowTimeTextView.setText(checked ? getTimeStringFromTimeInMillis(startWindowTime) : "-");
+                startWindowTimeTextView.setText(checked ? getTimeStringFromTimeInMillis(recording.getStartWindow()) : "-");
             }
         });
 
         duplicateDetectionLabelTextView.setVisibility(serverStatus.getHtspVersion() >= 20 ? View.VISIBLE : View.GONE);
         duplicateDetectionTextView.setVisibility(serverStatus.getHtspVersion() >= 20 ? View.VISIBLE : View.GONE);
-        duplicateDetectionTextView.setText(duplicateDetectionList[duplicateDetectionId]);
-        duplicateDetectionTextView.setOnClickListener(view -> handleDuplicateDetectionSelection(duplicateDetectionList, duplicateDetectionId));
+        duplicateDetectionTextView.setText(duplicateDetectionList[recording.getDupDetect()]);
+        duplicateDetectionTextView.setOnClickListener(view -> handleDuplicateDetectionSelection(duplicateDetectionList, recording.getDupDetect()));
     }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
-        saveWidgetValuesIntoVariables();
-        outState.putInt("priority", priority);
-        outState.putInt("minDuration", minDuration);
-        outState.putInt("maxDuration", maxDuration);
-        outState.putLong("startTime", startTime);
-        outState.putLong("startWindowTime", startWindowTime);
-        outState.putBoolean("timeEnabled", timeEnabled);
-        outState.putLong("startExtraTime", startExtraTime);
-        outState.putLong("stopExtraTime", stopExtraTime);
-        outState.putInt("duplicateDetectionId", duplicateDetectionId);
-        outState.putInt("daysOfWeek", daysOfWeek);
-        outState.putString("directory", directory);
-        outState.putString("title", title);
-        outState.putString("name", name);
-        outState.putBoolean("isEnabled", isEnabled);
-        outState.putInt("channelId", channelId);
+        outState.putString("id", id);
         outState.putInt("configName", recordingProfileName);
         super.onSaveInstanceState(outState);
     }
@@ -323,50 +239,12 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
     }
 
     /**
-     * Retrieves and checks the values from the user input elements and stores
-     * them in internal variables. These are used to remember the values during
-     * an orientation change or when the recording shall be saved.
-     */
-    private void saveWidgetValuesIntoVariables() {
-        try {
-            minDuration = Integer.valueOf(minDurationEditText.getText().toString());
-        } catch (NumberFormatException ex) {
-            minDuration = 0;
-        }
-        try {
-            maxDuration = Integer.valueOf(maxDurationEditText.getText().toString());
-        } catch (NumberFormatException ex) {
-            maxDuration = 0;
-        }
-
-        timeEnabled = timeEnabledCheckBox.isChecked();
-
-        try {
-            startExtraTime = Long.valueOf(startExtraTimeTextView.getText().toString());
-        } catch (NumberFormatException ex) {
-            startExtraTime = 0;
-        }
-        try {
-            stopExtraTime = Long.valueOf(stopExtraTimeTextView.getText().toString());
-        } catch (NumberFormatException ex) {
-            stopExtraTime = 0;
-        }
-
-        directory = directoryEditText.getText().toString();
-        title = titleEditText.getText().toString();
-        name = nameEditText.getText().toString();
-        isEnabled = isEnabledCheckbox.isChecked();
-    }
-
-    /**
      * Checks certain given values for plausibility and if everything is fine
      * creates the intent that will be passed to the service to save the newly
      * created recording.
      */
     private void save() {
-        saveWidgetValuesIntoVariables();
-
-        if (TextUtils.isEmpty(title)) {
+        if (TextUtils.isEmpty(recording.getTitle())) {
             if (activity.getCurrentFocus() != null) {
                 Snackbar.make(activity.getCurrentFocus(), getString(R.string.error_empty_title), Toast.LENGTH_SHORT).show();
             }
@@ -374,8 +252,10 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
         }
 
         // The maximum durationTextView must be at least the minimum durationTextView
-        if (minDuration > 0 && maxDuration > 0 && maxDuration < minDuration) {
-            maxDuration = minDuration;
+        if (recording.getMinDuration() > 0
+                && recording.getMaxDuration() > 0
+                && recording.getMaxDuration() < recording.getMinDuration()) {
+            recording.setMaxDuration(recording.getMinDuration());
         }
 
         if (!TextUtils.isEmpty(id)) {
@@ -440,28 +320,28 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
      */
     private Intent getIntentData() {
         Intent intent = new Intent(activity, EpgSyncService.class);
-        intent.putExtra("title", title);
-        intent.putExtra("name", name);
-        intent.putExtra("directory", directory);
-        intent.putExtra("minDuration", minDuration * 60);
-        intent.putExtra("maxDuration", maxDuration * 60);
+        intent.putExtra("title", recording.getTitle());
+        intent.putExtra("name", recording.getName());
+        intent.putExtra("directory", recording.getDirectory());
+        intent.putExtra("minDuration", recording.getMinDuration() * 60);
+        intent.putExtra("maxDuration", recording.getMaxDuration() * 60);
 
         // Assume no start time is specified if 0:00 is selected
-        if (timeEnabled) {
+        if (recording.isTimeEnabled()) {
             // Pass on minutes not milliseconds
-            Log.d(TAG, "getIntentData: start " + getMinutesFromTimeInMillis(startTime));
-            intent.putExtra("start", getMinutesFromTimeInMillis(startTime));
-            intent.putExtra("startWindow", getMinutesFromTimeInMillis(startWindowTime));
+            Log.d(TAG, "getIntentData: start " + getMinutesFromTimeInMillis(recording.getStart()));
+            intent.putExtra("start", getMinutesFromTimeInMillis(recording.getStart()));
+            intent.putExtra("startWindow", getMinutesFromTimeInMillis(recording.getStartWindow()));
         }
-        intent.putExtra("startExtra", startExtraTime);
-        intent.putExtra("stopExtra", stopExtraTime);
-        intent.putExtra("dupDetect", duplicateDetectionId);
-        intent.putExtra("daysOfWeek", daysOfWeek);
-        intent.putExtra("priority", priority);
-        intent.putExtra("enabled", (isEnabled ? 1 : 0));
+        intent.putExtra("startExtra", recording.getStartExtra());
+        intent.putExtra("stopExtra", recording.getStopExtra());
+        intent.putExtra("dupDetect", recording.getDupDetect());
+        intent.putExtra("daysOfWeek", recording.getDaysOfWeek());
+        intent.putExtra("priority", recording.getPriority());
+        intent.putExtra("enabled", recording.getEnabled());
 
-        if (channelId > 0) {
-            intent.putExtra("channelId", channelId);
+        if (recording.getChannelId() > 0) {
+            intent.putExtra("channelId", recording.getChannelId());
         }
         // Add the recording profile if available and enabled
         ServerProfile profile = profileRepository.getRecordingServerProfile();
@@ -478,8 +358,8 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
     @Override
     public void onChannelIdSelected(int which) {
         if (which > 0) {
-            channelId = which;
-            Channel channel = repository.getChannelSync(channelId);
+            recording.setChannelId(which);
+            Channel channel = repository.getChannelByIdSync(which);
             channelNameTextView.setText(channel.getChannelName());
         } else {
             channelNameTextView.setText(R.string.all_channels);
@@ -489,7 +369,7 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
     @Override
     public void onPrioritySelected(int which) {
         priorityTextView.setText(priorityList[which]);
-        priority = which;
+        recording.setPriority(which);
     }
 
     @Override
@@ -501,12 +381,12 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
     @Override
     public void onTimeSelected(long milliSeconds, String tag) {
         if (tag.equals("startTime")) {
-            startTime = milliSeconds;
-            startTimeTextView.setText(getTimeStringFromTimeInMillis(startTime));
+            recording.setStart(milliSeconds);
+            startTimeTextView.setText(getTimeStringFromTimeInMillis(milliSeconds));
 
         } else if (tag.equals("startWindowTime")) {
-            startWindowTime = milliSeconds;
-            startWindowTimeTextView.setText(getTimeStringFromTimeInMillis(startWindowTime));
+            recording.setStartWindow(milliSeconds);
+            startWindowTimeTextView.setText(getTimeStringFromTimeInMillis(milliSeconds));
         }
     }
 
@@ -517,12 +397,12 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
 
     @Override
     public void onDaysOfWeekSelected(int selectedDays) {
-        daysOfWeek = selectedDays;
-        daysOfWeekTextView.setText(getSelectedDaysOfWeek());
+        recording.setDaysOfWeek(selectedDays);
+        daysOfWeekTextView.setText(getSelectedDaysOfWeekText(selectedDays));
     }
 
     public void onDuplicateDetectionValueSelected(int which) {
-        duplicateDetectionId = which;
+        recording.setDupDetect(which);
         duplicateDetectionTextView.setText(duplicateDetectionList[which]);
     }
 
@@ -543,5 +423,66 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
     @Override
     public void onBackPressed() {
         cancel();
+    }
+
+    @OnTextChanged(R.id.title)
+    void onTitleTextChanged(CharSequence text, int start, int count, int after) {
+        recording.setTitle(text.toString());
+    }
+
+    @OnTextChanged(R.id.name)
+    void onNameTextChanged(CharSequence text, int start, int count, int after) {
+        recording.setName(text.toString());
+    }
+
+    @OnTextChanged(R.id.directory)
+    void onDirectoryTextChanged(CharSequence text, int start, int count, int after) {
+        recording.setDirectory(text.toString());
+    }
+
+    @OnCheckedChanged(R.id.is_enabled)
+    void onEnabledCheckboxChanged(CompoundButton buttonView, boolean isChecked) {
+        recording.setEnabled(isChecked ? 1 : 0);
+    }
+
+    @OnTextChanged(R.id.minimum_duration)
+    void onMinDurationTextChanged(CharSequence text, int start, int count, int after) {
+        try {
+            recording.setMinDuration(Integer.valueOf(text.toString()));
+        } catch (NumberFormatException ex) {
+            recording.setMinDuration(0);
+        }
+    }
+
+    @OnTextChanged(R.id.maximum_duration)
+    void onMaxDurationTextChanged(CharSequence text, int start, int count, int after) {
+        try {
+            recording.setMaxDuration(Integer.valueOf(text.toString()));
+        } catch (NumberFormatException ex) {
+            recording.setMaxDuration(0);
+        }
+    }
+
+    @OnTextChanged(R.id.start_extra)
+    void onStartExtraTextChanged(CharSequence text, int start, int count, int after) {
+        try {
+            recording.setStartExtra(Long.valueOf(text.toString()));
+        } catch (NumberFormatException ex) {
+            recording.setStartExtra(2);
+        }
+    }
+
+    @OnTextChanged(R.id.stop_extra)
+    void onStopExtraTextChanged(CharSequence text, int start, int count, int after) {
+        try {
+            recording.setStopExtra(Long.valueOf(text.toString()));
+        } catch (NumberFormatException ex) {
+            recording.setStopExtra(2);
+        }
+    }
+
+    @OnCheckedChanged(R.id.time_enabled)
+    void onTimeEnabledCheckboxChanged(CompoundButton buttonView, boolean isChecked) {
+        recording.setTimeEnabled(isChecked);
     }
 }

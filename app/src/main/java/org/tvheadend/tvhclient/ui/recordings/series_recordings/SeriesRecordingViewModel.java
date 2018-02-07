@@ -4,9 +4,10 @@ import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.text.TextUtils;
 
-import org.tvheadend.tvhclient.data.repository.RecordingRepository;
 import org.tvheadend.tvhclient.data.entity.SeriesRecording;
+import org.tvheadend.tvhclient.data.repository.RecordingRepository;
 
 import java.util.List;
 
@@ -14,6 +15,7 @@ public class SeriesRecordingViewModel extends AndroidViewModel {
 
     private final RecordingRepository repository;
     private LiveData<List<SeriesRecording>> recordings = new MutableLiveData<>();
+    private SeriesRecording recording;
 
     public SeriesRecordingViewModel(Application application) {
         super(application);
@@ -25,7 +27,18 @@ public class SeriesRecordingViewModel extends AndroidViewModel {
         return recordings;
     }
 
-    LiveData<SeriesRecording> getRecording(String id) {
-        return repository.getSeriesRecording(id);
+    LiveData<SeriesRecording> getRecordingById(String id) {
+        return repository.getSeriesRecordingById(id);
+    }
+
+    public SeriesRecording getRecordingByIdSync(String id) {
+        if (recording == null) {
+            if (!TextUtils.isEmpty(id)) {
+                recording = repository.getSeriesRecordingByIdSync(id);
+            } else {
+                recording = new SeriesRecording();
+            }
+        }
+        return recording;
     }
 }

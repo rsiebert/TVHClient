@@ -1,10 +1,12 @@
 package org.tvheadend.tvhclient.ui.recordings.recordings;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -12,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,19 +34,17 @@ import org.tvheadend.tvhclient.ui.recordings.common.RecordingPriorityListCallbac
 import org.tvheadend.tvhclient.ui.recordings.common.RecordingProfileListCallback;
 import org.tvheadend.tvhclient.utils.callbacks.ChannelListSelectionCallback;
 
-import java.util.Calendar;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnCheckedChanged;
+import butterknife.OnTextChanged;
 import butterknife.Unbinder;
 
-// TODO hide show layout stuff if editing scheduled or recording recordings
 // TODO updated getIntentData according to the previous todo
-// TODO replace savedinstance bundle with viewmodel
-// TODO use default recording from viewmodel when no id is available
 // TODO use getter and setting in the model from here and the service
 
 public class RecordingAddEditFragment extends BaseRecordingAddEditFragment implements BackPressedInterface, ChannelListSelectionCallback, DateTimePickerCallback, RecordingPriorityListCallback, RecordingProfileListCallback {
+    private String TAG = getClass().getSimpleName();
 
     @BindView(R.id.start_time)
     TextView startTimeTextView;
@@ -82,20 +83,10 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
     @BindView(R.id.dvr_config)
     TextView recordingProfileNameTextView;
 
-    private String title;
-    private String subtitle;
-    private String description;
-    private long startTime;
-    private long stopTime;
-    private long startExtra;
-    private long stopExtra;
-    private boolean isEnabled;
-    private int channelId;
-
     private Unbinder unbinder;
     private int dvrId = 0;
-    private boolean isRecording;
-    private boolean isScheduled;
+    private Recording recording;
+    private int recordingProfileName;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -115,72 +106,7 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        Bundle bundle = getArguments();
-        if (bundle != null) {
-            dvrId = bundle.getInt("dvrId");
-        }
-
-        if (savedInstanceState == null) {
-            // Get the values from the recording otherwise use default values
-            if (dvrId > 0) {
-                Recording recording = repository.getRecordingSync(dvrId);
-                if (recording != null) {
-                    priority = recording.getPriority();
-                    startExtra = recording.getStartExtra();
-                    stopExtra = recording.getStopExtra();
-                    startTime = recording.getStart();
-                    stopTime = recording.getStop();
-                    title = recording.getTitle();
-                    subtitle = recording.getSubtitle();
-                    description = recording.getDescription();
-                    isEnabled = recording.getEnabled() > 0;
-                    channelId = recording.getChannelId();
-
-                    // If the recording is already being recorded, show only the
-                    // title, subtitle, description, stop and stop extra field
-                    isRecording = recording.isRecording();
-                    // If the recording is scheduled (regular edit mode, hide the channel selection)
-                    isScheduled = recording.isScheduled();
-                }
-                updateUI();
-            } else {
-                priority = 2;
-                startExtra = 0;
-                stopExtra = 0;
-                Calendar calendar = Calendar.getInstance();
-                startTime = calendar.getTimeInMillis();
-                // Let the stop time be 30 minutes after the start time
-                stopTime = calendar.getTimeInMillis() + (30 * 60 * 1000);
-                title = "";
-                subtitle = "";
-                description = "";
-                isEnabled = true;
-                channelId = 0;
-                updateUI();
-            }
-        } else {
-            // Restore the values before the orientation change
-            priority = savedInstanceState.getInt("priority");
-            startExtra = savedInstanceState.getLong("startExtra");
-            stopExtra = savedInstanceState.getLong("stopExtra");
-            startTime = savedInstanceState.getLong("start");
-            stopTime = savedInstanceState.getLong("stop");
-            title = savedInstanceState.getString("title");
-            subtitle = savedInstanceState.getString("subtitle");
-            description = savedInstanceState.getString("description");
-            channelId = savedInstanceState.getInt("channelId");
-            recordingProfileName = savedInstanceState.getInt("configName");
-            isEnabled = savedInstanceState.getBoolean("isEnabled");
-            updateUI();
-        }
-
-        toolbarInterface.setTitle(dvrId > 0 ?
-                getString(R.string.edit_recording) :
-                getString(R.string.add_recording));
-
-        // Get the selected profile from the connection
-        // and select it from the recording config list
-        recordingProfileName = 0;
+        // Get the selected profile from the connection and select it from the recording config list
         ServerProfile profile = profileRepository.getRecordingServerProfile();
         if (profile != null) {
             for (int i = 0; i < recordingProfilesList.length; i++) {
@@ -190,51 +116,69 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
                 }
             }
         }
+
+        if (savedInstanceState == null) {
+            Bundle bundle = getArguments();
+            if (bundle != null) {
+                dvrId = bundle.getInt("dvrId");
+            }
+        } else {
+            dvrId = savedInstanceState.getInt("id");
+        }
+
+        // Create the view model that stores the connection model
+        RecordingViewModel viewModel = ViewModelProviders.of(activity).get(RecordingViewModel.class);
+        recording = viewModel.getRecordingByIdSync(dvrId);
+        updateUI();
+
+        toolbarInterface.setTitle(dvrId > 0 ?
+                getString(R.string.edit_recording) :
+                getString(R.string.add_recording));
     }
 
     private void updateUI() {
 
         titleLabelTextView.setVisibility(serverStatus.getHtspVersion() >= 21 ? View.VISIBLE : View.GONE);
         titleEditText.setVisibility(serverStatus.getHtspVersion() >= 21 ? View.VISIBLE : View.GONE);
-        titleEditText.setText(title);
+        titleEditText.setText(recording.getTitle());
 
         subtitleLabelTextView.setVisibility(serverStatus.getHtspVersion() >= 21 ? View.VISIBLE : View.GONE);
         subtitleEditText.setVisibility(serverStatus.getHtspVersion() >= 21 ? View.VISIBLE : View.GONE);
-        subtitleEditText.setText(subtitle);
+        subtitleEditText.setText(recording.getSubtitle());
 
         descriptionLabelTextView.setVisibility(serverStatus.getHtspVersion() >= 21 ? View.VISIBLE : View.GONE);
         descriptionEditText.setVisibility(serverStatus.getHtspVersion() >= 21 ? View.VISIBLE : View.GONE);
-        descriptionEditText.setText(description);
+        descriptionEditText.setText(recording.getDescription());
 
-        stopTimeTextView.setText(getTimeStringFromTimeInMillis(stopTime));
-        stopTimeTextView.setOnClickListener(view -> handleTimeSelection(stopTime, RecordingAddEditFragment.this, "stopTime"));
+        stopTimeTextView.setText(getTimeStringFromTimeInMillis(recording.getStop()));
+        stopTimeTextView.setOnClickListener(view -> handleTimeSelection(recording.getStop(), RecordingAddEditFragment.this, "stopTime"));
 
-        stopDateTextView.setText(getDateStringFromTimeInMillis(stopTime));
-        stopDateTextView.setOnClickListener(view -> handleDateSelection(stopTime, RecordingAddEditFragment.this, "stopDate"));
+        stopDateTextView.setText(getDateStringFromTimeInMillis(recording.getStop()));
+        stopDateTextView.setOnClickListener(view -> handleDateSelection(recording.getStop(), RecordingAddEditFragment.this, "stopDate"));
 
-        stopExtraEditText.setText(String.valueOf(stopExtra));
+        stopExtraEditText.setText(String.valueOf(recording.getStopExtra()));
 
-        if (isScheduled || isRecording) {
+        if (recording.isScheduled() || recording.isRecording()) {
             channelNameLabelTextView.setVisibility(View.GONE);
             channelNameTextView.setVisibility(View.GONE);
         } else {
-            Channel channel = repository.getChannelSync(channelId);
+            Channel channel = repository.getChannelByIdSync(recording.getChannelId());
             channelNameTextView.setText(channel != null ? channel.getChannelName() : getString(R.string.no_channel));
             channelNameTextView.setOnClickListener(view -> {
                 // Determine if the server supports recording on all channels
                 boolean allowRecordingOnAllChannels = serverStatus.getHtspVersion() >= 21;
-                handleChannelListSelection(channelId, RecordingAddEditFragment.this, allowRecordingOnAllChannels);
+                handleChannelListSelection(recording.getChannelId(), RecordingAddEditFragment.this, allowRecordingOnAllChannels);
             });
         }
 
-        isEnabledCheckbox.setVisibility(serverStatus.getHtspVersion() >= 23 && !isRecording ? View.VISIBLE : View.GONE);
-        isEnabledCheckbox.setChecked(isEnabled);
+        isEnabledCheckbox.setVisibility(serverStatus.getHtspVersion() >= 23 && !recording.isRecording() ? View.VISIBLE : View.GONE);
+        isEnabledCheckbox.setChecked(recording.getEnabled() == 1);
 
-        priorityTextView.setVisibility(!isRecording ? View.VISIBLE : View.GONE);
-        priorityTextView.setText(priorityList[priority]);
-        priorityTextView.setOnClickListener(view -> handlePrioritySelection(priorityList, priority, RecordingAddEditFragment.this));
+        priorityTextView.setVisibility(!recording.isRecording() ? View.VISIBLE : View.GONE);
+        priorityTextView.setText(priorityList[recording.getPriority()]);
+        priorityTextView.setOnClickListener(view -> handlePrioritySelection(priorityList, recording.getPriority(), RecordingAddEditFragment.this));
 
-        if (recordingProfilesList.length == 0 || isRecording) {
+        if (recordingProfilesList.length == 0 || recording.isRecording()) {
             recordingProfileNameTextView.setVisibility(View.GONE);
             recordingProfileLabelTextView.setVisibility(View.GONE);
         } else {
@@ -245,33 +189,23 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
             recordingProfileNameTextView.setOnClickListener(view -> handleRecordingProfileSelection(recordingProfilesList, recordingProfileName, RecordingAddEditFragment.this));
         }
 
-        startTimeTextView.setVisibility(!isRecording ? View.VISIBLE : View.GONE);
-        startTimeTextView.setText(getTimeStringFromTimeInMillis(startTime));
-        startTimeTextView.setOnClickListener(view -> handleTimeSelection(startTime, RecordingAddEditFragment.this, "startTime"));
+        startTimeTextView.setVisibility(!recording.isRecording() ? View.VISIBLE : View.GONE);
+        startTimeTextView.setText(getTimeStringFromTimeInMillis(recording.getStart()));
+        startTimeTextView.setOnClickListener(view -> handleTimeSelection(recording.getStart(), RecordingAddEditFragment.this, "startTime"));
 
-        startDateTextView.setVisibility(!isRecording ? View.VISIBLE : View.GONE);
-        startDateTextView.setText(getDateStringFromTimeInMillis(startTime));
-        startDateTextView.setOnClickListener(view -> handleDateSelection(startTime, RecordingAddEditFragment.this, "startDate"));
+        startDateTextView.setVisibility(!recording.isRecording() ? View.VISIBLE : View.GONE);
+        startDateTextView.setText(getDateStringFromTimeInMillis(recording.getStart()));
+        startDateTextView.setOnClickListener(view -> handleDateSelection(recording.getStart(), RecordingAddEditFragment.this, "startDate"));
 
         // Add the additional pre- and post recording values in minutes
-        startExtraEditText.setVisibility(!isRecording ? View.VISIBLE : View.GONE);
-        startExtraEditText.setText(String.valueOf(startExtra));
+        startExtraEditText.setVisibility(!recording.isRecording() ? View.VISIBLE : View.GONE);
+        startExtraEditText.setText(String.valueOf(recording.getStartExtra()));
     }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
-        saveWidgetValuesIntoVariables();
-        outState.putInt("priority", priority);
-        outState.putLong("start", startTime / 1000);
-        outState.putLong("stop", stopTime / 1000);
-        outState.putLong("startExtra", startExtra);
-        outState.putLong("stopExtra", stopExtra);
-        outState.putString("title", title);
-        outState.putString("subtitle", subtitle);
-        outState.putString("description", description);
-        outState.putInt("channelId", channelId);
+        outState.putInt("dvrId", dvrId);
         outState.putInt("configName", recordingProfileName);
-        outState.putBoolean("isEnabled", isEnabled);
         super.onSaveInstanceState(outState);
     }
 
@@ -299,42 +233,18 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
     }
 
     /**
-     * Retrieves and checks the values from the user input elements and stores
-     * them in internal variables. These are used to remember the values during
-     * an orientation change or when the recording shall be saved.
-     */
-    private void saveWidgetValuesIntoVariables() {
-        title = titleEditText.getText().toString();
-        subtitle = subtitleEditText.getText().toString();
-        description = descriptionEditText.getText().toString();
-        isEnabled = isEnabledCheckbox.isChecked();
-        try {
-            startExtra = Long.valueOf(startExtraEditText.getText().toString());
-        } catch (NumberFormatException ex) {
-            startExtra = 2;
-        }
-        try {
-            stopExtra = Long.valueOf(stopExtraEditText.getText().toString());
-        } catch (NumberFormatException ex) {
-            stopExtra = 2;
-        }
-    }
-
-    /**
      * Checks certain given values for plausibility and if everything is fine
      * creates the intent that will be passed to the service to save the newly
      * created recording.
      */
     private void save() {
-        saveWidgetValuesIntoVariables();
-
-        if (TextUtils.isEmpty(title) && serverStatus.getHtspVersion() >= 21) {
+        if (TextUtils.isEmpty(recording.getTitle()) && serverStatus.getHtspVersion() >= 21) {
             if (activity.getCurrentFocus() != null) {
                 Snackbar.make(activity.getCurrentFocus(), getString(R.string.error_empty_title), Toast.LENGTH_SHORT).show();
             }
             return;
         }
-        if (channelId == 0) {
+        if (recording.getChannelId() == 0) {
             if (activity.getCurrentFocus() != null) {
                 Snackbar.make(activity.getCurrentFocus(), "Please select a channel", Toast.LENGTH_SHORT).show();
             }
@@ -364,22 +274,22 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
 
     private Intent getIntentData() {
         Intent intent = new Intent(activity, EpgSyncService.class);
-        intent.putExtra("title", title);
-        intent.putExtra("subtitle", subtitle);
-        intent.putExtra("description", description);
+        intent.putExtra("title", recording.getTitle());
+        intent.putExtra("subtitle", recording.getSubtitle());
+        intent.putExtra("description", recording.getDescription());
         // Pass on seconds not milliseconds
-        intent.putExtra("stop", stopTime);
-        intent.putExtra("stopExtra", stopExtra);
+        intent.putExtra("stop", recording.getStop());
+        intent.putExtra("stopExtra", recording.getStopExtra());
 
-        if (!isScheduled) {
-            intent.putExtra("channelId", channelId);
+        if (!recording.isScheduled()) {
+            intent.putExtra("channelId", recording.getChannelId());
         }
-        if (!isRecording) {
+        if (!recording.isRecording()) {
             // Pass on seconds not milliseconds
-            intent.putExtra("start", startTime);
-            intent.putExtra("startExtra", startExtra);
-            intent.putExtra("priority", priority);
-            intent.putExtra("enabled", (isEnabled ? 1 : 0));
+            intent.putExtra("start", recording.getStart());
+            intent.putExtra("startExtra", recording.getStartExtra());
+            intent.putExtra("priority", recording.getPriority());
+            intent.putExtra("enabled", recording.getEnabled());
         }
         // Add the recording profile if available and enabled
         ServerProfile profile = profileRepository.getRecordingServerProfile();
@@ -422,8 +332,8 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
     @Override
     public void onChannelIdSelected(int which) {
         if (which > 0) {
-            channelId = which;
-            Channel channel = repository.getChannelSync(channelId);
+            recording.setChannelId(which);
+            Channel channel = repository.getChannelByIdSync(which);
             channelNameTextView.setText(channel.getChannelName());
         } else {
             channelNameTextView.setText(R.string.all_channels);
@@ -433,29 +343,29 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
     @Override
     public void onTimeSelected(long milliSeconds, String tag) {
         if (tag.equals("startTime")) {
-            startTime = milliSeconds;
-            startTimeTextView.setText(getTimeStringFromTimeInMillis(startTime));
+            recording.setStart(milliSeconds);
+            startTimeTextView.setText(getTimeStringFromTimeInMillis(milliSeconds));
         } else if (tag.equals("stopTime")) {
-            stopTime = milliSeconds;
-            stopTimeTextView.setText(getTimeStringFromTimeInMillis(stopTime));
+            recording.setStop(milliSeconds);
+            stopTimeTextView.setText(getTimeStringFromTimeInMillis(milliSeconds));
         }
     }
 
     @Override
     public void onDateSelected(long milliSeconds, String tag) {
         if (tag.equals("startDate")) {
-            startTime = milliSeconds;
-            startDateTextView.setText(getDateStringFromTimeInMillis(startTime));
+            recording.setStart(milliSeconds);
+            startDateTextView.setText(getDateStringFromTimeInMillis(milliSeconds));
         } else if (tag.equals("stopDate")) {
-            stopTime = milliSeconds;
-            stopDateTextView.setText(getDateStringFromTimeInMillis(stopTime));
+            recording.setStop(milliSeconds);
+            stopDateTextView.setText(getDateStringFromTimeInMillis(milliSeconds));
         }
     }
 
     @Override
     public void onPrioritySelected(int which) {
         priorityTextView.setText(priorityList[which]);
-        priority = which;
+        recording.setPriority(which);
     }
 
     @Override
@@ -467,5 +377,47 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
     @Override
     public void onBackPressed() {
         cancel();
+    }
+
+    @OnTextChanged(R.id.title)
+    void onTitleTextChanged(CharSequence text, int start, int count, int after) {
+        Log.d(TAG, "onTitleTextChanged() called with: text = [" + text + "], start = [" + start + "], count = [" + count + "], after = [" + after + "]");
+        recording.setTitle(text.toString());
+    }
+
+    @OnTextChanged(R.id.subtitle)
+    void onNameTextChanged(CharSequence text, int start, int count, int after) {
+        Log.d(TAG, "onNameTextChanged() called with: text = [" + text + "], start = [" + start + "], count = [" + count + "], after = [" + after + "]");
+        recording.setSubtitle(text.toString());
+    }
+
+    @OnTextChanged(R.id.description)
+    void onDirectoryTextChanged(CharSequence text, int start, int count, int after) {
+        Log.d(TAG, "onDirectoryTextChanged() called with: text = [" + text + "], start = [" + start + "], count = [" + count + "], after = [" + after + "]");
+        recording.setDescription(text.toString());
+    }
+
+    @OnCheckedChanged(R.id.is_enabled)
+    void onEnabledCheckboxChanged(CompoundButton buttonView, boolean isChecked) {
+        Log.d(TAG, "onEnabledCheckboxChanged() called with: buttonView = [" + buttonView + "], isChecked = [" + isChecked + "]");
+        recording.setEnabled(isChecked ? 1 : 0);
+    }
+
+    @OnTextChanged(R.id.start_extra)
+    void onStartExtraTextChanged(CharSequence text, int start, int count, int after) {
+        try {
+            recording.setStartExtra(Long.valueOf(text.toString()));
+        } catch (NumberFormatException ex) {
+            recording.setStartExtra(2);
+        }
+    }
+
+    @OnTextChanged(R.id.stop_extra)
+    void onStopExtraTextChanged(CharSequence text, int start, int count, int after) {
+        try {
+            recording.setStopExtra(Long.valueOf(text.toString()));
+        } catch (NumberFormatException ex) {
+            recording.setStopExtra(2);
+        }
     }
 }

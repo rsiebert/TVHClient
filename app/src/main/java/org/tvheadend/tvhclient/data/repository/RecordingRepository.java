@@ -31,11 +31,11 @@ public class RecordingRepository {
         return db.timerRecordingDao().loadAllRecordings();
     }
 
-    public LiveData<TimerRecording> getTimerRecording(String id) {
+    public LiveData<TimerRecording> getTimerRecordingById(String id) {
         return db.timerRecordingDao().loadRecordingById(id);
     }
 
-    public TimerRecording getTimerRecordingSync(String id) {
+    public TimerRecording getTimerRecordingByIdSync(String id) {
         try {
             return new LoadTimerRecordingTask(db.timerRecordingDao(), id).execute().get();
         } catch (InterruptedException | ExecutionException e) {
@@ -44,7 +44,7 @@ public class RecordingRepository {
         return null;
     }
 
-    public Channel getChannelSync(int id) {
+    public Channel getChannelByIdSync(int id) {
         try {
             return new LoadChannelTask(db.channelDao(), id).execute().get();
         } catch (InterruptedException | ExecutionException e) {
@@ -53,7 +53,7 @@ public class RecordingRepository {
         return null;
     }
 
-    public SeriesRecording getSeriesRecordingSync(String id) {
+    public SeriesRecording getSeriesRecordingByIdSync(String id) {
         try {
             return new LoadSeriesRecordingTask(db.seriesRecordingDao(), id).execute().get();
         } catch (InterruptedException | ExecutionException e) {
@@ -62,7 +62,7 @@ public class RecordingRepository {
         return null;
     }
 
-    public LiveData<SeriesRecording> getSeriesRecording(String id) {
+    public LiveData<SeriesRecording> getSeriesRecordingById(String id) {
         return db.seriesRecordingDao().loadRecordingById(id);
     }
 
@@ -70,7 +70,7 @@ public class RecordingRepository {
         return db.seriesRecordingDao().loadAllRecordings();
     }
 
-    public Recording getRecordingSync(int id) {
+    public Recording getRecordingByIdSync(int id) {
         try {
             return new LoadRecordingTask(db.recordingDao(), id).execute().get();
         } catch (InterruptedException | ExecutionException e) {
@@ -79,7 +79,7 @@ public class RecordingRepository {
         return null;
     }
 
-    public LiveData<Recording> getRecording(int id) {
+    public LiveData<Recording> getRecordingById(int id) {
         return db.recordingDao().loadRecordingById(id);
     }
 

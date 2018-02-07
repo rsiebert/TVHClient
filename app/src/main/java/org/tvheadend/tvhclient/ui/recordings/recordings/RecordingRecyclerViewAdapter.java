@@ -161,14 +161,14 @@ public class RecordingRecyclerViewAdapter extends RecyclerView.Adapter<Recording
             }
 
             // Show the information if the recording belongs to a series recording
-            if (recording.getAutorecId() != null) {
+            if (!TextUtils.isEmpty(recording.getAutorecId())) {
                 holder.isSeriesRecordingTextView.setVisibility(ImageView.VISIBLE);
             } else {
                 holder.isSeriesRecordingTextView.setVisibility(ImageView.GONE);
             }
 
             // Show the information if the recording belongs to a series recording
-            if (recording.getTimerecId() != null) {
+            if (!TextUtils.isEmpty(recording.getTimerecId())) {
                 holder.isTimerRecordingTextView.setVisibility(ImageView.VISIBLE);
             } else {
                 holder.isTimerRecordingTextView.setVisibility(ImageView.GONE);

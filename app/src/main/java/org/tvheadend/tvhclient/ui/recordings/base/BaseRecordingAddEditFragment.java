@@ -30,9 +30,6 @@ import java.util.List;
 public class BaseRecordingAddEditFragment extends BaseFragment {
 
     protected boolean isUnlocked;
-    protected int priority;
-    protected int daysOfWeek;
-    protected int recordingProfileName;
     protected String[] daysOfWeekList;
     protected String[] priorityList;
     protected String[] recordingProfilesList;
@@ -46,6 +43,7 @@ public class BaseRecordingAddEditFragment extends BaseFragment {
 
         isUnlocked = TVHClientApplication.getInstance().isUnlocked();
         profileRepository = new ProfileDataRepository(activity);
+        channelAndProgramRepository = new ChannelAndProgramRepository(activity);
 
         daysOfWeekList = activity.getResources().getStringArray(R.array.day_short_names);
         recordingProfilesList = profileRepository.getAllRecordingServerProfileNames();
@@ -84,7 +82,7 @@ public class BaseRecordingAddEditFragment extends BaseFragment {
                 + ((minute < 10) ? "0" + minute : minute);
     }
 
-    protected String getSelectedDaysOfWeek() {
+    protected String getSelectedDaysOfWeekText(int daysOfWeek) {
         StringBuilder text = new StringBuilder();
         for (int i = 0; i < 7; i++) {
             String s = (((daysOfWeek >> i) & 1) == 1) ? daysOfWeekList[i] : "";
