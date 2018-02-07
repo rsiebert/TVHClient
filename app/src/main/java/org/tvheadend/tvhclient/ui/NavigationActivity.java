@@ -1,11 +1,11 @@
 package org.tvheadend.tvhclient.ui;
 
+import android.support.v4.app.Fragment;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,7 +14,6 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.tasks.WakeOnLanTaskCallback;
 import org.tvheadend.tvhclient.ui.channels.ChannelListFragment;
 import org.tvheadend.tvhclient.ui.channels.ChannelViewModel;
-import org.tvheadend.tvhclient.ui.epg.ProgramGuideViewPagerFragment;
 import org.tvheadend.tvhclient.ui.misc.InfoFragment;
 import org.tvheadend.tvhclient.ui.misc.StatusFragment;
 import org.tvheadend.tvhclient.ui.misc.UnlockerFragment;
@@ -125,7 +124,7 @@ public class NavigationActivity extends MainActivity implements WakeOnLanTaskCal
                 fragment = new ChannelListFragment();
                 break;
             case NavigationDrawer.MENU_PROGRAM_GUIDE:
-                fragment = new ProgramGuideViewPagerFragment();
+                //fragment = new ProgramGuideViewPagerFragment();
                 break;
             case NavigationDrawer.MENU_COMPLETED_RECORDINGS:
                 fragment = new CompletedRecordingListFragment();
