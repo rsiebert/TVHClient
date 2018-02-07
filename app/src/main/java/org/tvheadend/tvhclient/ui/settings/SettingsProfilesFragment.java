@@ -123,6 +123,7 @@ public class SettingsProfilesFragment extends PreferenceFragment implements OnPr
     public void onBackPressed() {
         saveRecordingProfile();
         savePlaybackProfile();
+        getActivity().finish();
     }
 
     @Override

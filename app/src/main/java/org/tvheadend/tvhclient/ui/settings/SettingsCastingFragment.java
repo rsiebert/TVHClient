@@ -102,6 +102,7 @@ public class SettingsCastingFragment extends PreferenceFragment implements BackP
     @Override
     public void onBackPressed() {
         save();
+        activity.finish();
     }
 
     @Override

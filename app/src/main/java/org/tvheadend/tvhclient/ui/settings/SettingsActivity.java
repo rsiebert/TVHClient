@@ -1,26 +1,28 @@
 package org.tvheadend.tvhclient.ui.settings;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 
 import com.afollestad.materialdialogs.folderselector.FolderChooserDialog;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
-import org.tvheadend.tvhclient.ui.misc.ChangeLogFragment;
-import org.tvheadend.tvhclient.ui.misc.InfoFragment;
-import org.tvheadend.tvhclient.ui.misc.UnlockerFragment;
 import org.tvheadend.tvhclient.ui.common.BackPressedInterface;
+import org.tvheadend.tvhclient.ui.misc.ChangeLogActivity;
+import org.tvheadend.tvhclient.ui.misc.InfoActivity;
+import org.tvheadend.tvhclient.ui.misc.UnlockerActivity;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
 import java.io.File;
 
 public class SettingsActivity extends AppCompatActivity implements ToolbarInterface, FolderChooserDialog.FolderCallback {
-
+    private String TAG = getClass().getSimpleName();
     private String settingType;
 
     @Override
@@ -45,7 +47,7 @@ public class SettingsActivity extends AppCompatActivity implements ToolbarInterf
                 getFragmentManager().beginTransaction().add(R.id.main, fragment).commit();
             } else {
                 Fragment fragment = null;
-                android.support.v4.app.Fragment supportFragment = null;
+                Intent intent = null;
                 switch (settingType) {
                     case "list_connections":
                         fragment = new SettingsListConnectionsFragment();
@@ -69,22 +71,21 @@ public class SettingsActivity extends AppCompatActivity implements ToolbarInterf
                         fragment = new SettingsAdvancedFragment();
                         break;
                     case "information":
-                        supportFragment = new InfoFragment();
+                        intent = new Intent(this, InfoActivity.class);
+                        startActivity(intent);
                         break;
                     case "unlocker":
-                        supportFragment = new UnlockerFragment();
+                        intent = new Intent(this, UnlockerActivity.class);
+                        startActivity(intent);
                         break;
                     case "changelog":
-                        supportFragment = new ChangeLogFragment();
+                        intent = new Intent(this, ChangeLogActivity.class);
+                        startActivity(intent);
                         break;
                 }
                 if (fragment != null) {
                     fragment.setArguments(getIntent().getExtras());
                     getFragmentManager().beginTransaction().add(R.id.main, fragment).commit();
-                }
-                if (supportFragment != null) {
-                    supportFragment.setArguments(getIntent().getExtras());
-                    getSupportFragmentManager().beginTransaction().add(R.id.main, supportFragment).commit();
                 }
             }
         }
@@ -98,13 +99,15 @@ public class SettingsActivity extends AppCompatActivity implements ToolbarInterf
 
     @Override
     public void onBackPressed() {
+        Log.d(TAG, "onBackPressed: ");
         // If a settings fragment is currently visible, let the fragment
         // handle the back press, otherwise the setting activity.
         Fragment fragment = getFragmentManager().findFragmentById(R.id.main);
         if (fragment != null && fragment instanceof BackPressedInterface) {
             ((BackPressedInterface) fragment).onBackPressed();
+        } else {
+            super.onBackPressed();
         }
-        super.onBackPressed();
     }
 
     @Override

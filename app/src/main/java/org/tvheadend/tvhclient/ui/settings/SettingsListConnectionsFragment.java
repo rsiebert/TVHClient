@@ -25,12 +25,10 @@ import org.tvheadend.tvhclient.data.tasks.WakeOnLanTaskCallback;
 import org.tvheadend.tvhclient.service.EpgSyncService;
 import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
 import org.tvheadend.tvhclient.ui.common.BackPressedInterface;
-import org.tvheadend.tvhclient.ui.startup.StartupActivity;
+import org.tvheadend.tvhclient.utils.MenuUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-
-// TODO consider initial_setup argument
 
 public class SettingsListConnectionsFragment extends ListFragment implements BackPressedInterface, ActionMode.Callback, WakeOnLanTaskCallback {
 
@@ -38,10 +36,9 @@ public class SettingsListConnectionsFragment extends ListFragment implements Bac
     private ConnectionListAdapter connectionListAdapter;
     private List<Connection> connectionList;
     private ActionMode actionMode;
-    private boolean newConnectionSelected;
-    //private DatabaseHelper databaseHelper;
     private AppCompatActivity activity;
     private ConnectionDataRepository repository;
+    private boolean activeConnectionChanged;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -53,8 +50,8 @@ public class SettingsListConnectionsFragment extends ListFragment implements Bac
         }
         toolbarInterface.setTitle(getString(R.string.settings));
 
+        activeConnectionChanged = false;
         repository = new ConnectionDataRepository(activity);
-        //databaseHelper = DatabaseHelper.getInstance(activity.getApplicationContext());
         connectionList = new ArrayList<>();
         connectionListAdapter = new ConnectionListAdapter(activity, connectionList);
         setListAdapter(connectionListAdapter);
@@ -62,13 +59,13 @@ public class SettingsListConnectionsFragment extends ListFragment implements Bac
         setHasOptionsMenu(true);
 
         if (savedInstanceState != null) {
-            newConnectionSelected = savedInstanceState.getBoolean("new_connection_selected");
+            activeConnectionChanged = savedInstanceState.getBoolean("activeConnectionChanged");
         }
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putBoolean("new_connection_selected", newConnectionSelected);
+        outState.putBoolean("activeConnectionChanged", activeConnectionChanged);
     }
 
     @Override
@@ -137,29 +134,33 @@ public class SettingsListConnectionsFragment extends ListFragment implements Bac
         if (connection == null) {
             return false;
         }
-
+        Intent intent;
         switch (item.getItemId()) {
             case R.id.menu_set_active:
                 setConnectionStatus(connection, true);
-                newConnectionSelected = true;
+                activeConnectionChanged = true;
                 mode.finish();
                 return true;
+
             case R.id.menu_set_not_active:
                 setConnectionStatus(connection, false);
-                newConnectionSelected = false;
+                activeConnectionChanged = true;
                 mode.finish();
                 return true;
+
             case R.id.menu_edit:
-                Intent intent = new Intent(activity, SettingsManageConnectionActivity.class);
+                intent = new Intent(activity, SettingsManageConnectionActivity.class);
                 intent.putExtra("connection_id", connection.getId());
                 startActivity(intent);
                 mode.finish();
                 return true;
+
             case R.id.menu_send_wol:
                 WakeOnLanTask task = new WakeOnLanTask(activity, this, connection);
                 task.execute();
                 mode.finish();
                 return true;
+
             case R.id.menu_delete:
                 new MaterialDialog.Builder(activity)
                         .content(getString(R.string.delete_connection, connection.getName()))
@@ -169,15 +170,10 @@ public class SettingsListConnectionsFragment extends ListFragment implements Bac
                             @Override
                             public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                                 repository.removeConnectionSync(connection.getId());
-
-                                //if (databaseHelper.removeConnection(connection.id)) {
-                                    connectionListAdapter.remove(connection);
-                                    connectionListAdapter.notifyDataSetChanged();
-                                    showConnectionCount();
-                                    // Stop the service because the connection is gone
-                                    Intent intent = new Intent(activity, EpgSyncService.class);
-                                    activity.stopService(intent);
-                                //}
+                                connectionListAdapter.remove(connection);
+                                connectionListAdapter.notifyDataSetChanged();
+                                showConnectionCount();
+                                activeConnectionChanged = true;
                             }
                         })
                         .onNegative(new MaterialDialog.SingleButtonCallback() {
@@ -188,6 +184,7 @@ public class SettingsListConnectionsFragment extends ListFragment implements Bac
                         }).show();
                 mode.finish();
                 return true;
+
             default:
                 return false;
         }
@@ -239,18 +236,10 @@ public class SettingsListConnectionsFragment extends ListFragment implements Bac
 
     @Override
     public void onBackPressed() {
-        // If a new connection has been selected or no connection is active
-        // do a new initial sync. Otherwise nothing has changed.
-        if (newConnectionSelected
-                || repository.getActiveConnectionSync() == null) {
-
-            // Stop the service before restarting
-            Intent intent = new Intent(activity, EpgSyncService.class);
-            activity.stopService(intent);
-
-            intent = new Intent(activity, StartupActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
+        if (activeConnectionChanged) {
+            new MenuUtils(activity).handleMenuReconnectSelection();
+        } else {
+            activity.finish();
         }
     }
 }

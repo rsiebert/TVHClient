@@ -1,5 +1,6 @@
 package org.tvheadend.tvhclient.ui.settings;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
@@ -9,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -27,6 +29,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class SettingsManageConnectionFragment extends PreferenceFragment implements BackPressedInterface, Preference.OnPreferenceChangeListener {
+    @SuppressWarnings("unused")
+    private String TAG = getClass().getSimpleName();
 
     private ToolbarInterface toolbarInterface;
     private Connection connection;
@@ -44,6 +48,7 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
     private EditTextPreference prefWolAddress;
     private EditTextPreference prefWolPort;
     private CheckBoxPreference prefWolBroadcast;
+    private int connectionId;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -55,9 +60,8 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
             toolbarInterface = (ToolbarInterface) activity;
         }
         toolbarInterface.setTitle(getString(R.string.add_connection));
-        setHasOptionsMenu(true);
-
         repository = new ConnectionDataRepository(activity);
+        setHasOptionsMenu(true);
 
         // Get the connectivity preferences for later usage
         prefName = (EditTextPreference) findPreference("pref_name");
@@ -71,7 +75,6 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
         prefWolPort = (EditTextPreference) findPreference("pref_wol_port");
         prefWolBroadcast = (CheckBoxPreference) findPreference("pref_wol_broadcast");
 
-        // Set the default values
         prefName.setOnPreferenceChangeListener(this);
         prefAddress.setOnPreferenceChangeListener(this);
         prefPort.setOnPreferenceChangeListener(this);
@@ -83,63 +86,20 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
         prefWolPort.setOnPreferenceChangeListener(this);
         prefWolBroadcast.setOnPreferenceChangeListener(this);
 
-        // Initially the connection has no been changed
-        connectionValuesChanged = false;
-
-        // Restore the added connection information after an orientation change
-        if (savedInstanceState != null) {
-            connection = new Connection();
-            connection.setId(savedInstanceState.getInt("id"));
-            connection.setName(savedInstanceState.getString("name"));
-            connection.setHostname(savedInstanceState.getString("address"));
-            connection.setPort(savedInstanceState.getInt("port"));
-            connection.setStreamingPort(savedInstanceState.getInt("streaming_port"));
-            connection.setUsername(savedInstanceState.getString("username"));
-            connection.setPassword(savedInstanceState.getString("password"));
-            connection.setWolMacAddress(savedInstanceState.getString("wol_address"));
-            connection.setWolPort(savedInstanceState.getInt("wol_port"));
-            connection.setWolUseBroadcast(savedInstanceState.getBoolean("wol_use_broadcast"));
-            connectionValuesChanged = savedInstanceState.getBoolean("connection_changed");
-        } else {
-            // If the bundle is null then a new connection shall be added.
-            // Otherwise edit the connection with the given id
+        if (savedInstanceState == null) {
             Bundle bundle = getArguments();
-            if (bundle == null) {
-                connection = new Connection();
-            } else {
-                int connectionId = bundle.getInt("connection_id", 0);
-                connection = repository.getConnectionSync(connectionId);
+            if (bundle != null) {
+                connectionId = bundle.getInt("connection_id", 0);
             }
+        } else {
+            connectionId = savedInstanceState.getInt("id");
+            connectionValuesChanged = savedInstanceState.getBoolean("connectionValuesChanged");
         }
 
-        toolbarInterface.setTitle(connection.getId() > 0 ?
-                getString(R.string.edit_connection) :
-                getString(R.string.add_connection));
-    }
+        // Create the view model that stores the connection model
+        ConnectionViewModel viewModel = ViewModelProviders.of(activity).get(ConnectionViewModel.class);
+        connection = viewModel.getConnectionByIdSync(connectionId);
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        outState.putInt("id", connection.getId());
-        outState.putString("name", connection.getName());
-        outState.putString("address", connection.getHostname());
-        outState.putInt("port", connection.getPort());
-        outState.putInt("streaming_port", connection.getStreamingPort());
-        outState.putString("username", connection.getUsername());
-        outState.putString("password", connection.getPassword());
-        outState.putString("wol_address", connection.getWolMacAddress());
-        outState.putInt("wol_port", connection.getWolPort());
-        outState.putBoolean("wol_use_broadcast", connection.isWolUseBroadcast());
-        outState.putBoolean("connection_changed", connectionValuesChanged);
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        showPreferenceValues();
-    }
-
-    private void showPreferenceValues() {
         onPreferenceChange(prefName, connection.getName());
         onPreferenceChange(prefAddress, connection.getHostname());
         onPreferenceChange(prefPort, String.valueOf(connection.getPort()));
@@ -150,6 +110,21 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
         onPreferenceChange(prefWolAddress, connection.getWolMacAddress());
         onPreferenceChange(prefWolPort, connection.getWolPort());
         onPreferenceChange(prefWolBroadcast, connection.isWolUseBroadcast());
+
+        // Reset the variable which will be set to true when the method
+        // onPreferenceChange is called. Initially the values have not been changed
+        connectionValuesChanged = false;
+
+        toolbarInterface.setTitle(connection.getId() > 0 ?
+                getString(R.string.edit_connection) :
+                getString(R.string.add_connection));
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putInt("id", connection.getId());
+        outState.putBoolean("connectionValuesChanged", connectionValuesChanged);
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -161,18 +136,26 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                return true;
             case R.id.menu_save:
-                repository.updateConnectionSync(connection);
-                activity.finish();
+                save();
                 return true;
             case R.id.menu_cancel:
                 cancel();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void save() {
+        if (validateName(connection.getName())
+                && validateIpAddress(connection.getHostname())
+                && validatePort(connection.getStreamingPort())
+                && validatePort(connection.getWolPort())
+                && validateMacAddress(connection.getWolMacAddress())) {
+
+            repository.updateConnectionSync(connection);
+            activity.finish();
         }
     }
 
@@ -215,74 +198,61 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
         connectionValuesChanged = true;
 
         String value = String.valueOf(o);
+        Log.d(TAG, "onPreferenceChange: pref " + preference.getKey() + ", value " + value);
         switch (preference.getKey()) {
             case "pref_name":
-                if (validateName(value)) {
-                    connection.setName(value);
-                    prefName.setSummary(value.isEmpty() ?
-                            getString(R.string.pref_name_sum) : value);
-                }
+                connection.setName(value);
+                prefName.setText(value);
+                prefName.setSummary(value.isEmpty() ? getString(R.string.pref_name_sum) : value);
                 break;
             case "pref_address":
-                if (validateIpAddress(value)) {
-                    connection.setHostname(value);
-                    prefAddress.setSummary(value.isEmpty() ?
-                            getString(R.string.pref_host_sum) : value);
-                }
+                connection.setHostname(value);
+                prefAddress.setText(value);
+                prefAddress.setSummary(value.isEmpty() ? getString(R.string.pref_host_sum) : value);
                 break;
             case "pref_port":
                 try {
                     int port = Integer.parseInt(value);
-                    if (validatePort(port)) {
-                        connection.setPort(Integer.parseInt(value));
-                        prefPort.setSummary(value.isEmpty() ?
-                                getString(R.string.pref_port_sum) : value);
-                    }
+                    connection.setPort(port);
+                    prefPort.setText(String.valueOf(port));
+                    prefPort.setSummary(value.isEmpty() ? getString(R.string.pref_port_sum) : value);
                 } catch (NumberFormatException nex) {
                     // NOP
                 }
                 break;
             case "pref_streaming_port":
                 try {
-                    int port = Integer.parseInt(value);
-                    if (validatePort(port)) {
-                        connection.setStreamingPort(Integer.parseInt(value));
-                        prefStreamingPort.setSummary(getString(R.string.pref_streaming_port_sum,
-                                Integer.valueOf(value)));
-                    }
+                    connection.setStreamingPort(Integer.parseInt(value));
+                    prefStreamingPort.setText(value);
+                    prefStreamingPort.setSummary(getString(R.string.pref_streaming_port_sum, Integer.valueOf(value)));
                 } catch (NumberFormatException e) {
                     // NOP
                 }
                 break;
             case "pref_username":
                 connection.setUsername(value);
-                prefUsername.setSummary(value.isEmpty() ?
-                        getString(R.string.pref_user_sum) : value);
+                prefUsername.setText(value);
+                prefUsername.setSummary(value.isEmpty() ? getString(R.string.pref_user_sum) : value);
                 break;
             case "pref_password":
                 connection.setPassword(value);
-                prefPassword.setSummary(value.isEmpty() ?
-                        getString(R.string.pref_pass_sum) :
-                        getString(R.string.pref_pass_set_sum));
+                prefPassword.setText(value);
+                prefPassword.setSummary(value.isEmpty() ? getString(R.string.pref_pass_sum) : getString(R.string.pref_pass_set_sum));
                 break;
             case "pref_selected":
                 connection.setActive(Boolean.valueOf(value));
                 break;
             case "pref_wol_address":
-                if (validateMacAddress(value)) {
-                    connection.setWolMacAddress(value);
-                    prefWolAddress.setSummary(value.isEmpty() ?
-                            getString(R.string.pref_wol_address_sum) : value);
-                }
+                connection.setWolMacAddress(value);
+                prefWolAddress.setText(value);
+                prefWolAddress.setSummary(value.isEmpty() ? getString(R.string.pref_wol_address_sum) : value);
                 break;
             case "pref_wol_port":
                 try {
-                    int port = Integer.parseInt(value);
-                    if (validatePort(port)) {
-                        connection.setWolPort(port);
-                        prefWolPort.setSummary(getString(R.string.pref_wol_port_sum,
-                                Integer.valueOf(value)));
-                    }
+                    connection.setWolPort(Integer.parseInt(value));
+                    prefWolPort.setText(value);
+                    prefWolPort.setSummary(getString(R.string.pref_wol_port_sum,
+                            Integer.valueOf(value)));
                 } catch (NumberFormatException e) {
                     // NOP
                 }

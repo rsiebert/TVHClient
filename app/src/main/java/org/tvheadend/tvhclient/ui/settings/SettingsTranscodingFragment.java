@@ -185,5 +185,6 @@ public class SettingsTranscodingFragment extends PreferenceFragment implements B
     public void onBackPressed() {
         savePlaybackProfile();
         saveRecordingProfile();
+        getActivity().finish();
     }
 }
