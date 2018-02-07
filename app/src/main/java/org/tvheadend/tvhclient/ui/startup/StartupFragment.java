@@ -1,14 +1,21 @@
 package org.tvheadend.tvhclient.ui.startup;
 
-import android.app.Fragment;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,21 +27,26 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.data.entity.Connection;
+import org.tvheadend.tvhclient.data.repository.ConnectionDataRepository;
+import org.tvheadend.tvhclient.service.EpgSyncService;
 import org.tvheadend.tvhclient.service.htsp.HtspConnection;
 import org.tvheadend.tvhclient.service.htsp.tasks.Authenticator;
-import org.tvheadend.tvhclient.service.EpgSyncService;
 import org.tvheadend.tvhclient.ui.NavigationActivity;
 import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
 import org.tvheadend.tvhclient.ui.settings.SettingsActivity;
+import org.tvheadend.tvhclient.ui.settings.SettingsManageConnectionActivity;
 import org.tvheadend.tvhclient.utils.MenuUtils;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-// TODO loading initial data is shown before auth message
-
-public class SyncStatusFragment extends Fragment {
+public class StartupFragment extends Fragment {
+    @SuppressWarnings("unused")
+    private String TAG = getClass().getSimpleName();
 
     @BindView(R.id.progress_bar)
     ProgressBar progressBar;
@@ -42,15 +54,19 @@ public class SyncStatusFragment extends Fragment {
     TextView statusTextView;
     @BindView(R.id.status_background)
     ImageView statusImageView;
+    @BindView(R.id.fab)
+    FloatingActionButton floatingActionButton;
 
     private String status;
+    private String title;
     private Unbinder unbinder;
-    private SharedPreferences sharedPreferences;
-    private MenuUtils menuUtils;
+    private AppCompatActivity activity;
+    private ConnectionDataRepository repository;
+    private ToolbarInterface toolbarInterface;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.sync_status_fragment, null);
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.startup_fragment, null);
         unbinder = ButterKnife.bind(this, view);
         return view;
     }
@@ -64,26 +80,69 @@ public class SyncStatusFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (getActivity() instanceof ToolbarInterface) {
-            ToolbarInterface toolbarInterface = (ToolbarInterface) getActivity();
-            toolbarInterface.setTitle("Sync Status");
-        }
 
+        activity = (AppCompatActivity) getActivity();
+        if (activity instanceof ToolbarInterface) {
+            toolbarInterface = (ToolbarInterface) activity;
+            toolbarInterface.setTitle("Connection Status");
+        }
         setHasOptionsMenu(true);
 
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        menuUtils = new MenuUtils(getActivity());
+        repository = new ConnectionDataRepository(activity);
+        floatingActionButton.setVisibility(View.VISIBLE);
 
-        // Restore the last shown state when an orientation change happened.
-        // Otherwise start the service when the fragment was created first
-        if (savedInstanceState != null) {
-            status = savedInstanceState.getString("status");
+        if (!isConnectionDefined()) {
+            statusTextView.setText("No connection defined...");
+            floatingActionButton.setOnClickListener(v -> {
+                showSettingsAddNewConnection();
+            });
+        } else if (!isActiveConnectionDefined()) {
+            statusTextView.setText("At least one connection is defined but not active...");
+            floatingActionButton.setOnClickListener(v -> {
+                showSettingsListConnections();
+            });
+        } else if (!isNetworkAvailable()) {
+            statusTextView.setText("No network available, please activate wifi or mobile data...");
+            floatingActionButton.setOnClickListener(v -> {
+                Intent intent = new Intent(Settings.ACTION_WIRELESS_SETTINGS);
+                startActivity(intent);
+            });
         } else {
-            Intent intent = new Intent(getActivity(), EpgSyncService.class);
-            getActivity().stopService(intent);
-            getActivity().startService(intent);
+            // Restore the last shown state when an orientation change happened.
+            // Otherwise start the service when the fragment was created first
+            if (savedInstanceState != null) {
+                status = savedInstanceState.getString("status");
+                title = savedInstanceState.getString("title");
+                statusTextView.setText(status);
+                toolbarInterface.setTitle(title);
+            } else {
+                Log.d(TAG, "onActivityCreated: starting service");
+                Intent intent = new Intent(activity, EpgSyncService.class);
+                activity.stopService(intent);
+                activity.startService(intent);
+            }
         }
-        statusTextView.setText(status);
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putString("status", status);
+        outState.putString("title", title);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("service_status");
+        LocalBroadcastManager.getInstance(activity).registerReceiver(messageReceiver, intentFilter);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        LocalBroadcastManager.getInstance(activity).unregisterReceiver(messageReceiver);
     }
 
     @Override
@@ -96,33 +155,44 @@ public class SyncStatusFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_settings:
-                showSettingsActivity();
+                showSettingsListConnections();
                 return true;
             case R.id.menu_refresh:
-                menuUtils.handleMenuReconnectSelection();
+                new MenuUtils(activity).handleMenuReconnectSelection();
                 return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        outState.putString("status", status);
-        super.onSaveInstanceState(outState);
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivityManager != null) {
+            NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+            return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+        }
+        return false;
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction("service_status");
-        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(messageReceiver, intentFilter);
+    private boolean isConnectionDefined() {
+        Log.d(TAG, "isConnectionDefined: ");
+        List<Connection> connectionList = repository.getAllConnectionsSync();
+        return connectionList != null && connectionList.size() > 0;
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(messageReceiver);
+    private boolean isActiveConnectionDefined() {
+        Log.d(TAG, "isActiveConnectionDefined: ");
+        return repository.getActiveConnectionSync() != null;
+    }
+
+    private void showSettingsAddNewConnection() {
+        Intent intent = new Intent(activity, SettingsManageConnectionActivity.class);
+        startActivity(intent);
+    }
+
+    private void showSettingsListConnections() {
+        Intent intent = new Intent(activity, SettingsActivity.class);
+        intent.putExtra("setting_type", "list_connections");
+        startActivity(intent);
     }
 
     private BroadcastReceiver messageReceiver = new BroadcastReceiver() {
@@ -130,9 +200,9 @@ public class SyncStatusFragment extends Fragment {
         public void onReceive(Context context, Intent intent) {
             // Get the connection status from the local broadcast
             if (intent.hasExtra("connection_status")) {
-                progressBar.setVisibility(View.GONE);
-                HtspConnection.State state = (HtspConnection.State)
-                        intent.getSerializableExtra("connection_status");
+                title = "Connection Status";
+
+                HtspConnection.State state = (HtspConnection.State) intent.getSerializableExtra("connection_status");
                 if (state == HtspConnection.State.CLOSED) {
                     status = "Connection closed";
                 } else if (state == HtspConnection.State.CLOSING) {
@@ -158,9 +228,7 @@ public class SyncStatusFragment extends Fragment {
             }
             // Get the current authentication status from the local broadcast
             if (intent.hasExtra("authentication_status")) {
-                progressBar.setVisibility(View.GONE);
-                Authenticator.State state = (Authenticator.State)
-                        intent.getSerializableExtra("authentication_status");
+                Authenticator.State state = (Authenticator.State) intent.getSerializableExtra("authentication_status");
                 if (state == Authenticator.State.IDLE) {
                     status = "Authenticating idle";
                 } else if (state == Authenticator.State.AUTHENTICATING) {
@@ -177,6 +245,7 @@ public class SyncStatusFragment extends Fragment {
             }
             // Inform the fragment about the current sync status
             if (intent.hasExtra("sync_status")) {
+                title = "Sync Status";
                 progressBar.setVisibility(View.VISIBLE);
                 // TODO get an enum
                 status = intent.getStringExtra("sync_status");
@@ -187,6 +256,7 @@ public class SyncStatusFragment extends Fragment {
                 }
             }
             statusTextView.setText(status);
+            toolbarInterface.setTitle(title);
         }
     };
 
@@ -194,26 +264,18 @@ public class SyncStatusFragment extends Fragment {
         // Unregister from the broadcast manager to avoid getting any connection
         // state changes when the service is stopped and the connection gets closed.
         // The user needs to go to the settings and fix the login credentials.
-        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(messageReceiver);
-        getActivity().stopService(new Intent(getActivity(), EpgSyncService.class));
+        LocalBroadcastManager.getInstance(activity).unregisterReceiver(messageReceiver);
+        activity.stopService(new Intent(activity, EpgSyncService.class));
     }
 
     private void showContentScreen() {
         // Get the initial screen from the user preference.
         // This determines which screen shall be shown first
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity);
         int startScreen = Integer.parseInt(sharedPreferences.getString("defaultMenuPositionPref", "0"));
-        Intent intent = new Intent(getActivity(), NavigationActivity.class);
+        Intent intent = new Intent(activity, NavigationActivity.class);
         intent.putExtra("navigation_menu_position", startScreen);
-        getActivity().finish();
-        getActivity().startActivity(intent);
-    }
-
-    private void showSettingsActivity() {
-        Intent intent = new Intent(getActivity(), SettingsActivity.class);
-        intent.putExtra("setting_type", "list_connections");
-        intent.putExtra("initial_setup", true);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-        startActivity(intent);
-        getActivity().finish();
+        activity.startActivity(intent);
+        activity.finish();
     }
 }
