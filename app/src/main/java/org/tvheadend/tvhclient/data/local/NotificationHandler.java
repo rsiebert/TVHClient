@@ -71,7 +71,7 @@ public class NotificationHandler {
         Logger logger = Logger.getInstance();
         logger.log(TAG, "addNotification() called with: id = [" + id + "], offset = [" + offset + "]");
 
-        final Recording rec = new RecordingRepository(app.getApplicationContext()).getRecordingSync(id);
+        final Recording rec = new RecordingRepository(app.getApplicationContext()).getRecordingByIdSync(id);
 
         // The start time when the notification shall be shown
         String msg = app.getString(R.string.recording_started);

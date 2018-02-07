@@ -21,7 +21,7 @@ public class NotificationReceiver extends BroadcastReceiver {
         // Get the recording of interest
         int recId = intent.getIntExtra("dvrId", 0);
         String msg = intent.getStringExtra(Constants.BUNDLE_NOTIFICATION_MSG);
-        final Recording rec = new RecordingRepository(context).getRecordingSync(recId);
+        final Recording rec = new RecordingRepository(context).getRecordingByIdSync(recId);
 
         if (rec != null) {
             NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(

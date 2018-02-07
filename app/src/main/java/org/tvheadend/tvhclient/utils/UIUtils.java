@@ -84,7 +84,7 @@ public class UIUtils {
     }
 
     public static Drawable getRecordingState(Context context, int dvrId) {
-        final Recording recording = new RecordingRepository(context).getRecordingSync(dvrId);
+        final Recording recording = new RecordingRepository(context).getRecordingByIdSync(dvrId);
         if (recording == null) {
             return null;
         } else if (recording.isFailed()) {

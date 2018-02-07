@@ -178,7 +178,7 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
                     menuUtils.handleMenuSearchEpgSelection(program.getTitle(), channelId);
                     return true;
                 case R.id.menu_record_remove:
-                    final Recording rec = new RecordingRepository(activity).getRecordingSync(program.getDvrId());
+                    final Recording rec = new RecordingRepository(activity).getRecordingByIdSync(program.getDvrId());
                     if (rec != null) {
                         if (rec.isRecording()) {
                             menuUtils.handleMenuStopRecordingSelection(rec.getId(), rec.getTitle());

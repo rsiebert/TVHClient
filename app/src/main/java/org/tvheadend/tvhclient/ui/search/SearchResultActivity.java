@@ -152,7 +152,7 @@ public class SearchResultActivity extends AppCompatActivity implements SearchVie
         Bundle bundle = intent.getBundleExtra(SearchManager.APP_DATA);
         if (bundle != null) {
             channel = null; // TODO dataStorage.getChannelFromArray(bundle.getInt("channelId"));
-            //recording = dataStorage.getTimerRecording(bundle.getLong("dvrId"));
+            //recording = dataStorage.getTimerRecordingById(bundle.getLong("dvrId"));
         } else {
             channel = null;
             //recording = null;

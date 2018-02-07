@@ -535,7 +535,7 @@ public class MenuUtils {
             playMenuItem.setVisible(true);
         }
 
-        Recording rec = repository.getRecordingSync(dvrId);
+        Recording rec = repository.getRecordingByIdSync(dvrId);
 
         if (rec == null || !rec.isRecording() && !rec.isScheduled()) {
             recordOnceMenuItem.setVisible(true);

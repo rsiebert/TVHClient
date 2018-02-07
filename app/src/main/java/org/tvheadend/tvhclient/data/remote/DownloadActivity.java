@@ -48,7 +48,7 @@ public class DownloadActivity extends Activity implements OnRequestPermissionsRe
         super.onCreate(savedInstanceState);
         MiscUtils.setLanguage(this);
 
-        rec = new RecordingRepository(this).getRecordingSync(getIntent().getIntExtra("dvrId", 0));
+        rec = new RecordingRepository(this).getRecordingByIdSync(getIntent().getIntExtra("dvrId", 0));
         conn = new ConnectionDataRepository(this).getActiveConnectionSync();
         logger = Logger.getInstance();
     }

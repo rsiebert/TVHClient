@@ -85,8 +85,8 @@ public class PlayActivity extends Activity implements OnRequestPermissionsResult
         // Check that a valid channel or recording was specified
         connectionRepostory = new ConnectionDataRepository(this);
         repository = new RecordingRepository(this);
-        ch = repository.getChannelSync(getIntent().getIntExtra("channelId", 0));
-        rec = repository.getRecordingSync(getIntent().getIntExtra("dvrId", 0));
+        ch = repository.getChannelByIdSync(getIntent().getIntExtra("channelId", 0));
+        rec = repository.getRecordingByIdSync(getIntent().getIntExtra("dvrId", 0));
 
         // Get the title from either the channel or recording
         if (ch != null) {
@@ -347,7 +347,7 @@ public class PlayActivity extends Activity implements OnRequestPermissionsResult
             streamType = MediaInfo.STREAM_TYPE_LIVE;
         } else if (rec != null) {
             castUrl += "/dvrfile/" + rec.getId();
-            Channel channel = repository.getChannelSync(rec.getChannelId());
+            Channel channel = repository.getChannelByIdSync(rec.getChannelId());
             iconUrl += "/" + (channel != null ? channel.getChannelIcon() : "");
             streamType = MediaInfo.STREAM_TYPE_BUFFERED;
 
