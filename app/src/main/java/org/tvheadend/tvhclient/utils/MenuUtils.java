@@ -28,7 +28,6 @@ import org.tvheadend.tvhclient.data.model.GenreColorDialogItem;
 import org.tvheadend.tvhclient.data.remote.DownloadActivity;
 import org.tvheadend.tvhclient.data.remote.PlayActivity;
 import org.tvheadend.tvhclient.data.repository.ChannelAndProgramRepository;
-import org.tvheadend.tvhclient.data.repository.ConnectionDataRepository;
 import org.tvheadend.tvhclient.data.repository.ProfileDataRepository;
 import org.tvheadend.tvhclient.data.repository.RecordingRepository;
 import org.tvheadend.tvhclient.data.repository.ServerDataRepository;
@@ -57,7 +56,6 @@ public class MenuUtils {
 
     private final int htspVersion;
     private final boolean isUnlocked;
-    private final ConnectionDataRepository connectionRepository;
     private final ChannelAndProgramRepository channelAndProgramRepository;
     private final ProfileDataRepository profileRepository;
     private final RecordingRepository repository;
@@ -67,7 +65,6 @@ public class MenuUtils {
         this.activity = new WeakReference<>(activity);
         this.htspVersion = new ServerDataRepository(activity).loadServerStatus().getHtspVersion();
         this.isUnlocked = TVHClientApplication.getInstance().isUnlocked();
-        this.connectionRepository = new ConnectionDataRepository(activity);
         this.channelAndProgramRepository = new ChannelAndProgramRepository(activity);
         this.profileRepository = new ProfileDataRepository(activity);
         this.repository = new RecordingRepository(activity);
@@ -565,15 +562,10 @@ public class MenuUtils {
         new MaterialDialog.Builder(activity)
                 .title("Reconnect to server?")
                 .content("Do you want to reconnect to the server?\n" +
-                        "The application will be restarted and a new initial sync willbe performed.")
+                        "The application will be restarted and a new initial sync will be performed.")
                 .negativeText(R.string.cancel)
                 .positiveText("Reconnect")
                 .onPositive((dialog, which) -> {
-
-                    //Intent intent = new Intent(activity, EpgSyncService.class);
-                    //intent.setAction("disconnect");
-                    //activity.startService(intent);
-
                     // Save the information that a new sync is required
                     // Then restart the application to show the sync fragment
                     SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity);
@@ -581,6 +573,7 @@ public class MenuUtils {
                     editor.putBoolean("initial_sync_done", false);
                     editor.apply();
                     Intent intent = new Intent(activity, StartupActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     activity.startActivity(intent);
                     activity.finish();
                 })
