@@ -202,7 +202,7 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
             return true;
         }
 
-        Connection connection = connectionDataRepository.getConnectionSync((int) profile.getIdentifier());
+        Connection connection = connectionDataRepository.getConnectionByIdSync((int) profile.getIdentifier());
         connection.setActive(true);
         connectionDataRepository.updateConnectionSync(connection);
 
@@ -214,6 +214,7 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
         editor.apply();
 
         Intent intent = new Intent(activity, StartupActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         activity.finish();
         activity.startActivity(intent);
         return true;

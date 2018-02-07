@@ -21,7 +21,7 @@ public class ConnectionDataRepository {
         this.db = AppDatabase.getInstance(context.getApplicationContext());
     }
 
-    public Connection getConnectionSync(int connectionId) {
+    public Connection getConnectionByIdSync(int connectionId) {
         try {
             return new LoadConnectionTask(db.connectionDao(), connectionId).execute().get();
         } catch (InterruptedException | ExecutionException e) {
