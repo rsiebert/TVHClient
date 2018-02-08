@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 
 import org.tvheadend.tvhclient.data.AppDatabase;
 import org.tvheadend.tvhclient.data.dao.ServerStatusDao;
+import org.tvheadend.tvhclient.data.entity.ChannelTag;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
 
 import java.util.concurrent.ExecutionException;
@@ -19,6 +20,19 @@ public class ServerDataRepository {
     public ServerStatus loadServerStatus() {
         try {
             return new LoadServerStatusTask(db.serverStatusDao()).execute().get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public void setSelectedChannelTag(int id) {
+        new UpdateSelectedChannelTagTask(db.serverStatusDao(), id).execute();
+    }
+
+    public ChannelTag getSelectedChannelTag() {
+        try {
+            return new LoadSelectedChannelTagTask(db.serverStatusDao()).execute().get();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
@@ -83,6 +97,35 @@ public class ServerDataRepository {
                 case "recording_transcoding_profile":
                     dao.updateRecordingTranscodingProfile(id);
             }
+            return null;
+        }
+    }
+
+    private static class LoadSelectedChannelTagTask extends AsyncTask<Void, Void, ChannelTag> {
+        private final ServerStatusDao dao;
+
+        LoadSelectedChannelTagTask(ServerStatusDao dao) {
+            this.dao = dao;
+        }
+
+        @Override
+        protected ChannelTag doInBackground(Void... voids) {
+            return dao.loadSelectedChannelTag();
+        }
+    }
+
+    private static class UpdateSelectedChannelTagTask extends AsyncTask<Void, Void, ChannelTag> {
+        private final ServerStatusDao dao;
+        private final int id;
+
+        UpdateSelectedChannelTagTask(ServerStatusDao dao, int id) {
+            this.dao = dao;
+            this.id = id;
+        }
+
+        @Override
+        protected ChannelTag doInBackground(Void... voids) {
+            dao.updateSelectedChannelTag(id);
             return null;
         }
     }

@@ -36,9 +36,6 @@ import org.tvheadend.tvhclient.ui.common.ChannelTagListAdapter;
 import org.tvheadend.tvhclient.ui.common.GenreColorDialogAdapter;
 import org.tvheadend.tvhclient.ui.search.SearchActivity;
 import org.tvheadend.tvhclient.ui.startup.StartupActivity;
-import org.tvheadend.tvhclient.utils.callbacks.ChannelTagSelectionCallback;
-import org.tvheadend.tvhclient.utils.callbacks.ChannelTimeSelectionCallback;
-import org.tvheadend.tvhclient.utils.callbacks.RecordingRemovedCallback;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
@@ -59,6 +56,7 @@ public class MenuUtils {
     private final ChannelAndProgramRepository channelAndProgramRepository;
     private final ProfileDataRepository profileRepository;
     private final RecordingRepository repository;
+    private final ServerDataRepository serverDataRepository;
     private WeakReference<Activity> activity;
 
     public MenuUtils(Activity activity) {
@@ -68,6 +66,7 @@ public class MenuUtils {
         this.channelAndProgramRepository = new ChannelAndProgramRepository(activity);
         this.profileRepository = new ProfileDataRepository(activity);
         this.repository = new RecordingRepository(activity);
+        this.serverDataRepository = new ServerDataRepository(activity);
     }
 
     /**
@@ -131,13 +130,15 @@ public class MenuUtils {
 
     }
 
-    public void handleMenuTagsSelection(int selectedTagId, ChannelTagSelectionCallback callback) {
+    public void handleMenuTagsSelection(ChannelTagSelectionCallback callback) {
         Activity activity = this.activity.get();
         if (activity == null) {
             return;
         }
         // Fill the channel tag adapter with the available channel tags
         List<ChannelTag> channelTagList = channelAndProgramRepository.getAllChannelTags();
+        ChannelTag selectedChannelTag = serverDataRepository.getSelectedChannelTag();
+
 
         // Add the default tag (all channels) to the list after it has been sorted
         ChannelTag tag = new ChannelTag();
@@ -145,7 +146,7 @@ public class MenuUtils {
         tag.setTagName(activity.getString(R.string.all_channels));
         channelTagList.add(0, tag);
 
-        final ChannelTagListAdapter channelTagListAdapter = new ChannelTagListAdapter(activity, channelTagList, selectedTagId);
+        final ChannelTagListAdapter channelTagListAdapter = new ChannelTagListAdapter(activity, channelTagList, selectedChannelTag);
         // Show the dialog that shows all available channel tags. When the
         // user has selected a tag, restart the loader to loadRecordingById the updated channel list
         final MaterialDialog dialog = new MaterialDialog.Builder(activity)
@@ -155,6 +156,7 @@ public class MenuUtils {
         // Set the callback to handle clicks. This needs to be done after the
         // dialog creation so that the inner method has access to the dialog variable
         channelTagListAdapter.setCallback(which -> {
+            serverDataRepository.setSelectedChannelTag(which);
             if (callback != null) {
                 callback.onChannelTagIdSelected(which);
             }

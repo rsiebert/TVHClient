@@ -6,6 +6,7 @@ import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
 
+import org.tvheadend.tvhclient.data.entity.ChannelTag;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
 
 @Dao
@@ -47,6 +48,17 @@ public interface ServerStatusDao {
             "SET recording_transcoding_profile_id = :id " +
             "WHERE connection_id IN (SELECT id FROM connections WHERE active = 1)")
     void updateRecordingTranscodingProfile(int id);
+
+    @Query("SELECT tags.* " +
+            "FROM channel_tags AS tags " +
+            "LEFT JOIN server_status AS s ON s.channel_tag_id = tags.id " +
+            "LEFT JOIN connections AS c ON c.id = s.connection_id AND c.active = 1")
+    ChannelTag loadSelectedChannelTag();
+
+    @Query("UPDATE server_status " +
+            "SET channel_tag_id = :id " +
+            "WHERE connection_id IN (SELECT id FROM connections WHERE active = 1)")
+    void updateSelectedChannelTag(int id);
 
     @Insert
     void insert(ServerStatus serverStatus);
