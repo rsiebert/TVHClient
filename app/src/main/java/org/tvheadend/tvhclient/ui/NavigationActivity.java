@@ -60,6 +60,12 @@ public class NavigationActivity extends MainActivity implements WakeOnLanTaskCal
         } else {
             selectedNavigationMenuId = savedInstanceState.getInt("navigation_menu_position", NavigationDrawer.MENU_CHANNELS);
         }
+
+        // Update the drawer menu so that all available menu items are
+        // shown in case the recording counts have changed or the user has
+        // bought the unlocked version to enable all features
+        navigationDrawer.updateDrawerHeader();
+        startObservingViewModels();
     }
 
     private void startObservingViewModels() {
@@ -194,21 +200,6 @@ public class NavigationActivity extends MainActivity implements WakeOnLanTaskCal
                 break;
         }
         return true;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.d(TAG, "onResume() called");
-        // Show the defined fragment from the menu position or the
-        // status if the connection state is not fine
-        handleDrawerItemSelected(selectedNavigationMenuId);
-
-        // Update the drawer menu so that all available menu items are
-        // shown in case the recording counts have changed or the user has
-        // bought the unlocked version to enable all features
-        navigationDrawer.updateDrawerHeader();
-        startObservingViewModels();
     }
 
     @Override
