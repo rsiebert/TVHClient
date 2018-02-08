@@ -204,11 +204,11 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
         }
 
         new MaterialDialog.Builder(activity)
-                .title("Reconnect to server?")
-                .content("Do you want to reconnect to the server?\n" +
+                .title("Connect to new server?")
+                .content("Do you want to connect to the newly selected server?\n" +
                         "The application will be restarted and a new initial sync will be performed.")
                 .negativeText(R.string.cancel)
-                .positiveText("Reconnect")
+                .positiveText("Connect")
                 .onPositive((dialog, which) -> {
                     // Update the currently active connection
                     Connection connection = connectionDataRepository.getConnectionByIdSync((int) profile.getIdentifier());
