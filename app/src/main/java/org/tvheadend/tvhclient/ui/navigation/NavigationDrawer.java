@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.ui;
+package org.tvheadend.tvhclient.ui.navigation;
 
 import android.app.Activity;
 import android.content.Intent;

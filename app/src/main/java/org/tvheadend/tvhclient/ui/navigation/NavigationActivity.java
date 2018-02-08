@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.ui;
+package org.tvheadend.tvhclient.ui.navigation;
 
 import android.support.v4.app.Fragment;
 import android.arch.lifecycle.ViewModelProviders;
@@ -12,6 +12,7 @@ import android.view.MenuItem;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.tasks.WakeOnLanTaskCallback;
+import org.tvheadend.tvhclient.ui.MainActivity;
 import org.tvheadend.tvhclient.ui.channels.ChannelListFragment;
 import org.tvheadend.tvhclient.ui.channels.ChannelViewModel;
 import org.tvheadend.tvhclient.ui.misc.InfoFragment;
