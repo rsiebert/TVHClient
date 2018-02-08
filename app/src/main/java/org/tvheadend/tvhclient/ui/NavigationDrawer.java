@@ -10,6 +10,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
 import android.view.View;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
@@ -202,22 +203,34 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
             return true;
         }
 
-        Connection connection = connectionDataRepository.getConnectionByIdSync((int) profile.getIdentifier());
-        connection.setActive(true);
-        connectionDataRepository.updateConnectionSync(connection);
+        new MaterialDialog.Builder(activity)
+                .title("Reconnect to server?")
+                .content("Do you want to reconnect to the server?\n" +
+                        "The application will be restarted and a new initial sync will be performed.")
+                .negativeText(R.string.cancel)
+                .positiveText("Reconnect")
+                .onPositive((dialog, which) -> {
+                    // Update the currently active connection
+                    Connection connection = connectionDataRepository.getConnectionByIdSync((int) profile.getIdentifier());
+                    connection.setActive(true);
+                    connectionDataRepository.updateConnectionSync(connection);
 
-        // Save the information that a new sync is required
-        // Then restart the application to show the sync fragment
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean("initial_sync_done", false);
-        editor.apply();
+                    // Save the information that a new sync is required
+                    // Then restart the application to show the sync fragment
+                    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putBoolean("initial_sync_done", false);
+                    editor.apply();
 
-        Intent intent = new Intent(activity, StartupActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        activity.finish();
-        activity.startActivity(intent);
-        return true;
+                    // Restart the application
+                    Intent intent = new Intent(activity, StartupActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    activity.startActivity(intent);
+                    activity.finish();
+                })
+                .show();
+
+        return false;
     }
 
     @Override
