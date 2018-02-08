@@ -25,6 +25,8 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+// TODO improve layout
+
 public class RecordingRecyclerViewAdapter extends RecyclerView.Adapter<RecordingRecyclerViewAdapter.RecyclerViewHolder> {
 
     private List<Recording> recordingList;
@@ -126,8 +128,8 @@ public class RecordingRecyclerViewAdapter extends RecyclerView.Adapter<Recording
 
             holder.dateTextView.setText(UIUtils.getDate(activity, recording.getStart()));
 
-            String time = UIUtils.getTimeText(activity, recording.getStart()) + " - " + UIUtils.getTimeText(activity, recording.getStop());
-            holder.timeTextView.setText(time);
+            holder.startTimeTextView.setText(UIUtils.getTimeText(activity, recording.getStart()));
+            holder.stopTimeTextView.setText(UIUtils.getTimeText(activity, recording.getStop()));
 
             String durationTime = activity.getString(R.string.minutes, recording.getDuration());
             holder.durationTextView.setText(durationTime);
@@ -218,8 +220,10 @@ public class RecordingRecyclerViewAdapter extends RecyclerView.Adapter<Recording
         TextView isTimerRecordingTextView;
         @BindView(R.id.channel)
         TextView channelTextView;
-        @BindView(R.id.time)
-        TextView timeTextView;
+        @BindView(R.id.start)
+        TextView startTimeTextView;
+        @BindView(R.id.stop)
+        TextView stopTimeTextView;
         @BindView(R.id.date)
         TextView dateTextView;
         @BindView(R.id.duration)

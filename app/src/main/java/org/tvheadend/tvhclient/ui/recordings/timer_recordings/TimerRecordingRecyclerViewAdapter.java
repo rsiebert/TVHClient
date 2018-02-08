@@ -24,6 +24,8 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+// TODO improve layout
+
 public class TimerRecordingRecyclerViewAdapter extends RecyclerView.Adapter<TimerRecordingRecyclerViewAdapter.RecyclerViewHolder> {
 
     private List<TimerRecording> timerRecordingList;
@@ -97,8 +99,8 @@ public class TimerRecordingRecyclerViewAdapter extends RecyclerView.Adapter<Time
             String daysOfWeek = UIUtils.getDaysOfWeekText(context, recording.getDaysOfWeek());
             holder.daysOfWeekTextView.setText(daysOfWeek);
 
-            String time = UIUtils.getTimeText(context, recording.getStart()) + " - " + UIUtils.getTimeText(context, recording.getStop());
-            holder.timeTextView.setText(time);
+            holder.startTimeTextView.setText(UIUtils.getTimeText(context, recording.getStart()));
+            holder.stopTimeTextView.setText(UIUtils.getTimeText(context, recording.getStop()));
 
             String duration = context.getString(R.string.minutes, recording.getDuration());
             holder.durationTextView.setText(duration);
@@ -140,8 +142,10 @@ public class TimerRecordingRecyclerViewAdapter extends RecyclerView.Adapter<Time
         TextView channelTextView;
         @BindView(R.id.days_of_week)
         TextView daysOfWeekTextView;
-        @BindView(R.id.time)
-        TextView timeTextView;
+        @BindView(R.id.start)
+        TextView startTimeTextView;
+        @BindView(R.id.stop)
+        TextView stopTimeTextView;
         @BindView(R.id.duration)
         TextView durationTextView;
         @BindView(R.id.enabled)

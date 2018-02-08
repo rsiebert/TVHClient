@@ -24,6 +24,8 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+// TODO improve layout
+
 public class SeriesRecordingRecyclerViewAdapter extends RecyclerView.Adapter<SeriesRecordingRecyclerViewAdapter.RecyclerViewHolder> {
 
     private List<SeriesRecording> seriesRecordingList;
@@ -101,8 +103,9 @@ public class SeriesRecordingRecyclerViewAdapter extends RecyclerView.Adapter<Ser
             holder.daysOfWeekTextView.setText(UIUtils.getDaysOfWeekText(context, recording.getDaysOfWeek()));
 
             // Convert the minute from midnight into a time
-            String time = UIUtils.getTimeText(context, recording.getStart()) + " - " + UIUtils.getTimeText(context, recording.getStartWindow());
-            holder.timeTextView.setText(time);
+            holder.startTimeTextView.setText(UIUtils.getTimeText(context, recording.getStart()));
+            holder.stopTimeTextView.setText(UIUtils.getTimeText(context, recording.getStartWindow()));
+
             // Show the duration
             holder.durationTextView.setText(context.getString(R.string.minutes, recording.getDuration()));
 
@@ -144,8 +147,10 @@ public class SeriesRecordingRecyclerViewAdapter extends RecyclerView.Adapter<Ser
         TextView channelTextView;
         @BindView(R.id.days_of_week)
         TextView daysOfWeekTextView;
-        @BindView(R.id.time)
-        TextView timeTextView;
+        @BindView(R.id.start)
+        TextView startTimeTextView;
+        @BindView(R.id.stop)
+        TextView stopTimeTextView;
         @BindView(R.id.duration)
         TextView durationTextView;
         @BindView(R.id.enabled)

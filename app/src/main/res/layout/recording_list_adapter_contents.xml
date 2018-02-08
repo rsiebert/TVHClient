@@ -122,7 +122,19 @@
             app:layout_constraintTop_toBottomOf="@+id/channel" />
 
         <TextView
-            android:id="@+id/time"
+            android:id="@+id/start"
+            style="?attr/ContentFont"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:gravity="end"
+            android:text="@string/time"
+            app:layout_constraintEnd_toStartOf="@+id/stop"
+            app:layout_constraintTop_toBottomOf="@+id/duration" />
+
+        <TextView
+            android:id="@+id/stop"
             style="?attr/ContentFont"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
