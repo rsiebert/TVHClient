@@ -33,7 +33,7 @@ import org.tvheadend.tvhclient.ui.recordings.common.DateTimePickerCallback;
 import org.tvheadend.tvhclient.ui.recordings.common.DaysOfWeekSelectionCallback;
 import org.tvheadend.tvhclient.ui.recordings.common.RecordingPriorityListCallback;
 import org.tvheadend.tvhclient.ui.recordings.common.RecordingProfileListCallback;
-import org.tvheadend.tvhclient.utils.callbacks.ChannelListSelectionCallback;
+import org.tvheadend.tvhclient.utils.ChannelListSelectionCallback;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

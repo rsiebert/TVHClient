@@ -26,7 +26,6 @@ import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.ui.epg.ProgramGuideViewPagerContentListAdapterContentsView.ProgramContextMenuInterface;
 import org.tvheadend.tvhclient.utils.MenuUtils;
 import org.tvheadend.tvhclient.utils.UIUtils;
-import org.tvheadend.tvhclient.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -272,7 +271,7 @@ public class ProgramGuideViewPagerContentListFragment extends ListFragment imple
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
                         adapter.add((Channel) obj);
-                        adapter.sort(Utils.getChannelSortOrder(activity));
+                        //adapter.sort(Utils.getChannelSortOrder(activity));
                         adapter.notifyDataSetChanged();
                     }
                 });

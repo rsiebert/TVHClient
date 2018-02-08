@@ -22,29 +22,29 @@ import java.util.List;
 public class ChannelTagListAdapter extends RecyclerView.Adapter<ChannelTagListAdapter.ViewHolder> {
 
     private final Context context;
-    private Callback mCallback;
-    private List<ChannelTag> mTagList;
-    private long mSelectedTagId;
-    private boolean mShowChannelTagIcons;
+    private Callback callback;
+    private List<ChannelTag> channelTagList;
+    private ChannelTag selectedChannelTag;
+    private boolean showChannelTagIcons;
 
     public interface Callback {
         void onItemClicked(int index);
     }
 
-    public ChannelTagListAdapter(Context context, List<ChannelTag> mChannelTagList, long selectedTagId) {
+    public ChannelTagListAdapter(Context context, List<ChannelTag> channelTagList, ChannelTag selectedChannelTag) {
         this.context = context;
-        mTagList = mChannelTagList;
-        mSelectedTagId = selectedTagId;
+        this.channelTagList = channelTagList;
+        this.selectedChannelTag = selectedChannelTag;
     }
 
     public void setCallback(Callback callback) {
-        mCallback = callback;
+        this.callback = callback;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(parent.getContext());
-        mShowChannelTagIcons = prefs.getBoolean("showTagIconPref", true);
+        showChannelTagIcons = prefs.getBoolean("showTagIconPref", true);
 
         final View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.channeltag_list_selection_dialog_adapter, parent, false);
         return new ViewHolder(view, this);
@@ -52,14 +52,14 @@ public class ChannelTagListAdapter extends RecyclerView.Adapter<ChannelTagListAd
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        final ChannelTag item = mTagList.get(position);
+        final ChannelTag item = channelTagList.get(position);
         if (item != null) {
             // TODO highlight the selected tag using mSelectedTagId, its -1 if not set
 
             if (holder.icon != null) {
                 Bitmap iconBitmap = MiscUtils.getCachedIcon(context, item.getTagIcon());
                 holder.icon.setImageBitmap(iconBitmap);
-                holder.icon.setVisibility(iconBitmap != null && mShowChannelTagIcons ? ImageView.VISIBLE : ImageView.GONE);
+                holder.icon.setVisibility(iconBitmap != null && showChannelTagIcons ? ImageView.VISIBLE : ImageView.GONE);
             }
             if (holder.title != null) {
                 holder.title.setText(item.getTagName());
@@ -70,7 +70,7 @@ public class ChannelTagListAdapter extends RecyclerView.Adapter<ChannelTagListAd
 
     @Override
     public int getItemCount() {
-        return mTagList.size();
+        return channelTagList.size();
     }
 
     // Provide a reference to the views for each data item
@@ -91,9 +91,9 @@ public class ChannelTagListAdapter extends RecyclerView.Adapter<ChannelTagListAd
 
         @Override
         public void onClick(View view) {
-            if (channelTagListAdapter != null && channelTagListAdapter.mCallback != null) {
-                int id = channelTagListAdapter.mTagList.get(getAdapterPosition()).getTagId();
-                channelTagListAdapter.mCallback.onItemClicked(id);
+            if (channelTagListAdapter != null && channelTagListAdapter.callback != null) {
+                int id = channelTagListAdapter.channelTagList.get(getAdapterPosition()).getTagId();
+                channelTagListAdapter.callback.onItemClicked(id);
             }
         }
     }

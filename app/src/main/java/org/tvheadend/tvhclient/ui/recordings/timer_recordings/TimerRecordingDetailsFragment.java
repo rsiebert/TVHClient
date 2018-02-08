@@ -20,7 +20,7 @@ import org.tvheadend.tvhclient.data.entity.TimerRecording;
 import org.tvheadend.tvhclient.ui.base.BaseFragment;
 import org.tvheadend.tvhclient.ui.recordings.common.RecordingAddEditActivity;
 import org.tvheadend.tvhclient.utils.UIUtils;
-import org.tvheadend.tvhclient.utils.callbacks.RecordingRemovedCallback;
+import org.tvheadend.tvhclient.utils.RecordingRemovedCallback;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

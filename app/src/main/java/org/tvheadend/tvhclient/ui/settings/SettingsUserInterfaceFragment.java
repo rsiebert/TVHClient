@@ -28,7 +28,7 @@ import android.support.v4.app.TaskStackBuilder;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
-import org.tvheadend.tvhclient.ui.NavigationActivity;
+import org.tvheadend.tvhclient.ui.navigation.NavigationActivity;
 import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
 
 public class SettingsUserInterfaceFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener {

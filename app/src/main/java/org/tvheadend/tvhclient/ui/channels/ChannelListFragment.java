@@ -34,9 +34,8 @@ import org.tvheadend.tvhclient.ui.programs.ProgramListFragment;
 import org.tvheadend.tvhclient.ui.search.SearchActivity;
 import org.tvheadend.tvhclient.ui.search.SearchRequestInterface;
 import org.tvheadend.tvhclient.utils.MenuUtils;
-import org.tvheadend.tvhclient.utils.Utils;
-import org.tvheadend.tvhclient.utils.callbacks.ChannelTagSelectionCallback;
-import org.tvheadend.tvhclient.utils.callbacks.ChannelTimeSelectionCallback;
+import org.tvheadend.tvhclient.utils.ChannelTagSelectionCallback;
+import org.tvheadend.tvhclient.utils.ChannelTimeSelectionCallback;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -167,8 +166,7 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_tags:
-                ChannelTag tag = Utils.getChannelTag(activity);
-                menuUtils.handleMenuTagsSelection((tag != null ? tag.getTagId() : -1), this);
+                menuUtils.handleMenuTagsSelection(this);
                 return true;
             case R.id.menu_timeframe:
                 menuUtils.handleMenuTimeSelection(channelTimeSelection, this);

@@ -30,7 +30,7 @@ import org.tvheadend.tvhclient.data.tasks.ImageDownloadTask;
 import org.tvheadend.tvhclient.data.tasks.ImageDownloadTaskCallback;
 import org.tvheadend.tvhclient.ui.base.BaseFragment;
 import org.tvheadend.tvhclient.utils.UIUtils;
-import org.tvheadend.tvhclient.utils.callbacks.RecordingRemovedCallback;
+import org.tvheadend.tvhclient.utils.RecordingRemovedCallback;
 
 import java.util.Date;
 

@@ -25,7 +25,7 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.data.local.SuggestionProvider;
 import org.tvheadend.tvhclient.data.repository.ServerDataRepository;
-import org.tvheadend.tvhclient.ui.NavigationActivity;
+import org.tvheadend.tvhclient.ui.navigation.NavigationActivity;
 import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
 
 import java.io.File;

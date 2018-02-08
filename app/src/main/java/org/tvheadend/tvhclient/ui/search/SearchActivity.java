@@ -8,7 +8,7 @@ import android.support.v4.app.Fragment;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.local.SuggestionProvider;
-import org.tvheadend.tvhclient.ui.NavigationActivity;
+import org.tvheadend.tvhclient.ui.navigation.NavigationActivity;
 import org.tvheadend.tvhclient.ui.programs.ProgramListFragment;
 
 public class SearchActivity extends NavigationActivity {

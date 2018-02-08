@@ -14,7 +14,6 @@ import android.widget.ListView;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
-import org.tvheadend.tvhclient.utils.Utils;
 
 import java.util.ArrayList;
 
@@ -90,7 +89,7 @@ public class ProgramGuideChannelListFragment extends ListFragment implements OnS
                     public void run() {
                         Channel channel = (Channel) obj;
                         adapter.add(channel);
-                        adapter.sort(Utils.getChannelSortOrder(activity));
+                        //adapter.sort(Utils.getChannelSortOrder(activity));
                         adapter.notifyDataSetChanged();
                     }
                 });

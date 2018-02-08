@@ -32,7 +32,7 @@ import org.tvheadend.tvhclient.data.repository.ConnectionDataRepository;
 import org.tvheadend.tvhclient.service.EpgSyncService;
 import org.tvheadend.tvhclient.service.htsp.HtspConnection;
 import org.tvheadend.tvhclient.service.htsp.tasks.Authenticator;
-import org.tvheadend.tvhclient.ui.NavigationActivity;
+import org.tvheadend.tvhclient.ui.navigation.NavigationActivity;
 import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
 import org.tvheadend.tvhclient.ui.settings.SettingsActivity;
 import org.tvheadend.tvhclient.ui.settings.SettingsManageConnectionActivity;

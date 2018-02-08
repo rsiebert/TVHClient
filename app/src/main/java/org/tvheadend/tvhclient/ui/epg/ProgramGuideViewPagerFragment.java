@@ -25,13 +25,11 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.data.Constants;
-import org.tvheadend.tvhclient.data.entity.ChannelTag;
 import org.tvheadend.tvhclient.data.model.ProgramGuideTimeDialogItem;
 import org.tvheadend.tvhclient.ui.search.SearchActivity;
 import org.tvheadend.tvhclient.ui.search.SearchRequestInterface;
+import org.tvheadend.tvhclient.utils.ChannelTagSelectionCallback;
 import org.tvheadend.tvhclient.utils.MenuUtils;
-import org.tvheadend.tvhclient.utils.Utils;
-import org.tvheadend.tvhclient.utils.callbacks.ChannelTagSelectionCallback;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -143,8 +141,7 @@ public class ProgramGuideViewPagerFragment extends Fragment implements ProgramGu
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_tags:
-                ChannelTag tag = Utils.getChannelTag(activity);
-                menuUtils.handleMenuTagsSelection((tag != null ? tag.getTagId() : -1), this);
+                menuUtils.handleMenuTagsSelection(this);
                 return true;
             case R.id.menu_timeframe:
                 showProgramGuideTimeDialog();
