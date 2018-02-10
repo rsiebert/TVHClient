@@ -246,7 +246,6 @@ public class StartupFragment extends Fragment {
             // Inform the fragment about the current sync status
             if (intent.hasExtra("sync_status")) {
                 title = "Sync Status";
-                // TODO get an enum
                 status = intent.getStringExtra("sync_status");
                 // When this is received the connection is successfully established with
                 // the server and any possible sync has been finished

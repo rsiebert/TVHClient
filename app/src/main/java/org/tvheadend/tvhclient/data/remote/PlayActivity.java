@@ -38,10 +38,6 @@ import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
-// TODO rework playback
-// TODO rework casting
-// TODO using the ticket url is enough to play
-
 public class PlayActivity extends Activity implements OnRequestPermissionsResultCallback {
 
     private final static String TAG = PlayActivity.class.getSimpleName();

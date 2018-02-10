@@ -22,7 +22,7 @@ import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
 
 import java.util.regex.Pattern;
 
-// TODO update used libraries
+// TODO update used libraries in the html files
 
 public class InfoFragment extends Fragment implements FileLoaderCallback {
 

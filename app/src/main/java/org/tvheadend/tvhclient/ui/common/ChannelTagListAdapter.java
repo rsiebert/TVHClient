@@ -17,8 +17,6 @@ import org.tvheadend.tvhclient.utils.MiscUtils;
 
 import java.util.List;
 
-// TODO highlight selected tag
-
 public class ChannelTagListAdapter extends RecyclerView.Adapter<ChannelTagListAdapter.ViewHolder> {
 
     private final Context context;

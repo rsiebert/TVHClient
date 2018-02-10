@@ -44,13 +44,10 @@ import java.util.Date;
 
 // TODO show programs from time after orientation change
 // TODO show programs from time in dual pane, program list not updated
-// TODO change getting channel tag
 // TODO use contraintlayout
 // TODO periodic task could update channel table with current time (transaction), this would reload live data
 // TODO use recyclerview filter for channeltags or search by channel name
 // TODO sorting should consider minor major channel numbers
-
-// TODO move server status and other stuff back into connection?
 
 public class ChannelListFragment extends BaseFragment implements ChannelClickCallback, ChannelTimeSelectionCallback, ChannelTagSelectionCallback, SearchRequestInterface {
     private String TAG = getClass().getSimpleName();

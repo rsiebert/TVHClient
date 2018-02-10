@@ -43,7 +43,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 // TODO make the connection timeout a preference
 // TODO make the number of epg hours to load a preference (currently 4h)
-// TODO When authenticated fetch epg data in the background every x minutes
 
 public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener {
     private static final String TAG = EpgSyncTask.class.getSimpleName();
@@ -857,8 +856,6 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         }
 
         if (response != null) {
-            // TODO
-
             // Update the icon if required
             final String icon = response.getString("channelIcon", null);
             if (icon != null) {

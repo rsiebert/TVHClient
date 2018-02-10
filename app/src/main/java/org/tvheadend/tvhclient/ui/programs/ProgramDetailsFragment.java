@@ -38,9 +38,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-// TODO improve layout, more info, title, subtitle,... without header label
 // TODO update icons (same color, record with profile must differ from regular record...)
-// TODO use contraintlayout
 
 public class ProgramDetailsFragment extends BaseFragment implements ImageDownloadTaskCallback, RecordingRemovedCallback {
 

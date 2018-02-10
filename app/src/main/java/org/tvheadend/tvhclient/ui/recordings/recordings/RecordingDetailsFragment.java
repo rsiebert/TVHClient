@@ -29,9 +29,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-// TODO improve layout, more info, title, subtitle,... without header label
 // TODO update icons (same color...)
-// TODO convert to ConstraintLayout
 
 public class RecordingDetailsFragment extends BaseFragment implements RecordingRemovedCallback {
 

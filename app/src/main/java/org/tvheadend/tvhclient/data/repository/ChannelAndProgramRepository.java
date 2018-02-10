@@ -16,8 +16,6 @@ import org.tvheadend.tvhclient.data.entity.ServerStatus;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-// TODO methods to get and set active channel tag
-
 public class ChannelAndProgramRepository {
     private String TAG = getClass().getSimpleName();
 

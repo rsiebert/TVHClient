@@ -36,7 +36,6 @@ import java.util.ArrayList;
 import java.util.Date;
 
 // TODO search menu not shown in single pane list view, check dual pane
-// TODO use contraintlayout
 
 public class ProgramListFragment extends BaseFragment implements RecyclerViewClickCallback, BottomReachedListener, SearchRequestInterface {
     private String TAG = getClass().getSimpleName();

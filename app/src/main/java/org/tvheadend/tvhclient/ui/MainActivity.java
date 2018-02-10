@@ -38,7 +38,43 @@ import org.tvheadend.tvhclient.ui.search.SearchRequestInterface;
 import org.tvheadend.tvhclient.utils.MenuUtils;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
-// TODO casting stuff
+// TODO transcoding profiles crash upon start
+// TODO profiles are not greyed out when checkbox not selected
+// TODO send logfile shows dialog only on second selection
+// TODO changelog from settings shows nothing, pressing back shows white screen
+// TODO changelog from information shows nothing, pressing back shows white screen
+// TODO Click or long click on timer/series/recording list does not show detail (use implementation as in channel list)
+// TODO starting recording from channel list does not update channel recording status
+// TODO starting recording from channel list creates recording with wrong information
+// TODO clicking on program in program list crashes app
+// TODO split time in details screens into start and stop time
+// TODO highlight the selected channel in the channel list selection adapter (or use checkbox list)
+// TODO highlight the selected channel tag in the channel tag list selection adapter (or use checkbox list)
+// TODO status screen shows unknown server api
+// TODO status screen hide wol icon if no valid mac address
+// TODO status screen no reconnect menu missing
+// TODO show how many channels belong to a channel tag in the selection dialog
+// TODO brown genre color is not shown in the genre color info dialog
+// TODO remove advanced setting for the data buffer
+// TODO use setting for connection timeout in the sync service
+// TODO try to fetch epg data once when no programs are available in the program list
+// TODO use channel sorting from the settings
+// TODO when sorting channels by number, consider minor major channel numbers
+// TODO use face in / out for fragment transactions
+// TODO change used fab color in startup fragment
+// TODO playback can use the ticket url, no user pwd url required?
+// TODO casting needs rework
+// TODO move channel tag and profile stuff into a config repository
+// TODO use a factory to get the repository instance
+// TODO in startup screen use enum for the messages from the broadcast
+// TODO improve package structure
+// TODO check for gmtoffset
+// TODO dual screen layout
+// TODO dual screen listview on the left side must be (visually) set selected or checked
+// TODO move the conversion from ms to s or minutes from the intents into the entity getter and setter
+// TODO rework search (use recyclerview filter)
+// TODO rework epg (use recyclerview horizontal scroll)
+
 
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, ToolbarInterface {
 

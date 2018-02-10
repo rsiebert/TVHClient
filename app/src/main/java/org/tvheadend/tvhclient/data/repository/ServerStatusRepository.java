@@ -10,8 +10,6 @@ import org.tvheadend.tvhclient.data.entity.ServerStatus;
 
 import java.util.concurrent.ExecutionException;
 
-// TODO move channel tag and profile stuff into a config repository?
-
 public class ServerStatusRepository {
     private final AppDatabase db;
 

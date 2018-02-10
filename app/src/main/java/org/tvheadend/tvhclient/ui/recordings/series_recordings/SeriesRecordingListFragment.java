@@ -28,8 +28,6 @@ import org.tvheadend.tvhclient.ui.recordings.recordings.RecordingDetailsActivity
 import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-// TODO start and end time not correct (gmt offset?)
-
 public class SeriesRecordingListFragment extends BaseFragment implements RecyclerViewClickCallback {
 
     private SeriesRecordingRecyclerViewAdapter recyclerViewAdapter;

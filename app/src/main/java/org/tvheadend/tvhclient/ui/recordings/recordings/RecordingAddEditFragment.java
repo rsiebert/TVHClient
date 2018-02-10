@@ -40,9 +40,6 @@ import butterknife.OnCheckedChanged;
 import butterknife.OnTextChanged;
 import butterknife.Unbinder;
 
-// TODO updated getIntentData according to the previous todo
-// TODO use getter and setting in the model from here and the service
-
 public class RecordingAddEditFragment extends BaseRecordingAddEditFragment implements BackPressedInterface, ChannelListSelectionCallback, DateTimePickerCallback, RecordingPriorityListCallback, RecordingProfileListCallback {
     private String TAG = getClass().getSimpleName();
 

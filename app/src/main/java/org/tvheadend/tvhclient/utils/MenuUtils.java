@@ -45,9 +45,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-// TODO rename repositories
-// TODO get recording directly from program
-
 public class MenuUtils {
     private String TAG = getClass().getSimpleName();
 
@@ -55,7 +52,7 @@ public class MenuUtils {
     private final boolean isUnlocked;
     private final ChannelAndProgramRepository channelAndProgramRepository;
     private final ProfileRepository profileRepository;
-    private final RecordingRepository repository;
+    private final RecordingRepository recordingRepository;
     private final ServerStatusRepository serverDataRepository;
     private WeakReference<Activity> activity;
 
@@ -65,7 +62,7 @@ public class MenuUtils {
         this.isUnlocked = TVHClientApplication.getInstance().isUnlocked();
         this.channelAndProgramRepository = new ChannelAndProgramRepository(activity);
         this.profileRepository = new ProfileRepository(activity);
-        this.repository = new RecordingRepository(activity);
+        this.recordingRepository = new RecordingRepository(activity);
         this.serverDataRepository = new ServerStatusRepository(activity);
     }
 
@@ -129,8 +126,6 @@ public class MenuUtils {
                 .show();
 
     }
-
-    // TODO use checkbox list?
 
     public void handleMenuChannelTagsSelection(ChannelTagSelectionCallback callback) {
         Activity activity = this.activity.get();
@@ -540,7 +535,7 @@ public class MenuUtils {
             playMenuItem.setVisible(true);
         }
 
-        Recording rec = repository.getRecordingByIdSync(dvrId);
+        Recording rec = recordingRepository.getRecordingByIdSync(dvrId);
 
         if (rec == null || !rec.isRecording() && !rec.isScheduled()) {
             recordOnceMenuItem.setVisible(true);

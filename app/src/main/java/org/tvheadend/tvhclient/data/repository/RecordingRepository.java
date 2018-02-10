@@ -17,8 +17,6 @@ import org.tvheadend.tvhclient.data.entity.TimerRecording;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-// TODO combine methods by using switch statements
-
 public class RecordingRepository {
 
     private AppDatabase db;

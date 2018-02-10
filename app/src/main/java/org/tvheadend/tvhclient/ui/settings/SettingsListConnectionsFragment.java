@@ -28,9 +28,6 @@ import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
 import org.tvheadend.tvhclient.ui.common.BackPressedInterface;
 import org.tvheadend.tvhclient.utils.MenuUtils;
 
-// TODO recyclerview for connections
-// TODO use viewmodel
-
 public class SettingsListConnectionsFragment extends ListFragment implements BackPressedInterface, ActionMode.Callback, WakeOnLanTaskCallback {
 
     private ToolbarInterface toolbarInterface;
