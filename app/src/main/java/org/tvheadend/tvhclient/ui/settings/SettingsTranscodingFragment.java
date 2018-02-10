@@ -27,9 +27,9 @@ import android.support.v7.app.AppCompatActivity;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.entity.TranscodingProfile;
-import org.tvheadend.tvhclient.data.repository.ConnectionDataRepository;
-import org.tvheadend.tvhclient.data.repository.ProfileDataRepository;
-import org.tvheadend.tvhclient.data.repository.ServerDataRepository;
+import org.tvheadend.tvhclient.data.repository.ConnectionRepository;
+import org.tvheadend.tvhclient.data.repository.ProfileRepository;
+import org.tvheadend.tvhclient.data.repository.ServerStatusRepository;
 import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
 import org.tvheadend.tvhclient.ui.common.BackPressedInterface;
 
@@ -66,8 +66,8 @@ public class SettingsTranscodingFragment extends PreferenceFragment implements B
     private static final String REC_PROFILE_AUDIO_CODEC = "rec_profile_audio_codec";
     private static final String REC_PROFILE_VIDEO_CODEC = "rec_profile_vodeo_codec";
     private static final String REC_PROFILE_SUBTITLE_CODEC = "rec_profile_subtitle_codec";
-    private ProfileDataRepository profileRepository;
-    private ServerDataRepository serverRepository;
+    private ProfileRepository profileRepository;
+    private ServerStatusRepository serverRepository;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -79,7 +79,7 @@ public class SettingsTranscodingFragment extends PreferenceFragment implements B
             toolbarInterface = (ToolbarInterface) activity;
         }
 
-        Connection connection = new ConnectionDataRepository(activity).getActiveConnectionSync();
+        Connection connection = new ConnectionRepository(activity).getActiveConnectionSync();
         toolbarInterface.setTitle(getString(R.string.pref_transcoding));
         toolbarInterface.setSubtitle(connection.getName());
 
@@ -96,8 +96,8 @@ public class SettingsTranscodingFragment extends PreferenceFragment implements B
         prefRecVideoCodec = (ListPreference) findPreference("recVcodecPref");
         prefRecSubtitleCodec = (ListPreference) findPreference("recScodecPref");
 
-        serverRepository = new ServerDataRepository(activity);
-        profileRepository = new ProfileDataRepository(activity);
+        serverRepository = new ServerStatusRepository(activity);
+        profileRepository = new ProfileRepository(activity);
         playbackProfile = profileRepository.getPlaybackTranscodingProfile();
         recordingProfile = profileRepository.getRecordingTranscodingProfile();
 

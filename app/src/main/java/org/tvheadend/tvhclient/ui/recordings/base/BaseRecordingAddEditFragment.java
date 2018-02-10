@@ -12,7 +12,7 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.data.repository.ChannelAndProgramRepository;
-import org.tvheadend.tvhclient.data.repository.ProfileDataRepository;
+import org.tvheadend.tvhclient.data.repository.ProfileRepository;
 import org.tvheadend.tvhclient.ui.base.BaseFragment;
 import org.tvheadend.tvhclient.ui.channels.ChannelListSelectionAdapter;
 import org.tvheadend.tvhclient.ui.recordings.common.DateTimePickerCallback;
@@ -35,14 +35,14 @@ public class BaseRecordingAddEditFragment extends BaseFragment {
     protected String[] recordingProfilesList;
     protected List<Channel> channelList;
     protected ChannelAndProgramRepository channelAndProgramRepository;
-    protected ProfileDataRepository profileRepository;
+    protected ProfileRepository profileRepository;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
         isUnlocked = TVHClientApplication.getInstance().isUnlocked();
-        profileRepository = new ProfileDataRepository(activity);
+        profileRepository = new ProfileRepository(activity);
         channelAndProgramRepository = new ChannelAndProgramRepository(activity);
 
         daysOfWeekList = activity.getResources().getStringArray(R.array.day_short_names);

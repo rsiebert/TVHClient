@@ -28,9 +28,9 @@ import org.tvheadend.tvhclient.data.model.GenreColorDialogItem;
 import org.tvheadend.tvhclient.data.remote.DownloadActivity;
 import org.tvheadend.tvhclient.data.remote.PlayActivity;
 import org.tvheadend.tvhclient.data.repository.ChannelAndProgramRepository;
-import org.tvheadend.tvhclient.data.repository.ProfileDataRepository;
+import org.tvheadend.tvhclient.data.repository.ProfileRepository;
 import org.tvheadend.tvhclient.data.repository.RecordingRepository;
-import org.tvheadend.tvhclient.data.repository.ServerDataRepository;
+import org.tvheadend.tvhclient.data.repository.ServerStatusRepository;
 import org.tvheadend.tvhclient.service.EpgSyncService;
 import org.tvheadend.tvhclient.ui.common.ChannelTagListAdapter;
 import org.tvheadend.tvhclient.ui.common.GenreColorDialogAdapter;
@@ -49,24 +49,24 @@ import java.util.List;
 // TODO get recording directly from program
 
 public class MenuUtils {
-    private final static String TAG = MiscUtils.class.getSimpleName();
+    private String TAG = getClass().getSimpleName();
 
     private final int htspVersion;
     private final boolean isUnlocked;
     private final ChannelAndProgramRepository channelAndProgramRepository;
-    private final ProfileDataRepository profileRepository;
+    private final ProfileRepository profileRepository;
     private final RecordingRepository repository;
-    private final ServerDataRepository serverDataRepository;
+    private final ServerStatusRepository serverDataRepository;
     private WeakReference<Activity> activity;
 
     public MenuUtils(Activity activity) {
         this.activity = new WeakReference<>(activity);
-        this.htspVersion = new ServerDataRepository(activity).loadServerStatus().getHtspVersion();
+        this.htspVersion = new ServerStatusRepository(activity).loadServerStatusSync().getHtspVersion();
         this.isUnlocked = TVHClientApplication.getInstance().isUnlocked();
         this.channelAndProgramRepository = new ChannelAndProgramRepository(activity);
-        this.profileRepository = new ProfileDataRepository(activity);
+        this.profileRepository = new ProfileRepository(activity);
         this.repository = new RecordingRepository(activity);
-        this.serverDataRepository = new ServerDataRepository(activity);
+        this.serverDataRepository = new ServerStatusRepository(activity);
     }
 
     /**
@@ -130,14 +130,16 @@ public class MenuUtils {
 
     }
 
-    public void handleMenuTagsSelection(ChannelTagSelectionCallback callback) {
+    // TODO use checkbox list?
+
+    public void handleMenuChannelTagsSelection(ChannelTagSelectionCallback callback) {
         Activity activity = this.activity.get();
         if (activity == null) {
             return;
         }
         // Fill the channel tag adapter with the available channel tags
         List<ChannelTag> channelTagList = channelAndProgramRepository.getAllChannelTags();
-        ChannelTag selectedChannelTag = serverDataRepository.getSelectedChannelTag();
+        ChannelTag selectedChannelTag = channelAndProgramRepository.getSelectedChannelTag();
 
 
         // Add the default tag (all channels) to the list after it has been sorted
@@ -156,7 +158,8 @@ public class MenuUtils {
         // Set the callback to handle clicks. This needs to be done after the
         // dialog creation so that the inner method has access to the dialog variable
         channelTagListAdapter.setCallback(which -> {
-            serverDataRepository.setSelectedChannelTag(which);
+            Log.d(TAG, "handleMenuChannelTagsSelection: ");
+            serverDataRepository.updateSelectedChannelTag(which);
             if (callback != null) {
                 callback.onChannelTagIdSelected(which);
             }

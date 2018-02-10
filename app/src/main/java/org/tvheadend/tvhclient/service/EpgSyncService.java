@@ -12,7 +12,7 @@ import android.util.Log;
 
 import org.tvheadend.tvhclient.data.AppDatabase;
 import org.tvheadend.tvhclient.data.entity.Connection;
-import org.tvheadend.tvhclient.data.repository.ConnectionDataRepository;
+import org.tvheadend.tvhclient.data.repository.ConnectionRepository;
 import org.tvheadend.tvhclient.service.htsp.SimpleHtspConnection;
 
 // TODO add removing data older that x days
@@ -41,7 +41,7 @@ public class EpgSyncService extends Service {
         handlerThread.start();
         new Handler(handlerThread.getLooper());
 
-        connection = new ConnectionDataRepository(this).getActiveConnectionSync();
+        connection = new ConnectionRepository(this).getActiveConnectionSync();
         if (connection == null) {
             Log.i(TAG, "No account configured, aborting startup of EPG Sync Service");
             stopSelf();

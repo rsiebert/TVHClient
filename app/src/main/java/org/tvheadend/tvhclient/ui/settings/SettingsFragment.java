@@ -24,7 +24,7 @@ import com.afollestad.materialdialogs.folderselector.FolderChooserDialog;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.data.local.SuggestionProvider;
-import org.tvheadend.tvhclient.data.repository.ServerDataRepository;
+import org.tvheadend.tvhclient.data.repository.ServerStatusRepository;
 import org.tvheadend.tvhclient.ui.navigation.NavigationActivity;
 import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
 
@@ -58,7 +58,7 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         isUnlocked = TVHClientApplication.getInstance().isUnlocked();
-        htspVersion = new ServerDataRepository(activity).loadServerStatus().getHtspVersion();
+        htspVersion = new ServerStatusRepository(activity).loadServerStatusSync().getHtspVersion();
 
         Preference prefManageConnections = findPreference("pref_manage_connections");
         Preference prefMenuUserInterface = findPreference("pref_menu_user_interface");

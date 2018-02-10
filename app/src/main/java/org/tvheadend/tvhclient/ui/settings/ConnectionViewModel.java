@@ -2,19 +2,24 @@ package org.tvheadend.tvhclient.ui.settings;
 
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
+import android.arch.lifecycle.LiveData;
 
 import org.tvheadend.tvhclient.data.entity.Connection;
-import org.tvheadend.tvhclient.data.repository.ConnectionDataRepository;
+import org.tvheadend.tvhclient.data.repository.ConnectionRepository;
+
+import java.util.List;
 
 public class ConnectionViewModel extends AndroidViewModel {
+    private final LiveData<List<Connection>> connections;
     private String TAG = getClass().getSimpleName();
 
-    private final ConnectionDataRepository repository;
+    private final ConnectionRepository repository;
     private Connection connection;
 
     public ConnectionViewModel(Application application) {
         super(application);
-        repository = new ConnectionDataRepository(application);
+        repository = new ConnectionRepository(application);
+        connections = repository.getAllConnections();
     }
 
     Connection getConnectionByIdSync(int connectionId) {
@@ -26,5 +31,9 @@ public class ConnectionViewModel extends AndroidViewModel {
             }
         }
         return connection;
+    }
+
+    LiveData<List<Connection>> getAllConnections() {
+        return connections;
     }
 }

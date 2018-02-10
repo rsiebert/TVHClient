@@ -1,6 +1,5 @@
 package org.tvheadend.tvhclient.ui.channels;
 
-import android.app.SearchManager;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -27,15 +26,17 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.data.entity.ChannelTag;
 import org.tvheadend.tvhclient.data.entity.Recording;
+import org.tvheadend.tvhclient.data.entity.ServerStatus;
+import org.tvheadend.tvhclient.data.repository.ServerStatusRepository;
 import org.tvheadend.tvhclient.ui.base.BaseFragment;
-import org.tvheadend.tvhclient.ui.common.RecyclerViewClickCallback;
+import org.tvheadend.tvhclient.ui.common.RecyclerTouchListener;
+import org.tvheadend.tvhclient.ui.common.RecyclerViewTouchCallback;
 import org.tvheadend.tvhclient.ui.programs.ProgramListActivity;
 import org.tvheadend.tvhclient.ui.programs.ProgramListFragment;
-import org.tvheadend.tvhclient.ui.search.SearchActivity;
 import org.tvheadend.tvhclient.ui.search.SearchRequestInterface;
-import org.tvheadend.tvhclient.utils.MenuUtils;
 import org.tvheadend.tvhclient.utils.ChannelTagSelectionCallback;
 import org.tvheadend.tvhclient.utils.ChannelTimeSelectionCallback;
+import org.tvheadend.tvhclient.utils.MenuUtils;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -49,7 +50,9 @@ import java.util.Date;
 // TODO use recyclerview filter for channeltags or search by channel name
 // TODO sorting should consider minor major channel numbers
 
-public class ChannelListFragment extends BaseFragment implements RecyclerViewClickCallback, ChannelClickCallback, ChannelTimeSelectionCallback, ChannelTagSelectionCallback, SearchRequestInterface {
+// TODO move server status and other stuff back into connection?
+
+public class ChannelListFragment extends BaseFragment implements ChannelClickCallback, ChannelTimeSelectionCallback, ChannelTagSelectionCallback, SearchRequestInterface {
     private String TAG = getClass().getSimpleName();
 
     protected ChannelRecyclerViewAdapter recyclerViewAdapter;
@@ -61,6 +64,7 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
     private ChannelViewModel viewModel;
     private Runnable channelUpdateTask;
     private final Handler channelUpdateHandler = new Handler();
+    private ServerStatus serverStatus;
 
     @Nullable
     @Override
@@ -88,28 +92,49 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
             channelTimeSelection = 0;
         }
 
-        recyclerViewAdapter = new ChannelRecyclerViewAdapter(activity, new ArrayList<>(), this, this);
+        recyclerViewAdapter = new ChannelRecyclerViewAdapter(activity, new ArrayList<>(), this);
         recyclerView.setLayoutManager(new LinearLayoutManager(activity));
         recyclerView.addItemDecoration(new DividerItemDecoration(activity, LinearLayoutManager.VERTICAL));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(recyclerViewAdapter);
+        recyclerView.addOnItemTouchListener(new RecyclerTouchListener(activity.getApplicationContext(), recyclerView, new RecyclerViewTouchCallback() {
+            @Override
+            public void onClick(View view, int position) {
+                showChannelDetails(position);
+            }
+
+            @Override
+            public void onLongClick(View view, int position) {
+                showPopupMenu(view);
+            }
+        }));
+
+        serverStatus = new ServerStatusRepository(activity).loadServerStatusSync();
 
         Log.d(TAG, "onActivityCreated() called with: savedInstanceState = [" + savedInstanceState + "]");
         viewModel = ViewModelProviders.of(activity).get(ChannelViewModel.class);
+        viewModel.setTime(new Date().getTime());
+        viewModel.setTag(serverStatus.getChannelTagId());
+
         viewModel.getChannelsByTime().observe(this, channels -> {
-            Log.d(TAG, "onActivityCreated: observe");
             int channelCount = 0;
             if (channels != null) {
                 channelCount = channels.size();
                 recyclerViewAdapter.addItems(channels);
+                recyclerViewAdapter.notifyDataSetChanged();
+
                 if (isDualPane && channels.size() > 0) {
                     showChannelDetails(selectedListPosition);
                 }
             }
-            // TODO get the tag and so on
-            ChannelTag currentTag = null;
-            toolbarInterface.setTitle((currentTag == null) ? getString(R.string.all_channels) : currentTag.getTagName());
             toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.items, channelCount, channelCount));
+        });
+
+        viewModel.getServerStatus().observe(this, serverStatus -> {
+            if (serverStatus != null) {
+                ChannelTag channelTag = viewModel.getSelectedChannelTag();
+                toolbarInterface.setTitle((channelTag == null)  ? getString(R.string.all_channels) : channelTag.getTagName());
+            }
         });
 
         // Initiate a timer that will update the view model data every minute
@@ -166,7 +191,7 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_tags:
-                menuUtils.handleMenuTagsSelection(this);
+                menuUtils.handleMenuChannelTagsSelection(this);
                 return true;
             case R.id.menu_timeframe:
                 menuUtils.handleMenuTimeSelection(channelTimeSelection, this);
@@ -202,19 +227,8 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
     @Override
     public void onChannelTagIdSelected(int which) {
         Log.d(TAG, "onChannelTagIdSelected() called with: which = [" + which + "]");
-        // TODO update the channel tag stuff
-        /*
-        Connection connection = DatabaseHelper.getInstance(activity.getApplicationContext()).getSelectedConnection();
-        if (connection != null) {
-            connection.channelTag = which;
-            DatabaseHelper.getInstance(activity.getApplicationContext()).updateConnection(connection);
-        }
-        */
-    }
-
-    @Override
-    public void onClick(View view, int position) {
-        showChannelDetails(position);
+        viewModel.setTag(which);
+        new ServerStatusRepository(activity).updateSelectedChannelTag(which);
     }
 
     protected void showChannelDetails(int position) {
@@ -247,11 +261,10 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
         }
     }
 
-    @Override
-    public boolean onLongClick(View view) {
+    public void showPopupMenu(View view) {
         final Channel channel = (Channel) view.getTag();
         if (activity == null) {
-            return true;
+            return;
         }
         PopupMenu popupMenu = new PopupMenu(activity, view);
         popupMenu.getMenuInflater().inflate(R.menu.channel_list_program_popup_menu, popupMenu.getMenu());
@@ -295,17 +308,21 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
             }
         });
         popupMenu.show();
-        return true;
     }
 
     @Override
     public void onSearchRequested(String query) {
+        Log.d(TAG, "onSearchRequested() called with: query = [" + query + "]");
+        /*
         // Start searching for programs on all channels
         Intent searchIntent = new Intent(activity, SearchActivity.class);
         searchIntent.putExtra(SearchManager.QUERY, query);
         searchIntent.setAction(Intent.ACTION_SEARCH);
         searchIntent.putExtra("type", "programs");
         startActivity(searchIntent);
+*/
+        // filter recycler view when query submitted
+        //recyclerViewAdapter.getFilter().filter(query);
     }
 
     @Override

@@ -6,7 +6,10 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 
 import org.tvheadend.tvhclient.data.entity.Channel;
+import org.tvheadend.tvhclient.data.entity.ChannelTag;
+import org.tvheadend.tvhclient.data.entity.ServerStatus;
 import org.tvheadend.tvhclient.data.repository.ChannelAndProgramRepository;
+import org.tvheadend.tvhclient.data.repository.ServerStatusRepository;
 
 import java.util.Date;
 import java.util.List;
@@ -15,13 +18,18 @@ public class ChannelViewModel extends AndroidViewModel {
 
     private final LiveData<List<Channel>> channels;
     private final ChannelAndProgramRepository repository;
+    private final ServerStatusRepository serverRepository;
     private MutableLiveData<List<Channel>> channelsByTime = new MutableLiveData<>();
     private long showProgramsFromTime;
+    private int selectedChannelTagId;
 
     public ChannelViewModel(Application application) {
         super(application);
         repository = new ChannelAndProgramRepository(application);
+        serverRepository =  new ServerStatusRepository(application);
+
         showProgramsFromTime = new Date().getTime();
+        selectedChannelTagId = 0;
 
         channels = repository.getAllChannels();
         reloadChannels();
@@ -45,7 +53,20 @@ public class ChannelViewModel extends AndroidViewModel {
     }
 
     private void reloadChannels() {
-        List<Channel> newChannels = repository.getAllChannelsByTimeSync(showProgramsFromTime);
+        List<Channel> newChannels = repository.getAllChannelsByTimeSync(showProgramsFromTime, selectedChannelTagId);
         channelsByTime.postValue(newChannels);
+    }
+
+    public void setTag(int id) {
+        this.selectedChannelTagId = id;
+        reloadChannels();
+    }
+
+    public LiveData<ServerStatus> getServerStatus() {
+        return serverRepository.loadServerStatus();
+    }
+
+    ChannelTag getSelectedChannelTag() {
+        return repository.getSelectedChannelTag();
     }
 }

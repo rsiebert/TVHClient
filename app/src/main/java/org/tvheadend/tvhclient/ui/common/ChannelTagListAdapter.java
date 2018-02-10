@@ -54,7 +54,13 @@ public class ChannelTagListAdapter extends RecyclerView.Adapter<ChannelTagListAd
     public void onBindViewHolder(ViewHolder holder, int position) {
         final ChannelTag item = channelTagList.get(position);
         if (item != null) {
-            // TODO highlight the selected tag using mSelectedTagId, its -1 if not set
+
+            if ((selectedChannelTag == null && position == 0)
+                    || (selectedChannelTag != null && item.getTagId() == selectedChannelTag.getTagId())) {
+                holder.itemView.setSelected(true);
+            } else {
+                holder.itemView.setSelected(false);
+            }
 
             if (holder.icon != null) {
                 Bitmap iconBitmap = MiscUtils.getCachedIcon(context, item.getTagIcon());

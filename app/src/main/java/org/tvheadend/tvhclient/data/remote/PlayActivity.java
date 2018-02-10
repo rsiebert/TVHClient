@@ -27,10 +27,10 @@ import org.tvheadend.tvhclient.data.entity.ServerProfile;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
 import org.tvheadend.tvhclient.data.local.Logger;
 import org.tvheadend.tvhclient.data.model.HttpTicket;
-import org.tvheadend.tvhclient.data.repository.ConnectionDataRepository;
-import org.tvheadend.tvhclient.data.repository.ProfileDataRepository;
+import org.tvheadend.tvhclient.data.repository.ConnectionRepository;
+import org.tvheadend.tvhclient.data.repository.ProfileRepository;
 import org.tvheadend.tvhclient.data.repository.RecordingRepository;
-import org.tvheadend.tvhclient.data.repository.ServerDataRepository;
+import org.tvheadend.tvhclient.data.repository.ServerStatusRepository;
 import org.tvheadend.tvhclient.service.EpgSyncService;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
@@ -66,7 +66,7 @@ public class PlayActivity extends Activity implements OnRequestPermissionsResult
     private CastSession castSession;
     private ServerStatus serverStatus;
     private RecordingRepository repository;
-    private ConnectionDataRepository connectionRepostory;
+    private ConnectionRepository connectionRepostory;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,13 +77,13 @@ public class PlayActivity extends Activity implements OnRequestPermissionsResult
         app = TVHClientApplication.getInstance();
         logger = Logger.getInstance();
 
-        serverStatus = new ServerDataRepository(this).loadServerStatus();
+        serverStatus = new ServerStatusRepository(this).loadServerStatusSync();
         
         // If a play intent was sent no action is given, so default to play
         action = getIntent().getIntExtra(Constants.BUNDLE_ACTION, ACTION_PLAY);
 
         // Check that a valid channel or recording was specified
-        connectionRepostory = new ConnectionDataRepository(this);
+        connectionRepostory = new ConnectionRepository(this);
         repository = new RecordingRepository(this);
         ch = repository.getChannelByIdSync(getIntent().getIntExtra("channelId", 0));
         rec = repository.getRecordingByIdSync(getIntent().getIntExtra("dvrId", 0));
@@ -364,7 +364,7 @@ public class PlayActivity extends Activity implements OnRequestPermissionsResult
         movieMetadata.addImage(new WebImage(Uri.parse(iconUrl)));   // large background icon
 
         // Check if the correct profile was set, if not use the default
-        ServerProfile castingProfile = new ProfileDataRepository(this).getCastingServerProfile();
+        ServerProfile castingProfile = new ProfileRepository(this).getCastingServerProfile();
         if (castingProfile == null) {
             castUrl += "?profile=" + Constants.CAST_PROFILE_DEFAULT;
         } else {

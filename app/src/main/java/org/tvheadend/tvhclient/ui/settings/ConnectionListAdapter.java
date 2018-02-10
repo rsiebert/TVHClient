@@ -12,18 +12,18 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
 public class ConnectionListAdapter extends ArrayAdapter<Connection> {
 
     private final Activity context;
-    private final List<Connection> list;
+    private final List<Connection> list = new ArrayList<>();
 
-    ConnectionListAdapter(Activity context, List<Connection> list) {
-        super(context, R.layout.connection_list_adapter, list);
+    ConnectionListAdapter(Activity context) {
+        super(context, R.layout.connection_list_adapter);
         this.context = context;
-        this.list = list;
     }
 
     public void sort() {

@@ -30,7 +30,7 @@ import org.tvheadend.tvhclient.data.repository.RecordingRepository;
 import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.data.local.Logger;
-import org.tvheadend.tvhclient.data.repository.ConnectionDataRepository;
+import org.tvheadend.tvhclient.data.repository.ConnectionRepository;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
 public class DownloadActivity extends Activity implements OnRequestPermissionsResultCallback {
@@ -49,7 +49,7 @@ public class DownloadActivity extends Activity implements OnRequestPermissionsRe
         MiscUtils.setLanguage(this);
 
         rec = new RecordingRepository(this).getRecordingByIdSync(getIntent().getIntExtra("dvrId", 0));
-        conn = new ConnectionDataRepository(this).getActiveConnectionSync();
+        conn = new ConnectionRepository(this).getActiveConnectionSync();
         logger = Logger.getInstance();
     }
 

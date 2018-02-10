@@ -19,9 +19,9 @@ import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
 import org.tvheadend.tvhclient.data.repository.ChannelAndProgramRepository;
-import org.tvheadend.tvhclient.data.repository.ConnectionDataRepository;
+import org.tvheadend.tvhclient.data.repository.ConnectionRepository;
 import org.tvheadend.tvhclient.data.repository.RecordingRepository;
-import org.tvheadend.tvhclient.data.repository.ServerDataRepository;
+import org.tvheadend.tvhclient.data.repository.ServerStatusRepository;
 import org.tvheadend.tvhclient.data.tasks.WakeOnLanTask;
 import org.tvheadend.tvhclient.data.tasks.WakeOnLanTaskCallback;
 import org.tvheadend.tvhclient.ui.base.BaseFragment;
@@ -77,7 +77,7 @@ public class StatusFragment extends BaseFragment implements WakeOnLanTaskCallbac
 
     private Unbinder unbinder;
     private Connection connection;
-    private ConnectionDataRepository connectionRepository;
+    private ConnectionRepository connectionRepository;
     private ServerStatus serverStatus;
 
     @Override
@@ -101,9 +101,9 @@ public class StatusFragment extends BaseFragment implements WakeOnLanTaskCallbac
         toolbarInterface.setTitle(getString(R.string.status));
         toolbarInterface.setSubtitle(null);
 
-        connectionRepository = new ConnectionDataRepository(activity);
+        connectionRepository = new ConnectionRepository(activity);
         connection = connectionRepository.getActiveConnectionSync();
-        serverStatus = new ServerDataRepository(activity).loadServerStatus();
+        serverStatus = new ServerStatusRepository(activity).loadServerStatusSync();
 
         SeriesRecordingViewModel seriesRecordingViewModel = ViewModelProviders.of(activity).get(SeriesRecordingViewModel.class);
         seriesRecordingViewModel.getRecordings().observe(this, recordings -> {

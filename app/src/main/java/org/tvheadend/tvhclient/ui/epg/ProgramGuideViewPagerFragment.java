@@ -141,7 +141,7 @@ public class ProgramGuideViewPagerFragment extends Fragment implements ProgramGu
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_tags:
-                menuUtils.handleMenuTagsSelection(this);
+                menuUtils.handleMenuChannelTagsSelection(this);
                 return true;
             case R.id.menu_timeframe:
                 showProgramGuideTimeDialog();

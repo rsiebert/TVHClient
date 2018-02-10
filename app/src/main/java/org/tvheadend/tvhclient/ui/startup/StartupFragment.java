@@ -28,7 +28,7 @@ import android.widget.TextView;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Connection;
-import org.tvheadend.tvhclient.data.repository.ConnectionDataRepository;
+import org.tvheadend.tvhclient.data.repository.ConnectionRepository;
 import org.tvheadend.tvhclient.service.EpgSyncService;
 import org.tvheadend.tvhclient.service.htsp.HtspConnection;
 import org.tvheadend.tvhclient.service.htsp.tasks.Authenticator;
@@ -61,7 +61,7 @@ public class StartupFragment extends Fragment {
     private String title;
     private Unbinder unbinder;
     private AppCompatActivity activity;
-    private ConnectionDataRepository repository;
+    private ConnectionRepository repository;
     private ToolbarInterface toolbarInterface;
 
     @Override
@@ -88,7 +88,7 @@ public class StartupFragment extends Fragment {
         }
         setHasOptionsMenu(true);
 
-        repository = new ConnectionDataRepository(activity);
+        repository = new ConnectionRepository(activity);
         floatingActionButton.setVisibility(View.VISIBLE);
 
         if (!isConnectionDefined()) {

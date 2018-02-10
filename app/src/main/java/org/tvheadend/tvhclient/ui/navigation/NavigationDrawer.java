@@ -26,7 +26,7 @@ import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.data.entity.Connection;
-import org.tvheadend.tvhclient.data.repository.ConnectionDataRepository;
+import org.tvheadend.tvhclient.data.repository.ConnectionRepository;
 import org.tvheadend.tvhclient.ui.startup.StartupActivity;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
@@ -57,7 +57,7 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
     private final boolean isUnlocked;
     private AccountHeader headerResult;
     private Drawer result;
-    private ConnectionDataRepository connectionDataRepository;
+    private ConnectionRepository connectionRepository;
 
     NavigationDrawer(Activity activity, Bundle savedInstanceState, Toolbar toolbar, NavigationDrawerCallback callback) {
         this.activity = activity;
@@ -65,7 +65,7 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
         this.toolbar = toolbar;
         this.callback = callback;
         this.isUnlocked = TVHClientApplication.getInstance().isUnlocked();
-        this.connectionDataRepository = new ConnectionDataRepository(activity);
+        this.connectionRepository = new ConnectionRepository(activity);
     }
 
     void createHeader() {
@@ -172,7 +172,7 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
             headerResult.removeProfileByIdentifier(id);
         }
         // Add the existing connections as new profiles
-        final List<Connection> connectionList = connectionDataRepository.getAllConnectionsSync();
+        final List<Connection> connectionList = connectionRepository.getAllConnectionsSync();
         if (connectionList.size() > 0) {
             for (Connection c : connectionList) {
                 headerResult.addProfiles(new ProfileDrawerItem().withIdentifier(c.getId()).withName(c.getName()).withEmail(c.getHostname()));
@@ -180,7 +180,7 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
         } else {
             headerResult.addProfiles(new ProfileDrawerItem().withName(R.string.no_connection_available));
         }
-        Connection connection = connectionDataRepository.getActiveConnectionSync();
+        Connection connection = connectionRepository.getActiveConnectionSync();
         if (connection != null) {
             headerResult.setActiveProfile(connection.getId());
         }
@@ -211,9 +211,9 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
                 .positiveText("Connect")
                 .onPositive((dialog, which) -> {
                     // Update the currently active connection
-                    Connection connection = connectionDataRepository.getConnectionByIdSync((int) profile.getIdentifier());
+                    Connection connection = connectionRepository.getConnectionByIdSync((int) profile.getIdentifier());
                     connection.setActive(true);
-                    connectionDataRepository.updateConnectionSync(connection);
+                    connectionRepository.updateConnectionSync(connection);
 
                     // Save the information that a new sync is required
                     // Then restart the application to show the sync fragment

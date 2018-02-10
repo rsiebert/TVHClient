@@ -7,38 +7,42 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Channel;
-import org.tvheadend.tvhclient.ui.common.RecyclerViewClickCallback;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 import org.tvheadend.tvhclient.utils.UIUtils;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class ChannelRecyclerViewAdapter extends RecyclerView.Adapter<ChannelRecyclerViewAdapter.RecyclerViewHolder> {
+public class ChannelRecyclerViewAdapter extends RecyclerView.Adapter<ChannelRecyclerViewAdapter.RecyclerViewHolder> implements Filterable {
+    private String TAG = getClass().getSimpleName();
 
     private final ChannelClickCallback channelClickCallback;
     private List<Channel> channelList;
-    private RecyclerViewClickCallback clickCallback;
+    private List<Channel> channelListFiltered;
     private SharedPreferences sharedPreferences;
     private Context context;
     private int selectedPosition = 0;
 
-    ChannelRecyclerViewAdapter(Context context, List<Channel> channelList, RecyclerViewClickCallback clickCallback, ChannelClickCallback channelClickCallback) {
+    ChannelRecyclerViewAdapter(Context context, List<Channel> channelList, ChannelClickCallback channelClickCallback) {
         this.context = context;
         this.channelList = channelList;
-        this.clickCallback = clickCallback;
+        this.channelListFiltered = channelList;
         this.channelClickCallback = channelClickCallback;
         this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     }
@@ -51,20 +55,8 @@ public class ChannelRecyclerViewAdapter extends RecyclerView.Adapter<ChannelRecy
 
     @Override
     public void onBindViewHolder(RecyclerViewHolder holder, int position) {
-        Channel channel = channelList.get(position);
+        Channel channel = channelListFiltered.get(position);
         holder.itemView.setTag(channel);
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                clickCallback.onClick(view, holder.getAdapterPosition());
-            }
-        });
-        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                return clickCallback.onLongClick(view);
-            }
-        });
 
         boolean showChannelName = sharedPreferences.getBoolean("showChannelNamePref", true);
         boolean showProgressbar = sharedPreferences.getBoolean("showProgramProgressbarPref", true);
@@ -168,24 +160,62 @@ public class ChannelRecyclerViewAdapter extends RecyclerView.Adapter<ChannelRecy
     }
 
     void addItems(List<Channel> channelList) {
+        Log.d(TAG, "addItems() called with: channelList = [" + channelList + "]");
         this.channelList = channelList;
+        this.channelListFiltered = channelList;
+
+        if (channelList == null || selectedPosition > channelList.size()) {
+            Log.d(TAG, "addItems: selectedPosition > channelList.size() resetting");
+            selectedPosition = 0;
+        }
     }
 
     @Override
     public int getItemCount() {
-        return channelList.size();
+        return channelListFiltered.size();
     }
 
     public void setPosition(int pos) {
+        Log.d(TAG, "setPosition() called with: pos = [" + pos + "]");
         selectedPosition = pos;
     }
 
     public Channel getItem(int position) {
-        return channelList.get(position);
+        Log.d(TAG, "getItem() called with: position = [" + position + "]");
+        return channelListFiltered.get(position);
     }
 
-    public List<Channel> getItems() {
-        return channelList;
+    @Override
+    public Filter getFilter() {
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence charSequence) {
+                String charString = charSequence.toString();
+                if (charString.isEmpty()) {
+                    channelListFiltered = channelList;
+                } else {
+                    List<Channel> filteredList = new ArrayList<>();
+                    for (Channel row : channelList) {
+                        // name match condition. this might differ depending on your requirement
+                        // here we are looking for a channel name match
+                        if (row.getChannelName().toLowerCase().contains(charString.toLowerCase())) {
+                            filteredList.add(row);
+                        }
+                    }
+                    channelListFiltered = filteredList;
+                }
+
+                FilterResults filterResults = new FilterResults();
+                filterResults.values = channelListFiltered;
+                return filterResults;
+            }
+
+            @Override
+            protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+                channelListFiltered = (ArrayList<Channel>) filterResults.values;
+                notifyDataSetChanged();
+            }
+        };
     }
 
     static class RecyclerViewHolder extends RecyclerView.ViewHolder {

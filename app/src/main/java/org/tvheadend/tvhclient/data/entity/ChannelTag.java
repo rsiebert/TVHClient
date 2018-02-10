@@ -21,6 +21,7 @@ public class ChannelTag {
     private String tagIcon;          // str   optional   URL to an icon representative for the channel.
     @ColumnInfo(name = "tag_titled_icon")
     private int tagTitledIcon;       // u32   optional   Icon includes a title
+
     private boolean active;
     @Ignore
     private List<Integer> members;   // u32[] optional   Channel IDs of those that belong to the tag

@@ -1,5 +1,6 @@
 package org.tvheadend.tvhclient.data.repository;
 
+import android.arch.lifecycle.LiveData;
 import android.content.Context;
 import android.os.AsyncTask;
 
@@ -13,11 +14,11 @@ import org.tvheadend.tvhclient.data.entity.ServerStatus;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public class ConnectionDataRepository {
+public class ConnectionRepository {
 
     private AppDatabase db;
 
-    public ConnectionDataRepository(Context context) {
+    public ConnectionRepository(Context context) {
         this.db = AppDatabase.getInstance(context.getApplicationContext());
     }
 
@@ -30,15 +31,24 @@ public class ConnectionDataRepository {
         return null;
     }
 
+    /**
+     * Inserts a new or updates an existing connection. If the given connection
+     * is marked as active, the previous active one will be set inactive
+     *
+     * @param connection The connection that shall be inserted or updated
+     */
     public void updateConnectionSync(Connection connection) {
-        // Make the current active connection not active
         if (connection.isActive()) {
             new DisableActiveConnectionTask(db.connectionDao()).execute();
         }
-        // Insert or update the connection
-        new InsertUpdateConnectionTask(db.connectionDao(), db.serverStatusDao(), connection).execute();
+        new UpdateConnectionTask(db.connectionDao(), db.serverStatusDao(), connection).execute();
     }
 
+    /**
+     * Loads the currently active connections from the database
+     *
+     * @return The active connection or null if none exists
+     */
     public Connection getActiveConnectionSync() {
         try {
             return new LoadActiveConnectionTask(db.connectionDao()).execute().get();
@@ -50,6 +60,10 @@ public class ConnectionDataRepository {
 
     public void removeConnectionSync(int id) {
         new DeleteConnectionTask(db.connectionDao(), db.serverStatusDao(), db.transcodingProfileDao(), id).execute();
+    }
+
+    public LiveData<List<Connection>> getAllConnections() {
+        return db.connectionDao().loadAllConnections();
     }
 
     public List<Connection> getAllConnectionsSync() {
@@ -109,12 +123,12 @@ public class ConnectionDataRepository {
         }
     }
 
-    protected static class InsertUpdateConnectionTask extends AsyncTask<Void, Void, Void> {
+    protected static class UpdateConnectionTask extends AsyncTask<Void, Void, Void> {
         private final ConnectionDao connectionDao;
         private final Connection connection;
         private final ServerStatusDao serverStatusDao;
 
-        InsertUpdateConnectionTask(ConnectionDao connectionDao, ServerStatusDao serverStatusDao, Connection connection) {
+        UpdateConnectionTask(ConnectionDao connectionDao, ServerStatusDao serverStatusDao, Connection connection) {
             this.connectionDao = connectionDao;
             this.connection = connection;
             this.serverStatusDao = serverStatusDao;

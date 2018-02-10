@@ -35,9 +35,9 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.Constants;
 import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.entity.ServerProfile;
-import org.tvheadend.tvhclient.data.repository.ConnectionDataRepository;
-import org.tvheadend.tvhclient.data.repository.ProfileDataRepository;
-import org.tvheadend.tvhclient.data.repository.ServerDataRepository;
+import org.tvheadend.tvhclient.data.repository.ConnectionRepository;
+import org.tvheadend.tvhclient.data.repository.ProfileRepository;
+import org.tvheadend.tvhclient.data.repository.ServerStatusRepository;
 import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
 import org.tvheadend.tvhclient.ui.common.BackPressedInterface;
 
@@ -50,8 +50,8 @@ public class SettingsCastingFragment extends PreferenceFragment implements BackP
     private ServerProfile castingServerProfile = null;
     private CheckBoxPreference castingEnabledPreference;
     private ListPreference castingProfileListPreference;
-    private ProfileDataRepository profileRepository;
-    private ServerDataRepository serverRepository;
+    private ProfileRepository profileRepository;
+    private ServerStatusRepository serverRepository;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -63,7 +63,7 @@ public class SettingsCastingFragment extends PreferenceFragment implements BackP
             toolbarInterface = (ToolbarInterface) activity;
         }
 
-        Connection connection = new ConnectionDataRepository(activity).getActiveConnectionSync();
+        Connection connection = new ConnectionRepository(activity).getActiveConnectionSync();
         toolbarInterface.setTitle(getString(R.string.pref_casting));
         toolbarInterface.setSubtitle(connection.getName());
 
@@ -72,8 +72,8 @@ public class SettingsCastingFragment extends PreferenceFragment implements BackP
         castingEnabledPreference.setOnPreferenceClickListener(this);
         castingProfileListPreference.setOnPreferenceChangeListener(this);
 
-        serverRepository = new ServerDataRepository(activity);
-        profileRepository = new ProfileDataRepository(activity);
+        serverRepository = new ServerStatusRepository(activity);
+        profileRepository = new ProfileRepository(activity);
         castingServerProfile = profileRepository.getCastingServerProfile();
 
         addProfiles(profileRepository.getAllPlaybackServerProfiles());

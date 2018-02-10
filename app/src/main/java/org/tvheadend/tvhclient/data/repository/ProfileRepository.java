@@ -14,11 +14,11 @@ import org.tvheadend.tvhclient.data.entity.TranscodingProfile;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public class ProfileDataRepository {
+public class ProfileRepository {
 
     private final AppDatabase db;
 
-    public ProfileDataRepository(Context context) {
+    public ProfileRepository(Context context) {
         this.db = AppDatabase.getInstance(context.getApplicationContext());
     }
 
