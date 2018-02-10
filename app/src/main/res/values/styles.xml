@@ -180,6 +180,7 @@
 
         <item name="menu_text_selector">@color/menu_text_selector_dark</item>
         <item name="menu_background_selector">@drawable/menu_background_selector_dark</item>
+        <item name="listitem_background_selector">@drawable/listitem_background_selector_dark</item>
         <item name="android:windowBackground">@color/window_background_color_dark</item>
         <item name="toolbar_background_color">@color/toolbar_background_color_dark</item>
 
@@ -262,6 +263,7 @@
 
         <item name="menu_text_selector">@color/menu_text_selector_light</item>
         <item name="menu_background_selector">@drawable/menu_background_selector_light</item>
+        <item name="listitem_background_selector">@drawable/listitem_background_selector_light</item>
         <item name="android:windowBackground">@color/window_background_color_light</item>
         <item name="toolbar_background_color">@color/toolbar_background_color_light</item>
 
