@@ -1,6 +1,7 @@
 package org.tvheadend.tvhclient.ui.settings;
 
 import android.app.ListFragment;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -19,7 +20,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Connection;
-import org.tvheadend.tvhclient.data.repository.ConnectionDataRepository;
+import org.tvheadend.tvhclient.data.repository.ConnectionRepository;
 import org.tvheadend.tvhclient.data.tasks.WakeOnLanTask;
 import org.tvheadend.tvhclient.data.tasks.WakeOnLanTaskCallback;
 import org.tvheadend.tvhclient.service.EpgSyncService;
@@ -27,17 +28,16 @@ import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
 import org.tvheadend.tvhclient.ui.common.BackPressedInterface;
 import org.tvheadend.tvhclient.utils.MenuUtils;
 
-import java.util.ArrayList;
-import java.util.List;
+// TODO recyclerview for connections
+// TODO use viewmodel
 
 public class SettingsListConnectionsFragment extends ListFragment implements BackPressedInterface, ActionMode.Callback, WakeOnLanTaskCallback {
 
     private ToolbarInterface toolbarInterface;
     private ConnectionListAdapter connectionListAdapter;
-    private List<Connection> connectionList;
     private ActionMode actionMode;
     private AppCompatActivity activity;
-    private ConnectionDataRepository repository;
+    private ConnectionRepository repository;
     private boolean activeConnectionChanged;
 
     @Override
@@ -51,12 +51,24 @@ public class SettingsListConnectionsFragment extends ListFragment implements Bac
         toolbarInterface.setTitle(getString(R.string.settings));
 
         activeConnectionChanged = false;
-        repository = new ConnectionDataRepository(activity);
-        connectionList = new ArrayList<>();
-        connectionListAdapter = new ConnectionListAdapter(activity, connectionList);
+        repository = new ConnectionRepository(activity);
+        connectionListAdapter = new ConnectionListAdapter(activity);
         setListAdapter(connectionListAdapter);
         getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         setHasOptionsMenu(true);
+
+        ConnectionViewModel viewModel = ViewModelProviders.of(activity).get(ConnectionViewModel.class);
+        viewModel.getAllConnections().observe(activity, connections -> {
+            if (connections != null) {
+                connectionListAdapter.clear();
+                connectionListAdapter.addAll(connections);
+                connectionListAdapter.notifyDataSetChanged();
+                toolbarInterface.setSubtitle(getResources().getQuantityString(
+                        R.plurals.number_of_connections,
+                        connectionListAdapter.getCount(),
+                        connectionListAdapter.getCount()));
+            }
+        });
 
         if (savedInstanceState != null) {
             activeConnectionChanged = savedInstanceState.getBoolean("activeConnectionChanged");
@@ -85,21 +97,6 @@ public class SettingsListConnectionsFragment extends ListFragment implements Bac
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        showConnections();
-    }
-
-    private void showConnections() {
-        // Add all connections to the list
-        connectionList.clear();
-        connectionList.addAll(repository.getAllConnectionsSync());
-        connectionListAdapter.sort();
-        connectionListAdapter.notifyDataSetChanged();
-        showConnectionCount();
-    }
-
-    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.connection_add_options_menu, menu);
@@ -124,7 +121,6 @@ public class SettingsListConnectionsFragment extends ListFragment implements Bac
         // Set the new connection to active
         c.setActive(active);
         repository.updateConnectionSync(c);
-        showConnections();
     }
 
     @Override
@@ -170,9 +166,6 @@ public class SettingsListConnectionsFragment extends ListFragment implements Bac
                             @Override
                             public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                                 repository.removeConnectionSync(connection.getId());
-                                connectionListAdapter.remove(connection);
-                                connectionListAdapter.notifyDataSetChanged();
-                                showConnectionCount();
                                 activeConnectionChanged = true;
                             }
                         })
@@ -188,13 +181,6 @@ public class SettingsListConnectionsFragment extends ListFragment implements Bac
             default:
                 return false;
         }
-    }
-
-    private void showConnectionCount() {
-        toolbarInterface.setSubtitle(getResources().getQuantityString(
-                R.plurals.number_of_connections,
-                connectionListAdapter.getCount(),
-                connectionListAdapter.getCount()));
     }
 
     @Override

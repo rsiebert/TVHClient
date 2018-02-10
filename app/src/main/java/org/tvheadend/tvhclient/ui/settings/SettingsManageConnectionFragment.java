@@ -21,7 +21,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Connection;
-import org.tvheadend.tvhclient.data.repository.ConnectionDataRepository;
+import org.tvheadend.tvhclient.data.repository.ConnectionRepository;
 import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
 import org.tvheadend.tvhclient.ui.common.BackPressedInterface;
 
@@ -35,7 +35,7 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
     private ToolbarInterface toolbarInterface;
     private Connection connection;
     private boolean connectionValuesChanged;
-    private ConnectionDataRepository repository;
+    private ConnectionRepository repository;
     private AppCompatActivity activity;
 
     private EditTextPreference prefName;
@@ -60,7 +60,7 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
             toolbarInterface = (ToolbarInterface) activity;
         }
         toolbarInterface.setTitle(getString(R.string.add_connection));
-        repository = new ConnectionDataRepository(activity);
+        repository = new ConnectionRepository(activity);
         setHasOptionsMenu(true);
 
         // Get the connectivity preferences for later usage
