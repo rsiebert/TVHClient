@@ -91,16 +91,15 @@
         <TextView
             android:id="@+id/channel"
             style="?attr/ContentFont"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
+            android:layout_marginLeft="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:drawableEnd="?attr/ic_arrow_drop_down_like_spinner"
             android:drawablePadding="4dp"
             android:drawableRight="?attr/ic_arrow_drop_down_like_spinner"
             android:text="@string/not_set"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/channel_label" />
 
@@ -120,16 +119,15 @@
         <TextView
             android:id="@+id/start_time"
             style="?attr/ContentFont"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
+            android:layout_marginLeft="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:drawableEnd="?attr/ic_arrow_drop_down_like_spinner"
             android:drawablePadding="4dp"
             android:drawableRight="?attr/ic_arrow_drop_down_like_spinner"
             android:text="@string/not_set"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/start_time_label" />
 
@@ -149,16 +147,15 @@
         <TextView
             android:id="@+id/stop_time"
             style="?attr/ContentFont"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
+            android:layout_marginLeft="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:drawableEnd="?attr/ic_arrow_drop_down_like_spinner"
             android:drawablePadding="4dp"
             android:drawableRight="?attr/ic_arrow_drop_down_like_spinner"
             android:text="@string/not_set"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/stop_time_label" />
 
@@ -178,16 +175,15 @@
         <TextView
             android:id="@+id/days_of_week"
             style="?attr/ContentFont"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
+            android:layout_marginLeft="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:drawableEnd="?attr/ic_arrow_drop_down_like_spinner"
             android:drawablePadding="4dp"
             android:drawableRight="?attr/ic_arrow_drop_down_like_spinner"
             android:text="@string/days_of_week"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/days_of_week_label" />
 
@@ -207,16 +203,15 @@
         <TextView
             android:id="@+id/priority"
             style="?attr/ContentFont"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
+            android:layout_marginLeft="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:drawableEnd="?attr/ic_arrow_drop_down_like_spinner"
             android:drawablePadding="4dp"
             android:drawableRight="?attr/ic_arrow_drop_down_like_spinner"
             android:text="@string/not_set"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/priority_label" />
 
@@ -267,11 +262,13 @@
             style="?attr/ContentFont"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
             android:layout_marginEnd="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:hint="@string/add_recording_directory"
             android:inputType="text"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/directory_label" />

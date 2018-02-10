@@ -118,16 +118,15 @@
         <TextView
             android:id="@+id/channel"
             style="?attr/ContentFont"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
+            android:layout_marginLeft="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:drawableEnd="?attr/ic_arrow_drop_down_like_spinner"
             android:drawablePadding="4dp"
             android:drawableRight="?attr/ic_arrow_drop_down_like_spinner"
             android:text="@string/not_set"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/channel_label" />
 
@@ -288,14 +287,13 @@
             style="?attr/ContentFont"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
+            android:layout_marginLeft="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:drawableEnd="?attr/ic_arrow_drop_down_like_spinner"
             android:drawablePadding="4dp"
             android:drawableRight="?attr/ic_arrow_drop_down_like_spinner"
             android:text="@string/not_set"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/priority_label" />
 
@@ -315,16 +313,17 @@
         <TextView
             android:id="@+id/dvr_config"
             style="?attr/ContentFont"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            android:layout_marginLeft="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:drawableEnd="?attr/ic_arrow_drop_down_like_spinner"
             android:drawablePadding="4dp"
             android:drawableRight="?attr/ic_arrow_drop_down_like_spinner"
             android:text="@string/not_set"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/dvr_config_label" />
 
