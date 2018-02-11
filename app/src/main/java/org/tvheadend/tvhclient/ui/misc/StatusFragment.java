@@ -20,8 +20,6 @@ import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
 import org.tvheadend.tvhclient.data.repository.ChannelAndProgramRepository;
 import org.tvheadend.tvhclient.data.repository.ConnectionRepository;
-import org.tvheadend.tvhclient.data.repository.RecordingRepository;
-import org.tvheadend.tvhclient.data.repository.ServerStatusRepository;
 import org.tvheadend.tvhclient.data.tasks.WakeOnLanTask;
 import org.tvheadend.tvhclient.data.tasks.WakeOnLanTaskCallback;
 import org.tvheadend.tvhclient.ui.base.BaseFragment;
@@ -29,8 +27,6 @@ import org.tvheadend.tvhclient.ui.channels.ChannelViewModel;
 import org.tvheadend.tvhclient.ui.recordings.recordings.RecordingViewModel;
 import org.tvheadend.tvhclient.ui.recordings.series_recordings.SeriesRecordingViewModel;
 import org.tvheadend.tvhclient.ui.recordings.timer_recordings.TimerRecordingViewModel;
-
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -78,7 +74,6 @@ public class StatusFragment extends BaseFragment implements WakeOnLanTaskCallbac
     private Unbinder unbinder;
     private Connection connection;
     private ConnectionRepository connectionRepository;
-    private ServerStatus serverStatus;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -102,8 +97,7 @@ public class StatusFragment extends BaseFragment implements WakeOnLanTaskCallbac
         toolbarInterface.setSubtitle(null);
 
         connectionRepository = new ConnectionRepository(activity);
-        connection = connectionRepository.getActiveConnectionSync();
-        serverStatus = new ServerStatusRepository(activity).loadServerStatusSync();
+        showConnectionDetails();
 
         SeriesRecordingViewModel seriesRecordingViewModel = ViewModelProviders.of(activity).get(SeriesRecordingViewModel.class);
         seriesRecordingViewModel.getRecordings().observe(this, recordings -> {
@@ -132,6 +126,21 @@ public class StatusFragment extends BaseFragment implements WakeOnLanTaskCallbac
             if (recordings != null) {
                 upcomingRecordingsTextView.setText(getResources().getQuantityString(
                         R.plurals.upcoming_recordings, recordings.size(), recordings.size()));
+
+                // Get the programs that are currently being recorded
+                StringBuilder currentRecText = new StringBuilder();
+                for (Recording rec : recordings) {
+                    if (rec.isRecording()) {
+                        currentRecText.append(getString(R.string.currently_recording)).append(": ").append(rec.getTitle());
+                        Channel channel = new ChannelAndProgramRepository(activity).getChannelByIdSync(rec.getChannelId());
+                        if (channel != null) {
+                            currentRecText.append(" (").append(getString(R.string.channel)).append(" ").append(channel.getChannelName()).append(")\n");
+                        }
+                    }
+                }
+
+                // Show which programs are being recorded
+                currentlyRecordingTextView.setText(currentRecText.length() > 0 ? currentRecText.toString() : getString(R.string.nothing));
             }
         });
         recordingViewModel.getFailedRecordings().observe(this, recordings -> {
@@ -155,6 +164,16 @@ public class StatusFragment extends BaseFragment implements WakeOnLanTaskCallbac
                 channelsTextView.setText(text);
             }
         });
+
+        ServerStatusModel serverStatusModel = ViewModelProviders.of(activity).get(ServerStatusModel.class);
+        serverStatusModel.getServerStatus().observe(this, serverStatus -> {
+            if (serverStatus != null) {
+                seriesRecordingsTextView.setVisibility((serverStatus.getHtspVersion() >= 13) ? View.VISIBLE : View.GONE);
+                timerRecordingsTextView.setVisibility((serverStatus.getHtspVersion() >= 18 && isUnlocked) ? View.VISIBLE : View.GONE);
+
+                showServerStatus(serverStatus);
+            }
+        });
     }
 
     @Override
@@ -168,6 +187,8 @@ public class StatusFragment extends BaseFragment implements WakeOnLanTaskCallbac
         super.onPrepareOptionsMenu(menu);
         if (isUnlocked && connection != null && !TextUtils.isEmpty(connection.getWolMacAddress())) {
             menu.findItem(R.id.menu_wol).setVisible(true);
+        } else {
+            menu.findItem(R.id.menu_wol).setVisible(false);
         }
     }
 
@@ -191,20 +212,6 @@ public class StatusFragment extends BaseFragment implements WakeOnLanTaskCallbac
         }
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        // The connection is ok and not loading anymore, show all data
-        seriesRecordingsTextView.setVisibility((serverStatus.getHtspVersion() >= 13) ? View.VISIBLE : View.GONE);
-        timerRecordingsTextView.setVisibility((serverStatus.getHtspVersion() >= 18 && isUnlocked) ? View.VISIBLE : View.GONE);
-
-        showConnectionDetails();
-        showRecordingStatus();
-        showDiscSpace();
-        showServerStatus();
-    }
-
     /**
      * Shows the name and address of a connection, otherwise shows an
      * information that no connection is selected or available.
@@ -223,10 +230,18 @@ public class StatusFragment extends BaseFragment implements WakeOnLanTaskCallbac
     }
 
     /**
-     * Shows the available and total disc space either in MB or GB to avoid
-     * showing large numbers. This depends on the size of the value.
+     * Shows the server api version and the available and total disc
+     * space either in MB or GB to avoid showing large numbers.
+     * This depends on the size of the value.
      */
-    private void showDiscSpace() {
+    private void showServerStatus(ServerStatus serverStatus) {
+        String version = String.valueOf(serverStatus.getHtspVersion())
+                + "   (" + getString(R.string.server) + ": "
+                + serverStatus.getServerName() + " "
+                + serverStatus.getServerVersion() + ")";
+
+        serverApiVersionTextView.setText(version);
+
         try {
             // Get the disc space values and convert them to megabytes
             long free = serverStatus.getFreeDiskSpace() / 1000000;
@@ -254,36 +269,6 @@ public class StatusFragment extends BaseFragment implements WakeOnLanTaskCallbac
             freeDiscSpaceTextView.setText(R.string.unknown);
             totalDiscSpaceTextView.setText(R.string.unknown);
         }
-    }
-
-    /**
-     * Shows the program that is currently being recorded and the summary about
-     * the available, scheduled and failed recordings.
-     */
-    private void showRecordingStatus() {
-        // Get the programs that are currently being recorded
-        StringBuilder currentRecText = new StringBuilder();
-        List<Recording> recordingList = new RecordingRepository(activity).getAllRecordingsSync();
-        for (Recording rec : recordingList) {
-            if (rec.isRecording()) {
-                currentRecText.append(getString(R.string.currently_recording)).append(": ").append(rec.getTitle());
-                Channel channel = new ChannelAndProgramRepository(activity).getChannelByIdSync(rec.getChannelId());
-                if (channel != null) {
-                    currentRecText.append(" (").append(getString(R.string.channel)).append(" ").append(channel.getChannelName()).append(")\n");
-                }
-            }
-        }
-
-        // Show which programs are being recorded
-        currentlyRecordingTextView.setText(currentRecText.length() > 0 ? currentRecText.toString() : getString(R.string.nothing));
-    }
-
-    private void showServerStatus() {
-        String version = String.valueOf(serverStatus.getHtspVersion())
-                + "   (" + getString(R.string.server) + ": "
-                + serverStatus.getServerName() + " "
-                + serverStatus.getServerVersion() + ")";
-        currentlyRecordingTextView.setText(version);
     }
 
     @Override

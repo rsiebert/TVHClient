@@ -45,7 +45,6 @@ import org.tvheadend.tvhclient.utils.MiscUtils;
 // TODO split time in details screens into start and stop time
 // TODO highlight the selected channel in the channel list selection adapter (or use checkbox list)
 // TODO highlight the selected channel tag in the channel tag list selection adapter (or use checkbox list)
-// TODO status screen shows unknown server api
 // TODO status screen hide wol icon if no valid mac address
 // TODO status screen no reconnect menu missing
 // TODO show how many channels belong to a channel tag in the selection dialog
