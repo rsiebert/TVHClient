@@ -42,7 +42,6 @@ import org.tvheadend.tvhclient.utils.MiscUtils;
 // TODO profiles are not greyed out when checkbox not selected
 // TODO starting recording from channel list does not update channel recording status
 // TODO starting recording from channel list creates recording with wrong information
-// TODO clicking on program in program list crashes app
 // TODO split time in details screens into start and stop time
 // TODO highlight the selected channel in the channel list selection adapter (or use checkbox list)
 // TODO highlight the selected channel tag in the channel tag list selection adapter (or use checkbox list)

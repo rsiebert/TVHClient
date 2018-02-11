@@ -149,8 +149,8 @@ public class ProgramDetailsFragment extends BaseFragment implements ImageDownloa
         viewModel.getProgram(eventId).observe(this, p -> {
             if (p != null) {
                 program = p.getProgram();
-                channel = p.getChannels() != null ? p.getChannels().get(0) : null;
-                recording = p.getRecordings() != null ? p.getRecordings().get(0) : null;
+                channel = (p.getChannels() != null && p.getChannels().size() > 0) ? p.getChannels().get(0) : null;
+                recording = (p.getRecordings() != null && p.getRecordings().size() > 0) ? p.getRecordings().get(0) : null;
                 updateUI();
                 activity.invalidateOptionsMenu();
             }
