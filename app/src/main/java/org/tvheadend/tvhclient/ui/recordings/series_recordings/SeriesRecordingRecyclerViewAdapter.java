@@ -15,7 +15,6 @@ import android.widget.TextView;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.SeriesRecording;
-import org.tvheadend.tvhclient.ui.common.RecyclerViewClickCallback;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 import org.tvheadend.tvhclient.utils.UIUtils;
 
@@ -27,17 +26,15 @@ import butterknife.ButterKnife;
 public class SeriesRecordingRecyclerViewAdapter extends RecyclerView.Adapter<SeriesRecordingRecyclerViewAdapter.RecyclerViewHolder> {
 
     private List<SeriesRecording> seriesRecordingList;
-    private RecyclerViewClickCallback clickCallback;
     private int htspVersion;
     private SharedPreferences sharedPreferences;
     private Context context;
     private int selectedPosition = 0;
 
-    SeriesRecordingRecyclerViewAdapter(Context context, List<SeriesRecording> seriesRecordingList, int htspVersion, RecyclerViewClickCallback clickCallback) {
+    SeriesRecordingRecyclerViewAdapter(Context context, List<SeriesRecording> seriesRecordingList, int htspVersion) {
         this.context = context;
         this.htspVersion = htspVersion;
         this.seriesRecordingList = seriesRecordingList;
-        this.clickCallback = clickCallback;
         this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
@@ -51,18 +48,6 @@ public class SeriesRecordingRecyclerViewAdapter extends RecyclerView.Adapter<Ser
     public void onBindViewHolder(RecyclerViewHolder holder, int position) {
         SeriesRecording recording = seriesRecordingList.get(position);
         holder.itemView.setTag(recording);
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                clickCallback.onClick(view, holder.getAdapterPosition());
-            }
-        });
-        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                return clickCallback.onLongClick(view);
-            }
-        });
 
         boolean lightTheme = sharedPreferences.getBoolean("lightThemePref", true);
         boolean showChannelIcons = sharedPreferences.getBoolean("showIconPref", true);

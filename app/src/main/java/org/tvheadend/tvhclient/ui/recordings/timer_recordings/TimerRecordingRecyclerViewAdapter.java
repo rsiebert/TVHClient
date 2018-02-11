@@ -15,7 +15,6 @@ import android.widget.TextView;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.TimerRecording;
-import org.tvheadend.tvhclient.ui.common.RecyclerViewClickCallback;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 import org.tvheadend.tvhclient.utils.UIUtils;
 
@@ -27,17 +26,15 @@ import butterknife.ButterKnife;
 public class TimerRecordingRecyclerViewAdapter extends RecyclerView.Adapter<TimerRecordingRecyclerViewAdapter.RecyclerViewHolder> {
 
     private List<TimerRecording> timerRecordingList;
-    private RecyclerViewClickCallback clickCallback;
     private int htspVersion;
     private SharedPreferences sharedPreferences;
     private Context context;
     private int selectedPosition = 0;
 
-    TimerRecordingRecyclerViewAdapter(Context context, List<TimerRecording> timerRecordingList, int htspVersion, RecyclerViewClickCallback clickCallback) {
+    TimerRecordingRecyclerViewAdapter(Context context, List<TimerRecording> timerRecordingList, int htspVersion) {
         this.context = context;
         this.htspVersion = htspVersion;
         this.timerRecordingList = timerRecordingList;
-        this.clickCallback = clickCallback;
         this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
@@ -52,18 +49,6 @@ public class TimerRecordingRecyclerViewAdapter extends RecyclerView.Adapter<Time
         TimerRecording recording = timerRecordingList.get(position);
 
         holder.itemView.setTag(recording);
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                clickCallback.onClick(view, holder.getAdapterPosition());
-            }
-        });
-        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                return clickCallback.onLongClick(view);
-            }
-        });
 
         boolean lightTheme = sharedPreferences.getBoolean("lightThemePref", true);
         boolean showChannelIcons = sharedPreferences.getBoolean("showIconPref", true);

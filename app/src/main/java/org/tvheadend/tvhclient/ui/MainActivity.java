@@ -43,7 +43,6 @@ import org.tvheadend.tvhclient.utils.MiscUtils;
 // TODO send logfile shows dialog only on second selection
 // TODO changelog from settings shows nothing, pressing back shows white screen
 // TODO changelog from information shows nothing, pressing back shows white screen
-// TODO Click or long click on timer/series/recording list does not show detail (use implementation as in channel list)
 // TODO starting recording from channel list does not update channel recording status
 // TODO starting recording from channel list creates recording with wrong information
 // TODO clicking on program in program list crashes app

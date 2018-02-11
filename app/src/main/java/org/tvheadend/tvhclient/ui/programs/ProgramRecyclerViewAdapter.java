@@ -15,7 +15,6 @@ import android.widget.TextView;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Program;
 import org.tvheadend.tvhclient.data.entity.ProgramWithRecordingsAndChannels;
-import org.tvheadend.tvhclient.ui.common.RecyclerViewClickCallback;
 import org.tvheadend.tvhclient.utils.UIUtils;
 
 import java.util.List;
@@ -27,14 +26,12 @@ public class ProgramRecyclerViewAdapter extends RecyclerView.Adapter<ProgramRecy
 
     private final BottomReachedListener onBottomReachedListener;
     private List<ProgramWithRecordingsAndChannels> programList;
-    private RecyclerViewClickCallback clickCallback;
     private SharedPreferences sharedPreferences;
     private Context context;
 
-    ProgramRecyclerViewAdapter(Context context, List<ProgramWithRecordingsAndChannels> programList, RecyclerViewClickCallback clickCallback, BottomReachedListener onBottomReachedListener) {
+    ProgramRecyclerViewAdapter(Context context, List<ProgramWithRecordingsAndChannels> programList, BottomReachedListener onBottomReachedListener) {
         this.context = context;
         this.programList = programList;
-        this.clickCallback = clickCallback;
         this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         this.onBottomReachedListener = onBottomReachedListener;
     }
@@ -54,18 +51,6 @@ public class ProgramRecyclerViewAdapter extends RecyclerView.Adapter<ProgramRecy
         }
 
         holder.itemView.setTag(programWithRecordingsAndChannels);
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                clickCallback.onClick(view, holder.getAdapterPosition());
-            }
-        });
-        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                return clickCallback.onLongClick(view);
-            }
-        });
 
         boolean showProgramSubtitle = sharedPreferences.getBoolean("showProgramSubtitlePref", true);
         boolean showGenreColors = sharedPreferences.getBoolean("showGenreColorsProgramsPref", false);

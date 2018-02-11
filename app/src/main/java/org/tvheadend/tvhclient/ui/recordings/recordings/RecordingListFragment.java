@@ -21,7 +21,8 @@ import android.view.ViewGroup;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.ui.base.BaseFragment;
-import org.tvheadend.tvhclient.ui.common.RecyclerViewClickCallback;
+import org.tvheadend.tvhclient.ui.common.RecyclerTouchListener;
+import org.tvheadend.tvhclient.ui.common.RecyclerViewTouchCallback;
 import org.tvheadend.tvhclient.ui.recordings.common.RecordingAddEditActivity;
 import org.tvheadend.tvhclient.ui.search.SearchActivity;
 import org.tvheadend.tvhclient.ui.search.SearchRequestInterface;
@@ -29,7 +30,7 @@ import org.tvheadend.tvhclient.ui.search.SearchRequestInterface;
 import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class RecordingListFragment extends BaseFragment implements RecyclerViewClickCallback, SearchRequestInterface {
+public class RecordingListFragment extends BaseFragment implements SearchRequestInterface {
 
     protected RecordingRecyclerViewAdapter recyclerViewAdapter;
     protected RecyclerView recyclerView;
@@ -52,11 +53,22 @@ public class RecordingListFragment extends BaseFragment implements RecyclerViewC
             selectedListPosition = savedInstanceState.getInt("list_position", 0);
         }
 
-        recyclerViewAdapter = new RecordingRecyclerViewAdapter(activity, new ArrayList<>(), serverStatus.getHtspVersion(), this);
+        recyclerViewAdapter = new RecordingRecyclerViewAdapter(activity, new ArrayList<>(), serverStatus.getHtspVersion());
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(recyclerViewAdapter);
+        recyclerView.addOnItemTouchListener(new RecyclerTouchListener(activity.getApplicationContext(), recyclerView, new RecyclerViewTouchCallback() {
+            @Override
+            public void onClick(View view, int position) {
+                showRecordingDetails(position);
+            }
+
+            @Override
+            public void onLongClick(View view, int position) {
+                showPopupMenu(view);
+            }
+        }));
     }
 
     @Override
@@ -106,11 +118,6 @@ public class RecordingListFragment extends BaseFragment implements RecyclerViewC
         }
     }
 
-    @Override
-    public void onClick(View view, int position) {
-        showRecordingDetails(position);
-    }
-
     protected void showRecordingDetails(int position) {
         selectedListPosition = position;
         Recording recording = recyclerViewAdapter.getItem(position);
@@ -140,11 +147,10 @@ public class RecordingListFragment extends BaseFragment implements RecyclerViewC
         }
     }
 
-    @Override
-    public boolean onLongClick(View view) {
+    public void showPopupMenu(View view) {
         final Recording recording = (Recording) view.getTag();
         if (activity == null || recording == null) {
-            return true;
+            return;
         }
         PopupMenu popupMenu = new PopupMenu(activity, view);
         popupMenu.getMenuInflater().inflate(R.menu.recordings_popup_menu, popupMenu.getMenu());
@@ -202,7 +208,6 @@ public class RecordingListFragment extends BaseFragment implements RecyclerViewC
             }
         });
         popupMenu.show();
-        return true;
     }
 
     @Override

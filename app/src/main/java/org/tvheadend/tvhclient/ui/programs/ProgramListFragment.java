@@ -28,7 +28,8 @@ import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.data.repository.RecordingRepository;
 import org.tvheadend.tvhclient.service.EpgSyncService;
 import org.tvheadend.tvhclient.ui.base.BaseFragment;
-import org.tvheadend.tvhclient.ui.common.RecyclerViewClickCallback;
+import org.tvheadend.tvhclient.ui.common.RecyclerTouchListener;
+import org.tvheadend.tvhclient.ui.common.RecyclerViewTouchCallback;
 import org.tvheadend.tvhclient.ui.search.SearchActivity;
 import org.tvheadend.tvhclient.ui.search.SearchRequestInterface;
 
@@ -37,7 +38,7 @@ import java.util.Date;
 
 // TODO search menu not shown in single pane list view, check dual pane
 
-public class ProgramListFragment extends BaseFragment implements RecyclerViewClickCallback, BottomReachedListener, SearchRequestInterface {
+public class ProgramListFragment extends BaseFragment implements BottomReachedListener, SearchRequestInterface {
     private String TAG = getClass().getSimpleName();
 
     private ProgramRecyclerViewAdapter recyclerViewAdapter;
@@ -85,11 +86,22 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
 
         toolbarInterface.setTitle(channelName);
 
-        recyclerViewAdapter = new ProgramRecyclerViewAdapter(activity, new ArrayList<>(), this, this);
+        recyclerViewAdapter = new ProgramRecyclerViewAdapter(activity, new ArrayList<>(), this);
         recyclerView.setLayoutManager(new LinearLayoutManager(activity));
         recyclerView.addItemDecoration(new DividerItemDecoration(activity, LinearLayoutManager.VERTICAL));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(recyclerViewAdapter);
+        recyclerView.addOnItemTouchListener(new RecyclerTouchListener(activity.getApplicationContext(), recyclerView, new RecyclerViewTouchCallback() {
+            @Override
+            public void onClick(View view, int position) {
+                showProgramDetails(position);
+            }
+
+            @Override
+            public void onLongClick(View view, int position) {
+                showPopupMenu(view);
+            }
+        }));
 
         ProgramViewModel viewModel = ViewModelProviders.of(activity).get(ProgramViewModel.class);
         viewModel.getPrograms(channelId, showProgramsFromTime).observe(this, programs -> {
@@ -158,11 +170,10 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
         activity.startActivity(intent);
     }
 
-    @Override
-    public boolean onLongClick(View view) {
+    public void showPopupMenu(View view) {
         final Program program = ((ProgramWithRecordingsAndChannels) view.getTag()).getProgram();
         if (activity == null || program == null) {
-            return true;
+            return;
         }
         PopupMenu popupMenu = new PopupMenu(activity, view);
         popupMenu.getMenuInflater().inflate(R.menu.channel_list_program_popup_menu, popupMenu.getMenu());
@@ -205,12 +216,6 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
             }
         });
         popupMenu.show();
-        return true;
-    }
-
-    @Override
-    public void onClick(View view, int position) {
-        showProgramDetails(position);
     }
 
     public int getShownChannelId() {
