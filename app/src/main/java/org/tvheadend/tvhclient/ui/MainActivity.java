@@ -40,7 +40,6 @@ import org.tvheadend.tvhclient.utils.MiscUtils;
 
 // TODO transcoding profiles crash upon start
 // TODO profiles are not greyed out when checkbox not selected
-// TODO send logfile shows dialog only on second selection
 // TODO starting recording from channel list does not update channel recording status
 // TODO starting recording from channel list creates recording with wrong information
 // TODO clicking on program in program list crashes app
@@ -71,6 +70,7 @@ import org.tvheadend.tvhclient.utils.MiscUtils;
 // TODO move the conversion from ms to s or minutes from the intents into the entity getter and setter
 // TODO rework search (use recyclerview filter)
 // TODO rework epg (use recyclerview horizontal scroll)
+// TODO selected navigation item not updated when backstack is popped
 
 
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, ToolbarInterface {

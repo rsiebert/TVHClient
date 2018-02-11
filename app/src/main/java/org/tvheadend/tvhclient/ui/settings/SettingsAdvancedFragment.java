@@ -14,8 +14,8 @@ import android.support.v4.content.FileProvider;
 import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.tvheadend.tvhclient.BuildConfig;
-import org.tvheadend.tvhclient.data.local.Logger;
 import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.data.local.Logger;
 import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
 
 import java.io.File;
@@ -28,7 +28,6 @@ public class SettingsAdvancedFragment extends PreferenceFragment implements Pref
     private Activity activity;
     private ToolbarInterface toolbarInterface;
     private CheckBoxPreference prefDebugMode;
-    private Preference prefSendLogfile;
     private SharedPreferences sharedPreferences;
 
     @Override
@@ -47,7 +46,7 @@ public class SettingsAdvancedFragment extends PreferenceFragment implements Pref
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
         prefDebugMode = (CheckBoxPreference) findPreference("pref_debug_mode");
-        prefSendLogfile = findPreference("pref_send_logfile");
+        Preference prefSendLogfile = findPreference("pref_send_logfile");
         prefDebugMode.setOnPreferenceClickListener(this);
         prefSendLogfile.setOnPreferenceClickListener(this);
     }
@@ -78,38 +77,32 @@ public class SettingsAdvancedFragment extends PreferenceFragment implements Pref
     }
 
     private void handlePreferenceDebugModeEnabledSelected() {
-        prefDebugMode.setOnPreferenceClickListener(preference -> {
-            if (prefDebugMode.isChecked()) {
-                Logger.getInstance().enableLogToFile();
-            } else {
-                Logger.getInstance().disableLogToFile();
-            }
-            return true;
-        });
+        if (prefDebugMode.isChecked()) {
+            Logger.getInstance().enableLogToFile();
+        } else {
+            Logger.getInstance().disableLogToFile();
+        }
     }
 
     private void handlePreferenceSendLogFileSelected() {
-        prefSendLogfile.setOnPreferenceClickListener(preference -> {
-            Logger.getInstance().saveLog();
-            // Get the list of available files in the log path
-            File logPath = new File(getActivity().getCacheDir(), "logs");
-            File[] files = logPath.listFiles();
-            // Fill the items for the dialog
-            String[] logfileList = new String[files.length];
-            for (int i = 0; i < files.length; i++) {
-                logfileList[i] = files[i].getName();
-            }
-            // Show the dialog with the list of log files
-            new MaterialDialog.Builder(getActivity())
-                    .title(R.string.select_log_file)
-                    .items(logfileList)
-                    .itemsCallbackSingleChoice(-1, (dialog, view, which, text) -> {
-                        mailLogfile(logfileList[which]);
-                        return true;
-                    })
-                    .show();
-            return true;
-        });
+        Logger.getInstance().saveLog();
+        // Get the list of available files in the log path
+        File logPath = new File(getActivity().getCacheDir(), "logs");
+        File[] files = logPath.listFiles();
+        // Fill the items for the dialog
+        String[] logfileList = new String[files.length];
+        for (int i = 0; i < files.length; i++) {
+            logfileList[i] = files[i].getName();
+        }
+        // Show the dialog with the list of log files
+        new MaterialDialog.Builder(getActivity())
+                .title(R.string.select_log_file)
+                .items(logfileList)
+                .itemsCallbackSingleChoice(-1, (dialog, view, which, text) -> {
+                    mailLogfile(logfileList[which]);
+                    return true;
+                })
+                .show();
     }
 
     private void mailLogfile(String filename) {
