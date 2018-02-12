@@ -82,7 +82,7 @@
     <string name="pref_name">Connection name</string>
     <string name="pref_name_sum">Enter a unique name of the connection</string>
     <string name="pref_name_error_empty">The name must not be empty.</string>
-    <string name="pref_name_error_invalid">The name must only contain letters, numbers, minus and underscore.</string>
+    <string name="pref_name_error_invalid">The name must not be empty and may only contain letters, numbers, minus and underscore.</string>
     <string name="pref_selected">Default connection</string>
     <string name="pref_selected_sum">Select to make this the default connection and use it after the application has started.</string>
     <string name="pref_host">Hostname</string>

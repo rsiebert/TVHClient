@@ -80,7 +80,7 @@
     <string name="pref_name">Name der Verbindung</string>
     <string name="pref_name_sum">Bitte einen eindeutigen Namen eingeben.</string>
     <string name="pref_name_error_empty">Der Name darf nicht leer sein.</string>
-    <string name="pref_name_error_invalid">Der Name darf nur Buchstaben, Ziffern, Minus oder Unterstrich enthalten.</string>
+    <string name="pref_name_error_invalid">Der Name darf nicht leer sein und nur Buchstaben, Ziffern, Minus oder Unterstrich enthalten.</string>
     <string name="pref_selected">Standardverbindung</string>
     <string name="pref_selected_sum">Falls gesetzt, wird diese Verbindung beim Starten automatisch verwendet.</string>
     <string name="pref_host">Hostname</string>
