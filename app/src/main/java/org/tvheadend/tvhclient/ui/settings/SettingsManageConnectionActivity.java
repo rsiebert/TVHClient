@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
@@ -37,6 +38,17 @@ public class SettingsManageConnectionActivity extends AppCompatActivity implemen
         Fragment fragment = getFragmentManager().findFragmentById(R.id.main);
         if (fragment != null && fragment instanceof BackPressedInterface) {
             ((BackPressedInterface) fragment).onBackPressed();
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 
