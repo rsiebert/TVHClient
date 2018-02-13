@@ -42,7 +42,6 @@ import org.tvheadend.tvhclient.utils.MiscUtils;
 // TODO status screen hide wol icon if no valid mac address
 // TODO status screen no reconnect menu missing
 // TODO remove advanced setting for the data buffer
-// TODO when connecting in progress hide fab
 
 // TODO transcoding profiles crash upon start
 // TODO profiles are not greyed out when checkbox not selected

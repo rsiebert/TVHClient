@@ -89,20 +89,22 @@ public class StartupFragment extends Fragment {
         setHasOptionsMenu(true);
 
         repository = new ConnectionRepository(activity);
-        floatingActionButton.setVisibility(View.VISIBLE);
 
         if (!isConnectionDefined()) {
             statusTextView.setText("No connection defined...");
+            floatingActionButton.setVisibility(View.VISIBLE);
             floatingActionButton.setOnClickListener(v -> {
                 showSettingsAddNewConnection();
             });
         } else if (!isActiveConnectionDefined()) {
             statusTextView.setText("At least one connection is defined but not active...");
+            floatingActionButton.setVisibility(View.VISIBLE);
             floatingActionButton.setOnClickListener(v -> {
                 showSettingsListConnections();
             });
         } else if (!isNetworkAvailable()) {
             statusTextView.setText("No network available, please activate wifi or mobile data...");
+            floatingActionButton.setVisibility(View.VISIBLE);
             floatingActionButton.setOnClickListener(v -> {
                 Intent intent = new Intent(Settings.ACTION_WIRELESS_SETTINGS);
                 startActivity(intent);
