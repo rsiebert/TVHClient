@@ -47,7 +47,6 @@ import org.tvheadend.tvhclient.utils.MiscUtils;
 // TODO highlight the selected channel tag in the channel tag list selection adapter (or use checkbox list)
 // TODO show how many channels belong to a channel tag in the selection dialog
 // TODO brown genre color is not shown in the genre color info dialog
-// TODO use setting for connection timeout in the sync service
 // TODO try to fetch epg data once when no programs are available in the program list
 // TODO use channel sorting from the settings
 // TODO when sorting channels by number, consider minor major channel numbers

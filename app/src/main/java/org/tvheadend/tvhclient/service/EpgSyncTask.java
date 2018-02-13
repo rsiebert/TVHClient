@@ -46,11 +46,11 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener {
     private static final String TAG = EpgSyncTask.class.getSimpleName();
-    private final AppDatabase db;
 
+    private final AppDatabase db;
+    private final int connectionTimeout;
     private int htspVersion = 9;
     private boolean initialSyncCompleted = false;
-
     private final Context context;
     private final HtspMessage.Dispatcher dispatcher;
     private final SharedPreferences sharedPreferences;
@@ -69,6 +69,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         HandlerThread mHandlerThread = new HandlerThread("EpgSyncTask Handler Thread");
         mHandlerThread.start();
         this.handler = new Handler(mHandlerThread.getLooper());
+        this.connectionTimeout = sharedPreferences.getInt("connectionTimeout", 5000);
     }
 
     // Authenticator.Listener Methods
@@ -811,7 +812,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
 
         HtspMessage response = null;
         try {
-            response = dispatcher.sendMessage(request, 5000);
+            response = dispatcher.sendMessage(request, connectionTimeout);
         } catch (HtspNotConnectedException e) {
             Log.e(TAG, "Failed to send getDiskSpace - not connected", e);
         }
@@ -830,7 +831,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
 
         HtspMessage response = null;
         try {
-            response = dispatcher.sendMessage(request, 5000);
+            response = dispatcher.sendMessage(request, connectionTimeout);
         } catch (HtspNotConnectedException e) {
             Log.e(TAG, "Failed to send getSysTime - not connected", e);
         }
@@ -850,7 +851,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
 
         HtspMessage response = null;
         try {
-            response = dispatcher.sendMessage(request, 5000);
+            response = dispatcher.sendMessage(request, connectionTimeout);
         } catch (HtspNotConnectedException e) {
             Log.e(TAG, "Failed to send getChannel - not connected", e);
         }
@@ -875,7 +876,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
 
         HtspMessage response = null;
         try {
-            response = dispatcher.sendMessage(request, 5000);
+            response = dispatcher.sendMessage(request, connectionTimeout);
         } catch (HtspNotConnectedException e) {
             Log.e(TAG, "Failed to send getEvent - not connected", e);
         }
@@ -896,7 +897,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
 
         HtspMessage response = null;
         try {
-            response = dispatcher.sendMessage(request, 5000);
+            response = dispatcher.sendMessage(request, connectionTimeout);
         } catch (HtspNotConnectedException e) {
             Log.e(TAG, "Failed to send getEvents - not connected", e);
         }
@@ -952,7 +953,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
 
         HtspMessage response = null;
         try {
-            response = dispatcher.sendMessage(request, 5000);
+            response = dispatcher.sendMessage(request, connectionTimeout);
         } catch (HtspNotConnectedException e) {
             Log.e(TAG, "Failed to send epgQuery - not connected", e);
         }
@@ -985,7 +986,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
 
         HtspMessage response = null;
         try {
-            response = dispatcher.sendMessage(request, 5000);
+            response = dispatcher.sendMessage(request, connectionTimeout);
         } catch (HtspNotConnectedException e) {
             Log.e(TAG, "Failed to send addDvrEntry - not connected", e);
         }
@@ -1011,7 +1012,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
 
         HtspMessage response = null;
         try {
-            response = dispatcher.sendMessage(request, 5000);
+            response = dispatcher.sendMessage(request, connectionTimeout);
         } catch (HtspNotConnectedException e) {
             Log.e(TAG, "Failed to send updateDvrEntry - not connected", e);
         }
@@ -1037,7 +1038,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         Log.d(TAG, "removeDvrEntry: event id " + intent.getIntExtra("id", 0));
         HtspMessage response = null;
         try {
-            response = dispatcher.sendMessage(request, 5000);
+            response = dispatcher.sendMessage(request, connectionTimeout);
         } catch (HtspNotConnectedException e) {
             Log.e(TAG, "Failed to send " + intent.getAction() + " - not connected", e);
         }
@@ -1058,7 +1059,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
 
         HtspMessage response = null;
         try {
-            response = dispatcher.sendMessage(request, 5000);
+            response = dispatcher.sendMessage(request, connectionTimeout);
         } catch (HtspNotConnectedException e) {
             Log.e(TAG, "Failed to send addAutorecEntry - not connected", e);
         }
@@ -1090,7 +1091,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
 
         HtspMessage response = null;
         try {
-            response = dispatcher.sendMessage(request, 5000);
+            response = dispatcher.sendMessage(request, connectionTimeout);
         } catch (HtspNotConnectedException e) {
             Log.e(TAG, "Failed to send updateAutorecEntry - not connected", e);
         }
@@ -1119,7 +1120,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
 
         HtspMessage response = null;
         try {
-            response = dispatcher.sendMessage(request, 5000);
+            response = dispatcher.sendMessage(request, connectionTimeout);
         } catch (HtspNotConnectedException e) {
             Log.e(TAG, "Failed to send deleteAutorecEntry - not connected", e);
         }
@@ -1144,7 +1145,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         // error              str   optional   English clear text of error message
         HtspMessage response = null;
         try {
-            response = dispatcher.sendMessage(request, 5000);
+            response = dispatcher.sendMessage(request, connectionTimeout);
         } catch (HtspNotConnectedException e) {
             Log.e(TAG, "Failed to send addTimerecEntry - not connected", e);
         }
@@ -1170,7 +1171,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
 
         HtspMessage response = null;
         try {
-            response = dispatcher.sendMessage(request, 5000);
+            response = dispatcher.sendMessage(request, connectionTimeout);
         } catch (HtspNotConnectedException e) {
             Log.e(TAG, "Failed to send updateTimerecEntry - not connected", e);
         }
@@ -1199,7 +1200,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
 
         HtspMessage response = null;
         try {
-            response = dispatcher.sendMessage(request, 5000);
+            response = dispatcher.sendMessage(request, connectionTimeout);
         } catch (HtspNotConnectedException e) {
             Log.e(TAG, "Failed to send deleteTimerecEntry - not connected", e);
         }
@@ -1230,7 +1231,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         // ticket             str  required   The ticket to pass in the URL query string
         HtspMessage response = null;
         try {
-            response = dispatcher.sendMessage(request, 5000);
+            response = dispatcher.sendMessage(request, connectionTimeout);
         } catch (HtspNotConnectedException e) {
             Log.e(TAG, "Failed to send getTicket - not connected", e);
         }
@@ -1247,7 +1248,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         request.put("method", "getProfiles");
         HtspMessage response = null;
         try {
-            response = dispatcher.sendMessage(request, 5000);
+            response = dispatcher.sendMessage(request, connectionTimeout);
         } catch (HtspNotConnectedException e) {
             Log.e(TAG, "Failed to send getProfiles - not connected", e);
         }
@@ -1273,7 +1274,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         request.put("method", "getDvrConfigs");
         HtspMessage response = null;
         try {
-            response = dispatcher.sendMessage(request, 5000);
+            response = dispatcher.sendMessage(request, connectionTimeout);
         } catch (HtspNotConnectedException e) {
             Log.e(TAG, "Failed to send getDvrConfigs - not connected", e);
         }
