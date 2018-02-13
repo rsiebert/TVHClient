@@ -4,7 +4,6 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -185,7 +184,7 @@ public class StatusFragment extends BaseFragment implements WakeOnLanTaskCallbac
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        if (isUnlocked && connection != null && !TextUtils.isEmpty(connection.getWolMacAddress())) {
+        if (isUnlocked && connection != null && connection.isWolEnabled()) {
             menu.findItem(R.id.menu_wol).setVisible(true);
         } else {
             menu.findItem(R.id.menu_wol).setVisible(false);
@@ -217,6 +216,7 @@ public class StatusFragment extends BaseFragment implements WakeOnLanTaskCallbac
      * information that no connection is selected or available.
      */
     private void showConnectionDetails() {
+        connection = connectionRepository.getActiveConnectionSync();
         if (connection == null) {
             if (connectionRepository.getAllConnectionsSync() == null) {
                 connectionTextView.setText(R.string.no_connection_available_advice);
