@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 
 import com.afollestad.materialdialogs.folderselector.FolderChooserDialog;
@@ -22,7 +21,6 @@ import org.tvheadend.tvhclient.utils.MiscUtils;
 import java.io.File;
 
 public class SettingsActivity extends AppCompatActivity implements ToolbarInterface, FolderChooserDialog.FolderCallback {
-    private String TAG = getClass().getSimpleName();
     private String settingType;
 
     @Override
@@ -47,7 +45,7 @@ public class SettingsActivity extends AppCompatActivity implements ToolbarInterf
                 getFragmentManager().beginTransaction().add(R.id.main, fragment).commit();
             } else {
                 Fragment fragment = null;
-                Intent intent = null;
+                Intent intent;
                 switch (settingType) {
                     case "list_connections":
                         fragment = new SettingsListConnectionsFragment();
@@ -99,7 +97,6 @@ public class SettingsActivity extends AppCompatActivity implements ToolbarInterf
 
     @Override
     public void onBackPressed() {
-        Log.d(TAG, "onBackPressed: ");
         // If a settings fragment is currently visible, let the fragment
         // handle the back press, otherwise the setting activity.
         Fragment fragment = getFragmentManager().findFragmentById(R.id.main);
