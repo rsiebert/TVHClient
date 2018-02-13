@@ -3,7 +3,9 @@ package org.tvheadend.tvhclient.ui.settings;
 import android.app.ListFragment;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -23,10 +25,9 @@ import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.repository.ConnectionRepository;
 import org.tvheadend.tvhclient.data.tasks.WakeOnLanTask;
 import org.tvheadend.tvhclient.data.tasks.WakeOnLanTaskCallback;
-import org.tvheadend.tvhclient.service.EpgSyncService;
 import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
 import org.tvheadend.tvhclient.ui.common.BackPressedInterface;
-import org.tvheadend.tvhclient.utils.MenuUtils;
+import org.tvheadend.tvhclient.ui.startup.StartupActivity;
 
 public class SettingsListConnectionsFragment extends ListFragment implements BackPressedInterface, ActionMode.Callback, WakeOnLanTaskCallback {
 
@@ -35,7 +36,8 @@ public class SettingsListConnectionsFragment extends ListFragment implements Bac
     private ActionMode actionMode;
     private AppCompatActivity activity;
     private ConnectionRepository repository;
-    private boolean activeConnectionChanged;
+    private int currentActiveConnectionId;
+    private int initialActiveConnectionId;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -47,7 +49,6 @@ public class SettingsListConnectionsFragment extends ListFragment implements Bac
         }
         toolbarInterface.setTitle(getString(R.string.settings));
 
-        activeConnectionChanged = false;
         repository = new ConnectionRepository(activity);
         connectionListAdapter = new ConnectionListAdapter(activity);
         setListAdapter(connectionListAdapter);
@@ -64,17 +65,27 @@ public class SettingsListConnectionsFragment extends ListFragment implements Bac
                         R.plurals.number_of_connections,
                         connectionListAdapter.getCount(),
                         connectionListAdapter.getCount()));
+
+                currentActiveConnectionId = 0;
+                for (Connection connection : connections) {
+                    if (connection.isActive()) {
+                        currentActiveConnectionId = connection.getId();
+                        break;
+                    }
+                }
             }
         });
 
         if (savedInstanceState != null) {
-            activeConnectionChanged = savedInstanceState.getBoolean("activeConnectionChanged");
+            initialActiveConnectionId = savedInstanceState.getInt("initialActiveConnectionId");
+        } else {
+            initialActiveConnectionId = (repository.getActiveConnectionSync() != null) ? repository.getActiveConnectionSync().getId() : 0;
         }
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putBoolean("activeConnectionChanged", activeConnectionChanged);
+        outState.putInt("initialActiveConnectionId", initialActiveConnectionId);
     }
 
     @Override
@@ -111,15 +122,6 @@ public class SettingsListConnectionsFragment extends ListFragment implements Bac
         }
     }
 
-    private void setConnectionStatus(Connection c, boolean active) {
-        // Stop the service
-        Intent intent = new Intent(activity, EpgSyncService.class);
-        activity.stopService(intent);
-        // Set the new connection to active
-        c.setActive(active);
-        repository.updateConnectionSync(c);
-    }
-
     @Override
     public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
         int position = getListView().getCheckedItemPosition();
@@ -130,14 +132,14 @@ public class SettingsListConnectionsFragment extends ListFragment implements Bac
         Intent intent;
         switch (item.getItemId()) {
             case R.id.menu_set_active:
-                setConnectionStatus(connection, true);
-                activeConnectionChanged = true;
+                connection.setActive(true);
+                repository.updateConnectionSync(connection);
                 mode.finish();
                 return true;
 
             case R.id.menu_set_not_active:
-                setConnectionStatus(connection, false);
-                activeConnectionChanged = true;
+                connection.setActive(false);
+                repository.updateConnectionSync(connection);
                 mode.finish();
                 return true;
 
@@ -163,7 +165,7 @@ public class SettingsListConnectionsFragment extends ListFragment implements Bac
                             @Override
                             public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                                 repository.removeConnectionSync(connection.getId());
-                                activeConnectionChanged = true;
+                                currentActiveConnectionId = 0;
                             }
                         })
                         .onNegative(new MaterialDialog.SingleButtonCallback() {
@@ -219,10 +221,36 @@ public class SettingsListConnectionsFragment extends ListFragment implements Bac
 
     @Override
     public void onBackPressed() {
-        if (activeConnectionChanged) {
-            new MenuUtils(activity).handleMenuReconnectSelection();
+        if (initialActiveConnectionId != currentActiveConnectionId) {
+            new MaterialDialog.Builder(activity)
+                    .title("Reconnect to server required")
+                    .content("A new active connection was defined. " +
+                            "The application will be restarted and a new initial sync will be performed.")
+                    .positiveText(android.R.string.ok)
+                    .onPositive((dialog, which) -> reconnect())
+                    .show();
+        } else if (currentActiveConnectionId == 0) {
+            new MaterialDialog.Builder(activity)
+                    .title("Connection will be closed")
+                    .content("No active connection is defined. The existing connection to the server will be closed.")
+                    .positiveText(android.R.string.ok)
+                    .onPositive((dialog, which) -> reconnect())
+                    .show();
         } else {
             activity.finish();
         }
+    }
+
+    private void reconnect() {
+        // Save the information that a new sync is required
+        // Then restart the application to show the sync fragment
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean("initial_sync_done", false);
+        editor.apply();
+        Intent intent = new Intent(activity, StartupActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        activity.startActivity(intent);
+        activity.finish();
     }
 }

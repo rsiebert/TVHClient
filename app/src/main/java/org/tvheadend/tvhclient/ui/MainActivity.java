@@ -38,7 +38,6 @@ import org.tvheadend.tvhclient.ui.search.SearchRequestInterface;
 import org.tvheadend.tvhclient.utils.MenuUtils;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
-// TODO when changing active connection do not ask for reconnect when the same connection is set as active
 // TODO transcoding profiles crash upon start
 // TODO profiles are not greyed out when checkbox not selected
 // TODO starting recording from channel list does not update channel recording status
