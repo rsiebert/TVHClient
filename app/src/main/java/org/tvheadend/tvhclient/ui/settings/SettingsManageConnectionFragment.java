@@ -9,7 +9,6 @@ import android.preference.PreferenceFragment;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -45,6 +44,7 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
     private CheckBoxPreference prefWolEnabled;
     private CheckBoxPreference prefWolBroadcast;
     private int connectionId;
+    //private boolean isActive;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -129,6 +129,7 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
         prefPassword.setText(password);
         prefPassword.setSummary(password.isEmpty() ? getString(R.string.pref_pass_sum) : getString(R.string.pref_pass_set_sum));
 
+        //isActive = connection.isActive();
         prefSelected.setChecked(connection.isActive());
         prefWolEnabled.setChecked(connection.isWolEnabled());
 
@@ -161,8 +162,7 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_save:
-                repository.updateConnectionSync(connection);
-                activity.finish();
+                save();
                 return true;
             case R.id.menu_cancel:
                 cancel();
@@ -172,6 +172,51 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
         }
     }
 
+    private void save() {
+        repository.updateConnectionSync(connection);
+        /*
+        // Do a restart when a new connection was added an is set
+        // as active or an existing connection is set as not active
+        if (connection.getId() == 0 && isActive) {
+            new MaterialDialog.Builder(activity)
+                    .title("Connect to new server?")
+                    .content("A new active connection was added. Do you want to connect to the server?\n" +
+                            "The application will be restarted and a new initial sync will be performed.")
+                    .negativeText(R.string.cancel)
+                    .positiveText("Reconnect")
+                    .onPositive((dialog, which) -> reconnect())
+                    .onNegative(((dialog, which) -> activity.finish()))
+                    .show();
+
+        } else if (connection.getId() > 0 && !isActive) {
+            new MaterialDialog.Builder(activity)
+                    .title("Close connection?")
+                    .content("An existing connection was marked as inactive. The connection to the server will be closed.")
+                    .negativeText(R.string.cancel)
+                    .positiveText("Close")
+                    .onPositive((dialog, which) -> reconnect())
+                    .onNegative(((dialog, which) -> activity.finish()))
+                    .show();
+        } else {
+            activity.finish();
+        }
+        */
+        activity.finish();
+    }
+/*
+    private void reconnect() {
+        // Save the information that a new sync is required
+        // Then restart the application to show the sync fragment
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean("initial_sync_done", false);
+        editor.apply();
+        Intent intent = new Intent(activity, StartupActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        activity.startActivity(intent);
+        activity.finish();
+    }
+*/
     /**
      * Asks the user to confirm canceling the current activity. If no is
      * chosen the user can continue to add or edit the connection. Otherwise
@@ -179,10 +224,8 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
      */
     private void cancel() {
         if (!connectionValuesChanged) {
-            Log.d(TAG, "cancel: finish");
             activity.finish();
         } else {
-            Log.d(TAG, "cancel: show confirmation");
             // Show confirmation dialog to cancel
             new MaterialDialog.Builder(activity)
                     .content(R.string.confirm_discard_connection)
@@ -205,7 +248,6 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
 
     @Override
     public void onBackPressed() {
-        Log.d(TAG, "onBackPressed: ");
         cancel();
     }
 
@@ -221,6 +263,7 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
                     prefName.setText(value);
                     prefName.setSummary(value.isEmpty() ? getString(R.string.pref_name_sum) : value);
                 } else {
+                    prefName.setText(connection.getName());
                     if (getView() != null) {
                         Snackbar.make(getView(), R.string.pref_name_error_invalid, Snackbar.LENGTH_SHORT).show();
                     }
@@ -232,6 +275,7 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
                     prefAddress.setText(value);
                     prefAddress.setSummary(value.isEmpty() ? getString(R.string.pref_host_sum) : value);
                 } else {
+                    prefAddress.setText(connection.getHostname());
                     if (getView() != null) {
                         Snackbar.make(getView(), R.string.pref_host_error_invalid, Snackbar.LENGTH_SHORT).show();
                     }
@@ -245,6 +289,7 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
                         prefPort.setText(String.valueOf(port));
                         prefPort.setSummary(String.valueOf(port));
                     } else {
+                        prefPort.setText(String.valueOf(connection.getPort()));
                         if (getView() != null) {
                             Snackbar.make(getView(), R.string.pref_port_error_invalid, Snackbar.LENGTH_SHORT).show();
                         }
@@ -261,6 +306,7 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
                         prefStreamingPort.setText(value);
                         prefStreamingPort.setSummary(getString(R.string.pref_streaming_port_sum, port));
                     } else {
+                        prefStreamingPort.setText(String.valueOf(connection.getStreamingPort()));
                         if (getView() != null) {
                             Snackbar.make(getView(), R.string.pref_port_error_invalid, Snackbar.LENGTH_SHORT).show();
                         }
@@ -280,6 +326,7 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
                 prefPassword.setSummary(value.isEmpty() ? getString(R.string.pref_pass_sum) : getString(R.string.pref_pass_set_sum));
                 break;
             case "pref_selected":
+                //isActive = Boolean.valueOf(value);
                 connection.setActive(Boolean.valueOf(value));
                 break;
             case "pref_wol_enabled":
@@ -291,6 +338,7 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
                     prefWolAddress.setText(value);
                     prefWolAddress.setSummary(value.isEmpty() ? getString(R.string.pref_wol_address_sum) : value);
                 } else {
+                    prefWolAddress.setText(connection.getWolMacAddress());
                     if (getView() != null) {
                         Snackbar.make(getView(), R.string.pref_wol_address_invalid, Snackbar.LENGTH_SHORT).show();
                     }
@@ -304,6 +352,7 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
                         prefWolPort.setText(value);
                         prefWolPort.setSummary(getString(R.string.pref_wol_port_sum, port));
                     } else {
+                        prefWolPort.setText(String.valueOf(connection.getWolPort()));
                         if (getView() != null) {
                             Snackbar.make(getView(), R.string.pref_port_error_invalid, Snackbar.LENGTH_SHORT).show();
                         }
