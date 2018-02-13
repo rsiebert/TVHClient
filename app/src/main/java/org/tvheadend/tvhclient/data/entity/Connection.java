@@ -3,6 +3,11 @@ package org.tvheadend.tvhclient.data.entity;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
+import android.text.TextUtils;
+import android.util.Patterns;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Entity(tableName = "connections")
 public class Connection {
@@ -18,6 +23,8 @@ public class Connection {
     private boolean active = false;
     @ColumnInfo(name = "streaming_port")
     private int streamingPort = 9981;
+    @ColumnInfo(name = "wol_enabled")
+    private boolean wolEnabled = false;
     @ColumnInfo(name = "wol_hostname")
     private String wolMacAddress = "";
     @ColumnInfo(name = "wol_port")
@@ -89,6 +96,14 @@ public class Connection {
         this.streamingPort = streamingPort;
     }
 
+    public boolean isWolEnabled() {
+        return wolEnabled;
+    }
+
+    public void setWolEnabled(boolean wolEnabled) {
+        this.wolEnabled = wolEnabled;
+    }
+
     public String getWolMacAddress() {
         return wolMacAddress;
     }
@@ -111,5 +126,54 @@ public class Connection {
 
     public void setWolUseBroadcast(boolean wolUseBroadcast) {
         this.wolUseBroadcast = wolUseBroadcast;
+    }
+
+    public boolean isWolMacAddressValid(String macAddress) {
+        // Check if the MAC address is valid
+        Pattern pattern = Pattern.compile("([0-9a-fA-F]{2}(?::|-|$)){6}");
+        Matcher matcher = pattern.matcher(macAddress);
+        return matcher.matches();
+    }
+
+    public boolean isNameValid(String name) {
+        if (TextUtils.isEmpty(name)) {
+            return false;
+        }
+        // Check if the name contains only valid characters.
+        Pattern pattern = Pattern.compile("^[0-9a-zA-Z_\\-\\.]*$");
+        Matcher matcher = pattern.matcher(name);
+        return matcher.matches();
+    }
+
+    public boolean isIpAddressValid(String address) {
+        // Do not allow an empty address
+        if (TextUtils.isEmpty(address)) {
+            return false;
+        }
+
+        // Check if the name contains only valid characters.
+        Pattern pattern = Pattern.compile("^[0-9a-zA-Z_\\-\\.]*$");
+        Matcher matcher = pattern.matcher(address);
+        if (!matcher.matches()) {
+            return false;
+        }
+
+        // Check if the address has only numbers and dots in it.
+        pattern = Pattern.compile("^[0-9\\.]*$");
+        matcher = pattern.matcher(address);
+
+        // Now validate the IP address
+        if (matcher.matches()) {
+            pattern = Patterns.IP_ADDRESS;
+            matcher = pattern.matcher(address);
+            if (!matcher.matches()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean isPortValid(int port) {
+        return port > 0 && port <= 65535;
     }
 }

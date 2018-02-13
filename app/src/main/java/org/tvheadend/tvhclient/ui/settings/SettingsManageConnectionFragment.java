@@ -9,9 +9,7 @@ import android.preference.PreferenceFragment;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
 import android.util.Log;
-import android.util.Patterns;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -24,9 +22,6 @@ import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.repository.ConnectionRepository;
 import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
 import org.tvheadend.tvhclient.ui.common.BackPressedInterface;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class SettingsManageConnectionFragment extends PreferenceFragment implements BackPressedInterface, Preference.OnPreferenceChangeListener {
     @SuppressWarnings("unused")
@@ -44,9 +39,10 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
     private EditTextPreference prefStreamingPort;
     private EditTextPreference prefUsername;
     private EditTextPreference prefPassword;
-    private CheckBoxPreference prefSelected;
     private EditTextPreference prefWolAddress;
     private EditTextPreference prefWolPort;
+    private CheckBoxPreference prefSelected;
+    private CheckBoxPreference prefWolEnabled;
     private CheckBoxPreference prefWolBroadcast;
     private int connectionId;
 
@@ -71,6 +67,7 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
         prefUsername = (EditTextPreference) findPreference("pref_username");
         prefPassword = (EditTextPreference) findPreference("pref_password");
         prefSelected = (CheckBoxPreference) findPreference("pref_selected");
+        prefWolEnabled = (CheckBoxPreference) findPreference("pref_wol_enabled");
         prefWolAddress = (EditTextPreference) findPreference("pref_wol_address");
         prefWolPort = (EditTextPreference) findPreference("pref_wol_port");
         prefWolBroadcast = (CheckBoxPreference) findPreference("pref_wol_broadcast");
@@ -82,6 +79,7 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
         prefUsername.setOnPreferenceChangeListener(this);
         prefPassword.setOnPreferenceChangeListener(this);
         prefSelected.setOnPreferenceChangeListener(this);
+        prefWolEnabled.setOnPreferenceChangeListener(this);
         prefWolAddress.setOnPreferenceChangeListener(this);
         prefWolPort.setOnPreferenceChangeListener(this);
         prefWolBroadcast.setOnPreferenceChangeListener(this);
@@ -100,24 +98,50 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
         ConnectionViewModel viewModel = ViewModelProviders.of(activity).get(ConnectionViewModel.class);
         connection = viewModel.getConnectionByIdSync(connectionId);
 
-        onPreferenceChange(prefName, connection.getName());
-        onPreferenceChange(prefAddress, connection.getHostname());
-        onPreferenceChange(prefPort, String.valueOf(connection.getPort()));
-        onPreferenceChange(prefStreamingPort, String.valueOf(connection.getStreamingPort()));
-        onPreferenceChange(prefUsername, connection.getUsername());
-        onPreferenceChange(prefPassword, connection.getPassword());
-        onPreferenceChange(prefSelected, connection.isActive());
-        onPreferenceChange(prefWolAddress, connection.getWolMacAddress());
-        onPreferenceChange(prefWolPort, connection.getWolPort());
-        onPreferenceChange(prefWolBroadcast, connection.isWolUseBroadcast());
-
-        // Reset the variable which will be set to true when the method
-        // onPreferenceChange is called. Initially the values have not been changed
-        connectionValuesChanged = false;
+        setPreferenceDefaultValues();
 
         toolbarInterface.setTitle(connection.getId() > 0 ?
                 getString(R.string.edit_connection) :
                 getString(R.string.add_connection));
+    }
+
+    private void setPreferenceDefaultValues() {
+        String name = connection.getName();
+        prefName.setText(name);
+        prefName.setSummary(name.isEmpty() ? getString(R.string.pref_name_sum) : name);
+
+        String address = connection.getHostname();
+        prefAddress.setText(address);
+        prefAddress.setSummary(address.isEmpty() ? getString(R.string.pref_host_sum) : address);
+
+        String port = String.valueOf(connection.getPort());
+        prefPort.setText(port);
+        prefPort.setSummary(port);
+
+        prefStreamingPort.setText(String.valueOf(connection.getPort()));
+        prefStreamingPort.setSummary(getString(R.string.pref_streaming_port_sum, connection.getPort()));
+
+        String username = connection.getUsername();
+        prefUsername.setText(username);
+        prefUsername.setSummary(username.isEmpty() ? getString(R.string.pref_user_sum) : username);
+
+        String password = connection.getPassword();
+        prefPassword.setText(password);
+        prefPassword.setSummary(password.isEmpty() ? getString(R.string.pref_pass_sum) : getString(R.string.pref_pass_set_sum));
+
+        prefSelected.setChecked(connection.isActive());
+        prefWolEnabled.setChecked(connection.isWolEnabled());
+
+        if (!connection.isWolEnabled()) {
+            String macAddress = connection.getWolMacAddress();
+            prefWolAddress.setText(macAddress);
+            prefWolAddress.setSummary(macAddress.isEmpty() ? getString(R.string.pref_wol_address_sum) : macAddress);
+            prefWolPort.setText(String.valueOf(connection.getWolPort()));
+            prefWolPort.setSummary(getString(R.string.pref_wol_port_sum, connection.getWolPort()));
+            prefWolBroadcast.setChecked(connection.isWolUseBroadcast());
+        }
+
+
     }
 
     @Override
@@ -137,25 +161,14 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_save:
-                save();
+                repository.updateConnectionSync(connection);
+                activity.finish();
                 return true;
             case R.id.menu_cancel:
                 cancel();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
-        }
-    }
-
-    private void save() {
-        if (validateName(connection.getName())
-                && validateIpAddress(connection.getHostname())
-                && validatePort(connection.getStreamingPort())
-                && validatePort(connection.getWolPort())
-                && validateMacAddress(connection.getWolMacAddress())) {
-
-            repository.updateConnectionSync(connection);
-            activity.finish();
         }
     }
 
@@ -166,8 +179,10 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
      */
     private void cancel() {
         if (!connectionValuesChanged) {
+            Log.d(TAG, "cancel: finish");
             activity.finish();
         } else {
+            Log.d(TAG, "cancel: show confirmation");
             // Show confirmation dialog to cancel
             new MaterialDialog.Builder(activity)
                     .content(R.string.confirm_discard_connection)
@@ -190,6 +205,7 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
 
     @Override
     public void onBackPressed() {
+        Log.d(TAG, "onBackPressed: ");
         cancel();
     }
 
@@ -198,33 +214,57 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
         connectionValuesChanged = true;
 
         String value = String.valueOf(o);
-        Log.d(TAG, "onPreferenceChange: pref " + preference.getKey() + ", value " + value);
         switch (preference.getKey()) {
             case "pref_name":
-                connection.setName(value);
-                prefName.setText(value);
-                prefName.setSummary(value.isEmpty() ? getString(R.string.pref_name_sum) : value);
+                if (connection.isNameValid(value)) {
+                    connection.setName(value);
+                    prefName.setText(value);
+                    prefName.setSummary(value.isEmpty() ? getString(R.string.pref_name_sum) : value);
+                } else {
+                    if (getView() != null) {
+                        Snackbar.make(getView(), R.string.pref_name_error_invalid, Snackbar.LENGTH_SHORT).show();
+                    }
+                }
                 break;
             case "pref_address":
-                connection.setHostname(value);
-                prefAddress.setText(value);
-                prefAddress.setSummary(value.isEmpty() ? getString(R.string.pref_host_sum) : value);
+                if (connection.isIpAddressValid(value)) {
+                    connection.setHostname(value);
+                    prefAddress.setText(value);
+                    prefAddress.setSummary(value.isEmpty() ? getString(R.string.pref_host_sum) : value);
+                } else {
+                    if (getView() != null) {
+                        Snackbar.make(getView(), R.string.pref_host_error_invalid, Snackbar.LENGTH_SHORT).show();
+                    }
+                }
                 break;
             case "pref_port":
                 try {
                     int port = Integer.parseInt(value);
-                    connection.setPort(port);
-                    prefPort.setText(String.valueOf(port));
-                    prefPort.setSummary(value.isEmpty() ? getString(R.string.pref_port_sum) : value);
+                    if (connection.isPortValid(port)) {
+                        connection.setPort(port);
+                        prefPort.setText(String.valueOf(port));
+                        prefPort.setSummary(String.valueOf(port));
+                    } else {
+                        if (getView() != null) {
+                            Snackbar.make(getView(), R.string.pref_port_error_invalid, Snackbar.LENGTH_SHORT).show();
+                        }
+                    }
                 } catch (NumberFormatException nex) {
                     // NOP
                 }
                 break;
             case "pref_streaming_port":
                 try {
-                    connection.setStreamingPort(Integer.parseInt(value));
-                    prefStreamingPort.setText(value);
-                    prefStreamingPort.setSummary(getString(R.string.pref_streaming_port_sum, Integer.valueOf(value)));
+                    int port = Integer.parseInt(value);
+                    if (connection.isPortValid(port)) {
+                        connection.setStreamingPort(port);
+                        prefStreamingPort.setText(value);
+                        prefStreamingPort.setSummary(getString(R.string.pref_streaming_port_sum, port));
+                    } else {
+                        if (getView() != null) {
+                            Snackbar.make(getView(), R.string.pref_port_error_invalid, Snackbar.LENGTH_SHORT).show();
+                        }
+                    }
                 } catch (NumberFormatException e) {
                     // NOP
                 }
@@ -242,17 +282,32 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
             case "pref_selected":
                 connection.setActive(Boolean.valueOf(value));
                 break;
+            case "pref_wol_enabled":
+                connection.setWolEnabled(Boolean.valueOf(value));
+                break;
             case "pref_wol_address":
-                connection.setWolMacAddress(value);
-                prefWolAddress.setText(value);
-                prefWolAddress.setSummary(value.isEmpty() ? getString(R.string.pref_wol_address_sum) : value);
+                if (connection.isWolMacAddressValid(value)) {
+                    connection.setWolMacAddress(value);
+                    prefWolAddress.setText(value);
+                    prefWolAddress.setSummary(value.isEmpty() ? getString(R.string.pref_wol_address_sum) : value);
+                } else {
+                    if (getView() != null) {
+                        Snackbar.make(getView(), R.string.pref_wol_address_invalid, Snackbar.LENGTH_SHORT).show();
+                    }
+                }
                 break;
             case "pref_wol_port":
                 try {
-                    connection.setWolPort(Integer.parseInt(value));
-                    prefWolPort.setText(value);
-                    prefWolPort.setSummary(getString(R.string.pref_wol_port_sum,
-                            Integer.valueOf(value)));
+                    int port = Integer.parseInt(value);
+                    if (connection.isPortValid(port)) {
+                        connection.setWolPort(port);
+                        prefWolPort.setText(value);
+                        prefWolPort.setSummary(getString(R.string.pref_wol_port_sum, port));
+                    } else {
+                        if (getView() != null) {
+                            Snackbar.make(getView(), R.string.pref_port_error_invalid, Snackbar.LENGTH_SHORT).show();
+                        }
+                    }
                 } catch (NumberFormatException e) {
                     // NOP
                 }
@@ -262,119 +317,6 @@ public class SettingsManageConnectionFragment extends PreferenceFragment impleme
                 break;
         }
         return true;
-    }
-
-    /**
-     * Checks if the MAC address syntax is correct.
-     *
-     * @param macAddress The MAC address that shall be validated
-     * @return True if MAC address is valid, otherwise false
-     */
-    private boolean validateMacAddress(String macAddress) {
-        // Allow an empty address
-        if (TextUtils.isEmpty(macAddress)) {
-            return true;
-        }
-        // Check if the MAC address is valid
-        Pattern pattern = Pattern.compile("([0-9a-fA-F]{2}(?::|-|$)){6}");
-        Matcher matcher = pattern.matcher(macAddress);
-        if (!matcher.matches()) {
-            if (getView() != null) {
-                Snackbar.make(getView(), R.string.pref_wol_address_invalid, Snackbar.LENGTH_SHORT).show();
-            }
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * Checks if the given name is not empty or does not contain special
-     * characters which are not allowed in the database
-     *
-     * @param name The name to be validated
-     * @return True if name is valid, otherwise false
-     */
-    private boolean validateName(String name) {
-        // Do not allow an empty address
-        if (TextUtils.isEmpty(name)) {
-            if (getView() != null) {
-                Snackbar.make(getView(), R.string.pref_name_error_empty, Snackbar.LENGTH_SHORT).show();
-            }
-            return false;
-        }
-        // Check if the name contains only valid characters.
-        Pattern pattern = Pattern.compile("^[0-9a-zA-Z_\\-\\.]*$");
-        Matcher matcher = pattern.matcher(name);
-        if (!matcher.matches()) {
-            if (getView() != null) {
-                Snackbar.make(getView(), R.string.pref_name_error_invalid, Snackbar.LENGTH_SHORT).show();
-            }
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * Checks the given address for validity. It must not be empty and if it
-     * is an IP address it must only contain numbers between 1 and 255 and
-     * dots. If it is an host name it must contain only valid characters.
-     *
-     * @param address The address that shall be validated
-     * @return True if IP address is valid, otherwise false
-     */
-    private boolean validateIpAddress(String address) {
-        // Do not allow an empty address
-        if (TextUtils.isEmpty(address)) {
-            if (getView() != null) {
-                Snackbar.make(getView(), R.string.pref_host_error_empty, Snackbar.LENGTH_SHORT).show();
-            }
-            return false;
-        }
-
-        // Check if the name contains only valid characters.
-        Pattern pattern = Pattern.compile("^[0-9a-zA-Z_\\-\\.]*$");
-        Matcher matcher = pattern.matcher(address);
-        if (!matcher.matches()) {
-            if (getView() != null) {
-                Snackbar.make(getView(), R.string.pref_host_error_invalid, Snackbar.LENGTH_SHORT).show();
-            }
-            return false;
-        }
-
-        // Check if the address has only numbers and dots in it.
-        pattern = Pattern.compile("^[0-9\\.]*$");
-        matcher = pattern.matcher(address);
-
-        // Now validate the IP address
-        if (matcher.matches()) {
-            pattern = Patterns.IP_ADDRESS;
-            matcher = pattern.matcher(address);
-            if (!matcher.matches()) {
-                if (getView() != null) {
-                    Snackbar.make(getView(), R.string.pref_host_error_invalid, Snackbar.LENGTH_SHORT).show();
-                }
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
-     * Validates the port numbers. It must not be empty and the value must be
-     * between the allowed port range of zero to 65535.
-     *
-     * @param port The port number
-     * @return True if port is valid, otherwise false
-     */
-    private boolean validatePort(int port) {
-        if (port > 0 && port <= 65535) {
-            return true;
-        }
-        if (getView() != null) {
-            Snackbar.make(getView(), R.string.pref_port_error_invalid,
-                    Snackbar.LENGTH_SHORT).show();
-        }
-        return false;
     }
 
 }
