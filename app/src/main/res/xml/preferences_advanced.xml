@@ -31,16 +31,6 @@
             android:numeric="integer"
             android:summary="@string/pref_connection_timeout_sum"
             android:title="@string/pref_connection_timeout" />
-        <ListPreference
-            android:id="@+id/pref_buffer_size"
-            android:defaultValue="0"
-            android:dialogTitle="@string/pref_buffer_size"
-            android:entries="@array/pref_buffer_size_names"
-            android:entryValues="@array/pref_buffer_size_ids"
-            android:key="bufferSize"
-            android:numeric="integer"
-            android:summary="@string/pref_buffer_size_sum"
-            android:title="@string/pref_buffer_size" />
     </PreferenceCategory>
 
 </PreferenceScreen>
