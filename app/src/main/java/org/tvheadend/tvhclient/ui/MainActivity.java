@@ -38,6 +38,12 @@ import org.tvheadend.tvhclient.ui.search.SearchRequestInterface;
 import org.tvheadend.tvhclient.utils.MenuUtils;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
+// TODO when changing active connection do not ask for reconnect when the same connection is set as active
+// TODO status screen hide wol icon if no valid mac address
+// TODO status screen no reconnect menu missing
+// TODO remove advanced setting for the data buffer
+// TODO when connecting in progress hide fab
+
 // TODO transcoding profiles crash upon start
 // TODO profiles are not greyed out when checkbox not selected
 // TODO starting recording from channel list does not update channel recording status
@@ -45,11 +51,8 @@ import org.tvheadend.tvhclient.utils.MiscUtils;
 // TODO split time in details screens into start and stop time
 // TODO highlight the selected channel in the channel list selection adapter (or use checkbox list)
 // TODO highlight the selected channel tag in the channel tag list selection adapter (or use checkbox list)
-// TODO status screen hide wol icon if no valid mac address
-// TODO status screen no reconnect menu missing
 // TODO show how many channels belong to a channel tag in the selection dialog
 // TODO brown genre color is not shown in the genre color info dialog
-// TODO remove advanced setting for the data buffer
 // TODO use setting for connection timeout in the sync service
 // TODO try to fetch epg data once when no programs are available in the program list
 // TODO use channel sorting from the settings
@@ -69,6 +72,8 @@ import org.tvheadend.tvhclient.utils.MiscUtils;
 // TODO rework search (use recyclerview filter)
 // TODO rework epg (use recyclerview horizontal scroll)
 // TODO selected navigation item not updated when backstack is popped
+// TODO test database migration
+// TODO load channel icons in the background during initial sync
 
 
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, ToolbarInterface {
