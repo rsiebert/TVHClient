@@ -39,8 +39,6 @@ import org.tvheadend.tvhclient.utils.MenuUtils;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
 // TODO when changing active connection do not ask for reconnect when the same connection is set as active
-// TODO status screen hide wol icon if no valid mac address
-// TODO status screen no reconnect menu missing
 // TODO remove advanced setting for the data buffer
 
 // TODO transcoding profiles crash upon start
