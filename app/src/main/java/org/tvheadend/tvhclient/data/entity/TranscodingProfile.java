@@ -8,7 +8,7 @@ import android.arch.persistence.room.PrimaryKey;
 public class TranscodingProfile {
 
     @PrimaryKey(autoGenerate = true)
-    private int id;
+    private int id = 0;
     @ColumnInfo(name = "connection_id")
     private int connectionId;
     @ColumnInfo(name = "is_enabled")

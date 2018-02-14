@@ -25,11 +25,14 @@ public interface TranscodingProfileDao {
     TranscodingProfile loadRecordingProfileSync();
 
     @Insert
-    void insert(TranscodingProfile... transcodingProfiles);
+    long insert(TranscodingProfile transcodingProfile);
 
     @Update
     void update(TranscodingProfile... transcodingProfiles);
 
     @Delete
     void delete(TranscodingProfile transcodingProfile);
+
+    @Query("SELECT * FROM transcoding_profiles WHERE id = :id")
+    TranscodingProfile loadProfileByIdSync(int id);
 }

@@ -27,9 +27,8 @@ import android.support.v7.app.AppCompatActivity;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.entity.TranscodingProfile;
+import org.tvheadend.tvhclient.data.repository.ConfigRepository;
 import org.tvheadend.tvhclient.data.repository.ConnectionRepository;
-import org.tvheadend.tvhclient.data.repository.ProfileRepository;
-import org.tvheadend.tvhclient.data.repository.ServerStatusRepository;
 import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
 import org.tvheadend.tvhclient.ui.common.BackPressedInterface;
 
@@ -54,30 +53,19 @@ public class SettingsTranscodingFragment extends PreferenceFragment implements B
     private ListPreference prefRecVideoCodec;
     private ListPreference prefRecSubtitleCodec;
 
-    private static final String PROG_PROFILE_CONTAINER = "prog_profile_container";
-    private static final String PROG_PROFILE_TRANSCODE = "prog_profile_transcode";
-    private static final String PROG_PROFILE_RESOLUTION = "prog_profile_resolution";
-    private static final String PROG_PROFILE_AUDIO_CODEC = "prog_profile_audio_codec";
-    private static final String PROG_PROFILE_VIDEO_CODEC = "prog_profile_vodeo_codec";
-    private static final String PROG_PROFILE_SUBTITLE_CODEC = "prog_profile_subtitle_codec";
-    private static final String REC_PROFILE_CONTAINER = "rec_profile_container";
-    private static final String REC_PROFILE_TRANSCODE = "rec_profile_transcode";
-    private static final String REC_PROFILE_RESOLUTION = "rec_profile_resolution";
-    private static final String REC_PROFILE_AUDIO_CODEC = "rec_profile_audio_codec";
-    private static final String REC_PROFILE_VIDEO_CODEC = "rec_profile_vodeo_codec";
-    private static final String REC_PROFILE_SUBTITLE_CODEC = "rec_profile_subtitle_codec";
-    private ProfileRepository profileRepository;
-    private ServerStatusRepository serverRepository;
+    private AppCompatActivity activity;
+    private ConfigRepository configRepository;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences_transcoding);
 
-        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        activity = (AppCompatActivity) getActivity();
         if (activity instanceof ToolbarInterface) {
             toolbarInterface = (ToolbarInterface) activity;
         }
+        setHasOptionsMenu(true);
 
         Connection connection = new ConnectionRepository(activity).getActiveConnectionSync();
         toolbarInterface.setTitle(getString(R.string.pref_transcoding));
@@ -96,49 +84,26 @@ public class SettingsTranscodingFragment extends PreferenceFragment implements B
         prefRecVideoCodec = (ListPreference) findPreference("recVcodecPref");
         prefRecSubtitleCodec = (ListPreference) findPreference("recScodecPref");
 
-        serverRepository = new ServerStatusRepository(activity);
-        profileRepository = new ProfileRepository(activity);
-        playbackProfile = profileRepository.getPlaybackTranscodingProfile();
-        recordingProfile = profileRepository.getRecordingTranscodingProfile();
+        configRepository = new ConfigRepository(activity);
+        playbackProfile = configRepository.getPlaybackTranscodingProfile();
+        recordingProfile = configRepository.getRecordingTranscodingProfile();
 
         // Restore the currently selected uuids after an orientation change
         if (savedInstanceState != null) {
-            playbackProfile.setContainer(savedInstanceState.getString(PROG_PROFILE_CONTAINER));
-            playbackProfile.setTranscode(savedInstanceState.getBoolean(PROG_PROFILE_TRANSCODE));
-            playbackProfile.setResolution(savedInstanceState.getString(PROG_PROFILE_RESOLUTION));
-            playbackProfile.setAudioCodec(savedInstanceState.getString(PROG_PROFILE_AUDIO_CODEC));
-            playbackProfile.setVideoCodec(savedInstanceState.getString(PROG_PROFILE_VIDEO_CODEC));
-            playbackProfile.setSubtitleCodec(savedInstanceState.getString(PROG_PROFILE_SUBTITLE_CODEC));
+            playbackProfile.setContainer(savedInstanceState.getString("prog_profile_container"));
+            playbackProfile.setTranscode(savedInstanceState.getBoolean("prog_profile_transcode"));
+            playbackProfile.setResolution(savedInstanceState.getString("prog_profile_resolution"));
+            playbackProfile.setAudioCodec(savedInstanceState.getString("prog_profile_audio_codec"));
+            playbackProfile.setVideoCodec(savedInstanceState.getString("prog_profile_vodeo_codec"));
+            playbackProfile.setSubtitleCodec(savedInstanceState.getString("prog_profile_subtitle_codec"));
 
-            recordingProfile.setContainer(savedInstanceState.getString(REC_PROFILE_CONTAINER));
-            recordingProfile.setTranscode(savedInstanceState.getBoolean(REC_PROFILE_TRANSCODE));
-            recordingProfile.setResolution(savedInstanceState.getString(REC_PROFILE_RESOLUTION));
-            recordingProfile.setAudioCodec(savedInstanceState.getString(REC_PROFILE_AUDIO_CODEC));
-            recordingProfile.setVideoCodec(savedInstanceState.getString(REC_PROFILE_VIDEO_CODEC));
-            recordingProfile.setSubtitleCodec(savedInstanceState.getString(REC_PROFILE_SUBTITLE_CODEC));
+            recordingProfile.setContainer(savedInstanceState.getString("rec_profile_container"));
+            recordingProfile.setTranscode(savedInstanceState.getBoolean("rec_profile_transcode"));
+            recordingProfile.setResolution(savedInstanceState.getString("rec_profile_resolution"));
+            recordingProfile.setAudioCodec(savedInstanceState.getString("rec_profile_audio_codec"));
+            recordingProfile.setVideoCodec(savedInstanceState.getString("rec_profile_vodeo_codec"));
+            recordingProfile.setSubtitleCodec(savedInstanceState.getString("rec_profile_subtitle_codec"));
         }
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        outState.putString(PROG_PROFILE_CONTAINER, prefProgContainer.getValue());
-        outState.putBoolean(PROG_PROFILE_TRANSCODE, prefProgTranscode.isChecked());
-        outState.putString(PROG_PROFILE_RESOLUTION, prefProgResolution.getValue());
-        outState.putString(PROG_PROFILE_AUDIO_CODEC, prefProgAudioCodec.getValue());
-        outState.putString(PROG_PROFILE_VIDEO_CODEC, prefProgVideoCodec.getValue());
-        outState.putString(PROG_PROFILE_SUBTITLE_CODEC, prefProgSubtitleCodec.getValue());
-
-        outState.putString(REC_PROFILE_CONTAINER, prefRecContainer.getValue());
-        outState.putBoolean(REC_PROFILE_TRANSCODE, prefRecTranscode.isChecked());
-        outState.putString(REC_PROFILE_RESOLUTION, prefRecResolution.getValue());
-        outState.putString(REC_PROFILE_AUDIO_CODEC, prefRecAudioCodec.getValue());
-        outState.putString(REC_PROFILE_VIDEO_CODEC, prefRecVideoCodec.getValue());
-        outState.putString(REC_PROFILE_SUBTITLE_CODEC, prefRecSubtitleCodec.getValue());
-        super.onSaveInstanceState(outState);
-    }
-
-    public void onResume() {
-        super.onResume();
 
         prefProgContainer.setValue(playbackProfile.getContainer());
         prefProgTranscode.setChecked(playbackProfile.isTranscode());
@@ -155,7 +120,25 @@ public class SettingsTranscodingFragment extends PreferenceFragment implements B
         prefRecSubtitleCodec.setValue(recordingProfile.getSubtitleCodec());
     }
 
-    private void savePlaybackProfile() {
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putString("prog_profile_container", prefProgContainer.getValue());
+        outState.putBoolean("prog_profile_transcode", prefProgTranscode.isChecked());
+        outState.putString("prog_profile_resolution", prefProgResolution.getValue());
+        outState.putString("prog_profile_audio_codec", prefProgAudioCodec.getValue());
+        outState.putString("prog_profile_vodeo_codec", prefProgVideoCodec.getValue());
+        outState.putString("prog_profile_subtitle_codec", prefProgSubtitleCodec.getValue());
+
+        outState.putString("rec_profile_container", prefRecContainer.getValue());
+        outState.putBoolean("rec_profile_transcode", prefRecTranscode.isChecked());
+        outState.putString("rec_profile_resolution", prefRecResolution.getValue());
+        outState.putString("rec_profile_audio_codec", prefRecAudioCodec.getValue());
+        outState.putString("rec_profile_vodeo_codec", prefRecVideoCodec.getValue());
+        outState.putString("rec_profile_subtitle_codec", prefRecSubtitleCodec.getValue());
+        super.onSaveInstanceState(outState);
+    }
+
+    private void save() {
         // Save the values into the profile
         playbackProfile.setContainer(prefProgContainer.getValue());
         playbackProfile.setTranscode(prefProgTranscode.isChecked());
@@ -163,12 +146,8 @@ public class SettingsTranscodingFragment extends PreferenceFragment implements B
         playbackProfile.setAudioCodec(prefProgAudioCodec.getValue());
         playbackProfile.setVideoCodec(prefProgVideoCodec.getValue());
         playbackProfile.setSubtitleCodec(prefProgSubtitleCodec.getValue());
+        configRepository.updatePlaybackTranscodingProfile(playbackProfile);
 
-        profileRepository.updatePlaybackTranscodingProfile(playbackProfile);
-        serverRepository.updatePlaybackTranscodingProfile(playbackProfile.getId());
-    }
-
-    private void saveRecordingProfile() {
         // Save the values into the profile
         recordingProfile.setContainer(prefRecContainer.getValue());
         recordingProfile.setTranscode(prefRecTranscode.isChecked());
@@ -176,15 +155,13 @@ public class SettingsTranscodingFragment extends PreferenceFragment implements B
         recordingProfile.setAudioCodec(prefRecAudioCodec.getValue());
         recordingProfile.setVideoCodec(prefRecVideoCodec.getValue());
         recordingProfile.setSubtitleCodec(prefRecSubtitleCodec.getValue());
+        configRepository.updateRecordingTranscodingProfile(recordingProfile);
 
-        profileRepository.updateRecordingTranscodingProfile(recordingProfile);
-        serverRepository.updateRecordingTranscodingProfile(recordingProfile.getId());
+        activity.finish();
     }
 
     @Override
     public void onBackPressed() {
-        savePlaybackProfile();
-        saveRecordingProfile();
-        getActivity().finish();
+        save();
     }
 }
