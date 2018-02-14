@@ -39,11 +39,21 @@ public interface ServerProfileDao {
     List<ServerProfile> loadAllRecordingProfilesSync();
 
     @Insert
-    void insert(ServerProfile... serverProfile);
+    long insert(ServerProfile serverProfile);
 
     @Update
     void update(ServerProfile... serverProfile);
 
     @Delete
     void delete(ServerProfile serverProfile);
+
+    @Query("SELECT p.* FROM server_profiles AS p " +
+            "LEFT JOIN connections AS c ON c.id = p.connection_id AND c.active = 1 " +
+            "WHERE p.id = :id")
+    ServerProfile loadProfileByIdSync(int id);
+
+    @Query("SELECT p.* FROM server_profiles AS p " +
+            "LEFT JOIN connections AS c ON c.id = p.connection_id AND c.active = 1 " +
+            "WHERE p.uuid = :uuid")
+    ServerProfile loadProfileByUuidSync(String uuid);
 }

@@ -10,6 +10,7 @@ import android.os.HandlerThread;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
+import android.text.TextUtils;
 import android.util.Log;
 
 import org.tvheadend.tvhclient.R;
@@ -69,7 +70,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         HandlerThread mHandlerThread = new HandlerThread("EpgSyncTask Handler Thread");
         mHandlerThread.start();
         this.handler = new Handler(mHandlerThread.getLooper());
-        this.connectionTimeout = sharedPreferences.getInt("connectionTimeout", 5000);
+        this.connectionTimeout = Integer.valueOf(sharedPreferences.getString("connectionTimeout", "5000"));
     }
 
     // Authenticator.Listener Methods
@@ -199,6 +200,15 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
                 break;
             case "initialSyncCompleted":
                 handleInitialSyncCompleted();
+                break;
+            case "getSysTime":
+                handleSystemTime(message);
+                break;
+            case "getProfiles":
+                handleProfiles(message);
+                break;
+            case "getDvrConfigs":
+                handleDvrConfigs(message);
                 break;
         }
     }
@@ -601,6 +611,64 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         db.programDao().deleteById(msg.getInteger("id"));
     }
 
+
+    private void handleProfiles(HtspMessage message) {
+        if (message.containsKey("profiles")) {
+            ServerStatus serverStatus = db.serverStatusDao().loadServerStatusSync();
+            for (HtspMessage msg : message.getHtspMessageArray("profiles")) {
+                ServerProfile serverProfile = db.serverProfileDao().loadProfileByUuidSync(msg.getString("uuid"));
+                if (serverProfile == null) {
+                    serverProfile = new ServerProfile();
+                }
+
+                serverProfile.setConnectionId(serverStatus.getConnectionId());
+                serverProfile.setUuid(msg.getString("uuid"));
+                serverProfile.setName(msg.getString("name"));
+                serverProfile.setComment(msg.getString("comment"));
+                serverProfile.setType("playback");
+
+                if (serverProfile.getId() == 0) {
+                    db.serverProfileDao().insert(serverProfile);
+                } else {
+                    db.serverProfileDao().update(serverProfile);
+                }
+            }
+        }
+    }
+
+    private void handleDvrConfigs(HtspMessage message) {
+        if (message.containsKey("dvrconfigs")) {
+            ServerStatus serverStatus = db.serverStatusDao().loadServerStatusSync();
+            for (HtspMessage msg : message.getHtspMessageArray("dvrconfigs")) {
+                ServerProfile serverProfile = db.serverProfileDao().loadProfileByUuidSync(msg.getString("uuid"));
+                if (serverProfile == null) {
+                    serverProfile = new ServerProfile();
+                }
+
+                serverProfile.setConnectionId(serverStatus.getConnectionId());
+                serverProfile.setUuid(msg.getString("uuid"));
+                String name = msg.getString("name");
+                serverProfile.setName(TextUtils.isEmpty(name) ? "Default Profile" : name);
+                serverProfile.setComment(msg.getString("comment"));
+                serverProfile.setType("recording");
+
+                if (serverProfile.getId() == 0) {
+                    db.serverProfileDao().insert(serverProfile);
+                } else {
+                    db.serverProfileDao().update(serverProfile);
+                }
+            }
+        }
+    }
+
+    private void handleSystemTime(HtspMessage message) {
+        Log.d(TAG, "handleSystemTime() called with: message = [" + message + "]");
+        ServerStatus serverStatus = db.serverStatusDao().loadServerStatusSync();
+        serverStatus.setGmtoffset(message.getInteger("gmtoffset", 0));
+        serverStatus.setTime(message.getLong("time", 0));
+        db.serverStatusDao().update(serverStatus);
+    }
+
     private void handleInitialSyncCompleted() {
         Log.d(TAG, "handleInitialSyncCompleted() called");
 
@@ -608,7 +676,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         flushPendingChannelOps();
         flushPendingDvrEntryOps();
         flushPendingEventOps();
-        flushPendingChannelLogoFetches();
+        //TODO flushPendingChannelLogoFetches();
 
         // Get additional information
         getDiscSpace();
@@ -807,6 +875,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     }
 
     private void getDiscSpace() {
+        Log.d(TAG, "getDiscSpace() called");
         HtspMessage request = new HtspMessage();
         request.put("method", "getDiskSpace");
 
@@ -818,6 +887,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         }
 
         if (response != null) {
+            Log.d(TAG, "getDiscSpace: got response");
             ServerStatus serverStatus = db.serverStatusDao().loadServerStatusSync();
             serverStatus.setFreeDiskSpace(response.getLong("freediskspace", 0));
             serverStatus.setTotalDiskSpace(response.getLong("totaldiskspace", 0));
@@ -826,21 +896,14 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     }
 
     private void getSystemTime() {
+        Log.d(TAG, "getSystemTime() called");
         final HtspMessage request = new HtspMessage();
         request.put("method", "getSysTime");
 
-        HtspMessage response = null;
         try {
-            response = dispatcher.sendMessage(request, connectionTimeout);
+            dispatcher.sendMessage(request);
         } catch (HtspNotConnectedException e) {
             Log.e(TAG, "Failed to send getSysTime - not connected", e);
-        }
-
-        if (response != null) {
-            ServerStatus serverStatus = db.serverStatusDao().loadServerStatusSync();
-            serverStatus.setGmtoffset(response.getInteger("gmtoffset", 0));
-            serverStatus.setTime(response.getLong("time", 0));
-            db.serverStatusDao().update(serverStatus);
         }
     }
 
@@ -1244,54 +1307,25 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     }
 
     private void getProfiles() {
+        Log.d(TAG, "getProfiles() called");
         final HtspMessage request = new HtspMessage();
         request.put("method", "getProfiles");
-        HtspMessage response = null;
         try {
-            response = dispatcher.sendMessage(request, connectionTimeout);
+            dispatcher.sendMessage(request);
         } catch (HtspNotConnectedException e) {
             Log.e(TAG, "Failed to send getProfiles - not connected", e);
-        }
-
-        if (response != null) {
-            if (response.containsKey("profiles")) {
-                ServerStatus serverStatus = db.serverStatusDao().loadServerStatusSync();
-                for (HtspMessage msg : response.getHtspMessageArray("profiles")) {
-                    ServerProfile serverProfile = new ServerProfile();
-                    serverProfile.setConnectionId(serverStatus.getConnectionId());
-                    serverProfile.setUuid(msg.getString("uuid"));
-                    serverProfile.setName(msg.getString("name"));
-                    serverProfile.setComment(msg.getString("comment"));
-                    serverProfile.setType(msg.getString("playback"));
-                    db.serverProfileDao().insert(serverProfile);
-                }
-            }
         }
     }
 
     private void getDvrConfigs() {
+        Log.d(TAG, "getDvrConfigs() called");
         final HtspMessage request = new HtspMessage();
         request.put("method", "getDvrConfigs");
-        HtspMessage response = null;
+
         try {
-            response = dispatcher.sendMessage(request, connectionTimeout);
+            dispatcher.sendMessage(request, connectionTimeout);
         } catch (HtspNotConnectedException e) {
             Log.e(TAG, "Failed to send getDvrConfigs - not connected", e);
-        }
-
-        if (response != null) {
-            if (response.containsKey("dvrconfigs")) {
-                ServerStatus serverStatus = db.serverStatusDao().loadServerStatusSync();
-                for (HtspMessage msg : response.getHtspMessageArray("dvrconfigs")) {
-                    ServerProfile serverProfile = new ServerProfile();
-                    serverProfile.setConnectionId(serverStatus.getConnectionId());
-                    serverProfile.setUuid(msg.getString("uuid"));
-                    serverProfile.setName(msg.getString("name", "(Default OldProfile)"));
-                    serverProfile.setComment(msg.getString("comment"));
-                    serverProfile.setType(msg.getString("recording"));
-                    db.serverProfileDao().insert(serverProfile);
-                }
-            }
         }
     }
 

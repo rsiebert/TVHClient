@@ -5,11 +5,15 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import org.tvheadend.tvhclient.data.AppDatabase;
+import org.tvheadend.tvhclient.data.dao.ServerProfileDao;
 import org.tvheadend.tvhclient.data.dao.ServerStatusDao;
 import org.tvheadend.tvhclient.data.dao.TranscodingProfileDao;
+import org.tvheadend.tvhclient.data.entity.ServerProfile;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
 import org.tvheadend.tvhclient.data.entity.TranscodingProfile;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class ConfigRepository {
@@ -21,39 +25,103 @@ public class ConfigRepository {
     }
 
     public TranscodingProfile getPlaybackTranscodingProfile() {
-        TranscodingProfile profile = null;
         try {
-            profile = new LoadTranscodingProfileTask(db.transcodingProfileDao(), db.serverStatusDao(), "playback").execute().get();
+            return new LoadTranscodingProfileTask(db.transcodingProfileDao(), db.serverStatusDao(), "playback").execute().get();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
-        if (profile == null) {
-            Log.d(TAG, "getPlaybackTranscodingProfile: loaded profile with id 0");
-            return new TranscodingProfile();
-        } else {
-            Log.d(TAG, "getPlaybackTranscodingProfile: loaded profile with id " + profile.getId());
-            return profile;
-        }
+        return null;
     }
 
     public TranscodingProfile getRecordingTranscodingProfile() {
-        TranscodingProfile profile = null;
         try {
-            profile = new LoadTranscodingProfileTask(db.transcodingProfileDao(), db.serverStatusDao(), "recording").execute().get();
+            return new LoadTranscodingProfileTask(db.transcodingProfileDao(), db.serverStatusDao(), "recording").execute().get();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
-        if (profile == null) {
-            Log.d(TAG, "getRecordingTranscodingProfile: loaded profile with id 0");
-            return new TranscodingProfile();
-        } else {
-            Log.d(TAG, "getRecordingTranscodingProfile: loaded profile with id " + profile.getId());
-            return profile;
+        return null;
+    }
+
+    public ServerProfile getPlaybackServerProfileById(int id) {
+        try {
+            return new LoadServerProfileByIdTask(db.serverProfileDao(), id).execute().get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public ServerProfile getRecordingServerProfileById(int id) {
+        try {
+            return new LoadServerProfileByIdTask(db.serverProfileDao(), id).execute().get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public ServerProfile getCastingServerProfileById(int id) {
+        try {
+            return new LoadServerProfileByIdTask(db.serverProfileDao(), id).execute().get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public List<ServerProfile> getAllPlaybackServerProfiles() {
+        try {
+            return new LoadAllServerProfilesTask(db.serverProfileDao(), "playback").execute().get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public List<ServerProfile> getAllRecordingServerProfiles() {
+        try {
+            return new LoadAllServerProfilesTask(db.serverProfileDao(), "recording").execute().get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public void updatePlaybackServerProfile(int id) {
+        new UpdateServerProfileTask(db.serverStatusDao(), "playback", id).execute();
+    }
+
+    public void updateRecordingServerProfile(int id) {
+        new UpdateServerProfileTask(db.serverStatusDao(), "recording", id).execute();
+    }
+
+    public void updateCastingServerProfile(int id) {
+        new UpdateServerProfileTask(db.serverStatusDao(), "casting", id).execute();
+    }
+
+    public ServerStatus getServerStatus() {
+        try {
+            return new LoadServerStatusTask(db.serverStatusDao()).execute().get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private static class LoadServerStatusTask extends AsyncTask<Void, Void, ServerStatus> {
+        private final ServerStatusDao dao;
+
+        LoadServerStatusTask(ServerStatusDao dao) {
+            this.dao = dao;
+        }
+
+        @Override
+        protected ServerStatus doInBackground(Void... voids) {
+            return dao.loadServerStatusSync();
         }
     }
 
     protected static class LoadTranscodingProfileTask extends AsyncTask<Void, Void, TranscodingProfile> {
-        private String TAG = getClass().getSimpleName();
         private final TranscodingProfileDao transcodingProfileDao;
         private final ServerStatusDao serverStatusDao;
         private final String type;
@@ -67,13 +135,99 @@ public class ConfigRepository {
         @Override
         protected TranscodingProfile doInBackground(Void... voids) {
             ServerStatus serverStatus = serverStatusDao.loadServerStatusSync();
+            TranscodingProfile profile = null;
             switch (type) {
                 case "playback":
-                    Log.d(TAG, "doInBackground: loading playback profile");
-                    return transcodingProfileDao.loadProfileByIdSync(serverStatus.getPlaybackTranscodingProfileId());
+                    profile = transcodingProfileDao.loadProfileByIdSync(serverStatus.getPlaybackTranscodingProfileId());
+                    break;
                 case "recording":
-                    Log.d(TAG, "doInBackground: loading recording profile");
-                    return transcodingProfileDao.loadProfileByIdSync(serverStatus.getRecordingTranscodingProfileId());
+                    profile = transcodingProfileDao.loadProfileByIdSync(serverStatus.getRecordingTranscodingProfileId());
+                    break;
+            }
+            if (profile != null) {
+                return profile;
+            } else {
+                return new TranscodingProfile();
+            }
+        }
+    }
+
+    protected static class LoadServerProfileByIdTask extends AsyncTask<Void, Void, ServerProfile> {
+        private final ServerProfileDao serverProfileDao;
+        private final int id;
+
+        LoadServerProfileByIdTask(ServerProfileDao serverProfileDao, int id) {
+            this.serverProfileDao = serverProfileDao;
+            this.id = id;
+        }
+
+        @Override
+        protected ServerProfile doInBackground(Void... voids) {
+            ServerProfile profile = serverProfileDao.loadProfileByIdSync(id);
+            if (profile != null) {
+                return profile;
+            } else {
+                return new ServerProfile();
+            }
+        }
+    }
+
+    protected static class LoadAllServerProfilesTask extends AsyncTask<Void, Void, List<ServerProfile>> {
+        private final ServerProfileDao dao;
+        private final String type;
+
+        LoadAllServerProfilesTask(ServerProfileDao dao, String type) {
+            this.dao = dao;
+            this.type = type;
+        }
+
+        @Override
+        protected List<ServerProfile> doInBackground(Void... voids) {
+            List<ServerProfile> profiles = null;
+            switch (type) {
+                case "playback":
+                    profiles = dao.loadAllPlaybackProfilesSync();
+                    break;
+                case "recording":
+                    profiles = dao.loadAllRecordingProfilesSync();
+                    break;
+            }
+            if (profiles != null) {
+                return profiles;
+            } else {
+                return new ArrayList<>();
+            }
+        }
+    }
+
+    protected static class UpdateServerProfileTask extends AsyncTask<Void, Void, Void> {
+        private final String type;
+        private final int id;
+        private final ServerStatusDao serverStatusDao;
+
+        UpdateServerProfileTask(ServerStatusDao serverStatusDao, String type, int id) {
+            this.serverStatusDao = serverStatusDao;
+            this.type = type;
+            this.id = id;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            ServerStatus serverStatus = serverStatusDao.loadServerStatusSync();
+            Log.d("Update", "doInBackground: updating profile " + type + ", id " + id);
+            switch (type) {
+                case "playback":
+                    serverStatus.setPlaybackServerProfileId(id);
+                    serverStatusDao.update(serverStatus);
+                    break;
+                case "recording":
+                    serverStatus.setRecordingServerProfileId(id);
+                    serverStatusDao.update(serverStatus);
+                    break;
+                case "casting":
+                    serverStatus.setCastingServerProfileId(id);
+                    serverStatusDao.update(serverStatus);
+                    break;
             }
             return null;
         }
@@ -88,7 +242,6 @@ public class ConfigRepository {
     }
 
     protected static class UpdateTranscodingProfileTask extends AsyncTask<Void, Void, Void> {
-        private String TAG = getClass().getSimpleName();
         private final TranscodingProfileDao transcodingProfileDao;
         private final String type;
         private final TranscodingProfile profile;
@@ -104,30 +257,23 @@ public class ConfigRepository {
         @Override
         protected Void doInBackground(Void... voids) {
             ServerStatus serverStatus = serverStatusDao.loadServerStatusSync();
-            Log.d(TAG, "doInBackground: profiles play: " + serverStatus.getPlaybackTranscodingProfileId() + ", rec: " + serverStatus.getRecordingTranscodingProfileId());
             switch (type) {
                 case "playback":
-                    Log.d(TAG, "doInBackground: playback profile id " + profile.getId());
                     if (profile.getId() == 0) {
                         int id = (int) transcodingProfileDao.insert(profile);
-                        Log.d(TAG, "doInBackground: inserted playback profile, id is " + id);
                         serverStatus.setPlaybackTranscodingProfileId(id);
                     } else {
                         transcodingProfileDao.update(profile);
-                        Log.d(TAG, "doInBackground: updated playback profile, id is " + profile.getId());
                         serverStatus.setPlaybackTranscodingProfileId(profile.getId());
                     }
                     serverStatusDao.update(serverStatus);
                     break;
                 case "recording":
-                    Log.d(TAG, "doInBackground: recording profile id " + profile.getId());
                     if (profile.getId() == 0) {
                         int id = (int) transcodingProfileDao.insert(profile);
-                        Log.d(TAG, "doInBackground: inserted recording profile, id is " + id);
                         serverStatus.setRecordingTranscodingProfileId(id);
                     } else {
                         transcodingProfileDao.update(profile);
-                        Log.d(TAG, "doInBackground: updated recording profile, id is " + profile.getId());
                         serverStatus.setRecordingTranscodingProfileId(profile.getId());
                     }
                     serverStatusDao.update(serverStatus);

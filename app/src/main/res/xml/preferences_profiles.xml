@@ -1,13 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory android:title="@string/pref_profiles" >
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="pref_enable_recording_profiles"
-            android:summary="@string/pref_enable_recording_profiles_sum"
-            android:title="@string/pref_enable_recording_profiles" />
-
+    <PreferenceCategory android:title="@string/pref_profiles">
         <ListPreference
             android:name="@string/pref_recording_profiles"
             android:dialogTitle="@string/pref_recording_profiles"
@@ -15,12 +9,6 @@
             android:summary="@string/pref_recording_profiles_sum"
             android:title="@string/pref_recording_profiles"
             android:visible="false" />
-
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="pref_enable_playback_profiles"
-            android:summary="@string/pref_enable_playback_profiles_sum"
-            android:title="@string/pref_enable_playback_profiles" />
 
         <ListPreference
             android:name="@string/pref_playback_profiles"

@@ -18,44 +18,39 @@
  */
 package org.tvheadend.tvhclient.ui.settings;
 
-import android.app.Activity;
 import android.os.Bundle;
-import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
-import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceFragment;
-import android.view.Menu;
-import android.view.MenuInflater;
+import android.support.v7.app.AppCompatActivity;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.entity.ServerProfile;
+import org.tvheadend.tvhclient.data.entity.ServerStatus;
+import org.tvheadend.tvhclient.data.repository.ConfigRepository;
 import org.tvheadend.tvhclient.data.repository.ConnectionRepository;
-import org.tvheadend.tvhclient.data.repository.ProfileRepository;
-import org.tvheadend.tvhclient.data.repository.ServerStatusRepository;
 import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
 import org.tvheadend.tvhclient.ui.common.BackPressedInterface;
 
 import java.util.List;
 
-public class SettingsProfilesFragment extends PreferenceFragment implements OnPreferenceClickListener, BackPressedInterface {
+public class SettingsProfilesFragment extends PreferenceFragment implements BackPressedInterface {
 
     private ToolbarInterface toolbarInterface;
-    private ServerProfile playbackServerProfile = null;
-    private ServerProfile recordingServerProfile = null;
-    private CheckBoxPreference recordingProfileEnabledPreference;
-    private CheckBoxPreference playbackProfileEnabledPreference;
     private ListPreference recordingProfileListPreference;
     private ListPreference playbackProfileListPreference;
-    private ServerStatusRepository serverRepository;
+    private ConfigRepository configRepository;
+    private int playbackServerProfileId;
+    private int recordingServerProfileId;
+    private AppCompatActivity activity;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences_profiles);
 
-        Activity activity = getActivity();
+        activity = (AppCompatActivity) getActivity();
         if (activity instanceof ToolbarInterface) {
             toolbarInterface = (ToolbarInterface) activity;
         }
@@ -64,91 +59,89 @@ public class SettingsProfilesFragment extends PreferenceFragment implements OnPr
         toolbarInterface.setTitle(getString(R.string.pref_profiles));
         toolbarInterface.setSubtitle(connection.getName());
 
-        recordingProfileEnabledPreference = (CheckBoxPreference) findPreference("pref_enable_recording_profiles");
-        playbackProfileEnabledPreference = (CheckBoxPreference) findPreference("pref_enable_playback_profiles");
-        recordingProfileEnabledPreference.setOnPreferenceClickListener(this);
-        playbackProfileEnabledPreference.setOnPreferenceClickListener(this);
-
-        recordingProfileListPreference = (ListPreference) findPreference("pref_recording_profiles");
         playbackProfileListPreference = (ListPreference) findPreference("pref_playback_profiles");
+        recordingProfileListPreference = (ListPreference) findPreference("pref_recording_profiles");
 
-        ProfileRepository profileRepository = new ProfileRepository(activity);
-        playbackServerProfile = profileRepository.getPlaybackServerProfile();
-        recordingServerProfile = profileRepository.getRecordingServerProfile();
+        configRepository = new ConfigRepository(activity);
+        ServerStatus serverStatus = configRepository.getServerStatus();
+        addProfiles(playbackProfileListPreference, configRepository.getAllPlaybackServerProfiles());
+        addProfiles(recordingProfileListPreference, configRepository.getAllRecordingServerProfiles());
 
-        addProfiles(playbackProfileListPreference, profileRepository.getAllPlaybackServerProfiles());
-        addProfiles(recordingProfileListPreference, profileRepository.getAllRecordingServerProfiles());
-
-        serverRepository = new ServerStatusRepository(activity);
-
-        // Restore the currently selected uuids after an orientation change
         if (savedInstanceState != null) {
-            playbackServerProfile.setUuid(savedInstanceState.getString("playback_profile_uuid"));
-            recordingServerProfile.setUuid(savedInstanceState.getString("recordind_profile_uuid"));
+            playbackServerProfileId = savedInstanceState.getInt("playback_profile_id");
+            recordingServerProfileId = savedInstanceState.getInt("recording_profile_id");
+        } else {
+            playbackServerProfileId = serverStatus.getPlaybackServerProfileId();
+            recordingServerProfileId = serverStatus.getRecordingServerProfileId();
+        }
+
+        setPlaybackProfileListSummary();
+        setRecordingProfileSummary();
+
+        playbackProfileListPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object o) {
+                playbackServerProfileId = Integer.valueOf((String) o);
+                setPlaybackProfileListSummary();
+                return true;
+            }
+        });
+        recordingProfileListPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object o) {
+                recordingServerProfileId = Integer.valueOf((String) o);
+                setRecordingProfileSummary();
+                return true;
+            }
+        });
+    }
+
+    private void setRecordingProfileSummary() {
+        if (recordingServerProfileId == 0) {
+            recordingProfileListPreference.setSummary("None");
+        } else {
+            ServerProfile recordingProfile = configRepository.getRecordingServerProfileById(recordingServerProfileId);
+            recordingProfileListPreference.setSummary(recordingProfile != null ? recordingProfile.getName() : null);
+        }
+    }
+
+    private void setPlaybackProfileListSummary() {
+        if (playbackServerProfileId == 0) {
+            playbackProfileListPreference.setSummary("None");
+        } else {
+            ServerProfile playbackProfile = configRepository.getPlaybackServerProfileById(playbackServerProfileId);
+            playbackProfileListPreference.setSummary(playbackProfile != null ? playbackProfile.getName() : null);
         }
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putString("playback_profile_uuid", playbackProfileListPreference.getValue());
-        outState.putString("recordind_profile_uuid", recordingProfileListPreference.getValue());
+        outState.putInt("playback_profile_id", playbackServerProfileId);
+        outState.putInt("recording_profile_id", recordingServerProfileId);
         super.onSaveInstanceState(outState);
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.save_cancel_options_menu, menu);
-    }
-
-    private void saveRecordingProfile() {
-        // Save the values into the recording profile (recording)
-        recordingServerProfile.setEnabled(recordingProfileEnabledPreference.isChecked());
-        recordingServerProfile.setName((recordingProfileListPreference.getEntry() != null ? recordingProfileListPreference.getEntry().toString() : ""));
-        recordingServerProfile.setUuid(recordingProfileListPreference.getValue());
-
-        serverRepository.updateRecordingServerProfile(recordingServerProfile.getId());
-    }
-
-    private void savePlaybackProfile() {
-        // Save the values into the program profile (play and streaming)
-        playbackServerProfile.setEnabled(playbackProfileEnabledPreference.isChecked());
-        playbackServerProfile.setName((playbackProfileListPreference.getEntry() != null ? playbackProfileListPreference.getEntry().toString() : ""));
-        playbackServerProfile.setUuid(playbackProfileListPreference.getValue());
-
-        serverRepository.updatePlaybackServerProfile(playbackServerProfile.getId());
-    }
-
-    @Override
     public void onBackPressed() {
-        saveRecordingProfile();
-        savePlaybackProfile();
-        getActivity().finish();
-    }
-
-    @Override
-    public boolean onPreferenceClick(Preference preference) {
-        switch (preference.getKey()) {
-            case "pref_enable_recording_profiles":
-                recordingProfileListPreference.setEnabled(recordingProfileEnabledPreference.isChecked());
-                return true;
-            case "pref_enable_playback_profiles":
-                playbackProfileListPreference.setEnabled(playbackProfileEnabledPreference.isChecked());
-                return true;
-        }
-        return false;
+        configRepository.updatePlaybackServerProfile(playbackServerProfileId);
+        configRepository.updateRecordingServerProfile(recordingServerProfileId);
+        activity.finish();
     }
 
     private void addProfiles(final ListPreference listPreference, final List<ServerProfile> serverProfileList) {
         // Initialize the arrays that contain the profile values
-        final int size = serverProfileList.size();
+        final int size = serverProfileList.size() + 1;
         CharSequence[] entries = new CharSequence[size];
         CharSequence[] entryValues = new CharSequence[size];
 
+        entries[0] = "None";
+        entryValues[0] = "0";
+
         // Add the available profiles to list preference
-        for (int i = 0; i < size; i++) {
-            entries[i] = serverProfileList.get(i).getName();
-            entryValues[i] = serverProfileList.get(i).getUuid();
+        for (int i = 1; i < size; i++) {
+            ServerProfile profile = serverProfileList.get(i - 1);
+            entries[i] = profile.getName();
+            entryValues[i] = String.valueOf(profile.getId());
         }
         listPreference.setEntries(entries);
         listPreference.setEntryValues(entryValues);

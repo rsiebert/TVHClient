@@ -38,7 +38,6 @@ import org.tvheadend.tvhclient.ui.search.SearchRequestInterface;
 import org.tvheadend.tvhclient.utils.MenuUtils;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
-// TODO profiles are not greyed out when checkbox not selected
 // TODO starting recording from channel list does not update channel recording status
 // TODO starting recording from channel list creates recording with wrong information
 // TODO split time in details screens into start and stop time

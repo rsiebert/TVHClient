@@ -49,36 +49,6 @@ public class ServerStatusRepository {
         }
     }
 
-    public void updatePlaybackServerProfile(int id) {
-        ServerStatus serverStatus = loadServerStatusSync();
-        serverStatus.setPlaybackServerProfileId(id);
-        new UpdateProfileTask(db.serverStatusDao(), serverStatus).execute();
-    }
-
-    public void updateRecordingServerProfile(int id) {
-        ServerStatus serverStatus = loadServerStatusSync();
-        serverStatus.setRecordingServerProfileId(id);
-        new UpdateProfileTask(db.serverStatusDao(), serverStatus).execute();
-    }
-
-    public void updateCastingServerProfile(int id) {
-        ServerStatus serverStatus = loadServerStatusSync();
-        serverStatus.setCastingServerProfileId(id);
-        new UpdateProfileTask(db.serverStatusDao(), serverStatus).execute();
-    }
-
-    public void updatePlaybackTranscodingProfile(int id) {
-        ServerStatus serverStatus = loadServerStatusSync();
-        serverStatus.setPlaybackTranscodingProfileId(id);
-        new UpdateProfileTask(db.serverStatusDao(), serverStatus).execute();
-    }
-
-    public void updateRecordingTranscodingProfile(int id) {
-        ServerStatus serverStatus = loadServerStatusSync();
-        serverStatus.setRecordingTranscodingProfileId(id);
-        new UpdateProfileTask(db.serverStatusDao(), serverStatus).execute();
-    }
-
     private static class UpdateProfileTask extends AsyncTask<Void, Void, Void> {
         private final ServerStatusDao dao;
         private final ServerStatus serverStatus;
