@@ -8,15 +8,6 @@
             android:summary="@string/pref_enable_casting_sum"
             android:title="@string/pref_enable_casting" />
 
-        <ListPreference
-            android:name="@string/pref_cast_profiles"
-            android:dependency="pref_enable_casting"
-            android:dialogTitle="@string/pref_cast_profiles"
-            android:key="pref_cast_profiles"
-            android:summary="@string/pref_cast_profiles_sum"
-            android:title="@string/pref_cast_profiles"
-            android:visible="false" />
-
         <CheckBoxPreference
             android:defaultValue="false"
             android:dependency="pref_enable_casting"

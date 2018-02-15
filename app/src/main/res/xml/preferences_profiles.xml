@@ -7,16 +7,21 @@
             android:dialogTitle="@string/pref_recording_profiles"
             android:key="pref_recording_profiles"
             android:summary="@string/pref_recording_profiles_sum"
-            android:title="@string/pref_recording_profiles"
-            android:visible="false" />
+            android:title="@string/pref_recording_profiles" />
 
         <ListPreference
             android:name="@string/pref_playback_profiles"
             android:dialogTitle="@string/pref_playback_profiles"
             android:key="pref_playback_profiles"
             android:summary="@string/pref_playback_profiles_sum"
-            android:title="@string/pref_playback_profiles"
-            android:visible="false" />
+            android:title="@string/pref_playback_profiles" />
+
+        <ListPreference
+            android:name="@string/pref_cast_profiles"
+            android:dialogTitle="@string/pref_cast_profiles"
+            android:key="pref_casting_profiles"
+            android:summary="@string/pref_cast_profiles_sum"
+            android:title="@string/pref_cast_profiles" />
     </PreferenceCategory>
 
 </PreferenceScreen>

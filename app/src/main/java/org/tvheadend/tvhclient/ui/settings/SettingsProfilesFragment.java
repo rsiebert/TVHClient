@@ -25,6 +25,7 @@ import android.preference.PreferenceFragment;
 import android.support.v7.app.AppCompatActivity;
 
 import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.entity.ServerProfile;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
@@ -40,9 +41,11 @@ public class SettingsProfilesFragment extends PreferenceFragment implements Back
     private ToolbarInterface toolbarInterface;
     private ListPreference recordingProfileListPreference;
     private ListPreference playbackProfileListPreference;
+    private ListPreference castingProfileListPreference;
     private ConfigRepository configRepository;
     private int playbackServerProfileId;
     private int recordingServerProfileId;
+    private int castingServerProfileId;
     private AppCompatActivity activity;
 
     @Override
@@ -61,22 +64,27 @@ public class SettingsProfilesFragment extends PreferenceFragment implements Back
 
         playbackProfileListPreference = (ListPreference) findPreference("pref_playback_profiles");
         recordingProfileListPreference = (ListPreference) findPreference("pref_recording_profiles");
+        castingProfileListPreference = (ListPreference) findPreference("pref_casting_profiles");
 
         configRepository = new ConfigRepository(activity);
         ServerStatus serverStatus = configRepository.getServerStatus();
         addProfiles(playbackProfileListPreference, configRepository.getAllPlaybackServerProfiles());
         addProfiles(recordingProfileListPreference, configRepository.getAllRecordingServerProfiles());
+        addProfiles(castingProfileListPreference, configRepository.getAllPlaybackServerProfiles());
 
         if (savedInstanceState != null) {
             playbackServerProfileId = savedInstanceState.getInt("playback_profile_id");
             recordingServerProfileId = savedInstanceState.getInt("recording_profile_id");
+            castingServerProfileId = savedInstanceState.getInt("casting_profile_id");
         } else {
             playbackServerProfileId = serverStatus.getPlaybackServerProfileId();
             recordingServerProfileId = serverStatus.getRecordingServerProfileId();
+            castingServerProfileId = serverStatus.getCastingServerProfileId();
         }
 
         setPlaybackProfileListSummary();
-        setRecordingProfileSummary();
+        setRecordingProfileListSummary();
+        setCastingProfileListSummary();
 
         playbackProfileListPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
@@ -90,18 +98,21 @@ public class SettingsProfilesFragment extends PreferenceFragment implements Back
             @Override
             public boolean onPreferenceChange(Preference preference, Object o) {
                 recordingServerProfileId = Integer.valueOf((String) o);
-                setRecordingProfileSummary();
+                setRecordingProfileListSummary();
                 return true;
             }
         });
-    }
+        castingProfileListPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object o) {
+                castingServerProfileId = Integer.valueOf((String) o);
+                setCastingProfileListSummary();
+                return true;
+            }
+        });
 
-    private void setRecordingProfileSummary() {
-        if (recordingServerProfileId == 0) {
-            recordingProfileListPreference.setSummary("None");
-        } else {
-            ServerProfile recordingProfile = configRepository.getRecordingServerProfileById(recordingServerProfileId);
-            recordingProfileListPreference.setSummary(recordingProfile != null ? recordingProfile.getName() : null);
+        if (!TVHClientApplication.getInstance().isUnlocked()) {
+            castingProfileListPreference.setEnabled(false);
         }
     }
 
@@ -114,10 +125,29 @@ public class SettingsProfilesFragment extends PreferenceFragment implements Back
         }
     }
 
+    private void setRecordingProfileListSummary() {
+        if (recordingServerProfileId == 0) {
+            recordingProfileListPreference.setSummary("None");
+        } else {
+            ServerProfile recordingProfile = configRepository.getRecordingServerProfileById(recordingServerProfileId);
+            recordingProfileListPreference.setSummary(recordingProfile != null ? recordingProfile.getName() : null);
+        }
+    }
+
+    private void setCastingProfileListSummary() {
+        if (castingServerProfileId == 0) {
+            castingProfileListPreference.setSummary("None");
+        } else {
+            ServerProfile castingProfile = configRepository.getCastingServerProfileById(castingServerProfileId);
+            castingProfileListPreference.setSummary(castingProfile != null ? castingProfile.getName() : null);
+        }
+    }
+
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putInt("playback_profile_id", playbackServerProfileId);
         outState.putInt("recording_profile_id", recordingServerProfileId);
+        outState.putInt("casting_profile_id", castingServerProfileId);
         super.onSaveInstanceState(outState);
     }
 
@@ -125,6 +155,9 @@ public class SettingsProfilesFragment extends PreferenceFragment implements Back
     public void onBackPressed() {
         configRepository.updatePlaybackServerProfile(playbackServerProfileId);
         configRepository.updateRecordingServerProfile(recordingServerProfileId);
+        if (TVHClientApplication.getInstance().isUnlocked()) {
+            configRepository.updateCastingServerProfile(castingServerProfileId);
+        }
         activity.finish();
     }
 
