@@ -64,9 +64,9 @@ import org.tvheadend.tvhclient.utils.MiscUtils;
 // TODO rework epg (use recyclerview horizontal scroll)
 // TODO selected navigation item not updated when backstack is popped
 // TODO test database migration
-// TODO load channel icons in the background during initial sync
-// TODO do not load channel icons when no initial sync
-
+// TODO ClearTablesAsyncTask add connection id to all tables
+// TODO make the number of epg hours in the sync task to load a preference (currently 1h)
+// TODO channel list pressing back shows blank channel list fragment
 
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, ToolbarInterface {
 

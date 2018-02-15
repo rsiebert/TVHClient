@@ -42,8 +42,6 @@ import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-// TODO make the number of epg hours to load a preference (currently 1h)
-
 public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener {
     private static final String TAG = EpgSyncTask.class.getSimpleName();
 

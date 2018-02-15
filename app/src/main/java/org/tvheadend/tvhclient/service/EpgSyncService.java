@@ -92,6 +92,8 @@ public class EpgSyncService extends Service {
             SharedPreferences.Editor editor = sharedPreferences.edit();
             // Save the id of the new connection in the preferences.
             editor.putLong("previous_connection_id", connection.getId());
+            // Discard the previously saved last EPG update stamp
+            editor.remove("last_update");
             // Save the status of the initial sync in the preferences.
             editor.putBoolean("initial_sync_required", true);
             editor.apply();
