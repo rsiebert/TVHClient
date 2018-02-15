@@ -521,12 +521,14 @@ public class MenuUtils {
                 .show();
     }
 
-    public void onPreparePopupMenu(Menu menu, long start, long stop, int dvrId) {
+    public void onPreparePopupMenu(Menu menu, int eventId, long start, long stop, int dvrId) {
         MenuItem recordOnceMenuItem = menu.findItem(R.id.menu_record_once);
         MenuItem recordOnceCustomProfileMenuItem = menu.findItem(R.id.menu_record_once_custom_profile);
         MenuItem recordSeriesMenuItem = menu.findItem(R.id.menu_record_series);
         MenuItem recordRemoveMenuItem = menu.findItem(R.id.menu_record_remove);
         MenuItem playMenuItem = menu.findItem(R.id.menu_play);
+        MenuItem searchImdbMenuItem = menu.findItem(R.id.menu_search_imdb);
+        MenuItem searchEpgMenuItem = menu.findItem(R.id.menu_search_epg);
 
         // Show the play menu item when the current
         // time is between the program start and end time
@@ -552,6 +554,9 @@ public class MenuUtils {
             recordRemoveMenuItem.setTitle(R.string.remove);
             recordRemoveMenuItem.setVisible(true);
         }
+
+        searchImdbMenuItem.setVisible(eventId > 0);
+        searchEpgMenuItem.setVisible(eventId > 0);
     }
 
     public void handleMenuReconnectSelection() {

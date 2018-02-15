@@ -177,7 +177,7 @@ public class ProgramListFragment extends BaseFragment implements BottomReachedLi
         }
         PopupMenu popupMenu = new PopupMenu(activity, view);
         popupMenu.getMenuInflater().inflate(R.menu.channel_list_program_popup_menu, popupMenu.getMenu());
-        menuUtils.onPreparePopupMenu(popupMenu.getMenu(), program.getStart(), program.getStop(), program.getDvrId());
+        menuUtils.onPreparePopupMenu(popupMenu.getMenu(), program.getEventId(), program.getStart(), program.getStop(), program.getDvrId());
 
         popupMenu.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {

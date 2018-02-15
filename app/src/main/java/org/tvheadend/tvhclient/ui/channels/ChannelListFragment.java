@@ -265,7 +265,7 @@ public class ChannelListFragment extends BaseFragment implements ChannelClickCal
         }
         PopupMenu popupMenu = new PopupMenu(activity, view);
         popupMenu.getMenuInflater().inflate(R.menu.channel_list_program_popup_menu, popupMenu.getMenu());
-        menuUtils.onPreparePopupMenu(popupMenu.getMenu(), channel.getProgramStart(), channel.getProgramStop(), channel.getRecordingId());
+        menuUtils.onPreparePopupMenu(popupMenu.getMenu(), channel.getProgramId(), channel.getProgramStart(), channel.getProgramStop(), channel.getRecordingId());
 
         popupMenu.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {
