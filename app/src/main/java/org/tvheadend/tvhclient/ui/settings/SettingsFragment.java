@@ -25,6 +25,7 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.data.local.SuggestionProvider;
 import org.tvheadend.tvhclient.data.repository.ServerStatusRepository;
+import org.tvheadend.tvhclient.ui.misc.ChangeLogActivity;
 import org.tvheadend.tvhclient.ui.navigation.NavigationActivity;
 import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
 
@@ -244,7 +245,8 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
     }
 
     private void handlePreferenceChangelogSelected() {
-        showSelectedSettingsFragment("changelog");
+        Intent intent = new Intent(getActivity(), ChangeLogActivity.class);
+        startActivity(intent);
     }
 
     private void showSelectedSettingsFragment(String settingType) {
