@@ -26,6 +26,9 @@ public class ChangeLogActivity extends AppCompatActivity implements ToolbarInter
         // Get the toolbar so that the fragments can set the title
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         if (savedInstanceState == null) {
             ChangeLogFragment fragment = new ChangeLogFragment();
