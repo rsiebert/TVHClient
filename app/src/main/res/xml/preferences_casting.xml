@@ -2,15 +2,9 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory android:title="@string/pref_casting" >
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="pref_enable_casting"
-            android:summary="@string/pref_enable_casting_sum"
-            android:title="@string/pref_enable_casting" />
 
         <CheckBoxPreference
             android:defaultValue="false"
-            android:dependency="pref_enable_casting"
             android:key="pref_show_cast_minicontroller"
             android:summary="@string/pref_show_cast_minicontroller_sum"
             android:title="@string/pref_show_cast_minicontroller" />

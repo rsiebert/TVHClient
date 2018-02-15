@@ -74,7 +74,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private MenuItem searchMenuItem;
     private SearchView searchView;
     private MenuItem mediaRouteMenuItem;
-    private boolean showCastingMenuItem;
     protected SharedPreferences sharedPreferences;
     protected boolean isUnlocked;
     protected boolean isDualPane;
@@ -178,7 +177,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         isUnlocked = TVHClientApplication.getInstance().isUnlocked();
         menuUtils = new MenuUtils(this);
 
-        showCastingMenuItem = isUnlocked && sharedPreferences.getBoolean("pref_enable_casting", false);
         showCastingMiniController = isUnlocked && sharedPreferences.getBoolean("pref_show_cast_minicontroller", false);
         miniController = findViewById(R.id.cast_mini_controller);
     }
@@ -236,7 +234,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        mediaRouteMenuItem.setVisible(showCastingMenuItem);
+        mediaRouteMenuItem.setVisible(isUnlocked);
         return true;
     }
 
