@@ -42,16 +42,16 @@ import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-// TODO make the connection timeout a preference
-// TODO make the number of epg hours to load a preference (currently 4h)
+// TODO make the number of epg hours to load a preference (currently 1h)
 
 public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener {
     private static final String TAG = EpgSyncTask.class.getSimpleName();
 
     private final AppDatabase db;
     private final int connectionTimeout;
-    private int htspVersion = 9;
-    private boolean initialSyncCompleted = false;
+    private int htspVersion;
+    private boolean initialSyncCompleted;
+    private boolean initialSyncRequired;
     private final Context context;
     private final HtspMessage.Dispatcher dispatcher;
     private final SharedPreferences sharedPreferences;
@@ -67,10 +67,11 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         this.dispatcher = dispatcher;
         this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         this.db = AppDatabase.getInstance(context.getApplicationContext());
-        HandlerThread mHandlerThread = new HandlerThread("EpgSyncTask Handler Thread");
-        mHandlerThread.start();
-        this.handler = new Handler(mHandlerThread.getLooper());
+        HandlerThread handlerThread = new HandlerThread("EpgSyncTask Handler Thread");
+        handlerThread.start();
+        this.handler = new Handler(handlerThread.getLooper());
         this.connectionTimeout = Integer.valueOf(sharedPreferences.getString("connectionTimeout", "5000"));
+        this.htspVersion = 9;
     }
 
     // Authenticator.Listener Methods
@@ -84,48 +85,60 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         // Continue with processing like getting all
         // initial data only if we are authenticated
         if (state == Authenticator.State.AUTHENTICATED) {
-            Log.d(TAG, "onAuthenticationStateChange: authenticated, starting initial sync");
+            initialSyncCompleted = false;
+            initialSyncRequired = sharedPreferences.getBoolean("initial_sync_required", true);
 
-            boolean initialSyncDone = sharedPreferences.getBoolean("initial_sync_done", false);
-            // Connect to the server by fetching all data to get notified about
-            // any changes on the server side. Disable fetching epg data for this
-            // and skip showing the sync status screen
-            HtspMessage enableAsyncMetadataRequest = new HtspMessage();
-            enableAsyncMetadataRequest.put("method", "enableAsyncMetadata");
-
-            if (!initialSyncDone) {
-                Log.d(TAG, "onAuthenticationStateChange: authenticated, adding info to fetch epg data");
-                initialSyncCompleted = false;
-
-                // Send the first sync message to any broadcast listeners
-                intent.putExtra("sync_status", "Loading initial data...");
-                LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
-
-                enableAsyncMetadataRequest.put("epg", 1);
-                // Sync the defined number of hours of epg data from the current time
-                long epgMaxTime = (1 * 3600) + (System.currentTimeMillis() / 1000L);
-                enableAsyncMetadataRequest.put("epgMaxTime", epgMaxTime);
-                // Only provide metadata that has changed since this time.
-                // Whenever the message eventUpdate is received from the server
-                // the current time will be stored in the preferences.
-                final long lastUpdate = sharedPreferences.getLong("last_update", 0);
-                enableAsyncMetadataRequest.put("lastUpdate", lastUpdate);
+            if (initialSyncRequired) {
+                startFullInitialSyncWithServer();
+            } else {
+                startInitialSyncWithServer();
             }
+        }
+    }
 
-            Log.d(TAG, "onAuthenticationStateChange: sending initial sync message");
-            try {
-                dispatcher.sendMessage(enableAsyncMetadataRequest);
-            } catch (HtspNotConnectedException e) {
-                Log.d(TAG, "Failed to enable async metadata, HTSP not connected", e);
-            }
+    private void startFullInitialSyncWithServer() {
+        Log.d(TAG, "startFullInitialSyncWithServer() called");
 
-            if (initialSyncDone) {
-                Log.d(TAG, "onAuthenticationStateChange: initialSyncDone");
-                // Send a broadcast to the listeners
-                intent = new Intent("service_status");
-                intent.putExtra("sync_status", "done");
-                LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
-            }
+        // Send the first sync message to any broadcast listeners
+        Intent intent = new Intent("service_status");
+        intent.putExtra("sync_status", "Loading initial data...");
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+
+        // Enable epg sync with the defined number of
+        // seconds of data starting from the current time
+        HtspMessage enableAsyncMetadataRequest = new HtspMessage();
+        enableAsyncMetadataRequest.put("method", "enableAsyncMetadata");
+        enableAsyncMetadataRequest.put("epg", 1);
+        long epgMaxTime = (3600) + (System.currentTimeMillis() / 1000L);
+        enableAsyncMetadataRequest.put("epgMaxTime", epgMaxTime);
+
+        // Only provide metadata that has changed since this time.
+        // Whenever the message eventUpdate is received from the server
+        // the current time will be stored in the preferences.
+        final long lastUpdate = sharedPreferences.getLong("last_update", 0);
+        enableAsyncMetadataRequest.put("lastUpdate", lastUpdate);
+
+        try {
+            dispatcher.sendMessage(enableAsyncMetadataRequest);
+        } catch (HtspNotConnectedException e) {
+            Log.d(TAG, "Failed to enable async metadata, HTSP not connected", e);
+        }
+    }
+
+    private void startInitialSyncWithServer() {
+        Log.d(TAG, "startInitialSyncWithServer() called");
+
+        // Send a broadcast to the listeners
+        Intent intent = new Intent("service_status");
+        intent.putExtra("sync_status", "done");
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+
+        HtspMessage enableAsyncMetadataRequest = new HtspMessage();
+        enableAsyncMetadataRequest.put("method", "enableAsyncMetadata");
+        try {
+            dispatcher.sendMessage(enableAsyncMetadataRequest);
+        } catch (HtspNotConnectedException e) {
+            Log.d(TAG, "Failed to enable async metadata, HTSP not connected", e);
         }
     }
 
@@ -400,18 +413,6 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         } else {
             db.channelDao().insert(channel);
         }
-/*
-        if (msg.containsKey("tags")) {
-            long channelId = msg.getInteger("channelId");
-            ArrayList tagList = msg.getArrayList("tags");
-            for (Object tagId : tagList) {
-                values.clear();
-                values.put(DataContract.TagsOnChannels.CHANNEL_ID, channelId);
-                values.put(DataContract.TagsOnChannels.TAG_ID, String.valueOf(tagId));
-                contentResolver.insert(DataContract.TagsOnChannels.CONTENT_URI, values);
-            }
-        }
-*/
         // Update the icon if required
         final String icon = msg.getString("channelIcon", null);
         if (icon != null) {
@@ -672,11 +673,17 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     private void handleInitialSyncCompleted() {
         Log.d(TAG, "handleInitialSyncCompleted() called");
 
-        // Flush all the received channels, recordings and events to the database
+        // Flush all received data to the database
         flushPendingChannelOps();
         flushPendingDvrEntryOps();
         flushPendingEventOps();
-        //TODO flushPendingChannelLogoFetches();
+
+        // Load the channel icons from the received path only if a full sync was requested
+        if (initialSyncRequired) {
+            flushPendingChannelLogoFetches();
+        } else {
+            pendingChannelLogoFetches.clear();
+        }
 
         // Get additional information
         getDiscSpace();
@@ -684,19 +691,19 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         getProfiles();
         getDvrConfigs();
 
-        initialSyncCompleted = true;
-
-        boolean initialSyncDone = sharedPreferences.getBoolean("initial_sync_done", false);
-        if (!initialSyncDone) {
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putBoolean("initial_sync_done", true);
-            editor.apply();
-
-            // Send a broadcast to the listeners
+        // The full initial sync is done, send the info to exit the start screen
+        if (initialSyncRequired) {
             Intent intent = new Intent("service_status");
             intent.putExtra("sync_status", "done");
             LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
         }
+
+        // The sync is done save the status
+        initialSyncCompleted = true;
+        initialSyncRequired = false;
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean("initial_sync_required", initialSyncRequired);
+        editor.apply();
     }
 
     private void flushPendingChannelOps() {
@@ -1302,12 +1309,11 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         if (response != null) {
             String path = response.getString("path");
             String ticket = response.getString("ticket");
-            // TODO create a HttpTicket model
+            // TODO create a HttpTicket model or use broadcast
         }
     }
 
     private void getProfiles() {
-        Log.d(TAG, "getProfiles() called");
         final HtspMessage request = new HtspMessage();
         request.put("method", "getProfiles");
         try {
@@ -1318,10 +1324,8 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     }
 
     private void getDvrConfigs() {
-        Log.d(TAG, "getDvrConfigs() called");
         final HtspMessage request = new HtspMessage();
         request.put("method", "getDvrConfigs");
-
         try {
             dispatcher.sendMessage(request, connectionTimeout);
         } catch (HtspNotConnectedException e) {

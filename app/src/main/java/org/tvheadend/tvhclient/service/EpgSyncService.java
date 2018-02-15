@@ -93,7 +93,7 @@ public class EpgSyncService extends Service {
             // Save the id of the new connection in the preferences.
             editor.putLong("previous_connection_id", connection.getId());
             // Save the status of the initial sync in the preferences.
-            editor.putBoolean("initial_sync_done", false);
+            editor.putBoolean("initial_sync_required", true);
             editor.apply();
         }
     }

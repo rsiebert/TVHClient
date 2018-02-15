@@ -219,7 +219,7 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
                     // Then restart the application to show the sync fragment
                     SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity);
                     SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.putBoolean("initial_sync_done", false);
+                    editor.putBoolean("initial_sync_required", true);
                     editor.apply();
 
                     // Restart the application

@@ -575,7 +575,7 @@ public class MenuUtils {
                     // Then restart the application to show the sync fragment
                     SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity);
                     SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.putBoolean("initial_sync_done", false);
+                    editor.putBoolean("initial_sync_required", true);
                     editor.apply();
                     Intent intent = new Intent(activity, StartupActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
