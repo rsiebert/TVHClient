@@ -66,7 +66,6 @@ import org.tvheadend.tvhclient.utils.MiscUtils;
 // TODO test database migration
 // TODO ClearTablesAsyncTask add connection id to all tables
 // TODO make the number of epg hours in the sync task to load a preference (currently 1h)
-// TODO channel list pressing back shows blank channel list fragment
 
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, ToolbarInterface {
 

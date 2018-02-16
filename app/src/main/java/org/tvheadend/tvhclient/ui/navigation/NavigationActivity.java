@@ -69,6 +69,15 @@ public class NavigationActivity extends MainActivity implements WakeOnLanTaskCal
         startObservingViewModels();
     }
 
+    @Override
+    public void onBackPressed() {
+        if (getSupportFragmentManager().getBackStackEntryCount() == 1){
+            finish();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
     private void startObservingViewModels() {
         Log.d("NavigationActivity", "startObservingViewModels() called");
 
