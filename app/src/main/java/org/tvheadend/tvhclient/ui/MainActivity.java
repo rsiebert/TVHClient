@@ -271,7 +271,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     public boolean onQueryTextSubmit(String query) {
         Log.d("X", "onQueryTextSubmit() called with: query = [" + query + "]");
         searchMenuItem.collapseActionView();
-        searchMenuItem.collapseActionView();
         final android.support.v4.app.Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main);
         if (fragment != null && fragment.isAdded() && fragment instanceof SearchRequestInterface) {
             ((SearchRequestInterface) fragment).onSearchRequested(query);
