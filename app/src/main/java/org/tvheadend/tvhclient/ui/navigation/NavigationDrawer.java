@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.AttrRes;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 
@@ -34,6 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, Drawer.OnDrawerItemClickListener {
+    private String TAG = getClass().getSimpleName();
 
     // The index for the navigation drawer menus
     static final int MENU_UNKNOWN = -1;
@@ -151,7 +153,7 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
                 .withSavedInstance(savedInstanceState)
                 .build();
 
-        if (isUnlocked) {
+        if (!isUnlocked) {
             result.addItem(extrasItem);
         }
     }
@@ -184,14 +186,6 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
         if (connection != null) {
             headerResult.setActiveProfile(connection.getId());
         }
-    }
-
-    public Drawer getDrawer() {
-        return result;
-    }
-
-    AccountHeader getHeader() {
-        return headerResult;
     }
 
     @Override
@@ -269,5 +263,16 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
 
     void updateChannelBadge(int size) {
         result.updateBadge(MENU_CHANNELS, new StringHolder(size + ""));
+    }
+
+    public void setSelection(int id) {
+        Log.d(TAG, "setSelection() called with: id = [" + id + "]");
+        result.setSelection(id);
+    }
+
+    Bundle saveInstanceState(Bundle outState) {
+        outState = result.saveInstanceState(outState);
+        outState = headerResult.saveInstanceState(outState);
+        return outState;
     }
 }

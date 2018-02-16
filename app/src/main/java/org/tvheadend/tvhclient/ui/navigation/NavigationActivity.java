@@ -1,11 +1,12 @@
 package org.tvheadend.tvhclient.ui.navigation;
 
-import android.support.v4.app.Fragment;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -38,7 +39,7 @@ public class NavigationActivity extends MainActivity implements WakeOnLanTaskCal
     private String TAG = getClass().getSimpleName();
 
     // Default navigation drawer menu position and the list positions
-    private int selectedNavigationMenuId = NavigationDrawer.MENU_UNKNOWN;
+    private int selectedNavigationMenuId;
     private NavigationDrawer navigationDrawer;
 
     @Override
@@ -54,13 +55,41 @@ public class NavigationActivity extends MainActivity implements WakeOnLanTaskCal
             // When the activity is created it got called by the main activity. Get the initial
             // navigation menu position and show the associated fragment with it. When the device
             // was rotated just restore the position from the saved instance.
-            selectedNavigationMenuId = getIntent().getIntExtra("navigation_menu_position", NavigationDrawer.MENU_CHANNELS);
+            selectedNavigationMenuId = Integer.valueOf(sharedPreferences.getString("defaultMenuPositionPref", "0"));
             if (selectedNavigationMenuId >= 0) {
                 handleDrawerItemSelected(selectedNavigationMenuId);
             }
         } else {
             selectedNavigationMenuId = savedInstanceState.getInt("navigation_menu_position", NavigationDrawer.MENU_CHANNELS);
         }
+
+        getSupportFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
+            @Override
+            public void onBackStackChanged() {
+                Fragment current = getSupportFragmentManager().findFragmentById(R.id.main);
+                if (current instanceof ChannelListFragment) {
+                    navigationDrawer.setSelection(NavigationDrawer.MENU_CHANNELS);
+                } else if (current instanceof CompletedRecordingListFragment) {
+                    navigationDrawer.setSelection(NavigationDrawer.MENU_COMPLETED_RECORDINGS);
+                } else if (current instanceof ScheduledRecordingListFragment) {
+                    navigationDrawer.setSelection(NavigationDrawer.MENU_SCHEDULED_RECORDINGS);
+                } else if (current instanceof SeriesRecordingListFragment) {
+                    navigationDrawer.setSelection(NavigationDrawer.MENU_SERIES_RECORDINGS);
+                } else if (current instanceof TimerRecordingListFragment) {
+                    navigationDrawer.setSelection(NavigationDrawer.MENU_TIMER_RECORDINGS);
+                } else if (current instanceof FailedRecordingListFragment) {
+                    navigationDrawer.setSelection(NavigationDrawer.MENU_FAILED_RECORDINGS);
+                } else if (current instanceof RemovedRecordingListFragment) {
+                    navigationDrawer.setSelection(NavigationDrawer.MENU_REMOVED_RECORDINGS);
+                } else if (current instanceof StatusFragment) {
+                    navigationDrawer.setSelection(NavigationDrawer.MENU_STATUS);
+                } else if (current instanceof InfoFragment) {
+                    navigationDrawer.setSelection(NavigationDrawer.MENU_INFORMATION);
+                } else if (current instanceof UnlockerFragment) {
+                    navigationDrawer.setSelection(NavigationDrawer.MENU_UNLOCKER);
+                }
+            }
+        });
 
         // Update the drawer menu so that all available menu items are
         // shown in case the recording counts have changed or the user has
@@ -71,7 +100,7 @@ public class NavigationActivity extends MainActivity implements WakeOnLanTaskCal
 
     @Override
     public void onBackPressed() {
-        if (getSupportFragmentManager().getBackStackEntryCount() == 1){
+        if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
             finish();
         } else {
             super.onBackPressed();
@@ -214,10 +243,8 @@ public class NavigationActivity extends MainActivity implements WakeOnLanTaskCal
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        // add the values which need to be saved from the drawer to the bundle
-        outState = navigationDrawer.getDrawer().saveInstanceState(outState);
-        // add the values which need to be saved from the accountHeader to the bundle
-        outState = navigationDrawer.getHeader().saveInstanceState(outState);
+        // add the values which need to be saved from the drawer and header to the bundle
+        outState = navigationDrawer.saveInstanceState(outState);
         outState.putInt("navigation_menu_position", selectedNavigationMenuId);
         super.onSaveInstanceState(outState);
     }
