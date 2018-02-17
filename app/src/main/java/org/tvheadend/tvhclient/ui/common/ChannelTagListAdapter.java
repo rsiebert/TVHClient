@@ -64,6 +64,8 @@ public class ChannelTagListAdapter extends RecyclerView.Adapter<ChannelTagListAd
                 holder.radioButton.setChecked(false);
             }
 
+            holder.itemView.setTag(channelTag);
+
             Bitmap iconBitmap = MiscUtils.getCachedIcon(context, channelTag.getTagIcon());
             holder.iconImageView.setImageBitmap(iconBitmap);
             holder.iconImageView.setVisibility(iconBitmap != null && showChannelTagIcons ? ImageView.VISIBLE : ImageView.GONE);
@@ -104,8 +106,8 @@ public class ChannelTagListAdapter extends RecyclerView.Adapter<ChannelTagListAd
         @Override
         public void onClick(View view) {
             if (channelTagListAdapter != null && channelTagListAdapter.callback != null) {
-                int id = channelTagListAdapter.channelTagList.get(getAdapterPosition()).getTagId();
-                channelTagListAdapter.callback.onItemClicked(id);
+                ChannelTag channelTag = channelTagListAdapter.channelTagList.get(getAdapterPosition());
+                channelTagListAdapter.callback.onItemClicked(channelTag.getTagId());
             }
         }
     }

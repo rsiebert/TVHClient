@@ -365,7 +365,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
                 TagAndChannel tagAndChannel = new TagAndChannel();
                 tagAndChannel.setTagId(tag.getTagId());
                 tagAndChannel.setChannelId(channelId);
-                db.tagAndChannelDao().update(tagAndChannel);
+                db.tagAndChannelDao().insert(tagAndChannel);
             }
         }
 

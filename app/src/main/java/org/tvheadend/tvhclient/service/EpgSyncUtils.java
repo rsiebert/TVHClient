@@ -36,6 +36,7 @@ class EpgSyncUtils {
         }
         if (msg.containsKey("members")) {
             List<Integer> members = msg.getIntegerList("members");
+            tag.setMembers(members);
             tag.setChannelCount(members.size());
         }
         return tag;
