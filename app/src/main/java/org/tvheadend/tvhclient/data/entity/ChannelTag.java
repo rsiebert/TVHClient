@@ -21,8 +21,9 @@ public class ChannelTag {
     private String tagIcon;          // str   optional   URL to an icon representative for the channel.
     @ColumnInfo(name = "tag_titled_icon")
     private int tagTitledIcon;       // u32   optional   Icon includes a title
+    @ColumnInfo(name = "channel_count")
+    private int channelCount;
 
-    private boolean active;
     @Ignore
     private List<Integer> members;   // u32[] optional   Channel IDs of those that belong to the tag
 
@@ -74,11 +75,11 @@ public class ChannelTag {
         this.members = members;
     }
 
-    public boolean isActive() {
-        return active;
+    public int getChannelCount() {
+        return channelCount;
     }
 
-    public void setActive(boolean active) {
-        this.active = active;
+    public void setChannelCount(int channelCount) {
+        this.channelCount = channelCount;
     }
 }

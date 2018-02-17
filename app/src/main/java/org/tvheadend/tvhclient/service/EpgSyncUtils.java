@@ -11,6 +11,8 @@ import org.tvheadend.tvhclient.data.entity.SeriesRecording;
 import org.tvheadend.tvhclient.data.entity.TimerRecording;
 import org.tvheadend.tvhclient.service.htsp.HtspMessage;
 
+import java.util.List;
+
 class EpgSyncUtils {
     private EpgSyncUtils() {
         throw new IllegalAccessError("Utility class");
@@ -33,7 +35,8 @@ class EpgSyncUtils {
             tag.setTagTitledIcon(msg.getInteger("tagTitledIcon"));
         }
         if (msg.containsKey("members")) {
-            tag.setMembers(msg.getIntegerList("members"));
+            List<Integer> members = msg.getIntegerList("members");
+            tag.setChannelCount(members.size());
         }
         return tag;
     }

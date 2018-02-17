@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RadioButton;
 import android.widget.TextView;
 
 import org.tvheadend.tvhclient.R;
@@ -16,6 +17,9 @@ import org.tvheadend.tvhclient.data.entity.ChannelTag;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
 import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class ChannelTagListAdapter extends RecyclerView.Adapter<ChannelTagListAdapter.ViewHolder> {
 
@@ -50,24 +54,22 @@ public class ChannelTagListAdapter extends RecyclerView.Adapter<ChannelTagListAd
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        final ChannelTag item = channelTagList.get(position);
-        if (item != null) {
+        final ChannelTag channelTag = channelTagList.get(position);
+        if (channelTag != null) {
 
             if ((selectedChannelTag == null && position == 0)
-                    || (selectedChannelTag != null && item.getTagId() == selectedChannelTag.getTagId())) {
-                holder.itemView.setSelected(true);
+                    || (selectedChannelTag != null && channelTag.getTagId() == selectedChannelTag.getTagId())) {
+                holder.radioButton.setChecked(true);
             } else {
-                holder.itemView.setSelected(false);
+                holder.radioButton.setChecked(false);
             }
 
-            if (holder.icon != null) {
-                Bitmap iconBitmap = MiscUtils.getCachedIcon(context, item.getTagIcon());
-                holder.icon.setImageBitmap(iconBitmap);
-                holder.icon.setVisibility(iconBitmap != null && showChannelTagIcons ? ImageView.VISIBLE : ImageView.GONE);
-            }
-            if (holder.title != null) {
-                holder.title.setText(item.getTagName());
-                holder.title.setTag(position);
+            Bitmap iconBitmap = MiscUtils.getCachedIcon(context, channelTag.getTagIcon());
+            holder.iconImageView.setImageBitmap(iconBitmap);
+            holder.iconImageView.setVisibility(iconBitmap != null && showChannelTagIcons ? ImageView.VISIBLE : ImageView.GONE);
+            holder.titleTextView.setText(channelTag.getTagName());
+            if (channelTag.getTagId() > 0) {
+                holder.countTextView.setText(String.valueOf(channelTag.getChannelCount()));
             }
         }
     }
@@ -81,14 +83,20 @@ public class ChannelTagListAdapter extends RecyclerView.Adapter<ChannelTagListAd
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        final ImageView icon;
-        final TextView title;
+        @BindView(R.id.icon)
+        ImageView iconImageView;
+        @BindView(R.id.title)
+        TextView titleTextView;
+        @BindView(R.id.radioButton)
+        RadioButton radioButton;
+        @BindView(R.id.count)
+        TextView countTextView;
+
         final ChannelTagListAdapter channelTagListAdapter;
 
         ViewHolder(View view, ChannelTagListAdapter adapter) {
             super(view);
-            icon = view.findViewById(R.id.icon);
-            title = view.findViewById(R.id.title);
+            ButterKnife.bind(this, view);
             channelTagListAdapter = adapter;
             view.setOnClickListener(this);
         }

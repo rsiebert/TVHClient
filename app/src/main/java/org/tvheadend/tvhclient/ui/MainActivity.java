@@ -42,7 +42,6 @@ import org.tvheadend.tvhclient.utils.MiscUtils;
 // TODO starting recording from channel list creates recording with wrong information
 // TODO split time in details screens into start and stop time
 // TODO highlight the selected channel in the channel list selection adapter (or use checkbox list)
-// TODO highlight the selected channel tag in the channel tag list selection adapter (or use checkbox list)
 // TODO show how many channels belong to a channel tag in the selection dialog
 // TODO brown genre color is not shown in the genre color info dialog
 // TODO try to fetch epg data once when no programs are available in the program list
