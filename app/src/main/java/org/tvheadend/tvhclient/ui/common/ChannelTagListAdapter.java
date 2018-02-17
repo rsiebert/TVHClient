@@ -20,6 +20,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class ChannelTagListAdapter extends RecyclerView.Adapter<ChannelTagListAdapter.ViewHolder> {
 
@@ -105,6 +106,11 @@ public class ChannelTagListAdapter extends RecyclerView.Adapter<ChannelTagListAd
 
         @Override
         public void onClick(View view) {
+            onClick();
+        }
+
+        @OnClick(R.id.radioButton)
+        public void onClick() {
             if (channelTagListAdapter != null && channelTagListAdapter.callback != null) {
                 ChannelTag channelTag = channelTagListAdapter.channelTagList.get(getAdapterPosition());
                 channelTagListAdapter.callback.onItemClicked(channelTag.getTagId());
