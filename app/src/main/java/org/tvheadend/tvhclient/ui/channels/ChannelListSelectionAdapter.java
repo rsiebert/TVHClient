@@ -50,16 +50,16 @@ public class ChannelListSelectionAdapter extends RecyclerView.Adapter<ChannelLis
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        final Channel item = channelList.get(position);
-        if (item != null) {
-
+        final Channel channel = channelList.get(position);
+        if (channel != null) {
+            holder.itemView.setTag(channel);
             if (holder.icon != null) {
-                Bitmap iconBitmap = MiscUtils.getCachedIcon(context, item.getChannelIcon());
+                Bitmap iconBitmap = MiscUtils.getCachedIcon(context, channel.getChannelIcon());
                 holder.icon.setImageBitmap(iconBitmap);
                 holder.icon.setVisibility(iconBitmap != null && showChannelIcons ? ImageView.VISIBLE : ImageView.GONE);
             }
             if (holder.title != null) {
-                holder.title.setText(item.getChannelName());
+                holder.title.setText(channel.getChannelName());
                 holder.title.setTag(position);
             }
         }
@@ -89,8 +89,8 @@ public class ChannelListSelectionAdapter extends RecyclerView.Adapter<ChannelLis
         @Override
         public void onClick(View view) {
             if (channelListAdapter != null && channelListAdapter.callback != null) {
-                int id = channelListAdapter.channelList.get(getAdapterPosition()).getChannelId();
-                channelListAdapter.callback.onItemClicked(id);
+                Channel channel = channelListAdapter.channelList.get(getAdapterPosition());
+                channelListAdapter.callback.onItemClicked(channel.getChannelId());
             }
         }
     }
