@@ -87,7 +87,7 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
     private String[] duplicateDetectionList;
     private Unbinder unbinder;
     private String id;
-    private int recordingProfileName;
+    private int recordingProfileNameId;
     private SeriesRecording recording;
 
     @Override
@@ -115,7 +115,7 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
         if (profile != null) {
             for (int i = 0; i < recordingProfilesList.length; i++) {
                 if (recordingProfilesList[i].equals(profile.getName())) {
-                    recordingProfileName = i;
+                    recordingProfileNameId = i;
                     break;
                 }
             }
@@ -128,7 +128,7 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
             }
         } else {
             id = savedInstanceState.getString("id");
-            recordingProfileName = savedInstanceState.getInt("configName");
+            recordingProfileNameId = savedInstanceState.getInt("configName");
         }
 
         // Create the view model that stores the connection model
@@ -169,8 +169,8 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
             recordingProfileNameTextView.setVisibility(View.VISIBLE);
             recordingProfileLabelTextView.setVisibility(View.VISIBLE);
 
-            recordingProfileNameTextView.setText(recordingProfileName);
-            recordingProfileNameTextView.setOnClickListener(view -> handleRecordingProfileSelection(recordingProfilesList, recordingProfileName, this));
+            recordingProfileNameTextView.setText(recordingProfilesList[recordingProfileNameId]);
+            recordingProfileNameTextView.setOnClickListener(view -> handleRecordingProfileSelection(recordingProfilesList, recordingProfileNameId, this));
         }
 
         startTimeTextView.setText(getTimeStringFromTimeInMillis(recording.getStart()));
@@ -209,7 +209,7 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         outState.putString("id", id);
-        outState.putInt("configName", recordingProfileName);
+        outState.putInt("configName", recordingProfileNameId);
         super.onSaveInstanceState(outState);
     }
 
@@ -373,7 +373,7 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
     @Override
     public void onProfileSelected(int which) {
         recordingProfileNameTextView.setText(recordingProfilesList[which]);
-        recordingProfileName = which;
+        recordingProfileNameId = which;
     }
 
     @Override

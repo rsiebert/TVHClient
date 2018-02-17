@@ -83,7 +83,7 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
     private Unbinder unbinder;
     private int dvrId = 0;
     private Recording recording;
-    private int recordingProfileName;
+    private int recordingProfileNameId;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -108,7 +108,7 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
         if (profile != null) {
             for (int i = 0; i < recordingProfilesList.length; i++) {
                 if (recordingProfilesList[i].equals(profile.getName())) {
-                    recordingProfileName = i;
+                    recordingProfileNameId = i;
                     break;
                 }
             }
@@ -182,8 +182,8 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
             recordingProfileNameTextView.setVisibility(View.VISIBLE);
             recordingProfileLabelTextView.setVisibility(View.VISIBLE);
 
-            recordingProfileNameTextView.setText(recordingProfileName);
-            recordingProfileNameTextView.setOnClickListener(view -> handleRecordingProfileSelection(recordingProfilesList, recordingProfileName, RecordingAddEditFragment.this));
+            recordingProfileNameTextView.setText(recordingProfilesList[recordingProfileNameId]);
+            recordingProfileNameTextView.setOnClickListener(view -> handleRecordingProfileSelection(recordingProfilesList, recordingProfileNameId, RecordingAddEditFragment.this));
         }
 
         startTimeTextView.setVisibility(!recording.isRecording() ? View.VISIBLE : View.GONE);
@@ -202,7 +202,7 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         outState.putInt("dvrId", dvrId);
-        outState.putInt("configName", recordingProfileName);
+        outState.putInt("configName", recordingProfileNameId);
         super.onSaveInstanceState(outState);
     }
 
@@ -368,7 +368,7 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
     @Override
     public void onProfileSelected(int which) {
         recordingProfileNameTextView.setText(recordingProfilesList[which]);
-        recordingProfileName = which;
+        recordingProfileNameId = which;
     }
 
     @Override

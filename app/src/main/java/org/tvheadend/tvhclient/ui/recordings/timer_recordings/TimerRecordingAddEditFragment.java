@@ -72,7 +72,7 @@ public class TimerRecordingAddEditFragment extends BaseRecordingAddEditFragment 
     private Unbinder unbinder;
     private String id;
     private TimerRecording recording;
-    private int recordingProfileName;
+    private int recordingProfileNameId;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -97,7 +97,7 @@ public class TimerRecordingAddEditFragment extends BaseRecordingAddEditFragment 
         if (profile != null) {
             for (int i = 0; i < recordingProfilesList.length; i++) {
                 if (recordingProfilesList[i].equals(profile.getName())) {
-                    recordingProfileName = i;
+                    recordingProfileNameId = i;
                     break;
                 }
             }
@@ -110,7 +110,7 @@ public class TimerRecordingAddEditFragment extends BaseRecordingAddEditFragment 
             }
         } else {
             id = savedInstanceState.getString("id");
-            recordingProfileName = savedInstanceState.getInt("configName");
+            recordingProfileNameId = savedInstanceState.getInt("configName");
         }
 
         // Create the view model that stores the connection model
@@ -152,8 +152,8 @@ public class TimerRecordingAddEditFragment extends BaseRecordingAddEditFragment 
             recordingProfileNameTextView.setVisibility(View.VISIBLE);
             recordingProfileLabelTextView.setVisibility(View.VISIBLE);
 
-            recordingProfileNameTextView.setText(recordingProfileName);
-            recordingProfileNameTextView.setOnClickListener(view -> handleRecordingProfileSelection(recordingProfilesList, recordingProfileName, TimerRecordingAddEditFragment.this));
+            recordingProfileNameTextView.setText(recordingProfilesList[recordingProfileNameId]);
+            recordingProfileNameTextView.setOnClickListener(view -> handleRecordingProfileSelection(recordingProfilesList, recordingProfileNameId, TimerRecordingAddEditFragment.this));
         }
 
         startTimeTextView.setText(getTimeStringFromTimeInMillis(recording.getStart()));
@@ -169,7 +169,7 @@ public class TimerRecordingAddEditFragment extends BaseRecordingAddEditFragment 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         outState.putString("id", id);
-        outState.putInt("configName", recordingProfileName);
+        outState.putInt("configName", recordingProfileNameId);
         super.onSaveInstanceState(outState);
     }
 
@@ -308,7 +308,7 @@ public class TimerRecordingAddEditFragment extends BaseRecordingAddEditFragment 
     @Override
     public void onProfileSelected(int which) {
         recordingProfileNameTextView.setText(recordingProfilesList[which]);
-        recordingProfileName = which;
+        recordingProfileNameId = which;
     }
 
     @Override
