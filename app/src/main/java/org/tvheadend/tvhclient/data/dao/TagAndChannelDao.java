@@ -9,6 +9,8 @@ import android.arch.persistence.room.Update;
 
 import org.tvheadend.tvhclient.data.entity.TagAndChannel;
 
+import java.util.ArrayList;
+
 @Dao
 public interface TagAndChannelDao {
 
@@ -26,4 +28,7 @@ public interface TagAndChannelDao {
 
     @Query("DELETE FROM tags_and_channels")
     void deleteAll();
+
+    @Insert
+    void insertAll(ArrayList<TagAndChannel> tagAndChannels);
 }

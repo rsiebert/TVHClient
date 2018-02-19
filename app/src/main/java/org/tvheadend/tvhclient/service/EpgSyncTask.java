@@ -56,6 +56,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     private final Handler handler;
 
     private final ArrayList<Channel> pendingChannelOps = new ArrayList<>();
+    private final ArrayList<TagAndChannel> pendingChannelTagRelationOps = new ArrayList<>();
     private final ArrayList<Recording> pendingRecordedProgramOps = new ArrayList<>();
     private final ArrayList<Program> pendingEventOps = new ArrayList<>();
     private final Queue<String> pendingChannelLogoFetches = new ConcurrentLinkedQueue<>();
@@ -343,7 +344,8 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
                 TagAndChannel tagAndChannel = new TagAndChannel();
                 tagAndChannel.setTagId(tag.getTagId());
                 tagAndChannel.setChannelId(channelId);
-                db.tagAndChannelDao().insert(tagAndChannel);
+                pendingChannelTagRelationOps.add(tagAndChannel);
+                //db.tagAndChannelDao().insert(tagAndChannel);
             }
         }
 
@@ -365,12 +367,9 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
      * @param msg The message with the updated tag data
      */
     private void handleTagUpdate(HtspMessage msg) {
-        ChannelTag[] tags = new ChannelTag[1];
-        tags[0] = EpgSyncUtils.convertMessageToChannelTagModel(new ChannelTag(), msg);
-        db.channelTagDao().update(tags);
+        ChannelTag tag = EpgSyncUtils.convertMessageToChannelTagModel(new ChannelTag(), msg);
+        db.channelTagDao().update(tag);
 
-        // Get the tag the shall be updated
-        ChannelTag tag = tags[0];
         // Remove all entries of this tag from the database before
         // adding new ones which are defined in the members variable
         db.tagAndChannelDao().deleteByTagId(tag.getTagId());
@@ -380,7 +379,8 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
                 TagAndChannel tagAndChannel = new TagAndChannel();
                 tagAndChannel.setTagId(tag.getTagId());
                 tagAndChannel.setChannelId(channelId);
-                db.tagAndChannelDao().insert(tagAndChannel);
+                pendingChannelTagRelationOps.add(tagAndChannel);
+                //db.tagAndChannelDao().insert(tagAndChannel);
             }
         }
 
@@ -426,6 +426,19 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         } else {
             db.channelDao().insert(channel);
         }
+
+        // Get the tag id and all channel ids of the tag so that
+        // new entries where the tagId is present can be added to the database
+        List<Integer> tagIds = channel.getTags();
+        if (tagIds != null) {
+            for (Integer tagId : tagIds) {
+                TagAndChannel tagAndChannel = new TagAndChannel();
+                tagAndChannel.setTagId(tagId);
+                tagAndChannel.setChannelId(channel.getChannelId());
+                //db.tagAndChannelDao().insert(tagAndChannel);
+            }
+        }
+
         // Update the icon if required
         final String icon = msg.getString("channelIcon", null);
         if (icon != null) {
@@ -440,13 +453,25 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
      * @param msg The message with the updated channel data
      */
     private void handleChannelUpdate(HtspMessage msg) {
-        Channel[] channel = new Channel[1];
-        channel[0] = EpgSyncUtils.convertMessageToChannelModel(new Channel(), msg);
+        Channel channel = EpgSyncUtils.convertMessageToChannelModel(new Channel(), msg);
         if (!initialSyncCompleted) {
-            pendingChannelOps.add(channel[0]);
+            pendingChannelOps.add(channel);
         } else {
             db.channelDao().update(channel);
         }
+
+        // Get the tag id and all channel ids of the tag so that
+        // new entries where the tagId is present can be added to the database
+        List<Integer> tagIds = channel.getTags();
+        if (tagIds != null) {
+            for (Integer tagId : tagIds) {
+                TagAndChannel tagAndChannel = new TagAndChannel();
+                tagAndChannel.setTagId(tagId);
+                tagAndChannel.setChannelId(channel.getChannelId());
+                //db.tagAndChannelDao().insert(tagAndChannel);
+            }
+        }
+
         // Update the icon if required
         final String icon = msg.getString("channelIcon");
         if (icon != null) {
@@ -688,6 +713,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
 
         // Flush all received data to the database
         flushPendingChannelOps();
+        flushPendingChannelTagRelationOps();
         flushPendingDvrEntryOps();
         flushPendingEventOps();
 
@@ -742,6 +768,14 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
             LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
         }
         pendingChannelOps.clear();
+    }
+
+    private void flushPendingChannelTagRelationOps() {
+        if (pendingChannelTagRelationOps.isEmpty()) {
+            return;
+        }
+        db.tagAndChannelDao().insertAll(pendingChannelTagRelationOps);
+        pendingChannelTagRelationOps.clear();
     }
 
     private void flushPendingChannelLogoFetches() {

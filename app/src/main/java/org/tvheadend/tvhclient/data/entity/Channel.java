@@ -6,6 +6,8 @@ import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.RoomWarnings;
 
+import java.util.List;
+
 
 @SuppressWarnings(RoomWarnings.PRIMARY_KEY_FROM_EMBEDDED_IS_DROPPED)
 @Entity(tableName = "channels")
@@ -52,6 +54,8 @@ public class Channel {
     @ColumnInfo(name = "recording_error")
     private String recordingError;
 
+    @Ignore
+    private List<Integer> tags;
     @Ignore
     private Recording recording;
 
@@ -213,5 +217,13 @@ public class Channel {
 
     public void setRecording(Recording recording) {
         this.recording = recording;
+    }
+
+    public List<Integer> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<Integer> tags) {
+        this.tags = tags;
     }
 }

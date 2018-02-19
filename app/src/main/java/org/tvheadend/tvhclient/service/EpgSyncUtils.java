@@ -64,6 +64,10 @@ class EpgSyncUtils {
         if (msg.containsKey("nextEventId")) {
             channel.setNextEventId(msg.getInteger("nextEventId"));
         }
+        if (msg.containsKey("tags")) {
+            List<Integer> tags = msg.getIntegerList("tags");
+            channel.setTags(tags);
+        }
         return channel;
     }
 
