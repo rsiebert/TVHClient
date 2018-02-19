@@ -41,8 +41,6 @@ import org.tvheadend.tvhclient.utils.MiscUtils;
 // TODO starting recording from channel list does not update channel recording status
 // TODO starting recording from channel list creates recording with wrong information
 // TODO split time in details screens into start and stop time
-// TODO highlight the selected channel in the channel list selection adapter (or use checkbox list)
-// TODO show how many channels belong to a channel tag in the selection dialog
 // TODO brown genre color is not shown in the genre color info dialog
 // TODO try to fetch epg data once when no programs are available in the program list
 // TODO use channel sorting from the settings
@@ -61,10 +59,13 @@ import org.tvheadend.tvhclient.utils.MiscUtils;
 // TODO move the conversion from ms to s or minutes from the intents into the entity getter and setter
 // TODO rework search (use recyclerview filter)
 // TODO rework epg (use recyclerview horizontal scroll)
-// TODO selected navigation item not updated when backstack is popped
 // TODO test database migration
 // TODO ClearTablesAsyncTask add connection id to all tables
 // TODO make the number of epg hours in the sync task to load a preference (currently 1h)
+// TODO handleTagUpdate shall bulk update the channel tags
+// TODO use info from channel add htsp call to fill channel count in tags_and_channels table
+// TODO all channels shown multiple times in base recording fragment
+
 
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, ToolbarInterface {
 
