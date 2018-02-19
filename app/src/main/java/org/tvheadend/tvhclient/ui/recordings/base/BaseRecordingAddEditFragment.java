@@ -24,6 +24,7 @@ import org.tvheadend.tvhclient.utils.ChannelListSelectionCallback;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 // TODO add title and full names to day of weeks list
 
@@ -131,7 +132,7 @@ public class BaseRecordingAddEditFragment extends BaseFragment {
 
     protected void handleChannelListSelection(long selectedChannelId, ChannelListSelectionCallback callback, boolean showAllChannelsListEntry) {
         // Fill the channel tag adapter with the available channel tags
-        List<Channel> channels = channelList;
+        CopyOnWriteArrayList<Channel> channels = new CopyOnWriteArrayList<>(channelList);
 
         // Add the default channel (all channels)
         // to the list after it has been sorted

@@ -64,7 +64,6 @@ import org.tvheadend.tvhclient.utils.MiscUtils;
 // TODO make the number of epg hours in the sync task to load a preference (currently 1h)
 // TODO handleTagUpdate shall bulk update the channel tags
 // TODO use info from channel add htsp call to fill channel count in tags_and_channels table
-// TODO all channels shown multiple times in base recording fragment
 
 
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, ToolbarInterface {
