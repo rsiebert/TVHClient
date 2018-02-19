@@ -221,6 +221,21 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
             case "getDvrConfigs":
                 handleDvrConfigs(message);
                 break;
+            case "getEvents":
+                handleGetEvents(message);
+                break;
+        }
+    }
+
+    private void handleGetEvents(HtspMessage message) {
+        if (message.containsKey("events")) {
+            Log.d(TAG, "getEvents: contains key events");
+            for (HtspMessage msg : message.getHtspMessageArray("events")) {
+                List<Program> programList = new ArrayList<>();
+                programList.add(EpgSyncUtils.convertMessageToProgramModel(new Program(), msg));
+                db.programDao().insertAll(programList);
+            }
+            flushPendingEventOps();
         }
     }
 
@@ -962,26 +977,10 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         request.put("method", "getEvents");
         request.put("eventId", intent.getIntExtra("eventId", 0));
         request.put("numFollowing", intent.getIntExtra("numFollowing", 10));
-
-        HtspMessage response = null;
         try {
-            response = dispatcher.sendMessage(request, connectionTimeout);
+            dispatcher.sendMessage(request, connectionTimeout);
         } catch (HtspNotConnectedException e) {
             Log.e(TAG, "Failed to send getEvents - not connected", e);
-        }
-
-        // Reply message fields: events
-        // msg[] required   List of events, using response message fields from eventAdd
-        if (response != null) {
-            if (response.containsKey("events")) {
-                Log.d(TAG, "getEvents: contains key events");
-                for (HtspMessage msg : response.getHtspMessageArray("events")) {
-                    List<Program> programList = new ArrayList<>();
-                    programList.add(EpgSyncUtils.convertMessageToProgramModel(new Program(), msg));
-                    db.programDao().insertAll(programList);
-                }
-                flushPendingEventOps();
-            }
         }
     }
 
