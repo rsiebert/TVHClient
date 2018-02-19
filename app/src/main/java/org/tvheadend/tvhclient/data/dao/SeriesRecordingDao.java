@@ -6,6 +6,7 @@ import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
+import android.arch.persistence.room.Transaction;
 import android.arch.persistence.room.Update;
 
 import org.tvheadend.tvhclient.data.entity.SeriesRecording;
@@ -21,12 +22,15 @@ public interface SeriesRecordingDao {
             "FROM series_recordings AS rec " +
             "LEFT JOIN channels AS c ON  c.id = rec.channel_id ";
 
+    @Transaction
     @Query(query)
     LiveData<List<SeriesRecording>> loadAllRecordings();
 
+    @Transaction
     @Query(query + "WHERE rec.id = :id")
     LiveData<SeriesRecording> loadRecordingById(String id);
 
+    @Transaction
     @Query(query + "WHERE rec.id = :id")
     SeriesRecording loadRecordingByIdSync(String id);
 

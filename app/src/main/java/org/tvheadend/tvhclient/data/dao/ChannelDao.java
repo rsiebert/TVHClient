@@ -6,6 +6,7 @@ import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
+import android.arch.persistence.room.Transaction;
 import android.arch.persistence.room.Update;
 
 import org.tvheadend.tvhclient.data.entity.Channel;
@@ -15,6 +16,7 @@ import java.util.List;
 @Dao
 public interface ChannelDao {
 
+    @Transaction
     @Query("SELECT c.*, " +
             "program.id AS program_id, " +
             "program.title AS program_title, " +
@@ -59,6 +61,7 @@ public interface ChannelDao {
     @Query("DELETE FROM channels")
     void deleteAll();
 
+    @Transaction
     @Query("SELECT c.*, " +
             "program.id AS program_id, " +
             "program.title AS program_title, " +

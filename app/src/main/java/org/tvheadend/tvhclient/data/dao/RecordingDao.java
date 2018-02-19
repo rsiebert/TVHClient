@@ -6,6 +6,7 @@ import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
+import android.arch.persistence.room.Transaction;
 import android.arch.persistence.room.Update;
 
 import org.tvheadend.tvhclient.data.entity.Recording;
@@ -21,27 +22,34 @@ public interface RecordingDao {
             "FROM recordings AS rec " +
             "LEFT JOIN channels AS c ON  c.id = rec.channel_id ";
 
+    @Transaction
     @Query(query)
     List<Recording> loadAllRecordings();
 
+    @Transaction
     @Query(query + "WHERE rec.error IS NULL AND rec.state = 'completed'")
     LiveData<List<Recording>> loadAllCompletedRecordings();
 
+    @Transaction
     @Query(query + "WHERE rec.error IS NULL AND (rec.state = 'recording' OR rec.state = 'scheduled')")
     LiveData<List<Recording>> loadAllScheduledRecordings();
 
+    @Transaction
     @Query(query + "WHERE " +
             "(rec.error IS NOT NULL AND (rec.state='missed'  OR rec.state='invalid')) " +
             " OR (rec.error IS NULL  AND rec.state='missed') " +
             " OR (rec.error='Aborted by user' AND rec.state='completed')")
     LiveData<List<Recording>> loadAllFailedRecordings();
 
+    @Transaction
     @Query(query + "WHERE rec.error = 'File missing' AND rec.state = 'completed'")
     LiveData<List<Recording>> loadAllRemovedRecordings();
 
+    @Transaction
     @Query(query + "WHERE rec.id = :id")
     LiveData<Recording> loadRecordingById(int id);
 
+    @Transaction
     @Query(query + "WHERE rec.id = :id")
     Recording loadRecordingByIdSync(int id);
 
