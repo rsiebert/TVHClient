@@ -18,16 +18,6 @@ public class ProfileRepository {
         this.db = AppDatabase.getInstance(context.getApplicationContext());
     }
 
-    public ServerProfile getPlaybackServerProfile() {
-        // Get the playback serverProfile of the currently active connection
-        try {
-            return new LoadServerProfileTask(db.serverProfileDao(), "playback").execute().get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-        return new ServerProfile();
-    }
-
     public ServerProfile getRecordingServerProfile() {
         // Get the recording serverProfile of the currently active connection
         try {
@@ -51,15 +41,6 @@ public class ProfileRepository {
     public List<ServerProfile> getAllRecordingServerProfiles() {
         try {
             return new LoadAllServerProfilesTask(db.serverProfileDao(), "recording").execute().get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public List<ServerProfile> getAllPlaybackServerProfiles() {
-        try {
-            return new LoadAllServerProfilesTask(db.serverProfileDao(), "playback").execute().get();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }

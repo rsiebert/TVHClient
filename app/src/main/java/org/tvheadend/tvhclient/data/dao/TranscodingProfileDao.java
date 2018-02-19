@@ -14,16 +14,6 @@ public interface TranscodingProfileDao {
     @Query("DELETE FROM transcoding_profiles WHERE connection_id = :id")
     void deleteByConnectionId(int id);
 
-    @Query("SELECT p.* FROM transcoding_profiles AS p " +
-            "LEFT JOIN server_status AS s ON s.playback_transcoding_profile_id = p.id " +
-            "LEFT JOIN connections AS c ON c.id = p.connection_id AND c.active = 1")
-    TranscodingProfile loadPlaybackProfileSync();
-
-    @Query("SELECT p.* FROM transcoding_profiles AS p " +
-            "LEFT JOIN server_status AS s ON s.recording_transcoding_profile_id = p.id " +
-            "LEFT JOIN connections AS c ON c.id = p.connection_id AND c.active = 1")
-    TranscodingProfile loadRecordingProfileSync();
-
     @Insert
     long insert(TranscodingProfile transcodingProfile);
 
