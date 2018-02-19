@@ -100,7 +100,7 @@ public class NavigationActivity extends MainActivity implements WakeOnLanTaskCal
 
     @Override
     public void onBackPressed() {
-        if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
+        if (getSupportFragmentManager().getBackStackEntryCount() == 1) {
             finish();
         } else {
             super.onBackPressed();

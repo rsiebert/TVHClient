@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.AttrRes;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 
@@ -266,8 +265,7 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
     }
 
     public void setSelection(int id) {
-        Log.d(TAG, "setSelection() called with: id = [" + id + "]");
-        result.setSelection(id);
+        result.setSelection(id, false);
     }
 
     Bundle saveInstanceState(Bundle outState) {
