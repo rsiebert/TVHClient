@@ -17,12 +17,11 @@ import android.view.ViewStub;
 import android.widget.TextView;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.data.entity.SeriesRecording;
 import org.tvheadend.tvhclient.ui.base.BaseFragment;
 import org.tvheadend.tvhclient.ui.recordings.common.RecordingAddEditActivity;
-import org.tvheadend.tvhclient.utils.UIUtils;
 import org.tvheadend.tvhclient.utils.RecordingRemovedCallback;
+import org.tvheadend.tvhclient.utils.UIUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -118,8 +117,7 @@ public class SeriesRecordingDetailsFragment extends BaseFragment implements Reco
         directoryTextView.setVisibility(!TextUtils.isEmpty(recording.getDirectory()) && serverStatus.getHtspVersion() >= 19 ? View.VISIBLE : View.GONE);
         directoryTextView.setText(recording.getDirectory());
 
-        Channel channel = repository.getChannelByIdSync(recording.getChannelId());
-        channelNameTextView.setText(channel != null ? channel.getChannelName() : getString(R.string.all_channels));
+        channelNameTextView.setText(!TextUtils.isEmpty(recording.getChannelName()) ? recording.getChannelName() : getString(R.string.all_channels));
 
         nameLabelTextView.setVisibility(!TextUtils.isEmpty(recording.getName()) ? View.VISIBLE : View.GONE);
         nameTextView.setVisibility(!TextUtils.isEmpty(recording.getName()) ? View.VISIBLE : View.GONE);

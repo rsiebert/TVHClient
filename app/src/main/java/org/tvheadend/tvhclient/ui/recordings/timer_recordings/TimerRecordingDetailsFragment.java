@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -120,7 +121,7 @@ public class TimerRecordingDetailsFragment extends BaseFragment implements Recor
         directoryTextView.setVisibility(serverStatus.getHtspVersion() >= 19 ? View.VISIBLE : View.GONE);
         directoryTextView.setText(recording.getDirectory());
 
-        channelNameTextView.setText(recording.getChannelName() != null ? recording.getChannelName() : getString(R.string.all_channels));
+        channelNameTextView.setText(!TextUtils.isEmpty(recording.getChannelName()) ? recording.getChannelName() : getString(R.string.all_channels));
 
         daysOfWeekTextView.setText(UIUtils.getDaysOfWeekText(activity, recording.getDaysOfWeek()));
 

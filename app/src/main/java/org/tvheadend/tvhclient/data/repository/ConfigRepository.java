@@ -5,9 +5,11 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import org.tvheadend.tvhclient.data.AppDatabase;
+import org.tvheadend.tvhclient.data.dao.ChannelTagDao;
 import org.tvheadend.tvhclient.data.dao.ServerProfileDao;
 import org.tvheadend.tvhclient.data.dao.ServerStatusDao;
 import org.tvheadend.tvhclient.data.dao.TranscodingProfileDao;
+import org.tvheadend.tvhclient.data.entity.ChannelTag;
 import org.tvheadend.tvhclient.data.entity.ServerProfile;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
 import org.tvheadend.tvhclient.data.entity.TranscodingProfile;
@@ -292,5 +294,50 @@ public class ConfigRepository {
         }
     }
 
+    public ChannelTag getSelectedChannelTag() {
+        try {
+            return new LoadSelectedChannelTagTask(db.serverStatusDao(), db.channelTagDao()).execute().get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
+    private static class LoadSelectedChannelTagTask extends AsyncTask<Void, Void, ChannelTag> {
+        private final ServerStatusDao serverStatusDao;
+        private final ChannelTagDao channelTagDao;
+
+        LoadSelectedChannelTagTask(ServerStatusDao serverStatusDao, ChannelTagDao channelTagDao) {
+            this.serverStatusDao = serverStatusDao;
+            this.channelTagDao = channelTagDao;
+        }
+
+        @Override
+        protected ChannelTag doInBackground(Void... voids) {
+            ServerStatus serverStatus = serverStatusDao.loadServerStatusSync();
+            return channelTagDao.loadChannelTagByIdSync(serverStatus.getChannelTagId());
+        }
+    }
+
+    public void setSelectedChannelTag(int id) {
+        new UpdateChannelTagTask(db.serverStatusDao(), id).execute();
+    }
+
+    private static class UpdateChannelTagTask extends AsyncTask<Void, Void, Void> {
+        private final ServerStatusDao dao;
+        private final int id;
+
+        UpdateChannelTagTask(ServerStatusDao dao, int id) {
+            this.dao = dao;
+            this.id = id;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            ServerStatus serverStatus = dao.loadServerStatusSync();
+            serverStatus.setChannelTagId(id);
+            dao.update(serverStatus);
+            return null;
+        }
+    }
 }

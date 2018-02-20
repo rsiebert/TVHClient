@@ -26,8 +26,6 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.data.entity.ChannelTag;
 import org.tvheadend.tvhclient.data.entity.Recording;
-import org.tvheadend.tvhclient.data.entity.ServerStatus;
-import org.tvheadend.tvhclient.data.repository.ServerStatusRepository;
 import org.tvheadend.tvhclient.ui.base.BaseFragment;
 import org.tvheadend.tvhclient.ui.common.RecyclerTouchListener;
 import org.tvheadend.tvhclient.ui.common.RecyclerViewTouchCallback;
@@ -61,7 +59,6 @@ public class ChannelListFragment extends BaseFragment implements ChannelClickCal
     private ChannelViewModel viewModel;
     private Runnable channelUpdateTask;
     private final Handler channelUpdateHandler = new Handler();
-    private ServerStatus serverStatus;
 
     @Nullable
     @Override
@@ -106,12 +103,8 @@ public class ChannelListFragment extends BaseFragment implements ChannelClickCal
             }
         }));
 
-        serverStatus = new ServerStatusRepository(activity).loadServerStatusSync();
-
-        Log.d(TAG, "onActivityCreated() called with: savedInstanceState = [" + savedInstanceState + "]");
         viewModel = ViewModelProviders.of(activity).get(ChannelViewModel.class);
         viewModel.setTime(new Date().getTime());
-        viewModel.setTag(serverStatus.getChannelTagId());
 
         viewModel.getChannelsByTime().observe(this, channels -> {
             int channelCount = 0;
@@ -225,7 +218,7 @@ public class ChannelListFragment extends BaseFragment implements ChannelClickCal
     public void onChannelTagIdSelected(int which) {
         Log.d(TAG, "onChannelTagIdSelected() called with: which = [" + which + "]");
         viewModel.setTag(which);
-        new ServerStatusRepository(activity).updateSelectedChannelTag(which);
+        viewModel.setSelectedChannelTag(which);
     }
 
     protected void showChannelDetails(int position) {

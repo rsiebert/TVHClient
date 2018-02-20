@@ -135,8 +135,7 @@ public class TimerRecordingAddEditFragment extends BaseRecordingAddEditFragment 
         directoryEditText.setVisibility(serverStatus.getHtspVersion() >= 19 ? View.VISIBLE : View.GONE);
         directoryEditText.setText(recording.getDirectory());
 
-        Channel channel = repository.getChannelByIdSync(recording.getChannelId());
-        channelNameTextView.setText(channel != null ? channel.getChannelName() : getString(R.string.all_channels));
+        channelNameTextView.setText(!TextUtils.isEmpty(recording.getChannelName()) ? recording.getChannelName() : getString(R.string.all_channels));
         channelNameTextView.setOnClickListener(view -> {
             // Determine if the server supports recording on all channels
             boolean allowRecordingOnAllChannels = serverStatus.getHtspVersion() >= 21;

@@ -5,11 +5,9 @@ import android.content.Context;
 import android.os.AsyncTask;
 
 import org.tvheadend.tvhclient.data.AppDatabase;
-import org.tvheadend.tvhclient.data.dao.ChannelDao;
 import org.tvheadend.tvhclient.data.dao.RecordingDao;
 import org.tvheadend.tvhclient.data.dao.SeriesRecordingDao;
 import org.tvheadend.tvhclient.data.dao.TimerRecordingDao;
-import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.data.entity.SeriesRecording;
 import org.tvheadend.tvhclient.data.entity.TimerRecording;
@@ -36,15 +34,6 @@ public class RecordingRepository {
     public TimerRecording getTimerRecordingByIdSync(String id) {
         try {
             return new LoadTimerRecordingTask(db.timerRecordingDao(), id).execute().get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public Channel getChannelByIdSync(int id) {
-        try {
-            return new LoadChannelTask(db.channelDao(), id).execute().get();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
@@ -161,34 +150,6 @@ public class RecordingRepository {
         @Override
         protected SeriesRecording doInBackground(Void... voids) {
             return dao.loadRecordingByIdSync(id);
-        }
-    }
-
-    protected static class LoadChannelTask extends AsyncTask<Void, Void, Channel> {
-        private final ChannelDao dao;
-        private final int id;
-
-        LoadChannelTask(ChannelDao dao, int id) {
-            this.dao = dao;
-            this.id = id;
-        }
-
-        @Override
-        protected Channel doInBackground(Void... voids) {
-            return dao.loadChannelByIdSync(id);
-        }
-    }
-
-    protected static class LoadAllChannelsTask extends AsyncTask<Void, Void, List<Channel>> {
-        private final ChannelDao dao;
-
-        LoadAllChannelsTask(ChannelDao dao) {
-            this.dao = dao;
-        }
-
-        @Override
-        protected List<Channel> doInBackground(Void... voids) {
-            return dao.loadAllChannelsSync();
         }
     }
 }

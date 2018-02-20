@@ -18,12 +18,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.ui.base.BaseFragment;
 import org.tvheadend.tvhclient.ui.recordings.common.RecordingAddEditActivity;
-import org.tvheadend.tvhclient.utils.UIUtils;
 import org.tvheadend.tvhclient.utils.RecordingRemovedCallback;
+import org.tvheadend.tvhclient.utils.UIUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -166,8 +165,7 @@ public class RecordingDetailsFragment extends BaseFragment implements RecordingR
         String durationTime = getString(R.string.minutes, (int) ((recording.getStop() - recording.getStart()) / 1000 / 60));
         durationTextView.setText(durationTime);
 
-        Channel channel = repository.getChannelByIdSync(recording.getChannelId());
-        channelNameTextView.setText(channel != null ? channel.getChannelName() : getString(R.string.no_channel));
+        channelNameTextView.setText(!TextUtils.isEmpty(recording.getChannelName()) ? recording.getChannelName() : getString(R.string.no_channel));
 
         summaryLabelTextView.setVisibility(!TextUtils.isEmpty(recording.getSummary()) ? View.VISIBLE : View.GONE);
         summaryTextView.setVisibility(!TextUtils.isEmpty(recording.getSummary()) ? View.VISIBLE : View.GONE);

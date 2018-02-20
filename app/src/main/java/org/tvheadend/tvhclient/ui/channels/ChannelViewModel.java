@@ -9,6 +9,7 @@ import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.data.entity.ChannelTag;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
 import org.tvheadend.tvhclient.data.repository.ChannelAndProgramRepository;
+import org.tvheadend.tvhclient.data.repository.ConfigRepository;
 import org.tvheadend.tvhclient.data.repository.ServerStatusRepository;
 
 import java.util.Date;
@@ -19,6 +20,7 @@ public class ChannelViewModel extends AndroidViewModel {
     private final LiveData<List<Channel>> channels;
     private final ChannelAndProgramRepository repository;
     private final ServerStatusRepository serverRepository;
+    private final ConfigRepository configRepository;
     private MutableLiveData<List<Channel>> channelsByTime = new MutableLiveData<>();
     private long showProgramsFromTime;
     private int selectedChannelTagId;
@@ -27,6 +29,7 @@ public class ChannelViewModel extends AndroidViewModel {
         super(application);
         repository = new ChannelAndProgramRepository(application);
         serverRepository =  new ServerStatusRepository(application);
+        configRepository =  new ConfigRepository(application);
 
         showProgramsFromTime = new Date().getTime();
         selectedChannelTagId = 0;
@@ -58,8 +61,11 @@ public class ChannelViewModel extends AndroidViewModel {
     }
 
     public void setTag(int id) {
-        this.selectedChannelTagId = id;
-        reloadChannels();
+        ChannelTag channelTag = getSelectedChannelTag();
+        if (channelTag != null) {
+            this.selectedChannelTagId = id;
+            reloadChannels();
+        }
     }
 
     public LiveData<ServerStatus> getServerStatus() {
@@ -67,6 +73,10 @@ public class ChannelViewModel extends AndroidViewModel {
     }
 
     ChannelTag getSelectedChannelTag() {
-        return repository.getSelectedChannelTag();
+        return configRepository.getSelectedChannelTag();
+    }
+
+    void setSelectedChannelTag(int id) {
+        configRepository.setSelectedChannelTag(id);
     }
 }

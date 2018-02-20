@@ -8,10 +8,8 @@ import android.util.Log;
 import org.tvheadend.tvhclient.data.AppDatabase;
 import org.tvheadend.tvhclient.data.dao.ChannelDao;
 import org.tvheadend.tvhclient.data.dao.ChannelTagDao;
-import org.tvheadend.tvhclient.data.dao.ServerStatusDao;
 import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.data.entity.ChannelTag;
-import org.tvheadend.tvhclient.data.entity.ServerStatus;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -28,7 +26,7 @@ public class ChannelAndProgramRepository {
 
     public List<Channel> getAllChannelsSync() {
         try {
-            return new RecordingRepository.LoadAllChannelsTask(db.channelDao()).execute().get();
+            return new LoadAllChannelsByTimeTask(db.channelDao(), 0, 0).execute().get();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
@@ -66,15 +64,6 @@ public class ChannelAndProgramRepository {
         return null;
     }
 
-    public ChannelTag getSelectedChannelTag() {
-        try {
-            return new LoadSelectedChannelTagTask(db.serverStatusDao(), db.channelTagDao()).execute().get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
     protected static class LoadAllChannelTagsTask extends AsyncTask<Void, Void, List<ChannelTag>> {
         private final ChannelTagDao dao;
 
@@ -102,12 +91,16 @@ public class ChannelAndProgramRepository {
 
         @Override
         protected List<Channel> doInBackground(Void... voids) {
-            if (tagId > 0) {
-                Log.d(TAG, "doInBackground: loadAllChannelsByTimeAndTagSync");
-                return dao.loadAllChannelsByTimeAndTagSync(time, tagId);
+            if (time > 0) {
+                if (tagId > 0) {
+                    Log.d(TAG, "doInBackground: loadAllChannelsByTimeAndTagSync");
+                    return dao.loadAllChannelsByTimeAndTagSync(time, tagId);
+                } else {
+                    Log.d(TAG, "doInBackground: loadAllChannelsByTimeSync");
+                    return dao.loadAllChannelsByTimeSync(time);
+                }
             } else {
-                Log.d(TAG, "doInBackground: loadAllChannelsByTimeSync");
-                return dao.loadAllChannelsByTimeSync(time);
+                return dao.loadAllChannelsSync();
             }
         }
     }
@@ -124,23 +117,6 @@ public class ChannelAndProgramRepository {
         @Override
         protected Channel doInBackground(Void... voids) {
             return dao.loadChannelByIdSync(id);
-        }
-    }
-
-    private static class LoadSelectedChannelTagTask extends AsyncTask<Void, Void, ChannelTag> {
-        private final ServerStatusDao serverStatusDao;
-        private final ChannelTagDao channelTagDao;
-
-        LoadSelectedChannelTagTask(ServerStatusDao serverStatusDao, ChannelTagDao channelTagDao) {
-            this.serverStatusDao = serverStatusDao;
-            this.channelTagDao = channelTagDao;
-        }
-
-        @Override
-        protected ChannelTag doInBackground(Void... voids) {
-            ServerStatus serverStatus = serverStatusDao.loadServerStatusSync();
-            Log.d("DAO", "doInBackground: channeltag id " + serverStatus.getChannelTagId());
-            return channelTagDao.loadChannelTagByIdSync(serverStatus.getChannelTagId());
         }
     }
 }

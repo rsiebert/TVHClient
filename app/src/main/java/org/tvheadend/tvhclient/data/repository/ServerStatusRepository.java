@@ -26,12 +26,6 @@ public class ServerStatusRepository {
         return null;
     }
 
-    public void updateSelectedChannelTag(int id) {
-        ServerStatus serverStatus = loadServerStatusSync();
-        serverStatus.setChannelTagId(id);
-        new UpdateProfileTask(db.serverStatusDao(), serverStatus).execute();
-    }
-
     public LiveData<ServerStatus> loadServerStatus() {
         return db.serverStatusDao().loadServerStatus();
     }
@@ -46,22 +40,6 @@ public class ServerStatusRepository {
         @Override
         protected ServerStatus doInBackground(Void... voids) {
             return dao.loadServerStatusSync();
-        }
-    }
-
-    private static class UpdateProfileTask extends AsyncTask<Void, Void, Void> {
-        private final ServerStatusDao dao;
-        private final ServerStatus serverStatus;
-
-        UpdateProfileTask(ServerStatusDao dao, ServerStatus serverStatus) {
-            this.dao = dao;
-            this.serverStatus = serverStatus;
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            dao.update(serverStatus);
-            return null;
         }
     }
 }

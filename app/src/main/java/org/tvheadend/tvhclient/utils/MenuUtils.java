@@ -137,7 +137,7 @@ public class MenuUtils {
         }
         // Fill the channel tag adapter with the available channel tags
         List<ChannelTag> channelTagList = channelAndProgramRepository.getAllChannelTags();
-        ChannelTag selectedChannelTag = channelAndProgramRepository.getSelectedChannelTag();
+        ChannelTag selectedChannelTag = configRepository.getSelectedChannelTag();
 
         // Add the default tag (all channels) to the list after it has been sorted
         ChannelTag tag = new ChannelTag();
@@ -155,7 +155,7 @@ public class MenuUtils {
         // Set the callback to handle clicks. This needs to be done after the
         // dialog creation so that the inner method has access to the dialog variable
         channelTagListAdapter.setCallback(which -> {
-            serverDataRepository.updateSelectedChannelTag(which);
+            configRepository.setSelectedChannelTag(which);
             if (callback != null) {
                 callback.onChannelTagIdSelected(which);
             }

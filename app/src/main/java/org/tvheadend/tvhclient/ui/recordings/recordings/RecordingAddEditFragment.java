@@ -160,8 +160,7 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
             channelNameLabelTextView.setVisibility(View.GONE);
             channelNameTextView.setVisibility(View.GONE);
         } else {
-            Channel channel = repository.getChannelByIdSync(recording.getChannelId());
-            channelNameTextView.setText(channel != null ? channel.getChannelName() : getString(R.string.no_channel));
+            channelNameTextView.setText(!TextUtils.isEmpty(recording.getChannelName()) ? recording.getChannelName() : getString(R.string.no_channel));
             channelNameTextView.setOnClickListener(view -> {
                 // Determine if the server supports recording on all channels
                 boolean allowRecordingOnAllChannels = serverStatus.getHtspVersion() >= 21;

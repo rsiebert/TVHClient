@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat.OnRequestPermissionsResultCallback;
+import android.text.TextUtils;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -27,6 +28,7 @@ import org.tvheadend.tvhclient.data.entity.ServerProfile;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
 import org.tvheadend.tvhclient.data.local.Logger;
 import org.tvheadend.tvhclient.data.model.HttpTicket;
+import org.tvheadend.tvhclient.data.repository.ChannelAndProgramRepository;
 import org.tvheadend.tvhclient.data.repository.ConfigRepository;
 import org.tvheadend.tvhclient.data.repository.ConnectionRepository;
 import org.tvheadend.tvhclient.data.repository.RecordingRepository;
@@ -61,7 +63,6 @@ public class PlayActivity extends Activity implements OnRequestPermissionsResult
     private CastContext castContext;
     private CastSession castSession;
     private ServerStatus serverStatus;
-    private RecordingRepository repository;
     private ConnectionRepository connectionRepostory;
 
     @Override
@@ -80,9 +81,8 @@ public class PlayActivity extends Activity implements OnRequestPermissionsResult
 
         // Check that a valid channel or recording was specified
         connectionRepostory = new ConnectionRepository(this);
-        repository = new RecordingRepository(this);
-        ch = repository.getChannelByIdSync(getIntent().getIntExtra("channelId", 0));
-        rec = repository.getRecordingByIdSync(getIntent().getIntExtra("dvrId", 0));
+        ch = new ChannelAndProgramRepository(this).getChannelByIdSync(getIntent().getIntExtra("channelId", 0));
+        rec = new RecordingRepository(this).getRecordingByIdSync(getIntent().getIntExtra("dvrId", 0));
 
         // Get the title from either the channel or recording
         if (ch != null) {
@@ -343,8 +343,7 @@ public class PlayActivity extends Activity implements OnRequestPermissionsResult
             streamType = MediaInfo.STREAM_TYPE_LIVE;
         } else if (rec != null) {
             castUrl += "/dvrfile/" + rec.getId();
-            Channel channel = repository.getChannelByIdSync(rec.getChannelId());
-            iconUrl += "/" + (channel != null ? channel.getChannelIcon() : "");
+            iconUrl += "/" + (!TextUtils.isEmpty(rec.getChannelIcon()) ? rec.getChannelIcon() : "");
             streamType = MediaInfo.STREAM_TYPE_BUFFERED;
 
             if (rec.getSubtitle() != null) {

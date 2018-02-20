@@ -48,7 +48,6 @@ import org.tvheadend.tvhclient.utils.MiscUtils;
 // TODO change used fab color in startup fragment
 // TODO playback can use the ticket url, no user pwd url required?
 // TODO casting needs rework
-// TODO move channel tag and profile stuff into a config repository
 // TODO use a factory to get the repository instance
 // TODO in startup screen use enum for the messages from the broadcast
 // TODO improve package structure
