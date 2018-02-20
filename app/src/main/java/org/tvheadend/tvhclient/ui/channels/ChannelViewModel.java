@@ -18,7 +18,7 @@ import java.util.List;
 public class ChannelViewModel extends AndroidViewModel {
 
     private final LiveData<List<Channel>> channels;
-    private final ChannelAndProgramRepository repository;
+    private final ChannelAndProgramRepository channelRepository;
     private final ServerStatusRepository serverRepository;
     private final ConfigRepository configRepository;
     private MutableLiveData<List<Channel>> channelsByTime = new MutableLiveData<>();
@@ -27,18 +27,19 @@ public class ChannelViewModel extends AndroidViewModel {
 
     public ChannelViewModel(Application application) {
         super(application);
-        repository = new ChannelAndProgramRepository(application);
-        serverRepository =  new ServerStatusRepository(application);
-        configRepository =  new ConfigRepository(application);
+
+        channelRepository = new ChannelAndProgramRepository(application);
+        serverRepository = new ServerStatusRepository(application);
+        configRepository = new ConfigRepository(application);
 
         showProgramsFromTime = new Date().getTime();
         selectedChannelTagId = 0;
 
-        channels = repository.getAllChannels();
+        channels = channelRepository.getAllChannels();
         reloadChannels();
     }
 
-    public LiveData<List<Channel>> getChannelsByTime() {
+    public LiveData<List<Channel>> getAllChannelsByTime() {
         return channelsByTime;
     }
 
@@ -56,16 +57,8 @@ public class ChannelViewModel extends AndroidViewModel {
     }
 
     private void reloadChannels() {
-        List<Channel> newChannels = repository.getAllChannelsByTimeSync(showProgramsFromTime, selectedChannelTagId);
+        List<Channel> newChannels = channelRepository.getAllChannelsByTimeSync(showProgramsFromTime, selectedChannelTagId);
         channelsByTime.postValue(newChannels);
-    }
-
-    public void setTag(int id) {
-        ChannelTag channelTag = getSelectedChannelTag();
-        if (channelTag != null) {
-            this.selectedChannelTagId = id;
-            reloadChannels();
-        }
     }
 
     public LiveData<ServerStatus> getServerStatus() {
@@ -78,5 +71,7 @@ public class ChannelViewModel extends AndroidViewModel {
 
     void setSelectedChannelTag(int id) {
         configRepository.setSelectedChannelTag(id);
+        selectedChannelTagId = id;
+        reloadChannels();
     }
 }

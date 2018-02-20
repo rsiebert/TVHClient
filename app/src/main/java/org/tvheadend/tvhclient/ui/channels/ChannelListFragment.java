@@ -106,7 +106,7 @@ public class ChannelListFragment extends BaseFragment implements ChannelClickCal
         viewModel = ViewModelProviders.of(activity).get(ChannelViewModel.class);
         viewModel.setTime(new Date().getTime());
 
-        viewModel.getChannelsByTime().observe(this, channels -> {
+        viewModel.getAllChannelsByTime().observe(this, channels -> {
             int channelCount = 0;
             if (channels != null) {
                 channelCount = channels.size();
@@ -216,8 +216,6 @@ public class ChannelListFragment extends BaseFragment implements ChannelClickCal
 
     @Override
     public void onChannelTagIdSelected(int which) {
-        Log.d(TAG, "onChannelTagIdSelected() called with: which = [" + which + "]");
-        viewModel.setTag(which);
         viewModel.setSelectedChannelTag(which);
     }
 
