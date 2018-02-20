@@ -156,7 +156,7 @@ public class StatusFragment extends BaseFragment implements WakeOnLanTaskCallbac
         });
 
         ChannelViewModel channelViewModel = ViewModelProviders.of(activity).get(ChannelViewModel.class);
-        channelViewModel.getChannelsByTime().observe(this, channels -> {
+        channelViewModel.getAllChannels().observe(this, channels -> {
             if (channels != null) {
                 // Show the number of available channelTextView
                 final String text = channels.size() + " " + getString(R.string.available);
