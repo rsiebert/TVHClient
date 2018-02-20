@@ -27,8 +27,8 @@ import org.tvheadend.tvhclient.data.entity.ServerProfile;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
 import org.tvheadend.tvhclient.data.local.Logger;
 import org.tvheadend.tvhclient.data.model.HttpTicket;
+import org.tvheadend.tvhclient.data.repository.ConfigRepository;
 import org.tvheadend.tvhclient.data.repository.ConnectionRepository;
-import org.tvheadend.tvhclient.data.repository.ProfileRepository;
 import org.tvheadend.tvhclient.data.repository.RecordingRepository;
 import org.tvheadend.tvhclient.data.repository.ServerStatusRepository;
 import org.tvheadend.tvhclient.service.EpgSyncService;
@@ -360,7 +360,9 @@ public class PlayActivity extends Activity implements OnRequestPermissionsResult
         movieMetadata.addImage(new WebImage(Uri.parse(iconUrl)));   // large background icon
 
         // Check if the correct profile was set, if not use the default
-        ServerProfile castingProfile = new ProfileRepository(this).getCastingServerProfile();
+        ConfigRepository configRepository = new ConfigRepository(this);
+        ServerStatus serverStatus = configRepository.getServerStatus();
+        ServerProfile castingProfile = configRepository.getCastingServerProfileById(serverStatus.getCastingServerProfileId());
         if (castingProfile == null) {
             castUrl += "?profile=" + Constants.CAST_PROFILE_DEFAULT;
         } else {

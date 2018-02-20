@@ -87,6 +87,15 @@ public class ConfigRepository {
         return null;
     }
 
+    public String[] getAllRecordingServerProfileNames() {
+        List<ServerProfile> profiles = getAllRecordingServerProfiles();
+        String[] recordingProfilesList = new String[profiles.size()];
+        for (int i = 0; i < recordingProfilesList.length; i++) {
+            recordingProfilesList[i] = profiles.get(i).getName();
+        }
+        return recordingProfilesList;
+    }
+
     public void updatePlaybackServerProfile(int id) {
         new UpdateServerProfileTask(db.serverStatusDao(), "playback", id).execute();
     }
@@ -282,4 +291,6 @@ public class ConfigRepository {
             return null;
         }
     }
+
+
 }

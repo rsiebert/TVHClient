@@ -89,6 +89,7 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
     private String id;
     private int recordingProfileNameId;
     private SeriesRecording recording;
+    private ServerProfile profile;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -111,7 +112,7 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
         duplicateDetectionList = activity.getResources().getStringArray(R.array.duplicate_detection_list);
 
         // Get the selected profile from the connection and select it from the recording config list
-        ServerProfile profile = profileRepository.getRecordingServerProfile();
+        profile = configRepository.getRecordingServerProfileById(serverStatus.getRecordingServerProfileId());
         if (profile != null) {
             for (int i = 0; i < recordingProfilesList.length; i++) {
                 if (recordingProfilesList[i].equals(profile.getName())) {
@@ -341,8 +342,8 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
         if (recording.getChannelId() > 0) {
             intent.putExtra("channelId", recording.getChannelId());
         }
+
         // Add the recording profile if available and enabled
-        ServerProfile profile = profileRepository.getRecordingServerProfile();
         if (profile != null && profile.isEnabled()
                 && (recordingProfileNameTextView.getText().length() > 0)
                 && serverStatus.getHtspVersion() >= 16) {
@@ -354,14 +355,9 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
     }
 
     @Override
-    public void onChannelIdSelected(int which) {
-        if (which > 0) {
-            recording.setChannelId(which);
-            Channel channel = repository.getChannelByIdSync(which);
-            channelNameTextView.setText(channel.getChannelName());
-        } else {
-            channelNameTextView.setText(R.string.all_channels);
-        }
+    public void onChannelIdSelected(Channel channel) {
+        recording.setChannelId(channel.getChannelId());
+        channelNameTextView.setText(channel.getChannelName());
     }
 
     @Override

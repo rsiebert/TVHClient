@@ -26,7 +26,7 @@ public class ChannelListSelectionAdapter extends RecyclerView.Adapter<ChannelLis
     private boolean showChannelIcons;
 
     public interface Callback {
-        void onItemClicked(int index);
+        void onItemClicked(Channel channel);
     }
 
     public ChannelListSelectionAdapter(Context context, List<Channel> channelList, long selectedChannelId) {
@@ -90,7 +90,7 @@ public class ChannelListSelectionAdapter extends RecyclerView.Adapter<ChannelLis
         public void onClick(View view) {
             if (channelListAdapter != null && channelListAdapter.callback != null) {
                 Channel channel = channelListAdapter.channelList.get(getAdapterPosition());
-                channelListAdapter.callback.onItemClicked(channel.getChannelId());
+                channelListAdapter.callback.onItemClicked(channel);
             }
         }
     }

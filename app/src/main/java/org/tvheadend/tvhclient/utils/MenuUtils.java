@@ -23,12 +23,13 @@ import org.tvheadend.tvhclient.data.entity.ChannelTag;
 import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.data.entity.SeriesRecording;
 import org.tvheadend.tvhclient.data.entity.ServerProfile;
+import org.tvheadend.tvhclient.data.entity.ServerStatus;
 import org.tvheadend.tvhclient.data.entity.TimerRecording;
 import org.tvheadend.tvhclient.data.model.GenreColorDialogItem;
 import org.tvheadend.tvhclient.data.remote.DownloadActivity;
 import org.tvheadend.tvhclient.data.remote.PlayActivity;
 import org.tvheadend.tvhclient.data.repository.ChannelAndProgramRepository;
-import org.tvheadend.tvhclient.data.repository.ProfileRepository;
+import org.tvheadend.tvhclient.data.repository.ConfigRepository;
 import org.tvheadend.tvhclient.data.repository.RecordingRepository;
 import org.tvheadend.tvhclient.data.repository.ServerStatusRepository;
 import org.tvheadend.tvhclient.service.EpgSyncService;
@@ -51,9 +52,10 @@ public class MenuUtils {
     private final int htspVersion;
     private final boolean isUnlocked;
     private final ChannelAndProgramRepository channelAndProgramRepository;
-    private final ProfileRepository profileRepository;
+    private final ConfigRepository configRepository;
     private final RecordingRepository recordingRepository;
     private final ServerStatusRepository serverDataRepository;
+    private final ServerStatus serverStatus;
     private WeakReference<Activity> activity;
 
     public MenuUtils(Activity activity) {
@@ -61,9 +63,10 @@ public class MenuUtils {
         this.htspVersion = new ServerStatusRepository(activity).loadServerStatusSync().getHtspVersion();
         this.isUnlocked = TVHClientApplication.getInstance().isUnlocked();
         this.channelAndProgramRepository = new ChannelAndProgramRepository(activity);
-        this.profileRepository = new ProfileRepository(activity);
+        this.configRepository = new ConfigRepository(activity);
         this.recordingRepository = new RecordingRepository(activity);
         this.serverDataRepository = new ServerStatusRepository(activity);
+        this.serverStatus = serverDataRepository.loadServerStatusSync();
     }
 
     /**
@@ -220,7 +223,7 @@ public class MenuUtils {
         intent.setAction("addDvrEntry");
         intent.putExtra("eventId", eventId);
 
-        ServerProfile profile = profileRepository.getRecordingServerProfile();
+        ServerProfile profile = configRepository.getRecordingServerProfileById(serverStatus.getRecordingServerProfileId());
         if (profile != null
                 && profile.isEnabled()
                 && htspVersion >= 16
@@ -239,7 +242,7 @@ public class MenuUtils {
         intent.setAction("addAutorecEntry");
         intent.putExtra("title", title);
 
-        ServerProfile profile = profileRepository.getRecordingServerProfile();
+        ServerProfile profile = configRepository.getRecordingServerProfileById(serverStatus.getRecordingServerProfileId());
         if (profile != null
                 && profile.isEnabled()
                 && htspVersion >= 16
@@ -481,12 +484,13 @@ public class MenuUtils {
             return;
         }
 
-        String[] dvrConfigList = profileRepository.getAllRecordingServerProfileNames();
+        String[] dvrConfigList = configRepository.getAllRecordingServerProfileNames();
 
         // Get the selected recording profile to highlight the
         // correct item in the list of the selection dialog
         int dvrConfigNameValue = 0;
-        ServerProfile serverProfile = profileRepository.getRecordingServerProfile();
+
+        ServerProfile serverProfile = configRepository.getRecordingServerProfileById(serverStatus.getRecordingServerProfileId());
         if (serverProfile != null) {
             for (int i = 0; i < dvrConfigList.length; i++) {
                 if (dvrConfigList[i].equals(serverProfile.getName())) {

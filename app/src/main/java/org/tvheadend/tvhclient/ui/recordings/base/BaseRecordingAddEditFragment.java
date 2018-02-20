@@ -12,7 +12,7 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.data.repository.ChannelAndProgramRepository;
-import org.tvheadend.tvhclient.data.repository.ProfileRepository;
+import org.tvheadend.tvhclient.data.repository.ConfigRepository;
 import org.tvheadend.tvhclient.ui.base.BaseFragment;
 import org.tvheadend.tvhclient.ui.channels.ChannelListSelectionAdapter;
 import org.tvheadend.tvhclient.ui.recordings.common.DateTimePickerCallback;
@@ -36,18 +36,17 @@ public class BaseRecordingAddEditFragment extends BaseFragment {
     protected String[] recordingProfilesList;
     protected List<Channel> channelList;
     protected ChannelAndProgramRepository channelAndProgramRepository;
-    protected ProfileRepository profileRepository;
+    protected ConfigRepository configRepository;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
         isUnlocked = TVHClientApplication.getInstance().isUnlocked();
-        profileRepository = new ProfileRepository(activity);
+        configRepository = new ConfigRepository(activity);
         channelAndProgramRepository = new ChannelAndProgramRepository(activity);
-
         daysOfWeekList = activity.getResources().getStringArray(R.array.day_short_names);
-        recordingProfilesList = profileRepository.getAllRecordingServerProfileNames();
+        recordingProfilesList = configRepository.getAllRecordingServerProfileNames();
         priorityList = activity.getResources().getStringArray(R.array.dvr_priorities);
         channelList = channelAndProgramRepository.getAllChannelsSync();
 
@@ -152,9 +151,9 @@ public class BaseRecordingAddEditFragment extends BaseFragment {
                 .build();
         // Set the callback to handle clicks. This needs to be done after the
         // dialog creation so that the inner method has access to the dialog variable
-        channelListSelectionAdapter.setCallback(which -> {
+        channelListSelectionAdapter.setCallback(channel -> {
             if (callback != null) {
-                callback.onChannelIdSelected(which);
+                callback.onChannelIdSelected(channel);
             }
             if (dialog != null) {
                 dialog.dismiss();
