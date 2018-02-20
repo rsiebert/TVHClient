@@ -63,8 +63,10 @@ public class ProgramDetailsFragment extends BaseFragment implements ImageDownloa
     TextView channelName;
     @BindView(R.id.date)
     TextView date;
-    @BindView(R.id.time)
-    TextView time;
+    @BindView(R.id.start_time)
+    TextView startTimeTextView;
+    @BindView(R.id.stop_time)
+    TextView stopTimeTextView;
     @BindView(R.id.duration)
     TextView duration;
     @BindView(R.id.progress)
@@ -166,8 +168,8 @@ public class ProgramDetailsFragment extends BaseFragment implements ImageDownloa
             state.setImageDrawable(drawable);
         }
 
-        String timeStr = UIUtils.getTimeText(getContext(), program.getStart()) + " - " + UIUtils.getTimeText(getContext(), program.getStop());
-        time.setText(timeStr);
+        startTimeTextView.setText(UIUtils.getTimeText(getContext(), program.getStart()));
+        stopTimeTextView.setText(UIUtils.getTimeText(getContext(), program.getStop()));
         date.setText(UIUtils.getDate(getContext(), program.getStart()));
 
         String durationTime = getString(R.string.minutes, (int) ((program.getStop() - program.getStart()) / 1000 / 60));

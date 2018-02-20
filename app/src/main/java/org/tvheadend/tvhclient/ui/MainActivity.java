@@ -40,7 +40,6 @@ import org.tvheadend.tvhclient.utils.MiscUtils;
 
 // TODO starting recording from channel list does not update channel recording status
 // TODO starting recording from channel list creates recording with wrong information
-// TODO split time in details screens into start and stop time
 // TODO brown genre color is not shown in the genre color info dialog
 // TODO try to fetch epg data once when no programs are available in the program list
 // TODO use channel sorting from the settings

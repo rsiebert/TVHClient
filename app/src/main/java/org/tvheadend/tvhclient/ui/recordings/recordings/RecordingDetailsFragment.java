@@ -55,8 +55,10 @@ public class RecordingDetailsFragment extends BaseFragment implements RecordingR
     TextView channelNameTextView;
     @BindView(R.id.date)
     TextView dateTextView;
-    @BindView(R.id.time)
-    TextView timeTextView;
+    @BindView(R.id.start_time)
+    TextView startTimeTextView;
+    @BindView(R.id.stop_time)
+    TextView stopTimeTextView;
     @BindView(R.id.duration)
     TextView durationTextView;
 
@@ -155,12 +157,11 @@ public class RecordingDetailsFragment extends BaseFragment implements RecordingR
 
     private void updateUI() {
 
-        // TODO use start tmie and date
+        // TODO use start time and date
         dateTextView.setText(UIUtils.getDate(getContext(), recording.getStart()));
 
-        // TODO use stop tmie and date
-        String time = UIUtils.getTimeText(getContext(), recording.getStart()) + " - " + UIUtils.getTimeText(getContext(), recording.getStop());
-        timeTextView.setText(time);
+        startTimeTextView.setText(UIUtils.getTimeText(getContext(), recording.getStart()));
+        stopTimeTextView.setText(UIUtils.getTimeText(getContext(), recording.getStop()));
 
         String durationTime = getString(R.string.minutes, (int) ((recording.getStop() - recording.getStart()) / 1000 / 60));
         durationTextView.setText(durationTime);
