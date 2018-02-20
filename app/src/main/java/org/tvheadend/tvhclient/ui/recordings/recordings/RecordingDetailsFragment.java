@@ -139,7 +139,7 @@ public class RecordingDetailsFragment extends BaseFragment implements RecordingR
         }
 
         RecordingViewModel viewModel = ViewModelProviders.of(activity).get(RecordingViewModel.class);
-        viewModel.getRecording(dvrId).observe(this, rec -> {
+        viewModel.getRecordingById(dvrId).observe(this, rec -> {
             recording = rec;
             updateUI();
         });

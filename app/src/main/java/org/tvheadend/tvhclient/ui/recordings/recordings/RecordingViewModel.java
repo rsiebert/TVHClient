@@ -44,7 +44,7 @@ public class RecordingViewModel extends AndroidViewModel {
         return removedRecordings;
     }
 
-    public LiveData<Recording> getRecording(int id) {
+    public LiveData<Recording> getRecordingById(int id) {
         return repository.getRecordingById(id);
     }
 

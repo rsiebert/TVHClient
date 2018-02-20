@@ -95,7 +95,7 @@ public class TimerRecordingDetailsFragment extends BaseFragment implements Recor
         }
 
         TimerRecordingViewModel viewModel = ViewModelProviders.of(activity).get(TimerRecordingViewModel.class);
-        viewModel.getRecording(id).observe(this, rec -> {
+        viewModel.getRecordingById(id).observe(this, rec -> {
             recording = rec;
             updateUI();
         });

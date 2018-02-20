@@ -27,7 +27,7 @@ public class TimerRecordingViewModel extends AndroidViewModel {
         return recordings;
     }
 
-    LiveData<TimerRecording> getRecording(String id) {
+    LiveData<TimerRecording> getRecordingById(String id) {
         return repository.getTimerRecordingById(id);
     }
 
