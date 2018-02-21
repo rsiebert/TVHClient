@@ -104,7 +104,7 @@ public class ChannelListFragment extends BaseFragment implements ChannelClickCal
         }));
 
         viewModel = ViewModelProviders.of(activity).get(ChannelViewModel.class);
-        viewModel.setTime(new Date().getTime());
+        viewModel.setCurrentTime(new Date().getTime());
 
         viewModel.getAllChannelsByTime().observe(this, channels -> {
             int channelCount = 0;
@@ -132,9 +132,9 @@ public class ChannelListFragment extends BaseFragment implements ChannelClickCal
         channelUpdateTask = new Runnable() {
             public void run() {
                 long currentTime = new Date().getTime();
-                Log.d(TAG, "run: viewModel.getTime() " + viewModel.getTime() + ", current time " + currentTime);
-                if (viewModel.getTime() < currentTime) {
-                    viewModel.setTime(currentTime);
+                Log.d(TAG, "run: viewModel.getTime() " + viewModel.getCurrentTime() + ", current time " + currentTime);
+                if (viewModel.getCurrentTime() < currentTime) {
+                    viewModel.setCurrentTime(currentTime);
                 }
                 channelUpdateHandler.postDelayed(channelUpdateTask, 60000);
             }
@@ -208,9 +208,9 @@ public class ChannelListFragment extends BaseFragment implements ChannelClickCal
             if (which > 0) {
                 c.set(Calendar.HOUR_OF_DAY, c.get(Calendar.HOUR_OF_DAY) + which);
             }
-            viewModel.setTime(c.getTimeInMillis());
+            viewModel.setCurrentTime(c.getTimeInMillis());
         } else {
-            viewModel.setTime(new Date().getTime());
+            viewModel.setCurrentTime(new Date().getTime());
         }
     }
 
@@ -230,7 +230,7 @@ public class ChannelListFragment extends BaseFragment implements ChannelClickCal
             Intent intent = new Intent(activity, ProgramListActivity.class);
             intent.putExtra("channelName", channel.getChannelName());
             intent.putExtra("channelId", channel.getChannelId());
-            intent.putExtra("show_programs_from_time", viewModel.getTime());
+            intent.putExtra("show_programs_from_time", viewModel.getCurrentTime());
             activity.startActivity(intent);
         } else {
             // We can display everything in-place with fragments, so update
@@ -240,7 +240,7 @@ public class ChannelListFragment extends BaseFragment implements ChannelClickCal
             ProgramListFragment programListFragment = (ProgramListFragment) getFragmentManager().findFragmentById(R.id.details);
             if (programListFragment == null || programListFragment.getShownChannelId() != channel.getChannelId()) {
                 // Make new fragment to show this selection.
-                programListFragment = ProgramListFragment.newInstance(channel.getChannelName(), channel.getChannelId(), viewModel.getTime());
+                programListFragment = ProgramListFragment.newInstance(channel.getChannelName(), channel.getChannelId(), viewModel.getCurrentTime());
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
                 ft.replace(R.id.details, programListFragment);
                 ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);

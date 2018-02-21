@@ -16,8 +16,7 @@ import java.util.List;
 @Dao
 public interface ChannelDao {
 
-    @Transaction
-    @Query("SELECT c.*, " +
+    String query = "SELECT c.*, " +
             "program.id AS program_id, " +
             "program.title AS program_title, " +
             "program.subtitle AS program_subtitle, " +
@@ -30,12 +29,7 @@ public interface ChannelDao {
             "recording.title AS recording_title, " +
             "recording.state AS recording_state, " +
             "recording.error AS recording_error " +
-            "FROM channels AS c " +
-            "LEFT JOIN programs AS program ON program.start <= :time AND program.stop > :time AND program.channel_id = c.id " +
-            "LEFT JOIN programs AS next_program ON next_program.id = program.id AND next_program.channel_id = c.id " +
-            "LEFT JOIN recordings AS recording ON recording.id = program.dvr_id " +
-            "ORDER BY c.channel_name ASC")
-    List<Channel> loadAllChannelsByTimeSync(long time);
+            "FROM channels AS c ";
 
     @Query("SELECT * FROM channels")
     List<Channel> loadAllChannelsSync();
@@ -62,24 +56,22 @@ public interface ChannelDao {
     void deleteAll();
 
     @Transaction
-    @Query("SELECT c.*, " +
-            "program.id AS program_id, " +
-            "program.title AS program_title, " +
-            "program.subtitle AS program_subtitle, " +
-            "program.start AS program_start, " +
-            "program.stop AS program_stop, " +
-            "program.content_type AS program_content_type, " +
-            "next_program.id AS next_program_id, " +
-            "next_program.title AS next_program_title, " +
-            "recording.id AS recording_id, " +
-            "recording.title AS recording_title, " +
-            "recording.state AS recording_state, " +
-            "recording.error AS recording_error " +
-            "FROM channels AS c " +
-            "LEFT JOIN programs AS program ON program.start <= :time AND program.stop > :time AND program.channel_id = c.id " +
+    @Query(query +
+            "LEFT JOIN programs AS program ON program.start <= c.time AND program.stop > c.time AND program.channel_id = c.id " +
             "LEFT JOIN programs AS next_program ON next_program.id = program.id AND next_program.channel_id = c.id " +
             "LEFT JOIN recordings AS recording ON recording.id = program.dvr_id " +
             "WHERE c.id IN (SELECT channel_id FROM tags_and_channels WHERE tag_id = :id) " +
             "ORDER BY c.channel_name ASC")
-    List<Channel> loadAllChannelsByTimeAndTagSync(long time, int id);
+    LiveData<List<Channel>> loadAllChannelsByTimeAndTag(int id);
+
+    @Transaction
+    @Query(query +
+            "LEFT JOIN programs AS program ON program.start <= c.time AND program.stop > c.time AND program.channel_id = c.id " +
+            "LEFT JOIN programs AS next_program ON next_program.id = program.id AND next_program.channel_id = c.id " +
+            "LEFT JOIN recordings AS recording ON recording.id = program.dvr_id " +
+            "ORDER BY c.channel_name ASC")
+    LiveData<List<Channel>> loadAllChannelsByTime();
+
+    @Query("UPDATE channels SET time = :time")
+    void updateCurrenTime(long time);
 }

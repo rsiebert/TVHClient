@@ -3,7 +3,6 @@ package org.tvheadend.tvhclient.ui.channels;
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
 
 import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.data.entity.ChannelTag;
@@ -17,13 +16,15 @@ import java.util.List;
 
 public class ChannelViewModel extends AndroidViewModel {
 
+    private LiveData<List<Channel>> channelsByTimeAndTag;
     private final LiveData<List<Channel>> channels;
+
     private final ChannelAndProgramRepository channelRepository;
     private final ServerStatusRepository serverRepository;
     private final ConfigRepository configRepository;
-    private MutableLiveData<List<Channel>> channelsByTime = new MutableLiveData<>();
-    private long showProgramsFromTime;
-    private int selectedChannelTagId;
+
+    private long currentTime;
+    private LiveData<ServerStatus> serverStatus;
 
     public ChannelViewModel(Application application) {
         super(application);
@@ -32,37 +33,31 @@ public class ChannelViewModel extends AndroidViewModel {
         serverRepository = new ServerStatusRepository(application);
         configRepository = new ConfigRepository(application);
 
-        showProgramsFromTime = new Date().getTime();
-        selectedChannelTagId = 0;
+        currentTime = new Date().getTime();
 
         channels = channelRepository.getAllChannels();
-        reloadChannels();
+        channelsByTimeAndTag = channelRepository.getAllChannelsByTimeAndTag();
+        serverStatus = serverRepository.loadServerStatus();
     }
 
-    public LiveData<List<Channel>> getAllChannelsByTime() {
-        return channelsByTime;
+    LiveData<List<Channel>> getAllChannelsByTime() {
+        return channelsByTimeAndTag;
     }
 
     public LiveData<List<Channel>> getAllChannels() {
         return channels;
     }
 
-    public void setTime(long time) {
-        this.showProgramsFromTime = time;
-        reloadChannels();
+    void setCurrentTime(long time) {
+        channelRepository.updateChannelTime(time);
     }
 
-    public long getTime() {
-        return this.showProgramsFromTime;
-    }
-
-    private void reloadChannels() {
-        List<Channel> newChannels = channelRepository.getAllChannelsByTimeSync(showProgramsFromTime, selectedChannelTagId);
-        channelsByTime.postValue(newChannels);
+    long getCurrentTime() {
+        return currentTime;
     }
 
     public LiveData<ServerStatus> getServerStatus() {
-        return serverRepository.loadServerStatus();
+        return serverStatus;
     }
 
     ChannelTag getSelectedChannelTag() {
@@ -71,7 +66,5 @@ public class ChannelViewModel extends AndroidViewModel {
 
     void setSelectedChannelTag(int id) {
         configRepository.setSelectedChannelTag(id);
-        selectedChannelTagId = id;
-        reloadChannels();
     }
 }
