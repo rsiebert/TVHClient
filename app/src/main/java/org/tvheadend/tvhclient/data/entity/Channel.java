@@ -29,6 +29,9 @@ public class Channel {
     @ColumnInfo(name = "next_event_id")
     private int nextEventId;           // u32   optional   ID of the next event on the channel.
 
+    @ColumnInfo(name = "time")
+    private long time;
+
     @ColumnInfo(name = "program_id")
     private int programId;
     @ColumnInfo(name = "program_title")
@@ -225,5 +228,13 @@ public class Channel {
 
     public void setTags(List<Integer> tags) {
         this.tags = tags;
+    }
+
+    public long getTime() {
+        return time;
+    }
+
+    public void setTime(long time) {
+        this.time = time;
     }
 }
