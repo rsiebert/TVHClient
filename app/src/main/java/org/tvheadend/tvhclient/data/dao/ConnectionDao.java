@@ -41,4 +41,7 @@ public interface ConnectionDao {
 
     @Query("UPDATE connections SET active = 0 WHERE active = 1")
     void disableActiveConnectionSync();
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertAll(List<Connection> connectionList);
 }
