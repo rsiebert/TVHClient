@@ -18,6 +18,7 @@ import org.tvheadend.tvhclient.utils.MiscUtils;
 public class StartupActivity extends AppCompatActivity implements ToolbarInterface {
     @SuppressWarnings("unused")
     private String TAG = getClass().getSimpleName();
+    private boolean showStatusFragment = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,12 +33,27 @@ public class StartupActivity extends AppCompatActivity implements ToolbarInterfa
         if (savedInstanceState == null) {
             if (isShowChangelogRequired()) {
                 Intent intent = new Intent(this, ChangeLogActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent, 0);
             } else {
-                StartupFragment fragment = new StartupFragment();
-                fragment.setArguments(getIntent().getExtras());
-                getSupportFragmentManager().beginTransaction().add(R.id.main, fragment).commit();
+                showStatusFragment = true;
             }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            showStatusFragment = true;
+        }
+    }
+
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        if (showStatusFragment) {
+            StartupFragment fragment = new StartupFragment();
+            fragment.setArguments(getIntent().getExtras());
+            getSupportFragmentManager().beginTransaction().replace(R.id.main, fragment).commit();
         }
     }
 

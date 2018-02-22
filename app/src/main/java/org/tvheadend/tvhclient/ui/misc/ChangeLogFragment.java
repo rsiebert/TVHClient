@@ -1,5 +1,6 @@
 package org.tvheadend.tvhclient.ui.misc;
 
+import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -108,6 +109,8 @@ public class ChangeLogFragment extends Fragment implements BackPressedInterface,
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("version_name_for_changelog", BuildConfig.VERSION_NAME);
         editor.apply();
+
+        activity.setResult(Activity.RESULT_OK, null);
         activity.finish();
     }
 
