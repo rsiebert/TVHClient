@@ -38,8 +38,8 @@ public class SimpleHtspConnection implements HtspMessage.Dispatcher, HtspConnect
     private Thread connectionThread;
 
     private boolean enableReconnect = false;
-    private int retryCount = 3;
-    private int retryDelay = 0;
+    private int retryCount = 0;
+    private int retryDelay = 3000;
 
     public SimpleHtspConnection(Context context, Connection connectionInfo) {
         this.context = context;
@@ -188,13 +188,17 @@ public class SimpleHtspConnection implements HtspMessage.Dispatcher, HtspConnect
             }
 
             retryCount += 1;
-            retryDelay = Math.min(retryCount * 100, 3000);
-            restart();
+            if (retryCount <= 3) {
+                Log.d(TAG, "onConnectionStateChange: restarting");
+                restart();
+            } else {
+                Log.d(TAG, "onConnectionStateChange: stop");
+                stop();
+            }
 
         } else if (state == HtspConnection.State.CONNECTED) {
             // Reset our retry counter and delay back to zero
             retryCount = 0;
-            retryDelay = 0;
         }
     }
 }
