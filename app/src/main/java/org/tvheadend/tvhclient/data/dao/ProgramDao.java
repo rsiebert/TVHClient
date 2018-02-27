@@ -10,7 +10,6 @@ import android.arch.persistence.room.Transaction;
 import android.arch.persistence.room.Update;
 
 import org.tvheadend.tvhclient.data.entity.Program;
-import org.tvheadend.tvhclient.data.entity.ProgramWithRecordingsAndChannels;
 
 import java.util.List;
 
@@ -21,11 +20,11 @@ public interface ProgramDao {
     @Query("SELECT * FROM programs " +
             "WHERE channel_id = :channelId AND ((start >= :time) OR (start <= :time AND stop >= :time)) " +
             "ORDER BY start ASC")
-    LiveData<List<ProgramWithRecordingsAndChannels>> loadProgramsFromChannelWithinTime(int channelId, long time);
+    LiveData<List<Program>> loadProgramsFromChannelWithinTime(int channelId, long time);
 
     @Transaction
     @Query("SELECT * FROM programs WHERE id = :id")
-    LiveData<ProgramWithRecordingsAndChannels> loadProgramById(int id);
+    LiveData<Program> loadProgramById(int id);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAll(List<Program> programs);

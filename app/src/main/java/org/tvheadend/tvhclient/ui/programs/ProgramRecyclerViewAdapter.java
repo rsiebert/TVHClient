@@ -14,7 +14,6 @@ import android.widget.TextView;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Program;
-import org.tvheadend.tvhclient.data.entity.ProgramWithRecordingsAndChannels;
 import org.tvheadend.tvhclient.utils.UIUtils;
 
 import java.util.List;
@@ -25,11 +24,11 @@ import butterknife.ButterKnife;
 public class ProgramRecyclerViewAdapter extends RecyclerView.Adapter<ProgramRecyclerViewAdapter.RecyclerViewHolder> {
 
     private final BottomReachedListener onBottomReachedListener;
-    private List<ProgramWithRecordingsAndChannels> programList;
+    private List<Program> programList;
     private SharedPreferences sharedPreferences;
     private Context context;
 
-    ProgramRecyclerViewAdapter(Context context, List<ProgramWithRecordingsAndChannels> programList, BottomReachedListener onBottomReachedListener) {
+    ProgramRecyclerViewAdapter(Context context, List<Program> programList, BottomReachedListener onBottomReachedListener) {
         this.context = context;
         this.programList = programList;
         this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -44,18 +43,17 @@ public class ProgramRecyclerViewAdapter extends RecyclerView.Adapter<ProgramRecy
 
     @Override
     public void onBindViewHolder(RecyclerViewHolder holder, int position) {
-        ProgramWithRecordingsAndChannels programWithRecordingsAndChannels = programList.get(position);
+        Program program = programList.get(position);
 
         if (position == programList.size() - 1){
             onBottomReachedListener.onBottomReached(position);
         }
 
-        holder.itemView.setTag(programWithRecordingsAndChannels);
+        holder.itemView.setTag(program);
 
         boolean showProgramSubtitle = sharedPreferences.getBoolean("showProgramSubtitlePref", true);
         boolean showGenreColors = sharedPreferences.getBoolean("showGenreColorsProgramsPref", false);
 
-        Program program = programWithRecordingsAndChannels.getProgram();
         if (program != null) {
             holder.titleTextView.setText(program.getTitle());
 
@@ -102,7 +100,7 @@ public class ProgramRecyclerViewAdapter extends RecyclerView.Adapter<ProgramRecy
         }
     }
 
-    void addItems(List<ProgramWithRecordingsAndChannels> programList) {
+    void addItems(List<Program> programList) {
         this.programList = programList;
         notifyDataSetChanged();
     }
@@ -112,7 +110,7 @@ public class ProgramRecyclerViewAdapter extends RecyclerView.Adapter<ProgramRecy
         return programList.size();
     }
 
-    public ProgramWithRecordingsAndChannels getItem(int position) {
+    public Program getItem(int position) {
         return programList.get(position);
     }
 

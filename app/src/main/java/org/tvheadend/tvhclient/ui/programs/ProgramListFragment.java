@@ -23,7 +23,6 @@ import android.view.ViewGroup;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Program;
-import org.tvheadend.tvhclient.data.entity.ProgramWithRecordingsAndChannels;
 import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.data.repository.RecordingRepository;
 import org.tvheadend.tvhclient.service.EpgSyncService;
@@ -160,7 +159,7 @@ public class ProgramListFragment extends BaseFragment implements BottomReachedLi
 
     protected void showProgramDetails(int position) {
         selectedListPosition = position;
-        Program program = recyclerViewAdapter.getItem(position).getProgram();
+        Program program = recyclerViewAdapter.getItem(position);
         if (program == null) {
             return;
         }
@@ -171,7 +170,7 @@ public class ProgramListFragment extends BaseFragment implements BottomReachedLi
     }
 
     public void showPopupMenu(View view) {
-        final Program program = ((ProgramWithRecordingsAndChannels) view.getTag()).getProgram();
+        final Program program = (Program) view.getTag();
         if (activity == null || program == null) {
             return;
         }
@@ -239,7 +238,7 @@ public class ProgramListFragment extends BaseFragment implements BottomReachedLi
 
     @Override
     public void onBottomReached(int position) {
-        Program lastProgram = recyclerViewAdapter.getItem(position).getProgram();
+        Program lastProgram = recyclerViewAdapter.getItem(position);
         Log.d(TAG, "onBottomReached: last program was " + lastProgram.getTitle());
         Intent intent = new Intent(activity, EpgSyncService.class);
         intent.setAction("getEvents");
