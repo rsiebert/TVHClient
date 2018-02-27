@@ -14,21 +14,6 @@ import java.util.List;
 public interface ServerProfileDao {
 
     @Query("SELECT p.* FROM server_profiles AS p " +
-            "LEFT JOIN server_status AS s ON s.playback_server_profile_id = p.id " +
-            "LEFT JOIN connections AS c ON c.id = p.connection_id AND c.active = 1")
-    ServerProfile loadPlaybackProfileSync();
-
-    @Query("SELECT p.* FROM server_profiles AS p " +
-            "LEFT JOIN server_status AS s ON s.recording_server_profile_id = p.id " +
-            "LEFT JOIN connections AS c ON c.id = p.connection_id AND c.active = 1")
-    ServerProfile loadRecordingProfileSync();
-
-    @Query("SELECT p.* FROM server_profiles AS p " +
-            "LEFT JOIN server_status AS s ON s.casting_server_profile_id = p.id " +
-            "LEFT JOIN connections AS c ON c.id = p.connection_id AND c.active = 1")
-    ServerProfile loadCastingProfileSync();
-
-    @Query("SELECT p.* FROM server_profiles AS p " +
             "LEFT JOIN connections AS c ON c.id = p.connection_id AND c.active = 1 " +
             "WHERE p.type = 'playback'")
     List<ServerProfile> loadAllPlaybackProfilesSync();
