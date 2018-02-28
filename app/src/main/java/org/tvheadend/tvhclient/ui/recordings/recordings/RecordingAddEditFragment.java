@@ -275,7 +275,7 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
         intent.putExtra("subtitle", recording.getSubtitle());
         intent.putExtra("description", recording.getDescription());
         // Pass on seconds not milliseconds
-        intent.putExtra("stop", recording.getStop());
+        intent.putExtra("stop", recording.getStop() / 1000);
         intent.putExtra("stopExtra", recording.getStopExtra());
 
         if (!recording.isScheduled()) {
@@ -283,7 +283,7 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
         }
         if (!recording.isRecording()) {
             // Pass on seconds not milliseconds
-            intent.putExtra("start", recording.getStart());
+            intent.putExtra("start", recording.getStart() / 1000);
             intent.putExtra("startExtra", recording.getStartExtra());
             intent.putExtra("priority", recording.getPriority());
             intent.putExtra("enabled", recording.getEnabled());
