@@ -61,6 +61,8 @@ import org.tvheadend.tvhclient.utils.MiscUtils;
 // TODO ClearTablesAsyncTask add connection id to all tables
 // TODO make the number of epg hours in the sync task to load a preference (currently 1h)
 // TODO use info from channel add htsp call to fill channel count in tags_and_channels table
+// TODO reconnect should be shown in the startup fragment
+// TODO add server config when migrating connections
 
 
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, ToolbarInterface {
