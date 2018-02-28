@@ -1,6 +1,7 @@
 package org.tvheadend.tvhclient.service;
 
 import android.content.Intent;
+import android.text.TextUtils;
 import android.util.Log;
 
 import org.tvheadend.tvhclient.data.entity.Channel;
@@ -14,6 +15,8 @@ import org.tvheadend.tvhclient.service.htsp.HtspMessage;
 import java.util.List;
 
 class EpgSyncUtils {
+    private static String TAG = EpgSyncUtils.class.getSimpleName();
+
     private EpgSyncUtils() {
         throw new IllegalAccessError("Utility class");
     }
@@ -26,13 +29,19 @@ class EpgSyncUtils {
             tag.setTagName(msg.getString("tagName"));
         }
         if (msg.containsKey("tagIndex")) {
-            tag.setTagIndex(msg.getInteger("tagIndex"));
+            if (msg.getInteger("tagIndex") > 0) {
+                tag.setTagIndex(msg.getInteger("tagIndex"));
+            }
         }
         if (msg.containsKey("tagIcon")) {
-            tag.setTagIcon(msg.getString("tagIcon"));
+            if (!TextUtils.isEmpty(msg.getString("tagIcon"))) {
+                tag.setTagIcon(msg.getString("tagIcon"));
+            }
         }
         if (msg.containsKey("tagTitledIcon")) {
-            tag.setTagTitledIcon(msg.getInteger("tagTitledIcon"));
+            if (msg.getInteger("tagTitledIcon") > 0) {
+                tag.setTagTitledIcon(msg.getInteger("tagTitledIcon"));
+            }
         }
         if (msg.containsKey("members")) {
             List<Integer> members = msg.getIntegerList("members");
@@ -50,19 +59,27 @@ class EpgSyncUtils {
             channel.setChannelNumber(msg.getInteger("channelNumber"));
         }
         if (msg.containsKey("channelNumberMinor")) {
-            channel.setChannelNumberMinor(msg.getInteger("channelNumberMinor"));
+            if (msg.getInteger("channelNumberMinor") > 0) {
+                channel.setChannelNumberMinor(msg.getInteger("channelNumberMinor"));
+            }
         }
         if (msg.containsKey("channelName")) {
             channel.setChannelName(msg.getString("channelName"));
         }
         if (msg.containsKey("channelIcon")) {
-            channel.setChannelIcon(msg.getString("channelIcon"));
+            if (!TextUtils.isEmpty(msg.getString("channelIcon"))) {
+                channel.setChannelIcon(msg.getString("channelIcon"));
+            }
         }
         if (msg.containsKey("eventId")) {
-            channel.setEventId(msg.getInteger("eventId"));
+            if (msg.getInteger("eventId") > 0) {
+                channel.setEventId(msg.getInteger("eventId"));
+            }
         }
         if (msg.containsKey("nextEventId")) {
-            channel.setNextEventId(msg.getInteger("nextEventId"));
+            if (msg.getInteger("nextEventId") > 0) {
+                channel.setNextEventId(msg.getInteger("nextEventId"));
+            }
         }
         if (msg.containsKey("tags")) {
             List<Integer> tags = msg.getIntegerList("tags");
@@ -72,11 +89,16 @@ class EpgSyncUtils {
     }
 
     static Recording convertMessageToRecordingModel(Recording recording, HtspMessage msg) {
+        Log.d(TAG, "convertMessageToRecordingModel() called with: recording = [" + recording + "], msg = [" + msg + "]");
+
         if (msg.containsKey("id")) {
             recording.setId(msg.getInteger("id"));
         }
         if (msg.containsKey("channel")) {
-            recording.setChannelId(msg.getInteger("channel"));
+            Log.d(TAG, "convertMessageToRecordingModel: channel " + msg.getInteger("channel"));
+            if (msg.getInteger("channel") > 0) {
+                recording.setChannelId(msg.getInteger("channel"));
+            }
         }
         if (msg.containsKey("start")) {
             recording.setStart(msg.getLong("start") * 1000);
@@ -97,55 +119,88 @@ class EpgSyncUtils {
             recording.setPriority(msg.getInteger("priority"));
         }
         if (msg.containsKey("eventId")) {
-            recording.setEventId(msg.getInteger("eventId"));
+            if (msg.getInteger("eventId") > 0) {
+                recording.setEventId(msg.getInteger("eventId"));
+            }
         }
         if (msg.containsKey("autorecId")) {
-            recording.setAutorecId(msg.getString("autorecId"));
+            if (!TextUtils.isEmpty(msg.getString("autorecId"))) {
+                recording.setAutorecId(msg.getString("autorecId"));
+            }
         }
         if (msg.containsKey("timerecId")) {
-            recording.setTimerecId(msg.getString("timerecId"));
+            if (!TextUtils.isEmpty(msg.getString("timerecId"))) {
+                recording.setTimerecId(msg.getString("timerecId"));
+            }
         }
         if (msg.containsKey("contentType")) {
-            recording.setContentType(msg.getInteger("contentType"));
+            if (msg.getInteger("contentType") > 0) {
+                recording.setContentType(msg.getInteger("contentType"));
+            }
         }
         if (msg.containsKey("title")) {
-            recording.setTitle(msg.getString("title"));
+            Log.d(TAG, "convertMessageToRecordingModel: title " + msg.getString("title"));
+            if (!TextUtils.isEmpty(msg.getString("title"))) {
+                recording.setTitle(msg.getString("title"));
+            }
         }
         if (msg.containsKey("subtitle")) {
-            recording.setSubtitle(msg.getString("subtitle"));
+            if (!TextUtils.isEmpty(msg.getString("subtitle"))) {
+                recording.setSubtitle(msg.getString("subtitle"));
+            }
         }
         if (msg.containsKey("summary")) {
-            recording.setSummary(msg.getString("summary"));
+            if (!TextUtils.isEmpty(msg.getString("summary"))) {
+                recording.setSummary(msg.getString("summary"));
+            }
         }
         if (msg.containsKey("description")) {
-            recording.setDescription(msg.getString("description"));
+            if (!TextUtils.isEmpty(msg.getString("description"))) {
+                recording.setDescription(msg.getString("description"));
+            }
         }
         if (msg.containsKey("state")) {
             recording.setState(msg.getString("state"));
         }
         if (msg.containsKey("error")) {
-            recording.setError(msg.getString("error"));
+            if (!TextUtils.isEmpty(msg.getString("error"))) {
+                recording.setError(msg.getString("error"));
+            }
         }
         if (msg.containsKey("owner")) {
-            recording.setOwner(msg.getString("owner"));
+            if (!TextUtils.isEmpty(msg.getString("owner"))) {
+                recording.setOwner(msg.getString("owner"));
+            }
         }
         if (msg.containsKey("creator")) {
-            recording.setCreator(msg.getString("creator"));
+            if (!TextUtils.isEmpty(msg.getString("creator"))) {
+                recording.setCreator(msg.getString("creator"));
+            }
         }
         if (msg.containsKey("subscriptionError")) {
-            recording.setSubscriptionError(msg.getString("subscriptionError"));
+            if (!TextUtils.isEmpty(msg.getString("subscriptionError"))) {
+                recording.setSubscriptionError(msg.getString("subscriptionError"));
+            }
         }
         if (msg.containsKey("streamErrors")) {
-            recording.setStreamErrors(msg.getString("streamErrors"));
+            if (!TextUtils.isEmpty(msg.getString("streamErrors"))) {
+                recording.setStreamErrors(msg.getString("streamErrors"));
+            }
         }
         if (msg.containsKey("dataErrors")) {
-            recording.setDataErrors(msg.getString("dataErrors"));
+            if (!TextUtils.isEmpty(msg.getString("dataErrors"))) {
+                recording.setDataErrors(msg.getString("dataErrors"));
+            }
         }
         if (msg.containsKey("path")) {
-            recording.setPath(msg.getString("path"));
+            if (!TextUtils.isEmpty(msg.getString("path"))) {
+                recording.setPath(msg.getString("path"));
+            }
         }
         if (msg.containsKey("dataSize")) {
-            recording.setDataSize(msg.getLong("dataSize"));
+            if (msg.getLong("dataSize") > 0) {
+                recording.setDataSize(msg.getLong("dataSize"));
+            }
         }
         if (msg.containsKey("enabled")) {
             recording.setEnabled(msg.getInteger("enabled"));
@@ -168,70 +223,114 @@ class EpgSyncUtils {
             program.setStop(msg.getLong("stop") * 1000);
         }
         if (msg.containsKey("title")) {
-            program.setTitle(msg.getString("title"));
+            if (!TextUtils.isEmpty(msg.getString(""))) {
+                program.setTitle(msg.getString("title"));
+            }
         }
         if (msg.containsKey("subtitle")) {
-            program.setSubtitle(msg.getString("subtitle"));
+            if (!TextUtils.isEmpty(msg.getString("subtitle"))) {
+                program.setSubtitle(msg.getString("subtitle"));
+            }
         }
         if (msg.containsKey("summary")) {
-            program.setSummary(msg.getString("summary"));
+            if (!TextUtils.isEmpty(msg.getString("summary"))) {
+                program.setSummary(msg.getString("summary"));
+            }
         }
         if (msg.containsKey("description")) {
-            program.setDescription(msg.getString("description"));
+            if (!TextUtils.isEmpty(msg.getString("description"))) {
+                program.setDescription(msg.getString("description"));
+            }
         }
         if (msg.containsKey("serieslinkId")) {
-            program.setSerieslinkId(msg.getInteger("serieslinkId"));
+            if (msg.getInteger("serieslinkId") > 0) {
+                program.setSerieslinkId(msg.getInteger("serieslinkId"));
+            }
         }
         if (msg.containsKey("episodeId")) {
-            program.setEpisodeId(msg.getInteger("episodeId"));
+            if (msg.getInteger("episodeId") > 0) {
+                program.setEpisodeId(msg.getInteger("episodeId"));
+            }
         }
         if (msg.containsKey("seasonId")) {
-            program.setSeasonId(msg.getInteger("seasonId"));
+            if (msg.getInteger("seasonId") > 0) {
+                program.setSeasonId(msg.getInteger("seasonId"));
+            }
         }
         if (msg.containsKey("brandId")) {
-            program.setBrandId(msg.getInteger("brandId"));
+            if (msg.getInteger("brandId") > 0) {
+                program.setBrandId(msg.getInteger("brandId"));
+            }
         }
         if (msg.containsKey("contentType")) {
-            program.setContentType(msg.getInteger("contentType"));
+            if (msg.getInteger("contentType") > 0) {
+                program.setContentType(msg.getInteger("contentType"));
+            }
         }
         if (msg.containsKey("ageRating")) {
-            program.setAgeRating(msg.getInteger("ageRating"));
+            if (msg.getInteger("ageRating") > 0) {
+                program.setAgeRating(msg.getInteger("ageRating"));
+            }
         }
         if (msg.containsKey("starRating")) {
-            program.setStarRating(msg.getInteger("starRating"));
+            if (msg.getInteger("starRating") > 0) {
+                program.setStarRating(msg.getInteger("starRating"));
+            }
         }
         if (msg.containsKey("firstAired")) {
-            program.setFirstAired(msg.getLong("firstAired"));
+            if (msg.getInteger("firstAired") > 0) {
+                program.setFirstAired(msg.getLong("firstAired"));
+            }
         }
         if (msg.containsKey("seasonNumber")) {
-            program.setSeasonNumber(msg.getInteger("seasonNumber"));
+            if (msg.getInteger("seasonNumber") > 0) {
+                program.setSeasonNumber(msg.getInteger("seasonNumber"));
+            }
         }
         if (msg.containsKey("seasonCount")) {
-            program.setSeasonCount(msg.getInteger("seasonCount"));
+            if (msg.getInteger("seasonCount") > 0) {
+                program.setSeasonCount(msg.getInteger("seasonCount"));
+            }
         }
         if (msg.containsKey("episodeNumber")) {
-            program.setEpisodeNumber(msg.getInteger("episodeNumber"));
+            if (msg.getInteger("episodeNumber") > 0) {
+                program.setEpisodeNumber(msg.getInteger("episodeNumber"));
+            }
         }
         if (msg.containsKey("episodeCount")) {
-            program.setEpisodeCount(msg.getInteger("episodeCount"));
+            if (msg.getInteger("episodeCount") > 0) {
+                program.setEpisodeCount(msg.getInteger("episodeCount"));
+            }
         }
         if (msg.containsKey("partNumber")) {
-            program.setPartNumber(msg.getInteger("partNumber"));
+            if (msg.getInteger("partNumber") > 0) {
+                program.setPartNumber(msg.getInteger("partNumber"));
+            }
         }
         if (msg.containsKey("partCount")) {
-            program.setPartCount(msg.getInteger("partCount"));
+            if (msg.getInteger("partCount") > 0) {
+                program.setPartCount(msg.getInteger("partCount"));
+            }
         }
         if (msg.containsKey("episodeOnscreen")) {
-            program.setEpisodeOnscreen(msg.getString("episodeOnscreen"));
+            if (msg.getInteger("episodeOnscreen") > 0) {
+                program.setEpisodeOnscreen(msg.getString("episodeOnscreen"));
+            }
         }
         if (msg.containsKey("image")) {
-            program.setImage(msg.getString("image"));
+            if (!TextUtils.isEmpty(msg.getString("image"))) {
+                program.setImage(msg.getString("image"));
+            }
         }
         if (msg.containsKey("dvrId")) {
-            program.setDvrId(msg.getInteger("dvrId"));
+            if (msg.getInteger("dvrId") > 0) {
+                program.setDvrId(msg.getInteger("dvrId"));
+            }
         }
         if (msg.containsKey("nextEventId")) {
-            program.setNextEventId(msg.getInteger("nextEventId"));
+            if (msg.getInteger("nextEventId") > 0) {
+                program.setNextEventId(msg.getInteger("nextEventId"));
+            }
         }
         return program;
     }
@@ -278,25 +377,39 @@ class EpgSyncUtils {
             seriesRecording.setStopExtra(msg.getLong("stopExtra"));
         }
         if (msg.containsKey("title")) {
-            seriesRecording.setTitle(msg.getString("title"));
+            if (!TextUtils.isEmpty(msg.getString("title"))) {
+                seriesRecording.setTitle(msg.getString("title"));
+            }
         }
         if (msg.containsKey("fulltext")) {
-            seriesRecording.setFulltext(msg.getInteger("fulltext"));
+            if (!TextUtils.isEmpty(msg.getString("fulltext"))) {
+                seriesRecording.setFulltext(msg.getInteger("fulltext"));
+            }
         }
         if (msg.containsKey("directory")) {
-            seriesRecording.setDirectory(msg.getString("directory"));
+            if (!TextUtils.isEmpty(msg.getString("directory"))) {
+                seriesRecording.setDirectory(msg.getString("directory"));
+            }
         }
         if (msg.containsKey("channel")) {
-            seriesRecording.setChannelId(msg.getInteger("channel"));
+            if (msg.getInteger("channel") > 0) {
+                seriesRecording.setChannelId(msg.getInteger("channel"));
+            }
         }
         if (msg.containsKey("owner")) {
-            seriesRecording.setOwner(msg.getString("owner"));
+            if (!TextUtils.isEmpty(msg.getString("owner"))) {
+                seriesRecording.setOwner(msg.getString("owner"));
+            }
         }
         if (msg.containsKey("creator")) {
-            seriesRecording.setCreator(msg.getString("creator"));
+            if (!TextUtils.isEmpty(msg.getString("creator"))) {
+                seriesRecording.setCreator(msg.getString("creator"));
+            }
         }
         if (msg.containsKey("dupDetect")) {
-            seriesRecording.setDupDetect(msg.getInteger("dupDetect"));
+            if (msg.getInteger("dupDetect") > 0) {
+                seriesRecording.setDupDetect(msg.getInteger("dupDetect"));
+            }
         }
         return seriesRecording;
     }
@@ -310,7 +423,9 @@ class EpgSyncUtils {
             timerRecording.setTitle(msg.getString("title"));
         }
         if (msg.containsKey("directory")) {
-            timerRecording.setDirectory(msg.getString("directory", null));
+            if (!TextUtils.isEmpty(msg.getString("directory"))) {
+                timerRecording.setDirectory(msg.getString("directory"));
+            }
         }
         if (msg.containsKey("enabled")) {
             timerRecording.setEnabled(msg.getInteger("enabled"));
@@ -325,27 +440,35 @@ class EpgSyncUtils {
             timerRecording.setChannelId(msg.getInteger("channel"));
         }
         if (msg.containsKey("daysOfWeek")) {
-            timerRecording.setDaysOfWeek(msg.getInteger("daysOfWeek"));
+            if (msg.getInteger("daysOfWeek") > 0) {
+                timerRecording.setDaysOfWeek(msg.getInteger("daysOfWeek"));
+            }
         }
         if (msg.containsKey("priority")) {
-            timerRecording.setPriority(msg.getInteger("priority"));
+            if (msg.getInteger("priority") > 0) {
+                timerRecording.setPriority(msg.getInteger("priority"));
+            }
         }
         if (msg.containsKey("start")) {
-            Log.d("X", "convertMessageToTimerRecordingModel: start " + msg.getLong("start"));
             timerRecording.setStart(msg.getLong("start") * 1000 * 60);
         }
         if (msg.containsKey("stop")) {
-            Log.d("X", "convertMessageToTimerRecordingModel: stop " + msg.getLong("stop"));
             timerRecording.setStop(msg.getLong("stop") * 1000 * 60);
         }
         if (msg.containsKey("retention")) {
-            timerRecording.setRetention(msg.getInteger("retention"));
+            if (msg.getInteger("retention") > 0) {
+                timerRecording.setRetention(msg.getInteger("retention"));
+            }
         }
         if (msg.containsKey("owner")) {
-            timerRecording.setOwner(msg.getString("owner"));
+            if (!TextUtils.isEmpty(msg.getString("owner"))) {
+                timerRecording.setOwner(msg.getString("owner"));
+            }
         }
         if (msg.containsKey("creator")) {
-            timerRecording.setCreator(msg.getString("creator"));
+            if (!TextUtils.isEmpty(msg.getString("creator"))) {
+                timerRecording.setCreator(msg.getString("creator"));
+            }
         }
         return timerRecording;
     }
