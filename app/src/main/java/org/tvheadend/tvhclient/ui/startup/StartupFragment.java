@@ -1,5 +1,7 @@
 package org.tvheadend.tvhclient.ui.startup;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -32,12 +34,13 @@ import org.tvheadend.tvhclient.data.repository.ConnectionRepository;
 import org.tvheadend.tvhclient.service.EpgSyncService;
 import org.tvheadend.tvhclient.service.htsp.HtspConnection;
 import org.tvheadend.tvhclient.service.htsp.tasks.Authenticator;
-import org.tvheadend.tvhclient.ui.navigation.NavigationActivity;
 import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
+import org.tvheadend.tvhclient.ui.navigation.NavigationActivity;
 import org.tvheadend.tvhclient.ui.settings.SettingsActivity;
 import org.tvheadend.tvhclient.ui.settings.SettingsManageConnectionActivity;
 import org.tvheadend.tvhclient.utils.MenuUtils;
 
+import java.util.Calendar;
 import java.util.List;
 
 import butterknife.BindView;
@@ -118,10 +121,31 @@ public class StartupFragment extends Fragment {
                 statusTextView.setText(status);
                 toolbarInterface.setTitle(title);
             } else {
-                Log.d(TAG, "onActivityCreated: starting service");
                 Intent intent = new Intent(activity, EpgSyncService.class);
                 activity.stopService(intent);
                 activity.startService(intent);
+
+                Intent epgFetchIntent = new Intent(activity, EpgSyncService.class);
+                epgFetchIntent.setAction("getMoreEvents");
+                PendingIntent epgFetchPendingIntent = PendingIntent.getService(activity, 0, epgFetchIntent, 0);
+
+                Intent epgRemovalIntent = new Intent(activity, EpgSyncService.class);
+                epgRemovalIntent.setAction("deleteEvents");
+                PendingIntent epgRemovalPendingIntent = PendingIntent.getService(activity, 0, epgRemovalIntent, 0);
+
+                // The time when the service shall be called periodically
+                // TODO make the interval time a preference
+                long epgFetchIntervalTime = 2 * 60 * 1000;     // 15 minutes
+                long epgRemovalIntervalTime = 120 * 60 * 1000;   // 120 minutes
+
+                // Start the alarms five minutes after the service has been started for the first time
+                long firstTriggerTime = Calendar.getInstance().getTimeInMillis() + (2 * 60 * 1000);
+                // Use the alarm manager to start the service every x minutes
+                AlarmManager alarm = (AlarmManager) activity.getSystemService(Context.ALARM_SERVICE);
+                if (alarm != null) {
+                    alarm.setRepeating(AlarmManager.RTC_WAKEUP, firstTriggerTime, epgFetchIntervalTime, epgFetchPendingIntent);
+                    alarm.setRepeating(AlarmManager.RTC_WAKEUP, firstTriggerTime, epgRemovalIntervalTime, epgRemovalPendingIntent);
+                }
             }
         }
     }

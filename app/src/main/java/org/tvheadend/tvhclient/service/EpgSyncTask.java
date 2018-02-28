@@ -38,6 +38,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -255,11 +256,17 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
             case "getChannel":
                 getChannel(intent);
                 break;
+            case "getMoreEvents":
+                getMoreEvents();
+                break;
             case "getEvent":
                 getEvent(intent);
                 break;
             case "getEvents":
                 getEvents(intent);
+                break;
+            case "deleteEvents":
+                deleteEvents();
                 break;
             case "epgQuery":
                 getEpgQuery(intent);
@@ -1007,10 +1014,22 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     private void getEvents(Intent intent) {
         Log.d(TAG, "getEvents() called with: intent = [" + intent + "]");
 
+        final long eventId = intent.getIntExtra("eventId", 0);
+        final long channelId = intent.getIntExtra("channelId", 0);
+        final long numFollowing = intent.getIntExtra("numFollowing", 0);
+
         final HtspMessage request = new HtspMessage();
         request.put("method", "getEvents");
-        request.put("eventId", intent.getIntExtra("eventId", 0));
-        request.put("numFollowing", intent.getIntExtra("numFollowing", 10));
+        if (eventId > 0) {
+            request.put("eventId", eventId);
+        }
+        if (channelId > 0) {
+            request.put("channelId", channelId);
+        }
+        if (numFollowing > 0) {
+            request.put("numFollowing", numFollowing);
+        }
+
         try {
             dispatcher.sendMessage(request, connectionTimeout);
         } catch (HtspNotConnectedException e) {
@@ -1369,5 +1388,39 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         Intent intent = new Intent("message");
         intent.putExtra("message", text);
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+    }
+
+    private void getMoreEvents() {
+        Log.d(TAG, "getMoreEvents() called");
+
+        List<Channel> channelList = db.channelDao().loadAllChannelsSync();
+        for (Channel channel : channelList) {
+            Log.d(TAG, "getMoreEvents: getting last program for channel " + channel.getChannelName());
+            Program program = db.programDao().loadLastProgramFromChannelSync(channel.getChannelId());
+            if (program != null && program.getEventId() > 0) {
+                Log.d(TAG, "getMoreEvents: getEvents for program " + program.getTitle());
+                Intent intent = new Intent();
+                intent.putExtra("eventId", program.getEventId());
+                intent.putExtra("channelId", channel.getChannelId());
+
+                // TODO make the value a preference
+                intent.putExtra("numFollowing", 25);
+                getEvents(intent);
+            }
+        }
+    }
+
+    private void deleteEvents() {
+        Log.d(TAG, "deleteEvents() called");
+
+        // Get the time that was one week before now
+        // TODO make the value a preference
+        long time = new Date().getTime() - 7 * 24 * 60 * 60 * 1000;
+
+        List<Channel> channelList = db.channelDao().loadAllChannelsSync();
+        for (Channel channel : channelList) {
+            Log.d(TAG, "getMoreEvents: removing programs older than " + time);
+            db.programDao().deleteOldProgramsByChannel(channel.getChannelId(), time);
+        }
     }
 }

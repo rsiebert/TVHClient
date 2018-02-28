@@ -56,4 +56,12 @@ public interface ProgramDao {
 
     @Query("DELETE FROM programs")
     void deleteAll();
+
+    @Query("SELECT * FROM programs " +
+            "WHERE channel_id = :channelId " +
+            "ORDER BY id DESC LIMIT 1")
+    Program loadLastProgramFromChannelSync(int channelId);
+
+    @Query("DELETE FROM programs WHERE channel_id = :channelId AND stop < :time")
+    void deleteOldProgramsByChannel(int channelId, long time);
 }
