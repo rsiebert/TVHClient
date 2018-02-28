@@ -23,14 +23,13 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.data.entity.Program;
 import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.data.tasks.ImageDownloadTask;
 import org.tvheadend.tvhclient.data.tasks.ImageDownloadTaskCallback;
 import org.tvheadend.tvhclient.ui.base.BaseFragment;
-import org.tvheadend.tvhclient.utils.UIUtils;
 import org.tvheadend.tvhclient.utils.RecordingRemovedCallback;
+import org.tvheadend.tvhclient.utils.UIUtils;
 
 import java.util.Date;
 
@@ -95,7 +94,6 @@ public class ProgramDetailsFragment extends BaseFragment implements ImageDownloa
     private int eventId;
     private Unbinder unbinder;
     private Program program;
-    private Channel channel;
     private Recording recording;
 
     public static ProgramDetailsFragment newInstance(int eventId) {
@@ -150,9 +148,8 @@ public class ProgramDetailsFragment extends BaseFragment implements ImageDownloa
         ProgramViewModel viewModel = ViewModelProviders.of(activity).get(ProgramViewModel.class);
         viewModel.getProgram(eventId).observe(this, p -> {
             if (p != null) {
-                program = p.getProgram();
-                channel = (p.getChannels() != null && p.getChannels().size() > 0) ? p.getChannels().get(0) : null;
-                recording = (p.getRecordings() != null && p.getRecordings().size() > 0) ? p.getRecordings().get(0) : null;
+                program = p;
+                recording = p.getRecording();
                 updateUI();
                 activity.invalidateOptionsMenu();
             }
@@ -191,9 +188,9 @@ public class ProgramDetailsFragment extends BaseFragment implements ImageDownloa
         desc.setVisibility(!TextUtils.isEmpty(program.getDescription()) ? View.VISIBLE : View.GONE);
         desc.setText(program.getDescription());
 
-        channelLabel.setVisibility(!TextUtils.isEmpty(channel.getChannelName()) ? View.VISIBLE : View.GONE);
-        channelName.setVisibility(!TextUtils.isEmpty(channel.getChannelName()) ? View.VISIBLE : View.GONE);
-        channelName.setText(channel.getChannelName());
+        channelLabel.setVisibility(!TextUtils.isEmpty(program.getChannelName()) ? View.VISIBLE : View.GONE);
+        channelName.setVisibility(!TextUtils.isEmpty(program.getChannelName()) ? View.VISIBLE : View.GONE);
+        channelName.setText(program.getChannelName());
 
         String seriesInfoText = UIUtils.getSeriesInfo(getContext(), program);
         if (TextUtils.isEmpty(seriesInfoText)) {

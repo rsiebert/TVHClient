@@ -59,8 +59,6 @@ public class Channel {
 
     @Ignore
     private List<Integer> tags;
-    @Ignore
-    private Recording recording;
 
     public int getChannelId() {
         return channelId;
@@ -216,10 +214,6 @@ public class Channel {
 
     public Recording getRecording() {
         return new Recording(recordingId, recordingTitle, recordingState, recordingError);
-    }
-
-    public void setRecording(Recording recording) {
-        this.recording = recording;
     }
 
     public List<Integer> getTags() {

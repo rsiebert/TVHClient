@@ -54,6 +54,17 @@ public class Program {
     @ColumnInfo(name = "next_event_id")
     private int nextEventId;         // u32   optional   ID of next event on the same channel.
 
+    @ColumnInfo(name = "channel_name")
+    private String channelName;
+    @ColumnInfo(name = "channel_icon")
+    private String channelIcon;
+    @ColumnInfo(name = "recording_title")
+    private String recordingTitle;
+    @ColumnInfo(name = "recording_state")
+    private String recordingState;
+    @ColumnInfo(name = "recording_error")
+    private String recordingError;
+
     public int getEventId() {
         return eventId;
     }
@@ -260,5 +271,49 @@ public class Program {
 
     public void setNextEventId(int nextEventId) {
         this.nextEventId = nextEventId;
+    }
+
+    public String getChannelName() {
+        return channelName;
+    }
+
+    public void setChannelName(String channelName) {
+        this.channelName = channelName;
+    }
+
+    public String getChannelIcon() {
+        return channelIcon;
+    }
+
+    public void setChannelIcon(String channelIcon) {
+        this.channelIcon = channelIcon;
+    }
+
+    public String getRecordingTitle() {
+        return recordingTitle;
+    }
+
+    public void setRecordingTitle(String recordingTitle) {
+        this.recordingTitle = recordingTitle;
+    }
+
+    public String getRecordingState() {
+        return recordingState;
+    }
+
+    public void setRecordingState(String recordingState) {
+        this.recordingState = recordingState;
+    }
+
+    public String getRecordingError() {
+        return recordingError;
+    }
+
+    public void setRecordingError(String recordingError) {
+        this.recordingError = recordingError;
+    }
+
+    public Recording getRecording() {
+        return new Recording(dvrId, recordingTitle, recordingState, recordingError);
     }
 }

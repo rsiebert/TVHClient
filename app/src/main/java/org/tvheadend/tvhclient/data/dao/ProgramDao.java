@@ -16,14 +16,27 @@ import java.util.List;
 @Dao
 public interface ProgramDao {
 
+    String query = "SELECT p.*," +
+            "c.channel_name AS channel_name, " +
+            "c.channel_icon AS channel_icon, " +
+            "recording.title AS recording_title, " +
+            "recording.state AS recording_state, " +
+            "recording.error AS recording_error " +
+            "FROM programs AS p ";
+
     @Transaction
-    @Query("SELECT * FROM programs " +
-            "WHERE channel_id = :channelId AND ((start >= :time) OR (start <= :time AND stop >= :time)) " +
-            "ORDER BY start ASC")
+    @Query(query +
+            "LEFT JOIN channels AS c ON c.id = p.channel_id " +
+            "LEFT JOIN recordings AS recording ON recording.id = p.dvr_id " +
+            "WHERE p.channel_id = :channelId AND ((p.start >= :time) OR (p.start <= :time AND p.stop >= :time)) " +
+            "ORDER BY p.start ASC")
     LiveData<List<Program>> loadProgramsFromChannelWithinTime(int channelId, long time);
 
     @Transaction
-    @Query("SELECT * FROM programs WHERE id = :id")
+    @Query(query +
+            "LEFT JOIN channels AS c ON c.id = p.channel_id " +
+            "LEFT JOIN recordings AS recording ON recording.id = p.dvr_id " +
+            "WHERE p.id = :id")
     LiveData<Program> loadProgramById(int id);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

@@ -1,9 +1,12 @@
 package org.tvheadend.tvhclient.data;
 
+import android.arch.persistence.db.SupportSQLiteDatabase;
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
+import android.arch.persistence.room.migration.Migration;
 import android.content.Context;
+import android.support.annotation.NonNull;
 
 import org.tvheadend.tvhclient.data.dao.ChannelDao;
 import org.tvheadend.tvhclient.data.dao.ChannelTagDao;
@@ -42,7 +45,7 @@ import org.tvheadend.tvhclient.data.entity.TranscodingProfile;
                 TranscodingProfile.class,
                 ServerStatus.class
         },
-        version = 1)
+        version = 2)
 public abstract class AppDatabase extends RoomDatabase {
 
     private static AppDatabase instance;
@@ -51,11 +54,23 @@ public abstract class AppDatabase extends RoomDatabase {
         if (instance == null) {
             synchronized (AppDatabase.class) {
                 instance = Room.databaseBuilder(context, AppDatabase.class, "tvhclient")
+                        .addMigrations(MIGRATION_1_2)
                         .build();
             }
         }
         return instance;
     }
+
+    private static final Migration MIGRATION_1_2 = new Migration(1, 2) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            database.execSQL("ALTER TABLE programs ADD COLUMN channel_name TEXT NULL;");
+            database.execSQL("ALTER TABLE programs ADD COLUMN channel_icon TEXT NULL;");
+            database.execSQL("ALTER TABLE programs ADD COLUMN recording_title TEXT NULL;");
+            database.execSQL("ALTER TABLE programs ADD COLUMN recording_state TEXT NULL;");
+            database.execSQL("ALTER TABLE programs ADD COLUMN recording_error TEXT NULL;");
+        }
+    };
 
     public abstract TimerRecordingDao timerRecordingDao();
 
@@ -78,4 +93,5 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract TranscodingProfileDao transcodingProfileDao();
 
     public abstract ServerStatusDao serverStatusDao();
+
 }
