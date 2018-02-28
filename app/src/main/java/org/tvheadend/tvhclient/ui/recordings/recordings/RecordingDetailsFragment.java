@@ -208,8 +208,8 @@ public class RecordingDetailsFragment extends BaseFragment implements RecordingR
 
         // Show the information if the recording belongs to a series recording
         // only when no dual pane is active (the controls shall be shown)
-        isSeriesRecordingTextView.setVisibility((recording.getAutorecId() != null) ? ImageView.VISIBLE : ImageView.GONE);
-        isTimerRecordingTextView.setVisibility((recording.getTimerecId() != null) ? ImageView.VISIBLE : ImageView.GONE);
+        isSeriesRecordingTextView.setVisibility(!TextUtils.isEmpty(recording.getAutorecId()) ? ImageView.VISIBLE : ImageView.GONE);
+        isTimerRecordingTextView.setVisibility(!TextUtils.isEmpty(recording.getTimerecId()) ? ImageView.VISIBLE : ImageView.GONE);
 
         isEnabledTextView.setVisibility((serverStatus.getHtspVersion() >= 23 && recording.getEnabled() == 0) ? View.VISIBLE : View.GONE);
         isEnabledTextView.setText(recording.getEnabled() > 0 ? R.string.recording_enabled : R.string.recording_disabled);
