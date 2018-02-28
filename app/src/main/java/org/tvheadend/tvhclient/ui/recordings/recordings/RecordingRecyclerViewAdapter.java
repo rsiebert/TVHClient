@@ -78,90 +78,85 @@ public class RecordingRecyclerViewAdapter extends RecyclerView.Adapter<Recording
             }
         }
 
-        if (recording != null) {
-            holder.titleTextView.setText(recording.getTitle());
-            if (recording.getChannelIcon() != null) {
-                holder.channelTextView.setText(recording.getChannelName());
-            }
+        holder.titleTextView.setText(recording.getTitle());
 
-            if (!TextUtils.isEmpty(recording.getSubtitle())) {
-                holder.subtitleTextView.setVisibility(View.VISIBLE);
-                holder.subtitleTextView.setText(recording.getSubtitle());
-            } else {
-                holder.subtitleTextView.setVisibility(View.GONE);
-            }
+        holder.subtitleTextView.setVisibility(!TextUtils.isEmpty(recording.getSubtitle()) ? View.VISIBLE : View.GONE);
+        holder.subtitleTextView.setText(recording.getSubtitle());
 
-            // Show the channel icon if available and set in the preferences.
-            // If not chosen, hide the imageView and show the channel name.
-            Bitmap iconBitmap = null;
-            if (recording.getChannelIcon() != null) {
-                iconBitmap = MiscUtils.getCachedIcon(activity, recording.getChannelIcon());
-                // Show the icon or a blank one if it does not exist
-                holder.iconImageView.setImageBitmap(iconBitmap);
-                holder.iconTextView.setText(recording.getChannelName());
-            }
-
-            if (showChannelIcons) {
-                holder.iconImageView.setVisibility(iconBitmap != null ? ImageView.VISIBLE : ImageView.INVISIBLE);
-                holder.iconTextView.setVisibility(iconBitmap == null ? ImageView.VISIBLE : ImageView.INVISIBLE);
-            } else {
-                holder.iconImageView.setVisibility(View.GONE);
-                holder.iconTextView.setVisibility(View.GONE);
-            }
-
-            holder.dateTextView.setText(UIUtils.getDate(activity, recording.getStart()));
-
-            holder.startTimeTextView.setText(UIUtils.getTimeText(activity, recording.getStart()));
-            holder.stopTimeTextView.setText(UIUtils.getTimeText(activity, recording.getStop()));
-
-            String durationTime = activity.getString(R.string.minutes, recording.getDuration());
-            holder.durationTextView.setText(durationTime);
-
-            holder.summaryTextView.setVisibility(!TextUtils.isEmpty(recording.getSummary()) ? View.VISIBLE : View.GONE);
-            holder.summaryTextView.setText(recording.getSummary());
-
-            holder.descriptionTextView.setVisibility(!TextUtils.isEmpty(recording.getDescription()) ? View.VISIBLE : View.GONE);
-            holder.descriptionTextView.setText(recording.getDescription());
-
-            if (recording.isRemoved()) {
-                holder.failedReasonTextView.setVisibility(View.GONE);
-            } else if (recording.isAborted()) {
-                holder.failedReasonTextView.setText(activity.getResources().getString(R.string.recording_canceled));
-            } else if (recording.isMissed()) {
-                holder.failedReasonTextView.setText(activity.getResources().getString(R.string.recording_time_missed));
-            } else if (recording.isFailed()) {
-                holder.failedReasonTextView.setText(activity.getResources().getString(R.string.recording_file_invalid));
-            } else {
-                holder.failedReasonTextView.setVisibility(View.GONE);
-            }
-
-            // Show only the recording icon
-            if (holder.stateImageView != null) {
-                if (recording.isRecording()) {
-                    holder.stateImageView.setImageResource(R.drawable.ic_rec_small);
-                    holder.stateImageView.setVisibility(ImageView.VISIBLE);
-                } else {
-                    holder.stateImageView.setVisibility(ImageView.GONE);
-                }
-            }
-
-            // Show the information if the recording belongs to a series recording
-            if (!TextUtils.isEmpty(recording.getAutorecId())) {
-                holder.isSeriesRecordingTextView.setVisibility(ImageView.VISIBLE);
-            } else {
-                holder.isSeriesRecordingTextView.setVisibility(ImageView.GONE);
-            }
-
-            // Show the information if the recording belongs to a series recording
-            if (!TextUtils.isEmpty(recording.getTimerecId())) {
-                holder.isTimerRecordingTextView.setVisibility(ImageView.VISIBLE);
-            } else {
-                holder.isTimerRecordingTextView.setVisibility(ImageView.GONE);
-            }
-
-            holder.isEnabledTextView.setVisibility((htspVersion >= 19 && recording.getEnabled() > 0) ? View.VISIBLE : View.GONE);
-            holder.isEnabledTextView.setText(recording.getEnabled() > 0 ? R.string.recording_enabled : R.string.recording_disabled);
+        if (recording.getChannelIcon() != null) {
+            holder.channelTextView.setText(recording.getChannelName());
         }
+
+        // Show the channel icon if available and set in the preferences.
+        // If not chosen, hide the imageView and show the channel name.
+        Bitmap iconBitmap = null;
+        if (recording.getChannelIcon() != null) {
+            iconBitmap = MiscUtils.getCachedIcon(activity, recording.getChannelIcon());
+            // Show the icon or a blank one if it does not exist
+            holder.iconImageView.setImageBitmap(iconBitmap);
+            holder.iconTextView.setText(recording.getChannelName());
+        }
+
+        if (showChannelIcons) {
+            holder.iconImageView.setVisibility(iconBitmap != null ? ImageView.VISIBLE : ImageView.INVISIBLE);
+            holder.iconTextView.setVisibility(iconBitmap == null ? ImageView.VISIBLE : ImageView.INVISIBLE);
+        } else {
+            holder.iconImageView.setVisibility(View.GONE);
+            holder.iconTextView.setVisibility(View.GONE);
+        }
+
+        holder.dateTextView.setText(UIUtils.getDate(activity, recording.getStart()));
+
+        holder.startTimeTextView.setText(UIUtils.getTimeText(activity, recording.getStart()));
+        holder.stopTimeTextView.setText(UIUtils.getTimeText(activity, recording.getStop()));
+
+        String durationTime = activity.getString(R.string.minutes, recording.getDuration());
+        holder.durationTextView.setText(durationTime);
+
+        holder.summaryTextView.setVisibility(!TextUtils.isEmpty(recording.getSummary()) ? View.VISIBLE : View.GONE);
+        holder.summaryTextView.setText(recording.getSummary());
+
+        holder.descriptionTextView.setVisibility(!TextUtils.isEmpty(recording.getDescription()) ? View.VISIBLE : View.GONE);
+        holder.descriptionTextView.setText(recording.getDescription());
+
+        if (recording.isRemoved()) {
+            holder.failedReasonTextView.setVisibility(View.GONE);
+        } else if (recording.isAborted()) {
+            holder.failedReasonTextView.setText(activity.getResources().getString(R.string.recording_canceled));
+        } else if (recording.isMissed()) {
+            holder.failedReasonTextView.setText(activity.getResources().getString(R.string.recording_time_missed));
+        } else if (recording.isFailed()) {
+            holder.failedReasonTextView.setText(activity.getResources().getString(R.string.recording_file_invalid));
+        } else {
+            holder.failedReasonTextView.setVisibility(View.GONE);
+        }
+
+        // Show only the recording icon
+        if (holder.stateImageView != null) {
+            if (recording.isRecording()) {
+                holder.stateImageView.setImageResource(R.drawable.ic_rec_small);
+                holder.stateImageView.setVisibility(ImageView.VISIBLE);
+            } else {
+                holder.stateImageView.setVisibility(ImageView.GONE);
+            }
+        }
+
+        // Show the information if the recording belongs to a series recording
+        if (!TextUtils.isEmpty(recording.getAutorecId())) {
+            holder.isSeriesRecordingTextView.setVisibility(ImageView.VISIBLE);
+        } else {
+            holder.isSeriesRecordingTextView.setVisibility(ImageView.GONE);
+        }
+
+        // Show the information if the recording belongs to a series recording
+        if (!TextUtils.isEmpty(recording.getTimerecId())) {
+            holder.isTimerRecordingTextView.setVisibility(ImageView.VISIBLE);
+        } else {
+            holder.isTimerRecordingTextView.setVisibility(ImageView.GONE);
+        }
+
+        holder.isEnabledTextView.setVisibility((htspVersion >= 19 && recording.getEnabled() > 0) ? View.VISIBLE : View.GONE);
+        holder.isEnabledTextView.setText(recording.getEnabled() > 0 ? R.string.recording_enabled : R.string.recording_disabled);
     }
 
     void addItems(List<Recording> recordingList) {
