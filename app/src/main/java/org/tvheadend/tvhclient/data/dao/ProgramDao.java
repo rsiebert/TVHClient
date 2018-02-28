@@ -39,6 +39,13 @@ public interface ProgramDao {
             "WHERE p.id = :id")
     LiveData<Program> loadProgramById(int id);
 
+    @Transaction
+    @Query(query +
+            "LEFT JOIN channels AS c ON c.id = p.channel_id " +
+            "LEFT JOIN recordings AS recording ON recording.id = p.dvr_id " +
+            "WHERE p.id = :id")
+    Program loadProgramByIdSync(int id);
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAll(List<Program> programs);
 
