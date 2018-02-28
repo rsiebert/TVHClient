@@ -141,6 +141,7 @@ public class RecordingDetailsFragment extends BaseFragment implements RecordingR
         viewModel.getRecordingById(dvrId).observe(this, rec -> {
             recording = rec;
             updateUI();
+            activity.invalidateOptionsMenu();
         });
 
         if (nestedToolbar != null) {
@@ -245,6 +246,9 @@ public class RecordingDetailsFragment extends BaseFragment implements RecordingR
     public void onPrepareOptionsMenu(Menu menu) {
         if (nestedToolbar != null) {
             menu = nestedToolbar.getMenu();
+        }
+        if (recording == null) {
+            return;
         }
         if (recording.isCompleted()) {
             menu.findItem(R.id.menu_record_remove).setVisible(true);
