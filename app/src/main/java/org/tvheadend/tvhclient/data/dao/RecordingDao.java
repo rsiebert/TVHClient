@@ -20,7 +20,7 @@ public interface RecordingDao {
             "c.channel_name AS channel_name, " +
             "c.channel_icon AS channel_icon " +
             "FROM recordings AS rec " +
-            "LEFT JOIN channels AS c ON  c.id = rec.channel_id ";
+            "LEFT JOIN channels AS c ON c.id = rec.channel_id ";
 
     @Transaction
     @Query(query)
