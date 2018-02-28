@@ -15,9 +15,6 @@ import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.repository.ConnectionRepository;
 import org.tvheadend.tvhclient.service.htsp.SimpleHtspConnection;
 
-// TODO add removing data older that x days
-// TODO add task to periodically fetch epg data for all channels
-
 public class EpgSyncService extends Service {
     private static final String TAG = EpgSyncService.class.getSimpleName();
 
@@ -88,7 +85,7 @@ public class EpgSyncService extends Service {
 
             AppDatabase appDatabase = AppDatabase.getInstance(this.getApplicationContext());
             new ClearTablesAsyncTask(appDatabase).execute();
-            
+
             SharedPreferences.Editor editor = sharedPreferences.edit();
             // Save the id of the new connection in the preferences.
             editor.putLong("previous_connection_id", connection.getId());
