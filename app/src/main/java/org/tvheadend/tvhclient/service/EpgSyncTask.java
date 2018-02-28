@@ -374,17 +374,18 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
      * @param msg The message with the updated tag data
      */
     private void handleTagUpdate(HtspMessage msg) {
-        ChannelTag tag = EpgSyncUtils.convertMessageToChannelTagModel(new ChannelTag(), msg);
-        db.channelTagDao().update(tag);
+        ChannelTag tag = db.channelTagDao().loadChannelTagByIdSync(msg.getInteger("tagId"));
+        ChannelTag updatedTag = EpgSyncUtils.convertMessageToChannelTagModel(tag, msg);
+        db.channelTagDao().update(updatedTag);
 
         // Remove all entries of this tag from the database before
         // adding new ones which are defined in the members variable
-        db.tagAndChannelDao().deleteByTagId(tag.getTagId());
-        List<Integer> channelIds = tag.getMembers();
+        db.tagAndChannelDao().deleteByTagId(updatedTag.getTagId());
+        List<Integer> channelIds = updatedTag.getMembers();
         if (channelIds != null) {
             for (Integer channelId : channelIds) {
                 TagAndChannel tagAndChannel = new TagAndChannel();
-                tagAndChannel.setTagId(tag.getTagId());
+                tagAndChannel.setTagId(updatedTag.getTagId());
                 tagAndChannel.setChannelId(channelId);
                 pendingChannelTagRelationOps.add(tagAndChannel);
                 //db.tagAndChannelDao().insert(tagAndChannel);
@@ -460,21 +461,22 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
      * @param msg The message with the updated channel data
      */
     private void handleChannelUpdate(HtspMessage msg) {
-        Channel channel = EpgSyncUtils.convertMessageToChannelModel(new Channel(), msg);
+        Channel channel = db.channelDao().loadChannelByIdSync(msg.getInteger("channelId"));
+        Channel updatedChannel = EpgSyncUtils.convertMessageToChannelModel(channel, msg);
         if (!initialSyncCompleted) {
-            pendingChannelOps.add(channel);
+            pendingChannelOps.add(updatedChannel);
         } else {
-            db.channelDao().update(channel);
+            db.channelDao().update(updatedChannel);
         }
 
         // Get the tag id and all channel ids of the tag so that
         // new entries where the tagId is present can be added to the database
-        List<Integer> tagIds = channel.getTags();
+        List<Integer> tagIds = updatedChannel.getTags();
         if (tagIds != null) {
             for (Integer tagId : tagIds) {
                 TagAndChannel tagAndChannel = new TagAndChannel();
                 tagAndChannel.setTagId(tagId);
-                tagAndChannel.setChannelId(channel.getChannelId());
+                tagAndChannel.setChannelId(updatedChannel.getChannelId());
                 //db.tagAndChannelDao().insert(tagAndChannel);
             }
         }
@@ -525,12 +527,13 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
      * @param msg The message with the updated recording data
      */
     private void handleDvrEntryUpdate(HtspMessage msg) {
-        Recording[] recordings = new Recording[1];
-        recordings[0] = EpgSyncUtils.convertMessageToRecordingModel(new Recording(), msg);
+        // Get the existing recording
+        Recording recording = db.recordingDao().loadRecordingByIdSync(msg.getInteger("id"));
+        Recording updatedRecording = EpgSyncUtils.convertMessageToRecordingModel(recording, msg);
         if (!initialSyncCompleted) {
-            pendingRecordedProgramOps.add(recordings[0]);
+            pendingRecordedProgramOps.add(updatedRecording);
         } else {
-            db.recordingDao().update(recordings[0]);
+            db.recordingDao().update(updatedRecording);
         }
     }
 
@@ -563,9 +566,9 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
      * @param msg The message with the updated series recording data
      */
     private void handleAutorecEntryUpdate(HtspMessage msg) {
-        SeriesRecording[] seriesRecordings = new SeriesRecording[1];
-        seriesRecordings[0] = EpgSyncUtils.convertMessageToSeriesRecordingModel(new SeriesRecording(), msg);
-        db.seriesRecordingDao().update(seriesRecordings[0]);
+        SeriesRecording recording = db.seriesRecordingDao().loadRecordingByIdSync(msg.getString("id"));
+        SeriesRecording updatedRecording = EpgSyncUtils.convertMessageToSeriesRecordingModel(recording, msg);
+        db.seriesRecordingDao().update(updatedRecording);
     }
 
     /**
@@ -596,9 +599,9 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
      * @param msg The message with the updated timer recording data
      */
     private void handleTimerRecEntryUpdate(HtspMessage msg) {
-        TimerRecording[] timerRecordings = new TimerRecording[1];
-        timerRecordings[0] = EpgSyncUtils.convertMessageToTimerRecordingModel(new TimerRecording(), msg);
-        db.timerRecordingDao().update(timerRecordings[0]);
+        TimerRecording recording = db.timerRecordingDao().loadRecordingByIdSync(msg.getString("id"));
+        TimerRecording updatedRecording = EpgSyncUtils.convertMessageToTimerRecordingModel(recording, msg);
+        db.timerRecordingDao().update(updatedRecording);
     }
 
     /**
@@ -638,12 +641,12 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
      * @param msg The message with the updated epg event data
      */
     private void handleEventUpdate(HtspMessage msg) {
-        Program[] program = new Program[1];
-        program[0] = EpgSyncUtils.convertMessageToProgramModel(new Program(), msg);
+        Program program = db.programDao().loadProgramByIdSync(msg.getInteger("eventId"));
+        Program updatedProgram = EpgSyncUtils.convertMessageToProgramModel(program, msg);
         if (!initialSyncCompleted) {
-            pendingEventOps.add(program[0]);
+            pendingEventOps.add(updatedProgram);
         } else {
-            db.programDao().update(program[0]);
+            db.programDao().update(updatedProgram);
         }
     }
 
