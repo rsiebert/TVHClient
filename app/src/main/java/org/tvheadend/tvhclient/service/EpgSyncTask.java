@@ -1020,6 +1020,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         final long eventId = intent.getIntExtra("eventId", 0);
         final long channelId = intent.getIntExtra("channelId", 0);
         final long numFollowing = intent.getIntExtra("numFollowing", 0);
+        final long maxTime = intent.getIntExtra("maxTime", 0);
 
         final HtspMessage request = new HtspMessage();
         request.put("method", "getEvents");
@@ -1031,6 +1032,9 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         }
         if (numFollowing > 0) {
             request.put("numFollowing", numFollowing);
+        }
+        if (maxTime > 0) {
+            request.put("maxTime", maxTime);
         }
 
         try {
@@ -1406,8 +1410,8 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
                 intent.putExtra("eventId", program.getEventId());
                 intent.putExtra("channelId", channel.getChannelId());
 
-                // TODO make the value a preference
-                intent.putExtra("numFollowing", 25);
+                int hours = Integer.valueOf(sharedPreferences.getString("pref_epg_hours_to_fetch", "7"));
+                intent.putExtra("maxTime", hours);
                 getEvents(intent);
             }
         }
@@ -1417,8 +1421,8 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         Log.d(TAG, "deleteEvents() called");
 
         // Get the time that was one week before now
-        // TODO make the value a preference
-        long time = new Date().getTime() - 7 * 24 * 60 * 60 * 1000;
+        int days = Integer.valueOf(sharedPreferences.getString("pref_epg_days_before_removal", "7"));
+        long time = new Date().getTime() - days * 24 * 60 * 60 * 1000;
 
         List<Channel> channelList = db.channelDao().loadAllChannelsSync();
         for (Channel channel : channelList) {
