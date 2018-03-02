@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory android:title="@string/pref_crash_reporting_settings">
         <CheckBoxPreference
@@ -31,6 +32,35 @@
             android:numeric="integer"
             android:summary="@string/pref_connection_timeout_sum"
             android:title="@string/pref_connection_timeout" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="EPG">
+        <EditTextPreference
+            android:defaultValue="4"
+            android:key="pref_epg_hours_to_fetch"
+            android:singleLine="true"
+            android:numeric="integer"
+            android:title="Hours of EPG data to load" />
+
+        <EditTextPreference
+            android:defaultValue="15"
+            android:key="pref_epg_fetch_interval"
+            android:singleLine="true"
+            android:numeric="integer"
+            android:title="Background EPG loading time interval" />
+
+        <EditTextPreference
+            android:defaultValue="7"
+            android:key="pref_epg_days_before_removal"
+            android:singleLine="true"
+            android:numeric="integer"
+            android:title="Age of EPG data before removal" />
+
+        <EditTextPreference
+            android:defaultValue="120"
+            android:key="pref_epg_removal_interval"
+            android:singleLine="true"
+            android:numeric="integer"
+            android:title="Background EPG removal time interval" />
     </PreferenceCategory>
 
 </PreferenceScreen>

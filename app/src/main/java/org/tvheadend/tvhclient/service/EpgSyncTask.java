@@ -77,14 +77,15 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     // Authenticator.Listener Methods
     @Override
     public void onAuthenticationStateChange(@NonNull Authenticator.State state) {
-        // Send the authentication status to any broadcast listeners
-        Intent intent = new Intent("service_status");
-        intent.putExtra("authentication_status", state);
-        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 
-        // Continue with processing like getting all
-        // initial data only if we are authenticated
-        if (state == Authenticator.State.AUTHENTICATED) {
+        String status;
+        if (state == Authenticator.State.IDLE) {
+            status = "Authenticating idle";
+        } else if (state == Authenticator.State.AUTHENTICATING) {
+            status = "Authenticating...";
+        } else if (state == Authenticator.State.AUTHENTICATED) {
+            status = "Authenticated";
+            // Continue with getting all initial data only if we are authenticated
             initialSyncCompleted = false;
             initialSyncRequired = sharedPreferences.getBoolean("initial_sync_required", true);
 
@@ -93,7 +94,14 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
             } else {
                 startInitialSyncWithServer();
             }
+        } else {
+            status = "Authentication failed";
         }
+
+        // Send the authentication status to any broadcast listeners
+        Intent intent = new Intent("service_status");
+        intent.putExtra("authentication_status", status);
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 
     private void startFullInitialSyncWithServer() {
@@ -101,7 +109,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
 
         // Send the first sync message to any broadcast listeners
         Intent intent = new Intent("service_status");
-        intent.putExtra("sync_status", "Loading initial data...");
+        intent.putExtra("sync_status", "Loading available data from the server...");
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 
         // Enable epg sync with the defined number of

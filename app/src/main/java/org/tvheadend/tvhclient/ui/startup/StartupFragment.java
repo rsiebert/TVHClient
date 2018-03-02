@@ -32,8 +32,6 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.repository.ConnectionRepository;
 import org.tvheadend.tvhclient.service.EpgSyncService;
-import org.tvheadend.tvhclient.service.htsp.HtspConnection;
-import org.tvheadend.tvhclient.service.htsp.tasks.Authenticator;
 import org.tvheadend.tvhclient.ui.base.ToolbarInterface;
 import org.tvheadend.tvhclient.ui.navigation.NavigationActivity;
 import org.tvheadend.tvhclient.ui.settings.SettingsActivity;
@@ -66,6 +64,7 @@ public class StartupFragment extends Fragment {
     private AppCompatActivity activity;
     private ConnectionRepository repository;
     private ToolbarInterface toolbarInterface;
+    private SharedPreferences sharedPreferences;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -91,6 +90,7 @@ public class StartupFragment extends Fragment {
         }
         setHasOptionsMenu(true);
 
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity);
         repository = new ConnectionRepository(activity);
 
         if (!isConnectionDefined()) {
@@ -124,28 +124,6 @@ public class StartupFragment extends Fragment {
                 Intent intent = new Intent(activity, EpgSyncService.class);
                 activity.stopService(intent);
                 activity.startService(intent);
-
-                Intent epgFetchIntent = new Intent(activity, EpgSyncService.class);
-                epgFetchIntent.setAction("getMoreEvents");
-                PendingIntent epgFetchPendingIntent = PendingIntent.getService(activity, 0, epgFetchIntent, 0);
-
-                Intent epgRemovalIntent = new Intent(activity, EpgSyncService.class);
-                epgRemovalIntent.setAction("deleteEvents");
-                PendingIntent epgRemovalPendingIntent = PendingIntent.getService(activity, 0, epgRemovalIntent, 0);
-
-                // The time when the service shall be called periodically
-                // TODO make the interval time a preference
-                long epgFetchIntervalTime = 2 * 60 * 1000;     // 15 minutes
-                long epgRemovalIntervalTime = 120 * 60 * 1000;   // 120 minutes
-
-                // Start the alarms five minutes after the service has been started for the first time
-                long firstTriggerTime = Calendar.getInstance().getTimeInMillis() + (2 * 60 * 1000);
-                // Use the alarm manager to start the service every x minutes
-                AlarmManager alarm = (AlarmManager) activity.getSystemService(Context.ALARM_SERVICE);
-                if (alarm != null) {
-                    alarm.setRepeating(AlarmManager.RTC_WAKEUP, firstTriggerTime, epgFetchIntervalTime, epgFetchPendingIntent);
-                    alarm.setRepeating(AlarmManager.RTC_WAKEUP, firstTriggerTime, epgRemovalIntervalTime, epgRemovalPendingIntent);
-                }
             }
         }
     }
@@ -227,47 +205,11 @@ public class StartupFragment extends Fragment {
             // Get the connection status from the local broadcast
             if (intent.hasExtra("connection_status")) {
                 title = "Connection Status";
-
-                HtspConnection.State state = (HtspConnection.State) intent.getSerializableExtra("connection_status");
-                if (state == HtspConnection.State.CLOSED) {
-                    status = "Connection closed";
-                } else if (state == HtspConnection.State.CLOSING) {
-                    status = "Connection closing...";
-                } else if (state == HtspConnection.State.CONNECTED) {
-                    status = "Connected";
-                } else if (state == HtspConnection.State.CONNECTING) {
-                    status = "Connecting...";
-                } else if (state == HtspConnection.State.FAILED) {
-                    status = "Connection failed";
-                } else if (state == HtspConnection.State.FAILED_UNRESOLVED_ADDRESS) {
-                    status = "Connection failed";
-                } else if (state == HtspConnection.State.FAILED_INTERRUPTED) {
-                    status = "Connection failed";
-                } else if (state == HtspConnection.State.FAILED_EXCEPTION_OPENING_SOCKET) {
-                    status = "Connection failed";
-                } else if (state == HtspConnection.State.FAILED_CONNECTING_TO_SERVER) {
-                    status = "Connection failed";
-                } else {
-                    status = "Unknown connection state";
-                    stopService();
-                }
+                status = (String) intent.getSerializableExtra("connection_status");
             }
             // Get the current authentication status from the local broadcast
             if (intent.hasExtra("authentication_status")) {
-                Authenticator.State state = (Authenticator.State) intent.getSerializableExtra("authentication_status");
-                if (state == Authenticator.State.IDLE) {
-                    status = "Authenticating idle";
-                } else if (state == Authenticator.State.AUTHENTICATING) {
-                    status = "Authenticating...";
-                } else if (state == Authenticator.State.AUTHENTICATED) {
-                    status = "Authenticated";
-                } else if (state == Authenticator.State.FAILED) {
-                    status = "Authentication failed";
-                    stopService();
-                } else {
-                    status = "Unknown authentication state";
-                    stopService();
-                }
+                status = (String) intent.getSerializableExtra("authentication_status");
             }
             // Inform the fragment about the current sync status
             if (intent.hasExtra("sync_status")) {
@@ -277,6 +219,7 @@ public class StartupFragment extends Fragment {
                 // the server and any possible sync has been finished
                 if (intent.getStringExtra("sync_status").equals("done")) {
                     showContentScreen();
+                    startBackgroundServices();
                 } else {
                     progressBar.setVisibility(View.VISIBLE);
                 }
@@ -285,6 +228,31 @@ public class StartupFragment extends Fragment {
             toolbarInterface.setTitle(title);
         }
     };
+
+    private void startBackgroundServices() {
+        Log.d(TAG, "startBackgroundServices() called");
+
+        Intent epgFetchIntent = new Intent(activity, EpgSyncService.class);
+        epgFetchIntent.setAction("getMoreEvents");
+        PendingIntent epgFetchPendingIntent = PendingIntent.getService(activity, 0, epgFetchIntent, 0);
+
+        Intent epgRemovalIntent = new Intent(activity, EpgSyncService.class);
+        epgRemovalIntent.setAction("deleteEvents");
+        PendingIntent epgRemovalPendingIntent = PendingIntent.getService(activity, 0, epgRemovalIntent, 0);
+
+        // The time when the service shall be called periodically
+        int epgFetchIntervalTime = Integer.valueOf(sharedPreferences.getString("pref_epg_fetch_interval", "15")) * 60 * 1000;
+        int epgRemovalIntervalTime = Integer.valueOf(sharedPreferences.getString("pref_epg_removal_interval", "120")) * 60 * 1000;
+
+        // Start the alarms one minute after the service has been started for the first time
+        long firstTriggerTime = Calendar.getInstance().getTimeInMillis() * 60 * 1000;
+        // Use the alarm manager to start the service every x minutes
+        AlarmManager alarm = (AlarmManager) activity.getSystemService(Context.ALARM_SERVICE);
+        if (alarm != null) {
+            alarm.setRepeating(AlarmManager.RTC_WAKEUP, firstTriggerTime, epgFetchIntervalTime, epgFetchPendingIntent);
+            alarm.setRepeating(AlarmManager.RTC_WAKEUP, firstTriggerTime, epgRemovalIntervalTime, epgRemovalPendingIntent);
+        }
+    }
 
     private void stopService() {
         // Unregister from the broadcast manager to avoid getting any connection

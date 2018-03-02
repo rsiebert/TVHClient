@@ -39,7 +39,7 @@ public class SimpleHtspConnection implements HtspMessage.Dispatcher, HtspConnect
 
     private boolean enableReconnect = false;
     private int retryCount = 0;
-    private int retryDelay = 3000;
+    private int retryDelay = 3;
 
     public SimpleHtspConnection(Context context, Connection connectionInfo) {
         this.context = context;
@@ -160,16 +160,32 @@ public class SimpleHtspConnection implements HtspMessage.Dispatcher, HtspConnect
     }
 
     @Override
-    public void setConnection(@NonNull HtspConnection connection) {}
+    public void setConnection(@NonNull HtspConnection connection) {
+    }
 
     @Override
     public void onConnectionStateChange(@NonNull HtspConnection.State state) {
 
-        Intent intent = new Intent("service_status");
-        intent.putExtra("connection_status", state);
-        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
-
-        // TODO consider the other failed states and send text as broadcast incl retry info
+        String status;
+        if (state == HtspConnection.State.CLOSED) {
+            status = "Connection closed";
+        } else if (state == HtspConnection.State.CLOSING) {
+            status = "Connection closing...";
+        } else if (state == HtspConnection.State.CONNECTED) {
+            status = "Connected";
+        } else if (state == HtspConnection.State.CONNECTING) {
+            status = "Connecting...";
+        } else if (state == HtspConnection.State.FAILED_INTERRUPTED) {
+            status = "Failed to open a connection to the server, interrupted";
+        } else if (state == HtspConnection.State.FAILED_UNRESOLVED_ADDRESS) {
+            status = "Failed to resolve server address";
+        } else if (state == HtspConnection.State.FAILED_EXCEPTION_OPENING_SOCKET) {
+            status = "Error while opening a connection to the server";
+        } else if (state == HtspConnection.State.FAILED_CONNECTING_TO_SERVER) {
+            status = "Failed to connect to server";
+        } else {
+            status = "Connection failed";
+        }
 
         // Simple HTSP Connections will take care of reconnecting upon failure for you..
         if (enableReconnect
@@ -179,20 +195,23 @@ public class SimpleHtspConnection implements HtspMessage.Dispatcher, HtspConnect
                 || state == HtspConnection.State.FAILED_INTERRUPTED
                 || state == HtspConnection.State.FAILED_UNRESOLVED_ADDRESS)) {
 
-            Log.w(TAG, "HTSP Connection failed, reconnecting in " + retryDelay + " milliseconds");
-
+            status = "Connection failed, reconnecting in " + retryDelay + " seconds";
             try {
-                Thread.sleep(retryDelay);
+                Thread.sleep(retryDelay * 1000);
             } catch (InterruptedException e) {
                 // Ignore
             }
 
             retryCount += 1;
             if (retryCount <= 3) {
-                Log.d(TAG, "onConnectionStateChange: restarting");
+                status = "Reconnecting...";
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    // Ignore
+                }
                 restart();
             } else {
-                Log.d(TAG, "onConnectionStateChange: stop");
                 stop();
             }
 
@@ -200,5 +219,9 @@ public class SimpleHtspConnection implements HtspMessage.Dispatcher, HtspConnect
             // Reset our retry counter and delay back to zero
             retryCount = 0;
         }
+
+        Intent intent = new Intent("service_status");
+        intent.putExtra("connection_status", status);
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 }
