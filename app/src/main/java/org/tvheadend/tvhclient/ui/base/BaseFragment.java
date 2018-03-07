@@ -10,8 +10,8 @@ import android.view.View;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.TVHClientApplication;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
+import org.tvheadend.tvhclient.data.repository.ConfigRepository;
 import org.tvheadend.tvhclient.data.repository.RecordingRepository;
-import org.tvheadend.tvhclient.data.repository.ServerStatusRepository;
 import org.tvheadend.tvhclient.utils.MenuUtils;
 
 public class BaseFragment extends Fragment {
@@ -35,7 +35,7 @@ public class BaseFragment extends Fragment {
         }
 
         repository = new RecordingRepository(activity);
-        serverStatus = new ServerStatusRepository(activity).loadServerStatusSync();
+        serverStatus = new ConfigRepository(activity).getServerStatus();
         isUnlocked = TVHClientApplication.getInstance().isUnlocked();
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity);
         menuUtils = new MenuUtils(activity);

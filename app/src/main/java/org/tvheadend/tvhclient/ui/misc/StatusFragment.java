@@ -164,7 +164,7 @@ public class StatusFragment extends BaseFragment implements WakeOnLanTaskCallbac
             }
         });
 
-        ServerStatusModel serverStatusModel = ViewModelProviders.of(activity).get(ServerStatusModel.class);
+        ServerStatusViewModel serverStatusModel = ViewModelProviders.of(activity).get(ServerStatusViewModel.class);
         serverStatusModel.getServerStatus().observe(this, serverStatus -> {
             if (serverStatus != null) {
                 seriesRecordingsTextView.setVisibility((serverStatus.getHtspVersion() >= 13) ? View.VISIBLE : View.GONE);

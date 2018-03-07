@@ -29,6 +29,7 @@ import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.ui.base.BaseFragment;
 import org.tvheadend.tvhclient.ui.common.RecyclerTouchListener;
 import org.tvheadend.tvhclient.ui.common.RecyclerViewTouchCallback;
+import org.tvheadend.tvhclient.ui.misc.ServerStatusViewModel;
 import org.tvheadend.tvhclient.ui.programs.ProgramListActivity;
 import org.tvheadend.tvhclient.ui.programs.ProgramListFragment;
 import org.tvheadend.tvhclient.ui.search.SearchRequestInterface;
@@ -56,9 +57,10 @@ public class ChannelListFragment extends BaseFragment implements ChannelClickCal
     private int channelTimeSelection;
     private int selectedListPosition;
     private String searchQuery;
-    private ChannelViewModel viewModel;
+    private ChannelViewModel channelViewModel;
     private Runnable channelUpdateTask;
     private final Handler channelUpdateHandler = new Handler();
+    private ServerStatusViewModel serverViewModel;
 
     @Nullable
     @Override
@@ -103,10 +105,12 @@ public class ChannelListFragment extends BaseFragment implements ChannelClickCal
             }
         }));
 
-        viewModel = ViewModelProviders.of(activity).get(ChannelViewModel.class);
-        viewModel.setCurrentTime(new Date().getTime());
+        serverViewModel = ViewModelProviders.of(activity).get(ServerStatusViewModel.class);
 
-        viewModel.getAllChannelsByTime().observe(this, channels -> {
+        channelViewModel = ViewModelProviders.of(activity).get(ChannelViewModel.class);
+        channelViewModel.setCurrentTime(new Date().getTime());
+
+        channelViewModel.getAllChannelsByTime().observe(this, channels -> {
             int channelCount = 0;
             if (channels != null) {
                 channelCount = channels.size();
@@ -120,9 +124,9 @@ public class ChannelListFragment extends BaseFragment implements ChannelClickCal
             toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.items, channelCount, channelCount));
         });
 
-        viewModel.getServerStatus().observe(this, serverStatus -> {
+        serverViewModel.getServerStatus().observe(this, serverStatus -> {
             if (serverStatus != null) {
-                ChannelTag channelTag = viewModel.getSelectedChannelTag();
+                ChannelTag channelTag = serverViewModel.getSelectedChannelTag();
                 toolbarInterface.setTitle((channelTag == null)  ? getString(R.string.all_channels) : channelTag.getTagName());
             }
         });
@@ -132,9 +136,9 @@ public class ChannelListFragment extends BaseFragment implements ChannelClickCal
         channelUpdateTask = new Runnable() {
             public void run() {
                 long currentTime = new Date().getTime();
-                Log.d(TAG, "run: viewModel.getTime() " + viewModel.getCurrentTime() + ", current time " + currentTime);
-                if (viewModel.getCurrentTime() < currentTime) {
-                    viewModel.setCurrentTime(currentTime);
+                Log.d(TAG, "run: channelViewModel.getTime() " + channelViewModel.getCurrentTime() + ", current time " + currentTime);
+                if (channelViewModel.getCurrentTime() < currentTime) {
+                    channelViewModel.setCurrentTime(currentTime);
                 }
                 channelUpdateHandler.postDelayed(channelUpdateTask, 60000);
             }
@@ -208,15 +212,15 @@ public class ChannelListFragment extends BaseFragment implements ChannelClickCal
             if (which > 0) {
                 c.set(Calendar.HOUR_OF_DAY, c.get(Calendar.HOUR_OF_DAY) + which);
             }
-            viewModel.setCurrentTime(c.getTimeInMillis());
+            channelViewModel.setCurrentTime(c.getTimeInMillis());
         } else {
-            viewModel.setCurrentTime(new Date().getTime());
+            channelViewModel.setCurrentTime(new Date().getTime());
         }
     }
 
     @Override
     public void onChannelTagIdSelected(int which) {
-        viewModel.setSelectedChannelTag(which);
+        serverViewModel.setSelectedChannelTag(which);
     }
 
     protected void showChannelDetails(int position) {
@@ -230,7 +234,7 @@ public class ChannelListFragment extends BaseFragment implements ChannelClickCal
             Intent intent = new Intent(activity, ProgramListActivity.class);
             intent.putExtra("channelName", channel.getChannelName());
             intent.putExtra("channelId", channel.getChannelId());
-            intent.putExtra("show_programs_from_time", viewModel.getCurrentTime());
+            intent.putExtra("show_programs_from_time", channelViewModel.getCurrentTime());
             activity.startActivity(intent);
         } else {
             // We can display everything in-place with fragments, so update
@@ -240,7 +244,7 @@ public class ChannelListFragment extends BaseFragment implements ChannelClickCal
             ProgramListFragment programListFragment = (ProgramListFragment) getFragmentManager().findFragmentById(R.id.details);
             if (programListFragment == null || programListFragment.getShownChannelId() != channel.getChannelId()) {
                 // Make new fragment to show this selection.
-                programListFragment = ProgramListFragment.newInstance(channel.getChannelName(), channel.getChannelId(), viewModel.getCurrentTime());
+                programListFragment = ProgramListFragment.newInstance(channel.getChannelName(), channel.getChannelId(), channelViewModel.getCurrentTime());
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
                 ft.replace(R.id.details, programListFragment);
                 ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);

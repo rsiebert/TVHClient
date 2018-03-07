@@ -32,7 +32,6 @@ import org.tvheadend.tvhclient.data.repository.ChannelAndProgramRepository;
 import org.tvheadend.tvhclient.data.repository.ConfigRepository;
 import org.tvheadend.tvhclient.data.repository.ConnectionRepository;
 import org.tvheadend.tvhclient.data.repository.RecordingRepository;
-import org.tvheadend.tvhclient.data.repository.ServerStatusRepository;
 import org.tvheadend.tvhclient.service.EpgSyncService;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
@@ -74,7 +73,7 @@ public class PlayActivity extends Activity implements OnRequestPermissionsResult
         app = TVHClientApplication.getInstance();
         logger = Logger.getInstance();
 
-        serverStatus = new ServerStatusRepository(this).loadServerStatusSync();
+        serverStatus = new ConfigRepository(this).getServerStatus();
         
         // If a play intent was sent no action is given, so default to play
         action = getIntent().getIntExtra(Constants.BUNDLE_ACTION, ACTION_PLAY);

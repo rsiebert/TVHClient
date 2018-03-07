@@ -1,5 +1,6 @@
 package org.tvheadend.tvhclient.data.repository;
 
+import android.arch.lifecycle.LiveData;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -117,6 +118,10 @@ public class ConfigRepository {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public LiveData<ServerStatus> loadServerStatus() {
+        return db.serverStatusDao().loadServerStatus();
     }
 
     private static class LoadServerStatusTask extends AsyncTask<Void, Void, ServerStatus> {

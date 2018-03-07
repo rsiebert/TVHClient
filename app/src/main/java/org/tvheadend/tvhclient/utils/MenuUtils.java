@@ -31,7 +31,6 @@ import org.tvheadend.tvhclient.data.remote.PlayActivity;
 import org.tvheadend.tvhclient.data.repository.ChannelAndProgramRepository;
 import org.tvheadend.tvhclient.data.repository.ConfigRepository;
 import org.tvheadend.tvhclient.data.repository.RecordingRepository;
-import org.tvheadend.tvhclient.data.repository.ServerStatusRepository;
 import org.tvheadend.tvhclient.service.EpgSyncService;
 import org.tvheadend.tvhclient.ui.common.ChannelTagListAdapter;
 import org.tvheadend.tvhclient.ui.common.GenreColorDialogAdapter;
@@ -49,24 +48,20 @@ import java.util.List;
 public class MenuUtils {
     private String TAG = getClass().getSimpleName();
 
-    private final int htspVersion;
     private final boolean isUnlocked;
     private final ChannelAndProgramRepository channelAndProgramRepository;
     private final ConfigRepository configRepository;
     private final RecordingRepository recordingRepository;
-    private final ServerStatusRepository serverDataRepository;
     private final ServerStatus serverStatus;
     private WeakReference<Activity> activity;
 
     public MenuUtils(Activity activity) {
         this.activity = new WeakReference<>(activity);
-        this.htspVersion = new ServerStatusRepository(activity).loadServerStatusSync().getHtspVersion();
         this.isUnlocked = TVHClientApplication.getInstance().isUnlocked();
         this.channelAndProgramRepository = new ChannelAndProgramRepository(activity);
         this.configRepository = new ConfigRepository(activity);
         this.recordingRepository = new RecordingRepository(activity);
-        this.serverDataRepository = new ServerStatusRepository(activity);
-        this.serverStatus = serverDataRepository.loadServerStatusSync();
+        this.serverStatus = configRepository.getServerStatus();
     }
 
     /**
@@ -226,7 +221,7 @@ public class MenuUtils {
         ServerProfile profile = configRepository.getRecordingServerProfileById(serverStatus.getRecordingServerProfileId());
         if (profile != null
                 && profile.isEnabled()
-                && htspVersion >= 16
+                && serverStatus.getHtspVersion() >= 16
                 && isUnlocked) {
             intent.putExtra("configName", profile.getName());
         }
@@ -245,7 +240,7 @@ public class MenuUtils {
         ServerProfile profile = configRepository.getRecordingServerProfileById(serverStatus.getRecordingServerProfileId());
         if (profile != null
                 && profile.isEnabled()
-                && htspVersion >= 16
+                && serverStatus.getHtspVersion() >= 16
                 && isUnlocked) {
             intent.putExtra("configName", profile.getName());
         }
@@ -544,7 +539,7 @@ public class MenuUtils {
         if (rec == null || !rec.isRecording() && !rec.isScheduled()) {
             recordOnceMenuItem.setVisible(true);
             recordOnceCustomProfileMenuItem.setVisible(isUnlocked);
-            recordSeriesMenuItem.setVisible(htspVersion >= 13);
+            recordSeriesMenuItem.setVisible(serverStatus.getHtspVersion() >= 13);
         } else if (rec.isRecording()) {
             playMenuItem.setVisible(true);
             recordRemoveMenuItem.setTitle(R.string.stop);

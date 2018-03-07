@@ -109,6 +109,9 @@ public class ProgramListFragment extends BaseFragment implements BottomReachedLi
             recyclerViewAdapter.addItems(programs);
             toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.programs, recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
 
+            if (programs != null && programs.size() == 0) {
+                loadMorePrograms();
+            }
             if (isDualPane && recyclerViewAdapter.getItemCount() > 0) {
                 showProgramDetails(selectedListPosition);
             }
@@ -236,15 +239,25 @@ public class ProgramListFragment extends BaseFragment implements BottomReachedLi
         startActivity(searchIntent);
     }
 
+    private void loadMorePrograms() {
+        Log.d(TAG, "loadMorePrograms() called");
+        Intent intent = new Intent(activity, EpgSyncService.class);
+        intent.setAction("getMoreEventsByChannel");
+        intent.putExtra("channelId", channelId);
+        intent.putExtra("numFollowing", 75);
+        activity.startService(intent);
+    }
+
     @Override
     public void onBottomReached(int position) {
+        Log.d(TAG, "onBottomReached() called with: position = [" + position + "]");
         Program lastProgram = recyclerViewAdapter.getItem(position);
         Log.d(TAG, "onBottomReached: last program was " + lastProgram.getTitle());
         Intent intent = new Intent(activity, EpgSyncService.class);
         intent.setAction("getEvents");
         intent.putExtra("eventId", lastProgram.getNextEventId());
         intent.putExtra("channelId", lastProgram.getChannelId());
-        intent.putExtra("count", 15);
+        intent.putExtra("numFollowing", 25);
         activity.startService(intent);
     }
 }
