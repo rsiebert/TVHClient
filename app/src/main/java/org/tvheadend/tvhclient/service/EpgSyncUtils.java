@@ -223,7 +223,7 @@ class EpgSyncUtils {
             program.setStop(msg.getLong("stop") * 1000);
         }
         if (msg.containsKey("title")) {
-            if (!TextUtils.isEmpty(msg.getString(""))) {
+            if (!TextUtils.isEmpty(msg.getString("title"))) {
                 program.setTitle(msg.getString("title"));
             }
         }
