@@ -4,7 +4,6 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -58,8 +57,8 @@ public class ChannelListFragment extends BaseFragment implements ChannelClickCal
     private int selectedListPosition;
     private String searchQuery;
     private ChannelViewModel channelViewModel;
-    private Runnable channelUpdateTask;
-    private final Handler channelUpdateHandler = new Handler();
+    //private Runnable channelUpdateTask;
+    //private final Handler channelUpdateHandler = new Handler();
     private ServerStatusViewModel serverViewModel;
 
     @Nullable
@@ -105,11 +104,24 @@ public class ChannelListFragment extends BaseFragment implements ChannelClickCal
             }
         }));
 
-        serverViewModel = ViewModelProviders.of(activity).get(ServerStatusViewModel.class);
+
 
         channelViewModel = ViewModelProviders.of(activity).get(ChannelViewModel.class);
-        channelViewModel.setCurrentTime(new Date().getTime());
+        //channelViewModel.setCurrentTime(new Date().getTime());
 
+        channelViewModel.getAllChannels().observe(this, channels -> {
+            int channelCount = 0;
+            if (channels != null) {
+                channelCount = channels.size();
+                recyclerViewAdapter.addItems(channels);
+                if (isDualPane && channels.size() > 0) {
+                    showChannelDetails(selectedListPosition);
+                }
+            }
+            toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.items, channelCount, channelCount));
+        });
+
+        /*
         channelViewModel.getAllChannelsByTime().observe(this, channels -> {
             int channelCount = 0;
             if (channels != null) {
@@ -123,7 +135,9 @@ public class ChannelListFragment extends BaseFragment implements ChannelClickCal
             }
             toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.items, channelCount, channelCount));
         });
+        */
 
+        serverViewModel = ViewModelProviders.of(activity).get(ServerStatusViewModel.class);
         serverViewModel.getServerStatus().observe(this, serverStatus -> {
             if (serverStatus != null) {
                 ChannelTag channelTag = serverViewModel.getSelectedChannelTag();
@@ -131,6 +145,7 @@ public class ChannelListFragment extends BaseFragment implements ChannelClickCal
             }
         });
 
+        /*
         // Initiate a timer that will update the view model data every minute
         // so that the progress bars will be displayed correctly
         channelUpdateTask = new Runnable() {
@@ -144,6 +159,7 @@ public class ChannelListFragment extends BaseFragment implements ChannelClickCal
             }
         };
         channelUpdateHandler.post(channelUpdateTask);
+        */
     }
 
     @Override
@@ -152,14 +168,14 @@ public class ChannelListFragment extends BaseFragment implements ChannelClickCal
         outState.putInt("list_position", selectedListPosition);
         outState.putInt("channel_time_selection", channelTimeSelection);
     }
-
+/*
     @Override
     public void onPause() {
         super.onPause();
         Log.d(TAG, "onPause() called, removing callbacks");
         channelUpdateHandler.removeCallbacks(channelUpdateTask);
     }
-
+*/
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
