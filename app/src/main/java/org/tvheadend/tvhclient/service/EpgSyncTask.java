@@ -238,8 +238,9 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     }
 
     private void handleGetEvents(HtspMessage message) {
+        Log.d(TAG, "handleGetEvents() called with: message = [" + message + "]");
         if (message.containsKey("events")) {
-            Log.d(TAG, "getEvents: contains key events");
+            Log.d(TAG, "handleGetEvents: contains key events");
             for (HtspMessage msg : message.getHtspMessageArray("events")) {
                 List<Program> programList = new ArrayList<>();
                 programList.add(EpgSyncUtils.convertMessageToProgramModel(new Program(), msg));
@@ -266,6 +267,9 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
                 break;
             case "getMoreEvents":
                 getMoreEvents();
+                break;
+            case "getMoreEventsByChannel":
+                getMoreEventsByChannel(intent.getIntExtra("channelId", 0));
                 break;
             case "getEvent":
                 getEvent(intent);
@@ -1405,6 +1409,21 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 
+    private void getMoreEventsByChannel(int channelId) {
+        Log.d(TAG, "getMoreEventsByChannel() called with: channelId = [" + channelId + "]");
+        //Program program = db.programDao().loadLastProgramFromChannelSync(channelId);
+        //if (program != null && program.getEventId() > 0) {
+            //Log.d(TAG, "getMoreEventsByChannel: getEvents for program " + program.getTitle());
+            Intent intent = new Intent();
+            //intent.putExtra("eventId", program.getEventId());
+            intent.putExtra("channelId", channelId);
+
+            //int hours = Integer.valueOf(sharedPreferences.getString("pref_epg_hours_to_fetch", "7"));
+            //intent.putExtra("maxTime", hours);
+            getEvents(intent);
+        //}
+    }
+
     private void getMoreEvents() {
         Log.d(TAG, "getMoreEvents() called");
 
@@ -1413,7 +1432,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
             Log.d(TAG, "getMoreEvents: getting last program for channel " + channel.getChannelName());
             Program program = db.programDao().loadLastProgramFromChannelSync(channel.getChannelId());
             if (program != null && program.getEventId() > 0) {
-                Log.d(TAG, "getMoreEvents: getEvents for program " + program.getTitle());
+                Log.d(TAG, "getMoreEventsByChannel: getEvents for program " + program.getTitle());
                 Intent intent = new Intent();
                 intent.putExtra("eventId", program.getEventId());
                 intent.putExtra("channelId", channel.getChannelId());
