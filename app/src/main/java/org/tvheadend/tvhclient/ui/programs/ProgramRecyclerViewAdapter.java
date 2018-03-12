@@ -57,7 +57,7 @@ public class ProgramRecyclerViewAdapter extends RecyclerView.Adapter<ProgramRecy
         if (program != null) {
             holder.titleTextView.setText(program.getTitle());
 
-            Drawable drawable = UIUtils.getRecordingState(context, program.getDvrId());
+            Drawable drawable = UIUtils.getRecordingState(context, program.getRecording());
             holder.stateTextView.setVisibility(drawable != null ? View.VISIBLE : View.GONE);
             holder.stateTextView.setImageDrawable(drawable);
 

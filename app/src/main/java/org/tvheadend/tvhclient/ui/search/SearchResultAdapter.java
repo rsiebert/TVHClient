@@ -240,7 +240,7 @@ public class SearchResultAdapter extends ArrayAdapter<Program> implements Filter
             holder.iconImageView.setVisibility(showChannelIcons ? ImageView.VISIBLE : ImageView.GONE);
             holder.iconTextView.setVisibility(showChannelIcons ? ImageView.VISIBLE : ImageView.GONE);
 
-            Drawable drawable = UIUtils.getRecordingState(context, program.getDvrId());
+            Drawable drawable = UIUtils.getRecordingState(context, program.getRecording());
             holder.state.setVisibility(drawable != null ? View.VISIBLE : View.GONE);
             holder.state.setImageDrawable(drawable);
 

@@ -372,7 +372,7 @@ public class ProgramGuideViewPagerContentListAdapterContentsView extends LinearL
             itemLayout.setTag(p.getEventId());
             title.setText(p.getTitle());
 
-            Drawable drawable = UIUtils.getRecordingState(activity, p.getDvrId());
+            Drawable drawable = UIUtils.getRecordingState(activity, p.getRecording());
             state.setVisibility(drawable != null ? View.VISIBLE : View.GONE);
             state.setImageDrawable(drawable);
 

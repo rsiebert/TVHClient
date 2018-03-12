@@ -160,7 +160,7 @@ public class ProgramDetailsFragment extends BaseFragment implements ImageDownloa
 
         // Show the program information
         if (state != null) {
-            Drawable drawable = UIUtils.getRecordingState(activity, program.getDvrId());
+            Drawable drawable = UIUtils.getRecordingState(activity, program.getRecording());
             state.setVisibility(drawable != null ? View.VISIBLE : View.GONE);
             state.setImageDrawable(drawable);
         }
