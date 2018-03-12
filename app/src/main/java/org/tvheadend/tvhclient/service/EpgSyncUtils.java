@@ -2,7 +2,6 @@ package org.tvheadend.tvhclient.service;
 
 import android.content.Intent;
 import android.text.TextUtils;
-import android.util.Log;
 
 import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.data.entity.ChannelTag;
@@ -89,13 +88,10 @@ class EpgSyncUtils {
     }
 
     static Recording convertMessageToRecordingModel(Recording recording, HtspMessage msg) {
-        Log.d(TAG, "convertMessageToRecordingModel() called with: recording = [" + recording + "], msg = [" + msg + "]");
-
         if (msg.containsKey("id")) {
             recording.setId(msg.getInteger("id"));
         }
         if (msg.containsKey("channel")) {
-            Log.d(TAG, "convertMessageToRecordingModel: channel " + msg.getInteger("channel"));
             if (msg.getInteger("channel") > 0) {
                 recording.setChannelId(msg.getInteger("channel"));
             }
@@ -139,7 +135,6 @@ class EpgSyncUtils {
             }
         }
         if (msg.containsKey("title")) {
-            Log.d(TAG, "convertMessageToRecordingModel: title " + msg.getString("title"));
             if (!TextUtils.isEmpty(msg.getString("title"))) {
                 recording.setTitle(msg.getString("title"));
             }
@@ -209,7 +204,6 @@ class EpgSyncUtils {
     }
 
     static Program convertMessageToProgramModel(Program program, HtspMessage msg) {
-
         if (msg.containsKey("eventId")) {
             program.setEventId(msg.getInteger("eventId"));
         }
@@ -336,7 +330,6 @@ class EpgSyncUtils {
     }
 
     static SeriesRecording convertMessageToSeriesRecordingModel(SeriesRecording seriesRecording, HtspMessage msg) {
-        Log.d("X", "convertMessageToSeriesRecordingModel() called with: seriesRecording = [" + seriesRecording + "], msg = [" + msg + "]");
         if (msg.containsKey("id")) {
             seriesRecording.setId(msg.getString("id"));
         }
@@ -413,7 +406,6 @@ class EpgSyncUtils {
         }
         return seriesRecording;
     }
-
 
     static TimerRecording convertMessageToTimerRecordingModel(TimerRecording timerRecording, HtspMessage msg) {
         if (msg.containsKey("id")) {
