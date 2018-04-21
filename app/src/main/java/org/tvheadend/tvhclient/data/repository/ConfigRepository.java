@@ -5,12 +5,10 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import org.tvheadend.tvhclient.data.AppDatabase;
-import org.tvheadend.tvhclient.data.dao.ChannelTagDao;
-import org.tvheadend.tvhclient.data.dao.ServerProfileDao;
-import org.tvheadend.tvhclient.data.dao.ServerStatusDao;
-import org.tvheadend.tvhclient.data.dao.TranscodingProfileDao;
-import org.tvheadend.tvhclient.data.entity.ChannelTag;
+import org.tvheadend.tvhclient.data.local.db.AppRoomDatabase;
+import org.tvheadend.tvhclient.data.local.dao.ServerProfileDao;
+import org.tvheadend.tvhclient.data.local.dao.ServerStatusDao;
+import org.tvheadend.tvhclient.data.local.dao.TranscodingProfileDao;
 import org.tvheadend.tvhclient.data.entity.ServerProfile;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
 import org.tvheadend.tvhclient.data.entity.TranscodingProfile;
@@ -20,11 +18,10 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class ConfigRepository {
-    private String TAG = getClass().getSimpleName();
-    private final AppDatabase db;
+    private final AppRoomDatabase db;
 
     public ConfigRepository(Context context) {
-        this.db = AppDatabase.getInstance(context.getApplicationContext());
+        this.db = AppRoomDatabase.getInstance(context.getApplicationContext());
     }
 
     public TranscodingProfile getPlaybackTranscodingProfile() {
@@ -298,7 +295,7 @@ public class ConfigRepository {
             return null;
         }
     }
-
+/*
     public ChannelTag getSelectedChannelTag() {
         try {
             return new LoadSelectedChannelTagTask(db.serverStatusDao(), db.channelTagDao()).execute().get();
@@ -345,4 +342,5 @@ public class ConfigRepository {
             return null;
         }
     }
+*/
 }

@@ -4,10 +4,10 @@ import android.arch.lifecycle.LiveData;
 import android.content.Context;
 import android.os.AsyncTask;
 
-import org.tvheadend.tvhclient.data.AppDatabase;
-import org.tvheadend.tvhclient.data.dao.RecordingDao;
-import org.tvheadend.tvhclient.data.dao.SeriesRecordingDao;
-import org.tvheadend.tvhclient.data.dao.TimerRecordingDao;
+import org.tvheadend.tvhclient.data.local.db.AppRoomDatabase;
+import org.tvheadend.tvhclient.data.local.dao.RecordingDao;
+import org.tvheadend.tvhclient.data.local.dao.SeriesRecordingDao;
+import org.tvheadend.tvhclient.data.local.dao.TimerRecordingDao;
 import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.data.entity.SeriesRecording;
 import org.tvheadend.tvhclient.data.entity.TimerRecording;
@@ -17,10 +17,10 @@ import java.util.concurrent.ExecutionException;
 
 public class RecordingRepository {
 
-    private AppDatabase db;
+    private AppRoomDatabase db;
 
     public RecordingRepository(Context context) {
-        this.db = AppDatabase.getInstance(context.getApplicationContext());
+        this.db = AppRoomDatabase.getInstance(context.getApplicationContext());
     }
 
     public LiveData<List<TimerRecording>> getAllTimerRecordings() {
@@ -95,6 +95,62 @@ public class RecordingRepository {
         return null;
     }
 
+    public LiveData<List<Recording>> getAllRecordingsByChannelId(int channelId) {
+        return db.recordingDao().loadAllRecordingsByChannelId(channelId);
+    }
+
+    public LiveData<List<Recording>> getAllRecordings() {
+        return db.recordingDao().loadAllRecordings();
+    }
+
+    public Recording getRecordingByEventIdSync(int eventId) {
+        try {
+            return new LoadRecordingByEventIdTask(db.recordingDao(), eventId).execute().get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public LiveData<Integer> getNumberOfSeriesRecordings() {
+        return db.seriesRecordingDao().getRecordingCount();
+    }
+
+    public LiveData<Integer> getNumberOfTimerRecordings() {
+        return db.timerRecordingDao().getRecordingCount();
+    }
+
+    public LiveData<Integer> getNumberOfCompletedRecordings() {
+        return db.recordingDao().getCompletedRecordingCount();
+    }
+
+    public LiveData<Integer> getNumberOfScheduledRecordings() {
+        return db.recordingDao().getScheduledRecordingCount();
+    }
+
+    public LiveData<Integer> getNumberOfFailedRecordings() {
+        return db.recordingDao().getFailedRecordingCount();
+    }
+
+    public LiveData<Integer> getNumberOfRemovedRecordings() {
+        return db.recordingDao().getRemovedRecordingCount();
+    }
+
+    protected static class LoadRecordingByEventIdTask extends AsyncTask<Void, Void, Recording> {
+        private final RecordingDao dao;
+        private final int id;
+
+        LoadRecordingByEventIdTask(RecordingDao dao, int id) {
+            this.dao = dao;
+            this.id = id;
+        }
+
+        @Override
+        protected Recording doInBackground(Void... voids) {
+            return dao.loadRecordingByEventIdSync(id);
+        }
+    }
+
     protected static class LoadAllRecordingsTask extends AsyncTask<Void, Void, List<Recording>> {
         private final RecordingDao dao;
 
@@ -104,7 +160,7 @@ public class RecordingRepository {
 
         @Override
         protected List<Recording> doInBackground(Void... voids) {
-            return dao.loadAllRecordings();
+            return dao.loadAllRecordingsSync();
         }
     }
 
