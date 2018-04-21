@@ -213,7 +213,7 @@
     <string name="clear_search_history_sum">Bitte bestätigen, dass alle Einträge aus der Historie gelöscht werden sollen.</string>
     <string name="clear_search_history_done">Suchhistorie wurde gelöscht</string>
     <string name="clear_icon_cache">Senderlogos löschen?</string>
-    <string name="clear_icon_cache_sum">Bitte bestätigen, dass alle Senderlogos gelöscht werden sollen. Dadurch können z.B. aktualisierte Senderlogos vom Server geladen werden.</string>
+    <string name="clear_icon_cache_sum">Sollen alle Senderlogos gelöscht werden? Die Verbindung zum Server muss neu gestarted werden, um aktualisierte Senderlogos vom Server zu laden.</string>
     <string name="clear_icon_cache_done">Gespeicherte Senderlogos wurden gelöscht</string>
 
     <string name="err_auth">Der Zugriff auf den Server wurde verweigert.</string>

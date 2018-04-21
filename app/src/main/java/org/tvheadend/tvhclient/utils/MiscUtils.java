@@ -4,42 +4,23 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.preference.PreferenceManager;
 
 import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.MainApplication;
+import org.tvheadend.tvhclient.data.entity.ServerProfile;
+import org.tvheadend.tvhclient.data.entity.ServerStatus;
 
-import java.io.File;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Locale;
+
+// TODO Split into UI and others
 
 public class MiscUtils {
 
     private MiscUtils() {
         throw new IllegalAccessError("Utility class");
-    }
-
-    /**
-     * Returns the cached image file. When no channel icon shall be shown return
-     * null instead of the icon. The icon will not be shown anyway, so returning
-     * null will drastically reduce memory consumption.
-     *
-     * @param url The url of the file
-     * @return The actual image of the file as a bitmap
-     */
-    public static Bitmap getCachedIcon(Context context, final String url) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        Boolean showIcons = prefs.getBoolean("showIconPref", true);
-        if (!showIcons) {
-            return null;
-        }
-        if (url == null || url.length() == 0) {
-            return null;
-        }
-        File file = new File(context.getCacheDir(), convertUrlToHashString(url) + ".png");
-        return BitmapFactory.decodeFile(file.toString());
     }
 
     /**
@@ -72,7 +53,7 @@ public class MiscUtils {
      */
     public static int getThemeId(final Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        Boolean theme = prefs.getBoolean("lightThemePref", true);
+        Boolean theme = prefs.getBoolean("light_theme_enabled", true);
         return (theme ? R.style.CustomTheme_Light : R.style.CustomTheme);
     }
 
@@ -85,11 +66,18 @@ public class MiscUtils {
      */
     public static void setLanguage(final Activity context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        String locale = prefs.getString("languagePref", "default");
+        String locale = prefs.getString("language", "default");
         if (!locale.equals("default")) {
             Configuration config = new Configuration(context.getResources().getConfiguration());
             config.locale = new Locale(locale);
             context.getResources().updateConfiguration(config, context.getResources().getDisplayMetrics());
         }
+    }
+
+    public static boolean isServerProfileEnabled(ServerProfile serverProfile, ServerStatus serverStatus) {
+        return serverProfile != null
+                //&& serverProfile.isEnabled()
+                && serverStatus.getHtspVersion() >= 16
+                && MainApplication.getInstance().isUnlocked();
     }
 }

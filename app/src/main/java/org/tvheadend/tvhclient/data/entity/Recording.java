@@ -3,74 +3,68 @@ package org.tvheadend.tvhclient.data.entity;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
-import android.arch.persistence.room.PrimaryKey;
 import android.text.TextUtils;
 
 import java.util.Calendar;
 import java.util.List;
 
-@Entity(tableName = "recordings")
+@Entity(tableName = "recordings", primaryKeys = {"id", "connection_id"})
 public class Recording {
 
-    @PrimaryKey
-    private int id = 0;                  // u32   required   ID of dvrEntry.
-    @ColumnInfo(name = "channel_id")
-    private int channelId = 0;               // u32   optional   Channel of dvrEntry.
-    private long start = Calendar.getInstance().getTimeInMillis();                  // s64   required   Time of when this entry was scheduled to start recording.
-    private long stop = Calendar.getInstance().getTimeInMillis() + (30 * 60 * 1000);                   // s64   required   Time of when this entry was scheduled to stop recording.
-    @ColumnInfo(name = "start_extra")
-    private long startExtra = 0;             // s64   required   Extra start time (pre-time) in minutes (Added in version 13).
-    @ColumnInfo(name = "stop_extra")
-    private long stopExtra = 0;          // s64   required   Extra stop time (post-time) in minutes (Added in version 13).
-    private long retention = 0;              // s64   required   DVR Entry retention time in days (Added in version 13).
-    private int priority = 0;                // u32   required   Priority (0 = Important, 1 = High, 2 = Normal, 3 = Low, 4 = Unimportant, 5 = Not set) (Added in version 13).
-    @ColumnInfo(name = "event_id")
-    private int eventId = 0;                 // u32   optional   Associated EPG Event ID (Added in version 13).
-    @ColumnInfo(name = "autorec_id")
-    private String autorecId = "";            // str   optional   Associated Autorec UUID (Added in version 13).
-    @ColumnInfo(name = "timerec_id")
-    private String timerecId = "";            // str   optional   Associated Timerec UUID (Added in version 18).
-    @ColumnInfo(name = "content_type")
-    private int contentType;             // u32   optional   Content Type (like in the DVB standard) (Added in version 13).
-    private String title;                // str   optional   Title of recording
-    private String subtitle;             // str   optional   Subtitle of recording (Added in version 20).
-    private String summary;              // str   optional   Short description of the recording (Added in version 6).
-    private String description;          // str   optional   Long description of the recording.
-    private String state;                // str   required   Recording state
-    private String error;                // str   optional   Plain english error description (e.g. "Aborted by user").
-    private String owner;                // str   optional   Name of the entry owner (Added in version 18).
-    private String creator;              // str   optional   Name of the entry creator (Added in version 18).
-    @ColumnInfo(name = "subscription_error")
-    private String subscriptionError;    // str   optional   Subscription error string (Added in version 20).
-    @ColumnInfo(name = "stream_errors")
-    private String streamErrors;         // str   optional   Number of recording errors (Added in version 20).
-    @ColumnInfo(name = "data_errors")
-    private String dataErrors;           // str   optional   Number of stream data errors (Added in version 20).
-    private String path;                 // str   optional   Recording path for playback.
-    @ColumnInfo(name = "data_size")
-    private long dataSize;               // s64   optional   Actual file size of the last recordings (Added in version 21).
-    private int enabled = 1;                 // u32   optional   Enabled flag (Added in version 23).
-    private String episode;              // str   optional   Episode (Added in version 18).
-    private String comment;              // str   optional   Comment (Added in version 18).
     @Ignore
-    private List<String> files;          // msg   optional   All recorded files for playback (Added in version 21).
+    private long time = Calendar.getInstance().getTimeInMillis();
+    @Ignore
+    private long offset = 30 * 60 * 1000;
+
+    private int id = 0;                     // u32   required   ID of dvrEntry.
+    @ColumnInfo(name = "channel_id")
+    private int channelId = 0;              // u32   optional   Channel of dvrEntry.
+    private long start = time;              // s64   required   Time of when this entry was scheduled to start recording.
+    private long stop = time + offset;      // s64   required   Time of when this entry was scheduled to stop recording.
+    @ColumnInfo(name = "start_extra")
+    private long startExtra = 0;            // s64   required   Extra start time (pre-time) in minutes (Added in version 13).
+    @ColumnInfo(name = "stop_extra")
+    private long stopExtra = 0;             // s64   required   Extra stop time (post-time) in minutes (Added in version 13).
+    private long retention = 0;             // s64   required   DVR Entry retention time in days (Added in version 13).
+    private int priority = 0;               // u32   required   Priority (0 = Important, 1 = High, 2 = Normal, 3 = Low, 4 = Unimportant, 5 = Not set) (Added in version 13).
+    @ColumnInfo(name = "event_id")
+    private int eventId = 0;                // u32   optional   Associated EPG Event ID (Added in version 13).
+    @ColumnInfo(name = "autorec_id")
+    private String autorecId = "";          // str   optional   Associated Autorec UUID (Added in version 13).
+    @ColumnInfo(name = "timerec_id")
+    private String timerecId = "";          // str   optional   Associated Timerec UUID (Added in version 18).
+    @ColumnInfo(name = "content_type")
+    private int contentType;                // u32   optional   Content Type (like in the DVB standard) (Added in version 13).
+    private String title;                   // str   optional   Title of recording
+    private String subtitle;                // str   optional   Subtitle of recording (Added in version 20).
+    private String summary;                 // str   optional   Short description of the recording (Added in version 6).
+    private String description;             // str   optional   Long description of the recording.
+    private String state;                   // str   required   Recording state
+    private String error;                   // str   optional   Plain english error description (e.g. "Aborted by user").
+    private String owner;                   // str   optional   Name of the entry owner (Added in version 18).
+    private String creator;                 // str   optional   Name of the entry creator (Added in version 18).
+    @ColumnInfo(name = "subscription_error")
+    private String subscriptionError;       // str   optional   Subscription error string (Added in version 20).
+    @ColumnInfo(name = "stream_errors")
+    private String streamErrors;            // str   optional   Number of recording errors (Added in version 20).
+    @ColumnInfo(name = "data_errors")
+    private String dataErrors;              // str   optional   Number of stream data errors (Added in version 20).
+    private String path;                    // str   optional   Recording path for playback.
+    @ColumnInfo(name = "data_size")
+    private long dataSize;                  // s64   optional   Actual file size of the last recordings (Added in version 21).
+    private int enabled = 1;                // u32   optional   Enabled flag (Added in version 23).
+    private String episode;                 // str   optional   Episode (Added in version 18).
+    private String comment;                 // str   optional   Comment (Added in version 18).
+    @Ignore
+    private List<String> files;             // msg   optional   All recorded files for playback (Added in version 21).
+
+    @ColumnInfo(name = "connection_id")
+    private int connectionId;
 
     @ColumnInfo(name = "channel_name")
     private String channelName;
     @ColumnInfo(name = "channel_icon")
     private String channelIcon;
-
-    @Ignore
-    public Recording(int id, String title, String state, String error) {
-        this.id = id;
-        this.title = title;
-        this.state = state;
-        this.error = error;
-    }
-
-    public Recording() {
-        // NOP
-    }
 
     public String getChannelName() {
         return channelName;
@@ -350,5 +344,13 @@ public class Recording {
 
     public void setFiles(List<String> files) {
         this.files = files;
+    }
+
+    public int getConnectionId() {
+        return connectionId;
+    }
+
+    public void setConnectionId(int connectionId) {
+        this.connectionId = connectionId;
     }
 }

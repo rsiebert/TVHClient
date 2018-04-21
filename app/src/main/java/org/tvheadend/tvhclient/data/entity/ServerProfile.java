@@ -2,13 +2,14 @@ package org.tvheadend.tvhclient.data.entity;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 
-@Entity(tableName = "server_profiles")
+@Entity(tableName = "server_profiles", indices = {@Index(value = {"id"}, unique = true)})
 public class ServerProfile {
 
     @PrimaryKey(autoGenerate = true)
-    private int id = 0;
+    private int id;
     @ColumnInfo(name = "connection_id")
     private int connectionId;
     @ColumnInfo(name = "is_enabled")

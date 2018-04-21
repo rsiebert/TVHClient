@@ -1,13 +1,12 @@
 $ 2.0.0
   % VERSION 2.0.0
-  _ 29.01.2018
-    * Added material design navigation menu
-    * UI improvements according to the material design guidelines
+  _ 20.03.2018
+    * UI changes according to the material design guidelines (new navigation menu and icons)
     * New UI on tablets when showing, editing or adding recordings
-    * New material icon set
-    * Added internal database to store and cache epg data
-    * Improved the performance of the program guide screen a bit
-    * Many internal changes to the code to improve speed and stability
+    * Added internal database to cache channels, recordings and epg data
+    * Added loading of epg data in the background
+    * Add notifications for programs (Only available in the unlocked version)
+    * Many internal changes to the entire code
 $ 1.9.11
   % VERSION 1.9.11
   _ 29.11.2017

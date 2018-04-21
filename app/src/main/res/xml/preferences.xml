@@ -3,7 +3,7 @@
 
     <PreferenceCategory android:title="@string/pref_connections" >
         <Preference
-            android:key="pref_manage_connections"
+            android:key="list_connections"
             android:summary="@string/pref_manage_connections_sum"
             android:title="@string/pref_manage_connections" >
         </Preference>
@@ -15,7 +15,7 @@
             android:dialogTitle="@string/pref_language"
             android:entries="@array/pref_language_list_display"
             android:entryValues="@array/pref_language_list"
-            android:key="languagePref"
+            android:key="language"
             android:summary="@string/pref_language_sum"
             android:title="@string/pref_language" />
         <ListPreference
@@ -24,59 +24,59 @@
             android:dialogTitle="@string/pref_default_menu"
             android:entries="@array/pref_menu_names"
             android:entryValues="@array/pref_menu_ids"
-            android:key="defaultMenuPositionPref"
+            android:key="start_screen"
             android:summary="@string/pref_default_menu_sum"
             android:title="@string/pref_default_menu" />
         <PreferenceScreen
-            android:key="pref_menu_user_interface"
+            android:key="user_interface"
             android:summary="@string/pref_customize_user_interface_sum"
             android:title="@string/pref_customize_user_interface" />
         <PreferenceScreen
-            android:key="pref_menu_notifications"
+            android:key="notifications"
             android:title="@string/pref_notifications" >
         </PreferenceScreen>
         <Preference
-            android:key="pref_download_directory"
+            android:key="download_directory"
             android:summary="@string/pref_download_directory_sum"
             android:title="@string/pref_download_directory">
         </Preference>
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_playback_and_recording" >
         <PreferenceScreen
-            android:key="pref_menu_profiles"
+            android:key="profiles"
             android:summary="@string/pref_profiles_sum"
             android:title="@string/pref_profiles" />
         <PreferenceScreen
-            android:key="pref_menu_casting"
+            android:key="casting"
             android:summary="@string/pref_casting_sum"
             android:title="@string/pref_casting" />
         <PreferenceScreen
-            android:key="pref_menu_transcoding"
+            android:key="transcoding"
             android:summary="@string/pref_transcoding_sum"
             android:title="@string/pref_transcoding" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_misc" >
         <Preference
-            android:key="pref_unlocker"
+            android:key="unlocker"
             android:summary="@string/pref_unlocker_sum"
             android:title="@string/pref_unlocker" >
         </Preference>
         <Preference
-            android:key="pref_clear_search_history"
+            android:key="clear_search_history"
             android:title="@string/pref_clear_search_history" >
         </Preference>
         <Preference
-            android:key="pref_clear_icon_cache"
+            android:key="clear_icon_cache"
             android:title="@string/pref_clear_icon_cache" >
         </Preference>
 
         <PreferenceScreen
             android:title="@string/pref_advanced_settings"
-            android:key="pref_advanced" />
+            android:key="advanced" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_information" >
         <Preference
-            android:key="pref_changelog"
+            android:key="changelog"
             android:summary="@string/pref_changelog_sum"
             android:title="@string/pref_changelog" >
         </Preference>

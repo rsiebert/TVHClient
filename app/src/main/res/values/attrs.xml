@@ -45,6 +45,8 @@
     <attr name="toolbar_background_color" format="reference" />
     <attr name="borderless_button" format="reference" />
 
+    <attr name="fab_background_color" format="reference" />
+
     <attr name="ic_menu_channels" format="reference" />
     <attr name="ic_menu_program_guide" format="reference" />
     <attr name="ic_menu_completed_recordings" format="reference" />

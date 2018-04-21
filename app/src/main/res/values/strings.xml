@@ -216,7 +216,7 @@
     <string name="clear_search_history_sum">Are you sure you want to remove all entries from the search history?</string>
     <string name="clear_search_history_done">Search history cleared</string>
     <string name="clear_icon_cache">Clear channel icon cache?</string>
-    <string name="clear_icon_cache_sum">Are you sure you want to remove all channel icons? You can do this to fetch updated icons from the server.</string>
+    <string name="clear_icon_cache_sum">Are you sure you want to remove all channel icons? You need to reconnect to load updated icons from the server.</string>
     <string name="clear_icon_cache_done">Channel icon cache cleared</string>
 
     <string name="err_auth">Access denied</string>
@@ -391,5 +391,10 @@
     <string name="pref_acra_disabled">ACRA disabled</string>
     <string name="pref_show_program_subtitle_sum">Displays the subtitle to the current program</string>
     <string name="pref_show_program_subtitle">Show program subtitle</string>
+    <string name="loading_more_programs">Loading more programs.</string>
+    <string name="loading_more_programs_finished">Finished loading more programs.</string>
+    <string name="startup">Starting</string>
+    <string name="initializing">Initializing</string>
+    <string name="add_reminder">Add reminder</string>
 
 </resources>

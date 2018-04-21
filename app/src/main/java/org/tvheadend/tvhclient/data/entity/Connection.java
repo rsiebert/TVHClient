@@ -2,6 +2,7 @@ package org.tvheadend.tvhclient.data.entity;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 import android.text.TextUtils;
 import android.util.Patterns;
@@ -9,12 +10,11 @@ import android.util.Patterns;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@Entity(tableName = "connections")
+@Entity(tableName = "connections", indices = {@Index(value = {"id"}, unique = true)})
 public class Connection {
 
     @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "id")
-    private int id = 0;
+    private int id;
     private String name = "";
     private String hostname = "";
     private int port = 9982;

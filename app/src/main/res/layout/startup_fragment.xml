@@ -30,20 +30,19 @@
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@+id/status_background"
             app:layout_constraintEnd_toEndOf="@+id/status_background"
             app:layout_constraintStart_toStartOf="@+id/status_background"
             app:layout_constraintTop_toTopOf="@+id/status_background" />
 
         <TextView
-            android:id="@+id/status_text"
+            android:id="@+id/state"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             android:layout_marginEnd="32dp"
             android:layout_marginStart="32dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
             android:text="@string/status"
             android:textAlignment="center"
             app:layout_constraintBottom_toBottomOf="@+id/status_background"
@@ -52,15 +51,40 @@
             app:layout_constraintTop_toBottomOf="@+id/progress_bar"
             app:layout_constraintVertical_bias="0.0" />
 
+        <TextView
+            android:id="@+id/details"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="32dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/status"
+            android:textAlignment="center"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/state" />
+
     </android.support.constraint.ConstraintLayout>
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
+        android:id="@+id/add_connection_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
+        app:backgroundTint="?attr/fab_background_color"
         android:visibility="gone"
-        app:srcCompat="?attr/ic_menu_settings" />
+        android:src="?attr/ic_menu_add" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/settings_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/fab_margin"
+        app:backgroundTint="?attr/fab_background_color"
+        android:visibility="gone"
+        android:src="?attr/ic_menu_settings" />
 
 </android.support.design.widget.CoordinatorLayout>

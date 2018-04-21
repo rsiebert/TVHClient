@@ -2,68 +2,67 @@ package org.tvheadend.tvhclient.data.entity;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.PrimaryKey;
+import android.arch.persistence.room.Ignore;
 
-@Entity(tableName = "programs")
+@Entity(tableName = "programs", primaryKeys = {"id", "connection_id"})
 public class Program {
 
-    @PrimaryKey
     @ColumnInfo(name = "id")
-    private int eventId;             // u32   required   Event ID
+    private int eventId;                    // u32   required   Event ID
     @ColumnInfo(name = "channel_id")
-    private int channelId;           // u32   required   The channel this event is related to.
-    private long start;              // u64   required   Start time of event, UNIX time.
-    private long stop;               // u64   required   Ending time of event, UNIX time.
-    private String title;            // str   optional   Title of event.
-    private String subtitle;         // str   optional   Subitle of event.
-    private String summary;          // str   optional   Short description of the event (Added in version 6).
-    private String description;      // str   optional   Long description of the event.
+    private int channelId;                  // u32   required   The channel this event is related to.
+    private long start;                     // u64   required   Start time of event, UNIX time.
+    private long stop;                      // u64   required   Ending time of event, UNIX time.
+    private String title;                   // str   optional   Title of event.
+    private String subtitle;                // str   optional   Subitle of event.
+    private String summary;                 // str   optional   Short description of the event (Added in version 6).
+    private String description;             // str   optional   Long description of the event.
     @ColumnInfo(name = "series_link_id")
-    private int serieslinkId;        // u32   optional   Series Link ID (Added in version 6).
+    private int serieslinkId;               // u32   optional   Series Link ID (Added in version 6).
     @ColumnInfo(name = "episode_id")
-    private int episodeId;           // u32   optional   Episode ID (Added in version 6).
+    private int episodeId;                  // u32   optional   Episode ID (Added in version 6).
     @ColumnInfo(name = "season_id")
-    private int seasonId;            // u32   optional   Season ID (Added in version 6).
+    private int seasonId;                   // u32   optional   Season ID (Added in version 6).
     @ColumnInfo(name = "brand_id")
-    private int brandId;             // u32   optional   Brand ID (Added in version 6).
+    private int brandId;                    // u32   optional   Brand ID (Added in version 6).
     @ColumnInfo(name = "content_type")
-    private int contentType;         // u32   optional   DVB content code (Added in version 4, Modified in version 6*).
+    private int contentType;                // u32   optional   DVB content code (Added in version 4, Modified in version 6*).
     @ColumnInfo(name = "age_rating")
-    private int ageRating;           // u32   optional   Minimum age rating (Added in version 6).
+    private int ageRating;                  // u32   optional   Minimum age rating (Added in version 6).
     @ColumnInfo(name = "star_rating")
-    private int starRating;          // u32   optional   Star rating (1-5) (Added in version 6).
+    private int starRating;                 // u32   optional   Star rating (1-5) (Added in version 6).
     @ColumnInfo(name = "first_aired")
-    private long firstAired;         // s64   optional   Original broadcast time, UNIX time (Added in version 6).
+    private long firstAired;                // s64   optional   Original broadcast time, UNIX time (Added in version 6).
     @ColumnInfo(name = "season_number")
-    private int seasonNumber;        // u32   optional   Season number (Added in version 6).
+    private int seasonNumber;               // u32   optional   Season number (Added in version 6).
     @ColumnInfo(name = "season_count")
-    private int seasonCount;         // u32   optional   Show season count (Added in version 6).
+    private int seasonCount;                // u32   optional   Show season count (Added in version 6).
     @ColumnInfo(name = "episode_number")
-    private int episodeNumber;       // u32   optional   Episode number (Added in version 6).
+    private int episodeNumber;              // u32   optional   Episode number (Added in version 6).
     @ColumnInfo(name = "episode_count")
-    private int episodeCount;        // u32   optional   Season episode count (Added in version 6).
+    private int episodeCount;               // u32   optional   Season episode count (Added in version 6).
     @ColumnInfo(name = "part_number")
-    private int partNumber;          // u32   optional   Multi-part episode part number (Added in version 6).
+    private int partNumber;                 // u32   optional   Multi-part episode part number (Added in version 6).
     @ColumnInfo(name = "part_count")
-    private int partCount;           // u32   optional   Multi-part episode part count (Added in version 6).
+    private int partCount;                  // u32   optional   Multi-part episode part count (Added in version 6).
     @ColumnInfo(name = "episode_on_screen")
-    private String episodeOnscreen;  // str   optional   Textual representation of episode number (Added in version 6).
-    private String image;            // str   optional   URL to a still capture from the episode (Added in version 6).
+    private String episodeOnscreen;         // str   optional   Textual representation of episode number (Added in version 6).
+    private String image;                   // str   optional   URL to a still capture from the episode (Added in version 6).
     @ColumnInfo(name = "dvr_id")
-    private int dvrId;               // u32   optional   ID of a recording (Added in version 5).
+    private int dvrId;                      // u32   optional   ID of a recording (Added in version 5).
     @ColumnInfo(name = "next_event_id")
-    private int nextEventId;         // u32   optional   ID of next event on the same channel.
+    private int nextEventId;                // u32   optional   ID of next event on the same channel.
+
+    @ColumnInfo(name = "connection_id")
+    private int connectionId;
 
     @ColumnInfo(name = "channel_name")
     private String channelName;
     @ColumnInfo(name = "channel_icon")
     private String channelIcon;
-    @ColumnInfo(name = "recording_title")
-    private String recordingTitle;
-    @ColumnInfo(name = "recording_state")
-    private String recordingState;
-    @ColumnInfo(name = "recording_error")
-    private String recordingError;
+
+    @Ignore
+    private Recording recording;
 
     public int getEventId() {
         return eventId;
@@ -289,31 +288,19 @@ public class Program {
         this.channelIcon = channelIcon;
     }
 
-    public String getRecordingTitle() {
-        return recordingTitle;
-    }
-
-    public void setRecordingTitle(String recordingTitle) {
-        this.recordingTitle = recordingTitle;
-    }
-
-    public String getRecordingState() {
-        return recordingState;
-    }
-
-    public void setRecordingState(String recordingState) {
-        this.recordingState = recordingState;
-    }
-
-    public String getRecordingError() {
-        return recordingError;
-    }
-
-    public void setRecordingError(String recordingError) {
-        this.recordingError = recordingError;
-    }
-
     public Recording getRecording() {
-        return new Recording(dvrId, recordingTitle, recordingState, recordingError);
+        return this.recording;
+    }
+
+    public void setRecording(Recording recording) {
+        this.recording = recording;
+    }
+
+    public int getConnectionId() {
+        return connectionId;
+    }
+
+    public void setConnectionId(int connectionId) {
+        this.connectionId = connectionId;
     }
 }

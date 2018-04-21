@@ -184,6 +184,8 @@
         <item name="android:windowBackground">@color/window_background_color_dark</item>
         <item name="toolbar_background_color">@color/toolbar_background_color_dark</item>
 
+        <item name="fab_background_color">@color/fab_background_color_dark</item>
+
         <item name="FragmentDividerLayoutStyle">@drawable/fragment_divider_dark</item>
         <item name="ic_menu_channels">@drawable/ic_menu_channels_dark</item>
         <item name="ic_menu_program_guide">@drawable/ic_menu_program_guide_dark</item>
@@ -266,6 +268,8 @@
         <item name="listitem_background_selector">@drawable/listitem_background_selector_light</item>
         <item name="android:windowBackground">@color/window_background_color_light</item>
         <item name="toolbar_background_color">@color/toolbar_background_color_light</item>
+
+        <item name="fab_background_color">@color/fab_background_color_light</item>
 
         <item name="FragmentDividerLayoutStyle">@drawable/fragment_divider_light</item>
         <item name="ic_menu_channels">@drawable/ic_menu_channels_light</item>

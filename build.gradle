@@ -4,9 +4,11 @@ apply from: 'properties.gradle'
 buildscript {
     repositories {
         jcenter()
+        google()
     }
+
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.1'
+        classpath 'com.android.tools.build:gradle:3.1.1'
         classpath 'org.ajoberstar:grgit:2.0.0'
         classpath 'co.riiid:gradle-github-plugin:0.4.2'
 
@@ -20,6 +22,7 @@ allprojects {
         jcenter()
         maven { url 'http://repo.maven.apache.org/maven2' }
         maven { url "https://maven.google.com" }
+        google()
     }
 }
 

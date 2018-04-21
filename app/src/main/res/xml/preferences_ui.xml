@@ -5,25 +5,25 @@
     <PreferenceCategory android:title="@string/pref_general">
         <CheckBoxPreference
             android:defaultValue="true"
-            android:key="lightThemePref"
+            android:key="light_theme_enabled"
             android:summary="@string/pref_theme_sum"
             android:title="@string/pref_theme" />
         <CheckBoxPreference
             android:name="@string/pref_date_time_format"
             android:defaultValue="false"
-            android:key="useLocalizedDateTimeFormatPref"
+            android:key="localized_date_time_format_enabled"
             android:summary="@string/pref_date_time_format_sum"
             android:title="@string/pref_date_time_format" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_channels">
         <CheckBoxPreference
             android:defaultValue="true"
-            android:key="showIconPref"
+            android:key="channel_icons_enabled"
             android:summary="@string/pref_icons_sum"
             android:title="@string/pref_icons" />
         <CheckBoxPreference
             android:defaultValue="true"
-            android:key="playWhenChannelIconSelectedPref"
+            android:key="channel_icon_starts_playback_enabled"
             android:summary="@string/pref_play_when_channel_icon_selected_sum"
             android:title="@string/pref_play_when_channel_icon_selected" />
         <ListPreference
@@ -32,22 +32,22 @@
             android:dialogTitle="@string/pref_sort_channels"
             android:entries="@array/pref_sort_channels_names"
             android:entryValues="@array/pref_sort_channels_ids"
-            android:key="sortChannelsPref"
+            android:key="channel_sort_order"
             android:summary="@string/pref_sort_channels_sum"
             android:title="@string/pref_sort_channels" />
         <CheckBoxPreference
             android:defaultValue="false"
-            android:key="showTagIconPref"
+            android:key="channel_tag_icons_enabled"
             android:summary="@string/pref_tag_icon_sum"
             android:title="@string/pref_tag_icon" />
         <CheckBoxPreference
             android:defaultValue="true"
-            android:key="showProgramProgressbarPref"
+            android:key="program_progressbar_enabled"
             android:summary="@string/pref_show_progressbar_sum"
             android:title="@string/pref_show_progressbar" />
         <CheckBoxPreference
             android:defaultValue="true"
-            android:key="showNextProgramPref"
+            android:key="next_program_title_enabled"
             android:summary="@string/pref_show_next_program_sum"
             android:title="@string/pref_show_next_program" />
     </PreferenceCategory>
@@ -55,12 +55,12 @@
     <PreferenceCategory android:title="@string/pref_programs">
         <CheckBoxPreference
             android:defaultValue="false"
-            android:key="showProgramSubtitlePref"
+            android:key="program_subtitle_enabled"
             android:summary="@string/pref_show_program_subtitle_sum"
             android:title="@string/pref_show_program_subtitle" />
         <CheckBoxPreference
             android:defaultValue="false"
-            android:key="pref_show_program_artwork"
+            android:key="program_artwork_enabled"
             android:summary="@string/pref_show_program_artwork_sum"
             android:title="@string/pref_show_program_artwork" />
     </PreferenceCategory>
@@ -73,7 +73,7 @@
             android:id="@+id/pref_epg_hours_visible"
             android:name="@string/pref_epg_hours_visible"
             android:defaultValue="4"
-            android:key="epgHoursVisible"
+            android:key="hours_of_epg_data_per_screen"
             android:numeric="integer"
             android:summary="@string/pref_epg_hours_visible_sum"
             android:title="@string/pref_epg_hours_visible" />
@@ -81,7 +81,7 @@
             android:id="@+id/pref_epg_max_days"
             android:name="@string/pref_epg_max_days"
             android:defaultValue="7"
-            android:key="epgMaxDays"
+            android:key="days_of_epg_data"
             android:numeric="integer"
             android:summary="@string/pref_epg_max_days_sum"
             android:title="@string/pref_epg_max_days" />
@@ -92,29 +92,24 @@
         android:title="@string/pref_genre_colors">
         <CheckBoxPreference
             android:defaultValue="false"
-            android:key="showGenreColorsChannelsPref"
+            android:key="genre_colors_for_channels_enabled"
             android:summary="@string/pref_genre_colors_channels_sum"
             android:title="@string/pref_genre_colors_channels" />
         <CheckBoxPreference
             android:defaultValue="false"
-            android:key="showGenreColorsProgramsPref"
+            android:key="genre_colors_for_programs_enabled"
             android:summary="@string/pref_genre_colors_programs_sum"
             android:title="@string/pref_genre_colors_programs" />
         <CheckBoxPreference
             android:defaultValue="false"
-            android:key="showGenreColorsGuidePref"
+            android:key="genre_colors_for_program_guide_enabled"
             android:summary="@string/pref_genre_colors_epg_sum"
             android:title="@string/pref_genre_colors_epg" />
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="showGenreColorsSearchPref"
-            android:summary="@string/pref_genre_colors_search_results_sum"
-            android:title="@string/pref_genre_colors_search_results" />
 
-        <org.tvheadend.tvhclient.ui.settings.SliderPreference
+        <org.tvheadend.tvhclient.features.settings.SliderPreference
             android:defaultValue="70"
             android:dialogMessage="@string/pref_genre_colors_visibility_message"
-            android:key="showGenreColorsVisibilityPref"
+            android:key="genre_color_transparency"
             android:summary="@string/pref_genre_colors_visibility_value"
             android:title="@string/pref_genre_colors_visibility"
             custom:maximumValue="100"
@@ -126,17 +121,12 @@
         android:title="@string/pref_menu_visibility">
         <CheckBoxPreference
             android:defaultValue="false"
-            android:key="hideMenuDeleteAllRecordingsPref"
+            android:key="delete_all_recordings_menu_enabled"
             android:summary="@string/pref_hide_menu_delete_all_recordings_sum"
             android:title="@string/pref_hide_menu_delete_all_recordings" />
         <CheckBoxPreference
             android:defaultValue="false"
-            android:key="hideMenuCancelAllRecordingsPref"
-            android:summary="@string/pref_hide_menu_cancel_all_recordings_sum"
-            android:title="@string/pref_hide_menu_cancel_all_recordings" />
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="visibleMenuIconTagsPref"
+            android:key="channel_tag_menu_enabled"
             android:summary="@string/pref_visible_menu_icon_tags_sum"
             android:title="@string/pref_visible_menu_icon_tags" />
     </PreferenceCategory>

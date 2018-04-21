@@ -11,7 +11,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
-        android:name="org.tvheadend.tvhclient.TVHClientApplication"
+        android:name="org.tvheadend.tvhclient.MainApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -30,7 +30,10 @@
             android:value="2.1" />
         <meta-data
             android:name="com.google.android.gms.cast.framework.OPTIONS_PROVIDER_CLASS_NAME"
-            android:value="org.tvheadend.tvhclient.TVHClientApplication" />
+            android:value="org.tvheadend.tvhclient.MainApplication" />
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="8ea21b9d2155f0843c3c57f71a18568c71ef17f9" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -42,7 +45,7 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <activity android:name=".ui.startup.StartupActivity">
+        <activity android:name=".features.startup.StartupActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -56,7 +59,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="org.tvheadend.tvhclient.ui.search.SearchResultActivity"
+            android:name=".features.search.SearchResultActivity"
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
@@ -66,35 +69,46 @@
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
         </activity>
-        <activity android:name="org.tvheadend.tvhclient.ui.settings.SettingsActivity" />
+        <activity android:name="org.tvheadend.tvhclient.features.settings.SettingsActivity" />
         <activity
-            android:name="org.tvheadend.tvhclient.data.remote.PlayActivity"
+            android:name="org.tvheadend.tvhclient.features.playback.PlayActivity"
             android:theme="@android:style/Theme.NoTitleBar" />
         <activity
-            android:name="org.tvheadend.tvhclient.data.remote.DownloadActivity"
+            android:name="org.tvheadend.tvhclient.features.download.DownloadActivity"
             android:theme="@android:style/Theme.NoTitleBar" />
 
         <service
-            android:name=".service.EpgSyncService"
+            android:name=".data.remote.EpgSyncService"
             android:enabled="true" />
 
         <provider
-            android:name="org.tvheadend.tvhclient.data.local.SuggestionProvider"
-            android:authorities="org.tvheadend.tvhclient.data.local.SuggestionProvider"
+            android:name=".features.search.SuggestionProvider"
+            android:authorities="org.tvheadend.tvhclient.features.search.SuggestionProvider"
             android:exported="false" />
-        <receiver android:name=".data.local.NotificationReceiver" />
 
-        <activity android:name=".ui.settings.SettingsManageConnectionActivity" />
-        <activity android:name=".ui.recordings.common.RecordingAddEditActivity" />
-        <activity android:name=".ui.recordings.recordings.RecordingDetailsActivity" />
-        <activity android:name=".ui.programs.ProgramListActivity" />
-        <activity android:name=".ui.misc.ChangeLogActivity" />
-        <activity android:name=".ui.MainActivity" />
-        <activity android:name=".ui.navigation.NavigationActivity" />
-        <activity android:name=".ui.programs.ProgramDetailsActivity" />
-        <activity android:name=".ui.search.SearchActivity" />
-        <activity android:name=".ui.misc.InfoActivity" />
-        <activity android:name=".ui.misc.UnlockerActivity" />
+        <receiver android:name=".features.notifications.ProgramNotificationReceiver" />
+        <receiver android:name=".features.notifications.RecordingNotificationReceiver" />
+
+        <activity android:name=".features.settings.SettingsAddEditConnectionActivity" />
+        <activity android:name=".features.dvr.RecordingAddEditActivity" />
+        <activity android:name=".features.dvr.recordings.RecordingDetailsActivity" />
+        <activity android:name=".features.programs.ProgramListActivity" />
+        <activity android:name=".features.changelog.ChangeLogActivity" />
+        <activity android:name=".features.MainActivity" />
+        <activity android:name=".features.navigation.NavigationActivity" />
+        <activity
+            android:name=".features.programs.ProgramDetailsActivity"
+            android:excludeFromRecents="true"
+            android:launchMode="singleTask"
+            android:taskAffinity="" />
+        <activity android:name=".features.search.SearchActivity" />
+        <activity android:name=".features.information.InfoActivity" />
+        <activity android:name=".features.purchase.UnlockerActivity" />
+        <activity android:name=".features.playback.PlayRecordingActivity" />
+        <activity android:name=".features.playback.PlayChannelActivity" />
+        <activity android:name=".features.playback.BasePlayActivity" />
+        <activity android:name=".features.casting.CastChannelActivity" />
+        <activity android:name=".features.casting.CastRecordingActivity" />
 
     </application>
 </manifest>

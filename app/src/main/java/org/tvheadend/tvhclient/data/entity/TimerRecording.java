@@ -2,31 +2,32 @@ package org.tvheadend.tvhclient.data.entity;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
-@Entity(tableName = "timer_recordings")
+@Entity(tableName = "timer_recordings", primaryKeys = {"id", "connection_id"})
 public class TimerRecording {
 
-    @PrimaryKey
     @NonNull
-    private String id = "";      // str   required   ID (string!) of dvrTimerecEntry.
-    private String title;        // str   required   Title for the recordings.
-    private String directory;    // str   optional   Forced directory name (Added in version 19).
-    private int enabled = 1;         // u32   required   Title for the recordings.
-    private String name;         // str   required   Name for this timerec entry.
+    private String id = "";             // str   required   ID (string!) of dvrTimerecEntry.
+    private String title;               // str   required   Title for the recordings.
+    private String directory;           // str   optional   Forced directory name (Added in version 19).
+    private int enabled = 1;            // u32   required   Title for the recordings.
+    private String name;                // str   required   Name for this timerec entry.
     @ColumnInfo(name = "config_name")
-    private String configName;   // str   required   DVR Configuration Name / UUID.
+    private String configName;          // str   required   DVR Configuration Name / UUID.
     @ColumnInfo(name = "channel_id")
-    private int channelId = 0;         // u32   required   Channel ID.
+    private int channelId = 0;          // u32   required   Channel ID.
     @ColumnInfo(name = "days_of_week")
-    private int daysOfWeek = 127;      // u32   optional   Bitmask - Days of week (0x01 = Monday, 0x40 = Sunday, 0x7f = Whole Week, 0 = Not set).
-    private int priority = 2;        // u32   optional   Priority (0 = Important, 1 = High, 2 = Normal, 3 = Low, 4 = Unimportant, 5 = Not set).
-    private long start = 0;          // u32   required   Minutes from midnight (up to 24*60) for the start of the time window (including)
-    private long stop = 0;           // u32   required   Minutes from modnight (up to 24*60) for the end of the time window (including, cross-noon allowed)
-    private int retention;       // u32   optional   Retention in days.
-    private String owner;        // str   optional   Owner of this timerec entry.
-    private String creator;      // str   optional   Creator of this timerec entry.
+    private int daysOfWeek = 127;       // u32   optional   Bitmask - Days of week (0x01 = Monday, 0x40 = Sunday, 0x7f = Whole Week, 0 = Not set).
+    private int priority = 2;           // u32   optional   Priority (0 = Important, 1 = High, 2 = Normal, 3 = Low, 4 = Unimportant, 5 = Not set).
+    private long start = 0;             // u32   required   Minutes from midnight (up to 24*60) for the start of the time window (including)
+    private long stop = 0;              // u32   required   Minutes from modnight (up to 24*60) for the end of the time window (including, cross-noon allowed)
+    private int retention;              // u32   optional   Retention in days.
+    private String owner;               // str   optional   Owner of this timerec entry.
+    private String creator;             // str   optional   Creator of this timerec entry.
+
+    @ColumnInfo(name = "connection_id")
+    private int connectionId;
 
     @ColumnInfo(name = "channel_name")
     private String channelName;
@@ -167,5 +168,13 @@ public class TimerRecording {
 
     public int getDuration() {
         return (int) ((this.stop - this.start) / 60 / 1000);
+    }
+
+    public int getConnectionId() {
+        return connectionId;
+    }
+
+    public void setConnectionId(int connectionId) {
+        this.connectionId = connectionId;
     }
 }

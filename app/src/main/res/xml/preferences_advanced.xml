@@ -1,66 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory android:title="@string/pref_crash_reporting_settings">
         <CheckBoxPreference
-            android:key="acra.enable"
-            android:title="@string/pref_disable_acra"
-            android:summaryOn="@string/pref_acra_enabled"
-            android:summaryOff="@string/pref_acra_disabled"
-            android:defaultValue="true"/>
+            android:defaultValue="true"
+            android:key="crash_reports_enabled"
+            android:summaryOff="Crashlytics disabled"
+            android:summaryOn="Crashlytics enabled"
+            android:title="Enable crash sending reports" />
+
         <CheckBoxPreference
             android:defaultValue="false"
-            android:key="pref_debug_mode"
+            android:key="debug_mode_enabled"
             android:summary="@string/pref_debug_mode_sum"
-            android:title="@string/pref_debug_mode" >
-        </CheckBoxPreference>
+            android:title="@string/pref_debug_mode" />
+
         <Preference
-            android:dependency="pref_debug_mode"
-            android:key="pref_send_logfile"
+            android:dependency="debug_mode_enabled"
+            android:key="send_debug_logfile_enabled"
             android:summary="@string/pref_send_logfile_sum"
-            android:title="@string/pref_send_logfile" >
-        </Preference>
+            android:title="@string/pref_send_logfile" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_connections">
         <EditTextPreference
-            android:id="@+id/pref_connection_timeout"
+            android:id="@+id/connection_timeout"
             android:name="@string/pref_connection_timeout"
             android:defaultValue="5"
-            android:key="connectionTimeout"
+            android:key="connection_timeout"
             android:numeric="integer"
-            android:summary="@string/pref_connection_timeout_sum"
+            android:summary="Defines the time in seconds until the server must have sent a reply. Increasing the value can improve the connectivity on slow networks."
             android:title="@string/pref_connection_timeout" />
+
+        <EditTextPreference
+            android:defaultValue="3"
+            android:key="connection_retries"
+            android:numeric="integer"
+            android:summary="Defines how often the app should try to reconnect to the server when the connection has failed."
+            android:title="Connection retries" />
+
     </PreferenceCategory>
     <PreferenceCategory android:title="EPG">
         <EditTextPreference
             android:defaultValue="4"
-            android:key="pref_epg_hours_to_fetch"
-            android:singleLine="true"
+            android:key="epg_hours_to_fetch"
             android:numeric="integer"
-            android:title="Hours of EPG data to load" />
+            android:summary="Number of hours of EPG data that shall be loaded for one channel from the server."
+            android:title="Amount of EPG hours to load" />
 
         <EditTextPreference
-            android:defaultValue="15"
-            android:key="pref_epg_fetch_interval"
-            android:singleLine="true"
+            android:defaultValue="2"
+            android:key="epg_fetch_time_interval"
             android:numeric="integer"
-            android:title="Background EPG loading time interval" />
+            android:summary="Time in hours to periodically load more EPG data from the server in the background. This interval should be smaller then the amount of EPG hours to load to avoid running out of EPG data."
+            android:title="Time interval to load more EPG data" />
 
         <EditTextPreference
             android:defaultValue="7"
-            android:key="pref_epg_days_before_removal"
-            android:singleLine="true"
+            android:key="epg_days_before_removal"
             android:numeric="integer"
-            android:title="Age of EPG data before removal" />
+            android:summary="Time in days that the EPG "
+            android:title="Remove outdated EPG data that is older than the specified number in days." />
 
         <EditTextPreference
-            android:defaultValue="120"
-            android:key="pref_epg_removal_interval"
-            android:singleLine="true"
+            android:defaultValue="3"
+            android:key="epg_removal_time_interval"
             android:numeric="integer"
-            android:title="Background EPG removal time interval" />
-    </PreferenceCategory>
+            android:summary="Time in hours to periodically remove outdated EPG data from the database. This prevents the database from becoming too large."
+            android:title="Time interval to remove outdated EPG data" />
 
+    </PreferenceCategory>
+    <PreferenceCategory android:title="Database">
+        <Preference
+            android:key="clear_database"
+            android:summary="Remove all channels, tags, programs and recordings from the database."
+            android:title="Clear database" />
+    </PreferenceCategory>
 </PreferenceScreen>

@@ -5,7 +5,7 @@
 
         <CheckBoxPreference
             android:defaultValue="false"
-            android:key="pref_show_cast_minicontroller"
+            android:key="casting_minicontroller_enabled"
             android:summary="@string/pref_show_cast_minicontroller_sum"
             android:title="@string/pref_show_cast_minicontroller" />
 

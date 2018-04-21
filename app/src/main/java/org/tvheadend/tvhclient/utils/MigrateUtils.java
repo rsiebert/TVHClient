@@ -5,19 +5,23 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
-import android.util.Log;
 
 import org.tvheadend.tvhclient.BuildConfig;
-import org.tvheadend.tvhclient.data.AppDatabase;
-import org.tvheadend.tvhclient.data.dao.ConnectionDao;
+import org.tvheadend.tvhclient.data.local.db.AppRoomDatabase;
+import org.tvheadend.tvhclient.data.local.db.DatabaseHelperForMigration;
+import org.tvheadend.tvhclient.data.local.dao.ConnectionDao;
+import org.tvheadend.tvhclient.data.local.dao.ServerStatusDao;
 import org.tvheadend.tvhclient.data.entity.Connection;
+import org.tvheadend.tvhclient.data.entity.ServerStatus;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import timber.log.Timber;
 
 public class MigrateUtils {
     private static final String TAG = MigrateUtils.class.getSimpleName();
@@ -32,12 +36,13 @@ public class MigrateUtils {
         int currentApplicationVersion = BuildConfig.BUILD_VERSION;
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         int lastInstalledApplicationVersion = sharedPreferences.getInt("build_version_for_migration", 0);
-        Log.i(TAG, "Migrating from " + lastInstalledApplicationVersion + " to " + currentApplicationVersion);
+        Timber.i("Migrating from " + lastInstalledApplicationVersion + " to " + currentApplicationVersion);
 
         if (currentApplicationVersion != lastInstalledApplicationVersion) {
             if (lastInstalledApplicationVersion < VERSION_101) {
                 migrateConvertStartScreenPreference(context);
                 migrateConnectionsFromDatabase(context);
+                migratePreferences(context);
             }
         }
 
@@ -48,14 +53,14 @@ public class MigrateUtils {
     }
 
     private static void migrateConnectionsFromDatabase(Context context) {
-        Log.d(TAG, "migrateConnectionsFromDatabase() called with: context = [" + context + "]");
-        SQLiteDatabase db = DatabaseHelper.getInstance(context).getReadableDatabase();
+        Timber.d("migrateConnectionsFromDatabase() called with: context = [" + context + "]");
+        SQLiteDatabase db = DatabaseHelperForMigration.getInstance(context).getReadableDatabase();
 
         List<Connection> connectionList = new ArrayList<>();
 
         // Save the connection credentials in a file and drop the database
         try {
-            Log.d(TAG, "migrateConnectionsFromDatabase: database is open " + db.isOpen());
+            Timber.d("migrateConnectionsFromDatabase: database is open " + db.isOpen());
             Cursor c = db.rawQuery("SELECT * FROM connections", null);
             while (c.moveToNext()) {
                 Connection connection = new Connection();
@@ -72,45 +77,53 @@ public class MigrateUtils {
                 connection.setWolUseBroadcast((c.getInt(c.getColumnIndex("wol_broadcast")) > 0));
                 connection.setWolEnabled((!TextUtils.isEmpty(connection.getWolMacAddress())));
 
-                Log.d(TAG, "migrateConnectionsFromDatabase: Added existing connection " + connection.getName());
+                Timber.d("migrateConnectionsFromDatabase: Added existing connection " + connection.getName());
                 connectionList.add(connection);
             }
             c.close();
         } catch (SQLiteException ex) {
-            Log.d(TAG, "migrateConnectionsFromDatabase: error executing query " + ex.getLocalizedMessage());
+            Timber.d("migrateConnectionsFromDatabase: error executing query " + ex.getLocalizedMessage());
         }
         db.close();
 
         // delete the entire database so we can restart with version one in room
-        Log.d(TAG, "migrateConnectionsFromDatabase: deleting old database");
+        Timber.d("migrateConnectionsFromDatabase: deleting old database");
         context.deleteDatabase("tvhclient");
 
         if (connectionList.size() > 0) {
-            Log.d(TAG, "migrateConnectionsFromDatabase: getting room db");
-            AppDatabase roomDb = AppDatabase.getInstance(context);
+            Timber.d("migrateConnectionsFromDatabase: getting room db");
+            AppRoomDatabase roomDb = AppRoomDatabase.getInstance(context);
 
-            Log.d(TAG, "migrateConnectionsFromDatabase: adding old connections to room db");
-            new MigrateConnectionsTask(roomDb.connectionDao(), connectionList).execute();
+            Timber.d("migrateConnectionsFromDatabase: adding old connections to room db");
+            new MigrateConnectionsTask(roomDb.connectionDao(), roomDb.serverStatusDao(), connectionList).execute();
         }
     }
 
     private static class MigrateConnectionsTask extends AsyncTask<Void, Void, Void> {
-        private final ConnectionDao dao;
-        private final List<Connection> list;
+        private final ConnectionDao connectionDao;
+        private final List<Connection> connectionList;
+        private final ServerStatusDao serverStatusDao;
 
-        MigrateConnectionsTask(ConnectionDao connectionDao, List<Connection> connectionList) {
-            this.dao = connectionDao;
-            this.list = connectionList;
+        MigrateConnectionsTask(ConnectionDao connectionDao, ServerStatusDao serverStatusDao, List<Connection> connectionList) {
+            this.connectionDao = connectionDao;
+            this.serverStatusDao = serverStatusDao;
+            this.connectionList = connectionList;
         }
 
         @Override
         protected Void doInBackground(Void... voids) {
-            dao.insertAll(list);
+            // Insert all connections and also add a server status for each connection
+            connectionDao.insertAll(connectionList);
+            for (Connection connection : connectionList) {
+                ServerStatus serverStatus = new ServerStatus();
+                serverStatus.setConnectionId((int) connection.getId());
+                serverStatusDao.insert(serverStatus);
+            }
             return null;
         }
     }
+
     private static void migrateConvertStartScreenPreference(Context context) {
-        Log.d(TAG, "migrateConvertStartScreenPreference() called with: context = [" + context + "]");
         // migrate preferences from old names to new
         // names to have a consistent naming scheme afterwards
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -131,39 +144,57 @@ public class MigrateUtils {
             }
 
             SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putString("defaultMenuPositionPref", String.valueOf(value));
+            editor.putString("start_screen", String.valueOf(value));
+            editor.remove("defaultMenuPositionPref");
             editor.apply();
         } catch (NumberFormatException e) {
             // NOP
         }
     }
 
-    private static class DatabaseHelper extends SQLiteOpenHelper {
+    /**
+     * Renames the names of the old preferences to the new naming scheme
+     *
+     * @param context The application context
+     */
+    private static void migratePreferences(Context context) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
 
-        private static DatabaseHelper instance = null;
+        // Advanced settings preferences
+        editor.putString("connection_timeout", sharedPreferences.getString("connectionTimeout", "5"));
+        editor.putBoolean("debug_mode_enabled", sharedPreferences.getBoolean("pref_debug_mode", false));
+        editor.putBoolean("send_debug_logfile_enabled", sharedPreferences.getBoolean("pref_send_logfile", false));
 
-        public static DatabaseHelper getInstance(Context ctx) {
-            Log.d(TAG, "getInstance() called with: ctx = [" + ctx + "]");
-            if (instance == null)
-                instance = new DatabaseHelper(ctx);
-            return instance;
-        }
+        // UI preferences
+        editor.putBoolean("light_theme_enabled", sharedPreferences.getBoolean("lightThemePref", true));
+        editor.putBoolean("localized_date_time_format_enabled", sharedPreferences.getBoolean("useLocalizedDateTimeFormatPref", false));
+        editor.putString("channel_sort_order", sharedPreferences.getString("sortChannelsPref", "0"));
+        editor.putBoolean("channel_name_enabled", sharedPreferences.getBoolean("showChannelNamePref", true));
+        editor.putBoolean("program_progressbar_enabled", sharedPreferences.getBoolean("showProgramProgressbarPref", true));
+        editor.putBoolean("program_subtitle_enabled", sharedPreferences.getBoolean("showProgramSubtitlePref", true));
+        editor.putBoolean("next_program_title_enabled", sharedPreferences.getBoolean("showNextProgramPref", true));
+        editor.putBoolean("channel_icons_enabled", sharedPreferences.getBoolean("showIconPref", true));
+        editor.putBoolean("genre_colors_for_channels_enabled", sharedPreferences.getBoolean("showGenreColorsChannelsPref", false));
+        editor.putBoolean("genre_colors_for_programs_enabled", sharedPreferences.getBoolean("showGenreColorsProgramsPref", false));
+        editor.putBoolean("genre_colors_for_program_guide_enabled", sharedPreferences.getBoolean("showGenreColorsGuidePref", false));
+        editor.putInt("genre_color_transparency", sharedPreferences.getInt("showGenreColorsVisibility", 70));
+        editor.putBoolean("channel_icon_starts_playback_enabled", sharedPreferences.getBoolean("playWhenChannelIconSelectedPref", true));
+        editor.putString("hours_of_epg_data_per_screen", sharedPreferences.getString("epgHoursVisible", "4"));
+        editor.putString("days_of_epg_data", sharedPreferences.getString("epgMaxDays", "7"));
+        editor.putBoolean("delete_all_recordings_menu_enabled", sharedPreferences.getBoolean("hideMenuDeleteAllRecordingsPref", false));
+        editor.putBoolean("channel_tag_menu_enabled", sharedPreferences.getBoolean("visibleMenuIconTagsPref", true));
 
-        private DatabaseHelper(Context context) {
-            super(context, "tvhclient", null, 9);
-            Log.d(TAG, "DatabaseHelper() called with: context = [" + context + "]");
-        }
+        // Casting preferences
+        editor.putBoolean("casting_minicontroller_enabled", sharedPreferences.getBoolean("pref_show_cast_minicontroller", true));
 
-        @Override
-        public void onCreate(SQLiteDatabase sqLiteDatabase) {
-            Log.d(TAG, "onCreate() called with: sqLiteDatabase = [" + sqLiteDatabase + "]");
+        // Notification preferences
+        editor.putBoolean("notifications_enabled", sharedPreferences.getBoolean("pref_show_notifications", false));
+        editor.putString("notification_lead_time", sharedPreferences.getString("pref_show_notification_offset", "5"));
 
-        }
+        // Main preferences
+        editor.putString("download_directory", sharedPreferences.getString("pref_download_directory", Environment.DIRECTORY_DOWNLOADS));
 
-        @Override
-        public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
-            Log.d(TAG, "onUpgrade() called with: sqLiteDatabase = [" + sqLiteDatabase + "], i = [" + i + "], i1 = [" + i1 + "]");
-
-        }
+        editor.apply();
     }
 }

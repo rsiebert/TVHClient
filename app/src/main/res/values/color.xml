@@ -68,6 +68,7 @@
 	<color name="material_drawer_selected_text_dark">@color/material_drawer_primary</color>
 	<color name="material_drawer_header_selection_text_dark">#FFF</color>
 
+	<color name="fab_background_color_dark">#7f8c8d</color>
 
 	<!-- MaterialDrawer DEFAULT colors -->
 	<color name="material_drawer_background_light">#F9F9F9</color>
@@ -82,4 +83,6 @@
 	<color name="material_drawer_selected_light">#E8E8E8</color>
 	<color name="material_drawer_selected_text_light">#2196F3</color>
 	<color name="material_drawer_header_selection_text_light">#FFF</color>
+
+	<color name="fab_background_color_light">#bdc3c7</color>
 </resources>

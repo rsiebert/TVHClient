@@ -3,34 +3,29 @@ package org.tvheadend.tvhclient.data.entity;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
-import android.arch.persistence.room.PrimaryKey;
-import android.arch.persistence.room.RoomWarnings;
 
 import java.util.List;
 
-
-@SuppressWarnings(RoomWarnings.PRIMARY_KEY_FROM_EMBEDDED_IS_DROPPED)
-@Entity(tableName = "channels")
+@Entity(tableName = "channels", primaryKeys = {"id", "connection_id"})
 public class Channel {
 
-    @PrimaryKey
     @ColumnInfo(name = "id")
-    private int channelId;             // u32   required   ID of channel.
-    @ColumnInfo(name = "channel_number")
-    private int channelNumber;         // u32   required   Channel number, 0 means unconfigured.
-    @ColumnInfo(name = "channel_number_minor")
-    private int channelNumberMinor;    // u32   optional   Minor channel number (Added in version 13).
-    @ColumnInfo(name = "channel_name")
-    private String channelName;        // str   required   Name of channel.
-    @ColumnInfo(name = "channel_icon")
-    private String channelIcon;        // str   optional   URL to an icon representative for the channel
+    private int id;                      // u32   required   ID of channel.
+    @ColumnInfo(name = "number")
+    private int number;                  // u32   required   Channel number, 0 means unconfigured.
+    @ColumnInfo(name = "number_minor")
+    private int numberMinor;             // u32   optional   Minor channel number (Added in version 13).
+    @ColumnInfo(name = "name")
+    private String name;                 // str   required   Name of channel.
+    @ColumnInfo(name = "icon")
+    private String icon;                 // str   optional   URL to an icon representative for the channel
     @ColumnInfo(name = "event_id")
-    private int eventId;               // u32   optional   ID of the current event on this channel.
+    private int eventId;                        // u32   optional   ID of the current event on this channel.
     @ColumnInfo(name = "next_event_id")
-    private int nextEventId;           // u32   optional   ID of the next event on the channel.
+    private int nextEventId;                    // u32   optional   ID of the next event on the channel.
 
-    @ColumnInfo(name = "time")
-    private long time;
+    @ColumnInfo(name = "connection_id")
+    private int connectionId;
 
     @ColumnInfo(name = "program_id")
     private int programId;
@@ -48,56 +43,50 @@ public class Channel {
     private int nextProgramId;
     @ColumnInfo(name = "next_program_title")
     private String nextProgramTitle;
-    @ColumnInfo(name = "recording_id")
-    private int recordingId;
-    @ColumnInfo(name = "recording_title")
-    private String recordingTitle;
-    @ColumnInfo(name = "recording_state")
-    private String recordingState;
-    @ColumnInfo(name = "recording_error")
-    private String recordingError;
 
+    @Ignore
+    private String displayNumber;
     @Ignore
     private List<Integer> tags;
 
-    public int getChannelId() {
-        return channelId;
+    public int getId() {
+        return id;
     }
 
-    public void setChannelId(int channelId) {
-        this.channelId = channelId;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public int getChannelNumber() {
-        return channelNumber;
+    public int getNumber() {
+        return number;
     }
 
-    public void setChannelNumber(int channelNumber) {
-        this.channelNumber = channelNumber;
+    public void setNumber(int number) {
+        this.number = number;
     }
 
-    public int getChannelNumberMinor() {
-        return channelNumberMinor;
+    public int getNumberMinor() {
+        return numberMinor;
     }
 
-    public void setChannelNumberMinor(int channelNumberMinor) {
-        this.channelNumberMinor = channelNumberMinor;
+    public void setNumberMinor(int numberMinor) {
+        this.numberMinor = numberMinor;
     }
 
-    public String getChannelName() {
-        return channelName;
+    public String getName() {
+        return name;
     }
 
-    public void setChannelName(String channelName) {
-        this.channelName = channelName;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getChannelIcon() {
-        return channelIcon;
+    public String getIcon() {
+        return icon;
     }
 
-    public void setChannelIcon(String channelIcon) {
-        this.channelIcon = channelIcon;
+    public void setIcon(String icon) {
+        this.icon = icon;
     }
 
     public int getEventId() {
@@ -180,42 +169,6 @@ public class Channel {
         this.nextProgramTitle = nextProgramTitle;
     }
 
-    public int getRecordingId() {
-        return recordingId;
-    }
-
-    public void setRecordingId(int recordingId) {
-        this.recordingId = recordingId;
-    }
-
-    public String getRecordingTitle() {
-        return recordingTitle;
-    }
-
-    public void setRecordingTitle(String recordingTitle) {
-        this.recordingTitle = recordingTitle;
-    }
-
-    public String getRecordingState() {
-        return recordingState;
-    }
-
-    public void setRecordingState(String recordingState) {
-        this.recordingState = recordingState;
-    }
-
-    public String getRecordingError() {
-        return recordingError;
-    }
-
-    public void setRecordingError(String recordingError) {
-        this.recordingError = recordingError;
-    }
-
-    public Recording getRecording() {
-        return new Recording(recordingId, recordingTitle, recordingState, recordingError);
-    }
-
     public List<Integer> getTags() {
         return tags;
     }
@@ -224,11 +177,19 @@ public class Channel {
         this.tags = tags;
     }
 
-    public long getTime() {
-        return time;
+    public int getConnectionId() {
+        return connectionId;
     }
 
-    public void setTime(long time) {
-        this.time = time;
+    public void setConnectionId(int connectionId) {
+        this.connectionId = connectionId;
+    }
+
+    public String getDisplayNumber() {
+        return displayNumber;
+    }
+
+    public void setDisplayNumber(String displayNumber) {
+        this.displayNumber = displayNumber;
     }
 }

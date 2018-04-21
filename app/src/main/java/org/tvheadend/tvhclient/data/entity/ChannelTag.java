@@ -3,29 +3,30 @@ package org.tvheadend.tvhclient.data.entity;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
-import android.arch.persistence.room.PrimaryKey;
 
 import java.util.List;
 
-@Entity(tableName = "channel_tags")
+@Entity(tableName = "channel_tags", primaryKeys = {"id", "connection_id"})
 public class ChannelTag {
 
-    @PrimaryKey
     @ColumnInfo(name = "id")
-    private int tagId;               // u32   required   ID of tag.
+    private int tagId;                      // u32   required   ID of tag.
     @ColumnInfo(name = "tag_name")
-    private String tagName;          // str   required   Name of tag.
+    private String tagName;                 // str   required   Name of tag.
     @ColumnInfo(name = "tag_index")
-    private int tagIndex;            // u32   optional   Index value for sorting (default by from min to max) (Added in version 18).
+    private int tagIndex;                   // u32   optional   Index value for sorting (default by from min to max) (Added in version 18).
     @ColumnInfo(name = "tag_icon")
-    private String tagIcon;          // str   optional   URL to an icon representative for the channel.
+    private String tagIcon;                 // str   optional   URL to an icon representative for the channel.
     @ColumnInfo(name = "tag_titled_icon")
-    private int tagTitledIcon;       // u32   optional   Icon includes a title
+    private int tagTitledIcon;              // u32   optional   Icon includes a title
     @ColumnInfo(name = "channel_count")
     private int channelCount;
 
+    @ColumnInfo(name = "connection_id")
+    private int connectionId;
+
     @Ignore
-    private List<Integer> members;   // u32[] optional   Channel IDs of those that belong to the tag
+    private List<Integer> members;          // u32[] optional   Channel IDs of those that belong to the tag
 
     public int getTagId() {
         return tagId;
@@ -81,5 +82,13 @@ public class ChannelTag {
 
     public void setChannelCount(int channelCount) {
         this.channelCount = channelCount;
+    }
+
+    public int getConnectionId() {
+        return connectionId;
+    }
+
+    public void setConnectionId(int connectionId) {
+        this.connectionId = connectionId;
     }
 }
