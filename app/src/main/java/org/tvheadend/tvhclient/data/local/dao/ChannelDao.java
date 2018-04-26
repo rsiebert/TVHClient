@@ -71,7 +71,7 @@ public interface ChannelDao {
             "   WHEN 1 THEN c.name " +
             "   WHEN 2 THEN c.number " +
             "END ASC")
-    List<Channel> loadAllChannelsByTimeAndTag(long time, int tagId, int sortOrder);
+    List<Channel> loadAllChannelsByTimeAndTagSync(long time, int tagId, int sortOrder);
 
     @Transaction
     @Query("SELECT c.*, " +
@@ -93,7 +93,7 @@ public interface ChannelDao {
             "   WHEN 1 THEN c.name " +
             "   WHEN 2 THEN c.number " +
             "END ASC")
-    List<Channel> loadAllChannelsByTime(long time, int sortOrder);
+    List<Channel> loadAllChannelsByTimeSync(long time, int sortOrder);
 
     @Query("SELECT COUNT (*) FROM channels " +
             "WHERE connection_id IN (SELECT id FROM connections WHERE active = 1)")

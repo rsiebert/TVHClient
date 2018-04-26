@@ -6,15 +6,15 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 
-import org.tvheadend.tvhclient.data.local.db.AppRoomDatabase;
-import org.tvheadend.tvhclient.data.local.dao.ChannelDao;
-import org.tvheadend.tvhclient.data.local.dao.ChannelTagDao;
-import org.tvheadend.tvhclient.data.local.dao.ProgramDao;
-import org.tvheadend.tvhclient.data.local.dao.ServerStatusDao;
 import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.data.entity.ChannelTag;
 import org.tvheadend.tvhclient.data.entity.Program;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
+import org.tvheadend.tvhclient.data.local.dao.ChannelDao;
+import org.tvheadend.tvhclient.data.local.dao.ChannelTagDao;
+import org.tvheadend.tvhclient.data.local.dao.ProgramDao;
+import org.tvheadend.tvhclient.data.local.dao.ServerStatusDao;
+import org.tvheadend.tvhclient.data.local.db.AppRoomDatabase;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -29,7 +29,6 @@ public class ChannelAndProgramRepository {
         this.db = AppRoomDatabase.getInstance(context.getApplicationContext());
         this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
     }
-
 
     public List<Channel> getAllChannelsSync() {
         try {
@@ -75,6 +74,7 @@ public class ChannelAndProgramRepository {
     public List<Channel> getAllChannelsByTimeAndTagSync(long currentTime, int channelTagId) {
         try {
             int channelSortOrder = Integer.valueOf(sharedPreferences.getString("channel_sort_order", "0"));
+            // TODO load this stuff here in the  background and return the calculated values, do not load in the viewmodel or fragment task
             return new LoadAllChannelsTask(db.channelDao(), currentTime, channelTagId, channelSortOrder).execute().get();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
@@ -166,7 +166,7 @@ public class ChannelAndProgramRepository {
                 return dao.loadAllChannelsSync(sortOrder);
             } else if (currentTime > 0 && channelTagId == 0) {
                 Timber.d("doInBackground: currentTime > 0 and channelTagId is 0");
-                List<Channel> channels = dao.loadAllChannelsByTime(currentTime, sortOrder);
+                List<Channel> channels = dao.loadAllChannelsByTimeSync(currentTime, sortOrder);
 
                 for (Channel c : channels) {
                     Timber.d("Found channel " + c.getName() + " with id " + c.getId());
@@ -174,7 +174,7 @@ public class ChannelAndProgramRepository {
                 return channels;
             } else {
                 Timber.d("doInBackground: currentTime > 0 and channelTagId > 0");
-                return dao.loadAllChannelsByTimeAndTag(currentTime, channelTagId, sortOrder);
+                return dao.loadAllChannelsByTimeAndTagSync(currentTime, channelTagId, sortOrder);
             }
         }
     }
