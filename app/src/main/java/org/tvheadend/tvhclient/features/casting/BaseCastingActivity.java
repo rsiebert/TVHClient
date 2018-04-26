@@ -21,9 +21,6 @@ import org.tvheadend.tvhclient.data.repository.ConfigRepository;
 import org.tvheadend.tvhclient.data.repository.ConnectionRepository;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-
 import timber.log.Timber;
 
 public abstract class BaseCastingActivity extends AppCompatActivity {
@@ -96,36 +93,12 @@ public abstract class BaseCastingActivity extends AppCompatActivity {
     };
 
     /**
-     * Creates the url with the credentials and the host and
-     * port configuration. This one is the same for playing recording and programs
+     * Creates the url with the host, port and webroot configuration.
+     * This one is the same for casting recordings or programs
      *
      * @return The url with the protocol and credentials
      */
-    protected String getBaseUrl(@NonNull Connection connection) {
-        String encodedUsername = "";
-        String encodedPassword = "";
-        try {
-            if (!connection.getUsername().isEmpty()) {
-                encodedUsername = URLEncoder.encode(connection.getUsername(), "UTF-8");
-            }
-            if (!connection.getPassword().isEmpty()) {
-                encodedPassword = URLEncoder.encode(connection.getPassword(), "UTF-8");
-            }
-        } catch (UnsupportedEncodingException e) {
-            // Can't happen since encoding is statically specified
-        }
-
-        // Only add the credentials to the playback URL if a
-        // username and password are set in the current connection
-        String url = "http://";
-        if (!encodedUsername.isEmpty()) {
-            url += encodedUsername;
-            if (!encodedPassword.isEmpty()) {
-                url += ":" + encodedPassword + "@";
-            }
-        }
-
-        url += connection.getHostname() + ":" + connection.getStreamingPort();
-        return url;
+    protected String getBaseUrl() {
+        return connection.getHostname() + ":" + connection.getStreamingPort() + serverStatus.getWebroot();
     }
 }

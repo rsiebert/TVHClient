@@ -41,7 +41,7 @@ public class CastChannelActivity extends BaseCastingActivity {
 
     @Override
     protected void onHttpTicketReceived(String path, String ticket) {
-        String baseUrl = getBaseUrl(connection) + serverStatus.getWebroot();
+        String baseUrl = getBaseUrl();
         String iconUrl = baseUrl + "/" + channel.getIcon();
 
         MediaMetadata movieMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE);
