@@ -30,9 +30,6 @@ import org.tvheadend.tvhclient.data.repository.ConfigRepository;
 import org.tvheadend.tvhclient.data.repository.ConnectionRepository;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
@@ -145,40 +142,6 @@ public abstract class BasePlayActivity extends AppCompatActivity {
         return url;
     }
 
-    /**
-     * Creates the url with the credentials and the host and
-     * port configuration. This one is the same for playing recording and programs
-     *
-     * @return The url with the protocol and credentials
-     */
-    private String getBaseUrl() {
-        String encodedUsername = "";
-        String encodedPassword = "";
-        try {
-            if (!connection.getUsername().isEmpty()) {
-                encodedUsername = URLEncoder.encode(connection.getUsername(), "UTF-8");
-            }
-            if (!connection.getPassword().isEmpty()) {
-                encodedPassword = URLEncoder.encode(connection.getPassword(), "UTF-8");
-            }
-        } catch (UnsupportedEncodingException e) {
-            // Can't happen since encoding is statically specified
-        }
-
-        // Only add the credentials to the playback URL if a
-        // username and password are set in the current connection
-        String url = "http://";
-        if (!encodedUsername.isEmpty()) {
-            url += encodedUsername;
-            if (!encodedPassword.isEmpty()) {
-                url += ":" + encodedPassword + "@";
-            }
-        }
-
-        url += connection.getHostname() + ":" + connection.getStreamingPort();
-        return url;
-    }
-
     protected String getPlayerMimeType() {
         String mimeType = "application/octet-stream";
         ServerProfile serverProfile = configRepository.getPlaybackServerProfileById(serverStatus.getPlaybackServerProfileId());
@@ -192,7 +155,7 @@ public abstract class BasePlayActivity extends AppCompatActivity {
     }
 
     protected String getPlayerUrl(String path, String ticket) {
-        String url = getBaseUrl() + path + "?ticket=" + ticket;
+        String url = connection.getHostname() + ":" + connection.getStreamingPort() + path + "?ticket=" + ticket;
 
         // Use the newer server profiles over the old local ones
         ServerProfile serverProfile = configRepository.getPlaybackServerProfileById(serverStatus.getPlaybackServerProfileId());
