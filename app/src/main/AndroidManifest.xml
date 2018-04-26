@@ -71,9 +71,6 @@
         </activity>
         <activity android:name="org.tvheadend.tvhclient.features.settings.SettingsActivity" />
         <activity
-            android:name="org.tvheadend.tvhclient.features.playback.PlayActivity"
-            android:theme="@android:style/Theme.NoTitleBar" />
-        <activity
             android:name="org.tvheadend.tvhclient.features.download.DownloadActivity"
             android:theme="@android:style/Theme.NoTitleBar" />
 
