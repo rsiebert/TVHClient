@@ -69,6 +69,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
 
     public enum State {
         IDLE,
+        RECONNECT,
         LOADING,
         SAVING,
         DONE
@@ -678,6 +679,12 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
                 LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
             }
             pendingEventOps.add(program);
+            if (pendingEventOps.size() % 50 == 0) {
+                Intent intent = new Intent("service_status");
+                intent.putExtra("sync_state", State.LOADING);
+                intent.putExtra("sync_details", "Received " + pendingEventOps.size() + " programs");
+                LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+            }
         } else {
             db.programDao().insert(program);
         }
@@ -1535,7 +1542,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
 
         Timber.d("connectedToServer is " + connectedToServer);
         Intent intent = new Intent("service_status");
-        intent.putExtra("sync_state", connectedToServer ? State.DONE : State.IDLE);
+        intent.putExtra("sync_state", connectedToServer ? State.DONE : State.RECONNECT);
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 

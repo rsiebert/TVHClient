@@ -248,12 +248,13 @@ public class StartupFragment extends Fragment {
 
             } else if (intent.hasExtra("authentication_state")) {
                 Authenticator.State state = (Authenticator.State) intent.getSerializableExtra("authentication_state");
+                detailsTextView.setText("");
                 if (state == Authenticator.State.AUTHENTICATING) {
-                    detailsTextView.setText("Authenticating...");
+                    stateTextView.setText("Authenticating...");
                 } else if (state == Authenticator.State.AUTHENTICATED) {
-                    detailsTextView.setText("Authenticated");
+                    stateTextView.setText("Authenticated");
                 } else if (state == Authenticator.State.FAILED_BAD_CREDENTIALS) {
-                    detailsTextView.setText("Authentication failed, bad username or password");
+                    stateTextView.setText("Authentication failed, bad username or password");
                     showSettingsButton = true;
                 }
 
@@ -278,6 +279,14 @@ public class StartupFragment extends Fragment {
                     showContentScreen();
                     startBackgroundServices();
                     activity.finish();
+
+                } else if (state == EpgSyncTask.State.RECONNECT) {
+                    progressBar.setVisibility(View.INVISIBLE);
+                    stateTextView.setText("Reconnecting to server");
+                    detailsTextView.setText("");
+
+                    activity.stopService(new Intent(activity, EpgSyncService.class));
+                    activity.startService(new Intent(activity, EpgSyncService.class));
                 }
             }
 
