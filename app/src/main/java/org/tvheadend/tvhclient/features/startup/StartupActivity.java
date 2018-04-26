@@ -6,29 +6,24 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 
 import org.tvheadend.tvhclient.BuildConfig;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.features.shared.callbacks.ToolbarInterface;
-import org.tvheadend.tvhclient.features.shared.callbacks.BackPressedInterface;
 import org.tvheadend.tvhclient.features.changelog.ChangeLogActivity;
+import org.tvheadend.tvhclient.features.shared.callbacks.BackPressedInterface;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
 import timber.log.Timber;
 
-public class StartupActivity extends AppCompatActivity implements ToolbarInterface {
+public class StartupActivity extends AppCompatActivity {
     private boolean showStatusFragment = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(MiscUtils.getThemeId(this));
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main_activity);
+        setContentView(R.layout.startup_activity);
         MiscUtils.setLanguage(this);
-
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
         if (savedInstanceState == null) {
             // Show the full changelog if the changelog was never shown before (app version
@@ -74,20 +69,6 @@ public class StartupActivity extends AppCompatActivity implements ToolbarInterfa
             ((BackPressedInterface) fragment).onBackPressed();
         } else {
             super.onBackPressed();
-        }
-    }
-
-    @Override
-    public void setTitle(String title) {
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle(title);
-        }
-    }
-
-    @Override
-    public void setSubtitle(String subtitle) {
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setSubtitle(subtitle);
         }
     }
 }

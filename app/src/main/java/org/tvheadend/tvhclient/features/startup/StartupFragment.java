@@ -37,7 +37,6 @@ import org.tvheadend.tvhclient.features.navigation.NavigationActivity;
 import org.tvheadend.tvhclient.features.settings.SettingsActivity;
 import org.tvheadend.tvhclient.features.settings.SettingsAddEditConnectionActivity;
 import org.tvheadend.tvhclient.features.shared.MenuUtils;
-import org.tvheadend.tvhclient.features.shared.callbacks.ToolbarInterface;
 
 import java.util.Date;
 import java.util.List;
@@ -87,10 +86,6 @@ public class StartupFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         activity = (AppCompatActivity) getActivity();
-        if (activity instanceof ToolbarInterface) {
-            ToolbarInterface toolbarInterface = (ToolbarInterface) activity;
-            toolbarInterface.setTitle(getString(R.string.startup));
-        }
         setHasOptionsMenu(true);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity);
         repository = new ConnectionRepository(activity);
