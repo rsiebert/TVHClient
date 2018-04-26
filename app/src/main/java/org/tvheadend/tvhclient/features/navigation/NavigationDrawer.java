@@ -204,6 +204,7 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
                     Connection connection = connectionRepository.getConnectionByIdSync((int) profile.getIdentifier());
                     connection.setActive(true);
                     connectionRepository.updateConnectionSync(connection);
+                    headerResult.setActiveProfile(connection.getId());
 /*
                     // Save the information that a new sync is required
                     // Then restart the application to show the sync fragment
@@ -221,6 +222,10 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
                     activity.startActivity(intent);
                     activity.finish();
                 })
+                .onNegative(((dialog, which) -> {
+                    Connection connection = connectionRepository.getActiveConnectionSync();
+                    headerResult.setActiveProfile(connection.getId());
+                }))
                 .show();
 
         return false;
