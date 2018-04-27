@@ -33,7 +33,7 @@ public class ChannelAndProgramRepository {
     public List<Channel> getAllChannelsSync() {
         try {
             int channelSortOrder = Integer.valueOf(sharedPreferences.getString("channel_sort_order", "0"));
-            return new LoadAllChannelsTask(db.channelDao(), channelSortOrder).execute().get();
+            return new LoadAllChannelsTask(db.getChannelDao(), channelSortOrder).execute().get();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
@@ -42,7 +42,7 @@ public class ChannelAndProgramRepository {
 
     public List<ChannelTag> getAllChannelTagsSync() {
         try {
-            return new LoadAllChannelTagsTask(db.channelTagDao()).execute().get();
+            return new LoadAllChannelTagsTask(db.getChannelTagDao()).execute().get();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
@@ -51,7 +51,7 @@ public class ChannelAndProgramRepository {
 
     public Channel getChannelByIdSync(int channelId) {
         try {
-            return new LoadChannelByIdTask(db.channelDao(), channelId).execute().get();
+            return new LoadChannelByIdTask(db.getChannelDao(), channelId).execute().get();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
@@ -60,7 +60,7 @@ public class ChannelAndProgramRepository {
 
     public Program getProgramByIdSync(int eventId) {
         try {
-            return new LoadProgramByIdTask(db.programDao(), eventId).execute().get();
+            return new LoadProgramByIdTask(db.getProgramDao(), eventId).execute().get();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
@@ -68,14 +68,14 @@ public class ChannelAndProgramRepository {
     }
 
     public LiveData<List<Program>> getProgramsByChannelFromTime(int channelId, long time) {
-        return db.programDao().loadProgramsFromChannelWithinTime(channelId, time);
+        return db.getProgramDao().loadProgramsFromChannelWithinTime(channelId, time);
     }
 
     public List<Channel> getAllChannelsByTimeAndTagSync(long currentTime, int channelTagId) {
         try {
             int channelSortOrder = Integer.valueOf(sharedPreferences.getString("channel_sort_order", "0"));
             // TODO load this stuff here in the  background and return the calculated values, do not load in the viewmodel or fragment task
-            return new LoadAllChannelsTask(db.channelDao(), currentTime, channelTagId, channelSortOrder).execute().get();
+            return new LoadAllChannelsTask(db.getChannelDao(), currentTime, channelTagId, channelSortOrder).execute().get();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
@@ -84,7 +84,7 @@ public class ChannelAndProgramRepository {
 
     public ChannelTag getChannelTagByIdSync(int channelTagId) {
         try {
-            return new LoadChannelTagTask(db.channelTagDao(), channelTagId).execute().get();
+            return new LoadChannelTagTask(db.getChannelTagDao(), channelTagId).execute().get();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
@@ -92,7 +92,7 @@ public class ChannelAndProgramRepository {
     }
 
     public LiveData<Integer> getNumberOfChannels() {
-        return db.channelDao().getChannelCount();
+        return db.getChannelDao().getChannelCount();
     }
 
     private static class LoadProgramByIdTask extends AsyncTask<Void, Void, Program> {
@@ -196,7 +196,7 @@ public class ChannelAndProgramRepository {
 
     public ServerStatus getServerStatus() {
         try {
-            return new LoadServerStatusTask(db.serverStatusDao()).execute().get();
+            return new LoadServerStatusTask(db.getServerStatusDao()).execute().get();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }

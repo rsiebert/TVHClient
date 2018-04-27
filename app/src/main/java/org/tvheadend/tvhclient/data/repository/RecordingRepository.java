@@ -24,16 +24,16 @@ public class RecordingRepository {
     }
 
     public LiveData<List<TimerRecording>> getAllTimerRecordings() {
-        return db.timerRecordingDao().loadAllRecordings();
+        return db.getTimerRecordingDao().loadAllRecordings();
     }
 
     public LiveData<TimerRecording> getTimerRecordingById(String id) {
-        return db.timerRecordingDao().loadRecordingById(id);
+        return db.getTimerRecordingDao().loadRecordingById(id);
     }
 
     public TimerRecording getTimerRecordingByIdSync(String id) {
         try {
-            return new LoadTimerRecordingTask(db.timerRecordingDao(), id).execute().get();
+            return new LoadTimerRecordingTask(db.getTimerRecordingDao(), id).execute().get();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
@@ -42,7 +42,7 @@ public class RecordingRepository {
 
     public SeriesRecording getSeriesRecordingByIdSync(String id) {
         try {
-            return new LoadSeriesRecordingTask(db.seriesRecordingDao(), id).execute().get();
+            return new LoadSeriesRecordingTask(db.getSeriesRecordingDao(), id).execute().get();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
@@ -50,16 +50,16 @@ public class RecordingRepository {
     }
 
     public LiveData<SeriesRecording> getSeriesRecordingById(String id) {
-        return db.seriesRecordingDao().loadRecordingById(id);
+        return db.getSeriesRecordingDao().loadRecordingById(id);
     }
 
     public LiveData<List<SeriesRecording>> getAllSeriesRecordings() {
-        return db.seriesRecordingDao().loadAllRecordings();
+        return db.getSeriesRecordingDao().loadAllRecordings();
     }
 
     public Recording getRecordingByIdSync(int id) {
         try {
-            return new LoadRecordingTask(db.recordingDao(), id).execute().get();
+            return new LoadRecordingTask(db.getRecordingDao(), id).execute().get();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
@@ -67,28 +67,28 @@ public class RecordingRepository {
     }
 
     public LiveData<Recording> getRecordingById(int id) {
-        return db.recordingDao().loadRecordingById(id);
+        return db.getRecordingDao().loadRecordingById(id);
     }
 
     public LiveData<List<Recording>> getAllCompletedRecordings() {
-        return db.recordingDao().loadAllCompletedRecordings();
+        return db.getRecordingDao().loadAllCompletedRecordings();
     }
 
     public LiveData<List<Recording>> getAllScheduledRecordings() {
-        return db.recordingDao().loadAllScheduledRecordings();
+        return db.getRecordingDao().loadAllScheduledRecordings();
     }
 
     public LiveData<List<Recording>> getAllFailedRecordings() {
-        return db.recordingDao().loadAllFailedRecordings();
+        return db.getRecordingDao().loadAllFailedRecordings();
     }
 
     public LiveData<List<Recording>> getAllRemovedRecordings() {
-        return db.recordingDao().loadAllRemovedRecordings();
+        return db.getRecordingDao().loadAllRemovedRecordings();
     }
 
     public List<Recording> getAllRecordingsSync() {
         try {
-            return new LoadAllRecordingsTask(db.recordingDao()).execute().get();
+            return new LoadAllRecordingsTask(db.getRecordingDao()).execute().get();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
@@ -96,16 +96,16 @@ public class RecordingRepository {
     }
 
     public LiveData<List<Recording>> getAllRecordingsByChannelId(int channelId) {
-        return db.recordingDao().loadAllRecordingsByChannelId(channelId);
+        return db.getRecordingDao().loadAllRecordingsByChannelId(channelId);
     }
 
     public LiveData<List<Recording>> getAllRecordings() {
-        return db.recordingDao().loadAllRecordings();
+        return db.getRecordingDao().loadAllRecordings();
     }
 
     public Recording getRecordingByEventIdSync(int eventId) {
         try {
-            return new LoadRecordingByEventIdTask(db.recordingDao(), eventId).execute().get();
+            return new LoadRecordingByEventIdTask(db.getRecordingDao(), eventId).execute().get();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
@@ -113,27 +113,27 @@ public class RecordingRepository {
     }
 
     public LiveData<Integer> getNumberOfSeriesRecordings() {
-        return db.seriesRecordingDao().getRecordingCount();
+        return db.getSeriesRecordingDao().getRecordingCount();
     }
 
     public LiveData<Integer> getNumberOfTimerRecordings() {
-        return db.timerRecordingDao().getRecordingCount();
+        return db.getTimerRecordingDao().getRecordingCount();
     }
 
     public LiveData<Integer> getNumberOfCompletedRecordings() {
-        return db.recordingDao().getCompletedRecordingCount();
+        return db.getRecordingDao().getCompletedRecordingCount();
     }
 
     public LiveData<Integer> getNumberOfScheduledRecordings() {
-        return db.recordingDao().getScheduledRecordingCount();
+        return db.getRecordingDao().getScheduledRecordingCount();
     }
 
     public LiveData<Integer> getNumberOfFailedRecordings() {
-        return db.recordingDao().getFailedRecordingCount();
+        return db.getRecordingDao().getFailedRecordingCount();
     }
 
     public LiveData<Integer> getNumberOfRemovedRecordings() {
-        return db.recordingDao().getRemovedRecordingCount();
+        return db.getRecordingDao().getRemovedRecordingCount();
     }
 
     protected static class LoadRecordingByEventIdTask extends AsyncTask<Void, Void, Recording> {

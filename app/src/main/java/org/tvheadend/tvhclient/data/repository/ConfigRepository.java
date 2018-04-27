@@ -26,7 +26,7 @@ public class ConfigRepository {
 
     public TranscodingProfile getPlaybackTranscodingProfile() {
         try {
-            return new LoadTranscodingProfileTask(db.transcodingProfileDao(), db.serverStatusDao(), "playback").execute().get();
+            return new LoadTranscodingProfileTask(db.getTranscodingProfileDao(), db.getServerStatusDao(), "playback").execute().get();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
@@ -35,7 +35,7 @@ public class ConfigRepository {
 
     public TranscodingProfile getRecordingTranscodingProfile() {
         try {
-            return new LoadTranscodingProfileTask(db.transcodingProfileDao(), db.serverStatusDao(), "recording").execute().get();
+            return new LoadTranscodingProfileTask(db.getTranscodingProfileDao(), db.getServerStatusDao(), "recording").execute().get();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
@@ -44,7 +44,7 @@ public class ConfigRepository {
 
     public ServerProfile getPlaybackServerProfileById(int id) {
         try {
-            return new LoadServerProfileByIdTask(db.serverProfileDao(), id).execute().get();
+            return new LoadServerProfileByIdTask(db.getServerProfileDao(), id).execute().get();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
@@ -53,7 +53,7 @@ public class ConfigRepository {
 
     public ServerProfile getRecordingServerProfileById(int id) {
         try {
-            return new LoadServerProfileByIdTask(db.serverProfileDao(), id).execute().get();
+            return new LoadServerProfileByIdTask(db.getServerProfileDao(), id).execute().get();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
@@ -62,7 +62,7 @@ public class ConfigRepository {
 
     public ServerProfile getCastingServerProfileById(int id) {
         try {
-            return new LoadServerProfileByIdTask(db.serverProfileDao(), id).execute().get();
+            return new LoadServerProfileByIdTask(db.getServerProfileDao(), id).execute().get();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
@@ -71,7 +71,7 @@ public class ConfigRepository {
 
     public List<ServerProfile> getAllPlaybackServerProfiles() {
         try {
-            return new LoadAllServerProfilesTask(db.serverProfileDao(), "playback").execute().get();
+            return new LoadAllServerProfilesTask(db.getServerProfileDao(), "playback").execute().get();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
@@ -80,7 +80,7 @@ public class ConfigRepository {
 
     public List<ServerProfile> getAllRecordingServerProfiles() {
         try {
-            return new LoadAllServerProfilesTask(db.serverProfileDao(), "recording").execute().get();
+            return new LoadAllServerProfilesTask(db.getServerProfileDao(), "recording").execute().get();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
@@ -97,20 +97,20 @@ public class ConfigRepository {
     }
 
     public void updatePlaybackServerProfile(int id) {
-        new UpdateServerProfileTask(db.serverStatusDao(), "playback", id).execute();
+        new UpdateServerProfileTask(db.getServerStatusDao(), "playback", id).execute();
     }
 
     public void updateRecordingServerProfile(int id) {
-        new UpdateServerProfileTask(db.serverStatusDao(), "recording", id).execute();
+        new UpdateServerProfileTask(db.getServerStatusDao(), "recording", id).execute();
     }
 
     public void updateCastingServerProfile(int id) {
-        new UpdateServerProfileTask(db.serverStatusDao(), "casting", id).execute();
+        new UpdateServerProfileTask(db.getServerStatusDao(), "casting", id).execute();
     }
 
     public ServerStatus getServerStatus() {
         try {
-            return new LoadServerStatusTask(db.serverStatusDao()).execute().get();
+            return new LoadServerStatusTask(db.getServerStatusDao()).execute().get();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
@@ -118,7 +118,7 @@ public class ConfigRepository {
     }
 
     public LiveData<ServerStatus> loadServerStatus() {
-        return db.serverStatusDao().loadServerStatus();
+        return db.getServerStatusDao().loadServerStatus();
     }
 
     private static class LoadServerStatusTask extends AsyncTask<Void, Void, ServerStatus> {
@@ -247,11 +247,11 @@ public class ConfigRepository {
     }
 
     public void updatePlaybackTranscodingProfile(TranscodingProfile playbackProfile) {
-        new UpdateTranscodingProfileTask(db.transcodingProfileDao(), db.serverStatusDao(), "playback", playbackProfile).execute();
+        new UpdateTranscodingProfileTask(db.getTranscodingProfileDao(), db.getServerStatusDao(), "playback", playbackProfile).execute();
     }
 
     public void updateRecordingTranscodingProfile(TranscodingProfile recordingProfile) {
-        new UpdateTranscodingProfileTask(db.transcodingProfileDao(), db.serverStatusDao(), "recording", recordingProfile).execute();
+        new UpdateTranscodingProfileTask(db.getTranscodingProfileDao(), db.getServerStatusDao(), "recording", recordingProfile).execute();
     }
 
     protected static class UpdateTranscodingProfileTask extends AsyncTask<Void, Void, Void> {
@@ -298,7 +298,7 @@ public class ConfigRepository {
 /*
     public ChannelTag getSelectedChannelTag() {
         try {
-            return new LoadSelectedChannelTagTask(db.serverStatusDao(), db.channelTagDao()).execute().get();
+            return new LoadSelectedChannelTagTask(db.getServerStatusDao(), db.getChannelTagDao()).execute().get();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
@@ -306,23 +306,23 @@ public class ConfigRepository {
     }
 
     private static class LoadSelectedChannelTagTask extends AsyncTask<Void, Void, ChannelTag> {
-        private final ServerStatusDao serverStatusDao;
-        private final ChannelTagDao channelTagDao;
+        private final ServerStatusDao getServerStatusDao;
+        private final ChannelTagDao getChannelTagDao;
 
-        LoadSelectedChannelTagTask(ServerStatusDao serverStatusDao, ChannelTagDao channelTagDao) {
-            this.serverStatusDao = serverStatusDao;
-            this.channelTagDao = channelTagDao;
+        LoadSelectedChannelTagTask(ServerStatusDao getServerStatusDao, ChannelTagDao getChannelTagDao) {
+            this.getServerStatusDao = getServerStatusDao;
+            this.getChannelTagDao = getChannelTagDao;
         }
 
         @Override
         protected ChannelTag doInBackground(Void... voids) {
-            ServerStatus serverStatus = serverStatusDao.loadServerStatusSync();
-            return channelTagDao.loadChannelTagByIdSync(serverStatus.getChannelTagId());
+            ServerStatus serverStatus = getServerStatusDao.loadServerStatusSync();
+            return getChannelTagDao.loadChannelTagByIdSync(serverStatus.getChannelTagId());
         }
     }
 
     public void setSelectedChannelTag(int id) {
-        new UpdateChannelTagTask(db.serverStatusDao(), id).execute();
+        new UpdateChannelTagTask(db.getServerStatusDao(), id).execute();
     }
 
     private static class UpdateChannelTagTask extends AsyncTask<Void, Void, Void> {

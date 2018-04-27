@@ -351,7 +351,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         htspVersion = response.getInteger("htspversion", 13);
 
         boolean insertNewServerStatus = false;
-        ServerStatus serverStatus = db.serverStatusDao().loadServerStatusSync();
+        ServerStatus serverStatus = db.getServerStatusDao().loadServerStatusSync();
         if (serverStatus == null) {
             serverStatus = new ServerStatus();
             serverStatus.setConnectionId(connectionId);
@@ -364,10 +364,10 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
 
         if (insertNewServerStatus) {
             Timber.d("Received initial server response, adding new server status");
-            db.serverStatusDao().insert(serverStatus);
+            db.getServerStatusDao().insert(serverStatus);
         } else {
             Timber.d("Received initial server response, updating existing server status");
-            db.serverStatusDao().update(serverStatus);
+            db.getServerStatusDao().update(serverStatus);
         }
     }
 
@@ -381,7 +381,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         Timber.d("handleTagAdd() called with: msg = [" + msg + "]");
         ChannelTag tag = EpgSyncUtils.convertMessageToChannelTagModel(new ChannelTag(), msg);
         tag.setConnectionId(connectionId);
-        db.channelTagDao().insert(tag);
+        db.getChannelTagDao().insert(tag);
 
         Intent intent = new Intent("service_status");
         intent.putExtra("sync_state", State.LOADING);
@@ -410,9 +410,9 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
      */
     private void handleTagUpdate(HtspMessage msg) {
         Timber.d("handleTagUpdate() called with: msg = [" + msg + "]");
-        ChannelTag tag = db.channelTagDao().loadChannelTagByIdSync(msg.getInteger("tagId"));
+        ChannelTag tag = db.getChannelTagDao().loadChannelTagByIdSync(msg.getInteger("tagId"));
         ChannelTag updatedTag = EpgSyncUtils.convertMessageToChannelTagModel(tag, msg);
-        db.channelTagDao().update(updatedTag);
+        db.getChannelTagDao().update(updatedTag);
 
         // Remove all entries of this tag from the database before
         // adding new ones which are defined in the members variable
@@ -432,9 +432,9 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     private void handleTagAndChannelRelation(ChannelTag tag) {
         // TODO channel count to much
         Timber.d("Checking channel to tag relation");
-        db.tagAndChannelDao().deleteByTagId(tag.getTagId());
+        db.getTagAndChannelDao().deleteByTagId(tag.getTagId());
         List<Integer> channelIds = tag.getMembers();
-        List<Integer> availableChannelIds = db.channelDao().loadAllChannelIds();
+        List<Integer> availableChannelIds = db.getChannelDao().loadAllChannelIds();
         if (channelIds != null) {
             for (Integer channelId : channelIds) {
                 Timber.d("Checking if channel id " + channelId + " is in the list of available channels");
@@ -458,10 +458,10 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
      */
     private void handleTagDelete(HtspMessage msg) {
         if (msg.containsKey("tagId")) {
-            ChannelTag tag = db.channelTagDao().loadChannelTagByIdSync(msg.getInteger("tagId"));
+            ChannelTag tag = db.getChannelTagDao().loadChannelTagByIdSync(msg.getInteger("tagId"));
             deleteIconFileFromCache(tag.getTagIcon());
-            db.channelTagDao().deleteById(tag.getTagId());
-            db.tagAndChannelDao().deleteByTagId(tag.getTagId());
+            db.getChannelTagDao().deleteById(tag.getTagId());
+            db.getTagAndChannelDao().deleteByTagId(tag.getTagId());
         }
     }
 
@@ -484,7 +484,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
             }
             pendingChannelOps.add(channel);
         } else {
-            db.channelDao().insert(channel);
+            db.getChannelDao().insert(channel);
         }
 
         // Update the icon if required
@@ -501,7 +501,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
      * @param msg The message with the updated channel data
      */
     private void handleChannelUpdate(HtspMessage msg) {
-        Channel channel = db.channelDao().loadChannelByIdSync(msg.getInteger("channelId"));
+        Channel channel = db.getChannelDao().loadChannelByIdSync(msg.getInteger("channelId"));
         Channel updatedChannel = EpgSyncUtils.convertMessageToChannelModel(channel, msg);
 
         Timber.d("Updating channel " + channel.getName() + " with id " + channel.getId() + ", connection id " + channel.getConnectionId());
@@ -509,7 +509,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         if (!initialSyncCompleted) {
             pendingChannelOps.add(updatedChannel);
         } else {
-            db.channelDao().update(updatedChannel);
+            db.getChannelDao().update(updatedChannel);
         }
 
         // Update the icon if required
@@ -529,13 +529,13 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         if (msg.containsKey("channelId")) {
             int channelId = msg.getInteger("channelId");
 
-            Channel channel = db.channelDao().loadChannelByIdSync(channelId);
+            Channel channel = db.getChannelDao().loadChannelByIdSync(channelId);
             if (channel != null && !TextUtils.isEmpty(channel.getIcon())) {
                 deleteIconFileFromCache(channel.getIcon());
             } else {
                 Timber.e("Could not delete channel icon from database");
             }
-            db.channelDao().deleteById(channelId);
+            db.getChannelDao().deleteById(channelId);
         }
     }
 
@@ -557,7 +557,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
             }
             pendingRecordedProgramOps.add(recording);
         } else {
-            db.recordingDao().insert(recording);
+            db.getRecordingDao().insert(recording);
         }
     }
 
@@ -569,12 +569,12 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
      */
     private void handleDvrEntryUpdate(HtspMessage msg) {
         // Get the existing recording
-        Recording recording = db.recordingDao().loadRecordingByIdSync(msg.getInteger("id"));
+        Recording recording = db.getRecordingDao().loadRecordingByIdSync(msg.getInteger("id"));
         Recording updatedRecording = EpgSyncUtils.convertMessageToRecordingModel(recording, msg);
         if (!initialSyncCompleted) {
             pendingRecordedProgramOps.add(updatedRecording);
         } else {
-            db.recordingDao().update(updatedRecording);
+            db.getRecordingDao().update(updatedRecording);
         }
     }
 
@@ -586,7 +586,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
      */
     private void handleDvrEntryDelete(HtspMessage msg) {
         if (msg.containsKey("id")) {
-            db.recordingDao().deleteById(msg.getInteger("id"));
+            db.getRecordingDao().deleteById(msg.getInteger("id"));
         }
     }
 
@@ -599,7 +599,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     private void handleAutorecEntryAdd(HtspMessage msg) {
         SeriesRecording seriesRecording = EpgSyncUtils.convertMessageToSeriesRecordingModel(new SeriesRecording(), msg);
         seriesRecording.setConnectionId(connectionId);
-        db.seriesRecordingDao().insert(seriesRecording);
+        db.getSeriesRecordingDao().insert(seriesRecording);
     }
 
     /**
@@ -609,9 +609,9 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
      * @param msg The message with the updated series recording data
      */
     private void handleAutorecEntryUpdate(HtspMessage msg) {
-        SeriesRecording recording = db.seriesRecordingDao().loadRecordingByIdSync(msg.getString("id"));
+        SeriesRecording recording = db.getSeriesRecordingDao().loadRecordingByIdSync(msg.getString("id"));
         SeriesRecording updatedRecording = EpgSyncUtils.convertMessageToSeriesRecordingModel(recording, msg);
-        db.seriesRecordingDao().update(updatedRecording);
+        db.getSeriesRecordingDao().update(updatedRecording);
     }
 
     /**
@@ -622,7 +622,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
      */
     private void handleAutorecEntryDelete(HtspMessage msg) {
         if (msg.containsKey("id")) {
-            db.seriesRecordingDao().deleteById(msg.getString("id"));
+            db.getSeriesRecordingDao().deleteById(msg.getString("id"));
         }
     }
 
@@ -635,7 +635,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     private void handleTimerRecEntryAdd(HtspMessage msg) {
         TimerRecording recording = EpgSyncUtils.convertMessageToTimerRecordingModel(new TimerRecording(), msg);
         recording.setConnectionId(connectionId);
-        db.timerRecordingDao().insert(recording);
+        db.getTimerRecordingDao().insert(recording);
     }
 
     /**
@@ -645,9 +645,9 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
      * @param msg The message with the updated timer recording data
      */
     private void handleTimerRecEntryUpdate(HtspMessage msg) {
-        TimerRecording recording = db.timerRecordingDao().loadRecordingByIdSync(msg.getString("id"));
+        TimerRecording recording = db.getTimerRecordingDao().loadRecordingByIdSync(msg.getString("id"));
         TimerRecording updatedRecording = EpgSyncUtils.convertMessageToTimerRecordingModel(recording, msg);
-        db.timerRecordingDao().update(updatedRecording);
+        db.getTimerRecordingDao().update(updatedRecording);
     }
 
     /**
@@ -658,7 +658,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
      */
     private void handleTimerRecEntryDelete(HtspMessage msg) {
         if (msg.containsKey("id")) {
-            db.timerRecordingDao().deleteById(msg.getString("id"));
+            db.getTimerRecordingDao().deleteById(msg.getString("id"));
         }
     }
 
@@ -686,7 +686,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
                 LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
             }
         } else {
-            db.programDao().insert(program);
+            db.getProgramDao().insert(program);
         }
     }
 
@@ -697,12 +697,12 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
      * @param msg The message with the updated epg event data
      */
     private void handleEventUpdate(HtspMessage msg) {
-        Program program = db.programDao().loadProgramByIdSync(msg.getInteger("eventId"));
+        Program program = db.getProgramDao().loadProgramByIdSync(msg.getInteger("eventId"));
         Program updatedProgram = EpgSyncUtils.convertMessageToProgramModel(program, msg);
         if (!initialSyncCompleted) {
             pendingEventOps.add(updatedProgram);
         } else {
-            db.programDao().update(updatedProgram);
+            db.getProgramDao().update(updatedProgram);
         }
     }
 
@@ -714,16 +714,16 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
      */
     private void handleEventDelete(HtspMessage msg) {
         if (msg.containsKey("id")) {
-            db.programDao().deleteById(msg.getInteger("id"));
+            db.getProgramDao().deleteById(msg.getInteger("id"));
         }
     }
 
 
     private void handleProfiles(HtspMessage message) {
         if (message.containsKey("profiles")) {
-            ServerStatus serverStatus = db.serverStatusDao().loadServerStatusSync();
+            ServerStatus serverStatus = db.getServerStatusDao().loadServerStatusSync();
             for (HtspMessage msg : message.getHtspMessageArray("profiles")) {
-                ServerProfile serverProfile = db.serverProfileDao().loadProfileByUuidSync(msg.getString("uuid"));
+                ServerProfile serverProfile = db.getServerProfileDao().loadProfileByUuidSync(msg.getString("uuid"));
                 if (serverProfile == null) {
                     serverProfile = new ServerProfile();
                 }
@@ -735,9 +735,9 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
                 serverProfile.setType("playback");
 
                 if (serverProfile.getId() == 0) {
-                    db.serverProfileDao().insert(serverProfile);
+                    db.getServerProfileDao().insert(serverProfile);
                 } else {
-                    db.serverProfileDao().update(serverProfile);
+                    db.getServerProfileDao().update(serverProfile);
                 }
             }
         }
@@ -745,9 +745,9 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
 
     private void handleDvrConfigs(HtspMessage message) {
         if (message.containsKey("dvrconfigs")) {
-            ServerStatus serverStatus = db.serverStatusDao().loadServerStatusSync();
+            ServerStatus serverStatus = db.getServerStatusDao().loadServerStatusSync();
             for (HtspMessage msg : message.getHtspMessageArray("dvrconfigs")) {
-                ServerProfile serverProfile = db.serverProfileDao().loadProfileByUuidSync(msg.getString("uuid"));
+                ServerProfile serverProfile = db.getServerProfileDao().loadProfileByUuidSync(msg.getString("uuid"));
                 if (serverProfile == null) {
                     serverProfile = new ServerProfile();
                 }
@@ -760,9 +760,9 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
                 serverProfile.setType("recording");
 
                 if (serverProfile.getId() == 0) {
-                    db.serverProfileDao().insert(serverProfile);
+                    db.getServerProfileDao().insert(serverProfile);
                 } else {
-                    db.serverProfileDao().update(serverProfile);
+                    db.getServerProfileDao().update(serverProfile);
                 }
             }
         }
@@ -770,18 +770,18 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
 
     private void handleSystemTime(HtspMessage message) {
         Timber.d("handleSystemTime() called with: message = [" + message + "]");
-        ServerStatus serverStatus = db.serverStatusDao().loadServerStatusSync();
+        ServerStatus serverStatus = db.getServerStatusDao().loadServerStatusSync();
         serverStatus.setGmtoffset(message.getInteger("gmtoffset", 0));
         serverStatus.setTime(message.getLong("time", 0));
-        db.serverStatusDao().update(serverStatus);
+        db.getServerStatusDao().update(serverStatus);
     }
 
     private void handleDiskSpace(HtspMessage message) {
         Timber.d("handleDiskSpace() called with: message = [" + message + "]");
-        ServerStatus serverStatus = db.serverStatusDao().loadServerStatusSync();
+        ServerStatus serverStatus = db.getServerStatusDao().loadServerStatusSync();
         serverStatus.setFreeDiskSpace(message.getLong("freediskspace", 0));
         serverStatus.setTotalDiskSpace(message.getLong("totaldiskspace", 0));
-        db.serverStatusDao().update(serverStatus);
+        db.getServerStatusDao().update(serverStatus);
     }
 
     private void handleInitialSyncCompleted() {
@@ -837,7 +837,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
             int toIndex = (fromIndex + steps >= listSize) ? listSize : fromIndex + steps;
             // Apply the batch only as a sublist of the entire list
             // so we can send out the number of saved operations to any listeners
-            db.channelDao().insertAll(new ArrayList<>(pendingChannelOps.subList(fromIndex, toIndex)));
+            db.getChannelDao().insertAll(new ArrayList<>(pendingChannelOps.subList(fromIndex, toIndex)));
             fromIndex = toIndex;
         }
         pendingChannelOps.clear();
@@ -848,7 +848,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
             return;
         }
         Timber.d("Adding " + pendingChannelTagRelationOps.size() + " channel tags relations into database");
-        db.tagAndChannelDao().insertAll(pendingChannelTagRelationOps);
+        db.getTagAndChannelDao().insertAll(pendingChannelTagRelationOps);
         pendingChannelTagRelationOps.clear();
     }
 
@@ -878,7 +878,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         // the database the are not existent anymore on the server.
         // This could be the case when the app was offline for a while
         // and we could not get any updates of removed recordings fro mthe server
-        db.recordingDao().deleteAll();
+        db.getRecordingDao().deleteAll();
 
         final int steps = 25;
         final int listSize = pendingRecordedProgramOps.size();
@@ -887,7 +887,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
             int toIndex = (fromIndex + steps >= listSize) ? listSize : fromIndex + steps;
             // Apply the batch only as a sublist of the entire list
             // so we can send out the number of saved operations to any listeners
-            db.recordingDao().insertAll(new ArrayList<>(pendingRecordedProgramOps.subList(fromIndex, toIndex)));
+            db.getRecordingDao().insertAll(new ArrayList<>(pendingRecordedProgramOps.subList(fromIndex, toIndex)));
             fromIndex = toIndex + 1;
         }
         pendingRecordedProgramOps.clear();
@@ -906,7 +906,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
             int toIndex = (fromIndex + steps >= listSize) ? listSize : fromIndex + steps;
             // Apply the batch only as a sublist of the entire list
             // so we can send out the number of saved operations to any listeners
-            db.programDao().insertAll(new ArrayList<>(pendingEventOps.subList(fromIndex, toIndex)));
+            db.getProgramDao().insertAll(new ArrayList<>(pendingEventOps.subList(fromIndex, toIndex)));
             fromIndex = toIndex;
 
             Timber.d("flushPendingEventOps: Saving program data (" + fromIndex + " of " + listSize + ")");
@@ -1069,7 +1069,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
 
         if (response != null) {
             Program program = EpgSyncUtils.convertMessageToProgramModel(new Program(), response);
-            db.programDao().insert(program);
+            db.getProgramDao().insert(program);
         }
     }
 
@@ -1490,9 +1490,9 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
 
     private void getMoreEvents() {
         Timber.d("getMoreEvents() called");
-        List<Channel> channelList = db.channelDao().loadAllChannelsSync(0);
+        List<Channel> channelList = db.getChannelDao().loadAllChannelsSync(0);
         for (Channel channel : channelList) {
-            Program program = db.programDao().loadLastProgramFromChannelSync(channel.getId());
+            Program program = db.getProgramDao().loadLastProgramFromChannelSync(channel.getId());
             if (program != null && program.getEventId() > 0) {
                 Timber.d("getMoreEvents: loading more events for channel " + channel.getName());
                 Intent intent = new Intent();
@@ -1513,9 +1513,9 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         int days = Integer.valueOf(sharedPreferences.getString("epg_days_before_removal", "7"));
         long time = new Date().getTime() - (days * 24 * 60 * 60 * 1000);
 
-        List<Channel> channelList = db.channelDao().loadAllChannelsSync(0);
+        List<Channel> channelList = db.getChannelDao().loadAllChannelsSync(0);
         for (Channel channel : channelList) {
-            db.programDao().deleteOldProgramsByChannel(channel.getId(), time);
+            db.getProgramDao().deleteOldProgramsByChannel(channel.getId(), time);
         }
     }
 

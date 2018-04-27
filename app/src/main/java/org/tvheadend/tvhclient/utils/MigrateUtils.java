@@ -95,7 +95,7 @@ public class MigrateUtils {
             AppRoomDatabase roomDb = AppRoomDatabase.getInstance(context);
 
             Timber.d("migrateConnectionsFromDatabase: adding old connections to room db");
-            new MigrateConnectionsTask(roomDb.connectionDao(), roomDb.serverStatusDao(), connectionList).execute();
+            new MigrateConnectionsTask(roomDb.getConnectionDao(), roomDb.getServerStatusDao(), connectionList).execute();
         }
     }
 

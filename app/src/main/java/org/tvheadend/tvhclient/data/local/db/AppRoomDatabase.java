@@ -68,26 +68,26 @@ public abstract class AppRoomDatabase extends RoomDatabase {
         }
     };
 
-    public abstract TimerRecordingDao timerRecordingDao();
+    public abstract TimerRecordingDao getTimerRecordingDao();
 
-    public abstract SeriesRecordingDao seriesRecordingDao();
+    public abstract SeriesRecordingDao getSeriesRecordingDao();
 
-    public abstract RecordingDao recordingDao();
+    public abstract RecordingDao getRecordingDao();
 
-    public abstract ChannelDao channelDao();
+    public abstract ChannelDao getChannelDao();
 
-    public abstract ChannelTagDao channelTagDao();
+    public abstract ChannelTagDao getChannelTagDao();
 
-    public abstract TagAndChannelDao tagAndChannelDao();
+    public abstract TagAndChannelDao getTagAndChannelDao();
 
-    public abstract ProgramDao programDao();
+    public abstract ProgramDao getProgramDao();
 
-    public abstract ConnectionDao connectionDao();
+    public abstract ConnectionDao getConnectionDao();
 
-    public abstract ServerProfileDao serverProfileDao();
+    public abstract ServerProfileDao getServerProfileDao();
 
-    public abstract TranscodingProfileDao transcodingProfileDao();
+    public abstract TranscodingProfileDao getTranscodingProfileDao();
 
-    public abstract ServerStatusDao serverStatusDao();
+    public abstract ServerStatusDao getServerStatusDao();
 
 }

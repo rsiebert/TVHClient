@@ -26,7 +26,7 @@ public class ConnectionRepository {
 
     public Connection getConnectionByIdSync(int connectionId) {
         try {
-            return new LoadConnectionTask(db.connectionDao(), connectionId).execute().get();
+            return new LoadConnectionTask(db.getConnectionDao(), connectionId).execute().get();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
@@ -41,16 +41,16 @@ public class ConnectionRepository {
      */
     public void updateConnectionSync(Connection connection) {
         if (connection.isActive()) {
-            new DisableActiveConnectionTask(db.connectionDao()).execute();
+            new DisableActiveConnectionTask(db.getConnectionDao()).execute();
         }
-        new UpdateConnectionTask(db.connectionDao(), connection).execute();
+        new UpdateConnectionTask(db.getConnectionDao(), connection).execute();
     }
 
     public void insertConnectionSync(Connection connection) {
         if (connection.isActive()) {
-            new DisableActiveConnectionTask(db.connectionDao()).execute();
+            new DisableActiveConnectionTask(db.getConnectionDao()).execute();
         }
-        new InsertConnectionTask(db.connectionDao(), db.serverStatusDao(), connection).execute();
+        new InsertConnectionTask(db.getConnectionDao(), db.getServerStatusDao(), connection).execute();
     }
 
     /**
@@ -60,7 +60,7 @@ public class ConnectionRepository {
      */
     public Connection getActiveConnectionSync() {
         try {
-            return new LoadActiveConnectionTask(db.connectionDao()).execute().get();
+            return new LoadActiveConnectionTask(db.getConnectionDao()).execute().get();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
@@ -68,16 +68,16 @@ public class ConnectionRepository {
     }
 
     public void removeConnectionSync(int id) {
-        new DeleteConnectionTask(db.connectionDao(), db.serverStatusDao(), db.transcodingProfileDao(), id).execute();
+        new DeleteConnectionTask(db.getConnectionDao(), db.getServerStatusDao(), db.getTranscodingProfileDao(), id).execute();
     }
 
     public LiveData<List<Connection>> getAllConnections() {
-        return db.connectionDao().loadAllConnections();
+        return db.getConnectionDao().loadAllConnections();
     }
 
     public List<Connection> getAllConnectionsSync() {
         try {
-            return new LoadAllConnectionsTask(db.connectionDao()).execute().get();
+            return new LoadAllConnectionsTask(db.getConnectionDao()).execute().get();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }

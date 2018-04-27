@@ -200,14 +200,14 @@ public class SettingsAdvancedFragment extends PreferenceFragment implements Pref
 
         @Override
         protected Boolean doInBackground(Void... voids) {
-            db.channelDao().deleteAll();
-            db.channelTagDao().deleteAll();
-            db.tagAndChannelDao().deleteAll();
-            db.programDao().deleteAll();
-            db.recordingDao().deleteAll();
-            db.seriesRecordingDao().deleteAll();
-            db.timerRecordingDao().deleteAll();
-            db.serverStatusDao().deleteAll();
+            db.getChannelDao().deleteAll();
+            db.getChannelTagDao().deleteAll();
+            db.getTagAndChannelDao().deleteAll();
+            db.getProgramDao().deleteAll();
+            db.getRecordingDao().deleteAll();
+            db.getSeriesRecordingDao().deleteAll();
+            db.getTimerRecordingDao().deleteAll();
+            db.getServerStatusDao().deleteAll();
             Timber.d("Removed all data from the database");
             return true;
         }
