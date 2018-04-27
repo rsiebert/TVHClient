@@ -57,9 +57,6 @@ import timber.log.Timber;
 // TODO improve icons, red, green cirles
 // TODO add info via fabrics which screen is used most often
 
-// TODO wrong message when changing connection from navigation drawer
-// TODO no program list shown after changing connection from navigation drawer
-
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, ToolbarInterface {
 
     protected MenuUtils menuUtils;
