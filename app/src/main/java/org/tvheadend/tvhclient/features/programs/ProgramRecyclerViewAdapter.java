@@ -114,7 +114,11 @@ public class ProgramRecyclerViewAdapter extends RecyclerView.Adapter<ProgramRecy
     }
 
     public Program getItem(int position) {
-        return programList.get(position);
+        if (programList.size() > position && position >= 0) {
+            return programList.get(position);
+        } else {
+            return null;
+        }
     }
 
     /**

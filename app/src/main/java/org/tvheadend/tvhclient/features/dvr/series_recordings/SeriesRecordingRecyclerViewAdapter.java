@@ -109,7 +109,11 @@ public class SeriesRecordingRecyclerViewAdapter extends RecyclerView.Adapter<Ser
     }
 
     public SeriesRecording getItem(int position) {
-        return seriesRecordingList.get(position);
+        if (seriesRecordingList.size() > position && position >= 0) {
+            return seriesRecordingList.get(position);
+        } else {
+            return null;
+        }
     }
 
     public List<SeriesRecording> getItems() {

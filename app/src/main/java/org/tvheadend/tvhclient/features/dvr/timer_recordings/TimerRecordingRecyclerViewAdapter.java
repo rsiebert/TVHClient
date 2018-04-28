@@ -106,7 +106,11 @@ public class TimerRecordingRecyclerViewAdapter extends RecyclerView.Adapter<Time
     }
 
     public TimerRecording getItem(int position) {
-        return timerRecordingList.get(position);
+        if (timerRecordingList.size() > position && position >= 0) {
+            return timerRecordingList.get(position);
+        } else {
+            return null;
+        }
     }
 
     public List<TimerRecording> getItems() {

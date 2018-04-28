@@ -149,7 +149,11 @@ public class RecordingRecyclerViewAdapter extends RecyclerView.Adapter<Recording
     }
 
     public Recording getItem(int position) {
-        return recordingList.get(position);
+        if (recordingList.size() > position && position >= 0) {
+            return recordingList.get(position);
+        } else {
+            return null;
+        }
     }
 
     public List<Recording> getItems() {

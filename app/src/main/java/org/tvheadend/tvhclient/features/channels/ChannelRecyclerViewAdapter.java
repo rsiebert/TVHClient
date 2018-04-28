@@ -185,7 +185,11 @@ public class ChannelRecyclerViewAdapter extends RecyclerView.Adapter<ChannelRecy
     }
 
     public Channel getItem(int position) {
-        return channelListFiltered.get(position);
+        if (channelListFiltered.size() > position && position >= 0) {
+            return channelListFiltered.get(position);
+        } else {
+            return null;
+        }
     }
 
     @Override
