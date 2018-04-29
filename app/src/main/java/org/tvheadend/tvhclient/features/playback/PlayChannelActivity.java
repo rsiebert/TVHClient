@@ -47,7 +47,7 @@ public class PlayChannelActivity extends BasePlayActivity {
     protected void onHttpTicketReceived(String path, String ticket) {
         Timber.d("Playing channel from server");
 
-        Channel channel = new ChannelAndProgramRepository(this).getChannelByIdSync(channelId);
+        Channel channel = channelAndProgramRepository.getChannelByIdSync(channelId);
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setDataAndType(Uri.parse(getPlayerUrl(path, ticket)), getPlayerMimeType());
         intent.putExtra("itemTitle", channel.getName());

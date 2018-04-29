@@ -50,7 +50,7 @@ public class PlayRecordingActivity extends BasePlayActivity {
 
     @Override
     protected void onHttpTicketReceived(String path, String ticket) {
-        Recording recording = new RecordingRepository(this).getRecordingByIdSync(dvrId);
+        Recording recording = recordingRepository.getRecordingByIdSync(dvrId);
 
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.putExtra("itemTitle", recording.getTitle());

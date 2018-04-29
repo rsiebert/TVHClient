@@ -11,7 +11,6 @@ import com.google.android.gms.common.images.WebImage;
 
 import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.data.entity.ServerProfile;
-import org.tvheadend.tvhclient.data.repository.ChannelAndProgramRepository;
 
 import timber.log.Timber;
 
@@ -25,7 +24,7 @@ public class CastChannelActivity extends BaseCastingActivity {
         super.onCreate(savedInstanceState);
 
         if (savedInstanceState == null) {
-            channel = new ChannelAndProgramRepository(this).getChannelByIdSync(getIntent().getIntExtra("channelId", -1));
+            channel = channelAndProgramRepository.getChannelByIdSync(getIntent().getIntExtra("channelId", -1));
             if (channel == null) {
                 Timber.d("No channel was provided");
                 finish();

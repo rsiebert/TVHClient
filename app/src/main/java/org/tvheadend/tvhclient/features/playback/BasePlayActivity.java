@@ -24,8 +24,10 @@ import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.entity.ServerProfile;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
 import org.tvheadend.tvhclient.data.entity.TranscodingProfile;
+import org.tvheadend.tvhclient.data.repository.ChannelAndProgramRepository;
 import org.tvheadend.tvhclient.data.repository.ConfigRepository;
 import org.tvheadend.tvhclient.data.repository.ConnectionRepository;
+import org.tvheadend.tvhclient.data.repository.RecordingRepository;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
 import butterknife.BindView;
@@ -39,6 +41,9 @@ public abstract class BasePlayActivity extends AppCompatActivity {
     @BindView(R.id.status)
     protected TextView statusTextView;
 
+    private ConnectionRepository connectionRepository;
+    protected ChannelAndProgramRepository channelAndProgramRepository;
+    protected RecordingRepository recordingRepository;
     protected ConfigRepository configRepository;
     protected ServerStatus serverStatus;
     protected Connection connection;
@@ -52,8 +57,10 @@ public abstract class BasePlayActivity extends AppCompatActivity {
         MiscUtils.setLanguage(this);
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        ConnectionRepository connectionRepository = new ConnectionRepository(this);
+        connectionRepository = new ConnectionRepository(this);
         configRepository = new ConfigRepository(this);
+        recordingRepository = new RecordingRepository(this);
+        channelAndProgramRepository = new ChannelAndProgramRepository(this);
 
         ButterKnife.bind(this);
 
@@ -144,7 +151,7 @@ public abstract class BasePlayActivity extends AppCompatActivity {
     }
 
     protected String getPlayerUrl(String path, String ticket) {
-        String url = connection.getHostname() + ":" + connection.getStreamingPort() + path + "?ticket=" + ticket;
+        String url = "http://" + connection.getHostname() + ":" + connection.getStreamingPort() + path + "?ticket=" + ticket;
 
         // Use the newer server profiles over the old local ones
         ServerProfile serverProfile = configRepository.getPlaybackServerProfileById(serverStatus.getPlaybackServerProfileId());

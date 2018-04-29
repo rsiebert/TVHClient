@@ -11,7 +11,6 @@ import com.google.android.gms.common.images.WebImage;
 
 import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.data.entity.ServerProfile;
-import org.tvheadend.tvhclient.data.repository.RecordingRepository;
 
 import timber.log.Timber;
 
@@ -25,7 +24,7 @@ public class CastRecordingActivity extends BaseCastingActivity {
         super.onCreate(savedInstanceState);
 
         if (savedInstanceState == null) {
-            recording = new RecordingRepository(this).getRecordingByIdSync(getIntent().getIntExtra("dvrId", -1));
+            recording = recordingRepository.getRecordingByIdSync(getIntent().getIntExtra("dvrId", -1));
             if (recording == null) {
                 Timber.d("No recording was provided");
                 finish();

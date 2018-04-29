@@ -17,14 +17,19 @@ import com.google.android.gms.cast.framework.CastSession;
 
 import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
+import org.tvheadend.tvhclient.data.repository.ChannelAndProgramRepository;
 import org.tvheadend.tvhclient.data.repository.ConfigRepository;
 import org.tvheadend.tvhclient.data.repository.ConnectionRepository;
+import org.tvheadend.tvhclient.data.repository.RecordingRepository;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
 import timber.log.Timber;
 
 public abstract class BaseCastingActivity extends AppCompatActivity {
 
+    private ConnectionRepository connectionRepository;
+    protected ChannelAndProgramRepository channelAndProgramRepository;
+    protected RecordingRepository recordingRepository;
     protected ConfigRepository configRepository;
     protected ServerStatus serverStatus;
     protected Connection connection;
@@ -36,8 +41,10 @@ public abstract class BaseCastingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         MiscUtils.setLanguage(this);
 
-        ConnectionRepository connectionRepository = new ConnectionRepository(this);
+        connectionRepository = new ConnectionRepository(this);
         configRepository = new ConfigRepository(this);
+        recordingRepository = new RecordingRepository(this);
+        channelAndProgramRepository = new ChannelAndProgramRepository(this);
 
         connection = connectionRepository.getActiveConnectionSync();
         serverStatus = configRepository.getServerStatus();
