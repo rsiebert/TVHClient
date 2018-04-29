@@ -15,11 +15,10 @@ import org.tvheadend.tvhclient.data.local.dao.ChannelTagDao;
 import org.tvheadend.tvhclient.data.local.dao.ProgramDao;
 import org.tvheadend.tvhclient.data.local.dao.ServerStatusDao;
 import org.tvheadend.tvhclient.data.local.db.AppRoomDatabase;
+import org.tvheadend.tvhclient.features.channels.ChannelsLoadedCallback;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-
-import timber.log.Timber;
 
 public class ChannelAndProgramRepository {
     private final SharedPreferences sharedPreferences;
@@ -71,15 +70,9 @@ public class ChannelAndProgramRepository {
         return db.getProgramDao().loadProgramsFromChannelWithinTime(channelId, time);
     }
 
-    public List<Channel> getAllChannelsByTimeAndTagSync(long currentTime, int channelTagId) {
-        try {
-            int channelSortOrder = Integer.valueOf(sharedPreferences.getString("channel_sort_order", "0"));
-            // TODO load this stuff here in the  background and return the calculated values, do not load in the viewmodel or fragment task
-            return new LoadAllChannelsTask(db.getChannelDao(), currentTime, channelTagId, channelSortOrder).execute().get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-        return null;
+    public void getAllChannelsByTimeAndTagSync(long currentTime, int channelTagId, ChannelsLoadedCallback callback) {
+        int channelSortOrder = Integer.valueOf(sharedPreferences.getString("channel_sort_order", "0"));
+        new LoadAllChannelsByTimeAndTagTask(db.getChannelDao(), currentTime, channelTagId, channelSortOrder, callback).execute();
     }
 
     public ChannelTag getChannelTagByIdSync(int channelTagId) {
@@ -141,40 +134,50 @@ public class ChannelAndProgramRepository {
     private static class LoadAllChannelsTask extends AsyncTask<Void, Void, List<Channel>> {
 
         private final ChannelDao dao;
-        private final long currentTime;
-        private final int channelTagId;
         private final int sortOrder;
-
-        LoadAllChannelsTask(ChannelDao dao, long currentTime, int channelTagId, int sortOrder) {
-            this.dao = dao;
-            this.currentTime = currentTime;
-            this.channelTagId = channelTagId;
-            this.sortOrder = sortOrder;
-        }
 
         LoadAllChannelsTask(ChannelDao dao, int sortOrder) {
             this.dao = dao;
-            this.currentTime = 0;
-            this.channelTagId = 0;
             this.sortOrder = sortOrder;
         }
 
         @Override
         protected List<Channel> doInBackground(Void... voids) {
+            return dao.loadAllChannelsSync(sortOrder);
+        }
+    }
+
+    private static class LoadAllChannelsByTimeAndTagTask extends AsyncTask<Void, Void, List<Channel>> {
+
+        private final ChannelDao dao;
+        private final long currentTime;
+        private final int channelTagId;
+        private final int sortOrder;
+        private final ChannelsLoadedCallback callback;
+
+        LoadAllChannelsByTimeAndTagTask(ChannelDao dao, long currentTime, int channelTagId, int sortOrder, ChannelsLoadedCallback callback) {
+            this.dao = dao;
+            this.currentTime = currentTime;
+            this.channelTagId = channelTagId;
+            this.sortOrder = sortOrder;
+            this.callback = callback;
+        }
+
+        @Override
+        protected List<Channel> doInBackground(Void... voids) {
             if (currentTime == 0) {
-                Timber.d("doInBackground: currentTime is 0");
                 return dao.loadAllChannelsSync(sortOrder);
             } else if (currentTime > 0 && channelTagId == 0) {
-                Timber.d("doInBackground: currentTime > 0 and channelTagId is 0");
-                List<Channel> channels = dao.loadAllChannelsByTimeSync(currentTime, sortOrder);
-
-                for (Channel c : channels) {
-                    Timber.d("Found channel " + c.getName() + " with id " + c.getId());
-                }
-                return channels;
+                return dao.loadAllChannelsByTimeSync(currentTime, sortOrder);
             } else {
-                Timber.d("doInBackground: currentTime > 0 and channelTagId > 0");
                 return dao.loadAllChannelsByTimeAndTagSync(currentTime, channelTagId, sortOrder);
+            }
+        }
+
+        @Override
+        protected void onPostExecute(List<Channel> channels) {
+            if (callback != null) {
+                callback.onChannelsLoaded(channels);
             }
         }
     }

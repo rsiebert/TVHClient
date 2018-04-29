@@ -5,7 +5,6 @@ import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 
-import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.data.entity.ChannelTag;
 import org.tvheadend.tvhclient.data.entity.Program;
 import org.tvheadend.tvhclient.data.entity.Recording;
@@ -21,7 +20,6 @@ public class ChannelViewModel extends AndroidViewModel {
     private final RecordingRepository recordingRepository;
     private final ChannelAndProgramRepository channelRepository;
     private final ConfigRepository configRepository;
-    private LiveData<List<Channel>> channels;
     private LiveData<List<Recording>> recordings;
     private LiveData<ServerStatus> serverStatus;
 
@@ -46,10 +44,6 @@ public class ChannelViewModel extends AndroidViewModel {
             serverStatus = configRepository.loadServerStatus();
         }
         return serverStatus;
-    }
-
-    List<Channel> getAllChannelsByTimeAndTagSync(long currentTime, int channelTagId) {
-        return channelRepository.getAllChannelsByTimeAndTagSync(currentTime, channelTagId);
     }
 
     Program getProgramByIdSync(int eventId) {

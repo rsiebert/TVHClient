@@ -21,23 +21,26 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.data.entity.ChannelTag;
 import org.tvheadend.tvhclient.data.entity.Program;
 import org.tvheadend.tvhclient.data.entity.Recording;
-import org.tvheadend.tvhclient.features.shared.BaseFragment;
-import org.tvheadend.tvhclient.features.shared.callbacks.ChannelClickCallback;
-import org.tvheadend.tvhclient.features.shared.listener.RecyclerTouchListener;
-import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewTouchCallback;
-import org.tvheadend.tvhclient.features.shared.callbacks.ChannelTagSelectionCallback;
-import org.tvheadend.tvhclient.features.shared.callbacks.ChannelTimeSelectionCallback;
-import org.tvheadend.tvhclient.features.shared.MenuUtils;
+import org.tvheadend.tvhclient.data.repository.ChannelAndProgramRepository;
 import org.tvheadend.tvhclient.features.programs.ProgramListActivity;
 import org.tvheadend.tvhclient.features.programs.ProgramListFragment;
 import org.tvheadend.tvhclient.features.search.SearchRequestInterface;
+import org.tvheadend.tvhclient.features.shared.BaseFragment;
+import org.tvheadend.tvhclient.features.shared.MenuUtils;
+import org.tvheadend.tvhclient.features.shared.callbacks.ChannelClickCallback;
+import org.tvheadend.tvhclient.features.shared.callbacks.ChannelTagSelectionCallback;
+import org.tvheadend.tvhclient.features.shared.callbacks.ChannelTimeSelectionCallback;
+import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewTouchCallback;
+import org.tvheadend.tvhclient.features.shared.listener.RecyclerTouchListener;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -49,10 +52,12 @@ import timber.log.Timber;
 // TODO sorting should consider minor major channel numbers
 // TODO use the channel tag from the server status
 
-public class ChannelListFragment extends BaseFragment implements ChannelClickCallback, ChannelTimeSelectionCallback, ChannelTagSelectionCallback, SearchRequestInterface {
+public class ChannelListFragment extends BaseFragment implements ChannelClickCallback, ChannelTimeSelectionCallback, ChannelTagSelectionCallback, SearchRequestInterface, ChannelsLoadedCallback {
 
     protected ChannelRecyclerViewAdapter recyclerViewAdapter;
     protected RecyclerView recyclerView;
+    protected ProgressBar progressBar;
+    private List<Channel> channels = new ArrayList<>();
 
     private long selectedTime;
     private int channelTagId;
@@ -62,6 +67,7 @@ public class ChannelListFragment extends BaseFragment implements ChannelClickCal
     private ChannelViewModel viewModel;
     private Runnable channelUpdateTask;
     private final Handler channelUpdateHandler = new Handler();
+    private ChannelAndProgramRepository channelRepository;
 
     @Nullable
     @Override
@@ -70,6 +76,7 @@ public class ChannelListFragment extends BaseFragment implements ChannelClickCal
         Timber.d("onCreateView() called");
         View view = inflater.inflate(R.layout.recyclerview_fragment, container, false);
         recyclerView = view.findViewById(R.id.recycler_view);
+        progressBar = view.findViewById(R.id.progress_bar);
         return view;
     }
 
@@ -112,6 +119,7 @@ public class ChannelListFragment extends BaseFragment implements ChannelClickCal
             }
         }));
 
+        channelRepository = new ChannelAndProgramRepository(activity);
         viewModel = ViewModelProviders.of(activity).get(ChannelViewModel.class);
 
         updateAdapterAndToolbar();
@@ -133,7 +141,7 @@ public class ChannelListFragment extends BaseFragment implements ChannelClickCal
                 long currentTime = new Date().getTime();
                 if (selectedTime < currentTime) {
                     selectedTime = currentTime;
-                    recyclerViewAdapter.addItems(viewModel.getAllChannelsByTimeAndTagSync(selectedTime, channelTagId));
+                    loadAllChannelsByTimeAndTagSync(selectedTime, channelTagId);
                 }
                 channelUpdateHandler.postDelayed(channelUpdateTask, 60000);
             }
@@ -158,7 +166,7 @@ public class ChannelListFragment extends BaseFragment implements ChannelClickCal
     @Override
     public void onResume() {
         super.onResume();
-        channelUpdateHandler.postDelayed(channelUpdateTask, 100);
+        channelUpdateHandler.post(channelUpdateTask);
     }
 
     @Override
@@ -216,13 +224,15 @@ public class ChannelListFragment extends BaseFragment implements ChannelClickCal
         } else {
             selectedTime = new Date().getTime();
         }
-        recyclerViewAdapter.addItems(viewModel.getAllChannelsByTimeAndTagSync(selectedTime, channelTagId));
+        //recyclerViewAdapter.addItems(viewModel.getAllChannelsByTimeAndTagSync(selectedTime, channelTagId));
+        loadAllChannelsByTimeAndTagSync(selectedTime, channelTagId);
     }
 
     @Override
     public void onChannelTagIdSelected(int id) {
         channelTagId = id;
-        updateAdapterAndToolbar();
+        //updateAdapterAndToolbar();
+        loadAllChannelsByTimeAndTagSync(selectedTime, channelTagId);
     }
 
     /**
@@ -231,15 +241,15 @@ public class ChannelListFragment extends BaseFragment implements ChannelClickCal
      * if no channel tag is set. The subtitle will show the number of visible channels.
      */
     private void updateAdapterAndToolbar() {
-        Timber.d("Updating adapter and toolbar");
-        List<Channel> channelList = viewModel.getAllChannelsByTimeAndTagSync(selectedTime, channelTagId);
-        Timber.d("Loaded " + channelList.size() + " channels");
-        recyclerViewAdapter.addItems(channelList);
+        //Timber.d("Updating adapter and toolbar");
+        //List<Channel> channelList = getAllChannelsByTimeAndTagSync();
+        Timber.d("Loaded " + channels.size() + " channels");
+        recyclerViewAdapter.addItems(channels);
 
         ChannelTag channelTag = viewModel.getChannelTagByIdSync(channelTagId);
         toolbarInterface.setTitle((channelTag == null) ? getString(R.string.all_channels) : channelTag.getTagName());
         toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.items,
-                channelList.size(), channelList.size()));
+                channels.size(), channels.size()));
     }
 
     /**
@@ -361,5 +371,20 @@ public class ChannelListFragment extends BaseFragment implements ChannelClickCal
     @Override
     public void onChannelClick(int id) {
         new MenuUtils(activity).handleMenuPlayChannelSelection(id);
+    }
+
+    @Override
+    public void onChannelsLoaded(List<Channel> channels) {
+        Timber.d("Loading channels done");
+        this.channels = channels;
+        updateAdapterAndToolbar();
+
+        recyclerView.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.GONE);
+    }
+
+    void loadAllChannelsByTimeAndTagSync(long currentTime, int channelTagId) {
+        Timber.d("Loading channels started");
+        channelRepository.getAllChannelsByTimeAndTagSync(currentTime, channelTagId, this);
     }
 }
