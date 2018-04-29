@@ -63,7 +63,7 @@ public class StartupFragment extends Fragment {
 
     private Unbinder unbinder;
     private AppCompatActivity activity;
-    private ConnectionRepository repository;
+    private ConnectionRepository connectionRepository;
     private SharedPreferences sharedPreferences;
     private String state;
     private String details;
@@ -88,7 +88,7 @@ public class StartupFragment extends Fragment {
         activity = (AppCompatActivity) getActivity();
         setHasOptionsMenu(true);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity);
-        repository = new ConnectionRepository(activity);
+        connectionRepository = new ConnectionRepository(activity);
 
         progressBar.setVisibility(View.INVISIBLE);
 
@@ -186,12 +186,12 @@ public class StartupFragment extends Fragment {
     }
 
     private boolean isConnectionDefined() {
-        List<Connection> connectionList = repository.getAllConnectionsSync();
+        List<Connection> connectionList = connectionRepository.getAllConnectionsSync();
         return connectionList != null && connectionList.size() > 0;
     }
 
     private boolean isActiveConnectionDefined() {
-        return repository.getActiveConnectionSync() != null;
+        return connectionRepository.getActiveConnectionSync() != null;
     }
 
     private void showSettingsAddNewConnection() {
