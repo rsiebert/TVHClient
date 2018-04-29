@@ -29,26 +29,13 @@ import java.util.concurrent.ExecutionException;
 
 import timber.log.Timber;
 
-public class SettingsAdvancedFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener, SharedPreferences.OnSharedPreferenceChangeListener {
-
-    private Activity activity;
-    private ToolbarInterface toolbarInterface;
-    private SharedPreferences sharedPreferences;
+public class SettingsAdvancedFragment extends BasePreferenceFragment implements Preference.OnPreferenceClickListener, SharedPreferences.OnSharedPreferenceChangeListener {
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences_advanced);
-
-        activity = getActivity();
-        if (activity instanceof ToolbarInterface) {
-            toolbarInterface = (ToolbarInterface) activity;
-        }
-        if (toolbarInterface != null) {
-            toolbarInterface.setTitle(getString(R.string.pref_advanced_settings));
-        }
-
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity);
+        toolbarInterface.setTitle(getString(R.string.pref_advanced_settings));
 
         Preference prefSendLogfile = findPreference("send_debug_logfile_enabled");
         Preference prefClearDatabase = findPreference("clear_database");

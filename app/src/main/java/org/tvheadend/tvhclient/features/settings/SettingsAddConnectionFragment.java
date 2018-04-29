@@ -29,7 +29,7 @@ public class SettingsAddConnectionFragment extends SettingsConnectionBaseFragmen
         } else if (!connection.isPortValid(connection.getStreamingPort())) {
             showMessage(getString(R.string.pref_port_error_invalid));
         } else {
-            repository.insertConnectionSync(connection);
+            connectionRepository.insertConnectionSync(connection);
             activity.finish();
         }
     }

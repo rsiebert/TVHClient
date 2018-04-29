@@ -38,7 +38,7 @@ public class SettingsListConnectionsFragment extends ListFragment implements Bac
     private ConnectionListAdapter connectionListAdapter;
     private ActionMode actionMode;
     private AppCompatActivity activity;
-    private ConnectionRepository repository;
+    private ConnectionRepository connectionRepository;
     private int currentActiveConnectionId;
     private int initialActiveConnectionId;
 
@@ -52,7 +52,7 @@ public class SettingsListConnectionsFragment extends ListFragment implements Bac
         }
         toolbarInterface.setTitle(getString(R.string.settings));
 
-        repository = new ConnectionRepository(activity);
+        connectionRepository = new ConnectionRepository(activity);
         connectionListAdapter = new ConnectionListAdapter(activity);
         setListAdapter(connectionListAdapter);
         getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
@@ -83,7 +83,7 @@ public class SettingsListConnectionsFragment extends ListFragment implements Bac
         if (savedInstanceState != null) {
             initialActiveConnectionId = savedInstanceState.getInt("initialActiveConnectionId");
         } else {
-            initialActiveConnectionId = (repository.getActiveConnectionSync() != null) ? repository.getActiveConnectionSync().getId() : -1;
+            initialActiveConnectionId = (connectionRepository.getActiveConnectionSync() != null) ? connectionRepository.getActiveConnectionSync().getId() : -1;
         }
 
         Timber.d("Initially active connection id: " + initialActiveConnectionId);
@@ -140,13 +140,13 @@ public class SettingsListConnectionsFragment extends ListFragment implements Bac
         switch (item.getItemId()) {
             case R.id.menu_set_active:
                 connection.setActive(true);
-                repository.updateConnectionSync(connection);
+                connectionRepository.updateConnectionSync(connection);
                 mode.finish();
                 return true;
 
             case R.id.menu_set_not_active:
                 connection.setActive(false);
-                repository.updateConnectionSync(connection);
+                connectionRepository.updateConnectionSync(connection);
                 mode.finish();
                 return true;
 
@@ -171,7 +171,7 @@ public class SettingsListConnectionsFragment extends ListFragment implements Bac
                         .onPositive(new MaterialDialog.SingleButtonCallback() {
                             @Override
                             public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                repository.removeConnectionSync(connection.getId());
+                                connectionRepository.removeConnectionSync(connection.getId());
                                 currentActiveConnectionId = 0;
                             }
                         })

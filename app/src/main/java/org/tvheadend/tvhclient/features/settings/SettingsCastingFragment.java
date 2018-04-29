@@ -24,16 +24,12 @@ import android.preference.PreferenceFragment;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.features.shared.callbacks.ToolbarInterface;
 
-public class SettingsCastingFragment extends PreferenceFragment {
+public class SettingsCastingFragment extends BasePreferenceFragment {
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences_casting);
-
-        if (getActivity() instanceof ToolbarInterface) {
-            ToolbarInterface toolbarInterface = (ToolbarInterface) getActivity();
-            toolbarInterface.setTitle(getString(R.string.pref_casting));
-        }
+        toolbarInterface.setTitle(getString(R.string.pref_casting));
     }
 }

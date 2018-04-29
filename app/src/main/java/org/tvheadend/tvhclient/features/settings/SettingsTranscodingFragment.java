@@ -21,20 +21,14 @@ package org.tvheadend.tvhclient.features.settings;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
-import android.preference.PreferenceFragment;
-import android.support.v7.app.AppCompatActivity;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.entity.TranscodingProfile;
-import org.tvheadend.tvhclient.data.repository.ConfigRepository;
-import org.tvheadend.tvhclient.data.repository.ConnectionRepository;
-import org.tvheadend.tvhclient.features.shared.callbacks.ToolbarInterface;
 import org.tvheadend.tvhclient.features.shared.callbacks.BackPressedInterface;
 
-public class SettingsTranscodingFragment extends PreferenceFragment implements BackPressedInterface {
+public class SettingsTranscodingFragment extends BasePreferenceFragment implements BackPressedInterface {
 
-    private ToolbarInterface toolbarInterface;
     private TranscodingProfile playbackProfile = null;
     private TranscodingProfile recordingProfile = null;
 
@@ -52,21 +46,14 @@ public class SettingsTranscodingFragment extends PreferenceFragment implements B
     private ListPreference recordingVideoCodecPreference;
     private ListPreference recordingSubtitleCodecPreference;
 
-    private AppCompatActivity activity;
-    private ConfigRepository configRepository;
-
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences_transcoding);
 
-        activity = (AppCompatActivity) getActivity();
-        if (activity instanceof ToolbarInterface) {
-            toolbarInterface = (ToolbarInterface) activity;
-        }
         setHasOptionsMenu(true);
 
-        Connection connection = new ConnectionRepository(activity).getActiveConnectionSync();
+        Connection connection = connectionRepository.getActiveConnectionSync();
         toolbarInterface.setTitle(getString(R.string.pref_transcoding));
         toolbarInterface.setSubtitle(connection.getName());
 
@@ -84,7 +71,6 @@ public class SettingsTranscodingFragment extends PreferenceFragment implements B
         recordingVideoCodecPreference = (ListPreference) findPreference("recording_video_codec");
         recordingSubtitleCodecPreference = (ListPreference) findPreference("recording_subtitle_codec");
 
-        configRepository = new ConfigRepository(activity);
         playbackProfile = configRepository.getPlaybackTranscodingProfile();
         recordingProfile = configRepository.getRecordingTranscodingProfile();
 

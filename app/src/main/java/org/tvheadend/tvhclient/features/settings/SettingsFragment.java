@@ -9,36 +9,27 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.preference.Preference;
-import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.provider.SearchRecentSuggestions;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AppCompatActivity;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.folderselector.FolderChooserDialog;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.MainApplication;
-import org.tvheadend.tvhclient.features.search.SuggestionProvider;
-import org.tvheadend.tvhclient.data.repository.ConfigRepository;
-import org.tvheadend.tvhclient.features.shared.callbacks.ToolbarInterface;
 import org.tvheadend.tvhclient.features.changelog.ChangeLogActivity;
 import org.tvheadend.tvhclient.features.navigation.NavigationActivity;
+import org.tvheadend.tvhclient.features.search.SuggestionProvider;
 
 import java.io.File;
 
 import timber.log.Timber;
 
-public class SettingsFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener, SharedPreferences.OnSharedPreferenceChangeListener, ActivityCompat.OnRequestPermissionsResultCallback, FolderChooserDialogCallback {
+public class SettingsFragment extends BasePreferenceFragment implements Preference.OnPreferenceClickListener, SharedPreferences.OnSharedPreferenceChangeListener, ActivityCompat.OnRequestPermissionsResultCallback, FolderChooserDialogCallback {
 
-    private ToolbarInterface toolbarInterface;
     private Preference downloadDirectoryPreference;
-    private boolean isUnlocked;
-    private int htspVersion;
-    private SharedPreferences sharedPreferences;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -46,18 +37,8 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
 
         PreferenceManager.setDefaultValues(getActivity(), R.xml.preferences, false);
         addPreferencesFromResource(R.xml.preferences);
-
-        AppCompatActivity activity = (AppCompatActivity) getActivity();
-        if (activity instanceof ToolbarInterface) {
-            toolbarInterface = (ToolbarInterface) activity;
-        }
-
         toolbarInterface.setTitle(getString(R.string.settings));
         toolbarInterface.setSubtitle("");
-
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        isUnlocked = MainApplication.getInstance().isUnlocked();
-        htspVersion = new ConfigRepository(activity).getServerStatus().getHtspVersion();
 
         Preference manageConnectionsPreference = findPreference("list_connections");
         Preference userInterfacePreference = findPreference("user_interface");

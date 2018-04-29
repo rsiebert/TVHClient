@@ -18,26 +18,18 @@
  */
 package org.tvheadend.tvhclient.features.settings;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.features.shared.callbacks.ToolbarInterface;
 
-public class SettingsNotificationFragment extends PreferenceFragment {
-
-    private ToolbarInterface toolbarInterface;
+public class SettingsNotificationFragment extends BasePreferenceFragment {
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences_notifications);
-
-        Activity activity = getActivity();
-        if (activity instanceof ToolbarInterface) {
-            toolbarInterface = (ToolbarInterface) activity;
-        }
         toolbarInterface.setTitle(getString(R.string.pref_notifications));
     }
 }

@@ -21,44 +21,31 @@ package org.tvheadend.tvhclient.features.settings;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
-import android.preference.PreferenceFragment;
-import android.support.v7.app.AppCompatActivity;
 
-import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.MainApplication;
+import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.entity.ServerProfile;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
-import org.tvheadend.tvhclient.data.repository.ConfigRepository;
-import org.tvheadend.tvhclient.data.repository.ConnectionRepository;
-import org.tvheadend.tvhclient.features.shared.callbacks.ToolbarInterface;
 import org.tvheadend.tvhclient.features.shared.callbacks.BackPressedInterface;
 
 import java.util.List;
 
-public class SettingsProfilesFragment extends PreferenceFragment implements BackPressedInterface {
+public class SettingsProfilesFragment extends BasePreferenceFragment implements BackPressedInterface {
 
-    private ToolbarInterface toolbarInterface;
     private ListPreference recordingProfilesPreference;
     private ListPreference playbackProfilesPreference;
     private ListPreference castingProfilesPreference;
-    private ConfigRepository configRepository;
     private int playbackServerProfileId;
     private int recordingServerProfileId;
     private int castingServerProfileId;
-    private AppCompatActivity activity;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences_profiles);
 
-        activity = (AppCompatActivity) getActivity();
-        if (activity instanceof ToolbarInterface) {
-            toolbarInterface = (ToolbarInterface) activity;
-        }
-
-        Connection connection = new ConnectionRepository(activity).getActiveConnectionSync();
+        Connection connection = connectionRepository.getActiveConnectionSync();
         toolbarInterface.setTitle(getString(R.string.pref_profiles));
         toolbarInterface.setSubtitle(connection.getName());
 
@@ -66,7 +53,6 @@ public class SettingsProfilesFragment extends PreferenceFragment implements Back
         recordingProfilesPreference = (ListPreference) findPreference("recording_profiles");
         castingProfilesPreference = (ListPreference) findPreference("casting_profiles");
 
-        configRepository = new ConfigRepository(activity);
         ServerStatus serverStatus = configRepository.getServerStatus();
         addProfiles(playbackProfilesPreference, configRepository.getAllPlaybackServerProfiles());
         addProfiles(recordingProfilesPreference, configRepository.getAllRecordingServerProfiles());
