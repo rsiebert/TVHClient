@@ -280,7 +280,7 @@ public class ProgramDetailsFragment extends BaseFragment implements ImageDownloa
         if (recording == null || (!recording.isRecording() && !recording.isScheduled())) {
             menu.findItem(R.id.menu_record_once).setVisible(true);
             menu.findItem(R.id.menu_record_once_custom_profile).setVisible(isUnlocked);
-            menu.findItem(R.id.menu_record_series).setVisible(serverStatus.getHtspVersion() >= 13);
+            menu.findItem(R.id.menu_record_series).setVisible(htspVersion >= 13);
 
         } else if (recording.isCompleted()) {
             menu.findItem(R.id.menu_record_remove).setVisible(true);

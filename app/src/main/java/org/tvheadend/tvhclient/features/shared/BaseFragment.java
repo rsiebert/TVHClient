@@ -7,11 +7,9 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
-import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.MainApplication;
-import org.tvheadend.tvhclient.data.entity.ServerStatus;
+import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.repository.ConfigRepository;
-import org.tvheadend.tvhclient.data.repository.RecordingRepository;
 import org.tvheadend.tvhclient.features.shared.callbacks.ToolbarInterface;
 
 public class BaseFragment extends Fragment {
@@ -19,11 +17,10 @@ public class BaseFragment extends Fragment {
     protected AppCompatActivity activity;
     protected ToolbarInterface toolbarInterface;
     protected boolean isDualPane;
-    protected RecordingRepository repository;
     protected SharedPreferences sharedPreferences;
     protected MenuUtils menuUtils;
     protected boolean isUnlocked;
-    protected ServerStatus serverStatus;
+    protected int htspVersion;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -34,10 +31,9 @@ public class BaseFragment extends Fragment {
             toolbarInterface = (ToolbarInterface) activity;
         }
 
-        repository = new RecordingRepository(activity);
-        serverStatus = new ConfigRepository(activity).getServerStatus();
-        isUnlocked = MainApplication.getInstance().isUnlocked();
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity);
+        isUnlocked = MainApplication.getInstance().isUnlocked();
+        htspVersion = new ConfigRepository(activity).getServerStatus().getHtspVersion();
         menuUtils = new MenuUtils(activity);
 
         // Check to see if we have a frame in which to embed the details

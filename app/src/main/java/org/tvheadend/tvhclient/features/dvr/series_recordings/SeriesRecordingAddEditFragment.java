@@ -144,18 +144,18 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
 
     private void updateUI() {
 
-        isEnabledCheckbox.setVisibility(serverStatus.getHtspVersion() >= 19 ? View.VISIBLE : View.GONE);
+        isEnabledCheckbox.setVisibility(htspVersion >= 19 ? View.VISIBLE : View.GONE);
         isEnabledCheckbox.setChecked(recording.getEnabled() == 1);
         titleEditText.setText(recording.getTitle());
         nameEditText.setText(recording.getName());
-        directoryLabelTextView.setVisibility(serverStatus.getHtspVersion() >= 19 ? View.VISIBLE : View.GONE);
-        directoryEditText.setVisibility(serverStatus.getHtspVersion() >= 19 ? View.VISIBLE : View.GONE);
+        directoryLabelTextView.setVisibility(htspVersion >= 19 ? View.VISIBLE : View.GONE);
+        directoryEditText.setVisibility(htspVersion >= 19 ? View.VISIBLE : View.GONE);
         directoryEditText.setText(recording.getDirectory());
 
         channelNameTextView.setText(!TextUtils.isEmpty(recording.getChannelName()) ? recording.getChannelName() : getString(R.string.all_channels));
         channelNameTextView.setOnClickListener(view -> {
             // Determine if the server supports recording on all channels
-            boolean allowRecordingOnAllChannels = serverStatus.getHtspVersion() >= 21;
+            boolean allowRecordingOnAllChannels = htspVersion >= 21;
             handleChannelListSelection(recording.getChannelId(), SeriesRecordingAddEditFragment.this, allowRecordingOnAllChannels);
         });
 
@@ -200,8 +200,8 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
             }
         });
 
-        duplicateDetectionLabelTextView.setVisibility(serverStatus.getHtspVersion() >= 20 ? View.VISIBLE : View.GONE);
-        duplicateDetectionTextView.setVisibility(serverStatus.getHtspVersion() >= 20 ? View.VISIBLE : View.GONE);
+        duplicateDetectionLabelTextView.setVisibility(htspVersion >= 20 ? View.VISIBLE : View.GONE);
+        duplicateDetectionTextView.setVisibility(htspVersion >= 20 ? View.VISIBLE : View.GONE);
         duplicateDetectionTextView.setText(duplicateDetectionList[recording.getDupDetect()]);
         duplicateDetectionTextView.setOnClickListener(view -> handleDuplicateDetectionSelection(duplicateDetectionList, recording.getDupDetect()));
     }

@@ -205,7 +205,7 @@ public class RecordingDetailsFragment extends BaseFragment implements RecordingR
         isSeriesRecordingTextView.setVisibility(!TextUtils.isEmpty(recording.getAutorecId()) ? ImageView.VISIBLE : ImageView.GONE);
         isTimerRecordingTextView.setVisibility(!TextUtils.isEmpty(recording.getTimerecId()) ? ImageView.VISIBLE : ImageView.GONE);
 
-        isEnabledTextView.setVisibility((serverStatus.getHtspVersion() >= 23 && recording.getEnabled() == 0) ? View.VISIBLE : View.GONE);
+        isEnabledTextView.setVisibility((htspVersion >= 23 && recording.getEnabled() == 0) ? View.VISIBLE : View.GONE);
         isEnabledTextView.setText(recording.getEnabled() > 0 ? R.string.recording_enabled : R.string.recording_disabled);
 
         // Only show the status details in the 

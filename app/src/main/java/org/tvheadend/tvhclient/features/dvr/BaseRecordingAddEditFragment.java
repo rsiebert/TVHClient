@@ -9,12 +9,12 @@ import com.sleepbot.datetimepicker.time.RadialPickerLayout;
 import com.sleepbot.datetimepicker.time.TimePickerDialog;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.data.entity.Channel;
+import org.tvheadend.tvhclient.data.entity.ServerStatus;
 import org.tvheadend.tvhclient.data.repository.ChannelAndProgramRepository;
 import org.tvheadend.tvhclient.data.repository.ConfigRepository;
-import org.tvheadend.tvhclient.features.shared.adapter.ChannelListSelectionAdapter;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
+import org.tvheadend.tvhclient.features.shared.adapter.ChannelListSelectionAdapter;
 import org.tvheadend.tvhclient.features.shared.callbacks.ChannelListSelectionCallback;
 import org.tvheadend.tvhclient.features.shared.callbacks.DateTimePickerCallback;
 import org.tvheadend.tvhclient.features.shared.callbacks.DaysOfWeekSelectionCallback;
@@ -30,25 +30,25 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class BaseRecordingAddEditFragment extends BaseFragment {
 
-    protected boolean isUnlocked;
     protected String[] daysOfWeekList;
     protected String[] priorityList;
     protected String[] recordingProfilesList;
     protected List<Channel> channelList;
     protected ChannelAndProgramRepository channelAndProgramRepository;
     protected ConfigRepository configRepository;
+    protected ServerStatus serverStatus;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        isUnlocked = MainApplication.getInstance().isUnlocked();
         configRepository = new ConfigRepository(activity);
         channelAndProgramRepository = new ChannelAndProgramRepository(activity);
         daysOfWeekList = activity.getResources().getStringArray(R.array.day_short_names);
         recordingProfilesList = configRepository.getAllRecordingServerProfileNames();
         priorityList = activity.getResources().getStringArray(R.array.dvr_priorities);
         channelList = channelAndProgramRepository.getAllChannelsSync();
+        serverStatus = configRepository.getServerStatus();
 
         setHasOptionsMenu(true);
     }

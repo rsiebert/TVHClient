@@ -53,7 +53,7 @@ public class TimerRecordingListFragment extends BaseFragment {
             selectedListPosition = savedInstanceState.getInt("listPosition", 0);
         }
 
-        recyclerViewAdapter = new TimerRecordingRecyclerViewAdapter(activity, serverStatus.getHtspVersion());
+        recyclerViewAdapter = new TimerRecordingRecyclerViewAdapter(activity, htspVersion);
         recyclerView.setLayoutManager(new LinearLayoutManager(activity));
         recyclerView.addItemDecoration(new DividerItemDecoration(activity, LinearLayoutManager.VERTICAL));
         recyclerView.setItemAnimator(new DefaultItemAnimator());

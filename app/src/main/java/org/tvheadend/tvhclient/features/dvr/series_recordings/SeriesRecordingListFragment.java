@@ -53,7 +53,7 @@ public class SeriesRecordingListFragment extends BaseFragment {
             selectedListPosition = savedInstanceState.getInt("listPosition", 0);
         }
 
-        recyclerViewAdapter = new SeriesRecordingRecyclerViewAdapter(activity, serverStatus.getHtspVersion());
+        recyclerViewAdapter = new SeriesRecordingRecyclerViewAdapter(activity, htspVersion);
         recyclerView.setLayoutManager(new LinearLayoutManager(activity));
         recyclerView.addItemDecoration(new DividerItemDecoration(activity, LinearLayoutManager.VERTICAL));
         recyclerView.setItemAnimator(new DefaultItemAnimator());

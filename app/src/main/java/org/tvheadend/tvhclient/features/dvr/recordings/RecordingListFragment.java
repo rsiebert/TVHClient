@@ -52,7 +52,7 @@ public class RecordingListFragment extends BaseFragment implements SearchRequest
             selectedListPosition = savedInstanceState.getInt("listPosition", 0);
         }
 
-        recyclerViewAdapter = new RecordingRecyclerViewAdapter(activity, serverStatus.getHtspVersion());
+        recyclerViewAdapter = new RecordingRecyclerViewAdapter(activity, htspVersion);
         recyclerView.setLayoutManager(new LinearLayoutManager(activity));
         recyclerView.addItemDecoration(new DividerItemDecoration(activity, LinearLayoutManager.VERTICAL));
         recyclerView.setItemAnimator(new DefaultItemAnimator());

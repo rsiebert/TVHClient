@@ -121,11 +121,11 @@ public class TimerRecordingDetailsFragment extends BaseFragment implements Recor
 
     private void updateUI() {
 
-        isEnabledTextView.setVisibility((serverStatus.getHtspVersion() >= 19) ? View.VISIBLE : View.GONE);
+        isEnabledTextView.setVisibility((htspVersion >= 19) ? View.VISIBLE : View.GONE);
         isEnabledTextView.setText(recording.getEnabled() > 0 ? R.string.recording_enabled : R.string.recording_disabled);
 
-        directoryLabelTextView.setVisibility(serverStatus.getHtspVersion() >= 19 ? View.VISIBLE : View.GONE);
-        directoryTextView.setVisibility(serverStatus.getHtspVersion() >= 19 ? View.VISIBLE : View.GONE);
+        directoryLabelTextView.setVisibility(htspVersion >= 19 ? View.VISIBLE : View.GONE);
+        directoryTextView.setVisibility(htspVersion >= 19 ? View.VISIBLE : View.GONE);
         directoryTextView.setText(recording.getDirectory());
 
         channelNameTextView.setText(!TextUtils.isEmpty(recording.getChannelName()) ? recording.getChannelName() : getString(R.string.all_channels));
