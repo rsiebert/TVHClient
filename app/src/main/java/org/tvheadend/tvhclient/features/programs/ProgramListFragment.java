@@ -19,6 +19,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Program;
@@ -39,6 +40,7 @@ public class ProgramListFragment extends BaseFragment implements BottomReachedLi
 
     private ProgramRecyclerViewAdapter recyclerViewAdapter;
     private RecyclerView recyclerView;
+    private ProgressBar progressBar;
     private long selectedTime;
     private int selectedListPosition;
     private int channelId;
@@ -60,6 +62,7 @@ public class ProgramListFragment extends BaseFragment implements BottomReachedLi
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.recyclerview_fragment, container, false);
         recyclerView = view.findViewById(R.id.recycler_view);
+        progressBar = view.findViewById(R.id.progress_bar);
         return view;
     }
 
@@ -108,6 +111,9 @@ public class ProgramListFragment extends BaseFragment implements BottomReachedLi
         viewModel.getProgramsByChannelFromTime(channelId, selectedTime).observe(this, programs -> {
             recyclerViewAdapter.addItems(programs);
             toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.programs, recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
+
+            recyclerView.setVisibility(View.VISIBLE);
+            progressBar.setVisibility(View.GONE);
 
             if (isDualPane && recyclerViewAdapter.getItemCount() > 0) {
                 showProgramDetails(selectedListPosition);

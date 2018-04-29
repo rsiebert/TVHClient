@@ -17,6 +17,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Recording;
@@ -33,6 +34,7 @@ public class RecordingListFragment extends BaseFragment implements SearchRequest
 
     protected RecordingRecyclerViewAdapter recyclerViewAdapter;
     protected RecyclerView recyclerView;
+    protected ProgressBar progressBar;
     protected int selectedListPosition;
 
     @Nullable
@@ -41,6 +43,7 @@ public class RecordingListFragment extends BaseFragment implements SearchRequest
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.recyclerview_fragment, container, false);
         recyclerView = view.findViewById(R.id.recycler_view);
+        progressBar = view.findViewById(R.id.progress_bar);
         return view;
     }
 

@@ -17,6 +17,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.SeriesRecording;
@@ -32,6 +33,7 @@ public class SeriesRecordingListFragment extends BaseFragment {
 
     private SeriesRecordingRecyclerViewAdapter recyclerViewAdapter;
     private RecyclerView recyclerView;
+    protected ProgressBar progressBar;
     protected int selectedListPosition;
 
     @Nullable
@@ -40,6 +42,7 @@ public class SeriesRecordingListFragment extends BaseFragment {
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.recyclerview_fragment, container, false);
         recyclerView = view.findViewById(R.id.recycler_view);
+        progressBar = view.findViewById(R.id.progress_bar);
         return view;
     }
 
@@ -74,6 +77,9 @@ public class SeriesRecordingListFragment extends BaseFragment {
         viewModel.getRecordings().observe(this, recordings -> {
             recyclerViewAdapter.addItems(recordings);
             toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.recordings, recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
+
+            recyclerView.setVisibility(View.VISIBLE);
+            progressBar.setVisibility(View.GONE);
 
             if (isDualPane && recyclerViewAdapter.getItemCount() > 0) {
                 showRecordingDetails(selectedListPosition);
