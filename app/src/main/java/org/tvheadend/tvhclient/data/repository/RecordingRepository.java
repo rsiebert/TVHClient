@@ -86,15 +86,6 @@ public class RecordingRepository {
         return db.getRecordingDao().loadAllRemovedRecordings();
     }
 
-    public List<Recording> getAllRecordingsSync() {
-        try {
-            return new LoadAllRecordingsTask(db.getRecordingDao()).execute().get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
     public LiveData<List<Recording>> getAllRecordingsByChannelId(int channelId) {
         return db.getRecordingDao().loadAllRecordingsByChannelId(channelId);
     }
@@ -148,19 +139,6 @@ public class RecordingRepository {
         @Override
         protected Recording doInBackground(Void... voids) {
             return dao.loadRecordingByEventIdSync(id);
-        }
-    }
-
-    protected static class LoadAllRecordingsTask extends AsyncTask<Void, Void, List<Recording>> {
-        private final RecordingDao dao;
-
-        LoadAllRecordingsTask(RecordingDao dao) {
-            this.dao = dao;
-        }
-
-        @Override
-        protected List<Recording> doInBackground(Void... voids) {
-            return dao.loadAllRecordingsSync();
         }
     }
 
