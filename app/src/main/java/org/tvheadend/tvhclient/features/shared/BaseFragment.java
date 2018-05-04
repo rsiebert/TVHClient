@@ -2,25 +2,35 @@ package org.tvheadend.tvhclient.features.shared;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.data.repository.ConfigRepository;
+import org.tvheadend.tvhclient.data.entity.Connection;
+import org.tvheadend.tvhclient.data.entity.ServerStatus;
+import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.features.shared.callbacks.ToolbarInterface;
+
+import javax.inject.Inject;
 
 public class BaseFragment extends Fragment {
 
     protected AppCompatActivity activity;
     protected ToolbarInterface toolbarInterface;
     protected boolean isDualPane;
-    protected SharedPreferences sharedPreferences;
     protected MenuUtils menuUtils;
     protected boolean isUnlocked;
     protected int htspVersion;
+
+    protected Connection connection;
+    protected ServerStatus serverStatus;
+
+    @Inject
+    protected SharedPreferences sharedPreferences;
+    @Inject
+    protected AppRepository appRepository;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -31,9 +41,13 @@ public class BaseFragment extends Fragment {
             toolbarInterface = (ToolbarInterface) activity;
         }
 
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity);
+        MainApplication.getComponent().inject(this);
+
+        connection = appRepository.getConnectionData().getActiveItem();
+        serverStatus = appRepository.getServerStatusData().getItemById(connection.getId());
+
+        htspVersion = serverStatus.getHtspVersion();
         isUnlocked = MainApplication.getInstance().isUnlocked();
-        htspVersion = new ConfigRepository(activity).getServerStatus().getHtspVersion();
         menuUtils = new MenuUtils(activity);
 
         // Check to see if we have a frame in which to embed the details
