@@ -31,18 +31,30 @@ import butterknife.Unbinder;
 
 public class SeriesRecordingDetailsFragment extends BaseFragment implements RecordingRemovedCallback {
 
-    @BindView(R.id.is_enabled) TextView isEnabledTextView;
-    @BindView(R.id.directory_label) TextView directoryLabelTextView;
-    @BindView(R.id.directory) TextView directoryTextView;
-    @BindView(R.id.minimum_duration) TextView minDurationTextView;
-    @BindView(R.id.maximum_duration) TextView maxDurationTextView;
-    @BindView(R.id.start_after_time) TextView startTimeTextView;
-    @BindView(R.id.start_before_time) TextView startWindowTimeTextView;
-    @BindView(R.id.days_of_week) TextView daysOfWeekTextView;
-    @BindView(R.id.channel) TextView channelNameTextView;
-    @BindView(R.id.name_label) TextView nameLabelTextView;
-    @BindView(R.id.name) TextView nameTextView;
-    @BindView(R.id.priority) TextView priorityTextView;
+    @BindView(R.id.is_enabled)
+    TextView isEnabledTextView;
+    @BindView(R.id.directory_label)
+    TextView directoryLabelTextView;
+    @BindView(R.id.directory)
+    TextView directoryTextView;
+    @BindView(R.id.minimum_duration)
+    TextView minDurationTextView;
+    @BindView(R.id.maximum_duration)
+    TextView maxDurationTextView;
+    @BindView(R.id.start_after_time)
+    TextView startTimeTextView;
+    @BindView(R.id.start_before_time)
+    TextView startWindowTimeTextView;
+    @BindView(R.id.days_of_week)
+    TextView daysOfWeekTextView;
+    @BindView(R.id.channel)
+    TextView channelNameTextView;
+    @BindView(R.id.name_label)
+    TextView nameLabelTextView;
+    @BindView(R.id.name)
+    TextView nameTextView;
+    @BindView(R.id.priority)
+    TextView priorityTextView;
 
     @Nullable
     @BindView(R.id.nested_toolbar)
