@@ -27,6 +27,9 @@ public interface ConnectionDao {
     @Query("SELECT * FROM connections WHERE id = :id")
     Connection loadConnectionByIdSync(int id);
 
+    @Query("SELECT * FROM connections WHERE id = :id")
+    LiveData<Connection> loadConnectionById(int id);
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     long insert(Connection connection);
 
@@ -44,4 +47,13 @@ public interface ConnectionDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAll(List<Connection> connectionList);
+
+    @Update
+    void update(List<Connection> items);
+
+    @Query("DELETE FROM connections")
+    void deleteAll();
+
+    @Query("SELECT COUNT (*) FROM connections")
+    LiveData<Integer> getConnectionCount();
 }

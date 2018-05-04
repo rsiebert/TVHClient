@@ -37,6 +37,16 @@ public interface ProgramDao {
             "LEFT JOIN channels AS c ON c.id = p.channel_id " +
             "WHERE p.connection_id IN (SELECT id FROM connections WHERE active = 1) " +
             " AND p.id = :id")
+    LiveData<Program> loadProgramById(int id);
+
+    @Transaction
+    @Query("SELECT p.*," +
+            "c.name AS channel_name, " +
+            "c.icon AS channel_icon " +
+            "FROM programs AS p " +
+            "LEFT JOIN channels AS c ON c.id = p.channel_id " +
+            "WHERE p.connection_id IN (SELECT id FROM connections WHERE active = 1) " +
+            " AND p.id = :id")
     Program loadProgramByIdSync(int id);
 
     @Query("SELECT p.*," +
@@ -62,6 +72,9 @@ public interface ProgramDao {
     @Update
     void update(Program... program);
 
+    @Update
+    void update(List<Program> programs);
+
     @Delete
     void delete(Program program);
 
@@ -73,4 +86,8 @@ public interface ProgramDao {
     @Query("DELETE FROM programs " +
             "WHERE connection_id IN (SELECT id FROM connections WHERE active = 1)")
     void deleteAll();
+
+    @Query("SELECT COUNT (*) FROM programs " +
+            "WHERE connection_id IN (SELECT id FROM connections WHERE active = 1)")
+    LiveData<Integer> getProgramCount();
 }
