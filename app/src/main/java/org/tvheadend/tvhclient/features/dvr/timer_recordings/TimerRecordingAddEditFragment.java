@@ -23,16 +23,15 @@ import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Channel;
-import org.tvheadend.tvhclient.data.entity.ServerProfile;
 import org.tvheadend.tvhclient.data.entity.TimerRecording;
 import org.tvheadend.tvhclient.data.remote.EpgSyncService;
-import org.tvheadend.tvhclient.features.shared.callbacks.BackPressedInterface;
 import org.tvheadend.tvhclient.features.dvr.BaseRecordingAddEditFragment;
+import org.tvheadend.tvhclient.features.shared.callbacks.BackPressedInterface;
+import org.tvheadend.tvhclient.features.shared.callbacks.ChannelListSelectionCallback;
 import org.tvheadend.tvhclient.features.shared.callbacks.DateTimePickerCallback;
 import org.tvheadend.tvhclient.features.shared.callbacks.DaysOfWeekSelectionCallback;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecordingPriorityListCallback;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecordingProfileListCallback;
-import org.tvheadend.tvhclient.features.shared.callbacks.ChannelListSelectionCallback;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
 import butterknife.BindView;
@@ -71,8 +70,6 @@ public class TimerRecordingAddEditFragment extends BaseRecordingAddEditFragment 
     private Unbinder unbinder;
     private String id;
     private TimerRecording recording;
-    private int recordingProfileNameId;
-    private ServerProfile profile;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -91,17 +88,6 @@ public class TimerRecordingAddEditFragment extends BaseRecordingAddEditFragment 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
-        // Get the selected profile from the connection and select it from the recording config list
-        profile = configRepository.getRecordingServerProfileById(serverStatus.getRecordingServerProfileId());
-        if (profile != null) {
-            for (int i = 0; i < recordingProfilesList.length; i++) {
-                if (recordingProfilesList[i].equals(profile.getName())) {
-                    recordingProfileNameId = i;
-                    break;
-                }
-            }
-        }
 
         if (savedInstanceState != null) {
             id = savedInstanceState.getString("id");

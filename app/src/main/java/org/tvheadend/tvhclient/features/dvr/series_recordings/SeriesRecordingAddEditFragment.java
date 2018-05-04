@@ -25,15 +25,14 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.data.entity.SeriesRecording;
-import org.tvheadend.tvhclient.data.entity.ServerProfile;
 import org.tvheadend.tvhclient.data.remote.EpgSyncService;
-import org.tvheadend.tvhclient.features.shared.callbacks.BackPressedInterface;
 import org.tvheadend.tvhclient.features.dvr.BaseRecordingAddEditFragment;
+import org.tvheadend.tvhclient.features.shared.callbacks.BackPressedInterface;
+import org.tvheadend.tvhclient.features.shared.callbacks.ChannelListSelectionCallback;
 import org.tvheadend.tvhclient.features.shared.callbacks.DateTimePickerCallback;
 import org.tvheadend.tvhclient.features.shared.callbacks.DaysOfWeekSelectionCallback;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecordingPriorityListCallback;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecordingProfileListCallback;
-import org.tvheadend.tvhclient.features.shared.callbacks.ChannelListSelectionCallback;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
 import butterknife.BindView;
@@ -86,9 +85,7 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
     private String[] duplicateDetectionList;
     private Unbinder unbinder;
     private String id;
-    private int recordingProfileNameId;
     private SeriesRecording recording;
-    private ServerProfile profile;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -111,7 +108,6 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
         duplicateDetectionList = activity.getResources().getStringArray(R.array.duplicate_detection_list);
 
         // Get the selected profile from the connection and select it from the recording config list
-        profile = configRepository.getRecordingServerProfileById(serverStatus.getRecordingServerProfileId());
         if (profile != null) {
             for (int i = 0; i < recordingProfilesList.length; i++) {
                 if (recordingProfilesList[i].equals(profile.getName())) {

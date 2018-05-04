@@ -10,6 +10,7 @@ import com.sleepbot.datetimepicker.time.TimePickerDialog;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Channel;
+import org.tvheadend.tvhclient.data.entity.ServerProfile;
 import org.tvheadend.tvhclient.data.repository.ConfigRepository;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
 import org.tvheadend.tvhclient.features.shared.adapter.ChannelListSelectionAdapter;
@@ -33,6 +34,8 @@ public class BaseRecordingAddEditFragment extends BaseFragment {
     protected String[] recordingProfilesList;
     protected List<Channel> channelList;
     protected ConfigRepository configRepository;
+    protected ServerProfile profile;
+    protected int recordingProfileNameId;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -45,6 +48,17 @@ public class BaseRecordingAddEditFragment extends BaseFragment {
         priorityList = activity.getResources().getStringArray(R.array.dvr_priorities);
 
         channelList = appRepository.getChannelData().getItems();
+
+        profile = configRepository.getRecordingServerProfileById(serverStatus.getRecordingServerProfileId());
+        // Get the selected profile from the connection and select it from the recording config list
+        if (profile != null) {
+            for (int i = 0; i < recordingProfilesList.length; i++) {
+                if (recordingProfilesList[i].equals(profile.getName())) {
+                    recordingProfileNameId = i;
+                    break;
+                }
+            }
+        }
 
         setHasOptionsMenu(true);
     }
