@@ -3,7 +3,6 @@ package org.tvheadend.tvhclient.features.navigation;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -11,13 +10,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.features.shared.tasks.WakeOnLanTaskCallback;
+import org.tvheadend.tvhclient.features.MainActivity;
 import org.tvheadend.tvhclient.features.channels.ChannelListFragment;
 import org.tvheadend.tvhclient.features.channels.ChannelViewModel;
-import org.tvheadend.tvhclient.features.MainActivity;
-import org.tvheadend.tvhclient.features.information.InfoFragment;
-import org.tvheadend.tvhclient.features.information.StatusFragment;
-import org.tvheadend.tvhclient.features.purchase.UnlockerFragment;
 import org.tvheadend.tvhclient.features.dvr.recordings.CompletedRecordingListFragment;
 import org.tvheadend.tvhclient.features.dvr.recordings.FailedRecordingListFragment;
 import org.tvheadend.tvhclient.features.dvr.recordings.RecordingViewModel;
@@ -27,7 +22,11 @@ import org.tvheadend.tvhclient.features.dvr.series_recordings.SeriesRecordingLis
 import org.tvheadend.tvhclient.features.dvr.series_recordings.SeriesRecordingViewModel;
 import org.tvheadend.tvhclient.features.dvr.timer_recordings.TimerRecordingListFragment;
 import org.tvheadend.tvhclient.features.dvr.timer_recordings.TimerRecordingViewModel;
+import org.tvheadend.tvhclient.features.information.InfoFragment;
+import org.tvheadend.tvhclient.features.information.StatusFragment;
+import org.tvheadend.tvhclient.features.purchase.UnlockerFragment;
 import org.tvheadend.tvhclient.features.settings.SettingsActivity;
+import org.tvheadend.tvhclient.features.shared.tasks.WakeOnLanTaskCallback;
 
 import timber.log.Timber;
 
@@ -43,7 +42,6 @@ public class NavigationActivity extends MainActivity implements WakeOnLanTaskCal
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         navigationDrawer = new NavigationDrawer(this, savedInstanceState, toolbar, this);
         navigationDrawer.createHeader();
         navigationDrawer.createMenu();

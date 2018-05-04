@@ -9,7 +9,6 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.LocalBroadcastManager;
@@ -38,16 +37,16 @@ import org.tvheadend.tvhclient.features.shared.MenuUtils;
 import org.tvheadend.tvhclient.features.shared.callbacks.ToolbarInterface;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
+import javax.inject.Inject;
+
 import timber.log.Timber;
 
 // TODO test glide and placeholder images
 // TODO brown genre color is not shown in the genre color info dialog
-// TODO use channel sorting from the settings
 // TODO when sorting channels by number, consider minor major channel numbers
 // TODO use face in / out for fragment transactions
 // TODO playback can use the ticket url, no user pwd url required?
 // TODO casting needs rework
-// TODO use dep injection to get the repository instance
 // TODO check for gmtoffset
 // TODO dual screen layout
 // TODO dual screen listview on the left side must be (visually) set selected or checked
@@ -56,6 +55,8 @@ import timber.log.Timber;
 // TODO rework epg (use recyclerview horizontal scroll)
 // TODO improve icons, red, green cirles
 // TODO add info via fabrics which screen is used most often
+// TODO default profile shown twice in rec profiles
+
 
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, ToolbarInterface {
 
@@ -63,6 +64,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private MenuItem searchMenuItem;
     private SearchView searchView;
     private MenuItem mediaRouteMenuItem;
+    @Inject
     protected SharedPreferences sharedPreferences;
     protected boolean isUnlocked;
     protected boolean isDualPane;
@@ -145,6 +147,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         setContentView(R.layout.main_activity);
         MiscUtils.setLanguage(this);
 
+        MainApplication.getComponent().inject(this);
+
         castContext = CastContext.getSharedInstance(this);
         castStateListener = new CastStateListener() {
             @Override
@@ -168,7 +172,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             actionBar.setHomeButtonEnabled(true);
         }
 
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         isUnlocked = MainApplication.getInstance().isUnlocked();
         menuUtils = new MenuUtils(this);
 
