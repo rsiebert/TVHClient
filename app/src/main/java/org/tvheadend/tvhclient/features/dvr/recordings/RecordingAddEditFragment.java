@@ -53,7 +53,7 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
     @BindView(R.id.is_enabled)
     CheckBox isEnabledCheckbox;
     @BindView(R.id.start_extra_label)
-    EditText startExtraLabelTextView;
+    TextView startExtraLabelTextView;
     @BindView(R.id.start_extra)
     EditText startExtraEditText;
     @BindView(R.id.stop_extra)
