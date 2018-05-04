@@ -7,6 +7,7 @@ import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.features.MainActivity;
 import org.tvheadend.tvhclient.features.dvr.recordings.RecordingViewModel;
+import org.tvheadend.tvhclient.features.shared.BaseFragment;
 import org.tvheadend.tvhclient.injection.modules.AppModule;
 import org.tvheadend.tvhclient.injection.modules.RepositoryModule;
 import org.tvheadend.tvhclient.injection.modules.SharedPreferencesModule;
@@ -32,4 +33,6 @@ public interface AppComponent {
     void inject(MainActivity mainActivity);
 
     void inject(RecordingViewModel recordingViewModel);
+
+    void inject(BaseFragment baseFragment);
 }
