@@ -11,9 +11,10 @@ public class AppRepository implements RepositoryInterface {
     private final TimerRecordingData timerRecordingData;
     private final ConnectionData connectionData;
     private final ChannelTagData channelTagData;
+    private final ServerStatusData serverStatusData;
 
     @Inject
-    public AppRepository(ChannelData channelData, ProgramData programData, RecordingData recordingData, SeriesRecordingData seriesRecordingData, TimerRecordingData timerRecordingData, ConnectionData connectionData, ChannelTagData channelTagData) {
+    public AppRepository(ChannelData channelData, ProgramData programData, RecordingData recordingData, SeriesRecordingData seriesRecordingData, TimerRecordingData timerRecordingData, ConnectionData connectionData, ChannelTagData channelTagData, ServerStatusData serverStatusData) {
         this.channelData = channelData;
         this.programData = programData;
         this.recordingData = recordingData;
@@ -21,6 +22,7 @@ public class AppRepository implements RepositoryInterface {
         this.timerRecordingData = timerRecordingData;
         this.connectionData = connectionData;
         this.channelTagData = channelTagData;
+        this.serverStatusData = serverStatusData;
     }
 
     @Override
@@ -56,5 +58,10 @@ public class AppRepository implements RepositoryInterface {
     @Override
     public ConnectionData getConnectionData() {
         return connectionData;
+    }
+
+    @Override
+    public ServerStatusData getServerStatusData() {
+        return serverStatusData;
     }
 }

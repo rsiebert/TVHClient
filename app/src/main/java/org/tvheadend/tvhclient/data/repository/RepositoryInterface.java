@@ -15,4 +15,6 @@ public interface RepositoryInterface {
     ProgramData getProgramData();
 
     ConnectionData getConnectionData();
+
+    ServerStatusData getServerStatusData();
 }
