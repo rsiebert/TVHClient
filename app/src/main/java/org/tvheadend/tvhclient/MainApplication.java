@@ -3,7 +3,6 @@ package org.tvheadend.tvhclient;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 
@@ -23,10 +22,17 @@ import org.tvheadend.tvhclient.features.logging.DebugTree;
 import org.tvheadend.tvhclient.features.logging.FileLoggingTree;
 import org.tvheadend.tvhclient.features.logging.ReleaseTree;
 import org.tvheadend.tvhclient.features.purchase.BillingUtils;
+import org.tvheadend.tvhclient.injection.AppComponent;
+import org.tvheadend.tvhclient.injection.DaggerAppComponent;
+import org.tvheadend.tvhclient.injection.modules.AppModule;
+import org.tvheadend.tvhclient.injection.modules.RepositoryModule;
+import org.tvheadend.tvhclient.injection.modules.SharedPreferencesModule;
 import org.tvheadend.tvhclient.utils.Constants;
 import org.tvheadend.tvhclient.utils.MigrateUtils;
 
 import java.util.List;
+
+import javax.inject.Inject;
 
 import io.fabric.sdk.android.Fabric;
 import timber.log.Timber;
@@ -36,10 +42,17 @@ public class MainApplication extends Application implements BillingProcessor.IBi
     private BillingProcessor billingProcessor;
     private static MainApplication instance;
     private RefWatcher refWatcher;
-    private SharedPreferences sharedPreferences;
+    @Inject
+    protected SharedPreferences sharedPreferences;
+
+    private static AppComponent component;
 
     public static synchronized MainApplication getInstance() {
         return instance;
+    }
+
+    public static AppComponent getComponent() {
+        return component;
     }
 
     public static RefWatcher getRefWatcher(Context context) {
@@ -51,12 +64,18 @@ public class MainApplication extends Application implements BillingProcessor.IBi
     public void onCreate() {
         super.onCreate();
 
+        instance = this;
+        // Create the component upon start of the app. This component
+        // is used by all other classes to inject certain fields
+        component = buildComponent();
+        // Inject the shared preferences
+        component.inject(this);
+
         Stetho.initialize(Stetho.newInitializerBuilder(this)
                 .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
                 .enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this))
                 .build());
 
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         if (sharedPreferences.getBoolean("crash_reports_enabled", true)) {
             Fabric.with(this, new Crashlytics());
             Fabric.with(this, new Answers());
@@ -69,13 +88,20 @@ public class MainApplication extends Application implements BillingProcessor.IBi
         }
         refWatcher = LeakCanary.install(this);
 
-        instance = this;
         initLogging();
         initBilling();
 
         // Migrates existing connections from the old database to the new room database.
         // Migrates existing preferences or remove old ones before starting the actual application
         MigrateUtils.doMigrate(getBaseContext());
+    }
+
+    private AppComponent buildComponent() {
+        return DaggerAppComponent.builder()
+                .appModule(new AppModule(this))
+                .sharedPreferencesModule(new SharedPreferencesModule())
+                .repositoryModule(new RepositoryModule(this))
+                .build();
     }
 
     private void initBilling() {
