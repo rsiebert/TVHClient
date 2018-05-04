@@ -12,6 +12,7 @@ import org.tvheadend.tvhclient.data.repository.ConnectionData;
 import org.tvheadend.tvhclient.data.repository.ProgramData;
 import org.tvheadend.tvhclient.data.repository.RecordingData;
 import org.tvheadend.tvhclient.data.repository.SeriesRecordingData;
+import org.tvheadend.tvhclient.data.repository.ServerStatusData;
 import org.tvheadend.tvhclient.data.repository.TimerRecordingData;
 
 import javax.inject.Singleton;
@@ -38,14 +39,15 @@ public class RepositoryModule {
     @Singleton
     @NonNull
     @Provides
-    AppRepository providesAppRepository(AppRoomDatabase db) {
+    AppRepository providesAppRepository(AppRoomDatabase db, Context context) {
         return new AppRepository(
-                new ChannelData(db),
+                new ChannelData(db, context),
                 new ProgramData(db),
                 new RecordingData(db),
                 new SeriesRecordingData(db),
                 new TimerRecordingData(db),
                 new ConnectionData(db),
-                new ChannelTagData(db));
+                new ChannelTagData(db),
+                new ServerStatusData(db));
     }
 }
