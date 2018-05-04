@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,7 +44,7 @@ public class ChannelListSelectionAdapter extends RecyclerView.Adapter<ChannelLis
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(parent.getContext());
-        showChannelIcons = Boolean.valueOf(sharedPreferences.getString("channel_icons_enabled", "true"));
+        showChannelIcons = sharedPreferences.getBoolean("channel_icons_enabled", true);
 
         final View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.channel_list_selection_dialog_adapter, parent, false);
         return new ViewHolder(view, this);
@@ -56,8 +57,9 @@ public class ChannelListSelectionAdapter extends RecyclerView.Adapter<ChannelLis
             holder.itemView.setTag(channel);
             if (holder.iconImageView != null) {
 
-                Glide.with(context).load(UIUtils.getIconUrl(context, channel.getIcon())).into(holder.iconImageView);
-
+                if (!TextUtils.isEmpty(channel.getIcon())) {
+                    Glide.with(context).load(UIUtils.getIconUrl(context, channel.getIcon())).into(holder.iconImageView);
+                }
                 //Bitmap iconBitmap = UIUtils.getCachedIcon(context, channel.getIcon());
                 //holder.icon.setImageBitmap(iconBitmap);
                 //holder.iconImageView.setVisibility(iconBitmap != null && showChannelIcons ? ImageView.VISIBLE : ImageView.GONE);
