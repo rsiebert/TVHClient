@@ -39,15 +39,17 @@ public interface ServerStatusDao {
     @Query("DELETE FROM server_status")
     void deleteAll();
 
-    @Query("SELECT s.* " +
+    @Query("SELECT s.*, " +
+            "c.name AS connection_name " +
             "FROM server_status AS s " +
-            "WHERE s.connection_id IN (SELECT id FROM connections WHERE active = 1) " +
-            " AND s.id = :id")
+            "LEFT JOIN connections AS c ON c.id = s.connection_id " +
+            "WHERE s.connection_id = :id")
     ServerStatus loadServerStatusByIdSync(int id);
 
-    @Query("SELECT s.* " +
+    @Query("SELECT s.*, " +
+            "c.name AS connection_name " +
             "FROM server_status AS s " +
-            "WHERE s.connection_id IN (SELECT id FROM connections WHERE active = 1) " +
-            " AND s.id = :id")
+            "LEFT JOIN connections AS c ON c.id = s.connection_id " +
+            "WHERE s.connection_id = :id")
     LiveData<ServerStatus> loadServerStatusById(int id);
 }
