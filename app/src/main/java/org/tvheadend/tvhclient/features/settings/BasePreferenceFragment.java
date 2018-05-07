@@ -36,8 +36,10 @@ public class BasePreferenceFragment extends PreferenceFragment {
         MainApplication.getComponent().inject(this);
 
         Connection connection = appRepository.getConnectionData().getActiveItem();
-        serverStatus = appRepository.getServerStatusData().getItemById(connection.getId());
+        if (connection != null) {
+            serverStatus = appRepository.getServerStatusData().getItemById(connection.getId());
+            htspVersion = serverStatus.getHtspVersion();
+        }
         isUnlocked = MainApplication.getInstance().isUnlocked();
-        htspVersion = serverStatus.getHtspVersion();
     }
 }
