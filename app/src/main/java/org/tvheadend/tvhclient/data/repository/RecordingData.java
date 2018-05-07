@@ -113,6 +113,10 @@ public class RecordingData implements DataSourceInterface<Recording> {
         return null;
     }
 
+    public LiveData<List<Recording>> getLiveDataItemByChannelId(int channelId) {
+        return db.getRecordingDao().loadAllRecordingsByChannelId(channelId);
+    }
+
     private static class ItemLoaderTask extends AsyncTask<Void, Void, Recording> {
         private final AppRoomDatabase db;
         private final int id;

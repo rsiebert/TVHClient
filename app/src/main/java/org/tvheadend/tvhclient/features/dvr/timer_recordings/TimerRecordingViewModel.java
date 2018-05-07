@@ -5,21 +5,26 @@ import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.text.TextUtils;
 
+import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.data.entity.TimerRecording;
-import org.tvheadend.tvhclient.data.repository.RecordingRepository;
+import org.tvheadend.tvhclient.data.repository.AppRepository;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 public class TimerRecordingViewModel extends AndroidViewModel {
 
-    private final RecordingRepository repository;
+    @Inject
+    protected AppRepository appRepository;
     private LiveData<List<TimerRecording>> recordings;
     private TimerRecording recording;
 
     public TimerRecordingViewModel(Application application) {
         super(application);
-        repository = new RecordingRepository(application);
-        recordings = repository.getAllTimerRecordings();
+        MainApplication.getComponent().inject(this);
+
+        recordings = appRepository.getTimerRecordingData().getLiveDataItems();
     }
 
     public LiveData<List<TimerRecording>> getRecordings() {
@@ -27,13 +32,13 @@ public class TimerRecordingViewModel extends AndroidViewModel {
     }
 
     LiveData<TimerRecording> getRecordingById(String id) {
-        return repository.getTimerRecordingById(id);
+        return appRepository.getTimerRecordingData().getLiveDataItemById(id);
     }
 
     TimerRecording getRecordingByIdSync(String id) {
         if (recording == null) {
             if (!TextUtils.isEmpty(id)) {
-                recording = repository.getTimerRecordingByIdSync(id);
+                recording = appRepository.getTimerRecordingData().getItemById(id);
             } else {
                 recording = new TimerRecording();
             }
@@ -42,6 +47,6 @@ public class TimerRecordingViewModel extends AndroidViewModel {
     }
 
     public LiveData<Integer> getNumberOfRecordings() {
-        return repository.getNumberOfTimerRecordings();
+        return appRepository.getTimerRecordingData().getLiveDataItemCount();
     }
 }

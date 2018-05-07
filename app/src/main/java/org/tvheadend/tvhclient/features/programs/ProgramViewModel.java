@@ -4,40 +4,43 @@ import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 
+import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.data.entity.Program;
 import org.tvheadend.tvhclient.data.entity.Recording;
+import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.data.repository.ChannelAndProgramRepository;
-import org.tvheadend.tvhclient.data.repository.RecordingRepository;
 
 import java.util.List;
 
-import timber.log.Timber;
+import javax.inject.Inject;
 
 public class ProgramViewModel extends AndroidViewModel {
 
     private final ChannelAndProgramRepository channelAndProgramRepository;
-    private final RecordingRepository recordingRepository;
+    @Inject
+    protected AppRepository appRepository;
 
     public ProgramViewModel(Application application) {
         super(application);
         channelAndProgramRepository = new ChannelAndProgramRepository(application);
-        recordingRepository = new RecordingRepository(application);
+
+        MainApplication.getComponent().inject(this);
     }
 
     LiveData<List<Program>> getProgramsByChannelFromTime(int channelId, long time) {
+        // TODO
         return channelAndProgramRepository.getProgramsByChannelFromTime(channelId, time);
     }
 
     Program getProgramByIdSync(int eventId) {
-        Timber.d("getProgramByIdSync() called with: eventId = [" + eventId + "]");
-        return channelAndProgramRepository.getProgramByIdSync(eventId);
+        return appRepository.getProgramData().getItemById(eventId);
     }
 
     LiveData<List<Recording>> getRecordingsByChannelId(int channelId) {
-        return recordingRepository.getAllRecordingsByChannelId(channelId);
+        return appRepository.getRecordingData().getLiveDataItemByChannelId(channelId);
     }
 
     Recording getRecordingsById(int dvrId) {
-        return recordingRepository.getRecordingByIdSync(dvrId);
+        return appRepository.getRecordingData().getItemById(dvrId);
     }
 }
