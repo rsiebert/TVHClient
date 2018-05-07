@@ -17,7 +17,6 @@ import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
-import org.tvheadend.tvhclient.data.repository.ChannelAndProgramRepository;
 import org.tvheadend.tvhclient.features.channels.ChannelViewModel;
 import org.tvheadend.tvhclient.features.dvr.recordings.RecordingViewModel;
 import org.tvheadend.tvhclient.features.dvr.series_recordings.SeriesRecordingViewModel;
@@ -179,7 +178,7 @@ public class StatusFragment extends BaseFragment implements WakeOnLanTaskCallbac
                 for (Recording rec : recordings) {
                     if (rec.isRecording()) {
                         currentRecText.append(getString(R.string.currently_recording)).append(": ").append(rec.getTitle());
-                        Channel channel = new ChannelAndProgramRepository(activity).getChannelByIdSync(rec.getChannelId());
+                        Channel channel = appRepository.getChannelData().getItemById(rec.getChannelId());
                         if (channel != null) {
                             currentRecText.append(" (").append(getString(R.string.channel)).append(" ").append(channel.getName()).append(")\n");
                         }

@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
-import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -13,10 +12,11 @@ import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.data.entity.Program;
-import org.tvheadend.tvhclient.data.repository.ChannelAndProgramRepository;
+import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.features.shared.UIUtils;
 
 import java.util.ArrayList;
@@ -24,11 +24,16 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
+import javax.inject.Inject;
+
 public class SearchResultAdapter extends ArrayAdapter<Program> implements Filterable {
 
     private final static String TAG = SearchResultAdapter.class.getSimpleName();
     private final Activity context;
-    private final SharedPreferences sharedPreferences;
+    @Inject
+    protected SharedPreferences sharedPreferences;
+    @Inject
+    protected AppRepository appRepository;
     private List<Program> originalData = null;
     private List<Program> filteredData = null;
     private final ItemFilter mFilter = new ItemFilter();
@@ -38,7 +43,7 @@ public class SearchResultAdapter extends ArrayAdapter<Program> implements Filter
         this.context = context;
         originalData = list;
         filteredData = list;
-        this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        MainApplication.getComponent().inject(this);
     }
 
     public void sort() {
@@ -225,7 +230,7 @@ public class SearchResultAdapter extends ArrayAdapter<Program> implements Filter
         if (program != null) {
             holder.titleTextView.setText(program.getTitle());
 
-            Channel channel = new ChannelAndProgramRepository(context).getChannelByIdSync(program.getChannelId());
+            Channel channel = appRepository.getChannelData().getItemById(program.getChannelId());
             holder.channelTextView.setText(channel.getName());
             holder.channelTextView.setVisibility(showChannelName ? View.VISIBLE : View.GONE);
 
