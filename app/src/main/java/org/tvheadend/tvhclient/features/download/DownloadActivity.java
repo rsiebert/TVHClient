@@ -24,38 +24,42 @@ import android.util.Base64;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
+import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.utils.Constants;
 import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.entity.Recording;
-import org.tvheadend.tvhclient.data.repository.ConnectionRepository;
-import org.tvheadend.tvhclient.data.repository.RecordingRepository;
+import org.tvheadend.tvhclient.data.repository.AppRepository;
+import org.tvheadend.tvhclient.utils.Constants;
 import org.tvheadend.tvhclient.utils.MiscUtils;
+
+import javax.inject.Inject;
 
 import timber.log.Timber;
 
 public class DownloadActivity extends Activity implements OnRequestPermissionsResultCallback {
-    private final static String TAG = DownloadActivity.class.getSimpleName();
 
-    private Connection conn;
-    private DownloadManager dm;
-    private Recording rec;
+    private Connection connection;
+    @Inject
+    protected AppRepository appRepository;
+    private DownloadManager downloadManager;
+    private Recording recording;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(MiscUtils.getThemeId(this));
         super.onCreate(savedInstanceState);
         MiscUtils.setLanguage(this);
+        MainApplication.getComponent().inject(this);
 
-        rec = new RecordingRepository(this).getRecordingByIdSync(getIntent().getIntExtra("dvrId", 0));
-        conn = new ConnectionRepository(this).getActiveConnectionSync();
+        recording = appRepository.getRecordingData().getItemById(getIntent().getIntExtra("dvrId", 0));
+        connection = appRepository.getConnectionData().getActiveItem();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        if (rec != null) {
+        if (recording != null) {
             if (isStoragePermissionGranted()) {
                 prepareDownload();
             }
@@ -68,21 +72,21 @@ public class DownloadActivity extends Activity implements OnRequestPermissionsRe
      */
     private void prepareDownload() {
 
-        String downloadUrl = "http://" + conn.getHostname() + ":" + conn.getStreamingPort() + "/dvrfile/" + rec.getId();
-        String auth = "Basic " + Base64.encodeToString((conn.getUsername() + ":" + conn.getPassword()).getBytes(), Base64.NO_WRAP);
+        String downloadUrl = "http://" + connection.getHostname() + ":" + connection.getStreamingPort() + "/dvrfile/" + recording.getId();
+        String auth = "Basic " + Base64.encodeToString((connection.getUsername() + ":" + connection.getPassword()).getBytes(), Base64.NO_WRAP);
 
         try {
             Request request = new Request(Uri.parse(downloadUrl));
             request.addRequestHeader("Authorization", auth);
             request.setTitle(getString(R.string.download));
-            request.setDescription(rec.getTitle());
+            request.setDescription(recording.getTitle());
             request.setNotificationVisibility(Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
 
             // The path that can be specified is always in the external storage. Therefore the path
             // like /storage/emulated/0 is fixed, only the location within this folder can be changed
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
             final String path = prefs.getString("pref_download_directory", Environment.DIRECTORY_DOWNLOADS);
-            request.setDestinationInExternalPublicDir(path, rec.getTitle() + ".mkv");
+            request.setDestinationInExternalPublicDir(path, recording.getTitle() + ".mkv");
 
             Timber.d("prepareDownload: Saving download from url " + downloadUrl + " to " + path);
             startDownload(request);
@@ -103,8 +107,8 @@ public class DownloadActivity extends Activity implements OnRequestPermissionsRe
      * @param request The given download request with all relevant data
      */
     private void startDownload(Request request) {
-        dm = (DownloadManager) getSystemService(Service.DOWNLOAD_SERVICE);
-        final long id = dm.enqueue(request);
+        downloadManager = (DownloadManager) getSystemService(Service.DOWNLOAD_SERVICE);
+        final long id = downloadManager.enqueue(request);
 
         // Check after a certain delay the status of the download and that for
         // example the download has not failed due to insufficient storage space.
@@ -114,7 +118,7 @@ public class DownloadActivity extends Activity implements OnRequestPermissionsRe
             public void run() {
                 DownloadManager.Query query = new DownloadManager.Query();
                 query.setFilterById(id);
-                Cursor c = dm.query(query);
+                Cursor c = downloadManager.query(query);
                 while (c.moveToNext()) {
                     int status = c.getInt(c.getColumnIndex(DownloadManager.COLUMN_STATUS));
                     int reason = c.getInt(c.getColumnIndex(DownloadManager.COLUMN_REASON));
@@ -125,10 +129,10 @@ public class DownloadActivity extends Activity implements OnRequestPermissionsRe
                         // Check the reason value if it is insufficient storage space
                         if (reason == 1006) {
                             Timber.d("startDownload: Download failed due to insufficient storage space");
-                            showErrorDialog(getString(R.string.download_error_insufficient_space, rec.getTitle()));
+                            showErrorDialog(getString(R.string.download_error_insufficient_space, recording.getTitle()));
                         } else if (reason == 407) {
                             Timber.d("startDownload: Download failed due to missing / wrong authentication");
-                            showErrorDialog(getString(R.string.download_error_authentication_required, rec.getTitle()));
+                            showErrorDialog(getString(R.string.download_error_authentication_required, recording.getTitle()));
                         } else {
                             finish();
                         }
