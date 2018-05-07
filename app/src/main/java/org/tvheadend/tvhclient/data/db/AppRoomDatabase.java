@@ -18,7 +18,6 @@ import org.tvheadend.tvhclient.data.dao.ServerProfileDao;
 import org.tvheadend.tvhclient.data.dao.ServerStatusDao;
 import org.tvheadend.tvhclient.data.dao.TagAndChannelDao;
 import org.tvheadend.tvhclient.data.dao.TimerRecordingDao;
-import org.tvheadend.tvhclient.data.dao.TranscodingProfileDao;
 import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.data.entity.ChannelTag;
 import org.tvheadend.tvhclient.data.entity.Connection;
@@ -29,7 +28,6 @@ import org.tvheadend.tvhclient.data.entity.ServerProfile;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
 import org.tvheadend.tvhclient.data.entity.TagAndChannel;
 import org.tvheadend.tvhclient.data.entity.TimerRecording;
-import org.tvheadend.tvhclient.data.entity.TranscodingProfile;
 
 @Database(
         entities = {
@@ -42,10 +40,9 @@ import org.tvheadend.tvhclient.data.entity.TranscodingProfile;
                 TagAndChannel.class,
                 Connection.class,
                 ServerProfile.class,
-                TranscodingProfile.class,
                 ServerStatus.class
         },
-        version = 4)
+        version = 5)
 public abstract class AppRoomDatabase extends RoomDatabase {
 
     private static AppRoomDatabase instance;
@@ -85,8 +82,6 @@ public abstract class AppRoomDatabase extends RoomDatabase {
     public abstract ConnectionDao getConnectionDao();
 
     public abstract ServerProfileDao getServerProfileDao();
-
-    public abstract TranscodingProfileDao getTranscodingProfileDao();
 
     public abstract ServerStatusDao getServerStatusDao();
 

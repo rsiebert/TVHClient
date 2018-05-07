@@ -179,7 +179,6 @@ public class ConnectionData implements DataSourceInterface<Connection> {
                     int id = connection.getId();
                     db.getConnectionDao().deleteById(id);
                     db.getServerStatusDao().deleteByConnectionId(id);
-                    db.getTranscodingProfileDao().deleteByConnectionId(id);
                     break;
             }
             return null;
