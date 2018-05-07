@@ -76,6 +76,38 @@ public class ServerProfileData implements DataSourceInterface<ServerProfile> {
         return null;
     }
 
+    public String[] getRecordingProfileNames() {
+        try {
+            List<ServerProfile> serverProfiles = new ItemsLoaderTask(db, "recording").execute().get();
+            if (serverProfiles != null) {
+                String[] names = new String[serverProfiles.size()];
+                for (int i = 0; i < serverProfiles.size(); i++) {
+                    names[i] = serverProfiles.get(i).getName();
+                }
+                return names;
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public String[] getPlaybackProfileNames() {
+        try {
+            List<ServerProfile> serverProfiles = new ItemsLoaderTask(db, "playback").execute().get();
+            if (serverProfiles != null) {
+                String[] names = new String[serverProfiles.size()];
+                for (int i = 0; i < serverProfiles.size(); i++) {
+                    names[i] = serverProfiles.get(i).getName();
+                }
+                return names;
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     @Override
     public List<ServerProfile> getItems() {
         return null;
