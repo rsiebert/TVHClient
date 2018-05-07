@@ -117,18 +117,40 @@ public class RecordingData implements DataSourceInterface<Recording> {
         return db.getRecordingDao().loadAllRecordingsByChannelId(channelId);
     }
 
+    public Recording getItemByEventId(int id) {
+        try {
+            return new ItemLoaderTask(db, id, "event").execute().get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     private static class ItemLoaderTask extends AsyncTask<Void, Void, Recording> {
         private final AppRoomDatabase db;
         private final int id;
+        private final String type;
 
         ItemLoaderTask(AppRoomDatabase db, int id) {
             this.db = db;
             this.id = id;
+            this.type = "";
+        }
+
+        ItemLoaderTask(AppRoomDatabase db, int id, String type) {
+            this.db = db;
+            this.id = id;
+            this.type = type;
         }
 
         @Override
         protected Recording doInBackground(Void... voids) {
-            return db.getRecordingDao().loadRecordingByIdSync(id);
+            switch (type) {
+                case "event":
+                    return db.getRecordingDao().loadRecordingByEventIdSync(id);
+                default:
+                    return db.getRecordingDao().loadRecordingByIdSync(id);
+            }
         }
     }
 
