@@ -7,7 +7,6 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
@@ -19,16 +18,15 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
+import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.entity.ServerProfile;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
-import org.tvheadend.tvhclient.data.entity.TranscodingProfile;
-import org.tvheadend.tvhclient.data.repository.ChannelAndProgramRepository;
-import org.tvheadend.tvhclient.data.repository.ConfigRepository;
-import org.tvheadend.tvhclient.data.repository.ConnectionRepository;
-import org.tvheadend.tvhclient.data.repository.RecordingRepository;
+import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.utils.MiscUtils;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -41,12 +39,12 @@ public abstract class BasePlayActivity extends AppCompatActivity {
     @BindView(R.id.status)
     protected TextView statusTextView;
 
-    private ConnectionRepository connectionRepository;
-    protected ChannelAndProgramRepository channelAndProgramRepository;
-    protected RecordingRepository recordingRepository;
-    protected ConfigRepository configRepository;
-    protected ServerStatus serverStatus;
     protected Connection connection;
+    protected ServerStatus serverStatus;
+    private ServerProfile serverProfile;
+    @Inject
+    protected AppRepository appRepository;
+    @Inject
     protected SharedPreferences sharedPreferences;
 
     @Override
@@ -55,17 +53,13 @@ public abstract class BasePlayActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.play_activity);
         MiscUtils.setLanguage(this);
-
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        connectionRepository = new ConnectionRepository(this);
-        configRepository = new ConfigRepository(this);
-        recordingRepository = new RecordingRepository(this);
-        channelAndProgramRepository = new ChannelAndProgramRepository(this);
+        MainApplication.getComponent().inject(this);
 
         ButterKnife.bind(this);
 
-        connection = connectionRepository.getActiveConnectionSync();
-        serverStatus = configRepository.getServerStatus();
+        connection = appRepository.getConnectionData().getActiveItem();
+        serverStatus = appRepository.getServerStatusData().getItemById(connection.getId());
+        serverProfile = appRepository.getServerProfileData().getItemById(serverStatus.getPlaybackServerProfileId());
     }
 
     @Override
@@ -109,60 +103,26 @@ public abstract class BasePlayActivity extends AppCompatActivity {
         }
     };
 
-    private String getTranscodingMimeType(TranscodingProfile transcodingProfile) {
-        switch (transcodingProfile.getContainer()) {
-            case "mpegps":
-                return "video/mp2p";
-            case "mpegts":
-                return "video/mp4";
-            case "matroska":
-                return "video/x-matroska";
-            case "pass":
-                return "video/mp2t";
-            case "webm":
-                return "video/webm";
-            default:
-                return "video/x-matroska";
-        }
-    }
-
-    private String getTranscodingParameters(TranscodingProfile transcodingProfile) {
-        String url = "&mux=" + transcodingProfile.getContainer();
-        if (transcodingProfile.isTranscode()) {
-            url += "&transcode=1";
-            url += "&resolution=" + transcodingProfile.getResolution();
-            url += "&acodec=" + transcodingProfile.getAudioCodec();
-            url += "&vcodec=" + transcodingProfile.getVideoCodec();
-            url += "&scodec=" + transcodingProfile.getSubtitleCodec();
-        }
-        return url;
-    }
-
     protected String getPlayerMimeType() {
-        String mimeType = "application/octet-stream";
-        ServerProfile serverProfile = configRepository.getPlaybackServerProfileById(serverStatus.getPlaybackServerProfileId());
-        if (!MiscUtils.isServerProfileEnabled(serverProfile, serverStatus)) {
-            TranscodingProfile transcodingProfile = configRepository.getPlaybackTranscodingProfile();
-            if (transcodingProfile != null) {
-                mimeType = getTranscodingMimeType(transcodingProfile);
-            }
+        if (serverProfile.getName().contains("matroska")) {
+            return "video/x-matroska";
+        } else if (serverProfile.getName().contains("webm")) {
+            return "video/webm";
+        } else if (serverProfile.getName().contains("mpegts")) {
+            return "video/mp2t";
+        } else if (serverProfile.getName().contains("mpegps")) {
+            return "video/mpeg";
+        } else {
+            return "application/octet-stream";
         }
-        return mimeType;
     }
 
     protected String getPlayerUrl(String path, String ticket) {
         String url = "http://" + connection.getHostname() + ":" + connection.getStreamingPort() + path + "?ticket=" + ticket;
 
         // Use the newer server profiles over the old local ones
-        ServerProfile serverProfile = configRepository.getPlaybackServerProfileById(serverStatus.getPlaybackServerProfileId());
-        if (MiscUtils.isServerProfileEnabled(serverProfile, serverStatus)) {
-            url += "&profile=" + serverProfile.getName();
-        } else {
-            TranscodingProfile transcodingProfile = configRepository.getPlaybackTranscodingProfile();
-            if (transcodingProfile != null) {
-                url += getTranscodingParameters(transcodingProfile);
-            }
-        }
+        ServerProfile serverProfile = appRepository.getServerProfileData().getItemById(serverStatus.getPlaybackServerProfileId());
+        url += "&profile=" + serverProfile.getName();
 
         // Strip the username and password from the url before logging it
         if (url.indexOf('@') != -1) {

@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 
 import org.tvheadend.tvhclient.data.entity.Channel;
-import org.tvheadend.tvhclient.data.repository.ChannelAndProgramRepository;
 import org.tvheadend.tvhclient.data.remote.EpgSyncService;
 
 import timber.log.Timber;
@@ -47,7 +46,7 @@ public class PlayChannelActivity extends BasePlayActivity {
     protected void onHttpTicketReceived(String path, String ticket) {
         Timber.d("Playing channel from server");
 
-        Channel channel = channelAndProgramRepository.getChannelByIdSync(channelId);
+        Channel channel = appRepository.getChannelData().getItemById(channelId);
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setDataAndType(Uri.parse(getPlayerUrl(path, ticket)), getPlayerMimeType());
         intent.putExtra("itemTitle", channel.getName());

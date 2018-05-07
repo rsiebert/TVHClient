@@ -8,7 +8,6 @@ import android.support.annotation.Nullable;
 
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.data.entity.Recording;
-import org.tvheadend.tvhclient.data.repository.RecordingRepository;
 import org.tvheadend.tvhclient.data.remote.EpgSyncService;
 
 import java.io.File;
@@ -50,7 +49,7 @@ public class PlayRecordingActivity extends BasePlayActivity {
 
     @Override
     protected void onHttpTicketReceived(String path, String ticket) {
-        Recording recording = recordingRepository.getRecordingByIdSync(dvrId);
+        Recording recording = appRepository.getRecordingData().getItemById(dvrId);
 
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.putExtra("itemTitle", recording.getTitle());
