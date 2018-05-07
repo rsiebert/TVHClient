@@ -185,8 +185,6 @@ public class SettingsFragment extends BasePreferenceFragment implements Preferen
         if (getView() != null) {
             if (htspVersion < 16) {
                 Snackbar.make(getView(), R.string.feature_not_supported_by_server, Snackbar.LENGTH_SHORT).show();
-            } else if (!isUnlocked) {
-                Snackbar.make(getView(), R.string.feature_not_available_in_free_version, Snackbar.LENGTH_SHORT).show();
             } else {
                 showSelectedSettingsFragment("profiles");
             }
