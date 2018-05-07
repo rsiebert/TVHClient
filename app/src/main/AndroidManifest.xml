@@ -103,7 +103,6 @@
         <activity android:name=".features.purchase.UnlockerActivity" />
         <activity android:name=".features.playback.PlayRecordingActivity" />
         <activity android:name=".features.playback.PlayChannelActivity" />
-        <activity android:name=".features.playback.BasePlayActivity" />
         <activity android:name=".features.casting.CastChannelActivity" />
         <activity android:name=".features.casting.CastRecordingActivity" />
 
