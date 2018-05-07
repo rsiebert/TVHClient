@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
+import org.tvheadend.tvhclient.data.service.EpgSyncService;
 import org.tvheadend.tvhclient.features.MainActivity;
 import org.tvheadend.tvhclient.features.casting.BaseCastingActivity;
 import org.tvheadend.tvhclient.features.channels.ChannelViewModel;
@@ -14,7 +15,10 @@ import org.tvheadend.tvhclient.features.dvr.series_recordings.SeriesRecordingVie
 import org.tvheadend.tvhclient.features.dvr.timer_recordings.TimerRecordingViewModel;
 import org.tvheadend.tvhclient.features.playback.BasePlayActivity;
 import org.tvheadend.tvhclient.features.programs.ProgramViewModel;
+import org.tvheadend.tvhclient.features.search.SearchResultAdapter;
 import org.tvheadend.tvhclient.features.settings.BasePreferenceFragment;
+import org.tvheadend.tvhclient.features.settings.ConnectionViewModel;
+import org.tvheadend.tvhclient.features.settings.SettingsListConnectionsFragment;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
 import org.tvheadend.tvhclient.features.shared.MenuUtils;
 import org.tvheadend.tvhclient.features.startup.StartupFragment;
@@ -65,4 +69,12 @@ public interface AppComponent {
     void inject(DownloadActivity downloadActivity);
 
     void inject(MenuUtils menuUtils);
+
+    void inject(SearchResultAdapter searchResultAdapter);
+
+    void inject(SettingsListConnectionsFragment settingsListConnectionsFragment);
+
+    void inject(ConnectionViewModel connectionViewModel);
+
+    void inject(EpgSyncService epgSyncService);
 }
