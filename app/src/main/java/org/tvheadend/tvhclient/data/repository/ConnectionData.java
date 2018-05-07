@@ -85,6 +85,15 @@ public class ConnectionData implements DataSourceInterface<Connection> {
         return null;
     }
 
+    public List<Connection> getItems() {
+        try {
+            return new ItemsLoaderTask(db).execute().get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public Connection getActiveItem() {
         try {
             return new ItemLoaderTask(db).execute().get();
@@ -115,6 +124,20 @@ public class ConnectionData implements DataSourceInterface<Connection> {
             } else {
                 return db.getConnectionDao().loadConnectionByIdSync(id);
             }
+        }
+    }
+
+    protected static class ItemsLoaderTask extends AsyncTask<Void, Void, List<Connection>> {
+        private final AppRoomDatabase db;
+
+
+        ItemsLoaderTask(AppRoomDatabase db) {
+            this.db = db;
+        }
+
+        @Override
+        protected List<Connection> doInBackground(Void... voids) {
+            return db.getConnectionDao().loadAllConnectionsSync();
         }
     }
 
