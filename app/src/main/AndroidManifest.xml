@@ -75,7 +75,7 @@
             android:theme="@android:style/Theme.NoTitleBar" />
 
         <service
-            android:name=".data.remote.EpgSyncService"
+            android:name=".data.service.EpgSyncService"
             android:enabled="true" />
 
         <provider

@@ -1,14 +1,11 @@
 package org.tvheadend.tvhclient.features.settings;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.Preference;
-import android.preference.PreferenceFragment;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.FileProvider;
@@ -18,8 +15,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.tvheadend.tvhclient.BuildConfig;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.data.local.db.AppRoomDatabase;
-import org.tvheadend.tvhclient.features.shared.callbacks.ToolbarInterface;
+import org.tvheadend.tvhclient.data.db.AppRoomDatabase;
 
 import java.io.File;
 import java.text.SimpleDateFormat;

@@ -6,10 +6,10 @@ import android.os.AsyncTask;
 
 import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
-import org.tvheadend.tvhclient.data.local.dao.ConnectionDao;
-import org.tvheadend.tvhclient.data.local.dao.ServerStatusDao;
-import org.tvheadend.tvhclient.data.local.dao.TranscodingProfileDao;
-import org.tvheadend.tvhclient.data.local.db.AppRoomDatabase;
+import org.tvheadend.tvhclient.data.dao.ConnectionDao;
+import org.tvheadend.tvhclient.data.dao.ServerStatusDao;
+import org.tvheadend.tvhclient.data.dao.TranscodingProfileDao;
+import org.tvheadend.tvhclient.data.db.AppRoomDatabase;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;

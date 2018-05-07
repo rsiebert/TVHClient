@@ -4,7 +4,7 @@ import android.arch.lifecycle.LiveData;
 import android.os.AsyncTask;
 
 import org.tvheadend.tvhclient.data.entity.Program;
-import org.tvheadend.tvhclient.data.local.db.AppRoomDatabase;
+import org.tvheadend.tvhclient.data.db.AppRoomDatabase;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;

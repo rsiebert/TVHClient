@@ -25,7 +25,7 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Program;
 import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.features.shared.listener.BottomReachedListener;
-import org.tvheadend.tvhclient.data.remote.EpgSyncService;
+import org.tvheadend.tvhclient.data.service.EpgSyncService;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
 import org.tvheadend.tvhclient.features.shared.listener.RecyclerTouchListener;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewTouchCallback;

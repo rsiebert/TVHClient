@@ -7,10 +7,10 @@ import android.util.Log;
 import org.tvheadend.tvhclient.data.entity.ServerProfile;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
 import org.tvheadend.tvhclient.data.entity.TranscodingProfile;
-import org.tvheadend.tvhclient.data.local.dao.ServerProfileDao;
-import org.tvheadend.tvhclient.data.local.dao.ServerStatusDao;
-import org.tvheadend.tvhclient.data.local.dao.TranscodingProfileDao;
-import org.tvheadend.tvhclient.data.local.db.AppRoomDatabase;
+import org.tvheadend.tvhclient.data.dao.ServerProfileDao;
+import org.tvheadend.tvhclient.data.dao.ServerStatusDao;
+import org.tvheadend.tvhclient.data.dao.TranscodingProfileDao;
+import org.tvheadend.tvhclient.data.db.AppRoomDatabase;
 
 import java.util.ArrayList;
 import java.util.List;

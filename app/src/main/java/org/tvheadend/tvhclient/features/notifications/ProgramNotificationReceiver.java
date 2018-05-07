@@ -10,7 +10,7 @@ import android.support.v4.app.NotificationManagerCompat;
 import android.text.TextUtils;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.data.remote.EpgSyncService;
+import org.tvheadend.tvhclient.data.service.EpgSyncService;
 import org.tvheadend.tvhclient.features.programs.ProgramDetailsActivity;
 
 import java.util.Date;

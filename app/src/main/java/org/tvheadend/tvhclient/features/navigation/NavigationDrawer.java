@@ -24,7 +24,7 @@ import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Connection;
-import org.tvheadend.tvhclient.data.remote.EpgSyncService;
+import org.tvheadend.tvhclient.data.service.EpgSyncService;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.features.startup.StartupActivity;
 import org.tvheadend.tvhclient.utils.MiscUtils;

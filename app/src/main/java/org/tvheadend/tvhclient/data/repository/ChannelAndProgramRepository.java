@@ -10,10 +10,10 @@ import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.data.entity.ChannelTag;
 import org.tvheadend.tvhclient.data.entity.Program;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
-import org.tvheadend.tvhclient.data.local.dao.ChannelDao;
-import org.tvheadend.tvhclient.data.local.dao.ChannelTagDao;
-import org.tvheadend.tvhclient.data.local.dao.ServerStatusDao;
-import org.tvheadend.tvhclient.data.local.db.AppRoomDatabase;
+import org.tvheadend.tvhclient.data.dao.ChannelDao;
+import org.tvheadend.tvhclient.data.dao.ChannelTagDao;
+import org.tvheadend.tvhclient.data.dao.ServerStatusDao;
+import org.tvheadend.tvhclient.data.db.AppRoomDatabase;
 import org.tvheadend.tvhclient.features.channels.ChannelsLoadedCallback;
 
 import java.util.List;

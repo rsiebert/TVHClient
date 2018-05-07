@@ -47,7 +47,7 @@ import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.data.entity.Program;
 import org.tvheadend.tvhclient.data.entity.Recording;
-import org.tvheadend.tvhclient.data.remote.EpgSyncService;
+import org.tvheadend.tvhclient.data.service.EpgSyncService;
 import org.tvheadend.tvhclient.features.dvr.recordings.RecordingDetailsActivity;
 import org.tvheadend.tvhclient.features.shared.MenuUtils;
 import org.tvheadend.tvhclient.utils.MiscUtils;

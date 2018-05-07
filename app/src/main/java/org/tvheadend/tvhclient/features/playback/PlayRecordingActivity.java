@@ -8,7 +8,7 @@ import android.support.annotation.Nullable;
 
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.data.entity.Recording;
-import org.tvheadend.tvhclient.data.remote.EpgSyncService;
+import org.tvheadend.tvhclient.data.service.EpgSyncService;
 
 import java.io.File;
 

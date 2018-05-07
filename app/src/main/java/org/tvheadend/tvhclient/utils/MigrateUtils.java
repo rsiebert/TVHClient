@@ -11,10 +11,10 @@ import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
 import org.tvheadend.tvhclient.BuildConfig;
-import org.tvheadend.tvhclient.data.local.db.AppRoomDatabase;
-import org.tvheadend.tvhclient.data.local.db.DatabaseHelperForMigration;
-import org.tvheadend.tvhclient.data.local.dao.ConnectionDao;
-import org.tvheadend.tvhclient.data.local.dao.ServerStatusDao;
+import org.tvheadend.tvhclient.data.db.AppRoomDatabase;
+import org.tvheadend.tvhclient.data.db.DatabaseHelperForMigration;
+import org.tvheadend.tvhclient.data.dao.ConnectionDao;
+import org.tvheadend.tvhclient.data.dao.ServerStatusDao;
 import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
 
