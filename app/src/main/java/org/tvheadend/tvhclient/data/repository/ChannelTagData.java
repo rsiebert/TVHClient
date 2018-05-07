@@ -84,6 +84,16 @@ public class ChannelTagData implements DataSourceInterface<ChannelTag> {
         return null;
     }
 
+    @Override
+    public List<ChannelTag> getItems() {
+        try {
+            return new ItemsLoaderTask(db).execute().get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     protected static class ItemLoaderTask extends AsyncTask<Void, Void, ChannelTag> {
         private final AppRoomDatabase db;
         private final int id;
@@ -96,6 +106,19 @@ public class ChannelTagData implements DataSourceInterface<ChannelTag> {
         @Override
         protected ChannelTag doInBackground(Void... voids) {
             return db.getChannelTagDao().loadChannelTagByIdSync(id);
+        }
+    }
+
+    protected static class ItemsLoaderTask extends AsyncTask<Void, Void, List<ChannelTag>> {
+        private final AppRoomDatabase db;
+
+        ItemsLoaderTask(AppRoomDatabase db) {
+            this.db = db;
+        }
+
+        @Override
+        protected List<ChannelTag> doInBackground(Void... voids) {
+            return db.getChannelTagDao().loadAllChannelTagsSync();
         }
     }
 

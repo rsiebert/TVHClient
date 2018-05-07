@@ -88,6 +88,7 @@ public class ChannelData implements DataSourceInterface<Channel> {
         return null;
     }
 
+    @Override
     public List<Channel> getItems() {
         try {
             int channelSortOrder = Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(context).getString("channel_sort_order", "0"));
@@ -116,7 +117,6 @@ public class ChannelData implements DataSourceInterface<Channel> {
     protected static class ItemsLoaderTask extends AsyncTask<Void, Void, List<Channel>> {
         private final AppRoomDatabase db;
         private final int sortOrder;
-
 
         ItemsLoaderTask(AppRoomDatabase db, int sortOrder) {
             this.db = db;

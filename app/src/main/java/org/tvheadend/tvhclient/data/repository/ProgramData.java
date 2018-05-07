@@ -84,6 +84,11 @@ public class ProgramData implements DataSourceInterface<Program> {
         return null;
     }
 
+    @Override
+    public List<Program> getItems() {
+        return null;
+    }
+
     protected static class ItemLoaderTask extends AsyncTask<Void, Void, Program> {
         private final AppRoomDatabase db;
         private final int id;

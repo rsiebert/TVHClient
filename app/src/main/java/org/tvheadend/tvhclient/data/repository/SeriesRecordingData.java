@@ -83,6 +83,11 @@ public class SeriesRecordingData implements DataSourceInterface<SeriesRecording>
         return null;
     }
 
+    @Override
+    public List<SeriesRecording> getItems() {
+        return null;
+    }
+
     private static class ItemLoaderTask extends AsyncTask<Void, Void, SeriesRecording> {
         private final AppRoomDatabase db;
         private final String id;

@@ -83,6 +83,11 @@ public class TimerRecordingData implements DataSourceInterface<TimerRecording> {
         return null;
     }
 
+    @Override
+    public List<TimerRecording> getItems() {
+        return null;
+    }
+
     private static class ItemLoaderTask extends AsyncTask<Void, Void, TimerRecording> {
         private final AppRoomDatabase db;
         private final String id;

@@ -85,6 +85,7 @@ public class ConnectionData implements DataSourceInterface<Connection> {
         return null;
     }
 
+    @Override
     public List<Connection> getItems() {
         try {
             return new ItemsLoaderTask(db).execute().get();

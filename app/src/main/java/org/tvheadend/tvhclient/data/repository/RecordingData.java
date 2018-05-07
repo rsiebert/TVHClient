@@ -113,6 +113,11 @@ public class RecordingData implements DataSourceInterface<Recording> {
         return null;
     }
 
+    @Override
+    public List<Recording> getItems() {
+        return null;
+    }
+
     public LiveData<List<Recording>> getLiveDataItemByChannelId(int channelId) {
         return db.getRecordingDao().loadAllRecordingsByChannelId(channelId);
     }

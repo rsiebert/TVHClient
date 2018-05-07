@@ -84,6 +84,11 @@ public class ServerStatusData implements DataSourceInterface<ServerStatus> {
         return null;
     }
 
+    @Override
+    public List<ServerStatus> getItems() {
+        return null;
+    }
+
     protected static class ItemLoaderTask extends AsyncTask<Void, Void, ServerStatus> {
         private final AppRoomDatabase db;
         private final int id;

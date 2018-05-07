@@ -25,4 +25,6 @@ public interface DataSourceInterface<T> {
     LiveData<T> getLiveDataItemById(Object id);
 
     T getItemById(Object id);
+
+    List<T> getItems();
 }

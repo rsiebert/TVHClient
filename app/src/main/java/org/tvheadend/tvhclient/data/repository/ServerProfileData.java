@@ -14,6 +14,7 @@ import javax.inject.Inject;
 public class ServerProfileData implements DataSourceInterface<ServerProfile> {
 
     private final AppRoomDatabase db;
+    private String[] recordingProfiles;
 
     @Inject
     public ServerProfileData(AppRoomDatabase database) {
@@ -75,6 +76,11 @@ public class ServerProfileData implements DataSourceInterface<ServerProfile> {
         return null;
     }
 
+    @Override
+    public List<ServerProfile> getItems() {
+        return null;
+    }
+
     private static class ItemLoaderTask extends AsyncTask<Void, Void, ServerProfile> {
         private final AppRoomDatabase db;
         private final int id;
@@ -87,6 +93,28 @@ public class ServerProfileData implements DataSourceInterface<ServerProfile> {
         @Override
         protected ServerProfile doInBackground(Void... voids) {
             return db.getServerProfileDao().loadProfileByIdSync(id);
+        }
+    }
+
+    protected static class ItemsLoaderTask extends AsyncTask<Void, Void, List<ServerProfile>> {
+        private final AppRoomDatabase db;
+        private final String type;
+
+        ItemsLoaderTask(AppRoomDatabase db, String type) {
+            this.db = db;
+            this.type = type;
+        }
+
+        @Override
+        protected List<ServerProfile> doInBackground(Void... voids) {
+            switch (type) {
+                case "playback":
+                    return db.getServerProfileDao().loadAllPlaybackProfilesSync();
+                case "recording":
+                    return db.getServerProfileDao().loadAllRecordingProfilesSync();
+                default:
+                    return null;
+            }
         }
     }
 }
