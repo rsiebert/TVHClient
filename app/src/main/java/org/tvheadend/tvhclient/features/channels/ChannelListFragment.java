@@ -28,7 +28,6 @@ import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.data.entity.ChannelTag;
 import org.tvheadend.tvhclient.data.entity.Program;
 import org.tvheadend.tvhclient.data.entity.Recording;
-import org.tvheadend.tvhclient.data.repository.ChannelAndProgramRepository;
 import org.tvheadend.tvhclient.features.programs.ProgramListActivity;
 import org.tvheadend.tvhclient.features.programs.ProgramListFragment;
 import org.tvheadend.tvhclient.features.search.SearchRequestInterface;
@@ -67,7 +66,6 @@ public class ChannelListFragment extends BaseFragment implements ChannelClickCal
     private ChannelViewModel viewModel;
     private Runnable channelUpdateTask;
     private final Handler channelUpdateHandler = new Handler();
-    private ChannelAndProgramRepository channelRepository;
 
     @Nullable
     @Override
@@ -119,7 +117,6 @@ public class ChannelListFragment extends BaseFragment implements ChannelClickCal
             }
         }));
 
-        channelRepository = new ChannelAndProgramRepository(activity);
         viewModel = ViewModelProviders.of(activity).get(ChannelViewModel.class);
 
         updateAdapterAndToolbar();
@@ -385,6 +382,6 @@ public class ChannelListFragment extends BaseFragment implements ChannelClickCal
 
     void loadAllChannelsByTimeAndTagSync(long currentTime, int channelTagId) {
         Timber.d("Loading channels started");
-        channelRepository.getAllChannelsByTimeAndTagSync(currentTime, channelTagId, this);
+        appRepository.getChannelData().getItemByTimeAndTag(currentTime, channelTagId, this);
     }
 }
