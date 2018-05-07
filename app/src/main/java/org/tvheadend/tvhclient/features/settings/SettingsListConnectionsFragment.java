@@ -20,15 +20,18 @@ import android.widget.ListView;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
+import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Connection;
+import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.data.service.EpgSyncService;
-import org.tvheadend.tvhclient.data.repository.ConnectionRepository;
 import org.tvheadend.tvhclient.features.shared.callbacks.BackPressedInterface;
 import org.tvheadend.tvhclient.features.shared.callbacks.ToolbarInterface;
 import org.tvheadend.tvhclient.features.shared.tasks.WakeOnLanTask;
 import org.tvheadend.tvhclient.features.shared.tasks.WakeOnLanTaskCallback;
 import org.tvheadend.tvhclient.features.startup.StartupActivity;
+
+import javax.inject.Inject;
 
 import timber.log.Timber;
 
@@ -38,13 +41,15 @@ public class SettingsListConnectionsFragment extends ListFragment implements Bac
     private ConnectionListAdapter connectionListAdapter;
     private ActionMode actionMode;
     private AppCompatActivity activity;
-    private ConnectionRepository connectionRepository;
+    @Inject
+    protected AppRepository appRepository;
     private int currentActiveConnectionId;
     private int initialActiveConnectionId;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        MainApplication.getComponent().inject(this);
 
         activity = (AppCompatActivity) getActivity();
         if (activity instanceof ToolbarInterface) {
@@ -52,7 +57,6 @@ public class SettingsListConnectionsFragment extends ListFragment implements Bac
         }
         toolbarInterface.setTitle(getString(R.string.settings));
 
-        connectionRepository = new ConnectionRepository(activity);
         connectionListAdapter = new ConnectionListAdapter(activity);
         setListAdapter(connectionListAdapter);
         getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
@@ -83,7 +87,7 @@ public class SettingsListConnectionsFragment extends ListFragment implements Bac
         if (savedInstanceState != null) {
             initialActiveConnectionId = savedInstanceState.getInt("initialActiveConnectionId");
         } else {
-            initialActiveConnectionId = (connectionRepository.getActiveConnectionSync() != null) ? connectionRepository.getActiveConnectionSync().getId() : -1;
+            initialActiveConnectionId = (appRepository.getConnectionData().getActiveItem() != null) ? appRepository.getConnectionData().getActiveItem().getId() : -1;
         }
 
         Timber.d("Initially active connection id: " + initialActiveConnectionId);
@@ -140,13 +144,13 @@ public class SettingsListConnectionsFragment extends ListFragment implements Bac
         switch (item.getItemId()) {
             case R.id.menu_set_active:
                 connection.setActive(true);
-                connectionRepository.updateConnectionSync(connection);
+                appRepository.getConnectionData().updateItem(connection);
                 mode.finish();
                 return true;
 
             case R.id.menu_set_not_active:
                 connection.setActive(false);
-                connectionRepository.updateConnectionSync(connection);
+                appRepository.getConnectionData().updateItem(connection);
                 mode.finish();
                 return true;
 
@@ -171,7 +175,7 @@ public class SettingsListConnectionsFragment extends ListFragment implements Bac
                         .onPositive(new MaterialDialog.SingleButtonCallback() {
                             @Override
                             public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                connectionRepository.removeConnectionSync(connection.getId());
+                                appRepository.getConnectionData().removeItem(connection);
                                 currentActiveConnectionId = 0;
                             }
                         })
