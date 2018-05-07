@@ -3,9 +3,9 @@ package org.tvheadend.tvhclient.data.repository;
 import android.arch.lifecycle.LiveData;
 import android.os.AsyncTask;
 
+import org.tvheadend.tvhclient.data.db.AppRoomDatabase;
 import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
-import org.tvheadend.tvhclient.data.db.AppRoomDatabase;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -164,7 +164,7 @@ public class ConnectionData implements DataSourceInterface<Connection> {
                     // Create a new server status row in the database
                     // that is linked to the newly added connection
                     ServerStatus serverStatus = new ServerStatus();
-                    new ServerStatus().setConnectionId((int) newId);
+                    serverStatus.setConnectionId((int) newId);
                     db.getServerStatusDao().insert(serverStatus);
                     break;
 
