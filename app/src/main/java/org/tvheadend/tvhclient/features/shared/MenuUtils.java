@@ -18,28 +18,28 @@ import android.view.View;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
-import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.MainApplication;
+import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.ChannelTag;
+import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.entity.Program;
 import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.data.entity.SeriesRecording;
 import org.tvheadend.tvhclient.data.entity.ServerProfile;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
 import org.tvheadend.tvhclient.data.entity.TimerRecording;
-import org.tvheadend.tvhclient.features.notifications.ProgramNotificationReceiver;
+import org.tvheadend.tvhclient.data.remote.EpgSyncService;
+import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.features.download.DownloadActivity;
+import org.tvheadend.tvhclient.features.notifications.ProgramNotificationReceiver;
 import org.tvheadend.tvhclient.features.playback.PlayChannelActivity;
 import org.tvheadend.tvhclient.features.playback.PlayRecordingActivity;
-import org.tvheadend.tvhclient.data.repository.ChannelAndProgramRepository;
-import org.tvheadend.tvhclient.data.repository.ConfigRepository;
+import org.tvheadend.tvhclient.features.search.SearchActivity;
 import org.tvheadend.tvhclient.features.shared.adapter.ChannelTagListAdapter;
 import org.tvheadend.tvhclient.features.shared.adapter.GenreColorDialogAdapter;
 import org.tvheadend.tvhclient.features.shared.callbacks.ChannelTagSelectionCallback;
 import org.tvheadend.tvhclient.features.shared.callbacks.ChannelTimeSelectionCallback;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecordingRemovedCallback;
-import org.tvheadend.tvhclient.data.remote.EpgSyncService;
-import org.tvheadend.tvhclient.features.search.SearchActivity;
 import org.tvheadend.tvhclient.features.startup.StartupActivity;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
@@ -51,6 +51,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import timber.log.Timber;
 
 import static android.content.Context.ALARM_SERVICE;
@@ -58,17 +60,19 @@ import static android.content.Context.ALARM_SERVICE;
 public class MenuUtils {
 
     private final boolean isUnlocked;
-    private final ChannelAndProgramRepository channelAndProgramRepository;
-    private final ConfigRepository configRepository;
+    @Inject
+    protected AppRepository appRepository;
     private final ServerStatus serverStatus;
     private WeakReference<Activity> activity;
 
     public MenuUtils(Activity activity) {
+        MainApplication.getComponent().inject(this);
+
         this.activity = new WeakReference<>(activity);
         this.isUnlocked = MainApplication.getInstance().isUnlocked();
-        this.channelAndProgramRepository = new ChannelAndProgramRepository(activity);
-        this.configRepository = new ConfigRepository(activity);
-        this.serverStatus = configRepository.getServerStatus();
+
+        Connection connection = appRepository.getConnectionData().getActiveItem();
+        this.serverStatus = appRepository.getServerStatusData().getItemById(connection.getId());
     }
 
     /**
@@ -138,7 +142,7 @@ public class MenuUtils {
             return;
         }
         // Fill the channel tag adapter with the available channel tags
-        List<ChannelTag> channelTagList = channelAndProgramRepository.getAllChannelTagsSync();
+        List<ChannelTag> channelTagList = appRepository.getChannelTagData().getItems();
 
         // Add the default tag (all channels) to the list after it has been sorted
         ChannelTag tag = new ChannelTag();
@@ -223,7 +227,7 @@ public class MenuUtils {
         intent.setAction("addDvrEntry");
         intent.putExtra("eventId", eventId);
 
-        ServerProfile profile = configRepository.getRecordingServerProfileById(serverStatus.getRecordingServerProfileId());
+        ServerProfile profile = appRepository.getServerProfileData().getItemById(serverStatus.getRecordingServerProfileId());
         if (MiscUtils.isServerProfileEnabled(profile, serverStatus)) {
             intent.putExtra("configName", profile.getName());
         }
@@ -239,7 +243,7 @@ public class MenuUtils {
         intent.setAction("addAutorecEntry");
         intent.putExtra("title", title);
 
-        ServerProfile profile = configRepository.getRecordingServerProfileById(serverStatus.getRecordingServerProfileId());
+        ServerProfile profile = appRepository.getServerProfileData().getItemById(serverStatus.getRecordingServerProfileId());
         if (MiscUtils.isServerProfileEnabled(profile, serverStatus)) {
             intent.putExtra("configName", profile.getName());
         }
@@ -487,13 +491,13 @@ public class MenuUtils {
             return;
         }
 
-        String[] dvrConfigList = configRepository.getAllRecordingServerProfileNames();
+        String[] dvrConfigList = appRepository.getServerProfileData().getRecordingProfileNames();
 
         // Get the selected recording profile to highlight the
         // correct item in the list of the selection dialog
         int dvrConfigNameValue = 0;
 
-        ServerProfile serverProfile = configRepository.getRecordingServerProfileById(serverStatus.getRecordingServerProfileId());
+        ServerProfile serverProfile = appRepository.getServerProfileData().getItemById(serverStatus.getRecordingServerProfileId());
         if (serverProfile != null) {
             for (int i = 0; i < dvrConfigList.length; i++) {
                 if (dvrConfigList[i].equals(serverProfile.getName())) {
@@ -622,7 +626,7 @@ public class MenuUtils {
         intent.putExtra("channelId", program.getChannelId());
         intent.putExtra("start", program.getStart());
 
-        ServerProfile profile = configRepository.getRecordingServerProfileById(serverStatus.getRecordingServerProfileId());
+        ServerProfile profile = appRepository.getServerProfileData().getItemById(serverStatus.getRecordingServerProfileId());
         if (MiscUtils.isServerProfileEnabled(profile, serverStatus)) {
             intent.putExtra("configName", profile.getName());
         }

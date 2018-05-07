@@ -16,6 +16,7 @@ import org.tvheadend.tvhclient.features.playback.BasePlayActivity;
 import org.tvheadend.tvhclient.features.programs.ProgramViewModel;
 import org.tvheadend.tvhclient.features.settings.BasePreferenceFragment;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
+import org.tvheadend.tvhclient.features.shared.MenuUtils;
 import org.tvheadend.tvhclient.features.startup.StartupFragment;
 import org.tvheadend.tvhclient.injection.modules.AppModule;
 import org.tvheadend.tvhclient.injection.modules.RepositoryModule;
@@ -62,4 +63,6 @@ public interface AppComponent {
     void inject(ChannelViewModel channelViewModel);
 
     void inject(DownloadActivity downloadActivity);
+
+    void inject(MenuUtils menuUtils);
 }
