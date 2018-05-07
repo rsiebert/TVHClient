@@ -10,7 +10,6 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -26,13 +25,14 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.remote.EpgSyncService;
 import org.tvheadend.tvhclient.data.remote.EpgSyncTask;
 import org.tvheadend.tvhclient.data.remote.htsp.HtspConnection;
 import org.tvheadend.tvhclient.data.remote.htsp.tasks.Authenticator;
-import org.tvheadend.tvhclient.data.repository.ConnectionRepository;
+import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.features.navigation.NavigationActivity;
 import org.tvheadend.tvhclient.features.settings.SettingsActivity;
 import org.tvheadend.tvhclient.features.settings.SettingsAddEditConnectionActivity;
@@ -40,6 +40,8 @@ import org.tvheadend.tvhclient.features.shared.MenuUtils;
 
 import java.util.Date;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -63,8 +65,10 @@ public class StartupFragment extends Fragment {
 
     private Unbinder unbinder;
     private AppCompatActivity activity;
-    private ConnectionRepository connectionRepository;
-    private SharedPreferences sharedPreferences;
+    @Inject
+    protected AppRepository appRepository;
+    @Inject
+    protected SharedPreferences sharedPreferences;
     private String state;
     private String details;
 
@@ -84,11 +88,10 @@ public class StartupFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        MainApplication.getComponent().inject(this);
 
         activity = (AppCompatActivity) getActivity();
         setHasOptionsMenu(true);
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity);
-        connectionRepository = new ConnectionRepository(activity);
 
         progressBar.setVisibility(View.INVISIBLE);
 
@@ -186,12 +189,12 @@ public class StartupFragment extends Fragment {
     }
 
     private boolean isConnectionDefined() {
-        List<Connection> connectionList = connectionRepository.getAllConnectionsSync();
+        List<Connection> connectionList = appRepository.getConnectionData().getItems();
         return connectionList != null && connectionList.size() > 0;
     }
 
     private boolean isActiveConnectionDefined() {
-        return connectionRepository.getActiveConnectionSync() != null;
+        return appRepository.getConnectionData().getActiveItem() != null;
     }
 
     private void showSettingsAddNewConnection() {

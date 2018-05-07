@@ -290,8 +290,8 @@ public class ChannelListFragment extends BaseFragment implements ChannelClickCal
     public void showPopupMenu(View view) {
 
         Channel channel = (Channel) view.getTag();
-        Program program = viewModel.getProgramByIdSync(channel.getProgramId());
-        Recording recording = viewModel.getRecordingByEventIdSync(channel.getProgramId());
+        Program program = appRepository.getProgramData().getItemById(channel.getProgramId());
+        Recording recording = appRepository.getRecordingData().getItemByEventId(channel.getProgramId());
 
         if (activity == null) {
             return;

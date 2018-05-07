@@ -5,35 +5,37 @@ import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 
+import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.data.entity.ChannelTag;
-import org.tvheadend.tvhclient.data.entity.Program;
+import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
+import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.data.repository.ChannelAndProgramRepository;
-import org.tvheadend.tvhclient.data.repository.ConfigRepository;
-import org.tvheadend.tvhclient.data.repository.RecordingRepository;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 public class ChannelViewModel extends AndroidViewModel {
 
-    private final RecordingRepository recordingRepository;
     private final ChannelAndProgramRepository channelRepository;
-    private final ConfigRepository configRepository;
+
     private LiveData<List<Recording>> recordings;
     private LiveData<ServerStatus> serverStatus;
+    @Inject
+    protected AppRepository appRepository;
 
     public ChannelViewModel(Application application) {
         super(application);
+        MainApplication.getComponent().inject(this);
         channelRepository = new ChannelAndProgramRepository(application);
-        configRepository = new ConfigRepository(application);
-        recordingRepository = new RecordingRepository(application);
     }
 
     LiveData<List<Recording>> getAllRecordings() {
         if (recordings == null) {
             recordings = new MutableLiveData<>();
-            recordings = recordingRepository.getAllRecordings();
+            recordings = appRepository.getRecordingData().getLiveDataItems();
         }
         return recordings;
     }
@@ -41,24 +43,18 @@ public class ChannelViewModel extends AndroidViewModel {
     public LiveData<ServerStatus> getServerStatus() {
         if (serverStatus == null) {
             serverStatus = new MutableLiveData<>();
-            serverStatus = configRepository.loadServerStatus();
+            Connection connection = appRepository.getConnectionData().getActiveItem();
+            serverStatus = appRepository.getServerStatusData().getLiveDataItemById(connection.getId());
         }
         return serverStatus;
     }
 
-    Program getProgramByIdSync(int eventId) {
-        return channelRepository.getProgramByIdSync(eventId);
-    }
-
-    Recording getRecordingByEventIdSync(int eventId) {
-        return recordingRepository.getRecordingByEventIdSync(eventId);
-    }
-
     ChannelTag getChannelTagByIdSync(int channelTagId) {
+        // TODO
         return channelRepository.getChannelTagByIdSync(channelTagId);
     }
 
     public LiveData<Integer> getNumberOfChannels() {
-        return channelRepository.getNumberOfChannels();
+        return appRepository.getChannelData().getLiveDataItemCount();
     }
 }
