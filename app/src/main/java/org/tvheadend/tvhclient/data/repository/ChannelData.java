@@ -153,6 +153,13 @@ public class ChannelData implements DataSourceInterface<Channel> {
                 return db.getChannelDao().loadAllChannelsByTimeAndTagSync(currentTime, channelTagId, sortOrder);
             }
         }
+
+        @Override
+        protected void onPostExecute(List<Channel> channels) {
+            if (callback != null) {
+                callback.onChannelsLoaded(channels);
+            }
+        }
     }
 
     protected static class ItemHandlerTask extends AsyncTask<Void, Void, Void> {
