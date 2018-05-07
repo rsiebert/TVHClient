@@ -910,7 +910,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
             int toIndex = (fromIndex + steps >= listSize) ? listSize : fromIndex + steps;
             // Apply the batch only as a sublist of the entire list
             // so we can send out the number of saved operations to any listeners
-            db.getProgramDao().insertAll(new ArrayList<>(pendingEventOps.subList(fromIndex, toIndex)));
+            db.getProgramDao().insert(new ArrayList<>(pendingEventOps.subList(fromIndex, toIndex)));
             fromIndex = toIndex;
 
             Timber.d("flushPendingEventOps: Saving program data (" + fromIndex + " of " + listSize + ")");

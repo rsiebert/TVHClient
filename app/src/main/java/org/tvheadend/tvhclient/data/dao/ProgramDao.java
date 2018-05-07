@@ -64,16 +64,19 @@ public interface ProgramDao {
     void deleteOldProgramsByChannel(int channelId, long time);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertAll(List<Program> programs);
+    void insert(List<Program> programs);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Program program);
 
     @Update
-    void update(Program... program);
+    void update(List<Program> programs);
 
     @Update
-    void update(List<Program> programs);
+    void update(Program... program);
+
+    @Delete
+    void delete(List<Program> programs);
 
     @Delete
     void delete(Program program);

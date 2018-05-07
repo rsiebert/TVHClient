@@ -3,8 +3,8 @@ package org.tvheadend.tvhclient.data.repository;
 import android.arch.lifecycle.LiveData;
 import android.os.AsyncTask;
 
-import org.tvheadend.tvhclient.data.entity.Program;
 import org.tvheadend.tvhclient.data.db.AppRoomDatabase;
+import org.tvheadend.tvhclient.data.entity.Program;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -30,9 +30,7 @@ public class ProgramData implements DataSourceInterface<Program> {
 
     @Override
     public void addItems(List<Program> items) {
-        for (Program program : items) {
-            addItem(program);
-        }
+        new ItemsHandlerTask(db, items, INSERT).execute();
     }
 
     @Override
@@ -42,9 +40,7 @@ public class ProgramData implements DataSourceInterface<Program> {
 
     @Override
     public void updateItems(List<Program> items) {
-        for (Program program : items) {
-            updateItem(program);
-        }
+        new ItemsHandlerTask(db, items, UPDATE).execute();
     }
 
     @Override
@@ -54,9 +50,7 @@ public class ProgramData implements DataSourceInterface<Program> {
 
     @Override
     public void removeItems(List<Program> items) {
-        for (Program program : items) {
-            removeItem(program);
-        }
+        new ItemsHandlerTask(db, items, DELETE).execute();
     }
 
     @Override
@@ -130,6 +124,34 @@ public class ProgramData implements DataSourceInterface<Program> {
                     break;
                 case DELETE:
                     db.getProgramDao().delete(program);
+                    break;
+            }
+            return null;
+        }
+    }
+
+    protected static class ItemsHandlerTask extends AsyncTask<Void, Void, Void> {
+        private final AppRoomDatabase db;
+        private final List<Program> programs;
+        private final int type;
+
+        ItemsHandlerTask(AppRoomDatabase db, List<Program> programs, int type) {
+            this.db = db;
+            this.programs = programs;
+            this.type = type;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            switch (type) {
+                case INSERT:
+                    db.getProgramDao().insert(programs);
+                    break;
+                case UPDATE:
+                    db.getProgramDao().update(programs);
+                    break;
+                case DELETE:
+                    db.getProgramDao().delete(programs);
                     break;
             }
             return null;
