@@ -24,14 +24,14 @@ public class CastChannelActivity extends BaseCastingActivity {
         super.onCreate(savedInstanceState);
 
         if (savedInstanceState == null) {
-            channel = channelAndProgramRepository.getChannelByIdSync(getIntent().getIntExtra("channelId", -1));
+            channel = appRepository.getChannelData().getItemById(getIntent().getIntExtra("channelId", -1));
             if (channel == null) {
                 Timber.d("No channel was provided");
                 finish();
             }
         }
 
-        castingProfile = configRepository.getCastingServerProfileById(serverStatus.getCastingServerProfileId());
+        castingProfile = appRepository.getServerProfileData().getItemById(serverStatus.getCastingServerProfileId());
         if (castingProfile == null) {
             Timber.d("No casting profile defined");
             finish();

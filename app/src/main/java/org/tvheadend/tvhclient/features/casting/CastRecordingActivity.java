@@ -24,14 +24,14 @@ public class CastRecordingActivity extends BaseCastingActivity {
         super.onCreate(savedInstanceState);
 
         if (savedInstanceState == null) {
-            recording = recordingRepository.getRecordingByIdSync(getIntent().getIntExtra("dvrId", -1));
+            recording = appRepository.getRecordingData().getItemById(getIntent().getIntExtra("dvrId", -1));
             if (recording == null) {
                 Timber.d("No recording was provided");
                 finish();
             }
         }
 
-        castingProfile = configRepository.getCastingServerProfileById(serverStatus.getCastingServerProfileId());
+        castingProfile = appRepository.getServerProfileData().getItemById(serverStatus.getCastingServerProfileId());
         if (castingProfile == null) {
             Timber.d("No playback profile defined");
             finish();
