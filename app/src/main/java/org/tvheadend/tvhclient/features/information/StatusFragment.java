@@ -18,14 +18,13 @@ import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
 import org.tvheadend.tvhclient.data.repository.ChannelAndProgramRepository;
-import org.tvheadend.tvhclient.data.repository.ConnectionRepository;
-import org.tvheadend.tvhclient.features.shared.tasks.WakeOnLanTask;
-import org.tvheadend.tvhclient.features.shared.tasks.WakeOnLanTaskCallback;
-import org.tvheadend.tvhclient.features.shared.BaseFragment;
 import org.tvheadend.tvhclient.features.channels.ChannelViewModel;
 import org.tvheadend.tvhclient.features.dvr.recordings.RecordingViewModel;
 import org.tvheadend.tvhclient.features.dvr.series_recordings.SeriesRecordingViewModel;
 import org.tvheadend.tvhclient.features.dvr.timer_recordings.TimerRecordingViewModel;
+import org.tvheadend.tvhclient.features.shared.BaseFragment;
+import org.tvheadend.tvhclient.features.shared.tasks.WakeOnLanTask;
+import org.tvheadend.tvhclient.features.shared.tasks.WakeOnLanTaskCallback;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -128,10 +127,9 @@ public class StatusFragment extends BaseFragment implements WakeOnLanTaskCallbac
      * information that no connection is selected or available.
      */
     private void showConnection() {
-        ConnectionRepository repository = new ConnectionRepository(activity);
-        connection = repository.getActiveConnectionSync();
+        connection = appRepository.getConnectionData().getActiveItem();
         if (connection == null) {
-            if (repository.getAllConnectionsSync() == null) {
+            if (appRepository.getConnectionData().getItems() == null) {
                 connectionTextView.setText(R.string.no_connection_available_advice);
             } else {
                 connectionTextView.setText(R.string.no_connection_active_advice);

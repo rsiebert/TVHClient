@@ -42,7 +42,7 @@ public class NavigationActivity extends MainActivity implements WakeOnLanTaskCal
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        navigationDrawer = new NavigationDrawer(this, savedInstanceState, toolbar, this);
+        navigationDrawer = new NavigationDrawer(this, savedInstanceState, toolbar, appRepository, this);
         navigationDrawer.createHeader();
         navigationDrawer.createMenu();
 

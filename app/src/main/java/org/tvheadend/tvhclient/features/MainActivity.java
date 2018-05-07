@@ -32,6 +32,7 @@ import com.google.android.gms.cast.framework.SessionManagerListener;
 
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.features.search.SearchRequestInterface;
 import org.tvheadend.tvhclient.features.shared.MenuUtils;
 import org.tvheadend.tvhclient.features.shared.callbacks.ToolbarInterface;
@@ -66,6 +67,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private MenuItem mediaRouteMenuItem;
     @Inject
     protected SharedPreferences sharedPreferences;
+    @Inject
+    protected AppRepository appRepository;
+
     protected boolean isUnlocked;
     protected boolean isDualPane;
     protected Toolbar toolbar;
