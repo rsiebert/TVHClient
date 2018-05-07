@@ -50,10 +50,6 @@
             android:key="casting"
             android:summary="@string/pref_casting_sum"
             android:title="@string/pref_casting" />
-        <PreferenceScreen
-            android:key="transcoding"
-            android:summary="@string/pref_transcoding_sum"
-            android:title="@string/pref_transcoding" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_misc" >
         <Preference

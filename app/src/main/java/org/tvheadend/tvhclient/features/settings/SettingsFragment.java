@@ -45,7 +45,6 @@ public class SettingsFragment extends BasePreferenceFragment implements Preferen
         Preference notificationsPreference = findPreference("notifications");
         Preference profilesPreference = findPreference("profiles");
         Preference castingPreference = findPreference("casting");
-        Preference transcodingPreference = findPreference("transcoding");
         Preference unlockerPreference = findPreference("unlocker");
         Preference advancedPreference = findPreference("advanced");
         Preference changelogPreference = findPreference("changelog");
@@ -59,7 +58,6 @@ public class SettingsFragment extends BasePreferenceFragment implements Preferen
         notificationsPreference.setOnPreferenceClickListener(this);
         profilesPreference.setOnPreferenceClickListener(this);
         castingPreference.setOnPreferenceClickListener(this);
-        transcodingPreference.setOnPreferenceClickListener(this);
         advancedPreference.setOnPreferenceClickListener(this);
         unlockerPreference.setOnPreferenceClickListener(this);
         changelogPreference.setOnPreferenceClickListener(this);
@@ -145,9 +143,6 @@ public class SettingsFragment extends BasePreferenceFragment implements Preferen
                 break;
             case "casting":
                 handlePreferenceCastingSelected();
-                break;
-            case "transcoding":
-                showSelectedSettingsFragment("transcoding");
                 break;
             case "advanced":
                 showSelectedSettingsFragment("advanced");
