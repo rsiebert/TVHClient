@@ -85,7 +85,7 @@ public class EpgSyncService extends Service {
         Timber.d("openConnection() called");
 
         simpleHtspConnection = new SimpleHtspConnection(getApplicationContext(), connection);
-        epgSyncTask = new EpgSyncTask(this, simpleHtspConnection, connection.getId());
+        epgSyncTask = new EpgSyncTask(this, simpleHtspConnection, connection.getId(), appRepository);
         simpleHtspConnection.addMessageListener(epgSyncTask);
         simpleHtspConnection.addConnectionListener(epgSyncTask);
         simpleHtspConnection.addAuthenticationListener(epgSyncTask);
