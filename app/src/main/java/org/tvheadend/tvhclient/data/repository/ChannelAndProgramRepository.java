@@ -12,7 +12,6 @@ import org.tvheadend.tvhclient.data.entity.Program;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
 import org.tvheadend.tvhclient.data.local.dao.ChannelDao;
 import org.tvheadend.tvhclient.data.local.dao.ChannelTagDao;
-import org.tvheadend.tvhclient.data.local.dao.ProgramDao;
 import org.tvheadend.tvhclient.data.local.dao.ServerStatusDao;
 import org.tvheadend.tvhclient.data.local.db.AppRoomDatabase;
 import org.tvheadend.tvhclient.features.channels.ChannelsLoadedCallback;
@@ -29,37 +28,9 @@ public class ChannelAndProgramRepository {
         this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
     }
 
-    public List<Channel> getAllChannelsSync() {
-        try {
-            int channelSortOrder = Integer.valueOf(sharedPreferences.getString("channel_sort_order", "0"));
-            return new LoadAllChannelsTask(db.getChannelDao(), channelSortOrder).execute().get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public List<ChannelTag> getAllChannelTagsSync() {
-        try {
-            return new LoadAllChannelTagsTask(db.getChannelTagDao()).execute().get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
     public Channel getChannelByIdSync(int channelId) {
         try {
             return new LoadChannelByIdTask(db.getChannelDao(), channelId).execute().get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public Program getProgramByIdSync(int eventId) {
-        try {
-            return new LoadProgramByIdTask(db.getProgramDao(), eventId).execute().get();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
@@ -84,25 +55,6 @@ public class ChannelAndProgramRepository {
         return null;
     }
 
-    public LiveData<Integer> getNumberOfChannels() {
-        return db.getChannelDao().getChannelCount();
-    }
-
-    private static class LoadProgramByIdTask extends AsyncTask<Void, Void, Program> {
-        private final ProgramDao dao;
-        private final int id;
-
-        LoadProgramByIdTask(ProgramDao dao, int id) {
-            this.dao = dao;
-            this.id = id;
-        }
-
-        @Override
-        protected Program doInBackground(Void... voids) {
-            return dao.loadProgramByIdSync(id);
-        }
-    }
-
     protected static class LoadChannelTagTask extends AsyncTask<Void, Void, ChannelTag> {
         private final ChannelTagDao dao;
         private int channelTagId;
@@ -115,35 +67,6 @@ public class ChannelAndProgramRepository {
         @Override
         protected ChannelTag doInBackground(Void... voids) {
             return dao.loadChannelTagByIdSync(channelTagId);
-        }
-    }
-
-    protected static class LoadAllChannelTagsTask extends AsyncTask<Void, Void, List<ChannelTag>> {
-        private final ChannelTagDao dao;
-
-        LoadAllChannelTagsTask(ChannelTagDao dao) {
-            this.dao = dao;
-        }
-
-        @Override
-        protected List<ChannelTag> doInBackground(Void... voids) {
-            return dao.loadAllChannelTagsSync();
-        }
-    }
-
-    private static class LoadAllChannelsTask extends AsyncTask<Void, Void, List<Channel>> {
-
-        private final ChannelDao dao;
-        private final int sortOrder;
-
-        LoadAllChannelsTask(ChannelDao dao, int sortOrder) {
-            this.dao = dao;
-            this.sortOrder = sortOrder;
-        }
-
-        @Override
-        protected List<Channel> doInBackground(Void... voids) {
-            return dao.loadAllChannelsSync(sortOrder);
         }
     }
 

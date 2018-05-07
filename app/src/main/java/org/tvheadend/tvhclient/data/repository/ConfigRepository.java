@@ -1,17 +1,16 @@
 package org.tvheadend.tvhclient.data.repository;
 
-import android.arch.lifecycle.LiveData;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import org.tvheadend.tvhclient.data.local.db.AppRoomDatabase;
-import org.tvheadend.tvhclient.data.local.dao.ServerProfileDao;
-import org.tvheadend.tvhclient.data.local.dao.ServerStatusDao;
-import org.tvheadend.tvhclient.data.local.dao.TranscodingProfileDao;
 import org.tvheadend.tvhclient.data.entity.ServerProfile;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
 import org.tvheadend.tvhclient.data.entity.TranscodingProfile;
+import org.tvheadend.tvhclient.data.local.dao.ServerProfileDao;
+import org.tvheadend.tvhclient.data.local.dao.ServerStatusDao;
+import org.tvheadend.tvhclient.data.local.dao.TranscodingProfileDao;
+import org.tvheadend.tvhclient.data.local.db.AppRoomDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -115,10 +114,6 @@ public class ConfigRepository {
             e.printStackTrace();
         }
         return null;
-    }
-
-    public LiveData<ServerStatus> loadServerStatus() {
-        return db.getServerStatusDao().loadServerStatus();
     }
 
     private static class LoadServerStatusTask extends AsyncTask<Void, Void, ServerStatus> {
