@@ -12,6 +12,7 @@ import org.tvheadend.tvhclient.data.repository.ConnectionData;
 import org.tvheadend.tvhclient.data.repository.ProgramData;
 import org.tvheadend.tvhclient.data.repository.RecordingData;
 import org.tvheadend.tvhclient.data.repository.SeriesRecordingData;
+import org.tvheadend.tvhclient.data.repository.ServerProfileData;
 import org.tvheadend.tvhclient.data.repository.ServerStatusData;
 import org.tvheadend.tvhclient.data.repository.TimerRecordingData;
 
@@ -48,6 +49,7 @@ public class RepositoryModule {
                 new TimerRecordingData(db),
                 new ConnectionData(db),
                 new ChannelTagData(db),
-                new ServerStatusData(db));
+                new ServerStatusData(db),
+                new ServerProfileData(db));
     }
 }

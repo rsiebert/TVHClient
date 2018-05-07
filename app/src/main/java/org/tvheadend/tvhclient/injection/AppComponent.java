@@ -6,7 +6,12 @@ import android.content.SharedPreferences;
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.features.MainActivity;
+import org.tvheadend.tvhclient.features.casting.BaseCastingActivity;
 import org.tvheadend.tvhclient.features.dvr.recordings.RecordingViewModel;
+import org.tvheadend.tvhclient.features.dvr.series_recordings.SeriesRecordingViewModel;
+import org.tvheadend.tvhclient.features.dvr.timer_recordings.TimerRecordingViewModel;
+import org.tvheadend.tvhclient.features.playback.BasePlayActivity;
+import org.tvheadend.tvhclient.features.programs.ProgramViewModel;
 import org.tvheadend.tvhclient.features.settings.BasePreferenceFragment;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
 import org.tvheadend.tvhclient.injection.modules.AppModule;
@@ -38,4 +43,14 @@ public interface AppComponent {
     void inject(BaseFragment baseFragment);
 
     void inject(BasePreferenceFragment basePreferenceFragment);
+
+    void inject(ProgramViewModel programViewModel);
+
+    void inject(TimerRecordingViewModel timerRecordingViewModel);
+
+    void inject(SeriesRecordingViewModel seriesRecordingViewModel);
+
+    void inject(BaseCastingActivity baseCastingActivity);
+
+    void inject(BasePlayActivity basePlayActivity);
 }
