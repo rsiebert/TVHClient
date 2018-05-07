@@ -6,6 +6,8 @@ import android.preference.PreferenceFragment;
 import android.support.v7.app.AppCompatActivity;
 
 import org.tvheadend.tvhclient.MainApplication;
+import org.tvheadend.tvhclient.data.entity.Connection;
+import org.tvheadend.tvhclient.data.entity.ServerStatus;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.data.repository.ConfigRepository;
 import org.tvheadend.tvhclient.data.repository.ConnectionRepository;
@@ -25,6 +27,7 @@ public class BasePreferenceFragment extends PreferenceFragment {
     protected ConnectionRepository connectionRepository;
     protected boolean isUnlocked;
     protected int htspVersion;
+    protected ServerStatus serverStatus;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -38,7 +41,10 @@ public class BasePreferenceFragment extends PreferenceFragment {
 
         configRepository = new ConfigRepository(activity);
         connectionRepository = new ConnectionRepository(activity);
+
+        Connection connection = appRepository.getConnectionData().getActiveItem();
+        serverStatus = appRepository.getServerStatusData().getItemById(connection.getId());
         isUnlocked = MainApplication.getInstance().isUnlocked();
-        htspVersion = configRepository.getServerStatus().getHtspVersion();
+        htspVersion = serverStatus.getHtspVersion();
     }
 }

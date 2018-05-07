@@ -26,7 +26,6 @@ import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.entity.ServerProfile;
-import org.tvheadend.tvhclient.data.entity.ServerStatus;
 import org.tvheadend.tvhclient.features.shared.callbacks.BackPressedInterface;
 
 import java.util.List;
@@ -53,7 +52,6 @@ public class SettingsProfilesFragment extends BasePreferenceFragment implements 
         recordingProfilesPreference = (ListPreference) findPreference("recording_profiles");
         castingProfilesPreference = (ListPreference) findPreference("casting_profiles");
 
-        ServerStatus serverStatus = configRepository.getServerStatus();
         addProfiles(playbackProfilesPreference, configRepository.getAllPlaybackServerProfiles());
         addProfiles(recordingProfilesPreference, configRepository.getAllRecordingServerProfiles());
         addProfiles(castingProfilesPreference, configRepository.getAllPlaybackServerProfiles());
