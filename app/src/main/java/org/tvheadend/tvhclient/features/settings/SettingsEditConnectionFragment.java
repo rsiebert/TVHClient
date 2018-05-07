@@ -29,7 +29,7 @@ public class SettingsEditConnectionFragment extends SettingsConnectionBaseFragme
 
     @Override
     protected void save() {
-        connectionRepository.updateConnectionSync(connection);
+        appRepository.getConnectionData().updateItem(connection);
         activity.finish();
     }
 

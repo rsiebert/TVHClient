@@ -76,6 +76,11 @@ public class ServerProfileData implements DataSourceInterface<ServerProfile> {
         return null;
     }
 
+    @Override
+    public List<ServerProfile> getItems() {
+        return null;
+    }
+
     public String[] getRecordingProfileNames() {
         try {
             List<ServerProfile> serverProfiles = new ItemsLoaderTask(db, "recording").execute().get();
@@ -108,8 +113,21 @@ public class ServerProfileData implements DataSourceInterface<ServerProfile> {
         return null;
     }
 
-    @Override
-    public List<ServerProfile> getItems() {
+    public List<ServerProfile> getRecordingProfiles() {
+        try {
+            return new ItemsLoaderTask(db, "recording").execute().get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public List<ServerProfile> getPlaybackProfiles() {
+        try {
+            return new ItemsLoaderTask(db, "playback").execute().get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
         return null;
     }
 

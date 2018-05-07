@@ -9,8 +9,6 @@ import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
-import org.tvheadend.tvhclient.data.repository.ConfigRepository;
-import org.tvheadend.tvhclient.data.repository.ConnectionRepository;
 import org.tvheadend.tvhclient.features.shared.callbacks.ToolbarInterface;
 
 import javax.inject.Inject;
@@ -23,8 +21,6 @@ public class BasePreferenceFragment extends PreferenceFragment {
     protected SharedPreferences sharedPreferences;
     @Inject
     protected AppRepository appRepository;
-    protected ConfigRepository configRepository;
-    protected ConnectionRepository connectionRepository;
     protected boolean isUnlocked;
     protected int htspVersion;
     protected ServerStatus serverStatus;
@@ -38,9 +34,6 @@ public class BasePreferenceFragment extends PreferenceFragment {
         }
 
         MainApplication.getComponent().inject(this);
-
-        configRepository = new ConfigRepository(activity);
-        connectionRepository = new ConnectionRepository(activity);
 
         Connection connection = appRepository.getConnectionData().getActiveItem();
         serverStatus = appRepository.getServerStatusData().getItemById(connection.getId());

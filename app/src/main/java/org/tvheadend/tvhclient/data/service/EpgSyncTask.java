@@ -15,6 +15,7 @@ import android.text.TextUtils;
 
 import org.tvheadend.tvhclient.BuildConfig;
 import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.data.db.AppRoomDatabase;
 import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.data.entity.ChannelTag;
 import org.tvheadend.tvhclient.data.entity.Program;
@@ -24,7 +25,7 @@ import org.tvheadend.tvhclient.data.entity.ServerProfile;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
 import org.tvheadend.tvhclient.data.entity.TagAndChannel;
 import org.tvheadend.tvhclient.data.entity.TimerRecording;
-import org.tvheadend.tvhclient.data.db.AppRoomDatabase;
+import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.data.service.htsp.HtspConnection;
 import org.tvheadend.tvhclient.data.service.htsp.HtspFileInputStream;
 import org.tvheadend.tvhclient.data.service.htsp.HtspMessage;
@@ -51,6 +52,8 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     private static final String TAG = EpgSyncTask.class.getSimpleName();
 
     private final AppRoomDatabase db;
+
+    protected AppRepository appRepository;
     private final int connectionTimeout;
     private final int connectionId;
     private int htspVersion;
@@ -75,7 +78,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         DONE
     }
 
-    EpgSyncTask(Context context, @NonNull HtspMessage.Dispatcher dispatcher, int connectionId) {
+    EpgSyncTask(Context context, @NonNull HtspMessage.Dispatcher dispatcher, int connectionId, AppRepository appRepository) {
         this.context = context;
         this.dispatcher = dispatcher;
         this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -86,6 +89,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         this.connectionTimeout = Integer.valueOf(sharedPreferences.getString("connectionTimeout", "5")) * 1000;
         this.htspVersion = 13;
         this.connectionId = connectionId;
+        this.appRepository = appRepository;
     }
 
 

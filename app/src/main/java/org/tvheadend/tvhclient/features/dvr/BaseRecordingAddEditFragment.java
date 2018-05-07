@@ -44,12 +44,12 @@ public class BaseRecordingAddEditFragment extends BaseFragment {
         configRepository = new ConfigRepository(activity);
 
         daysOfWeekList = activity.getResources().getStringArray(R.array.day_short_names);
-        recordingProfilesList = configRepository.getAllRecordingServerProfileNames();
+        recordingProfilesList = appRepository.getServerProfileData().getRecordingProfileNames();
         priorityList = activity.getResources().getStringArray(R.array.dvr_priorities);
 
         channelList = appRepository.getChannelData().getItems();
 
-        profile = configRepository.getRecordingServerProfileById(serverStatus.getRecordingServerProfileId());
+        profile = appRepository.getServerProfileData().getItemById(serverStatus.getRecordingServerProfileId());
         // Get the selected profile from the connection and select it from the recording config list
         if (profile != null) {
             for (int i = 0; i < recordingProfilesList.length; i++) {

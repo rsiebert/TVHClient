@@ -6,14 +6,19 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
 
+import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.data.entity.Connection;
-import org.tvheadend.tvhclient.data.repository.ConnectionRepository;
+import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.data.service.htsp.SimpleHtspConnection;
+
+import javax.inject.Inject;
 
 import timber.log.Timber;
 
 public class EpgSyncService extends Service {
 
+    @Inject
+    protected AppRepository appRepository;
     private HandlerThread handlerThread;
     private Connection connection;
     private SimpleHtspConnection simpleHtspConnection;
@@ -31,9 +36,10 @@ public class EpgSyncService extends Service {
         handlerThread = new HandlerThread("EpgSyncService Handler Thread");
         handlerThread.start();
         new Handler(handlerThread.getLooper());
-        ConnectionRepository connectionRepository = new ConnectionRepository(this);
 
-        connection = connectionRepository.getActiveConnectionSync();
+        MainApplication.getComponent().inject(this);
+
+        connection = appRepository.getConnectionData().getActiveItem();
         if (connection == null) {
             Timber.i("No account configured, aborting startup of EPG Sync Service");
             stopSelf();

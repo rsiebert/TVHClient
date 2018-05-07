@@ -44,7 +44,7 @@ public class SettingsProfilesFragment extends BasePreferenceFragment implements 
         super.onActivityCreated(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences_profiles);
 
-        Connection connection = connectionRepository.getActiveConnectionSync();
+        Connection connection = appRepository.getConnectionData().getActiveItem();
         toolbarInterface.setTitle(getString(R.string.pref_profiles));
         toolbarInterface.setSubtitle(connection.getName());
 
@@ -52,9 +52,9 @@ public class SettingsProfilesFragment extends BasePreferenceFragment implements 
         recordingProfilesPreference = (ListPreference) findPreference("recording_profiles");
         castingProfilesPreference = (ListPreference) findPreference("casting_profiles");
 
-        addProfiles(playbackProfilesPreference, configRepository.getAllPlaybackServerProfiles());
-        addProfiles(recordingProfilesPreference, configRepository.getAllRecordingServerProfiles());
-        addProfiles(castingProfilesPreference, configRepository.getAllPlaybackServerProfiles());
+        addProfiles(playbackProfilesPreference, appRepository.getServerProfileData().getPlaybackProfiles());
+        addProfiles(recordingProfilesPreference, appRepository.getServerProfileData().getRecordingProfiles());
+        addProfiles(castingProfilesPreference, appRepository.getServerProfileData().getPlaybackProfiles());
 
         if (savedInstanceState != null) {
             playbackServerProfileId = savedInstanceState.getInt("playback_profile_id");
@@ -104,7 +104,7 @@ public class SettingsProfilesFragment extends BasePreferenceFragment implements 
         if (playbackServerProfileId == 0) {
             playbackProfilesPreference.setSummary("None");
         } else {
-            ServerProfile playbackProfile = configRepository.getPlaybackServerProfileById(playbackServerProfileId);
+            ServerProfile playbackProfile = appRepository.getServerProfileData().getItemById(playbackServerProfileId);
             playbackProfilesPreference.setSummary(playbackProfile != null ? playbackProfile.getName() : null);
         }
     }
@@ -113,7 +113,7 @@ public class SettingsProfilesFragment extends BasePreferenceFragment implements 
         if (recordingServerProfileId == 0) {
             recordingProfilesPreference.setSummary("None");
         } else {
-            ServerProfile recordingProfile = configRepository.getRecordingServerProfileById(recordingServerProfileId);
+            ServerProfile recordingProfile = appRepository.getServerProfileData().getItemById(recordingServerProfileId);
             recordingProfilesPreference.setSummary(recordingProfile != null ? recordingProfile.getName() : null);
         }
     }
@@ -122,7 +122,7 @@ public class SettingsProfilesFragment extends BasePreferenceFragment implements 
         if (castingServerProfileId == 0) {
             castingProfilesPreference.setSummary("None");
         } else {
-            ServerProfile castingProfile = configRepository.getCastingServerProfileById(castingServerProfileId);
+            ServerProfile castingProfile = appRepository.getServerProfileData().getItemById(castingServerProfileId);
             castingProfilesPreference.setSummary(castingProfile != null ? castingProfile.getName() : null);
         }
     }
@@ -137,11 +137,12 @@ public class SettingsProfilesFragment extends BasePreferenceFragment implements 
 
     @Override
     public void onBackPressed() {
-        configRepository.updatePlaybackServerProfile(playbackServerProfileId);
-        configRepository.updateRecordingServerProfile(recordingServerProfileId);
+        serverStatus.setPlaybackServerProfileId(playbackServerProfileId);
+        serverStatus.setRecordingServerProfileId(recordingServerProfileId);
         if (MainApplication.getInstance().isUnlocked()) {
-            configRepository.updateCastingServerProfile(castingServerProfileId);
+            serverStatus.setCastingServerProfileId(castingServerProfileId);
         }
+        appRepository.getServerStatusData().updateItem(serverStatus);
         activity.finish();
     }
 

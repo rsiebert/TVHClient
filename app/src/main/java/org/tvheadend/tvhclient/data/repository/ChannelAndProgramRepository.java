@@ -1,23 +1,16 @@
 package org.tvheadend.tvhclient.data.repository;
 
-import android.arch.lifecycle.LiveData;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 
-import org.tvheadend.tvhclient.data.entity.Channel;
-import org.tvheadend.tvhclient.data.entity.ChannelTag;
-import org.tvheadend.tvhclient.data.entity.Program;
-import org.tvheadend.tvhclient.data.entity.ServerStatus;
 import org.tvheadend.tvhclient.data.dao.ChannelDao;
-import org.tvheadend.tvhclient.data.dao.ChannelTagDao;
-import org.tvheadend.tvhclient.data.dao.ServerStatusDao;
 import org.tvheadend.tvhclient.data.db.AppRoomDatabase;
+import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.features.channels.ChannelsLoadedCallback;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 public class ChannelAndProgramRepository {
     private final SharedPreferences sharedPreferences;
@@ -28,46 +21,9 @@ public class ChannelAndProgramRepository {
         this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
     }
 
-    public Channel getChannelByIdSync(int channelId) {
-        try {
-            return new LoadChannelByIdTask(db.getChannelDao(), channelId).execute().get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public LiveData<List<Program>> getProgramsByChannelFromTime(int channelId, long time) {
-        return db.getProgramDao().loadProgramsFromChannelWithinTime(channelId, time);
-    }
-
     public void getAllChannelsByTimeAndTagSync(long currentTime, int channelTagId, ChannelsLoadedCallback callback) {
         int channelSortOrder = Integer.valueOf(sharedPreferences.getString("channel_sort_order", "0"));
         new LoadAllChannelsByTimeAndTagTask(db.getChannelDao(), currentTime, channelTagId, channelSortOrder, callback).execute();
-    }
-
-    public ChannelTag getChannelTagByIdSync(int channelTagId) {
-        try {
-            return new LoadChannelTagTask(db.getChannelTagDao(), channelTagId).execute().get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    protected static class LoadChannelTagTask extends AsyncTask<Void, Void, ChannelTag> {
-        private final ChannelTagDao dao;
-        private int channelTagId;
-
-        LoadChannelTagTask(ChannelTagDao dao, int channelTagId) {
-            this.dao = dao;
-            this.channelTagId = channelTagId;
-        }
-
-        @Override
-        protected ChannelTag doInBackground(Void... voids) {
-            return dao.loadChannelTagByIdSync(channelTagId);
-        }
     }
 
     private static class LoadAllChannelsByTimeAndTagTask extends AsyncTask<Void, Void, List<Channel>> {
@@ -105,40 +61,4 @@ public class ChannelAndProgramRepository {
         }
     }
 
-    private static class LoadChannelByIdTask extends AsyncTask<Void, Void, Channel> {
-        private final ChannelDao dao;
-        private final int id;
-
-        LoadChannelByIdTask(ChannelDao dao, int id) {
-            this.dao = dao;
-            this.id = id;
-        }
-
-        @Override
-        protected Channel doInBackground(Void... voids) {
-            return dao.loadChannelByIdSync(id);
-        }
-    }
-
-    public ServerStatus getServerStatus() {
-        try {
-            return new LoadServerStatusTask(db.getServerStatusDao()).execute().get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    private static class LoadServerStatusTask extends AsyncTask<Void, Void, ServerStatus> {
-        private final ServerStatusDao dao;
-
-        LoadServerStatusTask(ServerStatusDao dao) {
-            this.dao = dao;
-        }
-
-        @Override
-        protected ServerStatus doInBackground(Void... voids) {
-            return dao.loadServerStatusSync();
-        }
-    }
 }

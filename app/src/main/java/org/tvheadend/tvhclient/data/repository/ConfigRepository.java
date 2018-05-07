@@ -41,60 +41,6 @@ public class ConfigRepository {
         return null;
     }
 
-    public ServerProfile getPlaybackServerProfileById(int id) {
-        try {
-            return new LoadServerProfileByIdTask(db.getServerProfileDao(), id).execute().get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public ServerProfile getRecordingServerProfileById(int id) {
-        try {
-            return new LoadServerProfileByIdTask(db.getServerProfileDao(), id).execute().get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public ServerProfile getCastingServerProfileById(int id) {
-        try {
-            return new LoadServerProfileByIdTask(db.getServerProfileDao(), id).execute().get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public List<ServerProfile> getAllPlaybackServerProfiles() {
-        try {
-            return new LoadAllServerProfilesTask(db.getServerProfileDao(), "playback").execute().get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public List<ServerProfile> getAllRecordingServerProfiles() {
-        try {
-            return new LoadAllServerProfilesTask(db.getServerProfileDao(), "recording").execute().get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public String[] getAllRecordingServerProfileNames() {
-        List<ServerProfile> profiles = getAllRecordingServerProfiles();
-        String[] recordingProfilesList = new String[profiles.size()];
-        for (int i = 0; i < recordingProfilesList.length; i++) {
-            recordingProfilesList[i] = profiles.get(i).getName();
-        }
-        return recordingProfilesList;
-    }
-
     public void updatePlaybackServerProfile(int id) {
         new UpdateServerProfileTask(db.getServerStatusDao(), "playback", id).execute();
     }
@@ -105,28 +51,6 @@ public class ConfigRepository {
 
     public void updateCastingServerProfile(int id) {
         new UpdateServerProfileTask(db.getServerStatusDao(), "casting", id).execute();
-    }
-
-    public ServerStatus getServerStatus() {
-        try {
-            return new LoadServerStatusTask(db.getServerStatusDao()).execute().get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    private static class LoadServerStatusTask extends AsyncTask<Void, Void, ServerStatus> {
-        private final ServerStatusDao dao;
-
-        LoadServerStatusTask(ServerStatusDao dao) {
-            this.dao = dao;
-        }
-
-        @Override
-        protected ServerStatus doInBackground(Void... voids) {
-            return dao.loadServerStatusSync();
-        }
     }
 
     protected static class LoadTranscodingProfileTask extends AsyncTask<Void, Void, TranscodingProfile> {
@@ -156,26 +80,6 @@ public class ConfigRepository {
                 return profile;
             } else {
                 return new TranscodingProfile();
-            }
-        }
-    }
-
-    protected static class LoadServerProfileByIdTask extends AsyncTask<Void, Void, ServerProfile> {
-        private final ServerProfileDao serverProfileDao;
-        private final int id;
-
-        LoadServerProfileByIdTask(ServerProfileDao serverProfileDao, int id) {
-            this.serverProfileDao = serverProfileDao;
-            this.id = id;
-        }
-
-        @Override
-        protected ServerProfile doInBackground(Void... voids) {
-            ServerProfile profile = serverProfileDao.loadProfileByIdSync(id);
-            if (profile != null) {
-                return profile;
-            } else {
-                return new ServerProfile();
             }
         }
     }
@@ -290,52 +194,4 @@ public class ConfigRepository {
             return null;
         }
     }
-/*
-    public ChannelTag getSelectedChannelTag() {
-        try {
-            return new LoadSelectedChannelTagTask(db.getServerStatusDao(), db.getChannelTagDao()).execute().get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    private static class LoadSelectedChannelTagTask extends AsyncTask<Void, Void, ChannelTag> {
-        private final ServerStatusDao getServerStatusDao;
-        private final ChannelTagDao getChannelTagDao;
-
-        LoadSelectedChannelTagTask(ServerStatusDao getServerStatusDao, ChannelTagDao getChannelTagDao) {
-            this.getServerStatusDao = getServerStatusDao;
-            this.getChannelTagDao = getChannelTagDao;
-        }
-
-        @Override
-        protected ChannelTag doInBackground(Void... voids) {
-            ServerStatus serverStatus = getServerStatusDao.loadServerStatusSync();
-            return getChannelTagDao.loadChannelTagByIdSync(serverStatus.getChannelTagId());
-        }
-    }
-
-    public void setSelectedChannelTag(int id) {
-        new UpdateChannelTagTask(db.getServerStatusDao(), id).execute();
-    }
-
-    private static class UpdateChannelTagTask extends AsyncTask<Void, Void, Void> {
-        private final ServerStatusDao dao;
-        private final int id;
-
-        UpdateChannelTagTask(ServerStatusDao dao, int id) {
-            this.dao = dao;
-            this.id = id;
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            ServerStatus serverStatus = dao.loadServerStatusSync();
-            serverStatus.setChannelTagId(id);
-            dao.update(serverStatus);
-            return null;
-        }
-    }
-*/
 }

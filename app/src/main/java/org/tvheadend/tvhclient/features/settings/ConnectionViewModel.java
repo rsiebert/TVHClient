@@ -4,26 +4,30 @@ import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 
+import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.data.entity.Connection;
-import org.tvheadend.tvhclient.data.repository.ConnectionRepository;
+import org.tvheadend.tvhclient.data.repository.AppRepository;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 public class ConnectionViewModel extends AndroidViewModel {
     private final LiveData<List<Connection>> connections;
-    private final ConnectionRepository repository;
+    @Inject
+    protected AppRepository appRepository;
     private Connection connection;
 
     public ConnectionViewModel(Application application) {
         super(application);
-        repository = new ConnectionRepository(application);
-        connections = repository.getAllConnections();
+        MainApplication.getComponent().inject(this);
+        connections = appRepository.getConnectionData().getLiveDataItems();
     }
 
     Connection getConnectionByIdSync(int connectionId) {
         if (connection == null) {
             if (connectionId >= 0) {
-                connection = repository.getConnectionByIdSync(connectionId);
+                connection = appRepository.getConnectionData().getItemById(connectionId);
             } else {
                 connection = new Connection();
             }
