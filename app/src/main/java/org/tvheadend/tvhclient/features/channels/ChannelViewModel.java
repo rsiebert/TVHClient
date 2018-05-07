@@ -11,15 +11,12 @@ import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
-import org.tvheadend.tvhclient.data.repository.ChannelAndProgramRepository;
 
 import java.util.List;
 
 import javax.inject.Inject;
 
 public class ChannelViewModel extends AndroidViewModel {
-
-    private final ChannelAndProgramRepository channelRepository;
 
     private LiveData<List<Recording>> recordings;
     private LiveData<ServerStatus> serverStatus;
@@ -29,7 +26,6 @@ public class ChannelViewModel extends AndroidViewModel {
     public ChannelViewModel(Application application) {
         super(application);
         MainApplication.getComponent().inject(this);
-        channelRepository = new ChannelAndProgramRepository(application);
     }
 
     LiveData<List<Recording>> getAllRecordings() {
@@ -50,8 +46,7 @@ public class ChannelViewModel extends AndroidViewModel {
     }
 
     ChannelTag getChannelTagByIdSync(int channelTagId) {
-        // TODO
-        return channelRepository.getChannelTagByIdSync(channelTagId);
+        return appRepository.getChannelTagData().getItemById(channelTagId);
     }
 
     public LiveData<Integer> getNumberOfChannels() {
