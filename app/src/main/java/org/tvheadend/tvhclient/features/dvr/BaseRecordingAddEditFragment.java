@@ -11,7 +11,6 @@ import com.sleepbot.datetimepicker.time.TimePickerDialog;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.data.entity.ServerProfile;
-import org.tvheadend.tvhclient.data.repository.ConfigRepository;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
 import org.tvheadend.tvhclient.features.shared.adapter.ChannelListSelectionAdapter;
 import org.tvheadend.tvhclient.features.shared.callbacks.ChannelListSelectionCallback;
@@ -33,15 +32,12 @@ public class BaseRecordingAddEditFragment extends BaseFragment {
     protected String[] priorityList;
     protected String[] recordingProfilesList;
     protected List<Channel> channelList;
-    protected ConfigRepository configRepository;
     protected ServerProfile profile;
     protected int recordingProfileNameId;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
-        configRepository = new ConfigRepository(activity);
 
         daysOfWeekList = activity.getResources().getStringArray(R.array.day_short_names);
         recordingProfilesList = appRepository.getServerProfileData().getRecordingProfileNames();
