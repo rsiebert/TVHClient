@@ -1,10 +1,11 @@
 $ 2.0.0
   % VERSION 2.0.0
-  _ 20.03.2018
-    * UI changes according to the material design guidelines (new navigation menu and icons)
+  _ 08.05.2018
+    * Some UI changes according to the material design guidelines (new navigation menu and icons)
     * New UI on tablets when showing, editing or adding recordings
-    * Added internal database to cache channels, recordings and epg data
-    * Added loading of epg data in the background
+    * Added database to cache channels, recordings and epg data
+    * Epg data will be loaded in the background
+    * The newer server profiles will be used as a default (The old transcoding profiles were removed)
     * Add notifications for programs (Only available in the unlocked version)
     * Many internal changes to the entire code
 $ 1.9.11
