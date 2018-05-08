@@ -42,7 +42,7 @@ import org.tvheadend.tvhclient.data.entity.TimerRecording;
                 ServerProfile.class,
                 ServerStatus.class
         },
-        version = 5)
+        version = 1)
 public abstract class AppRoomDatabase extends RoomDatabase {
 
     private static AppRoomDatabase instance;
