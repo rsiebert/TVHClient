@@ -35,7 +35,6 @@ import java.util.List;
 public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, Drawer.OnDrawerItemClickListener {
 
     // The index for the navigation drawer menus
-    static final int MENU_UNKNOWN = -1;
     static final int MENU_CHANNELS = 0;
     static final int MENU_PROGRAM_GUIDE = 1;
     static final int MENU_COMPLETED_RECORDINGS = 2;
@@ -205,14 +204,7 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
                     connection.setActive(true);
                     appRepository.getConnectionData().updateItem(connection);
                     headerResult.setActiveProfile(connection.getId());
-/*
-                    // Save the information that a new sync is required
-                    // Then restart the application to show the sync fragment
-                    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity);
-                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.putBoolean("initial_sync_required", true);
-                    editor.apply();
-*/
+
                     // Stop the service to reload the newly selected connection
                     activity.stopService(new Intent(activity, EpgSyncService.class));
 

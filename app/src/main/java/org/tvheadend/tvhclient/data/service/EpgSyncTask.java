@@ -96,22 +96,9 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     // Authenticator.Listener Methods
     @Override
     public void onAuthenticationStateChange(@NonNull Authenticator.State state) {
-/*
-        String details;
-        if (state == Authenticator.State.AUTHENTICATING) {
-            details = "Authenticating...";
-        } else if (state == Authenticator.State.AUTHENTICATED) {
-            details = "Authenticated";
-        } else if (state == Authenticator.State.FAILED_BAD_CREDENTIALS) {
-            details = "Authentication failed, bad username or password";
-        } else {
-            details = "Authentication failed";
-        }
-*/
+
         // Send the authentication status as details to any broadcast listeners
         Intent intent = new Intent("service_status");
-        //intent.putExtra("state", state);
-        //intent.putExtra("details", details);
         intent.putExtra("authentication_state", state);
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 
