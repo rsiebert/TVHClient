@@ -135,16 +135,28 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         // seconds of data starting from the current time
         HtspMessage enableAsyncMetadataRequest = new HtspMessage();
         enableAsyncMetadataRequest.put("method", "enableAsyncMetadata");
-        enableAsyncMetadataRequest.put("epg", 1);
 
-        long epgMaxTime = 3600 + (System.currentTimeMillis() / 1000L);
-        enableAsyncMetadataRequest.put("epgMaxTime", epgMaxTime);
+        final long epgMaxTime = 60;
+        final long lastUpdate = sharedPreferences.getLong("last_update", -1);
+        final long unixTime = (System.currentTimeMillis() / 1000L);
 
-        // Only provide metadata that has changed since this time.
-        // Whenever the message eventUpdate is received from the server
-        // the current time will be stored in the preferences.
-        final long lastUpdate = sharedPreferences.getLong("last_update", 0);
-        enableAsyncMetadataRequest.put("lastUpdate", lastUpdate);
+        Timber.d("last update: " + lastUpdate + " + " + (epgMaxTime * 60 * 1000));
+        Timber.d("unix time: " + unixTime);
+
+        // Only fetch new epg data if the last sync time including the
+        // epg fetch time is less than the current time.
+        if (lastUpdate + (epgMaxTime * 60 * 1000) < unixTime) {
+
+            enableAsyncMetadataRequest.put("epg", 1);
+            enableAsyncMetadataRequest.put("epgMaxTime", epgMaxTime);
+
+            // Only provide metadata that has changed since this time.
+            // Whenever the message eventUpdate or eventAdd is received
+            // from the server the current time will be stored in the preferences.
+            // This is also the case when the epg data is fetched periodically in
+            // the background.
+            enableAsyncMetadataRequest.put("lastUpdate", unixTime);
+        }
 
         try {
             dispatcher.sendMessage(enableAsyncMetadataRequest);
@@ -229,6 +241,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
                 break;
             case "eventAdd":
                 handleEventAdd(message);
+                storeLastUpdate();
                 break;
             case "eventUpdate":
                 handleEventUpdate(message);
@@ -342,9 +355,9 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         }
     }
 
-    // Internal Methods
     private void storeLastUpdate() {
         long unixTime = System.currentTimeMillis() / 1000L;
+        Timber.d("Saving last update time: " + unixTime);
         sharedPreferences.edit().putLong("last_update", unixTime).apply();
     }
 
@@ -354,25 +367,14 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         // to them later without querying the db too often
         htspVersion = response.getInteger("htspversion", 13);
 
-        boolean insertNewServerStatus = false;
         ServerStatus serverStatus = db.getServerStatusDao().loadServerStatusSync();
-        if (serverStatus == null) {
-            serverStatus = new ServerStatus();
-            serverStatus.setConnectionId(connectionId);
-            insertNewServerStatus = true;
-        }
         serverStatus.setHtspVersion(htspVersion);
         serverStatus.setServerName(response.getString("servername"));
         serverStatus.setServerVersion(response.getString("serverversion"));
         serverStatus.setWebroot(response.getString("webroot"));
 
-        if (insertNewServerStatus) {
-            Timber.d("Received initial server response, adding new server status");
-            db.getServerStatusDao().insert(serverStatus);
-        } else {
-            Timber.d("Received initial server response, updating existing server status");
-            db.getServerStatusDao().update(serverStatus);
-        }
+        Timber.d("Received initial server response, updating existing server status");
+        db.getServerStatusDao().update(serverStatus);
     }
 
     /**
@@ -724,6 +726,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
 
 
     private void handleProfiles(HtspMessage message) {
+        Timber.d("Loading playback profiles");
         if (message.containsKey("profiles")) {
             ServerStatus serverStatus = db.getServerStatusDao().loadServerStatusSync();
             for (HtspMessage msg : message.getHtspMessageArray("profiles")) {
@@ -738,6 +741,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
                 serverProfile.setComment(msg.getString("comment"));
                 serverProfile.setType("playback");
 
+                Timber.d("Loaded playback profile " + serverProfile.getName());
                 if (serverProfile.getId() == 0) {
                     db.getServerProfileDao().insert(serverProfile);
                 } else {
@@ -748,6 +752,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     }
 
     private void handleDvrConfigs(HtspMessage message) {
+        Timber.d("Loading recording profiles");
         if (message.containsKey("dvrconfigs")) {
             ServerStatus serverStatus = db.getServerStatusDao().loadServerStatusSync();
             for (HtspMessage msg : message.getHtspMessageArray("dvrconfigs")) {
@@ -763,6 +768,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
                 serverProfile.setComment(msg.getString("comment"));
                 serverProfile.setType("recording");
 
+                Timber.d("Loaded recording profile " + serverProfile.getName());
                 if (serverProfile.getId() == 0) {
                     db.getServerProfileDao().insert(serverProfile);
                 } else {
