@@ -190,7 +190,6 @@ public class SettingsAdvancedFragment extends BasePreferenceFragment implements 
             db.getRecordingDao().deleteAll();
             db.getSeriesRecordingDao().deleteAll();
             db.getTimerRecordingDao().deleteAll();
-            db.getServerStatusDao().deleteAll();
             Timber.d("Removed all data from the database");
             return true;
         }
