@@ -37,7 +37,7 @@
 
         <provider
             android:name="android.support.v4.content.FileProvider"
-            android:authorities="org.tvheadend.tvhclient.fileprovider"
+            android:authorities=".fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
@@ -59,7 +59,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".features.search.SearchResultActivity"
+            android:name=".features.search.SearchActivity"
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
@@ -69,9 +69,9 @@
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
         </activity>
-        <activity android:name="org.tvheadend.tvhclient.features.settings.SettingsActivity" />
+        <activity android:name=".features.settings.SettingsActivity" />
         <activity
-            android:name="org.tvheadend.tvhclient.features.download.DownloadActivity"
+            android:name=".features.download.DownloadActivity"
             android:theme="@android:style/Theme.NoTitleBar" />
 
         <service
@@ -80,12 +80,11 @@
 
         <provider
             android:name=".features.search.SuggestionProvider"
-            android:authorities="org.tvheadend.tvhclient.features.search.SuggestionProvider"
+            android:authorities="SuggestionProvider"
             android:exported="false" />
 
         <receiver android:name=".features.notifications.ProgramNotificationReceiver" />
         <receiver android:name=".features.notifications.RecordingNotificationReceiver" />
-
         <activity android:name=".features.settings.SettingsAddEditConnectionActivity" />
         <activity android:name=".features.dvr.RecordingAddEditActivity" />
         <activity android:name=".features.dvr.recordings.RecordingDetailsActivity" />
@@ -98,7 +97,6 @@
             android:excludeFromRecents="true"
             android:launchMode="singleTask"
             android:taskAffinity="" />
-        <activity android:name=".features.search.SearchActivity" />
         <activity android:name=".features.information.InfoActivity" />
         <activity android:name=".features.purchase.UnlockerActivity" />
         <activity android:name=".features.playback.PlayRecordingActivity" />
