@@ -10,6 +10,8 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -25,10 +27,11 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class ProgramRecyclerViewAdapter extends RecyclerView.Adapter<ProgramRecyclerViewAdapter.RecyclerViewHolder> {
+public class ProgramRecyclerViewAdapter extends RecyclerView.Adapter<ProgramRecyclerViewAdapter.RecyclerViewHolder> implements Filterable {
 
     private final BottomReachedListener onBottomReachedListener;
     private List<Program> programList = new ArrayList<>();
+    private List<Program> programListFiltered = new ArrayList<>();
     private SharedPreferences sharedPreferences;
     private Context context;
 
@@ -47,10 +50,10 @@ public class ProgramRecyclerViewAdapter extends RecyclerView.Adapter<ProgramRecy
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerViewHolder holder, int position) {
-        Program program = programList.get(position);
+        Program program = programListFiltered.get(position);
         holder.itemView.setTag(program);
 
-        if (position == programList.size() - 1) {
+        if (position == programListFiltered.size() - 1) {
             onBottomReachedListener.onBottomReached(position);
         }
 
@@ -103,22 +106,62 @@ public class ProgramRecyclerViewAdapter extends RecyclerView.Adapter<ProgramRecy
         }
     }
 
-    void addItems(List<Program> programList) {
-        this.programList = programList;
+    void addItems(List<Program> list) {
+        programList.clear();
+        programListFiltered.clear();
+
+        if (list != null) {
+            programList = list;
+            programListFiltered = list;
+        }
         notifyDataSetChanged();
     }
 
     @Override
     public int getItemCount() {
-        return programList.size();
+        return programListFiltered != null ? programListFiltered.size() : 0;
     }
 
     public Program getItem(int position) {
-        if (programList.size() > position && position >= 0) {
-            return programList.get(position);
+        if (programListFiltered.size() > position && position >= 0) {
+            return programListFiltered.get(position);
         } else {
             return null;
         }
+    }
+
+    @Override
+    public Filter getFilter() {
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence charSequence) {
+                String charString = charSequence.toString();
+                if (charString.isEmpty()) {
+                    programListFiltered = programList;
+                } else {
+                    List<Program> filteredList = new ArrayList<>();
+                    for (Program program : programList) {
+                        // name match condition. this might differ depending on your requirement
+                        // here we are looking for a channel name match
+                        if (program.getTitle().toLowerCase().contains(charString.toLowerCase())) {
+                            filteredList.add(program);
+                        }
+                    }
+                    programListFiltered = filteredList;
+                }
+
+                FilterResults filterResults = new FilterResults();
+                filterResults.values = programListFiltered;
+                return filterResults;
+            }
+
+            @SuppressWarnings("unchecked")
+            @Override
+            protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+                programListFiltered = (ArrayList<Program>) filterResults.values;
+                notifyDataSetChanged();
+            }
+        };
     }
 
     /**
@@ -131,8 +174,8 @@ public class ProgramRecyclerViewAdapter extends RecyclerView.Adapter<ProgramRecy
      */
     void addRecordings(List<Recording> recordings) {
         for (Recording recording : recordings) {
-            for (int i = 0; i < programList.size(); i++) {
-                Program program = programList.get(i);
+            for (int i = 0; i < programListFiltered.size(); i++) {
+                Program program = programListFiltered.get(i);
                 if (recording.getEventId() == program.getEventId()) {
                     program.setRecording(recording);
                     notifyItemChanged(i);
