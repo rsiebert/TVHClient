@@ -29,7 +29,6 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import timber.log.Timber;
 
 public class ChannelRecyclerViewAdapter extends RecyclerView.Adapter<ChannelRecyclerViewAdapter.RecyclerViewHolder> implements Filterable {
 
@@ -159,17 +158,16 @@ public class ChannelRecyclerViewAdapter extends RecyclerView.Adapter<ChannelRecy
         }
     }
 
-    void addItems(List<Channel> channelList) {
-        this.channelList.clear();
-        this.channelListFiltered.clear();
+    void addItems(List<Channel> list) {
+        channelList.clear();
+        channelListFiltered.clear();
 
-        if (channelList != null) {
-            Timber.d("addItems, adding " + channelList.size() + " channels");
-            this.channelList = channelList;
-            this.channelListFiltered = channelList;
+        if (list != null) {
+            channelList = list;
+            channelListFiltered = list;
         }
 
-        if (channelList == null || selectedPosition > channelList.size()) {
+        if (list == null || selectedPosition > list.size()) {
             selectedPosition = 0;
         }
         notifyDataSetChanged();
@@ -177,7 +175,7 @@ public class ChannelRecyclerViewAdapter extends RecyclerView.Adapter<ChannelRecy
 
     @Override
     public int getItemCount() {
-        return channelListFiltered.size();
+        return channelListFiltered != null ? channelListFiltered.size() : 0;
     }
 
     public void setPosition(int pos) {
@@ -202,11 +200,20 @@ public class ChannelRecyclerViewAdapter extends RecyclerView.Adapter<ChannelRecy
                     channelListFiltered = channelList;
                 } else {
                     List<Channel> filteredList = new ArrayList<>();
-                    for (Channel row : channelList) {
+                    for (Channel channel : channelList) {
                         // name match condition. this might differ depending on your requirement
                         // here we are looking for a channel name match
-                        if (row.getName().toLowerCase().contains(charString.toLowerCase())) {
-                            filteredList.add(row);
+                        if (channel.getName().toLowerCase().contains(charString.toLowerCase())) {
+                            filteredList.add(channel);
+                        } else if (channel.getProgramTitle() != null
+                                && channel.getProgramTitle().toLowerCase().contains(charString.toLowerCase())) {
+                            filteredList.add(channel);
+                        } else if (channel.getProgramSubtitle() != null
+                                && channel.getProgramSubtitle().toLowerCase().contains(charString.toLowerCase())) {
+                            filteredList.add(channel);
+                        } else if (channel.getNextProgramTitle() != null
+                                && channel.getNextProgramTitle().toLowerCase().contains(charString.toLowerCase())) {
+                            filteredList.add(channel);
                         }
                     }
                     channelListFiltered = filteredList;
