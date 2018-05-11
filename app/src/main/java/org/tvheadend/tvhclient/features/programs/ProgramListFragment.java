@@ -24,13 +24,13 @@ import android.widget.ProgressBar;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Program;
 import org.tvheadend.tvhclient.data.entity.Recording;
-import org.tvheadend.tvhclient.features.shared.listener.BottomReachedListener;
 import org.tvheadend.tvhclient.data.service.EpgSyncService;
-import org.tvheadend.tvhclient.features.shared.BaseFragment;
-import org.tvheadend.tvhclient.features.shared.listener.RecyclerTouchListener;
-import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewTouchCallback;
 import org.tvheadend.tvhclient.features.search.SearchActivity;
 import org.tvheadend.tvhclient.features.search.SearchRequestInterface;
+import org.tvheadend.tvhclient.features.shared.BaseFragment;
+import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewTouchCallback;
+import org.tvheadend.tvhclient.features.shared.listener.BottomReachedListener;
+import org.tvheadend.tvhclient.features.shared.listener.RecyclerTouchListener;
 
 import java.util.Date;
 
@@ -257,6 +257,8 @@ public class ProgramListFragment extends BaseFragment implements BottomReachedLi
 
     @Override
     public void onSearchRequested(String query) {
+        Timber.d("onSearchRequested() called with: query = [" + query + "]");
+
         // Start searching for programs on the given channelTextView
         Intent searchIntent = new Intent(activity, SearchActivity.class);
         searchIntent.putExtra(SearchManager.QUERY, query);
@@ -265,9 +267,12 @@ public class ProgramListFragment extends BaseFragment implements BottomReachedLi
         // Pass a the bundle. The contents will be forwarded to the
         // fragment that is responsible for displaying the search results
         Bundle bundle = new Bundle();
-        bundle.putLong("channelId", channelId);
+        bundle.putInt("channelId", channelId);
         searchIntent.putExtra(SearchManager.APP_DATA, bundle);
         startActivity(searchIntent);
+
+        // filter recycler view when query submitted
+        //recyclerViewAdapter.getFilter().filter(query);
     }
 
     @Override

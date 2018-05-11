@@ -1,5 +1,6 @@
 package org.tvheadend.tvhclient.features.channels;
 
+import android.app.SearchManager;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -30,6 +31,7 @@ import org.tvheadend.tvhclient.data.entity.Program;
 import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.features.programs.ProgramListActivity;
 import org.tvheadend.tvhclient.features.programs.ProgramListFragment;
+import org.tvheadend.tvhclient.features.search.SearchActivity;
 import org.tvheadend.tvhclient.features.search.SearchRequestInterface;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
 import org.tvheadend.tvhclient.features.shared.MenuUtils;
@@ -353,14 +355,14 @@ public class ChannelListFragment extends BaseFragment implements ChannelClickCal
     @Override
     public void onSearchRequested(String query) {
         Timber.d("onSearchRequested() called with: query = [" + query + "]");
-        /*
+
         // Start searching for programs on all channels
         Intent searchIntent = new Intent(activity, SearchActivity.class);
         searchIntent.putExtra(SearchManager.QUERY, query);
         searchIntent.setAction(Intent.ACTION_SEARCH);
-        searchIntent.putExtra("type", "programs");
+        searchIntent.putExtra("type", "channels");
         startActivity(searchIntent);
-*/
+
         // filter recycler view when query submitted
         //recyclerViewAdapter.getFilter().filter(query);
     }
