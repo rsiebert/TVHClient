@@ -73,7 +73,7 @@ public class ChannelViewModel extends AndroidViewModel {
         return serverStatus;
     }
 
-    ChannelTag getChannelTagByIdSync(int channelTagId) {
+    ChannelTag getChannelTag() {
         return appRepository.getChannelTagData().getItemById(channelTagId);
     }
 
