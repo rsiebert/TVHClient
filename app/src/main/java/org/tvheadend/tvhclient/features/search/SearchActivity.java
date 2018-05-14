@@ -7,14 +7,19 @@ import android.provider.SearchRecentSuggestions;
 import android.support.v4.app.Fragment;
 
 import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.features.channels.ChannelListFragment;
+import org.tvheadend.tvhclient.features.dvr.recordings.RecordingListFragment;
 import org.tvheadend.tvhclient.features.navigation.NavigationActivity;
 import org.tvheadend.tvhclient.features.programs.ProgramListFragment;
+
+import timber.log.Timber;
 
 public class SearchActivity extends NavigationActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         handleIntent(getIntent());
 
         if (savedInstanceState == null) {
@@ -40,16 +45,22 @@ public class SearchActivity extends NavigationActivity {
             String type = getIntent().getStringExtra("type");
             Fragment fragment = null;
             switch (type) {
+                case "channels":
+                    fragment = new ChannelListFragment();
+                    break;
                 case "programs":
                     fragment = new ProgramListFragment();
                     break;
                 case "recordings":
-                    fragment = new ProgramListFragment();
+                    fragment = new RecordingListFragment();
                     break;
             }
             if (fragment != null) {
-                fragment.setArguments(getIntent().getBundleExtra(SearchManager.APP_DATA));
-                getSupportFragmentManager().beginTransaction().add(R.id.main, fragment).commit();
+                fragment.setArguments(getIntent().getExtras());
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.main, fragment)
+                        .commit();
             }
         }
     }
@@ -61,12 +72,14 @@ public class SearchActivity extends NavigationActivity {
     }
 
     private void handleIntent(Intent intent) {
+        Timber.d("handleIntent");
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
             // Save the query so it can be shown again.
             SearchRecentSuggestions suggestions =
                     new SearchRecentSuggestions(this,
                             SuggestionProvider.AUTHORITY, SuggestionProvider.MODE);
+            Timber.d("Saving suggestion " + query);
             suggestions.saveRecentQuery(query, null);
         }
     }

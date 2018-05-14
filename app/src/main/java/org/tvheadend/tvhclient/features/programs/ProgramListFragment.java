@@ -13,12 +13,14 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
 import android.widget.ProgressBar;
 
 import org.tvheadend.tvhclient.R;
@@ -36,7 +38,7 @@ import java.util.Date;
 
 import timber.log.Timber;
 
-public class ProgramListFragment extends BaseFragment implements BottomReachedListener, SearchRequestInterface {
+public class ProgramListFragment extends BaseFragment implements BottomReachedListener, SearchRequestInterface, Filter.FilterListener {
 
     private ProgramRecyclerViewAdapter recyclerViewAdapter;
     private RecyclerView recyclerView;
@@ -45,6 +47,7 @@ public class ProgramListFragment extends BaseFragment implements BottomReachedLi
     private int selectedListPosition;
     private int channelId;
     private String channelName;
+    private String searchQuery;
 
     public static ProgramListFragment newInstance(String channelName, int channelId, long selectedTime) {
         ProgramListFragment f = new ProgramListFragment();
@@ -75,6 +78,7 @@ public class ProgramListFragment extends BaseFragment implements BottomReachedLi
             channelName = savedInstanceState.getString("channelName");
             selectedTime = savedInstanceState.getLong("selectedTime");
             selectedListPosition = savedInstanceState.getInt("listPosition", 0);
+            searchQuery = savedInstanceState.getString("searchQuery");
         } else {
             selectedListPosition = 0;
             selectedTime = new Date().getTime();
@@ -83,6 +87,7 @@ public class ProgramListFragment extends BaseFragment implements BottomReachedLi
             if (bundle != null) {
                 channelId = bundle.getInt("channelId", 0);
                 channelName = bundle.getString("channelName");
+                searchQuery = bundle.getString(SearchManager.QUERY);
             }
         }
 
@@ -109,11 +114,17 @@ public class ProgramListFragment extends BaseFragment implements BottomReachedLi
         // Get them as live data so that any newly added programs will be fetched automatically.
         ProgramViewModel viewModel = ViewModelProviders.of(activity).get(ProgramViewModel.class);
         viewModel.getProgramsByChannelFromTime(channelId, selectedTime).observe(this, programs -> {
-            recyclerViewAdapter.addItems(programs);
-            toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.programs, recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
 
             recyclerView.setVisibility(View.VISIBLE);
             progressBar.setVisibility(View.GONE);
+
+            recyclerViewAdapter.addItems(programs);
+            if (!TextUtils.isEmpty(searchQuery)) {
+                recyclerViewAdapter.getFilter().filter(searchQuery, this);
+            }
+
+            toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.programs,
+                    recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
 
             if (isDualPane && recyclerViewAdapter.getItemCount() > 0) {
                 showProgramDetails(selectedListPosition);
@@ -135,6 +146,7 @@ public class ProgramListFragment extends BaseFragment implements BottomReachedLi
         outState.putString("channelName", channelName);
         outState.putLong("selectedTime", selectedTime);
         outState.putInt("listPosition", selectedListPosition);
+        outState.putString("searchQuery", searchQuery);
     }
 
     @Override
@@ -257,27 +269,22 @@ public class ProgramListFragment extends BaseFragment implements BottomReachedLi
 
     @Override
     public void onSearchRequested(String query) {
-        Timber.d("onSearchRequested() called with: query = [" + query + "]");
-
-        // Start searching for programs on the given channelTextView
         Intent searchIntent = new Intent(activity, SearchActivity.class);
-        searchIntent.putExtra(SearchManager.QUERY, query);
         searchIntent.setAction(Intent.ACTION_SEARCH);
+        searchIntent.putExtra(SearchManager.QUERY, query);
         searchIntent.putExtra("type", "programs");
-        // Pass a the bundle. The contents will be forwarded to the
-        // fragment that is responsible for displaying the search results
-        Bundle bundle = new Bundle();
-        bundle.putInt("channelId", channelId);
-        searchIntent.putExtra(SearchManager.APP_DATA, bundle);
+        searchIntent.putExtra("channelId", channelId);
+        searchIntent.putExtra("channelName", channelName);
         startActivity(searchIntent);
-
-        // filter recycler view when query submitted
-        //recyclerViewAdapter.getFilter().filter(query);
     }
 
     @Override
     public void onBottomReached(int position) {
-        Timber.d("Bottom of program list reached");
+        // Do not load more programs when a search qery was given.
+        // Show only the results of the existing programs
+        if (!TextUtils.isEmpty(searchQuery)) {
+            return;
+        }
         Program lastProgram = recyclerViewAdapter.getItem(position);
         Intent intent = new Intent(activity, EpgSyncService.class);
         intent.setAction("getEvents");
@@ -286,5 +293,11 @@ public class ProgramListFragment extends BaseFragment implements BottomReachedLi
         intent.putExtra("numFollowing", 25);
         intent.putExtra("showMessage", true);
         activity.startService(intent);
+    }
+
+    @Override
+    public void onFilterComplete(int i) {
+        toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.programs,
+                recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
     }
 }

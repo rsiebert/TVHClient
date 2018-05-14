@@ -15,12 +15,14 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
 import android.widget.ProgressBar;
 
 import org.tvheadend.tvhclient.R;
@@ -50,7 +52,7 @@ import timber.log.Timber;
 // TODO sorting should consider minor major channel numbers
 // TODO use the channel tag from the server status
 
-public class ChannelListFragment extends BaseFragment implements ChannelClickCallback, ChannelTimeSelectionCallback, ChannelTagSelectionCallback, SearchRequestInterface {//}, ChannelsLoadedCallback {
+public class ChannelListFragment extends BaseFragment implements ChannelClickCallback, ChannelTimeSelectionCallback, ChannelTagSelectionCallback, SearchRequestInterface, Filter.FilterListener {//}, ChannelsLoadedCallback {
 
     protected ChannelRecyclerViewAdapter recyclerViewAdapter;
     protected RecyclerView recyclerView;
@@ -64,7 +66,6 @@ public class ChannelListFragment extends BaseFragment implements ChannelClickCal
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        Timber.d("onCreateView() called");
         View view = inflater.inflate(R.layout.recyclerview_fragment, container, false);
         recyclerView = view.findViewById(R.id.recycler_view);
         progressBar = view.findViewById(R.id.progress_bar);
@@ -78,9 +79,14 @@ public class ChannelListFragment extends BaseFragment implements ChannelClickCal
         if (savedInstanceState != null) {
             selectedListPosition = savedInstanceState.getInt("listPosition", 0);
             selectedTimeOffset = savedInstanceState.getInt("timeOffset");
+            searchQuery = savedInstanceState.getString("searchQuery");
         } else {
             selectedListPosition = 0;
             selectedTimeOffset = 0;
+            Bundle bundle = getArguments();
+            if (bundle != null) {
+                searchQuery = bundle.getString(SearchManager.QUERY);
+            }
         }
 
         recyclerViewAdapter = new ChannelRecyclerViewAdapter(activity, this);
@@ -107,12 +113,16 @@ public class ChannelListFragment extends BaseFragment implements ChannelClickCal
             progressBar.setVisibility(View.GONE);
 
             recyclerViewAdapter.addItems(channels);
+            if (!TextUtils.isEmpty(searchQuery)) {
+                recyclerViewAdapter.getFilter().filter(searchQuery, this);
+            }
 
-            // TODO
-            ChannelTag channelTag = viewModel.getChannelTagByIdSync(viewModel.getChannelTagId());
+            // Show either all channels or the name of the selected
+            // channel tag and the channel count in the toolbar
+            ChannelTag channelTag = viewModel.getChannelTag();
             toolbarInterface.setTitle((channelTag == null) ? getString(R.string.all_channels) : channelTag.getTagName());
             toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.items,
-                    channels.size(), channels.size()));
+                    recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
         });
 
         if (isDualPane && recyclerViewAdapter.getItemCount() > 0) {
@@ -122,9 +132,7 @@ public class ChannelListFragment extends BaseFragment implements ChannelClickCal
         // Get all recordings for the given channel to check if it belongs to a certain program
         // so the recording status of the particular program can be updated. This is required
         // because the programs are not updated automatically when recordings change.
-        viewModel.getAllRecordings().observe(this, recordings -> {
-            recyclerViewAdapter.addRecordings(recordings);
-        });
+        viewModel.getAllRecordings().observe(this, recordings -> recyclerViewAdapter.addRecordings(recordings));
     }
 
     @Override
@@ -132,6 +140,7 @@ public class ChannelListFragment extends BaseFragment implements ChannelClickCal
         super.onSaveInstanceState(outState);
         outState.putInt("listPosition", selectedListPosition);
         outState.putInt("timeOffset", selectedTimeOffset);
+        outState.putString("searchQuery", searchQuery);
     }
 
     @Override
@@ -304,21 +313,26 @@ public class ChannelListFragment extends BaseFragment implements ChannelClickCal
 
     @Override
     public void onSearchRequested(String query) {
-        Timber.d("onSearchRequested() called with: query = [" + query + "]");
-
         // Start searching for programs on all channels
         Intent searchIntent = new Intent(activity, SearchActivity.class);
         searchIntent.putExtra(SearchManager.QUERY, query);
         searchIntent.setAction(Intent.ACTION_SEARCH);
         searchIntent.putExtra("type", "channels");
         startActivity(searchIntent);
-
-        // filter recycler view when query submitted
-        //recyclerViewAdapter.getFilter().filter(query);
     }
 
     @Override
     public void onChannelClick(int id) {
         new MenuUtils(activity).handleMenuPlayChannelSelection(id);
+    }
+
+    @Override
+    public void onFilterComplete(int i) {
+        // Show either all channels or the name of the selected
+        // channel tag and the channel count in the toolbar
+        ChannelTag channelTag = viewModel.getChannelTag();
+        toolbarInterface.setTitle((channelTag == null) ? getString(R.string.all_channels) : channelTag.getTagName());
+        toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.items,
+                recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
     }
 }

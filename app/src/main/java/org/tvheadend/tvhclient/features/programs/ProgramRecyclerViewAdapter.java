@@ -23,9 +23,11 @@ import org.tvheadend.tvhclient.features.shared.listener.BottomReachedListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import timber.log.Timber;
 
 public class ProgramRecyclerViewAdapter extends RecyclerView.Adapter<ProgramRecyclerViewAdapter.RecyclerViewHolder> implements Filterable {
 
@@ -53,7 +55,7 @@ public class ProgramRecyclerViewAdapter extends RecyclerView.Adapter<ProgramRecy
         Program program = programListFiltered.get(position);
         holder.itemView.setTag(program);
 
-        if (position == programListFiltered.size() - 1) {
+        if (position == programList.size() - 1) {
             onBottomReachedListener.onBottomReached(position);
         }
 
@@ -132,22 +134,28 @@ public class ProgramRecyclerViewAdapter extends RecyclerView.Adapter<ProgramRecy
 
     @Override
     public Filter getFilter() {
+        Timber.d("Getting filter");
         return new Filter() {
             @Override
             protected FilterResults performFiltering(CharSequence charSequence) {
+                Timber.d("Filtering for query: " + charSequence);
                 String charString = charSequence.toString();
                 if (charString.isEmpty()) {
                     programListFiltered = programList;
                 } else {
                     List<Program> filteredList = new ArrayList<>();
-                    for (Program program : programList) {
+                    List<Program> programListCopy = new CopyOnWriteArrayList<>(programList);
+                    for (Program program : programListCopy) {
+                        Timber.d("Searching for program " + program.getTitle());
                         // name match condition. this might differ depending on your requirement
                         // here we are looking for a channel name match
                         if (program.getTitle().toLowerCase().contains(charString.toLowerCase())) {
                             filteredList.add(program);
                         }
                     }
+
                     programListFiltered = filteredList;
+                    Timber.d("Filtered list size is " + programListFiltered.size());
                 }
 
                 FilterResults filterResults = new FilterResults();
@@ -158,6 +166,7 @@ public class ProgramRecyclerViewAdapter extends RecyclerView.Adapter<ProgramRecy
             @SuppressWarnings("unchecked")
             @Override
             protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+                Timber.d("Done filtering");
                 programListFiltered = (ArrayList<Program>) filterResults.values;
                 notifyDataSetChanged();
             }
@@ -174,8 +183,8 @@ public class ProgramRecyclerViewAdapter extends RecyclerView.Adapter<ProgramRecy
      */
     void addRecordings(List<Recording> recordings) {
         for (Recording recording : recordings) {
-            for (int i = 0; i < programListFiltered.size(); i++) {
-                Program program = programListFiltered.get(i);
+            for (int i = 0; i < programList.size(); i++) {
+                Program program = programList.get(i);
                 if (recording.getEventId() == program.getEventId()) {
                     program.setRecording(recording);
                     notifyItemChanged(i);
