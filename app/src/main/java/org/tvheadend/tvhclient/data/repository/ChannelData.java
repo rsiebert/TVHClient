@@ -7,7 +7,6 @@ import android.preference.PreferenceManager;
 
 import org.tvheadend.tvhclient.data.db.AppRoomDatabase;
 import org.tvheadend.tvhclient.data.entity.Channel;
-import org.tvheadend.tvhclient.features.channels.ChannelsLoadedCallback;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -100,9 +99,14 @@ public class ChannelData implements DataSourceInterface<Channel> {
         return null;
     }
 
-    public void getItemByTimeAndTag(long currentTime, int channelTagId, ChannelsLoadedCallback callback) {
+    public List<Channel> getItemByTimeAndTag(long currentTime, int channelTagId) {
         int channelSortOrder = Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(context).getString("channel_sort_order", "0"));
-        new ItemsLoaderTask(db, currentTime, channelTagId, channelSortOrder, callback).execute();
+        try {
+            return new ItemsLoaderTask(db, currentTime, channelTagId, channelSortOrder).execute().get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     protected static class ItemLoaderTask extends AsyncTask<Void, Void, Channel> {
@@ -125,22 +129,19 @@ public class ChannelData implements DataSourceInterface<Channel> {
         private final int sortOrder;
         private final long currentTime;
         private final int channelTagId;
-        private final ChannelsLoadedCallback callback;
 
         ItemsLoaderTask(AppRoomDatabase db, int sortOrder) {
             this.db = db;
             this.currentTime = 0;
             this.channelTagId = 0;
             this.sortOrder = sortOrder;
-            this.callback = null;
         }
 
-        ItemsLoaderTask(AppRoomDatabase db, long currentTime, int channelTagId, int sortOrder, ChannelsLoadedCallback callback) {
+        ItemsLoaderTask(AppRoomDatabase db, long currentTime, int channelTagId, int sortOrder) {
             this.db = db;
             this.currentTime = currentTime;
             this.channelTagId = channelTagId;
             this.sortOrder = sortOrder;
-            this.callback = callback;
         }
 
         @Override
@@ -151,13 +152,6 @@ public class ChannelData implements DataSourceInterface<Channel> {
                 return db.getChannelDao().loadAllChannelsByTimeSync(currentTime, sortOrder);
             } else {
                 return db.getChannelDao().loadAllChannelsByTimeAndTagSync(currentTime, channelTagId, sortOrder);
-            }
-        }
-
-        @Override
-        protected void onPostExecute(List<Channel> channels) {
-            if (callback != null) {
-                callback.onChannelsLoaded(channels);
             }
         }
     }
