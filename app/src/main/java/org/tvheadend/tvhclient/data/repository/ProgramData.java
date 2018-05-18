@@ -16,6 +16,7 @@ public class ProgramData implements DataSourceInterface<Program> {
     private static final int INSERT = 1;
     private static final int UPDATE = 2;
     private static final int DELETE = 3;
+    private static final int LAST = 4;
     private AppRoomDatabase db;
 
     @Inject
@@ -87,6 +88,15 @@ public class ProgramData implements DataSourceInterface<Program> {
         return db.getProgramDao().loadProgramsFromChannelWithinTime(channelId, time);
     }
 
+    public Program getLastItem(Program item) {
+        try {
+            return new ItemHandlerTask(db, item, LAST).execute().get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     protected static class ItemLoaderTask extends AsyncTask<Void, Void, Program> {
         private final AppRoomDatabase db;
         private final int id;
@@ -102,7 +112,7 @@ public class ProgramData implements DataSourceInterface<Program> {
         }
     }
 
-    protected static class ItemHandlerTask extends AsyncTask<Void, Void, Void> {
+    protected static class ItemHandlerTask extends AsyncTask<Void, Void, Program> {
         private final AppRoomDatabase db;
         private final Program program;
         private final int type;
@@ -114,7 +124,7 @@ public class ProgramData implements DataSourceInterface<Program> {
         }
 
         @Override
-        protected Void doInBackground(Void... voids) {
+        protected Program doInBackground(Void... voids) {
             switch (type) {
                 case INSERT:
                     db.getProgramDao().insert(program);
@@ -125,6 +135,8 @@ public class ProgramData implements DataSourceInterface<Program> {
                 case DELETE:
                     db.getProgramDao().delete(program);
                     break;
+                case LAST:
+                    return db.getProgramDao().loadLastProgramFromChannelSync(program.getChannelId());
             }
             return null;
         }
