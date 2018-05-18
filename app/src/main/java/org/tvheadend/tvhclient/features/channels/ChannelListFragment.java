@@ -35,7 +35,6 @@ import org.tvheadend.tvhclient.features.programs.ProgramListFragment;
 import org.tvheadend.tvhclient.features.search.SearchActivity;
 import org.tvheadend.tvhclient.features.search.SearchRequestInterface;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
-import org.tvheadend.tvhclient.features.shared.MenuUtils;
 import org.tvheadend.tvhclient.features.shared.callbacks.ChannelClickCallback;
 import org.tvheadend.tvhclient.features.shared.callbacks.ChannelTagSelectionCallback;
 import org.tvheadend.tvhclient.features.shared.callbacks.ChannelTimeSelectionCallback;
@@ -323,11 +322,11 @@ public class ChannelListFragment extends BaseFragment implements ChannelClickCal
 
     @Override
     public void onChannelClick(int id) {
-        new MenuUtils(activity).handleMenuPlayChannelSelection(id);
+        menuUtils.handleMenuPlayChannelSelection(id);
     }
 
     @Override
-    public void onFilterComplete(int i) {
+    public void onFilterComplete(int count) {
         // Show either all channels or the name of the selected
         // channel tag and the channel count in the toolbar
         ChannelTag channelTag = viewModel.getChannelTag();
