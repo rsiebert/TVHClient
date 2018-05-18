@@ -280,7 +280,7 @@ public class ProgramListFragment extends BaseFragment implements BottomReachedLi
 
     @Override
     public void onBottomReached(int position) {
-        // Do not load more programs when a search qery was given.
+        // Do not load more programs when a search query was given.
         // Show only the results of the existing programs
         if (!TextUtils.isEmpty(searchQuery)) {
             return;
@@ -296,7 +296,7 @@ public class ProgramListFragment extends BaseFragment implements BottomReachedLi
     }
 
     @Override
-    public void onFilterComplete(int i) {
+    public void onFilterComplete(int count) {
         toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.programs,
                 recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
     }
