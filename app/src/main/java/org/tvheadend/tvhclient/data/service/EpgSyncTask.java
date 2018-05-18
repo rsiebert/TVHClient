@@ -133,6 +133,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         // Only fetch new epg data if the last sync time including the
         // epg fetch time is less than the current time.
         if (lastUpdate + (epgMaxTime * 60 * 1000) < unixTime) {
+            Timber.d("Loading epg up to " + epgMaxTime + " minutes from " + unixTime);
 
             enableAsyncMetadataRequest.put("epg", 1);
             enableAsyncMetadataRequest.put("epgMaxTime", epgMaxTime);
@@ -143,6 +144,8 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
             // This is also the case when the epg data is fetched periodically in
             // the background.
             enableAsyncMetadataRequest.put("lastUpdate", unixTime);
+        } else {
+            Timber.d("No epg required");
         }
 
         try {
