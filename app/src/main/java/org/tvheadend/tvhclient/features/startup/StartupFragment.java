@@ -71,6 +71,7 @@ public class StartupFragment extends Fragment {
     protected SharedPreferences sharedPreferences;
     private String state;
     private String details;
+    private MenuUtils menuUtils;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -91,6 +92,7 @@ public class StartupFragment extends Fragment {
         MainApplication.getComponent().inject(this);
 
         activity = (AppCompatActivity) getActivity();
+        menuUtils = new MenuUtils(activity);
         setHasOptionsMenu(true);
 
         progressBar.setVisibility(View.INVISIBLE);
@@ -173,7 +175,7 @@ public class StartupFragment extends Fragment {
                 showConnectionListSettings();
                 return true;
             case R.id.menu_refresh:
-                new MenuUtils(activity).handleMenuReconnectSelection();
+                menuUtils.handleMenuReconnectSelection();
                 return true;
         }
         return super.onOptionsItemSelected(item);
