@@ -134,28 +134,24 @@ public class ProgramRecyclerViewAdapter extends RecyclerView.Adapter<ProgramRecy
 
     @Override
     public Filter getFilter() {
-        Timber.d("Getting filter");
         return new Filter() {
             @Override
             protected FilterResults performFiltering(CharSequence charSequence) {
-                Timber.d("Filtering for query: " + charSequence);
                 String charString = charSequence.toString();
                 if (charString.isEmpty()) {
                     programListFiltered = programList;
                 } else {
                     List<Program> filteredList = new ArrayList<>();
-                    List<Program> programListCopy = new CopyOnWriteArrayList<>(programList);
-                    for (Program program : programListCopy) {
-                        Timber.d("Searching for program " + program.getTitle());
+                    // Iterate over the available program. Use a copy on write
+                    // array in case the program list changes during filtering.
+                    for (Program program : new CopyOnWriteArrayList<>(programList)) {
                         // name match condition. this might differ depending on your requirement
                         // here we are looking for a channel name match
                         if (program.getTitle().toLowerCase().contains(charString.toLowerCase())) {
                             filteredList.add(program);
                         }
                     }
-
                     programListFiltered = filteredList;
-                    Timber.d("Filtered list size is " + programListFiltered.size());
                 }
 
                 FilterResults filterResults = new FilterResults();

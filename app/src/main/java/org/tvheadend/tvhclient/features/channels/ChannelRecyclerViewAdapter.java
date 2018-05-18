@@ -26,6 +26,7 @@ import org.tvheadend.tvhclient.features.shared.callbacks.ChannelClickCallback;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -200,7 +201,9 @@ public class ChannelRecyclerViewAdapter extends RecyclerView.Adapter<ChannelRecy
                     channelListFiltered = channelList;
                 } else {
                     List<Channel> filteredList = new ArrayList<>();
-                    for (Channel channel : channelList) {
+                    // Iterate over the available channels. Use a copy on write
+                    // array in case the channel list changes during filtering.
+                    for (Channel channel : new CopyOnWriteArrayList<>(channelList)) {
                         // name match condition. this might differ depending on your requirement
                         // here we are looking for a channel name match
                         if (channel.getName().toLowerCase().contains(charString.toLowerCase())) {
