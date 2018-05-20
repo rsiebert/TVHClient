@@ -18,6 +18,8 @@ public interface DataSourceInterface<T> {
 
     void removeItems(List<T> items);
 
+    void removeItems();
+
     LiveData<Integer> getLiveDataItemCount();
 
     LiveData<List<T>> getLiveDataItems();
