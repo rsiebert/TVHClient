@@ -21,15 +21,14 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.ChannelTag;
-import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.entity.Program;
 import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.data.entity.SeriesRecording;
 import org.tvheadend.tvhclient.data.entity.ServerProfile;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
 import org.tvheadend.tvhclient.data.entity.TimerRecording;
-import org.tvheadend.tvhclient.data.service.EpgSyncService;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
+import org.tvheadend.tvhclient.data.service.EpgSyncService;
 import org.tvheadend.tvhclient.features.download.DownloadActivity;
 import org.tvheadend.tvhclient.features.notifications.ProgramNotificationReceiver;
 import org.tvheadend.tvhclient.features.playback.PlayChannelActivity;
@@ -70,9 +69,7 @@ public class MenuUtils {
 
         this.activity = new WeakReference<>(activity);
         this.isUnlocked = MainApplication.getInstance().isUnlocked();
-
-        Connection connection = appRepository.getConnectionData().getActiveItem();
-        this.serverStatus = appRepository.getServerStatusData().getItemById(connection.getId());
+        this.serverStatus = appRepository.getServerStatusData().getActiveItem();
     }
 
     /**
