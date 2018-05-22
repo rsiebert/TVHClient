@@ -5,6 +5,7 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -48,6 +49,9 @@ public class ProgramListFragment extends BaseFragment implements BottomReachedLi
     private int channelId;
     private String channelName;
     private String searchQuery;
+    private boolean loadingProgramAllowed;
+    private Runnable loadingProgramsAllowedTask;
+    private final Handler loadingProgramAllowedHandler = new Handler();
 
     public static ProgramListFragment newInstance(String channelName, int channelId, long selectedTime) {
         ProgramListFragment f = new ProgramListFragment();
@@ -137,6 +141,20 @@ public class ProgramListFragment extends BaseFragment implements BottomReachedLi
         viewModel.getRecordingsByChannelId(channelId).observe(this, recordings -> {
             recyclerViewAdapter.addRecordings(recordings);
         });
+
+        loadingProgramAllowed = true;
+        loadingProgramsAllowedTask = new Runnable() {
+            @Override
+            public void run() {
+                loadingProgramAllowed = true;
+            }
+        };
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        loadingProgramAllowedHandler.removeCallbacks(loadingProgramsAllowedTask);
     }
 
     @Override
@@ -282,9 +300,13 @@ public class ProgramListFragment extends BaseFragment implements BottomReachedLi
     public void onBottomReached(int position) {
         // Do not load more programs when a search query was given.
         // Show only the results of the existing programs
-        if (!TextUtils.isEmpty(searchQuery)) {
+        if (!TextUtils.isEmpty(searchQuery) || !loadingProgramAllowed) {
             return;
         }
+
+        loadingProgramAllowed = false;
+        loadingProgramAllowedHandler.postDelayed(loadingProgramsAllowedTask, 2000);
+
         Program lastProgram = recyclerViewAdapter.getItem(position);
         Intent intent = new Intent(activity, EpgSyncService.class);
         intent.setAction("getEvents");
