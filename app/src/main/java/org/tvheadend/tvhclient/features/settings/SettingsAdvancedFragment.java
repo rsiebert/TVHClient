@@ -3,11 +3,9 @@ package org.tvheadend.tvhclient.features.settings;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 import android.support.v4.content.FileProvider;
 
 import com.afollestad.materialdialogs.DialogAction;
@@ -15,15 +13,11 @@ import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.tvheadend.tvhclient.BuildConfig;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.data.db.AppRoomDatabase;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-import java.util.concurrent.ExecutionException;
-
-import timber.log.Timber;
 
 public class SettingsAdvancedFragment extends BasePreferenceFragment implements Preference.OnPreferenceClickListener, SharedPreferences.OnSharedPreferenceChangeListener {
 
@@ -74,15 +68,7 @@ public class SettingsAdvancedFragment extends BasePreferenceFragment implements 
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         dialog.dismiss();
-                        AppRoomDatabase appDatabase = AppRoomDatabase.getInstance(activity.getApplicationContext());
-                        try {
-                            if (new ClearTablesAsyncTask(appDatabase).execute().get()
-                                    && activity.getCurrentFocus() != null) {
-                                Snackbar.make(activity.getCurrentFocus(), "Database cleared, please reconnect", Snackbar.LENGTH_SHORT).show();
-                            }
-                        } catch (InterruptedException | ExecutionException e) {
-                            e.printStackTrace();
-                        }
+                        appRepository.getMiscData().clearDatabase();
                     }
                 })
                 .onNegative(new MaterialDialog.SingleButtonCallback() {
@@ -170,28 +156,6 @@ public class SettingsAdvancedFragment extends BasePreferenceFragment implements 
                     prefs.edit().putString(key, "5").apply();
                 }
                 break;
-        }
-    }
-
-    private static class ClearTablesAsyncTask extends AsyncTask<Void, Void, Boolean> {
-        private AppRoomDatabase db;
-
-        ClearTablesAsyncTask(AppRoomDatabase db) {
-            this.db = db;
-            Timber.d("Removing all data from the database");
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... voids) {
-            db.getChannelDao().deleteAll();
-            db.getChannelTagDao().deleteAll();
-            db.getTagAndChannelDao().deleteAll();
-            db.getProgramDao().deleteAll();
-            db.getRecordingDao().deleteAll();
-            db.getSeriesRecordingDao().deleteAll();
-            db.getTimerRecordingDao().deleteAll();
-            Timber.d("Removed all data from the database");
-            return true;
         }
     }
 }
