@@ -98,7 +98,7 @@ public class TimerRecordingRecyclerViewAdapter extends RecyclerView.Adapter<Time
 
     @Override
     public int getItemCount() {
-        return timerRecordingList.size();
+        return timerRecordingList != null ? timerRecordingList.size() : 0;
     }
 
     public void setPosition(int pos) {

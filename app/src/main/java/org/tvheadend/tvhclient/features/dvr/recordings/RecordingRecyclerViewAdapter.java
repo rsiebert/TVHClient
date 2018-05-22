@@ -141,7 +141,7 @@ public class RecordingRecyclerViewAdapter extends RecyclerView.Adapter<Recording
 
     @Override
     public int getItemCount() {
-        return recordingList.size();
+        return recordingList != null ? recordingList.size() : 0;
     }
 
     public void setPosition(int pos) {

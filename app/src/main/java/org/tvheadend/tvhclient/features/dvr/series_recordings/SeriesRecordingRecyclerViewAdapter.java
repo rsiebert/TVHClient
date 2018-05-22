@@ -101,7 +101,7 @@ public class SeriesRecordingRecyclerViewAdapter extends RecyclerView.Adapter<Ser
 
     @Override
     public int getItemCount() {
-        return seriesRecordingList.size();
+        return seriesRecordingList != null ? seriesRecordingList.size() : 0;
     }
 
     public void setPosition(int pos) {
