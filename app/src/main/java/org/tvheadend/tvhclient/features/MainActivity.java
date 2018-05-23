@@ -16,7 +16,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -45,7 +44,7 @@ import timber.log.Timber;
 // TODO test glide and placeholder images
 // TODO brown genre color is not shown in the genre color info dialog
 // TODO when sorting channels by number, consider minor major channel numbers
-// TODO use face in / out for fragment transactions
+// TODO use fade in / out for fragment transactions
 // TODO playback can use the ticket url, no user pwd url required?
 // TODO casting needs rework
 // TODO check for gmtoffset
@@ -56,7 +55,7 @@ import timber.log.Timber;
 // TODO rework epg (use recyclerview horizontal scroll)
 // TODO improve icons, red, green cirles
 // TODO add info via fabrics which screen is used most often
-// TODO default profile shown twice in rec profiles
+
 
 
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, ToolbarInterface {
@@ -274,9 +273,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     @Override
     public boolean onQueryTextSubmit(String query) {
-        Log.d("X", "onQueryTextSubmit() called with: query = [" + query + "]");
         searchMenuItem.collapseActionView();
-        final android.support.v4.app.Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main);
+        android.support.v4.app.Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main);
         if (fragment != null && fragment.isAdded() && fragment instanceof SearchRequestInterface) {
             ((SearchRequestInterface) fragment).onSearchRequested(query);
         }
