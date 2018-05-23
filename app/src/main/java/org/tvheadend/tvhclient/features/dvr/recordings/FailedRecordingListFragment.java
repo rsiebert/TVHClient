@@ -24,6 +24,7 @@ public class FailedRecordingListFragment extends RecordingListFragment {
             if (isDualPane && recyclerViewAdapter.getItemCount() > 0) {
                 showRecordingDetails(selectedListPosition);
             }
+            activity.invalidateOptionsMenu();
         });
     }
 }

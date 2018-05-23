@@ -3,10 +3,8 @@ package org.tvheadend.tvhclient.features.programs;
 import android.app.SearchManager;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -133,6 +131,7 @@ public class ProgramListFragment extends BaseFragment implements BottomReachedLi
             if (isDualPane && recyclerViewAdapter.getItemCount() > 0) {
                 showProgramDetails(selectedListPosition);
             }
+            activity.invalidateOptionsMenu();
         });
 
         // Get all recordings for the given channel to check if it belongs to a certain program
@@ -170,15 +169,15 @@ public class ProgramListFragment extends BaseFragment implements BottomReachedLi
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.program_options_menu, menu);
+        inflater.inflate(R.menu.program_list_options_menu, menu);
     }
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         // Hide the genre color menu in dual pane mode or if no genre colors shall be shown
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-        final boolean showGenreColors = prefs.getBoolean("genre_colors_for_programs_enabled", false);
+        final boolean showGenreColors = sharedPreferences.getBoolean("genre_colors_for_programs_enabled", false);
         menu.findItem(R.id.menu_genre_color_info_programs).setVisible(!isDualPane && showGenreColors);
+        menu.findItem(R.id.menu_search).setVisible((recyclerViewAdapter.getItemCount() > 0));
     }
 
     @Override

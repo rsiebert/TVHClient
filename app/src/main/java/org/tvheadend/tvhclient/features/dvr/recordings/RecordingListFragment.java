@@ -21,12 +21,12 @@ import android.widget.ProgressBar;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Recording;
-import org.tvheadend.tvhclient.features.shared.BaseFragment;
-import org.tvheadend.tvhclient.features.shared.listener.RecyclerTouchListener;
-import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewTouchCallback;
 import org.tvheadend.tvhclient.features.dvr.RecordingAddEditActivity;
 import org.tvheadend.tvhclient.features.search.SearchActivity;
 import org.tvheadend.tvhclient.features.search.SearchRequestInterface;
+import org.tvheadend.tvhclient.features.shared.BaseFragment;
+import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewTouchCallback;
+import org.tvheadend.tvhclient.features.shared.listener.RecyclerTouchListener;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -50,7 +50,6 @@ public class RecordingListFragment extends BaseFragment implements SearchRequest
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
         if (savedInstanceState != null) {
             selectedListPosition = savedInstanceState.getInt("listPosition", 0);
         }
@@ -111,15 +110,9 @@ public class RecordingListFragment extends BaseFragment implements SearchRequest
             menu.findItem(R.id.menu_record_remove_all).setVisible(true);
         }
         // Hide the casting icon as a default.
-        MenuItem mediaRouteMenuItem = menu.findItem(R.id.media_route_menu_item);
-        if (mediaRouteMenuItem != null) {
-            mediaRouteMenuItem.setVisible(false);
-        }
+        menu.findItem(R.id.media_route_menu_item).setVisible(false);
         // Do not show the search icon when no recordings are available
-        MenuItem searchMenuItem = menu.findItem(R.id.menu_search);
-        if (searchMenuItem != null && recyclerViewAdapter.getItemCount() == 0) {
-            searchMenuItem.setVisible(false);
-        }
+        menu.findItem(R.id.menu_search).setVisible((recyclerViewAdapter.getItemCount() > 0));
     }
 
     protected void showRecordingDetails(int position) {

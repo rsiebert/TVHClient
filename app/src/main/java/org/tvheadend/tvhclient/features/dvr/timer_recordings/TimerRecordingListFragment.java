@@ -84,6 +84,7 @@ public class TimerRecordingListFragment extends BaseFragment {
             if (isDualPane && recyclerViewAdapter.getItemCount() > 0) {
                 showRecordingDetails(selectedListPosition);
             }
+            activity.invalidateOptionsMenu();
         });
     }
 
@@ -125,6 +126,7 @@ public class TimerRecordingListFragment extends BaseFragment {
             menu.findItem(R.id.menu_record_remove_all).setVisible(true);
         }
         menu.findItem(R.id.menu_add).setVisible(true);
+        menu.findItem(R.id.menu_search).setVisible((recyclerViewAdapter.getItemCount() > 0));
     }
 
     protected void showRecordingDetails(int position) {

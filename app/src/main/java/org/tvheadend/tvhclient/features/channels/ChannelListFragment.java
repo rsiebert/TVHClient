@@ -157,11 +157,11 @@ public class ChannelListFragment extends BaseFragment implements ChannelClickCal
 
         menu.findItem(R.id.menu_genre_color_info_channels).setVisible(showGenreColors);
         menu.findItem(R.id.menu_timeframe).setVisible(isUnlocked);
+        menu.findItem(R.id.menu_search).setVisible((recyclerViewAdapter.getItemCount() > 0));
 
         // Prevent the channel tag menu item from going into the overlay menu
         if (showChannelTagMenu) {
-            menu.findItem(R.id.menu_tags).setShowAsActionFlags(
-                    MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+            menu.findItem(R.id.menu_tags).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
         }
     }
 
