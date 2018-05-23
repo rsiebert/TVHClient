@@ -16,12 +16,14 @@ import java.util.List;
 @Dao
 public interface ProgramDao {
 
-    @Transaction
-    @Query("SELECT p.*," +
+    String base = "SELECT p.*," +
             "c.name AS channel_name, " +
             "c.icon AS channel_icon " +
             "FROM programs AS p " +
-            "LEFT JOIN channels AS c ON c.id = p.channel_id " +
+            "LEFT JOIN channels AS c ON c.id = p.channel_id ";
+
+    @Transaction
+    @Query(base +
             "WHERE p.connection_id IN (SELECT id FROM connections WHERE active = 1) " +
             " AND p.channel_id = :channelId " +
             " AND ((p.start >= :time) " +
@@ -30,38 +32,26 @@ public interface ProgramDao {
     LiveData<List<Program>> loadProgramsFromChannelWithinTime(int channelId, long time);
 
     @Transaction
-    @Query("SELECT p.*," +
-            "c.name AS channel_name, " +
-            "c.icon AS channel_icon " +
-            "FROM programs AS p " +
-            "LEFT JOIN channels AS c ON c.id = p.channel_id " +
+    @Query(base +
             "WHERE p.connection_id IN (SELECT id FROM connections WHERE active = 1) " +
             " AND p.id = :id")
     LiveData<Program> loadProgramById(int id);
 
     @Transaction
-    @Query("SELECT p.*," +
-            "c.name AS channel_name, " +
-            "c.icon AS channel_icon " +
-            "FROM programs AS p " +
-            "LEFT JOIN channels AS c ON c.id = p.channel_id " +
+    @Query(base +
             "WHERE p.connection_id IN (SELECT id FROM connections WHERE active = 1) " +
             " AND p.id = :id")
     Program loadProgramByIdSync(int id);
 
-    @Query("SELECT p.*," +
-            "c.name AS channel_name, " +
-            "c.icon AS channel_icon " +
-            "FROM programs AS p " +
-            "LEFT JOIN channels AS c ON c.id = p.channel_id " +
+    @Query(base +
             "WHERE p.connection_id IN (SELECT id FROM connections WHERE active = 1) " +
             " AND p.channel_id = :channelId " +
             "ORDER BY start DESC LIMIT 1")
     Program loadLastProgramFromChannelSync(int channelId);
 
     @Query("DELETE FROM programs " +
-            "WHERE channel_id = :channelId AND stop < :time")
-    void deleteOldProgramsByChannel(int channelId, long time);
+            "WHERE stop < :time")
+    void deleteProgramsByTime(long time);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(List<Program> programs);
@@ -86,8 +76,7 @@ public interface ProgramDao {
             " AND id = :id")
     void deleteById(int id);
 
-    @Query("DELETE FROM programs " +
-            "WHERE connection_id IN (SELECT id FROM connections WHERE active = 1)")
+    @Query("DELETE FROM programs")
     void deleteAll();
 
     @Query("SELECT COUNT (*) FROM programs " +

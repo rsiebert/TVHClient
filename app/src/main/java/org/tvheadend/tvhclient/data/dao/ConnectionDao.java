@@ -39,20 +39,8 @@ public interface ConnectionDao {
     @Delete
     void delete(Connection connection);
 
-    @Query("DELETE FROM connections WHERE id = :id")
-    void deleteById(int id);
-
     @Query("UPDATE connections SET active = 0 WHERE active = 1")
-    void disableActiveConnectionSync();
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertAll(List<Connection> connectionList);
-
-    @Update
-    void update(List<Connection> items);
-
-    @Query("DELETE FROM connections")
-    void deleteAll();
+    void disableActiveConnection();
 
     @Query("SELECT COUNT (*) FROM connections")
     LiveData<Integer> getConnectionCount();

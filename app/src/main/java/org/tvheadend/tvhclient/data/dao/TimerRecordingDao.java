@@ -14,33 +14,27 @@ import org.tvheadend.tvhclient.data.entity.TimerRecording;
 import java.util.List;
 
 @Dao
-public interface  TimerRecordingDao {
+public interface TimerRecordingDao {
 
-    @Transaction
-    @Query("SELECT rec.*, " +
+    String base = "SELECT rec.*, " +
             "c.name AS channel_name, " +
             "c.icon AS channel_icon " +
             "FROM timer_recordings AS rec " +
-            "LEFT JOIN channels AS c ON  c.id = rec.channel_id " +
+            "LEFT JOIN channels AS c ON  c.id = rec.channel_id ";
+
+    @Transaction
+    @Query(base +
             "WHERE rec.connection_id IN (SELECT id FROM connections WHERE active = 1) ")
     LiveData<List<TimerRecording>> loadAllRecordings();
 
     @Transaction
-    @Query("SELECT rec.*, " +
-            "c.name AS channel_name, " +
-            "c.icon AS channel_icon " +
-            "FROM timer_recordings AS rec " +
-            "LEFT JOIN channels AS c ON  c.id = rec.channel_id " +
+    @Query(base +
             "WHERE rec.id = :id " +
             " AND rec.connection_id IN (SELECT id FROM connections WHERE active = 1)")
     LiveData<TimerRecording> loadRecordingById(String id);
 
     @Transaction
-    @Query("SELECT rec.*, " +
-            "c.name AS channel_name, " +
-            "c.icon AS channel_icon " +
-            "FROM timer_recordings AS rec " +
-            "LEFT JOIN channels AS c ON  c.id = rec.channel_id " +
+    @Query(base +
             "WHERE rec.id = :id " +
             " AND rec.connection_id IN (SELECT id FROM connections WHERE active = 1)")
     TimerRecording loadRecordingByIdSync(String id);
@@ -49,7 +43,7 @@ public interface  TimerRecordingDao {
     void insert(TimerRecording recording);
 
     @Update
-    void update(TimerRecording... recording);
+    void update(TimerRecording recording);
 
     @Delete
     void delete(TimerRecording recording);

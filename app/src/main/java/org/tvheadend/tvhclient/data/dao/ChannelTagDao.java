@@ -14,26 +14,28 @@ import java.util.List;
 @Dao
 public interface ChannelTagDao {
 
-    @Query("SELECT * FROM channel_tags")
+    @Query("SELECT * FROM channel_tags " +
+            "WHERE connection_id IN (SELECT id FROM connections WHERE active = 1)")
     List<ChannelTag> loadAllChannelTagsSync();
 
-    @Query("SELECT * FROM channel_tags WHERE id = :id")
+    @Query("SELECT * FROM channel_tags " +
+            "WHERE id = :id " +
+            "AND connection_id IN (SELECT id FROM connections WHERE active = 1)")
     ChannelTag loadChannelTagByIdSync(int id);
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertAll(List<ChannelTag> channelTags);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(ChannelTag channelTag);
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insert(List<ChannelTag> channelTag);
+
     @Update
-    void update(ChannelTag... channelTags);
+    void update(ChannelTag channelTags);
 
     @Delete
     void delete(ChannelTag channelTag);
 
-    @Query("DELETE FROM channel_tags " +
-            "WHERE connection_id IN (SELECT id FROM connections WHERE active = 1)")
+    @Query("DELETE FROM channel_tags")
     void deleteAll();
 
     @Query("DELETE FROM channel_tags " +

@@ -9,16 +9,11 @@ import android.arch.persistence.room.Update;
 
 import org.tvheadend.tvhclient.data.entity.TagAndChannel;
 
-import java.util.ArrayList;
-
 @Dao
 public interface TagAndChannelDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(TagAndChannel tagAndChannel);
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertAll(ArrayList<TagAndChannel> tagAndChannels);
 
     @Update
     void update(TagAndChannel... tagAndChannel);

@@ -16,31 +16,25 @@ import java.util.List;
 @Dao
 public interface SeriesRecordingDao {
 
-    @Transaction
-    @Query("SELECT rec.*, " +
+    String base = "SELECT rec.*, " +
             "c.name AS channel_name, " +
             "c.icon AS channel_icon " +
             "FROM series_recordings AS rec " +
-            "LEFT JOIN channels AS c ON  c.id = rec.channel_id " +
+            "LEFT JOIN channels AS c ON  c.id = rec.channel_id ";
+
+    @Transaction
+    @Query(base +
             "WHERE rec.connection_id IN (SELECT id FROM connections WHERE active = 1) ")
     LiveData<List<SeriesRecording>> loadAllRecordings();
 
     @Transaction
-    @Query("SELECT rec.*, " +
-            "c.name AS channel_name, " +
-            "c.icon AS channel_icon " +
-            "FROM series_recordings AS rec " +
-            "LEFT JOIN channels AS c ON  c.id = rec.channel_id " +
+    @Query(base +
             "WHERE rec.connection_id IN (SELECT id FROM connections WHERE active = 1) " +
             " AND rec.id = :id")
     LiveData<SeriesRecording> loadRecordingById(String id);
 
     @Transaction
-    @Query("SELECT rec.*, " +
-            "c.name AS channel_name, " +
-            "c.icon AS channel_icon " +
-            "FROM series_recordings AS rec " +
-            "LEFT JOIN channels AS c ON  c.id = rec.channel_id " +
+    @Query(base +
             "WHERE rec.connection_id IN (SELECT id FROM connections WHERE active = 1) " +
             " AND rec.id = :id")
     SeriesRecording loadRecordingByIdSync(String id);
@@ -49,7 +43,7 @@ public interface SeriesRecordingDao {
     void insert(SeriesRecording recording);
 
     @Update
-    void update(SeriesRecording... recording);
+    void update(SeriesRecording recording);
 
     @Delete
     void delete(SeriesRecording recording);

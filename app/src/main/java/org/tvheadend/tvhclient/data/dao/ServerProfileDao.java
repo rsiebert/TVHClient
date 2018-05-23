@@ -27,10 +27,13 @@ public interface ServerProfileDao {
     long insert(ServerProfile serverProfile);
 
     @Update
-    void update(ServerProfile... serverProfile);
+    void update(ServerProfile serverProfile);
 
     @Delete
     void delete(ServerProfile serverProfile);
+
+    @Query("DELETE FROM server_profiles")
+    void deleteAll();
 
     @Query("SELECT p.* FROM server_profiles AS p " +
             "LEFT JOIN connections AS c ON c.id = p.connection_id AND c.active = 1 " +
