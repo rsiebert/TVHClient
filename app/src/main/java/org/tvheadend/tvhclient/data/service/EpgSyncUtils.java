@@ -22,7 +22,7 @@ class EpgSyncUtils {
         throw new IllegalAccessError("Utility class");
     }
 
-    static ChannelTag convertMessageToChannelTagModel(ChannelTag tag, HtspMessage msg) {
+    static ChannelTag convertMessageToChannelTagModel(ChannelTag tag, HtspMessage msg, List<Channel> channels) {
         if (msg.containsKey("tagId")) {
             tag.setTagId(msg.getInteger("tagId"));
         }
@@ -48,7 +48,18 @@ class EpgSyncUtils {
             List<Integer> members = msg.getIntegerList("members");
             Timber.d("Tag contains key members with size " + members.size());
             tag.setMembers(members);
-            tag.setChannelCount(members.size());
+
+            int channelCount = 0;
+            for (Integer channelId : members) {
+                for (Channel channel : channels) {
+                    if (channel.getId() == channelId) {
+                        channelCount++;
+                        break;
+                    }
+                }
+            }
+            Timber.d("Tag contains " + channelCount + " channels");
+            tag.setChannelCount(channelCount);
         }
         return tag;
     }
