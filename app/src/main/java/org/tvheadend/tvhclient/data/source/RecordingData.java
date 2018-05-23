@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.data.repository;
+package org.tvheadend.tvhclient.data.source;
 
 import android.arch.lifecycle.LiveData;
 import android.os.AsyncTask;
@@ -11,11 +11,8 @@ import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
 
-public class RecordingData implements DataSourceInterface<Recording> {
+public class RecordingData extends BaseData implements DataSourceInterface<Recording> {
 
-    private static final int INSERT = 1;
-    private static final int UPDATE = 2;
-    private static final int DELETE = 3;
     private AppRoomDatabase db;
 
     @Inject
@@ -28,7 +25,6 @@ public class RecordingData implements DataSourceInterface<Recording> {
         new ItemHandlerTask(db, item, INSERT).execute();
     }
 
-    @Override
     public void addItems(List<Recording> items) {
         for (Recording recording : items) {
             addItem(recording);
@@ -41,22 +37,12 @@ public class RecordingData implements DataSourceInterface<Recording> {
     }
 
     @Override
-    public void updateItems(List<Recording> items) {
-        for (Recording recording : items) {
-            updateItem(recording);
-        }
-    }
-
-    @Override
     public void removeItem(Recording item) {
         new ItemHandlerTask(db, item, DELETE).execute();
     }
 
-    @Override
-    public void removeItems(List<Recording> items) {
-        for (Recording recording : items) {
-            removeItem(recording);
-        }
+    public void removeItems() {
+        new ItemsHandlerTask(db, null, DELETE_ALL).execute();
     }
 
     @Override
@@ -106,7 +92,7 @@ public class RecordingData implements DataSourceInterface<Recording> {
     @Override
     public Recording getItemById(Object id) {
         try {
-            return new ItemLoaderTask(db, (int) id).execute().get();
+            return new ItemLoaderTask(db, (int) id, LOAD_BY_ID).execute().get();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
@@ -124,7 +110,7 @@ public class RecordingData implements DataSourceInterface<Recording> {
 
     public Recording getItemByEventId(int id) {
         try {
-            return new ItemLoaderTask(db, id, "event").execute().get();
+            return new ItemLoaderTask(db, id, LOAD_BY_EVENT_ID).execute().get();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
@@ -134,15 +120,9 @@ public class RecordingData implements DataSourceInterface<Recording> {
     private static class ItemLoaderTask extends AsyncTask<Void, Void, Recording> {
         private final AppRoomDatabase db;
         private final int id;
-        private final String type;
+        private final int type;
 
-        ItemLoaderTask(AppRoomDatabase db, int id) {
-            this.db = db;
-            this.id = id;
-            this.type = "";
-        }
-
-        ItemLoaderTask(AppRoomDatabase db, int id, String type) {
+        ItemLoaderTask(AppRoomDatabase db, int id, int type) {
             this.db = db;
             this.id = id;
             this.type = type;
@@ -151,11 +131,12 @@ public class RecordingData implements DataSourceInterface<Recording> {
         @Override
         protected Recording doInBackground(Void... voids) {
             switch (type) {
-                case "event":
+                case LOAD_BY_EVENT_ID:
                     return db.getRecordingDao().loadRecordingByEventIdSync(id);
-                default:
+                case LOAD_BY_ID:
                     return db.getRecordingDao().loadRecordingByIdSync(id);
             }
+            return null;
         }
     }
 
@@ -181,6 +162,32 @@ public class RecordingData implements DataSourceInterface<Recording> {
                     break;
                 case DELETE:
                     db.getRecordingDao().delete(recording);
+                    break;
+            }
+            return null;
+        }
+    }
+
+    protected static class ItemsHandlerTask extends AsyncTask<Void, Void, Void> {
+        private final AppRoomDatabase db;
+        private final List<Recording> recordings;
+        private final int type;
+
+        ItemsHandlerTask(AppRoomDatabase db, List<Recording> recordings, int type) {
+            this.db = db;
+            this.recordings = recordings;
+            this.type = type;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            switch (type) {
+                case DELETE_ALL:
+                    if (recordings == null) {
+                        db.getRecordingDao().deleteAll();
+                    } else {
+                        db.getRecordingDao().delete(recordings);
+                    }
                     break;
             }
             return null;

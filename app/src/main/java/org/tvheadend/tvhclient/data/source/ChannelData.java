@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.data.repository;
+package org.tvheadend.tvhclient.data.source;
 
 import android.arch.lifecycle.LiveData;
 import android.content.Context;
@@ -13,11 +13,8 @@ import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
 
-public class ChannelData implements DataSourceInterface<Channel> {
+public class ChannelData extends BaseData implements DataSourceInterface<Channel> {
 
-    private static final int INSERT = 1;
-    private static final int UPDATE = 2;
-    private static final int DELETE = 3;
     private AppRoomDatabase db;
     private Context context;
 
@@ -32,11 +29,8 @@ public class ChannelData implements DataSourceInterface<Channel> {
         new ItemHandlerTask(db, item, INSERT).execute();
     }
 
-    @Override
     public void addItems(List<Channel> items) {
-        for (Channel channel : items) {
-            addItem(channel);
-        }
+        new ItemsHandlerTask(db, items, INSERT_ALL).execute();
     }
 
     @Override
@@ -45,22 +39,8 @@ public class ChannelData implements DataSourceInterface<Channel> {
     }
 
     @Override
-    public void updateItems(List<Channel> items) {
-        for (Channel channel : items) {
-            updateItem(channel);
-        }
-    }
-
-    @Override
     public void removeItem(Channel item) {
         new ItemHandlerTask(db, item, DELETE).execute();
-    }
-
-    @Override
-    public void removeItems(List<Channel> items) {
-        for (Channel channel : items) {
-            removeItem(channel);
-        }
     }
 
     @Override
@@ -178,6 +158,28 @@ public class ChannelData implements DataSourceInterface<Channel> {
                     break;
                 case DELETE:
                     db.getChannelDao().delete(channel);
+                    break;
+            }
+            return null;
+        }
+    }
+
+    protected static class ItemsHandlerTask extends AsyncTask<Void, Void, Void> {
+        private final AppRoomDatabase db;
+        private final List<Channel> channels;
+        private final int type;
+
+        ItemsHandlerTask(AppRoomDatabase db, List<Channel> channels, int type) {
+            this.db = db;
+            this.channels = channels;
+            this.type = type;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            switch (type) {
+                case INSERT_ALL:
+                    db.getChannelDao().insert(channels);
                     break;
             }
             return null;

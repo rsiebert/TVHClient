@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.data.repository;
+package org.tvheadend.tvhclient.data.source;
 
 import android.arch.lifecycle.LiveData;
 import android.os.AsyncTask;
@@ -12,11 +12,8 @@ import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
 
-public class ConnectionData implements DataSourceInterface<Connection> {
+public class ConnectionData extends BaseData implements DataSourceInterface<Connection> {
 
-    private static final int INSERT = 1;
-    private static final int UPDATE = 2;
-    private static final int DELETE = 3;
     private AppRoomDatabase db;
 
     @Inject
@@ -30,34 +27,13 @@ public class ConnectionData implements DataSourceInterface<Connection> {
     }
 
     @Override
-    public void addItems(List<Connection> items) {
-        for (Connection connection : items) {
-            addItem(connection);
-        }
-    }
-
-    @Override
     public void updateItem(Connection item) {
         new ItemHandlerTask(db, item, UPDATE).execute();
     }
 
     @Override
-    public void updateItems(List<Connection> items) {
-        for (Connection connection : items) {
-            updateItem(connection);
-        }
-    }
-
-    @Override
     public void removeItem(Connection item) {
         new ItemHandlerTask(db, item, DELETE).execute();
-    }
-
-    @Override
-    public void removeItems(List<Connection> items) {
-        for (Connection connection : items) {
-            removeItem(connection);
-        }
     }
 
     @Override
@@ -158,7 +134,7 @@ public class ConnectionData implements DataSourceInterface<Connection> {
             switch (type) {
                 case INSERT:
                     if (connection.isActive()) {
-                        db.getConnectionDao().disableActiveConnectionSync();
+                        db.getConnectionDao().disableActiveConnection();
                     }
                     long newId = db.getConnectionDao().insert(connection);
                     // Create a new server status row in the database
@@ -170,15 +146,14 @@ public class ConnectionData implements DataSourceInterface<Connection> {
 
                 case UPDATE:
                     if (connection.isActive()) {
-                        db.getConnectionDao().disableActiveConnectionSync();
+                        db.getConnectionDao().disableActiveConnection();
                     }
                     db.getConnectionDao().update(connection);
                     break;
 
                 case DELETE:
-                    int id = connection.getId();
-                    db.getConnectionDao().deleteById(id);
-                    db.getServerStatusDao().deleteByConnectionId(id);
+                    db.getConnectionDao().delete(connection);
+                    db.getServerStatusDao().deleteByConnectionId(connection.getId());
                     break;
             }
             return null;

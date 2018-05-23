@@ -5,15 +5,17 @@ import android.support.annotation.NonNull;
 
 import org.tvheadend.tvhclient.data.db.AppRoomDatabase;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
-import org.tvheadend.tvhclient.data.repository.ChannelData;
-import org.tvheadend.tvhclient.data.repository.ChannelTagData;
-import org.tvheadend.tvhclient.data.repository.ConnectionData;
-import org.tvheadend.tvhclient.data.repository.ProgramData;
-import org.tvheadend.tvhclient.data.repository.RecordingData;
-import org.tvheadend.tvhclient.data.repository.SeriesRecordingData;
-import org.tvheadend.tvhclient.data.repository.ServerProfileData;
-import org.tvheadend.tvhclient.data.repository.ServerStatusData;
-import org.tvheadend.tvhclient.data.repository.TimerRecordingData;
+import org.tvheadend.tvhclient.data.source.ChannelData;
+import org.tvheadend.tvhclient.data.source.ChannelTagData;
+import org.tvheadend.tvhclient.data.source.ConnectionData;
+import org.tvheadend.tvhclient.data.source.MiscData;
+import org.tvheadend.tvhclient.data.source.ProgramData;
+import org.tvheadend.tvhclient.data.source.RecordingData;
+import org.tvheadend.tvhclient.data.source.SeriesRecordingData;
+import org.tvheadend.tvhclient.data.source.ServerProfileData;
+import org.tvheadend.tvhclient.data.source.ServerStatusData;
+import org.tvheadend.tvhclient.data.source.TagAndChannelData;
+import org.tvheadend.tvhclient.data.source.TimerRecordingData;
 
 import javax.inject.Singleton;
 
@@ -49,6 +51,8 @@ public class RepositoryModule {
                 new ConnectionData(db),
                 new ChannelTagData(db),
                 new ServerStatusData(db),
-                new ServerProfileData(db));
+                new ServerProfileData(db),
+                new TagAndChannelData(db),
+                new MiscData(db));
     }
 }

@@ -1,21 +1,18 @@
-package org.tvheadend.tvhclient.data.repository;
+package org.tvheadend.tvhclient.data.source;
 
 import android.arch.lifecycle.LiveData;
 import android.os.AsyncTask;
 
-import org.tvheadend.tvhclient.data.entity.ServerStatus;
 import org.tvheadend.tvhclient.data.db.AppRoomDatabase;
+import org.tvheadend.tvhclient.data.entity.ServerStatus;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
 
-public class ServerStatusData implements DataSourceInterface<ServerStatus> {
+public class ServerStatusData extends BaseData implements DataSourceInterface<ServerStatus> {
 
-    private static final int INSERT = 1;
-    private static final int UPDATE = 2;
-    private static final int DELETE = 3;
     private AppRoomDatabase db;
 
     @Inject
@@ -29,34 +26,13 @@ public class ServerStatusData implements DataSourceInterface<ServerStatus> {
     }
 
     @Override
-    public void addItems(List<ServerStatus> items) {
-        for (ServerStatus item : items) {
-            addItem(item);
-        }
-    }
-
-    @Override
     public void updateItem(ServerStatus item) {
         new ItemHandlerTask(db, item, UPDATE).execute();
     }
 
     @Override
-    public void updateItems(List<ServerStatus> items) {
-        for (ServerStatus item : items) {
-            updateItem(item);
-        }
-    }
-
-    @Override
     public void removeItem(ServerStatus item) {
         new ItemHandlerTask(db, item, DELETE).execute();
-    }
-
-    @Override
-    public void removeItems(List<ServerStatus> items) {
-        for (ServerStatus item : items) {
-            removeItem(item);
-        }
     }
 
     @Override
@@ -89,6 +65,15 @@ public class ServerStatusData implements DataSourceInterface<ServerStatus> {
         return null;
     }
 
+    public ServerStatus getActiveItem() {
+        try {
+            return new ItemLoaderTask(db).execute().get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     protected static class ItemLoaderTask extends AsyncTask<Void, Void, ServerStatus> {
         private final AppRoomDatabase db;
         private final int id;
@@ -98,9 +83,18 @@ public class ServerStatusData implements DataSourceInterface<ServerStatus> {
             this.id = id;
         }
 
+        ItemLoaderTask(AppRoomDatabase db) {
+            this.db = db;
+            this.id = -1;
+        }
+
         @Override
         protected ServerStatus doInBackground(Void... voids) {
-            return db.getServerStatusDao().loadServerStatusByIdSync(id);
+            if (id < 0) {
+                return db.getServerStatusDao().loadServerStatusSync();
+            } else {
+                return db.getServerStatusDao().loadServerStatusByIdSync(id);
+            }
         }
     }
 

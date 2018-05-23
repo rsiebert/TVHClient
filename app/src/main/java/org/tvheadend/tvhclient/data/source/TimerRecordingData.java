@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.data.repository;
+package org.tvheadend.tvhclient.data.source;
 
 import android.arch.lifecycle.LiveData;
 import android.os.AsyncTask;
@@ -11,11 +11,8 @@ import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
 
-public class TimerRecordingData implements DataSourceInterface<TimerRecording> {
+public class TimerRecordingData extends BaseData implements DataSourceInterface<TimerRecording> {
 
-    private static final int INSERT = 1;
-    private static final int UPDATE = 2;
-    private static final int DELETE = 3;
     private AppRoomDatabase db;
 
     @Inject
@@ -29,34 +26,13 @@ public class TimerRecordingData implements DataSourceInterface<TimerRecording> {
     }
 
     @Override
-    public void addItems(List<TimerRecording> items) {
-        for (TimerRecording recording : items) {
-            addItem(recording);
-        }
-    }
-
-    @Override
     public void updateItem(TimerRecording item) {
         new ItemHandlerTask(db, item, UPDATE).execute();
     }
 
     @Override
-    public void updateItems(List<TimerRecording> items) {
-        for (TimerRecording recording : items) {
-            updateItem(recording);
-        }
-    }
-
-    @Override
     public void removeItem(TimerRecording item) {
         new ItemHandlerTask(db, item, DELETE).execute();
-    }
-
-    @Override
-    public void removeItems(List<TimerRecording> items) {
-        for (TimerRecording recording : items) {
-            removeItem(recording);
-        }
     }
 
     @Override

@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.data.repository;
+package org.tvheadend.tvhclient.data.source;
 
 import android.arch.lifecycle.LiveData;
 import android.os.AsyncTask;
@@ -11,11 +11,8 @@ import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
 
-public class ChannelTagData implements DataSourceInterface<ChannelTag> {
+public class ChannelTagData extends BaseData implements DataSourceInterface<ChannelTag> {
 
-    private static final int INSERT = 1;
-    private static final int UPDATE = 2;
-    private static final int DELETE = 3;
     private AppRoomDatabase db;
 
     @Inject
@@ -29,34 +26,13 @@ public class ChannelTagData implements DataSourceInterface<ChannelTag> {
     }
 
     @Override
-    public void addItems(List<ChannelTag> items) {
-        for (ChannelTag channel : items) {
-            addItem(channel);
-        }
-    }
-
-    @Override
     public void updateItem(ChannelTag item) {
         new ItemHandlerTask(db, item, UPDATE).execute();
     }
 
     @Override
-    public void updateItems(List<ChannelTag> items) {
-        for (ChannelTag channel : items) {
-            updateItem(channel);
-        }
-    }
-
-    @Override
     public void removeItem(ChannelTag item) {
         new ItemHandlerTask(db, item, DELETE).execute();
-    }
-
-    @Override
-    public void removeItems(List<ChannelTag> items) {
-        for (ChannelTag channel : items) {
-            removeItem(channel);
-        }
     }
 
     @Override

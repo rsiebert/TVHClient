@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.data.repository;
+package org.tvheadend.tvhclient.data.source;
 
 import android.arch.lifecycle.LiveData;
 
@@ -8,17 +8,9 @@ public interface DataSourceInterface<T> {
 
     void addItem(T item);
 
-    void addItems(List<T> items);
-
     void updateItem(T item);
 
-    void updateItems(List<T> items);
-
     void removeItem(T item);
-
-    void removeItems(List<T> items);
-
-    void removeItems();
 
     LiveData<Integer> getLiveDataItemCount();
 

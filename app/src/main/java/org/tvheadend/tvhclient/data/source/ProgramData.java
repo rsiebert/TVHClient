@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.data.repository;
+package org.tvheadend.tvhclient.data.source;
 
 import android.arch.lifecycle.LiveData;
 import android.os.AsyncTask;
@@ -11,12 +11,8 @@ import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
 
-public class ProgramData implements DataSourceInterface<Program> {
+public class ProgramData extends BaseData implements DataSourceInterface<Program> {
 
-    private static final int INSERT = 1;
-    private static final int UPDATE = 2;
-    private static final int DELETE = 3;
-    private static final int LAST = 4;
     private AppRoomDatabase db;
 
     @Inject
@@ -29,9 +25,8 @@ public class ProgramData implements DataSourceInterface<Program> {
         new ItemHandlerTask(db, item, INSERT).execute();
     }
 
-    @Override
     public void addItems(List<Program> items) {
-        new ItemsHandlerTask(db, items, INSERT).execute();
+        new ItemsHandlerTask(db, items, INSERT_ALL).execute();
     }
 
     @Override
@@ -40,18 +35,8 @@ public class ProgramData implements DataSourceInterface<Program> {
     }
 
     @Override
-    public void updateItems(List<Program> items) {
-        new ItemsHandlerTask(db, items, UPDATE).execute();
-    }
-
-    @Override
     public void removeItem(Program item) {
         new ItemHandlerTask(db, item, DELETE).execute();
-    }
-
-    @Override
-    public void removeItems(List<Program> items) {
-        new ItemsHandlerTask(db, items, DELETE).execute();
     }
 
     @Override
@@ -72,7 +57,7 @@ public class ProgramData implements DataSourceInterface<Program> {
     @Override
     public Program getItemById(Object id) {
         try {
-            return new ItemLoaderTask(db, (int) id).execute().get();
+            return new ItemLoaderTask(db, (int) id, LOAD_BY_ID).execute().get();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
@@ -88,27 +73,43 @@ public class ProgramData implements DataSourceInterface<Program> {
         return db.getProgramDao().loadProgramsFromChannelWithinTime(channelId, time);
     }
 
-    public Program getLastItem(Program item) {
+    public Program getLastItemByChannelId(int channelId) {
         try {
-            return new ItemHandlerTask(db, item, LAST).execute().get();
+            return new ItemLoaderTask(db, channelId, LOAD_LAST_IN_CHANNEL).execute().get();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
         return null;
     }
 
+    public void removeItemsByTime(long time) {
+        new ItemMiscTask(db, DELETE_BY_TIME, time).execute();
+    }
+
+    public void removeItemById(int id) {
+        new ItemMiscTask(db, DELETE_BY_ID, id).execute();
+    }
+
     protected static class ItemLoaderTask extends AsyncTask<Void, Void, Program> {
         private final AppRoomDatabase db;
         private final int id;
+        private final int type;
 
-        ItemLoaderTask(AppRoomDatabase db, int id) {
+        ItemLoaderTask(AppRoomDatabase db, int id, int type) {
             this.db = db;
             this.id = id;
+            this.type = type;
         }
 
         @Override
         protected Program doInBackground(Void... voids) {
-            return db.getProgramDao().loadProgramByIdSync(id);
+            switch (type) {
+                case LOAD_LAST_IN_CHANNEL:
+                    return db.getProgramDao().loadLastProgramFromChannelSync(id);
+                case LOAD_BY_ID:
+                    return db.getProgramDao().loadProgramByIdSync(id);
+            }
+            return null;
         }
     }
 
@@ -135,8 +136,6 @@ public class ProgramData implements DataSourceInterface<Program> {
                 case DELETE:
                     db.getProgramDao().delete(program);
                     break;
-                case LAST:
-                    return db.getProgramDao().loadLastProgramFromChannelSync(program.getChannelId());
             }
             return null;
         }
@@ -156,14 +155,33 @@ public class ProgramData implements DataSourceInterface<Program> {
         @Override
         protected Void doInBackground(Void... voids) {
             switch (type) {
-                case INSERT:
+                case INSERT_ALL:
                     db.getProgramDao().insert(programs);
                     break;
-                case UPDATE:
-                    db.getProgramDao().update(programs);
+            }
+            return null;
+        }
+    }
+
+    protected static class ItemMiscTask extends AsyncTask<Void, Void, Void> {
+        private final AppRoomDatabase db;
+        private final int type;
+        private final Object arg;
+
+        ItemMiscTask(AppRoomDatabase db, int type, Object arg) {
+            this.db = db;
+            this.type = type;
+            this.arg = arg;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            switch (type) {
+                case DELETE_BY_TIME:
+                    db.getProgramDao().deleteProgramsByTime((long) arg);
                     break;
-                case DELETE:
-                    db.getProgramDao().delete(programs);
+                case DELETE_BY_ID:
+                    db.getProgramDao().deleteById((int) arg);
                     break;
             }
             return null;
