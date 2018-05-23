@@ -15,7 +15,7 @@ import org.tvheadend.tvhclient.features.shared.callbacks.ToolbarInterface;
 
 import javax.inject.Inject;
 
-public class BaseFragment extends Fragment {
+public abstract class BaseFragment extends Fragment {
 
     protected AppCompatActivity activity;
     protected ToolbarInterface toolbarInterface;

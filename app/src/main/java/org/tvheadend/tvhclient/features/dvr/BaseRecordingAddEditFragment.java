@@ -26,7 +26,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 // TODO add title and full names to day of weeks list
 
-public class BaseRecordingAddEditFragment extends BaseFragment {
+public abstract class BaseRecordingAddEditFragment extends BaseFragment {
 
     protected String[] daysOfWeekList;
     protected String[] priorityList;
