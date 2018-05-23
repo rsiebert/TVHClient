@@ -93,7 +93,7 @@ public class MainApplication extends Application implements BillingProcessor.IBi
 
         // Migrates existing connections from the old database to the new room database.
         // Migrates existing preferences or remove old ones before starting the actual application
-        MigrateUtils.doMigrate(getBaseContext());
+        new MigrateUtils().doMigrate();
     }
 
     private AppComponent buildComponent() {

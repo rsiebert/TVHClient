@@ -5,44 +5,44 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
-import android.os.AsyncTask;
 import android.os.Environment;
-import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
 import org.tvheadend.tvhclient.BuildConfig;
-import org.tvheadend.tvhclient.data.db.AppRoomDatabase;
+import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.data.db.DatabaseHelperForMigration;
-import org.tvheadend.tvhclient.data.dao.ConnectionDao;
-import org.tvheadend.tvhclient.data.dao.ServerStatusDao;
 import org.tvheadend.tvhclient.data.entity.Connection;
-import org.tvheadend.tvhclient.data.entity.ServerStatus;
+import org.tvheadend.tvhclient.data.repository.AppRepository;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import timber.log.Timber;
 
 public class MigrateUtils {
-    private static final String TAG = MigrateUtils.class.getSimpleName();
     private static final int VERSION_101 = 101;
+    @Inject
+    protected Context context;
+    @Inject
+    protected AppRepository appRepository;
+    @Inject
+    protected SharedPreferences sharedPreferences;
 
-    private MigrateUtils() {
-        throw new IllegalAccessError("Utility class");
-    }
+    public void doMigrate() {
+        MainApplication.getComponent().inject(this);
 
-    public static void doMigrate(Context context) {
         // Lookup the current version and the last migrated version
         int currentApplicationVersion = BuildConfig.BUILD_VERSION;
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         int lastInstalledApplicationVersion = sharedPreferences.getInt("build_version_for_migration", 0);
         Timber.i("Migrating from " + lastInstalledApplicationVersion + " to " + currentApplicationVersion);
 
         if (currentApplicationVersion != lastInstalledApplicationVersion) {
             if (lastInstalledApplicationVersion < VERSION_101) {
-                migrateConvertStartScreenPreference(context);
-                migrateConnectionsFromDatabase(context);
-                migratePreferences(context);
+                migrateConvertStartScreenPreference();
+                migrateConnectionsFromDatabase();
+                migratePreferences();
             }
         }
 
@@ -52,7 +52,7 @@ public class MigrateUtils {
         editor.apply();
     }
 
-    private static void migrateConnectionsFromDatabase(Context context) {
+    private void migrateConnectionsFromDatabase() {
         Timber.d("migrateConnectionsFromDatabase() called with: context = [" + context + "]");
         SQLiteDatabase db = DatabaseHelperForMigration.getInstance(context).getReadableDatabase();
 
@@ -90,43 +90,15 @@ public class MigrateUtils {
         Timber.d("migrateConnectionsFromDatabase: deleting old database");
         context.deleteDatabase("tvhclient");
 
-        if (connectionList.size() > 0) {
-            Timber.d("migrateConnectionsFromDatabase: getting room db");
-            AppRoomDatabase roomDb = AppRoomDatabase.getInstance(context);
-
-            Timber.d("migrateConnectionsFromDatabase: adding old connections to room db");
-            new MigrateConnectionsTask(roomDb.getConnectionDao(), roomDb.getServerStatusDao(), connectionList).execute();
+        Timber.d("migrateConnectionsFromDatabase: adding old connections to room db");
+        for (Connection connection : connectionList) {
+            appRepository.getConnectionData().addItem(connection);
         }
     }
 
-    private static class MigrateConnectionsTask extends AsyncTask<Void, Void, Void> {
-        private final ConnectionDao connectionDao;
-        private final List<Connection> connectionList;
-        private final ServerStatusDao serverStatusDao;
-
-        MigrateConnectionsTask(ConnectionDao connectionDao, ServerStatusDao serverStatusDao, List<Connection> connectionList) {
-            this.connectionDao = connectionDao;
-            this.serverStatusDao = serverStatusDao;
-            this.connectionList = connectionList;
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            // Insert all connections and also add a server status for each connection
-            connectionDao.insertAll(connectionList);
-            for (Connection connection : connectionList) {
-                ServerStatus serverStatus = new ServerStatus();
-                serverStatus.setConnectionId((int) connection.getId());
-                serverStatusDao.insert(serverStatus);
-            }
-            return null;
-        }
-    }
-
-    private static void migrateConvertStartScreenPreference(Context context) {
+    private void migrateConvertStartScreenPreference() {
         // migrate preferences from old names to new
         // names to have a consistent naming scheme afterwards
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         try {
             int value = Integer.valueOf(sharedPreferences.getString("defaultMenuPositionPref", "0"));
             if (value > 8) {
@@ -154,11 +126,8 @@ public class MigrateUtils {
 
     /**
      * Renames the names of the old preferences to the new naming scheme
-     *
-     * @param context The application context
      */
-    private static void migratePreferences(Context context) {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+    private void migratePreferences() {
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
         // Advanced settings preferences

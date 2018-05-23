@@ -25,6 +25,7 @@ import org.tvheadend.tvhclient.features.startup.StartupFragment;
 import org.tvheadend.tvhclient.injection.modules.AppModule;
 import org.tvheadend.tvhclient.injection.modules.RepositoryModule;
 import org.tvheadend.tvhclient.injection.modules.SharedPreferencesModule;
+import org.tvheadend.tvhclient.utils.MigrateUtils;
 
 import javax.inject.Singleton;
 
@@ -77,4 +78,6 @@ public interface AppComponent {
     void inject(ConnectionViewModel connectionViewModel);
 
     void inject(EpgSyncService epgSyncService);
+
+    void inject(MigrateUtils migrateUtils);
 }
