@@ -22,6 +22,7 @@ import android.widget.ProgressBar;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.features.dvr.RecordingAddEditActivity;
+import org.tvheadend.tvhclient.features.playback.PlayRecordingActivity;
 import org.tvheadend.tvhclient.features.search.SearchActivity;
 import org.tvheadend.tvhclient.features.search.SearchRequestInterface;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
@@ -190,7 +191,9 @@ public class RecordingListFragment extends BaseFragment implements SearchRequest
                     return true;
 
                 case R.id.menu_play:
-                    menuUtils.handleMenuPlayRecordingSelection(recording.getId());
+                    Intent playIntent = new Intent(activity, PlayRecordingActivity.class);
+                    playIntent.putExtra("dvrId", recording.getId());
+                    activity.startActivity(playIntent);
                     return true;
 
                 case R.id.menu_download:

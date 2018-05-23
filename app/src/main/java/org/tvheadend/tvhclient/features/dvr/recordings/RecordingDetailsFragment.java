@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Recording;
+import org.tvheadend.tvhclient.features.playback.PlayRecordingActivity;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
 import org.tvheadend.tvhclient.features.dvr.RecordingAddEditActivity;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecordingRemovedCallback;
@@ -289,7 +290,9 @@ public class RecordingDetailsFragment extends BaseFragment implements RecordingR
                 return true;
 
             case R.id.menu_play:
-                menuUtils.handleMenuPlayRecordingSelection(recording.getId());
+                Intent intent = new Intent(activity, PlayRecordingActivity.class);
+                intent.putExtra("dvrId", recording.getId());
+                activity.startActivity(intent);
                 return true;
 
             case R.id.menu_download:
