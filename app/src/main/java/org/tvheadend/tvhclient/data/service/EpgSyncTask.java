@@ -101,12 +101,12 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         if (state == Authenticator.State.AUTHENTICATED) {
             initialSyncCompleted = false;
             initialSyncRequired = sharedPreferences.getBoolean("initial_sync_required", true);
-            startFullInitialSyncWithServer();
+            startInitialSyncWithServer();
         }
     }
 
-    private void startFullInitialSyncWithServer() {
-        Timber.d("startFullInitialSyncWithServer() called");
+    private void startInitialSyncWithServer() {
+        Timber.d("Starting sync with server, initialSyncCompleted: " + initialSyncCompleted + ", initialSyncRequired: " + initialSyncRequired);
 
         // Send the first sync message to any broadcast listeners
         Intent intent = new Intent("service_status");
@@ -128,7 +128,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         // Only fetch new epg data if the last sync time including the
         // epg fetch time is less than the current time.
         if (lastUpdate + (epgMaxTime * 60 * 1000) < unixTime || initialSyncRequired) {
-            Timber.d("Loading epg up to " + epgMaxTime + " minutes from " + unixTime);
+            Timber.d("Loading epg data from server");
 
             enableAsyncMetadataRequest.put("epg", 1);
             enableAsyncMetadataRequest.put("epgMaxTime", epgMaxTime);
@@ -140,7 +140,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
             // the background.
             enableAsyncMetadataRequest.put("lastUpdate", unixTime);
         } else {
-            Timber.d("No epg required");
+            Timber.d("No loading of epg from server required");
         }
 
         try {
@@ -783,7 +783,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     }
 
     private void handleInitialSyncCompleted() {
-        Timber.d("handleInitialSyncCompleted() called");
+        Timber.d("Received initial data from server");
 
         Intent intent = new Intent("service_status");
         intent.putExtra("sync_state", State.SAVING);
@@ -791,6 +791,12 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
 
         // Flush all received data to the database
         flushPendingChannelOps();
+
+        // Get additional information
+        getDiscSpace();
+        getSystemTime();
+        getProfiles();
+        getDvrConfigs();
 
         // Send the information that we are done when the channel list was saved.
         // This is enough to start showing the channel list
@@ -800,15 +806,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
 
         flushPendingDvrEntryOps();
         flushPendingEventOps();
-
-        // The channel icons list will contains icons only if a full sync was requested
         flushPendingChannelLogoFetches();
-
-        // Get additional information
-        getDiscSpace();
-        getSystemTime();
-        getProfiles();
-        getDvrConfigs();
 
         // The sync is done save the status
         initialSyncCompleted = true;
@@ -820,6 +818,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     }
 
     private void flushPendingChannelOps() {
+        Timber.d("Saving channels...");
         if (pendingChannelOps.isEmpty()) {
             return;
         }
@@ -838,6 +837,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     }
 
     private void flushPendingChannelLogoFetches() {
+        Timber.d("Downloading and saving channel logos...");
         if (pendingChannelLogoFetches.isEmpty()) {
             return;
         }
@@ -853,6 +853,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     }
 
     private void flushPendingDvrEntryOps() {
+        Timber.d("Saving recordings...");
         if (pendingRecordedProgramOps.isEmpty()) {
             return;
         }
@@ -877,6 +878,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     }
 
     private void flushPendingEventOps() {
+        Timber.d("Saving program data...");
         if (pendingEventOps.isEmpty()) {
             return;
         }
@@ -915,8 +917,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
             return;
         }
 
-        InputStream is = null;
-
+        InputStream is;
         if (url.startsWith("http")) {
             is = new BufferedInputStream(new URL(url).openStream());
         } else if (htspVersion > 9) {
