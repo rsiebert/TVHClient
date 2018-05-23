@@ -17,6 +17,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import org.tvheadend.tvhclient.R;
@@ -63,6 +64,20 @@ public class RecordingListFragment extends BaseFragment implements SearchRequest
         recyclerView.addOnItemTouchListener(new RecyclerTouchListener(activity.getApplicationContext(), recyclerView, new RecyclerViewTouchCallback() {
             @Override
             public void onClick(View view, int position) {
+                boolean playOnChannelIcon = sharedPreferences.getBoolean("channel_icon_starts_playback_enabled", true);
+                if (playOnChannelIcon) {
+                    ImageView icon = view.findViewById(R.id.icon);
+                    icon.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Recording recording = recyclerViewAdapter.getItem(position);
+
+                            Intent intent = new Intent(activity, PlayRecordingActivity.class);
+                            intent.putExtra("dvrId", recording.getId());
+                            activity.startActivity(intent);
+                        }
+                    });
+                }
                 showRecordingDetails(position);
             }
 

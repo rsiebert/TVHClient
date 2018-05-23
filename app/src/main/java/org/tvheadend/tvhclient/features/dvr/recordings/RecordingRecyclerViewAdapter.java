@@ -1,7 +1,6 @@
 package org.tvheadend.tvhclient.features.dvr.recordings;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -16,7 +15,6 @@ import android.widget.TextView;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Recording;
-import org.tvheadend.tvhclient.features.playback.PlayRecordingActivity;
 import org.tvheadend.tvhclient.features.shared.UIUtils;
 
 import java.util.List;
@@ -50,22 +48,8 @@ public class RecordingRecyclerViewAdapter extends RecyclerView.Adapter<Recording
         Recording recording = recordingList.get(position);
         holder.itemView.setTag(recording);
 
-        boolean playOnChannelIcon = sharedPreferences.getBoolean("channel_icon_starts_playback_enabled", true);
         boolean lightTheme = sharedPreferences.getBoolean("light_theme_enabled", true);
         boolean showChannelIcons = sharedPreferences.getBoolean("channel_icons_enabled", true);
-
-        holder.iconImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (playOnChannelIcon && recording != null) {
-                    if (recording.isCompleted() || recording.isRecording()) {
-                        Intent intent = new Intent(activity, PlayRecordingActivity.class);
-                        intent.putExtra("dvrId", recording.getId());
-                        activity.startActivity(intent);
-                    }
-                }
-            }
-        });
 
         if (holder.dualPaneListItemSelection != null) {
             // Set the correct indication when the dual pane mode is active
