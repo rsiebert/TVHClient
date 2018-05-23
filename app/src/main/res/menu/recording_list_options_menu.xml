@@ -6,8 +6,7 @@
         android:id="@+id/menu_add"
         android:icon="?attr/ic_menu_add"
         android:title="@string/add"
-        android:visible="false"
-        app:showAsAction="ifRoom" />
+        android:visible="false" />
     <item
         android:id="@+id/menu_record_remove_all"
         android:icon="?attr/ic_menu_record_remove"

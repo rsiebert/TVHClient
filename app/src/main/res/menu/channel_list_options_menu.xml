@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
         android:id="@+id/menu_tags"
         android:icon="?attr/ic_menu_tags"
         android:orderInCategory="5"
-        android:title="@string/tags"/>
+        android:title="@string/tags" />
     <item
         android:id="@+id/menu_timeframe"
         android:icon="?attr/ic_menu_timeframe"
-        android:title="@string/timeframe"
-        android:orderInCategory="6"/>
+        android:orderInCategory="6"
+        android:title="@string/timeframe" />
     <item
         android:id="@+id/menu_genre_color_info_channels"
         android:orderInCategory="7"
-        android:title="@string/genre_color_info"/>
+        android:title="@string/genre_color_info" />
 
 </menu>

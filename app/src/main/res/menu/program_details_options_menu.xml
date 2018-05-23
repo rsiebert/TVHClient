@@ -6,36 +6,30 @@
         android:id="@+id/menu_play"
         android:icon="?attr/ic_menu_play"
         android:title="@string/play"
-        android:visible="false"
-        app:showAsAction="ifRoom|withText" />
+        android:visible="false" />
     <item
         android:id="@+id/menu_record_once"
         android:icon="?attr/ic_menu_record_once"
         android:title="@string/record_once"
-        android:visible="false"
-        app:showAsAction="ifRoom|withText" />
+        android:visible="false" />
     <item
         android:id="@+id/menu_record_once_custom_profile"
         android:icon="?attr/ic_menu_record_once"
         android:title="@string/record_once_custom_profile"
-        android:visible="false"
-        app:showAsAction="never" />
+        android:visible="false" />
     <item
         android:id="@+id/menu_record_series"
         android:icon="?attr/ic_menu_record_series"
         android:title="@string/record_series"
-        android:visible="false"
-        app:showAsAction="never" />
+        android:visible="false" />
     <item
         android:id="@+id/menu_record_remove"
         android:icon="?attr/ic_menu_record_remove"
         android:title="@string/remove"
-        android:visible="false"
-        app:showAsAction="ifRoom|withText" />
+        android:visible="false" />
     <item
         android:id="@+id/menu_record_stop"
         android:icon="?attr/ic_menu_stop"
         android:title="@string/stop"
-        android:visible="false"
-        app:showAsAction="ifRoom|withText" />
+        android:visible="false" />
 </menu>
