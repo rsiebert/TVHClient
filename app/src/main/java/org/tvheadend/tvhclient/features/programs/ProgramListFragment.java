@@ -26,6 +26,7 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Program;
 import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.data.service.EpgSyncService;
+import org.tvheadend.tvhclient.features.playback.PlayChannelActivity;
 import org.tvheadend.tvhclient.features.search.SearchActivity;
 import org.tvheadend.tvhclient.features.search.SearchRequestInterface;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
@@ -190,7 +191,9 @@ public class ProgramListFragment extends BaseFragment implements BottomReachedLi
             case R.id.menu_play:
                 // Open a new activity that starts playing the first program that is
                 // currently transmitted over this channel
-                menuUtils.handleMenuPlayChannelSelection(channelId);
+                Intent intent = new Intent(activity, PlayChannelActivity.class);
+                intent.putExtra("channelId", channelId);
+                activity.startActivity(intent);
                 return true;
 
             case R.id.menu_genre_color_info_programs:
@@ -266,7 +269,9 @@ public class ProgramListFragment extends BaseFragment implements BottomReachedLi
                     return true;
 
                 case R.id.menu_play:
-                    menuUtils.handleMenuPlayChannelSelection(channelId);
+                    Intent intent = new Intent(activity, PlayChannelActivity.class);
+                    intent.putExtra("channelId", channelId);
+                    activity.startActivity(intent);
                     return true;
 
                 case R.id.menu_add_notification:

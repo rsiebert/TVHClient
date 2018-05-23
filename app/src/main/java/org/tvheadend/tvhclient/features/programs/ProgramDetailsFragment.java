@@ -1,6 +1,7 @@
 package org.tvheadend.tvhclient.features.programs;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -25,6 +26,7 @@ import android.widget.TextView;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Program;
 import org.tvheadend.tvhclient.data.entity.Recording;
+import org.tvheadend.tvhclient.features.playback.PlayChannelActivity;
 import org.tvheadend.tvhclient.features.shared.tasks.ImageDownloadTask;
 import org.tvheadend.tvhclient.features.shared.tasks.ImageDownloadTaskCallback;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
@@ -351,7 +353,9 @@ public class ProgramDetailsFragment extends BaseFragment implements ImageDownloa
                 return true;
 
             case R.id.menu_play:
-                menuUtils.handleMenuPlayChannelSelection(program.getChannelId());
+                Intent intent = new Intent(activity, PlayChannelActivity.class);
+                intent.putExtra("channelId", program.getChannelId());
+                activity.startActivity(intent);
                 return true;
 
             case R.id.menu_search_imdb:

@@ -30,6 +30,7 @@ import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.data.entity.ChannelTag;
 import org.tvheadend.tvhclient.data.entity.Program;
 import org.tvheadend.tvhclient.data.entity.Recording;
+import org.tvheadend.tvhclient.features.playback.PlayChannelActivity;
 import org.tvheadend.tvhclient.features.programs.ProgramListActivity;
 import org.tvheadend.tvhclient.features.programs.ProgramListFragment;
 import org.tvheadend.tvhclient.features.search.SearchActivity;
@@ -296,7 +297,9 @@ public class ChannelListFragment extends BaseFragment implements ChannelClickCal
 
                 case R.id.menu_play:
                     // Open a new activity to stream the current program to this device
-                    menuUtils.handleMenuPlayChannelSelection(channel.getId());
+                    Intent intent = new Intent(activity, PlayChannelActivity.class);
+                    intent.putExtra("channelId", channel.getId());
+                    activity.startActivity(intent);
                     return true;
 
                 case R.id.menu_add_notification:
@@ -322,7 +325,9 @@ public class ChannelListFragment extends BaseFragment implements ChannelClickCal
 
     @Override
     public void onChannelClick(int id) {
-        menuUtils.handleMenuPlayChannelSelection(id);
+        Intent intent = new Intent(activity, PlayChannelActivity.class);
+        intent.putExtra("channelId", id);
+        activity.startActivity(intent);
     }
 
     @Override

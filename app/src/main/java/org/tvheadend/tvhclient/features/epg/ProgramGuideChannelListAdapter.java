@@ -1,6 +1,7 @@
 package org.tvheadend.tvhclient.features.epg;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.preference.PreferenceManager;
@@ -13,10 +14,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.utils.Constants;
 import org.tvheadend.tvhclient.data.entity.Channel;
-import org.tvheadend.tvhclient.features.shared.MenuUtils;
+import org.tvheadend.tvhclient.features.playback.PlayChannelActivity;
 import org.tvheadend.tvhclient.features.shared.UIUtils;
+import org.tvheadend.tvhclient.utils.Constants;
 
 import java.util.Comparator;
 import java.util.List;
@@ -135,7 +136,9 @@ public class ProgramGuideChannelListAdapter extends ArrayAdapter<Channel> implem
     public void onClick(View view) {
         if (sharedPreferences.getBoolean("channel_icon_starts_playback_enabled", true)) {
             Channel channel = getSelectedItem();
-            new MenuUtils(context).handleMenuPlayChannelSelection(channel.getId());
+            Intent intent = new Intent(context, PlayChannelActivity.class);
+            intent.putExtra("channelId", channel.getId());
+            context.startActivity(intent);
         }
     }
 

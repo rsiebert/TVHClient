@@ -31,7 +31,6 @@ import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.data.service.EpgSyncService;
 import org.tvheadend.tvhclient.features.download.DownloadActivity;
 import org.tvheadend.tvhclient.features.notifications.ProgramNotificationReceiver;
-import org.tvheadend.tvhclient.features.playback.PlayChannelActivity;
 import org.tvheadend.tvhclient.features.playback.PlayRecordingActivity;
 import org.tvheadend.tvhclient.features.search.SearchActivity;
 import org.tvheadend.tvhclient.features.shared.adapter.ChannelTagListAdapter;
@@ -245,16 +244,6 @@ public class MenuUtils {
             intent.putExtra("configName", profile.getName());
         }
         activity.startService(intent);
-    }
-
-    public void handleMenuPlayChannelSelection(int channelId) {
-        Activity activity = this.activity.get();
-        if (activity == null) {
-            return;
-        }
-        Intent intent = new Intent(activity, PlayChannelActivity.class);
-        intent.putExtra("channelId", channelId);
-        activity.startActivity(intent);
     }
 
     public void handleMenuPlayRecordingSelection(int dvrId) {
