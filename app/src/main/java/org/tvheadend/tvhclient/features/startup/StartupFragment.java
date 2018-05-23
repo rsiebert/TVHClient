@@ -28,11 +28,11 @@ import android.widget.TextView;
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Connection;
+import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.data.service.EpgSyncService;
 import org.tvheadend.tvhclient.data.service.EpgSyncTask;
 import org.tvheadend.tvhclient.data.service.htsp.HtspConnection;
 import org.tvheadend.tvhclient.data.service.htsp.tasks.Authenticator;
-import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.features.navigation.NavigationActivity;
 import org.tvheadend.tvhclient.features.settings.SettingsActivity;
 import org.tvheadend.tvhclient.features.settings.SettingsAddEditConnectionActivity;
@@ -273,12 +273,11 @@ public class StartupFragment extends Fragment {
 
                 } else if (state == EpgSyncTask.State.DONE) {
                     progressBar.setVisibility(View.INVISIBLE);
-                    stateTextView.setText("Done");
+                    stateTextView.setText("Starting");
                     detailsTextView.setText("");
 
-                    showContentScreen();
                     startBackgroundServices();
-                    activity.finish();
+                    showContentScreen();
 
                 } else if (state == EpgSyncTask.State.RECONNECT) {
                     progressBar.setVisibility(View.INVISIBLE);
@@ -333,5 +332,6 @@ public class StartupFragment extends Fragment {
         Intent intent = new Intent(activity, NavigationActivity.class);
         intent.putExtra("startScreen", startScreen);
         activity.startActivity(intent);
+        activity.finish();
     }
 }
