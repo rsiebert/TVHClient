@@ -43,9 +43,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 // TODO show programs from time in dual pane, program list not updated
-// TODO use recycler view filter for search by channel name
 // TODO sorting should consider minor major channel numbers
-// TODO use the channel tag from the server status
 
 public class ChannelListFragment extends BaseFragment implements RecyclerViewClickCallback, ChannelTimeSelectionCallback, ChannelTagSelectionCallback, SearchRequestInterface, Filter.FilterListener {//}, ChannelsLoadedCallback {
 
@@ -336,7 +334,7 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
         // channel tag and the channel count in the toolbar
         ChannelTag channelTag = viewModel.getChannelTag();
         toolbarInterface.setTitle((channelTag == null) ? getString(R.string.all_channels) : channelTag.getTagName());
-        toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.items,
+        toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.results,
                 recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
     }
 }

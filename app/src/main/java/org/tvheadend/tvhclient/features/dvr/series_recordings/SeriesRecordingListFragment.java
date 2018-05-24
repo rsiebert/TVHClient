@@ -211,7 +211,7 @@ public class SeriesRecordingListFragment extends BaseFragment implements Recycle
 
     @Override
     public void onFilterComplete(int i) {
-        toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.recordings,
+        toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.results,
                 recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
     }
 
