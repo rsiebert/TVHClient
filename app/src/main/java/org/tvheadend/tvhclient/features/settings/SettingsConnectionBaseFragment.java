@@ -88,8 +88,8 @@ public abstract class SettingsConnectionBaseFragment extends BasePreferenceFragm
         htspPortPreference.setText(port);
         htspPortPreference.setSummary(port);
 
-        streamingPortPreference.setText(String.valueOf(connection.getPort()));
-        streamingPortPreference.setSummary(getString(R.string.pref_streaming_port_sum, connection.getPort()));
+        streamingPortPreference.setText(String.valueOf(connection.getStreamingPort()));
+        streamingPortPreference.setSummary(getString(R.string.pref_streaming_port_sum, connection.getStreamingPort()));
 
         String username = connection.getUsername();
         usernamePreference.setText(username);
