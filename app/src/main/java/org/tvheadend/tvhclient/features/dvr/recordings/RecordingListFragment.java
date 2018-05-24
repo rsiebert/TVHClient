@@ -17,7 +17,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import org.tvheadend.tvhclient.R;
@@ -27,12 +26,11 @@ import org.tvheadend.tvhclient.features.playback.PlayRecordingActivity;
 import org.tvheadend.tvhclient.features.search.SearchActivity;
 import org.tvheadend.tvhclient.features.search.SearchRequestInterface;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
-import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewTouchCallback;
-import org.tvheadend.tvhclient.features.shared.listener.RecyclerTouchListener;
+import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class RecordingListFragment extends BaseFragment implements SearchRequestInterface {
+public class RecordingListFragment extends BaseFragment implements RecyclerViewClickCallback, SearchRequestInterface {
 
     protected RecordingRecyclerViewAdapter recyclerViewAdapter;
     protected RecyclerView recyclerView;
@@ -56,36 +54,11 @@ public class RecordingListFragment extends BaseFragment implements SearchRequest
             selectedListPosition = savedInstanceState.getInt("listPosition", 0);
         }
 
-        recyclerViewAdapter = new RecordingRecyclerViewAdapter(activity, htspVersion);
+        recyclerViewAdapter = new RecordingRecyclerViewAdapter(activity, this, htspVersion);
         recyclerView.setLayoutManager(new LinearLayoutManager(activity));
         recyclerView.addItemDecoration(new DividerItemDecoration(activity, LinearLayoutManager.VERTICAL));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(recyclerViewAdapter);
-        recyclerView.addOnItemTouchListener(new RecyclerTouchListener(activity.getApplicationContext(), recyclerView, new RecyclerViewTouchCallback() {
-            @Override
-            public void onClick(View view, int position) {
-                boolean playOnChannelIcon = sharedPreferences.getBoolean("channel_icon_starts_playback_enabled", true);
-                if (playOnChannelIcon) {
-                    ImageView icon = view.findViewById(R.id.icon);
-                    icon.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            Recording recording = recyclerViewAdapter.getItem(position);
-
-                            Intent intent = new Intent(activity, PlayRecordingActivity.class);
-                            intent.putExtra("dvrId", recording.getId());
-                            activity.startActivity(intent);
-                        }
-                    });
-                }
-                showRecordingDetails(position);
-            }
-
-            @Override
-            public void onLongClick(View view, int position) {
-                showPopupMenu(view);
-            }
-        }));
     }
 
     @Override
@@ -237,5 +210,22 @@ public class RecordingListFragment extends BaseFragment implements SearchRequest
         searchIntent.setAction(Intent.ACTION_SEARCH);
         searchIntent.putExtra("type", "recordings");
         startActivity(searchIntent);
+    }
+
+    @Override
+    public void onClick(View view, int position) {
+        if (view.getId() == R.id.icon || view.getId() == R.id.icon_text) {
+            Recording recording = recyclerViewAdapter.getItem(position);
+            Intent playIntent = new Intent(activity, PlayRecordingActivity.class);
+            playIntent.putExtra("dvrId", recording.getId());
+            activity.startActivity(playIntent);
+        } else {
+            showRecordingDetails(position);
+        }
+    }
+
+    @Override
+    public void onLongClick(View view, int position) {
+        showPopupMenu(view);
     }
 }

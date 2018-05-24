@@ -21,15 +21,14 @@ import android.widget.ProgressBar;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.SeriesRecording;
-import org.tvheadend.tvhclient.features.shared.BaseFragment;
-import org.tvheadend.tvhclient.features.shared.listener.RecyclerTouchListener;
-import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewTouchCallback;
 import org.tvheadend.tvhclient.features.dvr.RecordingAddEditActivity;
 import org.tvheadend.tvhclient.features.dvr.recordings.RecordingDetailsActivity;
+import org.tvheadend.tvhclient.features.shared.BaseFragment;
+import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class SeriesRecordingListFragment extends BaseFragment {
+public class SeriesRecordingListFragment extends BaseFragment implements RecyclerViewClickCallback {
 
     private SeriesRecordingRecyclerViewAdapter recyclerViewAdapter;
     private RecyclerView recyclerView;
@@ -56,22 +55,11 @@ public class SeriesRecordingListFragment extends BaseFragment {
             selectedListPosition = savedInstanceState.getInt("listPosition", 0);
         }
 
-        recyclerViewAdapter = new SeriesRecordingRecyclerViewAdapter(activity, htspVersion);
+        recyclerViewAdapter = new SeriesRecordingRecyclerViewAdapter(activity, this, htspVersion);
         recyclerView.setLayoutManager(new LinearLayoutManager(activity));
         recyclerView.addItemDecoration(new DividerItemDecoration(activity, LinearLayoutManager.VERTICAL));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(recyclerViewAdapter);
-        recyclerView.addOnItemTouchListener(new RecyclerTouchListener(activity.getApplicationContext(), recyclerView, new RecyclerViewTouchCallback() {
-            @Override
-            public void onClick(View view, int position) {
-                showRecordingDetails(position);
-            }
-
-            @Override
-            public void onLongClick(View view, int position) {
-                showPopupMenu(view);
-            }
-        }));
 
         SeriesRecordingViewModel viewModel = ViewModelProviders.of(activity).get(SeriesRecordingViewModel.class);
         viewModel.getRecordings().observe(this, recordings -> {
@@ -190,5 +178,15 @@ public class SeriesRecordingListFragment extends BaseFragment {
             }
         });
         popupMenu.show();
+    }
+
+    @Override
+    public void onClick(View view, int position) {
+        showRecordingDetails(position);
+    }
+
+    @Override
+    public void onLongClick(View view, int position) {
+        showPopupMenu(view);
     }
 }

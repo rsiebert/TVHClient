@@ -19,6 +19,7 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Program;
 import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.features.shared.UIUtils;
+import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback;
 import org.tvheadend.tvhclient.features.shared.listener.BottomReachedListener;
 
 import java.util.ArrayList;
@@ -32,13 +33,15 @@ import timber.log.Timber;
 public class ProgramRecyclerViewAdapter extends RecyclerView.Adapter<ProgramRecyclerViewAdapter.RecyclerViewHolder> implements Filterable {
 
     private final BottomReachedListener onBottomReachedListener;
+    private final RecyclerViewClickCallback clickCallback;
     private List<Program> programList = new ArrayList<>();
     private List<Program> programListFiltered = new ArrayList<>();
     private SharedPreferences sharedPreferences;
     private Context context;
 
-    ProgramRecyclerViewAdapter(Context context, BottomReachedListener onBottomReachedListener) {
+    ProgramRecyclerViewAdapter(Context context, RecyclerViewClickCallback clickCallback, BottomReachedListener onBottomReachedListener) {
         this.context = context;
+        this.clickCallback = clickCallback;
         this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         this.onBottomReachedListener = onBottomReachedListener;
     }
@@ -61,6 +64,20 @@ public class ProgramRecyclerViewAdapter extends RecyclerView.Adapter<ProgramRecy
 
         boolean showProgramSubtitle = sharedPreferences.getBoolean("program_subtitle_enabled", true);
         boolean showGenreColors = sharedPreferences.getBoolean("genre_colors_for_programs_enabled", false);
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                clickCallback.onClick(view, holder.getAdapterPosition());
+            }
+        });
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                clickCallback.onLongClick(view, holder.getAdapterPosition());
+                return true;
+            }
+        });
 
         if (program != null) {
             holder.titleTextView.setText(program.getTitle());

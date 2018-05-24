@@ -15,6 +15,7 @@ import android.widget.TextView;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.SeriesRecording;
 import org.tvheadend.tvhclient.features.shared.UIUtils;
+import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,14 +25,16 @@ import butterknife.ButterKnife;
 
 public class SeriesRecordingRecyclerViewAdapter extends RecyclerView.Adapter<SeriesRecordingRecyclerViewAdapter.RecyclerViewHolder> {
 
+    private final RecyclerViewClickCallback clickCallback;
     private List<SeriesRecording> seriesRecordingList = new ArrayList<>();
     private int htspVersion;
     private SharedPreferences sharedPreferences;
     private Context context;
     private int selectedPosition = 0;
 
-    SeriesRecordingRecyclerViewAdapter(Context context, int htspVersion) {
+    SeriesRecordingRecyclerViewAdapter(Context context, RecyclerViewClickCallback clickCallback, int htspVersion) {
         this.context = context;
+        this.clickCallback = clickCallback;
         this.htspVersion = htspVersion;
         this.seriesRecordingList = seriesRecordingList;
         this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -50,6 +53,20 @@ public class SeriesRecordingRecyclerViewAdapter extends RecyclerView.Adapter<Ser
 
         boolean lightTheme = sharedPreferences.getBoolean("light_theme_enabled", true);
         boolean showChannelIcons = sharedPreferences.getBoolean("channel_icons_enabled", true);
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                clickCallback.onClick(view, holder.getAdapterPosition());
+            }
+        });
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                clickCallback.onLongClick(view, holder.getAdapterPosition());
+                return true;
+            }
+        });
 
         if (holder.dualPaneListItemSelection != null) {
             // Set the correct indication when the dual pane mode is active

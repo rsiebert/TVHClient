@@ -36,11 +36,9 @@ import org.tvheadend.tvhclient.features.programs.ProgramListFragment;
 import org.tvheadend.tvhclient.features.search.SearchActivity;
 import org.tvheadend.tvhclient.features.search.SearchRequestInterface;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
-import org.tvheadend.tvhclient.features.shared.callbacks.ChannelClickCallback;
 import org.tvheadend.tvhclient.features.shared.callbacks.ChannelTagSelectionCallback;
 import org.tvheadend.tvhclient.features.shared.callbacks.ChannelTimeSelectionCallback;
-import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewTouchCallback;
-import org.tvheadend.tvhclient.features.shared.listener.RecyclerTouchListener;
+import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -52,7 +50,7 @@ import timber.log.Timber;
 // TODO sorting should consider minor major channel numbers
 // TODO use the channel tag from the server status
 
-public class ChannelListFragment extends BaseFragment implements ChannelClickCallback, ChannelTimeSelectionCallback, ChannelTagSelectionCallback, SearchRequestInterface, Filter.FilterListener {//}, ChannelsLoadedCallback {
+public class ChannelListFragment extends BaseFragment implements RecyclerViewClickCallback, ChannelTimeSelectionCallback, ChannelTagSelectionCallback, SearchRequestInterface, Filter.FilterListener {//}, ChannelsLoadedCallback {
 
     protected ChannelRecyclerViewAdapter recyclerViewAdapter;
     protected RecyclerView recyclerView;
@@ -94,6 +92,7 @@ public class ChannelListFragment extends BaseFragment implements ChannelClickCal
         recyclerView.addItemDecoration(new DividerItemDecoration(activity, LinearLayoutManager.VERTICAL));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(recyclerViewAdapter);
+        /*
         recyclerView.addOnItemTouchListener(new RecyclerTouchListener(activity.getApplicationContext(), recyclerView, new RecyclerViewTouchCallback() {
             @Override
             public void onClick(View view, int position) {
@@ -105,6 +104,7 @@ public class ChannelListFragment extends BaseFragment implements ChannelClickCal
                 showPopupMenu(view);
             }
         }));
+        */
 
         viewModel = ViewModelProviders.of(activity).get(ChannelViewModel.class);
         viewModel.getChannels().observe(this, channels -> {
@@ -324,10 +324,20 @@ public class ChannelListFragment extends BaseFragment implements ChannelClickCal
     }
 
     @Override
-    public void onChannelClick(int id) {
-        Intent intent = new Intent(activity, PlayChannelActivity.class);
-        intent.putExtra("channelId", id);
-        activity.startActivity(intent);
+    public void onClick(View view, int position) {
+        if (view.getId() == R.id.icon || view.getId() == R.id.icon_text) {
+            Channel channel = recyclerViewAdapter.getItem(position);
+            Intent intent = new Intent(activity, PlayChannelActivity.class);
+            intent.putExtra("channelId", channel.getId());
+            activity.startActivity(intent);
+        } else {
+            showChannelDetails(position);
+        }
+    }
+
+    @Override
+    public void onLongClick(View view, int position) {
+        showPopupMenu(view);
     }
 
     @Override

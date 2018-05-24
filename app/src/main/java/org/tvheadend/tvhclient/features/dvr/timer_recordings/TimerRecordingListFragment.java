@@ -21,15 +21,14 @@ import android.widget.ProgressBar;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.TimerRecording;
-import org.tvheadend.tvhclient.features.shared.BaseFragment;
-import org.tvheadend.tvhclient.features.shared.listener.RecyclerTouchListener;
-import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewTouchCallback;
 import org.tvheadend.tvhclient.features.dvr.RecordingAddEditActivity;
 import org.tvheadend.tvhclient.features.dvr.recordings.RecordingDetailsActivity;
+import org.tvheadend.tvhclient.features.shared.BaseFragment;
+import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class TimerRecordingListFragment extends BaseFragment {
+public class TimerRecordingListFragment extends BaseFragment implements RecyclerViewClickCallback {
 
     private TimerRecordingRecyclerViewAdapter recyclerViewAdapter;
     private RecyclerView recyclerView;
@@ -56,22 +55,11 @@ public class TimerRecordingListFragment extends BaseFragment {
             selectedListPosition = savedInstanceState.getInt("listPosition", 0);
         }
 
-        recyclerViewAdapter = new TimerRecordingRecyclerViewAdapter(activity, htspVersion);
+        recyclerViewAdapter = new TimerRecordingRecyclerViewAdapter(activity, this, htspVersion);
         recyclerView.setLayoutManager(new LinearLayoutManager(activity));
         recyclerView.addItemDecoration(new DividerItemDecoration(activity, LinearLayoutManager.VERTICAL));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(recyclerViewAdapter);
-        recyclerView.addOnItemTouchListener(new RecyclerTouchListener(activity.getApplicationContext(), recyclerView, new RecyclerViewTouchCallback() {
-            @Override
-            public void onClick(View view, int position) {
-                showRecordingDetails(position);
-            }
-
-            @Override
-            public void onLongClick(View view, int position) {
-                showPopupMenu(view);
-            }
-        }));
 
         TimerRecordingViewModel viewModel = ViewModelProviders.of(activity).get(TimerRecordingViewModel.class);
         viewModel.getRecordings().observe(activity, recordings -> {
@@ -191,5 +179,15 @@ public class TimerRecordingListFragment extends BaseFragment {
             }
         });
         popupMenu.show();
+    }
+
+    @Override
+    public void onClick(View view, int position) {
+        showRecordingDetails(position);
+    }
+
+    @Override
+    public void onLongClick(View view, int position) {
+        showPopupMenu(view);
     }
 }

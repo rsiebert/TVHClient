@@ -30,15 +30,14 @@ import org.tvheadend.tvhclient.features.playback.PlayChannelActivity;
 import org.tvheadend.tvhclient.features.search.SearchActivity;
 import org.tvheadend.tvhclient.features.search.SearchRequestInterface;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
-import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewTouchCallback;
+import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback;
 import org.tvheadend.tvhclient.features.shared.listener.BottomReachedListener;
-import org.tvheadend.tvhclient.features.shared.listener.RecyclerTouchListener;
 
 import java.util.Date;
 
 import timber.log.Timber;
 
-public class ProgramListFragment extends BaseFragment implements BottomReachedListener, SearchRequestInterface, Filter.FilterListener {
+public class ProgramListFragment extends BaseFragment implements RecyclerViewClickCallback, BottomReachedListener, SearchRequestInterface, Filter.FilterListener {
 
     private ProgramRecyclerViewAdapter recyclerViewAdapter;
     private RecyclerView recyclerView;
@@ -96,22 +95,11 @@ public class ProgramListFragment extends BaseFragment implements BottomReachedLi
 
         toolbarInterface.setTitle(channelName);
 
-        recyclerViewAdapter = new ProgramRecyclerViewAdapter(activity, this);
+        recyclerViewAdapter = new ProgramRecyclerViewAdapter(activity, this, this);
         recyclerView.setLayoutManager(new LinearLayoutManager(activity));
         recyclerView.addItemDecoration(new DividerItemDecoration(activity, LinearLayoutManager.VERTICAL));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(recyclerViewAdapter);
-        recyclerView.addOnItemTouchListener(new RecyclerTouchListener(activity.getApplicationContext(), recyclerView, new RecyclerViewTouchCallback() {
-            @Override
-            public void onClick(View view, int position) {
-                showProgramDetails(position);
-            }
-
-            @Override
-            public void onLongClick(View view, int position) {
-                showPopupMenu(view);
-            }
-        }));
 
         // Get all programs for the given channel starting from the current time.
         // Get them as live data so that any newly added programs will be fetched automatically.
@@ -325,5 +313,15 @@ public class ProgramListFragment extends BaseFragment implements BottomReachedLi
     public void onFilterComplete(int count) {
         toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.programs,
                 recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
+    }
+
+    @Override
+    public void onClick(View view, int position) {
+        showProgramDetails(position);
+    }
+
+    @Override
+    public void onLongClick(View view, int position) {
+        showPopupMenu(view);
     }
 }

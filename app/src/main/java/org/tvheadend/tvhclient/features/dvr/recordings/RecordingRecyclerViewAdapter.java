@@ -16,6 +16,7 @@ import android.widget.TextView;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.features.shared.UIUtils;
+import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback;
 
 import java.util.List;
 
@@ -24,14 +25,16 @@ import butterknife.ButterKnife;
 
 public class RecordingRecyclerViewAdapter extends RecyclerView.Adapter<RecordingRecyclerViewAdapter.RecyclerViewHolder> {
 
+    private final RecyclerViewClickCallback clickCallback;
     private List<Recording> recordingList;
     private int htspVersion;
     private SharedPreferences sharedPreferences;
     private Activity activity;
     private int selectedPosition = 0;
 
-    RecordingRecyclerViewAdapter(Activity activity, int htspVersion) {
+    RecordingRecyclerViewAdapter(Activity activity, RecyclerViewClickCallback clickCallback, int htspVersion) {
         this.activity = activity;
+        this.clickCallback = clickCallback;
         this.htspVersion = htspVersion;
         this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity);
     }
@@ -48,8 +51,32 @@ public class RecordingRecyclerViewAdapter extends RecyclerView.Adapter<Recording
         Recording recording = recordingList.get(position);
         holder.itemView.setTag(recording);
 
+        boolean playOnChannelIcon = sharedPreferences.getBoolean("channel_icon_starts_playback_enabled", true);
         boolean lightTheme = sharedPreferences.getBoolean("light_theme_enabled", true);
         boolean showChannelIcons = sharedPreferences.getBoolean("channel_icons_enabled", true);
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                clickCallback.onClick(view, holder.getAdapterPosition());
+            }
+        });
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                clickCallback.onLongClick(view, holder.getAdapterPosition());
+                return true;
+            }
+        });
+        holder.iconImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (playOnChannelIcon && recording != null
+                        && (recording.isCompleted() || recording.isRecording())) {
+                    clickCallback.onClick(view, holder.getAdapterPosition());
+                }
+            }
+        });
 
         if (holder.dualPaneListItemSelection != null) {
             // Set the correct indication when the dual pane mode is active

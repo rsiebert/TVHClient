@@ -21,7 +21,7 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.features.shared.UIUtils;
-import org.tvheadend.tvhclient.features.shared.callbacks.ChannelClickCallback;
+import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -33,7 +33,7 @@ import butterknife.ButterKnife;
 
 public class ChannelRecyclerViewAdapter extends RecyclerView.Adapter<ChannelRecyclerViewAdapter.RecyclerViewHolder> implements Filterable {
 
-    private final ChannelClickCallback channelClickCallback;
+    private final RecyclerViewClickCallback clickCallback;
     private List<Recording> recordingList = new ArrayList<>();
     private List<Channel> channelList = new ArrayList<>();
     private List<Channel> channelListFiltered = new ArrayList<>();
@@ -41,9 +41,9 @@ public class ChannelRecyclerViewAdapter extends RecyclerView.Adapter<ChannelRecy
     private Context context;
     private int selectedPosition = 0;
 
-    ChannelRecyclerViewAdapter(Context context, ChannelClickCallback channelClickCallback) {
+    ChannelRecyclerViewAdapter(Context context, RecyclerViewClickCallback clickCallback) {
         this.context = context;
-        this.channelClickCallback = channelClickCallback;
+        this.clickCallback = clickCallback;
         this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
@@ -81,6 +81,36 @@ public class ChannelRecyclerViewAdapter extends RecyclerView.Adapter<ChannelRecy
             }
         }
 
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                clickCallback.onClick(view, holder.getAdapterPosition());
+            }
+        });
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                clickCallback.onLongClick(view, holder.getAdapterPosition());
+                return true;
+            }
+        });
+        holder.iconImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (playUponChannelClick) {
+                    clickCallback.onClick(view, holder.getAdapterPosition());
+                }
+            }
+        });
+        holder.iconTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (playUponChannelClick) {
+                    clickCallback.onClick(view, holder.getAdapterPosition());
+                }
+            }
+        });
+
         // Set the initial values
         holder.progressbar.setProgress(0);
         holder.progressbar.setVisibility(showProgressbar ? View.VISIBLE : View.GONE);
@@ -90,21 +120,6 @@ public class ChannelRecyclerViewAdapter extends RecyclerView.Adapter<ChannelRecy
 
         // Show the channel icons. Otherwise show the channel name only
         UIUtils.loadIcon(context, showChannelIcons, channel.getIcon(), channel.getName(), holder.iconImageView, holder.iconTextView);
-
-        if (playUponChannelClick) {
-            holder.iconImageView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    channelClickCallback.onChannelClick(channel.getId());
-                }
-            });
-            holder.iconTextView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    channelClickCallback.onChannelClick(channel.getId());
-                }
-            });
-        }
 
         if (channel.getProgramId() > 0) {
             holder.titleTextView.setText(channel.getProgramTitle());
