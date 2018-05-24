@@ -3,6 +3,7 @@ package org.tvheadend.tvhclient.features.dvr.timer_recordings;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -43,14 +44,15 @@ public class TimerRecordingRecyclerViewAdapter extends RecyclerView.Adapter<Time
         this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
+    @NonNull
     @Override
-    public RecyclerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RecyclerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         return new RecyclerViewHolder(LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.timer_recording_list_adapter, parent, false));
     }
 
     @Override
-    public void onBindViewHolder(RecyclerViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerViewHolder holder, int position) {
         TimerRecording recording = recordingListFiltered.get(position);
         holder.itemView.setTag(recording);
 
