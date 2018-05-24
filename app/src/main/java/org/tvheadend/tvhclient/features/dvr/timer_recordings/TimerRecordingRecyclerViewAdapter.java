@@ -29,8 +29,8 @@ import butterknife.ButterKnife;
 public class TimerRecordingRecyclerViewAdapter extends RecyclerView.Adapter<TimerRecordingRecyclerViewAdapter.RecyclerViewHolder> implements Filterable {
 
     private final RecyclerViewClickCallback clickCallback;
-    private List<TimerRecording> recordingList;
-    private List<TimerRecording> recordingListFiltered;
+    private List<TimerRecording> recordingList = new ArrayList<>();
+    private List<TimerRecording> recordingListFiltered = new ArrayList<>();
     private int htspVersion;
     private SharedPreferences sharedPreferences;
     private Context context;

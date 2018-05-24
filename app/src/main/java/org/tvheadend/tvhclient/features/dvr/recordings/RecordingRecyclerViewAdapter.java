@@ -30,8 +30,8 @@ import butterknife.ButterKnife;
 public class RecordingRecyclerViewAdapter extends RecyclerView.Adapter<RecordingRecyclerViewAdapter.RecyclerViewHolder> implements Filterable {
 
     private final RecyclerViewClickCallback clickCallback;
-    private List<Recording> recordingList;
-    private List<Recording> recordingListFiltered;
+    private List<Recording> recordingList = new ArrayList<>();
+    private List<Recording> recordingListFiltered = new ArrayList<>();
     private int htspVersion;
     private SharedPreferences sharedPreferences;
     private Activity activity;
