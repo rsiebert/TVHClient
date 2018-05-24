@@ -15,7 +15,6 @@ import org.tvheadend.tvhclient.features.dvr.series_recordings.SeriesRecordingVie
 import org.tvheadend.tvhclient.features.dvr.timer_recordings.TimerRecordingViewModel;
 import org.tvheadend.tvhclient.features.playback.BasePlayActivity;
 import org.tvheadend.tvhclient.features.programs.ProgramViewModel;
-import org.tvheadend.tvhclient.features.search.SearchResultAdapter;
 import org.tvheadend.tvhclient.features.settings.BasePreferenceFragment;
 import org.tvheadend.tvhclient.features.settings.ConnectionViewModel;
 import org.tvheadend.tvhclient.features.settings.SettingsListConnectionsFragment;
@@ -70,8 +69,6 @@ public interface AppComponent {
     void inject(DownloadActivity downloadActivity);
 
     void inject(MenuUtils menuUtils);
-
-    void inject(SearchResultAdapter searchResultAdapter);
 
     void inject(SettingsListConnectionsFragment settingsListConnectionsFragment);
 
