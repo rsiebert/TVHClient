@@ -89,11 +89,11 @@
     <string name="pref_host_sum">Wpisz adres serwera hosta</string>
     <string name="pref_host_error_empty">IP adres lub nazwa hosta nie może być pusta.</string>
     <string name="pref_host_error_invalid">IP adres jest nie poprawny.</string>
-    <string name="pref_port">Port</string>
+    <string name="pref_port">HTSP Port</string>
     <string name="pref_port_sum">Wpisz port serwera</string>
     <string name="pref_port_error_empty">Numer portu nie może być pusty.</string>
     <string name="pref_port_error_invalid">Numer portu jest nie poprawny. Powinien zawierać się pomiędzy 1 a 65535.</string>
-    <string name="pref_streaming_port">Port dla strumieniowej transmisji multimediów</string>
+    <string name="pref_streaming_port">HTTP Port dla strumieniowej transmisji multimediów</string>
     <string name="pref_streaming_port_sum">Port %d będzie wykorzystany do strumieniowej transmisji multimediów. Domyślnie jest to port 9981, który zazwyczaj jest najlepiej używać.</string>
     <string name="pref_user">Nazwa użytkownika</string>
     <string name="pref_user_sum">Wpisz nazwę użytkownika</string>

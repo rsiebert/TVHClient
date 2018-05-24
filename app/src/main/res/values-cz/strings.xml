@@ -52,11 +52,11 @@
     <string name="pref_host_sum">Zadejte adresu serveru (hostname nebo IP)</string>
     <string name="pref_host_error_empty">Adresa serveru nesmí být prázdná.</string>
     <string name="pref_host_error_invalid">Neplatná adresa serveru.</string>
-    <string name="pref_port">Port</string>
+    <string name="pref_port">HTSP Port</string>
     <string name="pref_port_sum">Zadejte port serveru</string>
     <string name="pref_port_error_empty">Číslo portu nesmí být prázdné.</string>
     <string name="pref_port_error_invalid">Číslo portu je neplatné. Zadejte číslo v rozsahu 1 a 65535.</string>
-    <string name="pref_streaming_port">Port pro media streaming</string>
+    <string name="pref_streaming_port">HTTP Port pro media streaming</string>
     <string name="pref_streaming_port_sum">%d bude použit pro media streaming. Výchozí port je 9981, který je obvykle správně.</string>
     <string name="pref_user">Uživatelské jméno</string>
     <string name="pref_user_sum">Zadejte uživatelské jméno</string>

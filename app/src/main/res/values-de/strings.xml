@@ -87,11 +87,11 @@
     <string name="pref_host_sum">Hostname des Servers eingeben</string>
     <string name="pref_host_error_empty">Die IP-Adresse oder der Hostname darf nicht leer sein.</string>
     <string name="pref_host_error_invalid">Die IP-Adresse ist ungültig.</string>
-    <string name="pref_port">Port</string>
+    <string name="pref_port">HTSP-Port</string>
     <string name="pref_port_sum">Server-Port eingeben</string>
     <string name="pref_port_error_empty">Die Port-Nummer darf nicht leer sein.</string>
     <string name="pref_port_error_invalid">Die Port-Nummer ist ungültig. Der Wert muss zwischen 1 und 65535 liegen.</string>
-    <string name="pref_streaming_port">Port zum Streamen</string>
+    <string name="pref_streaming_port">HTTP-Port zum Streamen</string>
     <string name="pref_streaming_port_sum">%d wird zum Streamen von TV-Programmen oder Aufnahmen verwendet. Normalerweise ist 9981 der Standardport und kann meistens beibehalten werden.</string>
     <string name="pref_user">Benutzername</string>
     <string name="pref_user_sum">Benutzername eingeben</string>

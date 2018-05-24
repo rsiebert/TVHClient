@@ -89,11 +89,11 @@
     <string name="pref_host_sum">Enter the server hostname</string>
     <string name="pref_host_error_empty">The IP-address or hostname must not be empty.</string>
     <string name="pref_host_error_invalid">The IP-address is not valid.</string>
-    <string name="pref_port">Port</string>
+    <string name="pref_port">HTSP Port</string>
     <string name="pref_port_sum">Enter the server port</string>
     <string name="pref_port_error_empty">The port number must not be empty.</string>
     <string name="pref_port_error_invalid">The port number is not valid. Specify a number between 1 and 65535.</string>
-    <string name="pref_streaming_port">Port for media streaming</string>
+    <string name="pref_streaming_port">HTTP Port for media streaming</string>
     <string name="pref_streaming_port_sum" tools:ignore="PluralsCandidate">Port %d will be used for media streaming. The default port is 9981 which is usually fine to use.</string>
     <string name="pref_user">Username</string>
     <string name="pref_user_sum">Enter username</string>

@@ -86,7 +86,7 @@
     <string name="pref_host_sum">Entrer le nom du serveur</string>
     <string name="pref_host_error_empty">Le nom ou adresse IP ne peut être vide.</string>
     <string name="pref_host_error_invalid">L\'adresse IP n\'est pas valide.</string>
-    <string name="pref_port">Port</string>
+    <string name="pref_port">HTSP Port</string>
     <string name="pref_port_sum">Entrer le port du serveur</string>
     <string name="pref_port_error_empty">Le port du serveur le peut être vide.</string>
     <string name="pref_port_error_invalid">Le port n\'est pas valide. Spécifier un nombre entre 1 et 65535.</string>

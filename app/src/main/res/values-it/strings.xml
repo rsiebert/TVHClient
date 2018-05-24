@@ -128,7 +128,7 @@
     <string name="pref_pass_sum">Inserisci la password</string>
     <string name="pref_playback_profiles">Profili riproduzione</string>
     <string name="pref_playback_profiles_sum">Scegli il profilo che il server userà per riprodurre i programmi registrati.</string>
-    <string name="pref_port">Porta</string>
+    <string name="pref_port">HTSP Porta</string>
     <string name="pref_port_error_empty">Il numero di porta non può essere vuoto.</string>
     <string name="pref_port_error_invalid">Il numero di porta non è valido. Specifica un numero compreso tra 1 e 65535.</string>
     <string name="pref_port_sum">Inserisci la porta del server</string>
@@ -151,7 +151,7 @@
     <string name="pref_show_notifications_sum">Visualizza una notifica quando una registrazione inizia o finisce.</string>
     <string name="pref_sort_channels">Ordine canali</string>
     <string name="pref_sort_channels_sum">"Scegli l'ordine in cui verranno visualizzati i canali."</string>
-    <string name="pref_streaming_port">Porta per lo streaming multimediale</string>
+    <string name="pref_streaming_port">HTTP Porta per lo streaming multimediale</string>
     <string name="pref_streaming_port_sum">Per lo streaming multimediale sarà usata la porta %d. La porta predefinita 9981 va in genere bene.</string>
     <string name="pref_tag_icon">Icone etichette canali</string>
     <string name="pref_tag_icon_sum">"Visualizzare l'icona dell'etichetta del canale invece del logo dell'applicazione?"</string>

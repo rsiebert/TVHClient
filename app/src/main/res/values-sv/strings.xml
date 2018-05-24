@@ -52,11 +52,11 @@
     <string name="pref_host_sum">Fyll i serverns värdnamn</string>
     <string name="pref_host_error_empty">Serverns IP-adress eller värdnamn får inte vara blankt.</string>
     <string name="pref_host_error_invalid">IP-adressen är inte giltig.</string>
-    <string name="pref_port">Port</string>
+    <string name="pref_port">HTSP Port</string>
     <string name="pref_port_sum">Fyll i serverport</string>
     <string name="pref_port_error_empty">Portnummret får inte vara blankt.</string>
     <string name="pref_port_error_invalid">Portnummret är inte giltigt. Specificera ett värde mellan 1 och 65535.</string>
-    <string name="pref_streaming_port">Port för medieström</string>
+    <string name="pref_streaming_port">HTTP Port för medieström</string>
     <string name="pref_streaming_port_sum">%d är standardport för medieström.</string>
     <string name="pref_user">Användarnamn</string>
     <string name="pref_user_sum">Fyll i användarnamn</string>

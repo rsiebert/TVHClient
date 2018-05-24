@@ -89,11 +89,11 @@
     <string name="pref_host_sum">Zadajte adresu servera (hostname alebo IP)</string>
     <string name="pref_host_error_empty">Adresa servera nesmie byť prázdna.</string>
     <string name="pref_host_error_invalid">Neplatná adresa servera.</string>
-    <string name="pref_port">Port</string>
+    <string name="pref_port">HTSP Port</string>
     <string name="pref_port_sum">Zadajte port servera</string>
     <string name="pref_port_error_empty">Číslo portu nesmie byť prázdne.</string>
     <string name="pref_port_error_invalid">Číslo portu je neplatné. Zadajte číslo v rozsahu 1 a 65535.</string>
-    <string name="pref_streaming_port">Port pre media streaming</string>
+    <string name="pref_streaming_port">HTTP Port pre media streaming</string>
     <string name="pref_streaming_port_sum">Port %d bude použitý pre media streaming. Predvolený port je 9981, ktorý je väčšinou správny.</string>
     <string name="pref_user">Použivateľské meno</string>
     <string name="pref_user_sum">Zadajte použivateľské meno</string>
