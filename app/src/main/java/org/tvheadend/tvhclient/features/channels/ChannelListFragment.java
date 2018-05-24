@@ -85,19 +85,6 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
         recyclerView.addItemDecoration(new DividerItemDecoration(activity, LinearLayoutManager.VERTICAL));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(recyclerViewAdapter);
-        /*
-        recyclerView.addOnItemTouchListener(new RecyclerTouchListener(activity.getApplicationContext(), recyclerView, new RecyclerViewTouchCallback() {
-            @Override
-            public void onClick(View view, int position) {
-                showChannelDetails(position);
-            }
-
-            @Override
-            public void onLongClick(View view, int position) {
-                showPopupMenu(view);
-            }
-        }));
-        */
 
         viewModel = ViewModelProviders.of(activity).get(ChannelViewModel.class);
         viewModel.getChannels().observe(this, channels -> {
