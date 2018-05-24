@@ -8,7 +8,12 @@ import android.support.v4.app.Fragment;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.features.channels.ChannelListFragment;
-import org.tvheadend.tvhclient.features.dvr.recordings.RecordingListFragment;
+import org.tvheadend.tvhclient.features.dvr.recordings.CompletedRecordingListFragment;
+import org.tvheadend.tvhclient.features.dvr.recordings.FailedRecordingListFragment;
+import org.tvheadend.tvhclient.features.dvr.recordings.RemovedRecordingListFragment;
+import org.tvheadend.tvhclient.features.dvr.recordings.ScheduledRecordingListFragment;
+import org.tvheadend.tvhclient.features.dvr.series_recordings.SeriesRecordingListFragment;
+import org.tvheadend.tvhclient.features.dvr.timer_recordings.TimerRecordingListFragment;
 import org.tvheadend.tvhclient.features.navigation.NavigationActivity;
 import org.tvheadend.tvhclient.features.programs.ProgramListFragment;
 
@@ -51,8 +56,23 @@ public class SearchActivity extends NavigationActivity {
                 case "programs":
                     fragment = new ProgramListFragment();
                     break;
-                case "recordings":
-                    fragment = new RecordingListFragment();
+                case "completed_recordings":
+                    fragment = new CompletedRecordingListFragment();
+                    break;
+                case "scheduled_recordings":
+                    fragment = new ScheduledRecordingListFragment();
+                    break;
+                case "removed_recordings":
+                    fragment = new RemovedRecordingListFragment();
+                    break;
+                case "failed_recordings":
+                    fragment = new FailedRecordingListFragment();
+                    break;
+                case "series_recordings":
+                    fragment = new SeriesRecordingListFragment();
+                    break;
+                case "timer_recordings":
+                    fragment = new TimerRecordingListFragment();
                     break;
             }
             if (fragment != null) {

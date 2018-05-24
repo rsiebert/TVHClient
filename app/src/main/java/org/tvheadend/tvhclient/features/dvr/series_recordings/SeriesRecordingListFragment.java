@@ -1,5 +1,6 @@
 package org.tvheadend.tvhclient.features.dvr.series_recordings;
 
+import android.app.SearchManager;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,29 +12,34 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
 import android.widget.ProgressBar;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.SeriesRecording;
 import org.tvheadend.tvhclient.features.dvr.RecordingAddEditActivity;
 import org.tvheadend.tvhclient.features.dvr.recordings.RecordingDetailsActivity;
+import org.tvheadend.tvhclient.features.search.SearchActivity;
+import org.tvheadend.tvhclient.features.search.SearchRequestInterface;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class SeriesRecordingListFragment extends BaseFragment implements RecyclerViewClickCallback {
+public class SeriesRecordingListFragment extends BaseFragment implements RecyclerViewClickCallback, SearchRequestInterface, Filter.FilterListener {
 
     private SeriesRecordingRecyclerViewAdapter recyclerViewAdapter;
     private RecyclerView recyclerView;
     protected ProgressBar progressBar;
     protected int selectedListPosition;
+    private String searchQuery;
 
     @Nullable
     @Override
@@ -53,6 +59,13 @@ public class SeriesRecordingListFragment extends BaseFragment implements Recycle
 
         if (savedInstanceState != null) {
             selectedListPosition = savedInstanceState.getInt("listPosition", 0);
+            searchQuery = savedInstanceState.getString("searchQuery");
+        } else {
+            selectedListPosition = 0;
+            Bundle bundle = getArguments();
+            if (bundle != null) {
+                searchQuery = bundle.getString(SearchManager.QUERY);
+            }
         }
 
         recyclerViewAdapter = new SeriesRecordingRecyclerViewAdapter(activity, this, htspVersion);
@@ -63,11 +76,16 @@ public class SeriesRecordingListFragment extends BaseFragment implements Recycle
 
         SeriesRecordingViewModel viewModel = ViewModelProviders.of(activity).get(SeriesRecordingViewModel.class);
         viewModel.getRecordings().observe(this, recordings -> {
-            recyclerViewAdapter.addItems(recordings);
-            toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.recordings, recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
 
             recyclerView.setVisibility(View.VISIBLE);
             progressBar.setVisibility(View.GONE);
+
+            recyclerViewAdapter.addItems(recordings);
+            if (!TextUtils.isEmpty(searchQuery)) {
+                recyclerViewAdapter.getFilter().filter(searchQuery, this);
+            }
+
+            toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.recordings, recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
 
             if (isDualPane && recyclerViewAdapter.getItemCount() > 0) {
                 showRecordingDetails(selectedListPosition);
@@ -80,6 +98,7 @@ public class SeriesRecordingListFragment extends BaseFragment implements Recycle
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt("listPosition", selectedListPosition);
+        outState.putString("searchQuery", searchQuery);
     }
 
     @Override
@@ -188,5 +207,20 @@ public class SeriesRecordingListFragment extends BaseFragment implements Recycle
     @Override
     public void onLongClick(View view, int position) {
         showPopupMenu(view);
+    }
+
+    @Override
+    public void onFilterComplete(int i) {
+        toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.recordings,
+                recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
+    }
+
+    @Override
+    public void onSearchRequested(String query) {
+        Intent searchIntent = new Intent(activity, SearchActivity.class);
+        searchIntent.putExtra(SearchManager.QUERY, query);
+        searchIntent.setAction(Intent.ACTION_SEARCH);
+        searchIntent.putExtra("type", "series_recordings");
+        startActivity(searchIntent);
     }
 }

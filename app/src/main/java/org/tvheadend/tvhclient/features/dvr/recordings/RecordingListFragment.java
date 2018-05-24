@@ -17,25 +17,25 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
 import android.widget.ProgressBar;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.features.dvr.RecordingAddEditActivity;
 import org.tvheadend.tvhclient.features.playback.PlayRecordingActivity;
-import org.tvheadend.tvhclient.features.search.SearchActivity;
-import org.tvheadend.tvhclient.features.search.SearchRequestInterface;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class RecordingListFragment extends BaseFragment implements RecyclerViewClickCallback, SearchRequestInterface {
+public class RecordingListFragment extends BaseFragment implements RecyclerViewClickCallback, Filter.FilterListener {
 
     protected RecordingRecyclerViewAdapter recyclerViewAdapter;
     protected RecyclerView recyclerView;
     protected ProgressBar progressBar;
     protected int selectedListPosition;
+    protected String searchQuery;
 
     @Nullable
     @Override
@@ -52,6 +52,13 @@ public class RecordingListFragment extends BaseFragment implements RecyclerViewC
         super.onActivityCreated(savedInstanceState);
         if (savedInstanceState != null) {
             selectedListPosition = savedInstanceState.getInt("listPosition", 0);
+            searchQuery = savedInstanceState.getString("searchQuery");
+        } else {
+            selectedListPosition = 0;
+            Bundle bundle = getArguments();
+            if (bundle != null) {
+                searchQuery = bundle.getString(SearchManager.QUERY);
+            }
         }
 
         recyclerViewAdapter = new RecordingRecyclerViewAdapter(activity, this, htspVersion);
@@ -65,6 +72,7 @@ public class RecordingListFragment extends BaseFragment implements RecyclerViewC
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt("listPosition", selectedListPosition);
+        outState.putString("searchQuery", searchQuery);
     }
 
     @Override
@@ -201,16 +209,6 @@ public class RecordingListFragment extends BaseFragment implements RecyclerViewC
     }
 
     @Override
-    public void onSearchRequested(String query) {
-        // Start searching for recordings
-        Intent searchIntent = new Intent(activity, SearchActivity.class);
-        searchIntent.putExtra(SearchManager.QUERY, query);
-        searchIntent.setAction(Intent.ACTION_SEARCH);
-        searchIntent.putExtra("type", "recordings");
-        startActivity(searchIntent);
-    }
-
-    @Override
     public void onClick(View view, int position) {
         if (view.getId() == R.id.icon || view.getId() == R.id.icon_text) {
             Recording recording = recyclerViewAdapter.getItem(position);
@@ -225,5 +223,11 @@ public class RecordingListFragment extends BaseFragment implements RecyclerViewC
     @Override
     public void onLongClick(View view, int position) {
         showPopupMenu(view);
+    }
+
+    @Override
+    public void onFilterComplete(int i) {
+        toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.recordings,
+                recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
     }
 }
