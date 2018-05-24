@@ -37,7 +37,7 @@
 
         <provider
             android:name="android.support.v4.content.FileProvider"
-            android:authorities=".fileprovider"
+            android:authorities="org.tvheadend.tvhclient.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
@@ -101,8 +101,8 @@
         <activity android:name=".features.purchase.UnlockerActivity" />
         <activity android:name=".features.playback.PlayRecordingActivity" />
         <activity android:name=".features.playback.PlayChannelActivity" />
-        <activity android:name=".features.casting.CastChannelActivity" />
-        <activity android:name=".features.casting.CastRecordingActivity" />
+        <activity android:name=".features.playback.CastChannelActivity" />
+        <activity android:name=".features.playback.CastRecordingActivity" />
 
     </application>
 </manifest>
