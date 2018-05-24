@@ -13,11 +13,7 @@ import org.tvheadend.tvhclient.data.service.htsp.HtspMessage;
 
 import java.util.List;
 
-import timber.log.Timber;
-
 class EpgSyncUtils {
-    private static String TAG = EpgSyncUtils.class.getSimpleName();
-
     private EpgSyncUtils() {
         throw new IllegalAccessError("Utility class");
     }
@@ -46,7 +42,6 @@ class EpgSyncUtils {
         }
         if (msg.containsKey("members")) {
             List<Integer> members = msg.getIntegerList("members");
-            Timber.d("Tag contains key members with size " + members.size());
             tag.setMembers(members);
 
             int channelCount = 0;
@@ -58,7 +53,6 @@ class EpgSyncUtils {
                     }
                 }
             }
-            Timber.d("Tag contains " + channelCount + " channels");
             tag.setChannelCount(channelCount);
         }
         return tag;
