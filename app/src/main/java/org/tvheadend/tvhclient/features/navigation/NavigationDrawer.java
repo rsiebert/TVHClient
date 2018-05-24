@@ -200,7 +200,7 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
                 .positiveText("Connect")
                 .onPositive((dialog, which) -> {
                     // Update the currently active connection
-                    Connection connection = appRepository.getConnectionData().getItemById(profile.getIdentifier());
+                    Connection connection = appRepository.getConnectionData().getItemById((int) profile.getIdentifier());
                     connection.setActive(true);
                     appRepository.getConnectionData().updateItem(connection);
                     headerResult.setActiveProfile(connection.getId());
