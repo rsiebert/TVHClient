@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -59,6 +58,8 @@ public class MenuUtils {
     private final boolean isUnlocked;
     @Inject
     protected AppRepository appRepository;
+    @Inject
+    protected SharedPreferences sharedPreferences;
     private final ServerStatus serverStatus;
     private WeakReference<Activity> activity;
 
@@ -549,7 +550,6 @@ public class MenuUtils {
         searchImdbMenuItem.setVisible(program.getEventId() > 0);
         searchEpgMenuItem.setVisible(program.getEventId() > 0);
 
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity);
         if (isUnlocked && sharedPreferences.getBoolean("notifications_enabled", true)) {
             addReminderMenuItem.setVisible(true);
         }
@@ -568,7 +568,6 @@ public class MenuUtils {
                 .positiveText("Reconnect")
                 .onPositive((dialog, which) -> {
 
-                    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity);
                     sharedPreferences.edit().putLong("last_update", 0).apply();
 
                     // Stop the service so that any connections will be closed
@@ -589,7 +588,6 @@ public class MenuUtils {
             return;
         }
 
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity);
         Integer offset = Integer.valueOf(sharedPreferences.getString("notification_lead_time", "0"));
 
         // TODO time handling weird
