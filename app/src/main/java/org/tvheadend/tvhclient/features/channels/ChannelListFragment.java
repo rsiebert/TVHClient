@@ -30,7 +30,6 @@ import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.data.entity.ChannelTag;
 import org.tvheadend.tvhclient.data.entity.Program;
 import org.tvheadend.tvhclient.data.entity.Recording;
-import org.tvheadend.tvhclient.features.playback.PlayChannelActivity;
 import org.tvheadend.tvhclient.features.programs.ProgramListActivity;
 import org.tvheadend.tvhclient.features.programs.ProgramListFragment;
 import org.tvheadend.tvhclient.features.search.SearchActivity;
@@ -42,8 +41,6 @@ import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallba
 
 import java.util.Calendar;
 import java.util.Date;
-
-import timber.log.Timber;
 
 // TODO show programs from time in dual pane, program list not updated
 // TODO use recycler view filter for search by channel name
@@ -255,8 +252,6 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
             return;
         }
 
-        Timber.d("showPopupMenu: program " + program.getEventId() + ", " + program.getTitle());
-
         PopupMenu popupMenu = new PopupMenu(activity, view);
         popupMenu.getMenuInflater().inflate(R.menu.channel_list_program_popup_menu, popupMenu.getMenu());
         menuUtils.onPreparePopupMenu(popupMenu.getMenu(), program, recording);
@@ -296,10 +291,7 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
                     return true;
 
                 case R.id.menu_play:
-                    // Open a new activity to stream the current program to this device
-                    Intent intent = new Intent(activity, PlayChannelActivity.class);
-                    intent.putExtra("channelId", channel.getId());
-                    activity.startActivity(intent);
+                    playChannel(channel.getId());
                     return true;
 
                 case R.id.menu_add_notification:
@@ -327,9 +319,7 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
     public void onClick(View view, int position) {
         if (view.getId() == R.id.icon || view.getId() == R.id.icon_text) {
             Channel channel = recyclerViewAdapter.getItem(position);
-            Intent intent = new Intent(activity, PlayChannelActivity.class);
-            intent.putExtra("channelId", channel.getId());
-            activity.startActivity(intent);
+            playChannel(channel.getId());
         } else {
             showChannelDetails(position);
         }

@@ -179,9 +179,7 @@ public class RecordingListFragment extends BaseFragment implements RecyclerViewC
                     return true;
 
                 case R.id.menu_play:
-                    Intent playIntent = new Intent(activity, PlayRecordingActivity.class);
-                    playIntent.putExtra("dvrId", recording.getId());
-                    activity.startActivity(playIntent);
+                    playRecording(recording.getId());
                     return true;
 
                 case R.id.menu_download:

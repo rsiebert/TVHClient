@@ -26,12 +26,11 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Program;
 import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.data.service.EpgSyncService;
-import org.tvheadend.tvhclient.features.playback.PlayChannelActivity;
 import org.tvheadend.tvhclient.features.search.SearchActivity;
 import org.tvheadend.tvhclient.features.search.SearchRequestInterface;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
-import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback;
 import org.tvheadend.tvhclient.features.shared.callbacks.BottomReachedCallback;
+import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback;
 
 import java.util.Date;
 
@@ -177,11 +176,7 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
                 return true;
 
             case R.id.menu_play:
-                // Open a new activity that starts playing the first program that is
-                // currently transmitted over this channel
-                Intent intent = new Intent(activity, PlayChannelActivity.class);
-                intent.putExtra("channelId", channelId);
-                activity.startActivity(intent);
+                playChannel(channelId);
                 return true;
 
             case R.id.menu_genre_color_info_programs:
@@ -214,8 +209,6 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
         if (activity == null || program == null) {
             return;
         }
-
-        Timber.d("showPopupMenu: program " + program.getEventId() + ", " + program.getTitle());
 
         PopupMenu popupMenu = new PopupMenu(activity, view);
         popupMenu.getMenuInflater().inflate(R.menu.channel_list_program_popup_menu, popupMenu.getMenu());
@@ -257,9 +250,7 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
                     return true;
 
                 case R.id.menu_play:
-                    Intent intent = new Intent(activity, PlayChannelActivity.class);
-                    intent.putExtra("channelId", channelId);
-                    activity.startActivity(intent);
+                    playChannel(channelId);
                     return true;
 
                 case R.id.menu_add_notification:

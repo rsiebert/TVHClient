@@ -1,5 +1,6 @@
 package org.tvheadend.tvhclient.features.shared;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -11,6 +12,8 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
+import org.tvheadend.tvhclient.features.playback.PlayChannelActivity;
+import org.tvheadend.tvhclient.features.playback.PlayRecordingActivity;
 import org.tvheadend.tvhclient.features.shared.callbacks.ToolbarInterface;
 
 import javax.inject.Inject;
@@ -55,5 +58,17 @@ public abstract class BaseFragment extends Fragment {
         View detailsFrame = activity.findViewById(R.id.right_fragment);
         isDualPane = detailsFrame != null && detailsFrame.getVisibility() == View.VISIBLE;
         setHasOptionsMenu(true);
+    }
+
+    protected void playChannel(int channelId) {
+        Intent intent = new Intent(activity, PlayChannelActivity.class);
+        intent.putExtra("channelId", channelId);
+        activity.startActivity(intent);
+    }
+
+    protected void playRecording(int dvrId) {
+        Intent intent = new Intent(activity, PlayRecordingActivity.class);
+        intent.putExtra("dvrId", dvrId);
+        activity.startActivity(intent);
     }
 }
