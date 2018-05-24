@@ -6,11 +6,12 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 
 import org.tvheadend.tvhclient.data.entity.Channel;
+import org.tvheadend.tvhclient.data.entity.ServerProfile;
 import org.tvheadend.tvhclient.data.service.EpgSyncService;
 
 import timber.log.Timber;
 
-public class PlayChannelActivity extends BasePlayActivity {
+public class PlayChannelActivity extends BasePlaybackActivity {
 
     private int channelId;
 
@@ -44,11 +45,19 @@ public class PlayChannelActivity extends BasePlayActivity {
 
     @Override
     protected void onHttpTicketReceived(String path, String ticket) {
-        Timber.d("Playing channel from server");
 
         Channel channel = appRepository.getChannelData().getItemById(channelId);
+        String baseUrl = connection.getHostname() + ":" + connection.getStreamingPort() + serverStatus.getWebroot();
+        String url = "http://" + baseUrl + "/stream/channelnumber/" + channel.getNumber();
+
+        ServerProfile serverProfile = appRepository.getServerProfileData().getItemById(serverStatus.getPlaybackServerProfileId());
+        if (serverProfile != null) {
+            url += "?profile=" + serverProfile.getName();
+        }
+        Timber.d("Playing channel from server with url " + url);
+
         Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setDataAndType(Uri.parse(getPlayerUrl(path, ticket)), getPlayerMimeType());
+        intent.setDataAndType(Uri.parse(url), "video/*");
         intent.putExtra("itemTitle", channel.getName());
         intent.putExtra("title", channel.getName());
         startExternalPlayer(intent);

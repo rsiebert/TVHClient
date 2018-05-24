@@ -8,13 +8,14 @@ import android.support.annotation.Nullable;
 
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.data.entity.Recording;
+import org.tvheadend.tvhclient.data.entity.ServerProfile;
 import org.tvheadend.tvhclient.data.service.EpgSyncService;
 
 import java.io.File;
 
 import timber.log.Timber;
 
-public class PlayRecordingActivity extends BasePlayActivity {
+public class PlayRecordingActivity extends BasePlaybackActivity {
 
     private Recording recording;
     private int dvrId;
@@ -63,8 +64,13 @@ public class PlayRecordingActivity extends BasePlayActivity {
             Timber.d("Playing recording from local file: " + file.getAbsolutePath());
             intent.setDataAndType(Uri.parse(file.getAbsolutePath()), "video/x-matroska");
         } else {
-            Timber.d("Playing recording from server");
-            intent.setDataAndType(Uri.parse(getPlayerUrl(path, ticket)), getPlayerMimeType());
+            String url = "http://" + connection.getHostname() + ":" + connection.getStreamingPort() + path + "?ticket=" + ticket;
+            ServerProfile serverProfile = appRepository.getServerProfileData().getItemById(serverStatus.getPlaybackServerProfileId());
+            if (serverProfile != null) {
+                url += "&profile=" + serverProfile.getName();
+            }
+            Timber.d("Playing recording from server with url: " + url);
+            intent.setDataAndType(Uri.parse(url), "video/*");
         }
         startExternalPlayer(intent);
     }

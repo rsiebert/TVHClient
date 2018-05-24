@@ -21,7 +21,6 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Connection;
-import org.tvheadend.tvhclient.data.entity.ServerProfile;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.utils.MiscUtils;
@@ -32,7 +31,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
 
-public abstract class BasePlayActivity extends AppCompatActivity {
+public abstract class BasePlaybackActivity extends AppCompatActivity {
 
     @BindView(R.id.progress_bar)
     ProgressBar progressBar;
@@ -41,7 +40,6 @@ public abstract class BasePlayActivity extends AppCompatActivity {
 
     protected Connection connection;
     protected ServerStatus serverStatus;
-    private ServerProfile serverProfile;
     @Inject
     protected AppRepository appRepository;
     @Inject
@@ -59,7 +57,6 @@ public abstract class BasePlayActivity extends AppCompatActivity {
 
         connection = appRepository.getConnectionData().getActiveItem();
         serverStatus = appRepository.getServerStatusData().getItemById(connection.getId());
-        serverProfile = appRepository.getServerProfileData().getItemById(serverStatus.getPlaybackServerProfileId());
     }
 
     @Override
@@ -82,7 +79,7 @@ public abstract class BasePlayActivity extends AppCompatActivity {
 
         if (connection == null || serverStatus == null) {
             progressBar.setVisibility(View.GONE);
-            statusTextView.setText("Error starting playback.\nCould not load required connection and server information");
+            statusTextView.setText("Error starting playback. Could not load required connection and server information");
         } else {
             statusTextView.setText("Requesting playback information from server");
             getHttpTicket();
@@ -103,35 +100,6 @@ public abstract class BasePlayActivity extends AppCompatActivity {
         }
     };
 
-    protected String getPlayerMimeType() {
-        if (serverProfile.getName().contains("matroska")) {
-            return "video/x-matroska";
-        } else if (serverProfile.getName().contains("webm")) {
-            return "video/webm";
-        } else if (serverProfile.getName().contains("mpegts")) {
-            return "video/mp2t";
-        } else if (serverProfile.getName().contains("mpegps")) {
-            return "video/mpeg";
-        } else {
-            return "application/octet-stream";
-        }
-    }
-
-    protected String getPlayerUrl(String path, String ticket) {
-        String url = "http://" + connection.getHostname() + ":" + connection.getStreamingPort() + path + "?ticket=" + ticket;
-
-        // Use the newer server profiles over the old local ones
-        ServerProfile serverProfile = appRepository.getServerProfileData().getItemById(serverStatus.getPlaybackServerProfileId());
-        url += "&profile=" + serverProfile.getName();
-
-        // Strip the username and password from the url before logging it
-        if (url.indexOf('@') != -1) {
-            Timber.d("Starting playback with url: http://user:pass" + url.substring(url.indexOf('@')));
-        }
-
-        return url;
-    }
-
     protected void startExternalPlayer(Intent intent) {
 
         progressBar.setVisibility(View.GONE);
@@ -149,7 +117,7 @@ public abstract class BasePlayActivity extends AppCompatActivity {
                     statusTextView.setText(R.string.no_media_player);
 
                     // Show a confirmation dialog before deleting the recording
-                    new MaterialDialog.Builder(BasePlayActivity.this)
+                    new MaterialDialog.Builder(BasePlaybackActivity.this)
                             .title(R.string.no_media_player)
                             .content(R.string.show_play_store)
                             .positiveText(getString(android.R.string.yes))
