@@ -9,6 +9,8 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -19,14 +21,16 @@ import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallba
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class TimerRecordingRecyclerViewAdapter extends RecyclerView.Adapter<TimerRecordingRecyclerViewAdapter.RecyclerViewHolder> {
+public class TimerRecordingRecyclerViewAdapter extends RecyclerView.Adapter<TimerRecordingRecyclerViewAdapter.RecyclerViewHolder> implements Filterable {
 
     private final RecyclerViewClickCallback clickCallback;
-    private List<TimerRecording> timerRecordingList = new ArrayList<>();
+    private List<TimerRecording> recordingList;
+    private List<TimerRecording> recordingListFiltered;
     private int htspVersion;
     private SharedPreferences sharedPreferences;
     private Context context;
@@ -36,7 +40,6 @@ public class TimerRecordingRecyclerViewAdapter extends RecyclerView.Adapter<Time
         this.context = context;
         this.clickCallback = clickCallback;
         this.htspVersion = htspVersion;
-        this.timerRecordingList = timerRecordingList;
         this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
@@ -48,7 +51,7 @@ public class TimerRecordingRecyclerViewAdapter extends RecyclerView.Adapter<Time
 
     @Override
     public void onBindViewHolder(RecyclerViewHolder holder, int position) {
-        TimerRecording recording = timerRecordingList.get(position);
+        TimerRecording recording = recordingListFiltered.get(position);
         holder.itemView.setTag(recording);
 
         boolean lightTheme = sharedPreferences.getBoolean("light_theme_enabled", true);
@@ -108,14 +111,24 @@ public class TimerRecordingRecyclerViewAdapter extends RecyclerView.Adapter<Time
         }
     }
 
-    void addItems(List<TimerRecording> recordingList) {
-        this.timerRecordingList = recordingList;
+    void addItems(List<TimerRecording> list) {
+        recordingList.clear();
+        recordingListFiltered.clear();
+
+        if (list != null) {
+            recordingList = list;
+            recordingListFiltered = list;
+        }
+
+        if (list == null || selectedPosition > list.size()) {
+            selectedPosition = 0;
+        }
         notifyDataSetChanged();
     }
 
     @Override
     public int getItemCount() {
-        return timerRecordingList != null ? timerRecordingList.size() : 0;
+        return recordingListFiltered != null ? recordingListFiltered.size() : 0;
     }
 
     public void setPosition(int pos) {
@@ -123,15 +136,54 @@ public class TimerRecordingRecyclerViewAdapter extends RecyclerView.Adapter<Time
     }
 
     public TimerRecording getItem(int position) {
-        if (timerRecordingList.size() > position && position >= 0) {
-            return timerRecordingList.get(position);
+        if (recordingListFiltered.size() > position && position >= 0) {
+            return recordingListFiltered.get(position);
         } else {
             return null;
         }
     }
 
     public List<TimerRecording> getItems() {
-        return timerRecordingList;
+        return recordingListFiltered;
+    }
+
+    @Override
+    public Filter getFilter() {
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence charSequence) {
+                String charString = charSequence.toString();
+                if (charString.isEmpty()) {
+                    recordingListFiltered = recordingList;
+                } else {
+                    List<TimerRecording> filteredList = new ArrayList<>();
+                    // Iterate over the available channels. Use a copy on write
+                    // array in case the channel list changes during filtering.
+                    for (TimerRecording recording : new CopyOnWriteArrayList<>(recordingList)) {
+                        // name match condition. this might differ depending on your requirement
+                        // here we are looking for a channel name match
+                        if (recording.getTitle().toLowerCase().contains(charString.toLowerCase())) {
+                            filteredList.add(recording);
+                        } else if (recording.getName() != null
+                                && recording.getName().toLowerCase().contains(charString.toLowerCase())) {
+                            filteredList.add(recording);
+                        }
+                    }
+                    recordingListFiltered = filteredList;
+                }
+
+                FilterResults filterResults = new FilterResults();
+                filterResults.values = recordingListFiltered;
+                return filterResults;
+            }
+
+            @SuppressWarnings("unchecked")
+            @Override
+            protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+                recordingListFiltered = (ArrayList<TimerRecording>) filterResults.values;
+                notifyDataSetChanged();
+            }
+        };
     }
 
     static class RecyclerViewHolder extends RecyclerView.ViewHolder {
