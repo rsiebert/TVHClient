@@ -20,7 +20,7 @@ import org.tvheadend.tvhclient.data.entity.Program;
 import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.features.shared.UIUtils;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback;
-import org.tvheadend.tvhclient.features.shared.listener.BottomReachedListener;
+import org.tvheadend.tvhclient.features.shared.callbacks.BottomReachedCallback;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,18 +32,18 @@ import timber.log.Timber;
 
 public class ProgramRecyclerViewAdapter extends RecyclerView.Adapter<ProgramRecyclerViewAdapter.RecyclerViewHolder> implements Filterable {
 
-    private final BottomReachedListener onBottomReachedListener;
+    private final BottomReachedCallback onBottomReachedCallback;
     private final RecyclerViewClickCallback clickCallback;
     private List<Program> programList = new ArrayList<>();
     private List<Program> programListFiltered = new ArrayList<>();
     private SharedPreferences sharedPreferences;
     private Context context;
 
-    ProgramRecyclerViewAdapter(Context context, RecyclerViewClickCallback clickCallback, BottomReachedListener onBottomReachedListener) {
+    ProgramRecyclerViewAdapter(Context context, RecyclerViewClickCallback clickCallback, BottomReachedCallback onBottomReachedCallback) {
         this.context = context;
         this.clickCallback = clickCallback;
         this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        this.onBottomReachedListener = onBottomReachedListener;
+        this.onBottomReachedCallback = onBottomReachedCallback;
     }
 
     @NonNull
@@ -59,7 +59,7 @@ public class ProgramRecyclerViewAdapter extends RecyclerView.Adapter<ProgramRecy
         holder.itemView.setTag(program);
 
         if (position == programList.size() - 1) {
-            onBottomReachedListener.onBottomReached(position);
+            onBottomReachedCallback.onBottomReached(position);
         }
 
         boolean showProgramSubtitle = sharedPreferences.getBoolean("program_subtitle_enabled", true);

@@ -31,13 +31,13 @@ import org.tvheadend.tvhclient.features.search.SearchActivity;
 import org.tvheadend.tvhclient.features.search.SearchRequestInterface;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback;
-import org.tvheadend.tvhclient.features.shared.listener.BottomReachedListener;
+import org.tvheadend.tvhclient.features.shared.callbacks.BottomReachedCallback;
 
 import java.util.Date;
 
 import timber.log.Timber;
 
-public class ProgramListFragment extends BaseFragment implements RecyclerViewClickCallback, BottomReachedListener, SearchRequestInterface, Filter.FilterListener {
+public class ProgramListFragment extends BaseFragment implements RecyclerViewClickCallback, BottomReachedCallback, SearchRequestInterface, Filter.FilterListener {
 
     private ProgramRecyclerViewAdapter recyclerViewAdapter;
     private RecyclerView recyclerView;
