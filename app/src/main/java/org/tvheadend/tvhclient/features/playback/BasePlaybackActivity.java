@@ -44,6 +44,7 @@ public abstract class BasePlaybackActivity extends AppCompatActivity {
     protected AppRepository appRepository;
     @Inject
     protected SharedPreferences sharedPreferences;
+    protected String baseUrl;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -57,6 +58,7 @@ public abstract class BasePlaybackActivity extends AppCompatActivity {
 
         connection = appRepository.getConnectionData().getActiveItem();
         serverStatus = appRepository.getServerStatusData().getItemById(connection.getId());
+        baseUrl = connection.getHostname() + ":" + connection.getStreamingPort() + serverStatus.getWebroot();
     }
 
     @Override
@@ -89,7 +91,6 @@ public abstract class BasePlaybackActivity extends AppCompatActivity {
     protected abstract void onHttpTicketReceived(String path, String ticket);
 
     protected abstract void getHttpTicket();
-
     private BroadcastReceiver messageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {

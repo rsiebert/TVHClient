@@ -67,7 +67,6 @@ public class CastRecordingActivity extends BasePlaybackActivity {
     protected void onHttpTicketReceived(String path, String ticket) {
 
         Recording recording = appRepository.getRecordingData().getItemById(dvrId);
-        String baseUrl = connection.getHostname() + ":" + connection.getStreamingPort() + serverStatus.getWebroot();
         String iconUrl = baseUrl + "/" + recording.getChannelIcon();
 
         MediaMetadata movieMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE);
@@ -76,7 +75,7 @@ public class CastRecordingActivity extends BasePlaybackActivity {
         movieMetadata.addImage(new WebImage(Uri.parse(iconUrl)));   // small cast icon
         movieMetadata.addImage(new WebImage(Uri.parse(iconUrl)));   // large background icon
 
-        String url = baseUrl + "/dvrfile/" + recording.getId();
+        String url = "http://" + baseUrl + "/dvrfile/" + recording.getId();
         ServerProfile serverProfile = appRepository.getServerProfileData().getItemById(serverStatus.getCastingServerProfileId());
         if (serverProfile != null) {
             url += "?profile=" + serverProfile.getName();
