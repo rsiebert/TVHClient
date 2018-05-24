@@ -214,6 +214,13 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
         popupMenu.getMenuInflater().inflate(R.menu.channel_list_program_popup_menu, popupMenu.getMenu());
         menuUtils.onPreparePopupMenu(popupMenu.getMenu(), program, program.getRecording());
 
+        // Show the play menu item when the current
+        // time is between the program start and end time
+        long currentTime = new Date().getTime();
+        if (currentTime > program.getStart() && currentTime < program.getStop()) {
+            popupMenu.getMenu().findItem(R.id.menu_play).setVisible(true);
+        }
+
         popupMenu.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {
                 case R.id.menu_search_imdb:

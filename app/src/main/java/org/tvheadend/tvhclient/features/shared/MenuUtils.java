@@ -521,13 +521,6 @@ public class MenuUtils {
         MenuItem searchEpgMenuItem = menu.findItem(R.id.menu_search_epg);
         MenuItem addReminderMenuItem = menu.findItem(R.id.menu_add_notification);
 
-        // Show the play menu item when the current
-        // time is between the program start and end time
-        long currentTime = new Date().getTime();
-        if (currentTime > program.getStart() && currentTime < program.getStop()) {
-            playMenuItem.setVisible(true);
-        }
-
         if (recording == null || !recording.isRecording() && !recording.isScheduled()) {
             recordOnceMenuItem.setVisible(true);
             recordOnceCustomProfileMenuItem.setVisible(isUnlocked);
@@ -547,8 +540,8 @@ public class MenuUtils {
             recordRemoveMenuItem.setVisible(true);
         }
 
-        searchImdbMenuItem.setVisible(program.getEventId() > 0);
-        searchEpgMenuItem.setVisible(program.getEventId() > 0);
+        searchImdbMenuItem.setVisible(program != null && program.getEventId() > 0);
+        searchEpgMenuItem.setVisible(program != null && program.getEventId() > 0);
 
         if (isUnlocked && sharedPreferences.getBoolean("notifications_enabled", true)) {
             addReminderMenuItem.setVisible(true);
