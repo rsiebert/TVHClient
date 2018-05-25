@@ -8,6 +8,7 @@ import org.tvheadend.tvhclient.data.entity.ChannelTag;
 import org.tvheadend.tvhclient.data.entity.Program;
 import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.data.entity.SeriesRecording;
+import org.tvheadend.tvhclient.data.entity.ServerStatus;
 import org.tvheadend.tvhclient.data.entity.TimerRecording;
 import org.tvheadend.tvhclient.data.service.htsp.HtspMessage;
 
@@ -666,5 +667,22 @@ class EpgSyncUtils {
             request.put("comment", comment);
         }
         return request;
+    }
+
+    static ServerStatus convertMessageToServerStatusModel(ServerStatus serverStatus, HtspMessage msg) {
+        if (msg.containsKey("htspversion")) {
+            serverStatus.setHtspVersion(msg.getInteger("htspversion", 13));
+        }
+        if (msg.containsKey("servername")) {
+            serverStatus.setServerName(msg.getString("servername"));
+        }
+        if (msg.containsKey("serverversion")) {
+            serverStatus.setServerVersion(msg.getString("serverversion"));
+        }
+        if (msg.containsKey("webroot")) {
+            String webroot = msg.getString("webroot");
+            serverStatus.setWebroot(webroot == null ? "" : webroot);
+        }
+        return serverStatus;
     }
 }
