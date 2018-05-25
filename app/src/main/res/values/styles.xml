@@ -147,7 +147,7 @@
         <item name="ic_menu_cancel">@drawable/ic_menu_cancel_dark</item>
         <item name="ic_menu_add">@drawable/ic_menu_add_dark</item>
         <item name="ic_menu_download">@drawable/ic_menu_download_dark</item>
-        <item name="ic_menu_tags">@drawable/ic_menu_tags_dark</item>
+        <item name="ic_menu_tags">@drawable/ic_menu_tag_dark</item>
         <item name="ic_menu_record_once">@drawable/ic_menu_record_dark</item>
         <item name="ic_menu_record_custom">@drawable/ic_menu_record_custom_dark</item>
         <item name="ic_menu_record_series">@drawable/ic_menu_record_series_dark</item>
