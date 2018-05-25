@@ -92,25 +92,28 @@ public class TimerRecordingRecyclerViewAdapter extends RecyclerView.Adapter<Time
             String title = !TextUtils.isEmpty(recording.getTitle()) ? recording.getTitle() : recording.getName();
             holder.titleTextView.setText(title);
 
-            if (recording.getChannelIcon() != null) {
+            if (!TextUtils.isEmpty(recording.getChannelName())) {
                 holder.channelTextView.setText(recording.getChannelName());
+            } else {
+                holder.channelTextView.setText(R.string.all_channels);
+            }
+
+            if (recording.getChannelIcon() != null) {
                 Picasso.get()
                         .load(UIUtils.getIconUrl(context, recording.getChannelIcon()))
                         .into(holder.iconImageView, new Callback() {
                             @Override
                             public void onSuccess() {
-                                holder.channelTextView.setVisibility(View.INVISIBLE);
+                                holder.iconTextView.setVisibility(View.INVISIBLE);
                                 holder.iconImageView.setVisibility(View.VISIBLE);
                             }
 
                             @Override
                             public void onError(Exception e) {
-                                holder.channelTextView.setVisibility(View.VISIBLE);
+                                holder.iconTextView.setVisibility(View.VISIBLE);
                                 holder.iconImageView.setVisibility(View.INVISIBLE);
                             }
                         });
-            } else {
-                holder.channelTextView.setText(R.string.all_channels);
             }
 
             String daysOfWeek = UIUtils.getDaysOfWeekText(context, recording.getDaysOfWeek());
@@ -206,6 +209,8 @@ public class TimerRecordingRecyclerViewAdapter extends RecyclerView.Adapter<Time
     static class RecyclerViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.icon)
         ImageView iconImageView;
+        @BindView(R.id.icon_text)
+        TextView iconTextView;
         @BindView(R.id.title)
         TextView titleTextView;
         @BindView(R.id.channel)

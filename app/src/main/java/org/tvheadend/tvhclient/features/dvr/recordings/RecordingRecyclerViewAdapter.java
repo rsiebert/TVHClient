@@ -103,9 +103,10 @@ public class RecordingRecyclerViewAdapter extends RecyclerView.Adapter<Recording
         holder.subtitleTextView.setVisibility(!TextUtils.isEmpty(recording.getSubtitle()) ? View.VISIBLE : View.GONE);
         holder.subtitleTextView.setText(recording.getSubtitle());
 
+        holder.channelTextView.setText(recording.getChannelName());
+
         // Show the channel icon if available and set in the preferences.
         // If not chosen, hide the imageView and show the channel name.
-        holder.iconTextView.setText(recording.getChannelName());
         Picasso.get()
                 .load(UIUtils.getIconUrl(activity, recording.getChannelIcon()))
                 .into(holder.iconImageView, new Callback() {

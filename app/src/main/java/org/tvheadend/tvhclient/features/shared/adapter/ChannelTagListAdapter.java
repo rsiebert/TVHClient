@@ -1,6 +1,8 @@
 package org.tvheadend.tvhclient.features.shared.adapter;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -29,6 +31,7 @@ public class ChannelTagListAdapter extends RecyclerView.Adapter<ChannelTagListAd
     private Callback callback;
     private List<ChannelTag> channelTagList;
     private int channelTagId;
+    private boolean showChannelTagIcons;
 
     public interface Callback {
         void onItemClicked(int index);
@@ -47,6 +50,8 @@ public class ChannelTagListAdapter extends RecyclerView.Adapter<ChannelTagListAd
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(parent.getContext());
+        showChannelTagIcons = prefs.getBoolean("channel_tag_icons_enabled", true);
         final View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.channeltag_list_selection_dialog_adapter, parent, false);
         return new ViewHolder(view, this);
     }
@@ -62,11 +67,16 @@ public class ChannelTagListAdapter extends RecyclerView.Adapter<ChannelTagListAd
                 holder.radioButton.setChecked(false);
             }
 
+            holder.titleTextView.setText(channelTag.getTagName());
+
             holder.itemView.setTag(channelTag);
-            if (holder.iconImageView != null && !TextUtils.isEmpty(channelTag.getTagIcon())) {
+            if (!TextUtils.isEmpty(channelTag.getTagIcon()) && showChannelTagIcons) {
+                holder.iconImageView.setVisibility(View.VISIBLE);
                 Picasso.get()
                         .load(UIUtils.getIconUrl(context, channelTag.getTagIcon()))
                         .into(holder.iconImageView);
+            } else {
+                holder.iconImageView.setVisibility(View.GONE);
             }
 
             if (channelTag.getTagId() > 0) {

@@ -121,19 +121,18 @@ public class ChannelRecyclerViewAdapter extends RecyclerView.Adapter<ChannelRecy
         holder.channelTextView.setVisibility(showChannelName ? View.VISIBLE : View.GONE);
 
         // Show the channel icons. Otherwise show the channel name only
-        holder.channelTextView.setText(channel.getName());
         Picasso.get()
                 .load(UIUtils.getIconUrl(context, channel.getIcon()))
                 .into(holder.iconImageView, new Callback() {
                     @Override
                     public void onSuccess() {
-                        holder.channelTextView.setVisibility(View.INVISIBLE);
+                        holder.iconTextView.setVisibility(View.INVISIBLE);
                         holder.iconImageView.setVisibility(View.VISIBLE);
                     }
 
                     @Override
                     public void onError(Exception e) {
-                        holder.channelTextView.setVisibility(View.VISIBLE);
+                        holder.iconTextView.setVisibility(View.VISIBLE);
                         holder.iconImageView.setVisibility(View.INVISIBLE);
                     }
                 });
