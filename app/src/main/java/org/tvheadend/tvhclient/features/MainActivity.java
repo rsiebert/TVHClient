@@ -41,7 +41,6 @@ import javax.inject.Inject;
 
 import timber.log.Timber;
 
-// TODO test glide and placeholder images
 // TODO brown genre color is not shown in the genre color info dialog
 // TODO when sorting channels by number, consider minor major channel numbers
 // TODO use fade in / out for fragment transactions
@@ -51,11 +50,8 @@ import timber.log.Timber;
 // TODO dual screen listview on the left side must be (visually) set selected or checked
 // TODO move the conversion from ms to s or minutes from the intents into the entity getter and setter
 // TODO rework epg (use recyclerview horizontal scroll)
-// TODO improve icons, red, green cirles
 // TODO add info via fabrics which screen is used most often
 // TODO allow playing failed recordings when the filesize is > 0
-// TODO channel icons are not hidden when disabled in settings
-// TODO playback can use the ticket url, no user pwd url required?
 
 
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, ToolbarInterface {
