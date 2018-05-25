@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
+import com.squareup.picasso.Picasso;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Channel;
@@ -55,14 +55,8 @@ public class ChannelListSelectionAdapter extends RecyclerView.Adapter<ChannelLis
         final Channel channel = channelList.get(position);
         if (channel != null) {
             holder.itemView.setTag(channel);
-            if (holder.iconImageView != null) {
-
-                if (!TextUtils.isEmpty(channel.getIcon())) {
-                    Glide.with(context).load(UIUtils.getIconUrl(context, channel.getIcon())).into(holder.iconImageView);
-                }
-                //Bitmap iconBitmap = UIUtils.getCachedIcon(context, channel.getIcon());
-                //holder.icon.setImageBitmap(iconBitmap);
-                //holder.iconImageView.setVisibility(iconBitmap != null && showChannelIcons ? ImageView.VISIBLE : ImageView.GONE);
+            if (holder.iconImageView != null && !TextUtils.isEmpty(channel.getIcon())) {
+                Picasso.get().load(UIUtils.getIconUrl(context, channel.getIcon())).into(holder.iconImageView);
             }
             if (holder.titleTextView != null) {
                 holder.titleTextView.setText(channel.getName());

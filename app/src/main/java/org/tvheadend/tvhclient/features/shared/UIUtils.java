@@ -7,7 +7,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.preference.PreferenceManager;
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.SparseArray;
@@ -15,11 +14,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.DataSource;
-import com.bumptech.glide.load.engine.GlideException;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Program;
@@ -371,7 +367,7 @@ public class UIUtils {
     }
 
     public static String getIconUrl(Context context, String url) {
-        return context.getCacheDir() + "/" + convertUrlToHashString(url) + ".png";
+        return "file://" + context.getCacheDir() + "/" + convertUrlToHashString(url) + ".png";
     }
 
     public static String getDaysOfWeekText(Context context, long daysOfWeek) {
@@ -391,25 +387,20 @@ public class UIUtils {
         iconTextView.setText(name);
 
         if (showChannelIcons) {
-            Glide.with(context)
+            Picasso.get()
                     .load(UIUtils.getIconUrl(context, url))
-                    .listener(new RequestListener<Drawable>() {
-
+                    .into(iconImageView, new Callback() {
                         @Override
-                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                            Timber.d("Load failed");
-                            return false;
-                        }
-
-                        @Override
-                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                        public void onSuccess() {
                             Timber.d("Load successful");
                             iconTextView.setText(null);
-                            return false;
                         }
-                    })
-                    .into(iconImageView);
 
+                        @Override
+                        public void onError(Exception e) {
+                            Timber.d("Load failed " + e.getLocalizedMessage());
+                        }
+                    });
         } else {
             iconImageView.setVisibility(View.GONE);
             iconTextView.setVisibility(View.GONE);
