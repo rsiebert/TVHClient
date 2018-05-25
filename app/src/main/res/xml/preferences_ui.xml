@@ -18,9 +18,9 @@
     <PreferenceCategory android:title="@string/pref_channels">
         <CheckBoxPreference
             android:defaultValue="true"
-            android:key="channel_icons_enabled"
-            android:summary="@string/pref_icons_sum"
-            android:title="@string/pref_icons" />
+            android:key="channel_name_enabled"
+            android:summary="Additionally to the channel icon display the channel name above the program title in the channel list."
+            android:title="Channel name" />
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="channel_icon_starts_playback_enabled"
