@@ -260,18 +260,7 @@ public class StartupFragment extends Fragment {
 
             } else if (intent.hasExtra("sync_state")) {
                 EpgSyncTask.State state = (EpgSyncTask.State) intent.getSerializableExtra("sync_state");
-                if (state == EpgSyncTask.State.LOADING) {
-                    stateTextView.setText("Receiving available data from server");
-                    if (intent.hasExtra("sync_details")) {
-                        String details = (String) intent.getSerializableExtra("sync_details");
-                        detailsTextView.setText(details);
-                    }
-
-                } else if (state == EpgSyncTask.State.SAVING) {
-                    stateTextView.setText("Saving available data into database");
-                    detailsTextView.setText("");
-
-                } else if (state == EpgSyncTask.State.DONE) {
+                if (state == EpgSyncTask.State.DONE) {
                     progressBar.setVisibility(View.INVISIBLE);
                     stateTextView.setText("Starting");
                     detailsTextView.setText("");

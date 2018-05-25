@@ -48,7 +48,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import timber.log.Timber;
 
 public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener, HtspConnection.Listener {
-    private static final String TAG = EpgSyncTask.class.getSimpleName();
 
     protected AppRepository appRepository;
     private final int connectionTimeout;
@@ -67,10 +66,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     private final Queue<String> pendingChannelLogoFetches = new ConcurrentLinkedQueue<>();
 
     public enum State {
-        IDLE,
         RECONNECT,
-        LOADING,
-        SAVING,
         DONE
     }
 
