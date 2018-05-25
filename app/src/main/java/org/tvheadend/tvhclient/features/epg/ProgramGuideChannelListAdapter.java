@@ -113,8 +113,6 @@ public class ProgramGuideChannelListAdapter extends ArrayAdapter<Channel> implem
         final Channel c = getItem(position);
         if (c != null) {
 
-            boolean showChannelIcons = sharedPreferences.getBoolean("channel_icons_enabled", true);
-
             // Show the regular or large channel icons. Otherwise show the channel name only
             // Assign the channel icon image or a null image
             Bitmap iconBitmap = UIUtils.getCachedIcon(context, c.getIcon());

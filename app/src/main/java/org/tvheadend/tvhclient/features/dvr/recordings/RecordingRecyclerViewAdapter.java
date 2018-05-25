@@ -15,6 +15,9 @@ import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
+
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.features.shared.UIUtils;
@@ -58,7 +61,6 @@ public class RecordingRecyclerViewAdapter extends RecyclerView.Adapter<Recording
 
         boolean playOnChannelIcon = sharedPreferences.getBoolean("channel_icon_starts_playback_enabled", true);
         boolean lightTheme = sharedPreferences.getBoolean("light_theme_enabled", true);
-        boolean showChannelIcons = sharedPreferences.getBoolean("channel_icons_enabled", true);
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -103,9 +105,22 @@ public class RecordingRecyclerViewAdapter extends RecyclerView.Adapter<Recording
 
         // Show the channel icon if available and set in the preferences.
         // If not chosen, hide the imageView and show the channel name.
-        UIUtils.loadIcon(activity, showChannelIcons,
-                recording.getChannelIcon(), recording.getChannelName(),
-                holder.iconImageView, holder.iconTextView);
+        holder.iconTextView.setText(recording.getChannelName());
+        Picasso.get()
+                .load(UIUtils.getIconUrl(activity, recording.getChannelIcon()))
+                .into(holder.iconImageView, new Callback() {
+                    @Override
+                    public void onSuccess() {
+                        holder.iconTextView.setVisibility(View.INVISIBLE);
+                        holder.iconImageView.setVisibility(View.VISIBLE);
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+                        holder.iconTextView.setVisibility(View.VISIBLE);
+                        holder.iconImageView.setVisibility(View.INVISIBLE);
+                    }
+                });
 
         holder.dateTextView.setText(UIUtils.getDate(activity, recording.getStart()));
 

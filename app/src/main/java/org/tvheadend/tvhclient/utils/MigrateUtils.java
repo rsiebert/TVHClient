@@ -143,7 +143,6 @@ public class MigrateUtils {
         editor.putBoolean("program_progressbar_enabled", sharedPreferences.getBoolean("showProgramProgressbarPref", true));
         editor.putBoolean("program_subtitle_enabled", sharedPreferences.getBoolean("showProgramSubtitlePref", true));
         editor.putBoolean("next_program_title_enabled", sharedPreferences.getBoolean("showNextProgramPref", true));
-        editor.putBoolean("channel_icons_enabled", sharedPreferences.getBoolean("showIconPref", true));
         editor.putBoolean("genre_colors_for_channels_enabled", sharedPreferences.getBoolean("showGenreColorsChannelsPref", false));
         editor.putBoolean("genre_colors_for_programs_enabled", sharedPreferences.getBoolean("showGenreColorsProgramsPref", false));
         editor.putBoolean("genre_colors_for_program_guide_enabled", sharedPreferences.getBoolean("showGenreColorsGuidePref", false));

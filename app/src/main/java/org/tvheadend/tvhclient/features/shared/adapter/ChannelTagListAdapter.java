@@ -1,17 +1,17 @@
 package org.tvheadend.tvhclient.features.shared.adapter;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.ChannelTag;
@@ -29,7 +29,6 @@ public class ChannelTagListAdapter extends RecyclerView.Adapter<ChannelTagListAd
     private Callback callback;
     private List<ChannelTag> channelTagList;
     private int channelTagId;
-    private boolean showChannelTagIcons;
 
     public interface Callback {
         void onItemClicked(int index);
@@ -48,9 +47,6 @@ public class ChannelTagListAdapter extends RecyclerView.Adapter<ChannelTagListAd
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(parent.getContext());
-        showChannelTagIcons = prefs.getBoolean("channel_icons_enabled", true);
-
         final View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.channeltag_list_selection_dialog_adapter, parent, false);
         return new ViewHolder(view, this);
     }
@@ -67,11 +63,11 @@ public class ChannelTagListAdapter extends RecyclerView.Adapter<ChannelTagListAd
             }
 
             holder.itemView.setTag(channelTag);
-
-            Bitmap iconBitmap = UIUtils.getCachedIcon(context, channelTag.getTagIcon());
-            holder.iconImageView.setImageBitmap(iconBitmap);
-            holder.iconImageView.setVisibility(iconBitmap != null && showChannelTagIcons ? ImageView.VISIBLE : ImageView.GONE);
-            holder.titleTextView.setText(channelTag.getTagName());
+            if (holder.iconImageView != null && !TextUtils.isEmpty(channelTag.getTagIcon())) {
+                Picasso.get()
+                        .load(UIUtils.getIconUrl(context, channelTag.getTagIcon()))
+                        .into(holder.iconImageView);
+            }
 
             if (channelTag.getTagId() > 0) {
                 holder.countTextView.setText(String.valueOf(channelTag.getChannelCount()));

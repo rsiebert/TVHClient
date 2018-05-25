@@ -1,8 +1,6 @@
 package org.tvheadend.tvhclient.features.shared.adapter;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -25,7 +23,6 @@ public class ChannelListSelectionAdapter extends RecyclerView.Adapter<ChannelLis
     private final Context context;
     private Callback callback;
     private List<Channel> channelList;
-    private boolean showChannelIcons;
 
     public interface Callback {
         void onItemClicked(Channel channel);
@@ -43,9 +40,6 @@ public class ChannelListSelectionAdapter extends RecyclerView.Adapter<ChannelLis
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(parent.getContext());
-        showChannelIcons = sharedPreferences.getBoolean("channel_icons_enabled", true);
-
         final View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.channel_list_selection_dialog_adapter, parent, false);
         return new ViewHolder(view, this);
     }
@@ -56,7 +50,9 @@ public class ChannelListSelectionAdapter extends RecyclerView.Adapter<ChannelLis
         if (channel != null) {
             holder.itemView.setTag(channel);
             if (holder.iconImageView != null && !TextUtils.isEmpty(channel.getIcon())) {
-                Picasso.get().load(UIUtils.getIconUrl(context, channel.getIcon())).into(holder.iconImageView);
+                Picasso.get()
+                        .load(UIUtils.getIconUrl(context, channel.getIcon()))
+                        .into(holder.iconImageView);
             }
             if (holder.titleTextView != null) {
                 holder.titleTextView.setText(channel.getName());

@@ -10,12 +10,6 @@ import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.SparseArray;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
-
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.Picasso;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Program;
@@ -25,8 +19,6 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-
-import timber.log.Timber;
 
 import static org.tvheadend.tvhclient.utils.MiscUtils.convertUrlToHashString;
 
@@ -354,11 +346,6 @@ public class UIUtils {
      * @return The actual image of the file as a bitmap
      */
     public static Bitmap getCachedIcon(Context context, final String url) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        Boolean showIcons = prefs.getBoolean("channel_icons_enabled", true);
-        if (!showIcons) {
-            return null;
-        }
         if (url == null || url.length() == 0) {
             return null;
         }
@@ -381,29 +368,5 @@ public class UIUtils {
             text.append(s);
         }
         return text.toString();
-    }
-
-    public static void loadIcon(Context context, boolean showChannelIcons, String url, String name, ImageView iconImageView, TextView iconTextView) {
-        iconTextView.setText(name);
-
-        if (showChannelIcons) {
-            Picasso.get()
-                    .load(UIUtils.getIconUrl(context, url))
-                    .into(iconImageView, new Callback() {
-                        @Override
-                        public void onSuccess() {
-                            Timber.d("Load successful");
-                            iconTextView.setText(null);
-                        }
-
-                        @Override
-                        public void onError(Exception e) {
-                            Timber.d("Load failed " + e.getLocalizedMessage());
-                        }
-                    });
-        } else {
-            iconImageView.setVisibility(View.GONE);
-            iconTextView.setVisibility(View.GONE);
-        }
     }
 }

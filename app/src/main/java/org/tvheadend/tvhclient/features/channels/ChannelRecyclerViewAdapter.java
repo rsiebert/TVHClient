@@ -17,6 +17,9 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
+
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.data.entity.Recording;
@@ -63,7 +66,6 @@ public class ChannelRecyclerViewAdapter extends RecyclerView.Adapter<ChannelRecy
         boolean showProgressbar = sharedPreferences.getBoolean("program_progressbar_enabled", true);
         boolean showSubtitle = sharedPreferences.getBoolean("program_subtitle_enabled", true);
         boolean showNextProgramTitle = sharedPreferences.getBoolean("next_program_title_enabled", true);
-        boolean showChannelIcons = sharedPreferences.getBoolean("channel_icons_enabled", true);
         boolean showGenreColors = sharedPreferences.getBoolean("genre_colors_for_channels_enabled", false);
         boolean playUponChannelClick = sharedPreferences.getBoolean("channel_icon_starts_playback_enabled", true);
 
@@ -119,7 +121,22 @@ public class ChannelRecyclerViewAdapter extends RecyclerView.Adapter<ChannelRecy
         holder.channelTextView.setVisibility(showChannelName ? View.VISIBLE : View.GONE);
 
         // Show the channel icons. Otherwise show the channel name only
-        UIUtils.loadIcon(context, showChannelIcons, channel.getIcon(), channel.getName(), holder.iconImageView, holder.iconTextView);
+        holder.channelTextView.setText(channel.getName());
+        Picasso.get()
+                .load(UIUtils.getIconUrl(context, channel.getIcon()))
+                .into(holder.iconImageView, new Callback() {
+                    @Override
+                    public void onSuccess() {
+                        holder.channelTextView.setVisibility(View.INVISIBLE);
+                        holder.iconImageView.setVisibility(View.VISIBLE);
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+                        holder.channelTextView.setVisibility(View.VISIBLE);
+                        holder.iconImageView.setVisibility(View.INVISIBLE);
+                    }
+                });
 
         if (channel.getProgramId() > 0) {
             holder.titleTextView.setText(channel.getProgramTitle());

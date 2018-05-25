@@ -15,6 +15,9 @@ import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
+
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.SeriesRecording;
 import org.tvheadend.tvhclient.features.shared.UIUtils;
@@ -57,7 +60,6 @@ public class SeriesRecordingRecyclerViewAdapter extends RecyclerView.Adapter<Ser
         holder.itemView.setTag(recording);
 
         boolean lightTheme = sharedPreferences.getBoolean("light_theme_enabled", true);
-        boolean showChannelIcons = sharedPreferences.getBoolean("channel_icons_enabled", true);
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -97,9 +99,22 @@ public class SeriesRecordingRecyclerViewAdapter extends RecyclerView.Adapter<Ser
             }
 
             if (recording.getChannelIcon() != null) {
-                UIUtils.loadIcon(context, showChannelIcons,
-                        recording.getChannelIcon(), recording.getChannelName(),
-                        holder.iconImageView, holder.channelTextView);
+                holder.channelTextView.setText(recording.getChannelName());
+                Picasso.get()
+                        .load(UIUtils.getIconUrl(context, recording.getChannelIcon()))
+                        .into(holder.iconImageView, new Callback() {
+                            @Override
+                            public void onSuccess() {
+                                holder.channelTextView.setVisibility(View.INVISIBLE);
+                                holder.iconImageView.setVisibility(View.VISIBLE);
+                            }
+
+                            @Override
+                            public void onError(Exception e) {
+                                holder.channelTextView.setVisibility(View.VISIBLE);
+                                holder.iconImageView.setVisibility(View.INVISIBLE);
+                            }
+                        });
             } else {
                 holder.channelTextView.setText(R.string.all_channels);
             }
