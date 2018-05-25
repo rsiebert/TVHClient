@@ -7,15 +7,12 @@ import android.content.res.Configuration;
 import android.preference.PreferenceManager;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.data.entity.ServerProfile;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Locale;
-
-// TODO Split into UI and others
 
 public class MiscUtils {
 
@@ -74,10 +71,8 @@ public class MiscUtils {
         }
     }
 
+    // TODO check if this can be optimized
     public static boolean isServerProfileEnabled(ServerProfile serverProfile, ServerStatus serverStatus) {
-        return serverProfile != null
-                //&& serverProfile.isEnabled()
-                && serverStatus.getHtspVersion() >= 16
-                && MainApplication.getInstance().isUnlocked();
+        return serverProfile != null && serverStatus.getHtspVersion() >= 16;
     }
 }
