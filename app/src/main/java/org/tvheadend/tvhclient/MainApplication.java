@@ -2,9 +2,10 @@ package org.tvheadend.tvhclient;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
+import android.support.v4.content.LocalBroadcastManager;
 
 import com.anjlab.android.iab.v3.BillingProcessor;
 import com.anjlab.android.iab.v3.TransactionDetails;
@@ -170,14 +171,16 @@ public class MainApplication extends Application implements BillingProcessor.IBi
 
     @Override
     public void onProductPurchased(@NonNull String productId, TransactionDetails details) {
-        // TODO onProductPurchased send a broadcast instead of showing a snackbar directly
+        String msg;
         if (billingProcessor.isValidTransactionDetails(details)) {
-            Snackbar.make(null, getString(R.string.unlocker_purchase_successful),
-                    Snackbar.LENGTH_LONG).show();
+            msg = getString(R.string.unlocker_purchase_successful);
         } else {
-            Snackbar.make(null, getString(R.string.unlocker_purchase_not_successful),
-                    Snackbar.LENGTH_LONG).show();
+            msg = getString(R.string.unlocker_purchase_not_successful);
         }
+
+        Intent intent = new Intent("message");
+        intent.putExtra("message", msg);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
     @Override
