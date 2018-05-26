@@ -28,8 +28,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-// TODO update icons (same color...)
-
 public class RecordingDetailsFragment extends BaseFragment implements RecordingRemovedCallback {
 
     @BindView(R.id.summary_label)

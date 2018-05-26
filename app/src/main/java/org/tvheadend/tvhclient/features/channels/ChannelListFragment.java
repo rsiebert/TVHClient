@@ -40,7 +40,6 @@ import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallba
 import java.util.Calendar;
 import java.util.Date;
 
-// TODO show programs from time in dual pane, program list not updated
 // TODO sorting should consider minor major channel numbers
 
 public class ChannelListFragment extends BaseFragment implements RecyclerViewClickCallback, ChannelTimeSelectionCallback, ChannelTagSelectionCallback, SearchRequestInterface, Filter.FilterListener {//}, ChannelsLoadedCallback {

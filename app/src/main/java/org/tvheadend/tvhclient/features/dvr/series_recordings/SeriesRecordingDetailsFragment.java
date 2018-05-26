@@ -27,8 +27,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-// TODO recording on all channels shows empty channel logo
-
 public class SeriesRecordingDetailsFragment extends BaseFragment implements RecordingRemovedCallback {
 
     @BindView(R.id.is_enabled)
