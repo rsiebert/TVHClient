@@ -9,7 +9,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -18,9 +17,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
+
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Program;
@@ -28,18 +29,17 @@ import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
 import org.tvheadend.tvhclient.features.shared.UIUtils;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecordingRemovedCallback;
-import org.tvheadend.tvhclient.features.shared.tasks.ImageDownloadTask;
-import org.tvheadend.tvhclient.features.shared.tasks.ImageDownloadTaskCallback;
 
 import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import timber.log.Timber;
 
 // TODO update icons (same color, record with profile must differ from regular record...)
 
-public class ProgramDetailsFragment extends BaseFragment implements ImageDownloadTaskCallback, RecordingRemovedCallback {
+public class ProgramDetailsFragment extends BaseFragment implements RecordingRemovedCallback {
 
     @Nullable
     @BindView(R.id.state)
@@ -87,7 +87,6 @@ public class ProgramDetailsFragment extends BaseFragment implements ImageDownloa
     @Nullable
     @BindView(R.id.nested_toolbar)
     Toolbar nestedToolbar;
-    @Nullable
     @BindView(R.id.image)
     ImageView imageView;
 
@@ -203,7 +202,7 @@ public class ProgramDetailsFragment extends BaseFragment implements ImageDownloa
         channelNameTextView.setVisibility(!TextUtils.isEmpty(program.getChannelName()) ? View.VISIBLE : View.GONE);
         channelNameTextView.setText(program.getChannelName());
 
-        String seriesInfoText = UIUtils.getSeriesInfo(getContext(), program);
+        String seriesInfoText = UIUtils.getSeriesInfo(activity, program);
         if (TextUtils.isEmpty(seriesInfoText)) {
             seriesInfoLabelTextView.setVisibility(View.GONE);
             seriesInfoTextView.setVisibility(View.GONE);
@@ -232,32 +231,23 @@ public class ProgramDetailsFragment extends BaseFragment implements ImageDownloa
 
         // Show the program image if one exists
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
+        Timber.d("Showing program image " + program.getImage());
         if (isUnlocked && prefs.getBoolean("program_artwork_enabled", false)) {
-            ImageDownloadTask dt = new ImageDownloadTask(this);
-            dt.execute(program.getImage(), String.valueOf(program.getEventId()));
-        }
-    }
+            Picasso.get()
+                    .load(UIUtils.getIconUrl(activity, program.getImage()))
+                    .into(imageView, new Callback() {
+                        @Override
+                        public void onSuccess() {
+                            imageView.setVisibility(View.VISIBLE);
+                        }
 
-    @Override
-    public void notify(Drawable image) {
-        if (imageView != null && image != null) {
-            imageView.setVisibility(View.VISIBLE);
-            imageView.setImageDrawable(image);
+                        @Override
+                        public void onError(Exception e) {
 
-            // Get the dimensions of the image so the
-            // width / height ratio can be determined
-            final float w = image.getIntrinsicWidth();
-            final float h = image.getIntrinsicHeight();
-
-            if (h > 0) {
-                // Scale the image view so it fits the width of the dialog or fragment root view
-                final float scale = h / w;
-                final float vw = imageView.getRootView().getWidth() - 128;
-                final float vh = vw * scale;
-                final LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams((int) vw, (int) vh);
-                layoutParams.gravity = Gravity.CENTER;
-                imageView.setLayoutParams(layoutParams);
-            }
+                        }
+                    });
+            //ImageDownloadTask dt = new ImageDownloadTask(this);
+            //dt.execute(program.getImage(), String.valueOf(program.getEventId()));
         }
     }
 
