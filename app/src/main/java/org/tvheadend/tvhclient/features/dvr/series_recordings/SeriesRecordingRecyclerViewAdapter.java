@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.TextViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -98,6 +99,8 @@ public class SeriesRecordingRecyclerViewAdapter extends RecyclerView.Adapter<Ser
                 holder.nameTextView.setVisibility(View.GONE);
             }
 
+            TextViewCompat.setAutoSizeTextTypeWithDefaults(holder.iconTextView, TextViewCompat.AUTO_SIZE_TEXT_TYPE_UNIFORM);
+
             if (!TextUtils.isEmpty(recording.getChannelName())) {
                 holder.iconTextView.setText(recording.getChannelName());
                 holder.channelTextView.setText(recording.getChannelName());
@@ -117,9 +120,7 @@ public class SeriesRecordingRecyclerViewAdapter extends RecyclerView.Adapter<Ser
 
                         @Override
                         public void onError(Exception e) {
-                            holder.iconTextView.setText(recording.getChannelName());
-                            holder.iconTextView.setVisibility(View.VISIBLE);
-                            holder.iconImageView.setVisibility(View.INVISIBLE);
+
                         }
                     });
 

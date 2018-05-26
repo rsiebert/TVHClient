@@ -17,6 +17,7 @@
             android:layout_marginTop="16dp"
             android:contentDescription="@null"
             android:scaleType="fitStart"
+            android:visibility="invisible"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 

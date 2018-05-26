@@ -29,6 +29,7 @@
             android:layout_marginTop="16dp"
             android:contentDescription="@null"
             android:scaleType="fitStart"
+            android:visibility="invisible"
             app:layout_constraintStart_toEndOf="@+id/genre"
             app:layout_constraintTop_toTopOf="parent" />
 

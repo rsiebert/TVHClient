@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.TextViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -120,6 +121,9 @@ public class ChannelRecyclerViewAdapter extends RecyclerView.Adapter<ChannelRecy
         holder.channelTextView.setText(channel.getName());
         holder.channelTextView.setVisibility(showChannelName ? View.VISIBLE : View.GONE);
 
+        TextViewCompat.setAutoSizeTextTypeWithDefaults(holder.iconTextView, TextViewCompat.AUTO_SIZE_TEXT_TYPE_UNIFORM);
+        holder.iconTextView.setText(channel.getName());
+
         // Show the channel icons. Otherwise show the channel name only
         Picasso.get()
                 .load(UIUtils.getIconUrl(context, channel.getIcon()))
@@ -132,9 +136,7 @@ public class ChannelRecyclerViewAdapter extends RecyclerView.Adapter<ChannelRecy
 
                     @Override
                     public void onError(Exception e) {
-                        holder.iconTextView.setText(channel.getName());
-                        holder.iconTextView.setVisibility(View.VISIBLE);
-                        holder.iconImageView.setVisibility(View.INVISIBLE);
+
                     }
                 });
 

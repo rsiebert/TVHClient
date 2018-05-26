@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.TextViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -105,6 +106,9 @@ public class RecordingRecyclerViewAdapter extends RecyclerView.Adapter<Recording
 
         holder.channelTextView.setText(recording.getChannelName());
 
+        TextViewCompat.setAutoSizeTextTypeWithDefaults(holder.iconTextView, TextViewCompat.AUTO_SIZE_TEXT_TYPE_UNIFORM);
+        holder.iconTextView.setText(recording.getChannelName());
+
         // Show the channel icon if available and set in the preferences.
         // If not chosen, hide the imageView and show the channel name.
         Picasso.get()
@@ -118,9 +122,7 @@ public class RecordingRecyclerViewAdapter extends RecyclerView.Adapter<Recording
 
                     @Override
                     public void onError(Exception e) {
-                        holder.iconTextView.setText(recording.getChannelName());
-                        holder.iconTextView.setVisibility(View.VISIBLE);
-                        holder.iconImageView.setVisibility(View.INVISIBLE);
+
                     }
                 });
 
