@@ -118,6 +118,7 @@ public class RecordingRecyclerViewAdapter extends RecyclerView.Adapter<Recording
 
                     @Override
                     public void onError(Exception e) {
+                        holder.iconTextView.setText(recording.getChannelName());
                         holder.iconTextView.setVisibility(View.VISIBLE);
                         holder.iconImageView.setVisibility(View.INVISIBLE);
                     }

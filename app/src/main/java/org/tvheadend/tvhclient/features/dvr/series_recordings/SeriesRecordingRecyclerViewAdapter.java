@@ -99,28 +99,29 @@ public class SeriesRecordingRecyclerViewAdapter extends RecyclerView.Adapter<Ser
             }
 
             if (!TextUtils.isEmpty(recording.getChannelName())) {
+                holder.iconTextView.setText(recording.getChannelName());
                 holder.channelTextView.setText(recording.getChannelName());
             } else {
+                holder.iconTextView.setText(R.string.all_channels);
                 holder.channelTextView.setText(R.string.all_channels);
             }
 
-            if (recording.getChannelIcon() != null) {
-                Picasso.get()
-                        .load(UIUtils.getIconUrl(context, recording.getChannelIcon()))
-                        .into(holder.iconImageView, new Callback() {
-                            @Override
-                            public void onSuccess() {
-                                holder.iconTextView.setVisibility(View.INVISIBLE);
-                                holder.iconImageView.setVisibility(View.VISIBLE);
-                            }
+            Picasso.get()
+                    .load(UIUtils.getIconUrl(context, recording.getChannelIcon()))
+                    .into(holder.iconImageView, new Callback() {
+                        @Override
+                        public void onSuccess() {
+                            holder.iconTextView.setVisibility(View.INVISIBLE);
+                            holder.iconImageView.setVisibility(View.VISIBLE);
+                        }
 
-                            @Override
-                            public void onError(Exception e) {
-                                holder.iconTextView.setVisibility(View.VISIBLE);
-                                holder.iconImageView.setVisibility(View.INVISIBLE);
-                            }
-                        });
-            }
+                        @Override
+                        public void onError(Exception e) {
+                            holder.iconTextView.setText(recording.getChannelName());
+                            holder.iconTextView.setVisibility(View.VISIBLE);
+                            holder.iconImageView.setVisibility(View.INVISIBLE);
+                        }
+                    });
 
             holder.daysOfWeekTextView.setText(UIUtils.getDaysOfWeekText(context, recording.getDaysOfWeek()));
 

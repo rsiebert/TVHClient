@@ -132,6 +132,7 @@ public class ChannelRecyclerViewAdapter extends RecyclerView.Adapter<ChannelRecy
 
                     @Override
                     public void onError(Exception e) {
+                        holder.iconTextView.setText(channel.getName());
                         holder.iconTextView.setVisibility(View.VISIBLE);
                         holder.iconImageView.setVisibility(View.INVISIBLE);
                     }
