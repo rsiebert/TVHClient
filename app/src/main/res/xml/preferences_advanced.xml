@@ -31,45 +31,8 @@
             android:numeric="integer"
             android:summary="Defines the time in seconds until the server must have sent a reply. Increasing the value can improve the connectivity on slow networks."
             android:title="@string/pref_connection_timeout" />
-
-        <EditTextPreference
-            android:defaultValue="3"
-            android:key="connection_retries"
-            android:numeric="integer"
-            android:summary="Defines how often the app should try to reconnect to the server when the connection has failed."
-            android:title="Connection retries" />
-
     </PreferenceCategory>
-    <PreferenceCategory android:title="EPG">
-        <EditTextPreference
-            android:defaultValue="4"
-            android:key="epg_hours_to_fetch"
-            android:numeric="integer"
-            android:summary="Number of hours of EPG data that shall be loaded for one channel from the server."
-            android:title="Amount of EPG hours to load" />
 
-        <EditTextPreference
-            android:defaultValue="2"
-            android:key="epg_fetch_time_interval"
-            android:numeric="integer"
-            android:summary="Time in hours to periodically load more EPG data from the server in the background. This interval should be smaller then the amount of EPG hours to load to avoid running out of EPG data."
-            android:title="Time interval to load more EPG data" />
-
-        <EditTextPreference
-            android:defaultValue="7"
-            android:key="epg_days_before_removal"
-            android:numeric="integer"
-            android:summary="Time in days that the EPG "
-            android:title="Remove outdated EPG data that is older than the specified number in days." />
-
-        <EditTextPreference
-            android:defaultValue="3"
-            android:key="epg_removal_time_interval"
-            android:numeric="integer"
-            android:summary="Time in hours to periodically remove outdated EPG data from the database. This prevents the database from becoming too large."
-            android:title="Time interval to remove outdated EPG data" />
-
-    </PreferenceCategory>
     <PreferenceCategory android:title="Database">
         <Preference
             android:key="clear_database"

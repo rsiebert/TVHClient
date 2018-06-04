@@ -1437,8 +1437,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
                 Intent intent = new Intent();
                 intent.putExtra("eventId", program.getNextEventId());
                 intent.putExtra("channelId", channel.getId());
-                //int maxTime = Integer.valueOf(sharedPreferences.getString("epg_hours_to_fetch", "4"));
-                //intent.putExtra("maxTime", maxTime);
+                //intent.putExtra("maxTime", 4);
                 intent.putExtra("numFollowing", 25);
                 getEvents(intent);
             }
@@ -1448,9 +1447,8 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     private void deleteEvents() {
         Timber.d("deleteEvents() called");
 
-        // Get the time that was one week before now
-        int days = Integer.valueOf(sharedPreferences.getString("epg_days_before_removal", "7"));
-        long time = new Date().getTime() - (days * 24 * 60 * 60 * 1000);
+        // Get the time that was one week (7 days in millis) before now
+        long time = new Date().getTime() - (7 * 24 * 60 * 60 * 1000);
         appRepository.getProgramData().removeItemsByTime(time);
     }
 

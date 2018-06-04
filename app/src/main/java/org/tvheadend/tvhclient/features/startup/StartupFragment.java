@@ -299,15 +299,18 @@ public class StartupFragment extends Fragment {
         epgRemovalIntent.setAction("deleteEvents");
         PendingIntent epgRemovalPendingIntent = PendingIntent.getService(activity, 0, epgRemovalIntent, 0);
 
-        int epgFetchIntervalTime = Integer.valueOf(sharedPreferences.getString("epg_fetch_time_interval", "2")) * 1000 * 60 * 60;
-        int epgRemovalIntervalTime = Integer.valueOf(sharedPreferences.getString("epg_removal_time_interval", "4")) * 1000 * 60 * 60;
-
-        // Start the intents two minutes after the service has been started for the first time
-        long firstTriggerTime = new Date().getTime() + (1000 * 60 * 2);
         // Use the alarm manager to start the intents after the specified intervals
         AlarmManager alarm = (AlarmManager) activity.getSystemService(Context.ALARM_SERVICE);
         if (alarm != null) {
+            // Start the intents two minutes after the service has been started for the first time
+            long firstTriggerTime = new Date().getTime() + (1000 * 60 * 2);
+
+            // 2 hours in millis to periodically load more EPG data from the server in the background.
+            int epgFetchIntervalTime = 2 * 1000 * 60 * 60;
             alarm.setRepeating(AlarmManager.RTC_WAKEUP, firstTriggerTime, epgFetchIntervalTime, epgFetchPendingIntent);
+
+            // 4 hours in millis to periodically remove outdated EPG data from the database.
+            int epgRemovalIntervalTime = 4 * 1000 * 60 * 60;
             alarm.setRepeating(AlarmManager.RTC_WAKEUP, firstTriggerTime, epgRemovalIntervalTime, epgRemovalPendingIntent);
         }
     }
