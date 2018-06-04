@@ -52,6 +52,11 @@ import timber.log.Timber;
 // TODO rework epg (use recyclerview horizontal scroll)
 // TODO add info via fabrics which screen is used most often
 // TODO allow playing failed recordings when the filesize is > 0
+// TODO deleted recordings are still there?
+// TODO in settings if values have changed send info back to settingslistfragment
+// TODO use viewmodel for connection list and its changes
+// TODO use fragment and back stack in settings instead of startactivity?
+// TODO call settings fragments from xml and not from settigns fragment
 
 
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, ToolbarInterface {
