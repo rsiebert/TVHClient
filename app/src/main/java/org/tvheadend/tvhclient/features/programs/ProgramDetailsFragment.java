@@ -341,7 +341,7 @@ public class ProgramDetailsFragment extends BaseFragment implements RecordingRem
                 return true;
 
             case R.id.menu_play:
-                playChannel(program.getChannelId());
+                menuUtils.handleMenuPlayChannel(program.getChannelId());
                 return true;
 
             case R.id.menu_search_imdb:

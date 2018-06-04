@@ -187,7 +187,7 @@ public class RecordingListFragment extends BaseFragment implements RecyclerViewC
                     return true;
 
                 case R.id.menu_play:
-                    playRecording(recording.getId());
+                    menuUtils.handleMenuPlayRecording(recording.getId());
                     return true;
 
                 case R.id.menu_download:

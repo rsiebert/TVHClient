@@ -287,7 +287,7 @@ public class RecordingDetailsFragment extends BaseFragment implements RecordingR
                 return true;
 
             case R.id.menu_play:
-                playRecording(recording.getId());
+                menuUtils.handleMenuPlayRecording(recording.getId());
                 return true;
 
             case R.id.menu_download:

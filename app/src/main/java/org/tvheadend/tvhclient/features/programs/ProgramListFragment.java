@@ -176,7 +176,7 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
                 return true;
 
             case R.id.menu_play:
-                playChannel(channelId);
+                menuUtils.handleMenuPlayChannel(channelId);
                 return true;
 
             case R.id.menu_genre_color_info_programs:
@@ -257,7 +257,7 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
                     return true;
 
                 case R.id.menu_play:
-                    playChannel(channelId);
+                    menuUtils.handleMenuPlayChannel(channelId);
                     return true;
 
                 case R.id.menu_add_notification:

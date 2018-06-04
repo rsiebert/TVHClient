@@ -30,6 +30,8 @@ import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.data.service.EpgSyncService;
 import org.tvheadend.tvhclient.features.download.DownloadActivity;
 import org.tvheadend.tvhclient.features.notifications.ProgramNotificationReceiver;
+import org.tvheadend.tvhclient.features.playback.PlayChannelActivity;
+import org.tvheadend.tvhclient.features.playback.PlayRecordingActivity;
 import org.tvheadend.tvhclient.features.search.SearchActivity;
 import org.tvheadend.tvhclient.features.shared.adapter.ChannelTagListAdapter;
 import org.tvheadend.tvhclient.features.shared.adapter.GenreColorDialogAdapter;
@@ -606,5 +608,25 @@ public class MenuUtils {
         if (am != null) {
             am.set(AlarmManager.RTC_WAKEUP, notificationTime, pendingIntent);
         }
+    }
+
+    public void handleMenuPlayChannel(int channelId) {
+        Activity activity = this.activity.get();
+        if (activity == null) {
+            return;
+        }
+        Intent intent = new Intent(activity, PlayChannelActivity.class);
+        intent.putExtra("channelId", channelId);
+        activity.startActivity(intent);
+    }
+
+    public void handleMenuPlayRecording(int dvrId) {
+        Activity activity = this.activity.get();
+        if (activity == null) {
+            return;
+        }
+        Intent intent = new Intent(activity, PlayRecordingActivity.class);
+        intent.putExtra("dvrId", dvrId);
+        activity.startActivity(intent);
     }
 }

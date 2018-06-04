@@ -274,7 +274,7 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
                     return true;
 
                 case R.id.menu_play:
-                    playChannel(channel.getId());
+                    menuUtils.handleMenuPlayChannel(channel.getId());
                     return true;
 
                 case R.id.menu_add_notification:
@@ -302,7 +302,7 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
     public void onClick(View view, int position) {
         if (view.getId() == R.id.icon || view.getId() == R.id.icon_text) {
             Channel channel = recyclerViewAdapter.getItem(position);
-            playChannel(channel.getId());
+            menuUtils.handleMenuPlayChannel(channel.getId());
         } else {
             showChannelDetails(position);
         }
