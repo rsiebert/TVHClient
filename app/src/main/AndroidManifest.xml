@@ -85,7 +85,7 @@
 
         <receiver android:name=".features.notifications.ProgramNotificationReceiver" />
         <receiver android:name=".features.notifications.RecordingNotificationReceiver" />
-        <activity android:name=".features.settings.SettingsAddEditConnectionActivity" />
+
         <activity android:name=".features.dvr.RecordingAddEditActivity" />
         <activity android:name=".features.dvr.recordings.RecordingDetailsActivity" />
         <activity android:name=".features.programs.ProgramListActivity" />

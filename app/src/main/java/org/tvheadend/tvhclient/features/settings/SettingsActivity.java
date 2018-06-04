@@ -11,11 +11,11 @@ import android.view.MenuItem;
 import com.afollestad.materialdialogs.folderselector.FolderChooserDialog;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.features.shared.callbacks.ToolbarInterface;
-import org.tvheadend.tvhclient.features.shared.callbacks.BackPressedInterface;
 import org.tvheadend.tvhclient.features.changelog.ChangeLogActivity;
 import org.tvheadend.tvhclient.features.information.InfoActivity;
 import org.tvheadend.tvhclient.features.purchase.UnlockerActivity;
+import org.tvheadend.tvhclient.features.shared.callbacks.BackPressedInterface;
+import org.tvheadend.tvhclient.features.shared.callbacks.ToolbarInterface;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
 import java.io.File;
@@ -48,6 +48,12 @@ public class SettingsActivity extends AppCompatActivity implements ToolbarInterf
                 switch (settingType) {
                     case "list_connections":
                         fragment = new SettingsListConnectionsFragment();
+                        break;
+                    case "add_connection":
+                        fragment = new SettingsAddConnectionFragment();
+                        break;
+                    case "edit_connection":
+                        fragment = new SettingsEditConnectionFragment();
                         break;
                     case "user_interface":
                         fragment = new SettingsUserInterfaceFragment();

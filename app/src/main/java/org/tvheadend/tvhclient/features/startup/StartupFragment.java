@@ -35,7 +35,6 @@ import org.tvheadend.tvhclient.data.service.htsp.HtspConnection;
 import org.tvheadend.tvhclient.data.service.htsp.tasks.Authenticator;
 import org.tvheadend.tvhclient.features.navigation.NavigationActivity;
 import org.tvheadend.tvhclient.features.settings.SettingsActivity;
-import org.tvheadend.tvhclient.features.settings.SettingsAddEditConnectionActivity;
 import org.tvheadend.tvhclient.features.shared.MenuUtils;
 
 import java.util.Date;
@@ -200,7 +199,8 @@ public class StartupFragment extends Fragment {
     }
 
     private void showSettingsAddNewConnection() {
-        Intent intent = new Intent(activity, SettingsAddEditConnectionActivity.class);
+        Intent intent = new Intent(activity, SettingsActivity.class);
+        intent.putExtra("setting_type", "add_connection");
         startActivity(intent);
     }
 

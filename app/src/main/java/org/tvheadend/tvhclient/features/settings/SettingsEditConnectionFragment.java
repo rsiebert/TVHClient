@@ -1,9 +1,13 @@
 package org.tvheadend.tvhclient.features.settings;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
 import org.tvheadend.tvhclient.R;
+
+import timber.log.Timber;
 
 public class SettingsEditConnectionFragment extends SettingsConnectionBaseFragment {
 
@@ -21,7 +25,6 @@ public class SettingsEditConnectionFragment extends SettingsConnectionBaseFragme
             }
         } else {
             connectionId = savedInstanceState.getInt("connection_id");
-            connectionValuesChanged = savedInstanceState.getBoolean("connection_settings_changed");
         }
 
         connection = viewModel.getConnectionByIdSync(connectionId);
@@ -30,13 +33,17 @@ public class SettingsEditConnectionFragment extends SettingsConnectionBaseFragme
     @Override
     protected void save() {
         appRepository.getConnectionData().updateItem(connection);
+
+        Timber.d("setting result");
+        Intent intent = new Intent();
+        intent.putExtra("connection_values_changed", true);
+        activity.setResult(Activity.RESULT_OK, intent);
         activity.finish();
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putInt("connection_id", connectionId);
-        outState.putBoolean("connection_settings_changed", connectionValuesChanged);
         super.onSaveInstanceState(outState);
     }
 }

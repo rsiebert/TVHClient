@@ -125,7 +125,8 @@ public class SettingsListConnectionsFragment extends ListFragment implements Bac
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_add:
-                Intent intent = new Intent(activity, SettingsAddEditConnectionActivity.class);
+                Intent intent = new Intent(activity, SettingsActivity.class);
+                intent.putExtra("setting_type", "add_connection");
                 startActivity(intent);
                 return true;
             default:
@@ -155,7 +156,8 @@ public class SettingsListConnectionsFragment extends ListFragment implements Bac
                 return true;
 
             case R.id.menu_edit:
-                intent = new Intent(activity, SettingsAddEditConnectionActivity.class);
+                intent = new Intent(activity, SettingsActivity.class);
+                intent.putExtra("setting_type", "edit_connection");
                 intent.putExtra("connection_id", connection.getId());
                 startActivity(intent);
                 mode.finish();
