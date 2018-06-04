@@ -33,8 +33,6 @@ import org.tvheadend.tvhclient.features.startup.StartupActivity;
 
 import javax.inject.Inject;
 
-import timber.log.Timber;
-
 public class SettingsListConnectionsFragment extends ListFragment implements BackPressedInterface, ActionMode.Callback, WakeOnLanTaskCallback {
 
     private ToolbarInterface toolbarInterface;
@@ -43,8 +41,7 @@ public class SettingsListConnectionsFragment extends ListFragment implements Bac
     private AppCompatActivity activity;
     @Inject
     protected AppRepository appRepository;
-    private int currentActiveConnectionId;
-    private int initialActiveConnectionId;
+    private ConnectionViewModel viewModel;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -62,7 +59,7 @@ public class SettingsListConnectionsFragment extends ListFragment implements Bac
         getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         setHasOptionsMenu(true);
 
-        ConnectionViewModel viewModel = ViewModelProviders.of(activity).get(ConnectionViewModel.class);
+        viewModel = ViewModelProviders.of(activity).get(ConnectionViewModel.class);
         viewModel.getAllConnections().observe(activity, connections -> {
             if (connections != null) {
                 connectionListAdapter.clear();
@@ -72,31 +69,8 @@ public class SettingsListConnectionsFragment extends ListFragment implements Bac
                         R.plurals.number_of_connections,
                         connectionListAdapter.getCount(),
                         connectionListAdapter.getCount()));
-
-                currentActiveConnectionId = -1;
-                for (Connection connection : connections) {
-                    if (connection.isActive()) {
-                        Timber.d("Currently active connection id: " + connection.getId());
-                        currentActiveConnectionId = connection.getId();
-                        break;
-                    }
-                }
             }
         });
-
-        if (savedInstanceState != null) {
-            initialActiveConnectionId = savedInstanceState.getInt("initialActiveConnectionId");
-        } else {
-            initialActiveConnectionId = (appRepository.getConnectionData().getActiveItem() != null) ? appRepository.getConnectionData().getActiveItem().getId() : -1;
-        }
-
-        Timber.d("Initially active connection id: " + initialActiveConnectionId);
-        Timber.d("Currently active connection id: " + currentActiveConnectionId);
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        outState.putInt("initialActiveConnectionId", initialActiveConnectionId);
     }
 
     @Override
@@ -146,6 +120,7 @@ public class SettingsListConnectionsFragment extends ListFragment implements Bac
             case R.id.menu_set_active:
                 connection.setActive(true);
                 appRepository.getConnectionData().updateItem(connection);
+                viewModel.setConnectionHasChanged(true);
                 mode.finish();
                 return true;
 
@@ -178,7 +153,6 @@ public class SettingsListConnectionsFragment extends ListFragment implements Bac
                             @Override
                             public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                                 appRepository.getConnectionData().removeItem(connection);
-                                currentActiveConnectionId = 0;
                             }
                         })
                         .onNegative(new MaterialDialog.SingleButtonCallback() {
@@ -234,22 +208,22 @@ public class SettingsListConnectionsFragment extends ListFragment implements Bac
 
     @Override
     public void onBackPressed() {
-        if (currentActiveConnectionId < 0) {
+        if (viewModel.getActiveConnectionId() < 0) {
             new MaterialDialog.Builder(activity)
                     .title("Connection will be closed")
                     .content("No active connection is defined. The existing connection to the server will be closed.")
                     .positiveText(android.R.string.ok)
                     .onPositive((dialog, which) -> reconnect())
                     .show();
-        } else if (initialActiveConnectionId != currentActiveConnectionId) {
+        } else if (viewModel.getConnectionHasChanged()) {
             new MaterialDialog.Builder(activity)
                     .title("Reconnect to server required")
-                    .content("A new active connection was defined. " +
-                            "The application will be restarted and a new initial sync will be performed.")
+                    .content("Connection settings have changed. The application will be restarted and a new initial sync will be performed.")
                     .positiveText(android.R.string.ok)
                     .onPositive((dialog, which) -> reconnect())
                     .show();
         } else {
+            viewModel.setConnectionHasChanged(false);
             activity.finish();
         }
     }
@@ -270,6 +244,8 @@ public class SettingsListConnectionsFragment extends ListFragment implements Bac
         Intent intent = new Intent(activity, StartupActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         activity.startActivity(intent);
+
+        viewModel.setConnectionHasChanged(false);
         activity.finish();
     }
 }
