@@ -22,7 +22,6 @@ import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
 
-import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.entity.ServerProfile;
@@ -95,7 +94,7 @@ public class SettingsProfilesFragment extends BasePreferenceFragment implements 
             }
         });
 
-        if (!MainApplication.getInstance().isUnlocked()) {
+        if (!isUnlocked) {
             castingProfilesPreference.setEnabled(false);
         }
     }
@@ -139,7 +138,7 @@ public class SettingsProfilesFragment extends BasePreferenceFragment implements 
     public void onBackPressed() {
         serverStatus.setPlaybackServerProfileId(playbackServerProfileId);
         serverStatus.setRecordingServerProfileId(recordingServerProfileId);
-        if (MainApplication.getInstance().isUnlocked()) {
+        if (isUnlocked) {
             serverStatus.setCastingServerProfileId(castingServerProfileId);
         }
         appRepository.getServerStatusData().updateItem(serverStatus);
