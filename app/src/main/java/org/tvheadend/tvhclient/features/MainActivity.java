@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
@@ -33,7 +34,6 @@ import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.features.search.SearchRequestInterface;
-import org.tvheadend.tvhclient.features.shared.MenuUtils;
 import org.tvheadend.tvhclient.features.shared.callbacks.ToolbarInterface;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
@@ -53,15 +53,12 @@ import timber.log.Timber;
 // TODO add info via fabrics which screen is used most often
 // TODO allow playing failed recordings when the filesize is > 0
 // TODO deleted recordings are still there?
-// TODO in settings if values have changed send info back to settingslistfragment
-// TODO use viewmodel for connection list and its changes
-// TODO use fragment and back stack in settings instead of startactivity?
-// TODO call settings fragments from xml and not from settigns fragment
+// TODO show snackbar connecting to server, connected when authenticated, sync done when required...
+// TODO listen to network changes and inform the user and restart service if required
 
 
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, ToolbarInterface {
 
-    protected MenuUtils menuUtils;
     private MenuItem searchMenuItem;
     private SearchView searchView;
     private MenuItem mediaRouteMenuItem;
@@ -177,8 +174,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         }
 
         isUnlocked = MainApplication.getInstance().isUnlocked();
-        menuUtils = new MenuUtils(this);
-
         showCastingMiniController = isUnlocked && sharedPreferences.getBoolean("casting_minicontroller_enabled", false);
         miniController = findViewById(R.id.cast_mini_controller);
     }
@@ -260,16 +255,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             searchView.setOnSuggestionListener(this);
         }
         return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_refresh:
-                menuUtils.handleMenuReconnectSelection();
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     @Override

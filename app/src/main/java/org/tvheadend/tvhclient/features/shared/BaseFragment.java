@@ -4,6 +4,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
 import android.view.View;
 
 import org.tvheadend.tvhclient.MainApplication;
@@ -55,5 +56,15 @@ public abstract class BaseFragment extends Fragment {
         View detailsFrame = activity.findViewById(R.id.right_fragment);
         isDualPane = detailsFrame != null && detailsFrame.getVisibility() == View.VISIBLE;
         setHasOptionsMenu(true);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_refresh:
+                menuUtils.handleMenuReconnectSelection();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
