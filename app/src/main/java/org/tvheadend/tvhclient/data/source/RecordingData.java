@@ -26,9 +26,7 @@ public class RecordingData extends BaseData implements DataSourceInterface<Recor
     }
 
     public void addItems(List<Recording> items) {
-        for (Recording recording : items) {
-            addItem(recording);
-        }
+        new ItemsHandlerTask(db, items, INSERT_ALL).execute();
     }
 
     @Override
@@ -188,6 +186,9 @@ public class RecordingData extends BaseData implements DataSourceInterface<Recor
                     } else {
                         db.getRecordingDao().delete(recordings);
                     }
+                    break;
+                case INSERT_ALL:
+                    db.getRecordingDao().insert(recordings);
                     break;
             }
             return null;

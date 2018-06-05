@@ -80,6 +80,9 @@ public interface RecordingDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Recording recording);
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insert(List<Recording> recordings);
+
     @Update
     void update(Recording recording);
 
