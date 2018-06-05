@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.data.service.EpgSyncService;
+import org.tvheadend.tvhclient.data.service.EpgSyncTask;
 import org.tvheadend.tvhclient.features.MainActivity;
 import org.tvheadend.tvhclient.features.channels.ChannelViewModel;
 import org.tvheadend.tvhclient.features.download.DownloadRecordingManager;
@@ -74,4 +75,6 @@ public interface AppComponent {
     void inject(MigrateUtils migrateUtils);
 
     void inject(DownloadRecordingManager downloadRecordingManager);
+
+    void inject(EpgSyncTask epgSyncTask);
 }

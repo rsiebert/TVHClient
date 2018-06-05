@@ -7,13 +7,13 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 
 import org.tvheadend.tvhclient.BuildConfig;
+import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.data.entity.ChannelTag;
@@ -45,19 +45,24 @@ import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import javax.inject.Inject;
+
 import timber.log.Timber;
 
 public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener, HtspConnection.Listener {
 
+    @Inject
     protected AppRepository appRepository;
+    @Inject
+    protected SharedPreferences sharedPreferences;
+    @Inject
+    protected Context context;
     private final int connectionTimeout;
     private final int connectionId;
     private int htspVersion;
     private boolean initialSyncCompleted;
     private boolean initialSyncRequired;
-    private final Context context;
     private final HtspMessage.Dispatcher dispatcher;
-    private final SharedPreferences sharedPreferences;
     private final Handler handler;
 
     private final ArrayList<Channel> pendingChannelOps = new ArrayList<>();
@@ -70,17 +75,16 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         DONE
     }
 
-    EpgSyncTask(Context context, @NonNull HtspMessage.Dispatcher dispatcher, int connectionId, AppRepository appRepository) {
-        this.context = context;
-        this.dispatcher = dispatcher;
-        this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+    EpgSyncTask(@NonNull HtspMessage.Dispatcher dispatcher, int connectionId) {
+        MainApplication.getComponent().inject(this);
         HandlerThread handlerThread = new HandlerThread("EpgSyncTask Handler Thread");
         handlerThread.start();
+
+        this.dispatcher = dispatcher;
         this.handler = new Handler(handlerThread.getLooper());
         this.connectionTimeout = Integer.valueOf(sharedPreferences.getString("connectionTimeout", "5")) * 1000;
         this.htspVersion = 13;
         this.connectionId = connectionId;
-        this.appRepository = appRepository;
     }
 
 
@@ -785,17 +789,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         if (pendingChannelOps.isEmpty()) {
             return;
         }
-
-        final int steps = 25;
-        final int listSize = pendingChannelOps.size();
-        int fromIndex = 0;
-        while (fromIndex < listSize) {
-            int toIndex = (fromIndex + steps >= listSize) ? listSize : fromIndex + steps;
-            // Apply the batch only as a sublist of the entire list
-            // so we can send out the number of saved operations to any listeners
-            appRepository.getChannelData().addItems(new ArrayList<>(pendingChannelOps.subList(fromIndex, toIndex)));
-            fromIndex = toIndex;
-        }
+        appRepository.getChannelData().addItems(pendingChannelOps);
         pendingChannelOps.clear();
     }
 
@@ -818,26 +812,17 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     private void flushPendingRecordingsOps() {
         Timber.d("Saving recordings...");
 
-        // Remove all recordings to avoid having outdated ones in
-        // the database the are not existent anymore on the server.
-        // This could be the case when the app was offline for a while
-        // and we could not get any updates of removed recordings from the server
+        // Remove all recordings from the database to prevent being out of sync with the server.
+        // This could be the case when the app was offline for a while and it did not receive
+        // any recording removal information from the server. During the initial sync the
+        // server only provides the list of available recordings.
         appRepository.getRecordingData().removeItems();
 
         if (pendingRecordingsOps.isEmpty()) {
             return;
         }
 
-        final int steps = 25;
-        final int listSize = pendingRecordingsOps.size();
-        int fromIndex = 0;
-        while (fromIndex < listSize) {
-            int toIndex = (fromIndex + steps >= listSize) ? listSize : fromIndex + steps;
-            // Apply the batch only as a sublist of the entire list
-            // so we can send out the number of saved operations to any listeners
-            appRepository.getRecordingData().addItems(new ArrayList<>(pendingRecordingsOps.subList(fromIndex, toIndex)));
-            fromIndex = toIndex + 1;
-        }
+        appRepository.getRecordingData().addItems(pendingRecordingsOps);
         pendingRecordingsOps.clear();
     }
 
@@ -848,7 +833,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         }
 
         // Apply the batch of Operations
-        final int steps = 50;
+        final int steps = 250;
         final int listSize = pendingEventOps.size();
         int fromIndex = 0;
         while (fromIndex < listSize) {
