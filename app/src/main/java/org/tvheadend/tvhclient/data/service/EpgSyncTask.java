@@ -61,7 +61,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     private final Handler handler;
 
     private final ArrayList<Channel> pendingChannelOps = new ArrayList<>();
-    private final ArrayList<Recording> pendingRecordedProgramOps = new ArrayList<>();
+    private final ArrayList<Recording> pendingRecordingsOps = new ArrayList<>();
     private final ArrayList<Program> pendingEventOps = new ArrayList<>();
     private final Queue<String> pendingChannelLogoFetches = new ConcurrentLinkedQueue<>();
 
@@ -526,7 +526,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         Recording recording = EpgSyncUtils.convertMessageToRecordingModel(new Recording(), msg);
         recording.setConnectionId(connectionId);
         if (!initialSyncCompleted) {
-            pendingRecordedProgramOps.add(recording);
+            pendingRecordingsOps.add(recording);
         } else {
             appRepository.getRecordingData().addItem(recording);
         }
@@ -543,7 +543,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         Recording recording = appRepository.getRecordingData().getItemById(msg.getInteger("id"));
         Recording updatedRecording = EpgSyncUtils.convertMessageToRecordingModel(recording, msg);
         if (!initialSyncCompleted) {
-            pendingRecordedProgramOps.add(updatedRecording);
+            pendingRecordingsOps.add(updatedRecording);
         } else {
             appRepository.getRecordingData().updateItem(updatedRecording);
         }
@@ -757,7 +757,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
 
         // Flush all received data to the database
         flushPendingChannelOps();
-        flushPendingDvrEntryOps();
+        flushPendingRecordingsOps();
         flushPendingEventOps();
         flushPendingChannelLogoFetches();
 
@@ -815,7 +815,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         pendingChannelLogoFetches.clear();
     }
 
-    private void flushPendingDvrEntryOps() {
+    private void flushPendingRecordingsOps() {
         Timber.d("Saving recordings...");
 
         // Remove all recordings to avoid having outdated ones in
@@ -824,21 +824,21 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         // and we could not get any updates of removed recordings from the server
         appRepository.getRecordingData().removeItems();
 
-        if (pendingRecordedProgramOps.isEmpty()) {
+        if (pendingRecordingsOps.isEmpty()) {
             return;
         }
 
         final int steps = 25;
-        final int listSize = pendingRecordedProgramOps.size();
+        final int listSize = pendingRecordingsOps.size();
         int fromIndex = 0;
         while (fromIndex < listSize) {
             int toIndex = (fromIndex + steps >= listSize) ? listSize : fromIndex + steps;
             // Apply the batch only as a sublist of the entire list
             // so we can send out the number of saved operations to any listeners
-            appRepository.getRecordingData().addItems(new ArrayList<>(pendingRecordedProgramOps.subList(fromIndex, toIndex)));
+            appRepository.getRecordingData().addItems(new ArrayList<>(pendingRecordingsOps.subList(fromIndex, toIndex)));
             fromIndex = toIndex + 1;
         }
-        pendingRecordedProgramOps.clear();
+        pendingRecordingsOps.clear();
     }
 
     private void flushPendingEventOps() {
