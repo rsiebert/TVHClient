@@ -817,15 +817,16 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
 
     private void flushPendingDvrEntryOps() {
         Timber.d("Saving recordings...");
-        if (pendingRecordedProgramOps.isEmpty()) {
-            return;
-        }
 
         // Remove all recordings to avoid having outdated ones in
         // the database the are not existent anymore on the server.
         // This could be the case when the app was offline for a while
         // and we could not get any updates of removed recordings from the server
         appRepository.getRecordingData().removeItems();
+
+        if (pendingRecordedProgramOps.isEmpty()) {
+            return;
+        }
 
         final int steps = 25;
         final int listSize = pendingRecordedProgramOps.size();
