@@ -22,6 +22,7 @@ import android.widget.ProgressBar;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Recording;
+import org.tvheadend.tvhclient.features.download.DownloadPermissionGrantedInterface;
 import org.tvheadend.tvhclient.features.dvr.RecordingAddEditActivity;
 import org.tvheadend.tvhclient.features.playback.PlayRecordingActivity;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
@@ -29,7 +30,7 @@ import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallba
 
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class RecordingListFragment extends BaseFragment implements RecyclerViewClickCallback, Filter.FilterListener {
+public class RecordingListFragment extends BaseFragment implements RecyclerViewClickCallback, Filter.FilterListener, DownloadPermissionGrantedInterface {
 
     protected RecordingRecyclerViewAdapter recyclerViewAdapter;
     protected RecyclerView recyclerView;
@@ -113,7 +114,6 @@ public class RecordingListFragment extends BaseFragment implements RecyclerViewC
     }
 
     protected void showRecordingDetails(int position) {
-        selectedListPosition = position;
         Recording recording = recyclerViewAdapter.getItem(position);
         if (recording == null) {
             return;
@@ -210,6 +210,7 @@ public class RecordingListFragment extends BaseFragment implements RecyclerViewC
 
     @Override
     public void onClick(View view, int position) {
+        selectedListPosition = position;
         if (view.getId() == R.id.icon || view.getId() == R.id.icon_text) {
             Recording recording = recyclerViewAdapter.getItem(position);
             Intent playIntent = new Intent(activity, PlayRecordingActivity.class);
@@ -229,5 +230,13 @@ public class RecordingListFragment extends BaseFragment implements RecyclerViewC
     public void onFilterComplete(int i) {
         toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.results,
                 recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
+    }
+
+    @Override
+    public void downloadRecording() {
+        Recording recording = recyclerViewAdapter.getItem(selectedListPosition);
+        if (recording != null) {
+            menuUtils.handleMenuDownloadSelection(recording.getId());
+        }
     }
 }

@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -33,6 +34,7 @@ import com.google.android.gms.cast.framework.SessionManagerListener;
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
+import org.tvheadend.tvhclient.features.download.DownloadPermissionGrantedInterface;
 import org.tvheadend.tvhclient.features.search.SearchRequestInterface;
 import org.tvheadend.tvhclient.features.shared.callbacks.ToolbarInterface;
 import org.tvheadend.tvhclient.utils.MiscUtils;
@@ -312,6 +314,21 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                     introductoryOverlay.show();
                 }
             });
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (grantResults[0] == PackageManager.PERMISSION_GRANTED
+                && permissions[0].equals("android.permission.WRITE_EXTERNAL_STORAGE")) {
+
+            Timber.d("Storage permission granted");
+            Fragment fragment = getSupportFragmentManager().findFragmentById(isDualPane ? R.id.details : R.id.main);
+            if (fragment != null && fragment instanceof DownloadPermissionGrantedInterface) {
+                ((DownloadPermissionGrantedInterface) fragment).downloadRecording();
+            }
         }
     }
 }

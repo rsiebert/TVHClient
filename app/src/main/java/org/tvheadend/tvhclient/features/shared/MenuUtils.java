@@ -28,7 +28,7 @@ import org.tvheadend.tvhclient.data.entity.ServerStatus;
 import org.tvheadend.tvhclient.data.entity.TimerRecording;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.data.service.EpgSyncService;
-import org.tvheadend.tvhclient.features.download.DownloadActivity;
+import org.tvheadend.tvhclient.features.download.DownloadRecordingManager;
 import org.tvheadend.tvhclient.features.notifications.ProgramNotificationReceiver;
 import org.tvheadend.tvhclient.features.playback.PlayChannelActivity;
 import org.tvheadend.tvhclient.features.playback.PlayRecordingActivity;
@@ -177,9 +177,7 @@ public class MenuUtils {
         if (activity == null) {
             return;
         }
-        Intent intent = new Intent(activity, DownloadActivity.class);
-        intent.putExtra("dvrId", dvrId);
-        activity.startActivity(intent);
+        new DownloadRecordingManager(activity, dvrId);
     }
 
     public void handleMenuSearchWebSelection(String title) {

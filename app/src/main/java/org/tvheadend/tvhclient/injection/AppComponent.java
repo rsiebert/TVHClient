@@ -8,7 +8,7 @@ import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.data.service.EpgSyncService;
 import org.tvheadend.tvhclient.features.MainActivity;
 import org.tvheadend.tvhclient.features.channels.ChannelViewModel;
-import org.tvheadend.tvhclient.features.download.DownloadActivity;
+import org.tvheadend.tvhclient.features.download.DownloadRecordingManager;
 import org.tvheadend.tvhclient.features.dvr.recordings.RecordingViewModel;
 import org.tvheadend.tvhclient.features.dvr.series_recordings.SeriesRecordingViewModel;
 import org.tvheadend.tvhclient.features.dvr.timer_recordings.TimerRecordingViewModel;
@@ -63,8 +63,6 @@ public interface AppComponent {
 
     void inject(ChannelViewModel channelViewModel);
 
-    void inject(DownloadActivity downloadActivity);
-
     void inject(MenuUtils menuUtils);
 
     void inject(SettingsListConnectionsFragment settingsListConnectionsFragment);
@@ -74,4 +72,6 @@ public interface AppComponent {
     void inject(EpgSyncService epgSyncService);
 
     void inject(MigrateUtils migrateUtils);
+
+    void inject(DownloadRecordingManager downloadRecordingManager);
 }
