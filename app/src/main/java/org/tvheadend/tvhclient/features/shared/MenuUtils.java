@@ -139,22 +139,26 @@ public class MenuUtils {
         if (activity == null) {
             return;
         }
-        // Fill the channel tag adapter with the available channel tags
-        List<ChannelTag> channelTagList = appRepository.getChannelTagData().getItems();
 
-        // Add the default tag (all channels) to the list after it has been sorted
+        // Create a default tag (All channels)
         ChannelTag tag = new ChannelTag();
         tag.setTagId(0);
         tag.setTagName(activity.getString(R.string.all_channels));
+
+        // Add the default tag to the beginning of the list to indicate
+        // that no tag is selected and all channels shall be shown
+        List<ChannelTag> channelTagList = appRepository.getChannelTagData().getItems();
         channelTagList.add(0, tag);
 
-        final ChannelTagListAdapter channelTagListAdapter = new ChannelTagListAdapter(activity, channelTagList, channelTagId);
+        ChannelTagListAdapter channelTagListAdapter = new ChannelTagListAdapter(activity, channelTagList, channelTagId);
+
         // Show the dialog that shows all available channel tags. When the
         // user has selected a tag, restart the loader to loadRecordingById the updated channel list
         final MaterialDialog dialog = new MaterialDialog.Builder(activity)
                 .title(R.string.tags)
                 .adapter(channelTagListAdapter, null)
                 .build();
+
         // Set the callback to handle clicks. This needs to be done after the
         // dialog creation so that the inner method has access to the dialog variable
         channelTagListAdapter.setCallback(which -> {
@@ -168,13 +172,13 @@ public class MenuUtils {
         dialog.show();
     }
 
-    public void handleMenuDownloadSelection(int recId) {
+    public void handleMenuDownloadSelection(int dvrId) {
         Activity activity = this.activity.get();
         if (activity == null) {
             return;
         }
         Intent intent = new Intent(activity, DownloadActivity.class);
-        intent.putExtra("dvrId", recId);
+        intent.putExtra("dvrId", dvrId);
         activity.startActivity(intent);
     }
 
@@ -469,7 +473,7 @@ public class MenuUtils {
             return;
         }
 
-        String[] dvrConfigList = appRepository.getServerProfileData().getRecordingProfileNames();
+        final String[] dvrConfigList = appRepository.getServerProfileData().getRecordingProfileNames();
 
         // Get the selected recording profile to highlight the
         // correct item in the list of the selection dialog
@@ -484,10 +488,6 @@ public class MenuUtils {
                 }
             }
         }
-
-        // Create new variables because the dialog needs them as final
-        final String[] dcList = dvrConfigList;
-
         // Create the dialog to show the available profiles
         new MaterialDialog.Builder(activity)
                 .title(R.string.select_dvr_config)
@@ -500,7 +500,7 @@ public class MenuUtils {
                         intent.setAction("addDvrEntry");
                         intent.putExtra("eventId", eventId);
                         intent.putExtra("channelId", channelId);
-                        intent.putExtra("configName", dcList[which]);
+                        intent.putExtra("configName", dvrConfigList[which]);
                         activity.startService(intent);
                         return true;
                     }
