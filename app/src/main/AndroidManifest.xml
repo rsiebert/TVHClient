@@ -45,7 +45,9 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <activity android:name=".features.startup.StartupActivity">
+        <activity
+            android:name=".features.startup.StartupActivity"
+            android:theme="@android:style/Theme.NoTitleBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
