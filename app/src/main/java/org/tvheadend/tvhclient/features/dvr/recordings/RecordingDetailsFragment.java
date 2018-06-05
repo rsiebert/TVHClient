@@ -261,6 +261,10 @@ public class RecordingDetailsFragment extends BaseFragment implements RecordingR
 
         } else if (recording.isFailed() || recording.isRemoved() || recording.isMissed() || recording.isAborted()) {
             menu.findItem(R.id.menu_record_remove).setVisible(true);
+            // Allow playing a failed recording which size is not zero
+            if (recording.getDataSize() > 0) {
+                menu.findItem(R.id.menu_play).setVisible(true);
+            }
         }
     }
 

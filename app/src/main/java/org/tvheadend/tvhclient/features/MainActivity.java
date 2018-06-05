@@ -53,7 +53,6 @@ import timber.log.Timber;
 // TODO move the conversion from ms to s or minutes from the intents into the entity getter and setter
 // TODO rework epg (use recyclerview horizontal scroll)
 // TODO add info via fabrics which screen is used most often
-// TODO allow playing failed recordings when the filesize is > 0
 // TODO deleted recordings are still there?
 // TODO show snackbar connecting to server, connected when authenticated, sync done when required...
 // TODO listen to network changes and inform the user and restart service if required
