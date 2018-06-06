@@ -16,7 +16,6 @@ import android.widget.TextView;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.features.playback.PlayChannelActivity;
-import org.tvheadend.tvhclient.features.shared.UIUtils;
 import org.tvheadend.tvhclient.utils.Constants;
 
 import java.util.Comparator;
@@ -115,7 +114,7 @@ public class ProgramGuideChannelListAdapter extends ArrayAdapter<Channel> implem
 
             // Show the regular or large channel icons. Otherwise show the channel name only
             // Assign the channel icon image or a null image
-            Bitmap iconBitmap = UIUtils.getCachedIcon(context, c.getIcon());
+            Bitmap iconBitmap = null;//UIUtils.getCachedIcon(context, c.getIcon());
             holder.iconImageView.setImageBitmap(iconBitmap);
             holder.iconTextView.setText(c.getName());
 

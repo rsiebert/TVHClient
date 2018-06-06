@@ -2,11 +2,10 @@ package org.tvheadend.tvhclient.features.shared;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.SparseArray;
@@ -15,10 +14,11 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Program;
 import org.tvheadend.tvhclient.data.entity.Recording;
 
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+
+import javax.annotation.Nullable;
 
 import static org.tvheadend.tvhclient.utils.MiscUtils.convertUrlToHashString;
 
@@ -87,10 +87,8 @@ public class UIUtils {
         }
     }
 
-    public static Drawable getRecordingState(Context context, Recording recording) {
-        if (recording == null) {
-            return null;
-        } else if (recording.isFailed()) {
+    public static Drawable getRecordingState(Context context, @NonNull final Recording recording) {
+        if (recording.isFailed()) {
             return context.getResources().getDrawable(R.drawable.ic_error_small);
         } else if (recording.isCompleted()) {
             return context.getResources().getDrawable(R.drawable.ic_success_small);
@@ -105,7 +103,7 @@ public class UIUtils {
         }
     }
 
-    public static String getRecordingFailedReasonText(Context context, Recording recording) {
+    public static String getRecordingFailedReasonText(Context context, @NonNull final Recording recording) {
         if (recording.isAborted()) {
             return context.getResources().getString(R.string.recording_canceled);
         } else if (recording.isMissed()) {
@@ -249,7 +247,7 @@ public class UIUtils {
         }
     }
 
-    public static String getSeriesInfo(Context context, Program program) {
+    public static String getSeriesInfo(Context context, @NonNull final Program program) {
 
         final String season = context.getResources().getString(R.string.season);
         final String episode = context.getResources().getString(R.string.episode);
@@ -283,7 +281,7 @@ public class UIUtils {
         return seriesInfo;
     }
 
-    public static String getContentTypeText(Context context, int ct) {
+    public static String getContentTypeText(Context context, int contentType) {
         SparseArray<String> ret = new SparseArray<>();
 
         String[] s = context.getResources().getStringArray(R.array.pr_content_type0);
@@ -334,26 +332,13 @@ public class UIUtils {
         for (int i = 0; i < s.length; i++) {
             ret.append(0xb0 + i, s[i]);
         }
-        return ret.get(ct, context.getString(R.string.no_data));
+        return ret.get(contentType, context.getString(R.string.no_data));
     }
 
-    /**
-     * Returns the cached image file. When no channel icon shall be shown return
-     * null instead of the icon. The icon will not be shown anyway, so returning
-     * null will drastically reduce memory consumption.
-     *
-     * @param url The url of the file
-     * @return The actual image of the file as a bitmap
-     */
-    public static Bitmap getCachedIcon(Context context, final String url) {
-        if (url == null || url.length() == 0) {
+    public static String getIconUrl(Context context, @Nullable final String url) {
+        if (TextUtils.isEmpty(url)) {
             return null;
         }
-        File file = new File(context.getCacheDir(), convertUrlToHashString(url) + ".png");
-        return BitmapFactory.decodeFile(file.toString());
-    }
-
-    public static String getIconUrl(Context context, String url) {
         return "file://" + context.getCacheDir() + "/" + convertUrlToHashString(url) + ".png";
     }
 

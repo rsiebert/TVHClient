@@ -1,10 +1,10 @@
 package org.tvheadend.tvhclient.utils;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.ServerProfile;
@@ -26,7 +26,7 @@ public class MiscUtils {
      * @param url The url that shall be converted
      * @return The hash value or the url or an empty string if an error occurred
      */
-    public static String convertUrlToHashString(String url) {
+    public static String convertUrlToHashString(@NonNull final String url) {
         try {
             MessageDigest digest = MessageDigest.getInstance("MD5");
             digest.update(url.getBytes());
@@ -59,9 +59,9 @@ public class MiscUtils {
      * Change the language to the defined setting. If the default is set then
      * let the application decide which language shall be used.
      *
-     * @param context Activity context
+     * @param context Context context
      */
-    public static void setLanguage(final Activity context) {
+    public static void setLanguage(final Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String locale = prefs.getString("language", "default");
         if (!locale.equals("default")) {
