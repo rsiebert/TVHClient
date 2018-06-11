@@ -545,11 +545,13 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     private void handleDvrEntryUpdate(HtspMessage msg) {
         // Get the existing recording
         Recording recording = appRepository.getRecordingData().getItemById(msg.getInteger("id"));
-        Recording updatedRecording = EpgSyncUtils.convertMessageToRecordingModel(recording, msg);
-        if (!initialSyncCompleted) {
-            pendingRecordingsOps.add(updatedRecording);
-        } else {
-            appRepository.getRecordingData().updateItem(updatedRecording);
+        if (recording != null) {
+            Recording updatedRecording = EpgSyncUtils.convertMessageToRecordingModel(recording, msg);
+            if (!initialSyncCompleted) {
+                pendingRecordingsOps.add(updatedRecording);
+            } else {
+                appRepository.getRecordingData().updateItem(updatedRecording);
+            }
         }
     }
 
@@ -757,8 +759,6 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     private void handleInitialSyncCompleted() {
         Timber.d("Received initial data from server");
 
-        sendStatusMessage("Saving received data...");
-
         // Flush all received data to the database
         flushPendingChannelOps();
         flushPendingRecordingsOps();
@@ -781,7 +781,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
 
         storeLastUpdate();
 
-        sendStatusMessage("Sync with server done");
+        sendStatusMessage("Loading data from server finished.");
     }
 
     private void flushPendingChannelOps() {
