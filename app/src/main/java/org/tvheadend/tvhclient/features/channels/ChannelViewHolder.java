@@ -31,30 +31,30 @@ import butterknife.ButterKnife;
 public class ChannelViewHolder extends RecyclerView.ViewHolder {
 
     @BindView(R.id.icon)
-    private ImageView iconImageView;
+    ImageView iconImageView;
     @BindView(R.id.icon_text)
-    private TextView iconTextView;
+    TextView iconTextView;
     @BindView(R.id.title)
-    private TextView titleTextView;
+    TextView titleTextView;
     @BindView(R.id.subtitle)
-    private TextView subtitleTextView;
+    TextView subtitleTextView;
     @BindView(R.id.next_title)
-    private TextView nextTitleTextView;
+    TextView nextTitleTextView;
     @BindView(R.id.channel)
-    private TextView channelTextView;
+    TextView channelTextView;
     @BindView(R.id.time)
-    private TextView timeTextView;
+    TextView timeTextView;
     @BindView(R.id.duration)
-    private TextView durationTextView;
+    TextView durationTextView;
     @BindView(R.id.progressbar)
-    private ProgressBar progressbar;
+    ProgressBar progressbar;
     @BindView(R.id.state)
-    private ImageView stateImageView;
+    ImageView stateImageView;
     @BindView(R.id.genre)
-    private TextView genreTextView;
+    TextView genreTextView;
     @Nullable
     @BindView(R.id.dual_pane_list_item_selection)
-    private ImageView dualPaneListItemSelection;
+    ImageView dualPaneListItemSelection;
 
     ChannelViewHolder(View view) {
         super(view);

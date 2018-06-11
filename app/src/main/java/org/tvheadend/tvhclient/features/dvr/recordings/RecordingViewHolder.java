@@ -25,47 +25,47 @@ import butterknife.ButterKnife;
 public class RecordingViewHolder extends RecyclerView.ViewHolder {
 
     @BindView(R.id.icon)
-    private ImageView iconImageView;
+    ImageView iconImageView;
     @BindView(R.id.icon_text)
-    private TextView iconTextView;
+    TextView iconTextView;
     @BindView(R.id.title)
-    private TextView titleTextView;
+    TextView titleTextView;
     @BindView(R.id.subtitle)
-    private TextView subtitleTextView;
+    TextView subtitleTextView;
     @BindView(R.id.summary)
-    private TextView summaryTextView;
+    TextView summaryTextView;
     @BindView(R.id.is_series_recording)
-    private TextView isSeriesRecordingTextView;
+    TextView isSeriesRecordingTextView;
     @BindView(R.id.is_timer_recording)
-    private TextView isTimerRecordingTextView;
+    TextView isTimerRecordingTextView;
     @BindView(R.id.channel)
-    private TextView channelTextView;
+    TextView channelTextView;
     @BindView(R.id.start)
-    private TextView startTimeTextView;
+    TextView startTimeTextView;
     @BindView(R.id.stop)
-    private TextView stopTimeTextView;
+    TextView stopTimeTextView;
     @BindView(R.id.date)
-    private TextView dateTextView;
+    TextView dateTextView;
     @BindView(R.id.duration)
-    private TextView durationTextView;
+    TextView durationTextView;
     @Nullable
     @BindView(R.id.state)
-    private ImageView stateImageView;
+    ImageView stateImageView;
     @BindView(R.id.description)
-    private TextView descriptionTextView;
+    TextView descriptionTextView;
     @BindView(R.id.failed_reason)
-    private TextView failedReasonTextView;
+    TextView failedReasonTextView;
     @BindView(R.id.enabled)
-    private TextView isEnabledTextView;
+    TextView isEnabledTextView;
     @Nullable
     @BindView(R.id.dual_pane_list_item_selection)
-    private ImageView dualPaneListItemSelection;
+    ImageView dualPaneListItemSelection;
 
     RecordingViewHolder(View view) {
         super(view);
         ButterKnife.bind(this, view);
     }
-    
+
     public void bindData(Context context, final Recording recording, boolean selected, int htspVersion, RecyclerViewClickCallback clickCallback) {
         itemView.setTag(recording);
 

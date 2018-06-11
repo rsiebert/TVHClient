@@ -25,28 +25,28 @@ import butterknife.ButterKnife;
 public class SeriesRecordingViewHolder extends RecyclerView.ViewHolder {
 
     @BindView(R.id.icon)
-    private ImageView iconImageView;
+    ImageView iconImageView;
     @BindView(R.id.icon_text)
-    private TextView iconTextView;
+    TextView iconTextView;
     @BindView(R.id.title)
-    private TextView titleTextView;
+    TextView titleTextView;
     @BindView(R.id.name)
-    private TextView nameTextView;
+    TextView nameTextView;
     @BindView(R.id.channel)
-    private TextView channelTextView;
+    TextView channelTextView;
     @BindView(R.id.days_of_week)
-    private TextView daysOfWeekTextView;
+    TextView daysOfWeekTextView;
     @BindView(R.id.start)
-    private TextView startTimeTextView;
+    TextView startTimeTextView;
     @BindView(R.id.stop)
-    private TextView stopTimeTextView;
+    TextView stopTimeTextView;
     @BindView(R.id.duration)
-    private TextView durationTextView;
+    TextView durationTextView;
     @BindView(R.id.enabled)
-    private TextView isEnabledTextView;
+    TextView isEnabledTextView;
     @Nullable
     @BindView(R.id.dual_pane_list_item_selection)
-    private ImageView dualPaneListItemSelection;
+    ImageView dualPaneListItemSelection;
 
     SeriesRecordingViewHolder(View view) {
         super(view);
