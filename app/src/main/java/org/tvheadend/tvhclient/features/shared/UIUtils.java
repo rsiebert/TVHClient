@@ -87,8 +87,10 @@ public class UIUtils {
         }
     }
 
-    public static Drawable getRecordingState(Context context, @NonNull final Recording recording) {
-        if (recording.isFailed()) {
+    public static Drawable getRecordingState(Context context, @Nullable final Recording recording) {
+        if (recording == null) {
+            return null;
+        } else if (recording.isFailed()) {
             return context.getResources().getDrawable(R.drawable.ic_error_small);
         } else if (recording.isCompleted()) {
             return context.getResources().getDrawable(R.drawable.ic_success_small);
@@ -103,8 +105,10 @@ public class UIUtils {
         }
     }
 
-    public static String getRecordingFailedReasonText(Context context, @NonNull final Recording recording) {
-        if (recording.isAborted()) {
+    public static String getRecordingFailedReasonText(Context context, @Nullable final Recording recording) {
+        if (recording == null) {
+            return null;
+        } else if (recording.isAborted()) {
             return context.getResources().getString(R.string.recording_canceled);
         } else if (recording.isMissed()) {
             return context.getResources().getString(R.string.recording_time_missed);
