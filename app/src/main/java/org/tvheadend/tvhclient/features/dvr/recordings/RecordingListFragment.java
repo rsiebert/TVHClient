@@ -62,7 +62,7 @@ public class RecordingListFragment extends BaseFragment implements RecyclerViewC
             }
         }
 
-        recyclerViewAdapter = new RecordingRecyclerViewAdapter(activity, this, htspVersion);
+        recyclerViewAdapter = new RecordingRecyclerViewAdapter(activity, isDualPane, this, htspVersion);
         recyclerView.setLayoutManager(new LinearLayoutManager(activity));
         recyclerView.addItemDecoration(new DividerItemDecoration(activity, LinearLayoutManager.VERTICAL));
         recyclerView.setItemAnimator(new DefaultItemAnimator());

@@ -21,15 +21,17 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class ChannelRecyclerViewAdapter extends RecyclerView.Adapter implements Filterable {
 
     private final RecyclerViewClickCallback clickCallback;
+    private final boolean isDualPane;
     private List<Recording> recordingList = new ArrayList<>();
     private List<Channel> channelList = new ArrayList<>();
     private List<Channel> channelListFiltered = new ArrayList<>();
     private Context context;
     private int selectedPosition = 0;
 
-    ChannelRecyclerViewAdapter(Context context, RecyclerViewClickCallback clickCallback) {
+    ChannelRecyclerViewAdapter(Context context, boolean isDualPane, RecyclerViewClickCallback clickCallback) {
         this.context = context;
         this.clickCallback = clickCallback;
+        this.isDualPane = isDualPane;
     }
 
     @NonNull
@@ -67,7 +69,7 @@ public class ChannelRecyclerViewAdapter extends RecyclerView.Adapter implements 
 
     @Override
     public int getItemViewType(final int position) {
-        return R.layout.channel_list_adapter;
+        return isDualPane ? R.layout.channel_list_adapter_dualpane : R.layout.channel_list_adapter;
     }
 
     public void setPosition(int pos) {

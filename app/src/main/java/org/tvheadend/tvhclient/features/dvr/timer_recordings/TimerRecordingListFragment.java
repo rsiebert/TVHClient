@@ -68,7 +68,7 @@ public class TimerRecordingListFragment extends BaseFragment implements Recycler
             }
         }
 
-        recyclerViewAdapter = new TimerRecordingRecyclerViewAdapter(activity, this, htspVersion);
+        recyclerViewAdapter = new TimerRecordingRecyclerViewAdapter(activity, isDualPane, this, htspVersion);
         recyclerView.setLayoutManager(new LinearLayoutManager(activity));
         recyclerView.addItemDecoration(new DividerItemDecoration(activity, LinearLayoutManager.VERTICAL));
         recyclerView.setItemAnimator(new DefaultItemAnimator());

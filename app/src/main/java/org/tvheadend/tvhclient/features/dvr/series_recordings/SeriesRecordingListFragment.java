@@ -68,7 +68,7 @@ public class SeriesRecordingListFragment extends BaseFragment implements Recycle
             }
         }
 
-        recyclerViewAdapter = new SeriesRecordingRecyclerViewAdapter(activity, this, htspVersion);
+        recyclerViewAdapter = new SeriesRecordingRecyclerViewAdapter(activity, isDualPane, this, htspVersion);
         recyclerView.setLayoutManager(new LinearLayoutManager(activity));
         recyclerView.addItemDecoration(new DividerItemDecoration(activity, LinearLayoutManager.VERTICAL));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
