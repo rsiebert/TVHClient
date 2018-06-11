@@ -20,29 +20,29 @@ import butterknife.ButterKnife;
 
 public class ProgramViewHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.title)
-    TextView titleTextView;
+    private TextView titleTextView;
     @BindView(R.id.time)
-    TextView timeTextView;
+    private TextView timeTextView;
     @BindView(R.id.date)
-    TextView dateTextView;
+    private TextView dateTextView;
     @BindView(R.id.duration)
-    TextView durationTextView;
+    private TextView durationTextView;
     @BindView(R.id.progress)
-    TextView progressTextView;
+    private TextView progressTextView;
     @BindView(R.id.summary)
-    TextView summaryTextView;
+    private TextView summaryTextView;
     @BindView(R.id.description)
-    TextView descriptionTextView;
+    private TextView descriptionTextView;
     @BindView(R.id.series_info)
-    TextView seriesInfoTextView;
+    private TextView seriesInfoTextView;
     @BindView(R.id.subtitle)
-    TextView subtitleTextView;
+    private TextView subtitleTextView;
     @BindView(R.id.content_type)
-    TextView contentTypeTextView;
+    private TextView contentTypeTextView;
     @BindView(R.id.state)
-    ImageView stateTextView;
+    private ImageView stateTextView;
     @BindView(R.id.genre)
-    TextView genreTextView;
+    private TextView genreTextView;
 
     ProgramViewHolder(View view) {
         super(view);
