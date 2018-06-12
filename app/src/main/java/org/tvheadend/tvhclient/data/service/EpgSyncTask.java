@@ -102,15 +102,6 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
             intent.putExtra("sync_state", State.DONE);
             LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 
-            // TODO
-            Timber.d("DONE Waiting");
-            try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            Timber.d("DONE Waiting done, starting sync");
-
             startInitialSyncWithServer();
 
         } else {
