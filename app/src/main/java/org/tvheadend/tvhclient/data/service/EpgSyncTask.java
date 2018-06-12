@@ -187,7 +187,9 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     @Override
     public void onMessage(@NonNull HtspMessage message) {
         final String method = message.getString("method");
-
+        if (TextUtils.isEmpty(method)) {
+            return;
+        }
         switch (method) {
             case "hello":
                 handleInitialServerResponse(message);
@@ -280,7 +282,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     }
 
     void handleIntent(Intent intent) {
-        if (intent == null || intent.getAction() == null) {
+        if (intent == null || TextUtils.isEmpty(intent.getAction())) {
             return;
         }
         switch (intent.getAction()) {
@@ -1452,14 +1454,15 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         try {
             response = dispatcher.sendMessage(message, connectionTimeout);
         } catch (HtspNotConnectedException e) {
+            Timber.e("Failed to send getStatus - not connected", e);
             connectedToServer = false;
         }
 
         if (response != null) {
+            Timber.d("Success sending getStatus - connected");
             connectedToServer = true;
         }
 
-        Timber.d("connectedToServer is " + connectedToServer);
         Intent intent = new Intent("service_status");
         intent.putExtra("sync_state", connectedToServer ? State.DONE : State.RECONNECT);
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
