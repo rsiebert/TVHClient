@@ -1,14 +1,8 @@
 package org.tvheadend.tvhclient.features.startup;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
@@ -29,27 +23,35 @@ import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
-import org.tvheadend.tvhclient.data.service.EpgSyncService;
-import org.tvheadend.tvhclient.data.service.EpgSyncTask;
-import org.tvheadend.tvhclient.data.service.htsp.HtspConnection;
-import org.tvheadend.tvhclient.data.service.htsp.tasks.Authenticator;
+import org.tvheadend.tvhclient.data.service.worker.EpgDataRemovalWorker;
+import org.tvheadend.tvhclient.data.service.worker.EpgDataUpdateWorker;
+import org.tvheadend.tvhclient.data.service.worker.EpgStartServiceWorker;
+import org.tvheadend.tvhclient.data.service.EpgSyncStatusCallback;
+import org.tvheadend.tvhclient.data.service.EpgSyncStatusReceiver;
 import org.tvheadend.tvhclient.features.navigation.NavigationActivity;
 import org.tvheadend.tvhclient.features.settings.SettingsActivity;
 import org.tvheadend.tvhclient.features.shared.MenuUtils;
+import org.tvheadend.tvhclient.utils.NetworkUtils;
 
-import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
+import androidx.work.Constraints;
+import androidx.work.NetworkType;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import timber.log.Timber;
 
 // TODO add nice background image
 // TODO use translated strings
 
-public class StartupFragment extends Fragment {
+public class StartupFragment extends Fragment implements EpgSyncStatusCallback {
 
     @BindView(R.id.progress_bar)
     ProgressBar progressBar;
@@ -71,6 +73,8 @@ public class StartupFragment extends Fragment {
     private String state;
     private String details;
     private MenuUtils menuUtils;
+    private boolean startService;
+    private EpgSyncStatusReceiver epgSyncStatusReceiver;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -92,23 +96,51 @@ public class StartupFragment extends Fragment {
 
         activity = (AppCompatActivity) getActivity();
         menuUtils = new MenuUtils(activity);
+        epgSyncStatusReceiver = new EpgSyncStatusReceiver(this);
         setHasOptionsMenu(true);
+
+        if (savedInstanceState != null) {
+            startService = savedInstanceState.getBoolean("start_service");
+            state = savedInstanceState.getString("state");
+            details = savedInstanceState.getString("details");
+        } else {
+            startService = true;
+            state = getString(R.string.initializing);
+            details = "";
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Timber.d("onResume");
 
         progressBar.setVisibility(View.INVISIBLE);
 
-        if (!isConnectionDefined()) {
+        if (!isConnectionAvailable()) {
+            Timber.d("No connection available, showing settings");
             state = getString(R.string.no_connection_available);
             addConnectionFab.setVisibility(View.VISIBLE);
             addConnectionFab.setOnClickListener(v -> {
                 showSettingsAddNewConnection();
             });
-        } else if (!isActiveConnectionDefined()) {
+
+        } else if (!isActiveConnectionAvailable()) {
+            Timber.d("No active connection available, showing settings");
             state = getString(R.string.no_connection_active_advice);
             settingsFab.setVisibility(View.VISIBLE);
             settingsFab.setOnClickListener(v -> {
                 showConnectionListSettings();
             });
-        } else if (!isNetworkAvailable()) {
+
+        } else if (appRepository.getChannelData().getItems() != null
+                && appRepository.getChannelData().getItems().size() > 0) {
+            Timber.d("Database contains channels, showing main screen");
+            startService();
+            showContentScreen();
+
+        } else if (!NetworkUtils.isNetworkAvailable(activity)) {
+            Timber.d("No network is active to perform initial sync, showing settings");
             state = getString(R.string.err_no_network);
             settingsFab.setVisibility(View.VISIBLE);
             settingsFab.setOnClickListener(v -> {
@@ -116,21 +148,9 @@ public class StartupFragment extends Fragment {
                 startActivity(intent);
             });
         } else {
+            Timber.d("Network is active, starting initial sync");
             progressBar.setVisibility(View.VISIBLE);
-
-            if (savedInstanceState != null) {
-                state = savedInstanceState.getString("state");
-                details = savedInstanceState.getString("details");
-            } else {
-                state = getString(R.string.initializing);
-                details = "";
-                // Call the service to get the connectivity status. If the service is not
-                // connected to the server anymore it will open a connection and start an
-                // initial sync, otherwise the sync is skipped and the main screen can be shown.
-                Intent intent = new Intent(activity, EpgSyncService.class);
-                intent.setAction("getStatus");
-                activity.startService(intent);
-            }
+            startService();
         }
 
         stateTextView.setText(state);
@@ -141,24 +161,21 @@ public class StartupFragment extends Fragment {
     public void onSaveInstanceState(@NonNull Bundle outState) {
         outState.putString("state", state);
         outState.putString("details", details);
+        outState.putBoolean("start_service", startService);
         super.onSaveInstanceState(outState);
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        // Register the BroadcastReceiver so that the connection
-        // and sync messages from the service can be received and shown
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction("service_status");
-        LocalBroadcastManager.getInstance(activity).registerReceiver(messageReceiver, intentFilter);
+        LocalBroadcastManager.getInstance(activity)
+                .registerReceiver(epgSyncStatusReceiver, new IntentFilter("service_status"));
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        // Unregister the BroadcastReceiver when this fragment is not active anymore
-        LocalBroadcastManager.getInstance(activity).unregisterReceiver(messageReceiver);
+        LocalBroadcastManager.getInstance(activity).unregisterReceiver(epgSyncStatusReceiver);
     }
 
     @Override
@@ -180,21 +197,12 @@ public class StartupFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (connectivityManager != null) {
-            NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-            return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-        }
-        return false;
-    }
-
-    private boolean isConnectionDefined() {
+    private boolean isConnectionAvailable() {
         List<Connection> connectionList = appRepository.getConnectionData().getItems();
         return connectionList != null && connectionList.size() > 0;
     }
 
-    private boolean isActiveConnectionDefined() {
+    private boolean isActiveConnectionAvailable() {
         return appRepository.getConnectionData().getActiveItem() != null;
     }
 
@@ -211,108 +219,32 @@ public class StartupFragment extends Fragment {
     }
 
     /**
-     * This receiver handles the data that was given from an intent via the LocalBroadcastManager.
-     * The main message is sent via the "state" extra. Any details about the state is given
-     * via the "details" extra. When the extra "done" was received the startup of the app
-     * is considered done. The pending intents for the background data sync are started.
-     * Finally the defined main fragment like the channel list will be shown.
+     * Call the service to get the connectivity status. If the service is not
+     * connected to the server anymore it will open a connection and start an
+     * initial sync, otherwise the sync is skipped and the main screen can be shown.
      */
-    private BroadcastReceiver messageReceiver = new BroadcastReceiver() {
+    private void startService() {
+        Timber.d("Starting workers");
+        Constraints constraints = new Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build();
 
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            boolean showSettingsButton = false;
+        OneTimeWorkRequest epgServiceStart = new OneTimeWorkRequest.Builder(EpgStartServiceWorker.class)
+                .setInitialDelay(10, TimeUnit.SECONDS)
+                .build();
 
-            if (intent.hasExtra("connection_state")) {
-                HtspConnection.State state = (HtspConnection.State) intent.getSerializableExtra("connection_state");
-                if (state == HtspConnection.State.CLOSED) {
-                    stateTextView.setText("Connection closed");
-                } else if (state == HtspConnection.State.CONNECTED) {
-                    stateTextView.setText("Connected");
-                    detailsTextView.setText("");
-                } else if (state == HtspConnection.State.CONNECTING) {
-                    stateTextView.setText("Connecting...");
-                } else if (state == HtspConnection.State.FAILED) {
-                    stateTextView.setText("Connection failed");
-                    showSettingsButton = true;
-                } else if (state == HtspConnection.State.FAILED_UNRESOLVED_ADDRESS) {
-                    detailsTextView.setText("Failed to resolve server address");
-                    showSettingsButton = true;
-                } else if (state == HtspConnection.State.FAILED_EXCEPTION_OPENING_SOCKET) {
-                    detailsTextView.setText("Error while opening a connection to the server");
-                    showSettingsButton = true;
-                } else if (state == HtspConnection.State.FAILED_CONNECTING_TO_SERVER) {
-                    detailsTextView.setText("Failed to connect to server");
-                    showSettingsButton = true;
-                }
+        PeriodicWorkRequest epgDataUpdate = new PeriodicWorkRequest.Builder(EpgDataUpdateWorker.class, 2, TimeUnit.HOURS)
+                .setConstraints(constraints)
+                .build();
 
-            } else if (intent.hasExtra("authentication_state")) {
-                Authenticator.State state = (Authenticator.State) intent.getSerializableExtra("authentication_state");
-                detailsTextView.setText("");
-                if (state == Authenticator.State.AUTHENTICATING) {
-                    stateTextView.setText("Authenticating...");
-                } else if (state == Authenticator.State.AUTHENTICATED) {
-                    stateTextView.setText("Authenticated");
-                } else if (state == Authenticator.State.FAILED_BAD_CREDENTIALS) {
-                    stateTextView.setText("Authentication failed, bad username or password");
-                    showSettingsButton = true;
-                }
+        PeriodicWorkRequest epgDataRemoval = new PeriodicWorkRequest.Builder(EpgDataRemovalWorker.class, 4, TimeUnit.HOURS)
+                .setConstraints(constraints)
+                .build();
 
-            } else if (intent.hasExtra("sync_state")) {
-                EpgSyncTask.State state = (EpgSyncTask.State) intent.getSerializableExtra("sync_state");
-                if (state == EpgSyncTask.State.DONE) {
-                    progressBar.setVisibility(View.INVISIBLE);
-                    stateTextView.setText("Starting");
-                    detailsTextView.setText("");
-
-                    startBackgroundServices();
-                    showContentScreen();
-
-                } else if (state == EpgSyncTask.State.RECONNECT) {
-                    progressBar.setVisibility(View.INVISIBLE);
-                    stateTextView.setText("Reconnecting to server");
-                    detailsTextView.setText("");
-
-                    activity.stopService(new Intent(activity, EpgSyncService.class));
-                    activity.startService(new Intent(activity, EpgSyncService.class));
-                }
-            }
-
-            progressBar.setVisibility(showSettingsButton ? View.INVISIBLE : View.VISIBLE);
-            settingsFab.setVisibility(showSettingsButton ? View.VISIBLE : View.INVISIBLE);
-            settingsFab.setOnClickListener(v -> showConnectionListSettings());
-        }
-    };
-
-    /**
-     * Defines the two intents that will periodically get more events and remove outdated
-     * events from the database in the background. The alarm manager is used to start the
-     * intents after the specified time intervals. The time interval is read from preferences.
-     */
-    private void startBackgroundServices() {
-
-        Intent epgFetchIntent = new Intent(activity, EpgSyncService.class);
-        epgFetchIntent.setAction("getMoreEvents");
-        PendingIntent epgFetchPendingIntent = PendingIntent.getService(activity, 0, epgFetchIntent, 0);
-
-        Intent epgRemovalIntent = new Intent(activity, EpgSyncService.class);
-        epgRemovalIntent.setAction("deleteEvents");
-        PendingIntent epgRemovalPendingIntent = PendingIntent.getService(activity, 0, epgRemovalIntent, 0);
-
-        // Use the alarm manager to start the intents after the specified intervals
-        AlarmManager alarm = (AlarmManager) activity.getSystemService(Context.ALARM_SERVICE);
-        if (alarm != null) {
-            // Start the intents two minutes after the service has been started for the first time
-            long firstTriggerTime = new Date().getTime() + (1000 * 60 * 2);
-
-            // 2 hours in millis to periodically load more EPG data from the server in the background.
-            int epgFetchIntervalTime = 2 * 1000 * 60 * 60;
-            alarm.setRepeating(AlarmManager.RTC_WAKEUP, firstTriggerTime, epgFetchIntervalTime, epgFetchPendingIntent);
-
-            // 4 hours in millis to periodically remove outdated EPG data from the database.
-            int epgRemovalIntervalTime = 4 * 1000 * 60 * 60;
-            alarm.setRepeating(AlarmManager.RTC_WAKEUP, firstTriggerTime, epgRemovalIntervalTime, epgRemovalPendingIntent);
-        }
+        // Create the actual work object and enqueue the recurring task
+        WorkManager.getInstance().beginWith(epgServiceStart);
+        WorkManager.getInstance().enqueue(epgDataUpdate);
+        WorkManager.getInstance().enqueue(epgDataRemoval);
     }
 
     /**
@@ -325,5 +257,22 @@ public class StartupFragment extends Fragment {
         intent.putExtra("startScreen", startScreen);
         activity.startActivity(intent);
         activity.finish();
+    }
+
+    @Override
+    public void onEpgSyncMessageChanged(String msg, String details) {
+        stateTextView.setText(msg);
+        detailsTextView.setText(details);
+    }
+
+    @Override
+    public void onEpgSyncStateChanged(EpgSyncStatusReceiver.State state) {
+        if (state == EpgSyncStatusReceiver.State.DONE) {
+            showContentScreen();
+        } else {
+            progressBar.setVisibility(View.INVISIBLE);
+            settingsFab.setVisibility(View.VISIBLE);
+            settingsFab.setOnClickListener(v -> showConnectionListSettings());
+        }
     }
 }

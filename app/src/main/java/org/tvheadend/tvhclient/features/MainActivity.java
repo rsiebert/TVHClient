@@ -34,10 +34,13 @@ import com.google.android.gms.cast.framework.SessionManagerListener;
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
+import org.tvheadend.tvhclient.data.service.EpgSyncStatusCallback;
+import org.tvheadend.tvhclient.data.service.EpgSyncStatusReceiver;
 import org.tvheadend.tvhclient.features.download.DownloadPermissionGrantedInterface;
 import org.tvheadend.tvhclient.features.search.SearchRequestInterface;
 import org.tvheadend.tvhclient.features.shared.callbacks.ToolbarInterface;
 import org.tvheadend.tvhclient.utils.MiscUtils;
+import org.tvheadend.tvhclient.utils.NetworkUtils;
 
 import javax.inject.Inject;
 
@@ -58,7 +61,7 @@ import timber.log.Timber;
 // TODO listen to network changes and inform the user and restart service if required
 
 
-public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, ToolbarInterface {
+public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, ToolbarInterface, EpgSyncStatusCallback {
 
     private MenuItem searchMenuItem;
     private SearchView searchView;
@@ -79,6 +82,21 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private IntroductoryOverlay introductoryOverlay;
     private CastContext castContext;
     private CastStateListener castStateListener;
+    private EpgSyncStatusReceiver epgSyncStatusReceiver;
+
+    @Override
+    public void onEpgSyncMessageChanged(String msg, String details) {
+        if (getCurrentFocus() != null) {
+            Snackbar.make(getCurrentFocus(), msg, Snackbar.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onEpgSyncStateChanged(EpgSyncStatusReceiver.State state) {
+        if (state == EpgSyncStatusReceiver.State.DONE) {
+            Timber.d("Sync is done");
+        }
+    }
 
     private class MySessionManagerListener implements SessionManagerListener<CastSession> {
         @Override
@@ -126,6 +144,22 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         }
     }
 
+    private BroadcastReceiver networkChangeReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Timber.d("Received network change " + intent.getAction());
+
+            // TODO disable the menus and stop the server if being offline
+            // TODO enable the menus and reconnect again when the network is available
+            if (!NetworkUtils.isNetworkAvailable(context)) {
+                if (getCurrentFocus() != null) {
+                    Snackbar.make(getCurrentFocus(), "Connection to server lost.", Snackbar.LENGTH_SHORT).show();
+                }
+                //stopService(new Intent(MainActivity.this, EpgSyncService.class));
+            }
+        }
+    };
+
     /**
      * This receiver handles the data that was given from an intent via the LocalBroadcastManager.
      * Any string in the given extra will be shown as a snackbar.
@@ -150,6 +184,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         MiscUtils.setLanguage(this);
 
         MainApplication.getComponent().inject(this);
+
+        epgSyncStatusReceiver = new EpgSyncStatusReceiver(this);
 
         castContext = CastContext.getSharedInstance(this);
         castStateListener = new CastStateListener() {
@@ -186,12 +222,14 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     @Override
     protected void onResume() {
+        Timber.d("onResume start");
         castContext.addCastStateListener(castStateListener);
         castContext.getSessionManager().addSessionManagerListener(mSessionManagerListener, CastSession.class);
         if (castSession == null) {
             castSession = CastContext.getSharedInstance(this).getSessionManager().getCurrentCastSession();
         }
         super.onResume();
+        Timber.d("onResume done");
     }
 
     @Override
@@ -204,17 +242,22 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     @Override
     public void onStart() {
         super.onStart();
-        // Register the BroadcastReceiver so that the snackbar message can be received and shown
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction("message");
-        LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, intentFilter);
+
+        LocalBroadcastManager.getInstance(this)
+                .registerReceiver(messageReceiver, new IntentFilter("message"));
+        LocalBroadcastManager.getInstance(this)
+                .registerReceiver(epgSyncStatusReceiver, new IntentFilter("service_status"));
+
+        registerReceiver(networkChangeReceiver, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        // Unregister the BroadcastReceiver when this activity is not active anymore
         LocalBroadcastManager.getInstance(this).unregisterReceiver(messageReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(epgSyncStatusReceiver);
+
+        unregisterReceiver(networkChangeReceiver);
     }
 
     @Override
