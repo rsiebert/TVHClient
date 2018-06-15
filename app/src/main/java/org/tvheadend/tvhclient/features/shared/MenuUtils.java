@@ -560,12 +560,9 @@ public class MenuUtils {
                 .negativeText(R.string.cancel)
                 .positiveText("Reconnect")
                 .onPositive((dialog, which) -> {
-
-                    sharedPreferences.edit().putLong("last_update", 0).apply();
-
-                    // Stop the service so that any connections will be closed
+                    // Stop the service so that any connections will be closed and
+                    // call the startup activity that will initiate a fresh startup
                     activity.stopService(new Intent(activity, EpgSyncService.class));
-                    // Call the startup activity that will initiate a fresh startup
                     Intent intent = new Intent(activity, StartupActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     activity.startActivity(intent);
