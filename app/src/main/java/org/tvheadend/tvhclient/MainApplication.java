@@ -23,9 +23,9 @@ import org.tvheadend.tvhclient.features.logging.DebugTree;
 import org.tvheadend.tvhclient.features.logging.FileLoggingTree;
 import org.tvheadend.tvhclient.features.logging.ReleaseTree;
 import org.tvheadend.tvhclient.features.purchase.BillingUtils;
-import org.tvheadend.tvhclient.injection.AppComponent;
-import org.tvheadend.tvhclient.injection.DaggerAppComponent;
-import org.tvheadend.tvhclient.injection.modules.AppModule;
+import org.tvheadend.tvhclient.injection.DaggerMainApplicationComponent;
+import org.tvheadend.tvhclient.injection.MainApplicationComponent;
+import org.tvheadend.tvhclient.injection.modules.MainApplicationModule;
 import org.tvheadend.tvhclient.injection.modules.RepositoryModule;
 import org.tvheadend.tvhclient.injection.modules.SharedPreferencesModule;
 import org.tvheadend.tvhclient.utils.Constants;
@@ -46,13 +46,13 @@ public class MainApplication extends Application implements BillingProcessor.IBi
     @Inject
     protected SharedPreferences sharedPreferences;
 
-    private static AppComponent component;
+    private static MainApplicationComponent component;
 
     public static synchronized MainApplication getInstance() {
         return instance;
     }
 
-    public static AppComponent getComponent() {
+    public static MainApplicationComponent getComponent() {
         return component;
     }
 
@@ -64,6 +64,7 @@ public class MainApplication extends Application implements BillingProcessor.IBi
     @Override
     public void onCreate() {
         super.onCreate();
+        Timber.d("start");
 
         instance = this;
         // Create the component upon start of the app. This component
@@ -95,11 +96,13 @@ public class MainApplication extends Application implements BillingProcessor.IBi
         // Migrates existing connections from the old database to the new room database.
         // Migrates existing preferences or remove old ones before starting the actual application
         new MigrateUtils().doMigrate();
+
+        Timber.d("end");
     }
 
-    private AppComponent buildComponent() {
-        return DaggerAppComponent.builder()
-                .appModule(new AppModule(this))
+    private MainApplicationComponent buildComponent() {
+        return DaggerMainApplicationComponent.builder()
+                .mainApplicationModule(new MainApplicationModule(this))
                 .sharedPreferencesModule(new SharedPreferencesModule())
                 .repositoryModule(new RepositoryModule(this))
                 .build();

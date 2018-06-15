@@ -21,7 +21,7 @@ import org.tvheadend.tvhclient.features.settings.SettingsListConnectionsFragment
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
 import org.tvheadend.tvhclient.features.shared.MenuUtils;
 import org.tvheadend.tvhclient.features.startup.StartupFragment;
-import org.tvheadend.tvhclient.injection.modules.AppModule;
+import org.tvheadend.tvhclient.injection.modules.MainApplicationModule;
 import org.tvheadend.tvhclient.injection.modules.RepositoryModule;
 import org.tvheadend.tvhclient.injection.modules.SharedPreferencesModule;
 import org.tvheadend.tvhclient.utils.MigrateUtils;
@@ -31,11 +31,12 @@ import javax.inject.Singleton;
 import dagger.Component;
 
 @Component(modules = {
-        AppModule.class,
+        MainApplicationModule.class,
         SharedPreferencesModule.class,
-        RepositoryModule.class,})
+        RepositoryModule.class})
 @Singleton
-public interface AppComponent {
+public interface MainApplicationComponent {
+
     Context context();
 
     SharedPreferences sharedPreferences();
@@ -43,8 +44,6 @@ public interface AppComponent {
     AppRepository appRepository();
 
     void inject(MainApplication mainApplication);
-
-    void inject(MainActivity mainActivity);
 
     void inject(RecordingViewModel recordingViewModel);
 
@@ -59,8 +58,6 @@ public interface AppComponent {
     void inject(SeriesRecordingViewModel seriesRecordingViewModel);
 
     void inject(BasePlaybackActivity basePlayActivity);
-
-    void inject(StartupFragment startupFragment);
 
     void inject(ChannelViewModel channelViewModel);
 
@@ -77,4 +74,8 @@ public interface AppComponent {
     void inject(DownloadRecordingManager downloadRecordingManager);
 
     void inject(EpgSyncTask epgSyncTask);
+
+    void inject(MainActivity mainActivity);
+
+    void inject(StartupFragment startupFragment);
 }
