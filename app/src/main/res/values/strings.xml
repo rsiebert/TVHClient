@@ -5,7 +5,7 @@
     <string name="app_name">TVHClient</string>
 
     <string name="media_route_menu_title">Play on&#8230;</string>
-    <string name="intro_overlay_text">Touch to cast Live TV or recordings to your TV\n\nPlease check that you meet the requirements described in the casting settings.</string>
+    <string name="intro_overlay_text">Touch to cast Live TV or recordings to your TV.\n\nPlease check that you meet the requirements described in the casting settings.</string>
     <string name="connection_temp_lost">Connection to the cast device is temporarily lost</string>
     <string name="connection_recovered">Connection to the cast device is recovered</string>
     <string name="cast_profile_not_set">No casting serverProfile was selected in the settings. This is required before casting can be used.</string>
