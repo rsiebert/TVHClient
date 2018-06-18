@@ -240,7 +240,7 @@ public class StartupFragment extends Fragment implements EpgSyncStatusCallback {
         if (state == EpgSyncStatusReceiver.State.DONE) {
             Timber.d("Service sync state is done, starting main screen");
             showContentScreen();
-        } else {
+        } else if (state == EpgSyncStatusReceiver.State.FAILED) {
             Timber.d("Service sync state failed, showing settings");
             progressBar.setVisibility(View.INVISIBLE);
             settingsFab.setVisibility(View.VISIBLE);
