@@ -32,6 +32,7 @@ import timber.log.Timber;
 
 // TODO make nav image blasser
 // TODO icons in dual pane mode
+//// TODO Initialize only once and in the startup phase
 
 public class NavigationActivity extends MainActivity implements WakeOnLanTaskCallback, NavigationDrawerCallback {
 
