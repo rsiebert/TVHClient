@@ -77,6 +77,7 @@ public class MigrateUtils {
                 connection.setWolUseBroadcast((c.getInt(c.getColumnIndex("wol_broadcast")) > 0));
                 connection.setWolEnabled((!TextUtils.isEmpty(connection.getWolMacAddress())));
                 connection.setLastUpdate(0);
+                connection.setSyncRequired(true);
 
                 Timber.d("migrateConnectionsFromDatabase: Added existing connection " + connection.getName());
                 connectionList.add(connection);

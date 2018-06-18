@@ -33,6 +33,16 @@ public class Connection {
     private boolean wolUseBroadcast = false;
     @ColumnInfo(name = "last_update")
     private long lastUpdate = 0;
+    @ColumnInfo(name = "sync_required")
+    private boolean syncRequired = true;
+
+    public boolean isSyncRequired() {
+        return syncRequired;
+    }
+
+    public void setSyncRequired(boolean syncRequired) {
+        this.syncRequired = syncRequired;
+    }
 
     public long getLastUpdate() {
         return lastUpdate;
