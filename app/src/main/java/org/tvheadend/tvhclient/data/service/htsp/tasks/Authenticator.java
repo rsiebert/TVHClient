@@ -108,12 +108,10 @@ public class Authenticator implements HtspMessage.Listener, HtspConnection.Liste
     }
 
     public State getState() {
-        Timber.d("getState() is " + state);
         return state;
     }
 
     private void setState(final State state) {
-        Timber.d("setState() called with: state = [" + state + "]");
         lock.lock();
         try {
             this.state = state;

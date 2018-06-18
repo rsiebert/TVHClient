@@ -56,11 +56,8 @@ public class EpgSyncService extends Service {
         if (simpleHtspConnection == null
                 || !simpleHtspConnection.isConnected()
                 || !simpleHtspConnection.isAuthenticated()) {
-            Timber.d("onStartCommand: simpleHtspConnection is null");
             openConnection();
         } else {
-            Timber.d("onStartCommand: simpleHtspConnection is connected");
-
             // Forward intents that contain an action to the epg sync task.
             // This task will then execute the desired actions
             if (intent != null && intent.getAction() != null) {
@@ -82,8 +79,6 @@ public class EpgSyncService extends Service {
     }
 
     private void openConnection() {
-        Timber.d("openConnection() called");
-
         simpleHtspConnection = new SimpleHtspConnection(getApplicationContext(), connection);
         epgSyncTask = new EpgSyncTask(simpleHtspConnection, connection.getId());
         simpleHtspConnection.addMessageListener(epgSyncTask);
