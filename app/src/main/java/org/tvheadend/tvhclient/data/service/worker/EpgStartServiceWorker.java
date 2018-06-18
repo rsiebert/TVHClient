@@ -12,7 +12,7 @@ public class EpgStartServiceWorker extends Worker {
     @NonNull
     @Override
     public WorkerResult doWork() {
-        Timber.d("doWork: Starting service");
+        Timber.d("Starting service");
 
         Intent intent = new Intent(getApplicationContext(), EpgSyncService.class);
         intent.setAction("getStatus");

@@ -12,7 +12,17 @@ public class EpgDataUpdateWorker extends Worker {
     @NonNull
     @Override
     public WorkerResult doWork() {
-        Timber.d("doWork: Getting more epg data");
+        Timber.d("Loading more event data from server");
+
+        // The work here will be done when the worker is first enqueued.
+        // This is done during startup. Delay the execution for 30
+        // seconds to avoid having too much load during startup.
+        // TODO This can be removed when a periodic task supports the setInitialDelay call.
+        try {
+            Thread.sleep(30000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         Intent intent = new Intent(getApplicationContext(), EpgSyncService.class);
         intent.setAction("getMoreEvents");
