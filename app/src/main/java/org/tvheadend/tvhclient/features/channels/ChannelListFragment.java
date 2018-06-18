@@ -206,6 +206,15 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
             intent.putExtra("channelId", channel.getId());
             intent.putExtra("selectedTime", viewModel.getSelectedTime());
             activity.startActivity(intent);
+/*
+            ProgramListFragment fragment = new ProgramListFragment();
+            fragment.setArguments(intent.getExtras());
+            activity.getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.main, fragment)
+                    .addToBackStack(null)
+                    .commit();
+*/
         } else {
             FragmentManager fm = getFragmentManager();
             if (fm != null) {

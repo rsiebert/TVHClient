@@ -23,9 +23,7 @@ import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
-import org.tvheadend.tvhclient.data.service.worker.EpgDataRemovalWorker;
-import org.tvheadend.tvhclient.data.service.worker.EpgDataUpdateWorker;
-import org.tvheadend.tvhclient.data.service.worker.EpgStartServiceWorker;
+import org.tvheadend.tvhclient.data.service.EpgSyncService;
 import org.tvheadend.tvhclient.data.service.EpgSyncStatusCallback;
 import org.tvheadend.tvhclient.data.service.EpgSyncStatusReceiver;
 import org.tvheadend.tvhclient.features.navigation.NavigationActivity;
@@ -34,15 +32,9 @@ import org.tvheadend.tvhclient.features.shared.MenuUtils;
 import org.tvheadend.tvhclient.utils.NetworkUtils;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
-import androidx.work.Constraints;
-import androidx.work.NetworkType;
-import androidx.work.OneTimeWorkRequest;
-import androidx.work.PeriodicWorkRequest;
-import androidx.work.WorkManager;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -73,7 +65,6 @@ public class StartupFragment extends Fragment implements EpgSyncStatusCallback {
     private String state;
     private String details;
     private MenuUtils menuUtils;
-    private boolean startService;
     private EpgSyncStatusReceiver epgSyncStatusReceiver;
 
     @Override
@@ -92,6 +83,8 @@ public class StartupFragment extends Fragment implements EpgSyncStatusCallback {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        Timber.d("start");
+
         MainApplication.getComponent().inject(this);
 
         activity = (AppCompatActivity) getActivity();
@@ -100,20 +93,12 @@ public class StartupFragment extends Fragment implements EpgSyncStatusCallback {
         setHasOptionsMenu(true);
 
         if (savedInstanceState != null) {
-            startService = savedInstanceState.getBoolean("start_service");
             state = savedInstanceState.getString("state");
             details = savedInstanceState.getString("details");
         } else {
-            startService = true;
             state = getString(R.string.initializing);
             details = "";
         }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        Timber.d("onResume");
 
         progressBar.setVisibility(View.INVISIBLE);
 
@@ -136,7 +121,19 @@ public class StartupFragment extends Fragment implements EpgSyncStatusCallback {
         } else if (appRepository.getChannelData().getItems() != null
                 && appRepository.getChannelData().getItems().size() > 0) {
             Timber.d("Database contains channels, showing main screen");
-            startService();
+            // Do not start the service and go to the main screen to speed things up.
+            // The base activity listens for network changes via the NetworkStatusReceiver class.
+            // It informs the base activity if the network is available or not. The base activity
+            // will the either start or stop the service via the EpgStatusHandler class.
+
+            //activity.startService(new Intent(activity, EpgSyncService.class).setAction("getStatus"));
+            Timber.d("Starting worker to start service");
+            //OneTimeWorkRequest x = new OneTimeWorkRequest.Builder(EpgServiceStartupWorker.class)
+                    //.setInitialDelay(5, TimeUnit.SECONDS)
+            //        .build();
+            //WorkManager.getInstance().enqueue(x);
+
+            Timber.d("Showing main screen");
             showContentScreen();
 
         } else if (!NetworkUtils.isNetworkAvailable(activity)) {
@@ -147,29 +144,35 @@ public class StartupFragment extends Fragment implements EpgSyncStatusCallback {
                 Intent intent = new Intent(Settings.ACTION_WIRELESS_SETTINGS);
                 startActivity(intent);
             });
+
         } else {
-            Timber.d("Network is active, starting initial sync");
+            Timber.d("Network is active, starting service");
             progressBar.setVisibility(View.VISIBLE);
-            startService();
+            // Start the service it will send its status via the broadcast receiver.
+            // Depending if the service is already connected or not the receiver will
+            // either start the initial sync or reconnect to the server. We will be
+            // notified of the sync being done via the onEpgSyncStateChanged method.
+            // Then we show the main screen.
+            activity.startService(new Intent(activity, EpgSyncService.class).setAction("getStatus"));
         }
 
         stateTextView.setText(state);
         detailsTextView.setText(details);
+
+        Timber.d("end");
     }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         outState.putString("state", state);
         outState.putString("details", details);
-        outState.putBoolean("start_service", startService);
         super.onSaveInstanceState(outState);
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        LocalBroadcastManager.getInstance(activity)
-                .registerReceiver(epgSyncStatusReceiver, new IntentFilter("service_status"));
+        LocalBroadcastManager.getInstance(activity).registerReceiver(epgSyncStatusReceiver, new IntentFilter(EpgSyncStatusReceiver.ACTION));
     }
 
     @Override
@@ -219,35 +222,6 @@ public class StartupFragment extends Fragment implements EpgSyncStatusCallback {
     }
 
     /**
-     * Call the service to get the connectivity status. If the service is not
-     * connected to the server anymore it will open a connection and start an
-     * initial sync, otherwise the sync is skipped and the main screen can be shown.
-     */
-    private void startService() {
-        Timber.d("Starting workers");
-        Constraints constraints = new Constraints.Builder()
-                .setRequiredNetworkType(NetworkType.CONNECTED)
-                .build();
-
-        OneTimeWorkRequest epgServiceStart = new OneTimeWorkRequest.Builder(EpgStartServiceWorker.class)
-                .setInitialDelay(10, TimeUnit.SECONDS)
-                .build();
-
-        PeriodicWorkRequest epgDataUpdate = new PeriodicWorkRequest.Builder(EpgDataUpdateWorker.class, 2, TimeUnit.HOURS)
-                .setConstraints(constraints)
-                .build();
-
-        PeriodicWorkRequest epgDataRemoval = new PeriodicWorkRequest.Builder(EpgDataRemovalWorker.class, 4, TimeUnit.HOURS)
-                .setConstraints(constraints)
-                .build();
-
-        // Create the actual work object and enqueue the recurring task
-        WorkManager.getInstance().beginWith(epgServiceStart);
-        WorkManager.getInstance().enqueue(epgDataUpdate);
-        WorkManager.getInstance().enqueue(epgDataRemoval);
-    }
-
-    /**
      * Shows the main fragment like the channel list when the startup is complete.
      * Which fragment shall be shown is determined from the user preference.
      */
@@ -268,8 +242,10 @@ public class StartupFragment extends Fragment implements EpgSyncStatusCallback {
     @Override
     public void onEpgSyncStateChanged(EpgSyncStatusReceiver.State state) {
         if (state == EpgSyncStatusReceiver.State.DONE) {
+            Timber.d("Service sync state is done, starting main screen");
             showContentScreen();
         } else {
+            Timber.d("Service sync state failed, showing settings");
             progressBar.setVisibility(View.INVISIBLE);
             settingsFab.setVisibility(View.VISIBLE);
             settingsFab.setOnClickListener(v -> showConnectionListSettings());

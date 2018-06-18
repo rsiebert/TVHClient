@@ -9,6 +9,11 @@ import org.tvheadend.tvhclient.data.service.htsp.tasks.Authenticator;
 
 public class EpgSyncStatusReceiver extends BroadcastReceiver {
 
+    public final static String ACTION = "service_status";
+    public final static String CONNECTION_STATE = "connection_state";
+    public final static String AUTH_STATE = "authentication_state";
+    public final static String SYNC_STATE = "sync_state";
+
     private final EpgSyncStatusCallback callback;
 
     public enum State {
@@ -29,7 +34,7 @@ public class EpgSyncStatusReceiver extends BroadcastReceiver {
      */
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (intent.hasExtra("connection_state")) {
+        if (intent.hasExtra(CONNECTION_STATE)) {
             HtspConnection.State state = (HtspConnection.State) intent.getSerializableExtra("connection_state");
             switch (state) {
                 case CLOSED:
@@ -58,31 +63,38 @@ public class EpgSyncStatusReceiver extends BroadcastReceiver {
                     callback.onEpgSyncStateChanged(State.FAILED);
                     break;
             }
-        } else if (intent.hasExtra("authentication_state")) {
+        } else if (intent.hasExtra(AUTH_STATE)) {
             Authenticator.State state = (Authenticator.State) intent.getSerializableExtra("authentication_state");
             switch (state) {
                 case AUTHENTICATING:
                     callback.onEpgSyncMessageChanged("Authenticating...", "");
                     break;
                 case AUTHENTICATED:
-                    callback.onEpgSyncMessageChanged("Authenticating...", "");
+                    callback.onEpgSyncMessageChanged("Authenticated", "");
                     break;
                 case FAILED_BAD_CREDENTIALS:
                     callback.onEpgSyncMessageChanged("Authentication failed", "Probably bad username or password");
                     callback.onEpgSyncStateChanged(State.FAILED);
                     break;
             }
-        } else if (intent.hasExtra("sync_state")) {
+        } else if (intent.hasExtra(SYNC_STATE)) {
             EpgSyncTask.State state = (EpgSyncTask.State) intent.getSerializableExtra("sync_state");
             switch (state) {
+                case CONNECTED:
+                    callback.onEpgSyncMessageChanged("Connected to server.", "");
+                    break;
+                case SYNCING:
+                    callback.onEpgSyncMessageChanged("Loading data from server.", "");
+                    break;
                 case DONE:
-                    callback.onEpgSyncMessageChanged("Starting", "");
+                    callback.onEpgSyncMessageChanged("Loading data from server finished.", "");
                     callback.onEpgSyncStateChanged(State.DONE);
                     break;
                 case RECONNECT:
                     callback.onEpgSyncMessageChanged("Reconnecting to server...", "");
                     context.stopService(new Intent(context, EpgSyncService.class));
                     context.startService(new Intent(context, EpgSyncService.class));
+                    callback.onEpgSyncStateChanged(State.DONE);
                     break;
             }
         }

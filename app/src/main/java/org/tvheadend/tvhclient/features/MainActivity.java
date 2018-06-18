@@ -1,9 +1,7 @@
 package org.tvheadend.tvhclient.features;
 
 import android.app.SearchManager;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -37,10 +35,13 @@ import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.data.service.EpgSyncStatusCallback;
 import org.tvheadend.tvhclient.data.service.EpgSyncStatusReceiver;
 import org.tvheadend.tvhclient.features.download.DownloadPermissionGrantedInterface;
+import org.tvheadend.tvhclient.features.playback.CastSessionManagerListener;
 import org.tvheadend.tvhclient.features.search.SearchRequestInterface;
+import org.tvheadend.tvhclient.features.shared.callbacks.NetworkStatusCallback;
 import org.tvheadend.tvhclient.features.shared.callbacks.ToolbarInterface;
+import org.tvheadend.tvhclient.features.shared.receivers.NetworkStatusReceiver;
+import org.tvheadend.tvhclient.features.shared.receivers.SnackbarMessageReceiver;
 import org.tvheadend.tvhclient.utils.MiscUtils;
-import org.tvheadend.tvhclient.utils.NetworkUtils;
 
 import javax.inject.Inject;
 
@@ -56,12 +57,14 @@ import timber.log.Timber;
 // TODO move the conversion from ms to s or minutes from the intents into the entity getter and setter
 // TODO rework epg (use recyclerview horizontal scroll)
 // TODO add info via fabrics which screen is used most often
-// TODO deleted recordings are still there?
-// TODO show snackbar connecting to server, connected when authenticated, sync done when required...
-// TODO listen to network changes and inform the user and restart service if required
+// TODO add last_update info per connection
+// TODO enable or disable the menus depending on the network availability
+// TODO removing scheduled recording in program list does not remove icon
+// TODO add option in menu to show file missing recordings
+// TODO in channel tag selection list show number of channels for first item (all channels)
 
 
-public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, ToolbarInterface, EpgSyncStatusCallback {
+public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, ToolbarInterface, EpgSyncStatusCallback, NetworkStatusCallback {
 
     private MenuItem searchMenuItem;
     private SearchView searchView;
@@ -70,111 +73,23 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     protected SharedPreferences sharedPreferences;
     @Inject
     protected AppRepository appRepository;
-
     protected boolean isUnlocked;
     protected boolean isDualPane;
     protected Toolbar toolbar;
+    protected boolean isNetworkAvailable;
 
-    private final SessionManagerListener<CastSession> mSessionManagerListener = new MySessionManagerListener();
-    private CastSession castSession;
     private boolean showCastingMiniController;
     private View miniController;
     private IntroductoryOverlay introductoryOverlay;
+    private CastSession castSession;
     private CastContext castContext;
     private CastStateListener castStateListener;
+    private SessionManagerListener<CastSession> castSessionManagerListener;
     private EpgSyncStatusReceiver epgSyncStatusReceiver;
-
-    @Override
-    public void onEpgSyncMessageChanged(String msg, String details) {
-        if (getCurrentFocus() != null) {
-            Snackbar.make(getCurrentFocus(), msg, Snackbar.LENGTH_SHORT).show();
-        }
-    }
-
-    @Override
-    public void onEpgSyncStateChanged(EpgSyncStatusReceiver.State state) {
-        if (state == EpgSyncStatusReceiver.State.DONE) {
-            Timber.d("Sync is done");
-        }
-    }
-
-    private class MySessionManagerListener implements SessionManagerListener<CastSession> {
-        @Override
-        public void onSessionEnded(CastSession session, int error) {
-            if (session == castSession) {
-                castSession = null;
-            }
-            invalidateOptionsMenu();
-        }
-
-        @Override
-        public void onSessionResumed(CastSession session, boolean wasSuspended) {
-            castSession = session;
-            invalidateOptionsMenu();
-        }
-
-        @Override
-        public void onSessionStarted(CastSession session, String sessionId) {
-            castSession = session;
-            invalidateOptionsMenu();
-        }
-
-        @Override
-        public void onSessionStarting(CastSession session) {
-        }
-
-        @Override
-        public void onSessionStartFailed(CastSession session, int error) {
-        }
-
-        @Override
-        public void onSessionEnding(CastSession session) {
-        }
-
-        @Override
-        public void onSessionResuming(CastSession session, String sessionId) {
-        }
-
-        @Override
-        public void onSessionResumeFailed(CastSession session, int error) {
-        }
-
-        @Override
-        public void onSessionSuspended(CastSession session, int reason) {
-        }
-    }
-
-    private BroadcastReceiver networkChangeReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Timber.d("Received network change " + intent.getAction());
-
-            // TODO disable the menus and stop the server if being offline
-            // TODO enable the menus and reconnect again when the network is available
-            if (!NetworkUtils.isNetworkAvailable(context)) {
-                if (getCurrentFocus() != null) {
-                    Snackbar.make(getCurrentFocus(), "Connection to server lost.", Snackbar.LENGTH_SHORT).show();
-                }
-                //stopService(new Intent(MainActivity.this, EpgSyncService.class));
-            }
-        }
-    };
-
-    /**
-     * This receiver handles the data that was given from an intent via the LocalBroadcastManager.
-     * Any string in the given extra will be shown as a snackbar.
-     */
-    private BroadcastReceiver messageReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (intent.hasExtra("message")) {
-                Timber.d("onReceive() called with: context = [" + context + "], intent = [" + intent + "]");
-                if (getCurrentFocus() != null) {
-                    Snackbar.make(getCurrentFocus(), intent.getStringExtra("message"), Snackbar.LENGTH_SHORT).show();
-                }
-            }
-        }
-    };
+    private NetworkStatusReceiver networkStatusReceiver;
+    private SnackbarMessageReceiver snackbarMessageReceiver;
+    private String epgStateMessage;
+    private String epgStateMessageDetails;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -186,7 +101,10 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         MainApplication.getComponent().inject(this);
 
         epgSyncStatusReceiver = new EpgSyncStatusReceiver(this);
+        networkStatusReceiver = new NetworkStatusReceiver(this);
+        snackbarMessageReceiver = new SnackbarMessageReceiver(this);
 
+        castSessionManagerListener = new CastSessionManagerListener(this, castSession);
         castContext = CastContext.getSharedInstance(this);
         castStateListener = new CastStateListener() {
             @Override
@@ -197,11 +115,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             }
         };
 
-        // Check if the layout is single or dual pane
         View v = findViewById(R.id.right_fragment);
         isDualPane = v != null && v.getVisibility() == View.VISIBLE;
 
-        // Setup the action bar and the toolbar
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
@@ -222,42 +138,35 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     @Override
     protected void onResume() {
-        Timber.d("onResume start");
         castContext.addCastStateListener(castStateListener);
-        castContext.getSessionManager().addSessionManagerListener(mSessionManagerListener, CastSession.class);
+        castContext.getSessionManager().addSessionManagerListener(castSessionManagerListener, CastSession.class);
         if (castSession == null) {
             castSession = CastContext.getSharedInstance(this).getSessionManager().getCurrentCastSession();
         }
         super.onResume();
-        Timber.d("onResume done");
     }
 
     @Override
     protected void onPause() {
         castContext.removeCastStateListener(castStateListener);
-        castContext.getSessionManager().removeSessionManagerListener(mSessionManagerListener, CastSession.class);
+        castContext.getSessionManager().removeSessionManagerListener(castSessionManagerListener, CastSession.class);
         super.onPause();
     }
 
     @Override
     public void onStart() {
         super.onStart();
-
-        LocalBroadcastManager.getInstance(this)
-                .registerReceiver(messageReceiver, new IntentFilter("message"));
-        LocalBroadcastManager.getInstance(this)
-                .registerReceiver(epgSyncStatusReceiver, new IntentFilter("service_status"));
-
-        registerReceiver(networkChangeReceiver, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
+        LocalBroadcastManager.getInstance(this).registerReceiver(snackbarMessageReceiver, new IntentFilter(SnackbarMessageReceiver.ACTION));
+        LocalBroadcastManager.getInstance(this).registerReceiver(epgSyncStatusReceiver, new IntentFilter(EpgSyncStatusReceiver.ACTION));
+        registerReceiver(networkStatusReceiver, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(messageReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(snackbarMessageReceiver);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(epgSyncStatusReceiver);
-
-        unregisterReceiver(networkChangeReceiver);
+        unregisterReceiver(networkStatusReceiver);
     }
 
     @Override
@@ -372,5 +281,39 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 ((DownloadPermissionGrantedInterface) fragment).downloadRecording();
             }
         }
+    }
+
+    @Override
+    public void onEpgSyncMessageChanged(String msg, String details) {
+        epgStateMessage = msg;
+        epgStateMessageDetails = details;
+    }
+
+    @Override
+    public void onEpgSyncStateChanged(EpgSyncStatusReceiver.State state) {
+        if (state == EpgSyncStatusReceiver.State.FAILED
+                && getCurrentFocus() != null) {
+            Timber.d("Showing epg sync message " + epgStateMessage);
+            Snackbar.make(getCurrentFocus(), epgStateMessage, Snackbar.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onNetworkAvailable() {
+        Timber.d("Network is available");
+        //startService(new Intent(this, EpgSyncService.class).setAction("getStatus"));
+        isNetworkAvailable = true;
+        //invalidateOptionsMenu();
+    }
+
+    @Override
+    public void onNetworkNotAvailable() {
+        Timber.d("Network is not available anymore");
+        if (getCurrentFocus() != null) {
+            Snackbar.make(getCurrentFocus(), "Connection to server lost.", Snackbar.LENGTH_SHORT).show();
+        }
+        //stopService(new Intent(this, EpgSyncService.class));
+        isNetworkAvailable = false;
+        //invalidateOptionsMenu();
     }
 }
