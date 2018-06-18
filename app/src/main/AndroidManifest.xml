@@ -49,10 +49,6 @@
             android:name=".features.startup.StartupActivity"
             android:theme="@android:style/Theme.NoTitleBar">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-            <intent-filter>
                 <data android:scheme="tvhclient" />
                 <action android:name="android.intent.action.VIEW" />
 
@@ -102,6 +98,14 @@
         <activity android:name=".features.playback.PlayChannelActivity" />
         <activity android:name=".features.playback.CastChannelActivity" />
         <activity android:name=".features.playback.CastRecordingActivity" />
+        <activity
+            android:name=".features.startup.SplashActivity"
+            android:theme="@style/SplashTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
     </application>
 </manifest>
