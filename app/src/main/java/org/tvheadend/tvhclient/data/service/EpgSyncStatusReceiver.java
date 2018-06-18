@@ -7,6 +7,8 @@ import android.content.Intent;
 import org.tvheadend.tvhclient.data.service.htsp.HtspConnection;
 import org.tvheadend.tvhclient.data.service.htsp.tasks.Authenticator;
 
+// TODO use another object with msg, details and state and pass this in one method around
+
 public class EpgSyncStatusReceiver extends BroadcastReceiver {
 
     public final static String ACTION = "service_status";
@@ -18,6 +20,7 @@ public class EpgSyncStatusReceiver extends BroadcastReceiver {
 
     public enum State {
         FAILED,
+        START,
         DONE
     }
 
@@ -44,7 +47,7 @@ public class EpgSyncStatusReceiver extends BroadcastReceiver {
                     callback.onEpgSyncMessageChanged("Connected", "");
                     break;
                 case CONNECTING:
-                    callback.onEpgSyncMessageChanged("Connecting...", "");
+                    callback.onEpgSyncMessageChanged("Connecting", "");
                     break;
                 case FAILED:
                     callback.onEpgSyncMessageChanged("Connection failed", "");
@@ -67,7 +70,7 @@ public class EpgSyncStatusReceiver extends BroadcastReceiver {
             Authenticator.State state = (Authenticator.State) intent.getSerializableExtra("authentication_state");
             switch (state) {
                 case AUTHENTICATING:
-                    callback.onEpgSyncMessageChanged("Authenticating...", "");
+                    callback.onEpgSyncMessageChanged("Authenticating", "");
                     break;
                 case AUTHENTICATED:
                     callback.onEpgSyncMessageChanged("Authenticated", "");
@@ -81,17 +84,18 @@ public class EpgSyncStatusReceiver extends BroadcastReceiver {
             EpgSyncTask.State state = (EpgSyncTask.State) intent.getSerializableExtra("sync_state");
             switch (state) {
                 case CONNECTED:
-                    callback.onEpgSyncMessageChanged("Connected to server.", "");
+                    callback.onEpgSyncMessageChanged("Connected to server", "");
                     break;
                 case SYNCING:
-                    callback.onEpgSyncMessageChanged("Loading data from server.", "");
+                    callback.onEpgSyncMessageChanged("Loading data from server", "");
+                    callback.onEpgSyncStateChanged(State.START);
                     break;
                 case DONE:
-                    callback.onEpgSyncMessageChanged("Loading data from server finished.", "");
+                    callback.onEpgSyncMessageChanged("Loading data from server finished", "");
                     callback.onEpgSyncStateChanged(State.DONE);
                     break;
                 case RECONNECT:
-                    callback.onEpgSyncMessageChanged("Reconnecting to server...", "");
+                    callback.onEpgSyncMessageChanged("Reconnecting to server", "");
                     context.stopService(new Intent(context, EpgSyncService.class));
                     context.startService(new Intent(context, EpgSyncService.class));
                     callback.onEpgSyncStateChanged(State.DONE);
