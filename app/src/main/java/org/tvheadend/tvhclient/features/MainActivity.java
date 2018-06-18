@@ -291,9 +291,12 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     @Override
     public void onEpgSyncStateChanged(EpgSyncStatusReceiver.State state) {
         if (state == EpgSyncStatusReceiver.State.FAILED
-                && getCurrentFocus() != null) {
+                || state == EpgSyncStatusReceiver.State.START
+                || state == EpgSyncStatusReceiver.State.DONE) {
             Timber.d("Showing epg sync message " + epgStateMessage);
-            Snackbar.make(getCurrentFocus(), epgStateMessage, Snackbar.LENGTH_SHORT).show();
+            if (getCurrentFocus() != null) {
+                Snackbar.make(getCurrentFocus(), epgStateMessage, Snackbar.LENGTH_SHORT).show();
+            }
         }
     }
 
