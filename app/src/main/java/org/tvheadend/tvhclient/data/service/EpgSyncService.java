@@ -80,7 +80,7 @@ public class EpgSyncService extends Service {
 
     private void openConnection() {
         simpleHtspConnection = new SimpleHtspConnection(getApplicationContext(), connection);
-        epgSyncTask = new EpgSyncTask(simpleHtspConnection, connection.getId());
+        epgSyncTask = new EpgSyncTask(simpleHtspConnection, connection);
         simpleHtspConnection.addMessageListener(epgSyncTask);
         simpleHtspConnection.addConnectionListener(epgSyncTask);
         simpleHtspConnection.addAuthenticationListener(epgSyncTask);

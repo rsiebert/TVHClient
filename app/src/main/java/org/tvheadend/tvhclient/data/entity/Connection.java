@@ -31,6 +31,16 @@ public class Connection {
     private int wolPort = 9;
     @ColumnInfo(name = "wol_use_broadcast")
     private boolean wolUseBroadcast = false;
+    @ColumnInfo(name = "last_update")
+    private long lastUpdate = 0;
+
+    public long getLastUpdate() {
+        return lastUpdate;
+    }
+
+    public void setLastUpdate(long lastUpdate) {
+        this.lastUpdate = lastUpdate;
+    }
 
     public int getId() {
         return id;

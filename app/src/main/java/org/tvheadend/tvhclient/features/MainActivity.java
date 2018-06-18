@@ -57,7 +57,6 @@ import timber.log.Timber;
 // TODO move the conversion from ms to s or minutes from the intents into the entity getter and setter
 // TODO rework epg (use recyclerview horizontal scroll)
 // TODO add info via fabrics which screen is used most often
-// TODO add last_update info per connection
 // TODO enable or disable the menus depending on the network availability
 // TODO removing scheduled recording in program list does not remove icon
 // TODO add option in menu to show file missing recordings

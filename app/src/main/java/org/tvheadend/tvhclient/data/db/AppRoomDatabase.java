@@ -42,7 +42,7 @@ import org.tvheadend.tvhclient.data.entity.TimerRecording;
                 ServerProfile.class,
                 ServerStatus.class
         },
-        version = 1)
+        version = 2)
 public abstract class AppRoomDatabase extends RoomDatabase {
 
     private static AppRoomDatabase instance;
@@ -51,7 +51,7 @@ public abstract class AppRoomDatabase extends RoomDatabase {
         if (instance == null) {
             synchronized (AppRoomDatabase.class) {
                 instance = Room.databaseBuilder(context, AppRoomDatabase.class, "tvhclient")
-                        .fallbackToDestructiveMigration()
+                        .addMigrations(MIGRATION_1_2)
                         .build();
             }
         }
@@ -61,7 +61,7 @@ public abstract class AppRoomDatabase extends RoomDatabase {
     private static final Migration MIGRATION_1_2 = new Migration(1, 2) {
         @Override
         public void migrate(@NonNull SupportSQLiteDatabase database) {
-            // NOP
+            database.execSQL("ALTER TABLE connections ADD COLUMN last_update INTEGER NOT NULL DEFAULT 0;");
         }
     };
 
