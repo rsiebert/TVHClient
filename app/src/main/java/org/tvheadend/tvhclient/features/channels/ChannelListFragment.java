@@ -28,7 +28,6 @@ import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.data.entity.ChannelTag;
 import org.tvheadend.tvhclient.data.entity.Program;
 import org.tvheadend.tvhclient.data.entity.Recording;
-import org.tvheadend.tvhclient.features.programs.ProgramListActivity;
 import org.tvheadend.tvhclient.features.programs.ProgramListFragment;
 import org.tvheadend.tvhclient.features.search.SearchActivity;
 import org.tvheadend.tvhclient.features.search.SearchRequestInterface;
@@ -199,33 +198,31 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
         if (channel == null) {
             return;
         }
-        if (!isDualPane) {
-            // Launch a new activity to display the program list of the selected channel.
-            Intent intent = new Intent(activity, ProgramListActivity.class);
-            intent.putExtra("channelName", channel.getName());
-            intent.putExtra("channelId", channel.getId());
-            intent.putExtra("selectedTime", viewModel.getSelectedTime());
-            activity.startActivity(intent);
-/*
-            ProgramListFragment fragment = new ProgramListFragment();
-            fragment.setArguments(intent.getExtras());
-            activity.getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.main, fragment)
-                    .addToBackStack(null)
-                    .commit();
-*/
-        } else {
-            FragmentManager fm = getFragmentManager();
-            if (fm != null) {
+
+        FragmentManager fm = getFragmentManager();
+        if (fm != null) {
+            if (!isDualPane) {
+                // Show the fragment to display the program list of the selected channel.
+                Bundle bundle = new Bundle();
+                bundle.putString("channelName", channel.getName());
+                bundle.putInt("channelId", channel.getId());
+                bundle.putLong("selectedTime", viewModel.getSelectedTime());
+
+                ProgramListFragment fragment = new ProgramListFragment();
+                fragment.setArguments(bundle);
+                fm.beginTransaction()
+                        .replace(R.id.main, fragment)
+                        .addToBackStack(null)
+                        .commit();
+            } else {
                 // Check if the fragment for the selected channel is already shown, if not replace it with a new fragment.
                 ProgramListFragment programListFragment = (ProgramListFragment) fm.findFragmentById(R.id.details);
                 if (programListFragment == null || programListFragment.getShownChannelId() != channel.getId()) {
                     programListFragment = ProgramListFragment.newInstance(channel.getName(), channel.getId(), viewModel.getSelectedTime());
-                    FragmentTransaction ft = fm.beginTransaction();
-                    ft.replace(R.id.details, programListFragment);
-                    ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-                    ft.commit();
+                    fm.beginTransaction()
+                            .replace(R.id.details, programListFragment)
+                            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                            .commit();
                 }
             }
         }

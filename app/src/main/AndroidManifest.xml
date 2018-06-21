@@ -83,7 +83,6 @@
 
         <activity android:name=".features.dvr.RecordingAddEditActivity" />
         <activity android:name=".features.dvr.recordings.RecordingDetailsActivity" />
-        <activity android:name=".features.programs.ProgramListActivity" />
         <activity android:name=".features.changelog.ChangeLogActivity" />
         <activity android:name=".features.MainActivity" />
         <activity android:name=".features.navigation.NavigationActivity" />
