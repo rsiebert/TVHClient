@@ -20,18 +20,19 @@ public class EpgSyncService extends Service {
     @Inject
     protected AppRepository appRepository;
     private HandlerThread handlerThread;
+    private Handler handler;
     private Connection connection;
     private SimpleHtspConnection simpleHtspConnection;
     private EpgSyncTask epgSyncTask;
 
     @Override
     public IBinder onBind(Intent intent) {
-        throw new UnsupportedOperationException("Binding not allowed");
+        throw new UnsupportedOperationException("Binding to service not allowed");
     }
 
     @Override
     public void onCreate() {
-        Timber.d("Starting EPG Sync Service");
+        Timber.d("Starting service");
 
         handlerThread = new HandlerThread("EpgSyncService Handler Thread");
         handlerThread.start();
@@ -41,35 +42,26 @@ public class EpgSyncService extends Service {
 
         connection = appRepository.getConnectionData().getActiveItem();
         if (connection == null) {
-            Timber.i("No account configured, aborting startup of EPG Sync Service");
+            Timber.i("No account configured, not starting service");
             stopSelf();
         }
+        openConnection();
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-
         if (connection == null) {
             return START_NOT_STICKY;
         }
-
-        if (simpleHtspConnection == null
-                || !simpleHtspConnection.isConnected()
-                || !simpleHtspConnection.isAuthenticated()) {
-            openConnection();
-        } else {
-            // Forward intents that contain an action to the epg sync task.
-            // This task will then execute the desired actions
-            if (intent != null && intent.getAction() != null) {
-                epgSyncTask.getHandler().post(() -> epgSyncTask.handleIntent(intent));
-            }
+        if (intent != null && intent.getAction() != null) {
+            epgSyncTask.getHandler().post(() -> epgSyncTask.handleIntent(intent));
         }
         return START_STICKY;
     }
 
     @Override
     public void onDestroy() {
-        Timber.d("Stopping EPG Sync Service");
+        Timber.d("Stopping service");
         closeConnection();
         if (handlerThread != null) {
             handlerThread.quit();
@@ -79,6 +71,7 @@ public class EpgSyncService extends Service {
     }
 
     private void openConnection() {
+        Timber.d("Opening connection to server");
         simpleHtspConnection = new SimpleHtspConnection(getApplicationContext(), connection);
         epgSyncTask = new EpgSyncTask(simpleHtspConnection, connection);
         simpleHtspConnection.addMessageListener(epgSyncTask);
@@ -88,6 +81,7 @@ public class EpgSyncService extends Service {
     }
 
     private void closeConnection() {
+        Timber.d("Closing connection to server");
         if (epgSyncTask != null) {
             simpleHtspConnection.removeMessageListener(epgSyncTask);
             simpleHtspConnection.removeConnectionListener(epgSyncTask);

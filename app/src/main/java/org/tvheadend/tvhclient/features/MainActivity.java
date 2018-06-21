@@ -2,6 +2,7 @@ package org.tvheadend.tvhclient.features;
 
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -32,8 +33,10 @@ import com.google.android.gms.cast.framework.SessionManagerListener;
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
+import org.tvheadend.tvhclient.data.service.EpgSyncService;
 import org.tvheadend.tvhclient.data.service.EpgSyncStatusCallback;
 import org.tvheadend.tvhclient.data.service.EpgSyncStatusReceiver;
+import org.tvheadend.tvhclient.data.service.EpgSyncTaskState;
 import org.tvheadend.tvhclient.features.download.DownloadPermissionGrantedInterface;
 import org.tvheadend.tvhclient.features.playback.CastSessionManagerListener;
 import org.tvheadend.tvhclient.features.search.SearchRequestInterface;
@@ -61,6 +64,7 @@ import timber.log.Timber;
 // TODO removing scheduled recording in program list does not remove icon
 // TODO add option in menu to show file missing recordings
 // TODO in channel tag selection list show number of channels for first item (all channels)
+// TODO when bad reception and internet is available the app stalls during getstatus?
 
 
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, ToolbarInterface, EpgSyncStatusCallback, NetworkStatusCallback {
@@ -75,7 +79,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     protected boolean isUnlocked;
     protected boolean isDualPane;
     protected Toolbar toolbar;
-    protected boolean isNetworkAvailable;
 
     private boolean showCastingMiniController;
     private View miniController;
@@ -87,8 +90,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private EpgSyncStatusReceiver epgSyncStatusReceiver;
     private NetworkStatusReceiver networkStatusReceiver;
     private SnackbarMessageReceiver snackbarMessageReceiver;
-    private String epgStateMessage;
-    private String epgStateMessageDetails;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -283,29 +284,25 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     }
 
     @Override
-    public void onEpgSyncMessageChanged(String msg, String details) {
-        epgStateMessage = msg;
-        epgStateMessageDetails = details;
-    }
-
-    @Override
-    public void onEpgSyncStateChanged(EpgSyncStatusReceiver.State state) {
-        if (state == EpgSyncStatusReceiver.State.FAILED
-                || state == EpgSyncStatusReceiver.State.START
-                || state == EpgSyncStatusReceiver.State.DONE) {
-            Timber.d("Showing epg sync message " + epgStateMessage);
-            if (getCurrentFocus() != null) {
-                Snackbar.make(getCurrentFocus(), epgStateMessage, Snackbar.LENGTH_SHORT).show();
-            }
+    public void onEpgTaskStateChanged(EpgSyncTaskState state) {
+        Timber.d("Epg task state changed, message is " + state.getMessage());
+        switch (state.getState()) {
+            case START:
+            case LOADING:
+            case DONE:
+            case FAILED:
+                if (getCurrentFocus() != null) {
+                    Timber.d("Epg task state changed, showing message " + state.getMessage());
+                    Snackbar.make(getCurrentFocus(), state.getMessage(), Snackbar.LENGTH_SHORT).show();
+                }
+                break;
         }
     }
 
     @Override
     public void onNetworkAvailable() {
-        Timber.d("Network is available");
-        //startService(new Intent(this, EpgSyncService.class).setAction("getStatus"));
-        isNetworkAvailable = true;
-        //invalidateOptionsMenu();
+        Timber.d("Network is available, starting worker to periodically ping server");
+        startService(new Intent(this, EpgSyncService.class).setAction("getStatus"));
     }
 
     @Override
@@ -314,8 +311,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         if (getCurrentFocus() != null) {
             Snackbar.make(getCurrentFocus(), "Connection to server lost.", Snackbar.LENGTH_SHORT).show();
         }
-        //stopService(new Intent(this, EpgSyncService.class));
-        isNetworkAvailable = false;
-        //invalidateOptionsMenu();
+        stopService(new Intent(this, EpgSyncService.class));
     }
 }

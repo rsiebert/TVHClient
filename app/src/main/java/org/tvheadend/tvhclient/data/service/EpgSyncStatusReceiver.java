@@ -19,8 +19,11 @@ public class EpgSyncStatusReceiver extends BroadcastReceiver {
     private final EpgSyncStatusCallback callback;
 
     public enum State {
-        FAILED,
+        IDLE,
         START,
+        CONNECTED,
+        LOADING,
+        FAILED,
         DONE
     }
 
@@ -38,67 +41,117 @@ public class EpgSyncStatusReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         if (intent.hasExtra(CONNECTION_STATE)) {
-            HtspConnection.State state = (HtspConnection.State) intent.getSerializableExtra("connection_state");
+            HtspConnection.State state = (HtspConnection.State) intent.getSerializableExtra(CONNECTION_STATE);
             switch (state) {
                 case CLOSED:
-                    callback.onEpgSyncMessageChanged("Connection closed", "");
+                    callback.onEpgTaskStateChanged(
+                            new EpgSyncTaskState.EpgSyncTaskStateBuilder()
+                                    .message("Connection closed")
+                                    .build());
                     break;
                 case CONNECTED:
-                    callback.onEpgSyncMessageChanged("Connected", "");
+                    callback.onEpgTaskStateChanged(
+                            new EpgSyncTaskState.EpgSyncTaskStateBuilder()
+                                    .message("Connected")
+                                    .build());
                     break;
                 case CONNECTING:
-                    callback.onEpgSyncMessageChanged("Connecting", "");
+                    callback.onEpgTaskStateChanged(
+                            new EpgSyncTaskState.EpgSyncTaskStateBuilder()
+                                    .state(State.START)
+                                    .message("Connecting")
+                                    .build());
                     break;
                 case FAILED:
-                    callback.onEpgSyncMessageChanged("Connection failed", "");
-                    callback.onEpgSyncStateChanged(State.FAILED);
+                    callback.onEpgTaskStateChanged(
+                            new EpgSyncTaskState.EpgSyncTaskStateBuilder()
+                                    .state(State.FAILED)
+                                    .message("Connection failed")
+                                    .details("Failed to connect to server")
+                                    .build());
                     break;
                 case FAILED_UNRESOLVED_ADDRESS:
-                    callback.onEpgSyncMessageChanged("Connection failed", "Failed to resolve server address");
-                    callback.onEpgSyncStateChanged(State.FAILED);
+                    callback.onEpgTaskStateChanged(
+                            new EpgSyncTaskState.EpgSyncTaskStateBuilder()
+                                    .state(State.FAILED)
+                                    .message("Connection failed")
+                                    .details("Failed to resolve server address")
+                                    .build());
                     break;
                 case FAILED_EXCEPTION_OPENING_SOCKET:
-                    callback.onEpgSyncMessageChanged("Connection failed", "Error while opening a connection to the server");
-                    callback.onEpgSyncStateChanged(State.FAILED);
+                    callback.onEpgTaskStateChanged(
+                            new EpgSyncTaskState.EpgSyncTaskStateBuilder()
+                                    .state(State.FAILED)
+                                    .message("Connection failed")
+                                    .details("Failed to open socket to the server")
+                                    .build());
                     break;
                 case FAILED_CONNECTING_TO_SERVER:
-                    callback.onEpgSyncMessageChanged("Connection failed", "Failed to connect to server");
-                    callback.onEpgSyncStateChanged(State.FAILED);
+                    callback.onEpgTaskStateChanged(
+                            new EpgSyncTaskState.EpgSyncTaskStateBuilder()
+                                    .state(State.FAILED)
+                                    .message("Connection failed")
+                                    .details("Failed to connect to server")
+                                    .build());
                     break;
             }
         } else if (intent.hasExtra(AUTH_STATE)) {
-            Authenticator.State state = (Authenticator.State) intent.getSerializableExtra("authentication_state");
+            Authenticator.State state = (Authenticator.State) intent.getSerializableExtra(AUTH_STATE);
             switch (state) {
                 case AUTHENTICATING:
-                    callback.onEpgSyncMessageChanged("Authenticating", "");
+                    callback.onEpgTaskStateChanged(
+                            new EpgSyncTaskState.EpgSyncTaskStateBuilder()
+                                    .message("Authenticating")
+                                    .build());
                     break;
                 case AUTHENTICATED:
-                    callback.onEpgSyncMessageChanged("Authenticated", "");
+                    callback.onEpgTaskStateChanged(
+                            new EpgSyncTaskState.EpgSyncTaskStateBuilder()
+                                    .message("Authenticated")
+                                    .build());
                     break;
                 case FAILED_BAD_CREDENTIALS:
-                    callback.onEpgSyncMessageChanged("Authentication failed", "Probably bad username or password");
-                    callback.onEpgSyncStateChanged(State.FAILED);
+                    callback.onEpgTaskStateChanged(
+                            new EpgSyncTaskState.EpgSyncTaskStateBuilder()
+                                    .state(State.FAILED)
+                                    .message("Authentication failed")
+                                    .details("Probably bad username or password")
+                                    .build());
                     break;
             }
         } else if (intent.hasExtra(SYNC_STATE)) {
-            EpgSyncTask.State state = (EpgSyncTask.State) intent.getSerializableExtra("sync_state");
+            EpgSyncTask.State state = (EpgSyncTask.State) intent.getSerializableExtra(SYNC_STATE);
             switch (state) {
                 case CONNECTED:
-                    callback.onEpgSyncMessageChanged("Connected to server", "");
+                    callback.onEpgTaskStateChanged(
+                            new EpgSyncTaskState.EpgSyncTaskStateBuilder()
+                                    .state(State.CONNECTED)
+                                    .message("Connected to server")
+                                    .build());
                     break;
-                case SYNCING:
-                    callback.onEpgSyncMessageChanged("Loading data from server", "");
-                    callback.onEpgSyncStateChanged(State.START);
+                case SYNCING_STARTED:
+                    callback.onEpgTaskStateChanged(
+                            new EpgSyncTaskState.EpgSyncTaskStateBuilder()
+                                    .state(State.LOADING)
+                                    .message("Loading data from server")
+                                    .build());
                     break;
-                case DONE:
-                    callback.onEpgSyncMessageChanged("Loading data from server finished", "");
-                    callback.onEpgSyncStateChanged(State.DONE);
+                case SYNCING_DONE:
+                    callback.onEpgTaskStateChanged(
+                            new EpgSyncTaskState.EpgSyncTaskStateBuilder()
+                                    .state(State.DONE)
+                                    .message("Loading data from server finished")
+                                    .build());
                     break;
-                case RECONNECT:
-                    callback.onEpgSyncMessageChanged("Reconnecting to server", "");
+                case NOT_CONNECTED:
+                    callback.onEpgTaskStateChanged(
+                            new EpgSyncTaskState.EpgSyncTaskStateBuilder()
+                                    .state(State.FAILED)
+                                    .message("Reconnecting to server")
+                                    .build());
+
                     context.stopService(new Intent(context, EpgSyncService.class));
                     context.startService(new Intent(context, EpgSyncService.class));
-                    callback.onEpgSyncStateChanged(State.DONE);
                     break;
             }
         }
