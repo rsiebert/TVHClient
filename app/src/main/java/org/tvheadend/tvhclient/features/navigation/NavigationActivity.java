@@ -22,6 +22,7 @@ import org.tvheadend.tvhclient.features.dvr.series_recordings.SeriesRecordingLis
 import org.tvheadend.tvhclient.features.dvr.series_recordings.SeriesRecordingViewModel;
 import org.tvheadend.tvhclient.features.dvr.timer_recordings.TimerRecordingListFragment;
 import org.tvheadend.tvhclient.features.dvr.timer_recordings.TimerRecordingViewModel;
+import org.tvheadend.tvhclient.features.epg.ProgramGuideFragment;
 import org.tvheadend.tvhclient.features.information.InfoFragment;
 import org.tvheadend.tvhclient.features.information.StatusFragment;
 import org.tvheadend.tvhclient.features.purchase.UnlockerFragment;
@@ -152,7 +153,7 @@ public class NavigationActivity extends MainActivity implements WakeOnLanTaskCal
                 fragment = new ChannelListFragment();
                 break;
             case NavigationDrawer.MENU_PROGRAM_GUIDE:
-                //fragment = new ProgramGuideViewPagerFragment();
+                fragment = new ProgramGuideFragment();
                 break;
             case NavigationDrawer.MENU_COMPLETED_RECORDINGS:
                 fragment = new CompletedRecordingListFragment();
