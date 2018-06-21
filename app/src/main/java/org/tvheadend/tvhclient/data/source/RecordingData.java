@@ -2,10 +2,12 @@ package org.tvheadend.tvhclient.data.source;
 
 import android.arch.lifecycle.LiveData;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 
 import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.data.db.AppRoomDatabase;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -98,8 +100,9 @@ public class RecordingData extends BaseData implements DataSourceInterface<Recor
     }
 
     @Override
+    @NonNull
     public List<Recording> getItems() {
-        return null;
+        return new ArrayList<>();
     }
 
     public LiveData<List<Recording>> getLiveDataItemByChannelId(int channelId) {

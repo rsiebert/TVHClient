@@ -2,10 +2,12 @@ package org.tvheadend.tvhclient.data.source;
 
 import android.arch.lifecycle.LiveData;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 
 import org.tvheadend.tvhclient.data.db.AppRoomDatabase;
 import org.tvheadend.tvhclient.data.entity.Program;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -65,8 +67,9 @@ public class ProgramData extends BaseData implements DataSourceInterface<Program
     }
 
     @Override
+    @NonNull
     public List<Program> getItems() {
-        return null;
+        return new ArrayList<>();
     }
 
     public LiveData<List<Program>> getLiveDataItemByChannelIdAndTime(int channelId, long time) {

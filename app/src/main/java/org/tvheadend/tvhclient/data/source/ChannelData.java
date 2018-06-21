@@ -4,10 +4,12 @@ import android.arch.lifecycle.LiveData;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 
 import org.tvheadend.tvhclient.data.db.AppRoomDatabase;
 import org.tvheadend.tvhclient.data.entity.Channel;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -69,14 +71,16 @@ public class ChannelData extends BaseData implements DataSourceInterface<Channel
     }
 
     @Override
+    @NonNull
     public List<Channel> getItems() {
+        List<Channel> channels = new ArrayList<>();
         try {
             int channelSortOrder = Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(context).getString("channel_sort_order", "0"));
-            return new ItemsLoaderTask(db, channelSortOrder).execute().get();
+            channels.addAll(new ItemsLoaderTask(db, channelSortOrder).execute().get());
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
-        return null;
+        return channels;
     }
 
     public List<Channel> getItemByTimeAndTag(long currentTime, int channelTagId) {

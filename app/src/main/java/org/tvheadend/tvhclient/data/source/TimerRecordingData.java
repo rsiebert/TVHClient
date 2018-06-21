@@ -2,10 +2,12 @@ package org.tvheadend.tvhclient.data.source;
 
 import android.arch.lifecycle.LiveData;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 
 import org.tvheadend.tvhclient.data.entity.TimerRecording;
 import org.tvheadend.tvhclient.data.db.AppRoomDatabase;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -60,8 +62,9 @@ public class TimerRecordingData extends BaseData implements DataSourceInterface<
     }
 
     @Override
+    @NonNull
     public List<TimerRecording> getItems() {
-        return null;
+        return new ArrayList<>();
     }
 
     private static class ItemLoaderTask extends AsyncTask<Void, Void, TimerRecording> {

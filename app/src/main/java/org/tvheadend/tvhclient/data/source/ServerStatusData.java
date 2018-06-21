@@ -2,10 +2,12 @@ package org.tvheadend.tvhclient.data.source;
 
 import android.arch.lifecycle.LiveData;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 
 import org.tvheadend.tvhclient.data.db.AppRoomDatabase;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -61,8 +63,9 @@ public class ServerStatusData extends BaseData implements DataSourceInterface<Se
     }
 
     @Override
+    @NonNull
     public List<ServerStatus> getItems() {
-        return null;
+        return new ArrayList<>();
     }
 
     public ServerStatus getActiveItem() {

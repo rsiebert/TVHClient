@@ -2,11 +2,13 @@ package org.tvheadend.tvhclient.data.source;
 
 import android.arch.lifecycle.LiveData;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 
 import org.tvheadend.tvhclient.data.db.AppRoomDatabase;
 import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -62,13 +64,15 @@ public class ConnectionData extends BaseData implements DataSourceInterface<Conn
     }
 
     @Override
+    @NonNull
     public List<Connection> getItems() {
+        List<Connection> connections = new ArrayList<>();
         try {
-            return new ItemsLoaderTask(db).execute().get();
+            connections.addAll(new ItemsLoaderTask(db).execute().get());
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
-        return null;
+        return connections;
     }
 
     public Connection getActiveItem() {

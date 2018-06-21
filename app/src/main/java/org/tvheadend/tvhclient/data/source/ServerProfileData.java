@@ -2,10 +2,12 @@ package org.tvheadend.tvhclient.data.source;
 
 import android.arch.lifecycle.LiveData;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 
 import org.tvheadend.tvhclient.data.entity.ServerProfile;
 import org.tvheadend.tvhclient.data.db.AppRoomDatabase;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -63,8 +65,9 @@ public class ServerProfileData extends BaseData implements DataSourceInterface<S
     }
 
     @Override
+    @NonNull
     public List<ServerProfile> getItems() {
-        return null;
+        return new ArrayList<>();
     }
 
     public String[] getRecordingProfileNames() {

@@ -2,10 +2,12 @@ package org.tvheadend.tvhclient.data.source;
 
 import android.arch.lifecycle.LiveData;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 
 import org.tvheadend.tvhclient.data.db.AppRoomDatabase;
 import org.tvheadend.tvhclient.data.entity.TagAndChannel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -55,8 +57,9 @@ public class TagAndChannelData extends BaseData implements DataSourceInterface<T
     }
 
     @Override
+    @NonNull
     public List<TagAndChannel> getItems() {
-        return null;
+        return new ArrayList<>();
     }
 
     public void removeItemByTagId(int tagId) {

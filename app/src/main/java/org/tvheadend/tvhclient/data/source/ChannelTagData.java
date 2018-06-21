@@ -2,10 +2,12 @@ package org.tvheadend.tvhclient.data.source;
 
 import android.arch.lifecycle.LiveData;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 
 import org.tvheadend.tvhclient.data.entity.ChannelTag;
 import org.tvheadend.tvhclient.data.db.AppRoomDatabase;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -61,13 +63,15 @@ public class ChannelTagData extends BaseData implements DataSourceInterface<Chan
     }
 
     @Override
+    @NonNull
     public List<ChannelTag> getItems() {
+        List<ChannelTag> channelTags = new ArrayList<>();
         try {
-            return new ItemsLoaderTask(db).execute().get();
+            channelTags.addAll(new ItemsLoaderTask(db).execute().get());
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
-        return null;
+        return channelTags;
     }
 
     protected static class ItemLoaderTask extends AsyncTask<Void, Void, ChannelTag> {
