@@ -89,6 +89,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private EpgSyncStatusReceiver epgSyncStatusReceiver;
     private NetworkStatusReceiver networkStatusReceiver;
     private SnackbarMessageReceiver snackbarMessageReceiver;
+    protected boolean isNetworkAvailable;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -288,12 +289,17 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         switch (state.getState()) {
             case START:
             case LOADING:
-            case DONE:
             case FAILED:
                 if (getCurrentFocus() != null) {
-                    Timber.d("Epg task state changed, showing message " + state.getMessage());
                     Snackbar.make(getCurrentFocus(), state.getMessage(), Snackbar.LENGTH_SHORT).show();
                 }
+                break;
+            case DONE:
+                if (getCurrentFocus() != null) {
+                    Snackbar.make(getCurrentFocus(), state.getMessage(), Snackbar.LENGTH_SHORT).show();
+                }
+                isNetworkAvailable = true;
+                invalidateOptionsMenu();
                 break;
         }
     }
@@ -311,5 +317,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             Snackbar.make(getCurrentFocus(), "Connection to server lost.", Snackbar.LENGTH_SHORT).show();
         }
         stopService(new Intent(this, EpgSyncService.class));
+        isNetworkAvailable = false;
+        invalidateOptionsMenu();
     }
 }
