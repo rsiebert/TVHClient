@@ -39,7 +39,6 @@ import org.tvheadend.tvhclient.features.shared.adapter.GenreColorDialogAdapter;
 import org.tvheadend.tvhclient.features.shared.callbacks.ChannelTagSelectionCallback;
 import org.tvheadend.tvhclient.features.shared.callbacks.ChannelTimeSelectionCallback;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecordingRemovedCallback;
-import org.tvheadend.tvhclient.features.startup.StartupActivity;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
 import java.io.UnsupportedEncodingException;
@@ -151,7 +150,9 @@ public class MenuUtils {
         List<ChannelTag> channelTagList = appRepository.getChannelTagData().getItems();
         channelTagList.add(0, tag);
 
-        ChannelTagListAdapter channelTagListAdapter = new ChannelTagListAdapter(activity, channelTagList, channelTagId);
+        ChannelTagListAdapter channelTagListAdapter = new ChannelTagListAdapter(
+                activity, channelTagList, channelTagId,
+                appRepository.getChannelData().getItems().size());
 
         // Show the dialog that shows all available channel tags. When the
         // user has selected a tag, restart the loader to loadRecordingById the updated channel list

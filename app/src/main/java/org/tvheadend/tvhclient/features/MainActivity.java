@@ -63,7 +63,6 @@ import timber.log.Timber;
 // TODO enable or disable the menus depending on the network availability
 // TODO removing scheduled recording in program list does not remove icon
 // TODO add option in menu to show file missing recordings
-// TODO in channel tag selection list show number of channels for first item (all channels)
 // TODO when bad reception and internet is available the app stalls during getstatus?
 
 

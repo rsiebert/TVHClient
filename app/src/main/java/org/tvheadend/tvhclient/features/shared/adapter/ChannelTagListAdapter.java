@@ -28,6 +28,7 @@ import butterknife.OnClick;
 public class ChannelTagListAdapter extends RecyclerView.Adapter<ChannelTagListAdapter.ViewHolder> {
 
     private final Context context;
+    private final int channelCount;
     private Callback callback;
     private List<ChannelTag> channelTagList;
     private int channelTagId;
@@ -37,10 +38,11 @@ public class ChannelTagListAdapter extends RecyclerView.Adapter<ChannelTagListAd
         void onItemClicked(int index);
     }
 
-    public ChannelTagListAdapter(Context context, List<ChannelTag> channelTagList, int channelTagId) {
+    public ChannelTagListAdapter(Context context, List<ChannelTag> channelTagList, int channelTagId, int channelCount) {
         this.context = context;
         this.channelTagList = channelTagList;
         this.channelTagId = channelTagId;
+        this.channelCount = channelCount;
     }
 
     public void setCallback(Callback callback) {
@@ -81,6 +83,8 @@ public class ChannelTagListAdapter extends RecyclerView.Adapter<ChannelTagListAd
 
             if (channelTag.getTagId() > 0) {
                 holder.countTextView.setText(String.valueOf(channelTag.getChannelCount()));
+            } else {
+                holder.countTextView.setText(String.valueOf(channelCount));
             }
         }
     }
