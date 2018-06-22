@@ -5,6 +5,7 @@ import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.data.entity.Channel;
@@ -31,7 +32,6 @@ public class ChannelViewModel extends AndroidViewModel {
     private int channelTagId;
     private Runnable channelUpdateTask;
     private final Handler channelUpdateHandler = new Handler();
-
 
     public ChannelViewModel(Application application) {
         super(application);
@@ -81,6 +81,7 @@ public class ChannelViewModel extends AndroidViewModel {
         return appRepository.getChannelData().getLiveDataItemCount();
     }
 
+    @NonNull
     public MutableLiveData<List<Channel>> getChannels() {
         if (channels == null) {
             channels = new MutableLiveData<>();

@@ -83,14 +83,16 @@ public class ChannelData extends BaseData implements DataSourceInterface<Channel
         return channels;
     }
 
+    @NonNull
     public List<Channel> getItemByTimeAndTag(long currentTime, int channelTagId) {
         int channelSortOrder = Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(context).getString("channel_sort_order", "0"));
+        List<Channel> channels = new ArrayList<>();
         try {
-            return new ItemsLoaderTask(db, currentTime, channelTagId, channelSortOrder).execute().get();
+            channels.addAll(new ItemsLoaderTask(db, currentTime, channelTagId, channelSortOrder).execute().get());
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
-        return null;
+        return channels;
     }
 
     protected static class ItemLoaderTask extends AsyncTask<Void, Void, Channel> {
