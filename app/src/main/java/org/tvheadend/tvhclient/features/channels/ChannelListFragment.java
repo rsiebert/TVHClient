@@ -199,7 +199,7 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
             return;
         }
 
-        FragmentManager fm = getFragmentManager();
+        FragmentManager fm = activity.getSupportFragmentManager();
         if (fm != null) {
             if (!isDualPane) {
                 // Show the fragment to display the program list of the selected channel.
