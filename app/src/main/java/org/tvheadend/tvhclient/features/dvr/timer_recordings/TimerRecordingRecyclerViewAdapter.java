@@ -52,8 +52,8 @@ public class TimerRecordingRecyclerViewAdapter extends RecyclerView.Adapter impl
         recordingListFiltered.clear();
 
         if (list != null) {
-            recordingList = list;
-            recordingListFiltered = list;
+            recordingList.addAll(list);
+            recordingListFiltered.addAll(list);
         }
 
         if (list == null || selectedPosition > list.size()) {

@@ -60,8 +60,8 @@ public class ProgramRecyclerViewAdapter extends RecyclerView.Adapter implements 
         programListFiltered.clear();
 
         if (list != null) {
-            programList = list;
-            programListFiltered = list;
+            programList.addAll(list);
+            programListFiltered.addAll(list);
         }
         notifyDataSetChanged();
     }

@@ -52,8 +52,8 @@ public class ChannelRecyclerViewAdapter extends RecyclerView.Adapter implements 
         channelListFiltered.clear();
 
         if (list != null) {
-            channelList = list;
-            channelListFiltered = list;
+            channelList.addAll(list);
+            channelListFiltered.addAll(list);
         }
 
         if (list == null || selectedPosition > list.size()) {
