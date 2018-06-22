@@ -120,7 +120,6 @@ public class SimpleHtspConnection implements HtspMessage.Dispatcher, HtspConnect
     }
 
     public boolean isConnected() {
-        Timber.d("isConnected " + htspConnection.isConnected());
         return htspConnection.isConnected();
     }
 
