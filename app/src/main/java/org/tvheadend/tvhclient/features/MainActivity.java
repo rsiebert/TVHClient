@@ -40,6 +40,7 @@ import org.tvheadend.tvhclient.data.service.EpgSyncTaskState;
 import org.tvheadend.tvhclient.features.download.DownloadPermissionGrantedInterface;
 import org.tvheadend.tvhclient.features.playback.CastSessionManagerListener;
 import org.tvheadend.tvhclient.features.search.SearchRequestInterface;
+import org.tvheadend.tvhclient.features.shared.callbacks.NetworkAvailableInterface;
 import org.tvheadend.tvhclient.features.shared.callbacks.NetworkStatusCallback;
 import org.tvheadend.tvhclient.features.shared.callbacks.ToolbarInterface;
 import org.tvheadend.tvhclient.features.shared.receivers.NetworkStatusReceiver;
@@ -89,7 +90,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private EpgSyncStatusReceiver epgSyncStatusReceiver;
     private NetworkStatusReceiver networkStatusReceiver;
     private SnackbarMessageReceiver snackbarMessageReceiver;
-    protected boolean isNetworkAvailable;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -286,21 +286,46 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     @Override
     public void onEpgTaskStateChanged(EpgSyncTaskState state) {
         Timber.d("Epg task state changed, message is " + state.getMessage());
+        boolean isNetworkAvailable = false;
         switch (state.getState()) {
+            // Show a message in all these cases and set the network
+            // availability to false because the sync is not yet done or
+            // the connection to the server has not been fully established
             case START:
             case LOADING:
             case FAILED:
                 if (getCurrentFocus() != null) {
                     Snackbar.make(getCurrentFocus(), state.getMessage(), Snackbar.LENGTH_SHORT).show();
                 }
+                isNetworkAvailable = false;
                 break;
+            // Show a message that the loading is done. The connection to the
+            // service is available is now also considered available.
             case DONE:
                 if (getCurrentFocus() != null) {
                     Snackbar.make(getCurrentFocus(), state.getMessage(), Snackbar.LENGTH_SHORT).show();
                 }
                 isNetworkAvailable = true;
-                invalidateOptionsMenu();
                 break;
+            // The network is considered available because the connection
+            // to the server is still established. No reconnect required.
+            case CONNECTED:
+                isNetworkAvailable = true;
+                break;
+
+        }
+        Timber.d("Informing fragments about network availability " + isNetworkAvailable);
+        // Inform the fragment about the network state. They can then enable or disable
+        // certain menu items.
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main);
+        if (fragment != null && fragment instanceof NetworkAvailableInterface) {
+            ((NetworkAvailableInterface) fragment).onNetworkIsAvailable(isNetworkAvailable);
+        }
+        if (isDualPane) {
+            fragment = getSupportFragmentManager().findFragmentById(R.id.details);
+            if (fragment != null && fragment instanceof NetworkAvailableInterface) {
+                ((NetworkAvailableInterface) fragment).onNetworkIsAvailable(isNetworkAvailable);
+            }
         }
     }
 
@@ -317,7 +342,10 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             Snackbar.make(getCurrentFocus(), "Connection to server lost.", Snackbar.LENGTH_SHORT).show();
         }
         stopService(new Intent(this, EpgSyncService.class));
-        isNetworkAvailable = false;
-        invalidateOptionsMenu();
+
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main);
+        if (fragment != null && fragment instanceof NetworkAvailableInterface) {
+            ((NetworkAvailableInterface) fragment).onNetworkIsAvailable(false);
+        }
     }
 }

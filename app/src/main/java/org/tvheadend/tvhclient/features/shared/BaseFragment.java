@@ -12,11 +12,14 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
+import org.tvheadend.tvhclient.features.shared.callbacks.NetworkAvailableInterface;
 import org.tvheadend.tvhclient.features.shared.callbacks.ToolbarInterface;
 
 import javax.inject.Inject;
 
-public abstract class BaseFragment extends Fragment {
+import timber.log.Timber;
+
+public abstract class BaseFragment extends Fragment implements NetworkAvailableInterface {
 
     protected AppCompatActivity activity;
     protected ToolbarInterface toolbarInterface;
@@ -24,6 +27,7 @@ public abstract class BaseFragment extends Fragment {
     protected MenuUtils menuUtils;
     protected boolean isUnlocked;
     protected int htspVersion;
+    protected boolean isNetworkAvailable;
 
     protected Connection connection;
     protected ServerStatus serverStatus;
@@ -66,5 +70,12 @@ public abstract class BaseFragment extends Fragment {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onNetworkIsAvailable(boolean networkIsAvailable) {
+        Timber.d("Network is available " + networkIsAvailable + ", invalidating menu");
+        isNetworkAvailable = networkIsAvailable;
+        activity.invalidateOptionsMenu();
     }
 }
