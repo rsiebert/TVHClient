@@ -21,6 +21,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Connection;
+import org.tvheadend.tvhclient.data.entity.ServerProfile;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.utils.MiscUtils;
@@ -45,6 +46,7 @@ public abstract class BasePlaybackActivity extends AppCompatActivity {
     @Inject
     protected SharedPreferences sharedPreferences;
     protected String baseUrl;
+    protected ServerProfile serverProfile;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -82,6 +84,9 @@ public abstract class BasePlaybackActivity extends AppCompatActivity {
         if (connection == null || serverStatus == null) {
             progressBar.setVisibility(View.GONE);
             statusTextView.setText("Error starting playback. Could not load required connection and server information");
+        } else if (serverProfile == null) {
+            progressBar.setVisibility(View.GONE);
+            statusTextView.setText("Error starting playback. You did not select a playback profile in the settings.");
         } else {
             statusTextView.setText("Requesting playback information from server");
             getHttpTicket();

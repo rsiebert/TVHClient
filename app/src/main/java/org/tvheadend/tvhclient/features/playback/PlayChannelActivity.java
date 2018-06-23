@@ -26,6 +26,8 @@ public class PlayChannelActivity extends BasePlaybackActivity {
                 channelId = bundle.getInt("channelId", -1);
             }
         }
+        serverProfile = appRepository.getServerProfileData()
+                .getItemById(serverStatus.getPlaybackServerProfileId());
     }
 
     @Override
@@ -46,10 +48,13 @@ public class PlayChannelActivity extends BasePlaybackActivity {
     protected void onHttpTicketReceived(String path, String ticket) {
 
         Channel channel = appRepository.getChannelData().getItemById(channelId);
-        String url = "http://" + baseUrl + path + "?ticket=" + ticket + "&mux=matroska";
+        String url = "http://" + baseUrl + path + "?ticket=" + ticket + "&profile=" + serverProfile.getName();
 
         Timber.d("Playing channel from server with url " + url);
 
+        // Mime types depending on the selected profile are available under the following link.
+        // https://github.com/tvheadend/tvheadend/blob/66d6161c563181e5a572337ab3509a835c5a57e2/src/webui/static/tv.js#L56
+        // Currently it is not possible to determine which mime type to use from the profile name.
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setDataAndType(Uri.parse(url), "video/x-matroska");
         intent.putExtra("itemTitle", channel.getName());

@@ -31,6 +31,8 @@ public class PlayRecordingActivity extends BasePlaybackActivity {
                 dvrId = bundle.getInt("dvrId", -1);
             }
         }
+        serverProfile = appRepository.getServerProfileData()
+                .getItemById(serverStatus.getRecordingServerProfileId());
     }
 
     @Override

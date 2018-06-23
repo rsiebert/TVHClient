@@ -37,6 +37,9 @@ public class CastChannelActivity extends BasePlaybackActivity {
         }
         CastContext castContext = CastContext.getSharedInstance(this);
         castSession = castContext.getSessionManager().getCurrentCastSession();
+
+        serverProfile = appRepository.getServerProfileData()
+                .getItemById(serverStatus.getCastingServerProfileId());
     }
 
     @Override
