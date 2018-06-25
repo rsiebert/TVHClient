@@ -41,7 +41,7 @@ import java.util.Date;
 
 // TODO sorting should consider minor major channel numbers
 
-public class ChannelListFragment extends BaseFragment implements RecyclerViewClickCallback, ChannelTimeSelectionCallback, ChannelTagSelectionCallback, SearchRequestInterface, Filter.FilterListener {//}, ChannelsLoadedCallback {
+public class ChannelListFragment extends BaseFragment implements RecyclerViewClickCallback, ChannelTimeSelectionCallback, ChannelTagSelectionCallback, SearchRequestInterface, Filter.FilterListener {
 
     protected ChannelRecyclerViewAdapter recyclerViewAdapter;
     protected RecyclerView recyclerView;
