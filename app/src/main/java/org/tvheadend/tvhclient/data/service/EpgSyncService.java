@@ -45,7 +45,6 @@ public class EpgSyncService extends Service {
             Timber.i("No account configured, not starting service");
             stopSelf();
         }
-        openConnection();
     }
 
     @Override
@@ -53,8 +52,16 @@ public class EpgSyncService extends Service {
         if (connection == null) {
             return START_NOT_STICKY;
         }
-        if (intent != null && intent.getAction() != null) {
-            epgSyncTask.getHandler().post(() -> epgSyncTask.handleIntent(intent));
+        if (simpleHtspConnection == null
+                || !simpleHtspConnection.isAuthenticated()
+                || !simpleHtspConnection.isConnected()) {
+            Timber.d("htsp connection is null, opening connection to server");
+            openConnection();
+        } else {
+            Timber.d("htsp connection is not null, passing intent to epg sync task");
+            if (intent != null && intent.getAction() != null) {
+                epgSyncTask.getHandler().post(() -> epgSyncTask.handleIntent(intent));
+            }
         }
         return START_STICKY;
     }
