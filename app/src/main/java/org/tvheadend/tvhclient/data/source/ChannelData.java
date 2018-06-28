@@ -84,11 +84,22 @@ public class ChannelData extends BaseData implements DataSourceInterface<Channel
     }
 
     @NonNull
-    public List<Channel> getItemByTimeAndTag(long currentTime, int channelTagId) {
+    public List<Channel> getItemsByTimeAndTag(long currentTime, int channelTagId) {
         int channelSortOrder = Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(context).getString("channel_sort_order", "0"));
         List<Channel> channels = new ArrayList<>();
         try {
             channels.addAll(new ItemsLoaderTask(db, currentTime, channelTagId, channelSortOrder).execute().get());
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        return channels;
+    }
+
+    public List<Channel> getChannelNamesByTimeAndTag(long currentTime, int channelTagId) {
+        int channelSortOrder = Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(context).getString("channel_sort_order", "0"));
+        List<Channel> channels = new ArrayList<>();
+        try {
+            channels.addAll(new ItemsLoaderTask(db, currentTime, channelTagId, channelSortOrder, true).execute().get());
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
@@ -115,12 +126,14 @@ public class ChannelData extends BaseData implements DataSourceInterface<Channel
         private final int sortOrder;
         private final long currentTime;
         private final int channelTagId;
+        private final boolean channelNameOnly;
 
         ItemsLoaderTask(AppRoomDatabase db, int sortOrder) {
             this.db = db;
             this.currentTime = 0;
             this.channelTagId = 0;
             this.sortOrder = sortOrder;
+            this.channelNameOnly = false;
         }
 
         ItemsLoaderTask(AppRoomDatabase db, long currentTime, int channelTagId, int sortOrder) {
@@ -128,6 +141,15 @@ public class ChannelData extends BaseData implements DataSourceInterface<Channel
             this.currentTime = currentTime;
             this.channelTagId = channelTagId;
             this.sortOrder = sortOrder;
+            this.channelNameOnly = false;
+        }
+
+        ItemsLoaderTask(AppRoomDatabase db, long currentTime, int channelTagId, int sortOrder, boolean loadOnlyIds) {
+            this.db = db;
+            this.currentTime = currentTime;
+            this.channelTagId = channelTagId;
+            this.sortOrder = sortOrder;
+            this.channelNameOnly = loadOnlyIds;
         }
 
         @Override
@@ -136,8 +158,10 @@ public class ChannelData extends BaseData implements DataSourceInterface<Channel
                 return db.getChannelDao().loadAllChannelsSync(sortOrder);
             } else if (currentTime > 0 && channelTagId == 0) {
                 return db.getChannelDao().loadAllChannelsByTimeSync(currentTime, sortOrder);
-            } else {
+            } else if (!channelNameOnly){
                 return db.getChannelDao().loadAllChannelsByTimeAndTagSync(currentTime, channelTagId, sortOrder);
+            } else {
+                return db.getChannelDao().loadAllChannelsNamesOnlyByTimeAndTagSync(currentTime, channelTagId, sortOrder);
             }
         }
     }

@@ -48,7 +48,7 @@ public class ChannelViewModel extends AndroidViewModel {
                 if (selectedTime < currentTime) {
                     selectedTime = currentTime;
                 }
-                List<Channel> list = appRepository.getChannelData().getItemByTimeAndTag(selectedTime, channelTagId);
+                List<Channel> list = appRepository.getChannelData().getItemsByTimeAndTag(selectedTime, channelTagId);
                 channels.setValue(list);
 
                 channelUpdateHandler.postDelayed(channelUpdateTask, 60000);
