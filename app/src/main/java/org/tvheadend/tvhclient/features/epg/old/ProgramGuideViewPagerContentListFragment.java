@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.features.epg;
+package org.tvheadend.tvhclient.features.epg.old;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -22,7 +22,7 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.data.entity.Program;
 import org.tvheadend.tvhclient.data.entity.Recording;
-import org.tvheadend.tvhclient.features.epg.ProgramGuideViewPagerContentListAdapterContentsView.ProgramContextMenuInterface;
+import org.tvheadend.tvhclient.features.epg.old.ProgramGuideViewPagerContentListAdapterContentsView.ProgramContextMenuInterface;
 import org.tvheadend.tvhclient.features.shared.MenuUtils;
 import org.tvheadend.tvhclient.features.shared.UIUtils;
 

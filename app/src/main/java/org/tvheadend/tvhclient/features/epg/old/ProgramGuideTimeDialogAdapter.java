@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.features.epg;
+package org.tvheadend.tvhclient.features.epg.old;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;

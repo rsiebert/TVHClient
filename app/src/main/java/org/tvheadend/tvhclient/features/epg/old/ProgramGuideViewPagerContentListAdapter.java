@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.features.epg;
+package org.tvheadend.tvhclient.features.epg.old;
 
 import android.app.Activity;
 import android.support.v4.app.Fragment;
