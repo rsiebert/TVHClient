@@ -129,10 +129,12 @@ public class TimerRecordingListFragment extends BaseFragment implements Recycler
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        if (sharedPreferences.getBoolean("delete_all_recordings_menu_enabled", false) && recyclerViewAdapter.getItemCount() > 1) {
+        if (sharedPreferences.getBoolean("delete_all_recordings_menu_enabled", false)
+                && recyclerViewAdapter.getItemCount() > 1
+                && isNetworkAvailable) {
             menu.findItem(R.id.menu_record_remove_all).setVisible(true);
         }
-        menu.findItem(R.id.menu_add).setVisible(true);
+        menu.findItem(R.id.menu_add).setVisible(isNetworkAvailable);
         menu.findItem(R.id.menu_search).setVisible((recyclerViewAdapter.getItemCount() > 0));
     }
 

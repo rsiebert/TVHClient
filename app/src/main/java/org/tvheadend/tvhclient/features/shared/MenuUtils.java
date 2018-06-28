@@ -508,7 +508,7 @@ public class MenuUtils {
                 .show();
     }
 
-    public void onPreparePopupMenu(Menu menu, Program program, Recording recording) {
+    public void onPreparePopupMenu(Menu menu, Program program, Recording recording, boolean isNetworkAvailable) {
         Activity activity = this.activity.get();
         if (activity == null) {
             return;
@@ -523,28 +523,29 @@ public class MenuUtils {
         MenuItem searchEpgMenuItem = menu.findItem(R.id.menu_search_epg);
         MenuItem addReminderMenuItem = menu.findItem(R.id.menu_add_notification);
 
-        if (recording == null || !recording.isRecording() && !recording.isScheduled()) {
-            recordOnceMenuItem.setVisible(true);
-            recordOnceCustomProfileMenuItem.setVisible(isUnlocked);
-            recordSeriesMenuItem.setVisible(serverStatus.getHtspVersion() >= 13);
+        if (isNetworkAvailable) {
+            if (recording == null || !recording.isRecording() && !recording.isScheduled()) {
+                recordOnceMenuItem.setVisible(true);
+                recordOnceCustomProfileMenuItem.setVisible(isUnlocked);
+                recordSeriesMenuItem.setVisible(serverStatus.getHtspVersion() >= 13);
 
-        } else if (recording.isRecording()) {
-            playMenuItem.setVisible(true);
-            recordRemoveMenuItem.setTitle(R.string.stop);
-            recordRemoveMenuItem.setVisible(true);
+            } else if (recording.isRecording()) {
+                playMenuItem.setVisible(true);
+                recordRemoveMenuItem.setTitle(R.string.stop);
+                recordRemoveMenuItem.setVisible(true);
 
-        } else if (recording.isScheduled()) {
-            recordRemoveMenuItem.setTitle(R.string.cancel);
-            recordRemoveMenuItem.setVisible(true);
+            } else if (recording.isScheduled()) {
+                recordRemoveMenuItem.setTitle(R.string.cancel);
+                recordRemoveMenuItem.setVisible(true);
 
-        } else {
-            recordRemoveMenuItem.setTitle(R.string.remove);
-            recordRemoveMenuItem.setVisible(true);
+            } else {
+                recordRemoveMenuItem.setTitle(R.string.remove);
+                recordRemoveMenuItem.setVisible(true);
+            }
+
+            searchImdbMenuItem.setVisible(program != null && program.getEventId() > 0);
+            searchEpgMenuItem.setVisible(program != null && program.getEventId() > 0);
         }
-
-        searchImdbMenuItem.setVisible(program != null && program.getEventId() > 0);
-        searchEpgMenuItem.setVisible(program != null && program.getEventId() > 0);
-
         if (isUnlocked && sharedPreferences.getBoolean("notifications_enabled", true)) {
             addReminderMenuItem.setVisible(true);
         }

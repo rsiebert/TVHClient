@@ -129,10 +129,12 @@ public class SeriesRecordingListFragment extends BaseFragment implements Recycle
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        if (sharedPreferences.getBoolean("delete_all_recordings_menu_enabled", false) && recyclerViewAdapter.getItemCount() > 1) {
+        if (sharedPreferences.getBoolean("delete_all_recordings_menu_enabled", false)
+                && recyclerViewAdapter.getItemCount() > 1
+                && isNetworkAvailable) {
             menu.findItem(R.id.menu_record_remove_all).setVisible(true);
         }
-        menu.findItem(R.id.menu_add).setVisible(isUnlocked);
+        menu.findItem(R.id.menu_add).setVisible(isUnlocked && isNetworkAvailable);
         menu.findItem(R.id.menu_search).setVisible((recyclerViewAdapter.getItemCount() > 0));
     }
 

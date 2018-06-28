@@ -104,7 +104,9 @@ public class RecordingListFragment extends BaseFragment implements RecyclerViewC
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        if (sharedPreferences.getBoolean("delete_all_recordings_menu_enabled", false) && recyclerViewAdapter.getItemCount() > 1) {
+        if (sharedPreferences.getBoolean("delete_all_recordings_menu_enabled", false)
+                && recyclerViewAdapter.getItemCount() > 1
+                && isNetworkAvailable) {
             menu.findItem(R.id.menu_record_remove_all).setVisible(true);
         }
         // Hide the casting icon as a default.
@@ -146,22 +148,24 @@ public class RecordingListFragment extends BaseFragment implements RecyclerViewC
         PopupMenu popupMenu = new PopupMenu(activity, view);
         popupMenu.getMenuInflater().inflate(R.menu.recordings_popup_menu, popupMenu.getMenu());
 
-        if (recording.isCompleted()) {
-            popupMenu.getMenu().findItem(R.id.menu_record_remove).setVisible(true);
-            popupMenu.getMenu().findItem(R.id.menu_play).setVisible(true);
-            popupMenu.getMenu().findItem(R.id.menu_download).setVisible(isUnlocked);
+        if (isNetworkAvailable) {
+            if (recording.isCompleted()) {
+                popupMenu.getMenu().findItem(R.id.menu_record_remove).setVisible(true);
+                popupMenu.getMenu().findItem(R.id.menu_play).setVisible(true);
+                popupMenu.getMenu().findItem(R.id.menu_download).setVisible(isUnlocked);
 
-        } else if (recording.isScheduled() && !recording.isRecording()) {
-            popupMenu.getMenu().findItem(R.id.menu_record_remove).setVisible(true);
-            popupMenu.getMenu().findItem(R.id.menu_edit).setVisible(isUnlocked);
+            } else if (recording.isScheduled() && !recording.isRecording()) {
+                popupMenu.getMenu().findItem(R.id.menu_record_remove).setVisible(true);
+                popupMenu.getMenu().findItem(R.id.menu_edit).setVisible(isUnlocked);
 
-        } else if (recording.isRecording()) {
-            popupMenu.getMenu().findItem(R.id.menu_record_stop).setVisible(true);
-            popupMenu.getMenu().findItem(R.id.menu_play).setVisible(true);
-            popupMenu.getMenu().findItem(R.id.menu_edit).setVisible(isUnlocked);
+            } else if (recording.isRecording()) {
+                popupMenu.getMenu().findItem(R.id.menu_record_stop).setVisible(true);
+                popupMenu.getMenu().findItem(R.id.menu_play).setVisible(true);
+                popupMenu.getMenu().findItem(R.id.menu_edit).setVisible(isUnlocked);
 
-        } else if (recording.isFailed() || recording.isRemoved() || recording.isMissed() || recording.isAborted()) {
-            popupMenu.getMenu().findItem(R.id.menu_record_remove).setVisible(true);
+            } else if (recording.isFailed() || recording.isRemoved() || recording.isMissed() || recording.isAborted()) {
+                popupMenu.getMenu().findItem(R.id.menu_record_remove).setVisible(true);
+            }
         }
 
         popupMenu.setOnMenuItemClickListener(item -> {

@@ -166,6 +166,7 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
         final boolean showGenreColors = sharedPreferences.getBoolean("genre_colors_for_programs_enabled", false);
         menu.findItem(R.id.menu_genre_color_info_programs).setVisible(!isDualPane && showGenreColors);
         menu.findItem(R.id.menu_search).setVisible((recyclerViewAdapter.getItemCount() > 0));
+        menu.findItem(R.id.menu_play).setVisible(isNetworkAvailable);
     }
 
     @Override
@@ -212,7 +213,7 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
 
         PopupMenu popupMenu = new PopupMenu(activity, view);
         popupMenu.getMenuInflater().inflate(R.menu.channel_list_program_popup_menu, popupMenu.getMenu());
-        menuUtils.onPreparePopupMenu(popupMenu.getMenu(), program, program.getRecording());
+        menuUtils.onPreparePopupMenu(popupMenu.getMenu(), program, program.getRecording(), isNetworkAvailable);
 
         // Show the play menu item when the current
         // time is between the program start and end time
