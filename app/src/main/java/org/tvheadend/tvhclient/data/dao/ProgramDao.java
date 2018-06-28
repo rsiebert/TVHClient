@@ -29,7 +29,17 @@ public interface ProgramDao {
             " AND ((p.start >= :time) " +
             "  OR (p.start <= :time AND p.stop >= :time)) " +
             "ORDER BY p.start ASC")
-    LiveData<List<Program>> loadProgramsFromChannelWithinTime(int channelId, long time);
+    LiveData<List<Program>> loadProgramsFromChannelFromTime(int channelId, long time);
+
+    @Transaction
+    @Query(base +
+            "WHERE p.connection_id IN (SELECT id FROM connections WHERE active = 1) " +
+            " AND p.channel_id = :channelId " +
+            " AND ((p.start >= :startTime) " +
+            "  OR (p.start <= :startTime AND p.stop >= :startTime)) " +
+            " AND (p.stop <= :endTime) " +
+            "ORDER BY p.start ASC")
+    LiveData<List<Program>> loadProgramsFromChannelBetweenTime(int channelId, long startTime, long endTime);
 
     @Transaction
     @Query(base +

@@ -73,7 +73,11 @@ public class ProgramData extends BaseData implements DataSourceInterface<Program
     }
 
     public LiveData<List<Program>> getLiveDataItemByChannelIdAndTime(int channelId, long time) {
-        return db.getProgramDao().loadProgramsFromChannelWithinTime(channelId, time);
+        return db.getProgramDao().loadProgramsFromChannelFromTime(channelId, time);
+    }
+
+    public LiveData<List<Program>> getLiveDataItemByChannelIdAndBetweenTime(int channelId, long startTime, long endTime) {
+        return db.getProgramDao().loadProgramsFromChannelBetweenTime(channelId, startTime, endTime);
     }
 
     public Program getLastItemByChannelId(int channelId) {
