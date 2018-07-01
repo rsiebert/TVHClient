@@ -8,12 +8,15 @@ import android.support.annotation.NonNull;
 
 import org.tvheadend.tvhclient.data.db.AppRoomDatabase;
 import org.tvheadend.tvhclient.data.entity.Channel;
+import org.tvheadend.tvhclient.data.entity.ChannelSubset;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
+
+import timber.log.Timber;
 
 public class ChannelData extends BaseData implements DataSourceInterface<Channel> {
 
@@ -95,14 +98,15 @@ public class ChannelData extends BaseData implements DataSourceInterface<Channel
         return channels;
     }
 
-    public List<Channel> getChannelNamesByTimeAndTag(long currentTime, int channelTagId) {
+    public List<ChannelSubset> getChannelNamesByTimeAndTag(int channelTagId) {
         int channelSortOrder = Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(context).getString("channel_sort_order", "0"));
-        List<Channel> channels = new ArrayList<>();
+        List<ChannelSubset> channels = new ArrayList<>();
         try {
-            channels.addAll(new ItemsLoaderTask(db, currentTime, channelTagId, channelSortOrder, true).execute().get());
+            channels.addAll(new ItemSubsetsLoaderTask(db, channelTagId, channelSortOrder).execute().get());
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
+        Timber.d("Loaded " + channels.size() + " channel subset");
         return channels;
     }
 
@@ -126,14 +130,12 @@ public class ChannelData extends BaseData implements DataSourceInterface<Channel
         private final int sortOrder;
         private final long currentTime;
         private final int channelTagId;
-        private final boolean channelNameOnly;
 
         ItemsLoaderTask(AppRoomDatabase db, int sortOrder) {
             this.db = db;
             this.currentTime = 0;
             this.channelTagId = 0;
             this.sortOrder = sortOrder;
-            this.channelNameOnly = false;
         }
 
         ItemsLoaderTask(AppRoomDatabase db, long currentTime, int channelTagId, int sortOrder) {
@@ -141,15 +143,6 @@ public class ChannelData extends BaseData implements DataSourceInterface<Channel
             this.currentTime = currentTime;
             this.channelTagId = channelTagId;
             this.sortOrder = sortOrder;
-            this.channelNameOnly = false;
-        }
-
-        ItemsLoaderTask(AppRoomDatabase db, long currentTime, int channelTagId, int sortOrder, boolean loadOnlyIds) {
-            this.db = db;
-            this.currentTime = currentTime;
-            this.channelTagId = channelTagId;
-            this.sortOrder = sortOrder;
-            this.channelNameOnly = loadOnlyIds;
         }
 
         @Override
@@ -158,10 +151,29 @@ public class ChannelData extends BaseData implements DataSourceInterface<Channel
                 return db.getChannelDao().loadAllChannelsSync(sortOrder);
             } else if (currentTime > 0 && channelTagId == 0) {
                 return db.getChannelDao().loadAllChannelsByTimeSync(currentTime, sortOrder);
-            } else if (!channelNameOnly){
-                return db.getChannelDao().loadAllChannelsByTimeAndTagSync(currentTime, channelTagId, sortOrder);
             } else {
-                return db.getChannelDao().loadAllChannelsNamesOnlyByTimeAndTagSync(currentTime, channelTagId, sortOrder);
+                return db.getChannelDao().loadAllChannelsByTimeAndTagSync(currentTime, channelTagId, sortOrder);
+            }
+        }
+    }
+
+    protected static class ItemSubsetsLoaderTask extends AsyncTask<Void, Void, List<ChannelSubset>> {
+        private final AppRoomDatabase db;
+        private final int sortOrder;
+        private final int channelTagId;
+
+        ItemSubsetsLoaderTask(AppRoomDatabase db, int channelTagId, int sortOrder) {
+            this.db = db;
+            this.channelTagId = channelTagId;
+            this.sortOrder = sortOrder;
+        }
+
+        @Override
+        protected List<ChannelSubset> doInBackground(Void... voids) {
+            if (channelTagId == 0) {
+                return db.getChannelDao().loadAllChannelsNamesOnlySync(sortOrder);
+            } else {
+                return db.getChannelDao().loadAllChannelsNamesOnlyByTagSync(channelTagId, sortOrder);
             }
         }
     }

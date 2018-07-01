@@ -10,6 +10,7 @@ import android.arch.persistence.room.Transaction;
 import android.arch.persistence.room.Update;
 
 import org.tvheadend.tvhclient.data.entity.Channel;
+import org.tvheadend.tvhclient.data.entity.ChannelSubset;
 
 import java.util.List;
 
@@ -53,12 +54,19 @@ public interface ChannelDao {
     List<Channel> loadAllChannelsByTimeAndTagSync(long time, int tagId, int sortOrder);
 
     @Transaction
-    @Query("SELECT c.id, c.name, c.icon " +
+    @Query("SELECT c.id, c.name, c.icon, c.number, c.number_minor " +
+            "FROM channels AS c " +
+            "WHERE c.connection_id IN (SELECT id FROM connections WHERE active = 1) " +
+            "GROUP BY c.id " + orderBy)
+    List<ChannelSubset> loadAllChannelsNamesOnlySync(int sortOrder);
+
+    @Transaction
+    @Query("SELECT c.id, c.name, c.icon, c.number, c.number_minor " +
             "FROM channels AS c " +
             "WHERE c.connection_id IN (SELECT id FROM connections WHERE active = 1) " +
             " AND c.id IN (SELECT channel_id FROM tags_and_channels WHERE tag_id = :tagId) " +
             "GROUP BY c.id " + orderBy)
-    List<Channel> loadAllChannelsNamesOnlyByTimeAndTagSync(long time, int tagId, int sortOrder);
+    List<ChannelSubset> loadAllChannelsNamesOnlyByTagSync(int tagId, int sortOrder);
 
     @Transaction
     @Query(base +
