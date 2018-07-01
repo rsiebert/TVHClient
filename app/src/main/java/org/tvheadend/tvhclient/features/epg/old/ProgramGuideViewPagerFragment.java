@@ -21,13 +21,12 @@ import android.view.ViewGroup;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 
-import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.MainApplication;
-import org.tvheadend.tvhclient.utils.Constants;
+import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.features.search.SearchActivity;
 import org.tvheadend.tvhclient.features.search.SearchRequestInterface;
-import org.tvheadend.tvhclient.features.shared.callbacks.ChannelTagSelectionCallback;
 import org.tvheadend.tvhclient.features.shared.MenuUtils;
+import org.tvheadend.tvhclient.features.shared.callbacks.ChannelTagSelectionCallback;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -199,8 +198,8 @@ public class ProgramGuideViewPagerFragment extends Fragment implements ProgramGu
      */
     private void calcFragmentCount() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-        int daysToShow = Integer.parseInt(prefs.getString("days_of_epg_data", Constants.EPG_DEFAULT_MAX_DAYS));
-        hoursToShow = Integer.parseInt(prefs.getString("hours_of_epg_data_per_screen", Constants.EPG_DEFAULT_HOURS_VISIBLE));
+        int daysToShow = Integer.parseInt(prefs.getString("days_of_epg_data", "7"));
+        hoursToShow = Integer.parseInt(prefs.getString("hours_of_epg_data_per_screen", "4"));
         fragmentCount = (daysToShow * (24 / hoursToShow));
     }
 

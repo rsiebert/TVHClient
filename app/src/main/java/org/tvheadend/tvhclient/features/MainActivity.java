@@ -64,7 +64,10 @@ import timber.log.Timber;
 // TODO enable or disable the menus depending on the network availability
 // TODO removing scheduled recording in program list does not remove icon
 // TODO add option in menu to show file missing recordings
-// TODO when bad reception and internet is available the app stalls during getstatus?
+// TODO give up after x reconnect retries
+// TODO reschedule work when not successful
+// TODO make channel and channelsubset implement interface to avoid two loader tasks in the channeldata
+
 
 
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, ToolbarInterface, EpgSyncStatusCallback, NetworkStatusCallback {

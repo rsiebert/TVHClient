@@ -5,7 +5,7 @@
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/channel_title_date"
+        android:id="@+id/channel_list_header"
         style="?attr/ProgramGuideTimelineFont"
         android:layout_width="match_parent"
         android:layout_height="36dp"

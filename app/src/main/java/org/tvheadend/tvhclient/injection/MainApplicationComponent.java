@@ -13,6 +13,7 @@ import org.tvheadend.tvhclient.features.download.DownloadRecordingManager;
 import org.tvheadend.tvhclient.features.dvr.recordings.RecordingViewModel;
 import org.tvheadend.tvhclient.features.dvr.series_recordings.SeriesRecordingViewModel;
 import org.tvheadend.tvhclient.features.dvr.timer_recordings.TimerRecordingViewModel;
+import org.tvheadend.tvhclient.features.epg.EpgViewModel;
 import org.tvheadend.tvhclient.features.playback.BasePlaybackActivity;
 import org.tvheadend.tvhclient.features.programs.ProgramViewModel;
 import org.tvheadend.tvhclient.features.settings.BasePreferenceFragment;
@@ -78,4 +79,6 @@ public interface MainApplicationComponent {
     void inject(MainActivity mainActivity);
 
     void inject(StartupFragment startupFragment);
+
+    void inject(EpgViewModel epgViewModel);
 }
