@@ -29,6 +29,8 @@ import com.google.android.gms.cast.framework.CastState;
 import com.google.android.gms.cast.framework.CastStateListener;
 import com.google.android.gms.cast.framework.IntroductoryOverlay;
 import com.google.android.gms.cast.framework.SessionManagerListener;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
@@ -66,8 +68,12 @@ import timber.log.Timber;
 // TODO add option in menu to show file missing recordings
 // TODO give up after x reconnect retries
 // TODO reschedule work when not successful
-// TODO make channel and channelsubset implement interface to avoid two loader tasks in the channeldata
-
+// TODO epg: long click popup menu
+// TODO epg: short click program details
+// TODO epg: genre colors
+// TODO epg: caching of programs in viewmodel
+// TODO epg: sync scrolling
+// TODO epg: optimize passed vars like start and end times
 
 
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, ToolbarInterface, EpgSyncStatusCallback, NetworkStatusCallback {
@@ -107,16 +113,23 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         networkStatusReceiver = new NetworkStatusReceiver(this);
         snackbarMessageReceiver = new SnackbarMessageReceiver(this);
 
-        castSessionManagerListener = new CastSessionManagerListener(this, castSession);
-        castContext = CastContext.getSharedInstance(this);
-        castStateListener = new CastStateListener() {
-            @Override
-            public void onCastStateChanged(int newState) {
-                if (newState != CastState.NO_DEVICES_AVAILABLE) {
-                    showIntroductoryOverlay();
+        GoogleApiAvailability googleApiAvailability = GoogleApiAvailability.getInstance();
+        int status = googleApiAvailability.isGooglePlayServicesAvailable(this);
+        if (status == ConnectionResult.SUCCESS) {
+            Timber.d("Google API available");
+            castContext = CastContext.getSharedInstance(this);
+            castSessionManagerListener = new CastSessionManagerListener(this, castSession);
+            castStateListener = new CastStateListener() {
+                @Override
+                public void onCastStateChanged(int newState) {
+                    if (newState != CastState.NO_DEVICES_AVAILABLE) {
+                        showIntroductoryOverlay();
+                    }
                 }
-            }
-        };
+            };
+        } else {
+            Timber.d("Google API not available");
+        }
 
         View v = findViewById(R.id.right_fragment);
         isDualPane = v != null && v.getVisibility() == View.VISIBLE;
@@ -136,23 +149,30 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     @Override
     public boolean dispatchKeyEvent(@NonNull KeyEvent event) {
-        return castContext.onDispatchVolumeKeyEventBeforeJellyBean(event) || super.dispatchKeyEvent(event);
+        if (castContext != null) {
+            return castContext.onDispatchVolumeKeyEventBeforeJellyBean(event) || super.dispatchKeyEvent(event);
+        }
+        return super.dispatchKeyEvent(event);
     }
 
     @Override
     protected void onResume() {
-        castContext.addCastStateListener(castStateListener);
-        castContext.getSessionManager().addSessionManagerListener(castSessionManagerListener, CastSession.class);
-        if (castSession == null) {
-            castSession = CastContext.getSharedInstance(this).getSessionManager().getCurrentCastSession();
+        if (castContext != null) {
+            castContext.addCastStateListener(castStateListener);
+            castContext.getSessionManager().addSessionManagerListener(castSessionManagerListener, CastSession.class);
+            if (castSession == null) {
+                castSession = CastContext.getSharedInstance(this).getSessionManager().getCurrentCastSession();
+            }
         }
         super.onResume();
     }
 
     @Override
     protected void onPause() {
-        castContext.removeCastStateListener(castStateListener);
-        castContext.getSessionManager().removeSessionManagerListener(castSessionManagerListener, CastSession.class);
+        if (castContext != null) {
+            castContext.removeCastStateListener(castStateListener);
+            castContext.getSessionManager().removeSessionManagerListener(castSessionManagerListener, CastSession.class);
+        }
         super.onPause();
     }
 
