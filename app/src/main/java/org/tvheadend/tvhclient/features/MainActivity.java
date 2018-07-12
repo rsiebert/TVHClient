@@ -68,12 +68,7 @@ import timber.log.Timber;
 // TODO add option in menu to show file missing recordings
 // TODO give up after x reconnect retries
 // TODO reschedule work when not successful
-// TODO epg: long click popup menu
-// TODO epg: short click program details
-// TODO epg: genre colors
-// TODO epg: caching of programs in viewmodel
-// TODO epg: sync scrolling
-// TODO epg: optimize passed vars like start and end times
+// TODO program details not shown
 
 
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, ToolbarInterface, EpgSyncStatusCallback, NetworkStatusCallback {
