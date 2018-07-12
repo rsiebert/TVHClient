@@ -3,6 +3,7 @@ package org.tvheadend.tvhclient.features.epg;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
@@ -29,7 +30,9 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import timber.log.Timber;
 
-public class EpgViewPagerFragment extends Fragment {
+import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
+
+public class EpgViewPagerFragment extends Fragment implements EpgScrollInterface {
 
     @BindView(R.id.constraint_layout)
     ConstraintLayout constraintLayout;
@@ -43,14 +46,12 @@ public class EpgViewPagerFragment extends Fragment {
     ImageView currentTimeIndication;
 
     private Unbinder unbinder;
-    private FragmentActivity activity;
     private EpgViewPagerRecyclerViewAdapter recyclerViewAdapter;
     private EpgViewModel viewModel;
 
     private boolean showTimeIndication;
     private long startTime;
     private long endTime;
-    private int displayWidth;
     private float pixelsPerMinute;
 
     private Handler updateViewHandler;
@@ -58,17 +59,15 @@ public class EpgViewPagerFragment extends Fragment {
     private Handler updateTimeIndicationHandler;
     private Runnable updateTimeIndicationTask;
     private ConstraintSet constraintSet;
+    private boolean enableScrolling;
+    private LinearLayoutManager recyclerViewLinearLayoutManager;
+    private Parcelable recyclerViewLinearLayoutManagerState;
 
-
-    public static EpgViewPagerFragment newInstance(Long startTime, Long endTime, float pixelsPerMinute, int displayWidth, boolean timeIndicationEnabled) {
+    public static EpgViewPagerFragment newInstance(Long startTime, Long endTime, float pixelsPerMinute, boolean timeIndicationEnabled) {
         EpgViewPagerFragment fragment = new EpgViewPagerFragment();
         Bundle bundle = new Bundle();
         bundle.putLong("epg_start_time", startTime);
         bundle.putLong("epg_end_time", endTime);
-        // Required so that the correct width of each program guide entry
-        // can be calculated. Also used to determine the exact position of
-        // the vertical current time indication
-        bundle.putInt("display_width", displayWidth);
         // Required to know how many pixels of the display are remaining
         bundle.putFloat("pixels_per_minute", pixelsPerMinute);
         // Used to only show the vertical current time indication in the first fragment
@@ -103,16 +102,19 @@ public class EpgViewPagerFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        activity = getActivity();
+        FragmentActivity activity = getActivity();
 
         constraintSet = new ConstraintSet();
         constraintSet.clone(constraintLayout);
+
+        if (savedInstanceState != null) {
+            recyclerViewLinearLayoutManagerState = savedInstanceState.getParcelable("layout");
+        }
 
         Bundle bundle = getArguments();
         if (bundle != null) {
             startTime = bundle.getLong("epg_start_time", 0);
             endTime = bundle.getLong("epg_end_time", 0);
-            displayWidth = bundle.getInt("display_width");
             pixelsPerMinute = bundle.getFloat("pixels_per_minute");
             showTimeIndication = bundle.getBoolean("time_indication_enabled", false);
         }
@@ -122,20 +124,54 @@ public class EpgViewPagerFragment extends Fragment {
         titleDate.setText(date);
         titleHours.setText(time);
 
-        recyclerViewAdapter = new EpgViewPagerRecyclerViewAdapter(activity);
-        recyclerView.setLayoutManager(new LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false));
+        recyclerViewAdapter = new EpgViewPagerRecyclerViewAdapter(activity, pixelsPerMinute, startTime, endTime);
+        recyclerViewLinearLayoutManager = new LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false);
+        recyclerView.setLayoutManager(recyclerViewLinearLayoutManager);
         recyclerView.addItemDecoration(new DividerItemDecoration(activity, LinearLayoutManager.VERTICAL));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(recyclerViewAdapter);
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (newState != SCROLL_STATE_IDLE) {
+                    enableScrolling = true;
+                } else if (enableScrolling) {
+                    Fragment fragment = activity.getSupportFragmentManager().findFragmentById(R.id.main);
+                    if (fragment != null
+                            && fragment instanceof EpgScrollInterface) {
+                        enableScrolling = false;
+                        ((EpgScrollInterface) fragment).onScrollStateChanged();
+                    }
+                }
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (enableScrolling) {
+                    int position = recyclerViewLinearLayoutManager.findFirstVisibleItemPosition();
+                    View v = recyclerViewLinearLayoutManager.getChildAt(0);
+                    int offset = (v == null) ? 0 : v.getTop() - recyclerView.getPaddingTop();
+
+                    //Timber.d("onScrolled: Scrolling program list by " + position + ", " + offset);
+                    Fragment fragment = activity.getSupportFragmentManager().findFragmentById(R.id.main);
+                    if (fragment != null
+                            && fragment instanceof EpgScrollInterface) {
+                        ((EpgScrollInterface) fragment).onScroll(position, offset);
+                    }
+                }
+            }
+        });
 
         viewModel = ViewModelProviders.of(activity).get(EpgViewModel.class);
         viewModel.getChannels().observe(this, channels -> {
-            Timber.d("Loaded channels in view pager fragment");
             if (channels != null) {
                 int position = 0;
                 for (ChannelSubset channel : channels) {
-                    position++;
                     loadPrograms(position, channel);
+                    position++;
                 }
             }
         });
@@ -166,9 +202,18 @@ public class EpgViewPagerFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable("layout", recyclerViewLinearLayoutManager.onSaveInstanceState());
+    }
+
     private void loadPrograms(int position, ChannelSubset channel) {
         viewModel.getProgramsByChannelAndBetweenTime(channel.getId(), startTime, endTime).observe(this, programs -> {
-            recyclerViewAdapter.addItems(position, channel, programs);
+            recyclerViewAdapter.addItems(position, programs);
+
+            Timber.d("Setting scroll position to layout mananger");
+            recyclerViewLinearLayoutManager.onRestoreInstanceState(recyclerViewLinearLayoutManagerState);
         });
     }
 
@@ -187,8 +232,21 @@ public class EpgViewPagerFragment extends Fragment {
         final int offset = (int) (durationTime * pixelsPerMinute);
 
         // Set the left constraint of the time indication so it shows the actual time
-        constraintSet.connect(currentTimeIndication.getId(), ConstraintSet.LEFT, constraintLayout.getId(), ConstraintSet.LEFT, offset);
-        constraintSet.connect(currentTimeIndication.getId(), ConstraintSet.START, constraintLayout.getId(), ConstraintSet.START, offset);
-        constraintSet.applyTo(constraintLayout);
+        if (currentTimeIndication != null) {
+            constraintSet.connect(currentTimeIndication.getId(), ConstraintSet.LEFT, constraintLayout.getId(), ConstraintSet.LEFT, offset);
+            constraintSet.connect(currentTimeIndication.getId(), ConstraintSet.START, constraintLayout.getId(), ConstraintSet.START, offset);
+            constraintSet.applyTo(constraintLayout);
+        }
+    }
+
+    @Override
+    public void onScroll(int position, int offset) {
+        Timber.d("onScroll, scrolling program list to " + position + ", " + offset);
+        recyclerViewLinearLayoutManager.scrollToPositionWithOffset(position, offset);
+    }
+
+    @Override
+    public void onScrollStateChanged() {
+
     }
 }

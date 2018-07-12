@@ -1,21 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="wrap_content"
-    android:layout_height="80dp"
-    android:background="?attr/selectableItemBackground"
-    android:paddingBottom="16dp">
-
-    <TextView
-        android:id="@+id/genre"
-        android:layout_width="8dp"
-        android:layout_height="fill_parent"
-        android:text="@null"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    android:id="@+id/program_item_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/selectableItemBackground">
 
     <TextView
         android:id="@+id/title"
@@ -23,23 +12,24 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
-        android:layout_marginLeft="16dp"
+        android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:ellipsize="end"
+        android:maxLines="1"
         android:text="@string/title"
         app:layout_constraintEnd_toStartOf="@+id/state"
-        app:layout_constraintStart_toEndOf="@+id/genre"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/state"
         android:layout_width="20dp"
         android:layout_height="20dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="8dp"
         android:contentDescription="@null"
         android:scaleType="fitCenter"
         app:layout_constraintEnd_toEndOf="parent"
@@ -50,60 +40,33 @@
         style="?attr/SubtitleFont"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginStart="16dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="8dp"
         android:ellipsize="end"
-        android:singleLine="true"
+        android:maxLines="1"
         android:text="@string/subtitle"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/genre"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/title" />
-
-    <TextView
-        android:id="@+id/date"
-        style="?attr/ContentFont"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:gravity="start"
-        android:text="@string/date"
-        android:textAlignment="viewStart"
-        app:layout_constraintStart_toEndOf="@+id/genre"
-        app:layout_constraintTop_toBottomOf="@+id/subtitle" />
-
-    <TextView
-        android:id="@+id/time"
-        style="?attr/ContentFont"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:text="@string/time"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.3"
-        app:layout_constraintStart_toEndOf="@+id/genre"
-        app:layout_constraintTop_toBottomOf="@+id/subtitle" />
 
     <TextView
         android:id="@+id/duration"
         style="?attr/ContentFont"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginRight="16dp"
+        android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         android:layout_weight="0.3"
         android:gravity="end"
         android:text="@string/duration"
         android:textAlignment="textEnd"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/genre"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/subtitle" />
 
 </android.support.constraint.ConstraintLayout>

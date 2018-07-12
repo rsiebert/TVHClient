@@ -28,6 +28,8 @@ public class EpgViewModel extends AndroidViewModel {
     private int channelTagId;
     private Runnable channelUpdateTask;
     private final Handler handler = new Handler();
+    private int verticalOffset = 0;
+    private int verticalPosition = 0;
 
     public EpgViewModel(Application application) {
         super(application);
@@ -86,5 +88,21 @@ public class EpgViewModel extends AndroidViewModel {
 
     LiveData<List<Program>> getProgramsByChannelAndBetweenTime(int channelId, long startTime, long endTime) {
         return appRepository.getProgramData().getLiveDataItemByChannelIdAndBetweenTime(channelId, startTime, endTime);
+    }
+
+    void setVerticalScrollOffset(int offset) {
+        this.verticalOffset = offset;
+    }
+
+    int getVerticalScrollOffset() {
+        return this.verticalOffset;
+    }
+
+    void setVerticalScrollPosition(int position) {
+        this.verticalPosition = position;
+    }
+
+    int getVerticalScrollPosition() {
+        return this.verticalPosition;
     }
 }
