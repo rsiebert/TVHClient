@@ -59,7 +59,9 @@ public class EpgSyncService extends Service {
             openConnection();
         } else {
             Timber.d("htsp connection is not null, passing intent to epg sync task");
-            if (intent != null && intent.getAction() != null) {
+            if (epgSyncTask != null
+                    && intent != null
+                    && intent.getAction() != null) {
                 epgSyncTask.getHandler().post(() -> epgSyncTask.handleIntent(intent));
             }
         }
