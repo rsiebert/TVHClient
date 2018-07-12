@@ -11,13 +11,13 @@ import timber.log.Timber;
 public class EpgPingServiceWorker extends Worker {
     @NonNull
     @Override
-    public WorkerResult doWork() {
+    public Result doWork() {
         Timber.d("Starting service and calling getStatus");
 
         Intent intent = new Intent(getApplicationContext(), EpgSyncService.class);
         intent.setAction("getStatus");
         getApplicationContext().startService(intent);
 
-        return WorkerResult.SUCCESS;
+        return Result.SUCCESS;
     }
 }

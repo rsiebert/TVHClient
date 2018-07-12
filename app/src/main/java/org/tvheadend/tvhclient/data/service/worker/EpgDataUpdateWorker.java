@@ -11,7 +11,7 @@ import timber.log.Timber;
 public class EpgDataUpdateWorker extends Worker {
     @NonNull
     @Override
-    public WorkerResult doWork() {
+    public Result doWork() {
         Timber.d("Loading more event data from server");
 
         // The work here will be done when the worker is first enqueued.
@@ -28,6 +28,6 @@ public class EpgDataUpdateWorker extends Worker {
         intent.setAction("getMoreEvents");
         getApplicationContext().startService(intent);
 
-        return WorkerResult.SUCCESS;
+        return Result.SUCCESS;
     }
 }

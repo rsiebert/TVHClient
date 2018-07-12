@@ -11,7 +11,7 @@ import timber.log.Timber;
 public class EpgDataRemovalWorker extends Worker {
     @NonNull
     @Override
-    public WorkerResult doWork() {
+    public Result doWork() {
         Timber.d("Removing outdated epg data from the database");
 
         // The work here will be done when the worker is first enqueued.
@@ -28,6 +28,6 @@ public class EpgDataRemovalWorker extends Worker {
         intent.setAction("deleteEvents");
         getApplicationContext().startService(intent);
 
-        return WorkerResult.SUCCESS;
+        return Result.SUCCESS;
     }
 }
