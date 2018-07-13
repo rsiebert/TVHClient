@@ -87,7 +87,11 @@ public class EpgViewModel extends AndroidViewModel {
     }
 
     LiveData<List<Program>> getProgramsByChannelAndBetweenTime(int channelId, long startTime, long endTime) {
-        return appRepository.getProgramData().getLiveDataItemByChannelIdAndBetweenTime(channelId, startTime, endTime);
+        if (channelTagId == 0) {
+            return appRepository.getProgramData().getLiveDataItemByChannelIdAndBetweenTime(channelId, startTime, endTime);
+        } else {
+            return appRepository.getProgramData().getLiveDataItemByChannelIdAndByTagAndBetweenTime(channelId, channelTagId, startTime, endTime);
+        }
     }
 
     void setVerticalScrollOffset(int offset) {

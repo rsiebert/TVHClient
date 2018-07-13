@@ -59,4 +59,8 @@ public class EpgViewPagerRecyclerViewAdapter extends RecyclerView.Adapter {
     public int getItemViewType(final int position) {
         return R.layout.epg_program_list_adapter;
     }
+
+    public void clearItems() {
+        programList.clear();
+    }
 }
