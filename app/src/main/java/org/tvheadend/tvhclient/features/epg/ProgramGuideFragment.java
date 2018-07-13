@@ -26,6 +26,8 @@ import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.ProgressBar;
 
+import com.afollestad.materialdialogs.MaterialDialog;
+
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.ChannelSubset;
 import org.tvheadend.tvhclient.data.entity.ChannelTag;
@@ -48,16 +50,14 @@ import timber.log.Timber;
 
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 
-// TODO epg: genre colors
-// TODO epg: caching of programs in viewmodel
-// TODO epg: optimize passed vars like start and end times
-// TODO jump to selected time
-// TODO filter by channel tag
+// TODO genre colors
+// TODO optimize passed vars like start and end times
 // TODO channel list item decoration right and vertical
 // TODO Reduce scrolling calls to layout manager
-// TODO filter programs in epg
 // TODO show recording states
 // TODO search in epg
+// TODO refactor time dialog adapter
+// TODO rename classes
 
 
 public class ProgramGuideFragment extends BaseFragment implements EpgScrollInterface, RecyclerViewClickCallback, ChannelTimeSelectionCallback, ChannelTagSelectionCallback, Filter.FilterListener, ViewPager.OnPageChangeListener {
@@ -215,7 +215,8 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
                 menuUtils.handleMenuChannelTagsSelection(viewModel.getChannelTagId(), this);
                 return true;
             case R.id.menu_timeframe:
-                menuUtils.handleMenuTimeSelection(selectedTimeOffset, this);
+                //menuUtils.handleMenuTimeSelection(selectedTimeOffset, this);
+                showProgramGuideTimeDialog();
                 return true;
             case R.id.menu_genre_color_info_channels:
                 menuUtils.handleMenuGenreColorSelection();
@@ -223,6 +224,44 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    public class ProgramGuideTimeDialogItem {
+        public long start;
+        public long end;
+    }
+
+    /**
+     * Prepares a dialog that shows the available dates and times the user can
+     * choose from. In here the data for the adapter is created and the dialog
+     * prepared which can be shown later.
+     */
+    private void showProgramGuideTimeDialog() {
+        // Fill the list for the adapter
+        List<ProgramGuideTimeDialogItem> times = new ArrayList<>();
+        for (int i = 0; i < fragmentCount; ++i) {
+            ProgramGuideTimeDialogItem item = new ProgramGuideTimeDialogItem();
+            item.start = startTimes.get(i);
+            item.end = endTimes.get(i);
+            times.add(item);
+        }
+        // The dialog that allows the user to select a certain time frame
+        final ProgramGuideTimeDialogAdapter timeAdapter = new ProgramGuideTimeDialogAdapter(activity, times);
+        final MaterialDialog programGuideTimeDialog = new MaterialDialog.Builder(activity)
+                .title(R.string.tags)
+                .adapter(timeAdapter, null)
+                .build();
+
+        // Set the callback to handle clicks. This needs to be done after the
+        // dialog creation so that the inner method has access to the dialog variable
+        timeAdapter.setCallback(new ProgramGuideTimeDialogAdapter.Callback() {
+            @Override
+            public void onItemClicked(int which) {
+                programViewPager.setCurrentItem(which);
+                programGuideTimeDialog.dismiss();
+            }
+        });
+        programGuideTimeDialog.show();
     }
 
     @Override

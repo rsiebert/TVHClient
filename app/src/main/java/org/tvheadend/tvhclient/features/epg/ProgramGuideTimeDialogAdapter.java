@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.features.epg.old;
+package org.tvheadend.tvhclient.features.epg;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -30,13 +30,13 @@ public class ProgramGuideTimeDialogAdapter extends RecyclerView.Adapter<ProgramG
 
     private final Context context;
     private Callback mCallback;
-    private List<ProgramGuideViewPagerFragment.ProgramGuideTimeDialogItem> list;
+    private List<ProgramGuideFragment.ProgramGuideTimeDialogItem> list;
 
     public interface Callback {
         void onItemClicked(int index);
     }
 
-    public ProgramGuideTimeDialogAdapter(Context context, List<ProgramGuideViewPagerFragment.ProgramGuideTimeDialogItem> list) {
+    public ProgramGuideTimeDialogAdapter(Context context, List<ProgramGuideFragment.ProgramGuideTimeDialogItem> list) {
         this.list = list;
         this.context = context;
     }
@@ -56,7 +56,7 @@ public class ProgramGuideTimeDialogAdapter extends RecyclerView.Adapter<ProgramG
      * Applies the values to the available layout items
      */
     public void onBindViewHolder(ViewHolder holder, int position) {
-        ProgramGuideViewPagerFragment.ProgramGuideTimeDialogItem item = list.get(position);
+        ProgramGuideFragment.ProgramGuideTimeDialogItem item = list.get(position);
         if (item != null) {
             Timber.d("onBindViewHolder: start " + item.start);
             // Convert the dates into a nice string representation
