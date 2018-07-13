@@ -34,8 +34,6 @@ import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallba
 
 import java.util.Date;
 
-import timber.log.Timber;
-
 public class ProgramListFragment extends BaseFragment implements RecyclerViewClickCallback, BottomReachedCallback, SearchRequestInterface, Filter.FilterListener {
 
     private ProgramRecyclerViewAdapter recyclerViewAdapter;
@@ -195,9 +193,6 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
         if (program == null) {
             return;
         }
-
-        Timber.d("showProgramDetails: program " + program.getEventId() + ", " + program.getTitle());
-
         // Launch a new activity to display the program list of the selected channelTextView.
         Intent intent = new Intent(activity, ProgramDetailsActivity.class);
         intent.putExtra("eventId", program.getEventId());

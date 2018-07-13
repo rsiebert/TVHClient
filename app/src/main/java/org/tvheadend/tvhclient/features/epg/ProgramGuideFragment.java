@@ -56,6 +56,9 @@ import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 // TODO channel list item decoration right and vertical
 // TODO Reduce scrolling calls to layout manager
 // TODO filter programs in epg
+// TODO show recording states
+// TODO search in epg
+
 
 public class ProgramGuideFragment extends BaseFragment implements EpgScrollInterface, RecyclerViewClickCallback, ChannelTimeSelectionCallback, ChannelTagSelectionCallback, Filter.FilterListener, ViewPager.OnPageChangeListener {
 
@@ -143,12 +146,9 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
                 if (enableScrolling) {
-
                     int position = channelListRecyclerViewLayoutManager.findFirstVisibleItemPosition();
                     View v = channelListRecyclerViewLayoutManager.getChildAt(0);
                     int offset = (v == null) ? 0 : v.getTop() - recyclerView.getPaddingTop();
-
-                    //Timber.d("onScrolled: Scrolling channel list by " + position + ", " + offset);
                     onScroll(position, offset);
                 }
             }
@@ -391,24 +391,25 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
 
     @Override
     public void onScroll(int position, int offset) {
-        Timber.d("onScroll " + position + ", " + offset);
-        // Save the values
         viewModel.setVerticalScrollPosition(position);
         viewModel.setVerticalScrollOffset(offset);
-
         startScrolling();
     }
 
     @Override
     public void onScrollStateChanged() {
-        Timber.d("onScrollStateChanged");
         startScrolling();
     }
 
+    /**
+     * Scrolls the channel list and the program lists in all available
+     * fragments from the viewpager to the saved position and offset.
+     * When the user swipes the viewpager to show a new fragment it will
+     * not be scrolled here but in the onPageSelected method
+     */
     private void startScrolling() {
         int position = viewModel.getVerticalScrollPosition();
         int offset = viewModel.getVerticalScrollOffset();
-        Timber.d("startScrolling, scrolling channel list and program list to " + position + ", " + offset);
 
         channelListRecyclerViewLayoutManager.scrollToPositionWithOffset(position, offset);
 
@@ -428,14 +429,14 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
 
     @Override
     public void onPageSelected(int position) {
-        Timber.d("onPageSelected " + position);
+        // When a fragment was selected new fragment could have been created by the viewpager.
+        // Scrolls the channel list and the program lists in all available fragments
+        // except the currently visible one from the viewpager to the saved position and offset.
         for (int i = (position - 1); i <= (position + 1); i++) {
-            Timber.d("onPageSelected, checking fragment at position " + i);
             Fragment fragment = viewPagerAdapter.getRegisteredFragment(i);
             if (fragment != null
                     && i != position
                     && fragment instanceof EpgScrollInterface) {
-                Timber.d("onPageSelected, scrolling fragment at position " + i);
                 ((EpgScrollInterface) fragment).onScroll(viewModel.getVerticalScrollPosition(), viewModel.getVerticalScrollOffset());
             }
         }
