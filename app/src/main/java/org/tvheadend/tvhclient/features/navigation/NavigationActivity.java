@@ -3,11 +3,15 @@ package org.tvheadend.tvhclient.features.navigation;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.features.MainActivity;
@@ -29,20 +33,27 @@ import org.tvheadend.tvhclient.features.purchase.UnlockerFragment;
 import org.tvheadend.tvhclient.features.settings.SettingsActivity;
 import org.tvheadend.tvhclient.features.shared.tasks.WakeOnLanTaskCallback;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import timber.log.Timber;
 
 // TODO make nav image blasser
 // TODO icons in dual pane mode
-//// TODO Initialize only once and in the startup phase
 
 public class NavigationActivity extends MainActivity implements WakeOnLanTaskCallback, NavigationDrawerCallback {
 
     private int selectedNavigationMenuId;
     private NavigationDrawer navigationDrawer;
+    @BindView(R.id.main)
+    FrameLayout mainFrameLayout;
+    @Nullable
+    @BindView(R.id.details)
+    FrameLayout detailsFrameLayout;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ButterKnife.bind(this);
 
         navigationDrawer = new NavigationDrawer(this, savedInstanceState, toolbar, appRepository, this);
         navigationDrawer.createHeader();
@@ -191,11 +202,64 @@ public class NavigationActivity extends MainActivity implements WakeOnLanTaskCal
         if (fragment != null) {
             // Save the menu position so we know which one was selected
             selectedNavigationMenuId = position;
+
+            removeDetailsFragment();
+            removeDetailsLayout(position);
+
+            // Show the new fragment that represents the selected menu entry.
             fragment.setArguments(getIntent().getExtras());
             getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.main, fragment)
                     .addToBackStack(null)
+                    .commit();
+        }
+    }
+
+    /**
+     * Hide the details layout for certain fragments. Even in dual pane mode these
+     * fragment shall be fully visible because they show no details whatsoever.
+     *
+     * @param position The current navigation menu position
+     */
+    private void removeDetailsLayout(int position) {
+        // TODO pass info single pane only to base fragment
+
+        if (detailsFrameLayout != null) {
+            if (position == NavigationDrawer.MENU_PROGRAM_GUIDE
+                    || position == NavigationDrawer.MENU_INFORMATION
+                    || position == NavigationDrawer.MENU_STATUS
+                    || position == NavigationDrawer.MENU_UNLOCKER) {
+                detailsFrameLayout.setVisibility(View.GONE);
+                LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        1.0f
+                );
+                mainFrameLayout.setLayoutParams(param);
+            } else {
+                detailsFrameLayout.setVisibility(View.VISIBLE);
+                LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        0.65f
+                );
+                mainFrameLayout.setLayoutParams(param);
+            }
+        }
+    }
+
+    /**
+     * Remove the old details fragment if there is one so that it is not visible when
+     * the new main fragment is loaded. It takes a while until the new details
+     * fragment is visible. This prevents showing wrong data when switching screens.
+     */
+    private void removeDetailsFragment() {
+        Fragment detailsFragment = getSupportFragmentManager().findFragmentById(R.id.details);
+        if (detailsFragment != null) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .remove(detailsFragment)
                     .commit();
         }
     }
