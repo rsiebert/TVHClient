@@ -1,6 +1,7 @@
 package org.tvheadend.tvhclient.features.epg;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,8 +14,6 @@ import org.tvheadend.tvhclient.features.shared.UIUtils;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
-
-import timber.log.Timber;
 
 /**
  * A private custom adapter that contains the list of
@@ -36,7 +35,7 @@ public class ProgramGuideTimeDialogAdapter extends RecyclerView.Adapter<ProgramG
         void onItemClicked(int index);
     }
 
-    public ProgramGuideTimeDialogAdapter(Context context, List<ProgramGuideFragment.ProgramGuideTimeDialogItem> list) {
+    ProgramGuideTimeDialogAdapter(Context context, List<ProgramGuideFragment.ProgramGuideTimeDialogItem> list) {
         this.list = list;
         this.context = context;
     }
@@ -45,20 +44,17 @@ public class ProgramGuideTimeDialogAdapter extends RecyclerView.Adapter<ProgramG
         this.mCallback = mCallback;
     }
 
+    @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         final View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.program_guide_time_selection_dialog_adapter, parent, false);
         return new ViewHolder(view, this);
     }
 
     @Override
-    /**
-     * Applies the values to the available layout items
-     */
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         ProgramGuideFragment.ProgramGuideTimeDialogItem item = list.get(position);
         if (item != null) {
-            Timber.d("onBindViewHolder: start " + item.start);
             // Convert the dates into a nice string representation
             final SimpleDateFormat sdf1 = new SimpleDateFormat("HH:mm", Locale.US);
             String time = sdf1.format(item.start) + " - " + sdf1.format(item.end);
