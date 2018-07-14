@@ -73,7 +73,9 @@ public class ChannelRecyclerViewAdapter extends RecyclerView.Adapter implements 
     }
 
     public void setPosition(int pos) {
+        notifyItemChanged(selectedPosition);
         selectedPosition = pos;
+        notifyItemChanged(pos);
     }
 
     public Channel getItem(int position) {

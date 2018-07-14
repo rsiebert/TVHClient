@@ -73,7 +73,9 @@ public class SeriesRecordingRecyclerViewAdapter extends RecyclerView.Adapter imp
     }
 
     public void setPosition(int pos) {
+        notifyItemChanged(selectedPosition);
         selectedPosition = pos;
+        notifyItemChanged(pos);
     }
 
     public SeriesRecording getItem(int position) {

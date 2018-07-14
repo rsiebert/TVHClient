@@ -73,7 +73,9 @@ public class TimerRecordingRecyclerViewAdapter extends RecyclerView.Adapter impl
     }
 
     public void setPosition(int pos) {
+        notifyItemChanged(selectedPosition);
         selectedPosition = pos;
+        notifyItemChanged(pos);
     }
 
     public TimerRecording getItem(int position) {

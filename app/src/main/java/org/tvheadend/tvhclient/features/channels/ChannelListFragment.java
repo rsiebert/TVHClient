@@ -113,11 +113,11 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
             toolbarInterface.setTitle((channelTag == null) ? getString(R.string.all_channels) : channelTag.getTagName());
             toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.items,
                     recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
-        });
 
-        if (isDualPane && recyclerViewAdapter.getItemCount() > 0) {
-            showChannelDetails(selectedListPosition);
-        }
+            if (isDualPane && recyclerViewAdapter.getItemCount() > 0) {
+                showChannelDetails(selectedListPosition);
+            }
+        });
 
         // Get all recordings for the given channel to check if it belongs to a certain program
         // so the recording status of the particular program can be updated. This is required
@@ -206,6 +206,7 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
      */
     protected void showChannelDetails(int position) {
         selectedListPosition = position;
+        recyclerViewAdapter.setPosition(position);
         Channel channel = recyclerViewAdapter.getItem(position);
         if (channel == null) {
             return;

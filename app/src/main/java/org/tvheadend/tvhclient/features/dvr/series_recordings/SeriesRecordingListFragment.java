@@ -152,6 +152,7 @@ public class SeriesRecordingListFragment extends BaseFragment implements Recycle
 
     protected void showRecordingDetails(int position) {
         selectedListPosition = position;
+        recyclerViewAdapter.setPosition(position);
         SeriesRecording recording = recyclerViewAdapter.getItem(position);
         if (recording == null) {
             return;

@@ -73,7 +73,9 @@ public class RecordingRecyclerViewAdapter extends RecyclerView.Adapter implement
     }
 
     public void setPosition(int pos) {
+        notifyItemChanged(selectedPosition);
         selectedPosition = pos;
+        notifyItemChanged(pos);
     }
 
     public Recording getItem(int position) {

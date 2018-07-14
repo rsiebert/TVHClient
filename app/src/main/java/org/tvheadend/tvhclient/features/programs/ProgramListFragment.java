@@ -126,9 +126,6 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
             toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.programs,
                     recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
 
-            if (isDualPane && recyclerViewAdapter.getItemCount() > 0) {
-                showProgramDetails(selectedListPosition);
-            }
             activity.invalidateOptionsMenu();
         });
 
