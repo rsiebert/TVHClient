@@ -30,22 +30,34 @@ import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallba
 
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
+
 public class RecordingListFragment extends BaseFragment implements RecyclerViewClickCallback, Filter.FilterListener, DownloadPermissionGrantedInterface {
 
     protected RecordingRecyclerViewAdapter recyclerViewAdapter;
+    @BindView(R.id.recycler_view)
     protected RecyclerView recyclerView;
+    @BindView(R.id.progress_bar)
     protected ProgressBar progressBar;
     protected int selectedListPosition;
     protected String searchQuery;
+    private Unbinder unbinder;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.recyclerview_fragment, container, false);
-        recyclerView = view.findViewById(R.id.recycler_view);
-        progressBar = view.findViewById(R.id.progress_bar);
+        unbinder = ButterKnife.bind(this, view);
         return view;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
     }
 
     @Override

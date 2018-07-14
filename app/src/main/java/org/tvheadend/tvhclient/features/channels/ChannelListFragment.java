@@ -39,26 +39,38 @@ import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallba
 import java.util.Calendar;
 import java.util.Date;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
+
 // TODO sorting should consider minor major channel numbers
 
 public class ChannelListFragment extends BaseFragment implements RecyclerViewClickCallback, ChannelTimeSelectionCallback, ChannelTagSelectionCallback, SearchRequestInterface, Filter.FilterListener {
 
     protected ChannelRecyclerViewAdapter recyclerViewAdapter;
+    @BindView(R.id.recycler_view)
     protected RecyclerView recyclerView;
+    @BindView(R.id.progress_bar)
     protected ProgressBar progressBar;
     private int selectedTimeOffset;
     private int selectedListPosition;
     private String searchQuery;
     private ChannelViewModel viewModel;
+    private Unbinder unbinder;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.recyclerview_fragment, container, false);
-        recyclerView = view.findViewById(R.id.recycler_view);
-        progressBar = view.findViewById(R.id.progress_bar);
+        unbinder = ButterKnife.bind(this, view);
         return view;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
     }
 
     @Override
