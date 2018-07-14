@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -213,30 +214,30 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
         }
 
         FragmentManager fm = activity.getSupportFragmentManager();
-        if (fm != null) {
-            if (!isDualPane) {
-                // Show the fragment to display the program list of the selected channel.
-                Bundle bundle = new Bundle();
-                bundle.putString("channelName", channel.getName());
-                bundle.putInt("channelId", channel.getId());
-                bundle.putLong("selectedTime", viewModel.getSelectedTime());
+        if (!isDualPane) {
+            // Show the fragment to display the program list of the selected channel.
+            Bundle bundle = new Bundle();
+            bundle.putString("channelName", channel.getName());
+            bundle.putInt("channelId", channel.getId());
+            bundle.putLong("selectedTime", viewModel.getSelectedTime());
 
-                ProgramListFragment fragment = new ProgramListFragment();
-                fragment.setArguments(bundle);
+            ProgramListFragment fragment = new ProgramListFragment();
+            fragment.setArguments(bundle);
+            fm.beginTransaction()
+                    .replace(R.id.main, fragment)
+                    .addToBackStack(null)
+                    .commit();
+        } else {
+            // Check if the fragment for the selected channel is already shown, if not replace it with a new fragment.
+            Fragment fragment = fm.findFragmentById(R.id.details);
+            if (fragment == null
+                    || !(fragment instanceof ProgramListFragment)
+                    || ((ProgramListFragment) fragment).getShownChannelId() != channel.getId()) {
+                fragment = ProgramListFragment.newInstance(channel.getName(), channel.getId(), viewModel.getSelectedTime());
                 fm.beginTransaction()
-                        .replace(R.id.main, fragment)
-                        .addToBackStack(null)
+                        .replace(R.id.details, fragment)
+                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                         .commit();
-            } else {
-                // Check if the fragment for the selected channel is already shown, if not replace it with a new fragment.
-                ProgramListFragment programListFragment = (ProgramListFragment) fm.findFragmentById(R.id.details);
-                if (programListFragment == null || programListFragment.getShownChannelId() != channel.getId()) {
-                    programListFragment = ProgramListFragment.newInstance(channel.getName(), channel.getId(), viewModel.getSelectedTime());
-                    fm.beginTransaction()
-                            .replace(R.id.details, programListFragment)
-                            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                            .commit();
-                }
             }
         }
     }

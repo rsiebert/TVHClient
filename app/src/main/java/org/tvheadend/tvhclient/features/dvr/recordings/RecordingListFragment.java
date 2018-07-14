@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
@@ -142,12 +143,14 @@ public class RecordingListFragment extends BaseFragment implements RecyclerViewC
             activity.startActivity(intent);
         } else {
             // Check what fragment is currently shown, replace if needed.
-            RecordingDetailsFragment recordingDetailsFragment = (RecordingDetailsFragment) getFragmentManager().findFragmentById(R.id.details);
-            if (recordingDetailsFragment == null || recordingDetailsFragment.getShownDvrId() != recording.getId()) {
+            Fragment fragment = activity.getSupportFragmentManager().findFragmentById(R.id.details);
+            if (fragment == null
+                    || !(fragment instanceof RecordingDetailsFragment)
+                    || ((RecordingDetailsFragment) fragment).getShownDvrId() != recording.getId()) {
                 // Make new fragment to show this selection.
-                recordingDetailsFragment = RecordingDetailsFragment.newInstance(recording.getId());
-                FragmentTransaction ft = getFragmentManager().beginTransaction();
-                ft.replace(R.id.details, recordingDetailsFragment);
+                fragment = RecordingDetailsFragment.newInstance(recording.getId());
+                FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
+                ft.replace(R.id.details, fragment);
                 ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
                 ft.commit();
             }
