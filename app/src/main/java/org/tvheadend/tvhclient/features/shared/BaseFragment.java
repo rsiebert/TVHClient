@@ -57,7 +57,7 @@ public abstract class BaseFragment extends Fragment implements NetworkAvailableI
 
         // Check to see if we have a frame in which to embed the details
         // fragment directly in the containing UI.
-        View detailsFrame = activity.findViewById(R.id.right_fragment);
+        View detailsFrame = activity.findViewById(R.id.details);
         isDualPane = detailsFrame != null && detailsFrame.getVisibility() == View.VISIBLE;
         setHasOptionsMenu(true);
     }

@@ -61,14 +61,12 @@ import timber.log.Timber;
 // TODO dual screen layout
 // TODO dual screen listview on the left side must be (visually) set selected or checked
 // TODO move the conversion from ms to s or minutes from the intents into the entity getter and setter
-// TODO rework epg (use recyclerview horizontal scroll)
 // TODO add info via fabrics which screen is used most often
 // TODO enable or disable the menus depending on the network availability
 // TODO removing scheduled recording in program list does not remove icon
 // TODO add option in menu to show file missing recordings
 // TODO give up after x reconnect retries
 // TODO reschedule work when not successful
-// TODO program details not shown
 
 
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, ToolbarInterface, EpgSyncStatusCallback, NetworkStatusCallback {
@@ -126,7 +124,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             Timber.d("Google API not available");
         }
 
-        View v = findViewById(R.id.right_fragment);
+        View v = findViewById(R.id.details);
         isDualPane = v != null && v.getVisibility() == View.VISIBLE;
 
         toolbar = findViewById(R.id.toolbar);
