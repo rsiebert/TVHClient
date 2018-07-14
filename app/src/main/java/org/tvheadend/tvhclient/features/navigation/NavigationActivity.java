@@ -203,8 +203,10 @@ public class NavigationActivity extends MainActivity implements WakeOnLanTaskCal
             // Save the menu position so we know which one was selected
             selectedNavigationMenuId = position;
 
-            removeDetailsFragment();
-            removeDetailsLayout(position);
+            if (isDualPane) {
+                removeDetailsFragment();
+                removeDetailsLayout(position);
+            }
 
             // Show the new fragment that represents the selected menu entry.
             fragment.setArguments(getIntent().getExtras());
