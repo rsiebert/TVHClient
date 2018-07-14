@@ -152,12 +152,12 @@ public class TimerRecordingListFragment extends BaseFragment implements Recycler
             activity.startActivity(intent);
         } else {
             // Check what fragment is currently shown, replace if needed.
-            TimerRecordingDetailsFragment recordingDetailsFragment = (TimerRecordingDetailsFragment) getFragmentManager().findFragmentById(R.id.right_fragment);
+            TimerRecordingDetailsFragment recordingDetailsFragment = (TimerRecordingDetailsFragment) getFragmentManager().findFragmentById(R.id.main);
             if (recordingDetailsFragment == null || !recordingDetailsFragment.getShownId().equals(recording.getId())) {
                 // Make new fragment to show this selection.
                 recordingDetailsFragment = TimerRecordingDetailsFragment.newInstance(recording.getId());
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
-                ft.replace(R.id.right_fragment, recordingDetailsFragment);
+                ft.replace(R.id.details, recordingDetailsFragment);
                 ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
                 ft.commit();
             }
