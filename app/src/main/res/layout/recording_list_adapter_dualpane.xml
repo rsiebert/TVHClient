@@ -9,9 +9,7 @@
         android:layout_width="0dip"
         android:layout_height="wrap_content"
         android:layout_weight="0.999"
-        android:orientation="horizontal"
-        android:paddingBottom="20dp"
-        android:paddingTop="16dp" >
+        android:orientation="horizontal">
 
         <include layout="@layout/recording_list_adapter_contents" />
     </LinearLayout>

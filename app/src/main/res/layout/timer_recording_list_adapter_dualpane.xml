@@ -3,15 +3,13 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:baselineAligned="false"
-    android:orientation="horizontal" >
+    android:orientation="horizontal">
 
     <LinearLayout
         android:layout_width="0dip"
         android:layout_height="wrap_content"
         android:layout_weight="0.999"
-        android:orientation="horizontal"
-        android:paddingBottom="20dp"
-        android:paddingTop="16dp" >
+        android:orientation="horizontal">
 
         <include layout="@layout/timer_recording_list_adapter_contents" />
     </LinearLayout>
@@ -20,7 +18,7 @@
         android:layout_width="16dp"
         android:layout_height="fill_parent"
         android:gravity="center"
-        android:orientation="vertical" >
+        android:orientation="vertical">
 
         <ImageView
             android:id="@+id/dual_pane_list_item_selection"
