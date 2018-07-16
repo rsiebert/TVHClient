@@ -44,10 +44,12 @@ import org.tvheadend.tvhclient.utils.MiscUtils;
 import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import javax.inject.Inject;
 
@@ -99,31 +101,35 @@ public class MenuUtils {
                 .show();
     }
 
-    public void handleMenuTimeSelection(int currentSelection, ChannelTimeSelectionCallback callback) {
+    public void handleMenuTimeSelection(int currentSelection, int intervalInHours, int maxIntervalsToShow, ChannelTimeSelectionCallback callback) {
         Activity activity = this.activity.get();
         if (activity == null) {
             return;
         }
-        // TODO show the next 12h, consider overflow into the next day
-        // Get the current hour of the day and create
-        // a list of the next hours until midnight
-        Calendar c = Calendar.getInstance();
-        final int hourOfDay = c.get(Calendar.HOUR_OF_DAY);
-        String[] times = new String[12];
+
+        SimpleDateFormat startDateFormat = new SimpleDateFormat("dd.MM.yyyy - HH.00", Locale.US);
+        SimpleDateFormat endDateFormat = new SimpleDateFormat("HH.00", Locale.US);
+
+        String[] times = new String[maxIntervalsToShow];
         times[0] = activity.getString(R.string.current_time);
 
-        // TODO show a locale dependant time representation
-        for (int i = 1; i < 12; i++) {
-            int hour = (hourOfDay + i);
-            times[i] = String.valueOf(hour <= 24 ? hour : hour - 24) + ":00";
+        // Set the time that shall be shown next in the dialog. This is the
+        // current time plus the value of the intervalInHours in milliseconds
+        long timeInMillis = Calendar.getInstance().getTimeInMillis() + 1000 * 60 * 60 * intervalInHours;
+
+        // Add the date and time to the list. Remove Increase the time in
+        // milliseconds for each iteration by the defined intervalInHours
+        for (int i = 1; i < maxIntervalsToShow; i++) {
+            String startTime = startDateFormat.format(timeInMillis);
+            timeInMillis += 1000 * 60 * 60 * intervalInHours;
+            String endTime = endDateFormat.format(timeInMillis);
+            times[i] = startTime + " - " + endTime;
         }
 
         new MaterialDialog.Builder(activity)
                 .title(R.string.select_time)
                 .items(times)
                 .itemsCallbackSingleChoice(currentSelection, (dialog, itemView, which, text) -> {
-                    // Convert the selected index into hours in seconds
-                    // and reload the data with the given offset
                     if (callback != null) {
                         callback.onTimeSelected(which);
                     }

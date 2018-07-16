@@ -26,8 +26,6 @@ import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.ProgressBar;
 
-import com.afollestad.materialdialogs.MaterialDialog;
-
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.ChannelSubset;
 import org.tvheadend.tvhclient.data.entity.ChannelTag;
@@ -58,7 +56,7 @@ import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 // TODO search in epg
 // TODO refactor time dialog adapter
 // TODO rename classes
-
+// TODO timeline time not correct?
 
 public class ProgramGuideFragment extends BaseFragment implements EpgScrollInterface, RecyclerViewClickCallback, ChannelTimeSelectionCallback, ChannelTagSelectionCallback, Filter.FilterListener, ViewPager.OnPageChangeListener {
 
@@ -71,13 +69,13 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
 
     private Unbinder unbinder;
     private int selectedTimeOffset;
-    private int selectedListPosition;
     private String searchQuery;
     private EpgViewModel viewModel;
     private EpgChannelListRecyclerViewAdapter channelListRecyclerViewAdapter;
 
     private final List<Long> startTimes = new ArrayList<>();
     private final List<Long> endTimes = new ArrayList<>();
+    private int daysToShow;
     private int hoursToShow;
     private int fragmentCount;
     private EpgViewPagerAdapter viewPagerAdapter;
@@ -103,21 +101,19 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        if (savedInstanceState != null) {
-            selectedListPosition = savedInstanceState.getInt("listPosition", 0);
-            selectedTimeOffset = savedInstanceState.getInt("timeOffset");
-        } else {
-            selectedListPosition = 0;
-            selectedTimeOffset = 0;
-        }
-
         // Calculates the available display width of one minute in pixels. This depends
         // how wide the screen is and how many hours shall be shown in one screen.
         DisplayMetrics displaymetrics = new DisplayMetrics();
         activity.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
         int displayWidth = displaymetrics.widthPixels;
 
-        calculateViewPagerFragmentCount();
+        // Calculates the number of fragments in the view pager. This depends on how
+        // many days shall be shown of the program guide and how many hours shall be
+        // visible per fragment.
+        hoursToShow = Integer.parseInt(sharedPreferences.getString("hours_of_epg_data_per_screen", "4"));
+        daysToShow = Integer.parseInt(sharedPreferences.getString("days_of_epg_data", "7"));
+        fragmentCount = (daysToShow * (24 / hoursToShow));
+
         calculateViewPagerFragmentStartAndEndTimes();
 
         // Calculate the ratio how many minutes a pixel represents on the screen.
@@ -181,13 +177,6 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
     }
 
     @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putInt("listPosition", selectedListPosition);
-        outState.putInt("timeOffset", selectedTimeOffset);
-    }
-
-    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.channel_list_options_menu, menu);
@@ -215,8 +204,7 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
                 menuUtils.handleMenuChannelTagsSelection(viewModel.getChannelTagId(), this);
                 return true;
             case R.id.menu_timeframe:
-                //menuUtils.handleMenuTimeSelection(selectedTimeOffset, this);
-                showProgramGuideTimeDialog();
+                menuUtils.handleMenuTimeSelection(selectedTimeOffset, hoursToShow, (hoursToShow * daysToShow), this);
                 return true;
             case R.id.menu_genre_color_info_channels:
                 menuUtils.handleMenuGenreColorSelection();
@@ -226,62 +214,10 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
         }
     }
 
-    public class ProgramGuideTimeDialogItem {
-        public long start;
-        public long end;
-    }
-
-    /**
-     * Prepares a dialog that shows the available dates and times the user can
-     * choose from. In here the data for the adapter is created and the dialog
-     * prepared which can be shown later.
-     */
-    private void showProgramGuideTimeDialog() {
-        // Fill the list for the adapter
-        List<ProgramGuideTimeDialogItem> times = new ArrayList<>();
-        for (int i = 0; i < fragmentCount; ++i) {
-            ProgramGuideTimeDialogItem item = new ProgramGuideTimeDialogItem();
-            item.start = startTimes.get(i);
-            item.end = endTimes.get(i);
-            times.add(item);
-        }
-        // The dialog that allows the user to select a certain time frame
-        final ProgramGuideTimeDialogAdapter timeAdapter = new ProgramGuideTimeDialogAdapter(activity, times);
-        final MaterialDialog programGuideTimeDialog = new MaterialDialog.Builder(activity)
-                .title(R.string.tags)
-                .adapter(timeAdapter, null)
-                .build();
-
-        // Set the callback to handle clicks. This needs to be done after the
-        // dialog creation so that the inner method has access to the dialog variable
-        timeAdapter.setCallback(new ProgramGuideTimeDialogAdapter.Callback() {
-            @Override
-            public void onItemClicked(int which) {
-                programViewPager.setCurrentItem(which);
-                programGuideTimeDialog.dismiss();
-            }
-        });
-        programGuideTimeDialog.show();
-    }
-
     @Override
     public void onTimeSelected(int which) {
         selectedTimeOffset = which;
-
-        channelListRecyclerView.setVisibility(View.GONE);
-        progressBar.setVisibility(View.VISIBLE);
-
-        // Add the selected list index as extra hours to the current time.
-        // If the first index was selected then use the current time.
-        Calendar c = Calendar.getInstance();
-        if (which > 0) {
-            c.set(Calendar.MINUTE, 0);
-            c.set(Calendar.SECOND, 0);
-            c.set(Calendar.HOUR_OF_DAY, c.get(Calendar.HOUR_OF_DAY) + which);
-            viewModel.setSelectedTime(c.getTimeInMillis());
-        } else {
-            viewModel.setSelectedTime(new Date().getTime());
-        }
+        programViewPager.setCurrentItem(which);
     }
 
     @Override
@@ -389,17 +325,6 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
         toolbarInterface.setTitle((channelTag == null) ? getString(R.string.all_channels) : channelTag.getTagName());
         toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.results,
                 channelListRecyclerViewAdapter.getItemCount(), channelListRecyclerViewAdapter.getItemCount()));
-    }
-
-    /**
-     * Calculates the number of fragments in the view pager. This depends on how
-     * many days shall be shown of the program guide and how many hours shall be
-     * visible per fragment.
-     */
-    private void calculateViewPagerFragmentCount() {
-        int daysToShow = Integer.parseInt(sharedPreferences.getString("days_of_epg_data", "7"));
-        hoursToShow = Integer.parseInt(sharedPreferences.getString("hours_of_epg_data_per_screen", "4"));
-        fragmentCount = (daysToShow * (24 / hoursToShow));
     }
 
     /**

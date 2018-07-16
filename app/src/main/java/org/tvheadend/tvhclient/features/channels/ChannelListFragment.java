@@ -38,7 +38,6 @@ import org.tvheadend.tvhclient.features.shared.callbacks.ChannelTimeSelectionCal
 import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback;
 
 import java.util.Calendar;
-import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -58,6 +57,9 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
     private String searchQuery;
     private ChannelViewModel viewModel;
     private Unbinder unbinder;
+
+    // Used in the time selection dialog to show a time entry every x hours.
+    private final int intervalInHours = 2;
 
     @Nullable
     @Override
@@ -162,7 +164,7 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
                 menuUtils.handleMenuChannelTagsSelection(viewModel.getChannelTagId(), this);
                 return true;
             case R.id.menu_timeframe:
-                menuUtils.handleMenuTimeSelection(selectedTimeOffset, this);
+                menuUtils.handleMenuTimeSelection(selectedTimeOffset, intervalInHours, 12, this);
                 return true;
             case R.id.menu_genre_color_info_channels:
                 menuUtils.handleMenuGenreColorSelection();
@@ -175,21 +177,14 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
     @Override
     public void onTimeSelected(int which) {
         selectedTimeOffset = which;
-
         recyclerView.setVisibility(View.GONE);
         progressBar.setVisibility(View.VISIBLE);
 
         // Add the selected list index as extra hours to the current time.
         // If the first index was selected then use the current time.
-        Calendar c = Calendar.getInstance();
-        if (which > 0) {
-            c.set(Calendar.MINUTE, 0);
-            c.set(Calendar.SECOND, 0);
-            c.set(Calendar.HOUR_OF_DAY, c.get(Calendar.HOUR_OF_DAY) + which);
-            viewModel.setSelectedTime(c.getTimeInMillis());
-        } else {
-            viewModel.setSelectedTime(new Date().getTime());
-        }
+        long timeInMillis = Calendar.getInstance().getTimeInMillis();
+        timeInMillis += (1000 * 60 * 60 * which * intervalInHours);
+        viewModel.setSelectedTime(timeInMillis);
     }
 
     @Override
