@@ -48,15 +48,6 @@ import butterknife.Unbinder;
 
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 
-// TODO genre colors
-// TODO optimize passed vars like start and end times
-// TODO channel list item decoration right and vertical
-// TODO Reduce scrolling calls to layout manager
-// TODO show recording states
-// TODO search in epg
-// TODO rename classes
-// TODO timeline time not correct?
-
 public class ProgramGuideFragment extends BaseFragment implements EpgScrollInterface, RecyclerViewClickCallback, ChannelTimeSelectionCallback, ChannelTagSelectionCallback, Filter.FilterListener, ViewPager.OnPageChangeListener {
 
     @BindView(R.id.channel_list_recycler_view)
