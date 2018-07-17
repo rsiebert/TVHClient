@@ -136,7 +136,10 @@ public class EpgViewPagerFragment extends Fragment implements EpgScrollInterface
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-                if (newState == SCROLL_STATE_IDLE) {
+                if (newState != SCROLL_STATE_IDLE) {
+                    enableScrolling = true;
+                } else if (enableScrolling) {
+                    enableScrolling = false;
                     Fragment fragment = activity.getSupportFragmentManager().findFragmentById(R.id.main);
                     if (fragment != null && fragment instanceof EpgScrollInterface) {
                         ((EpgScrollInterface) fragment).onScrollStateChanged();
@@ -147,14 +150,15 @@ public class EpgViewPagerFragment extends Fragment implements EpgScrollInterface
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
+                if (enableScrolling) {
+                    int position = recyclerViewLinearLayoutManager.findFirstVisibleItemPosition();
+                    View v = recyclerViewLinearLayoutManager.getChildAt(0);
+                    int offset = (v == null) ? 0 : v.getTop() - recyclerView.getPaddingTop();
 
-                int position = recyclerViewLinearLayoutManager.findFirstVisibleItemPosition();
-                View v = recyclerViewLinearLayoutManager.getChildAt(0);
-                int offset = (v == null) ? 0 : v.getTop() - recyclerView.getPaddingTop();
-
-                Fragment fragment = activity.getSupportFragmentManager().findFragmentById(R.id.main);
-                if (fragment != null && fragment instanceof EpgScrollInterface) {
-                    ((EpgScrollInterface) fragment).onScroll(position, offset);
+                    Fragment fragment = activity.getSupportFragmentManager().findFragmentById(R.id.main);
+                    if (fragment != null && fragment instanceof EpgScrollInterface) {
+                        ((EpgScrollInterface) fragment).onScroll(position, offset);
+                    }
                 }
             }
         });
