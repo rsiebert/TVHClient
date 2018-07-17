@@ -89,7 +89,7 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
             channelName = savedInstanceState.getString("channelName");
             selectedTime = savedInstanceState.getLong("selectedTime");
             selectedListPosition = savedInstanceState.getInt("listPosition", 0);
-            searchQuery = savedInstanceState.getString("searchQuery");
+            searchQuery = savedInstanceState.getString(SearchManager.QUERY);
         } else {
             selectedListPosition = 0;
             selectedTime = new Date().getTime();
@@ -158,7 +158,7 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
         outState.putString("channelName", channelName);
         outState.putLong("selectedTime", selectedTime);
         outState.putInt("listPosition", selectedListPosition);
-        outState.putString("searchQuery", searchQuery);
+        outState.putString(SearchManager.QUERY, searchQuery);
     }
 
     @Override

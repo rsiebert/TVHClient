@@ -83,7 +83,7 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
         if (savedInstanceState != null) {
             selectedListPosition = savedInstanceState.getInt("listPosition", 0);
             selectedTimeOffset = savedInstanceState.getInt("timeOffset");
-            searchQuery = savedInstanceState.getString("searchQuery");
+            searchQuery = savedInstanceState.getString(SearchManager.QUERY);
         } else {
             selectedListPosition = 0;
             selectedTimeOffset = 0;
@@ -133,7 +133,7 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
         super.onSaveInstanceState(outState);
         outState.putInt("listPosition", selectedListPosition);
         outState.putInt("timeOffset", selectedTimeOffset);
-        outState.putString("searchQuery", searchQuery);
+        outState.putString(SearchManager.QUERY, searchQuery);
     }
 
     @Override

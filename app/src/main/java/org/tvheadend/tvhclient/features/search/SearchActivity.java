@@ -14,6 +14,7 @@ import org.tvheadend.tvhclient.features.dvr.recordings.RemovedRecordingListFragm
 import org.tvheadend.tvhclient.features.dvr.recordings.ScheduledRecordingListFragment;
 import org.tvheadend.tvhclient.features.dvr.series_recordings.SeriesRecordingListFragment;
 import org.tvheadend.tvhclient.features.dvr.timer_recordings.TimerRecordingListFragment;
+import org.tvheadend.tvhclient.features.epg.ProgramGuideFragment;
 import org.tvheadend.tvhclient.features.navigation.NavigationActivity;
 import org.tvheadend.tvhclient.features.programs.ProgramListFragment;
 
@@ -53,6 +54,9 @@ public class SearchActivity extends NavigationActivity {
                 case "channels":
                     fragment = new ChannelListFragment();
                     break;
+                case "program_guide":
+                    fragment = new ProgramGuideFragment();
+                    break;
                 case "programs":
                     fragment = new ProgramListFragment();
                     break;
@@ -75,6 +79,7 @@ public class SearchActivity extends NavigationActivity {
                     fragment = new TimerRecordingListFragment();
                     break;
             }
+            // TODO layout stuff needs to be done here as in the nav activity
             if (fragment != null) {
                 fragment.setArguments(getIntent().getExtras());
                 getSupportFragmentManager()

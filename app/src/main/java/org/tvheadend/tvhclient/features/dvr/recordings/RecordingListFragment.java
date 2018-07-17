@@ -66,7 +66,7 @@ public class RecordingListFragment extends BaseFragment implements RecyclerViewC
         super.onActivityCreated(savedInstanceState);
         if (savedInstanceState != null) {
             selectedListPosition = savedInstanceState.getInt("listPosition", 0);
-            searchQuery = savedInstanceState.getString("searchQuery");
+            searchQuery = savedInstanceState.getString(SearchManager.QUERY);
         } else {
             selectedListPosition = 0;
             Bundle bundle = getArguments();
@@ -86,7 +86,7 @@ public class RecordingListFragment extends BaseFragment implements RecyclerViewC
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt("listPosition", selectedListPosition);
-        outState.putString("searchQuery", searchQuery);
+        outState.putString(SearchManager.QUERY, searchQuery);
     }
 
     @Override
