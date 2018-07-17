@@ -1,5 +1,6 @@
 package org.tvheadend.tvhclient.features.epg;
 
+import android.app.SearchManager;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -44,7 +45,6 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import timber.log.Timber;
 
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 
@@ -54,7 +54,6 @@ import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 // TODO Reduce scrolling calls to layout manager
 // TODO show recording states
 // TODO search in epg
-// TODO refactor time dialog adapter
 // TODO rename classes
 // TODO timeline time not correct?
 
@@ -100,6 +99,17 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        if (savedInstanceState != null) {
+            selectedTimeOffset = savedInstanceState.getInt("timeOffset");
+            searchQuery = savedInstanceState.getString("searchQuery");
+        } else {
+            selectedTimeOffset = 0;
+            Bundle bundle = getArguments();
+            if (bundle != null) {
+                searchQuery = bundle.getString(SearchManager.QUERY);
+            }
+        }
 
         // Calculates the available display width of one minute in pixels. This depends
         // how wide the screen is and how many hours shall be shown in one screen.
@@ -177,6 +187,13 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
     }
 
     @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("timeOffset", selectedTimeOffset);
+        outState.putString("searchQuery", searchQuery);
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.channel_list_options_menu, menu);
@@ -251,7 +268,6 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
 
 
     public void showPopupMenu(View view, Program program) {
-        Timber.d("Showing popup menu");
         if (activity == null || program == null) {
             return;
         }
@@ -388,8 +404,7 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
 
         for (int i = 0; i < viewPagerAdapter.getRegisteredFragmentCount(); i++) {
             Fragment fragment = viewPagerAdapter.getRegisteredFragment(i);
-            if (fragment != null
-                    && fragment instanceof EpgScrollInterface) {
+            if (fragment != null && fragment instanceof EpgScrollInterface) {
                 ((EpgScrollInterface) fragment).onScroll(position, offset);
             }
         }
