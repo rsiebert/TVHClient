@@ -353,7 +353,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     public void onNetworkNotAvailable() {
         Timber.d("Network is not available anymore");
         if (getCurrentFocus() != null) {
-            Snackbar.make(getCurrentFocus(), "Connection to server lost.", Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(getCurrentFocus(), "No connection to server.", Snackbar.LENGTH_SHORT).show();
         }
         stopService(new Intent(this, EpgSyncService.class));
 
