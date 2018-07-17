@@ -9,9 +9,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.ContentViewEvent;
@@ -232,7 +230,6 @@ public class NavigationActivity extends MainActivity implements WakeOnLanTaskCal
 
             if (isDualPane) {
                 removeDetailsFragment();
-                removeDetailsLayout(position);
             }
 
             // Show the new fragment that represents the selected menu entry.
@@ -242,39 +239,6 @@ public class NavigationActivity extends MainActivity implements WakeOnLanTaskCal
                     .replace(R.id.main, fragment)
                     .addToBackStack(null)
                     .commit();
-        }
-    }
-
-    /**
-     * Hide the details layout for certain fragments. Even in dual pane mode these
-     * fragment shall be fully visible because they show no details whatsoever.
-     *
-     * @param position The current navigation menu position
-     */
-    private void removeDetailsLayout(int position) {
-        // TODO pass info single pane only to base fragment
-
-        if (detailsFrameLayout != null) {
-            if (position == NavigationDrawer.MENU_PROGRAM_GUIDE
-                    || position == NavigationDrawer.MENU_INFORMATION
-                    || position == NavigationDrawer.MENU_STATUS
-                    || position == NavigationDrawer.MENU_UNLOCKER) {
-                detailsFrameLayout.setVisibility(View.GONE);
-                LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT,
-                        LinearLayout.LayoutParams.MATCH_PARENT,
-                        1.0f
-                );
-                mainFrameLayout.setLayoutParams(param);
-            } else {
-                detailsFrameLayout.setVisibility(View.VISIBLE);
-                LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT,
-                        LinearLayout.LayoutParams.MATCH_PARENT,
-                        0.65f
-                );
-                mainFrameLayout.setLayoutParams(param);
-            }
         }
     }
 

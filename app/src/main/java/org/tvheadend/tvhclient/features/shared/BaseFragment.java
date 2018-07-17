@@ -6,6 +6,8 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
@@ -37,6 +39,9 @@ public abstract class BaseFragment extends Fragment implements NetworkAvailableI
     @Inject
     protected AppRepository appRepository;
 
+    FrameLayout mainFrameLayout;
+    FrameLayout detailsFrameLayout;
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -48,6 +53,9 @@ public abstract class BaseFragment extends Fragment implements NetworkAvailableI
 
         MainApplication.getComponent().inject(this);
 
+        mainFrameLayout = activity.findViewById(R.id.main);
+        detailsFrameLayout = activity.findViewById(R.id.details);
+
         connection = appRepository.getConnectionData().getActiveItem();
         serverStatus = appRepository.getServerStatusData().getItemById(connection.getId());
 
@@ -55,10 +63,20 @@ public abstract class BaseFragment extends Fragment implements NetworkAvailableI
         isUnlocked = MainApplication.getInstance().isUnlocked();
         menuUtils = new MenuUtils(activity);
 
-        // Check to see if we have a frame in which to embed the details
-        // fragment directly in the containing UI.
-        View detailsFrame = activity.findViewById(R.id.details);
-        isDualPane = detailsFrame != null && detailsFrame.getVisibility() == View.VISIBLE;
+        // Check if we have a frame in which to embed the details fragment.
+        // Make the frame layout visible and set the weights again in case
+        // it was hidden by the call to forceSingleScreenLayout()
+        isDualPane = detailsFrameLayout != null;
+        if (isDualPane) {
+            detailsFrameLayout.setVisibility(View.VISIBLE);
+            LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    0.65f
+            );
+            mainFrameLayout.setLayoutParams(param);
+        }
+
         setHasOptionsMenu(true);
     }
 
@@ -77,5 +95,17 @@ public abstract class BaseFragment extends Fragment implements NetworkAvailableI
         Timber.d("Network is available " + networkIsAvailable + ", invalidating menu");
         isNetworkAvailable = networkIsAvailable;
         activity.invalidateOptionsMenu();
+    }
+
+    protected void forceSingleScreenLayout() {
+        if (detailsFrameLayout != null) {
+            detailsFrameLayout.setVisibility(View.GONE);
+            LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    1.0f
+            );
+            mainFrameLayout.setLayoutParams(param);
+        }
     }
 }
