@@ -14,6 +14,7 @@ import com.google.android.gms.cast.framework.media.RemoteMediaClient;
 import com.google.android.gms.common.images.WebImage;
 
 import org.tvheadend.tvhclient.data.entity.Channel;
+import org.tvheadend.tvhclient.data.entity.ServerProfile;
 import org.tvheadend.tvhclient.data.service.EpgSyncService;
 
 import timber.log.Timber;
@@ -78,14 +79,11 @@ public class CastChannelActivity extends BasePlaybackActivity {
         movieMetadata.addImage(new WebImage(Uri.parse(iconUrl)));   // small cast icon
         movieMetadata.addImage(new WebImage(Uri.parse(iconUrl)));   // large background icon
 
-        String url = "http://" + baseUrl + path + "?ticket=" + ticket + "&mux=matroska";
-        /*
-        String url = baseUrl + "/stream/channelnumber/" + channel.getNumber();
+        String url = "http://" + baseUrl + path + "?ticket=" + ticket; // + "&mux=matroska";
         ServerProfile serverProfile = appRepository.getServerProfileData().getItemById(serverStatus.getCastingServerProfileId());
         if (serverProfile != null) {
-            url += "?profile=" + serverProfile.getName();
+            url += "&profile=" + serverProfile.getName();
         }
-        */
         Timber.d("Trying to cast channel with url: " + url);
 
         MediaInfo mediaInfo = new MediaInfo.Builder(url)
@@ -96,6 +94,39 @@ public class CastChannelActivity extends BasePlaybackActivity {
                 .build();
 
         RemoteMediaClient remoteMediaClient = castSession.getRemoteMediaClient();
+        remoteMediaClient.addListener(new RemoteMediaClient.Listener() {
+            @Override
+            public void onStatusUpdated() {
+                Timber.d("onStatusUpdated");
+                remoteMediaClient.removeListener(this);
+            }
+
+            @Override
+            public void onMetadataUpdated() {
+                Timber.d("onMetadataUpdated");
+            }
+
+            @Override
+            public void onQueueStatusUpdated() {
+                Timber.d("onQueueStatusUpdated");
+            }
+
+            @Override
+            public void onPreloadStatusUpdated() {
+                Timber.d("onPreloadStatusUpdated");
+            }
+
+            @Override
+            public void onSendingRemoteMediaRequest() {
+                Timber.d("onSendingRemoteMediaRequest");
+            }
+
+            @Override
+            public void onAdBreakStatusUpdated() {
+
+            }
+        });
+        // TODO convert to media load options
         remoteMediaClient.load(mediaInfo, true, 0);
         finish();
     }

@@ -90,6 +90,39 @@ public class CastRecordingActivity extends BasePlaybackActivity {
                 .build();
 
         RemoteMediaClient remoteMediaClient = castSession.getRemoteMediaClient();
+        remoteMediaClient.addListener(new RemoteMediaClient.Listener() {
+            @Override
+            public void onStatusUpdated() {
+                Timber.d("onStatusUpdated");
+                remoteMediaClient.removeListener(this);
+            }
+
+            @Override
+            public void onMetadataUpdated() {
+                Timber.d("onMetadataUpdated");
+            }
+
+            @Override
+            public void onQueueStatusUpdated() {
+                Timber.d("onQueueStatusUpdated");
+            }
+
+            @Override
+            public void onPreloadStatusUpdated() {
+                Timber.d("onPreloadStatusUpdated");
+            }
+
+            @Override
+            public void onSendingRemoteMediaRequest() {
+                Timber.d("onSendingRemoteMediaRequest");
+            }
+
+            @Override
+            public void onAdBreakStatusUpdated() {
+
+            }
+        });
+        // TODO convert to media load options
         remoteMediaClient.load(mediaInfo, true, 0);
         finish();
     }
