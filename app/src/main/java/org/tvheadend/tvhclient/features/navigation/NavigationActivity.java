@@ -165,63 +165,63 @@ public class NavigationActivity extends MainActivity implements WakeOnLanTaskCal
         switch (position) {
             case NavigationDrawer.MENU_CHANNELS:
                 Answers.getInstance().logContentView(new ContentViewEvent()
-                        .putContentName("Channel screen selected"));
+                        .putContentName("Channel screen"));
                 fragment = new ChannelListFragment();
                 break;
             case NavigationDrawer.MENU_PROGRAM_GUIDE:
                 Answers.getInstance().logContentView(new ContentViewEvent()
-                        .putContentName("Program guide screen selected"));
+                        .putContentName("Program guide screen"));
                 fragment = new ProgramGuideFragment();
                 break;
             case NavigationDrawer.MENU_COMPLETED_RECORDINGS:
                 Answers.getInstance().logContentView(new ContentViewEvent()
-                        .putContentName("Completed recordings screen selected"));
+                        .putContentName("Completed recordings screen"));
                 fragment = new CompletedRecordingListFragment();
                 break;
             case NavigationDrawer.MENU_SCHEDULED_RECORDINGS:
                 Answers.getInstance().logContentView(new ContentViewEvent()
-                        .putContentName("Scheduled recordings screen selected"));
+                        .putContentName("Scheduled recordings screen"));
                 fragment = new ScheduledRecordingListFragment();
                 break;
             case NavigationDrawer.MENU_SERIES_RECORDINGS:
                 Answers.getInstance().logContentView(new ContentViewEvent()
-                        .putContentName("Series recordings screen selected"));
+                        .putContentName("Series recordings screen"));
                 fragment = new SeriesRecordingListFragment();
                 break;
             case NavigationDrawer.MENU_TIMER_RECORDINGS:
                 Answers.getInstance().logContentView(new ContentViewEvent()
-                        .putContentName("Timer recordings screen selected"));
+                        .putContentName("Timer recordings screen"));
                 fragment = new TimerRecordingListFragment();
                 break;
             case NavigationDrawer.MENU_FAILED_RECORDINGS:
                 Answers.getInstance().logContentView(new ContentViewEvent()
-                        .putContentName("Failed recordings screen selected"));
+                        .putContentName("Failed recordings screen"));
                 fragment = new FailedRecordingListFragment();
                 break;
             case NavigationDrawer.MENU_REMOVED_RECORDINGS:
                 Answers.getInstance().logContentView(new ContentViewEvent()
-                        .putContentName("Removed recordings screen selected"));
+                        .putContentName("Removed recordings screen"));
                 fragment = new RemovedRecordingListFragment();
                 break;
             case NavigationDrawer.MENU_STATUS:
                 Answers.getInstance().logContentView(new ContentViewEvent()
-                        .putContentName("Status screen selected"));
+                        .putContentName("Status screen"));
                 fragment = new StatusFragment();
                 break;
             case NavigationDrawer.MENU_INFORMATION:
                 Answers.getInstance().logContentView(new ContentViewEvent()
-                        .putContentName("Information screen selected"));
+                        .putContentName("Information screen"));
                 fragment = new InfoFragment();
                 break;
             case NavigationDrawer.MENU_SETTINGS:
                 Answers.getInstance().logContentView(new ContentViewEvent()
-                        .putContentName("Settings screen selected"));
+                        .putContentName("Settings screen"));
                 intent = new Intent(this, SettingsActivity.class);
                 startActivity(intent);
                 break;
             case NavigationDrawer.MENU_UNLOCKER:
                 Answers.getInstance().logContentView(new ContentViewEvent()
-                        .putContentName("Unlocker screen selected"));
+                        .putContentName("Unlocker screen"));
                 fragment = new UnlockerFragment();
                 break;
         }

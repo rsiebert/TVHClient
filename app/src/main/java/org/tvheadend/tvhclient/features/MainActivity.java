@@ -23,6 +23,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.CustomEvent;
 import com.crashlytics.android.answers.SearchEvent;
 import com.google.android.gms.cast.framework.CastButtonFactory;
 import com.google.android.gms.cast.framework.CastContext;
@@ -109,6 +110,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         int status = googleApiAvailability.isGooglePlayServicesAvailable(this);
         if (status == ConnectionResult.SUCCESS) {
             Timber.d("Google API is available");
+            Answers.getInstance().logCustom(new CustomEvent("Startup")
+                    .putCustomAttribute("Google API", "Available"));
+
             castContext = CastContext.getSharedInstance(this);
             castSessionManagerListener = new CastSessionManagerListener(this, castSession);
             castStateListener = new CastStateListener() {
@@ -121,6 +125,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             };
         } else {
             Timber.d("Google API is not available, casting will no be enabled");
+            Answers.getInstance().logCustom(new CustomEvent("Startup")
+                    .putCustomAttribute("Google API", "Not available"));
         }
 
         View v = findViewById(R.id.details);
