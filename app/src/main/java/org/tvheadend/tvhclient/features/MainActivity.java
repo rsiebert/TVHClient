@@ -22,6 +22,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.SearchEvent;
 import com.google.android.gms.cast.framework.CastButtonFactory;
 import com.google.android.gms.cast.framework.CastContext;
 import com.google.android.gms.cast.framework.CastSession;
@@ -226,6 +228,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     @Override
     public boolean onQueryTextSubmit(String query) {
+        Answers.getInstance().logSearch(new SearchEvent().putQuery(query));
+
         searchMenuItem.collapseActionView();
         android.support.v4.app.Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main);
         if (fragment != null && fragment.isAdded() && fragment instanceof SearchRequestInterface) {

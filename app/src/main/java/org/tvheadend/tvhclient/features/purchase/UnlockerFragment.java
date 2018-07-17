@@ -16,13 +16,15 @@ import android.webkit.WebView;
 import android.widget.ProgressBar;
 
 import com.anjlab.android.iab.v3.BillingProcessor;
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.PurchaseEvent;
 
-import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.MainApplication;
-import org.tvheadend.tvhclient.utils.Constants;
+import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.features.shared.callbacks.ToolbarInterface;
 import org.tvheadend.tvhclient.features.shared.tasks.FileLoaderCallback;
 import org.tvheadend.tvhclient.features.shared.tasks.HtmlFileLoaderTask;
-import org.tvheadend.tvhclient.features.shared.callbacks.ToolbarInterface;
+import org.tvheadend.tvhclient.utils.Constants;
 
 public class UnlockerFragment extends Fragment implements FileLoaderCallback {
 
@@ -84,6 +86,9 @@ public class UnlockerFragment extends Fragment implements FileLoaderCallback {
                 // here because this activity is not information about any changes
                 // via the billing event interface.
                 if (billingProcessor.isPurchased(Constants.UNLOCKER)) {
+                    Answers.getInstance().logPurchase(new PurchaseEvent()
+                            .putItemName("Unlocker")
+                            .putSuccess(true));
                     if (getView() != null) {
                         Snackbar.make(getView(), getString(R.string.unlocker_already_purchased),
                                 Snackbar.LENGTH_SHORT).show();
