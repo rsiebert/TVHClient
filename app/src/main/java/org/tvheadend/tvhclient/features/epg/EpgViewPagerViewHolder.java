@@ -11,6 +11,7 @@ import android.view.View;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Program;
+import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.features.programs.ProgramDetailsActivity;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback;
 
@@ -39,9 +40,9 @@ public class EpgViewPagerViewHolder extends RecyclerView.ViewHolder implements R
         programListRecyclerView.setAdapter(programListRecyclerViewAdapter);
     }
 
-    public void bindData(List<Program> programs) {
-        //Timber.d("Adding " + (programs != null ? programs.size() : 0) + " programs");
+    public void bindData(List<Program> programs, List<Recording> recordings) {
         programListRecyclerViewAdapter.addItems(programs);
+        programListRecyclerViewAdapter.addRecordings(recordings);
     }
 
     @Override

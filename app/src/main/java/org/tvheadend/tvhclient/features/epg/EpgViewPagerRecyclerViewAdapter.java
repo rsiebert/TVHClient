@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Program;
+import org.tvheadend.tvhclient.data.entity.Recording;
 
 import java.util.HashMap;
 import java.util.List;
@@ -21,6 +22,7 @@ public class EpgViewPagerRecyclerViewAdapter extends RecyclerView.Adapter {
     private final long fragmentStopTime;
     private final FragmentActivity activity;
     private Map<Integer, List<Program>> programList = new HashMap<>();
+    private Map<Integer, List<Recording>> recordingList = new HashMap<>();
 
     EpgViewPagerRecyclerViewAdapter(FragmentActivity activity, float pixelsPerMinute, long fragmentStartTime, long fragmentStopTime) {
         this.activity = activity;
@@ -39,13 +41,22 @@ public class EpgViewPagerRecyclerViewAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         List<Program> programs = programList.get(position);
-        ((EpgViewPagerViewHolder) holder).bindData(programs);
+        List<Recording> recordings = recordingList.get(position);
+        ((EpgViewPagerViewHolder) holder).bindData(programs, recordings);
     }
 
     void addItems(int position, List<Program> list) {
         programList.remove(position);
         if (list != null) {
             programList.put(position, list);
+        }
+        notifyDataSetChanged();
+    }
+
+    void addRecordings(int position, List<Recording> list) {
+        recordingList.remove(position);
+        if (list != null) {
+            recordingList.put(position, list);
         }
         notifyDataSetChanged();
     }

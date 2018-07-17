@@ -136,13 +136,9 @@ public class EpgViewPagerFragment extends Fragment implements EpgScrollInterface
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-                if (newState != SCROLL_STATE_IDLE) {
-                    enableScrolling = true;
-                } else if (enableScrolling) {
+                if (newState == SCROLL_STATE_IDLE) {
                     Fragment fragment = activity.getSupportFragmentManager().findFragmentById(R.id.main);
-                    if (fragment != null
-                            && fragment instanceof EpgScrollInterface) {
-                        enableScrolling = false;
+                    if (fragment != null && fragment instanceof EpgScrollInterface) {
                         ((EpgScrollInterface) fragment).onScrollStateChanged();
                     }
                 }
@@ -151,17 +147,14 @@ public class EpgViewPagerFragment extends Fragment implements EpgScrollInterface
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                if (enableScrolling) {
-                    int position = recyclerViewLinearLayoutManager.findFirstVisibleItemPosition();
-                    View v = recyclerViewLinearLayoutManager.getChildAt(0);
-                    int offset = (v == null) ? 0 : v.getTop() - recyclerView.getPaddingTop();
 
-                    //Timber.d("onScrolled: Scrolling program list by " + position + ", " + offset);
-                    Fragment fragment = activity.getSupportFragmentManager().findFragmentById(R.id.main);
-                    if (fragment != null
-                            && fragment instanceof EpgScrollInterface) {
-                        ((EpgScrollInterface) fragment).onScroll(position, offset);
-                    }
+                int position = recyclerViewLinearLayoutManager.findFirstVisibleItemPosition();
+                View v = recyclerViewLinearLayoutManager.getChildAt(0);
+                int offset = (v == null) ? 0 : v.getTop() - recyclerView.getPaddingTop();
+
+                Fragment fragment = activity.getSupportFragmentManager().findFragmentById(R.id.main);
+                if (fragment != null && fragment instanceof EpgScrollInterface) {
+                    ((EpgScrollInterface) fragment).onScroll(position, offset);
                 }
             }
         });
@@ -171,7 +164,7 @@ public class EpgViewPagerFragment extends Fragment implements EpgScrollInterface
             if (channels != null) {
                 int position = 0;
                 for (ChannelSubset channel : channels) {
-                    loadPrograms(position, channel);
+                    loadPrograms(position, channels.size(), channel);
                     position++;
                 }
             }
@@ -209,19 +202,25 @@ public class EpgViewPagerFragment extends Fragment implements EpgScrollInterface
         outState.putParcelable("layout", recyclerViewLinearLayoutManager.onSaveInstanceState());
     }
 
-    private void loadPrograms(int position, ChannelSubset channel) {
+    private void loadPrograms(int position, int channelCount, ChannelSubset channel) {
+        Timber.d("loadPrograms, position " + position + ", " + channelCount);
         viewModel.getProgramsByChannelAndBetweenTime(channel.getId(), startTime, endTime).observe(this, programs -> {
             recyclerViewAdapter.addItems(position, programs);
 
-            Timber.d("Setting scroll position to layout mananger");
-            recyclerViewLinearLayoutManager.onRestoreInstanceState(recyclerViewLinearLayoutManagerState);
+            if (position == (channelCount - 1)) {
+                Timber.d("loadPrograms, setting scroll position to layout manager");
+                recyclerViewLinearLayoutManager.onRestoreInstanceState(recyclerViewLinearLayoutManagerState);
+            }
+        });
+
+        viewModel.getRecordingsByChannel(channel.getId()).observe(this, recordings -> {
+            recyclerViewAdapter.addRecordings(position, recordings);
         });
     }
 
     /**
      * Shows a vertical line in the program guide to indicate the current time.
-     * This line is only visible in the first screen where the current time is
-     * shown. This method is called every minute.
+     * It is only visible in the first screen. This method is called every minute.
      */
     private void setCurrentTimeIndication() {
         // Get the difference between the current time and the given start time. Calculate

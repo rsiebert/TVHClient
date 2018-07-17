@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Program;
+import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback;
 
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ class EpgProgramListRecyclerViewAdapter extends RecyclerView.Adapter {
     private final long fragmentStopTime;
     private Context context;
     private List<Program> programList = new ArrayList<>();
+    private List<Recording> recordingList = new ArrayList<>();
 
     EpgProgramListRecyclerViewAdapter(Context context, float pixelsPerMinute, long fragmentStartTime, long fragmentStopTime, RecyclerViewClickCallback clickCallback) {
         this.context = context;
@@ -41,7 +43,7 @@ class EpgProgramListRecyclerViewAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         Program program = programList.get(position);
-        ((EpgProgramListViewHolder) holder).bindData(context, program, clickCallback);
+        ((EpgProgramListViewHolder) holder).bindData(context, program, recordingList, clickCallback);
     }
 
     void addItems(List<Program> list) {
@@ -50,6 +52,21 @@ class EpgProgramListRecyclerViewAdapter extends RecyclerView.Adapter {
             programList.addAll(list);
         }
         notifyDataSetChanged();
+    }
+
+    void addRecordings(List<Recording> recordings) {
+        recordingList.clear();
+        recordingList = recordings;
+
+        for (Recording recording : recordingList) {
+            for (int i = 0; i < programList.size(); i++) {
+                Program program = programList.get(i);
+                if (recording.getEventId() == program.getEventId()) {
+                    notifyItemChanged(i);
+                    break;
+                }
+            }
+        }
     }
 
     @Override
