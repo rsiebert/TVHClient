@@ -57,10 +57,6 @@ public class EpgViewModel extends AndroidViewModel {
         return appRepository.getChannelTagData().getItemById(channelTagId);
     }
 
-    public LiveData<Integer> getNumberOfChannels() {
-        return appRepository.getChannelData().getLiveDataItemCount();
-    }
-
     @NonNull
     public MutableLiveData<List<ChannelSubset>> getChannels() {
         if (channels == null) {
@@ -73,18 +69,9 @@ public class EpgViewModel extends AndroidViewModel {
     LiveData<List<Recording>> getRecordingsByChannel(int channelId) {
         if (recordings == null) {
             recordings = new MutableLiveData<>();
-            recordings = appRepository.getRecordingData().getLiveDataItemByChannelId(channelId);
+            recordings = appRepository.getRecordingData().getLiveDataItemsByChannelId(channelId);
         }
         return recordings;
-    }
-
-    public long getSelectedTime() {
-        return selectedTime;
-    }
-
-    public void setSelectedTime(long selectedTime) {
-        this.selectedTime = selectedTime;
-        handler.post(channelUpdateTask);
     }
 
     public int getChannelTagId() {
