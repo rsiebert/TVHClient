@@ -62,7 +62,6 @@ import timber.log.Timber;
 // TODO dual screen listview on the left side must be (visually) set selected or checked
 // TODO move the conversion from ms to s or minutes from the intents into the entity getter and setter
 // TODO add info via fabrics which screen is used most often
-// TODO enable or disable the menus depending on the network availability
 // TODO removing scheduled recording in program list does not remove icon
 // TODO add option in menu to show file missing recordings
 // TODO give up after x reconnect retries
@@ -82,8 +81,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     protected boolean isDualPane;
     protected Toolbar toolbar;
 
-    private boolean showCastingMiniController;
-    private View miniController;
     private IntroductoryOverlay introductoryOverlay;
     private CastSession castSession;
     private CastContext castContext;
@@ -109,7 +106,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         GoogleApiAvailability googleApiAvailability = GoogleApiAvailability.getInstance();
         int status = googleApiAvailability.isGooglePlayServicesAvailable(this);
         if (status == ConnectionResult.SUCCESS) {
-            Timber.d("Google API available");
+            Timber.d("Google API is available");
             castContext = CastContext.getSharedInstance(this);
             castSessionManagerListener = new CastSessionManagerListener(this, castSession);
             castStateListener = new CastStateListener() {
@@ -121,7 +118,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 }
             };
         } else {
-            Timber.d("Google API not available");
+            Timber.d("Google API is not available, casting will no be enabled");
         }
 
         View v = findViewById(R.id.details);
@@ -136,8 +133,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         }
 
         isUnlocked = MainApplication.getInstance().isUnlocked();
-        showCastingMiniController = isUnlocked && sharedPreferences.getBoolean("casting_minicontroller_enabled", false);
-        miniController = findViewById(R.id.cast_mini_controller);
+        boolean showCastingMiniController = isUnlocked && sharedPreferences.getBoolean("casting_minicontroller_enabled", false);
+        View miniController = findViewById(R.id.cast_mini_controller);
+        miniController.setVisibility(showCastingMiniController ? View.VISIBLE : View.GONE);
     }
 
     @Override
