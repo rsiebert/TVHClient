@@ -3,7 +3,6 @@ package org.tvheadend.tvhclient.features.information;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -17,13 +16,14 @@ import android.widget.ProgressBar;
 import org.tvheadend.tvhclient.BuildConfig;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.features.changelog.ChangeLogActivity;
+import org.tvheadend.tvhclient.features.shared.BaseFragment;
+import org.tvheadend.tvhclient.features.shared.callbacks.ToolbarInterface;
 import org.tvheadend.tvhclient.features.shared.tasks.FileLoaderCallback;
 import org.tvheadend.tvhclient.features.shared.tasks.HtmlFileLoaderTask;
-import org.tvheadend.tvhclient.features.shared.callbacks.ToolbarInterface;
 
 import java.util.regex.Pattern;
 
-public class InfoFragment extends Fragment implements FileLoaderCallback {
+public class InfoFragment extends BaseFragment implements FileLoaderCallback {
 
     private WebView webView;
     private HtmlFileLoaderTask htmlFileLoaderTask;
@@ -42,6 +42,7 @@ public class InfoFragment extends Fragment implements FileLoaderCallback {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        forceSingleScreenLayout();
 
         activity = (AppCompatActivity) getActivity();
         if (activity instanceof ToolbarInterface) {
