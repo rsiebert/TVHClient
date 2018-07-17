@@ -123,9 +123,10 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
                 recyclerViewAdapter.getFilter().filter(searchQuery, this);
             }
 
-            toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.programs,
-                    recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
-
+            if (!isDualPane) {
+                toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.programs,
+                        recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
+            }
             activity.invalidateOptionsMenu();
         });
 
