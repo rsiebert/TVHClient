@@ -22,7 +22,7 @@
         android:id="@+id/channel_list_header"
         android:layout_width="90dp"
         android:layout_height="36dp"
-        android:background="?attr/TimelineHeaderLayoutStyle"
+        android:background="?attr/material_drawer_selected"
         android:text="@null"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -51,7 +51,7 @@
         android:id="@+id/divider"
         android:layout_width="1dp"
         android:layout_height="0dp"
-        android:background="@android:color/darker_gray"
+        android:background="?attr/material_drawer_selected"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/channel_list_recycler_view"
         app:layout_constraintTop_toTopOf="parent" />
