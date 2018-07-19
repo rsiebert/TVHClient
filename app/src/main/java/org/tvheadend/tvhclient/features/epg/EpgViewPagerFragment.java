@@ -1,5 +1,6 @@
 package org.tvheadend.tvhclient.features.epg;
 
+import android.app.SearchManager;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,6 +14,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -63,8 +65,9 @@ public class EpgViewPagerFragment extends Fragment implements EpgScrollInterface
     private boolean enableScrolling;
     private LinearLayoutManager recyclerViewLinearLayoutManager;
     private Parcelable recyclerViewLinearLayoutManagerState;
+    private String searchQuery;
 
-    public static EpgViewPagerFragment newInstance(Long startTime, Long endTime, float pixelsPerMinute, boolean timeIndicationEnabled) {
+    public static EpgViewPagerFragment newInstance(Long startTime, Long endTime, float pixelsPerMinute, boolean timeIndicationEnabled, String searchQuery) {
         EpgViewPagerFragment fragment = new EpgViewPagerFragment();
         Bundle bundle = new Bundle();
         bundle.putLong("epg_start_time", startTime);
@@ -73,6 +76,7 @@ public class EpgViewPagerFragment extends Fragment implements EpgScrollInterface
         bundle.putFloat("pixels_per_minute", pixelsPerMinute);
         // Used to only show the vertical current time indication in the first fragment
         bundle.putBoolean("time_indication_enabled", timeIndicationEnabled);
+        bundle.putString(SearchManager.QUERY, searchQuery);
         fragment.setArguments(bundle);
         return fragment;
     }
@@ -118,6 +122,7 @@ public class EpgViewPagerFragment extends Fragment implements EpgScrollInterface
             endTime = bundle.getLong("epg_end_time", 0);
             pixelsPerMinute = bundle.getFloat("pixels_per_minute");
             showTimeIndication = bundle.getBoolean("time_indication_enabled", false);
+            searchQuery = bundle.getString(SearchManager.QUERY);
         }
 
         String date = UIUtils.getDate(activity, startTime);
@@ -204,12 +209,16 @@ public class EpgViewPagerFragment extends Fragment implements EpgScrollInterface
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable("layout", recyclerViewLinearLayoutManager.onSaveInstanceState());
+        outState.putString(SearchManager.QUERY, searchQuery);
     }
 
     private void loadPrograms(int position, int channelCount, ChannelSubset channel) {
         Timber.d("loadPrograms, position " + position + ", " + channelCount);
         viewModel.getProgramsByChannelAndBetweenTime(channel.getId(), startTime, endTime).observe(this, programs -> {
             recyclerViewAdapter.addItems(position, programs);
+            if (!TextUtils.isEmpty(searchQuery)) {
+                recyclerViewAdapter.getFilter().filter(searchQuery);
+            }
 
             if (position == (channelCount - 1)) {
                 Timber.d("loadPrograms, setting scroll position to layout manager");

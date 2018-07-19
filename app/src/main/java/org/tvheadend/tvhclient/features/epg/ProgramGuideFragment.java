@@ -2,6 +2,7 @@ package org.tvheadend.tvhclient.features.epg;
 
 import android.app.SearchManager;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -14,7 +15,6 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.text.format.Time;
 import android.util.DisplayMetrics;
 import android.util.SparseArray;
@@ -32,6 +32,8 @@ import org.tvheadend.tvhclient.data.entity.ChannelSubset;
 import org.tvheadend.tvhclient.data.entity.ChannelTag;
 import org.tvheadend.tvhclient.data.entity.Program;
 import org.tvheadend.tvhclient.data.entity.Recording;
+import org.tvheadend.tvhclient.features.search.SearchActivity;
+import org.tvheadend.tvhclient.features.search.SearchRequestInterface;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
 import org.tvheadend.tvhclient.features.shared.callbacks.ChannelTagSelectionCallback;
 import org.tvheadend.tvhclient.features.shared.callbacks.ChannelTimeSelectionCallback;
@@ -48,7 +50,7 @@ import butterknife.Unbinder;
 
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 
-public class ProgramGuideFragment extends BaseFragment implements EpgScrollInterface, RecyclerViewClickCallback, ChannelTimeSelectionCallback, ChannelTagSelectionCallback, Filter.FilterListener, ViewPager.OnPageChangeListener {
+public class ProgramGuideFragment extends BaseFragment implements EpgScrollInterface, RecyclerViewClickCallback, ChannelTimeSelectionCallback, ChannelTagSelectionCallback, Filter.FilterListener, ViewPager.OnPageChangeListener, SearchRequestInterface {
 
     @BindView(R.id.channel_list_recycler_view)
     RecyclerView channelListRecyclerView;
@@ -90,10 +92,11 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        forceSingleScreenLayout();
 
         if (savedInstanceState != null) {
             selectedTimeOffset = savedInstanceState.getInt("timeOffset");
-            searchQuery = savedInstanceState.getString("searchQuery");
+            searchQuery = savedInstanceState.getString(SearchManager.QUERY);
         } else {
             selectedTimeOffset = 0;
             Bundle bundle = getArguments();
@@ -151,7 +154,7 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
             }
         });
 
-        viewPagerAdapter = new EpgViewPagerAdapter(getChildFragmentManager(), startTimes, endTimes, pixelsPerMinute, fragmentCount);
+        viewPagerAdapter = new EpgViewPagerAdapter(getChildFragmentManager(), startTimes, endTimes, pixelsPerMinute, fragmentCount, searchQuery);
         programViewPager.setAdapter(viewPagerAdapter);
         programViewPager.setOffscreenPageLimit(2);
         programViewPager.addOnPageChangeListener(this);
@@ -164,9 +167,6 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
             programViewPager.setVisibility(View.VISIBLE);
 
             channelListRecyclerViewAdapter.addItems(channels);
-            if (!TextUtils.isEmpty(searchQuery)) {
-                channelListRecyclerViewAdapter.getFilter().filter(searchQuery, this);
-            }
 
             // Show either all channels or the name of the selected
             // channel tag and the channel count in the toolbar
@@ -181,7 +181,7 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt("timeOffset", selectedTimeOffset);
-        outState.putString("searchQuery", searchQuery);
+        outState.putString(SearchManager.QUERY, searchQuery);
     }
 
     @Override
@@ -197,7 +197,6 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
 
         menu.findItem(R.id.menu_genre_color_info_channels).setVisible(showGenreColors);
         menu.findItem(R.id.menu_timeframe).setVisible(isUnlocked);
-        menu.findItem(R.id.menu_search).setVisible(false);
 
         // Prevent the channel tag menu item from going into the overlay menu
         if (showChannelTagMenu) {
@@ -426,6 +425,16 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
         // TOP
     }
 
+    @Override
+    public void onSearchRequested(String query) {
+        // Start searching for programs on all channels
+        Intent searchIntent = new Intent(activity, SearchActivity.class);
+        searchIntent.putExtra(SearchManager.QUERY, query);
+        searchIntent.setAction(Intent.ACTION_SEARCH);
+        searchIntent.putExtra("type", "program_guide");
+        startActivity(searchIntent);
+    }
+
     private static class EpgViewPagerAdapter extends FragmentStatePagerAdapter {
 
         private SparseArray<Fragment> registeredFragments = new SparseArray<>();
@@ -433,13 +442,15 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
         private final List<Long> endTimes;
         private float pixelsPerMinute;
         private int fragmentCount;
+        private final String searchQuery;
 
-        EpgViewPagerAdapter(FragmentManager fragmentManager, List<Long> startTimes, List<Long> endTimes, float pixelsPerMinute, int fragmentCount) {
+        EpgViewPagerAdapter(FragmentManager fragmentManager, List<Long> startTimes, List<Long> endTimes, float pixelsPerMinute, int fragmentCount, String searchQuery) {
             super(fragmentManager);
             this.startTimes = startTimes;
             this.endTimes = endTimes;
             this.pixelsPerMinute = pixelsPerMinute;
             this.fragmentCount = fragmentCount;
+            this.searchQuery = searchQuery;
         }
 
         @Override
@@ -449,7 +460,8 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
                     startTimes.get(position),
                     endTimes.get(position),
                     pixelsPerMinute,
-                    showTimeIndication);
+                    showTimeIndication,
+                    searchQuery);
         }
 
         @NonNull
