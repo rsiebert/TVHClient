@@ -45,8 +45,8 @@ import org.tvheadend.tvhclient.data.service.EpgSyncTaskState;
 import org.tvheadend.tvhclient.features.download.DownloadPermissionGrantedInterface;
 import org.tvheadend.tvhclient.features.playback.CastSessionManagerListener;
 import org.tvheadend.tvhclient.features.search.SearchRequestInterface;
-import org.tvheadend.tvhclient.features.shared.callbacks.NetworkAvailableInterface;
-import org.tvheadend.tvhclient.features.shared.callbacks.NetworkStatusCallback;
+import org.tvheadend.tvhclient.features.shared.callbacks.NetworkAvailabilityInterface;
+import org.tvheadend.tvhclient.features.shared.callbacks.NetworkStatusReceiverCallback;
 import org.tvheadend.tvhclient.features.shared.callbacks.ToolbarInterface;
 import org.tvheadend.tvhclient.features.shared.receivers.NetworkStatusReceiver;
 import org.tvheadend.tvhclient.features.shared.receivers.SnackbarMessageReceiver;
@@ -87,7 +87,7 @@ import timber.log.Timber;
 // TODO join recordings when getting livedata programs in epg
 // TODO join recordings when getting livedata programs in program list
 
-public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, ToolbarInterface, EpgSyncStatusCallback, NetworkStatusCallback {
+public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, ToolbarInterface, EpgSyncStatusCallback, NetworkStatusReceiverCallback {
 
     private MenuItem searchMenuItem;
     private SearchView searchView;
@@ -108,6 +108,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private EpgSyncStatusReceiver epgSyncStatusReceiver;
     private NetworkStatusReceiver networkStatusReceiver;
     private SnackbarMessageReceiver snackbarMessageReceiver;
+    private boolean isNetworkAvailable;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -325,7 +326,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     @Override
     public void onEpgTaskStateChanged(EpgSyncTaskState state) {
         Timber.d("Epg task state changed, message is " + state.getMessage());
-        boolean isNetworkAvailable = false;
+        isNetworkAvailable = false;
         switch (state.getState()) {
             // Show a message in all these cases and set the network
             // availability to false because the sync is not yet done or
@@ -357,13 +358,13 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         // Inform the fragment about the network state. They can then enable or disable
         // certain menu items.
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main);
-        if (fragment != null && fragment instanceof NetworkAvailableInterface) {
-            ((NetworkAvailableInterface) fragment).onNetworkIsAvailable(isNetworkAvailable);
+        if (fragment != null && fragment instanceof NetworkAvailabilityInterface) {
+            ((NetworkAvailabilityInterface) fragment).onNetworkAvailabilityChanged(isNetworkAvailable);
         }
         if (isDualPane) {
             fragment = getSupportFragmentManager().findFragmentById(R.id.details);
-            if (fragment != null && fragment instanceof NetworkAvailableInterface) {
-                ((NetworkAvailableInterface) fragment).onNetworkIsAvailable(isNetworkAvailable);
+            if (fragment != null && fragment instanceof NetworkAvailabilityInterface) {
+                ((NetworkAvailabilityInterface) fragment).onNetworkAvailabilityChanged(isNetworkAvailable);
             }
         }
     }
@@ -383,8 +384,12 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         stopService(new Intent(this, EpgSyncService.class));
 
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main);
-        if (fragment != null && fragment instanceof NetworkAvailableInterface) {
-            ((NetworkAvailableInterface) fragment).onNetworkIsAvailable(false);
+        if (fragment != null && fragment instanceof NetworkAvailabilityInterface) {
+            ((NetworkAvailabilityInterface) fragment).onNetworkAvailabilityChanged(false);
         }
+    }
+
+    public boolean isNetworkAvailable() {
+        return isNetworkAvailable;
     }
 }

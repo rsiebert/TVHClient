@@ -1,6 +1,6 @@
 package org.tvheadend.tvhclient.features.shared.callbacks;
 
-public interface NetworkStatusCallback {
+public interface NetworkStatusReceiverCallback {
     void onNetworkAvailable();
     void onNetworkNotAvailable();
 }

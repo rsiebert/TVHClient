@@ -14,14 +14,15 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
-import org.tvheadend.tvhclient.features.shared.callbacks.NetworkAvailableInterface;
+import org.tvheadend.tvhclient.features.MainActivity;
+import org.tvheadend.tvhclient.features.shared.callbacks.NetworkAvailabilityInterface;
 import org.tvheadend.tvhclient.features.shared.callbacks.ToolbarInterface;
 
 import javax.inject.Inject;
 
 import timber.log.Timber;
 
-public abstract class BaseFragment extends Fragment implements NetworkAvailableInterface {
+public abstract class BaseFragment extends Fragment implements NetworkAvailabilityInterface {
 
     protected AppCompatActivity activity;
     protected ToolbarInterface toolbarInterface;
@@ -52,6 +53,10 @@ public abstract class BaseFragment extends Fragment implements NetworkAvailableI
         }
 
         MainApplication.getComponent().inject(this);
+        if (activity instanceof MainActivity) {
+            isNetworkAvailable = ((MainActivity) activity).isNetworkAvailable();
+            Timber.d("Network is available " + isNetworkAvailable);
+        }
 
         mainFrameLayout = activity.findViewById(R.id.main);
         detailsFrameLayout = activity.findViewById(R.id.details);
@@ -91,7 +96,7 @@ public abstract class BaseFragment extends Fragment implements NetworkAvailableI
     }
 
     @Override
-    public void onNetworkIsAvailable(boolean networkIsAvailable) {
+    public void onNetworkAvailabilityChanged(boolean networkIsAvailable) {
         Timber.d("Network is available " + networkIsAvailable + ", invalidating menu");
         isNetworkAvailable = networkIsAvailable;
         activity.invalidateOptionsMenu();
