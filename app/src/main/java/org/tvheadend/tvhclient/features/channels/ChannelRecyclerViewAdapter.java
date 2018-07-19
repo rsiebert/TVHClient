@@ -2,6 +2,7 @@ package org.tvheadend.tvhclient.features.channels;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -48,6 +49,7 @@ public class ChannelRecyclerViewAdapter extends RecyclerView.Adapter implements 
     }
 
     void addItems(List<Channel> list) {
+
         channelList.clear();
         channelListFiltered.clear();
 
@@ -56,10 +58,12 @@ public class ChannelRecyclerViewAdapter extends RecyclerView.Adapter implements 
             channelListFiltered.addAll(list);
         }
 
+        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new ChannelListDiffCallback(channelList, list));
+        diffResult.dispatchUpdatesTo(this);
+
         if (list == null || selectedPosition > list.size()) {
             selectedPosition = 0;
         }
-        notifyDataSetChanged();
     }
 
     @Override
