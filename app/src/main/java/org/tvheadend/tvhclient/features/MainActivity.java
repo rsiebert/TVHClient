@@ -68,14 +68,24 @@ import timber.log.Timber;
 
 // TODO add option in settings to disable answers
 
+// TODO rotating program list is then messed up
+// TODO removing recording in program list it does not reset state
+// TODO network connectivity change is messing up the menu items
+
+// TODO when searching the selected item in the nav drawer is wrong
+
 // TODO give up after x reconnect retries
 // TODO reschedule work when not successful
 
-// TODO after orientation change in the epg from portrait to landscape the viewpager is not taking the full screen width
 // TODO epg genre colors
 // TODO epg Reduce scrolling calls to layout manager
 // TODO epg search in epg
 // TODO epg rename classes
+// TODO epg layout width of each program is wrong / too short
+// TODO epg adding a recording causes lag
+
+// TODO join recordings when getting livedata programs in epg
+// TODO join recordings when getting livedata programs in program list
 
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, ToolbarInterface, EpgSyncStatusCallback, NetworkStatusCallback {
 
@@ -135,8 +145,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                     .putCustomAttribute("Google API", "Not available"));
         }
 
-        View v = findViewById(R.id.details);
-        isDualPane = v != null && v.getVisibility() == View.VISIBLE;
+        isDualPane = findViewById(R.id.details) != null;
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
