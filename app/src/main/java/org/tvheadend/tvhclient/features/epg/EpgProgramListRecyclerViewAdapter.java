@@ -51,6 +51,10 @@ class EpgProgramListRecyclerViewAdapter extends RecyclerView.Adapter {
         if (list != null) {
             programList.addAll(list);
         }
+
+        //Timber.d("Added " + programList.size() + " programs");
+        //DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new ProgramListDiffCallback(programList, list));
+        //diffResult.dispatchUpdatesTo(this);
         notifyDataSetChanged();
     }
 
@@ -76,11 +80,7 @@ class EpgProgramListRecyclerViewAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemViewType(final int position) {
-        if (programList.get(position) == null) {
-            return R.layout.epg_program_item_loading_adapter;
-        } else {
-            return R.layout.epg_program_item_adapter;
-        }
+        return R.layout.epg_program_item_adapter;
     }
 
     public Program getItem(int position) {

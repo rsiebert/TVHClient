@@ -31,16 +31,12 @@ class EpgProgramListViewHolder extends RecyclerView.ViewHolder {
 
     @BindView(R.id.program_item_layout)
     ConstraintLayout constraintLayout;
-    @Nullable
     @BindView(R.id.title)
     TextView titleTextView;
-    @Nullable
     @BindView(R.id.duration)
     TextView durationTextView;
-    @Nullable
     @BindView(R.id.subtitle)
     TextView subtitleTextView;
-    @Nullable
     @BindView(R.id.state)
     ImageView stateImageView;
     @Nullable
@@ -62,10 +58,11 @@ class EpgProgramListViewHolder extends RecyclerView.ViewHolder {
 
             long startTime = (program.getStart() < fragmentStartTime) ? fragmentStartTime : program.getStart();
             long stopTime = (program.getStop() > fragmentStopTime) ? fragmentStopTime : program.getStop();
+            int duration = (int) (((stopTime - startTime) / 1000 / 60) * pixelsPerMinute);
 
-            int duration = (int) ((stopTime - startTime) / 1000 / 60 * pixelsPerMinute);
-            constraintLayout.setMaxWidth(duration);
-            constraintLayout.setMinWidth(duration);
+            RecyclerView.LayoutParams layoutParams = (RecyclerView.LayoutParams) constraintLayout.getLayoutParams();
+            layoutParams.width = duration;
+            constraintLayout.setLayoutParams(layoutParams);
 
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
             boolean showProgramSubtitle = sharedPreferences.getBoolean("program_subtitle_enabled", true);
