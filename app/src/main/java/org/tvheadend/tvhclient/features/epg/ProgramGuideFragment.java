@@ -16,7 +16,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.Time;
-import android.util.DisplayMetrics;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -105,24 +104,13 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
             }
         }
 
-        // Calculates the available display width of one minute in pixels. This depends
-        // how wide the screen is and how many hours shall be shown in one screen.
-        DisplayMetrics displaymetrics = new DisplayMetrics();
-        activity.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-        int displayWidth = displaymetrics.widthPixels;
-
-        // Calculates the number of fragments in the view pager. This depends on how
-        // many days shall be shown of the program guide and how many hours shall be
-        // visible per fragment.
+        // Calculates the number of fragments in the view pager. This depends on how many days
+        // shall be shown of the program guide and how many hours shall be visible per fragment.
         hoursToShow = Integer.parseInt(sharedPreferences.getString("hours_of_epg_data_per_screen", "4"));
         daysToShow = Integer.parseInt(sharedPreferences.getString("days_of_epg_data", "7"));
         fragmentCount = (daysToShow * (24 / hoursToShow));
 
         calculateViewPagerFragmentStartAndEndTimes();
-
-        // Calculate the ratio how many minutes a pixel represents on the screen.
-        int viewPagerWidth = programViewPager.getLayoutParams().width;
-        float pixelsPerMinute = ((float) (displayWidth - viewPagerWidth) / (60.0f * (float) hoursToShow));
 
         channelListRecyclerViewAdapter = new EpgChannelListRecyclerViewAdapter(activity, this);
         channelListRecyclerViewLayoutManager = new LinearLayoutManager(activity);
@@ -154,9 +142,9 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
             }
         });
 
-        viewPagerAdapter = new EpgViewPagerAdapter(getChildFragmentManager(), startTimes, endTimes, pixelsPerMinute, fragmentCount, searchQuery);
+        viewPagerAdapter = new EpgViewPagerAdapter(getChildFragmentManager(), startTimes, endTimes, fragmentCount, searchQuery);
         programViewPager.setAdapter(viewPagerAdapter);
-        programViewPager.setOffscreenPageLimit(2);
+        programViewPager.setOffscreenPageLimit(1);
         programViewPager.addOnPageChangeListener(this);
 
         viewModel = ViewModelProviders.of(activity).get(EpgViewModel.class);
@@ -440,15 +428,13 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
         private SparseArray<Fragment> registeredFragments = new SparseArray<>();
         private final List<Long> startTimes;
         private final List<Long> endTimes;
-        private float pixelsPerMinute;
         private int fragmentCount;
         private final String searchQuery;
 
-        EpgViewPagerAdapter(FragmentManager fragmentManager, List<Long> startTimes, List<Long> endTimes, float pixelsPerMinute, int fragmentCount, String searchQuery) {
+        EpgViewPagerAdapter(FragmentManager fragmentManager, List<Long> startTimes, List<Long> endTimes, int fragmentCount, String searchQuery) {
             super(fragmentManager);
             this.startTimes = startTimes;
             this.endTimes = endTimes;
-            this.pixelsPerMinute = pixelsPerMinute;
             this.fragmentCount = fragmentCount;
             this.searchQuery = searchQuery;
         }
@@ -459,7 +445,6 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
             return EpgViewPagerFragment.newInstance(
                     startTimes.get(position),
                     endTimes.get(position),
-                    pixelsPerMinute,
                     showTimeIndication,
                     searchQuery);
         }
