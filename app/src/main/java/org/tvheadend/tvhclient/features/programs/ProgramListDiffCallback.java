@@ -11,7 +11,7 @@ public class ProgramListDiffCallback extends DiffUtil.Callback {
     private List<Program> oldList;
     private List<Program> newList;
 
-    ProgramListDiffCallback(List<Program> oldList, List<Program> newList) {
+    public ProgramListDiffCallback(List<Program> oldList, List<Program> newList) {
         this.oldList = oldList;
         this.newList = newList;
     }
