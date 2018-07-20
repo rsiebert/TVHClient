@@ -18,8 +18,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import timber.log.Timber;
-
 public class EpgViewPagerRecyclerViewAdapter extends RecyclerView.Adapter implements Filterable {
 
     private final float pixelsPerMinute;
@@ -90,7 +88,6 @@ public class EpgViewPagerRecyclerViewAdapter extends RecyclerView.Adapter implem
             @Override
             protected FilterResults performFiltering(CharSequence charSequence) {
                 String charString = charSequence.toString();
-                Timber.d("Searching for " + charString);
                 if (charString.isEmpty()) {
                     filteredProgramList = programList;
                 } else {
