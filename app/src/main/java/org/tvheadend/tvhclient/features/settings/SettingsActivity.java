@@ -2,8 +2,10 @@ package org.tvheadend.tvhclient.features.settings;
 
 import android.app.Fragment;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -16,11 +18,14 @@ import org.tvheadend.tvhclient.features.information.InfoActivity;
 import org.tvheadend.tvhclient.features.purchase.UnlockerActivity;
 import org.tvheadend.tvhclient.features.shared.callbacks.BackPressedInterface;
 import org.tvheadend.tvhclient.features.shared.callbacks.ToolbarInterface;
+import org.tvheadend.tvhclient.features.shared.receivers.SnackbarMessageReceiver;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
 import java.io.File;
 
 public class SettingsActivity extends AppCompatActivity implements ToolbarInterface, FolderChooserDialog.FolderCallback {
+
+    private SnackbarMessageReceiver snackbarMessageReceiver;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -34,6 +39,8 @@ public class SettingsActivity extends AppCompatActivity implements ToolbarInterf
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
+
+        snackbarMessageReceiver = new SnackbarMessageReceiver(this);
 
         if (savedInstanceState == null) {
             String settingType = getIntent().getStringExtra("setting_type");
@@ -89,6 +96,18 @@ public class SettingsActivity extends AppCompatActivity implements ToolbarInterf
                 }
             }
         }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        LocalBroadcastManager.getInstance(this).registerReceiver(snackbarMessageReceiver, new IntentFilter(SnackbarMessageReceiver.ACTION));
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(snackbarMessageReceiver);
     }
 
     @Override

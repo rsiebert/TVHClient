@@ -13,6 +13,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.tvheadend.tvhclient.BuildConfig;
 import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.data.entity.Connection;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -68,7 +69,11 @@ public class SettingsAdvancedFragment extends BasePreferenceFragment implements 
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         dialog.dismiss();
-                        appRepository.getMiscData().clearDatabase();
+                        // Clear the database and the last update information so that a epg data is fetched
+                        appRepository.getMiscData().clearDatabase(activity);
+                        Connection connection = appRepository.getConnectionData().getActiveItem();
+                        connection.setLastUpdate(0);
+                        appRepository.getConnectionData().updateItem(connection);
                     }
                 })
                 .onNegative(new MaterialDialog.SingleButtonCallback() {
