@@ -269,6 +269,10 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
                     menuUtils.handleMenuSearchWebSelection(program.getTitle());
                     return true;
 
+                case R.id.menu_search_fileaffinity:
+                    menuUtils.handleMenuSearchFileAffinityWebsite(program.getTitle());
+                    return true;
+
                 case R.id.menu_search_epg:
                     menuUtils.handleMenuSearchEpgSelection(program.getTitle(), program.getChannelId());
                     return true;

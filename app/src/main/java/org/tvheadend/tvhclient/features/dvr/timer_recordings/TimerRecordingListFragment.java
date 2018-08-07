@@ -203,6 +203,10 @@ public class TimerRecordingListFragment extends BaseFragment implements Recycler
                     menuUtils.handleMenuSearchWebSelection(timerRecording.getTitle());
                     return true;
 
+                case R.id.menu_search_fileaffinity:
+                    menuUtils.handleMenuSearchFileAffinityWebsite(timerRecording.getTitle());
+                    return true;
+
                 case R.id.menu_search_epg:
                     menuUtils.handleMenuSearchEpgSelection(timerRecording.getTitle());
                     return true;

@@ -261,6 +261,8 @@ public class ProgramDetailsFragment extends BaseFragment implements RecordingRem
             menu = nestedToolbar.getMenu();
         }
 
+        menuUtils.onPreparePopupSearchMenu(menu, isNetworkAvailable);
+
         // Show the play menu item when the current
         // time is between the program start and end time
         long currentTime = new Date().getTime();
@@ -286,8 +288,6 @@ public class ProgramDetailsFragment extends BaseFragment implements RecordingRem
         } else if (recording.isFailed() || recording.isRemoved() || recording.isMissed() || recording.isAborted()) {
             menu.findItem(R.id.menu_record_remove).setVisible(true);
         }
-
-        menuUtils.onPreparePopupSearchMenu(menu, isNetworkAvailable);
     }
 
     @Override
@@ -302,6 +302,7 @@ public class ProgramDetailsFragment extends BaseFragment implements RecordingRem
         super.onCreateOptionsMenu(menu, inflater);
         if (nestedToolbar == null) {
             inflater.inflate(R.menu.program_details_options_menu, menu);
+            inflater.inflate(R.menu.external_search_options_menu, menu);
         } else {
             inflater.inflate(R.menu.external_search_options_menu, menu);
         }
@@ -349,6 +350,10 @@ public class ProgramDetailsFragment extends BaseFragment implements RecordingRem
 
             case R.id.menu_search_imdb:
                 menuUtils.handleMenuSearchWebSelection(program.getTitle());
+                return true;
+
+            case R.id.menu_search_fileaffinity:
+                menuUtils.handleMenuSearchFileAffinityWebsite(program.getTitle());
                 return true;
 
             case R.id.menu_search_epg:

@@ -205,6 +205,10 @@ public class SeriesRecordingListFragment extends BaseFragment implements Recycle
                     menuUtils.handleMenuSearchWebSelection(seriesRecording.getTitle());
                     return true;
 
+                case R.id.menu_search_fileaffinity:
+                    menuUtils.handleMenuSearchFileAffinityWebsite(seriesRecording.getTitle());
+                    return true;
+
                 case R.id.menu_search_epg:
                     menuUtils.handleMenuSearchEpgSelection(seriesRecording.getTitle());
                     return true;

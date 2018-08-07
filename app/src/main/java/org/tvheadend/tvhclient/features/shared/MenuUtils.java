@@ -208,6 +208,22 @@ public class MenuUtils {
         }
     }
 
+    public void handleMenuSearchFileAffinityWebsite(String title) {
+        Activity activity = this.activity.get();
+        if (activity == null) {
+            return;
+        }
+        try {
+            String url = URLEncoder.encode(title, "utf-8");
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse("https://www.filmaffinity.com/es/search.php?stext=" + url));
+            activity.startActivity(intent);
+            activity.finish();
+        } catch (UnsupportedEncodingException e) {
+            // NOP
+        }
+    }
+
     public void handleMenuSearchEpgSelection(String title) {
         handleMenuSearchEpgSelection(title, 0);
     }

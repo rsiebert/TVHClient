@@ -245,6 +245,9 @@ public class RecordingDetailsFragment extends BaseFragment implements RecordingR
         if (recording == null) {
             return;
         }
+
+        menuUtils.onPreparePopupSearchMenu(menu, isNetworkAvailable);
+
         if (recording.isCompleted()) {
             menu.findItem(R.id.menu_record_remove).setVisible(true);
             menu.findItem(R.id.menu_play).setVisible(true);
@@ -279,6 +282,7 @@ public class RecordingDetailsFragment extends BaseFragment implements RecordingR
         super.onCreateOptionsMenu(menu, inflater);
         if (nestedToolbar == null) {
             inflater.inflate(R.menu.recordings_popup_menu, menu);
+            inflater.inflate(R.menu.external_search_options_menu, menu);
         } else {
             inflater.inflate(R.menu.external_search_options_menu, menu);
         }
@@ -320,6 +324,10 @@ public class RecordingDetailsFragment extends BaseFragment implements RecordingR
 
             case R.id.menu_search_imdb:
                 menuUtils.handleMenuSearchWebSelection(recording.getTitle());
+                return true;
+
+            case R.id.menu_search_fileaffinity:
+                menuUtils.handleMenuSearchFileAffinityWebsite(recording.getTitle());
                 return true;
 
             case R.id.menu_search_epg:
