@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -16,15 +15,18 @@ import android.webkit.WebView;
 import android.widget.ProgressBar;
 
 import com.anjlab.android.iab.v3.BillingProcessor;
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.PurchaseEvent;
 
-import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.MainApplication;
-import org.tvheadend.tvhclient.utils.Constants;
+import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.features.shared.BaseFragment;
+import org.tvheadend.tvhclient.features.shared.callbacks.ToolbarInterface;
 import org.tvheadend.tvhclient.features.shared.tasks.FileLoaderCallback;
 import org.tvheadend.tvhclient.features.shared.tasks.HtmlFileLoaderTask;
-import org.tvheadend.tvhclient.features.shared.callbacks.ToolbarInterface;
+import org.tvheadend.tvhclient.utils.Constants;
 
-public class UnlockerFragment extends Fragment implements FileLoaderCallback {
+public class UnlockerFragment extends BaseFragment implements FileLoaderCallback {
 
     private WebView webView;
     private ProgressBar loadingProgressBar;
@@ -44,6 +46,7 @@ public class UnlockerFragment extends Fragment implements FileLoaderCallback {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        forceSingleScreenLayout();
 
         activity = (AppCompatActivity) getActivity();
         if (activity instanceof ToolbarInterface) {
@@ -84,6 +87,9 @@ public class UnlockerFragment extends Fragment implements FileLoaderCallback {
                 // here because this activity is not information about any changes
                 // via the billing event interface.
                 if (billingProcessor.isPurchased(Constants.UNLOCKER)) {
+                    Answers.getInstance().logPurchase(new PurchaseEvent()
+                            .putItemName("Unlocker")
+                            .putSuccess(true));
                     if (getView() != null) {
                         Snackbar.make(getView(), getString(R.string.unlocker_already_purchased),
                                 Snackbar.LENGTH_SHORT).show();

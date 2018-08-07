@@ -22,6 +22,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.CustomEvent;
+import com.crashlytics.android.answers.SearchEvent;
 import com.google.android.gms.cast.framework.CastButtonFactory;
 import com.google.android.gms.cast.framework.CastContext;
 import com.google.android.gms.cast.framework.CastSession;
@@ -42,8 +45,8 @@ import org.tvheadend.tvhclient.data.service.EpgSyncTaskState;
 import org.tvheadend.tvhclient.features.download.DownloadPermissionGrantedInterface;
 import org.tvheadend.tvhclient.features.playback.CastSessionManagerListener;
 import org.tvheadend.tvhclient.features.search.SearchRequestInterface;
-import org.tvheadend.tvhclient.features.shared.callbacks.NetworkAvailableInterface;
-import org.tvheadend.tvhclient.features.shared.callbacks.NetworkStatusCallback;
+import org.tvheadend.tvhclient.features.shared.callbacks.NetworkAvailabilityInterface;
+import org.tvheadend.tvhclient.features.shared.callbacks.NetworkStatusReceiverCallback;
 import org.tvheadend.tvhclient.features.shared.callbacks.ToolbarInterface;
 import org.tvheadend.tvhclient.features.shared.receivers.NetworkStatusReceiver;
 import org.tvheadend.tvhclient.features.shared.receivers.SnackbarMessageReceiver;
@@ -55,21 +58,36 @@ import timber.log.Timber;
 
 // TODO brown genre color is not shown in the genre color info dialog
 // TODO when sorting channels by number, consider minor major channel numbers
-// TODO use fade in / out for fragment transactions
+
 // TODO casting needs rework
 // TODO check for gmtoffset
 // TODO dual screen layout
 // TODO dual screen listview on the left side must be (visually) set selected or checked
 // TODO move the conversion from ms to s or minutes from the intents into the entity getter and setter
-// TODO add info via fabrics which screen is used most often
-// TODO enable or disable the menus depending on the network availability
-// TODO removing scheduled recording in program list does not remove icon
 // TODO add option in menu to show file missing recordings
+
+// TODO add option in settings to disable answers
+
+// TODO rotating program list is then messed up
+// TODO removing recording in program list it does not reset state
+// TODO network connectivity change is messing up the menu items
+
+// TODO when searching the selected item in the nav drawer is wrong
+
 // TODO give up after x reconnect retries
 // TODO reschedule work when not successful
 
+// TODO epg genre colors
+// TODO epg Reduce scrolling calls to layout manager
+// TODO epg search in epg
+// TODO epg rename classes
+// TODO epg layout width of each program is wrong / too short
+// TODO epg adding a recording causes lag
 
-public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, ToolbarInterface, EpgSyncStatusCallback, NetworkStatusCallback {
+// TODO join recordings when getting livedata programs in epg
+// TODO join recordings when getting livedata programs in program list
+
+public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, ToolbarInterface, EpgSyncStatusCallback, NetworkStatusReceiverCallback {
 
     private MenuItem searchMenuItem;
     private SearchView searchView;
@@ -82,8 +100,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     protected boolean isDualPane;
     protected Toolbar toolbar;
 
-    private boolean showCastingMiniController;
-    private View miniController;
     private IntroductoryOverlay introductoryOverlay;
     private CastSession castSession;
     private CastContext castContext;
@@ -92,6 +108,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private EpgSyncStatusReceiver epgSyncStatusReceiver;
     private NetworkStatusReceiver networkStatusReceiver;
     private SnackbarMessageReceiver snackbarMessageReceiver;
+    private boolean isNetworkAvailable;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -109,7 +126,10 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         GoogleApiAvailability googleApiAvailability = GoogleApiAvailability.getInstance();
         int status = googleApiAvailability.isGooglePlayServicesAvailable(this);
         if (status == ConnectionResult.SUCCESS) {
-            Timber.d("Google API available");
+            Timber.d("Google API is available");
+            Answers.getInstance().logCustom(new CustomEvent("Startup")
+                    .putCustomAttribute("Google API", "Available"));
+
             castContext = CastContext.getSharedInstance(this);
             castSessionManagerListener = new CastSessionManagerListener(this, castSession);
             castStateListener = new CastStateListener() {
@@ -121,11 +141,12 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 }
             };
         } else {
-            Timber.d("Google API not available");
+            Timber.d("Google API is not available, casting will no be enabled");
+            Answers.getInstance().logCustom(new CustomEvent("Startup")
+                    .putCustomAttribute("Google API", "Not available"));
         }
 
-        View v = findViewById(R.id.details);
-        isDualPane = v != null && v.getVisibility() == View.VISIBLE;
+        isDualPane = findViewById(R.id.details) != null;
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -136,8 +157,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         }
 
         isUnlocked = MainApplication.getInstance().isUnlocked();
-        showCastingMiniController = isUnlocked && sharedPreferences.getBoolean("casting_minicontroller_enabled", false);
-        miniController = findViewById(R.id.cast_mini_controller);
+        boolean showCastingMiniController = isUnlocked && sharedPreferences.getBoolean("casting_minicontroller_enabled", false);
+        View miniController = findViewById(R.id.cast_mini_controller);
+        miniController.setVisibility(showCastingMiniController ? View.VISIBLE : View.GONE);
     }
 
     @Override
@@ -228,6 +250,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     @Override
     public boolean onQueryTextSubmit(String query) {
+        Answers.getInstance().logSearch(new SearchEvent().putQuery(query));
+
         searchMenuItem.collapseActionView();
         android.support.v4.app.Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main);
         if (fragment != null && fragment.isAdded() && fragment instanceof SearchRequestInterface) {
@@ -302,7 +326,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     @Override
     public void onEpgTaskStateChanged(EpgSyncTaskState state) {
         Timber.d("Epg task state changed, message is " + state.getMessage());
-        boolean isNetworkAvailable = false;
+        isNetworkAvailable = false;
         switch (state.getState()) {
             // Show a message in all these cases and set the network
             // availability to false because the sync is not yet done or
@@ -334,13 +358,13 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         // Inform the fragment about the network state. They can then enable or disable
         // certain menu items.
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main);
-        if (fragment != null && fragment instanceof NetworkAvailableInterface) {
-            ((NetworkAvailableInterface) fragment).onNetworkIsAvailable(isNetworkAvailable);
+        if (fragment != null && fragment instanceof NetworkAvailabilityInterface) {
+            ((NetworkAvailabilityInterface) fragment).onNetworkAvailabilityChanged(isNetworkAvailable);
         }
         if (isDualPane) {
             fragment = getSupportFragmentManager().findFragmentById(R.id.details);
-            if (fragment != null && fragment instanceof NetworkAvailableInterface) {
-                ((NetworkAvailableInterface) fragment).onNetworkIsAvailable(isNetworkAvailable);
+            if (fragment != null && fragment instanceof NetworkAvailabilityInterface) {
+                ((NetworkAvailabilityInterface) fragment).onNetworkAvailabilityChanged(isNetworkAvailable);
             }
         }
     }
@@ -360,13 +384,17 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     public void onNetworkNotAvailable() {
         Timber.d("Network is not available anymore");
         if (getCurrentFocus() != null) {
-            Snackbar.make(getCurrentFocus(), "Connection to server lost.", Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(getCurrentFocus(), "No connection to server.", Snackbar.LENGTH_SHORT).show();
         }
         stopService(new Intent(this, EpgSyncService.class));
 
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main);
-        if (fragment != null && fragment instanceof NetworkAvailableInterface) {
-            ((NetworkAvailableInterface) fragment).onNetworkIsAvailable(false);
+        if (fragment != null && fragment instanceof NetworkAvailabilityInterface) {
+            ((NetworkAvailabilityInterface) fragment).onNetworkAvailabilityChanged(false);
         }
+    }
+
+    public boolean isNetworkAvailable() {
+        return isNetworkAvailable;
     }
 }

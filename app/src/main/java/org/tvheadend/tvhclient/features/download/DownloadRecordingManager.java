@@ -17,6 +17,9 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.util.Base64;
 
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.CustomEvent;
+
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Connection;
@@ -66,6 +69,9 @@ public class DownloadRecordingManager {
      * notification.
      */
     private void startDownload() {
+
+        Answers.getInstance().logCustom(new CustomEvent("Download")
+                .putCustomAttribute("Recording title", recording.getTitle()));
 
         lastDownloadId = downloadManager.enqueue(getDownloadRequest());
         // Check after a certain delay the status of the download and that for

@@ -167,26 +167,16 @@
         <item name="ic_arrow_drop_down_like_spinner">@drawable/ic_arrow_drop_down_like_spinner_dark</item>
         <item name="item_active">@drawable/item_active_dark</item>
         <item name="item_not_active">@drawable/item_not_active_dark</item>
-        <item name="ActionbarTitleFont">@style/ActionbarTitleFont.Dark</item>
-        <item name="ActionbarSubtitleFont">@style/ActionbarSubtitleFont.Dark</item>
+
         <item name="TitleFont">@style/TitleFont.Dark</item>
         <item name="SubtitleFont">@style/SubtitleFont.Dark</item>
         <item name="ContentFont">@style/ContentFont.Dark</item>
         <item name="ProgramGuideTimelineFont">@style/ProgramGuideTimelineFont.Dark</item>
         <item name="ProgramGuideTitleFont">@style/ProgramGuideTitleFont.Dark</item>
         <item name="ProgramGuideContentFont">@style/ProgramGuideContentFont.Dark</item>
-        <item name="TimelineItemLayoutStyle">@drawable/timeline_item_dark</item>
-        <item name="TimelineHeaderLayoutStyle">@drawable/timeline_header_dark</item>
-
-        <item name="menu_text_selector">@color/menu_text_selector_dark</item>
-        <item name="menu_background_selector">@drawable/menu_background_selector_dark</item>
-        <item name="listitem_background_selector">@drawable/listitem_background_selector_dark</item>
-        <item name="android:windowBackground">@color/window_background_color_dark</item>
-        <item name="toolbar_background_color">@color/toolbar_background_color_dark</item>
 
         <item name="fab_background_color">@color/fab_background_color_dark</item>
 
-        <item name="FragmentDividerLayoutStyle">@drawable/fragment_divider_dark</item>
         <item name="ic_menu_channels">@drawable/ic_menu_channels_dark</item>
         <item name="ic_menu_program_guide">@drawable/ic_menu_program_guide_dark</item>
         <item name="ic_menu_completed_recordings">@drawable/ic_menu_completed_recordings_dark</item>
@@ -203,8 +193,6 @@
         <item name="android:spinnerItemStyle">@style/spinnerItemStyle.Dark</item>
         <!-- For each individual Spinner list item once clicked on -->
         <item name="android:spinnerDropDownItemStyle">@style/spinnerDropDownItemStyle.Dark</item>
-
-        <item name="borderless_button">@style/Button.Borderless.Dark</item>
 
         <!-- MaterialDrawer specific values -->
         <item name="material_drawer_badge">@color/material_drawer_badge_dark</item>
@@ -252,26 +240,16 @@
         <item name="ic_arrow_drop_down_like_spinner">@drawable/ic_arrow_drop_down_like_spinner_light</item>
         <item name="item_active">@drawable/item_active_light</item>
         <item name="item_not_active">@drawable/item_not_active_light</item>
-        <item name="ActionbarTitleFont">@style/ActionbarTitleFont.Light</item>
-        <item name="ActionbarSubtitleFont">@style/ActionbarSubtitleFont.Light</item>
+
         <item name="TitleFont">@style/TitleFont.Light</item>
         <item name="SubtitleFont">@style/SubtitleFont.Light</item>
         <item name="ContentFont">@style/ContentFont.Light</item>
         <item name="ProgramGuideTimelineFont">@style/ProgramGuideTimelineFont.Light</item>
         <item name="ProgramGuideTitleFont">@style/ProgramGuideTitleFont.Light</item>
         <item name="ProgramGuideContentFont">@style/ProgramGuideContentFont.Light</item>
-        <item name="TimelineItemLayoutStyle">@drawable/timeline_item_light</item>
-        <item name="TimelineHeaderLayoutStyle">@drawable/timeline_header_light</item>
-
-        <item name="menu_text_selector">@color/menu_text_selector_light</item>
-        <item name="menu_background_selector">@drawable/menu_background_selector_light</item>
-        <item name="listitem_background_selector">@drawable/listitem_background_selector_light</item>
-        <item name="android:windowBackground">@color/window_background_color_light</item>
-        <item name="toolbar_background_color">@color/toolbar_background_color_light</item>
 
         <item name="fab_background_color">@color/fab_background_color_light</item>
 
-        <item name="FragmentDividerLayoutStyle">@drawable/fragment_divider_light</item>
         <item name="ic_menu_channels">@drawable/ic_menu_channels_light</item>
         <item name="ic_menu_program_guide">@drawable/ic_menu_program_guide_light</item>
         <item name="ic_menu_completed_recordings">@drawable/ic_menu_completed_recordings_light</item>
@@ -288,8 +266,6 @@
         <item name="android:spinnerItemStyle">@style/spinnerItemStyle.Light</item>
         <!-- For each individual Spinner list item once clicked on -->
         <item name="android:spinnerDropDownItemStyle">@style/spinnerDropDownItemStyle.Light</item>
-
-        <item name="borderless_button">@style/Button.Borderless.Light</item>
 
         <!-- MaterialDrawer specific values -->
         <item name="material_drawer_badge">@color/material_drawer_badge_light</item>

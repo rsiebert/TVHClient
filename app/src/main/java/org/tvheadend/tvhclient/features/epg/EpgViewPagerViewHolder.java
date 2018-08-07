@@ -11,6 +11,7 @@ import android.view.View;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Program;
+import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.features.programs.ProgramDetailsActivity;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback;
 
@@ -18,7 +19,6 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import timber.log.Timber;
 
 public class EpgViewPagerViewHolder extends RecyclerView.ViewHolder implements RecyclerViewClickCallback {
 
@@ -35,24 +35,21 @@ public class EpgViewPagerViewHolder extends RecyclerView.ViewHolder implements R
         programListRecyclerView.setLayoutManager(new CustomHorizontalLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false));
         programListRecyclerView.addItemDecoration(new DividerItemDecoration(activity, LinearLayoutManager.HORIZONTAL));
         programListRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        programListRecyclerViewAdapter = new EpgProgramListRecyclerViewAdapter(activity, pixelsPerMinute,fragmentStartTime, fragmentStopTime, this);
+        programListRecyclerViewAdapter = new EpgProgramListRecyclerViewAdapter(activity, pixelsPerMinute, fragmentStartTime, fragmentStopTime, this);
         programListRecyclerView.setAdapter(programListRecyclerViewAdapter);
     }
 
-    public void bindData(List<Program> programs) {
-        //Timber.d("Adding " + (programs != null ? programs.size() : 0) + " programs");
+    public void bindData(List<Program> programs, List<Recording> recordings) {
         programListRecyclerViewAdapter.addItems(programs);
+        programListRecyclerViewAdapter.addRecordings(recordings);
     }
 
     @Override
     public void onClick(View view, int position) {
-        Timber.d("onClick at " + position);
         Program program = programListRecyclerViewAdapter.getItem(position);
         if (program == null) {
             return;
         }
-        Timber.d("Found program " + program.getTitle());
-        // Launch a new activity to display the program list of the selected channelTextView.
         Intent intent = new Intent(activity, ProgramDetailsActivity.class);
         intent.putExtra("eventId", program.getEventId());
         intent.putExtra("channelId", program.getChannelId());
@@ -61,13 +58,10 @@ public class EpgViewPagerViewHolder extends RecyclerView.ViewHolder implements R
 
     @Override
     public void onLongClick(View view, int position) {
-        Timber.d("onLongClick at " + position);
         final Program program = (Program) view.getTag();
         if (program == null) {
             return;
         }
-        Timber.d("Found program " + program.getTitle());
-
         Fragment fragment = activity.getSupportFragmentManager().findFragmentById(R.id.main);
         if (fragment != null
                 && fragment.isAdded()

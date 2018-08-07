@@ -1,6 +1,8 @@
 package org.tvheadend.tvhclient.features.epg;
 
+import android.app.SearchManager;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -13,9 +15,7 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.text.format.Time;
-import android.util.DisplayMetrics;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -26,13 +26,13 @@ import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.ProgressBar;
 
-import com.afollestad.materialdialogs.MaterialDialog;
-
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.ChannelSubset;
 import org.tvheadend.tvhclient.data.entity.ChannelTag;
 import org.tvheadend.tvhclient.data.entity.Program;
 import org.tvheadend.tvhclient.data.entity.Recording;
+import org.tvheadend.tvhclient.features.search.SearchActivity;
+import org.tvheadend.tvhclient.features.search.SearchRequestInterface;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
 import org.tvheadend.tvhclient.features.shared.callbacks.ChannelTagSelectionCallback;
 import org.tvheadend.tvhclient.features.shared.callbacks.ChannelTimeSelectionCallback;
@@ -46,21 +46,10 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import timber.log.Timber;
 
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 
-// TODO genre colors
-// TODO optimize passed vars like start and end times
-// TODO channel list item decoration right and vertical
-// TODO Reduce scrolling calls to layout manager
-// TODO show recording states
-// TODO search in epg
-// TODO refactor time dialog adapter
-// TODO rename classes
-
-
-public class ProgramGuideFragment extends BaseFragment implements EpgScrollInterface, RecyclerViewClickCallback, ChannelTimeSelectionCallback, ChannelTagSelectionCallback, Filter.FilterListener, ViewPager.OnPageChangeListener {
+public class ProgramGuideFragment extends BaseFragment implements EpgScrollInterface, RecyclerViewClickCallback, ChannelTimeSelectionCallback, ChannelTagSelectionCallback, Filter.FilterListener, ViewPager.OnPageChangeListener, SearchRequestInterface {
 
     @BindView(R.id.channel_list_recycler_view)
     RecyclerView channelListRecyclerView;
@@ -71,13 +60,13 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
 
     private Unbinder unbinder;
     private int selectedTimeOffset;
-    private int selectedListPosition;
     private String searchQuery;
     private EpgViewModel viewModel;
     private EpgChannelListRecyclerViewAdapter channelListRecyclerViewAdapter;
 
     private final List<Long> startTimes = new ArrayList<>();
     private final List<Long> endTimes = new ArrayList<>();
+    private int daysToShow;
     private int hoursToShow;
     private int fragmentCount;
     private EpgViewPagerAdapter viewPagerAdapter;
@@ -102,27 +91,26 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        forceSingleScreenLayout();
 
         if (savedInstanceState != null) {
-            selectedListPosition = savedInstanceState.getInt("listPosition", 0);
             selectedTimeOffset = savedInstanceState.getInt("timeOffset");
+            searchQuery = savedInstanceState.getString(SearchManager.QUERY);
         } else {
-            selectedListPosition = 0;
             selectedTimeOffset = 0;
+            Bundle bundle = getArguments();
+            if (bundle != null) {
+                searchQuery = bundle.getString(SearchManager.QUERY);
+            }
         }
 
-        // Calculates the available display width of one minute in pixels. This depends
-        // how wide the screen is and how many hours shall be shown in one screen.
-        DisplayMetrics displaymetrics = new DisplayMetrics();
-        activity.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-        int displayWidth = displaymetrics.widthPixels;
+        // Calculates the number of fragments in the view pager. This depends on how many days
+        // shall be shown of the program guide and how many hours shall be visible per fragment.
+        hoursToShow = Integer.parseInt(sharedPreferences.getString("hours_of_epg_data_per_screen", "4"));
+        daysToShow = Integer.parseInt(sharedPreferences.getString("days_of_epg_data", "7"));
+        fragmentCount = (daysToShow * (24 / hoursToShow));
 
-        calculateViewPagerFragmentCount();
         calculateViewPagerFragmentStartAndEndTimes();
-
-        // Calculate the ratio how many minutes a pixel represents on the screen.
-        int viewPagerWidth = programViewPager.getLayoutParams().width;
-        float pixelsPerMinute = ((float) (displayWidth - viewPagerWidth) / (60.0f * (float) hoursToShow));
 
         channelListRecyclerViewAdapter = new EpgChannelListRecyclerViewAdapter(activity, this);
         channelListRecyclerViewLayoutManager = new LinearLayoutManager(activity);
@@ -154,9 +142,9 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
             }
         });
 
-        viewPagerAdapter = new EpgViewPagerAdapter(getChildFragmentManager(), startTimes, endTimes, pixelsPerMinute, fragmentCount);
+        viewPagerAdapter = new EpgViewPagerAdapter(getChildFragmentManager(), startTimes, endTimes, fragmentCount, searchQuery);
         programViewPager.setAdapter(viewPagerAdapter);
-        programViewPager.setOffscreenPageLimit(2);
+        programViewPager.setOffscreenPageLimit(1);
         programViewPager.addOnPageChangeListener(this);
 
         viewModel = ViewModelProviders.of(activity).get(EpgViewModel.class);
@@ -167,9 +155,6 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
             programViewPager.setVisibility(View.VISIBLE);
 
             channelListRecyclerViewAdapter.addItems(channels);
-            if (!TextUtils.isEmpty(searchQuery)) {
-                channelListRecyclerViewAdapter.getFilter().filter(searchQuery, this);
-            }
 
             // Show either all channels or the name of the selected
             // channel tag and the channel count in the toolbar
@@ -183,8 +168,8 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt("listPosition", selectedListPosition);
         outState.putInt("timeOffset", selectedTimeOffset);
+        outState.putString(SearchManager.QUERY, searchQuery);
     }
 
     @Override
@@ -200,7 +185,6 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
 
         menu.findItem(R.id.menu_genre_color_info_channels).setVisible(showGenreColors);
         menu.findItem(R.id.menu_timeframe).setVisible(isUnlocked);
-        menu.findItem(R.id.menu_search).setVisible(false);
 
         // Prevent the channel tag menu item from going into the overlay menu
         if (showChannelTagMenu) {
@@ -215,8 +199,7 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
                 menuUtils.handleMenuChannelTagsSelection(viewModel.getChannelTagId(), this);
                 return true;
             case R.id.menu_timeframe:
-                //menuUtils.handleMenuTimeSelection(selectedTimeOffset, this);
-                showProgramGuideTimeDialog();
+                menuUtils.handleMenuTimeSelection(selectedTimeOffset, hoursToShow, (hoursToShow * daysToShow), this);
                 return true;
             case R.id.menu_genre_color_info_channels:
                 menuUtils.handleMenuGenreColorSelection();
@@ -226,62 +209,10 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
         }
     }
 
-    public class ProgramGuideTimeDialogItem {
-        public long start;
-        public long end;
-    }
-
-    /**
-     * Prepares a dialog that shows the available dates and times the user can
-     * choose from. In here the data for the adapter is created and the dialog
-     * prepared which can be shown later.
-     */
-    private void showProgramGuideTimeDialog() {
-        // Fill the list for the adapter
-        List<ProgramGuideTimeDialogItem> times = new ArrayList<>();
-        for (int i = 0; i < fragmentCount; ++i) {
-            ProgramGuideTimeDialogItem item = new ProgramGuideTimeDialogItem();
-            item.start = startTimes.get(i);
-            item.end = endTimes.get(i);
-            times.add(item);
-        }
-        // The dialog that allows the user to select a certain time frame
-        final ProgramGuideTimeDialogAdapter timeAdapter = new ProgramGuideTimeDialogAdapter(activity, times);
-        final MaterialDialog programGuideTimeDialog = new MaterialDialog.Builder(activity)
-                .title(R.string.tags)
-                .adapter(timeAdapter, null)
-                .build();
-
-        // Set the callback to handle clicks. This needs to be done after the
-        // dialog creation so that the inner method has access to the dialog variable
-        timeAdapter.setCallback(new ProgramGuideTimeDialogAdapter.Callback() {
-            @Override
-            public void onItemClicked(int which) {
-                programViewPager.setCurrentItem(which);
-                programGuideTimeDialog.dismiss();
-            }
-        });
-        programGuideTimeDialog.show();
-    }
-
     @Override
     public void onTimeSelected(int which) {
         selectedTimeOffset = which;
-
-        channelListRecyclerView.setVisibility(View.GONE);
-        progressBar.setVisibility(View.VISIBLE);
-
-        // Add the selected list index as extra hours to the current time.
-        // If the first index was selected then use the current time.
-        Calendar c = Calendar.getInstance();
-        if (which > 0) {
-            c.set(Calendar.MINUTE, 0);
-            c.set(Calendar.SECOND, 0);
-            c.set(Calendar.HOUR_OF_DAY, c.get(Calendar.HOUR_OF_DAY) + which);
-            viewModel.setSelectedTime(c.getTimeInMillis());
-        } else {
-            viewModel.setSelectedTime(new Date().getTime());
-        }
+        programViewPager.setCurrentItem(which);
     }
 
     @Override
@@ -315,7 +246,6 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
 
 
     public void showPopupMenu(View view, Program program) {
-        Timber.d("Showing popup menu");
         if (activity == null || program == null) {
             return;
         }
@@ -392,17 +322,6 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
     }
 
     /**
-     * Calculates the number of fragments in the view pager. This depends on how
-     * many days shall be shown of the program guide and how many hours shall be
-     * visible per fragment.
-     */
-    private void calculateViewPagerFragmentCount() {
-        int daysToShow = Integer.parseInt(sharedPreferences.getString("days_of_epg_data", "7"));
-        hoursToShow = Integer.parseInt(sharedPreferences.getString("hours_of_epg_data_per_screen", "4"));
-        fragmentCount = (daysToShow * (24 / hoursToShow));
-    }
-
-    /**
      * Calculates the day, start and end hours that are valid for the fragment
      * at the given position. This will be saved in the lists to avoid
      * calculating this for every fragment again and so we can update the data
@@ -463,8 +382,7 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
 
         for (int i = 0; i < viewPagerAdapter.getRegisteredFragmentCount(); i++) {
             Fragment fragment = viewPagerAdapter.getRegisteredFragment(i);
-            if (fragment != null
-                    && fragment instanceof EpgScrollInterface) {
+            if (fragment != null && fragment instanceof EpgScrollInterface) {
                 ((EpgScrollInterface) fragment).onScroll(position, offset);
             }
         }
@@ -495,20 +413,30 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
         // TOP
     }
 
+    @Override
+    public void onSearchRequested(String query) {
+        // Start searching for programs on all channels
+        Intent searchIntent = new Intent(activity, SearchActivity.class);
+        searchIntent.putExtra(SearchManager.QUERY, query);
+        searchIntent.setAction(Intent.ACTION_SEARCH);
+        searchIntent.putExtra("type", "program_guide");
+        startActivity(searchIntent);
+    }
+
     private static class EpgViewPagerAdapter extends FragmentStatePagerAdapter {
 
         private SparseArray<Fragment> registeredFragments = new SparseArray<>();
         private final List<Long> startTimes;
         private final List<Long> endTimes;
-        private float pixelsPerMinute;
         private int fragmentCount;
+        private final String searchQuery;
 
-        EpgViewPagerAdapter(FragmentManager fragmentManager, List<Long> startTimes, List<Long> endTimes, float pixelsPerMinute, int fragmentCount) {
+        EpgViewPagerAdapter(FragmentManager fragmentManager, List<Long> startTimes, List<Long> endTimes, int fragmentCount, String searchQuery) {
             super(fragmentManager);
             this.startTimes = startTimes;
             this.endTimes = endTimes;
-            this.pixelsPerMinute = pixelsPerMinute;
             this.fragmentCount = fragmentCount;
+            this.searchQuery = searchQuery;
         }
 
         @Override
@@ -517,8 +445,8 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
             return EpgViewPagerFragment.newInstance(
                     startTimes.get(position),
                     endTimes.get(position),
-                    pixelsPerMinute,
-                    showTimeIndication);
+                    showTimeIndication,
+                    searchQuery);
         }
 
         @NonNull

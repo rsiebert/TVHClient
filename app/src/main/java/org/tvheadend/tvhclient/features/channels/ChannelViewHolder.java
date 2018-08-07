@@ -174,6 +174,7 @@ public class ChannelViewHolder extends RecyclerView.ViewHolder {
                     break;
                 }
             }
+            stateImageView.setVisibility(stateDrawable != null ? View.VISIBLE : View.GONE);
             stateImageView.setImageDrawable(stateDrawable);
 
         } else {

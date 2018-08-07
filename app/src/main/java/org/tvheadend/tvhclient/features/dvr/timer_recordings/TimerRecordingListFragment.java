@@ -72,7 +72,7 @@ public class TimerRecordingListFragment extends BaseFragment implements Recycler
 
         if (savedInstanceState != null) {
             selectedListPosition = savedInstanceState.getInt("listPosition", 0);
-            searchQuery = savedInstanceState.getString("searchQuery");
+            searchQuery = savedInstanceState.getString(SearchManager.QUERY);
         } else {
             selectedListPosition = 0;
             Bundle bundle = getArguments();
@@ -111,7 +111,7 @@ public class TimerRecordingListFragment extends BaseFragment implements Recycler
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt("listPosition", selectedListPosition);
-        outState.putString("searchQuery", searchQuery);
+        outState.putString(SearchManager.QUERY, searchQuery);
     }
 
     @Override

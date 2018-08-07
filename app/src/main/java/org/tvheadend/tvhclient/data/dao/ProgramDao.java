@@ -35,9 +35,12 @@ public interface ProgramDao {
     @Query(base +
             "WHERE p.connection_id IN (SELECT id FROM connections WHERE active = 1) " +
             " AND p.channel_id = :channelId " +
-            " AND ((p.start >= :startTime) " +
-            "  OR (p.start <= :startTime AND p.stop >= :startTime)) " +
-            " AND (p.stop <= :endTime) " +
+            // Program is within time slot
+            " AND ((p.start >= :startTime AND p.stop <= :endTime) " +
+            // Program is at the beginning of time slot
+            "  OR (p.start <= :startTime AND p.stop > :startTime) " +
+            // Program is at the end of the time slot
+            "  OR (p.start < :endTime AND p.stop >= :endTime)) " +
             "ORDER BY p.start ASC")
     LiveData<List<Program>> loadProgramsFromChannelBetweenTime(int channelId, long startTime, long endTime);
 
@@ -46,9 +49,12 @@ public interface ProgramDao {
             "WHERE p.connection_id IN (SELECT id FROM connections WHERE active = 1) " +
             " AND c.id IN (SELECT channel_id FROM tags_and_channels WHERE tag_id = :tagId) " +
             " AND p.channel_id = :channelId " +
-            " AND ((p.start >= :startTime) " +
-            "  OR (p.start <= :startTime AND p.stop >= :startTime)) " +
-            " AND (p.stop <= :endTime) " +
+            // Program is within time slot
+            " AND ((p.start >= :startTime AND p.stop <= :endTime) " +
+            // Program is at the beginning of time slot
+            "  OR (p.start <= :startTime AND p.stop > :startTime) " +
+            // Program is at the end of the time slot
+            "  OR (p.start < :endTime AND p.stop >= :endTime)) " +
             "ORDER BY p.start ASC")
     LiveData<List<Program>> loadProgramsFromChannelByTagBetweenTime(int channelId, int tagId, long startTime, long endTime);
 

@@ -1,8 +1,14 @@
 package org.tvheadend.tvhclient.data.source;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
+import android.support.v4.content.LocalBroadcastManager;
 
 import org.tvheadend.tvhclient.data.db.AppRoomDatabase;
+import org.tvheadend.tvhclient.features.shared.receivers.SnackbarMessageReceiver;
+
+import java.lang.ref.WeakReference;
 
 import javax.inject.Inject;
 
@@ -15,14 +21,16 @@ public class MiscData extends BaseData {
         this.db = database;
     }
 
-    public void clearDatabase() {
-        new ClearDatabaseTask(db).execute();
+    public void clearDatabase(Context context) {
+        new ClearDatabaseTask(context, db).execute();
     }
 
     protected static class ClearDatabaseTask extends AsyncTask<Void, Void, Void> {
         private final AppRoomDatabase db;
+        private final WeakReference<Context> context;
 
-        ClearDatabaseTask(AppRoomDatabase db) {
+        ClearDatabaseTask(Context context, AppRoomDatabase db) {
+            this.context = new WeakReference<>(context);
             this.db = db;
         }
 
@@ -37,6 +45,17 @@ public class MiscData extends BaseData {
             db.getTimerRecordingDao().deleteAll();
             db.getServerProfileDao().deleteAll();
             return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            Context context = this.context.get();
+            if (context == null) {
+                return;
+            }
+            Intent intent = new Intent(SnackbarMessageReceiver.ACTION);
+            intent.putExtra(SnackbarMessageReceiver.CONTENT, "Database cleared");
+            LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
         }
     }
 }

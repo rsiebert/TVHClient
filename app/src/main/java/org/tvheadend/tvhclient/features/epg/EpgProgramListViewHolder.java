@@ -13,8 +13,11 @@ import android.widget.TextView;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Program;
+import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.features.shared.UIUtils;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback;
+
+import java.util.List;
 
 import javax.annotation.Nullable;
 
@@ -28,18 +31,14 @@ class EpgProgramListViewHolder extends RecyclerView.ViewHolder {
 
     @BindView(R.id.program_item_layout)
     ConstraintLayout constraintLayout;
-    @Nullable
     @BindView(R.id.title)
     TextView titleTextView;
-    @Nullable
     @BindView(R.id.duration)
     TextView durationTextView;
-    @Nullable
     @BindView(R.id.subtitle)
     TextView subtitleTextView;
-    @Nullable
     @BindView(R.id.state)
-    ImageView stateTextView;
+    ImageView stateImageView;
     @Nullable
     @BindView(R.id.genre)
     TextView genreTextView;
@@ -52,18 +51,18 @@ class EpgProgramListViewHolder extends RecyclerView.ViewHolder {
         ButterKnife.bind(this, view);
     }
 
-    public void bindData(Context context, final Program program, RecyclerViewClickCallback clickCallback) {
-        //Timber.d("bindData program is null " + (program == null));
+    public void bindData(Context context, final Program program, List<Recording> recordingList, RecyclerViewClickCallback clickCallback) {
 
         if (program != null) {
             itemView.setTag(program);
 
             long startTime = (program.getStart() < fragmentStartTime) ? fragmentStartTime : program.getStart();
             long stopTime = (program.getStop() > fragmentStopTime) ? fragmentStopTime : program.getStop();
+            int duration = (int) (((stopTime - startTime) / 1000 / 60) * pixelsPerMinute);
 
-            int duration = (int) ((stopTime - startTime) / 1000 / 60 * pixelsPerMinute);
-            constraintLayout.setMaxWidth(duration);
-            constraintLayout.setMinWidth(duration);
+            RecyclerView.LayoutParams layoutParams = (RecyclerView.LayoutParams) constraintLayout.getLayoutParams();
+            layoutParams.width = duration;
+            constraintLayout.setLayoutParams(layoutParams);
 
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
             boolean showProgramSubtitle = sharedPreferences.getBoolean("program_subtitle_enabled", true);
@@ -90,10 +89,16 @@ class EpgProgramListViewHolder extends RecyclerView.ViewHolder {
             if (titleTextView != null) {
                 titleTextView.setText(program.getTitle());
             }
-            if (stateTextView != null) {
-                Drawable drawable = UIUtils.getRecordingState(context, program.getRecording());
-                stateTextView.setVisibility(drawable != null ? View.VISIBLE : View.GONE);
-                stateTextView.setImageDrawable(drawable);
+            if (stateImageView != null) {
+                Drawable stateDrawable = null;
+                for (Recording recording : recordingList) {
+                    if (recording.getEventId() == program.getEventId()) {
+                        stateDrawable = UIUtils.getRecordingState(context, recording);
+                        break;
+                    }
+                }
+                stateImageView.setVisibility(stateDrawable != null ? View.VISIBLE : View.GONE);
+                stateImageView.setImageDrawable(stateDrawable);
             }
             if (durationTextView != null) {
                 String durationTime = context.getString(R.string.minutes, (int) ((program.getStop() - program.getStart()) / 1000 / 60));

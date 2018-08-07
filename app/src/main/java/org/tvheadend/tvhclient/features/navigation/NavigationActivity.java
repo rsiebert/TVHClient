@@ -9,9 +9,10 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
+
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.ContentViewEvent;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.features.MainActivity;
@@ -161,40 +162,64 @@ public class NavigationActivity extends MainActivity implements WakeOnLanTaskCal
         Fragment fragment = null;
         switch (position) {
             case NavigationDrawer.MENU_CHANNELS:
+                Answers.getInstance().logContentView(new ContentViewEvent()
+                        .putContentName("Channel screen"));
                 fragment = new ChannelListFragment();
                 break;
             case NavigationDrawer.MENU_PROGRAM_GUIDE:
+                Answers.getInstance().logContentView(new ContentViewEvent()
+                        .putContentName("Program guide screen"));
                 fragment = new ProgramGuideFragment();
                 break;
             case NavigationDrawer.MENU_COMPLETED_RECORDINGS:
+                Answers.getInstance().logContentView(new ContentViewEvent()
+                        .putContentName("Completed recordings screen"));
                 fragment = new CompletedRecordingListFragment();
                 break;
             case NavigationDrawer.MENU_SCHEDULED_RECORDINGS:
+                Answers.getInstance().logContentView(new ContentViewEvent()
+                        .putContentName("Scheduled recordings screen"));
                 fragment = new ScheduledRecordingListFragment();
                 break;
             case NavigationDrawer.MENU_SERIES_RECORDINGS:
+                Answers.getInstance().logContentView(new ContentViewEvent()
+                        .putContentName("Series recordings screen"));
                 fragment = new SeriesRecordingListFragment();
                 break;
             case NavigationDrawer.MENU_TIMER_RECORDINGS:
+                Answers.getInstance().logContentView(new ContentViewEvent()
+                        .putContentName("Timer recordings screen"));
                 fragment = new TimerRecordingListFragment();
                 break;
             case NavigationDrawer.MENU_FAILED_RECORDINGS:
+                Answers.getInstance().logContentView(new ContentViewEvent()
+                        .putContentName("Failed recordings screen"));
                 fragment = new FailedRecordingListFragment();
                 break;
             case NavigationDrawer.MENU_REMOVED_RECORDINGS:
+                Answers.getInstance().logContentView(new ContentViewEvent()
+                        .putContentName("Removed recordings screen"));
                 fragment = new RemovedRecordingListFragment();
                 break;
             case NavigationDrawer.MENU_STATUS:
+                Answers.getInstance().logContentView(new ContentViewEvent()
+                        .putContentName("Status screen"));
                 fragment = new StatusFragment();
                 break;
             case NavigationDrawer.MENU_INFORMATION:
+                Answers.getInstance().logContentView(new ContentViewEvent()
+                        .putContentName("Information screen"));
                 fragment = new InfoFragment();
                 break;
             case NavigationDrawer.MENU_SETTINGS:
+                Answers.getInstance().logContentView(new ContentViewEvent()
+                        .putContentName("Settings screen"));
                 intent = new Intent(this, SettingsActivity.class);
                 startActivity(intent);
                 break;
             case NavigationDrawer.MENU_UNLOCKER:
+                Answers.getInstance().logContentView(new ContentViewEvent()
+                        .putContentName("Unlocker screen"));
                 fragment = new UnlockerFragment();
                 break;
         }
@@ -205,7 +230,6 @@ public class NavigationActivity extends MainActivity implements WakeOnLanTaskCal
 
             if (isDualPane) {
                 removeDetailsFragment();
-                removeDetailsLayout(position);
             }
 
             // Show the new fragment that represents the selected menu entry.
@@ -215,39 +239,6 @@ public class NavigationActivity extends MainActivity implements WakeOnLanTaskCal
                     .replace(R.id.main, fragment)
                     .addToBackStack(null)
                     .commit();
-        }
-    }
-
-    /**
-     * Hide the details layout for certain fragments. Even in dual pane mode these
-     * fragment shall be fully visible because they show no details whatsoever.
-     *
-     * @param position The current navigation menu position
-     */
-    private void removeDetailsLayout(int position) {
-        // TODO pass info single pane only to base fragment
-
-        if (detailsFrameLayout != null) {
-            if (position == NavigationDrawer.MENU_PROGRAM_GUIDE
-                    || position == NavigationDrawer.MENU_INFORMATION
-                    || position == NavigationDrawer.MENU_STATUS
-                    || position == NavigationDrawer.MENU_UNLOCKER) {
-                detailsFrameLayout.setVisibility(View.GONE);
-                LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT,
-                        LinearLayout.LayoutParams.MATCH_PARENT,
-                        1.0f
-                );
-                mainFrameLayout.setLayoutParams(param);
-            } else {
-                detailsFrameLayout.setVisibility(View.VISIBLE);
-                LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT,
-                        LinearLayout.LayoutParams.MATCH_PARENT,
-                        0.65f
-                );
-                mainFrameLayout.setLayoutParams(param);
-            }
         }
     }
 

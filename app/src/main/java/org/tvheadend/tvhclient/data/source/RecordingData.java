@@ -105,7 +105,7 @@ public class RecordingData extends BaseData implements DataSourceInterface<Recor
         return new ArrayList<>();
     }
 
-    public LiveData<List<Recording>> getLiveDataItemByChannelId(int channelId) {
+    public LiveData<List<Recording>> getLiveDataItemsByChannelId(int channelId) {
         return db.getRecordingDao().loadAllRecordingsByChannelId(channelId);
     }
 

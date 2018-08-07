@@ -32,7 +32,7 @@ public class ProgramViewModel extends AndroidViewModel {
     }
 
     LiveData<List<Recording>> getRecordingsByChannelId(int channelId) {
-        return appRepository.getRecordingData().getLiveDataItemByChannelId(channelId);
+        return appRepository.getRecordingData().getLiveDataItemsByChannelId(channelId);
     }
 
     Recording getRecordingsById(int dvrId) {

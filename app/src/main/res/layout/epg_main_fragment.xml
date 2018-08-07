@@ -21,7 +21,7 @@
         android:id="@+id/channel_list_header"
         android:layout_width="90dp"
         android:layout_height="36dp"
-        android:background="?attr/TimelineHeaderLayoutStyle"
+        android:background="?attr/material_drawer_selected"
         android:text="@null"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -37,12 +37,22 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/channel_list_header" />
 
+    <View
+        android:id="@+id/divider"
+        android:layout_width="1dp"
+        android:layout_height="0dp"
+        android:background="?attr/material_drawer_selected"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/channel_list_recycler_view"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <android.support.v4.view.ViewPager
         android:id="@+id/program_list_viewpager"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/channel_list_header"
+        app:layout_constraintStart_toEndOf="@+id/divider"
         app:layout_constraintTop_toTopOf="parent" />
+
 </android.support.constraint.ConstraintLayout>

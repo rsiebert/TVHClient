@@ -11,6 +11,7 @@ import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.data.entity.ChannelSubset;
 import org.tvheadend.tvhclient.data.entity.ChannelTag;
 import org.tvheadend.tvhclient.data.entity.Program;
+import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
 
 import java.util.Date;
@@ -21,6 +22,7 @@ import javax.inject.Inject;
 public class EpgViewModel extends AndroidViewModel {
 
     private MutableLiveData<List<ChannelSubset>> channels;
+    private LiveData<List<Recording>> recordings;
     @Inject
     protected AppRepository appRepository;
 
@@ -55,10 +57,6 @@ public class EpgViewModel extends AndroidViewModel {
         return appRepository.getChannelTagData().getItemById(channelTagId);
     }
 
-    public LiveData<Integer> getNumberOfChannels() {
-        return appRepository.getChannelData().getLiveDataItemCount();
-    }
-
     @NonNull
     public MutableLiveData<List<ChannelSubset>> getChannels() {
         if (channels == null) {
@@ -68,13 +66,12 @@ public class EpgViewModel extends AndroidViewModel {
         return channels;
     }
 
-    public long getSelectedTime() {
-        return selectedTime;
-    }
-
-    public void setSelectedTime(long selectedTime) {
-        this.selectedTime = selectedTime;
-        handler.post(channelUpdateTask);
+    LiveData<List<Recording>> getRecordingsByChannel(int channelId) {
+        if (recordings == null) {
+            recordings = new MutableLiveData<>();
+            recordings = appRepository.getRecordingData().getLiveDataItemsByChannelId(channelId);
+        }
+        return recordings;
     }
 
     public int getChannelTagId() {

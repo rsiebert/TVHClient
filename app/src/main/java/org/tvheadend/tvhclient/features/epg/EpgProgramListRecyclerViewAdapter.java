@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Program;
+import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback;
 
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ class EpgProgramListRecyclerViewAdapter extends RecyclerView.Adapter {
     private final long fragmentStopTime;
     private Context context;
     private List<Program> programList = new ArrayList<>();
+    private List<Recording> recordingList = new ArrayList<>();
 
     EpgProgramListRecyclerViewAdapter(Context context, float pixelsPerMinute, long fragmentStartTime, long fragmentStopTime, RecyclerViewClickCallback clickCallback) {
         this.context = context;
@@ -41,7 +43,7 @@ class EpgProgramListRecyclerViewAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         Program program = programList.get(position);
-        ((EpgProgramListViewHolder) holder).bindData(context, program, clickCallback);
+        ((EpgProgramListViewHolder) holder).bindData(context, program, recordingList, clickCallback);
     }
 
     void addItems(List<Program> list) {
@@ -49,7 +51,26 @@ class EpgProgramListRecyclerViewAdapter extends RecyclerView.Adapter {
         if (list != null) {
             programList.addAll(list);
         }
+
+        //Timber.d("Added " + programList.size() + " programs");
+        //DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new ProgramListDiffCallback(programList, list));
+        //diffResult.dispatchUpdatesTo(this);
         notifyDataSetChanged();
+    }
+
+    void addRecordings(List<Recording> recordings) {
+        recordingList.clear();
+        recordingList = recordings;
+
+        for (Recording recording : recordingList) {
+            for (int i = 0; i < programList.size(); i++) {
+                Program program = programList.get(i);
+                if (recording.getEventId() == program.getEventId()) {
+                    notifyItemChanged(i);
+                    break;
+                }
+            }
+        }
     }
 
     @Override
@@ -59,11 +80,7 @@ class EpgProgramListRecyclerViewAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemViewType(final int position) {
-        if (programList.get(position) == null) {
-            return R.layout.epg_program_item_loading_adapter;
-        } else {
-            return R.layout.epg_program_item_adapter;
-        }
+        return R.layout.epg_program_item_adapter;
     }
 
     public Program getItem(int position) {

@@ -76,6 +76,7 @@ public class StatusFragment extends BaseFragment implements WakeOnLanTaskCallbac
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        forceSingleScreenLayout();
 
         toolbarInterface.setTitle(getString(R.string.status));
         toolbarInterface.setSubtitle(null);

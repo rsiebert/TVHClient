@@ -1,6 +1,8 @@
 package org.tvheadend.tvhclient.features.epg;
 
+import android.app.SearchManager;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
@@ -13,18 +15,24 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.ChannelSubset;
 import org.tvheadend.tvhclient.features.shared.UIUtils;
 import org.tvheadend.tvhclient.features.shared.callbacks.ChannelTagSelectionCallback;
 
 import java.util.Calendar;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -45,6 +53,11 @@ public class EpgViewPagerFragment extends Fragment implements EpgScrollInterface
     RecyclerView recyclerView;
     @BindView(R.id.current_time)
     ImageView currentTimeIndication;
+    @BindView(R.id.progress_bar)
+    ProgressBar progressBar;
+
+    @Inject
+    SharedPreferences sharedPreferences;
 
     private Unbinder unbinder;
     private EpgViewPagerRecyclerViewAdapter recyclerViewAdapter;
@@ -63,16 +76,17 @@ public class EpgViewPagerFragment extends Fragment implements EpgScrollInterface
     private boolean enableScrolling;
     private LinearLayoutManager recyclerViewLinearLayoutManager;
     private Parcelable recyclerViewLinearLayoutManagerState;
+    private String searchQuery;
+    private FragmentActivity activity;
 
-    public static EpgViewPagerFragment newInstance(Long startTime, Long endTime, float pixelsPerMinute, boolean timeIndicationEnabled) {
+    public static EpgViewPagerFragment newInstance(Long startTime, Long endTime, boolean timeIndicationEnabled, String searchQuery) {
         EpgViewPagerFragment fragment = new EpgViewPagerFragment();
         Bundle bundle = new Bundle();
         bundle.putLong("epg_start_time", startTime);
         bundle.putLong("epg_end_time", endTime);
-        // Required to know how many pixels of the display are remaining
-        bundle.putFloat("pixels_per_minute", pixelsPerMinute);
         // Used to only show the vertical current time indication in the first fragment
         bundle.putBoolean("time_indication_enabled", timeIndicationEnabled);
+        bundle.putString(SearchManager.QUERY, searchQuery);
         fragment.setArguments(bundle);
         return fragment;
     }
@@ -103,7 +117,8 @@ public class EpgViewPagerFragment extends Fragment implements EpgScrollInterface
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        FragmentActivity activity = getActivity();
+        MainApplication.getComponent().inject(this);
+        activity = getActivity();
 
         constraintSet = new ConstraintSet();
         constraintSet.clone(constraintLayout);
@@ -116,14 +131,22 @@ public class EpgViewPagerFragment extends Fragment implements EpgScrollInterface
         if (bundle != null) {
             startTime = bundle.getLong("epg_start_time", 0);
             endTime = bundle.getLong("epg_end_time", 0);
-            pixelsPerMinute = bundle.getFloat("pixels_per_minute");
             showTimeIndication = bundle.getBoolean("time_indication_enabled", false);
+            searchQuery = bundle.getString(SearchManager.QUERY);
         }
 
         String date = UIUtils.getDate(activity, startTime);
         String time = UIUtils.getTimeText(activity, startTime) + " - " + UIUtils.getTimeText(activity, endTime);
         titleDate.setText(date);
         titleHours.setText(time);
+
+        // Calculates the available display width of one minute in pixels. This depends
+        // how wide the screen is and how many hours shall be shown in one screen.
+        DisplayMetrics displaymetrics = new DisplayMetrics();
+        activity.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+        int displayWidth = displaymetrics.widthPixels;
+        int hoursToShow = Integer.parseInt(sharedPreferences.getString("hours_of_epg_data_per_screen", "4"));
+        pixelsPerMinute = ((float) (displayWidth - 221) / (60.0f * (float) hoursToShow));
 
         recyclerViewAdapter = new EpgViewPagerRecyclerViewAdapter(activity, pixelsPerMinute, startTime, endTime);
         recyclerViewLinearLayoutManager = new LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false);
@@ -139,10 +162,9 @@ public class EpgViewPagerFragment extends Fragment implements EpgScrollInterface
                 if (newState != SCROLL_STATE_IDLE) {
                     enableScrolling = true;
                 } else if (enableScrolling) {
+                    enableScrolling = false;
                     Fragment fragment = activity.getSupportFragmentManager().findFragmentById(R.id.main);
-                    if (fragment != null
-                            && fragment instanceof EpgScrollInterface) {
-                        enableScrolling = false;
+                    if (fragment != null && fragment instanceof EpgScrollInterface) {
                         ((EpgScrollInterface) fragment).onScrollStateChanged();
                     }
                 }
@@ -156,10 +178,8 @@ public class EpgViewPagerFragment extends Fragment implements EpgScrollInterface
                     View v = recyclerViewLinearLayoutManager.getChildAt(0);
                     int offset = (v == null) ? 0 : v.getTop() - recyclerView.getPaddingTop();
 
-                    //Timber.d("onScrolled: Scrolling program list by " + position + ", " + offset);
                     Fragment fragment = activity.getSupportFragmentManager().findFragmentById(R.id.main);
-                    if (fragment != null
-                            && fragment instanceof EpgScrollInterface) {
+                    if (fragment != null && fragment instanceof EpgScrollInterface) {
                         ((EpgScrollInterface) fragment).onScroll(position, offset);
                     }
                 }
@@ -171,13 +191,12 @@ public class EpgViewPagerFragment extends Fragment implements EpgScrollInterface
             if (channels != null) {
                 int position = 0;
                 for (ChannelSubset channel : channels) {
-                    loadPrograms(position, channel);
+                    loadPrograms(position, channels.size(), channel);
                     position++;
                 }
             }
         });
 
-        currentTimeIndication.setVisibility(showTimeIndication ? View.VISIBLE : View.GONE);
         if (showTimeIndication) {
             // Create the handler and the timer task that will update the
             // entire view every 30 minutes if the first screen is visible.
@@ -207,21 +226,34 @@ public class EpgViewPagerFragment extends Fragment implements EpgScrollInterface
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable("layout", recyclerViewLinearLayoutManager.onSaveInstanceState());
+        outState.putString(SearchManager.QUERY, searchQuery);
     }
 
-    private void loadPrograms(int position, ChannelSubset channel) {
+    private void loadPrograms(int position, int channelCount, ChannelSubset channel) {
         viewModel.getProgramsByChannelAndBetweenTime(channel.getId(), startTime, endTime).observe(this, programs -> {
             recyclerViewAdapter.addItems(position, programs);
+            if (!TextUtils.isEmpty(searchQuery)) {
+                recyclerViewAdapter.getFilter().filter(searchQuery);
+            }
+            // Restore the scroll position when the program
+            // list of the last channel has been loaded
+            if (position == (channelCount - 1)) {
+                progressBar.setVisibility(View.GONE);
+                recyclerView.setVisibility(View.VISIBLE);
+                currentTimeIndication.setVisibility(showTimeIndication ? View.VISIBLE : View.GONE);
+                recyclerViewLinearLayoutManager.onRestoreInstanceState(recyclerViewLinearLayoutManagerState);
+            }
+        });
 
-            Timber.d("Setting scroll position to layout mananger");
-            recyclerViewLinearLayoutManager.onRestoreInstanceState(recyclerViewLinearLayoutManagerState);
+        viewModel.getRecordingsByChannel(channel.getId()).observe(this, recordings -> {
+            Timber.d("All recordings loaded");
+            recyclerViewAdapter.addRecordings(position, recordings);
         });
     }
 
     /**
      * Shows a vertical line in the program guide to indicate the current time.
-     * This line is only visible in the first screen where the current time is
-     * shown. This method is called every minute.
+     * It is only visible in the first screen. This method is called every minute.
      */
     private void setCurrentTimeIndication() {
         // Get the difference between the current time and the given start time. Calculate
