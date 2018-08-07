@@ -257,7 +257,7 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
         popupMenu.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {
                 case R.id.menu_search_imdb:
-                    menuUtils.handleMenuSearchWebSelection(channel.getProgramTitle());
+                    menuUtils.handleMenuSearchImdbWebsite(channel.getProgramTitle());
                     return true;
 
                 case R.id.menu_search_fileaffinity:

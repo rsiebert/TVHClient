@@ -200,7 +200,7 @@ public class TimerRecordingListFragment extends BaseFragment implements Recycler
                     return true;
 
                 case R.id.menu_search_imdb:
-                    menuUtils.handleMenuSearchWebSelection(timerRecording.getTitle());
+                    menuUtils.handleMenuSearchImdbWebsite(timerRecording.getTitle());
                     return true;
 
                 case R.id.menu_search_fileaffinity:

@@ -349,7 +349,7 @@ public class ProgramDetailsFragment extends BaseFragment implements RecordingRem
                 return true;
 
             case R.id.menu_search_imdb:
-                menuUtils.handleMenuSearchWebSelection(program.getTitle());
+                menuUtils.handleMenuSearchImdbWebsite(program.getTitle());
                 return true;
 
             case R.id.menu_search_fileaffinity:

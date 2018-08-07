@@ -188,7 +188,7 @@ public class MenuUtils {
         new DownloadRecordingManager(activity, dvrId);
     }
 
-    public void handleMenuSearchWebSelection(String title) {
+    public void handleMenuSearchImdbWebsite(String title) {
         Activity activity = this.activity.get();
         if (activity == null) {
             return;

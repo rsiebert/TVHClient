@@ -187,7 +187,7 @@ public class TimerRecordingDetailsFragment extends BaseFragment implements Recor
                 return true;
 
             case R.id.menu_search_imdb:
-                menuUtils.handleMenuSearchWebSelection(recording.getTitle());
+                menuUtils.handleMenuSearchImdbWebsite(recording.getTitle());
                 return true;
 
             case R.id.menu_search_epg:

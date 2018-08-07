@@ -190,7 +190,7 @@ public class RecordingListFragment extends BaseFragment implements RecyclerViewC
         popupMenu.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {
                 case R.id.menu_search_imdb:
-                    menuUtils.handleMenuSearchWebSelection(recording.getTitle());
+                    menuUtils.handleMenuSearchImdbWebsite(recording.getTitle());
                     return true;
 
                 case R.id.menu_search_fileaffinity:

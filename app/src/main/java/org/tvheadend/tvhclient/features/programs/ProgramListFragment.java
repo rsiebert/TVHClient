@@ -234,7 +234,7 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
         popupMenu.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {
                 case R.id.menu_search_imdb:
-                    menuUtils.handleMenuSearchWebSelection(program.getTitle());
+                    menuUtils.handleMenuSearchImdbWebsite(program.getTitle());
                     return true;
 
                 case R.id.menu_search_fileaffinity:

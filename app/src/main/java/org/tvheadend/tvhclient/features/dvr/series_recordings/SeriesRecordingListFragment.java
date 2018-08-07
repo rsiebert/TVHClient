@@ -202,7 +202,7 @@ public class SeriesRecordingListFragment extends BaseFragment implements Recycle
                     return true;
 
                 case R.id.menu_search_imdb:
-                    menuUtils.handleMenuSearchWebSelection(seriesRecording.getTitle());
+                    menuUtils.handleMenuSearchImdbWebsite(seriesRecording.getTitle());
                     return true;
 
                 case R.id.menu_search_fileaffinity:
