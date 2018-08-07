@@ -80,6 +80,9 @@ public class MainApplication extends Application implements BillingProcessor.IBi
 
         if (sharedPreferences.getBoolean("crash_reports_enabled", true)) {
             Fabric.with(this, new Crashlytics());
+        }
+
+        if (sharedPreferences.getBoolean("usage_statistics_enabled", true)) {
             Fabric.with(this, new Answers());
         }
 

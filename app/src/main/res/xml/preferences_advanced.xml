@@ -5,9 +5,16 @@
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="crash_reports_enabled"
-            android:summaryOff="Crashlytics disabled"
-            android:summaryOn="Crashlytics enabled"
-            android:title="Enable crash sending reports" />
+            android:summaryOff="Crash reports disabled"
+            android:summaryOn="Crash reports enabled"
+            android:title="Enable crash sending anonymous reports" />
+
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="usage_statistics_enabled"
+            android:summaryOff="Usage statistics disabled"
+            android:summaryOn="Usage statistics enabled"
+            android:title="Enable sending anonymous usage statistics" />
 
         <CheckBoxPreference
             android:defaultValue="false"
