@@ -129,6 +129,16 @@
             android:key="channel_tag_menu_enabled"
             android:summary="@string/pref_visible_menu_icon_tags_sum"
             android:title="@string/pref_visible_menu_icon_tags" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="search_on_imdb_menu_enabled"
+            android:summary=""
+            android:title="Show menu 'Search on IMDB'" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="search_epg_menu_enabled"
+            android:summary=""
+            android:title="Show menu 'Search the EPG'" />
     </PreferenceCategory>
 
 </PreferenceScreen>

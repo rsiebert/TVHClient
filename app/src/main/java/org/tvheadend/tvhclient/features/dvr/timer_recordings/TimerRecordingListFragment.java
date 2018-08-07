@@ -187,6 +187,8 @@ public class TimerRecordingListFragment extends BaseFragment implements Recycler
         }
         PopupMenu popupMenu = new PopupMenu(activity, view);
         popupMenu.getMenuInflater().inflate(R.menu.timer_recordings_popup_menu, popupMenu.getMenu());
+        popupMenu.getMenuInflater().inflate(R.menu.external_search_options_menu, popupMenu.getMenu());
+        menuUtils.onPreparePopupSearchMenu(popupMenu.getMenu(), isNetworkAvailable);
 
         popupMenu.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {

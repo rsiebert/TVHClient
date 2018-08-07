@@ -525,8 +525,6 @@ public class MenuUtils {
         MenuItem recordSeriesMenuItem = menu.findItem(R.id.menu_record_series);
         MenuItem recordRemoveMenuItem = menu.findItem(R.id.menu_record_remove);
         MenuItem playMenuItem = menu.findItem(R.id.menu_play);
-        MenuItem searchImdbMenuItem = menu.findItem(R.id.menu_search_imdb);
-        MenuItem searchEpgMenuItem = menu.findItem(R.id.menu_search_epg);
         MenuItem addReminderMenuItem = menu.findItem(R.id.menu_add_notification);
 
         if (isNetworkAvailable) {
@@ -548,13 +546,21 @@ public class MenuUtils {
                 recordRemoveMenuItem.setTitle(R.string.remove);
                 recordRemoveMenuItem.setVisible(true);
             }
-
-            searchImdbMenuItem.setVisible(program != null && program.getEventId() > 0);
-            searchEpgMenuItem.setVisible(program != null && program.getEventId() > 0);
         }
         if (isUnlocked && sharedPreferences.getBoolean("notifications_enabled", true)) {
             addReminderMenuItem.setVisible(true);
         }
+    }
+
+    public void onPreparePopupSearchMenu(Menu menu, boolean isNetworkAvailable) {
+        Activity activity = this.activity.get();
+        if (activity == null) {
+            return;
+        }
+        menu.findItem(R.id.menu_search_imdb).setVisible(
+                isNetworkAvailable && sharedPreferences.getBoolean("search_on_imdb_menu_enabled", true));
+        menu.findItem(R.id.menu_search_epg).setVisible(
+                isNetworkAvailable && sharedPreferences.getBoolean("search_epg_menu_enabled", true));
     }
 
     public void handleMenuReconnectSelection() {

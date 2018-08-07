@@ -164,6 +164,8 @@ public class RecordingListFragment extends BaseFragment implements RecyclerViewC
         }
         PopupMenu popupMenu = new PopupMenu(activity, view);
         popupMenu.getMenuInflater().inflate(R.menu.recordings_popup_menu, popupMenu.getMenu());
+        popupMenu.getMenuInflater().inflate(R.menu.external_search_options_menu, popupMenu.getMenu());
+        menuUtils.onPreparePopupSearchMenu(popupMenu.getMenu(), isNetworkAvailable);
 
         if (isNetworkAvailable) {
             if (recording.isCompleted()) {

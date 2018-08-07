@@ -187,7 +187,10 @@ public class SeriesRecordingListFragment extends BaseFragment implements Recycle
         }
         PopupMenu popupMenu = new PopupMenu(getActivity(), view);
         popupMenu.getMenuInflater().inflate(R.menu.series_recordings_popup_menu, popupMenu.getMenu());
-        (popupMenu.getMenu().findItem(R.id.menu_edit)).setVisible(isUnlocked);
+        popupMenu.getMenuInflater().inflate(R.menu.external_search_options_menu, popupMenu.getMenu());
+
+        menuUtils.onPreparePopupSearchMenu(popupMenu.getMenu(), isNetworkAvailable);
+        popupMenu.getMenu().findItem(R.id.menu_edit).setVisible(isUnlocked);
 
         popupMenu.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {
