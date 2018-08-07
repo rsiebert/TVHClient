@@ -32,12 +32,4 @@
         android:title="@string/download"
         android:visible="false"
         app:showAsAction="ifRoom" />
-    <item
-        android:id="@+id/menu_search_imdb"
-        android:icon="?attr/ic_menu_search"
-        android:title="@string/search_imdb" />
-    <item
-        android:id="@+id/menu_search_epg"
-        android:icon="?attr/ic_menu_search"
-        android:title="@string/search_epg" />
 </menu>
