@@ -44,8 +44,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-// TODO sorting should consider minor major channel numbers
-
 public class ChannelListFragment extends BaseFragment implements RecyclerViewClickCallback, ChannelTimeSelectionCallback, ChannelTagSelectionCallback, SearchRequestInterface, Filter.FilterListener {
 
     protected ChannelRecyclerViewAdapter recyclerViewAdapter;

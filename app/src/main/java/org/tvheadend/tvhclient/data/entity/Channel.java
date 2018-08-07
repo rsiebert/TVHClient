@@ -44,7 +44,7 @@ public class Channel {
     @ColumnInfo(name = "next_program_title")
     private String nextProgramTitle;
 
-    @Ignore
+    @ColumnInfo(name = "display_number")
     private String displayNumber;
     @Ignore
     private List<Integer> tags;
