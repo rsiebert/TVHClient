@@ -148,6 +148,7 @@ public class TimerRecordingDetailsFragment extends BaseFragment implements Recor
         if (nestedToolbar != null) {
             menu = nestedToolbar.getMenu();
         }
+        menuUtils.onPreparePopupSearchMenu(menu, true);
         menu.findItem(R.id.menu_edit).setVisible(true);
         menu.findItem(R.id.menu_record_remove).setVisible(true);
     }
@@ -163,9 +164,8 @@ public class TimerRecordingDetailsFragment extends BaseFragment implements Recor
         super.onCreateOptionsMenu(menu, inflater);
         if (nestedToolbar == null) {
             inflater.inflate(R.menu.recordings_popup_menu, menu);
-        } else {
-            inflater.inflate(R.menu.external_search_options_menu, menu);
         }
+        inflater.inflate(R.menu.external_search_options_menu, menu);
     }
 
     @Override
@@ -188,6 +188,10 @@ public class TimerRecordingDetailsFragment extends BaseFragment implements Recor
 
             case R.id.menu_search_imdb:
                 menuUtils.handleMenuSearchImdbWebsite(recording.getTitle());
+                return true;
+
+            case R.id.menu_search_fileaffinity:
+                menuUtils.handleMenuSearchFileAffinityWebsite(recording.getTitle());
                 return true;
 
             case R.id.menu_search_epg:

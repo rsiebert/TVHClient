@@ -140,7 +140,6 @@ public class ProgramDetailsFragment extends BaseFragment implements RecordingRem
 
         if (nestedToolbar != null) {
             nestedToolbar.inflateMenu(R.menu.program_details_toolbar_menu);
-            nestedToolbar.inflateMenu(R.menu.external_search_options_menu);
             nestedToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem menuItem) {
@@ -261,7 +260,7 @@ public class ProgramDetailsFragment extends BaseFragment implements RecordingRem
             menu = nestedToolbar.getMenu();
         }
 
-        menuUtils.onPreparePopupSearchMenu(menu, isNetworkAvailable);
+        menuUtils.onPreparePopupSearchMenu(menu, true);
 
         // Show the play menu item when the current
         // time is between the program start and end time
@@ -302,10 +301,8 @@ public class ProgramDetailsFragment extends BaseFragment implements RecordingRem
         super.onCreateOptionsMenu(menu, inflater);
         if (nestedToolbar == null) {
             inflater.inflate(R.menu.program_details_options_menu, menu);
-            inflater.inflate(R.menu.external_search_options_menu, menu);
-        } else {
-            inflater.inflate(R.menu.external_search_options_menu, menu);
         }
+        inflater.inflate(R.menu.external_search_options_menu, menu);
     }
 
     @Override

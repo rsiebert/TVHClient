@@ -26,6 +26,7 @@ import org.tvheadend.tvhclient.features.shared.UIUtils;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import timber.log.Timber;
 
 public class SeriesRecordingDetailsFragment extends BaseFragment implements RecordingRemovedCallback {
 
@@ -161,9 +162,11 @@ public class SeriesRecordingDetailsFragment extends BaseFragment implements Reco
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
+        Timber.d("onPrepareOptionsMenu " + (nestedToolbar != null) + " isNetworkAvailable " + isNetworkAvailable);
         if (nestedToolbar != null) {
             menu = nestedToolbar.getMenu();
         }
+        menuUtils.onPreparePopupSearchMenu(menu, true);
         menu.findItem(R.id.menu_edit).setVisible(true);
         menu.findItem(R.id.menu_record_remove).setVisible(true);
     }
@@ -179,9 +182,8 @@ public class SeriesRecordingDetailsFragment extends BaseFragment implements Reco
         super.onCreateOptionsMenu(menu, inflater);
         if (nestedToolbar == null) {
             inflater.inflate(R.menu.recordings_popup_menu, menu);
-        } else {
-            inflater.inflate(R.menu.external_search_options_menu, menu);
         }
+        inflater.inflate(R.menu.external_search_options_menu, menu);
     }
 
     @Override
@@ -205,6 +207,10 @@ public class SeriesRecordingDetailsFragment extends BaseFragment implements Reco
 
             case R.id.menu_search_imdb:
                 menuUtils.handleMenuSearchImdbWebsite(recording.getTitle());
+                return true;
+
+            case R.id.menu_search_fileaffinity:
+                menuUtils.handleMenuSearchFileAffinityWebsite(recording.getTitle());
                 return true;
 
             case R.id.menu_search_epg:
