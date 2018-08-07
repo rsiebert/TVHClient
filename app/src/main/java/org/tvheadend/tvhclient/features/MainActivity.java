@@ -156,6 +156,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             actionBar.setHomeButtonEnabled(true);
         }
 
+        isNetworkAvailable = true;
+
         isUnlocked = MainApplication.getInstance().isUnlocked();
         boolean showCastingMiniController = isUnlocked && sharedPreferences.getBoolean("casting_minicontroller_enabled", false);
         View miniController = findViewById(R.id.cast_mini_controller);
@@ -326,37 +328,54 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     @Override
     public void onEpgTaskStateChanged(EpgSyncTaskState state) {
         Timber.d("Epg task state changed, message is " + state.getMessage());
-        isNetworkAvailable = false;
         switch (state.getState()) {
-            // Show a message in all these cases and set the network
-            // availability to false because the sync is not yet done or
-            // the connection to the server has not been fully established
-            case START:
-            case LOADING:
             case FAILED:
                 if (getCurrentFocus() != null) {
                     Snackbar.make(getCurrentFocus(), state.getMessage(), Snackbar.LENGTH_SHORT).show();
                 }
                 isNetworkAvailable = false;
+                informFragmentsAboutNetworkAvailability();
                 break;
-            // Show a message that the loading is done. The connection to the
-            // service is available is now also considered available.
+            // Show a message that the sync is in progress or
+            // the connection to the server has not been fully
+            // established or that the loading is done.
+            case START:
+            case LOADING:
             case DONE:
                 if (getCurrentFocus() != null) {
                     Snackbar.make(getCurrentFocus(), state.getMessage(), Snackbar.LENGTH_SHORT).show();
                 }
-                isNetworkAvailable = true;
                 break;
-            // The network is considered available because the connection
-            // to the server is still established. No reconnect required.
-            case CONNECTED:
-                isNetworkAvailable = true;
-                break;
-
         }
+    }
+
+    @Override
+    public void onNetworkAvailable() {
+        Timber.d("Network is available, starting worker to periodically ping server");
+        isNetworkAvailable = true;
+
+        startService(new Intent(this, EpgSyncService.class).setAction("getStatus"));
+        informFragmentsAboutNetworkAvailability();
+    }
+
+    @Override
+    public void onNetworkNotAvailable() {
+        Timber.d("Network is not available anymore");
+        isNetworkAvailable = false;
+
+        if (getCurrentFocus() != null) {
+            Snackbar.make(getCurrentFocus(), "No connection to server.", Snackbar.LENGTH_SHORT).show();
+        }
+        stopService(new Intent(this, EpgSyncService.class));
+        informFragmentsAboutNetworkAvailability();
+    }
+
+    /**
+     * Informs the fragments about the network state.
+     * They can then enable or disable certain menu items.
+     */
+    private void informFragmentsAboutNetworkAvailability() {
         Timber.d("Informing fragments about network availability " + isNetworkAvailable);
-        // Inform the fragment about the network state. They can then enable or disable
-        // certain menu items.
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main);
         if (fragment != null && fragment instanceof NetworkAvailabilityInterface) {
             ((NetworkAvailabilityInterface) fragment).onNetworkAvailabilityChanged(isNetworkAvailable);
@@ -366,31 +385,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             if (fragment != null && fragment instanceof NetworkAvailabilityInterface) {
                 ((NetworkAvailabilityInterface) fragment).onNetworkAvailabilityChanged(isNetworkAvailable);
             }
-        }
-    }
-
-    @Override
-    public void onNetworkAvailable() {
-        Timber.d("Network is available, starting worker to periodically ping server");
-        startService(new Intent(this, EpgSyncService.class).setAction("getStatus"));
-
-        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main);
-        if (fragment != null && fragment instanceof NetworkAvailableInterface) {
-            ((NetworkAvailableInterface) fragment).onNetworkIsAvailable(true);
-        }
-    }
-
-    @Override
-    public void onNetworkNotAvailable() {
-        Timber.d("Network is not available anymore");
-        if (getCurrentFocus() != null) {
-            Snackbar.make(getCurrentFocus(), "No connection to server.", Snackbar.LENGTH_SHORT).show();
-        }
-        stopService(new Intent(this, EpgSyncService.class));
-
-        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main);
-        if (fragment != null && fragment instanceof NetworkAvailabilityInterface) {
-            ((NetworkAvailabilityInterface) fragment).onNetworkAvailabilityChanged(false);
         }
     }
 
