@@ -135,6 +135,11 @@
             android:summary=""
             android:title="Show menu 'Search on IMDB'" />
         <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="search_on_fileaffinity_menu_enabled"
+            android:summary=""
+            android:title="Show menu 'Search on FileAffinity website'" />
+        <CheckBoxPreference
             android:defaultValue="true"
             android:key="search_epg_menu_enabled"
             android:summary=""

@@ -36,6 +36,7 @@
     <string name="record_remove_all">Remove all recordings</string>
     <string name="confirm_remove_all">Are you sure you want to remove all recordings?</string>
     <string name="search_imdb">Search on IMDB</string>
+    <string name="search_fileaffinity">Search on FileAffinity</string>
     <string name="search_epg">Search the program guide</string>
     <string name="add">Add</string>
     <string name="save">Save</string>

@@ -559,6 +559,8 @@ public class MenuUtils {
         }
         menu.findItem(R.id.menu_search_imdb).setVisible(
                 isNetworkAvailable && sharedPreferences.getBoolean("search_on_imdb_menu_enabled", true));
+        menu.findItem(R.id.menu_search_fileaffinity).setVisible(
+                isNetworkAvailable && sharedPreferences.getBoolean("search_on_fileaffinity_menu_enabled", true));
         menu.findItem(R.id.menu_search_epg).setVisible(
                 isNetworkAvailable && sharedPreferences.getBoolean("search_epg_menu_enabled", true));
     }

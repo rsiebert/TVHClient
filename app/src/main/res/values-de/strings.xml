@@ -34,6 +34,7 @@
     <string name="record_remove_all">Alle Aufnahmen entfernen</string>
     <string name="confirm_remove_all">Bist Du sicher, dass Du alle Aufnahmen entfernen willst?</string>
     <string name="search_imdb">Suche auf der IMDB Webseite</string>
+    <string name="search_fileaffinity">Suche auf der FileAffinity Webseite</string>
     <string name="search_epg">Suche im TV-Programm</string>
     <string name="add">Hinzufügen</string>
     <string name="save">Speichern</string>
