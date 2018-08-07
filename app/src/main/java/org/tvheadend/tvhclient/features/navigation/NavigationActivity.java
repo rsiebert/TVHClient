@@ -77,6 +77,8 @@ public class NavigationActivity extends MainActivity implements WakeOnLanTaskCal
                 Fragment current = getSupportFragmentManager().findFragmentById(R.id.main);
                 if (current instanceof ChannelListFragment) {
                     navigationDrawer.setSelection(NavigationDrawer.MENU_CHANNELS);
+                } else if (current instanceof ProgramGuideFragment) {
+                    navigationDrawer.setSelection(NavigationDrawer.MENU_PROGRAM_GUIDE);
                 } else if (current instanceof CompletedRecordingListFragment) {
                     navigationDrawer.setSelection(NavigationDrawer.MENU_COMPLETED_RECORDINGS);
                 } else if (current instanceof ScheduledRecordingListFragment) {
