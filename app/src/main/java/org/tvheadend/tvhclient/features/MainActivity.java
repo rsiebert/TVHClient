@@ -349,6 +349,11 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     public void onNetworkAvailable() {
         Timber.d("Network is available, starting worker to periodically ping server");
         startService(new Intent(this, EpgSyncService.class).setAction("getStatus"));
+
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main);
+        if (fragment != null && fragment instanceof NetworkAvailableInterface) {
+            ((NetworkAvailableInterface) fragment).onNetworkIsAvailable(true);
+        }
     }
 
     @Override
