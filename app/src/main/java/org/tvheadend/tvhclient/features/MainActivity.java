@@ -84,6 +84,8 @@ import timber.log.Timber;
 // TODO epg layout width of each program is wrong / too short
 // TODO epg adding a recording causes lag
 
+// TODO navigation count increases when done then the number is correct
+
 // TODO join recordings when getting livedata programs in epg
 // TODO join recordings when getting livedata programs in program list
 

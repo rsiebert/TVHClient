@@ -38,9 +38,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
 
-// TODO make nav image blasser
-// TODO icons in dual pane mode
-
 public class NavigationActivity extends MainActivity implements WakeOnLanTaskCallback, NavigationDrawerCallback {
 
     private int selectedNavigationMenuId;
