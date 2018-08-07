@@ -38,12 +38,4 @@
         android:title="@string/stop"
         android:visible="false"
         app:showAsAction="ifRoom|withText" />
-    <item
-        android:id="@+id/menu_search_imdb"
-        android:title="@string/search_imdb"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/menu_search_epg"
-        android:title="@string/search_epg"
-        app:showAsAction="never" />
 </menu>

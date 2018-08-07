@@ -140,6 +140,7 @@ public class ProgramDetailsFragment extends BaseFragment implements RecordingRem
 
         if (nestedToolbar != null) {
             nestedToolbar.inflateMenu(R.menu.program_details_toolbar_menu);
+            nestedToolbar.inflateMenu(R.menu.external_search_options_menu);
             nestedToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem menuItem) {
@@ -285,6 +286,8 @@ public class ProgramDetailsFragment extends BaseFragment implements RecordingRem
         } else if (recording.isFailed() || recording.isRemoved() || recording.isMissed() || recording.isAborted()) {
             menu.findItem(R.id.menu_record_remove).setVisible(true);
         }
+
+        menuUtils.onPreparePopupSearchMenu(menu, isNetworkAvailable);
     }
 
     @Override
