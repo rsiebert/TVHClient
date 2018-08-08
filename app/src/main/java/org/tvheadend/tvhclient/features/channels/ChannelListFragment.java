@@ -99,6 +99,8 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(recyclerViewAdapter);
 
+        recyclerViewAdapter.notifyDataSetChanged();
+
         viewModel = ViewModelProviders.of(activity).get(ChannelViewModel.class);
         viewModel.getChannels().observe(this, channels -> {
 
