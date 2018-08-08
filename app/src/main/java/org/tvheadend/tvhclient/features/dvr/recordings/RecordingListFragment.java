@@ -164,6 +164,8 @@ public class RecordingListFragment extends BaseFragment implements RecyclerViewC
         }
         PopupMenu popupMenu = new PopupMenu(activity, view);
         popupMenu.getMenuInflater().inflate(R.menu.recordings_popup_menu, popupMenu.getMenu());
+        popupMenu.getMenuInflater().inflate(R.menu.external_search_options_menu, popupMenu.getMenu());
+        menuUtils.onPreparePopupSearchMenu(popupMenu.getMenu(), isNetworkAvailable);
 
         if (isNetworkAvailable) {
             if (recording.isCompleted()) {
@@ -188,7 +190,11 @@ public class RecordingListFragment extends BaseFragment implements RecyclerViewC
         popupMenu.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {
                 case R.id.menu_search_imdb:
-                    menuUtils.handleMenuSearchWebSelection(recording.getTitle());
+                    menuUtils.handleMenuSearchImdbWebsite(recording.getTitle());
+                    return true;
+
+                case R.id.menu_search_fileaffinity:
+                    menuUtils.handleMenuSearchFileAffinityWebsite(recording.getTitle());
                     return true;
 
                 case R.id.menu_search_epg:

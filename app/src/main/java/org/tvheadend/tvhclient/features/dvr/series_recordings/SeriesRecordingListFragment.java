@@ -187,7 +187,10 @@ public class SeriesRecordingListFragment extends BaseFragment implements Recycle
         }
         PopupMenu popupMenu = new PopupMenu(getActivity(), view);
         popupMenu.getMenuInflater().inflate(R.menu.series_recordings_popup_menu, popupMenu.getMenu());
-        (popupMenu.getMenu().findItem(R.id.menu_edit)).setVisible(isUnlocked);
+        popupMenu.getMenuInflater().inflate(R.menu.external_search_options_menu, popupMenu.getMenu());
+
+        menuUtils.onPreparePopupSearchMenu(popupMenu.getMenu(), isNetworkAvailable);
+        popupMenu.getMenu().findItem(R.id.menu_edit).setVisible(isUnlocked);
 
         popupMenu.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {
@@ -199,7 +202,11 @@ public class SeriesRecordingListFragment extends BaseFragment implements Recycle
                     return true;
 
                 case R.id.menu_search_imdb:
-                    menuUtils.handleMenuSearchWebSelection(seriesRecording.getTitle());
+                    menuUtils.handleMenuSearchImdbWebsite(seriesRecording.getTitle());
+                    return true;
+
+                case R.id.menu_search_fileaffinity:
+                    menuUtils.handleMenuSearchFileAffinityWebsite(seriesRecording.getTitle());
                     return true;
 
                 case R.id.menu_search_epg:

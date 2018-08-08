@@ -67,7 +67,7 @@ public class TimerRecordingDetailsFragment extends BaseFragment implements Recor
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        View view = inflater.inflate(R.layout.recording_details_fragment, container, false);
+        View view = inflater.inflate(R.layout.details_fragment, container, false);
         ViewStub stub = view.findViewById(R.id.stub);
         stub.setLayoutResource(R.layout.timer_recording_details_fragment_contents);
         stub.inflate();
@@ -145,9 +145,8 @@ public class TimerRecordingDetailsFragment extends BaseFragment implements Recor
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
-        if (nestedToolbar != null) {
-            menu = nestedToolbar.getMenu();
-        }
+        menuUtils.onPreparePopupSearchMenu(menu, true);
+        menu = nestedToolbar.getMenu();
         menu.findItem(R.id.menu_edit).setVisible(true);
         menu.findItem(R.id.menu_record_remove).setVisible(true);
     }
@@ -161,11 +160,7 @@ public class TimerRecordingDetailsFragment extends BaseFragment implements Recor
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        if (nestedToolbar == null) {
-            inflater.inflate(R.menu.recordings_popup_menu, menu);
-        } else {
-            inflater.inflate(R.menu.external_search_options_menu, menu);
-        }
+        inflater.inflate(R.menu.external_search_options_menu, menu);
     }
 
     @Override
@@ -187,7 +182,11 @@ public class TimerRecordingDetailsFragment extends BaseFragment implements Recor
                 return true;
 
             case R.id.menu_search_imdb:
-                menuUtils.handleMenuSearchWebSelection(recording.getTitle());
+                menuUtils.handleMenuSearchImdbWebsite(recording.getTitle());
+                return true;
+
+            case R.id.menu_search_fileaffinity:
+                menuUtils.handleMenuSearchFileAffinityWebsite(recording.getTitle());
                 return true;
 
             case R.id.menu_search_epg:

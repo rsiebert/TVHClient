@@ -252,7 +252,9 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
 
         PopupMenu popupMenu = new PopupMenu(activity, view);
         popupMenu.getMenuInflater().inflate(R.menu.channel_list_program_popup_menu, popupMenu.getMenu());
+        popupMenu.getMenuInflater().inflate(R.menu.external_search_options_menu, popupMenu.getMenu());
         menuUtils.onPreparePopupMenu(popupMenu.getMenu(), program, program.getRecording(), isNetworkAvailable);
+        menuUtils.onPreparePopupSearchMenu(popupMenu.getMenu(), isNetworkAvailable);
 
         // Show the play menu item when the current
         // time is between the program start and end time
@@ -264,7 +266,11 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
         popupMenu.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {
                 case R.id.menu_search_imdb:
-                    menuUtils.handleMenuSearchWebSelection(program.getTitle());
+                    menuUtils.handleMenuSearchImdbWebsite(program.getTitle());
+                    return true;
+
+                case R.id.menu_search_fileaffinity:
+                    menuUtils.handleMenuSearchFileAffinityWebsite(program.getTitle());
                     return true;
 
                 case R.id.menu_search_epg:

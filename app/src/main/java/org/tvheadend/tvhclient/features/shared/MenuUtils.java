@@ -188,7 +188,7 @@ public class MenuUtils {
         new DownloadRecordingManager(activity, dvrId);
     }
 
-    public void handleMenuSearchWebSelection(String title) {
+    public void handleMenuSearchImdbWebsite(String title) {
         Activity activity = this.activity.get();
         if (activity == null) {
             return;
@@ -201,6 +201,22 @@ public class MenuUtils {
             if (packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY).isEmpty()) {
                 intent.setData(Uri.parse("http://www.imdb.org/find?s=tt&q=" + url));
             }
+            activity.startActivity(intent);
+            activity.finish();
+        } catch (UnsupportedEncodingException e) {
+            // NOP
+        }
+    }
+
+    public void handleMenuSearchFileAffinityWebsite(String title) {
+        Activity activity = this.activity.get();
+        if (activity == null) {
+            return;
+        }
+        try {
+            String url = URLEncoder.encode(title, "utf-8");
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse("https://www.filmaffinity.com/es/search.php?stext=" + url));
             activity.startActivity(intent);
             activity.finish();
         } catch (UnsupportedEncodingException e) {
@@ -525,8 +541,6 @@ public class MenuUtils {
         MenuItem recordSeriesMenuItem = menu.findItem(R.id.menu_record_series);
         MenuItem recordRemoveMenuItem = menu.findItem(R.id.menu_record_remove);
         MenuItem playMenuItem = menu.findItem(R.id.menu_play);
-        MenuItem searchImdbMenuItem = menu.findItem(R.id.menu_search_imdb);
-        MenuItem searchEpgMenuItem = menu.findItem(R.id.menu_search_epg);
         MenuItem addReminderMenuItem = menu.findItem(R.id.menu_add_notification);
 
         if (isNetworkAvailable) {
@@ -548,12 +562,34 @@ public class MenuUtils {
                 recordRemoveMenuItem.setTitle(R.string.remove);
                 recordRemoveMenuItem.setVisible(true);
             }
-
-            searchImdbMenuItem.setVisible(program != null && program.getEventId() > 0);
-            searchEpgMenuItem.setVisible(program != null && program.getEventId() > 0);
         }
         if (isUnlocked && sharedPreferences.getBoolean("notifications_enabled", true)) {
             addReminderMenuItem.setVisible(true);
+        }
+    }
+
+    public void onPreparePopupSearchMenu(Menu menu, boolean isNetworkAvailable) {
+        Activity activity = this.activity.get();
+        if (activity == null) {
+            return;
+        }
+
+        MenuItem searchImdbMenuItem = menu.findItem(R.id.menu_search_imdb);
+        if (searchImdbMenuItem != null) {
+            searchImdbMenuItem.setVisible(
+                    isNetworkAvailable && sharedPreferences.getBoolean("search_on_imdb_menu_enabled", true));
+        }
+
+        MenuItem searchFileAffinityMenuItem = menu.findItem(R.id.menu_search_fileaffinity);
+        if (searchFileAffinityMenuItem != null) {
+            searchFileAffinityMenuItem.setVisible(
+                    isNetworkAvailable && sharedPreferences.getBoolean("search_on_fileaffinity_menu_enabled", true));
+        }
+
+        MenuItem searchEpgMenuItem = menu.findItem(R.id.menu_search_epg);
+        if (searchEpgMenuItem != null) {
+            searchEpgMenuItem.setVisible(
+                    isNetworkAvailable && sharedPreferences.getBoolean("search_epg_menu_enabled", true));
         }
     }
 

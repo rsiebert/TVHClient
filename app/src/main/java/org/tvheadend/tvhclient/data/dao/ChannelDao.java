@@ -31,8 +31,8 @@ public interface ChannelDao {
     String orderBy = "ORDER BY CASE :sortOrder " +
             "   WHEN 0 THEN c.id " +
             "   WHEN 1 THEN c.name " +
-            "   WHEN 2 THEN c.number " +
-            "END ASC";
+            "   WHEN 2 THEN c.display_number " +
+            "END";
 
     @Query("SELECT c.* FROM channels AS c " +
             "WHERE c.connection_id IN (SELECT id FROM connections WHERE active = 1) " +

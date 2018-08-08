@@ -38,9 +38,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
 
-// TODO make nav image blasser
-// TODO icons in dual pane mode
-
 public class NavigationActivity extends MainActivity implements WakeOnLanTaskCallback, NavigationDrawerCallback {
 
     private int selectedNavigationMenuId;
@@ -77,6 +74,8 @@ public class NavigationActivity extends MainActivity implements WakeOnLanTaskCal
                 Fragment current = getSupportFragmentManager().findFragmentById(R.id.main);
                 if (current instanceof ChannelListFragment) {
                     navigationDrawer.setSelection(NavigationDrawer.MENU_CHANNELS);
+                } else if (current instanceof ProgramGuideFragment) {
+                    navigationDrawer.setSelection(NavigationDrawer.MENU_PROGRAM_GUIDE);
                 } else if (current instanceof CompletedRecordingListFragment) {
                     navigationDrawer.setSelection(NavigationDrawer.MENU_COMPLETED_RECORDINGS);
                 } else if (current instanceof ScheduledRecordingListFragment) {

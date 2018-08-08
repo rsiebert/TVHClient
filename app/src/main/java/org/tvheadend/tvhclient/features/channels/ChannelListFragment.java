@@ -43,8 +43,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-// TODO sorting should consider minor major channel numbers
-
 public class ChannelListFragment extends BaseFragment implements RecyclerViewClickCallback, ChannelTimeSelectionCallback, ChannelTagSelectionCallback, SearchRequestInterface, Filter.FilterListener {
 
     protected ChannelRecyclerViewAdapter recyclerViewAdapter;
@@ -251,7 +249,9 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
 
         PopupMenu popupMenu = new PopupMenu(activity, view);
         popupMenu.getMenuInflater().inflate(R.menu.channel_list_program_popup_menu, popupMenu.getMenu());
+        popupMenu.getMenuInflater().inflate(R.menu.external_search_options_menu, popupMenu.getMenu());
         menuUtils.onPreparePopupMenu(popupMenu.getMenu(), program, recording, isNetworkAvailable);
+        menuUtils.onPreparePopupSearchMenu(popupMenu.getMenu(), isNetworkAvailable);
 
         // Always show the play menu item because the channel can be played
         popupMenu.getMenu().findItem(R.id.menu_play).setVisible(true);
@@ -259,7 +259,11 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
         popupMenu.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {
                 case R.id.menu_search_imdb:
-                    menuUtils.handleMenuSearchWebSelection(channel.getProgramTitle());
+                    menuUtils.handleMenuSearchImdbWebsite(channel.getProgramTitle());
+                    return true;
+
+                case R.id.menu_search_fileaffinity:
+                    menuUtils.handleMenuSearchFileAffinityWebsite(channel.getProgramTitle());
                     return true;
 
                 case R.id.menu_search_epg:

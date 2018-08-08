@@ -32,6 +32,7 @@ public class ProgramRecyclerViewAdapter extends RecyclerView.Adapter implements 
     private List<Program> programListFiltered = new ArrayList<>();
     private SharedPreferences sharedPreferences;
     private Context context;
+    private List<Recording> recordingList = new ArrayList<>();
 
     ProgramRecyclerViewAdapter(Context context, RecyclerViewClickCallback clickCallback, BottomReachedCallback onBottomReachedCallback) {
         this.context = context;
@@ -137,10 +138,31 @@ public class ProgramRecyclerViewAdapter extends RecyclerView.Adapter implements 
                 Program program = programList.get(i);
                 if (recording.getEventId() == program.getEventId()) {
                     program.setRecording(recording);
+                    Timber.d("Adding recording to program " + program.getTitle());
+                    notifyItemChanged(i);
+                    break;
+                }
+            }
+            for (int j = 0; j < recordingList.size(); j++) {
+                if (recording.getId() == recordingList.get(j).getId()) {
+                    Timber.d("Removing outdated recording " + recordingList.get(j).getTitle() + " from list");
+                    recordingList.remove(j);
                     break;
                 }
             }
         }
-        notifyDataSetChanged();
+        for (Recording recording : recordingList) {
+            for (int i = 0; i < programList.size(); i++) {
+                Program program = programList.get(i);
+                if (recording.getEventId() == program.getEventId()) {
+                    program.setRecording(null);
+                    Timber.d("Removing recording from program " + program.getTitle());
+                    notifyItemChanged(i);
+                    break;
+                }
+            }
+        }
+        recordingList.clear();
+        recordingList.addAll(recordings);
     }
 }

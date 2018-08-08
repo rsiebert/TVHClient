@@ -107,7 +107,7 @@ public class ProgramDetailsFragment extends BaseFragment implements RecordingRem
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        View view = inflater.inflate(R.layout.recording_details_fragment, container, false);
+        View view = inflater.inflate(R.layout.details_fragment, container, false);
         ViewStub stub = view.findViewById(R.id.stub);
         stub.setLayoutResource(R.layout.program_details_fragment_contents);
         stub.inflate();
@@ -246,8 +246,6 @@ public class ProgramDetailsFragment extends BaseFragment implements RecordingRem
 
                         }
                     });
-            //ImageDownloadTask dt = new ImageDownloadTask(this);
-            //dt.execute(program.getImage(), String.valueOf(program.getEventId()));
         }
     }
 
@@ -256,10 +254,10 @@ public class ProgramDetailsFragment extends BaseFragment implements RecordingRem
         if (program == null) {
             return;
         }
-        if (nestedToolbar != null) {
-            menu = nestedToolbar.getMenu();
-        }
 
+        menuUtils.onPreparePopupSearchMenu(menu, true);
+
+        menu = nestedToolbar.getMenu();
         // Show the play menu item when the current
         // time is between the program start and end time
         long currentTime = new Date().getTime();
@@ -297,11 +295,7 @@ public class ProgramDetailsFragment extends BaseFragment implements RecordingRem
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        if (nestedToolbar == null) {
-            inflater.inflate(R.menu.program_details_options_menu, menu);
-        } else {
-            inflater.inflate(R.menu.external_search_options_menu, menu);
-        }
+        inflater.inflate(R.menu.external_search_options_menu, menu);
     }
 
     @Override
@@ -345,7 +339,11 @@ public class ProgramDetailsFragment extends BaseFragment implements RecordingRem
                 return true;
 
             case R.id.menu_search_imdb:
-                menuUtils.handleMenuSearchWebSelection(program.getTitle());
+                menuUtils.handleMenuSearchImdbWebsite(program.getTitle());
+                return true;
+
+            case R.id.menu_search_fileaffinity:
+                menuUtils.handleMenuSearchFileAffinityWebsite(program.getTitle());
                 return true;
 
             case R.id.menu_search_epg:

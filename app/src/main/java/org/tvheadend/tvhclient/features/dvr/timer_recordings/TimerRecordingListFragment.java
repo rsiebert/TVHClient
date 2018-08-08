@@ -187,6 +187,8 @@ public class TimerRecordingListFragment extends BaseFragment implements Recycler
         }
         PopupMenu popupMenu = new PopupMenu(activity, view);
         popupMenu.getMenuInflater().inflate(R.menu.timer_recordings_popup_menu, popupMenu.getMenu());
+        popupMenu.getMenuInflater().inflate(R.menu.external_search_options_menu, popupMenu.getMenu());
+        menuUtils.onPreparePopupSearchMenu(popupMenu.getMenu(), isNetworkAvailable);
 
         popupMenu.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {
@@ -198,7 +200,11 @@ public class TimerRecordingListFragment extends BaseFragment implements Recycler
                     return true;
 
                 case R.id.menu_search_imdb:
-                    menuUtils.handleMenuSearchWebSelection(timerRecording.getTitle());
+                    menuUtils.handleMenuSearchImdbWebsite(timerRecording.getTitle());
+                    return true;
+
+                case R.id.menu_search_fileaffinity:
+                    menuUtils.handleMenuSearchFileAffinityWebsite(timerRecording.getTitle());
                     return true;
 
                 case R.id.menu_search_epg:
