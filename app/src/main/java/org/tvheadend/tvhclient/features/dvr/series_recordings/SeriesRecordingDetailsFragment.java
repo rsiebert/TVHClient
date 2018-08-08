@@ -18,15 +18,14 @@ import android.widget.TextView;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.SeriesRecording;
-import org.tvheadend.tvhclient.features.shared.BaseFragment;
 import org.tvheadend.tvhclient.features.dvr.RecordingAddEditActivity;
-import org.tvheadend.tvhclient.features.shared.callbacks.RecordingRemovedCallback;
+import org.tvheadend.tvhclient.features.shared.BaseFragment;
 import org.tvheadend.tvhclient.features.shared.UIUtils;
+import org.tvheadend.tvhclient.features.shared.callbacks.RecordingRemovedCallback;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import timber.log.Timber;
 
 public class SeriesRecordingDetailsFragment extends BaseFragment implements RecordingRemovedCallback {
 
@@ -74,7 +73,7 @@ public class SeriesRecordingDetailsFragment extends BaseFragment implements Reco
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        View view = inflater.inflate(R.layout.recording_details_fragment, container, false);
+        View view = inflater.inflate(R.layout.details_fragment, container, false);
         ViewStub stub = view.findViewById(R.id.stub);
         stub.setLayoutResource(R.layout.series_recording_details_fragment_contents);
         stub.inflate();
@@ -162,11 +161,8 @@ public class SeriesRecordingDetailsFragment extends BaseFragment implements Reco
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
-        Timber.d("onPrepareOptionsMenu " + (nestedToolbar != null) + " isNetworkAvailable " + isNetworkAvailable);
-        if (nestedToolbar != null) {
-            menu = nestedToolbar.getMenu();
-        }
         menuUtils.onPreparePopupSearchMenu(menu, true);
+        menu = nestedToolbar.getMenu();
         menu.findItem(R.id.menu_edit).setVisible(true);
         menu.findItem(R.id.menu_record_remove).setVisible(true);
     }
@@ -180,9 +176,6 @@ public class SeriesRecordingDetailsFragment extends BaseFragment implements Reco
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        if (nestedToolbar == null) {
-            inflater.inflate(R.menu.recordings_popup_menu, menu);
-        }
         inflater.inflate(R.menu.external_search_options_menu, menu);
     }
 
