@@ -647,12 +647,17 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
      * @param msg The message with the new epg event data
      */
     private void handleEventAdd(HtspMessage msg) {
-        Program program = EpgSyncUtils.convertMessageToProgramModel(new Program(), msg);
-        program.setConnectionId(connection.getId());
-        if (!initialSyncCompleted) {
-            pendingEventOps.add(program);
+        Program program = appRepository.getProgramData().getItemById(msg.getInteger("eventId"));
+        if (program != null) {
+            handleEventUpdate(msg);
         } else {
-            appRepository.getProgramData().addItem(program);
+            program = EpgSyncUtils.convertMessageToProgramModel(new Program(), msg);
+            program.setConnectionId(connection.getId());
+            if (!initialSyncCompleted) {
+                pendingEventOps.add(program);
+            } else {
+                appRepository.getProgramData().addItem(program);
+            }
         }
     }
 
