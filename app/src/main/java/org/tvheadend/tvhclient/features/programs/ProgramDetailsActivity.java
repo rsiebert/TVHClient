@@ -2,16 +2,16 @@ package org.tvheadend.tvhclient.features.programs;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.features.shared.BaseActivity;
 import org.tvheadend.tvhclient.features.shared.callbacks.ToolbarInterface;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
 import timber.log.Timber;
 
-public class ProgramDetailsActivity extends AppCompatActivity implements ToolbarInterface {
+public class ProgramDetailsActivity extends BaseActivity implements ToolbarInterface {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

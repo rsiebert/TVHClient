@@ -60,7 +60,12 @@ public abstract class BasePlaybackActivity extends AppCompatActivity {
 
         connection = appRepository.getConnectionData().getActiveItem();
         serverStatus = appRepository.getServerStatusData().getItemById(connection.getId());
-        baseUrl = connection.getHostname() + ":" + connection.getStreamingPort() + serverStatus.getWebroot();
+
+        if (connection.getStreamingPort() != 80 && connection.getStreamingPort() != 443) {
+             baseUrl = connection.getHostname() + ":" + connection.getStreamingPort() + serverStatus.getWebroot();
+        } else {
+            baseUrl = connection.getHostname() + serverStatus.getWebroot();
+        }
     }
 
     @Override

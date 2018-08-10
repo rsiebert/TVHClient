@@ -5,17 +5,17 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 
 import org.tvheadend.tvhclient.BuildConfig;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.features.changelog.ChangeLogActivity;
+import org.tvheadend.tvhclient.features.shared.BaseActivity;
 import org.tvheadend.tvhclient.features.shared.callbacks.BackPressedInterface;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
 import timber.log.Timber;
 
-public class StartupActivity extends AppCompatActivity {
+public class StartupActivity extends BaseActivity {
     private boolean showStatusFragment = false;
 
     @Override

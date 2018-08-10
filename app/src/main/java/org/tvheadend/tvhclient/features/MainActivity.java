@@ -14,7 +14,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
@@ -45,10 +44,9 @@ import org.tvheadend.tvhclient.data.service.EpgSyncTaskState;
 import org.tvheadend.tvhclient.features.download.DownloadPermissionGrantedInterface;
 import org.tvheadend.tvhclient.features.playback.CastSessionManagerListener;
 import org.tvheadend.tvhclient.features.search.SearchRequestInterface;
-import org.tvheadend.tvhclient.features.shared.callbacks.NetworkAvailabilityInterface;
-import org.tvheadend.tvhclient.features.shared.callbacks.NetworkStatusReceiverCallback;
+import org.tvheadend.tvhclient.features.shared.BaseActivity;
+import org.tvheadend.tvhclient.features.shared.callbacks.NetworkAvailabilityChangedInterface;
 import org.tvheadend.tvhclient.features.shared.callbacks.ToolbarInterface;
-import org.tvheadend.tvhclient.features.shared.receivers.NetworkStatusReceiver;
 import org.tvheadend.tvhclient.features.shared.receivers.SnackbarMessageReceiver;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
@@ -89,7 +87,7 @@ import timber.log.Timber;
 // TODO join recordings when getting livedata programs in epg
 // TODO join recordings when getting livedata programs in program list
 
-public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, ToolbarInterface, EpgSyncStatusCallback, NetworkStatusReceiverCallback {
+public class MainActivity extends BaseActivity implements SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, ToolbarInterface, EpgSyncStatusCallback {
 
     private MenuItem searchMenuItem;
     private SearchView searchView;
@@ -108,9 +106,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private CastStateListener castStateListener;
     private SessionManagerListener<CastSession> castSessionManagerListener;
     private EpgSyncStatusReceiver epgSyncStatusReceiver;
-    private NetworkStatusReceiver networkStatusReceiver;
     private SnackbarMessageReceiver snackbarMessageReceiver;
-    private boolean isNetworkAvailable;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -122,7 +118,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         MainApplication.getComponent().inject(this);
 
         epgSyncStatusReceiver = new EpgSyncStatusReceiver(this);
-        networkStatusReceiver = new NetworkStatusReceiver(this);
         snackbarMessageReceiver = new SnackbarMessageReceiver(this);
 
         GoogleApiAvailability googleApiAvailability = GoogleApiAvailability.getInstance();
@@ -157,8 +152,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setHomeButtonEnabled(true);
         }
-
-        isNetworkAvailable = true;
 
         isUnlocked = MainApplication.getInstance().isUnlocked();
         boolean showCastingMiniController = isUnlocked && sharedPreferences.getBoolean("casting_minicontroller_enabled", false);
@@ -200,7 +193,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         super.onStart();
         LocalBroadcastManager.getInstance(this).registerReceiver(snackbarMessageReceiver, new IntentFilter(SnackbarMessageReceiver.ACTION));
         LocalBroadcastManager.getInstance(this).registerReceiver(epgSyncStatusReceiver, new IntentFilter(EpgSyncStatusReceiver.ACTION));
-        registerReceiver(networkStatusReceiver, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
     }
 
     @Override
@@ -208,7 +200,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         super.onStop();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(snackbarMessageReceiver);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(epgSyncStatusReceiver);
-        unregisterReceiver(networkStatusReceiver);
     }
 
     @Override
@@ -336,7 +327,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                     Snackbar.make(getCurrentFocus(), state.getMessage(), Snackbar.LENGTH_SHORT).show();
                 }
                 isNetworkAvailable = false;
-                informFragmentsAboutNetworkAvailability();
+                onNetworkAvailabilityChanged(false);
                 break;
             // Show a message that the sync is in progress or
             // the connection to the server has not been fully
@@ -351,46 +342,24 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         }
     }
 
-    @Override
-    public void onNetworkAvailable() {
-        Timber.d("Network is available, starting worker to periodically ping server");
-        isNetworkAvailable = true;
-
-        startService(new Intent(this, EpgSyncService.class).setAction("getStatus"));
-        informFragmentsAboutNetworkAvailability();
-    }
-
-    @Override
-    public void onNetworkNotAvailable() {
-        Timber.d("Network is not available anymore");
-        isNetworkAvailable = false;
-
-        if (getCurrentFocus() != null) {
-            Snackbar.make(getCurrentFocus(), "No connection to server.", Snackbar.LENGTH_SHORT).show();
+    protected void onNetworkAvailabilityChanged(boolean isNetworkAvailable) {
+        if (isNetworkAvailable) {
+            Timber.d("Network is available, starting worker to periodically ping server");
+            startService(new Intent(this, EpgSyncService.class).setAction("getStatus"));
+        } else {
+            Timber.d("Network is not available anymore");
+            if (getCurrentFocus() != null) {
+                Snackbar.make(getCurrentFocus(), "No connection to server.", Snackbar.LENGTH_SHORT).show();
+            }
+            stopService(new Intent(this, EpgSyncService.class));
         }
-        stopService(new Intent(this, EpgSyncService.class));
-        informFragmentsAboutNetworkAvailability();
-    }
 
-    /**
-     * Informs the fragments about the network state.
-     * They can then enable or disable certain menu items.
-     */
-    private void informFragmentsAboutNetworkAvailability() {
-        Timber.d("Informing fragments about network availability " + isNetworkAvailable);
-        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main);
-        if (fragment != null && fragment instanceof NetworkAvailabilityInterface) {
-            ((NetworkAvailabilityInterface) fragment).onNetworkAvailabilityChanged(isNetworkAvailable);
-        }
+        // The fragment on the main frame layout is already informed from the base activity
         if (isDualPane) {
-            fragment = getSupportFragmentManager().findFragmentById(R.id.details);
-            if (fragment != null && fragment instanceof NetworkAvailabilityInterface) {
-                ((NetworkAvailabilityInterface) fragment).onNetworkAvailabilityChanged(isNetworkAvailable);
+            Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.details);
+            if (fragment != null && fragment instanceof NetworkAvailabilityChangedInterface) {
+                ((NetworkAvailabilityChangedInterface) fragment).onNetworkAvailabilityChanged(isNetworkAvailable);
             }
         }
-    }
-
-    public boolean isNetworkAvailable() {
-        return isNetworkAvailable;
     }
 }

@@ -14,15 +14,15 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
-import org.tvheadend.tvhclient.features.MainActivity;
-import org.tvheadend.tvhclient.features.shared.callbacks.NetworkAvailabilityInterface;
+import org.tvheadend.tvhclient.features.shared.callbacks.NetworkAvailabilityChangedInterface;
+import org.tvheadend.tvhclient.features.shared.callbacks.NetworkStatusInterface;
 import org.tvheadend.tvhclient.features.shared.callbacks.ToolbarInterface;
 
 import javax.inject.Inject;
 
 import timber.log.Timber;
 
-public abstract class BaseFragment extends Fragment implements NetworkAvailabilityInterface {
+public abstract class BaseFragment extends Fragment implements NetworkAvailabilityChangedInterface {
 
     protected AppCompatActivity activity;
     protected ToolbarInterface toolbarInterface;
@@ -53,9 +53,8 @@ public abstract class BaseFragment extends Fragment implements NetworkAvailabili
         }
 
         MainApplication.getComponent().inject(this);
-        if (activity instanceof MainActivity) {
-            isNetworkAvailable = ((MainActivity) activity).isNetworkAvailable();
-            Timber.d("Network is available " + isNetworkAvailable);
+        if (activity instanceof NetworkStatusInterface) {
+            isNetworkAvailable = ((NetworkStatusInterface) activity).isNetworkAvailable();
         }
 
         mainFrameLayout = activity.findViewById(R.id.main);
