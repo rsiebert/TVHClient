@@ -14,13 +14,14 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import org.tvheadend.tvhclient.BuildConfig;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Connection;
+import org.tvheadend.tvhclient.features.startup.StartupActivity;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-public class SettingsAdvancedFragment extends BasePreferenceFragment implements Preference.OnPreferenceClickListener, SharedPreferences.OnSharedPreferenceChangeListener {
+public class SettingsAdvancedFragment extends BasePreferenceFragment implements Preference.OnPreferenceClickListener, SharedPreferences.OnSharedPreferenceChangeListener, DatabaseClearedInterface {
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -62,7 +63,7 @@ public class SettingsAdvancedFragment extends BasePreferenceFragment implements 
     private void handlePreferenceClearDatabaseSelected() {
         new MaterialDialog.Builder(activity)
                 .title("Clear database")
-                .content("Do you really want to clear the database contents? You need to reconnect to the server.")
+                .content("Do you really want to clear the database contents? The app will be restarted to start a new sync with the server.")
                 .positiveText("Clear")
                 .negativeText(activity.getString(R.string.cancel))
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
@@ -70,10 +71,11 @@ public class SettingsAdvancedFragment extends BasePreferenceFragment implements 
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         dialog.dismiss();
                         // Clear the database and the last update information so that a epg data is fetched
-                        appRepository.getMiscData().clearDatabase(activity);
                         Connection connection = appRepository.getConnectionData().getActiveItem();
+                        connection.setSyncRequired(true);
                         connection.setLastUpdate(0);
                         appRepository.getConnectionData().updateItem(connection);
+                        appRepository.getMiscData().clearDatabase(activity, SettingsAdvancedFragment.this);
                     }
                 })
                 .onNegative(new MaterialDialog.SingleButtonCallback() {
@@ -162,5 +164,13 @@ public class SettingsAdvancedFragment extends BasePreferenceFragment implements 
                 }
                 break;
         }
+    }
+
+    @Override
+    public void onDatabaseCleared() {
+        Intent intent = new Intent(activity, StartupActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        activity.startActivity(intent);
+        activity.finish();
     }
 }

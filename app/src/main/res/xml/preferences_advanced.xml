@@ -43,7 +43,7 @@
     <PreferenceCategory android:title="Database">
         <Preference
             android:key="clear_database"
-            android:summary="Remove all channels, tags, programs and recordings from the database."
+            android:summary="Remove all information from the database. This includes all channels, channel tags, programs and recordings from the database."
             android:title="Clear database" />
     </PreferenceCategory>
 </PreferenceScreen>
