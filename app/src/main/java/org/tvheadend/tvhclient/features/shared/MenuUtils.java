@@ -606,22 +606,17 @@ public class MenuUtils {
                 .positiveText("Reconnect")
                 .onPositive((dialog, which) -> {
                     Timber.d("Reconnect requested, stopping service and clearing last update information");
-                    // Stop the service so that any connections will be closed and
-                    // call the startup activity that will initiate a fresh startup
-                    activity.stopService(new Intent(activity, EpgSyncService.class));
 
                     // clear the last update information so that a epg data is fetched
                     Connection connection = appRepository.getConnectionData().getActiveItem();
+                    connection.setSyncRequired(true);
                     connection.setLastUpdate(0);
                     appRepository.getConnectionData().updateItem(connection);
 
+                    // Stop the service so that any connections will be closed
+                    // before starting the service for a sync again
+                    activity.stopService(new Intent(activity, EpgSyncService.class));
                     activity.startService(new Intent(activity, EpgSyncService.class));
-                    /*
-                    Intent intent = new Intent(activity, StartupActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    activity.startActivity(intent);
-                    activity.finish();
-                    */
                 })
                 .show();
     }
