@@ -83,7 +83,7 @@
     <!-- Font for the program title in the program guide screen -->
     <style name="ProgramGuideTitleFont.Light" parent="@android:style/TextAppearance.Small">
         <item name="android:textColor">#ac000000</item>
-        <item name="android:textSize">14sp</item>
+        <item name="android:textSize">13sp</item>
     </style>
 
     <style name="ProgramGuideTitleFont.Dark" parent="ProgramGuideTitleFont.Light">
@@ -93,7 +93,7 @@
     <!-- Font for the additional information in the program guide screen -->
     <style name="ProgramGuideContentFont.Light" parent="@android:style/TextAppearance.Small">
         <item name="android:textColor">#7c000000</item>
-        <item name="android:textSize">14sp</item>
+        <item name="android:textSize">11sp</item>
     </style>
 
     <style name="ProgramGuideContentFont.Dark" parent="ProgramGuideContentFont.Light">
