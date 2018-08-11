@@ -522,7 +522,11 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     private void handleDvrEntryAdd(HtspMessage msg) {
         Recording recording = EpgSyncUtils.convertMessageToRecordingModel(new Recording(), msg);
         recording.setConnectionId(connection.getId());
-        appRepository.getRecordingData().addItem(recording);
+        if (!initialSyncCompleted) {
+            pendingRecordingsOps.add(recording);
+        } else {
+            appRepository.getRecordingData().addItem(recording);
+        }
     }
 
     /**
@@ -538,7 +542,11 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
             return;
         }
         Recording updatedRecording = EpgSyncUtils.convertMessageToRecordingModel(recording, msg);
-        appRepository.getRecordingData().updateItem(updatedRecording);
+        if (!initialSyncCompleted) {
+            pendingRecordingsOps.add(updatedRecording);
+        } else {
+            appRepository.getRecordingData().updateItem(updatedRecording);
+        }
     }
 
     /**
