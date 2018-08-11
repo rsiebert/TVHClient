@@ -9,6 +9,7 @@ import org.tvheadend.tvhclient.data.entity.Program;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
@@ -27,7 +28,7 @@ public class ProgramData extends BaseData implements DataSourceInterface<Program
         new ItemHandlerTask(db, item, INSERT).execute();
     }
 
-    public void addItems(List<Program> items) {
+    public void addItems(@NonNull List<Program> items) {
         new ItemsHandlerTask(db, items, INSERT_ALL).execute();
     }
 
@@ -159,7 +160,7 @@ public class ProgramData extends BaseData implements DataSourceInterface<Program
 
         ItemsHandlerTask(AppRoomDatabase db, List<Program> programs, int type) {
             this.db = db;
-            this.programs = programs;
+            this.programs = new CopyOnWriteArrayList<>(programs);
             this.type = type;
         }
 

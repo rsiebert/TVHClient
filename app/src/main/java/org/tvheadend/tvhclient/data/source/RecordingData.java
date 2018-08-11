@@ -4,11 +4,12 @@ import android.arch.lifecycle.LiveData;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
-import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.data.db.AppRoomDatabase;
+import org.tvheadend.tvhclient.data.entity.Recording;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
@@ -27,7 +28,7 @@ public class RecordingData extends BaseData implements DataSourceInterface<Recor
         new ItemHandlerTask(db, item, INSERT).execute();
     }
 
-    public void addItems(List<Recording> items) {
+    public void addItems(@NonNull List<Recording> items) {
         new ItemsHandlerTask(db, items, INSERT_ALL).execute();
     }
 
@@ -42,7 +43,7 @@ public class RecordingData extends BaseData implements DataSourceInterface<Recor
     }
 
     public void removeItems() {
-        new ItemsHandlerTask(db, null, DELETE_ALL).execute();
+        new ItemsHandlerTask(db, DELETE_ALL).execute();
     }
 
     @Override
@@ -176,7 +177,13 @@ public class RecordingData extends BaseData implements DataSourceInterface<Recor
 
         ItemsHandlerTask(AppRoomDatabase db, List<Recording> recordings, int type) {
             this.db = db;
-            this.recordings = recordings;
+            this.recordings = new CopyOnWriteArrayList<>(recordings);
+            this.type = type;
+        }
+
+        ItemsHandlerTask(AppRoomDatabase db, int type) {
+            this.db = db;
+            this.recordings = new ArrayList<>();
             this.type = type;
         }
 
@@ -184,7 +191,7 @@ public class RecordingData extends BaseData implements DataSourceInterface<Recor
         protected Void doInBackground(Void... voids) {
             switch (type) {
                 case DELETE_ALL:
-                    if (recordings == null) {
+                    if (recordings.size() == 0) {
                         db.getRecordingDao().deleteAll();
                     } else {
                         db.getRecordingDao().delete(recordings);

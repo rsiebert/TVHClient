@@ -12,6 +12,7 @@ import org.tvheadend.tvhclient.data.entity.ChannelSubset;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
@@ -34,7 +35,7 @@ public class ChannelData extends BaseData implements DataSourceInterface<Channel
         new ItemHandlerTask(db, item, INSERT).execute();
     }
 
-    public void addItems(List<Channel> items) {
+    public void addItems(@NonNull List<Channel> items) {
         new ItemsHandlerTask(db, items, INSERT_ALL).execute();
     }
 
@@ -213,7 +214,7 @@ public class ChannelData extends BaseData implements DataSourceInterface<Channel
 
         ItemsHandlerTask(AppRoomDatabase db, List<Channel> channels, int type) {
             this.db = db;
-            this.channels = channels;
+            this.channels = new CopyOnWriteArrayList<>(channels);
             this.type = type;
         }
 
