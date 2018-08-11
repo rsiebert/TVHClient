@@ -27,7 +27,7 @@ public class EpgViewPagerViewHolder extends RecyclerView.ViewHolder implements R
     @BindView(R.id.program_list_recycler_view)
     protected RecyclerView programListRecyclerView;
 
-    EpgViewPagerViewHolder(FragmentActivity activity, View view, float pixelsPerMinute, long fragmentStartTime, long fragmentStopTime) {
+    EpgViewPagerViewHolder(FragmentActivity activity, View view, float pixelsPerMinute, long fragmentStartTime, long fragmentStopTime, RecyclerView.RecycledViewPool viewPool) {
         super(view);
         ButterKnife.bind(this, view);
 
@@ -37,6 +37,7 @@ public class EpgViewPagerViewHolder extends RecyclerView.ViewHolder implements R
         programListRecyclerView.setItemAnimator(new DefaultItemAnimator());
         programListRecyclerViewAdapter = new EpgProgramListRecyclerViewAdapter(activity, pixelsPerMinute, fragmentStartTime, fragmentStopTime, this);
         programListRecyclerView.setAdapter(programListRecyclerViewAdapter);
+        programListRecyclerView.setRecycledViewPool(viewPool);
     }
 
     public void bindData(List<Program> programs, List<Recording> recordings) {

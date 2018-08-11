@@ -24,22 +24,24 @@ public class EpgViewPagerRecyclerViewAdapter extends RecyclerView.Adapter implem
     private final long fragmentStartTime;
     private final long fragmentStopTime;
     private final FragmentActivity activity;
+    private final RecyclerView.RecycledViewPool viewPool;
     private Map<Integer, List<Program>> programList = new HashMap<>();
     private Map<Integer, List<Program>> filteredProgramList = new HashMap<>();
     private Map<Integer, List<Recording>> recordingList = new HashMap<>();
 
-    EpgViewPagerRecyclerViewAdapter(FragmentActivity activity, float pixelsPerMinute, long fragmentStartTime, long fragmentStopTime) {
+    EpgViewPagerRecyclerViewAdapter(FragmentActivity activity, float pixelsPerMinute, long fragmentStartTime, long fragmentStopTime, RecyclerView.RecycledViewPool viewPool) {
         this.activity = activity;
         this.pixelsPerMinute = pixelsPerMinute;
         this.fragmentStartTime = fragmentStartTime;
         this.fragmentStopTime = fragmentStopTime;
+        this.viewPool = viewPool;
     }
 
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         final View view = LayoutInflater.from(parent.getContext()).inflate(viewType, parent, false);
-        return new EpgViewPagerViewHolder(activity, view, pixelsPerMinute, fragmentStartTime, fragmentStopTime);
+        return new EpgViewPagerViewHolder(activity, view, pixelsPerMinute, fragmentStartTime, fragmentStopTime, viewPool);
     }
 
     @Override
