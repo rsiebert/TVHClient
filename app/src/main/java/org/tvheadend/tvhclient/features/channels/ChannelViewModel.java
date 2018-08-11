@@ -57,11 +57,7 @@ public class ChannelViewModel extends AndroidViewModel {
     }
 
     LiveData<List<Recording>> getAllRecordings() {
-        if (recordings == null) {
-            recordings = new MutableLiveData<>();
-            recordings = appRepository.getRecordingData().getLiveDataItems();
-        }
-        return recordings;
+        return appRepository.getRecordingData().getLiveDataItems();
     }
 
     public LiveData<ServerStatus> getServerStatus() {
