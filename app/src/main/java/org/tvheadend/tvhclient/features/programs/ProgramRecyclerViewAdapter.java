@@ -24,7 +24,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import timber.log.Timber;
 
-public class ProgramRecyclerViewAdapter extends RecyclerView.Adapter implements Filterable {
+public class ProgramRecyclerViewAdapter extends RecyclerView.Adapter<ProgramViewHolder> implements Filterable {
 
     private final BottomReachedCallback onBottomReachedCallback;
     private final RecyclerViewClickCallback clickCallback;
@@ -43,18 +43,23 @@ public class ProgramRecyclerViewAdapter extends RecyclerView.Adapter implements 
 
     @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ProgramViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         final View view = LayoutInflater.from(parent.getContext()).inflate(viewType, parent, false);
         return new ProgramViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ProgramViewHolder holder, int position) {
         Program program = programListFiltered.get(position);
-        ((ProgramViewHolder) holder).bindData(context, program, clickCallback);
+        holder.bindData(context, program, clickCallback);
         if (position == programList.size() - 1) {
             onBottomReachedCallback.onBottomReached(position);
         }
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull ProgramViewHolder holder, int position, @NonNull List<Object> payloads) {
+        onBindViewHolder(holder, position);
     }
 
     void addItems(List<Program> list) {

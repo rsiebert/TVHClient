@@ -19,8 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import timber.log.Timber;
-
 public class ChannelRecyclerViewAdapter extends RecyclerView.Adapter<ChannelViewHolder> implements Filterable {
 
     private final RecyclerViewClickCallback clickCallback;
@@ -46,22 +44,13 @@ public class ChannelRecyclerViewAdapter extends RecyclerView.Adapter<ChannelView
 
     @Override
     public void onBindViewHolder(@NonNull ChannelViewHolder holder, int position) {
-        Timber.d("onBindViewHolder item has changed at position " + position);
         Channel channel = channelListFiltered.get(position);
         holder.bindData(context, channel, (selectedPosition == position), recordingList, clickCallback);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ChannelViewHolder holder, int position, @NonNull List<Object> payloads) {
-        Timber.d("onBindViewHolder item with payload has changed at position " + position);
-        /*if (payloads.isEmpty()) {
-            return;
-        } else {
-            Bundle bundle = (Bundle) payloads.get(0);
-            //holder.bindData2(context, bundle, (selectedPosition == position), clickCallback);
-        }*/
-        Channel channel = channelListFiltered.get(position);
-        holder.bindData(context, channel, (selectedPosition == position), recordingList, clickCallback);
+        onBindViewHolder(holder, position);
     }
 
     void addItems(List<Channel> list) {

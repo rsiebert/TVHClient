@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class SeriesRecordingRecyclerViewAdapter extends RecyclerView.Adapter implements Filterable {
+public class SeriesRecordingRecyclerViewAdapter extends RecyclerView.Adapter<SeriesRecordingViewHolder> implements Filterable {
 
     private final RecyclerViewClickCallback clickCallback;
     private final boolean isDualPane;
@@ -36,15 +36,20 @@ public class SeriesRecordingRecyclerViewAdapter extends RecyclerView.Adapter imp
 
     @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public SeriesRecordingViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         final View view = LayoutInflater.from(parent.getContext()).inflate(viewType, parent, false);
         return new SeriesRecordingViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull SeriesRecordingViewHolder holder, int position) {
         SeriesRecording recording = recordingListFiltered.get(position);
-        ((SeriesRecordingViewHolder) holder).bindData(context, recording, (selectedPosition == position), htspVersion, clickCallback);
+        holder.bindData(context, recording, (selectedPosition == position), htspVersion, clickCallback);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull SeriesRecordingViewHolder holder, int position, @NonNull List<Object> payloads) {
+        onBindViewHolder(holder, position);
     }
 
     void addItems(List<SeriesRecording> list) {

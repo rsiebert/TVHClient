@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class TimerRecordingRecyclerViewAdapter extends RecyclerView.Adapter implements Filterable {
+public class TimerRecordingRecyclerViewAdapter extends RecyclerView.Adapter<TimerRecordingViewHolder> implements Filterable {
 
     private final RecyclerViewClickCallback clickCallback;
     private final boolean isDualPane;
@@ -36,15 +36,20 @@ public class TimerRecordingRecyclerViewAdapter extends RecyclerView.Adapter impl
 
     @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public TimerRecordingViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         final View view = LayoutInflater.from(parent.getContext()).inflate(viewType, parent, false);
         return new TimerRecordingViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull TimerRecordingViewHolder holder, int position) {
        TimerRecording recording = recordingListFiltered.get(position);
-        ((TimerRecordingViewHolder) holder).bindData(context, recording, (selectedPosition == position), htspVersion, clickCallback);
+        holder.bindData(context, recording, (selectedPosition == position), htspVersion, clickCallback);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull TimerRecordingViewHolder holder, int position, @NonNull List<Object> payloads) {
+        onBindViewHolder(holder, position);
     }
 
     void addItems(List<TimerRecording> list) {
