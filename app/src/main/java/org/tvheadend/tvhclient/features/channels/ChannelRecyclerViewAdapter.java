@@ -19,7 +19,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class ChannelRecyclerViewAdapter extends RecyclerView.Adapter implements Filterable {
+import timber.log.Timber;
+
+public class ChannelRecyclerViewAdapter extends RecyclerView.Adapter<ChannelViewHolder> implements Filterable {
 
     private final RecyclerViewClickCallback clickCallback;
     private final boolean isDualPane;
@@ -37,31 +39,43 @@ public class ChannelRecyclerViewAdapter extends RecyclerView.Adapter implements 
 
     @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ChannelViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         final View view = LayoutInflater.from(parent.getContext()).inflate(viewType, parent, false);
         return new ChannelViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ChannelViewHolder holder, int position) {
+        Timber.d("onBindViewHolder item has changed at position " + position);
         Channel channel = channelListFiltered.get(position);
-        ((ChannelViewHolder) holder).bindData(context, channel, (selectedPosition == position), recordingList, clickCallback);
+        holder.bindData(context, channel, (selectedPosition == position), recordingList, clickCallback);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull ChannelViewHolder holder, int position, @NonNull List<Object> payloads) {
+        Timber.d("onBindViewHolder item with payload has changed at position " + position);
+        /*if (payloads.isEmpty()) {
+            return;
+        } else {
+            Bundle bundle = (Bundle) payloads.get(0);
+            //holder.bindData2(context, bundle, (selectedPosition == position), clickCallback);
+        }*/
+        Channel channel = channelListFiltered.get(position);
+        holder.bindData(context, channel, (selectedPosition == position), recordingList, clickCallback);
     }
 
     void addItems(List<Channel> list) {
-
-        channelList.clear();
-        channelListFiltered.clear();
-
-        if (list != null) {
-            channelList.addAll(list);
-            channelListFiltered.addAll(list);
-        }
+        updateRecordingState(list, recordingList);
 
         DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new ChannelListDiffCallback(channelList, list));
         diffResult.dispatchUpdatesTo(this);
 
-        if (list == null || selectedPosition > list.size()) {
+        channelList.clear();
+        channelListFiltered.clear();
+        channelList.addAll(list);
+        channelListFiltered.addAll(list);
+
+        if (selectedPosition > list.size()) {
             selectedPosition = 0;
         }
     }
@@ -141,20 +155,31 @@ public class ChannelRecyclerViewAdapter extends RecyclerView.Adapter implements 
      * recording states. Each recording is checked if it belongs to the
      * currently shown program. If yes then its state is updated.
      *
-     * @param recordings List of recordings
+     * @param list List of recordings
      */
-    void addRecordings(List<Recording> recordings) {
-        recordingList.clear();
-        recordingList = recordings;
+    void addRecordings(List<Recording> list) {
+        recordingList = list;
+        updateRecordingState(channelList, recordingList);
+    }
 
-        for (Recording recording : recordingList) {
-            for (int i = 0; i < channelList.size(); i++) {
-                Channel channel = channelList.get(i);
-                if (recording.getEventId() == channel.getProgramId()) {
+    private void updateRecordingState(List<Channel> channels, List<Recording> recordings) {
+        for (int i = 0; i < channels.size(); i++) {
+            Channel channel = channels.get(i);
+            boolean recordingExists = false;
+
+            for (Recording recording : recordings) {
+                if (channel.getProgramId() == recording.getEventId()) {
+                    channel.setRecording(recording);
                     notifyItemChanged(i);
+                    recordingExists = true;
                     break;
                 }
             }
+            if (!recordingExists && channel.getRecording() != null) {
+                channel.setRecording(null);
+                notifyItemChanged(i);
+            }
+            channels.set(i, channel);
         }
     }
 }

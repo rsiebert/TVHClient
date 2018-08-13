@@ -167,13 +167,7 @@ public class ChannelViewHolder extends RecyclerView.ViewHolder {
                 genreTextView.setVisibility(View.GONE);
             }
 
-            Drawable stateDrawable = null;
-            for (Recording recording : recordingList) {
-                if (recording.getEventId() == channel.getProgramId()) {
-                    stateDrawable = UIUtils.getRecordingState(context, recording);
-                    break;
-                }
-            }
+            Drawable stateDrawable = UIUtils.getRecordingState(context, channel.getRecording());
             stateImageView.setVisibility(stateDrawable != null ? View.VISIBLE : View.GONE);
             stateImageView.setImageDrawable(stateDrawable);
 

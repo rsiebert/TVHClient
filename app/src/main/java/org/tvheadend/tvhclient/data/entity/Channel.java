@@ -49,6 +49,17 @@ public class Channel {
     @Ignore
     private List<Integer> tags;
 
+    @Ignore
+    private Recording recording;
+
+    public Recording getRecording() {
+        return recording;
+    }
+
+    public void setRecording(Recording recording) {
+        this.recording = recording;
+    }
+
     public int getId() {
         return id;
     }
