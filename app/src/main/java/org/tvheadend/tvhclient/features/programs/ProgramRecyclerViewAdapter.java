@@ -58,15 +58,15 @@ public class ProgramRecyclerViewAdapter extends RecyclerView.Adapter implements 
     }
 
     void addItems(List<Program> list) {
-        programList.clear();
-        programListFiltered.clear();
+        updateRecordingState(list, recordingList);
 
-        if (list != null) {
-            programList.addAll(list);
-            programListFiltered.addAll(list);
-        }
         DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new ProgramListDiffCallback(programList, list));
         diffResult.dispatchUpdatesTo(this);
+
+        programList.clear();
+        programListFiltered.clear();
+        programList.addAll(list);
+        programListFiltered.addAll(list);
     }
 
     @Override
@@ -130,39 +130,31 @@ public class ProgramRecyclerViewAdapter extends RecyclerView.Adapter implements 
      * recording states. Each recording is checked if it belongs to the
      * currently shown program. If yes then its state is updated.
      *
-     * @param recordings List of recordings
+     * @param list List of recordings
      */
-    void addRecordings(List<Recording> recordings) {
-        for (Recording recording : recordings) {
-            for (int i = 0; i < programList.size(); i++) {
-                Program program = programList.get(i);
-                if (recording.getEventId() == program.getEventId()) {
+    void addRecordings(List<Recording> list) {
+        recordingList = list;
+        updateRecordingState(programList, recordingList);
+    }
+
+    private void updateRecordingState(List<Program> programs, List<Recording> recordings) {
+        for (int i = 0; i < programs.size(); i++) {
+            Program program = programs.get(i);
+            boolean recordingExists = false;
+
+            for (Recording recording : recordings) {
+                if (program.getEventId() == recording.getEventId()) {
                     program.setRecording(recording);
-                    Timber.d("Adding recording to program " + program.getTitle());
                     notifyItemChanged(i);
+                    recordingExists = true;
                     break;
                 }
             }
-            for (int j = 0; j < recordingList.size(); j++) {
-                if (recording.getId() == recordingList.get(j).getId()) {
-                    Timber.d("Removing outdated recording " + recordingList.get(j).getTitle() + " from list");
-                    recordingList.remove(j);
-                    break;
-                }
+            if (!recordingExists && program.getRecording() != null) {
+                program.setRecording(null);
+                notifyItemChanged(i);
             }
+            programs.set(i, program);
         }
-        for (Recording recording : recordingList) {
-            for (int i = 0; i < programList.size(); i++) {
-                Program program = programList.get(i);
-                if (recording.getEventId() == program.getEventId()) {
-                    program.setRecording(null);
-                    Timber.d("Removing recording from program " + program.getTitle());
-                    notifyItemChanged(i);
-                    break;
-                }
-            }
-        }
-        recordingList.clear();
-        recordingList.addAll(recordings);
     }
 }
