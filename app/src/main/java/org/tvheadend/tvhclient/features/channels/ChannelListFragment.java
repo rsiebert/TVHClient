@@ -108,12 +108,7 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
                 recyclerViewAdapter.getFilter().filter(searchQuery, this);
             }
 
-            // Show either all channels or the name of the selected
-            // channel tag and the channel count in the toolbar
-            ChannelTag channelTag = viewModel.getChannelTag();
-            toolbarInterface.setTitle((channelTag == null) ? getString(R.string.all_channels) : channelTag.getTagName());
-            toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.items,
-                    recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
+            showChannelTagOrChannelCount();
 
             if (isDualPane && recyclerViewAdapter.getItemCount() > 0) {
                 showChannelDetails(selectedListPosition);
@@ -124,6 +119,15 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
         // so the recording status of the particular program can be updated. This is required
         // because the programs are not updated automatically when recordings change.
         viewModel.getAllRecordings().observe(this, recordings -> recyclerViewAdapter.addRecordings(recordings));
+    }
+
+    private void showChannelTagOrChannelCount() {
+        // Show either all channels or the name of the selected
+        // channel tag and the channel count in the toolbar
+        ChannelTag channelTag = viewModel.getChannelTag();
+        toolbarInterface.setTitle((channelTag == null) ? getString(R.string.all_channels) : channelTag.getTagName());
+        toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.items,
+                recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
     }
 
     @Override
@@ -343,11 +347,6 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
 
     @Override
     public void onFilterComplete(int count) {
-        // Show either all channels or the name of the selected
-        // channel tag and the channel count in the toolbar
-        ChannelTag channelTag = viewModel.getChannelTag();
-        toolbarInterface.setTitle((channelTag == null) ? getString(R.string.all_channels) : channelTag.getTagName());
-        toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.results,
-                recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
+        showChannelTagOrChannelCount();
     }
 }
