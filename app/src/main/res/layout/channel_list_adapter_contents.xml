@@ -6,8 +6,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?attr/selectableItemBackground"
-        android:paddingBottom="16dp">
+        android:background="?attr/selectableItemBackground">
 
         <TextView
             android:id="@+id/genre"
@@ -147,15 +146,18 @@
             style="?attr/ContentFont"
             android:layout_width="0dp"
             android:layout_height="21dp"
+            android:layout_marginBottom="16dp"
             android:layout_marginEnd="16dp"
             android:layout_marginStart="16dp"
             android:ellipsize="end"
             android:maxLines="2"
             android:singleLine="false"
             android:text="@string/title"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/icon_text"
-            app:layout_constraintTop_toBottomOf="@+id/progressbar" />
+            app:layout_constraintTop_toBottomOf="@+id/progressbar"
+            app:layout_constraintVertical_bias="0.0" />
 
     </android.support.constraint.ConstraintLayout>
 
