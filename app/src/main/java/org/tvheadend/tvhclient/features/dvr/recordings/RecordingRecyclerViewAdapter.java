@@ -2,6 +2,7 @@ package org.tvheadend.tvhclient.features.dvr.recordings;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -53,6 +54,10 @@ public class RecordingRecyclerViewAdapter extends RecyclerView.Adapter<Recording
     }
 
     void addItems(List<Recording> list) {
+
+        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new RecordingListDiffCallback(recordingList, list));
+        diffResult.dispatchUpdatesTo(this);
+
         recordingList.clear();
         recordingListFiltered.clear();
 
@@ -60,11 +65,9 @@ public class RecordingRecyclerViewAdapter extends RecyclerView.Adapter<Recording
             recordingList.addAll(list);
             recordingListFiltered.addAll(list);
         }
-
         if (list == null || selectedPosition > list.size()) {
             selectedPosition = 0;
         }
-        notifyDataSetChanged();
     }
 
     @Override
