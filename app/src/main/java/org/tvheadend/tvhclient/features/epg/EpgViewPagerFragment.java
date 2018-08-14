@@ -15,20 +15,16 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.data.entity.ChannelSubset;
 import org.tvheadend.tvhclient.features.shared.UIUtils;
-import org.tvheadend.tvhclient.features.shared.callbacks.ChannelTagSelectionCallback;
 
 import java.util.Calendar;
 
@@ -37,11 +33,10 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import timber.log.Timber;
 
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 
-public class EpgViewPagerFragment extends Fragment implements EpgScrollInterface, ChannelTagSelectionCallback {
+public class EpgViewPagerFragment extends Fragment implements EpgScrollInterface {
 
     @BindView(R.id.constraint_layout)
     ConstraintLayout constraintLayout;
@@ -53,8 +48,6 @@ public class EpgViewPagerFragment extends Fragment implements EpgScrollInterface
     RecyclerView recyclerView;
     @BindView(R.id.current_time)
     ImageView currentTimeIndication;
-    @BindView(R.id.progress_bar)
-    ProgressBar progressBar;
 
     @Inject
     SharedPreferences sharedPreferences;
@@ -148,16 +141,14 @@ public class EpgViewPagerFragment extends Fragment implements EpgScrollInterface
         int hoursToShow = Integer.parseInt(sharedPreferences.getString("hours_of_epg_data_per_screen", "4"));
         pixelsPerMinute = ((float) (displayWidth - 221) / (60.0f * (float) hoursToShow));
 
-        RecyclerView.RecycledViewPool viewPool = new RecyclerView.RecycledViewPool();
-
-        recyclerViewAdapter = new EpgViewPagerRecyclerViewAdapter(activity, pixelsPerMinute, startTime, endTime, viewPool);
+        recyclerViewAdapter = new EpgViewPagerRecyclerViewAdapter(activity, pixelsPerMinute, startTime, endTime);
         recyclerViewLinearLayoutManager = new LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false);
-        recyclerView.setRecycledViewPool(viewPool);
         recyclerView.setLayoutManager(recyclerViewLinearLayoutManager);
         recyclerView.addItemDecoration(new DividerItemDecoration(activity, LinearLayoutManager.VERTICAL));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(recyclerViewAdapter);
+
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -192,13 +183,11 @@ public class EpgViewPagerFragment extends Fragment implements EpgScrollInterface
         viewModel = ViewModelProviders.of(activity).get(EpgViewModel.class);
         viewModel.getChannels().observe(this, channels -> {
             if (channels != null) {
-                int position = 0;
-                for (ChannelSubset channel : channels) {
-                    loadPrograms(position, channels.size(), channel);
-                    position++;
-                }
+                recyclerViewAdapter.addChannelItems(channels);
             }
         });
+
+        currentTimeIndication.setVisibility(showTimeIndication ? View.VISIBLE : View.GONE);
 
         if (showTimeIndication) {
             // Create the handler and the timer task that will update the
@@ -232,28 +221,6 @@ public class EpgViewPagerFragment extends Fragment implements EpgScrollInterface
         outState.putString(SearchManager.QUERY, searchQuery);
     }
 
-    private void loadPrograms(int position, int channelCount, ChannelSubset channel) {
-        viewModel.getProgramsByChannelAndBetweenTime(channel.getId(), startTime, endTime).observe(this, programs -> {
-            recyclerViewAdapter.addItems(position, programs);
-            if (!TextUtils.isEmpty(searchQuery)) {
-                recyclerViewAdapter.getFilter().filter(searchQuery);
-            }
-            // Restore the scroll position when the program
-            // list of the last channel has been loaded
-            if (position == (channelCount - 1)) {
-                progressBar.setVisibility(View.GONE);
-                recyclerView.setVisibility(View.VISIBLE);
-                currentTimeIndication.setVisibility(showTimeIndication ? View.VISIBLE : View.GONE);
-                recyclerViewLinearLayoutManager.onRestoreInstanceState(recyclerViewLinearLayoutManagerState);
-            }
-        });
-
-        viewModel.getRecordingsByChannel(channel.getId()).observe(this, recordings -> {
-            Timber.d("All recordings loaded");
-            recyclerViewAdapter.addRecordings(position, recordings);
-        });
-    }
-
     /**
      * Shows a vertical line in the program guide to indicate the current time.
      * It is only visible in the first screen. This method is called every minute.
@@ -277,17 +244,11 @@ public class EpgViewPagerFragment extends Fragment implements EpgScrollInterface
 
     @Override
     public void onScroll(int position, int offset) {
-        Timber.d("onScroll, scrolling program list to " + position + ", " + offset);
         recyclerViewLinearLayoutManager.scrollToPositionWithOffset(position, offset);
     }
 
     @Override
     public void onScrollStateChanged() {
 
-    }
-
-    @Override
-    public void onChannelTagIdSelected(int id) {
-        recyclerViewAdapter.clearItems();
     }
 }

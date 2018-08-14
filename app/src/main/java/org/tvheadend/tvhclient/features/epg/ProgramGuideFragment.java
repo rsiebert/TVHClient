@@ -220,15 +220,6 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
         viewModel.setChannelTagId(id);
         channelListRecyclerView.setVisibility(View.GONE);
         progressBar.setVisibility(View.VISIBLE);
-
-        // Clear the programs in the viewpager fragment
-        for (int i = 0; i < viewPagerAdapter.getRegisteredFragmentCount(); i++) {
-            Fragment fragment = viewPagerAdapter.getRegisteredFragment(i);
-            if (fragment != null
-                    && fragment instanceof EpgScrollInterface) {
-                ((ChannelTagSelectionCallback) fragment).onChannelTagIdSelected(id);
-            }
-        }
     }
 
     @Override

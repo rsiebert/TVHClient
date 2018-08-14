@@ -10,68 +10,50 @@ import android.widget.Filter;
 import android.widget.Filterable;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.data.entity.Program;
-import org.tvheadend.tvhclient.data.entity.Recording;
+import org.tvheadend.tvhclient.data.entity.ChannelSubset;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-public class EpgViewPagerRecyclerViewAdapter extends RecyclerView.Adapter implements Filterable {
+public class EpgViewPagerRecyclerViewAdapter extends RecyclerView.Adapter<EpgViewPagerViewHolder> implements Filterable {
 
     private final float pixelsPerMinute;
     private final long fragmentStartTime;
     private final long fragmentStopTime;
     private final FragmentActivity activity;
     private final RecyclerView.RecycledViewPool viewPool;
-    private Map<Integer, List<Program>> programList = new HashMap<>();
-    private Map<Integer, List<Program>> filteredProgramList = new HashMap<>();
-    private Map<Integer, List<Recording>> recordingList = new HashMap<>();
+    private List<ChannelSubset> channelList = new ArrayList<>();
+    private List<ChannelSubset> channelListFiltered = new ArrayList<>();
 
-    EpgViewPagerRecyclerViewAdapter(FragmentActivity activity, float pixelsPerMinute, long fragmentStartTime, long fragmentStopTime, RecyclerView.RecycledViewPool viewPool) {
+    EpgViewPagerRecyclerViewAdapter(FragmentActivity activity, float pixelsPerMinute, long fragmentStartTime, long fragmentStopTime) {
         this.activity = activity;
         this.pixelsPerMinute = pixelsPerMinute;
         this.fragmentStartTime = fragmentStartTime;
         this.fragmentStopTime = fragmentStopTime;
-        this.viewPool = viewPool;
+        this.viewPool = new RecyclerView.RecycledViewPool();;
     }
 
     @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public EpgViewPagerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         final View view = LayoutInflater.from(parent.getContext()).inflate(viewType, parent, false);
         return new EpgViewPagerViewHolder(activity, view, pixelsPerMinute, fragmentStartTime, fragmentStopTime, viewPool);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        List<Program> programs = filteredProgramList.get(position);
-        List<Recording> recordings = recordingList.get(position);
-        ((EpgViewPagerViewHolder) holder).bindData(programs, recordings);
+    public void onBindViewHolder(@NonNull EpgViewPagerViewHolder holder, int position) {
+        ChannelSubset channelSubset = channelListFiltered.get(position);
+        holder.bindData(channelSubset);
     }
 
-    void addItems(int position, List<Program> list) {
-        programList.remove(position);
-        filteredProgramList.remove(position);
-        if (list != null) {
-            programList.put(position, list);
-            filteredProgramList.put(position, list);
-        }
-        notifyDataSetChanged();
-    }
-
-    void addRecordings(int position, List<Recording> list) {
-        recordingList.remove(position);
-        if (list != null) {
-            recordingList.put(position, list);
-        }
-        notifyDataSetChanged();
+    @Override
+    public void onBindViewHolder(@NonNull EpgViewPagerViewHolder holder, int position, @NonNull List<Object> payloads) {
+        onBindViewHolder(holder, position);
     }
 
     @Override
     public int getItemCount() {
-        return filteredProgramList != null ? filteredProgramList.size() : 0;
+        return channelListFiltered != null ? channelListFiltered.size() : 0;
     }
 
     @Override
@@ -79,19 +61,16 @@ public class EpgViewPagerRecyclerViewAdapter extends RecyclerView.Adapter implem
         return R.layout.epg_program_list_adapter;
     }
 
-    public void clearItems() {
-        programList.clear();
-        filteredProgramList.clear();
-    }
-
     @Override
     public Filter getFilter() {
+        return null;
+/*
         return new Filter() {
             @Override
             protected FilterResults performFiltering(CharSequence charSequence) {
                 String charString = charSequence.toString();
                 if (charString.isEmpty()) {
-                    filteredProgramList = programList;
+                    programListFiltered = programList;
                 } else {
                     HashMap<Integer, List<Program>> newFilteredProgramList = new HashMap<>();
 
@@ -104,20 +83,31 @@ public class EpgViewPagerRecyclerViewAdapter extends RecyclerView.Adapter implem
                         }
                         newFilteredProgramList.put(entry.getKey(), programListForOneChannel);
                     }
-                    filteredProgramList = newFilteredProgramList;
+                    programListFiltered = newFilteredProgramList;
                 }
 
                 FilterResults filterResults = new FilterResults();
-                filterResults.values = filteredProgramList;
+                filterResults.values = programListFiltered;
                 return filterResults;
             }
 
             @SuppressWarnings("unchecked")
             @Override
             protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-                filteredProgramList = (HashMap<Integer, List<Program>>) filterResults.values;
+                programListFiltered = (HashMap<Integer, List<Program>>) filterResults.values;
                 notifyDataSetChanged();
             }
         };
+*/
+    }
+
+    public void addChannelItems(List<ChannelSubset> channels) {
+        channelList.clear();
+        channelListFiltered.clear();
+
+        channelList.addAll(channels);
+        channelListFiltered.addAll(channels);
+
+        notifyDataSetChanged();
     }
 }

@@ -67,11 +67,7 @@ public class EpgViewModel extends AndroidViewModel {
     }
 
     LiveData<List<Recording>> getRecordingsByChannel(int channelId) {
-        if (recordings == null) {
-            recordings = new MutableLiveData<>();
-            recordings = appRepository.getRecordingData().getLiveDataItemsByChannelId(channelId);
-        }
-        return recordings;
+        return appRepository.getRecordingData().getLiveDataItemsByChannelId(channelId);
     }
 
     public int getChannelTagId() {

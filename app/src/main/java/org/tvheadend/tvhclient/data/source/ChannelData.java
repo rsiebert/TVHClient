@@ -17,8 +17,6 @@ import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
 
-import timber.log.Timber;
-
 public class ChannelData extends BaseData implements DataSourceInterface<Channel> {
 
     private AppRoomDatabase db;
@@ -107,7 +105,6 @@ public class ChannelData extends BaseData implements DataSourceInterface<Channel
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
-        Timber.d("Loaded " + channels.size() + " channel subset");
         return channels;
     }
 
