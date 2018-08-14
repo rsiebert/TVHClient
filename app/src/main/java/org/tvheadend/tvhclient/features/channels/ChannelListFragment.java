@@ -97,8 +97,6 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(recyclerViewAdapter);
 
-        recyclerViewAdapter.notifyDataSetChanged();
-
         viewModel = ViewModelProviders.of(activity).get(ChannelViewModel.class);
         viewModel.getChannels().observe(this, channels -> {
 
@@ -134,6 +132,15 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
         outState.putInt("listPosition", selectedListPosition);
         outState.putInt("timeOffset", selectedTimeOffset);
         outState.putString(SearchManager.QUERY, searchQuery);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        viewModel.setChannelSortOrder(Integer.valueOf(sharedPreferences.getString("channel_sort_order", "0")));
+        // Refresh the recycler view upon resume to show possible setting
+        // updates like showing genre colors, progress bar or channel name
+        recyclerViewAdapter.notifyDataSetChanged();
     }
 
     @Override

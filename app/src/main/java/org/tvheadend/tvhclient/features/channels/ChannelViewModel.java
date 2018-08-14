@@ -22,14 +22,14 @@ import javax.inject.Inject;
 
 public class ChannelViewModel extends AndroidViewModel {
 
-    private MutableLiveData<List<Channel>> channels;
-    private LiveData<List<Recording>> recordings;
-    private LiveData<ServerStatus> serverStatus;
+    private MutableLiveData<List<Channel>> channels = new MutableLiveData<>();
+    private LiveData<ServerStatus> serverStatus = new MutableLiveData<>();
     @Inject
     protected AppRepository appRepository;
 
     private long selectedTime;
     private int channelTagId;
+    private int channelSortOrder;
     private Runnable channelUpdateTask;
     private final Handler channelUpdateHandler = new Handler();
 
@@ -39,6 +39,7 @@ public class ChannelViewModel extends AndroidViewModel {
 
         channelTagId = 0;
         selectedTime = new Date().getTime();
+        channelSortOrder = 0;
 
         // Initiate a timer that will update the view model data every minute
         // so that the progress bars will be displayed correctly
@@ -54,6 +55,7 @@ public class ChannelViewModel extends AndroidViewModel {
                 channelUpdateHandler.postDelayed(channelUpdateTask, 60000);
             }
         };
+        channelUpdateHandler.post(channelUpdateTask);
     }
 
     LiveData<List<Recording>> getAllRecordings() {
@@ -61,12 +63,8 @@ public class ChannelViewModel extends AndroidViewModel {
     }
 
     public LiveData<ServerStatus> getServerStatus() {
-        if (serverStatus == null) {
-            serverStatus = new MutableLiveData<>();
-            Connection connection = appRepository.getConnectionData().getActiveItem();
-            serverStatus = appRepository.getServerStatusData().getLiveDataItemById(connection.getId());
-        }
-        return serverStatus;
+        Connection connection = appRepository.getConnectionData().getActiveItem();
+        return appRepository.getServerStatusData().getLiveDataItemById(connection.getId());
     }
 
     ChannelTag getChannelTag() {
@@ -79,11 +77,14 @@ public class ChannelViewModel extends AndroidViewModel {
 
     @NonNull
     public MutableLiveData<List<Channel>> getChannels() {
-        if (channels == null) {
-            channels = new MutableLiveData<>();
+        return channels;
+    }
+
+    public void setChannelSortOrder(int sortOrder) {
+        if (channelSortOrder != sortOrder) {
+            channelSortOrder = sortOrder;
             channelUpdateHandler.post(channelUpdateTask);
         }
-        return channels;
     }
 
     public long getSelectedTime() {
