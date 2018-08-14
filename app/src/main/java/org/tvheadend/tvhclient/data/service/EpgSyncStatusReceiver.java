@@ -147,11 +147,8 @@ public class EpgSyncStatusReceiver extends BroadcastReceiver {
                     callback.onEpgTaskStateChanged(
                             new EpgSyncTaskState.EpgSyncTaskStateBuilder()
                                     .state(State.FAILED)
-                                    .message("Reconnecting to server")
+                                    .message("No connection to server")
                                     .build());
-
-                    context.stopService(new Intent(context, EpgSyncService.class));
-                    context.startService(new Intent(context, EpgSyncService.class));
                     break;
             }
         }
