@@ -30,7 +30,7 @@ public class EpgViewPagerRecyclerViewAdapter extends RecyclerView.Adapter<EpgVie
         this.pixelsPerMinute = pixelsPerMinute;
         this.fragmentStartTime = fragmentStartTime;
         this.fragmentStopTime = fragmentStopTime;
-        this.viewPool = new RecyclerView.RecycledViewPool();;
+        this.viewPool = new RecyclerView.RecycledViewPool();
     }
 
     @NonNull
