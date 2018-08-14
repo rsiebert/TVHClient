@@ -2,17 +2,13 @@ package org.tvheadend.tvhclient.features;
 
 import android.app.SearchManager;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
@@ -37,17 +33,11 @@ import com.google.android.gms.common.GoogleApiAvailability;
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
-import org.tvheadend.tvhclient.data.service.EpgSyncService;
-import org.tvheadend.tvhclient.data.service.EpgSyncStatusCallback;
-import org.tvheadend.tvhclient.data.service.EpgSyncStatusReceiver;
-import org.tvheadend.tvhclient.data.service.EpgSyncTaskState;
 import org.tvheadend.tvhclient.features.download.DownloadPermissionGrantedInterface;
 import org.tvheadend.tvhclient.features.playback.CastSessionManagerListener;
 import org.tvheadend.tvhclient.features.search.SearchRequestInterface;
 import org.tvheadend.tvhclient.features.shared.BaseActivity;
-import org.tvheadend.tvhclient.features.shared.callbacks.NetworkAvailabilityChangedInterface;
 import org.tvheadend.tvhclient.features.shared.callbacks.ToolbarInterface;
-import org.tvheadend.tvhclient.features.shared.receivers.SnackbarMessageReceiver;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
 import javax.inject.Inject;
@@ -62,7 +52,6 @@ import timber.log.Timber;
 // TODO add option in menu to show file missing recordings
 // TODO rotating program list is then messed up
 // TODO removing recording in program list it does not reset state
-// TODO network connectivity change is messing up the menu items
 // TODO when searching the selected item in the nav drawer is wrong
 // TODO give up after x reconnect retries
 // TODO reschedule work when not successful
@@ -71,7 +60,7 @@ import timber.log.Timber;
 // TODO navigation count increases when done then the number is correct
 // TODO show recording state in details view
 
-public class MainActivity extends BaseActivity implements SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, ToolbarInterface, EpgSyncStatusCallback {
+public class MainActivity extends BaseActivity implements SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, ToolbarInterface {
 
     private MenuItem searchMenuItem;
     private SearchView searchView;
@@ -89,8 +78,6 @@ public class MainActivity extends BaseActivity implements SearchView.OnQueryText
     private CastContext castContext;
     private CastStateListener castStateListener;
     private SessionManagerListener<CastSession> castSessionManagerListener;
-    private EpgSyncStatusReceiver epgSyncStatusReceiver;
-    private SnackbarMessageReceiver snackbarMessageReceiver;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -100,9 +87,6 @@ public class MainActivity extends BaseActivity implements SearchView.OnQueryText
         MiscUtils.setLanguage(this);
 
         MainApplication.getComponent().inject(this);
-
-        epgSyncStatusReceiver = new EpgSyncStatusReceiver(this);
-        snackbarMessageReceiver = new SnackbarMessageReceiver(this);
 
         GoogleApiAvailability googleApiAvailability = GoogleApiAvailability.getInstance();
         int status = googleApiAvailability.isGooglePlayServicesAvailable(this);
@@ -170,20 +154,6 @@ public class MainActivity extends BaseActivity implements SearchView.OnQueryText
             castContext.getSessionManager().removeSessionManagerListener(castSessionManagerListener, CastSession.class);
         }
         super.onPause();
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        LocalBroadcastManager.getInstance(this).registerReceiver(snackbarMessageReceiver, new IntentFilter(SnackbarMessageReceiver.ACTION));
-        LocalBroadcastManager.getInstance(this).registerReceiver(epgSyncStatusReceiver, new IntentFilter(EpgSyncStatusReceiver.ACTION));
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(snackbarMessageReceiver);
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(epgSyncStatusReceiver);
     }
 
     @Override
@@ -298,51 +268,6 @@ public class MainActivity extends BaseActivity implements SearchView.OnQueryText
             Fragment fragment = getSupportFragmentManager().findFragmentById(isDualPane ? R.id.details : R.id.main);
             if (fragment != null && fragment instanceof DownloadPermissionGrantedInterface) {
                 ((DownloadPermissionGrantedInterface) fragment).downloadRecording();
-            }
-        }
-    }
-
-    @Override
-    public void onEpgTaskStateChanged(EpgSyncTaskState state) {
-        Timber.d("Epg task state changed, message is " + state.getMessage());
-        switch (state.getState()) {
-            case FAILED:
-                if (getCurrentFocus() != null) {
-                    Snackbar.make(getCurrentFocus(), state.getMessage(), Snackbar.LENGTH_SHORT).show();
-                }
-                isNetworkAvailable = false;
-                onNetworkAvailabilityChanged(false);
-                break;
-            // Show a message that the sync is in progress or
-            // the connection to the server has not been fully
-            // established or that the loading is done.
-            case START:
-            case LOADING:
-            case DONE:
-                if (getCurrentFocus() != null) {
-                    Snackbar.make(getCurrentFocus(), state.getMessage(), Snackbar.LENGTH_SHORT).show();
-                }
-                break;
-        }
-    }
-
-    protected void onNetworkAvailabilityChanged(boolean isNetworkAvailable) {
-        if (isNetworkAvailable) {
-            Timber.d("Network is available, starting worker to periodically ping server");
-            startService(new Intent(this, EpgSyncService.class).setAction("getStatus"));
-        } else {
-            Timber.d("Network is not available anymore");
-            if (getCurrentFocus() != null) {
-                Snackbar.make(getCurrentFocus(), "No connection to server.", Snackbar.LENGTH_SHORT).show();
-            }
-            stopService(new Intent(this, EpgSyncService.class));
-        }
-
-        // The fragment on the main frame layout is already informed from the base activity
-        if (isDualPane) {
-            Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.details);
-            if (fragment != null && fragment instanceof NetworkAvailabilityChangedInterface) {
-                ((NetworkAvailabilityChangedInterface) fragment).onNetworkAvailabilityChanged(isNetworkAvailable);
             }
         }
     }
