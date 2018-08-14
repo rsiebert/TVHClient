@@ -107,7 +107,8 @@ public class ProgramViewHolder extends RecyclerView.ViewHolder {
             summaryTextView.setText(program.getSummary());
 
             if (showGenreColors) {
-                int color = UIUtils.getGenreColor(context, program.getContentType(), 0);
+                int offset = sharedPreferences.getInt("genre_color_transparency", 0);
+                int color = UIUtils.getGenreColor(context, program.getContentType(), offset);
                 genreTextView.setBackgroundColor(color);
                 genreTextView.setVisibility(View.VISIBLE);
             } else {

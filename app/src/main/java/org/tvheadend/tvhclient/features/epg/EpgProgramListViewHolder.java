@@ -19,8 +19,6 @@ import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallba
 
 import java.util.List;
 
-import javax.annotation.Nullable;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -39,7 +37,6 @@ class EpgProgramListViewHolder extends RecyclerView.ViewHolder {
     TextView subtitleTextView;
     @BindView(R.id.state)
     ImageView stateImageView;
-    @Nullable
     @BindView(R.id.genre)
     TextView genreTextView;
 
@@ -110,7 +107,8 @@ class EpgProgramListViewHolder extends RecyclerView.ViewHolder {
             }
             if (genreTextView != null) {
                 if (showGenreColors) {
-                    int color = UIUtils.getGenreColor(context, program.getContentType(), 0);
+                    int offset = sharedPreferences.getInt("genre_color_transparency", 0);
+                    int color = UIUtils.getGenreColor(context, program.getContentType(), offset);
                     genreTextView.setBackgroundColor(color);
                     genreTextView.setVisibility(View.VISIBLE);
                 } else {

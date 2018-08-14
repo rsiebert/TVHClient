@@ -160,7 +160,8 @@ public class ChannelViewHolder extends RecyclerView.ViewHolder {
             progressbar.setVisibility(showProgressbar ? View.VISIBLE : View.GONE);
 
             if (showGenreColors) {
-                int color = UIUtils.getGenreColor(context, channel.getProgramContentType(), 0);
+                int offset = sharedPreferences.getInt("genre_color_transparency", 0);
+                int color = UIUtils.getGenreColor(context, channel.getProgramContentType(), offset);
                 genreTextView.setBackgroundColor(color);
                 genreTextView.setVisibility(View.VISIBLE);
             } else {
