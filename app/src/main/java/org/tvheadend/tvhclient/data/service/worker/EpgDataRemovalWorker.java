@@ -3,7 +3,7 @@ package org.tvheadend.tvhclient.data.service.worker;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 
-import org.tvheadend.tvhclient.data.service.EpgSyncService;
+import org.tvheadend.tvhclient.data.service.EpgSyncIntentService;
 
 import androidx.work.Worker;
 import timber.log.Timber;
@@ -24,9 +24,9 @@ public class EpgDataRemovalWorker extends Worker {
             e.printStackTrace();
         }
 
-        Intent intent = new Intent(getApplicationContext(), EpgSyncService.class);
+        Intent intent = new Intent();
         intent.setAction("deleteEvents");
-        getApplicationContext().startService(intent);
+        EpgSyncIntentService.enqueueWork(getApplicationContext(), intent);
 
         return Result.SUCCESS;
     }
