@@ -10,9 +10,16 @@ import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.data.service.htsp.SimpleHtspConnection;
+import org.tvheadend.tvhclient.data.service.worker.EpgDataRemovalWorker;
+import org.tvheadend.tvhclient.data.service.worker.EpgDataUpdateWorker;
+
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
+import androidx.work.Constraints;
+import androidx.work.NetworkType;
+import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 import timber.log.Timber;
 
@@ -43,6 +50,7 @@ public class EpgSyncService extends Service {
         if (!epgSyncHandler.init()) {
             stopSelf();
         }
+        startBackgroundWorker();
     }
 
     @Override
@@ -62,5 +70,29 @@ public class EpgSyncService extends Service {
         Timber.d("Stopping service");
         epgSyncHandler.stop();
         WorkManager.getInstance().cancelAllWorkByTag(REQUEST_TAG);
+    }
+
+    private void startBackgroundWorker() {
+        Timber.d("Starting background workers");
+
+        Constraints constraints = new Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build();
+
+        PeriodicWorkRequest updateWorkRequest =
+                new PeriodicWorkRequest.Builder(EpgDataUpdateWorker.class, 2, TimeUnit.HOURS)
+                        .setConstraints(constraints)
+                        .addTag(REQUEST_TAG)
+                        .build();
+
+        PeriodicWorkRequest removalWorkRequest =
+                new PeriodicWorkRequest.Builder(EpgDataRemovalWorker.class, 4, TimeUnit.HOURS)
+                        .setConstraints(constraints)
+                        .addTag(REQUEST_TAG)
+                        .build();
+
+        WorkManager.getInstance().cancelAllWorkByTag(REQUEST_TAG);
+        WorkManager.getInstance().enqueue(updateWorkRequest);
+        WorkManager.getInstance().enqueue(removalWorkRequest);
     }
 }

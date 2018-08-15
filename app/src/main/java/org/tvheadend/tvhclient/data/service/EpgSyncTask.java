@@ -31,9 +31,6 @@ import org.tvheadend.tvhclient.data.service.htsp.HtspFileInputStream;
 import org.tvheadend.tvhclient.data.service.htsp.HtspMessage;
 import org.tvheadend.tvhclient.data.service.htsp.HtspNotConnectedException;
 import org.tvheadend.tvhclient.data.service.htsp.tasks.Authenticator;
-import org.tvheadend.tvhclient.data.service.worker.EpgDataRemovalWorker;
-import org.tvheadend.tvhclient.data.service.worker.EpgDataUpdateWorker;
-import org.tvheadend.tvhclient.data.service.worker.EpgPingServiceWorker;
 import org.tvheadend.tvhclient.features.shared.receivers.SnackbarMessageReceiver;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
@@ -49,14 +46,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
-import androidx.work.Constraints;
-import androidx.work.NetworkType;
-import androidx.work.PeriodicWorkRequest;
-import androidx.work.WorkManager;
 import timber.log.Timber;
 
 public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener, HtspConnection.Listener {
@@ -788,7 +780,6 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         appRepository.getConnectionData().updateItem(connection);
 
         storeLastUpdate();
-        startBackgroundWorker();
 
         initialSyncCompleted = true;
 
@@ -797,38 +788,6 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 
         Timber.d("Done receiving initial data from server");
-    }
-
-    private void startBackgroundWorker() {
-        Timber.d("Starting background workers");
-
-        final String REQUEST_TAG = "tvhclient_worker";
-
-        Constraints constraints = new Constraints.Builder()
-                .setRequiredNetworkType(NetworkType.CONNECTED)
-                .build();
-
-        PeriodicWorkRequest updateWorkRequest =
-                new PeriodicWorkRequest.Builder(EpgDataUpdateWorker.class, 2, TimeUnit.HOURS)
-                        .setConstraints(constraints)
-                        .addTag(REQUEST_TAG)
-                        .build();
-        PeriodicWorkRequest removalWorkRequest =
-                new PeriodicWorkRequest.Builder(EpgDataRemovalWorker.class, 4, TimeUnit.HOURS)
-                        .setConstraints(constraints)
-                        .addTag(REQUEST_TAG)
-                        .build();
-        // TODO make this a setting (keep alive)
-        PeriodicWorkRequest pingWorkRequest =
-                new PeriodicWorkRequest.Builder(EpgPingServiceWorker.class, 15, TimeUnit.MINUTES)
-                        .setConstraints(constraints)
-                        .addTag(REQUEST_TAG)
-                        .build();
-
-        WorkManager.getInstance().cancelAllWorkByTag(REQUEST_TAG);
-        WorkManager.getInstance().enqueue(updateWorkRequest);
-        WorkManager.getInstance().enqueue(removalWorkRequest);
-        WorkManager.getInstance().enqueue(pingWorkRequest);
     }
 
     private void flushPendingChannelLogoFetches() {
