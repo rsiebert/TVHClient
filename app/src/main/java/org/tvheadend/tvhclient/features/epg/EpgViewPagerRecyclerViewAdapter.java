@@ -14,22 +14,23 @@ import org.tvheadend.tvhclient.data.entity.ChannelSubset;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class EpgViewPagerRecyclerViewAdapter extends RecyclerView.Adapter<EpgViewPagerViewHolder> implements Filterable {
 
     private final float pixelsPerMinute;
-    private final long fragmentStartTime;
-    private final long fragmentStopTime;
+    private final long startTime;
+    private final long endTime;
     private final FragmentActivity activity;
     private final RecyclerView.RecycledViewPool viewPool;
     private List<ChannelSubset> channelList = new ArrayList<>();
     private List<ChannelSubset> channelListFiltered = new ArrayList<>();
 
-    EpgViewPagerRecyclerViewAdapter(FragmentActivity activity, float pixelsPerMinute, long fragmentStartTime, long fragmentStopTime) {
+    EpgViewPagerRecyclerViewAdapter(FragmentActivity activity, float pixelsPerMinute, long startTime, long endTime) {
         this.activity = activity;
         this.pixelsPerMinute = pixelsPerMinute;
-        this.fragmentStartTime = fragmentStartTime;
-        this.fragmentStopTime = fragmentStopTime;
+        this.startTime = startTime;
+        this.endTime = endTime;
         this.viewPool = new RecyclerView.RecycledViewPool();
     }
 
@@ -37,7 +38,7 @@ public class EpgViewPagerRecyclerViewAdapter extends RecyclerView.Adapter<EpgVie
     @Override
     public EpgViewPagerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         final View view = LayoutInflater.from(parent.getContext()).inflate(viewType, parent, false);
-        return new EpgViewPagerViewHolder(activity, view, pixelsPerMinute, fragmentStartTime, fragmentStopTime, viewPool);
+        return new EpgViewPagerViewHolder(activity, view, pixelsPerMinute, startTime, endTime, viewPool);
     }
 
     @Override
@@ -63,45 +64,39 @@ public class EpgViewPagerRecyclerViewAdapter extends RecyclerView.Adapter<EpgVie
 
     @Override
     public Filter getFilter() {
-        return null;
-/*
         return new Filter() {
             @Override
             protected FilterResults performFiltering(CharSequence charSequence) {
                 String charString = charSequence.toString();
                 if (charString.isEmpty()) {
-                    programListFiltered = programList;
+                    channelListFiltered = channelList;
                 } else {
-                    HashMap<Integer, List<Program>> newFilteredProgramList = new HashMap<>();
-
-                    for (Map.Entry<Integer, List<Program>> entry : programList.entrySet()) {
-                        List<Program> programListForOneChannel = new ArrayList<>();
-                        for (Program program : entry.getValue()) {
-                            if (program.getTitle().toLowerCase().contains(charString.toLowerCase())) {
-                                programListForOneChannel.add(program);
-                            }
+                    List<ChannelSubset> filteredList = new ArrayList<>();
+                    // Iterate over the available channels. Use a copy on write
+                    // array in case the channel list changes during filtering.
+                    for (ChannelSubset channel : new CopyOnWriteArrayList<>(channelList)) {
+                        if (channel.getName().toLowerCase().contains(charString.toLowerCase())) {
+                            filteredList.add(channel);
                         }
-                        newFilteredProgramList.put(entry.getKey(), programListForOneChannel);
                     }
-                    programListFiltered = newFilteredProgramList;
+                    channelListFiltered = filteredList;
                 }
 
                 FilterResults filterResults = new FilterResults();
-                filterResults.values = programListFiltered;
+                filterResults.values = channelListFiltered;
                 return filterResults;
             }
 
             @SuppressWarnings("unchecked")
             @Override
             protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-                programListFiltered = (HashMap<Integer, List<Program>>) filterResults.values;
+                channelListFiltered = (ArrayList<ChannelSubset>) filterResults.values;
                 notifyDataSetChanged();
             }
         };
-*/
     }
 
-    public void addChannelItems(List<ChannelSubset> channels) {
+    public void addItems(List<ChannelSubset> channels) {
         channelList.clear();
         channelListFiltered.clear();
 

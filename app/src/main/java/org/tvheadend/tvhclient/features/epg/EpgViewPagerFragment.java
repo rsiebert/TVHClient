@@ -5,7 +5,6 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
@@ -25,6 +24,7 @@ import android.widget.TextView;
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.features.shared.UIUtils;
+import org.tvheadend.tvhclient.features.shared.callbacks.ChannelTagSelectionCallback;
 
 import java.util.Calendar;
 
@@ -36,7 +36,9 @@ import butterknife.Unbinder;
 
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 
-public class EpgViewPagerFragment extends Fragment implements EpgScrollInterface {
+// TODO Show loading indication when channel tag changed
+
+public class EpgViewPagerFragment extends Fragment implements EpgScrollInterface, ChannelTagSelectionCallback {
 
     @BindView(R.id.constraint_layout)
     ConstraintLayout constraintLayout;
@@ -54,7 +56,6 @@ public class EpgViewPagerFragment extends Fragment implements EpgScrollInterface
 
     private Unbinder unbinder;
     private EpgViewPagerRecyclerViewAdapter recyclerViewAdapter;
-    private EpgViewModel viewModel;
 
     private boolean showTimeIndication;
     private long startTime;
@@ -68,7 +69,6 @@ public class EpgViewPagerFragment extends Fragment implements EpgScrollInterface
     private ConstraintSet constraintSet;
     private boolean enableScrolling;
     private LinearLayoutManager recyclerViewLinearLayoutManager;
-    private Parcelable recyclerViewLinearLayoutManagerState;
     private String searchQuery;
     private FragmentActivity activity;
 
@@ -115,10 +115,6 @@ public class EpgViewPagerFragment extends Fragment implements EpgScrollInterface
 
         constraintSet = new ConstraintSet();
         constraintSet.clone(constraintLayout);
-
-        if (savedInstanceState != null) {
-            recyclerViewLinearLayoutManagerState = savedInstanceState.getParcelable("layout");
-        }
 
         Bundle bundle = getArguments();
         if (bundle != null) {
@@ -180,10 +176,10 @@ public class EpgViewPagerFragment extends Fragment implements EpgScrollInterface
             }
         });
 
-        viewModel = ViewModelProviders.of(activity).get(EpgViewModel.class);
+        EpgViewModel viewModel = ViewModelProviders.of(activity).get(EpgViewModel.class);
         viewModel.getChannels().observe(this, channels -> {
             if (channels != null) {
-                recyclerViewAdapter.addChannelItems(channels);
+                recyclerViewAdapter.addItems(channels);
             }
         });
 
@@ -250,5 +246,10 @@ public class EpgViewPagerFragment extends Fragment implements EpgScrollInterface
     @Override
     public void onScrollStateChanged() {
 
+    }
+
+    @Override
+    public void onChannelTagIdSelected(int id) {
+        // NOP
     }
 }
