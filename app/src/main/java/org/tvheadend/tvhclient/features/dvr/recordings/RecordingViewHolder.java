@@ -114,6 +114,11 @@ public class RecordingViewHolder extends RecyclerView.ViewHolder {
         subtitleTextView.setVisibility(!TextUtils.isEmpty(recording.getSubtitle()) ? View.VISIBLE : View.GONE);
         subtitleTextView.setText(recording.getSubtitle());
 
+        boolean hideSummaryView = TextUtils.isEmpty(recording.getSummary())
+                || TextUtils.equals(recording.getSubtitle(), recording.getSummary());
+        summaryTextView.setVisibility(hideSummaryView ? View.GONE : View.VISIBLE);
+        summaryTextView.setText(recording.getSummary());
+
         channelTextView.setText(recording.getChannelName());
 
         TextViewCompat.setAutoSizeTextTypeWithDefaults(iconTextView, TextViewCompat.AUTO_SIZE_TEXT_TYPE_UNIFORM);
@@ -144,9 +149,6 @@ public class RecordingViewHolder extends RecyclerView.ViewHolder {
         String durationTime = context.getString(R.string.minutes, recording.getDuration());
         durationTextView.setText(durationTime);
 
-        summaryTextView.setVisibility(!TextUtils.isEmpty(recording.getSummary()) ? View.VISIBLE : View.GONE);
-        summaryTextView.setText(recording.getSummary());
-
         descriptionTextView.setVisibility(!TextUtils.isEmpty(recording.getDescription()) ? View.VISIBLE : View.GONE);
         descriptionTextView.setText(recording.getDescription());
 
@@ -164,21 +166,13 @@ public class RecordingViewHolder extends RecyclerView.ViewHolder {
             }
         }
 
-        // Show the information if the recording belongs to a series recording
-        if (!TextUtils.isEmpty(recording.getAutorecId())) {
-            isSeriesRecordingTextView.setVisibility(ImageView.VISIBLE);
-        } else {
-            isSeriesRecordingTextView.setVisibility(ImageView.GONE);
-        }
+        // Show the information if the recording belongs to a series or timer recording
+        isSeriesRecordingTextView.setVisibility(TextUtils.isEmpty(recording.getAutorecId()) ? View.GONE : ImageView.VISIBLE);
+        isTimerRecordingTextView.setVisibility(TextUtils.isEmpty(recording.getTimerecId()) ? View.GONE : ImageView.VISIBLE);
 
-        // Show the information if the recording belongs to a series recording
-        if (!TextUtils.isEmpty(recording.getTimerecId())) {
-            isTimerRecordingTextView.setVisibility(ImageView.VISIBLE);
-        } else {
-            isTimerRecordingTextView.setVisibility(ImageView.GONE);
-        }
-
-        isEnabledTextView.setVisibility((htspVersion >= 19 && recording.getEnabled() > 0) ? View.VISIBLE : View.GONE);
+        boolean hideEnabledView = recording.isFailed() || recording.isRemoved() || recording.isMissed() || recording.isAborted()
+                || htspVersion < 19 || recording.getEnabled() == 0;
+        isEnabledTextView.setVisibility(hideEnabledView ? View.GONE : View.VISIBLE);
         isEnabledTextView.setText(recording.getEnabled() > 0 ? R.string.recording_enabled : R.string.recording_disabled);
     }
 }
