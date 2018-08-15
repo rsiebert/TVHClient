@@ -45,17 +45,14 @@ import javax.inject.Inject;
 import timber.log.Timber;
 
 // TODO brown genre color is not shown in the genre color info dialog
-// TODO when sorting channels by number, consider minor major channel numbers
 // TODO casting needs rework
 // TODO check for gmtoffset
 // TODO move the conversion from ms to s or minutes from the intents into the entity getter and setter
 // TODO add option in menu to show file missing recordings
 // TODO rotating program list is then messed up
-// TODO removing recording in program list it does not reset state
 // TODO when searching the selected item in the nav drawer is wrong
 // TODO give up after x reconnect retries
 // TODO reschedule work when not successful
-// TODO epg genre colors
 // TODO epg search in epg
 // TODO navigation count increases when done then the number is correct
 // TODO show recording state in details view
