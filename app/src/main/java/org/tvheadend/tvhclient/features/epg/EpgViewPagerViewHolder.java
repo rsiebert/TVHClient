@@ -22,42 +22,40 @@ import butterknife.ButterKnife;
 
 public class EpgViewPagerViewHolder extends RecyclerView.ViewHolder implements RecyclerViewClickCallback {
 
-    private final EpgProgramListRecyclerViewAdapter programListRecyclerViewAdapter;
+    private final EpgProgramListRecyclerViewAdapter recyclerViewAdapter;
     private final FragmentActivity activity;
     private final long startTime;
     private final long endTime;
     private EpgViewModel viewModel;
 
     @BindView(R.id.program_list_recycler_view)
-    protected RecyclerView programListRecyclerView;
+    protected RecyclerView recyclerView;
     @BindView(R.id.progress_bar)
     ProgressBar progressBar;
 
-    EpgViewPagerViewHolder(FragmentActivity activity, View view, float pixelsPerMinute, long fragmentStartTime, long fragmentStopTime, RecyclerView.RecycledViewPool viewPool) {
+    EpgViewPagerViewHolder(FragmentActivity activity, View view, float pixelsPerMinute, long startTime, long endTime, RecyclerView.RecycledViewPool viewPool) {
         super(view);
         ButterKnife.bind(this, view);
 
         this.activity = activity;
-        this.startTime = fragmentStartTime;
-        this.endTime = fragmentStopTime;
+        this.startTime = startTime;
+        this.endTime = endTime;
 
-        programListRecyclerView.setLayoutManager(new CustomHorizontalLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false));
-        programListRecyclerView.addItemDecoration(new DividerItemDecoration(activity, LinearLayoutManager.HORIZONTAL));
-        programListRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        programListRecyclerView.setRecycledViewPool(viewPool);
+        recyclerView.setLayoutManager(new CustomHorizontalLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false));
+        recyclerView.addItemDecoration(new DividerItemDecoration(activity, LinearLayoutManager.HORIZONTAL));
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setRecycledViewPool(viewPool);
+        recyclerViewAdapter = new EpgProgramListRecyclerViewAdapter(activity, pixelsPerMinute, startTime, endTime, this);
+        recyclerView.setAdapter(recyclerViewAdapter);
 
-        programListRecyclerViewAdapter = new EpgProgramListRecyclerViewAdapter(activity, pixelsPerMinute, fragmentStartTime, fragmentStopTime, this);
-        programListRecyclerView.setAdapter(programListRecyclerViewAdapter);
-
-        programListRecyclerView.setVisibility(View.GONE);
+        recyclerView.setVisibility(View.GONE);
         progressBar.setVisibility(View.VISIBLE);
-
         viewModel = ViewModelProviders.of(activity).get(EpgViewModel.class);
     }
 
     @Override
     public void onClick(View view, int position) {
-        Program program = programListRecyclerViewAdapter.getItem(position);
+        Program program = recyclerViewAdapter.getItem(position);
         if (program == null) {
             return;
         }
@@ -85,14 +83,14 @@ public class EpgViewPagerViewHolder extends RecyclerView.ViewHolder implements R
     public void bindData(ChannelSubset channelSubset) {
         viewModel.getProgramsByChannelAndBetweenTime(channelSubset.getId(), startTime, endTime).observe(activity, programs -> {
             if (programs != null) {
-                programListRecyclerViewAdapter.addItems(programs);
-                programListRecyclerView.setVisibility(View.VISIBLE);
+                recyclerViewAdapter.addItems(programs);
+                recyclerView.setVisibility(View.VISIBLE);
                 progressBar.setVisibility(View.GONE);
             }
         });
         viewModel.getRecordingsByChannel(channelSubset.getId()).observe(activity, recordings -> {
             if (recordings != null) {
-                programListRecyclerViewAdapter.addRecordings(recordings);
+                recyclerViewAdapter.addRecordings(recordings);
             }
         });
     }
