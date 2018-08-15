@@ -63,7 +63,7 @@ class EpgProgramListViewHolder extends RecyclerView.ViewHolder {
 
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
             boolean showProgramSubtitle = sharedPreferences.getBoolean("program_subtitle_enabled", true);
-            boolean showGenreColors = sharedPreferences.getBoolean("genre_colors_for_programs_enabled", false);
+            boolean showGenreColors = sharedPreferences.getBoolean("genre_colors_for_program_guide_enabled", false);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
