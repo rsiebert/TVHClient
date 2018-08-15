@@ -135,6 +135,7 @@ public class StartupFragment extends Fragment implements EpgSyncStatusCallback {
 
         } else {
             Timber.d("Database is empty and network is active");
+            LocalBroadcastManager.getInstance(activity).registerReceiver(epgSyncStatusReceiver, new IntentFilter(EpgSyncStatusReceiver.ACTION));
             // The database is empty and a full initial sync is required to get all data
             // for the first time. Start the service so it can connect to the server.
             // The current status is given via the broadcast receiver.
@@ -159,12 +160,6 @@ public class StartupFragment extends Fragment implements EpgSyncStatusCallback {
         outState.putString("details", detailsTextView.getText().toString());
         outState.putBoolean("serviceStarted", isServiceStarted);
         super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        LocalBroadcastManager.getInstance(activity).registerReceiver(epgSyncStatusReceiver, new IntentFilter(EpgSyncStatusReceiver.ACTION));
     }
 
     @Override
