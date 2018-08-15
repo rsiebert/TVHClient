@@ -108,7 +108,10 @@ class EpgProgramListViewHolder extends RecyclerView.ViewHolder {
             if (genreTextView != null) {
                 if (showGenreColors) {
                     int offset = sharedPreferences.getInt("genre_color_transparency", 0);
-                    int color = UIUtils.getGenreColor(context, program.getContentType(), offset);
+                    // The offset in the setting has a range from 30 to 100% opacity.
+                    // Reduce this a bit for the epg otherwise the colors would be to aggressive
+                    int reducedOffset = ((offset - 25 > 0) ? offset - 25 : offset);
+                    int color = UIUtils.getGenreColor(context, program.getContentType(), reducedOffset);
                     genreTextView.setBackgroundColor(color);
                     genreTextView.setVisibility(View.VISIBLE);
                 } else {
