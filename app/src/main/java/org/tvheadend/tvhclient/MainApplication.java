@@ -25,6 +25,7 @@ import org.tvheadend.tvhclient.features.logging.ReleaseTree;
 import org.tvheadend.tvhclient.features.purchase.BillingUtils;
 import org.tvheadend.tvhclient.injection.DaggerMainApplicationComponent;
 import org.tvheadend.tvhclient.injection.MainApplicationComponent;
+import org.tvheadend.tvhclient.injection.modules.EpgSyncHandlerModule;
 import org.tvheadend.tvhclient.injection.modules.MainApplicationModule;
 import org.tvheadend.tvhclient.injection.modules.RepositoryModule;
 import org.tvheadend.tvhclient.injection.modules.SharedPreferencesModule;
@@ -108,6 +109,7 @@ public class MainApplication extends Application implements BillingProcessor.IBi
                 .mainApplicationModule(new MainApplicationModule(this))
                 .sharedPreferencesModule(new SharedPreferencesModule())
                 .repositoryModule(new RepositoryModule(this))
+                .epgSyncHandlerModule(new EpgSyncHandlerModule())
                 .build();
     }
 
