@@ -36,7 +36,7 @@ public class EpgSyncService extends Service {
 
         handlerThread = new HandlerThread("EpgSyncService Handler Thread");
         handlerThread.start();
-        new Handler(handlerThread.getLooper());
+        handler = new Handler(handlerThread.getLooper());
 
         MainApplication.getComponent().inject(this);
 
