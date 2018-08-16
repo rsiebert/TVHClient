@@ -26,7 +26,7 @@ public class Recording {
     @ColumnInfo(name = "stop_extra")
     private long stopExtra = 0;             // s64   required   Extra stop time (post-time) in minutes (Added in version 13).
     private long retention = 0;             // s64   required   DVR Entry retention time in days (Added in version 13).
-    private int priority = 0;               // u32   required   Priority (0 = Important, 1 = High, 2 = Normal, 3 = Low, 4 = Unimportant, 5 = Not set) (Added in version 13).
+    private int priority = 2;               // u32   required   Priority (0 = Important, 1 = High, 2 = Normal, 3 = Low, 4 = Unimportant, 5 = Not set) (Added in version 13).
     @ColumnInfo(name = "event_id")
     private int eventId = 0;                // u32   optional   Associated EPG Event ID (Added in version 13).
     @ColumnInfo(name = "autorec_id")
