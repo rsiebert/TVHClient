@@ -14,7 +14,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
-            android:layout_marginStart="16dp"
+            android:layout_marginLeft="12dp"
+            android:layout_marginStart="12dp"
             android:layout_marginTop="16dp"
             android:text="@string/activate_recording"
             app:layout_constraintEnd_toEndOf="parent"
@@ -39,12 +40,9 @@
             style="?attr/ContentFont"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
             android:hint="@string/add_title"
             android:inputType="text"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/title_label" />
 
@@ -66,12 +64,9 @@
             style="?attr/ContentFont"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
             android:hint="@string/add_name"
             android:inputType="text"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/name_label" />
 
@@ -108,11 +103,9 @@
             style="?attr/TitleFont"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:text="@string/start_time"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/channel" />
 
@@ -121,14 +114,12 @@
             style="?attr/ContentFont"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:drawableEnd="?attr/ic_arrow_drop_down_like_spinner"
             android:drawablePadding="4dp"
             android:drawableRight="?attr/ic_arrow_drop_down_like_spinner"
             android:text="@string/not_set"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/start_time_label"
             app:layout_constraintTop_toBottomOf="@+id/start_time_label" />
 
         <TextView
@@ -136,27 +127,23 @@
             style="?attr/TitleFont"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginLeft="32dp"
+            android:layout_marginStart="32dp"
             android:text="@string/stop_time"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/start_time" />
+            app:layout_constraintStart_toEndOf="@+id/start_time_label"
+            app:layout_constraintTop_toTopOf="@+id/start_time_label" />
 
         <TextView
             android:id="@+id/stop_time"
             style="?attr/ContentFont"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:drawableEnd="?attr/ic_arrow_drop_down_like_spinner"
             android:drawablePadding="4dp"
             android:drawableRight="?attr/ic_arrow_drop_down_like_spinner"
             android:text="@string/not_set"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/stop_time_label"
             app:layout_constraintTop_toBottomOf="@+id/stop_time_label" />
 
         <TextView
@@ -263,13 +250,10 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:layout_marginEnd="16dp"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
             android:hint="@string/add_recording_directory"
             android:inputType="text"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/directory_label" />
     </android.support.constraint.ConstraintLayout>

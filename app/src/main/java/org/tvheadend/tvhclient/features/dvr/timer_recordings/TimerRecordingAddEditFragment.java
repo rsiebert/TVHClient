@@ -295,9 +295,23 @@ public class TimerRecordingAddEditFragment extends BaseRecordingAddEditFragment 
             recording.setStart(milliSeconds);
             startTimeTextView.setText(getTimeStringFromTimeInMillis(milliSeconds));
 
+            // If the start time is after the stop time,
+            // update the stop time with the start value
+            if (milliSeconds > recording.getStop()) {
+                recording.setStop(milliSeconds);
+                stopTimeTextView.setText(getTimeStringFromTimeInMillis(milliSeconds));
+            }
+
         } else if (tag.equals("stopTime")) {
             recording.setStop(milliSeconds);
             stopTimeTextView.setText(getTimeStringFromTimeInMillis(milliSeconds));
+
+            // If the stop time is before the start time,
+            // update the start time with the stop value
+            if (milliSeconds < recording.getStart()) {
+                recording.setStart(milliSeconds);
+                startTimeTextView.setText(getTimeStringFromTimeInMillis(milliSeconds));
+            }
         }
     }
 

@@ -51,10 +51,14 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
     EditText minDurationEditText;
     @BindView(R.id.maximum_duration)
     EditText maxDurationEditText;
-    @BindView(R.id.start_time)
-    TextView startTimeTextView;
     @BindView(R.id.time_enabled)
     CheckBox timeEnabledCheckBox;
+    @BindView(R.id.start_time_label)
+    TextView startTimeLabelTextView;
+    @BindView(R.id.start_time)
+    TextView startTimeTextView;
+    @BindView(R.id.start_window_time_label)
+    TextView startWindowTimeLabelTextView;
     @BindView(R.id.start_window_time)
     TextView startWindowTimeTextView;
     @BindView(R.id.start_extra)
@@ -106,16 +110,6 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
         super.onActivityCreated(savedInstanceState);
 
         duplicateDetectionList = activity.getResources().getStringArray(R.array.duplicate_detection_list);
-
-        // Get the selected profile from the connection and select it from the recording config list
-        if (profile != null) {
-            for (int i = 0; i < recordingProfilesList.length; i++) {
-                if (recordingProfilesList[i].equals(profile.getName())) {
-                    recordingProfileNameId = i;
-                    break;
-                }
-            }
-        }
 
         if (savedInstanceState != null) {
             id = savedInstanceState.getString("id");
@@ -190,8 +184,12 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
             public void onClick(View view) {
                 boolean checked = timeEnabledCheckBox.isChecked();
                 startTimeTextView.setEnabled(checked);
+                startTimeTextView.setVisibility(checked ? View.VISIBLE : View.GONE);
+                startTimeLabelTextView.setVisibility(checked ? View.VISIBLE : View.GONE);
                 startTimeTextView.setText(checked ? getTimeStringFromTimeInMillis(recording.getStart()) : "-");
                 startWindowTimeTextView.setEnabled(checked);
+                startWindowTimeTextView.setVisibility(checked ? View.VISIBLE : View.GONE);
+                startWindowTimeLabelTextView.setVisibility(checked ? View.VISIBLE : View.GONE);
                 startWindowTimeTextView.setText(checked ? getTimeStringFromTimeInMillis(recording.getStartWindow()) : "-");
             }
         });
@@ -369,9 +367,23 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
             recording.setStart(milliSeconds);
             startTimeTextView.setText(getTimeStringFromTimeInMillis(milliSeconds));
 
+            // If the start time is after the start window time,
+            // update the start window time with the start value
+            if (milliSeconds > recording.getStartWindow()) {
+                recording.setStartWindow(milliSeconds);
+                startWindowTimeTextView.setText(getTimeStringFromTimeInMillis(milliSeconds));
+            }
+
         } else if (tag.equals("startWindowTime")) {
             recording.setStartWindow(milliSeconds);
             startWindowTimeTextView.setText(getTimeStringFromTimeInMillis(milliSeconds));
+
+            // If the start window time is before the start time,
+            // update the start time with the start window value
+            if (milliSeconds < recording.getStart()) {
+                recording.setStart(milliSeconds);
+                startTimeTextView.setText(getTimeStringFromTimeInMillis(milliSeconds));
+            }
         }
     }
 
