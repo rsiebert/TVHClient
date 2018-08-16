@@ -7,8 +7,6 @@ import android.content.Intent;
 import org.tvheadend.tvhclient.data.service.htsp.HtspConnection;
 import org.tvheadend.tvhclient.data.service.htsp.tasks.Authenticator;
 
-// TODO use another object with msg, details and state and pass this in one method around
-
 public class EpgSyncStatusReceiver extends BroadcastReceiver {
 
     public final static String ACTION = "service_status";
