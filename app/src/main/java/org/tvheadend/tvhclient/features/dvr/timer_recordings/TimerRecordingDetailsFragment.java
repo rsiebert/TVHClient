@@ -146,6 +146,9 @@ public class TimerRecordingDetailsFragment extends BaseFragment implements Recor
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         menuUtils.onPreparePopupSearchMenu(menu, isNetworkAvailable);
+        if (!isDualPane) {
+            menu.findItem(R.id.menu_search).setVisible(false);
+        }
         menu = nestedToolbar.getMenu();
         menu.findItem(R.id.menu_edit).setVisible(true);
         menu.findItem(R.id.menu_record_remove).setVisible(true);

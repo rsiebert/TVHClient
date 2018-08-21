@@ -256,6 +256,9 @@ public class ProgramDetailsFragment extends BaseFragment implements RecordingRem
         }
 
         menuUtils.onPreparePopupSearchMenu(menu, isNetworkAvailable);
+        if (!isDualPane) {
+            menu.findItem(R.id.menu_search).setVisible(false);
+        }
 
         menu = nestedToolbar.getMenu();
         // Show the play menu item when the current
