@@ -43,7 +43,7 @@ public class RecordingDetailsActivity extends BaseActivity implements ToolbarInt
 
             if (fragment != null) {
                 fragment.setArguments(getIntent().getExtras());
-                getSupportFragmentManager().beginTransaction().add(R.id.content_frame, fragment).commit();
+                getSupportFragmentManager().beginTransaction().add(R.id.main, fragment).commit();
             }
         }
     }

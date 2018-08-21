@@ -45,14 +45,14 @@ public class RecordingAddEditActivity extends AppCompatActivity implements Toolb
 
             if (fragment != null) {
                 fragment.setArguments(getIntent().getExtras());
-                getSupportFragmentManager().beginTransaction().add(R.id.content_frame, fragment).commit();
+                getSupportFragmentManager().beginTransaction().add(R.id.main, fragment).commit();
             }
         }
     }
 
     @Override
     public void onBackPressed() {
-        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.content_frame);
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main);
         if (fragment != null && fragment instanceof BackPressedInterface) {
             ((BackPressedInterface) fragment).onBackPressed();
         } else {

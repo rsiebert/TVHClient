@@ -30,7 +30,7 @@ public class ProgramDetailsActivity extends BaseActivity implements ToolbarInter
         if (savedInstanceState == null) {
             Fragment fragment = new ProgramDetailsFragment();
             fragment.setArguments(getIntent().getExtras());
-            getSupportFragmentManager().beginTransaction().add(R.id.content_frame, fragment).commit();
+            getSupportFragmentManager().beginTransaction().add(R.id.main, fragment).commit();
         }
     }
 
