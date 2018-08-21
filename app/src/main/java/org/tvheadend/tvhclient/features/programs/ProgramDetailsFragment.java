@@ -1,8 +1,6 @@
 package org.tvheadend.tvhclient.features.programs;
 
-import android.app.SearchManager;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -28,8 +26,6 @@ import com.squareup.picasso.Picasso;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Program;
 import org.tvheadend.tvhclient.data.entity.Recording;
-import org.tvheadend.tvhclient.features.search.SearchActivity;
-import org.tvheadend.tvhclient.features.search.SearchRequestInterface;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
 import org.tvheadend.tvhclient.features.shared.UIUtils;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecordingRemovedCallback;
@@ -43,7 +39,7 @@ import timber.log.Timber;
 
 // TODO update icons (same color, record with profile must differ from regular record...)
 
-public class ProgramDetailsFragment extends BaseFragment implements RecordingRemovedCallback, SearchRequestInterface {
+public class ProgramDetailsFragment extends BaseFragment implements RecordingRemovedCallback {
 
     @Nullable
     @BindView(R.id.state)
@@ -362,16 +358,6 @@ public class ProgramDetailsFragment extends BaseFragment implements RecordingRem
     @Override
     public void onRecordingRemoved() {
         activity.finish();
-    }
-
-    @Override
-    public void onSearchRequested(String query) {
-        Intent searchIntent = new Intent(activity, SearchActivity.class);
-        searchIntent.setAction(Intent.ACTION_SEARCH);
-        searchIntent.putExtra(SearchManager.QUERY, query);
-        searchIntent.putExtra("type", "programs");
-        searchIntent.putExtra("channelId", channelId);
-        startActivity(searchIntent);
     }
 }
 
