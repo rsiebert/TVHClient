@@ -102,7 +102,9 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
             }
         }
 
-        toolbarInterface.setTitle(channelName);
+        if (!isDualPane) {
+            toolbarInterface.setTitle(channelName);
+        }
 
         recyclerViewAdapter = new ProgramRecyclerViewAdapter(activity, this, this);
         recyclerView.setLayoutManager(new LinearLayoutManager(activity));
