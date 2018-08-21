@@ -5,7 +5,9 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.Preference;
+import android.provider.SearchRecentSuggestions;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.FileProvider;
 
 import com.afollestad.materialdialogs.DialogAction;
@@ -14,12 +16,15 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import org.tvheadend.tvhclient.BuildConfig;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Connection;
+import org.tvheadend.tvhclient.features.search.SuggestionProvider;
 import org.tvheadend.tvhclient.features.startup.StartupActivity;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+
+import timber.log.Timber;
 
 public class SettingsAdvancedFragment extends BasePreferenceFragment implements Preference.OnPreferenceClickListener, SharedPreferences.OnSharedPreferenceChangeListener, DatabaseClearedInterface {
 
@@ -31,8 +36,12 @@ public class SettingsAdvancedFragment extends BasePreferenceFragment implements 
 
         Preference prefSendLogfile = findPreference("send_debug_logfile_enabled");
         Preference prefClearDatabase = findPreference("clear_database");
+        Preference clearSearchHistoryPreference = findPreference("clear_search_history");
+        Preference clearIconCachePreference = findPreference("clear_icon_cache");
         prefSendLogfile.setOnPreferenceClickListener(this);
         prefClearDatabase.setOnPreferenceClickListener(this);
+        clearIconCachePreference.setOnPreferenceClickListener(this);
+        clearSearchHistoryPreference.setOnPreferenceClickListener(this);
     }
 
     @Override
@@ -55,6 +64,12 @@ public class SettingsAdvancedFragment extends BasePreferenceFragment implements 
                 break;
             case "clear_database":
                 handlePreferenceClearDatabaseSelected();
+                break;
+            case "clear_search_history":
+                handlePreferenceClearSearchHistorySelected();
+                break;
+            case "clear_icon_cache":
+                handlePreferenceClearIconCacheSelected();
                 break;
         }
         return true;
@@ -172,5 +187,42 @@ public class SettingsAdvancedFragment extends BasePreferenceFragment implements 
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         activity.startActivity(intent);
         activity.finish();
+    }
+
+
+    private void handlePreferenceClearSearchHistorySelected() {
+        new MaterialDialog.Builder(getActivity())
+                .title(R.string.clear_search_history)
+                .content(R.string.clear_search_history_sum)
+                .positiveText(getString(R.string.delete))
+                .negativeText(getString(R.string.cancel))
+                .onPositive((dialog, which) -> {
+                    SearchRecentSuggestions suggestions = new SearchRecentSuggestions(getActivity(), SuggestionProvider.AUTHORITY, SuggestionProvider.MODE);
+                    suggestions.clearHistory();
+                    if (getView() != null) {
+                        Snackbar.make(getView(), getString(R.string.clear_search_history_done), Snackbar.LENGTH_SHORT).show();
+                    }
+                }).show();
+    }
+
+    private void handlePreferenceClearIconCacheSelected() {
+        new MaterialDialog.Builder(getActivity())
+                .title(R.string.clear_icon_cache)
+                .content(R.string.clear_icon_cache_sum)
+                .positiveText(getString(R.string.delete))
+                .negativeText(getString(R.string.cancel))
+                .onPositive((dialog, which) -> {
+                    File[] files = getActivity().getCacheDir().listFiles();
+                    for (File file : files) {
+                        if (file.toString().endsWith(".png")) {
+                            if (!file.delete()) {
+                                Timber.d("Could not delete channel icon " + file.getName());
+                            }
+                        }
+                    }
+                    if (getView() != null) {
+                        Snackbar.make(getView(), getString(R.string.clear_icon_cache_done), Snackbar.LENGTH_SHORT).show();
+                    }
+                }).show();
     }
 }

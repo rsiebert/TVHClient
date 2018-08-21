@@ -31,15 +31,6 @@
             android:key="user_interface"
             android:summary="@string/pref_customize_user_interface_sum"
             android:title="@string/pref_customize_user_interface" />
-        <PreferenceScreen
-            android:key="notifications"
-            android:title="@string/pref_notifications" >
-        </PreferenceScreen>
-        <Preference
-            android:key="download_directory"
-            android:summary="@string/pref_download_directory_sum"
-            android:title="@string/pref_download_directory">
-        </Preference>
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_playback_and_recording" >
         <PreferenceScreen
@@ -57,15 +48,15 @@
             android:summary="@string/pref_unlocker_sum"
             android:title="@string/pref_unlocker" >
         </Preference>
+        <PreferenceScreen
+            android:key="notifications"
+            android:title="@string/pref_notifications" >
+        </PreferenceScreen>
         <Preference
-            android:key="clear_search_history"
-            android:title="@string/pref_clear_search_history" >
+            android:key="download_directory"
+            android:summary="@string/pref_download_directory_sum"
+            android:title="@string/pref_download_directory">
         </Preference>
-        <Preference
-            android:key="clear_icon_cache"
-            android:title="@string/pref_clear_icon_cache" >
-        </Preference>
-
         <PreferenceScreen
             android:title="@string/pref_advanced_settings"
             android:key="advanced" />

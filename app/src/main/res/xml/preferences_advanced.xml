@@ -40,7 +40,15 @@
             android:title="@string/pref_connection_timeout" />
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="Database">
+    <PreferenceCategory android:title="@string/pref_misc">
+        <Preference
+            android:key="clear_search_history"
+            android:title="@string/pref_clear_search_history" >
+        </Preference>
+        <Preference
+            android:key="clear_icon_cache"
+            android:title="@string/pref_clear_icon_cache" >
+        </Preference>
         <Preference
             android:key="clear_database"
             android:summary="Remove all information from the database. This includes all channels, channel tags, programs and recordings from the database."

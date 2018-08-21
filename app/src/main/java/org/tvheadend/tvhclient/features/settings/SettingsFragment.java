@@ -10,22 +10,17 @@ import android.os.Environment;
 import android.os.Handler;
 import android.preference.Preference;
 import android.preference.PreferenceManager;
-import android.provider.SearchRecentSuggestions;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.folderselector.FolderChooserDialog;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.features.changelog.ChangeLogActivity;
 import org.tvheadend.tvhclient.features.navigation.NavigationActivity;
-import org.tvheadend.tvhclient.features.search.SuggestionProvider;
 
 import java.io.File;
-
-import timber.log.Timber;
 
 public class SettingsFragment extends BasePreferenceFragment implements Preference.OnPreferenceClickListener, SharedPreferences.OnSharedPreferenceChangeListener, ActivityCompat.OnRequestPermissionsResultCallback, FolderChooserDialogCallback {
 
@@ -49,8 +44,6 @@ public class SettingsFragment extends BasePreferenceFragment implements Preferen
         Preference advancedPreference = findPreference("advanced");
         Preference changelogPreference = findPreference("changelog");
         Preference languagePreference = findPreference("language");
-        Preference clearSearchHistoryPreference = findPreference("clear_search_history");
-        Preference clearIconCachePreference = findPreference("clear_icon_cache");
         downloadDirectoryPreference = findPreference("download_directory");
 
         manageConnectionsPreference.setOnPreferenceClickListener(this);
@@ -63,8 +56,6 @@ public class SettingsFragment extends BasePreferenceFragment implements Preferen
         changelogPreference.setOnPreferenceClickListener(this);
         languagePreference.setOnPreferenceClickListener(this);
         downloadDirectoryPreference.setOnPreferenceClickListener(this);
-        clearIconCachePreference.setOnPreferenceClickListener(this);
-        clearSearchHistoryPreference.setOnPreferenceClickListener(this);
 
         updateDownloadDirSummary();
     }
@@ -156,12 +147,6 @@ public class SettingsFragment extends BasePreferenceFragment implements Preferen
             case "download_directory":
                 handlePreferenceDownloadDirectorySelected();
                 break;
-            case "clear_search_history":
-                handlePreferenceClearSearchHistorySelected();
-                break;
-            case "clear_icon_cache":
-                handlePreferenceClearIconCacheSelected();
-                break;
         }
         return true;
     }
@@ -232,42 +217,6 @@ public class SettingsFragment extends BasePreferenceFragment implements Preferen
                 new FolderChooserDialog.Builder(getActivity()).show(activity);
             }
         }
-    }
-
-    private void handlePreferenceClearSearchHistorySelected() {
-        new MaterialDialog.Builder(getActivity())
-                .title(R.string.clear_search_history)
-                .content(R.string.clear_search_history_sum)
-                .positiveText(getString(R.string.delete))
-                .negativeText(getString(R.string.cancel))
-                .onPositive((dialog, which) -> {
-                    SearchRecentSuggestions suggestions = new SearchRecentSuggestions(getActivity(), SuggestionProvider.AUTHORITY, SuggestionProvider.MODE);
-                    suggestions.clearHistory();
-                    if (getView() != null) {
-                        Snackbar.make(getView(), getString(R.string.clear_search_history_done), Snackbar.LENGTH_SHORT).show();
-                    }
-                }).show();
-    }
-
-    private void handlePreferenceClearIconCacheSelected() {
-        new MaterialDialog.Builder(getActivity())
-                .title(R.string.clear_icon_cache)
-                .content(R.string.clear_icon_cache_sum)
-                .positiveText(getString(R.string.delete))
-                .negativeText(getString(R.string.cancel))
-                .onPositive((dialog, which) -> {
-                    File[] files = getActivity().getCacheDir().listFiles();
-                    for (File file : files) {
-                        if (file.toString().endsWith(".png")) {
-                            if (!file.delete()) {
-                                Timber.d("Could not delete channel icon " + file.getName());
-                            }
-                        }
-                    }
-                    if (getView() != null) {
-                        Snackbar.make(getView(), getString(R.string.clear_icon_cache_done), Snackbar.LENGTH_SHORT).show();
-                    }
-                }).show();
     }
 
     @Override
