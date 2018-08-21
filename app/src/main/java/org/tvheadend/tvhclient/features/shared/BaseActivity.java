@@ -118,16 +118,6 @@ public abstract class BaseActivity extends AppCompatActivity implements NetworkS
                 isNetworkAvailable = false;
                 onNetworkAvailabilityChanged(false);
                 break;
-            // Show a message that the sync is in progress or
-            // the connection to the server has not been fully
-            // established or that the loading is done.
-            case START:
-            case LOADING:
-            case DONE:
-                //if (getCurrentFocus() != null) {
-                //    Snackbar.make(getCurrentFocus(), state.getMessage(), Snackbar.LENGTH_SHORT).show();
-                //}
-                break;
         }
     }
 
