@@ -29,6 +29,7 @@ import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.data.entity.ChannelTag;
 import org.tvheadend.tvhclient.data.entity.Program;
 import org.tvheadend.tvhclient.data.entity.Recording;
+import org.tvheadend.tvhclient.features.playback.player.PlaybackSession;
 import org.tvheadend.tvhclient.features.programs.ProgramListFragment;
 import org.tvheadend.tvhclient.features.search.SearchActivity;
 import org.tvheadend.tvhclient.features.search.SearchRequestInterface;
@@ -38,6 +39,7 @@ import org.tvheadend.tvhclient.features.shared.callbacks.ChannelTimeSelectionCal
 import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback;
 
 import java.util.Calendar;
+import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -142,9 +144,7 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
     public void onResume() {
         super.onResume();
         viewModel.setChannelSortOrder(Integer.valueOf(sharedPreferences.getString("channel_sort_order", "0")));
-        // Refresh the recycler view upon resume to show possible setting
-        // updates like showing genre colors, progress bar or channel name
-        recyclerViewAdapter.notifyDataSetChanged();
+        viewModel.setSelectedTime(new Date().getTime());
     }
 
     @Override
@@ -164,7 +164,7 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
 
         // Prevent the channel tag menu item from going into the overlay menu
         if (showChannelTagMenu) {
-            menu.findItem(R.id.menu_tags).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+            menu.findItem(R.id.menu_tags).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_IF_ROOM);
         }
     }
 
@@ -307,6 +307,12 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
 
                 case R.id.menu_play:
                     menuUtils.handleMenuPlayChannel(channel.getId());
+                    return true;
+
+                case R.id.menu_play_external:
+                    Intent intent = new Intent(activity, PlaybackSession.class);
+                    intent.putExtra("channelId", channel.getId());
+                    startActivity(intent);
                     return true;
 
                 case R.id.menu_add_notification:
