@@ -1,5 +1,6 @@
 package org.tvheadend.tvhclient.features.dvr.series_recordings;
 
+import android.app.SearchManager;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
@@ -19,6 +20,8 @@ import android.widget.TextView;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.SeriesRecording;
 import org.tvheadend.tvhclient.features.dvr.RecordingAddEditActivity;
+import org.tvheadend.tvhclient.features.search.SearchActivity;
+import org.tvheadend.tvhclient.features.search.SearchRequestInterface;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
 import org.tvheadend.tvhclient.features.shared.UIUtils;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecordingRemovedCallback;
@@ -27,7 +30,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-public class SeriesRecordingDetailsFragment extends BaseFragment implements RecordingRemovedCallback {
+public class SeriesRecordingDetailsFragment extends BaseFragment implements RecordingRemovedCallback, SearchRequestInterface {
 
     @BindView(R.id.is_enabled)
     TextView isEnabledTextView;
@@ -222,5 +225,14 @@ public class SeriesRecordingDetailsFragment extends BaseFragment implements Reco
     @Override
     public void onRecordingRemoved() {
         activity.finish();
+    }
+
+    @Override
+    public void onSearchRequested(String query) {
+        Intent searchIntent = new Intent(activity, SearchActivity.class);
+        searchIntent.putExtra(SearchManager.QUERY, query);
+        searchIntent.setAction(Intent.ACTION_SEARCH);
+        searchIntent.putExtra("type", "series_recordings");
+        startActivity(searchIntent);
     }
 }
