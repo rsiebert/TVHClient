@@ -83,7 +83,6 @@ public class ChannelViewModel extends AndroidViewModel {
     public void setChannelSortOrder(int sortOrder) {
         if (channelSortOrder != sortOrder) {
             channelSortOrder = sortOrder;
-            channelUpdateHandler.post(channelUpdateTask);
         }
     }
 
