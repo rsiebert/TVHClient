@@ -243,6 +243,13 @@ public abstract class SettingsConnectionBaseFragment extends BasePreferenceFragm
                 passwordPreference.setSummary(value.isEmpty() ? getString(R.string.pref_pass_sum) : getString(R.string.pref_pass_set_sum));
                 break;
             case "active_enabled":
+                // When the connection was set as the new active
+                // connection, an initial sync is required
+                boolean isActive = Boolean.valueOf(value);
+                if (!connection.isActive() && isActive) {
+                    connection.setSyncRequired(true);
+                    connection.setLastUpdate(0);
+                }
                 connection.setActive(Boolean.valueOf(value));
                 break;
             case "wol_enabled":
