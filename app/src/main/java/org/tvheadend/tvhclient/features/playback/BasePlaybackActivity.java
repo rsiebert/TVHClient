@@ -142,7 +142,7 @@ public abstract class BasePlaybackActivity extends AppCompatActivity {
                                         installIntent.setData(Uri.parse("market://search?q=free%20video%20player&c=apps"));
                                         startActivity(installIntent);
                                     } catch (Throwable t2) {
-                                        Timber.d("Could not open google play store");
+                                        Timber.d("Could not startPlayback google play store");
                                     } finally {
                                         finish();
                                     }

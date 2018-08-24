@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.features.shared;
+package org.tvheadend.tvhclient.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;

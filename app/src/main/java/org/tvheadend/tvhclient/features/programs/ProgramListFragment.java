@@ -116,14 +116,14 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
         // Get them as live data so that any newly added programs will be fetched automatically.
         ProgramViewModel viewModel = ViewModelProviders.of(activity).get(ProgramViewModel.class);
         viewModel.getProgramsByChannelFromTime(channelId, selectedTime).observe(this, programs -> {
-
-            recyclerView.setVisibility(View.VISIBLE);
-            progressBar.setVisibility(View.GONE);
-
-            recyclerViewAdapter.addItems(programs);
+            if (programs != null) {
+                recyclerViewAdapter.addItems(programs);
+            }
             if (!TextUtils.isEmpty(searchQuery)) {
                 recyclerViewAdapter.getFilter().filter(searchQuery, this);
             }
+            recyclerView.setVisibility(View.VISIBLE);
+            progressBar.setVisibility(View.GONE);
 
             if (!isDualPane) {
                 toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.programs,

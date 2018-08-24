@@ -42,6 +42,40 @@
             android:summary="@string/pref_casting_sum"
             android:title="@string/pref_casting" />
     </PreferenceCategory>
+
+    <PreferenceCategory android:title="Audio and Video">
+        <ListPreference
+            android:key="buffer_playback_ms"
+            android:title="Buffer Duration"
+            android:dialogTitle="Buffer Seconds"
+            android:entries="@array/buffer_playback_ms_names"
+            android:entryValues="@array/buffer_playback_ms_values"
+            android:defaultValue="@string/pref_default_buffer_playback_ms"
+            android:summary="How many seconds to buffer before starting playback"/>
+
+        <CheckBoxPreference
+            android:key="audio_passthrough_decodeder_enabled"
+            android:title="Enable Audio Passthrough"
+            android:defaultValue="@bool/pref_default_audio_passthrough_decodeder_enabled"
+            android:summary="You must also ensure the system audio settings allows passthrough"/>
+
+        <CheckBoxPreference
+            android:key="audio_tunneling_enabled"
+            android:title="Enable Audio Tunneling"
+            android:defaultValue="@bool/pref_default_audio_tunneling_enabled"
+            android:summary="Enable support for DSP audio tunneling"/>
+
+        <CheckBoxPreference
+            android:key="ffmpeg_audio_enabled"
+            android:title="Enable FFMpeg Audio Codecs"
+            android:defaultValue="@bool/pref_default_audio_ffmpeg_audio_enabled"/>
+
+        <CheckBoxPreference
+            android:key="captions_apply_embedded_styles"
+            android:title="Apply embedded caption styles"
+            android:defaultValue="@bool/pref_default_captions_apply_embedded_styles"/>
+    </PreferenceCategory>
+
     <PreferenceCategory android:title="@string/pref_misc" >
         <Preference
             android:key="unlocker"

@@ -27,7 +27,7 @@ import org.tvheadend.tvhclient.features.shared.callbacks.BackPressedInterface;
 import org.tvheadend.tvhclient.features.shared.callbacks.ToolbarInterface;
 import org.tvheadend.tvhclient.features.shared.tasks.WakeOnLanTask;
 import org.tvheadend.tvhclient.features.shared.tasks.WakeOnLanTaskCallback;
-import org.tvheadend.tvhclient.features.startup.StartupActivity;
+import org.tvheadend.tvhclient.features.startup.SplashActivity;
 
 import javax.inject.Inject;
 
@@ -239,9 +239,10 @@ public class SettingsListConnectionsFragment extends ListFragment implements Bac
 
         Connection connection = appRepository.getConnectionData().getActiveItem();
         connection.setSyncRequired(true);
+        connection.setLastUpdate(0);
         appRepository.getConnectionData().updateItem(connection);
 
-        Intent intent = new Intent(activity, StartupActivity.class);
+        Intent intent = new Intent(activity, SplashActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         activity.startActivity(intent);
 

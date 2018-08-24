@@ -62,7 +62,7 @@ public class ProgramRecyclerViewAdapter extends RecyclerView.Adapter<ProgramView
         onBindViewHolder(holder, position);
     }
 
-    void addItems(List<Program> list) {
+    void addItems(@NonNull List<Program> list) {
         updateRecordingState(list, recordingList);
 
         DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new ProgramListDiffCallback(programList, list));

@@ -249,7 +249,7 @@ public class HtspConnection implements Runnable {
         setState(State.CONNECTED);
     }
 
-    private void processReadableSelectionKey(SelectionKey selectionKey) throws IOException {
+    private void processReadableSelectionKey(SelectionKey selectionKey) {
 
         SocketChannel socketChannel = (SocketChannel) selectionKey.channel();
 
@@ -261,7 +261,7 @@ public class HtspConnection implements Runnable {
         }
     }
 
-    private void processWritableSelectionKey(SelectionKey selectionKey) throws IOException {
+    private void processWritableSelectionKey(SelectionKey selectionKey) {
 
         SocketChannel socketChannel = (SocketChannel) selectionKey.channel();
 

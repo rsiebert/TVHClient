@@ -17,10 +17,9 @@ import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.features.shared.callbacks.NetworkAvailabilityChangedInterface;
 import org.tvheadend.tvhclient.features.shared.callbacks.NetworkStatusInterface;
 import org.tvheadend.tvhclient.features.shared.callbacks.ToolbarInterface;
+import org.tvheadend.tvhclient.utils.MenuUtils;
 
 import javax.inject.Inject;
-
-import timber.log.Timber;
 
 public abstract class BaseFragment extends Fragment implements NetworkAvailabilityChangedInterface {
 
@@ -50,6 +49,8 @@ public abstract class BaseFragment extends Fragment implements NetworkAvailabili
         activity = (AppCompatActivity) getActivity();
         if (activity instanceof ToolbarInterface) {
             toolbarInterface = (ToolbarInterface) activity;
+            toolbarInterface.setTitle("");
+            toolbarInterface.setSubtitle("");
         }
 
         MainApplication.getComponent().inject(this);
@@ -95,10 +96,8 @@ public abstract class BaseFragment extends Fragment implements NetworkAvailabili
     }
 
     @Override
-    public void onNetworkAvailabilityChanged(boolean networkIsAvailable) {
-        Timber.d("Network is available " + networkIsAvailable + ", invalidating menu");
-        isNetworkAvailable = networkIsAvailable;
-        activity.invalidateOptionsMenu();
+    public void onNetworkAvailabilityChanged(boolean isNetworkAvailable) {
+        this.isNetworkAvailable = isNetworkAvailable;
     }
 
     protected void forceSingleScreenLayout() {

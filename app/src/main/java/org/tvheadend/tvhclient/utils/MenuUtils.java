@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.features.shared;
+package org.tvheadend.tvhclient.utils;
 
 
 import android.app.Activity;
@@ -39,7 +39,7 @@ import org.tvheadend.tvhclient.features.shared.adapter.GenreColorDialogAdapter;
 import org.tvheadend.tvhclient.features.shared.callbacks.ChannelTagSelectionCallback;
 import org.tvheadend.tvhclient.features.shared.callbacks.ChannelTimeSelectionCallback;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecordingRemovedCallback;
-import org.tvheadend.tvhclient.utils.MiscUtils;
+import org.tvheadend.tvhclient.features.startup.SplashActivity;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
@@ -600,23 +600,22 @@ public class MenuUtils {
         }
         new MaterialDialog.Builder(activity)
                 .title("Reconnect to server?")
-                .content("Do you want to reconnect to the server?\n" +
-                        "The application will be restarted and a new initial sync will be done.")
+                .content("The application will be restarted and a new initial sync will be done.")
                 .negativeText(R.string.cancel)
                 .positiveText("Reconnect")
                 .onPositive((dialog, which) -> {
                     Timber.d("Reconnect requested, stopping service and clearing last update information");
 
-                    // clear the last update information so that a epg data is fetched
+                    activity.stopService(new Intent(activity, EpgSyncService.class));
+                    // Update the connection with the information that a new sync is required.
                     Connection connection = appRepository.getConnectionData().getActiveItem();
                     connection.setSyncRequired(true);
                     connection.setLastUpdate(0);
                     appRepository.getConnectionData().updateItem(connection);
-
-                    // Stop the service so that any connections will be closed
-                    // before starting the service for a sync again
-                    activity.stopService(new Intent(activity, EpgSyncService.class));
-                    activity.startService(new Intent(activity, EpgSyncService.class));
+                    // Finally restart the application to show the startup fragment
+                    Intent intent = new Intent(activity, SplashActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    activity.startActivity(intent);
                 })
                 .show();
     }

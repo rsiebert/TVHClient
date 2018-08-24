@@ -17,8 +17,8 @@ import android.support.v4.app.ActivityCompat;
 import com.afollestad.materialdialogs.folderselector.FolderChooserDialog;
 
 import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.features.MainActivity;
 import org.tvheadend.tvhclient.features.changelog.ChangeLogActivity;
-import org.tvheadend.tvhclient.features.navigation.NavigationActivity;
 
 import java.io.File;
 
@@ -111,7 +111,7 @@ public class SettingsFragment extends BasePreferenceFragment implements Preferen
     public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
         switch (key) {
             case "language":
-                Intent intent = new Intent(getActivity(), NavigationActivity.class);
+                Intent intent = new Intent(getActivity(), MainActivity.class);
                 getActivity().startActivity(intent);
                 break;
         }

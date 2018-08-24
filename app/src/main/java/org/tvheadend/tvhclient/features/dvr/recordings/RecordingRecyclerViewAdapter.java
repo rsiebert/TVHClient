@@ -53,19 +53,16 @@ public class RecordingRecyclerViewAdapter extends RecyclerView.Adapter<Recording
         onBindViewHolder(holder, position);
     }
 
-    void addItems(List<Recording> list) {
-
+    void addItems(@NonNull List<Recording> list) {
         DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new RecordingListDiffCallback(recordingList, list));
         diffResult.dispatchUpdatesTo(this);
 
         recordingList.clear();
         recordingListFiltered.clear();
+        recordingList.addAll(list);
+        recordingListFiltered.addAll(list);
 
-        if (list != null) {
-            recordingList.addAll(list);
-            recordingListFiltered.addAll(list);
-        }
-        if (list == null || selectedPosition > list.size()) {
+        if (selectedPosition > list.size()) {
             selectedPosition = 0;
         }
     }

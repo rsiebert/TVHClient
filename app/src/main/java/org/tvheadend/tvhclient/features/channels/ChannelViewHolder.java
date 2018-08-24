@@ -19,7 +19,7 @@ import com.squareup.picasso.Picasso;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.data.entity.Recording;
-import org.tvheadend.tvhclient.features.shared.UIUtils;
+import org.tvheadend.tvhclient.utils.UIUtils;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback;
 
 import java.util.Date;
@@ -52,6 +52,8 @@ public class ChannelViewHolder extends RecyclerView.ViewHolder {
     ImageView stateImageView;
     @BindView(R.id.genre)
     TextView genreTextView;
+    @BindView(R.id.no_programs)
+    TextView noProgramsTextView;
     @Nullable
     @BindView(R.id.dual_pane_list_item_selection)
     ImageView dualPaneListItemSelection;
@@ -143,6 +145,7 @@ public class ChannelViewHolder extends RecyclerView.ViewHolder {
                 });
 
         if (channel.getProgramId() > 0) {
+            noProgramsTextView.setVisibility(View.GONE);
             titleTextView.setText(channel.getProgramTitle());
 
             subtitleTextView.setText(channel.getProgramSubtitle());
@@ -174,7 +177,8 @@ public class ChannelViewHolder extends RecyclerView.ViewHolder {
 
         } else {
             // The channel does not provide program data. Hide certain views
-            titleTextView.setText(R.string.no_data);
+            noProgramsTextView.setVisibility(View.VISIBLE);
+            titleTextView.setVisibility(View.GONE);
             subtitleTextView.setVisibility(View.GONE);
             progressbar.setVisibility(View.GONE);
             timeTextView.setVisibility(View.GONE);

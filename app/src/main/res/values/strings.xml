@@ -23,6 +23,7 @@
     <string name="details">Details</string>
     <string name="settings">Settings</string>
     <string name="refresh">Refresh</string>
+    <string name="reconnect">Reconnect</string>
     <string name="tags">Tags</string>
     <string name="play">Play</string>
     <string name="download">Download</string>

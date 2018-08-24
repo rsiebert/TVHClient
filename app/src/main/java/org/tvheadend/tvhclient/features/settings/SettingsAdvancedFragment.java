@@ -16,8 +16,9 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import org.tvheadend.tvhclient.BuildConfig;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Connection;
+import org.tvheadend.tvhclient.data.service.EpgSyncTask;
 import org.tvheadend.tvhclient.features.search.SuggestionProvider;
-import org.tvheadend.tvhclient.features.startup.StartupActivity;
+import org.tvheadend.tvhclient.features.startup.SplashActivity;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -77,20 +78,25 @@ public class SettingsAdvancedFragment extends BasePreferenceFragment implements 
 
     private void handlePreferenceClearDatabaseSelected() {
         new MaterialDialog.Builder(activity)
-                .title("Clear database")
-                .content("Do you really want to clear the database contents? The app will be restarted to start a new sync with the server.")
+                .title("Clear database contents?")
+                .content("The application will be restarted and a new initial sync will be done.")
                 .positiveText("Clear")
                 .negativeText(activity.getString(R.string.cancel))
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        dialog.dismiss();
-                        // Clear the database and the last update information so that a epg data is fetched
+                        Timber.d("Clear database requested, stopping service and clearing database");
+
+                        activity.stopService(new Intent(activity, EpgSyncTask.class));
+                        // Update the connection with the information that a new sync is required.
                         Connection connection = appRepository.getConnectionData().getActiveItem();
                         connection.setSyncRequired(true);
                         connection.setLastUpdate(0);
                         appRepository.getConnectionData().updateItem(connection);
+                        // Clear the database contents, when done the callback
+                        // is triggered which will restart the application
                         appRepository.getMiscData().clearDatabase(activity, SettingsAdvancedFragment.this);
+                        dialog.dismiss();
                     }
                 })
                 .onNegative(new MaterialDialog.SingleButtonCallback() {
@@ -183,7 +189,7 @@ public class SettingsAdvancedFragment extends BasePreferenceFragment implements 
 
     @Override
     public void onDatabaseCleared() {
-        Intent intent = new Intent(activity, StartupActivity.class);
+        Intent intent = new Intent(activity, SplashActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         activity.startActivity(intent);
         activity.finish();

@@ -44,6 +44,7 @@ import java.util.Date;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import timber.log.Timber;
 
 public class ChannelListFragment extends BaseFragment implements RecyclerViewClickCallback, ChannelTimeSelectionCallback, ChannelTagSelectionCallback, SearchRequestInterface, Filter.FilterListener {
 
@@ -79,6 +80,7 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        Timber.d("start");
 
         if (savedInstanceState != null) {
             selectedListPosition = savedInstanceState.getInt("listPosition", 0);
@@ -99,28 +101,33 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(recyclerViewAdapter);
 
+        recyclerView.setVisibility(View.GONE);
+        progressBar.setVisibility(View.VISIBLE);
+
         viewModel = ViewModelProviders.of(activity).get(ChannelViewModel.class);
         viewModel.getChannels().observe(this, channels -> {
-
-            recyclerView.setVisibility(View.VISIBLE);
-            progressBar.setVisibility(View.GONE);
-
-            recyclerViewAdapter.addItems(channels);
+            Timber.d("observe start");
+            if (channels != null) {
+                recyclerViewAdapter.addItems(channels);
+            }
             if (!TextUtils.isEmpty(searchQuery)) {
                 recyclerViewAdapter.getFilter().filter(searchQuery, this);
             }
-
+            recyclerView.setVisibility(View.VISIBLE);
+            progressBar.setVisibility(View.GONE);
             showChannelTagOrChannelCount();
 
             if (isDualPane && recyclerViewAdapter.getItemCount() > 0) {
                 showChannelDetails(selectedListPosition);
             }
+            Timber.d("observe end");
         });
-
         // Get all recordings for the given channel to check if it belongs to a certain program
         // so the recording status of the particular program can be updated. This is required
         // because the programs are not updated automatically when recordings change.
         viewModel.getAllRecordings().observe(this, recordings -> recyclerViewAdapter.addRecordings(recordings));
+
+        Timber.d("end");
     }
 
     private void showChannelTagOrChannelCount() {
@@ -143,8 +150,10 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
     @Override
     public void onResume() {
         super.onResume();
+        Timber.d("start");
         viewModel.setChannelSortOrder(Integer.valueOf(sharedPreferences.getString("channel_sort_order", "0")));
         viewModel.setSelectedTime(new Date().getTime());
+        Timber.d("end");
     }
 
     @Override
@@ -200,9 +209,9 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
 
     @Override
     public void onChannelTagIdSelected(int id) {
-        viewModel.setChannelTagId(id);
         recyclerView.setVisibility(View.GONE);
         progressBar.setVisibility(View.VISIBLE);
+        viewModel.setChannelTagId(id);
     }
 
     /**

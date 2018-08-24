@@ -52,16 +52,13 @@ public class SeriesRecordingRecyclerViewAdapter extends RecyclerView.Adapter<Ser
         onBindViewHolder(holder, position);
     }
 
-    void addItems(List<SeriesRecording> list) {
+    void addItems(@NonNull List<SeriesRecording> list) {
         recordingList.clear();
         recordingListFiltered.clear();
+        recordingList.addAll(list);
+        recordingListFiltered.addAll(list);
 
-        if (list != null) {
-            recordingList.addAll(list);
-            recordingListFiltered.addAll(list);
-        }
-
-        if (list == null || selectedPosition > list.size()) {
+        if (selectedPosition > list.size()) {
             selectedPosition = 0;
         }
         notifyDataSetChanged();

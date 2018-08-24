@@ -5,7 +5,9 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
@@ -29,13 +31,17 @@ import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.features.download.DownloadPermissionGrantedInterface;
+import org.tvheadend.tvhclient.features.navigation.NavigationDrawer;
+import org.tvheadend.tvhclient.features.navigation.NavigationDrawerCallback;
 import org.tvheadend.tvhclient.features.playback.CastSessionManagerListener;
 import org.tvheadend.tvhclient.features.shared.BaseActivity;
 import org.tvheadend.tvhclient.features.shared.callbacks.ToolbarInterface;
+import org.tvheadend.tvhclient.features.shared.tasks.WakeOnLanTaskCallback;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
 import javax.inject.Inject;
 
+import butterknife.ButterKnife;
 import timber.log.Timber;
 
 // TODO casting needs rework
@@ -48,31 +54,71 @@ import timber.log.Timber;
 // TODO show recording state in details view
 // TODO add option to add recording and directly edit it
 
-public class MainActivity extends BaseActivity implements ToolbarInterface {
+public class MainActivity extends BaseActivity implements ToolbarInterface, WakeOnLanTaskCallback, NavigationDrawerCallback {
 
     private MenuItem mediaRouteMenuItem;
-    @Inject
-    protected SharedPreferences sharedPreferences;
-    @Inject
-    protected AppRepository appRepository;
-    protected boolean isUnlocked;
-    protected boolean isDualPane;
-    protected Toolbar toolbar;
-
     private IntroductoryOverlay introductoryOverlay;
     private CastSession castSession;
     private CastContext castContext;
     private CastStateListener castStateListener;
     private SessionManagerListener<CastSession> castSessionManagerListener;
 
+    private NavigationDrawer navigationDrawer;
+    private int selectedNavigationMenuId;
+    private boolean isUnlocked;
+    private boolean isDualPane;
+
+    @Inject
+    protected SharedPreferences sharedPreferences;
+    @Inject
+    protected AppRepository appRepository;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         setTheme(MiscUtils.getThemeId(this));
         super.onCreate(savedInstanceState);
+        Timber.d("start");
         setContentView(R.layout.main_activity);
         MiscUtils.setLanguage(this);
+        ButterKnife.bind(this);
 
         MainApplication.getComponent().inject(this);
+
+        isUnlocked = MainApplication.getInstance().isUnlocked();
+        isDualPane = findViewById(R.id.details) != null;
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeButtonEnabled(true);
+        }
+
+        navigationDrawer = new NavigationDrawer(this, savedInstanceState, toolbar, appRepository, this);
+        navigationDrawer.createHeader();
+        navigationDrawer.createMenu();
+
+        // When the activity is created it got called by the main activity. Get the initial
+        // navigation menu position and show the associated fragment with it. When the device
+        // was rotated just restore the position from the saved instance.
+        if (savedInstanceState == null) {
+            selectedNavigationMenuId = Integer.parseInt(sharedPreferences.getString("start_screen", "0"));
+        } else {
+            selectedNavigationMenuId = savedInstanceState.getInt("navigationMenuId", NavigationDrawer.MENU_CHANNELS);
+        }
+
+        boolean showCastingMiniController = isUnlocked && sharedPreferences.getBoolean("casting_minicontroller_enabled", false);
+        View miniController = findViewById(R.id.cast_mini_controller);
+        miniController.setVisibility(showCastingMiniController ? View.VISIBLE : View.GONE);
+
+        getSupportFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
+            @Override
+            public void onBackStackChanged() {
+                Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main);
+                navigationDrawer.handleSelection(fragment);
+            }
+        });
 
         GoogleApiAvailability googleApiAvailability = GoogleApiAvailability.getInstance();
         int status = googleApiAvailability.isGooglePlayServicesAvailable(this);
@@ -97,20 +143,13 @@ public class MainActivity extends BaseActivity implements ToolbarInterface {
                     .putCustomAttribute("Google API", "Not available"));
         }
 
-        isDualPane = findViewById(R.id.details) != null;
-
-        toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setHomeButtonEnabled(true);
-        }
-
-        isUnlocked = MainApplication.getInstance().isUnlocked();
-        boolean showCastingMiniController = isUnlocked && sharedPreferences.getBoolean("casting_minicontroller_enabled", false);
-        View miniController = findViewById(R.id.cast_mini_controller);
-        miniController.setVisibility(showCastingMiniController ? View.VISIBLE : View.GONE);
+        // Update the drawer menu so that all available menu items are
+        // shown in case the recording counts have changed or the user has
+        // bought the unlocked version to enable all features
+        navigationDrawer.showConnectionsInDrawerHeader();
+        navigationDrawer.startObservingViewModels();
+        handleDrawerItemSelected(selectedNavigationMenuId);
+        Timber.d("end");
     }
 
     @Override
@@ -123,6 +162,7 @@ public class MainActivity extends BaseActivity implements ToolbarInterface {
 
     @Override
     protected void onResume() {
+        Timber.d("start");
         if (castContext != null) {
             castContext.addCastStateListener(castStateListener);
             castContext.getSessionManager().addSessionManagerListener(castSessionManagerListener, CastSession.class);
@@ -131,6 +171,7 @@ public class MainActivity extends BaseActivity implements ToolbarInterface {
             }
         }
         super.onResume();
+        Timber.d("end");
     }
 
     @Override
@@ -154,13 +195,6 @@ public class MainActivity extends BaseActivity implements ToolbarInterface {
         if (getSupportActionBar() != null) {
             getSupportActionBar().setSubtitle(subtitle);
         }
-    }
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        super.onPrepareOptionsMenu(menu);
-        mediaRouteMenuItem.setVisible(isUnlocked);
-        return true;
     }
 
     @Override
@@ -201,15 +235,109 @@ public class MainActivity extends BaseActivity implements ToolbarInterface {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
         if (grantResults[0] == PackageManager.PERMISSION_GRANTED
                 && permissions[0].equals("android.permission.WRITE_EXTERNAL_STORAGE")) {
-
             Timber.d("Storage permission granted");
             Fragment fragment = getSupportFragmentManager().findFragmentById(isDualPane ? R.id.details : R.id.main);
             if (fragment != null && fragment instanceof DownloadPermissionGrantedInterface) {
                 ((DownloadPermissionGrantedInterface) fragment).downloadRecording();
             }
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (getSupportFragmentManager().getBackStackEntryCount() <= 1) {
+            finish();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    /**
+     * Called when a menu item from the navigation drawer was selected. It loads
+     * and shows the correct fragment or fragments depending on the selected
+     * menu item.
+     *
+     * @param position Selected position within the menu array
+     */
+    private void handleDrawerItemSelected(int position) {
+        Timber.d("start");
+        Fragment fragment = navigationDrawer.getFragmentFromSelection(position);
+        if (fragment != null) {
+            // Save the menu position so we know which one was selected
+            selectedNavigationMenuId = position;
+
+            // Remove the old details fragment if there is one so that it is not visible when
+            // the new main fragment is loaded. It takes a while until the new details
+            // fragment is visible. This prevents showing wrong data when switching screens.
+            if (isDualPane) {
+                Fragment detailsFragment = getSupportFragmentManager().findFragmentById(R.id.details);
+                if (detailsFragment != null) {
+                    getSupportFragmentManager()
+                            .beginTransaction()
+                            .remove(detailsFragment)
+                            .commit();
+                }
+            }
+            // Show the new fragment that represents the selected menu entry.
+            fragment.setArguments(getIntent().getExtras());
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.main, fragment)
+                    .addToBackStack(null)
+                    .commit();
+        }
+        Timber.d("end");
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+
+        switch (selectedNavigationMenuId) {
+            case NavigationDrawer.MENU_STATUS:
+            case NavigationDrawer.MENU_INFORMATION:
+            case NavigationDrawer.MENU_UNLOCKER:
+                if (mediaRouteMenuItem != null) {
+                    mediaRouteMenuItem.setVisible(false);
+                }
+                MenuItem searchMenuItem = menu.findItem(R.id.menu_search);
+                if (searchMenuItem != null) {
+                    searchMenuItem.setVisible(false);
+                }
+                MenuItem reconnectMenuItem = menu.findItem(R.id.menu_refresh);
+                if (reconnectMenuItem != null) {
+                    reconnectMenuItem.setVisible(false);
+                }
+                break;
+            default:
+                mediaRouteMenuItem.setVisible(isUnlocked);
+                break;
+        }
+        return true;
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        // add the values which need to be saved from the drawer and header to the bundle
+        outState = navigationDrawer.saveInstanceState(outState);
+        outState.putInt("navigationMenuId", selectedNavigationMenuId);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void notify(String message) {
+        if (getCurrentFocus() != null) {
+            Snackbar.make(getCurrentFocus(), message, Snackbar.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
+    public void onNavigationMenuSelected(int id) {
+        Timber.d("Newly selected menu id is " + id + ", current selection id is " + selectedNavigationMenuId);
+        if (selectedNavigationMenuId != id) {
+            handleDrawerItemSelected(id);
         }
     }
 }

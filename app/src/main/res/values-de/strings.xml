@@ -21,6 +21,7 @@
     <string name="details">Details</string>
     <string name="settings">Einstellungen</string>
     <string name="refresh">Aktualisieren</string>
+    <string name="reconnect">Neu verbinden</string>
     <string name="tags">Anzeige Filtern</string>
     <string name="play">Abspielen</string>
     <string name="download">Download</string>

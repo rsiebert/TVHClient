@@ -89,20 +89,21 @@ public class TimerRecordingListFragment extends BaseFragment implements Recycler
 
         TimerRecordingViewModel viewModel = ViewModelProviders.of(activity).get(TimerRecordingViewModel.class);
         viewModel.getRecordings().observe(activity, recordings -> {
-
-            recyclerView.setVisibility(View.VISIBLE);
-            progressBar.setVisibility(View.GONE);
-
-            recyclerViewAdapter.addItems(recordings);
+            if (recordings != null) {
+                recyclerViewAdapter.addItems(recordings);
+            }
             if (!TextUtils.isEmpty(searchQuery)) {
                 recyclerViewAdapter.getFilter().filter(searchQuery, this);
             }
-
+            recyclerView.setVisibility(View.VISIBLE);
+            progressBar.setVisibility(View.GONE);
             toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.recordings, recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
 
             if (isDualPane && recyclerViewAdapter.getItemCount() > 0) {
                 showRecordingDetails(selectedListPosition);
             }
+            // Invalidate the menu so that the search menu item is shown in
+            // case the adapter contains items now.
             activity.invalidateOptionsMenu();
         });
     }
@@ -149,6 +150,7 @@ public class TimerRecordingListFragment extends BaseFragment implements Recycler
         }
         menu.findItem(R.id.menu_add).setVisible(isNetworkAvailable);
         menu.findItem(R.id.menu_search).setVisible((recyclerViewAdapter.getItemCount() > 0));
+        menu.findItem(R.id.media_route_menu_item).setVisible(false);
     }
 
     protected void showRecordingDetails(int position) {

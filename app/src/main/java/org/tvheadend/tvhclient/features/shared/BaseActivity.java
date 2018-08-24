@@ -44,62 +44,71 @@ public abstract class BaseActivity extends AppCompatActivity implements NetworkS
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Timber.d("start");
+        isNetworkAvailable = false;
         networkStatusReceiver = new NetworkStatusReceiver(this);
-        isNetworkAvailable = true;
         epgSyncStatusReceiver = new EpgSyncStatusReceiver(this);
         snackbarMessageReceiver = new SnackbarMessageReceiver(this);
+        Timber.d("end");
     }
 
     @Override
     public void onStart() {
         super.onStart();
+        Timber.d("start");
         LocalBroadcastManager.getInstance(this).registerReceiver(snackbarMessageReceiver, new IntentFilter(SnackbarMessageReceiver.ACTION));
         LocalBroadcastManager.getInstance(this).registerReceiver(epgSyncStatusReceiver, new IntentFilter(EpgSyncStatusReceiver.ACTION));
         registerReceiver(networkStatusReceiver, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
+        Timber.d("end");
     }
 
     @Override
     public void onStop() {
         super.onStop();
+        Timber.d("start");
         LocalBroadcastManager.getInstance(this).unregisterReceiver(snackbarMessageReceiver);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(epgSyncStatusReceiver);
         unregisterReceiver(networkStatusReceiver);
+        Timber.d("end");
     }
 
     @Override
     public void onNetworkAvailable() {
-        isNetworkAvailable = true;
         onNetworkAvailabilityChanged(true);
     }
 
     @Override
     public void onNetworkNotAvailable() {
-        isNetworkAvailable = false;
         onNetworkAvailabilityChanged(false);
-
         if (getCurrentFocus() != null) {
             Snackbar.make(getCurrentFocus(), "No network available.", Snackbar.LENGTH_SHORT).show();
         }
     }
 
-    protected void onNetworkAvailabilityChanged(boolean isNetworkAvailable) {
-        if (isNetworkAvailable) {
-            Timber.d("Network is available, starting service to get status from server");
-            startService(new Intent(this, EpgSyncService.class).setAction("getStatus"));
+    protected void onNetworkAvailabilityChanged(boolean isAvailable) {
+        if (isAvailable) {
+            Timber.d("Network is available");
+            if (!isNetworkAvailable) {
+                Timber.d("Network changed from offline to online, starting service");
+                startService(new Intent(this, EpgSyncService.class));
+            }
         } else {
             Timber.d("Network is not available anymore, stopping service");
             stopService(new Intent(this, EpgSyncService.class));
         }
+        isNetworkAvailable = isAvailable;
 
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main);
         if (fragment != null && fragment instanceof NetworkAvailabilityChangedInterface) {
-            ((NetworkAvailabilityChangedInterface) fragment).onNetworkAvailabilityChanged(isNetworkAvailable);
+            ((NetworkAvailabilityChangedInterface) fragment).onNetworkAvailabilityChanged(isAvailable);
         }
 
         fragment = getSupportFragmentManager().findFragmentById(R.id.details);
         if (fragment != null && fragment instanceof NetworkAvailabilityChangedInterface) {
-            ((NetworkAvailabilityChangedInterface) fragment).onNetworkAvailabilityChanged(isNetworkAvailable);
+            ((NetworkAvailabilityChangedInterface) fragment).onNetworkAvailabilityChanged(isAvailable);
         }
+        Timber.d("Network availability changed, invalidating menu");
+        invalidateOptionsMenu();
     }
 
     @Override
@@ -115,8 +124,14 @@ public abstract class BaseActivity extends AppCompatActivity implements NetworkS
                 if (getCurrentFocus() != null) {
                     Snackbar.make(getCurrentFocus(), state.getMessage(), Snackbar.LENGTH_SHORT).show();
                 }
-                isNetworkAvailable = false;
                 onNetworkAvailabilityChanged(false);
+                break;
+
+            case START:
+            case DONE:
+                if (getCurrentFocus() != null) {
+                    Snackbar.make(getCurrentFocus(), state.getMessage(), Snackbar.LENGTH_SHORT).show();
+                }
                 break;
         }
     }

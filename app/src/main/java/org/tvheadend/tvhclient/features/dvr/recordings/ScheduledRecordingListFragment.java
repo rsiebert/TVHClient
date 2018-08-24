@@ -21,20 +21,21 @@ public class ScheduledRecordingListFragment extends RecordingListFragment implem
 
         RecordingViewModel viewModel = ViewModelProviders.of(activity).get(RecordingViewModel.class);
         viewModel.getScheduledRecordings().observe(this, recordings -> {
-
-            recyclerView.setVisibility(View.VISIBLE);
-            progressBar.setVisibility(View.GONE);
-
-            recyclerViewAdapter.addItems(recordings);
+            if (recordings != null) {
+                recyclerViewAdapter.addItems(recordings);
+            }
             if (!TextUtils.isEmpty(searchQuery)) {
                 recyclerViewAdapter.getFilter().filter(searchQuery, this);
             }
-
+            recyclerView.setVisibility(View.VISIBLE);
+            progressBar.setVisibility(View.GONE);
             toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.recordings, recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
 
             if (isDualPane && recyclerViewAdapter.getItemCount() > 0) {
                 showRecordingDetails(selectedListPosition);
             }
+            // Invalidate the menu so that the search menu item is shown in
+            // case the adapter contains items now.
             activity.invalidateOptionsMenu();
         });
     }

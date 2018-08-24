@@ -26,7 +26,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.TaskStackBuilder;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.features.navigation.NavigationActivity;
+import org.tvheadend.tvhclient.features.MainActivity;
 
 public class SettingsUserInterfaceFragment extends BasePreferenceFragment implements Preference.OnPreferenceClickListener {
 
@@ -60,7 +60,7 @@ public class SettingsUserInterfaceFragment extends BasePreferenceFragment implem
 
     private void handlePreferenceThemeSelected() {
         TaskStackBuilder.create(getActivity())
-                .addNextIntent(new Intent(getActivity(), NavigationActivity.class))
+                .addNextIntent(new Intent(getActivity(), MainActivity.class))
                 .addNextIntent(getActivity().getIntent())
                 .startActivities();
     }

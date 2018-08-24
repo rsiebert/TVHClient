@@ -7,6 +7,7 @@ import android.provider.SearchRecentSuggestions;
 import android.support.v4.app.Fragment;
 
 import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.features.MainActivity;
 import org.tvheadend.tvhclient.features.channels.ChannelListFragment;
 import org.tvheadend.tvhclient.features.dvr.recordings.CompletedRecordingListFragment;
 import org.tvheadend.tvhclient.features.dvr.recordings.FailedRecordingListFragment;
@@ -15,12 +16,11 @@ import org.tvheadend.tvhclient.features.dvr.recordings.ScheduledRecordingListFra
 import org.tvheadend.tvhclient.features.dvr.series_recordings.SeriesRecordingListFragment;
 import org.tvheadend.tvhclient.features.dvr.timer_recordings.TimerRecordingListFragment;
 import org.tvheadend.tvhclient.features.epg.ProgramGuideFragment;
-import org.tvheadend.tvhclient.features.navigation.NavigationActivity;
 import org.tvheadend.tvhclient.features.programs.ProgramListFragment;
 
 import timber.log.Timber;
 
-public class SearchActivity extends NavigationActivity {
+public class SearchActivity extends MainActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

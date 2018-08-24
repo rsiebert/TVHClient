@@ -53,7 +53,7 @@ public class ChannelRecyclerViewAdapter extends RecyclerView.Adapter<ChannelView
         onBindViewHolder(holder, position);
     }
 
-    void addItems(List<Channel> list) {
+    void addItems(@NonNull List<Channel> list) {
         updateRecordingState(list, recordingList);
 
         DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new ChannelListDiffCallback(channelList, list));

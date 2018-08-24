@@ -21,7 +21,7 @@
             android:value="@integer/google_play_services_version" />
         <meta-data
             android:name="android.app.default_searchable"
-            android:value=".activities.SearchResultActivity" />
+            android:value=".features.shared.SearchActivity" />
         <meta-data
             android:name="android.app.searchable"
             android:resource="@xml/searchable" />
@@ -57,8 +57,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".features.search.SearchActivity"
-            android:launchMode="singleTop">
+            android:name=".features.search.SearchActivity">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -90,7 +89,6 @@
         <activity android:name=".features.dvr.recordings.RecordingDetailsActivity" />
         <activity android:name=".features.changelog.ChangeLogActivity" />
         <activity android:name=".features.MainActivity" />
-        <activity android:name=".features.navigation.NavigationActivity" />
         <activity
             android:name=".features.programs.ProgramDetailsActivity"
             android:excludeFromRecents="true"
@@ -110,6 +108,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".features.playback.player.PlaybackSession" />
 
     </application>
 </manifest>

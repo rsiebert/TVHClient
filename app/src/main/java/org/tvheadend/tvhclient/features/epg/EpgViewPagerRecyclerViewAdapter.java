@@ -96,13 +96,11 @@ public class EpgViewPagerRecyclerViewAdapter extends RecyclerView.Adapter<EpgVie
         };
     }
 
-    public void addItems(List<ChannelSubset> channels) {
+    public void addItems(@NonNull List<ChannelSubset> channels) {
         channelList.clear();
         channelListFiltered.clear();
-
         channelList.addAll(channels);
         channelListFiltered.addAll(channels);
-
         notifyDataSetChanged();
     }
 }

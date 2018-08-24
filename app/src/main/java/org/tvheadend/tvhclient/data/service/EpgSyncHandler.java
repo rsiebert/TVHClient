@@ -75,4 +75,8 @@ public class EpgSyncHandler {
         }
         simpleHtspConnection = null;
     }
+
+    public SimpleHtspConnection getConnection() {
+        return simpleHtspConnection;
+    }
 }

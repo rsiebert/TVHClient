@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-
     <PreferenceCategory android:title="@string/pref_crash_reporting_settings">
         <CheckBoxPreference
             android:defaultValue="true"
@@ -40,18 +39,44 @@
             android:title="@string/pref_connection_timeout" />
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="EPG">
+        <ListPreference
+            android:defaultValue="@string/pref_default_epg_max_time"
+            android:dialogTitle="EPG Sync Duration"
+            android:entries="@array/epg_max_time_names"
+            android:entryValues="@array/epg_max_time_values"
+            android:key="epg_max_time"
+            android:summary="Amount of EPG data to sync"
+            android:title="EPG Sync Duration" />
+    </PreferenceCategory>
+
     <PreferenceCategory android:title="@string/pref_misc">
         <Preference
             android:key="clear_search_history"
-            android:title="@string/pref_clear_search_history" >
-        </Preference>
+            android:title="@string/pref_clear_search_history"></Preference>
         <Preference
             android:key="clear_icon_cache"
-            android:title="@string/pref_clear_icon_cache" >
-        </Preference>
+            android:title="@string/pref_clear_icon_cache"></Preference>
         <Preference
             android:key="clear_database"
             android:summary="Remove all information from the database. This includes all channels, channel tags, programs and recordings from the database."
             android:title="Clear database" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Playback">
+        <CheckBoxPreference
+            android:defaultValue="@bool/pref_default_shield_workaround_enabled"
+            android:key="shield_workaround_enabled"
+            android:title="Enable nVidia Shield Workaround" />
+
+        <CheckBoxPreference
+            android:defaultValue="@bool/pref_default_debug_text_view_enabled"
+            android:key="debug_text_view_enabled"
+            android:title="Enable Debug Text View" />
+
+        <CheckBoxPreference
+            android:defaultValue="@bool/pref_default_timeshift_enabled"
+            android:key="timeshift_enabled"
+            android:title="Enable timeshift support" />
     </PreferenceCategory>
 </PreferenceScreen>

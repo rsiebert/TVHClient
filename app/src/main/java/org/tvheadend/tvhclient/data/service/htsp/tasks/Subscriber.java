@@ -46,12 +46,11 @@ public class Subscriber implements HtspMessage.Listener, Authenticator.Listener 
     // Copy of TvInputManager.TIME_SHIFT_INVALID_TIME, available on M+ Only.
     public static final long INVALID_TIMESHIFT_TIME = -9223372036854775808L;
 
-    private static final Set<String> HANDLED_METHODS = new HashSet<>(Arrays.asList(new String[]{
-            "subscriptionStart", "subscriptionStatus", "subscriptionStop",
+    private static final Set<String> HANDLED_METHODS = new HashSet<>(Arrays.asList("subscriptionStart", "subscriptionStatus", "subscriptionStop",
             "queueStatus", "signalStatus", "timeshiftStatus", "muxpkt",
-            "subscriptionSkip", "subscriptionSpeed",
+            "subscriptionSkip", "subscriptionSpeed"
             // "subscriptionGrace"
-    }));
+    ));
 
     private static final AtomicInteger subscriptionCount = new AtomicInteger();
 

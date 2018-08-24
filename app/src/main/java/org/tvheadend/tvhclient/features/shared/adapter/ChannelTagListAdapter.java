@@ -17,7 +17,7 @@ import com.squareup.picasso.Picasso;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.ChannelTag;
-import org.tvheadend.tvhclient.features.shared.UIUtils;
+import org.tvheadend.tvhclient.utils.UIUtils;
 
 import java.util.List;
 

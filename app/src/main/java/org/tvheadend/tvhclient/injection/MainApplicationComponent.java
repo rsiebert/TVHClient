@@ -18,12 +18,13 @@ import org.tvheadend.tvhclient.features.dvr.timer_recordings.TimerRecordingViewM
 import org.tvheadend.tvhclient.features.epg.EpgViewModel;
 import org.tvheadend.tvhclient.features.epg.EpgViewPagerFragment;
 import org.tvheadend.tvhclient.features.playback.BasePlaybackActivity;
+import org.tvheadend.tvhclient.features.playback.player.PlaybackSession;
 import org.tvheadend.tvhclient.features.programs.ProgramViewModel;
 import org.tvheadend.tvhclient.features.settings.BasePreferenceFragment;
 import org.tvheadend.tvhclient.features.settings.ConnectionViewModel;
 import org.tvheadend.tvhclient.features.settings.SettingsListConnectionsFragment;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
-import org.tvheadend.tvhclient.features.shared.MenuUtils;
+import org.tvheadend.tvhclient.utils.MenuUtils;
 import org.tvheadend.tvhclient.features.startup.StartupFragment;
 import org.tvheadend.tvhclient.injection.modules.EpgSyncHandlerModule;
 import org.tvheadend.tvhclient.injection.modules.MainApplicationModule;
@@ -92,4 +93,6 @@ public interface MainApplicationComponent {
     void inject(EpgViewPagerFragment epgViewPagerFragment);
 
     void inject(EpgSyncIntentService epgSyncIntentService);
+
+    void inject(PlaybackSession playbackSession);
 }

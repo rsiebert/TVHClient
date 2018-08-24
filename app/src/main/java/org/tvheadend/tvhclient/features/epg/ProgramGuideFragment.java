@@ -154,8 +154,9 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
             channelListRecyclerView.setVisibility(View.VISIBLE);
             programViewPager.setVisibility(View.VISIBLE);
 
-            channelListRecyclerViewAdapter.addItems(channels);
-
+            if (channels != null) {
+                channelListRecyclerViewAdapter.addItems(channels);
+            }
             // Show either all channels or the name of the selected
             // channel tag and the channel count in the toolbar
             ChannelTag channelTag = viewModel.getChannelTag();
@@ -217,10 +218,10 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
 
     @Override
     public void onChannelTagIdSelected(int id) {
-        viewModel.setChannelTagId(id);
         channelListRecyclerView.setVisibility(View.GONE);
         programViewPager.setVisibility(View.GONE);
         progressBar.setVisibility(View.VISIBLE);
+        viewModel.setChannelTagId(id);
 
         // Clear the programs in the viewpager fragment
         for (int i = 0; i < viewPagerAdapter.getRegisteredFragmentCount(); i++) {

@@ -23,7 +23,7 @@ import android.widget.TextView;
 
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.features.shared.UIUtils;
+import org.tvheadend.tvhclient.utils.UIUtils;
 import org.tvheadend.tvhclient.features.shared.callbacks.ChannelTagSelectionCallback;
 
 import java.util.Calendar;

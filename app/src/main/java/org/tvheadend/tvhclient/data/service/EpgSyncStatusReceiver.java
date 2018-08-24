@@ -50,14 +50,14 @@ public class EpgSyncStatusReceiver extends BroadcastReceiver {
                 case CONNECTED:
                     callback.onEpgTaskStateChanged(
                             new EpgSyncTaskState.EpgSyncTaskStateBuilder()
-                                    .message("Connected")
+                                    .message("Connected to server")
                                     .build());
                     break;
                 case CONNECTING:
                     callback.onEpgTaskStateChanged(
                             new EpgSyncTaskState.EpgSyncTaskStateBuilder()
                                     .state(State.START)
-                                    .message("Connecting")
+                                    .message("Connecting to server...")
                                     .build());
                     break;
                 case FAILED:

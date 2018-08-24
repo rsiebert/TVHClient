@@ -10,6 +10,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.ChannelSubset;
@@ -19,6 +20,7 @@ import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallba
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import timber.log.Timber;
 
 public class EpgViewPagerViewHolder extends RecyclerView.ViewHolder implements RecyclerViewClickCallback {
 
@@ -32,6 +34,8 @@ public class EpgViewPagerViewHolder extends RecyclerView.ViewHolder implements R
     protected RecyclerView recyclerView;
     @BindView(R.id.progress_bar)
     ProgressBar progressBar;
+    @BindView(R.id.no_programs)
+    TextView noProgramsTextView;
 
     EpgViewPagerViewHolder(FragmentActivity activity, View view, float pixelsPerMinute, long startTime, long endTime, RecyclerView.RecycledViewPool viewPool) {
         super(view);
@@ -50,6 +54,7 @@ public class EpgViewPagerViewHolder extends RecyclerView.ViewHolder implements R
 
         recyclerView.setVisibility(View.GONE);
         progressBar.setVisibility(View.VISIBLE);
+        noProgramsTextView.setVisibility(View.GONE);
         viewModel = ViewModelProviders.of(activity).get(EpgViewModel.class);
     }
 
@@ -82,10 +87,16 @@ public class EpgViewPagerViewHolder extends RecyclerView.ViewHolder implements R
 
     public void bindData(ChannelSubset channelSubset) {
         viewModel.getProgramsByChannelAndBetweenTime(channelSubset.getId(), startTime, endTime).observe(activity, programs -> {
-            if (programs != null) {
+            if (programs != null && programs.size() > 0) {
+                Timber.d("Loaded " + programs.size() + " programs for channel " + channelSubset.getName());
                 recyclerViewAdapter.addItems(programs);
                 recyclerView.setVisibility(View.VISIBLE);
                 progressBar.setVisibility(View.GONE);
+            } else {
+                Timber.d("No program data available for channel " + channelSubset.getName());
+                recyclerView.setVisibility(View.GONE);
+                progressBar.setVisibility(View.GONE);
+                noProgramsTextView.setVisibility(View.VISIBLE);
             }
         });
         viewModel.getRecordingsByChannel(channelSubset.getId()).observe(activity, recordings -> {

@@ -134,27 +134,31 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         HtspMessage enableAsyncMetadataRequest = new HtspMessage();
         enableAsyncMetadataRequest.put("method", "enableAsyncMetadata");
 
-        final long epgMaxTime = 2;
-        final long lastUpdate = connection.getLastUpdate();
-        final long lastSyncTime = lastUpdate + (epgMaxTime * 60 * 1000);
-        final long currentTimeInSeconds = (System.currentTimeMillis() / 1000L);
+        boolean lastUpdateEnabled = sharedPreferences.getBoolean("epg_last_update_enabled", false);
+        long epgMaxTime = Long.parseLong(sharedPreferences.getString("epg_max_time", context.getResources().getString(R.string.pref_default_epg_max_time)));
+        long currentTimeInSeconds = (System.currentTimeMillis() / 1000L);
 
-        Timber.d("time difference is " + (currentTimeInSeconds - lastSyncTime) +
-                " and manual sync is required " + connection.isSyncRequired());
+        Timber.d("Connection last update: " + connection.getLastUpdate());
+        Timber.d("epgMaxTime: " + epgMaxTime);
+        Timber.d("currentTimeInSeconds: " + currentTimeInSeconds);
+        Timber.d("Connection sync required: " + connection.isSyncRequired());
 
-        // Only fetch new epg data if the last sync time including the
-        // epg fetch time is less than the current time.
-        if (lastSyncTime < currentTimeInSeconds || connection.isSyncRequired()) {
+        // Only fetch new epg data if the last update time plus the epg fetch
+        // time is older than the current time or if a sync is required.
+        if ((connection.getLastUpdate() + epgMaxTime) < currentTimeInSeconds
+                || connection.isSyncRequired()) {
             Timber.d("Requesting epg data during initial sync");
 
-            // Only provide metadata that has changed since the last update time. Whenever the
-            // message eventUpdate or eventAdd is received from the server the current
-            // time will be stored for the active connection. This is also the case when the
-            // epg data is fetched periodically in the background. Additionally load only
-            // maximum time of epg data to reduce the received data during sync
+            // Load only the defined time of epg data to reduce the received data during sync
             enableAsyncMetadataRequest.put("epg", 1);
-            enableAsyncMetadataRequest.put("epgMaxTime", epgMaxTime);
-            enableAsyncMetadataRequest.put("lastUpdate", currentTimeInSeconds);
+            enableAsyncMetadataRequest.put("epgMaxTime", epgMaxTime + (System.currentTimeMillis() / 1000L));
+
+            if (lastUpdateEnabled) {
+                Timber.d("Setting last update field to " + connection.getLastUpdate());
+                enableAsyncMetadataRequest.put("lastUpdate", connection.getLastUpdate());
+            } else {
+                Timber.d("Skipping lastUpdate field, disabled by preference");
+            }
         } else {
             Timber.d("Not requesting epg data during initial sync");
         }

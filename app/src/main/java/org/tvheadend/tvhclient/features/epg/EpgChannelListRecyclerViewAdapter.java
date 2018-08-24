@@ -43,16 +43,13 @@ public class EpgChannelListRecyclerViewAdapter extends RecyclerView.Adapter impl
         ((EpgChannelViewHolder) holder).bindData(context, channel, clickCallback);
     }
 
-    void addItems(List<ChannelSubset> list) {
+    void addItems(@NonNull List<ChannelSubset> list) {
         channelList.clear();
         channelListFiltered.clear();
+        channelList.addAll(list);
+        channelListFiltered.addAll(list);
 
-        if (list != null) {
-            channelList.addAll(list);
-            channelListFiltered.addAll(list);
-        }
-
-        if (list == null || selectedPosition > list.size()) {
+        if (selectedPosition > list.size()) {
             selectedPosition = 0;
         }
         notifyDataSetChanged();

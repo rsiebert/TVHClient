@@ -186,9 +186,7 @@ public class Connection {
         if (matcher.matches()) {
             pattern = Patterns.IP_ADDRESS;
             matcher = pattern.matcher(address);
-            if (!matcher.matches()) {
-                return false;
-            }
+            return matcher.matches();
         }
         return true;
     }

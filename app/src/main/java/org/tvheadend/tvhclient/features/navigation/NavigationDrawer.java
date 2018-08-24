@@ -1,14 +1,18 @@
 package org.tvheadend.tvhclient.features.navigation;
 
-import android.app.Activity;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.AttrRes;
+import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
 import android.view.View;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.ContentViewEvent;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
@@ -24,32 +28,50 @@ import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Connection;
-import org.tvheadend.tvhclient.data.service.EpgSyncService;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
-import org.tvheadend.tvhclient.features.startup.StartupActivity;
+import org.tvheadend.tvhclient.data.service.EpgSyncService;
+import org.tvheadend.tvhclient.features.channels.ChannelListFragment;
+import org.tvheadend.tvhclient.features.channels.ChannelViewModel;
+import org.tvheadend.tvhclient.features.dvr.recordings.CompletedRecordingListFragment;
+import org.tvheadend.tvhclient.features.dvr.recordings.FailedRecordingListFragment;
+import org.tvheadend.tvhclient.features.dvr.recordings.RecordingViewModel;
+import org.tvheadend.tvhclient.features.dvr.recordings.RemovedRecordingListFragment;
+import org.tvheadend.tvhclient.features.dvr.recordings.ScheduledRecordingListFragment;
+import org.tvheadend.tvhclient.features.dvr.series_recordings.SeriesRecordingListFragment;
+import org.tvheadend.tvhclient.features.dvr.series_recordings.SeriesRecordingViewModel;
+import org.tvheadend.tvhclient.features.dvr.timer_recordings.TimerRecordingListFragment;
+import org.tvheadend.tvhclient.features.dvr.timer_recordings.TimerRecordingViewModel;
+import org.tvheadend.tvhclient.features.epg.ProgramGuideFragment;
+import org.tvheadend.tvhclient.features.information.InfoFragment;
+import org.tvheadend.tvhclient.features.information.StatusFragment;
+import org.tvheadend.tvhclient.features.purchase.UnlockerFragment;
+import org.tvheadend.tvhclient.features.settings.SettingsActivity;
+import org.tvheadend.tvhclient.features.startup.SplashActivity;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import timber.log.Timber;
+
 public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, Drawer.OnDrawerItemClickListener {
 
     // The index for the navigation drawer menus
-    static final int MENU_CHANNELS = 0;
-    static final int MENU_PROGRAM_GUIDE = 1;
-    static final int MENU_COMPLETED_RECORDINGS = 2;
-    static final int MENU_SCHEDULED_RECORDINGS = 3;
-    static final int MENU_SERIES_RECORDINGS = 4;
-    static final int MENU_TIMER_RECORDINGS = 5;
-    static final int MENU_FAILED_RECORDINGS = 6;
-    static final int MENU_REMOVED_RECORDINGS = 7;
-    static final int MENU_STATUS = 8;
-    static final int MENU_INFORMATION = 9;
-    static final int MENU_SETTINGS = 10;
-    static final int MENU_UNLOCKER = 11;
+    public static final int MENU_CHANNELS = 0;
+    public static final int MENU_PROGRAM_GUIDE = 1;
+    public static final int MENU_COMPLETED_RECORDINGS = 2;
+    public static final int MENU_SCHEDULED_RECORDINGS = 3;
+    public static final int MENU_SERIES_RECORDINGS = 4;
+    public static final int MENU_TIMER_RECORDINGS = 5;
+    public static final int MENU_FAILED_RECORDINGS = 6;
+    public static final int MENU_REMOVED_RECORDINGS = 7;
+    public static final int MENU_STATUS = 8;
+    public static final int MENU_INFORMATION = 9;
+    public static final int MENU_SETTINGS = 10;
+    public static final int MENU_UNLOCKER = 11;
 
     private final Bundle savedInstanceState;
-    private final Activity activity;
+    private final AppCompatActivity activity;
     private final Toolbar toolbar;
     private final NavigationDrawerCallback callback;
     private final boolean isUnlocked;
@@ -57,16 +79,19 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
     private Drawer result;
     private AppRepository appRepository;
 
-    NavigationDrawer(Activity activity, Bundle savedInstanceState, Toolbar toolbar, AppRepository appRepository, NavigationDrawerCallback callback) {
+    public NavigationDrawer(AppCompatActivity activity, Bundle savedInstanceState, Toolbar toolbar, AppRepository appRepository, NavigationDrawerCallback callback) {
+        Timber.d("start");
         this.activity = activity;
         this.savedInstanceState = savedInstanceState;
         this.toolbar = toolbar;
         this.callback = callback;
         this.isUnlocked = MainApplication.getInstance().isUnlocked();
         this.appRepository = appRepository;
+        Timber.d("end");
     }
 
-    void createHeader() {
+    public void createHeader() {
+        Timber.d("start");
         headerResult = new AccountHeaderBuilder()
                 .withActivity(activity)
                 .withCompactStyle(true)
@@ -76,9 +101,11 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
                 .withOnAccountHeaderListener(this)
                 .withSavedInstance(savedInstanceState)
                 .build();
+        Timber.d("end");
     }
 
-    void createMenu() {
+    public void createMenu() {
+        Timber.d("start");
         BadgeStyle badgeStyle = new BadgeStyle()
                 .withColorRes(getResourceIdFromAttr(R.attr.material_drawer_badge));
 
@@ -152,6 +179,7 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
         if (!isUnlocked) {
             result.addItem(extrasItem);
         }
+        Timber.d("end");
     }
 
     private int getResourceIdFromAttr(@AttrRes int attr) {
@@ -160,7 +188,7 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
         return typedValue.resourceId;
     }
 
-    void updateDrawerHeader() {
+    public void showConnectionsInDrawerHeader() {
         // Remove old profiles from the header
         List<Long> profileIdList = new ArrayList<>();
         for (IProfile profile : headerResult.getProfiles()) {
@@ -195,24 +223,12 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
 
         new MaterialDialog.Builder(activity)
                 .title("Connect to new server?")
-                .content("Do you want to connect to the selected server?")
+                .content("The application will be restarted.")
                 .negativeText(R.string.cancel)
                 .positiveText("Connect")
                 .onPositive((dialog, which) -> {
-                    // Update the currently active connection
-                    Connection connection = appRepository.getConnectionData().getItemById((int) profile.getIdentifier());
-                    connection.setActive(true);
-                    appRepository.getConnectionData().updateItem(connection);
-                    headerResult.setActiveProfile(connection.getId());
-
-                    // Stop the service to reload the newly selected connection
-                    activity.stopService(new Intent(activity, EpgSyncService.class));
-
-                    // Restart the application
-                    Intent intent = new Intent(activity, StartupActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    activity.startActivity(intent);
-                    activity.finish();
+                    headerResult.setActiveProfile(profile.getIdentifier());
+                    handleNewServerSelected((int) profile.getIdentifier());
                 })
                 .onNegative(((dialog, which) -> {
                     Connection connection = appRepository.getConnectionData().getActiveItem();
@@ -221,6 +237,26 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
                 .show();
 
         return false;
+    }
+
+    /**
+     * A new server was selected in the navigation header.
+     * Stops the service and sets the newly selected connection as the active one.
+     * The app will be restarted to show the data from the new server.
+     *
+     * @param id The connection id of the newly selected server
+     */
+    private void handleNewServerSelected(int id) {
+        activity.stopService(new Intent(activity, EpgSyncService.class));
+
+        Connection connection = appRepository.getConnectionData().getItemById(id);
+        connection.setActive(true);
+        appRepository.getConnectionData().updateItem(connection);
+
+        Intent intent = new Intent(activity, SplashActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        activity.startActivity(intent);
+        activity.finish();
     }
 
     @Override
@@ -233,41 +269,141 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
         return true;
     }
 
-    void updateSeriesRecordingBadge(int size) {
-        result.updateBadge(MENU_SERIES_RECORDINGS, new StringHolder(size + ""));
-    }
-
-    void updateTimerRecordingBadge(int size) {
-        result.updateBadge(MENU_TIMER_RECORDINGS, new StringHolder(size + ""));
-    }
-
-    void updateCompletedRecordingBadge(int size) {
-        result.updateBadge(MENU_COMPLETED_RECORDINGS, new StringHolder(size + ""));
-    }
-
-    void updateScheduledRecordingBadge(int size) {
-        result.updateBadge(MENU_SCHEDULED_RECORDINGS, new StringHolder(size + ""));
-    }
-
-    void updateFailedRecordingBadge(int size) {
-        result.updateBadge(MENU_FAILED_RECORDINGS, new StringHolder(size + ""));
-    }
-
-    void updateRemovedRecordingBadge(int size) {
-        result.updateBadge(MENU_REMOVED_RECORDINGS, new StringHolder(size + ""));
-    }
-
-    void updateChannelBadge(int size) {
-        result.updateBadge(MENU_CHANNELS, new StringHolder(size + ""));
-    }
-
     public void setSelection(int id) {
         result.setSelection(id, false);
     }
 
-    Bundle saveInstanceState(Bundle outState) {
+    public Bundle saveInstanceState(Bundle outState) {
         outState = result.saveInstanceState(outState);
         outState = headerResult.saveInstanceState(outState);
         return outState;
+    }
+
+    public void startObservingViewModels() {
+        Timber.d("start");
+        ChannelViewModel channelViewModel = ViewModelProviders.of(activity).get(ChannelViewModel.class);
+        channelViewModel.getNumberOfChannels().observe(activity, count -> {
+            result.updateBadge(MENU_CHANNELS, new StringHolder(count + ""));
+        });
+
+        SeriesRecordingViewModel seriesRecordingViewModel = ViewModelProviders.of(activity).get(SeriesRecordingViewModel.class);
+        seriesRecordingViewModel.getNumberOfRecordings().observe(activity, count -> {
+            result.updateBadge(MENU_SERIES_RECORDINGS, new StringHolder(count + ""));
+        });
+
+        TimerRecordingViewModel timerRecordingViewModel = ViewModelProviders.of(activity).get(TimerRecordingViewModel.class);
+        timerRecordingViewModel.getNumberOfRecordings().observe(activity, count -> {
+            result.updateBadge(MENU_TIMER_RECORDINGS, new StringHolder(count + ""));
+        });
+
+        RecordingViewModel recordingViewModel = ViewModelProviders.of(activity).get(RecordingViewModel.class);
+        recordingViewModel.getNumberOfCompletedRecordings().observe(activity, count -> {
+            result.updateBadge(MENU_COMPLETED_RECORDINGS, new StringHolder(count + ""));
+        });
+        recordingViewModel.getNumberOfScheduledRecordings().observe(activity, count -> {
+            result.updateBadge(MENU_SCHEDULED_RECORDINGS, new StringHolder(count + ""));
+        });
+        recordingViewModel.getNumberOfFailedRecordings().observe(activity, count -> {
+            result.updateBadge(MENU_FAILED_RECORDINGS, new StringHolder(count + ""));
+        });
+        recordingViewModel.getNumberOfRemovedRecordings().observe(activity, count -> {
+            result.updateBadge(MENU_REMOVED_RECORDINGS, new StringHolder(count + ""));
+        });
+        Timber.d("end");
+    }
+
+    public void handleSelection(Fragment fragment) {
+        if (fragment instanceof ChannelListFragment) {
+            setSelection(MENU_CHANNELS);
+        } else if (fragment instanceof ProgramGuideFragment) {
+            setSelection(MENU_PROGRAM_GUIDE);
+        } else if (fragment instanceof CompletedRecordingListFragment) {
+            setSelection(MENU_COMPLETED_RECORDINGS);
+        } else if (fragment instanceof ScheduledRecordingListFragment) {
+            setSelection(MENU_SCHEDULED_RECORDINGS);
+        } else if (fragment instanceof SeriesRecordingListFragment) {
+            setSelection(MENU_SERIES_RECORDINGS);
+        } else if (fragment instanceof TimerRecordingListFragment) {
+            setSelection(MENU_TIMER_RECORDINGS);
+        } else if (fragment instanceof FailedRecordingListFragment) {
+            setSelection(MENU_FAILED_RECORDINGS);
+        } else if (fragment instanceof RemovedRecordingListFragment) {
+            setSelection(MENU_REMOVED_RECORDINGS);
+        } else if (fragment instanceof StatusFragment) {
+            setSelection(MENU_STATUS);
+        } else if (fragment instanceof InfoFragment) {
+            setSelection(MENU_INFORMATION);
+        } else if (fragment instanceof UnlockerFragment) {
+            setSelection(MENU_UNLOCKER);
+        }
+    }
+
+    public Fragment getFragmentFromSelection(int position) {
+        Intent intent;
+        Fragment fragment = null;
+        switch (position) {
+            case NavigationDrawer.MENU_CHANNELS:
+                Answers.getInstance().logContentView(new ContentViewEvent()
+                        .putContentName("Channel screen"));
+                fragment = new ChannelListFragment();
+                break;
+            case NavigationDrawer.MENU_PROGRAM_GUIDE:
+                Answers.getInstance().logContentView(new ContentViewEvent()
+                        .putContentName("Program guide screen"));
+                fragment = new ProgramGuideFragment();
+                break;
+            case NavigationDrawer.MENU_COMPLETED_RECORDINGS:
+                Answers.getInstance().logContentView(new ContentViewEvent()
+                        .putContentName("Completed recordings screen"));
+                fragment = new CompletedRecordingListFragment();
+                break;
+            case NavigationDrawer.MENU_SCHEDULED_RECORDINGS:
+                Answers.getInstance().logContentView(new ContentViewEvent()
+                        .putContentName("Scheduled recordings screen"));
+                fragment = new ScheduledRecordingListFragment();
+                break;
+            case NavigationDrawer.MENU_SERIES_RECORDINGS:
+                Answers.getInstance().logContentView(new ContentViewEvent()
+                        .putContentName("Series recordings screen"));
+                fragment = new SeriesRecordingListFragment();
+                break;
+            case NavigationDrawer.MENU_TIMER_RECORDINGS:
+                Answers.getInstance().logContentView(new ContentViewEvent()
+                        .putContentName("Timer recordings screen"));
+                fragment = new TimerRecordingListFragment();
+                break;
+            case NavigationDrawer.MENU_FAILED_RECORDINGS:
+                Answers.getInstance().logContentView(new ContentViewEvent()
+                        .putContentName("Failed recordings screen"));
+                fragment = new FailedRecordingListFragment();
+                break;
+            case NavigationDrawer.MENU_REMOVED_RECORDINGS:
+                Answers.getInstance().logContentView(new ContentViewEvent()
+                        .putContentName("Removed recordings screen"));
+                fragment = new RemovedRecordingListFragment();
+                break;
+            case NavigationDrawer.MENU_STATUS:
+                Answers.getInstance().logContentView(new ContentViewEvent()
+                        .putContentName("Status screen"));
+                fragment = new StatusFragment();
+                break;
+            case NavigationDrawer.MENU_INFORMATION:
+                Answers.getInstance().logContentView(new ContentViewEvent()
+                        .putContentName("Information screen"));
+                fragment = new InfoFragment();
+                break;
+            case NavigationDrawer.MENU_SETTINGS:
+                Answers.getInstance().logContentView(new ContentViewEvent()
+                        .putContentName("Settings screen"));
+                intent = new Intent(activity, SettingsActivity.class);
+                activity.startActivity(intent);
+                break;
+            case NavigationDrawer.MENU_UNLOCKER:
+                Answers.getInstance().logContentView(new ContentViewEvent()
+                        .putContentName("Unlocker screen"));
+                fragment = new UnlockerFragment();
+                break;
+        }
+        return fragment;
     }
 }

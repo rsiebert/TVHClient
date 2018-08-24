@@ -11,4 +11,6 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="toolbar_double_height">112dp</dimen>
     <dimen name="cardview_toolbar_spacer">64dp</dimen>
+
+    <dimen name="subtitle_minimum_font_size">13sp</dimen>
 </resources>
