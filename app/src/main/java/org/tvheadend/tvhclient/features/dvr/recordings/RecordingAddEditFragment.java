@@ -65,6 +65,10 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
     EditText subtitleEditText;
     @BindView(R.id.subtitle_label)
     TextView subtitleLabelTextView;
+    @BindView(R.id.summary)
+    EditText summaryEditText;
+    @BindView(R.id.summary_label)
+    TextView summaryLabelTextView;
     @BindView(R.id.description)
     EditText descriptionEditText;
     @BindView(R.id.description_label)
@@ -131,6 +135,10 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
         subtitleLabelTextView.setVisibility(serverStatus.getHtspVersion() >= 21 ? View.VISIBLE : View.GONE);
         subtitleEditText.setVisibility(serverStatus.getHtspVersion() >= 21 ? View.VISIBLE : View.GONE);
         subtitleEditText.setText(recording.getSubtitle());
+
+        summaryLabelTextView.setVisibility(serverStatus.getHtspVersion() >= 21 ? View.VISIBLE : View.GONE);
+        summaryEditText.setVisibility(serverStatus.getHtspVersion() >= 21 ? View.VISIBLE : View.GONE);
+        summaryEditText.setText(recording.getSummary());
 
         descriptionLabelTextView.setVisibility(serverStatus.getHtspVersion() >= 21 ? View.VISIBLE : View.GONE);
         descriptionEditText.setVisibility(serverStatus.getHtspVersion() >= 21 ? View.VISIBLE : View.GONE);
@@ -262,6 +270,7 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
         Intent intent = new Intent(activity, EpgSyncService.class);
         intent.putExtra("title", recording.getTitle());
         intent.putExtra("subtitle", recording.getSubtitle());
+        intent.putExtra("summary", recording.getSummary());
         intent.putExtra("description", recording.getDescription());
         // Pass on seconds not milliseconds
         intent.putExtra("stop", recording.getStop() / 1000);
