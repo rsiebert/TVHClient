@@ -96,10 +96,10 @@
             android:taskAffinity="" />
         <activity android:name=".features.information.InfoActivity" />
         <activity android:name=".features.purchase.UnlockerActivity" />
-        <activity android:name=".features.playback.PlayRecordingActivity" />
-        <activity android:name=".features.playback.PlayChannelActivity" />
-        <activity android:name=".features.playback.CastChannelActivity" />
-        <activity android:name=".features.playback.CastRecordingActivity" />
+        <activity android:name=".features.streaming.external.PlayRecordingActivity" />
+        <activity android:name=".features.streaming.external.PlayChannelActivity" />
+        <activity android:name=".features.streaming.external.CastChannelActivity" />
+        <activity android:name=".features.streaming.external.CastRecordingActivity" />
         <activity
             android:name=".features.startup.SplashActivity"
             android:theme="@style/SplashTheme">
@@ -108,7 +108,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".features.playback.player.PlaybackSession" />
+        <activity android:name=".features.streaming.internal.HtspPlaybackActivity" />
 
     </application>
 </manifest>
