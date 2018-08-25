@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.features.playback;
+package org.tvheadend.tvhclient.features.streaming.external;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

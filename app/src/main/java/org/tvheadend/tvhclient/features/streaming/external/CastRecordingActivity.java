@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.features.playback;
+package org.tvheadend.tvhclient.features.streaming.external;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -7,21 +7,22 @@ import android.support.annotation.Nullable;
 import android.view.View;
 
 import com.google.android.gms.cast.MediaInfo;
+import com.google.android.gms.cast.MediaLoadOptions;
 import com.google.android.gms.cast.MediaMetadata;
 import com.google.android.gms.cast.framework.CastContext;
 import com.google.android.gms.cast.framework.CastSession;
 import com.google.android.gms.cast.framework.media.RemoteMediaClient;
 import com.google.android.gms.common.images.WebImage;
 
-import org.tvheadend.tvhclient.data.entity.Channel;
+import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.data.entity.ServerProfile;
 import org.tvheadend.tvhclient.data.service.EpgSyncService;
 
 import timber.log.Timber;
 
-public class CastChannelActivity extends BasePlaybackActivity {
+public class CastRecordingActivity extends BasePlaybackActivity {
 
-    private int channelId;
+    private int dvrId;
     private CastSession castSession;
 
     @Override
@@ -29,18 +30,15 @@ public class CastChannelActivity extends BasePlaybackActivity {
         super.onCreate(savedInstanceState);
 
         if (savedInstanceState != null) {
-            channelId = getIntent().getIntExtra("channelId", -1);
+            dvrId = getIntent().getIntExtra("dvrId", -1);
         } else {
             Bundle bundle = getIntent().getExtras();
             if (bundle != null) {
-                channelId = bundle.getInt("channelId", -1);
+                dvrId = bundle.getInt("dvrId", -1);
             }
         }
         CastContext castContext = CastContext.getSharedInstance(this);
         castSession = castContext.getSessionManager().getCurrentCastSession();
-
-        serverProfile = appRepository.getServerProfileData()
-                .getItemById(serverStatus.getCastingServerProfileId());
     }
 
     @Override
@@ -55,79 +53,52 @@ public class CastChannelActivity extends BasePlaybackActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt("channelId", channelId);
+        outState.putInt("dvrId", dvrId);
     }
 
     @Override
     protected void getHttpTicket() {
         Intent intent = new Intent(this, EpgSyncService.class);
         intent.setAction("getTicket");
-        intent.putExtra("channelId", channelId);
+        intent.putExtra("dvrId", dvrId);
         startService(intent);
     }
 
     @Override
     protected void onHttpTicketReceived(String path, String ticket) {
 
-        Channel channel = appRepository.getChannelData().getItemById(channelId);
-        String baseUrl = connection.getHostname() + ":" + connection.getStreamingPort() + serverStatus.getWebroot();
-        String iconUrl = baseUrl + "/" + channel.getIcon();
+        Recording recording = appRepository.getRecordingData().getItemById(dvrId);
+        String iconUrl = baseUrl + "/" + recording.getChannelIcon();
+        Timber.d("Recording icon url: " + iconUrl);
 
         MediaMetadata movieMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE);
-        movieMetadata.putString(MediaMetadata.KEY_TITLE, channel.getProgramTitle());
-        movieMetadata.putString(MediaMetadata.KEY_SUBTITLE, channel.getProgramSubtitle());
+        movieMetadata.putString(MediaMetadata.KEY_TITLE, recording.getTitle());
+        movieMetadata.putString(MediaMetadata.KEY_SUBTITLE, recording.getSubtitle());
         movieMetadata.addImage(new WebImage(Uri.parse(iconUrl)));   // small cast icon
         movieMetadata.addImage(new WebImage(Uri.parse(iconUrl)));   // large background icon
 
-        String url = "http://" + baseUrl + path + "?ticket=" + ticket; // + "&mux=matroska";
+        String url = "http://" + baseUrl + "/dvrfile/" + recording.getId();
         ServerProfile serverProfile = appRepository.getServerProfileData().getItemById(serverStatus.getCastingServerProfileId());
         if (serverProfile != null) {
-            url += "&profile=" + serverProfile.getName();
+            url += "?profile=" + serverProfile.getName();
         }
-        Timber.d("Trying to cast channel with url: " + url);
+        Timber.d("Recording casting url: " + url);
 
         MediaInfo mediaInfo = new MediaInfo.Builder(url)
-                .setStreamType(MediaInfo.STREAM_TYPE_LIVE)
+                .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)
                 .setContentType("video/webm")
                 .setMetadata(movieMetadata)
-                .setStreamDuration(0)
+                .setStreamDuration(recording.getStop() - recording.getStart())
                 .build();
 
         RemoteMediaClient remoteMediaClient = castSession.getRemoteMediaClient();
-        remoteMediaClient.addListener(new RemoteMediaClient.Listener() {
-            @Override
-            public void onStatusUpdated() {
-                Timber.d("onStatusUpdated");
-                remoteMediaClient.removeListener(this);
-            }
+        remoteMediaClient.registerCallback(new CastRemoteMediaClientCallback(remoteMediaClient));
 
-            @Override
-            public void onMetadataUpdated() {
-                Timber.d("onMetadataUpdated");
-            }
-
-            @Override
-            public void onQueueStatusUpdated() {
-                Timber.d("onQueueStatusUpdated");
-            }
-
-            @Override
-            public void onPreloadStatusUpdated() {
-                Timber.d("onPreloadStatusUpdated");
-            }
-
-            @Override
-            public void onSendingRemoteMediaRequest() {
-                Timber.d("onSendingRemoteMediaRequest");
-            }
-
-            @Override
-            public void onAdBreakStatusUpdated() {
-
-            }
-        });
-        // TODO convert to media load options
-        remoteMediaClient.load(mediaInfo, true, 0);
+        MediaLoadOptions mediaLoadOptions = new MediaLoadOptions.Builder()
+                .setAutoplay(true)
+                .setPlayPosition(0)
+                .build();
+        remoteMediaClient.load(mediaInfo, mediaLoadOptions);
         finish();
     }
 }
