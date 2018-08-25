@@ -24,7 +24,7 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.data.service.EpgSyncService;
 import org.tvheadend.tvhclient.data.service.EpgSyncStatusCallback;
-import org.tvheadend.tvhclient.data.service.EpgSyncStatusReceiver;
+import org.tvheadend.tvhclient.features.shared.receivers.ServiceStatusReceiver;
 import org.tvheadend.tvhclient.data.service.EpgSyncTaskState;
 import org.tvheadend.tvhclient.features.MainActivity;
 import org.tvheadend.tvhclient.features.settings.SettingsActivity;
@@ -60,7 +60,7 @@ public class StartupFragment extends Fragment implements EpgSyncStatusCallback {
     protected AppRepository appRepository;
     @Inject
     protected SharedPreferences sharedPreferences;
-    private EpgSyncStatusReceiver epgSyncStatusReceiver;
+    private ServiceStatusReceiver serviceStatusReceiver;
     private boolean isServiceStarted;
     private String stateText;
     private String detailsText;
@@ -136,8 +136,8 @@ public class StartupFragment extends Fragment implements EpgSyncStatusCallback {
         } else {
             Timber.d("Database is empty and network is active, starting service to perform initial sync");
             // Create and register the broadcast receiver to get the sync status
-            epgSyncStatusReceiver = new EpgSyncStatusReceiver(this);
-            LocalBroadcastManager.getInstance(activity).registerReceiver(epgSyncStatusReceiver, new IntentFilter(EpgSyncStatusReceiver.ACTION));
+            serviceStatusReceiver = new ServiceStatusReceiver(this);
+            LocalBroadcastManager.getInstance(activity).registerReceiver(serviceStatusReceiver, new IntentFilter(ServiceStatusReceiver.ACTION));
 
             // The database is empty and a full initial sync is required.
             // Start the service so it can connect to the server.
@@ -167,7 +167,7 @@ public class StartupFragment extends Fragment implements EpgSyncStatusCallback {
     @Override
     public void onStop() {
         super.onStop();
-        LocalBroadcastManager.getInstance(activity).unregisterReceiver(epgSyncStatusReceiver);
+        LocalBroadcastManager.getInstance(activity).unregisterReceiver(serviceStatusReceiver);
     }
 
     @Override
@@ -216,20 +216,21 @@ public class StartupFragment extends Fragment implements EpgSyncStatusCallback {
     @Override
     public void onEpgTaskStateChanged(EpgSyncTaskState state) {
         switch (state.getState()) {
-            case DONE:
+            case CONNECTING:
+            case CONNECTED:
+            case SYNC_STARTED:
+                Timber.d("Service sync is starting or loading data");
+                progressBar.setVisibility(View.VISIBLE);
+                stateTextView.setText(state.getMessage());
+                detailsTextView.setText(state.getDetails());
+                break;
+
+            case SYNC_DONE:
                 Timber.d("Service sync is done, starting main screen");
                 progressBar.setVisibility(View.INVISIBLE);
                 stateTextView.setText(state.getMessage());
                 detailsTextView.setText(state.getDetails());
                 showContentScreen();
-                break;
-
-            case START:
-            case LOADING:
-                Timber.d("Service sync is starting or loading data");
-                progressBar.setVisibility(View.VISIBLE);
-                stateTextView.setText(state.getMessage());
-                detailsTextView.setText(state.getDetails());
                 break;
 
             case FAILED:

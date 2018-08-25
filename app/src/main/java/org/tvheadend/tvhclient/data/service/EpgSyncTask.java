@@ -31,6 +31,7 @@ import org.tvheadend.tvhclient.data.service.htsp.HtspFileInputStream;
 import org.tvheadend.tvhclient.data.service.htsp.HtspMessage;
 import org.tvheadend.tvhclient.data.service.htsp.HtspNotConnectedException;
 import org.tvheadend.tvhclient.data.service.htsp.tasks.Authenticator;
+import org.tvheadend.tvhclient.features.shared.receivers.ServiceStatusReceiver;
 import org.tvheadend.tvhclient.features.shared.receivers.SnackbarMessageReceiver;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
@@ -62,7 +63,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     private final int connectionTimeout;
     private Connection connection;
     private int htspVersion;
-    // This variable controls if the recieved data shall be stored
+    // This variable controls if the received data shall be stored
     // in lists so that it can be added at once to the database.
     private boolean initialSyncCompleted;
 
@@ -97,10 +98,32 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     public void onConnectionStateChange(@NonNull HtspConnection.State state) {
         Timber.d("Connection state changed to " + state);
 
-        // Send the message about the current connection status.
-        Intent intent = new Intent(EpgSyncStatusReceiver.ACTION);
-        intent.putExtra(EpgSyncStatusReceiver.CONNECTION_STATE, state);
-        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+        if (state == HtspConnection.State.FAILED) {
+            sendEpgSyncStatusMessage(ServiceStatusReceiver.State.FAILED,
+                    "Connection failed.", "");
+        } else if (state == HtspConnection.State.FAILED_CONNECTING_TO_SERVER) {
+            sendEpgSyncStatusMessage(ServiceStatusReceiver.State.FAILED,
+                    "Connection failed.",
+                    "Failed to connect to server");
+        } else if (state == HtspConnection.State.FAILED_EXCEPTION_OPENING_SOCKET) {
+            sendEpgSyncStatusMessage(ServiceStatusReceiver.State.FAILED,
+                    "Connection failed.",
+                    "Failed to open socket to the server");
+        } else if (state == HtspConnection.State.FAILED_INTERRUPTED) {
+            sendEpgSyncStatusMessage(ServiceStatusReceiver.State.FAILED,
+                    "Connection failed.",
+                    "Error during connection attempt to server");
+        } else if (state == HtspConnection.State.FAILED_UNRESOLVED_ADDRESS) {
+            sendEpgSyncStatusMessage(ServiceStatusReceiver.State.FAILED,
+                    "Connection failed.",
+                    "Failed to resolve server address");
+        } else if (state == HtspConnection.State.CONNECTING) {
+            sendEpgSyncStatusMessage(ServiceStatusReceiver.State.CONNECTED,
+                    "Connecting to server...", "");
+        } else if (state == HtspConnection.State.CLOSED) {
+            sendEpgSyncStatusMessage(ServiceStatusReceiver.State.CLOSED,
+                    "Connection closed.", "");
+        }
     }
 
     // Authenticator.Listener Methods
@@ -108,13 +131,17 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     public void onAuthenticationStateChange(@NonNull Authenticator.State state) {
         Timber.d("Authentication state changed to " + state);
 
-        // Send the authentication status as details to any broadcast listeners
-        Intent intent = new Intent(EpgSyncStatusReceiver.ACTION);
-        intent.putExtra(EpgSyncStatusReceiver.AUTH_STATE, state);
-        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
-
-        // Continue with getting all initial data only if we are authenticated
-        if (state == Authenticator.State.AUTHENTICATED) {
+        if (state == Authenticator.State.FAILED) {
+            sendEpgSyncStatusMessage(ServiceStatusReceiver.State.FAILED,
+                    "Authentication failed.", "");
+        } else if (state == Authenticator.State.FAILED_BAD_CREDENTIALS) {
+            sendEpgSyncStatusMessage(ServiceStatusReceiver.State.FAILED,
+                    "Authentication failed.",
+                    "Probably bad username or password");
+        } else if (state == Authenticator.State.AUTHENTICATED) {
+            sendEpgSyncStatusMessage(ServiceStatusReceiver.State.CONNECTED,
+                    "Connected to server.", "");
+            // Continue with getting all initial data only if we are authenticated
             startAsyncCommunicationWithServer();
         }
     }
@@ -125,9 +152,8 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         initialSyncCompleted = false;
 
         // Send the first sync message to any broadcast listeners
-        Intent intent = new Intent(EpgSyncStatusReceiver.ACTION);
-        intent.putExtra(EpgSyncStatusReceiver.SYNC_STATE, State.SYNCING_STARTED);
-        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+        sendEpgSyncStatusMessage(ServiceStatusReceiver.State.SYNC_STARTED,
+                "Loading data from server", "");
 
         // Enable epg sync with the defined number of
         // seconds of data starting from the current time
@@ -787,9 +813,8 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
 
         initialSyncCompleted = true;
 
-        Intent intent = new Intent(EpgSyncStatusReceiver.ACTION);
-        intent.putExtra(EpgSyncStatusReceiver.SYNC_STATE, State.SYNCING_DONE);
-        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+        sendEpgSyncStatusMessage(ServiceStatusReceiver.State.SYNC_DONE,
+                "Loading data from server finished.", "");
 
         Timber.d("Done receiving initial data from server");
     }
@@ -1032,7 +1057,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         HtspMessage response = null;
         try {
             if (showMessage) {
-                sendStatusMessage(context.getString(R.string.loading_more_programs));
+                sendSnackbarMessage(context.getString(R.string.loading_more_programs));
             }
             response = dispatcher.sendMessage(request, connectionTimeout);
         } catch (HtspNotConnectedException e) {
@@ -1042,7 +1067,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         if (response != null) {
             handleGetEvents(response);
             if (showMessage) {
-                sendStatusMessage(context.getString(R.string.loading_more_programs_finished));
+                sendSnackbarMessage(context.getString(R.string.loading_more_programs_finished));
             }
         }
     }
@@ -1125,9 +1150,9 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
             // id                 u32   optional   ID of created DVR entry
             // error              str   optional   English clear text of error message
             if (response.getInteger("success", 0) == 1) {
-                sendStatusMessage(context.getString(R.string.success_adding_recording));
+                sendSnackbarMessage(context.getString(R.string.success_adding_recording));
             } else {
-                sendStatusMessage(context.getString(R.string.error_adding_recording, response.getString("error", "")));
+                sendSnackbarMessage(context.getString(R.string.error_adding_recording, response.getString("error", "")));
             }
         }
     }
@@ -1149,9 +1174,9 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
             // success            u32   required   1 if update as successful, otherwise 0
             // error              str   optional   Error message if update failed
             if (response.getInteger("success", 0) == 1) {
-                sendStatusMessage(context.getString(R.string.success_updating_recording));
+                sendSnackbarMessage(context.getString(R.string.success_updating_recording));
             } else {
-                sendStatusMessage(context.getString(R.string.error_updating_recording, response.getString("error", "")));
+                sendSnackbarMessage(context.getString(R.string.error_updating_recording, response.getString("error", "")));
             }
         }
     }
@@ -1175,9 +1200,9 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         if (response != null) {
             Timber.d("Response is not null");
             if (response.getInteger("success", 0) == 1) {
-                sendStatusMessage(context.getString(R.string.success_removing_recording));
+                sendSnackbarMessage(context.getString(R.string.success_removing_recording));
             } else {
-                sendStatusMessage(context.getString(R.string.error_removing_recording, response.getString("error", "")));
+                sendSnackbarMessage(context.getString(R.string.error_removing_recording, response.getString("error", "")));
             }
         } else {
             Timber.d("Response is null");
@@ -1201,9 +1226,9 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
             // id                 str   optional   ID (string!) of created autorec DVR entry
             // error              str   optional   English clear text of error message
             if (response.getInteger("success", 0) == 1) {
-                sendStatusMessage(context.getString(R.string.success_adding_recording));
+                sendSnackbarMessage(context.getString(R.string.success_adding_recording));
             } else {
-                sendStatusMessage(context.getString(R.string.error_adding_recording, response.getString("error", "")));
+                sendSnackbarMessage(context.getString(R.string.error_adding_recording, response.getString("error", "")));
             }
         }
     }
@@ -1234,9 +1259,9 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
                 addAutorecEntry(intent);
             } else {
                 if (success) {
-                    sendStatusMessage(context.getString(R.string.success_updating_recording));
+                    sendSnackbarMessage(context.getString(R.string.success_updating_recording));
                 } else {
-                    sendStatusMessage(context.getString(R.string.error_updating_recording, response.getString("error", "")));
+                    sendSnackbarMessage(context.getString(R.string.error_updating_recording, response.getString("error", "")));
                 }
             }
         }
@@ -1256,9 +1281,9 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
 
         if (response != null) {
             if (response.getInteger("success", 0) == 1) {
-                sendStatusMessage(context.getString(R.string.success_removing_recording));
+                sendSnackbarMessage(context.getString(R.string.success_removing_recording));
             } else {
-                sendStatusMessage(context.getString(R.string.error_removing_recording, response.getString("error", "")));
+                sendSnackbarMessage(context.getString(R.string.error_removing_recording, response.getString("error", "")));
             }
         }
     }
@@ -1280,9 +1305,9 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
 
         if (response != null) {
             if (response.getInteger("success", 0) == 1) {
-                sendStatusMessage(context.getString(R.string.success_adding_recording));
+                sendSnackbarMessage(context.getString(R.string.success_adding_recording));
             } else {
-                sendStatusMessage(context.getString(R.string.error_adding_recording, response.getString("error", "")));
+                sendSnackbarMessage(context.getString(R.string.error_adding_recording, response.getString("error", "")));
             }
         }
     }
@@ -1313,9 +1338,9 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
                 addTimerrecEntry(intent);
             } else {
                 if (success) {
-                    sendStatusMessage(context.getString(R.string.success_updating_recording));
+                    sendSnackbarMessage(context.getString(R.string.success_updating_recording));
                 } else {
-                    sendStatusMessage(context.getString(R.string.error_updating_recording, response.getString("error", "")));
+                    sendSnackbarMessage(context.getString(R.string.error_updating_recording, response.getString("error", "")));
                 }
             }
         }
@@ -1335,9 +1360,9 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
 
         if (response != null) {
             if (response.getInteger("success", 0) == 1) {
-                sendStatusMessage(context.getString(R.string.success_removing_recording));
+                sendSnackbarMessage(context.getString(R.string.success_removing_recording));
             } else {
-                sendStatusMessage(context.getString(R.string.error_removing_recording, response.getString("error", "")));
+                sendSnackbarMessage(context.getString(R.string.error_removing_recording, response.getString("error", "")));
             }
         }
     }
@@ -1433,26 +1458,28 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     private void getStatus() {
         HtspMessage message = new HtspMessage();
         message.put("method", "hello");
-        message.put("htspversion", 26);
+        message.put("htspversion", 32);
         message.put("clientname", "TVHClient");
         message.put("clientversion", BuildConfig.VERSION_NAME);
 
-        HtspMessage response = null;
         try {
-            response = dispatcher.sendMessage(message, connectionTimeout);
+            dispatcher.sendMessage(message);
         } catch (HtspNotConnectedException e) {
             Timber.e("Failed to send getStatus - not connected", e);
         }
+    }
 
-        boolean connectedToServer = (response != null);
-        Timber.d("getStatus, connected to server " + connectedToServer);
-
-        Intent intent = new Intent(EpgSyncStatusReceiver.ACTION);
-        intent.putExtra(EpgSyncStatusReceiver.SYNC_STATE, connectedToServer ? State.CONNECTED : State.NOT_CONNECTED);
+    private void sendEpgSyncStatusMessage(ServiceStatusReceiver.State state, String msg, String details) {
+        Intent intent = new Intent(ServiceStatusReceiver.ACTION);
+        intent.putExtra(ServiceStatusReceiver.STATE, state);
+        intent.putExtra(ServiceStatusReceiver.MESSAGE, msg);
+        if (!TextUtils.isEmpty(details)) {
+            intent.putExtra(ServiceStatusReceiver.DETAILS, details);
+        }
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 
-    private void sendStatusMessage(String msg) {
+    private void sendSnackbarMessage(String msg) {
         Intent intent = new Intent(SnackbarMessageReceiver.ACTION);
         intent.putExtra(SnackbarMessageReceiver.CONTENT, msg);
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);

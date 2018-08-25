@@ -1,8 +1,10 @@
 package org.tvheadend.tvhclient.data.service;
 
+import org.tvheadend.tvhclient.features.shared.receivers.ServiceStatusReceiver;
+
 public class EpgSyncTaskState {
 
-    private final EpgSyncStatusReceiver.State state;
+    private final ServiceStatusReceiver.State state;
     private final String message;
     private final String details;
 
@@ -12,7 +14,7 @@ public class EpgSyncTaskState {
         this.details = builder.details;
     }
 
-    public EpgSyncStatusReceiver.State getState() {
+    public ServiceStatusReceiver.State getState() {
         return state;
     }
 
@@ -25,11 +27,11 @@ public class EpgSyncTaskState {
     }
 
     public static class EpgSyncTaskStateBuilder {
-        private EpgSyncStatusReceiver.State state = EpgSyncStatusReceiver.State.IDLE;
+        private ServiceStatusReceiver.State state = ServiceStatusReceiver.State.CLOSED;
         private String message = "";
         private String details = "";
 
-        public EpgSyncTaskStateBuilder state(EpgSyncStatusReceiver.State state) {
+        public EpgSyncTaskStateBuilder state(ServiceStatusReceiver.State state) {
             this.state = state;
             return this;
         }
