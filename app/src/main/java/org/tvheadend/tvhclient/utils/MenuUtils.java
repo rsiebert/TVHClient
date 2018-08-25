@@ -31,8 +31,6 @@ import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.data.service.EpgSyncService;
 import org.tvheadend.tvhclient.features.download.DownloadRecordingManager;
 import org.tvheadend.tvhclient.features.notifications.ProgramNotificationReceiver;
-import org.tvheadend.tvhclient.features.playback.PlayChannelActivity;
-import org.tvheadend.tvhclient.features.playback.PlayRecordingActivity;
 import org.tvheadend.tvhclient.features.search.SearchActivity;
 import org.tvheadend.tvhclient.features.shared.adapter.ChannelTagListAdapter;
 import org.tvheadend.tvhclient.features.shared.adapter.GenreColorDialogAdapter;
@@ -40,6 +38,9 @@ import org.tvheadend.tvhclient.features.shared.callbacks.ChannelTagSelectionCall
 import org.tvheadend.tvhclient.features.shared.callbacks.ChannelTimeSelectionCallback;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecordingRemovedCallback;
 import org.tvheadend.tvhclient.features.startup.SplashActivity;
+import org.tvheadend.tvhclient.features.streaming.external.PlayChannelActivity;
+import org.tvheadend.tvhclient.features.streaming.external.PlayRecordingActivity;
+import org.tvheadend.tvhclient.features.streaming.internal.HtspPlaybackActivity;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
@@ -80,10 +81,10 @@ public class MenuUtils {
      * here the data for the adapter is created and the dialog prepared which
      * can be shown later.
      */
-    public void handleMenuGenreColorSelection() {
+    public boolean handleMenuGenreColorSelection() {
         Activity activity = this.activity.get();
         if (activity == null) {
-            return;
+            return false;
         }
         final String[] s = activity.getResources().getStringArray(R.array.pr_content_type0);
 
@@ -99,12 +100,13 @@ public class MenuUtils {
                 .title(R.string.genre_color_list)
                 .adapter(new GenreColorDialogAdapter(items), null)
                 .show();
+        return true;
     }
 
-    public void handleMenuTimeSelection(int currentSelection, int intervalInHours, int maxIntervalsToShow, ChannelTimeSelectionCallback callback) {
+    public boolean handleMenuTimeSelection(int currentSelection, int intervalInHours, int maxIntervalsToShow, ChannelTimeSelectionCallback callback) {
         Activity activity = this.activity.get();
         if (activity == null) {
-            return;
+            return false;
         }
 
         SimpleDateFormat startDateFormat = new SimpleDateFormat("dd.MM.yyyy - HH.00", Locale.US);
@@ -137,13 +139,13 @@ public class MenuUtils {
                 })
                 .build()
                 .show();
-
+        return true;
     }
 
-    public void handleMenuChannelTagsSelection(int channelTagId, ChannelTagSelectionCallback callback) {
+    public boolean handleMenuChannelTagsSelection(int channelTagId, ChannelTagSelectionCallback callback) {
         Activity activity = this.activity.get();
         if (activity == null) {
-            return;
+            return false;
         }
 
         // Create a default tag (All channels)
@@ -178,20 +180,22 @@ public class MenuUtils {
             }
         });
         dialog.show();
+        return true;
     }
 
-    public void handleMenuDownloadSelection(int dvrId) {
+    public boolean handleMenuDownloadSelection(int dvrId) {
         Activity activity = this.activity.get();
         if (activity == null) {
-            return;
+            return false;
         }
         new DownloadRecordingManager(activity, dvrId);
+        return true;
     }
 
-    public void handleMenuSearchImdbWebsite(String title) {
+    public boolean handleMenuSearchImdbWebsite(String title) {
         Activity activity = this.activity.get();
         if (activity == null) {
-            return;
+            return false;
         }
         try {
             String url = URLEncoder.encode(title, "utf-8");
@@ -206,12 +210,13 @@ public class MenuUtils {
         } catch (UnsupportedEncodingException e) {
             // NOP
         }
+        return true;
     }
 
-    public void handleMenuSearchFileAffinityWebsite(String title) {
+    public boolean handleMenuSearchFileAffinityWebsite(String title) {
         Activity activity = this.activity.get();
         if (activity == null) {
-            return;
+            return false;
         }
         try {
             String url = URLEncoder.encode(title, "utf-8");
@@ -222,16 +227,17 @@ public class MenuUtils {
         } catch (UnsupportedEncodingException e) {
             // NOP
         }
+        return true;
     }
 
-    public void handleMenuSearchEpgSelection(String title) {
-        handleMenuSearchEpgSelection(title, 0);
+    public boolean handleMenuSearchEpgSelection(String title) {
+        return handleMenuSearchEpgSelection(title, 0);
     }
 
-    public void handleMenuSearchEpgSelection(String title, int channelId) {
+    public boolean handleMenuSearchEpgSelection(String title, int channelId) {
         Activity activity = this.activity.get();
         if (activity == null) {
-            return;
+            return false;
         }
         Intent intent = new Intent(activity, SearchActivity.class);
         intent.setAction(Intent.ACTION_SEARCH);
@@ -239,12 +245,13 @@ public class MenuUtils {
         intent.putExtra("channelId", channelId);
         activity.startActivity(intent);
         activity.finish();
+        return true;
     }
 
-    public void handleMenuRecordSelection(int eventId) {
+    public boolean handleMenuRecordSelection(int eventId) {
         Activity activity = this.activity.get();
         if (activity == null) {
-            return;
+            return false;
         }
         Timber.d("handleMenuRecordSelection() called with: eventId = [" + eventId + "]");
         final Intent intent = new Intent(activity, EpgSyncService.class);
@@ -256,12 +263,13 @@ public class MenuUtils {
             intent.putExtra("configName", profile.getName());
         }
         activity.startService(intent);
+        return true;
     }
 
-    public void handleMenuSeriesRecordSelection(String title) {
+    public boolean handleMenuSeriesRecordSelection(String title) {
         Activity activity = this.activity.get();
         if (activity == null) {
-            return;
+            return false;
         }
         final Intent intent = new Intent(activity, EpgSyncService.class);
         intent.setAction("addAutorecEntry");
@@ -272,12 +280,13 @@ public class MenuUtils {
             intent.putExtra("configName", profile.getName());
         }
         activity.startService(intent);
+        return true;
     }
 
-    public void handleMenuStopRecordingSelection(int dvrId, String title) {
+    public boolean handleMenuStopRecordingSelection(int dvrId, String title) {
         Activity activity = this.activity.get();
         if (activity == null) {
-            return;
+            return false;
         }
         // Show a confirmation dialog before stopping the recording
         new MaterialDialog.Builder(activity)
@@ -292,13 +301,14 @@ public class MenuUtils {
                     activity.startService(intent);
                 })
                 .show();
+        return true;
     }
 
-    public void handleMenuRemoveRecordingSelection(int dvrId, String title, RecordingRemovedCallback callback) {
+    public boolean handleMenuRemoveRecordingSelection(int dvrId, String title, RecordingRemovedCallback callback) {
         Timber.d("handleMenuRemoveRecordingSelection() called with: dvrId = [" + dvrId + "], title = [" + title + "]");
         Activity activity = this.activity.get();
         if (activity == null) {
-            return;
+            return false;
         }
         Timber.d("handleMenuRemoveRecordingSelection: ");
         // Show a confirmation dialog before removing the recording
@@ -317,12 +327,13 @@ public class MenuUtils {
                     }
                 })
                 .show();
+        return true;
     }
 
-    public void handleMenuCancelRecordingSelection(int dvrId, String title, RecordingRemovedCallback callback) {
+    public boolean handleMenuCancelRecordingSelection(int dvrId, String title, RecordingRemovedCallback callback) {
         Activity activity = this.activity.get();
         if (activity == null) {
-            return;
+            return false;
         }
         // Show a confirmation dialog before cancelling the recording
         new MaterialDialog.Builder(activity)
@@ -340,12 +351,13 @@ public class MenuUtils {
                     }
                 })
                 .show();
+        return true;
     }
 
-    public void handleMenuRemoveSeriesRecordingSelection(String id, String title, RecordingRemovedCallback callback) {
+    public boolean handleMenuRemoveSeriesRecordingSelection(String id, String title, RecordingRemovedCallback callback) {
         Activity activity = this.activity.get();
         if (activity == null) {
-            return;
+            return false;
         }
         // Show a confirmation dialog before removing the recording
         new MaterialDialog.Builder(activity)
@@ -363,13 +375,14 @@ public class MenuUtils {
                     }
                 })
                 .show();
+        return true;
     }
 
-    public void handleMenuRemoveTimerRecordingSelection(String id, String title, RecordingRemovedCallback callback) {
+    public boolean handleMenuRemoveTimerRecordingSelection(String id, String title, RecordingRemovedCallback callback) {
         Timber.d("handleMenuRemoveTimerRecordingSelection() called with: id = [" + id + "], title = [" + title + "], callback = [" + callback + "]");
         Activity activity = this.activity.get();
         if (activity == null) {
-            return;
+            return false;
         }
         // Show a confirmation dialog before removing the recording
         new MaterialDialog.Builder(activity)
@@ -387,12 +400,13 @@ public class MenuUtils {
                     }
                 })
                 .show();
+        return true;
     }
 
-    public void handleMenuRemoveAllRecordingsSelection(List<Recording> items) {
+    public boolean handleMenuRemoveAllRecordingsSelection(List<Recording> items) {
         Activity activity = this.activity.get();
         if (activity == null) {
-            return;
+            return false;
         }
         new MaterialDialog.Builder(activity)
                 .title(R.string.record_remove_all)
@@ -423,12 +437,13 @@ public class MenuUtils {
                         }.start();
                     }
                 }).show();
+        return true;
     }
 
-    public void handleMenuRemoveAllSeriesRecordingSelection(List<SeriesRecording> items) {
+    public boolean handleMenuRemoveAllSeriesRecordingSelection(List<SeriesRecording> items) {
         Activity activity = this.activity.get();
         if (activity == null) {
-            return;
+            return false;
         }
         new MaterialDialog.Builder(activity)
                 .title(R.string.record_remove_all)
@@ -455,12 +470,13 @@ public class MenuUtils {
                         }.start();
                     }
                 }).show();
+        return true;
     }
 
-    public void handleMenuRemoveAllTimerRecordingSelection(List<TimerRecording> items) {
+    public boolean handleMenuRemoveAllTimerRecordingSelection(List<TimerRecording> items) {
         Activity activity = this.activity.get();
         if (activity == null) {
-            return;
+            return false;
         }
         new MaterialDialog.Builder(activity)
                 .title(R.string.record_remove_all)
@@ -487,12 +503,13 @@ public class MenuUtils {
                         }.start();
                     }
                 }).show();
+        return true;
     }
 
-    public void handleMenuCustomRecordSelection(final int eventId, final int channelId) {
+    public boolean handleMenuCustomRecordSelection(final int eventId, final int channelId) {
         Activity activity = this.activity.get();
         if (activity == null) {
-            return;
+            return false;
         }
 
         final String[] dvrConfigList = appRepository.getServerProfileData().getRecordingProfileNames();
@@ -528,6 +545,7 @@ public class MenuUtils {
                     }
                 })
                 .show();
+        return true;
     }
 
     public void onPreparePopupMenu(Menu menu, Program program, Recording recording, boolean isNetworkAvailable) {
@@ -541,6 +559,7 @@ public class MenuUtils {
         MenuItem recordSeriesMenuItem = menu.findItem(R.id.menu_record_series);
         MenuItem recordRemoveMenuItem = menu.findItem(R.id.menu_record_remove);
         MenuItem playMenuItem = menu.findItem(R.id.menu_play);
+        MenuItem castMenuItem = menu.findItem(R.id.menu_cast);
         MenuItem addReminderMenuItem = menu.findItem(R.id.menu_add_notification);
 
         if (isNetworkAvailable) {
@@ -620,11 +639,11 @@ public class MenuUtils {
                 .show();
     }
 
-    public void handleMenuAddNotificationSelection(Program program) {
+    public boolean handleMenuAddNotificationSelection(Program program) {
         Timber.d("handleMenuAddNotificationSelection: program " + program.getEventId() + ", " + program.getTitle());
         Activity activity = this.activity.get();
         if (activity == null) {
-            return;
+            return false;
         }
 
         Integer offset = Integer.valueOf(sharedPreferences.getString("notification_lead_time", "0"));
@@ -652,25 +671,34 @@ public class MenuUtils {
         if (am != null) {
             am.set(AlarmManager.RTC_WAKEUP, notificationTime, pendingIntent);
         }
+        return true;
     }
 
-    public void handleMenuPlayChannel(int channelId) {
+    public boolean handleMenuPlayChannel(int channelId) {
         Activity activity = this.activity.get();
         if (activity == null) {
-            return;
+            return false;
         }
-        Intent intent = new Intent(activity, PlayChannelActivity.class);
-        intent.putExtra("channelId", channelId);
-        activity.startActivity(intent);
+        if (sharedPreferences.getBoolean("internal_player_enabled", false)) {
+            Intent intent = new Intent(activity, HtspPlaybackActivity.class);
+            intent.putExtra("channelId", channelId);
+            activity.startActivity(intent);
+        } else {
+            Intent intent = new Intent(activity, PlayChannelActivity.class);
+            intent.putExtra("channelId", channelId);
+            activity.startActivity(intent);
+        }
+        return true;
     }
 
-    public void handleMenuPlayRecording(int dvrId) {
+    public boolean handleMenuPlayRecording(int dvrId) {
         Activity activity = this.activity.get();
         if (activity == null) {
-            return;
+            return false;
         }
         Intent intent = new Intent(activity, PlayRecordingActivity.class);
         intent.putExtra("dvrId", dvrId);
         activity.startActivity(intent);
+        return true;
     }
 }

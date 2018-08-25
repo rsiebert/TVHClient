@@ -24,12 +24,14 @@ import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.ProgressBar;
 
+import com.google.android.gms.cast.framework.CastContext;
+import com.google.android.gms.cast.framework.CastSession;
+
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.data.entity.ChannelTag;
 import org.tvheadend.tvhclient.data.entity.Program;
 import org.tvheadend.tvhclient.data.entity.Recording;
-import org.tvheadend.tvhclient.features.playback.player.PlaybackSession;
 import org.tvheadend.tvhclient.features.programs.ProgramListFragment;
 import org.tvheadend.tvhclient.features.search.SearchActivity;
 import org.tvheadend.tvhclient.features.search.SearchRequestInterface;
@@ -37,6 +39,7 @@ import org.tvheadend.tvhclient.features.shared.BaseFragment;
 import org.tvheadend.tvhclient.features.shared.callbacks.ChannelTagSelectionCallback;
 import org.tvheadend.tvhclient.features.shared.callbacks.ChannelTimeSelectionCallback;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback;
+import org.tvheadend.tvhclient.features.streaming.external.CastChannelActivity;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -273,60 +276,57 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
         menuUtils.onPreparePopupMenu(popupMenu.getMenu(), program, recording, isNetworkAvailable);
         menuUtils.onPreparePopupSearchMenu(popupMenu.getMenu(), isNetworkAvailable);
 
-        // Always show the play menu item because the channel can be played
-        popupMenu.getMenu().findItem(R.id.menu_play).setVisible(true);
+        // Show the play menu item if the network is available because the channel
+        // can be played as live TV. Also show the cast menu item if available
+        if (isNetworkAvailable) {
+            popupMenu.getMenu().findItem(R.id.menu_play).setVisible(true);
+            CastSession castSession = CastContext.getSharedInstance(activity).getSessionManager().getCurrentCastSession();
+            popupMenu.getMenu().findItem(R.id.menu_cast).setVisible(castSession != null);
+        }
 
         popupMenu.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {
                 case R.id.menu_search_imdb:
-                    menuUtils.handleMenuSearchImdbWebsite(channel.getProgramTitle());
-                    return true;
+                    return menuUtils.handleMenuSearchImdbWebsite(channel.getProgramTitle());
 
                 case R.id.menu_search_fileaffinity:
-                    menuUtils.handleMenuSearchFileAffinityWebsite(channel.getProgramTitle());
-                    return true;
+                    return menuUtils.handleMenuSearchFileAffinityWebsite(channel.getProgramTitle());
 
                 case R.id.menu_search_epg:
-                    menuUtils.handleMenuSearchEpgSelection(channel.getProgramTitle(), channel.getId());
-                    return true;
+                    return menuUtils.handleMenuSearchEpgSelection(channel.getProgramTitle(), channel.getId());
 
                 case R.id.menu_record_remove:
                     if (recording != null) {
                         if (recording.isRecording()) {
-                            menuUtils.handleMenuStopRecordingSelection(recording.getId(), recording.getTitle());
+                            return menuUtils.handleMenuStopRecordingSelection(recording.getId(), recording.getTitle());
                         } else if (recording.isScheduled()) {
-                            menuUtils.handleMenuCancelRecordingSelection(recording.getId(), recording.getTitle(), null);
+                            return menuUtils.handleMenuCancelRecordingSelection(recording.getId(), recording.getTitle(), null);
                         } else {
-                            menuUtils.handleMenuRemoveRecordingSelection(recording.getId(), recording.getTitle(), null);
+                            return menuUtils.handleMenuRemoveRecordingSelection(recording.getId(), recording.getTitle(), null);
                         }
                     }
-                    return true;
+                    return false;
 
                 case R.id.menu_record_once:
-                    menuUtils.handleMenuRecordSelection(channel.getProgramId());
-                    return true;
+                    return menuUtils.handleMenuRecordSelection(channel.getProgramId());
 
                 case R.id.menu_record_once_custom_profile:
-                    menuUtils.handleMenuCustomRecordSelection(channel.getProgramId(), channel.getId());
-                    return true;
+                    return menuUtils.handleMenuCustomRecordSelection(channel.getProgramId(), channel.getId());
 
                 case R.id.menu_record_series:
-                    menuUtils.handleMenuSeriesRecordSelection(channel.getProgramTitle());
-                    return true;
+                    return menuUtils.handleMenuSeriesRecordSelection(channel.getProgramTitle());
 
                 case R.id.menu_play:
-                    menuUtils.handleMenuPlayChannel(channel.getId());
-                    return true;
+                    return menuUtils.handleMenuPlayChannel(channel.getId());
 
-                case R.id.menu_play_external:
-                    Intent intent = new Intent(activity, PlaybackSession.class);
+                case R.id.menu_cast:
+                    Intent intent = new Intent(activity, CastChannelActivity.class);
                     intent.putExtra("channelId", channel.getId());
                     startActivity(intent);
                     return true;
 
                 case R.id.menu_add_notification:
-                    menuUtils.handleMenuAddNotificationSelection(program);
-                    return true;
+                    return menuUtils.handleMenuAddNotificationSelection(program);
 
                 default:
                     return false;

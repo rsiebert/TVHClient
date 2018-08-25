@@ -21,11 +21,14 @@ import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.ProgressBar;
 
+import com.google.android.gms.cast.framework.CastContext;
+import com.google.android.gms.cast.framework.CastSession;
+
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.features.download.DownloadPermissionGrantedInterface;
 import org.tvheadend.tvhclient.features.dvr.RecordingAddEditActivity;
-import org.tvheadend.tvhclient.features.playback.PlayRecordingActivity;
+import org.tvheadend.tvhclient.features.streaming.external.PlayRecordingActivity;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback;
 
@@ -174,6 +177,8 @@ public class RecordingListFragment extends BaseFragment implements RecyclerViewC
             if (recording.isCompleted()) {
                 popupMenu.getMenu().findItem(R.id.menu_record_remove).setVisible(true);
                 popupMenu.getMenu().findItem(R.id.menu_play).setVisible(true);
+                CastSession castSession = CastContext.getSharedInstance(activity).getSessionManager().getCurrentCastSession();
+                popupMenu.getMenu().findItem(R.id.menu_cast).setVisible(castSession != null);
                 popupMenu.getMenu().findItem(R.id.menu_download).setVisible(isUnlocked);
 
             } else if (recording.isScheduled() && !recording.isRecording()) {
@@ -183,6 +188,8 @@ public class RecordingListFragment extends BaseFragment implements RecyclerViewC
             } else if (recording.isRecording()) {
                 popupMenu.getMenu().findItem(R.id.menu_record_stop).setVisible(true);
                 popupMenu.getMenu().findItem(R.id.menu_play).setVisible(true);
+                CastSession castSession = CastContext.getSharedInstance(activity).getSessionManager().getCurrentCastSession();
+                popupMenu.getMenu().findItem(R.id.menu_cast).setVisible(castSession != null);
                 popupMenu.getMenu().findItem(R.id.menu_edit).setVisible(isUnlocked);
 
             } else if (recording.isFailed() || recording.isRemoved() || recording.isMissed() || recording.isAborted()) {
@@ -193,36 +200,29 @@ public class RecordingListFragment extends BaseFragment implements RecyclerViewC
         popupMenu.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {
                 case R.id.menu_search_imdb:
-                    menuUtils.handleMenuSearchImdbWebsite(recording.getTitle());
-                    return true;
+                    return menuUtils.handleMenuSearchImdbWebsite(recording.getTitle());
 
                 case R.id.menu_search_fileaffinity:
-                    menuUtils.handleMenuSearchFileAffinityWebsite(recording.getTitle());
-                    return true;
+                    return menuUtils.handleMenuSearchFileAffinityWebsite(recording.getTitle());
 
                 case R.id.menu_search_epg:
-                    menuUtils.handleMenuSearchEpgSelection(recording.getTitle());
-                    return true;
+                    return menuUtils.handleMenuSearchEpgSelection(recording.getTitle());
 
                 case R.id.menu_record_stop:
-                    menuUtils.handleMenuStopRecordingSelection(recording.getId(), recording.getTitle());
-                    return true;
+                    return menuUtils.handleMenuStopRecordingSelection(recording.getId(), recording.getTitle());
 
                 case R.id.menu_record_remove:
                     if (recording.isScheduled()) {
-                        menuUtils.handleMenuCancelRecordingSelection(recording.getId(), recording.getTitle(), null);
+                        return menuUtils.handleMenuCancelRecordingSelection(recording.getId(), recording.getTitle(), null);
                     } else {
-                        menuUtils.handleMenuRemoveRecordingSelection(recording.getId(), recording.getTitle(), null);
+                        return menuUtils.handleMenuRemoveRecordingSelection(recording.getId(), recording.getTitle(), null);
                     }
-                    return true;
 
                 case R.id.menu_play:
-                    menuUtils.handleMenuPlayRecording(recording.getId());
-                    return true;
+                    return menuUtils.handleMenuPlayRecording(recording.getId());
 
                 case R.id.menu_download:
-                    menuUtils.handleMenuDownloadSelection(recording.getId());
-                    return true;
+                    return menuUtils.handleMenuDownloadSelection(recording.getId());
 
                 case R.id.menu_edit:
                     Intent intent = new Intent(activity, RecordingAddEditActivity.class);

@@ -9,10 +9,10 @@
         android:visible="false"
         app:showAsAction="ifRoom" />
     <item
-        android:id="@+id/menu_play_external"
+        android:id="@+id/menu_cast"
         android:icon="?attr/ic_menu_play"
-        android:title="Play with ExoPlayer"
-        android:visible="true"
+        android:title="@string/cast"
+        android:visible="false"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/menu_record_once"
