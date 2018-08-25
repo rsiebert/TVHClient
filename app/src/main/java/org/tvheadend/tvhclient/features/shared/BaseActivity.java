@@ -21,13 +21,13 @@ import com.crashlytics.android.answers.SearchEvent;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.service.EpgSyncService;
 import org.tvheadend.tvhclient.data.service.EpgSyncStatusCallback;
-import org.tvheadend.tvhclient.data.service.EpgSyncStatusReceiver;
 import org.tvheadend.tvhclient.data.service.EpgSyncTaskState;
 import org.tvheadend.tvhclient.features.search.SearchRequestInterface;
 import org.tvheadend.tvhclient.features.shared.callbacks.NetworkAvailabilityChangedInterface;
 import org.tvheadend.tvhclient.features.shared.callbacks.NetworkStatusInterface;
 import org.tvheadend.tvhclient.features.shared.callbacks.NetworkStatusReceiverCallback;
 import org.tvheadend.tvhclient.features.shared.receivers.NetworkStatusReceiver;
+import org.tvheadend.tvhclient.features.shared.receivers.ServiceStatusReceiver;
 import org.tvheadend.tvhclient.features.shared.receivers.SnackbarMessageReceiver;
 
 import timber.log.Timber;
@@ -38,7 +38,7 @@ public abstract class BaseActivity extends AppCompatActivity implements NetworkS
     private SearchView searchView;
     private NetworkStatusReceiver networkStatusReceiver;
     protected boolean isNetworkAvailable;
-    private EpgSyncStatusReceiver epgSyncStatusReceiver;
+    private ServiceStatusReceiver serviceStatusReceiver;
     private SnackbarMessageReceiver snackbarMessageReceiver;
 
     @Override
@@ -47,7 +47,7 @@ public abstract class BaseActivity extends AppCompatActivity implements NetworkS
         Timber.d("start");
         isNetworkAvailable = false;
         networkStatusReceiver = new NetworkStatusReceiver(this);
-        epgSyncStatusReceiver = new EpgSyncStatusReceiver(this);
+        serviceStatusReceiver = new ServiceStatusReceiver(this);
         snackbarMessageReceiver = new SnackbarMessageReceiver(this);
         Timber.d("end");
     }
@@ -57,7 +57,7 @@ public abstract class BaseActivity extends AppCompatActivity implements NetworkS
         super.onStart();
         Timber.d("start");
         LocalBroadcastManager.getInstance(this).registerReceiver(snackbarMessageReceiver, new IntentFilter(SnackbarMessageReceiver.ACTION));
-        LocalBroadcastManager.getInstance(this).registerReceiver(epgSyncStatusReceiver, new IntentFilter(EpgSyncStatusReceiver.ACTION));
+        LocalBroadcastManager.getInstance(this).registerReceiver(serviceStatusReceiver, new IntentFilter(ServiceStatusReceiver.ACTION));
         registerReceiver(networkStatusReceiver, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
         Timber.d("end");
     }
@@ -67,20 +67,15 @@ public abstract class BaseActivity extends AppCompatActivity implements NetworkS
         super.onStop();
         Timber.d("start");
         LocalBroadcastManager.getInstance(this).unregisterReceiver(snackbarMessageReceiver);
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(epgSyncStatusReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(serviceStatusReceiver);
         unregisterReceiver(networkStatusReceiver);
         Timber.d("end");
     }
 
     @Override
-    public void onNetworkAvailable() {
-        onNetworkAvailabilityChanged(true);
-    }
-
-    @Override
-    public void onNetworkNotAvailable() {
-        onNetworkAvailabilityChanged(false);
-        if (getCurrentFocus() != null) {
+    public void onNetworkStatusChanged(boolean isNetworkAvailable) {
+        onNetworkAvailabilityChanged(isNetworkAvailable);
+        if (!isNetworkAvailable && getCurrentFocus() != null) {
             Snackbar.make(getCurrentFocus(), "No network available.", Snackbar.LENGTH_SHORT).show();
         }
     }
@@ -127,8 +122,8 @@ public abstract class BaseActivity extends AppCompatActivity implements NetworkS
                 onNetworkAvailabilityChanged(false);
                 break;
 
-            case START:
-            case DONE:
+            case CONNECTING:
+            case CONNECTED:
                 if (getCurrentFocus() != null) {
                     Snackbar.make(getCurrentFocus(), state.getMessage(), Snackbar.LENGTH_SHORT).show();
                 }
