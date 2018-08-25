@@ -26,6 +26,9 @@ import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.ProgressBar;
 
+import com.google.android.gms.cast.framework.CastContext;
+import com.google.android.gms.cast.framework.CastSession;
+
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.ChannelSubset;
 import org.tvheadend.tvhclient.data.entity.ChannelTag;
@@ -258,59 +261,55 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
         menuUtils.onPreparePopupMenu(popupMenu.getMenu(), program, program.getRecording(), isNetworkAvailable);
         menuUtils.onPreparePopupSearchMenu(popupMenu.getMenu(), isNetworkAvailable);
 
-        // Show the play menu item when the current
-        // time is between the program start and end time
-        long currentTime = new Date().getTime();
-        if (currentTime > program.getStart() && currentTime < program.getStop()) {
-            popupMenu.getMenu().findItem(R.id.menu_play).setVisible(true);
+        // Show the play menu item and the cast menu item (if available)
+        // when the current time is between the program start and end time
+        if (isNetworkAvailable) {
+            long currentTime = new Date().getTime();
+            if (currentTime > program.getStart() && currentTime < program.getStop()) {
+                popupMenu.getMenu().findItem(R.id.menu_play).setVisible(true);
+                CastSession castSession = CastContext.getSharedInstance(activity).getSessionManager().getCurrentCastSession();
+                popupMenu.getMenu().findItem(R.id.menu_cast).setVisible(castSession != null);
+            }
         }
 
         popupMenu.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {
                 case R.id.menu_search_imdb:
-                    menuUtils.handleMenuSearchImdbWebsite(program.getTitle());
-                    return true;
+                    return menuUtils.handleMenuSearchImdbWebsite(program.getTitle());
 
                 case R.id.menu_search_fileaffinity:
-                    menuUtils.handleMenuSearchFileAffinityWebsite(program.getTitle());
-                    return true;
+                    return menuUtils.handleMenuSearchFileAffinityWebsite(program.getTitle());
 
                 case R.id.menu_search_epg:
-                    menuUtils.handleMenuSearchEpgSelection(program.getTitle(), program.getChannelId());
-                    return true;
+                    return menuUtils.handleMenuSearchEpgSelection(program.getTitle(), program.getChannelId());
 
                 case R.id.menu_record_remove:
                     final Recording recording = program.getRecording();
                     if (recording != null) {
                         if (recording.isRecording()) {
-                            menuUtils.handleMenuStopRecordingSelection(recording.getId(), recording.getTitle());
+                            return menuUtils.handleMenuStopRecordingSelection(recording.getId(), recording.getTitle());
                         } else if (recording.isScheduled()) {
-                            menuUtils.handleMenuCancelRecordingSelection(recording.getId(), recording.getTitle(), null);
+                            return menuUtils.handleMenuCancelRecordingSelection(recording.getId(), recording.getTitle(), null);
                         } else {
-                            menuUtils.handleMenuRemoveRecordingSelection(recording.getId(), recording.getTitle(), null);
+                            return menuUtils.handleMenuRemoveRecordingSelection(recording.getId(), recording.getTitle(), null);
                         }
                     }
-                    return true;
+                    return false;
 
                 case R.id.menu_record_once:
-                    menuUtils.handleMenuRecordSelection(program.getEventId());
-                    return true;
+                    return menuUtils.handleMenuRecordSelection(program.getEventId());
 
                 case R.id.menu_record_once_custom_profile:
-                    menuUtils.handleMenuCustomRecordSelection(program.getEventId(), program.getChannelId());
-                    return true;
+                    return menuUtils.handleMenuCustomRecordSelection(program.getEventId(), program.getChannelId());
 
                 case R.id.menu_record_series:
-                    menuUtils.handleMenuSeriesRecordSelection(program.getTitle());
-                    return true;
+                    return menuUtils.handleMenuSeriesRecordSelection(program.getTitle());
 
                 case R.id.menu_play:
-                    menuUtils.handleMenuPlayChannel(program.getChannelId());
-                    return true;
+                    return menuUtils.handleMenuPlayChannel(program.getChannelId());
 
                 case R.id.menu_add_notification:
-                    menuUtils.handleMenuAddNotificationSelection(program);
-                    return true;
+                    return menuUtils.handleMenuAddNotificationSelection(program);
 
                 default:
                     return false;
