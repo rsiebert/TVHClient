@@ -26,6 +26,7 @@
     <string name="reconnect">Reconnect</string>
     <string name="tags">Tags</string>
     <string name="play">Play</string>
+    <string name="cast">Cast</string>
     <string name="download">Download</string>
     <string name="search">Search</string>
     <string name="record_once">Record</string>

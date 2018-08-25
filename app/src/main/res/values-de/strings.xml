@@ -24,6 +24,7 @@
     <string name="reconnect">Neu verbinden</string>
     <string name="tags">Anzeige Filtern</string>
     <string name="play">Abspielen</string>
+    <string name="cast">Cast</string>
     <string name="download">Download</string>
     <string name="search">Suchen</string>
     <string name="record_once">Aufnehmen</string>
