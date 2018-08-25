@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory android:title="@string/pref_connections" >
+    <PreferenceCategory android:title="@string/pref_connections">
         <Preference
             android:key="list_connections"
             android:summary="@string/pref_manage_connections_sum"
-            android:title="@string/pref_manage_connections" >
-        </Preference>
+            android:title="@string/pref_manage_connections"></Preference>
     </PreferenceCategory>
-    <PreferenceCategory android:title="@string/pref_user_interface" >
+    <PreferenceCategory android:title="@string/pref_user_interface">
         <ListPreference
             android:name="@string/pref_language"
             android:defaultValue="default"
@@ -32,7 +31,7 @@
             android:summary="@string/pref_customize_user_interface_sum"
             android:title="@string/pref_customize_user_interface" />
     </PreferenceCategory>
-    <PreferenceCategory android:title="@string/pref_playback_and_recording" >
+    <PreferenceCategory android:title="@string/pref_playback_and_recording">
         <PreferenceScreen
             android:key="profiles"
             android:summary="@string/pref_profiles_sum"
@@ -41,66 +40,67 @@
             android:key="casting"
             android:summary="@string/pref_casting_sum"
             android:title="@string/pref_casting" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="internal_player_enabled"
+            android:summary="Play live TV or recordings with the internal player which uses the HTSP protocol"
+            android:title="Enable Internal Player" />
+        <PreferenceScreen
+            android:dependency="internal_player_enabled"
+            android:title="Internal player settings">
+
+            <PreferenceCategory android:title="Audio and Video">
+                <ListPreference
+                    android:defaultValue="@string/pref_default_buffer_playback_ms"
+                    android:dialogTitle="Buffer Seconds"
+                    android:entries="@array/buffer_playback_ms_names"
+                    android:entryValues="@array/buffer_playback_ms_values"
+                    android:key="buffer_playback_ms"
+                    android:summary="How many seconds to buffer before starting playback"
+                    android:title="Buffer Duration" />
+                <CheckBoxPreference
+                    android:defaultValue="@bool/pref_default_audio_passthrough_decodeder_enabled"
+                    android:key="audio_passthrough_decodeder_enabled"
+                    android:summary="You must also ensure the system audio settings allows passthrough"
+                    android:title="Enable Audio Passthrough" />
+                <CheckBoxPreference
+                    android:defaultValue="@bool/pref_default_audio_tunneling_enabled"
+                    android:key="audio_tunneling_enabled"
+                    android:summary="Enable support for DSP audio tunneling"
+                    android:title="Enable Audio Tunneling" />
+                <CheckBoxPreference
+                    android:defaultValue="@bool/pref_default_audio_ffmpeg_audio_enabled"
+                    android:key="ffmpeg_audio_enabled"
+                    android:title="Enable FFMpeg Audio Codecs" />
+                <CheckBoxPreference
+                    android:defaultValue="@bool/pref_default_captions_apply_embedded_styles"
+                    android:key="captions_apply_embedded_styles"
+                    android:title="Apply embedded caption styles" />
+            </PreferenceCategory>
+        </PreferenceScreen>
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="Audio and Video">
-        <ListPreference
-            android:key="buffer_playback_ms"
-            android:title="Buffer Duration"
-            android:dialogTitle="Buffer Seconds"
-            android:entries="@array/buffer_playback_ms_names"
-            android:entryValues="@array/buffer_playback_ms_values"
-            android:defaultValue="@string/pref_default_buffer_playback_ms"
-            android:summary="How many seconds to buffer before starting playback"/>
-
-        <CheckBoxPreference
-            android:key="audio_passthrough_decodeder_enabled"
-            android:title="Enable Audio Passthrough"
-            android:defaultValue="@bool/pref_default_audio_passthrough_decodeder_enabled"
-            android:summary="You must also ensure the system audio settings allows passthrough"/>
-
-        <CheckBoxPreference
-            android:key="audio_tunneling_enabled"
-            android:title="Enable Audio Tunneling"
-            android:defaultValue="@bool/pref_default_audio_tunneling_enabled"
-            android:summary="Enable support for DSP audio tunneling"/>
-
-        <CheckBoxPreference
-            android:key="ffmpeg_audio_enabled"
-            android:title="Enable FFMpeg Audio Codecs"
-            android:defaultValue="@bool/pref_default_audio_ffmpeg_audio_enabled"/>
-
-        <CheckBoxPreference
-            android:key="captions_apply_embedded_styles"
-            android:title="Apply embedded caption styles"
-            android:defaultValue="@bool/pref_default_captions_apply_embedded_styles"/>
-    </PreferenceCategory>
-
-    <PreferenceCategory android:title="@string/pref_misc" >
+    <PreferenceCategory android:title="@string/pref_misc">
         <Preference
             android:key="unlocker"
             android:summary="@string/pref_unlocker_sum"
-            android:title="@string/pref_unlocker" >
-        </Preference>
+            android:title="@string/pref_unlocker" />
         <PreferenceScreen
             android:key="notifications"
-            android:title="@string/pref_notifications" >
-        </PreferenceScreen>
+            android:title="@string/pref_notifications" />
         <Preference
             android:key="download_directory"
             android:summary="@string/pref_download_directory_sum"
-            android:title="@string/pref_download_directory">
-        </Preference>
+            android:title="@string/pref_download_directory" />
         <PreferenceScreen
-            android:title="@string/pref_advanced_settings"
-            android:key="advanced" />
+            android:key="advanced"
+            android:title="@string/pref_advanced_settings" />
     </PreferenceCategory>
-    <PreferenceCategory android:title="@string/pref_information" >
+    <PreferenceCategory android:title="@string/pref_information">
         <Preference
             android:key="changelog"
             android:summary="@string/pref_changelog_sum"
-            android:title="@string/pref_changelog" >
-        </Preference>
+            android:title="@string/pref_changelog"></Preference>
     </PreferenceCategory>
 
 </PreferenceScreen>
