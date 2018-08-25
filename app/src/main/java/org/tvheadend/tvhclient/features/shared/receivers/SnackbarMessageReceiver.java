@@ -24,11 +24,10 @@ public class SnackbarMessageReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Timber.d("onReceive");
         if (intent.hasExtra(CONTENT)) {
             if (activity.getCurrentFocus() != null) {
                 String msg = intent.getStringExtra(CONTENT);
-                Timber.d("Showing snackbar with msg " + msg);
+                Timber.d("Showing snackbar with message '" + msg + "'");
                 Snackbar.make(activity.getCurrentFocus(), msg, Snackbar.LENGTH_SHORT).show();
             }
         }
