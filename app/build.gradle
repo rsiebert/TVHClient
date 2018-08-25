@@ -80,33 +80,37 @@ dependencies {
     implementation 'com.android.support:support-annotations:27.1.1'
     implementation 'com.android.support:design:27.1.1'
     implementation 'com.android.support.constraint:constraint-layout:1.1.2'
+    // Casting
     implementation 'com.google.android.gms:play-services-cast-framework:16.0.1'
     implementation 'com.android.support:mediarouter-v7:27.1.1'
+    // Misc libraries
     implementation 'com.anjlab.android.iab.v3:library:1.0.44'
     implementation 'com.github.flavienlaurent.datetimepicker:library:0.0.2'
-    //compile 'com.nineoldandroids:library:2.4.0'
     implementation 'com.afollestad.material-dialogs:commons:0.9.6.0'
-    //compile 'ch.acra:acra:4.9.2'
     implementation 'com.mikepenz:materialdrawer:6.0.8'
     implementation 'com.jakewharton:butterknife:8.8.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+    // Memory leaks and crash analytics
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5.3'
     releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.3'
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.4'
     // Architecture components
     implementation 'android.arch.lifecycle:extensions:1.1.1'
     implementation 'android.arch.lifecycle:common-java8:1.1.1'
     implementation 'android.arch.persistence.room:runtime:1.1.1'
-    implementation "android.arch.work:work-runtime:1.0.0-alpha06"
+    implementation "android.arch.work:work-runtime:1.0.0-alpha07"
     annotationProcessor "android.arch.persistence.room:compiler:1.1.1"
-    // Injection library
+    // Dependency injection
     implementation 'com.google.dagger:dagger:2.11'
     annotationProcessor 'com.google.dagger:dagger-compiler:2.11'
     // Logging library
     implementation 'com.jakewharton.timber:timber:4.5.1'
-    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.4'
     // Image loading library
     implementation 'com.squareup.picasso:picasso:2.71828'
-
+    // App data access via browser
     implementation 'com.facebook.stetho:stetho:1.5.0'
-    //implementation project(':stetho')
+    // Exoplayer
+    implementation 'com.google.android.exoplayer:exoplayer-core:2.7.1k1'
+    implementation 'com.google.android.exoplayer:exoplayer-ui:2.7.1k1'
+    implementation 'com.google.android.exoplayer:extension-ffmpeg:2.7.1k1'
 }
