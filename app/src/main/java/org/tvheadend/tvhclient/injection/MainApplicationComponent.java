@@ -17,8 +17,8 @@ import org.tvheadend.tvhclient.features.dvr.series_recordings.SeriesRecordingVie
 import org.tvheadend.tvhclient.features.dvr.timer_recordings.TimerRecordingViewModel;
 import org.tvheadend.tvhclient.features.epg.EpgViewModel;
 import org.tvheadend.tvhclient.features.epg.EpgViewPagerFragment;
-import org.tvheadend.tvhclient.features.playback.BasePlaybackActivity;
-import org.tvheadend.tvhclient.features.playback.player.PlaybackSession;
+import org.tvheadend.tvhclient.features.streaming.external.BasePlaybackActivity;
+import org.tvheadend.tvhclient.features.streaming.internal.HtspPlaybackActivity;
 import org.tvheadend.tvhclient.features.programs.ProgramViewModel;
 import org.tvheadend.tvhclient.features.settings.BasePreferenceFragment;
 import org.tvheadend.tvhclient.features.settings.ConnectionViewModel;
@@ -94,5 +94,5 @@ public interface MainApplicationComponent {
 
     void inject(EpgSyncIntentService epgSyncIntentService);
 
-    void inject(PlaybackSession playbackSession);
+    void inject(HtspPlaybackActivity htspPlaybackActivity);
 }
