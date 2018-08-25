@@ -8,6 +8,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -25,6 +26,7 @@ import java.io.File;
 public class SettingsFragment extends BasePreferenceFragment implements Preference.OnPreferenceClickListener, SharedPreferences.OnSharedPreferenceChangeListener, ActivityCompat.OnRequestPermissionsResultCallback, FolderChooserDialogCallback {
 
     private Preference downloadDirectoryPreference;
+    private CheckBoxPreference internalPlayerPreference;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -40,6 +42,7 @@ public class SettingsFragment extends BasePreferenceFragment implements Preferen
         Preference notificationsPreference = findPreference("notifications");
         Preference profilesPreference = findPreference("profiles");
         Preference castingPreference = findPreference("casting");
+        internalPlayerPreference = (CheckBoxPreference) findPreference("internal_player_enabled");
         Preference unlockerPreference = findPreference("unlocker");
         Preference advancedPreference = findPreference("advanced");
         Preference changelogPreference = findPreference("changelog");
@@ -51,6 +54,7 @@ public class SettingsFragment extends BasePreferenceFragment implements Preferen
         notificationsPreference.setOnPreferenceClickListener(this);
         profilesPreference.setOnPreferenceClickListener(this);
         castingPreference.setOnPreferenceClickListener(this);
+        internalPlayerPreference.setOnPreferenceClickListener(this);
         advancedPreference.setOnPreferenceClickListener(this);
         unlockerPreference.setOnPreferenceClickListener(this);
         changelogPreference.setOnPreferenceClickListener(this);
@@ -132,6 +136,9 @@ public class SettingsFragment extends BasePreferenceFragment implements Preferen
             case "profiles":
                 handlePreferenceProfilesSelected();
                 break;
+            case "internal_player_enabled":
+                handlePreferenceInternalPlayerSelected();
+                break;
             case "casting":
                 handlePreferenceCastingSelected();
                 break;
@@ -167,6 +174,15 @@ public class SettingsFragment extends BasePreferenceFragment implements Preferen
                 Snackbar.make(getView(), R.string.feature_not_supported_by_server, Snackbar.LENGTH_SHORT).show();
             } else {
                 showSelectedSettingsFragment("profiles");
+            }
+        }
+    }
+
+    private void handlePreferenceInternalPlayerSelected() {
+        if (getView() != null) {
+            if (!isUnlocked) {
+                Snackbar.make(getView(), R.string.feature_not_available_in_free_version, Snackbar.LENGTH_SHORT).show();
+                internalPlayerPreference.setChecked(false);
             }
         }
     }
