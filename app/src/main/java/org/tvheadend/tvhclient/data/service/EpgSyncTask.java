@@ -501,11 +501,8 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
             return;
         }
         Channel updatedChannel = EpgSyncUtils.convertMessageToChannelModel(channel, msg);
-        if (!initialSyncCompleted) {
-            pendingChannelOps.add(updatedChannel);
-        } else {
-            appRepository.getChannelData().updateItem(updatedChannel);
-        }
+        appRepository.getChannelData().updateItem(updatedChannel);
+
         // Update the icon only if a full sync was required
         final String icon = msg.getString("channelIcon");
         if (icon != null) {
@@ -564,11 +561,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
             return;
         }
         Recording updatedRecording = EpgSyncUtils.convertMessageToRecordingModel(recording, msg);
-        if (!initialSyncCompleted) {
-            pendingRecordingOps.add(updatedRecording);
-        } else {
-            appRepository.getRecordingData().updateItem(updatedRecording);
-        }
+        appRepository.getRecordingData().updateItem(updatedRecording);
     }
 
     /**
@@ -698,11 +691,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
             return;
         }
         Program updatedProgram = EpgSyncUtils.convertMessageToProgramModel(program, msg);
-        if (!initialSyncCompleted) {
-            pendingEventOps.add(updatedProgram);
-        } else {
-            appRepository.getProgramData().updateItem(updatedProgram);
-        }
+        appRepository.getProgramData().updateItem(updatedProgram);
     }
 
     /**
