@@ -51,10 +51,6 @@ public class SettingsProfilesFragment extends BasePreferenceFragment implements 
         recordingProfilesPreference = (ListPreference) findPreference("recording_profiles");
         castingProfilesPreference = (ListPreference) findPreference("casting_profiles");
 
-        addProfiles(playbackProfilesPreference, appRepository.getServerProfileData().getPlaybackProfiles());
-        addProfiles(recordingProfilesPreference, appRepository.getServerProfileData().getRecordingProfiles());
-        addProfiles(castingProfilesPreference, appRepository.getServerProfileData().getPlaybackProfiles());
-
         if (savedInstanceState != null) {
             playbackServerProfileId = savedInstanceState.getInt("playback_profile_id");
             recordingServerProfileId = savedInstanceState.getInt("recording_profile_id");
@@ -64,6 +60,16 @@ public class SettingsProfilesFragment extends BasePreferenceFragment implements 
             recordingServerProfileId = serverStatus.getRecordingServerProfileId();
             castingServerProfileId = serverStatus.getCastingServerProfileId();
         }
+
+        addProfiles(playbackProfilesPreference,
+                appRepository.getServerProfileData().getPlaybackProfiles(),
+                playbackServerProfileId);
+        addProfiles(recordingProfilesPreference,
+                appRepository.getServerProfileData().getRecordingProfiles(),
+                recordingServerProfileId);
+        addProfiles(castingProfilesPreference,
+                appRepository.getServerProfileData().getPlaybackProfiles(),
+                castingServerProfileId);
 
         setPlaybackProfileListSummary();
         setRecordingProfileListSummary();
@@ -145,7 +151,7 @@ public class SettingsProfilesFragment extends BasePreferenceFragment implements 
         activity.finish();
     }
 
-    private void addProfiles(final ListPreference listPreference, final List<ServerProfile> serverProfileList) {
+    private void addProfiles(final ListPreference listPreference, final List<ServerProfile> serverProfileList, int selectedIndex) {
         // Initialize the arrays that contain the profile values
         final int size = serverProfileList.size() + 1;
         CharSequence[] entries = new CharSequence[size];
@@ -162,5 +168,6 @@ public class SettingsProfilesFragment extends BasePreferenceFragment implements 
         }
         listPreference.setEntries(entries);
         listPreference.setEntryValues(entryValues);
+        listPreference.setValueIndex(selectedIndex);
     }
 }
