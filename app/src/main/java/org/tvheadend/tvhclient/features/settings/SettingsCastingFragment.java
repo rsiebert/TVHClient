@@ -19,10 +19,8 @@
 package org.tvheadend.tvhclient.features.settings;
 
 import android.os.Bundle;
-import android.preference.PreferenceFragment;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.features.shared.callbacks.ToolbarInterface;
 
 public class SettingsCastingFragment extends BasePreferenceFragment {
 
@@ -30,6 +28,8 @@ public class SettingsCastingFragment extends BasePreferenceFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences_casting);
+
         toolbarInterface.setTitle(getString(R.string.pref_casting));
+        toolbarInterface.setSubtitle("");
     }
 }

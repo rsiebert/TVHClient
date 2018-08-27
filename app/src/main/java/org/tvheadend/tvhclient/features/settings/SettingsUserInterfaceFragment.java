@@ -18,15 +18,12 @@
  */
 package org.tvheadend.tvhclient.features.settings;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.TaskStackBuilder;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.features.MainActivity;
 
 public class SettingsUserInterfaceFragment extends BasePreferenceFragment implements Preference.OnPreferenceClickListener {
 
@@ -38,6 +35,7 @@ public class SettingsUserInterfaceFragment extends BasePreferenceFragment implem
         addPreferencesFromResource(R.xml.preferences_ui);
 
         toolbarInterface.setTitle(getString(R.string.pref_user_interface));
+        toolbarInterface.setSubtitle("");
 
         programArtworkEnabledPreference = (CheckBoxPreference) findPreference("program_artwork_enabled");
         programArtworkEnabledPreference.setOnPreferenceClickListener(this);

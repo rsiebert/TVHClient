@@ -20,9 +20,9 @@ import org.tvheadend.tvhclient.features.shared.callbacks.BackPressedInterface;
 
 public abstract class SettingsConnectionBaseFragment extends BasePreferenceFragment implements BackPressedInterface, Preference.OnPreferenceChangeListener {
 
-    protected boolean connectionValuesChanged;
-    protected Connection connection;
-    protected ConnectionViewModel viewModel;
+    boolean connectionValuesChanged;
+    Connection connection;
+    ConnectionViewModel viewModel;
 
     private EditTextPreference namePreference;
     private EditTextPreference hostnamePreference;
@@ -289,7 +289,7 @@ public abstract class SettingsConnectionBaseFragment extends BasePreferenceFragm
         return true;
     }
 
-    protected void showMessage(String msgid) {
+    void showMessage(String msgid) {
         if (getView() != null) {
             Snackbar.make(getView(), msgid, Snackbar.LENGTH_SHORT).show();
         }
