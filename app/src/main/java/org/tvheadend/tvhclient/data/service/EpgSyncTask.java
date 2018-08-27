@@ -213,6 +213,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         if (TextUtils.isEmpty(method)) {
             return;
         }
+        Timber.d("Handling method " + method);
         switch (method) {
             case "hello":
                 handleInitialServerResponse(message);
@@ -677,17 +678,12 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
      * @param msg The message with the new epg event data
      */
     private void handleEventAdd(HtspMessage msg) {
-        Program program = appRepository.getProgramData().getItemById(msg.getInteger("eventId"));
-        if (program != null) {
-            handleEventUpdate(msg);
+        Program program = EpgSyncUtils.convertMessageToProgramModel(new Program(), msg);
+        program.setConnectionId(connection.getId());
+        if (!initialSyncCompleted) {
+            pendingEventOps.add(program);
         } else {
-            program = EpgSyncUtils.convertMessageToProgramModel(new Program(), msg);
-            program.setConnectionId(connection.getId());
-            if (!initialSyncCompleted) {
-                pendingEventOps.add(program);
-            } else {
-                appRepository.getProgramData().addItem(program);
-            }
+            appRepository.getProgramData().addItem(program);
         }
     }
 
