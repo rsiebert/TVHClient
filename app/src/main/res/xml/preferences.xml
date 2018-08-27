@@ -17,15 +17,11 @@
             android:key="language"
             android:summary="@string/pref_language_sum"
             android:title="@string/pref_language" />
-        <ListPreference
-            android:name="@string/pref_default_menu"
-            android:defaultValue="0"
-            android:dialogTitle="@string/pref_default_menu"
-            android:entries="@array/pref_menu_names"
-            android:entryValues="@array/pref_menu_ids"
-            android:key="start_screen"
-            android:summary="@string/pref_default_menu_sum"
-            android:title="@string/pref_default_menu" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="light_theme_enabled"
+            android:summary="@string/pref_theme_sum"
+            android:title="@string/pref_theme" />
         <PreferenceScreen
             android:key="user_interface"
             android:summary="@string/pref_customize_user_interface_sum"

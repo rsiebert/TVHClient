@@ -18,7 +18,6 @@ package org.tvheadend.tvhclient.features.streaming.internal;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.util.SparseArray;
 
 import com.google.android.exoplayer2.C;
@@ -38,9 +37,10 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.Arrays;
 
+import timber.log.Timber;
+
 // TODO: Rename HtspSubscriptionExtractor
 class HtspExtractor implements Extractor {
-    private static final String TAG = HtspExtractor.class.getName();
 
     private class HtspSeekMap implements SeekMap {
         @Override
@@ -68,7 +68,7 @@ class HtspExtractor implements Extractor {
 
     public HtspExtractor(Context context) {
         mContext = context;
-        Log.d(TAG, "New HtspExtractor instantiated");
+        Timber.d( "New HtspExtractor instantiated");
     }
 
     // Extractor Methods
@@ -85,7 +85,7 @@ class HtspExtractor implements Extractor {
 
     @Override
     public void init(ExtractorOutput output) {
-        Log.i(TAG, "Initializing HTSP Extractor");
+        Timber.i( "Initializing HTSP Extractor");
         mOutput = output;
         mOutput.seekMap(new HtspSeekMap());
     }
@@ -94,7 +94,7 @@ class HtspExtractor implements Extractor {
     public int read(ExtractorInput input, PositionHolder seekPosition) throws IOException, InterruptedException {
         int bytesRead = input.read(mRawBytes, 0, mRawBytes.length);
 
-        Log.v(TAG, "Read " + bytesRead + " bytes");
+        Timber.v( "Read " + bytesRead + " bytes");
 
         ObjectInputStream objectInput = null;
 
@@ -108,10 +108,10 @@ class HtspExtractor implements Extractor {
             }
         } catch (IOException e) {
             // TODO: This is a problem, and returning RESULT_CONTINUE is a hack... I think?
-            Log.w(TAG, "Caught IOException, returning RESULT_CONTINUE");
+            Timber.w( "Caught IOException, returning RESULT_CONTINUE");
             return RESULT_CONTINUE;
         } catch (ClassNotFoundException e) {
-            Log.w(TAG, "Class Not Found");
+            Timber.w( "Class Not Found");
         } finally {
             try {
                 if (objectInput != null) {
@@ -127,12 +127,12 @@ class HtspExtractor implements Extractor {
 
     @Override
     public void seek(long position, long timeUs) {
-        Log.d(TAG, "Seeking HTSP Extractor to position:" + position + " and timeUs:" + timeUs);
+        Timber.d( "Seeking HTSP Extractor to position:" + position + " and timeUs:" + timeUs);
     }
 
     @Override
     public void release() {
-        Log.i(TAG, "Releasing HTSP Extractor");
+        Timber.i( "Releasing HTSP Extractor");
         mStreamReaders.clear();
     }
 
@@ -148,7 +148,7 @@ class HtspExtractor implements Extractor {
     }
 
     private void handleSubscriptionStart(@NonNull final HtspMessage message) {
-        Log.i(TAG, "Handling Subscription Start");
+        Timber.i( "Handling Subscription Start");
 
         StreamReadersFactory streamReadersFactory = new StreamReadersFactory(mContext);
 
@@ -158,15 +158,15 @@ class HtspExtractor implements Extractor {
 
             final StreamReader streamReader = streamReadersFactory.createStreamReader(streamType);
             if (streamReader != null) {
-                Log.d(TAG, "Creating StreamReader for " + streamType + " stream at index " + streamIndex);
+                Timber.d( "Creating StreamReader for " + streamType + " stream at index " + streamIndex);
                 streamReader.createTracks(stream, mOutput);
                 mStreamReaders.put(streamIndex, streamReader);
             } else {
-                Log.d(TAG, "Discarding stream at index " + streamIndex + ", no suitable StreamReader");
+                Timber.d( "Discarding stream at index " + streamIndex + ", no suitable StreamReader");
             }
         }
 
-        Log.d(TAG, "All streams have now been handled");
+        Timber.d( "All streams have now been handled");
         mOutput.endTracks();
     }
 

@@ -85,7 +85,9 @@ public class TimerRecordingDetailsFragment extends BaseFragment implements Recor
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        toolbarInterface.setTitle(getString(R.string.details));
+        if (!isDualPane) {
+            toolbarInterface.setTitle(getString(R.string.details));
+        }
 
         // Get the recording id after an orientation change has occurred
         // or when the fragment is shown for the first time

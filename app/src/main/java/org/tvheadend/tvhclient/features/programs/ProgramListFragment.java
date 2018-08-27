@@ -322,8 +322,9 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
 
     @Override
     public void onFilterComplete(int count) {
-        toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.results,
-                recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
+        if (!isDualPane) {
+            toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.results, count, count));
+        }
     }
 
     @Override

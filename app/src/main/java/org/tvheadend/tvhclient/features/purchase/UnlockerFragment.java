@@ -21,26 +21,36 @@ import com.crashlytics.android.answers.PurchaseEvent;
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
-import org.tvheadend.tvhclient.features.shared.callbacks.ToolbarInterface;
 import org.tvheadend.tvhclient.features.shared.tasks.FileLoaderCallback;
 import org.tvheadend.tvhclient.features.shared.tasks.HtmlFileLoaderTask;
 import org.tvheadend.tvhclient.utils.Constants;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
+
 public class UnlockerFragment extends BaseFragment implements FileLoaderCallback {
 
-    private WebView webView;
-    private ProgressBar loadingProgressBar;
+    @BindView(R.id.webview)
+    protected WebView webView;
+    @BindView(R.id.loading)
+    protected ProgressBar progressBar;
     private HtmlFileLoaderTask htmlFileLoaderTask;
-    private AppCompatActivity activity;
     private BillingProcessor billingProcessor;
+    private Unbinder unbinder;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        View v = inflater.inflate(R.layout.webview_fragment, container, false);
-        webView = v.findViewById(R.id.webview);
-        loadingProgressBar = v.findViewById(R.id.loading);
-        return v;
+        View view = inflater.inflate(R.layout.webview_fragment, container, false);
+        unbinder = ButterKnife.bind(this, view);
+        return view;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
     }
 
     @Override
@@ -48,13 +58,9 @@ public class UnlockerFragment extends BaseFragment implements FileLoaderCallback
         super.onActivityCreated(savedInstanceState);
         forceSingleScreenLayout();
 
-        activity = (AppCompatActivity) getActivity();
-        if (activity instanceof ToolbarInterface) {
-            ToolbarInterface toolbarInterface = (ToolbarInterface) activity;
-            toolbarInterface.setTitle(getString(R.string.pref_unlocker));
-            toolbarInterface.setSubtitle(null);
-        }
-        setHasOptionsMenu(true);
+        toolbarInterface.setTitle(getString(R.string.pref_unlocker));
+        toolbarInterface.setSubtitle(null);
+
         billingProcessor = MainApplication.getInstance().getBillingProcessor();
         htmlFileLoaderTask = new HtmlFileLoaderTask(activity, "features", "en", this);
         htmlFileLoaderTask.execute();
@@ -78,6 +84,7 @@ public class UnlockerFragment extends BaseFragment implements FileLoaderCallback
             case android.R.id.home:
                 activity.finish();
                 return true;
+
             case R.id.menu_purchase:
                 // Open the activity where the user can actually make the purchase
                 if (billingProcessor.isInitialized()) {
@@ -97,6 +104,7 @@ public class UnlockerFragment extends BaseFragment implements FileLoaderCallback
                     activity.finish();
                 }
                 return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -115,7 +123,7 @@ public class UnlockerFragment extends BaseFragment implements FileLoaderCallback
     public void notify(String content) {
         if (content != null) {
             webView.loadDataWithBaseURL("file:///android_asset/", content, "text/html", "utf-8", null);
-            loadingProgressBar.setVisibility(View.GONE);
+            progressBar.setVisibility(View.GONE);
             webView.setVisibility(View.VISIBLE);
         }
     }

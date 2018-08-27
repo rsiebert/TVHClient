@@ -17,7 +17,6 @@
 package org.tvheadend.tvhclient.features.streaming.internal;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.google.android.exoplayer2.upstream.DataSpec;
 
@@ -28,8 +27,9 @@ import org.tvheadend.tvhclient.data.service.htsp.SimpleHtspConnection;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import timber.log.Timber;
+
 public class HtspFileInputStreamDataSource extends HtspDataSource {
-    private static final String TAG = HtspFileInputStreamDataSource.class.getName();
     private static final int BUFFER_SIZE = 10 * 1024 * 1024;
     private static final AtomicInteger sDataSourceCount = new AtomicInteger();
 
@@ -59,7 +59,7 @@ public class HtspFileInputStreamDataSource extends HtspDataSource {
 
         mDataSourceNumber = sDataSourceCount.incrementAndGet();
 
-        Log.d(TAG, "New HtspSubscriptionDataSource instantiated (" + mDataSourceNumber + ")");
+        Timber.d("New HtspSubscriptionDataSource instantiated (" + mDataSourceNumber + ")");
     }
 
     @Override
@@ -68,7 +68,7 @@ public class HtspFileInputStreamDataSource extends HtspDataSource {
         // https://github.com/google/ExoPlayer/issues/2662 - Luckily, i've not found it's actually
         // been used anywhere at this moment.
         if (mConnection != null) {
-            Log.e(TAG, "Datasource finalize relied upon to release the subscription");
+            Timber.e("Datasource finalize relied upon to release the subscription");
 
             release();
 
@@ -88,7 +88,7 @@ public class HtspFileInputStreamDataSource extends HtspDataSource {
     // DataSource Methods
     @Override
     public long open(DataSpec dataSpec) throws IOException {
-        Log.i(TAG, "Opening HTSP DataSource (" + mDataSourceNumber + ")");
+        Timber.i("Opening HTSP DataSource (" + mDataSourceNumber + ")");
 
         mDataSpec = dataSpec;
 
@@ -106,7 +106,7 @@ public class HtspFileInputStreamDataSource extends HtspDataSource {
 
     @Override
     public void close() throws IOException {
-        Log.i(TAG, "Closing HTSP DataSource (" + mDataSourceNumber + ")");
+        Timber.i("Closing HTSP DataSource (" + mDataSourceNumber + ")");
         if (mHtspFileInputStream != null) {
             mHtspFileInputStream.close();
         }

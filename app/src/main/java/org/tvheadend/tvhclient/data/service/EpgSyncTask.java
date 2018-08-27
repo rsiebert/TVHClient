@@ -219,6 +219,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         if (TextUtils.isEmpty(method)) {
             return;
         }
+        Timber.d("Handling method " + method);
         switch (method) {
             case "hello":
                 handleInitialServerResponse(message);
