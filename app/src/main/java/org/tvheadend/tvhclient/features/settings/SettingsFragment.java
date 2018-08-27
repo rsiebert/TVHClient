@@ -14,6 +14,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.TaskStackBuilder;
 
 import com.afollestad.materialdialogs.folderselector.FolderChooserDialog;
 
@@ -34,31 +35,25 @@ public class SettingsFragment extends BasePreferenceFragment implements Preferen
 
         PreferenceManager.setDefaultValues(getActivity(), R.xml.preferences, false);
         addPreferencesFromResource(R.xml.preferences);
+
         toolbarInterface.setTitle(getString(R.string.settings));
         toolbarInterface.setSubtitle("");
 
-        Preference manageConnectionsPreference = findPreference("list_connections");
-        Preference userInterfacePreference = findPreference("user_interface");
-        Preference notificationsPreference = findPreference("notifications");
-        Preference profilesPreference = findPreference("profiles");
-        Preference castingPreference = findPreference("casting");
-        internalPlayerPreference = (CheckBoxPreference) findPreference("internal_player_enabled");
-        Preference unlockerPreference = findPreference("unlocker");
-        Preference advancedPreference = findPreference("advanced");
-        Preference changelogPreference = findPreference("changelog");
-        Preference languagePreference = findPreference("language");
-        downloadDirectoryPreference = findPreference("download_directory");
+        findPreference("list_connections").setOnPreferenceClickListener(this);
+        findPreference("user_interface").setOnPreferenceClickListener(this);
+        findPreference("notifications").setOnPreferenceClickListener(this);
+        findPreference("profiles").setOnPreferenceClickListener(this);
+        findPreference("casting").setOnPreferenceClickListener(this);
+        findPreference("unlocker").setOnPreferenceClickListener(this);
+        findPreference("advanced").setOnPreferenceClickListener(this);
+        findPreference("changelog").setOnPreferenceClickListener(this);
+        findPreference("language").setOnPreferenceClickListener(this);
+        findPreference("light_theme_enabled").setOnPreferenceClickListener(this);
 
-        manageConnectionsPreference.setOnPreferenceClickListener(this);
-        userInterfacePreference.setOnPreferenceClickListener(this);
-        notificationsPreference.setOnPreferenceClickListener(this);
-        profilesPreference.setOnPreferenceClickListener(this);
-        castingPreference.setOnPreferenceClickListener(this);
+        internalPlayerPreference = (CheckBoxPreference) findPreference("internal_player_enabled");
         internalPlayerPreference.setOnPreferenceClickListener(this);
-        advancedPreference.setOnPreferenceClickListener(this);
-        unlockerPreference.setOnPreferenceClickListener(this);
-        changelogPreference.setOnPreferenceClickListener(this);
-        languagePreference.setOnPreferenceClickListener(this);
+
+        downloadDirectoryPreference = findPreference("download_directory");
         downloadDirectoryPreference.setOnPreferenceClickListener(this);
 
         updateDownloadDirSummary();
@@ -130,6 +125,9 @@ public class SettingsFragment extends BasePreferenceFragment implements Preferen
             case "user_interface":
                 showSelectedSettingsFragment("user_interface");
                 break;
+            case "light_theme_enabled":
+                handlePreferenceThemeSelected();
+                break;
             case "notifications":
                 handlePreferenceNotificationsSelected();
                 break;
@@ -156,6 +154,13 @@ public class SettingsFragment extends BasePreferenceFragment implements Preferen
                 break;
         }
         return true;
+    }
+
+    private void handlePreferenceThemeSelected() {
+        TaskStackBuilder.create(getActivity())
+                .addNextIntent(new Intent(getActivity(), MainActivity.class))
+                .addNextIntent(getActivity().getIntent())
+                .startActivities();
     }
 
     private void handlePreferenceNotificationsSelected() {

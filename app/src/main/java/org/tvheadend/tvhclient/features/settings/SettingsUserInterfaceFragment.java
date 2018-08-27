@@ -40,29 +40,17 @@ public class SettingsUserInterfaceFragment extends BasePreferenceFragment implem
         toolbarInterface.setTitle(getString(R.string.pref_user_interface));
 
         programArtworkEnabledPreference = (CheckBoxPreference) findPreference("program_artwork_enabled");
-        CheckBoxPreference lightThemeEnabledPreference = (CheckBoxPreference) findPreference("light_theme_enabled");
         programArtworkEnabledPreference.setOnPreferenceClickListener(this);
-        lightThemeEnabledPreference.setOnPreferenceClickListener(this);
     }
 
     @Override
     public boolean onPreferenceClick(Preference preference) {
         switch (preference.getKey()) {
-            case "light_theme_enabled":
-                handlePreferenceThemeSelected();
-                break;
             case "program_artwork_enabled":
                 handlePreferenceShowArtworkSelected();
                 break;
         }
         return true;
-    }
-
-    private void handlePreferenceThemeSelected() {
-        TaskStackBuilder.create(getActivity())
-                .addNextIntent(new Intent(getActivity(), MainActivity.class))
-                .addNextIntent(getActivity().getIntent())
-                .startActivities();
     }
 
     private void handlePreferenceShowArtworkSelected() {
