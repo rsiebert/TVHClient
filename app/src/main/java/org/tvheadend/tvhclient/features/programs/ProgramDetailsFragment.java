@@ -125,8 +125,9 @@ public class ProgramDetailsFragment extends BaseFragment implements RecordingRem
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        toolbarInterface.setTitle(getString(R.string.details));
-
+        if (!isDualPane) {
+            toolbarInterface.setTitle(getString(R.string.details));
+        }
         if (savedInstanceState != null) {
             eventId = savedInstanceState.getInt("eventId", 0);
             channelId = savedInstanceState.getInt("channelId", 0);
