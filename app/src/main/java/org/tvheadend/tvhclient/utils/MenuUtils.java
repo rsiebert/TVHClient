@@ -16,6 +16,8 @@ import android.view.View;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.google.android.gms.cast.framework.CastContext;
+import com.google.android.gms.cast.framework.CastSession;
 
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
@@ -548,7 +550,7 @@ public class MenuUtils {
         return true;
     }
 
-    public void onPreparePopupMenu(Menu menu, Program program, Recording recording, boolean isNetworkAvailable) {
+    public void onPreparePopupMenu(Menu menu, Recording recording, boolean isNetworkAvailable) {
         Activity activity = this.activity.get();
         if (activity == null) {
             return;
@@ -570,6 +572,8 @@ public class MenuUtils {
 
             } else if (recording.isRecording()) {
                 playMenuItem.setVisible(true);
+                CastSession castSession = CastContext.getSharedInstance(activity).getSessionManager().getCurrentCastSession();
+                castMenuItem.setVisible(castSession != null);
                 recordRemoveMenuItem.setTitle(R.string.stop);
                 recordRemoveMenuItem.setVisible(true);
 

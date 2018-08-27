@@ -386,4 +386,5 @@
     <string name="pref_date_time_format_sum">Zeige das Datum und die Zeit in der landesüblichen Form an. Alternativ wird das Format \'31.12.2017, 21:09\' verwendet.</string>
     <string name="pref_show_program_subtitle_sum">Zeigt den Untertitel (falls vorhanden) eines Programmes an.</string>
     <string name="pref_show_program_subtitle">Zeige den Programmuntertitel</string>
+    <string name="full_changelog">Full Changelog</string>
 </resources>

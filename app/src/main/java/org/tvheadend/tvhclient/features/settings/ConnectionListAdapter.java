@@ -12,26 +12,13 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-
 public class ConnectionListAdapter extends ArrayAdapter<Connection> {
 
     private final Activity context;
-    private final List<Connection> list = new ArrayList<>();
 
     ConnectionListAdapter(Activity context) {
         super(context, R.layout.connection_list_adapter);
         this.context = context;
-    }
-
-    public void sort() {
-        sort(new Comparator<Connection>() {
-            public int compare(Connection x, Connection y) {
-                return (x.getName().equals(y.getName())) ? 0 : 1;
-            }
-        });
     }
 
     static class ViewHolder {
@@ -72,18 +59,5 @@ public class ConnectionListAdapter extends ArrayAdapter<Connection> {
            }
         }
         return view;
-    }
-
-    public void update(Connection c) {
-        int length = list.size();
-
-        // Go through the list of programs and find the
-        // one with the same id. If its been found, replace it.
-        for (int i = 0; i < length; ++i) {
-            if (list.get(i).getId() == c.getId()) {
-                list.set(i, c);
-                break;
-            }
-        }
     }
 }

@@ -15,8 +15,6 @@ public class EpgSyncHandler {
 
     private final Context context;
     private final AppRepository appRepository;
-    private HandlerThread handlerThread;
-    private Handler handler;
     private Connection connection;
     private SimpleHtspConnection simpleHtspConnection;
     private EpgSyncTask epgSyncTask;
@@ -25,9 +23,9 @@ public class EpgSyncHandler {
         this.appRepository = appRepository;
         this.context = context;
 
-        handlerThread = new HandlerThread("EpgSyncService Handler Thread");
+        HandlerThread handlerThread = new HandlerThread("EpgSyncService Handler Thread");
         handlerThread.start();
-        handler = new Handler(handlerThread.getLooper());
+        Handler handler = new Handler(handlerThread.getLooper());
     }
 
     public boolean init() {

@@ -282,33 +282,19 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
     public void startObservingViewModels() {
         Timber.d("start");
         ChannelViewModel channelViewModel = ViewModelProviders.of(activity).get(ChannelViewModel.class);
-        channelViewModel.getNumberOfChannels().observe(activity, count -> {
-            result.updateBadge(MENU_CHANNELS, new StringHolder(count + ""));
-        });
+        channelViewModel.getNumberOfChannels().observe(activity, count -> result.updateBadge(MENU_CHANNELS, new StringHolder(count + "")));
 
         SeriesRecordingViewModel seriesRecordingViewModel = ViewModelProviders.of(activity).get(SeriesRecordingViewModel.class);
-        seriesRecordingViewModel.getNumberOfRecordings().observe(activity, count -> {
-            result.updateBadge(MENU_SERIES_RECORDINGS, new StringHolder(count + ""));
-        });
+        seriesRecordingViewModel.getNumberOfRecordings().observe(activity, count -> result.updateBadge(MENU_SERIES_RECORDINGS, new StringHolder(count + "")));
 
         TimerRecordingViewModel timerRecordingViewModel = ViewModelProviders.of(activity).get(TimerRecordingViewModel.class);
-        timerRecordingViewModel.getNumberOfRecordings().observe(activity, count -> {
-            result.updateBadge(MENU_TIMER_RECORDINGS, new StringHolder(count + ""));
-        });
+        timerRecordingViewModel.getNumberOfRecordings().observe(activity, count -> result.updateBadge(MENU_TIMER_RECORDINGS, new StringHolder(count + "")));
 
         RecordingViewModel recordingViewModel = ViewModelProviders.of(activity).get(RecordingViewModel.class);
-        recordingViewModel.getNumberOfCompletedRecordings().observe(activity, count -> {
-            result.updateBadge(MENU_COMPLETED_RECORDINGS, new StringHolder(count + ""));
-        });
-        recordingViewModel.getNumberOfScheduledRecordings().observe(activity, count -> {
-            result.updateBadge(MENU_SCHEDULED_RECORDINGS, new StringHolder(count + ""));
-        });
-        recordingViewModel.getNumberOfFailedRecordings().observe(activity, count -> {
-            result.updateBadge(MENU_FAILED_RECORDINGS, new StringHolder(count + ""));
-        });
-        recordingViewModel.getNumberOfRemovedRecordings().observe(activity, count -> {
-            result.updateBadge(MENU_REMOVED_RECORDINGS, new StringHolder(count + ""));
-        });
+        recordingViewModel.getNumberOfCompletedRecordings().observe(activity, count -> result.updateBadge(MENU_COMPLETED_RECORDINGS, new StringHolder(count + "")));
+        recordingViewModel.getNumberOfScheduledRecordings().observe(activity, count -> result.updateBadge(MENU_SCHEDULED_RECORDINGS, new StringHolder(count + "")));
+        recordingViewModel.getNumberOfFailedRecordings().observe(activity, count -> result.updateBadge(MENU_FAILED_RECORDINGS, new StringHolder(count + "")));
+        recordingViewModel.getNumberOfRemovedRecordings().observe(activity, count -> result.updateBadge(MENU_REMOVED_RECORDINGS, new StringHolder(count + "")));
         Timber.d("end");
     }
 

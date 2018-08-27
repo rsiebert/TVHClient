@@ -140,12 +140,7 @@ public class ProgramDetailsFragment extends BaseFragment implements RecordingRem
 
         if (nestedToolbar != null) {
             nestedToolbar.inflateMenu(R.menu.program_details_toolbar_menu);
-            nestedToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem menuItem) {
-                    return onOptionsItemSelected(menuItem);
-                }
-            });
+            nestedToolbar.setOnMenuItemClickListener(this::onOptionsItemSelected);
         }
 
         ProgramViewModel viewModel = ViewModelProviders.of(activity).get(ProgramViewModel.class);
@@ -210,7 +205,7 @@ public class ProgramDetailsFragment extends BaseFragment implements RecordingRem
             seriesInfoTextView.setText(seriesInfoText);
         }
 
-        String ct = UIUtils.getContentTypeText(getContext(), program.getContentType());
+        String ct = UIUtils.getContentTypeText(activity, program.getContentType());
         if (TextUtils.isEmpty(ct)) {
             contentTypeLabelTextView.setVisibility(View.GONE);
             contentTypeTextView.setVisibility(View.GONE);
@@ -259,7 +254,9 @@ public class ProgramDetailsFragment extends BaseFragment implements RecordingRem
         if (!isDualPane) {
             menu.findItem(R.id.menu_search).setVisible(false);
         }
-
+        if (nestedToolbar == null || nestedToolbar.getMenu() == null) {
+            return;
+        }
         menu = nestedToolbar.getMenu();
         // Show the play menu item when the current
         // time is between the program start and end time

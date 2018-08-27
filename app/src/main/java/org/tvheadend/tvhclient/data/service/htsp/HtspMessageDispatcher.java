@@ -36,7 +36,6 @@ import timber.log.Timber;
  * dispatching functionality later on, as it becomes required.
  */
 public class HtspMessageDispatcher implements HtspMessage.DispatcherInternal, HtspMessage.Listener, HtspConnection.Listener {
-    private static final String TAG = HtspMessageDispatcher.class.getSimpleName();
     private static final AtomicInteger sSequence = new AtomicInteger();
 
     private final Set<HtspMessage.Listener> listeners = new CopyOnWriteArraySet<>();

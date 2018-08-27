@@ -77,12 +77,7 @@ public class DownloadRecordingManager {
         // Check after a certain delay the status of the download and that for
         // example the download has not failed due to insufficient storage space.
         // The download manager does not sent a broadcast if this error occurs.
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                showDownloadStatusMessage();
-            }
-        }, 1500);
+        new Handler().postDelayed(this::showDownloadStatusMessage, 1500);
     }
 
     private DownloadManager.Request getDownloadRequest() {

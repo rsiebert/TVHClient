@@ -149,12 +149,7 @@ public class RecordingDetailsFragment extends BaseFragment implements RecordingR
         // Show the contents of the toolbar and handle the menu selection
         if (nestedToolbar != null) {
             nestedToolbar.inflateMenu(R.menu.recording_details_toolbar_menu);
-            nestedToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem menuItem) {
-                    return onOptionsItemSelected(menuItem);
-                }
-            });
+            nestedToolbar.setOnMenuItemClickListener(this::onOptionsItemSelected);
         }
     }
 
@@ -247,7 +242,9 @@ public class RecordingDetailsFragment extends BaseFragment implements RecordingR
         if (!isDualPane) {
             menu.findItem(R.id.menu_search).setVisible(false);
         }
-
+        if (nestedToolbar == null || nestedToolbar.getMenu() == null) {
+            return;
+        }
         menu = nestedToolbar.getMenu();
         if (recording.isCompleted()) {
             menu.findItem(R.id.menu_record_remove).setVisible(true);

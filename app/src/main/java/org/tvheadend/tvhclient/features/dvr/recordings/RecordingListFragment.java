@@ -106,8 +106,7 @@ public class RecordingListFragment extends BaseFragment implements RecyclerViewC
 
             case R.id.menu_record_remove_all:
                 CopyOnWriteArrayList<Recording> list = new CopyOnWriteArrayList<>(recyclerViewAdapter.getItems());
-                menuUtils.handleMenuRemoveAllRecordingsSelection(list);
-                return true;
+                return menuUtils.handleMenuRemoveAllRecordingsSelection(list);
 
             default:
                 return super.onOptionsItemSelected(item);

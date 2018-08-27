@@ -1,8 +1,6 @@
 package org.tvheadend.tvhclient.features.programs;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
@@ -30,14 +28,12 @@ public class ProgramRecyclerViewAdapter extends RecyclerView.Adapter<ProgramView
     private final RecyclerViewClickCallback clickCallback;
     private List<Program> programList = new ArrayList<>();
     private List<Program> programListFiltered = new ArrayList<>();
-    private SharedPreferences sharedPreferences;
     private Context context;
     private List<Recording> recordingList = new ArrayList<>();
 
     ProgramRecyclerViewAdapter(Context context, RecyclerViewClickCallback clickCallback, BottomReachedCallback onBottomReachedCallback) {
         this.context = context;
         this.clickCallback = clickCallback;
-        this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         this.onBottomReachedCallback = onBottomReachedCallback;
     }
 

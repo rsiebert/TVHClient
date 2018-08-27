@@ -22,7 +22,6 @@ import javax.inject.Inject;
 public class EpgViewModel extends AndroidViewModel {
 
     private MutableLiveData<List<ChannelSubset>> channels;
-    private LiveData<List<Recording>> recordings;
     @Inject
     protected AppRepository appRepository;
 

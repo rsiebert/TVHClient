@@ -140,9 +140,7 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
         // Get all recordings for the given channel to check if it belongs to a certain program
         // so the recording status of the particular program can be updated. This is required
         // because the programs are not updated automatically when recordings change.
-        viewModel.getRecordingsByChannelId(channelId).observe(this, recordings -> {
-            recyclerViewAdapter.addRecordings(recordings);
-        });
+        viewModel.getRecordingsByChannelId(channelId).observe(this, recordings -> recyclerViewAdapter.addRecordings(recordings));
 
         loadingProgramAllowed = true;
         loadingProgramsAllowedTask = new Runnable() {
@@ -226,7 +224,7 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
         PopupMenu popupMenu = new PopupMenu(activity, view);
         popupMenu.getMenuInflater().inflate(R.menu.channel_list_program_popup_menu, popupMenu.getMenu());
         popupMenu.getMenuInflater().inflate(R.menu.external_search_options_menu, popupMenu.getMenu());
-        menuUtils.onPreparePopupMenu(popupMenu.getMenu(), program, program.getRecording(), isNetworkAvailable);
+        menuUtils.onPreparePopupMenu(popupMenu.getMenu(), program.getRecording(), isNetworkAvailable);
         menuUtils.onPreparePopupSearchMenu(popupMenu.getMenu(), isNetworkAvailable);
 
         // Show the play menu item when the current

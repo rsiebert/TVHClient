@@ -36,7 +36,6 @@ import timber.log.Timber;
  * Handles a Subscription on a HTSP Connection
  */
 public class Subscriber implements HtspMessage.Listener, Authenticator.Listener {
-    private static final String TAG = Subscriber.class.getSimpleName();
 
     private static final int INVALID_SUBSCRIPTION_ID = -1;
     private static final int INVALID_START_TIME = -1;
@@ -439,18 +438,17 @@ public class Subscriber implements HtspMessage.Listener, Authenticator.Listener 
             final int pDrops = queueStatus.getInteger("Pdrops");
             final int iDrops = queueStatus.getInteger("Idrops");
 
-            StringBuilder builder = new StringBuilder()
-                    .append("Queue Status:")
-                    .append(" S: ").append(subscriptionId)
-                    .append(" P: ").append(packets)
-                    .append(" B: ").append(bytes)
-                    .append(" E: ").append(errors)
-                    .append(" D: ").append(delay)
-                    .append(" bD: ").append(bDrops)
-                    .append(" pD: ").append(pDrops)
-                    .append(" iD: ").append(iDrops);
+            String builder = "Queue Status:" +
+                    " S: " + subscriptionId +
+                    " P: " + packets +
+                    " B: " + bytes +
+                    " E: " + errors +
+                    " D: " + delay +
+                    " bD: " + bDrops +
+                    " pD: " + pDrops +
+                    " iD: " + iDrops;
 
-            Timber.i(builder.toString());
+            Timber.i(builder);
         }
 
         private void logSignalStatus() {

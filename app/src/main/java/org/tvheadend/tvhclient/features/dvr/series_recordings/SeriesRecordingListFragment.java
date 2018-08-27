@@ -126,8 +126,7 @@ public class SeriesRecordingListFragment extends BaseFragment implements Recycle
 
             case R.id.menu_record_remove_all:
                 CopyOnWriteArrayList<SeriesRecording> list = new CopyOnWriteArrayList<>(recyclerViewAdapter.getItems());
-                menuUtils.handleMenuRemoveAllSeriesRecordingSelection(list);
-                return true;
+                return menuUtils.handleMenuRemoveAllSeriesRecordingSelection(list);
 
             default:
                 return super.onOptionsItemSelected(item);
@@ -204,20 +203,16 @@ public class SeriesRecordingListFragment extends BaseFragment implements Recycle
                     return true;
 
                 case R.id.menu_search_imdb:
-                    menuUtils.handleMenuSearchImdbWebsite(seriesRecording.getTitle());
-                    return true;
+                    return menuUtils.handleMenuSearchImdbWebsite(seriesRecording.getTitle());
 
                 case R.id.menu_search_fileaffinity:
-                    menuUtils.handleMenuSearchFileAffinityWebsite(seriesRecording.getTitle());
-                    return true;
+                    return menuUtils.handleMenuSearchFileAffinityWebsite(seriesRecording.getTitle());
 
                 case R.id.menu_search_epg:
-                    menuUtils.handleMenuSearchEpgSelection(seriesRecording.getTitle());
-                    return true;
+                    return menuUtils.handleMenuSearchEpgSelection(seriesRecording.getTitle());
 
                 case R.id.menu_record_remove:
-                    menuUtils.handleMenuRemoveSeriesRecordingSelection(seriesRecording.getId(), seriesRecording.getTitle(), null);
-                    return true;
+                    return menuUtils.handleMenuRemoveSeriesRecordingSelection(seriesRecording.getId(), seriesRecording.getTitle(), null);
 
                 default:
                     return false;

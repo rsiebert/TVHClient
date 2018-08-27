@@ -160,7 +160,7 @@ public class Connection {
             return false;
         }
         // Check if the name contains only valid characters.
-        Pattern pattern = Pattern.compile("^[0-9a-zA-Z_\\-\\.]*$");
+        Pattern pattern = Pattern.compile("^[0-9a-zA-Z_\\-.]*$");
         Matcher matcher = pattern.matcher(name);
         return matcher.matches();
     }
@@ -172,14 +172,14 @@ public class Connection {
         }
 
         // Check if the name contains only valid characters.
-        Pattern pattern = Pattern.compile("^[0-9a-zA-Z_\\-\\.]*$");
+        Pattern pattern = Pattern.compile("^[0-9a-zA-Z_\\-.]*$");
         Matcher matcher = pattern.matcher(address);
         if (!matcher.matches()) {
             return false;
         }
 
         // Check if the address has only numbers and dots in it.
-        pattern = Pattern.compile("^[0-9\\.]*$");
+        pattern = Pattern.compile("^[0-9.]*$");
         matcher = pattern.matcher(address);
 
         // Now validate the IP address

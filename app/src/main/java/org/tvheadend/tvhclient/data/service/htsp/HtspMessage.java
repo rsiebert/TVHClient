@@ -40,7 +40,6 @@ import java.util.Map;
  */
 
 public class HtspMessage extends HashMap<String, Object> {
-    private static final String TAG = HtspMessage.class.getSimpleName();
 
     // Message Handler, will receive incoming messages
 

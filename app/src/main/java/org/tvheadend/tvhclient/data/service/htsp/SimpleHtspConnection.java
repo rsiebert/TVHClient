@@ -27,12 +27,10 @@ import org.tvheadend.tvhclient.data.service.htsp.tasks.Authenticator;
 import timber.log.Timber;
 
 public class SimpleHtspConnection implements HtspMessage.Dispatcher, HtspConnection.Listener {
-    private static final String TAG = SimpleHtspConnection.class.getSimpleName();
 
     private final HtspMessageDispatcher messageDispatcher;
     private final Authenticator authenticator;
     private final HtspConnection htspConnection;
-    private final Context context;
     private Thread connectionThread;
 
     private boolean enableReconnect = false;
@@ -40,7 +38,6 @@ public class SimpleHtspConnection implements HtspMessage.Dispatcher, HtspConnect
     private int retryDelay = 3;
 
     public SimpleHtspConnection(Context context, Connection connectionInfo) {
-        this.context = context;
 
         messageDispatcher = new HtspMessageDispatcher();
 

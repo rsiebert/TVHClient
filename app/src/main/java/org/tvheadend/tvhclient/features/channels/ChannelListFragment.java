@@ -184,14 +184,14 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_tags:
-                menuUtils.handleMenuChannelTagsSelection(viewModel.getChannelTagId(), this);
-                return true;
+                return menuUtils.handleMenuChannelTagsSelection(viewModel.getChannelTagId(), this);
+
             case R.id.menu_timeframe:
-                menuUtils.handleMenuTimeSelection(selectedTimeOffset, intervalInHours, 12, this);
-                return true;
+                return menuUtils.handleMenuTimeSelection(selectedTimeOffset, intervalInHours, 12, this);
+
             case R.id.menu_genre_color_info_channels:
-                menuUtils.handleMenuGenreColorSelection();
-                return true;
+                return menuUtils.handleMenuGenreColorSelection();
+
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -273,7 +273,7 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
         PopupMenu popupMenu = new PopupMenu(activity, view);
         popupMenu.getMenuInflater().inflate(R.menu.channel_list_program_popup_menu, popupMenu.getMenu());
         popupMenu.getMenuInflater().inflate(R.menu.external_search_options_menu, popupMenu.getMenu());
-        menuUtils.onPreparePopupMenu(popupMenu.getMenu(), program, recording, isNetworkAvailable);
+        menuUtils.onPreparePopupMenu(popupMenu.getMenu(), recording, isNetworkAvailable);
         menuUtils.onPreparePopupSearchMenu(popupMenu.getMenu(), isNetworkAvailable);
 
         // Show the play menu item if the network is available because the channel

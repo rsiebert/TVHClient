@@ -41,7 +41,6 @@ import timber.log.Timber;
  * Main HTSP Connection class
  */
 public class HtspConnection implements Runnable {
-    private static final String TAG = HtspConnection.class.getSimpleName();
 
     /**
      * A listener for Connection state events

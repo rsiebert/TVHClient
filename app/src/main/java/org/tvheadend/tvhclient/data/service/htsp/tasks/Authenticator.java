@@ -45,7 +45,6 @@ import timber.log.Timber;
  * * Removes itself as a Message listener
  */
 public class Authenticator implements HtspMessage.Listener, HtspConnection.Listener {
-    private static final String TAG = Authenticator.class.getSimpleName();
 
     private final Lock lock = new ReentrantLock();
 

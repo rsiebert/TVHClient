@@ -126,8 +126,7 @@ public class TimerRecordingListFragment extends BaseFragment implements Recycler
 
             case R.id.menu_record_remove_all:
                 CopyOnWriteArrayList<TimerRecording> list = new CopyOnWriteArrayList<>(recyclerViewAdapter.getItems());
-                menuUtils.handleMenuRemoveAllTimerRecordingSelection(list);
-                return true;
+                return menuUtils.handleMenuRemoveAllTimerRecordingSelection(list);
 
             default:
                 return super.onOptionsItemSelected(item);
@@ -202,22 +201,18 @@ public class TimerRecordingListFragment extends BaseFragment implements Recycler
                     return true;
 
                 case R.id.menu_search_imdb:
-                    menuUtils.handleMenuSearchImdbWebsite(timerRecording.getTitle());
-                    return true;
+                    return menuUtils.handleMenuSearchImdbWebsite(timerRecording.getTitle());
 
                 case R.id.menu_search_fileaffinity:
-                    menuUtils.handleMenuSearchFileAffinityWebsite(timerRecording.getTitle());
-                    return true;
+                    return menuUtils.handleMenuSearchFileAffinityWebsite(timerRecording.getTitle());
 
                 case R.id.menu_search_epg:
-                    menuUtils.handleMenuSearchEpgSelection(timerRecording.getTitle());
-                    return true;
+                    return menuUtils.handleMenuSearchEpgSelection(timerRecording.getTitle());
 
                 case R.id.menu_record_remove:
                     final String name = (timerRecording.getName() != null && timerRecording.getName().length() > 0) ? timerRecording.getName() : "";
                     final String title = timerRecording.getTitle() != null ? timerRecording.getTitle() : "";
-                    menuUtils.handleMenuRemoveTimerRecordingSelection(timerRecording.getId(), (name.length() > 0 ? name : title), null);
-                    return true;
+                    return menuUtils.handleMenuRemoveTimerRecordingSelection(timerRecording.getId(), (name.length() > 0 ? name : title), null);
 
                 default:
                     return false;

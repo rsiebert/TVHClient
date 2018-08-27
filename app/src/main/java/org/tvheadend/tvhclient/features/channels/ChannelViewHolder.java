@@ -18,12 +18,10 @@ import com.squareup.picasso.Picasso;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Channel;
-import org.tvheadend.tvhclient.data.entity.Recording;
-import org.tvheadend.tvhclient.utils.UIUtils;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback;
+import org.tvheadend.tvhclient.utils.UIUtils;
 
 import java.util.Date;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -63,7 +61,7 @@ public class ChannelViewHolder extends RecyclerView.ViewHolder {
         ButterKnife.bind(this, view);
     }
 
-    public void bindData(Context context, final Channel channel, boolean selected, List<Recording> recordingList, RecyclerViewClickCallback clickCallback) {
+    public void bindData(Context context, final Channel channel, boolean selected, RecyclerViewClickCallback clickCallback) {
         itemView.setTag(channel);
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);

@@ -399,5 +399,6 @@
     <string name="startup">Starting</string>
     <string name="initializing">Initializing</string>
     <string name="add_reminder">Add reminder</string>
+    <string name="full_changelog">Full Changelog</string>
 
 </resources>

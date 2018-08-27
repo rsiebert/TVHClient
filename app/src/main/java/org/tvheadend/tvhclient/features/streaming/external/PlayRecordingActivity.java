@@ -16,7 +16,6 @@ import timber.log.Timber;
 
 public class PlayRecordingActivity extends BasePlaybackActivity {
 
-    private Recording recording;
     private int dvrId;
 
     @Override

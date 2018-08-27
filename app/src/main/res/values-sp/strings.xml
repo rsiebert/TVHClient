@@ -340,7 +340,7 @@ Debe tener el patrón '01:24:67:9a:cd:ef'."</string>
     <string name="unlocker_already_purchased">¡Todas las características adicionales están disponibles! Gracias por tu apoyo!</string>
     <string name="unlocker_purchase_not_successful">Desafortunadamente la compra no fue exitosa. Por favor contacte al desarrollador.</string>
     <string name="unlocker_purchase_successful">Compra exitosa! ¡Gracias por su apoyo! Todas las características están ahora disponibles.</string>
-    <string name="updating">Actualizando ...</string>
+    <string name="updating">Actualizando …</string>
     <string name="wednesday">Miercoles</string>
     <string name="wol_address_invalid">La dirección MAC no es válida. Por favor verifica tu configuración.</string>
     <string name="wol_error">"Error al enviar el paquete de activación en puerto LAN a '%1$s'.

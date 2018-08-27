@@ -92,31 +92,39 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     public void onConnectionStateChange(@NonNull HtspConnection.State state) {
         Timber.d("Connection state changed to " + state);
 
-        if (state == HtspConnection.State.FAILED) {
-            sendEpgSyncStatusMessage(ServiceStatusReceiver.State.FAILED,
-                    "Connection failed.", "");
-        } else if (state == HtspConnection.State.FAILED_CONNECTING_TO_SERVER) {
-            sendEpgSyncStatusMessage(ServiceStatusReceiver.State.FAILED,
-                    "Connection failed.",
-                    "Failed to connect to server");
-        } else if (state == HtspConnection.State.FAILED_EXCEPTION_OPENING_SOCKET) {
-            sendEpgSyncStatusMessage(ServiceStatusReceiver.State.FAILED,
-                    "Connection failed.",
-                    "Failed to open socket to the server");
-        } else if (state == HtspConnection.State.FAILED_INTERRUPTED) {
-            sendEpgSyncStatusMessage(ServiceStatusReceiver.State.FAILED,
-                    "Connection failed.",
-                    "Error during connection attempt to server");
-        } else if (state == HtspConnection.State.FAILED_UNRESOLVED_ADDRESS) {
-            sendEpgSyncStatusMessage(ServiceStatusReceiver.State.FAILED,
-                    "Connection failed.",
-                    "Failed to resolve server address");
-        } else if (state == HtspConnection.State.CONNECTING) {
-            sendEpgSyncStatusMessage(ServiceStatusReceiver.State.CONNECTED,
-                    "Connecting to server...", "");
-        } else if (state == HtspConnection.State.CLOSED) {
-            sendEpgSyncStatusMessage(ServiceStatusReceiver.State.CLOSED,
-                    "Connection closed.", "");
+        switch (state) {
+            case FAILED:
+                sendEpgSyncStatusMessage(ServiceStatusReceiver.State.FAILED,
+                        "Connection failed.", "");
+                break;
+            case FAILED_CONNECTING_TO_SERVER:
+                sendEpgSyncStatusMessage(ServiceStatusReceiver.State.FAILED,
+                        "Connection failed.",
+                        "Failed to connect to server");
+                break;
+            case FAILED_EXCEPTION_OPENING_SOCKET:
+                sendEpgSyncStatusMessage(ServiceStatusReceiver.State.FAILED,
+                        "Connection failed.",
+                        "Failed to open socket to the server");
+                break;
+            case FAILED_INTERRUPTED:
+                sendEpgSyncStatusMessage(ServiceStatusReceiver.State.FAILED,
+                        "Connection failed.",
+                        "Error during connection attempt to server");
+                break;
+            case FAILED_UNRESOLVED_ADDRESS:
+                sendEpgSyncStatusMessage(ServiceStatusReceiver.State.FAILED,
+                        "Connection failed.",
+                        "Failed to resolve server address");
+                break;
+            case CONNECTING:
+                sendEpgSyncStatusMessage(ServiceStatusReceiver.State.CONNECTED,
+                        "Connecting to server...", "");
+                break;
+            case CLOSED:
+                sendEpgSyncStatusMessage(ServiceStatusReceiver.State.CLOSED,
+                        "Connection closed.", "");
+                break;
         }
     }
 
@@ -125,18 +133,22 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     public void onAuthenticationStateChange(@NonNull Authenticator.State state) {
         Timber.d("Authentication state changed to " + state);
 
-        if (state == Authenticator.State.FAILED) {
-            sendEpgSyncStatusMessage(ServiceStatusReceiver.State.FAILED,
-                    "Authentication failed.", "");
-        } else if (state == Authenticator.State.FAILED_BAD_CREDENTIALS) {
-            sendEpgSyncStatusMessage(ServiceStatusReceiver.State.FAILED,
-                    "Authentication failed.",
-                    "Probably bad username or password");
-        } else if (state == Authenticator.State.AUTHENTICATED) {
-            sendEpgSyncStatusMessage(ServiceStatusReceiver.State.CONNECTED,
-                    "Connected to server.", "");
-            // Continue with getting all initial data only if we are authenticated
-            startAsyncCommunicationWithServer();
+        switch (state) {
+            case FAILED:
+                sendEpgSyncStatusMessage(ServiceStatusReceiver.State.FAILED,
+                        "Authentication failed.", "");
+                break;
+            case FAILED_BAD_CREDENTIALS:
+                sendEpgSyncStatusMessage(ServiceStatusReceiver.State.FAILED,
+                        "Authentication failed.",
+                        "Probably bad username or password");
+                break;
+            case AUTHENTICATED:
+                sendEpgSyncStatusMessage(ServiceStatusReceiver.State.CONNECTED,
+                        "Connected to server.", "");
+                // Continue with getting all initial data only if we are authenticated
+                startAsyncCommunicationWithServer();
+                break;
         }
     }
 

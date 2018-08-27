@@ -200,14 +200,14 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_tags:
-                menuUtils.handleMenuChannelTagsSelection(viewModel.getChannelTagId(), this);
-                return true;
+                return menuUtils.handleMenuChannelTagsSelection(viewModel.getChannelTagId(), this);
+
             case R.id.menu_timeframe:
-                menuUtils.handleMenuTimeSelection(selectedTimeOffset, hoursToShow, (hoursToShow * daysToShow), this);
-                return true;
+                return menuUtils.handleMenuTimeSelection(selectedTimeOffset, hoursToShow, (hoursToShow * daysToShow), this);
+
             case R.id.menu_genre_color_info_channels:
-                menuUtils.handleMenuGenreColorSelection();
-                return true;
+                return menuUtils.handleMenuGenreColorSelection();
+
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -258,7 +258,7 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
         PopupMenu popupMenu = new PopupMenu(activity, view);
         popupMenu.getMenuInflater().inflate(R.menu.channel_list_program_popup_menu, popupMenu.getMenu());
         popupMenu.getMenuInflater().inflate(R.menu.external_search_options_menu, popupMenu.getMenu());
-        menuUtils.onPreparePopupMenu(popupMenu.getMenu(), program, program.getRecording(), isNetworkAvailable);
+        menuUtils.onPreparePopupMenu(popupMenu.getMenu(), program.getRecording(), isNetworkAvailable);
         menuUtils.onPreparePopupSearchMenu(popupMenu.getMenu(), isNetworkAvailable);
 
         // Show the play menu item and the cast menu item (if available)

@@ -9,10 +9,9 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-public class BillingUtils {
-    private static final String TAG = BillingUtils.class.getSimpleName();
+// TODO public key missing
 
-    // TODO public key missing
+public class BillingUtils {
 
     private BillingUtils() {
         throw new IllegalAccessError("Utility class");

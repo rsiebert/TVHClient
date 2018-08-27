@@ -5,7 +5,7 @@
         <Preference
             android:key="list_connections"
             android:summary="@string/pref_manage_connections_sum"
-            android:title="@string/pref_manage_connections"></Preference>
+            android:title="@string/pref_manage_connections" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_user_interface">
         <ListPreference
@@ -59,8 +59,8 @@
                     android:summary="How many seconds to buffer before starting playback"
                     android:title="Buffer Duration" />
                 <CheckBoxPreference
-                    android:defaultValue="@bool/pref_default_audio_passthrough_decodeder_enabled"
-                    android:key="audio_passthrough_decodeder_enabled"
+                    android:defaultValue="@bool/pref_default_audio_passthrough_decoder_enabled"
+                    android:key="audio_passthrough_decoder_enabled"
                     android:summary="You must also ensure the system audio settings allows passthrough"
                     android:title="Enable Audio Passthrough" />
                 <CheckBoxPreference
@@ -100,7 +100,7 @@
         <Preference
             android:key="changelog"
             android:summary="@string/pref_changelog_sum"
-            android:title="@string/pref_changelog"></Preference>
+            android:title="@string/pref_changelog" />
     </PreferenceCategory>
 
 </PreferenceScreen>

@@ -28,7 +28,6 @@ import timber.log.Timber;
  * Default implementation tying together most of the other HTSP classes
  */
 public class HtspDataHandler implements HtspConnection.Reader, HtspConnection.Writer, HtspConnection.Listener {
-    private static final String TAG = HtspDataHandler.class.getSimpleName();
 
     private final HtspMessageSerializer messageSerializer;
     private final HtspMessage.DispatcherInternal messageDispatcher;

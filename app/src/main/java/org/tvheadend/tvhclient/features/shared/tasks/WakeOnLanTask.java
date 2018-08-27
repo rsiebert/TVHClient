@@ -16,7 +16,6 @@ import java.util.regex.Pattern;
 import timber.log.Timber;
 
 public class WakeOnLanTask extends AsyncTask<String, Void, Integer> {
-    private final static String TAG = WakeOnLanTask.class.getSimpleName();
 
     private final static int WOL_SEND = 0;
     private final static int WOL_SEND_BROADCAST = 1;
@@ -110,7 +109,7 @@ public class WakeOnLanTask extends AsyncTask<String, Void, Integer> {
         byte[] macBytes = new byte[6];
 
         // Parse the MAC address elements into the array.
-        String[] hex = macAddress.split("(:|-)");
+        String[] hex = macAddress.split("([:\\-])");
         for (int i = 0; i < 6; i++) {
             macBytes[i] = (byte) Integer.parseInt(hex[i], 16);
         }
@@ -126,14 +125,19 @@ public class WakeOnLanTask extends AsyncTask<String, Void, Integer> {
         String message = "";
         Context ctx = context.get();
         if (ctx != null) {
-            if (result == WOL_SEND) {
-                message = ctx.getString(R.string.wol_send, connection.getHostname());
-            } else if (result == WOL_SEND_BROADCAST) {
-                message = ctx.getString(R.string.wol_send_broadcast, connection.getHostname());
-            } else if (result == WOL_INVALID_MAC) {
-                message = ctx.getString(R.string.wol_address_invalid);
-            } else {
-                message = ctx.getString(R.string.wol_error, connection.getHostname(), exception.getLocalizedMessage());
+            switch (result) {
+                case WOL_SEND:
+                    message = ctx.getString(R.string.wol_send, connection.getHostname());
+                    break;
+                case WOL_SEND_BROADCAST:
+                    message = ctx.getString(R.string.wol_send_broadcast, connection.getHostname());
+                    break;
+                case WOL_INVALID_MAC:
+                    message = ctx.getString(R.string.wol_address_invalid);
+                    break;
+                default:
+                    message = ctx.getString(R.string.wol_error, connection.getHostname(), exception.getLocalizedMessage());
+                    break;
             }
         }
         callback.notify(message);

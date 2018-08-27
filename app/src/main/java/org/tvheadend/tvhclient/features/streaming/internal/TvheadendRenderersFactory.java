@@ -116,7 +116,7 @@ class TvheadendRenderersFactory extends DefaultRenderersFactory {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
 
         final boolean enablePassthroughDecoder = sharedPreferences.getBoolean(
-                "audio_passthrough_decodeder_enabled",
+                "audio_passthrough_decoder_enabled",
                 false);
 
         // Native Audio Decoders

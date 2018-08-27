@@ -129,7 +129,7 @@ public class StatusFragment extends BaseFragment implements WakeOnLanTaskCallbac
     private void showConnection() {
         connection = appRepository.getConnectionData().getActiveItem();
         if (connection == null) {
-            if (appRepository.getConnectionData().getItems() == null) {
+            if (appRepository.getConnectionData().getItems().isEmpty()) {
                 connectionTextView.setText(R.string.no_connection_available_advice);
             } else {
                 connectionTextView.setText(R.string.no_connection_active_advice);
@@ -143,34 +143,16 @@ public class StatusFragment extends BaseFragment implements WakeOnLanTaskCallbac
     private void showRecordings() {
 
         SeriesRecordingViewModel seriesRecordingViewModel = ViewModelProviders.of(this).get(SeriesRecordingViewModel.class);
-        seriesRecordingViewModel.getNumberOfRecordings().observe(this, count -> {
-            seriesRecordingsTextView.setText(getResources().getQuantityString(
-                    R.plurals.series_recordings, count, count));
-        });
+        seriesRecordingViewModel.getNumberOfRecordings().observe(this, count -> seriesRecordingsTextView.setText(getResources().getQuantityString(R.plurals.series_recordings, count != null ? count : 0, count)));
 
         TimerRecordingViewModel timerRecordingViewModel = ViewModelProviders.of(this).get(TimerRecordingViewModel.class);
-        timerRecordingViewModel.getNumberOfRecordings().observe(this, count -> {
-            timerRecordingsTextView.setText(getResources().getQuantityString(
-                    R.plurals.timer_recordings, count, count));
-        });
+        timerRecordingViewModel.getNumberOfRecordings().observe(this, count -> timerRecordingsTextView.setText(getResources().getQuantityString(R.plurals.timer_recordings, count != null ? count : 0, count)));
 
         RecordingViewModel recordingViewModel = ViewModelProviders.of(this).get(RecordingViewModel.class);
-        recordingViewModel.getNumberOfCompletedRecordings().observe(this, count -> {
-            completedRecordingsTextView.setText(getResources().getQuantityString(
-                    R.plurals.completed_recordings, count, count));
-        });
-        recordingViewModel.getNumberOfScheduledRecordings().observe(this, count -> {
-            upcomingRecordingsTextView.setText(getResources().getQuantityString(
-                    R.plurals.upcoming_recordings, count, count));
-        });
-        recordingViewModel.getNumberOfFailedRecordings().observe(this, count -> {
-            failedRecordingsTextView.setText(getResources().getQuantityString(
-                    R.plurals.failed_recordings, count, count));
-        });
-        recordingViewModel.getNumberOfRemovedRecordings().observe(this, count -> {
-            removedRecordingsTextView.setText(getResources().getQuantityString(
-                    R.plurals.removed_recordings, count, count));
-        });
+        recordingViewModel.getNumberOfCompletedRecordings().observe(this, count -> completedRecordingsTextView.setText(getResources().getQuantityString(R.plurals.completed_recordings, count != null ? count : 0, count)));
+        recordingViewModel.getNumberOfScheduledRecordings().observe(this, count -> upcomingRecordingsTextView.setText(getResources().getQuantityString(R.plurals.upcoming_recordings, count != null ? count : 0, count)));
+        recordingViewModel.getNumberOfFailedRecordings().observe(this, count -> failedRecordingsTextView.setText(getResources().getQuantityString(R.plurals.failed_recordings, count != null ? count : 0, count)));
+        recordingViewModel.getNumberOfRemovedRecordings().observe(this, count -> removedRecordingsTextView.setText(getResources().getQuantityString(R.plurals.removed_recordings, count != null ? count : 0, count)));
 
         // Get the programs that are currently being recorded
         recordingViewModel.getScheduledRecordings().observe(this, recordings -> {

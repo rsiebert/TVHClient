@@ -45,7 +45,7 @@ public class ChannelRecyclerViewAdapter extends RecyclerView.Adapter<ChannelView
     @Override
     public void onBindViewHolder(@NonNull ChannelViewHolder holder, int position) {
         Channel channel = channelListFiltered.get(position);
-        holder.bindData(context, channel, (selectedPosition == position), recordingList, clickCallback);
+        holder.bindData(context, channel, (selectedPosition == position), clickCallback);
     }
 
     @Override

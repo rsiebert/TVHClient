@@ -105,18 +105,14 @@ public class StartupFragment extends Fragment implements EpgSyncStatusCallback {
             stateText = getString(R.string.no_connection_available);
             progressBar.setVisibility(View.INVISIBLE);
             addConnectionFab.setVisibility(View.VISIBLE);
-            addConnectionFab.setOnClickListener(v -> {
-                showSettingsAddNewConnection();
-            });
+            addConnectionFab.setOnClickListener(v -> showSettingsAddNewConnection());
 
         } else if (appRepository.getConnectionData().getActiveItem() == null) {
             Timber.d("No active connection available, showing settings");
             stateText = getString(R.string.no_connection_active_advice);
             progressBar.setVisibility(View.INVISIBLE);
             settingsFab.setVisibility(View.VISIBLE);
-            settingsFab.setOnClickListener(v -> {
-                showConnectionListSettings();
-            });
+            settingsFab.setOnClickListener(v -> showConnectionListSettings());
 
         } else if (NetworkUtils.isNetworkAvailable(activity)
                 && appRepository.getChannelData().getItems().size() > 0) {

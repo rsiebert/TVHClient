@@ -51,7 +51,7 @@ $ 1.9.7
 $ 1.9.6
   % VERSION 1.9.6
   _ 01.12.2016
-    * Added menu to search imdb or the EPG to the program and recording details screens
+    * Added menu to search IMDB or the EPG to the program and recording details screens
     * Refresh the program guide view automatically every 15 minutes
     * Fixed crash in timer recording details screen
 $ 1.9.5
@@ -62,7 +62,7 @@ $ 1.9.5
     * Show cancel dialog in add/edit connection screen when the back button was pressed
     * Show very long program or recording titles on two lines in the details screens
     * Show, enable or disable a scheduled recording (requires at least server API 23)
-    * Added menu to search imdb or the EPG to the program and recording details screens
+    * Added menu to search IMDB or the EPG to the program and recording details screens
     * Improved search speed
     * Small bug fixes
 $ 1.9.4
