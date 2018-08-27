@@ -74,6 +74,9 @@ public class SettingsActivity extends AppCompatActivity implements ToolbarInterf
                     case "casting":
                         fragment = new SettingsCastingFragment();
                         break;
+                    case "playback":
+                        fragment = new SettingsPlaybackFragment();
+                        break;
                     case "advanced":
                         fragment = new SettingsAdvancedFragment();
                         break;

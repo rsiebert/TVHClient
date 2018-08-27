@@ -36,44 +36,10 @@
             android:key="casting"
             android:summary="@string/pref_casting_sum"
             android:title="@string/pref_casting" />
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="internal_player_enabled"
-            android:summary="Play live TV or recordings with the internal player which uses the HTSP protocol"
-            android:title="Enable Internal Player" />
         <PreferenceScreen
-            android:dependency="internal_player_enabled"
-            android:title="Internal player settings">
-
-            <PreferenceCategory android:title="Audio and Video">
-                <ListPreference
-                    android:defaultValue="@string/pref_default_buffer_playback_ms"
-                    android:dialogTitle="Buffer Seconds"
-                    android:entries="@array/buffer_playback_ms_names"
-                    android:entryValues="@array/buffer_playback_ms_values"
-                    android:key="buffer_playback_ms"
-                    android:summary="How many seconds to buffer before starting playback"
-                    android:title="Buffer Duration" />
-                <CheckBoxPreference
-                    android:defaultValue="@bool/pref_default_audio_passthrough_decoder_enabled"
-                    android:key="audio_passthrough_decoder_enabled"
-                    android:summary="You must also ensure the system audio settings allows passthrough"
-                    android:title="Enable Audio Passthrough" />
-                <CheckBoxPreference
-                    android:defaultValue="@bool/pref_default_audio_tunneling_enabled"
-                    android:key="audio_tunneling_enabled"
-                    android:summary="Enable support for DSP audio tunneling"
-                    android:title="Enable Audio Tunneling" />
-                <CheckBoxPreference
-                    android:defaultValue="@bool/pref_default_audio_ffmpeg_audio_enabled"
-                    android:key="ffmpeg_audio_enabled"
-                    android:title="Enable FFMpeg Audio Codecs" />
-                <CheckBoxPreference
-                    android:defaultValue="@bool/pref_default_captions_apply_embedded_styles"
-                    android:key="captions_apply_embedded_styles"
-                    android:title="Apply embedded caption styles" />
-            </PreferenceCategory>
-        </PreferenceScreen>
+            android:key="playback"
+            android:summary="Choose how live TV programs or recordings are played."
+            android:title="Playback" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_misc">

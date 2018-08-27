@@ -44,14 +44,12 @@ public class SettingsFragment extends BasePreferenceFragment implements Preferen
         findPreference("notifications").setOnPreferenceClickListener(this);
         findPreference("profiles").setOnPreferenceClickListener(this);
         findPreference("casting").setOnPreferenceClickListener(this);
+        findPreference("playback").setOnPreferenceClickListener(this);
         findPreference("unlocker").setOnPreferenceClickListener(this);
         findPreference("advanced").setOnPreferenceClickListener(this);
         findPreference("changelog").setOnPreferenceClickListener(this);
         findPreference("language").setOnPreferenceClickListener(this);
         findPreference("light_theme_enabled").setOnPreferenceClickListener(this);
-
-        internalPlayerPreference = (CheckBoxPreference) findPreference("internal_player_enabled");
-        internalPlayerPreference.setOnPreferenceClickListener(this);
 
         downloadDirectoryPreference = findPreference("download_directory");
         downloadDirectoryPreference.setOnPreferenceClickListener(this);
@@ -134,8 +132,8 @@ public class SettingsFragment extends BasePreferenceFragment implements Preferen
             case "profiles":
                 handlePreferenceProfilesSelected();
                 break;
-            case "internal_player_enabled":
-                handlePreferenceInternalPlayerSelected();
+            case "playback":
+                showSelectedSettingsFragment("playback");
                 break;
             case "casting":
                 handlePreferenceCastingSelected();
@@ -179,15 +177,6 @@ public class SettingsFragment extends BasePreferenceFragment implements Preferen
                 Snackbar.make(getView(), R.string.feature_not_supported_by_server, Snackbar.LENGTH_SHORT).show();
             } else {
                 showSelectedSettingsFragment("profiles");
-            }
-        }
-    }
-
-    private void handlePreferenceInternalPlayerSelected() {
-        if (getView() != null) {
-            if (!isUnlocked) {
-                Snackbar.make(getView(), R.string.feature_not_available_in_free_version, Snackbar.LENGTH_SHORT).show();
-                internalPlayerPreference.setChecked(false);
             }
         }
     }

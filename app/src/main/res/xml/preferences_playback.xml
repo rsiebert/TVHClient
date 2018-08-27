@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="Player">
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="internal_player_enabled"
+            android:summary="Play live TV or recordings with the internal player which uses the HTSP protocol"
+            android:title="Enable Internal Player" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Audio and Video">
+        <ListPreference
+            android:defaultValue="@string/pref_default_buffer_playback_ms"
+            android:dependency="internal_player_enabled"
+            android:dialogTitle="Buffer Seconds"
+            android:entries="@array/buffer_playback_ms_names"
+            android:entryValues="@array/buffer_playback_ms_values"
+            android:key="buffer_playback_ms"
+            android:summary="How many seconds to buffer before starting playback"
+            android:title="Buffer Duration" />
+        <CheckBoxPreference
+            android:defaultValue="@bool/pref_default_audio_passthrough_decoder_enabled"
+            android:dependency="internal_player_enabled"
+            android:key="audio_passthrough_decoder_enabled"
+            android:summary="You must also ensure the system audio settings allows passthrough"
+            android:title="Enable Audio Passthrough" />
+        <CheckBoxPreference
+            android:defaultValue="@bool/pref_default_audio_tunneling_enabled"
+            android:dependency="internal_player_enabled"
+            android:key="audio_tunneling_enabled"
+            android:summary="Enable support for DSP audio tunneling"
+            android:title="Enable Audio Tunneling" />
+        <CheckBoxPreference
+            android:defaultValue="@bool/pref_default_audio_ffmpeg_audio_enabled"
+            android:dependency="internal_player_enabled"
+            android:key="ffmpeg_audio_enabled"
+            android:title="Enable FFMpeg Audio Codecs" />
+        <CheckBoxPreference
+            android:defaultValue="@bool/pref_default_captions_apply_embedded_styles"
+            android:dependency="internal_player_enabled"
+            android:key="captions_apply_embedded_styles"
+            android:title="Apply embedded caption styles" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Advanced">
+        <CheckBoxPreference
+            android:defaultValue="@bool/pref_default_shield_workaround_enabled"
+            android:dependency="internal_player_enabled"
+            android:key="shield_workaround_enabled"
+            android:title="Enable nVidia Shield Workaround" />
+        <CheckBoxPreference
+            android:defaultValue="@bool/pref_default_debug_text_view_enabled"
+            android:dependency="internal_player_enabled"
+            android:key="debug_text_view_enabled"
+            android:title="Enable Debug Text View" />
+        <CheckBoxPreference
+            android:defaultValue="@bool/pref_default_timeshift_enabled"
+            android:key="timeshift_enabled"
+            android:title="Enable timeshift support" />
+    </PreferenceCategory>
+</PreferenceScreen>

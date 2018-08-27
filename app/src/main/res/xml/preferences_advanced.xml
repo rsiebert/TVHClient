@@ -62,21 +62,4 @@
             android:summary="Remove all information from the database. This includes all channels, channel tags, programs and recordings from the database."
             android:title="Clear database" />
     </PreferenceCategory>
-
-    <PreferenceCategory android:title="Playback">
-        <CheckBoxPreference
-            android:defaultValue="@bool/pref_default_shield_workaround_enabled"
-            android:key="shield_workaround_enabled"
-            android:title="Enable nVidia Shield Workaround" />
-
-        <CheckBoxPreference
-            android:defaultValue="@bool/pref_default_debug_text_view_enabled"
-            android:key="debug_text_view_enabled"
-            android:title="Enable Debug Text View" />
-
-        <CheckBoxPreference
-            android:defaultValue="@bool/pref_default_timeshift_enabled"
-            android:key="timeshift_enabled"
-            android:title="Enable timeshift support" />
-    </PreferenceCategory>
 </PreferenceScreen>
