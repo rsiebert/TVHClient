@@ -61,7 +61,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     @Inject
     protected Context context;
     private final int connectionTimeout;
-    private Connection connection;
+    private final Connection connection;
     private int htspVersion;
     // This variable controls if the received data shall be stored
     // in lists so that it can be added at once to the database.
@@ -390,8 +390,6 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         Timber.d("Saving last update time: " + unixTime);
         connection.setLastUpdate(unixTime);
         appRepository.getConnectionData().updateItem(connection);
-
-        Timber.d("Saved last update time " + appRepository.getConnectionData().getActiveItem().getLastUpdate());
     }
 
     private void handleInitialServerResponse(HtspMessage response) {
@@ -808,8 +806,6 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
 
         connection.setSyncRequired(false);
         appRepository.getConnectionData().updateItem(connection);
-
-        storeLastUpdate();
 
         initialSyncCompleted = true;
 
