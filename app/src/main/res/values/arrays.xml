@@ -70,9 +70,9 @@
         <item>nl</item>
         <item>pl</item>
         <item>sv</item>
-        <item>cz</item>
+        <item>cs</item>
         <item>sk</item>
-        <item>sp</item>
+        <item>es</item>
     </string-array>
 
     <string-array name="pref_language_list_display">

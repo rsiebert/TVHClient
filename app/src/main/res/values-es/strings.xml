@@ -37,7 +37,7 @@
     <string name="content_type">Tipo de contenido</string>
     <string name="current_time">Tiempo actual</string>
     <string name="currently_recording">Actualmente grabando</string>
-    <string name="data_errors">Errores de datos: %1$d</string>
+    <string name="data_errors">Errores de datos: %1$s</string>
     <string name="data_size">Tamaño de archivo: %1$d %2$s</string>
     <string name="date">Fecha</string>
     <string name="days_of_week">Dias de la semana</string>
@@ -316,7 +316,7 @@ Debe tener el patrón '01:24:67:9a:cd:ef'."</string>
     <string name="stop">Detener</string>
     <string name="stop_recording">"¿De verdad quieres detener la grabación en funcionamiento '%s'?"</string>
     <string name="stop_time">Detener tiempo</string>
-    <string name="stream_errors">Errores de transmisión: %1$d</string>
+    <string name="stream_errors">Errores de transmisión: %1$s</string>
     <string name="subscription_error">Error de suscripción: %1$s</string>
     <string name="subtitle">Subtitulo</string>
     <string name="success_adding_recording">La grabación ha sido agregada.</string>
