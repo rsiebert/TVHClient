@@ -17,13 +17,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class EpgChannelListRecyclerViewAdapter extends RecyclerView.Adapter implements Filterable {
+class EpgChannelListRecyclerViewAdapter extends RecyclerView.Adapter implements Filterable {
 
     private final RecyclerViewClickCallback clickCallback;
-    private List<ChannelSubset> channelList = new ArrayList<>();
+    private final List<ChannelSubset> channelList = new ArrayList<>();
     private List<ChannelSubset> channelListFiltered = new ArrayList<>();
-    private Context context;
-    private int selectedPosition = 0;
+    private final Context context;
 
     EpgChannelListRecyclerViewAdapter(Context context, RecyclerViewClickCallback clickCallback) {
         this.context = context;
@@ -49,9 +48,6 @@ public class EpgChannelListRecyclerViewAdapter extends RecyclerView.Adapter impl
         channelList.addAll(list);
         channelListFiltered.addAll(list);
 
-        if (selectedPosition > list.size()) {
-            selectedPosition = 0;
-        }
         notifyDataSetChanged();
     }
 
@@ -63,10 +59,6 @@ public class EpgChannelListRecyclerViewAdapter extends RecyclerView.Adapter impl
     @Override
     public int getItemViewType(final int position) {
         return R.layout.epg_channel_list_adapter;
-    }
-
-    public void setPosition(int pos) {
-        selectedPosition = pos;
     }
 
     public ChannelSubset getItem(int position) {

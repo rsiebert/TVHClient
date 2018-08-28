@@ -18,14 +18,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class RecordingRecyclerViewAdapter extends RecyclerView.Adapter<RecordingViewHolder> implements Filterable {
+class RecordingRecyclerViewAdapter extends RecyclerView.Adapter<RecordingViewHolder> implements Filterable {
 
     private final RecyclerViewClickCallback clickCallback;
     private final boolean isDualPane;
-    private List<Recording> recordingList = new ArrayList<>();
+    private final List<Recording> recordingList = new ArrayList<>();
     private List<Recording> recordingListFiltered = new ArrayList<>();
-    private int htspVersion;
-    private Context context;
+    private final int htspVersion;
+    private final Context context;
     private int selectedPosition = 0;
 
     RecordingRecyclerViewAdapter(Context context, boolean isDualPane, RecyclerViewClickCallback clickCallback, int htspVersion) {

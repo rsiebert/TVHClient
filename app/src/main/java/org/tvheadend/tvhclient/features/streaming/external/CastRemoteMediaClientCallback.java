@@ -4,7 +4,7 @@ import com.google.android.gms.cast.framework.media.RemoteMediaClient;
 
 import timber.log.Timber;
 
-public class CastRemoteMediaClientCallback extends RemoteMediaClient.Callback {
+class CastRemoteMediaClientCallback extends RemoteMediaClient.Callback {
 
     private final RemoteMediaClient remoteMediaClient;
 

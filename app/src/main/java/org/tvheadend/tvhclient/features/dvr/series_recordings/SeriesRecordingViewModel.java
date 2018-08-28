@@ -17,7 +17,7 @@ public class SeriesRecordingViewModel extends AndroidViewModel {
 
     @Inject
     protected AppRepository appRepository;
-    private LiveData<List<SeriesRecording>> recordings;
+    private final LiveData<List<SeriesRecording>> recordings;
     private SeriesRecording recording;
 
     public SeriesRecordingViewModel(Application application) {

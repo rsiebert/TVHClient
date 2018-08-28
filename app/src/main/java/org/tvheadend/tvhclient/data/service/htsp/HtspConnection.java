@@ -116,7 +116,7 @@ public class HtspConnection implements Runnable {
         FAILED_EXCEPTION_OPENING_SOCKET
     }
 
-    private Connection connection;
+    private final Connection connection;
     private final Reader reader;
     private final Writer writer;
 
@@ -219,12 +219,16 @@ public class HtspConnection implements Runnable {
                 return;
             }
 
-            if (getState() == State.CLOSED) {
-                Timber.i("HTSP Connection thread wrapped up cleanly");
-            } else if (getState() == State.FAILED) {
-                Timber.e("HTSP Connection thread wrapped up upon failure");
-            } else {
-                Timber.e("HTSP Connection thread wrapped up in an unexpected state: " + getState());
+            switch (getState()) {
+                case CLOSED:
+                    Timber.i("HTSP Connection thread wrapped up cleanly");
+                    break;
+                case FAILED:
+                    Timber.e("HTSP Connection thread wrapped up upon failure");
+                    break;
+                default:
+                    Timber.e("HTSP Connection thread wrapped up in an unexpected state: " + getState());
+                    break;
             }
         } finally {
             lock.unlock();

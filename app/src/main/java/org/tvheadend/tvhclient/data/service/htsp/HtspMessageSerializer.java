@@ -16,7 +16,6 @@
 package org.tvheadend.tvhclient.data.service.htsp;
 
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
@@ -27,6 +26,7 @@ import java.util.Map;
 import timber.log.Timber;
 
 public class HtspMessageSerializer implements HtspMessage.Serializer {
+
     private static final String TAG = HtspMessageSerializer.class.getSimpleName();
     private static final boolean DEBUG = false;
 
@@ -35,9 +35,6 @@ public class HtspMessageSerializer implements HtspMessage.Serializer {
     private static final byte FIELD_STR = 3;
     private static final byte FIELD_BIN = 4;
     private static final byte FIELD_LIST = 5;
-
-    public HtspMessageSerializer() {
-    }
 
     @Override
     public HtspMessage read(@NonNull ByteBuffer buffer) {
@@ -57,7 +54,7 @@ public class HtspMessageSerializer implements HtspMessage.Serializer {
         int fullLength = length + 4;
 
         if (DEBUG) {
-            Log.v(TAG, "Reading message of length " + fullLength + " from buffer");
+            Timber.v("Reading message of length " + fullLength + " from buffer");
         }
 
         if (buffer.capacity() < fullLength) {
@@ -67,19 +64,17 @@ public class HtspMessageSerializer implements HtspMessage.Serializer {
         // Keep reading until we have the entire message
         if (buffer.limit() < fullLength) {
             if (DEBUG) {
-                Log.v(TAG, "Waiting for more data, don't have enough yet. Need: " + fullLength + " bytes / Have: " + buffer.limit() + " bytes");
+                Timber.v("Waiting for more data, don't have enough yet. Need: " + fullLength + " bytes / Have: " + buffer.limit() + " bytes");
             }
             return null;
         }
 
-        // Set the buffers limit to ensure we don't read data belonging to the next message...
+        // Set the buffers limit to ensure we don't read
+        // data belonging to the next message...
         buffer.limit(fullLength);
-
         buffer.position(4);
 
-        HtspMessage message = deserialize(buffer);
-
-        return message;
+        return deserialize(buffer);
     }
 
     @Override
@@ -96,12 +91,12 @@ public class HtspMessageSerializer implements HtspMessage.Serializer {
         // Drop in the length
         byte[] lengthBytes = long2bin(dataLength);
 
-        for(int i=0; i < lengthBytes.length; i++){
+        for (int i = 0; i < lengthBytes.length; i++) {
             buffer.put(i, lengthBytes[i]);
         }
     }
 
-    protected static HtspMessage deserialize(ByteBuffer buffer) {
+    private static HtspMessage deserialize(ByteBuffer buffer) {
         HtspMessage message = new HtspMessage();
 
         byte fieldType;
@@ -110,7 +105,7 @@ public class HtspMessageSerializer implements HtspMessage.Serializer {
         byte[] valueLengthBytes = new byte[4];
         long valueLength;
         byte[] valueBytes;
-        Object value = null;
+        Object value;
 
         int listIndex = 0;
 
@@ -145,38 +140,44 @@ public class HtspMessageSerializer implements HtspMessage.Serializer {
             buffer.get(valueBytes);
 
             // Deserialize the Value
-            if (fieldType == FIELD_STR) {
-                if (DEBUG) {
-                    Log.v(TAG, "Deserializaing a STR with key " + key);
-                }
-                value = new String(valueBytes);
+            switch (fieldType) {
+                case FIELD_STR:
+                    if (DEBUG) {
+                        Timber.v("Deserializaing a STR with key " + key);
+                    }
+                    value = new String(valueBytes);
+                    break;
 
-            } else if (fieldType == FIELD_S64) {
-                if (DEBUG) {
-                    Log.v(TAG, "Deserializaing a S64 with key " + key + " and valueBytes length " + valueBytes.length);
-                }
-                value = toBigInteger(valueBytes);
+                case FIELD_S64:
+                    if (DEBUG) {
+                        Timber.v("Deserializaing a S64 with key " + key + " and valueBytes length " + valueBytes.length);
+                    }
+                    value = toBigInteger(valueBytes);
+                    break;
 
-            } else if (fieldType == FIELD_MAP) {
-                if (DEBUG) {
-                    Log.v(TAG, "Deserializaing a MAP with key " + key);
-                }
-                value = deserialize(ByteBuffer.wrap(valueBytes));
+                case FIELD_MAP:
+                    if (DEBUG) {
+                        Timber.v("Deserializaing a MAP with key " + key);
+                    }
+                    value = deserialize(ByteBuffer.wrap(valueBytes));
+                    break;
 
-            } else if (fieldType == FIELD_LIST) {
-                if (DEBUG) {
-                    Log.v(TAG, "Deserializaing a LIST with key " + key);
-                }
-                value = new ArrayList<>(deserialize(ByteBuffer.wrap(valueBytes)).values());
+                case FIELD_LIST:
+                    if (DEBUG) {
+                        Timber.v("Deserializaing a LIST with key " + key);
+                    }
+                    value = new ArrayList<>(deserialize(ByteBuffer.wrap(valueBytes)).values());
+                    break;
 
-            } else if (fieldType == FIELD_BIN) {
-                if (DEBUG) {
-                    Log.v(TAG, "Deserializaing a BIN with key " + key);
-                }
-                value = valueBytes;
+                case FIELD_BIN:
+                    if (DEBUG) {
+                        Timber.v("Deserializaing a BIN with key " + key);
+                    }
+                    value = valueBytes;
+                    break;
 
-            } else {
-                throw new RuntimeException("Cannot deserialize unknown data type, derp: " + fieldType);
+                default:
+                    throw new RuntimeException("Cannot deserialize unknown data type, derp: " + fieldType);
             }
 
             if (value != null) {
@@ -187,13 +188,13 @@ public class HtspMessageSerializer implements HtspMessage.Serializer {
         return message;
     }
 
-    protected void serialize(ByteBuffer buffer, Map<String, Object> map) {
+    private void serialize(ByteBuffer buffer, Map<String, Object> map) {
         for (Map.Entry<String, Object> entry : map.entrySet()) {
             serialize(buffer, entry.getKey(), entry.getValue());
         }
     }
 
-    protected void serialize(ByteBuffer buffer, Iterable<?> list) {
+    private void serialize(ByteBuffer buffer, Iterable<?> list) {
         for (Object value : list) {
             // Lists are just like maps, but with empty / zero length keys.
             serialize(buffer, "", value);
@@ -201,7 +202,7 @@ public class HtspMessageSerializer implements HtspMessage.Serializer {
     }
 
     @SuppressWarnings("unchecked") // We cast LOTS here...
-    protected void serialize(ByteBuffer buffer, String key, Object value) {
+    private void serialize(ByteBuffer buffer, String key, Object value) {
         byte[] keyBytes = key.getBytes();
         ByteBuffer valueBytes = ByteBuffer.allocate(65535);
 
@@ -211,43 +212,43 @@ public class HtspMessageSerializer implements HtspMessage.Serializer {
             return;
         } else if (value instanceof String) {
             if (DEBUG) {
-                Log.v(TAG, "Serializaing a STR with key " + key + " value " + value);
+                Timber.v("Serializing a STR with key " + key + " value " + value);
             }
             buffer.put(FIELD_STR);
             valueBytes.put(((String) value).getBytes());
         } else if (value instanceof BigInteger) {
             if (DEBUG) {
-                Log.v(TAG, "Serializaing a S64b with key " + key + " value " + value);
+                Timber.v("Serializing a S64b with key " + key + " value " + value);
             }
             buffer.put(FIELD_S64);
             valueBytes.put(toByteArray((BigInteger) value));
         } else if (value instanceof Integer) {
             if (DEBUG) {
-                Log.v(TAG, "Serializaing a S64i with key " + key + " value " + value);
+                Timber.v("Serializing a S64i with key " + key + " value " + value);
             }
             buffer.put(FIELD_S64);
             valueBytes.put(toByteArray(BigInteger.valueOf((Integer) value)));
         } else if (value instanceof Long) {
             if (DEBUG) {
-                Log.v(TAG, "Serializaing a S64l with key " + key + " value " + value);
+                Timber.v("Serializing a S64l with key " + key + " value " + value);
             }
             buffer.put(FIELD_S64);
             valueBytes.put(toByteArray(BigInteger.valueOf((Long) value)));
         } else if (value instanceof Map) {
             if (DEBUG) {
-                Log.v(TAG, "Serializaing a MAP with key " + key);
+                Timber.v("Serializing a MAP with key " + key);
             }
             buffer.put(FIELD_MAP);
             serialize(valueBytes, (Map<String, Object>) value);
         } else if (value instanceof byte[]) {
             if (DEBUG) {
-                Log.v(TAG, "Serializaing a BIN with key " + key);
+                Timber.v("Serializing a BIN with key " + key);
             }
             buffer.put(FIELD_BIN);
             valueBytes.put((byte[]) value);
         } else if (value instanceof Iterable) {
             if (DEBUG) {
-                Log.v(TAG, "Serializaing a LIST with key " + key);
+                Timber.v("Serializing a LIST with key " + key);
             }
             buffer.put(FIELD_LIST);
             serialize(valueBytes, (Iterable<?>) value);
@@ -271,9 +272,7 @@ public class HtspMessageSerializer implements HtspMessage.Serializer {
     }
 
     private static byte[] long2bin(long l) {
-        /**
-         * return chr(i >> 24 & 0xFF) + chr(i >> 16 & 0xFF) + chr(i >> 8 & 0xFF) + chr(i & 0xFF)
-         */
+        // return chr(i >> 24 & 0xFF) + chr(i >> 16 & 0xFF) + chr(i >> 8 & 0xFF) + chr(i & 0xFF)
         byte[] result = new byte[4];
 
         result[0] = (byte) ((l >> 24) & 0xFF);
@@ -285,9 +284,7 @@ public class HtspMessageSerializer implements HtspMessage.Serializer {
     }
 
     private static long bin2long(byte[] bytes) {
-        /**
-         *  return (ord(d[0]) << 24) + (ord(d[1]) << 16) + (ord(d[2]) <<  8) + ord(d[3])
-         */
+        // return (ord(d[0]) << 24) + (ord(d[1]) << 16) + (ord(d[2]) <<  8) + ord(d[3])
         long result = 0;
 
         result ^= (bytes[0] & 0xFF) << 24;

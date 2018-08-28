@@ -202,7 +202,7 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
         }
     }
 
-    protected void showProgramDetails(int position) {
+    private void showProgramDetails(int position) {
         selectedListPosition = position;
         Program program = recyclerViewAdapter.getItem(position);
         if (program == null) {
@@ -215,7 +215,7 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
         activity.startActivity(intent);
     }
 
-    public void showPopupMenu(View view) {
+    private void showPopupMenu(View view) {
         final Program program = (Program) view.getTag();
         if (activity == null || program == null) {
             return;

@@ -199,7 +199,7 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
         }
     }
 
-    public void startPlayback() {
+    private void startPlayback() {
         Timber.d("startPlayback");
         stopPlayback();
 

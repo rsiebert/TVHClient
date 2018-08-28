@@ -15,7 +15,7 @@ import java.lang.ref.WeakReference;
 public class ChangeLogLoaderTask extends AsyncTask<Boolean, Void, String> {
 
     private final String lastAppVersion;
-    private WeakReference<Context> context;
+    private final WeakReference<Context> context;
     private final FileLoaderCallback callback;
     private ListMode listMode = ListMode.NONE;
     private StringBuffer stringBuffer = null;

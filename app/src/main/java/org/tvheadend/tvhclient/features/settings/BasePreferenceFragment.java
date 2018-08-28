@@ -15,15 +15,15 @@ import javax.inject.Inject;
 
 public class BasePreferenceFragment extends PreferenceFragment {
 
-    protected AppCompatActivity activity;
-    protected ToolbarInterface toolbarInterface;
+    AppCompatActivity activity;
+    ToolbarInterface toolbarInterface;
     @Inject
     protected SharedPreferences sharedPreferences;
     @Inject
     protected AppRepository appRepository;
-    protected boolean isUnlocked;
-    protected int htspVersion;
-    protected ServerStatus serverStatus;
+    boolean isUnlocked;
+    int htspVersion;
+    ServerStatus serverStatus;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {

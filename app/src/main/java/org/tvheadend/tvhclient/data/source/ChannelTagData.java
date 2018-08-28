@@ -15,7 +15,7 @@ import javax.inject.Inject;
 
 public class ChannelTagData extends BaseData implements DataSourceInterface<ChannelTag> {
 
-    final private AppRoomDatabase db;
+    private final AppRoomDatabase db;
 
     @Inject
     public ChannelTagData(AppRoomDatabase database) {

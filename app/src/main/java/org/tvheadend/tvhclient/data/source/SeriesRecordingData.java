@@ -15,7 +15,7 @@ import javax.inject.Inject;
 
 public class SeriesRecordingData extends BaseData implements DataSourceInterface<SeriesRecording> {
 
-    final private AppRoomDatabase db;
+    private final AppRoomDatabase db;
 
     @Inject
     public SeriesRecordingData(AppRoomDatabase database) {

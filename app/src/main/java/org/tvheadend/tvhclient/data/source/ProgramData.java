@@ -16,7 +16,7 @@ import javax.inject.Inject;
 
 public class ProgramData extends BaseData implements DataSourceInterface<Program> {
 
-    final private AppRoomDatabase db;
+    private final AppRoomDatabase db;
 
     @Inject
     public ProgramData(AppRoomDatabase database) {

@@ -22,7 +22,7 @@ public class ChannelListSelectionAdapter extends RecyclerView.Adapter<ChannelLis
 
     private final Context context;
     private Callback callback;
-    private List<Channel> channelList;
+    private final List<Channel> channelList;
 
     public interface Callback {
         void onItemClicked(Channel channel);

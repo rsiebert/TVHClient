@@ -37,7 +37,7 @@ public abstract class BaseActivity extends AppCompatActivity implements NetworkS
     private MenuItem searchMenuItem;
     private SearchView searchView;
     private NetworkStatusReceiver networkStatusReceiver;
-    protected boolean isNetworkAvailable;
+    private boolean isNetworkAvailable;
     private ServiceStatusReceiver serviceStatusReceiver;
     private SnackbarMessageReceiver snackbarMessageReceiver;
 
@@ -80,7 +80,7 @@ public abstract class BaseActivity extends AppCompatActivity implements NetworkS
         }
     }
 
-    protected void onNetworkAvailabilityChanged(boolean isAvailable) {
+    private void onNetworkAvailabilityChanged(boolean isAvailable) {
         if (isAvailable) {
             Timber.d("Network is available");
             if (!isNetworkAvailable) {

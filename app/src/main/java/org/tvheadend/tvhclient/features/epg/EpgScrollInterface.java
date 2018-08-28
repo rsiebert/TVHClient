@@ -1,6 +1,6 @@
 package org.tvheadend.tvhclient.features.epg;
 
-public interface EpgScrollInterface {
+interface EpgScrollInterface {
 
     /**
      * To keep two list views synchronized both lists need to be scrolled.

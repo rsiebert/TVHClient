@@ -432,10 +432,10 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
 
     private static class EpgViewPagerAdapter extends FragmentStatePagerAdapter {
 
-        private SparseArray<Fragment> registeredFragments = new SparseArray<>();
+        private final SparseArray<Fragment> registeredFragments = new SparseArray<>();
+        private final int fragmentCount;
         private final List<Long> startTimes;
         private final List<Long> endTimes;
-        private int fragmentCount;
         private final String searchQuery;
 
         EpgViewPagerAdapter(FragmentManager fragmentManager, List<Long> startTimes, List<Long> endTimes, int fragmentCount, String searchQuery) {

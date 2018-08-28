@@ -30,7 +30,7 @@ import java.io.Closeable;
 import java.lang.ref.WeakReference;
 
 public abstract class HtspDataSource implements DataSource, Closeable {
-    public static final long INVALID_TIMESHIFT_TIME = Subscriber.INVALID_TIMESHIFT_TIME;
+    static final long INVALID_TIMESHIFT_TIME = Subscriber.INVALID_TIMESHIFT_TIME;
 
     public static abstract class Factory implements DataSource.Factory {
 

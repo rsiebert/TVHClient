@@ -7,11 +7,11 @@ import org.tvheadend.tvhclient.data.entity.Recording;
 
 import java.util.List;
 
-public class RecordingListDiffCallback extends DiffUtil.Callback {
-    private List<Recording> oldList;
-    private List<Recording> newList;
+class RecordingListDiffCallback extends DiffUtil.Callback {
+    private final List<Recording> oldList;
+    private final List<Recording> newList;
 
-    public RecordingListDiffCallback(List<Recording> oldList, List<Recording> newList) {
+    RecordingListDiffCallback(List<Recording> oldList, List<Recording> newList) {
         this.oldList = oldList;
         this.newList = newList;
     }

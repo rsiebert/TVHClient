@@ -15,7 +15,7 @@ import javax.inject.Inject;
 
 public class MiscData extends BaseData {
 
-    final private AppRoomDatabase db;
+    private final AppRoomDatabase db;
     private static WeakReference<DatabaseClearedInterface> callback;
 
     @Inject

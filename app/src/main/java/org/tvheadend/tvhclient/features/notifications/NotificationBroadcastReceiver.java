@@ -11,7 +11,7 @@ import org.tvheadend.tvhclient.R;
 
 public abstract class NotificationBroadcastReceiver extends BroadcastReceiver {
 
-    protected NotificationCompat.Builder getNotificationBuilder(Context context) {
+    NotificationCompat.Builder getNotificationBuilder(Context context) {
         String notificationChannelId = context.getString(R.string.app_name);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

@@ -28,7 +28,7 @@ public class EpgViewPagerViewHolder extends RecyclerView.ViewHolder implements R
     private final FragmentActivity activity;
     private final long startTime;
     private final long endTime;
-    private EpgViewModel viewModel;
+    private final EpgViewModel viewModel;
 
     @BindView(R.id.program_list_recycler_view)
     protected RecyclerView recyclerView;
@@ -45,7 +45,7 @@ public class EpgViewPagerViewHolder extends RecyclerView.ViewHolder implements R
         this.startTime = startTime;
         this.endTime = endTime;
 
-        recyclerView.setLayoutManager(new CustomHorizontalLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false));
+        recyclerView.setLayoutManager(new CustomHorizontalLayoutManager(activity));
         recyclerView.addItemDecoration(new DividerItemDecoration(activity, LinearLayoutManager.HORIZONTAL));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setRecycledViewPool(viewPool);

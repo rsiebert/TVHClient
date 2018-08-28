@@ -11,9 +11,9 @@ import java.util.Calendar;
 public class SeriesRecording {
 
     @Ignore
-    final private long time = Calendar.getInstance().getTimeInMillis();
+    private final long time = Calendar.getInstance().getTimeInMillis();
     @Ignore
-    final private long offset = 30 * 60 * 1000;
+    private final long offset = 30 * 60 * 1000;
 
     @NonNull
     private String id = "";                     // str   required   ID (string!) of dvrAutorecEntry.

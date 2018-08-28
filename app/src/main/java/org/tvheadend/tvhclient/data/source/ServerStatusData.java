@@ -15,7 +15,7 @@ import javax.inject.Inject;
 
 public class ServerStatusData extends BaseData implements DataSourceInterface<ServerStatus> {
 
-    final private AppRoomDatabase db;
+    private final AppRoomDatabase db;
 
     @Inject
     public ServerStatusData(AppRoomDatabase database) {

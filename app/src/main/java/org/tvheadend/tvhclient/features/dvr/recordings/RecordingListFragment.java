@@ -40,13 +40,13 @@ import butterknife.Unbinder;
 
 public class RecordingListFragment extends BaseFragment implements RecyclerViewClickCallback, Filter.FilterListener, DownloadPermissionGrantedInterface {
 
-    protected RecordingRecyclerViewAdapter recyclerViewAdapter;
+    RecordingRecyclerViewAdapter recyclerViewAdapter;
     @BindView(R.id.recycler_view)
     protected RecyclerView recyclerView;
     @BindView(R.id.progress_bar)
     protected ProgressBar progressBar;
-    protected int selectedListPosition;
-    protected String searchQuery;
+    int selectedListPosition;
+    String searchQuery;
     private Unbinder unbinder;
 
     @Nullable
@@ -133,7 +133,7 @@ public class RecordingListFragment extends BaseFragment implements RecyclerViewC
         menu.findItem(R.id.menu_search).setVisible((recyclerViewAdapter.getItemCount() > 0));
     }
 
-    protected void showRecordingDetails(int position) {
+    void showRecordingDetails(int position) {
         selectedListPosition = position;
         recyclerViewAdapter.setPosition(position);
         Recording recording = recyclerViewAdapter.getItem(position);
@@ -162,7 +162,7 @@ public class RecordingListFragment extends BaseFragment implements RecyclerViewC
         }
     }
 
-    public void showPopupMenu(View view) {
+    private void showPopupMenu(View view) {
         final Recording recording = (Recording) view.getTag();
         if (activity == null || recording == null) {
             return;

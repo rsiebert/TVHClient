@@ -16,14 +16,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class EpgViewPagerRecyclerViewAdapter extends RecyclerView.Adapter<EpgViewPagerViewHolder> implements Filterable {
+class EpgViewPagerRecyclerViewAdapter extends RecyclerView.Adapter<EpgViewPagerViewHolder> implements Filterable {
 
     private final float pixelsPerMinute;
     private final long startTime;
     private final long endTime;
     private final FragmentActivity activity;
     private final RecyclerView.RecycledViewPool viewPool;
-    private List<ChannelSubset> channelList = new ArrayList<>();
+    private final List<ChannelSubset> channelList = new ArrayList<>();
     private List<ChannelSubset> channelListFiltered = new ArrayList<>();
 
     EpgViewPagerRecyclerViewAdapter(FragmentActivity activity, float pixelsPerMinute, long startTime, long endTime) {

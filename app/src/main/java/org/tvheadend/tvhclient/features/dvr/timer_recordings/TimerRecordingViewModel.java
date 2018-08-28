@@ -17,7 +17,7 @@ public class TimerRecordingViewModel extends AndroidViewModel {
 
     @Inject
     protected AppRepository appRepository;
-    private LiveData<List<TimerRecording>> recordings;
+    private final LiveData<List<TimerRecording>> recordings;
     private TimerRecording recording;
 
     public TimerRecordingViewModel(Application application) {

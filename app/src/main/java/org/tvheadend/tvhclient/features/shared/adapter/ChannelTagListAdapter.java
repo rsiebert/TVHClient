@@ -30,8 +30,8 @@ public class ChannelTagListAdapter extends RecyclerView.Adapter<ChannelTagListAd
     private final Context context;
     private final int channelCount;
     private Callback callback;
-    private List<ChannelTag> channelTagList;
-    private int channelTagId;
+    private final List<ChannelTag> channelTagList;
+    private final int channelTagId;
     private boolean showChannelTagIcons;
 
     public interface Callback {

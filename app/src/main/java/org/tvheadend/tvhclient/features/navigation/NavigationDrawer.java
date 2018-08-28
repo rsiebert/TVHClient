@@ -58,16 +58,16 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
 
     // The index for the navigation drawer menus
     public static final int MENU_CHANNELS = 0;
-    public static final int MENU_PROGRAM_GUIDE = 1;
-    public static final int MENU_COMPLETED_RECORDINGS = 2;
-    public static final int MENU_SCHEDULED_RECORDINGS = 3;
-    public static final int MENU_SERIES_RECORDINGS = 4;
-    public static final int MENU_TIMER_RECORDINGS = 5;
-    public static final int MENU_FAILED_RECORDINGS = 6;
-    public static final int MENU_REMOVED_RECORDINGS = 7;
+    private static final int MENU_PROGRAM_GUIDE = 1;
+    private static final int MENU_COMPLETED_RECORDINGS = 2;
+    private static final int MENU_SCHEDULED_RECORDINGS = 3;
+    private static final int MENU_SERIES_RECORDINGS = 4;
+    private static final int MENU_TIMER_RECORDINGS = 5;
+    private static final int MENU_FAILED_RECORDINGS = 6;
+    private static final int MENU_REMOVED_RECORDINGS = 7;
     public static final int MENU_STATUS = 8;
     public static final int MENU_INFORMATION = 9;
-    public static final int MENU_SETTINGS = 10;
+    private static final int MENU_SETTINGS = 10;
     public static final int MENU_UNLOCKER = 11;
 
     private final Bundle savedInstanceState;
@@ -77,7 +77,7 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
     private final boolean isUnlocked;
     private AccountHeader headerResult;
     private Drawer result;
-    private AppRepository appRepository;
+    private final AppRepository appRepository;
 
     public NavigationDrawer(AppCompatActivity activity, Bundle savedInstanceState, Toolbar toolbar, AppRepository appRepository, NavigationDrawerCallback callback) {
         Timber.d("start");
@@ -269,7 +269,7 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
         return true;
     }
 
-    public void setSelection(int id) {
+    private void setSelection(int id) {
         result.setSelection(id, false);
     }
 

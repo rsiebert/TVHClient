@@ -12,7 +12,7 @@ public class Channel {
     @ColumnInfo(name = "id")
     private int id;                      // u32   required   ID of channel.
     @ColumnInfo(name = "number")
-    private int number;                  // u32   required   Channel number, 0 means unconfigured.
+    private int number;                  // u32   required   Channel number, 0 means not configured.
     @ColumnInfo(name = "number_minor")
     private int numberMinor;             // u32   optional   Minor channel number (Added in version 13).
     @ColumnInfo(name = "name")

@@ -17,14 +17,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class TimerRecordingRecyclerViewAdapter extends RecyclerView.Adapter<TimerRecordingViewHolder> implements Filterable {
+class TimerRecordingRecyclerViewAdapter extends RecyclerView.Adapter<TimerRecordingViewHolder> implements Filterable {
 
     private final RecyclerViewClickCallback clickCallback;
     private final boolean isDualPane;
-    private List<TimerRecording> recordingList = new ArrayList<>();
+    private final List<TimerRecording> recordingList = new ArrayList<>();
     private List<TimerRecording> recordingListFiltered = new ArrayList<>();
-    private int htspVersion;
-    private Context context;
+    private final int htspVersion;
+    private final Context context;
     private int selectedPosition = 0;
 
     TimerRecordingRecyclerViewAdapter(Context context, boolean isDualPane, RecyclerViewClickCallback clickCallback, int htspVersion) {

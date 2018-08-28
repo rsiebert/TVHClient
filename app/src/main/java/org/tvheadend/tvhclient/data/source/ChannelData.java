@@ -19,8 +19,8 @@ import javax.inject.Inject;
 
 public class ChannelData extends BaseData implements DataSourceInterface<Channel> {
 
-    final private AppRoomDatabase db;
-    final private Context context;
+    private final AppRoomDatabase db;
+    private final Context context;
 
     @Inject
     public ChannelData(AppRoomDatabase database, Context context) {

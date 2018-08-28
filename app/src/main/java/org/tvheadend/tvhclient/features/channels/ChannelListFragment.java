@@ -51,7 +51,7 @@ import timber.log.Timber;
 
 public class ChannelListFragment extends BaseFragment implements RecyclerViewClickCallback, ChannelTimeSelectionCallback, ChannelTagSelectionCallback, SearchRequestInterface, Filter.FilterListener {
 
-    protected ChannelRecyclerViewAdapter recyclerViewAdapter;
+    private ChannelRecyclerViewAdapter recyclerViewAdapter;
     @BindView(R.id.recycler_view)
     protected RecyclerView recyclerView;
     @BindView(R.id.progress_bar)
@@ -223,7 +223,7 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
      *
      * @param position The selected position in the list
      */
-    protected void showChannelDetails(int position) {
+    private void showChannelDetails(int position) {
         selectedListPosition = position;
         recyclerViewAdapter.setPosition(position);
         Channel channel = recyclerViewAdapter.getItem(position);
@@ -260,7 +260,7 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
         }
     }
 
-    public void showPopupMenu(View view) {
+    private void showPopupMenu(View view) {
 
         Channel channel = (Channel) view.getTag();
         Program program = appRepository.getProgramData().getItemById(channel.getProgramId());

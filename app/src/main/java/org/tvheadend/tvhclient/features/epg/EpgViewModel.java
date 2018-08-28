@@ -27,7 +27,7 @@ public class EpgViewModel extends AndroidViewModel {
 
     private long selectedTime;
     private int channelTagId;
-    private Runnable channelUpdateTask;
+    private final Runnable channelUpdateTask;
     private final Handler handler = new Handler();
     private int verticalOffset = 0;
     private int verticalPosition = 0;

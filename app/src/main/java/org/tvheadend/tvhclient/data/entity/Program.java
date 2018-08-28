@@ -14,7 +14,7 @@ public class Program {
     private long start;                     // u64   required   Start time of event, UNIX time.
     private long stop;                      // u64   required   Ending time of event, UNIX time.
     private String title;                   // str   optional   Title of event.
-    private String subtitle;                // str   optional   Subitle of event.
+    private String subtitle;                // str   optional   Subtitle of event.
     private String summary;                 // str   optional   Short description of the event (Added in version 6).
     private String description;             // str   optional   Long description of the event.
     @ColumnInfo(name = "series_link_id")

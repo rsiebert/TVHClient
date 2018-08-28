@@ -2,7 +2,7 @@ package org.tvheadend.tvhclient.features.logging;
 
 import timber.log.Timber;
 
-public abstract class BaseDebugTree extends Timber.DebugTree {
+abstract class BaseDebugTree extends Timber.DebugTree {
 
     @Override
     protected String createStackElementTag(StackTraceElement element) {

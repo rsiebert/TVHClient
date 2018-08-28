@@ -22,7 +22,7 @@ public class WakeOnLanTask extends AsyncTask<String, Void, Integer> {
     private final static int WOL_INVALID_MAC = 2;
     private final static int WOL_ERROR = 3;
 
-    private WeakReference<Context> context;
+    private final WeakReference<Context> context;
     private final Connection connection;
     private final WakeOnLanTaskCallback callback;
     private Exception exception;

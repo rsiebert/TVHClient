@@ -113,7 +113,7 @@ public class HtspFileInputStreamDataSource extends HtspDataSource {
     }
 
     // HtspDataSource Methods
-    public void release() {
+    protected void release() {
         if (mConnection != null) {
             mConnection = null;
         }

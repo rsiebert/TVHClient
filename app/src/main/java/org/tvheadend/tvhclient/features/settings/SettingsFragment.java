@@ -91,7 +91,7 @@ public class SettingsFragment extends BasePreferenceFragment implements Preferen
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (grantResults[0] == PackageManager.PERMISSION_GRANTED && permissions[0].equals("android.permission.READ_EXTERNAL_STORAGE")) {
             // The delay is needed, otherwise an illegalStateException would be thrown. This is
-            // a known bug in android. Until it is fixed this unpretty workaround is required.
+            // a known bug in android. Until it is fixed this workaround is required.
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {

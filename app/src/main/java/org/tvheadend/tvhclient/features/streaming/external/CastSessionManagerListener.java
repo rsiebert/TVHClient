@@ -9,7 +9,7 @@ import timber.log.Timber;
 
 public class CastSessionManagerListener implements SessionManagerListener<CastSession> {
 
-    private Activity activity;
+    private final Activity activity;
     private CastSession castSession;
 
     public CastSessionManagerListener(Activity activity, CastSession castSession) {

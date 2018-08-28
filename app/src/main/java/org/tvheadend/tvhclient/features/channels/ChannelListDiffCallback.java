@@ -7,9 +7,9 @@ import org.tvheadend.tvhclient.data.entity.Channel;
 
 import java.util.List;
 
-public class ChannelListDiffCallback extends DiffUtil.Callback {
-    private List<Channel> oldList;
-    private List<Channel> newList;
+class ChannelListDiffCallback extends DiffUtil.Callback {
+    private final List<Channel> oldList;
+    private final List<Channel> newList;
 
     ChannelListDiffCallback(List<Channel> oldList, List<Channel> newList) {
         this.oldList = oldList;

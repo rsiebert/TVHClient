@@ -12,7 +12,7 @@ import org.tvheadend.tvhclient.data.source.ServerStatusData;
 import org.tvheadend.tvhclient.data.source.TagAndChannelData;
 import org.tvheadend.tvhclient.data.source.TimerRecordingData;
 
-public interface RepositoryInterface {
+interface RepositoryInterface {
 
     TimerRecordingData getTimerRecordingData();
 

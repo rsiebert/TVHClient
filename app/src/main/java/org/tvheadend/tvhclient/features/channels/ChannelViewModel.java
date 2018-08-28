@@ -22,8 +22,7 @@ import javax.inject.Inject;
 
 public class ChannelViewModel extends AndroidViewModel {
 
-    private MutableLiveData<List<Channel>> channels = new MutableLiveData<>();
-    private LiveData<ServerStatus> serverStatus = new MutableLiveData<>();
+    private final MutableLiveData<List<Channel>> channels = new MutableLiveData<>();
     @Inject
     protected AppRepository appRepository;
 

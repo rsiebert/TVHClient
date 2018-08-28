@@ -8,8 +8,8 @@ import org.tvheadend.tvhclient.data.entity.Program;
 import java.util.List;
 
 public class ProgramListDiffCallback extends DiffUtil.Callback {
-    private List<Program> oldList;
-    private List<Program> newList;
+    private final List<Program> oldList;
+    private final List<Program> newList;
 
     public ProgramListDiffCallback(List<Program> oldList, List<Program> newList) {
         this.oldList = oldList;

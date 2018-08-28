@@ -45,7 +45,7 @@ public class SeriesRecordingListFragment extends BaseFragment implements Recycle
     protected RecyclerView recyclerView;
     @BindView(R.id.progress_bar)
     protected ProgressBar progressBar;
-    protected int selectedListPosition;
+    private int selectedListPosition;
     private String searchQuery;
     private Unbinder unbinder;
 
@@ -152,7 +152,7 @@ public class SeriesRecordingListFragment extends BaseFragment implements Recycle
         menu.findItem(R.id.media_route_menu_item).setVisible(false);
     }
 
-    protected void showRecordingDetails(int position) {
+    private void showRecordingDetails(int position) {
         selectedListPosition = position;
         recyclerViewAdapter.setPosition(position);
         SeriesRecording recording = recyclerViewAdapter.getItem(position);
@@ -181,7 +181,7 @@ public class SeriesRecordingListFragment extends BaseFragment implements Recycle
         }
     }
 
-    public void showPopupMenu(View view) {
+    private void showPopupMenu(View view) {
         final SeriesRecording seriesRecording = (SeriesRecording) view.getTag();
         if (getActivity() == null || seriesRecording == null) {
             return;

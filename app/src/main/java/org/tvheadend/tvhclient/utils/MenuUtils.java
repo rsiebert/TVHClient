@@ -68,7 +68,7 @@ public class MenuUtils {
     @Inject
     protected SharedPreferences sharedPreferences;
     private final ServerStatus serverStatus;
-    private WeakReference<Activity> activity;
+    private final WeakReference<Activity> activity;
 
     public MenuUtils(Activity activity) {
         MainApplication.getComponent().inject(this);

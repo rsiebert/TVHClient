@@ -8,7 +8,7 @@ public class EpgSyncTaskState {
     private final String message;
     private final String details;
 
-    EpgSyncTaskState(EpgSyncTaskStateBuilder builder) {
+    private EpgSyncTaskState(EpgSyncTaskStateBuilder builder) {
         this.state = builder.state;
         this.message = builder.message;
         this.details = builder.details;

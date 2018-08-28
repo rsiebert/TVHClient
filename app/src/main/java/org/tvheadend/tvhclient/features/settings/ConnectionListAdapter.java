@@ -12,7 +12,7 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
-public class ConnectionListAdapter extends ArrayAdapter<Connection> {
+class ConnectionListAdapter extends ArrayAdapter<Connection> {
 
     private final Activity context;
 
@@ -22,9 +22,9 @@ public class ConnectionListAdapter extends ArrayAdapter<Connection> {
     }
 
     static class ViewHolder {
-        public TextView title;
-        public TextView summary;
-        public ImageView selected;
+        private TextView title;
+        private TextView summary;
+        private ImageView selected;
     }
 
     @NonNull

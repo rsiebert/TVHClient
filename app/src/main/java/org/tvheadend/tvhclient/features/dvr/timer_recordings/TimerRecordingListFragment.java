@@ -45,7 +45,7 @@ public class TimerRecordingListFragment extends BaseFragment implements Recycler
     protected RecyclerView recyclerView;
     @BindView(R.id.progress_bar)
     protected ProgressBar progressBar;
-    protected int selectedListPosition;
+    private int selectedListPosition;
     private String searchQuery;
     private Unbinder unbinder;
 
@@ -152,7 +152,7 @@ public class TimerRecordingListFragment extends BaseFragment implements Recycler
         menu.findItem(R.id.media_route_menu_item).setVisible(false);
     }
 
-    protected void showRecordingDetails(int position) {
+    private void showRecordingDetails(int position) {
         selectedListPosition = position;
         recyclerViewAdapter.setPosition(position);
         TimerRecording recording = recyclerViewAdapter.getItem(position);
@@ -181,7 +181,7 @@ public class TimerRecordingListFragment extends BaseFragment implements Recycler
         }
     }
 
-    public void showPopupMenu(View view) {
+    private void showPopupMenu(View view) {
         final TimerRecording timerRecording = (TimerRecording) view.getTag();
         if (activity == null || timerRecording == null) {
             return;

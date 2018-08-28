@@ -26,10 +26,10 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public abstract class BaseRecordingAddEditFragment extends BaseFragment {
 
-    protected String[] daysOfWeekList;
+    private String[] daysOfWeekList;
     protected String[] priorityList;
     protected String[] recordingProfilesList;
-    protected List<Channel> channelList;
+    private List<Channel> channelList;
     protected ServerProfile profile;
     protected int recordingProfileNameId;
 

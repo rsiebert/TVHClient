@@ -16,7 +16,7 @@ import javax.inject.Inject;
 
 public class RecordingData extends BaseData implements DataSourceInterface<Recording> {
 
-    final private AppRoomDatabase db;
+    private final AppRoomDatabase db;
 
     @Inject
     public RecordingData(AppRoomDatabase database) {

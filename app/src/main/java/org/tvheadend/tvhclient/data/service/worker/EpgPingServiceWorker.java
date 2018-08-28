@@ -8,7 +8,7 @@ import org.tvheadend.tvhclient.data.service.EpgSyncIntentService;
 import androidx.work.Worker;
 import timber.log.Timber;
 
-public class EpgPingServiceWorker extends Worker {
+class EpgPingServiceWorker extends Worker {
     @NonNull
     @Override
     public Result doWork() {

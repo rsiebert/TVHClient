@@ -264,7 +264,7 @@ public class HtspSubscriptionDataSource extends HtspDataSource implements Subscr
     }
 
     // HtspDataSource Methods
-    public void release() {
+    protected void release() {
         if (mConnection != null) {
             mConnection.removeAuthenticationListener(mSubscriber);
             mConnection = null;

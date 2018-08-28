@@ -14,7 +14,7 @@ import java.util.List;
 
 public class GenreColorDialogAdapter extends RecyclerView.Adapter<GenreColorDialogAdapter.ViewHolder> {
 
-    private List<GenreColorDialogItem> list;
+    private final List<GenreColorDialogItem> list;
 
     public GenreColorDialogAdapter(List<GenreColorDialogItem> list) {
         this.list = list;
@@ -33,9 +33,14 @@ public class GenreColorDialogAdapter extends RecyclerView.Adapter<GenreColorDial
     }
 
     @Override
+    public int getItemCount() {
+        return list.size();
+    }
+
     /**
      * Applies the values to the available layout items
      */
+    @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         final GenreColorDialogItem item = list.get(position);
         if (item != null) {
@@ -49,20 +54,15 @@ public class GenreColorDialogAdapter extends RecyclerView.Adapter<GenreColorDial
         }
     }
 
-    @Override
-    public int getItemCount() {
-        return list.size();
-    }
-
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    static class ViewHolder extends RecyclerView.ViewHolder {
         final TextView color;
         final TextView genre;
         final GenreColorDialogAdapter adapter;
 
-        public ViewHolder(View view, GenreColorDialogAdapter adapter) {
+        ViewHolder(View view, GenreColorDialogAdapter adapter) {
             super(view);
             this.color = view.findViewById(R.id.color);
             this.genre = view.findViewById(R.id.genre);

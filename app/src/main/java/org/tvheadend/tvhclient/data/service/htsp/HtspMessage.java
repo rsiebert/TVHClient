@@ -135,7 +135,7 @@ public class HtspMessage extends HashMap<String, Object> {
          * Deserializes data from a buffer into HTSPMessage instances
          *
          * @param buffer The buffer from which to read data
-         * @return the first Deserialized message in the buffer.
+         * @return the first deserialized message in the buffer.
          */
         HtspMessage read(@NonNull ByteBuffer buffer);
 

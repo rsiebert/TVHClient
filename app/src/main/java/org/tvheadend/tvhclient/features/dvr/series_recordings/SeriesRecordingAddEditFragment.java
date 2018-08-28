@@ -398,12 +398,12 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
         daysOfWeekTextView.setText(getSelectedDaysOfWeekText(selectedDays));
     }
 
-    public void onDuplicateDetectionValueSelected(int which) {
+    private void onDuplicateDetectionValueSelected(int which) {
         recording.setDupDetect(which);
         duplicateDetectionTextView.setText(duplicateDetectionList[which]);
     }
 
-    public void handleDuplicateDetectionSelection(String[] duplicateDetectionList, int duplicateDetectionId) {
+    private void handleDuplicateDetectionSelection(String[] duplicateDetectionList, int duplicateDetectionId) {
         new MaterialDialog.Builder(activity)
                 .title(R.string.select_duplicate_detection)
                 .items(duplicateDetectionList)

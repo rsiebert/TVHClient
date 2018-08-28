@@ -31,7 +31,7 @@ public abstract class BaseFragment extends Fragment implements NetworkAvailabili
     protected int htspVersion;
     protected boolean isNetworkAvailable;
 
-    protected Connection connection;
+    private Connection connection;
     protected ServerStatus serverStatus;
 
     @Inject
@@ -39,8 +39,8 @@ public abstract class BaseFragment extends Fragment implements NetworkAvailabili
     @Inject
     protected AppRepository appRepository;
 
-    FrameLayout mainFrameLayout;
-    FrameLayout detailsFrameLayout;
+    private FrameLayout mainFrameLayout;
+    private FrameLayout detailsFrameLayout;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {

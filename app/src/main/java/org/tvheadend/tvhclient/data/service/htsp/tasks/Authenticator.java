@@ -81,7 +81,7 @@ public class Authenticator implements HtspMessage.Listener, HtspConnection.Liste
 
     private final HtspMessage.Dispatcher dispatcher;
     private State state = State.IDLE;
-    private Connection connection;
+    private final Connection connection;
 
     public Authenticator(@NonNull HtspMessage.Dispatcher dispatcher, @NonNull Connection connection) {
         this.dispatcher = dispatcher;

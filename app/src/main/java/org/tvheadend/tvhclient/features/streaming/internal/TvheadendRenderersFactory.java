@@ -140,8 +140,8 @@ class TvheadendRenderersFactory extends DefaultRenderersFactory {
     /**
      * Builds a MediaCodecSelector that can explicitly disable audio passthrough
      *
-     * @param enablePassthroughDecoder
-     * @return
+     * @param enablePassthroughDecoder True if audio passthrough shall be enabled, disabled otherwise
+     * @return The MediaCodecSelector
      */
     private MediaCodecSelector buildMediaCodecSelector(final boolean enablePassthroughDecoder) {
         return new MediaCodecSelector() {

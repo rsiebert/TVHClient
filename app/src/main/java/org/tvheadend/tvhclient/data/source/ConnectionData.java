@@ -16,7 +16,7 @@ import javax.inject.Inject;
 
 public class ConnectionData extends BaseData implements DataSourceInterface<Connection> {
 
-    final private AppRoomDatabase db;
+    private final AppRoomDatabase db;
 
     @Inject
     public ConnectionData(AppRoomDatabase database) {

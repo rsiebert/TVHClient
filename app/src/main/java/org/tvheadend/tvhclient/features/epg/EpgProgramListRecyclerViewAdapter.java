@@ -23,8 +23,8 @@ class EpgProgramListRecyclerViewAdapter extends RecyclerView.Adapter<EpgProgramL
     private final float pixelsPerMinute;
     private final long fragmentStartTime;
     private final long fragmentStopTime;
-    private Context context;
-    private List<Program> programList = new ArrayList<>();
+    private final Context context;
+    private final List<Program> programList = new ArrayList<>();
     private List<Recording> recordingList = new ArrayList<>();
 
     EpgProgramListRecyclerViewAdapter(Context context, float pixelsPerMinute, long fragmentStartTime, long fragmentStopTime, RecyclerViewClickCallback clickCallback) {

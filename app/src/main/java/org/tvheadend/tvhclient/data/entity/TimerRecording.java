@@ -21,7 +21,7 @@ public class TimerRecording {
     private int daysOfWeek = 127;       // u32   optional   Bitmask - Days of week (0x01 = Monday, 0x40 = Sunday, 0x7f = Whole Week, 0 = Not set).
     private int priority = 2;           // u32   optional   Priority (0 = Important, 1 = High, 2 = Normal, 3 = Low, 4 = Unimportant, 5 = Not set).
     private long start = 0;             // u32   required   Minutes from midnight (up to 24*60) for the start of the time window (including)
-    private long stop = 0;              // u32   required   Minutes from modnight (up to 24*60) for the end of the time window (including, cross-noon allowed)
+    private long stop = 0;              // u32   required   Minutes from midnight (up to 24*60) for the end of the time window (including, cross-noon allowed)
     private int retention;              // u32   optional   Retention in days.
     private String owner;               // str   optional   Owner of this timerec entry.
     private String creator;             // str   optional   Creator of this timerec entry.

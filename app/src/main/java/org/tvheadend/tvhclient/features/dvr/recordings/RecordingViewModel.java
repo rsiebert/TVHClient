@@ -14,10 +14,10 @@ import javax.inject.Inject;
 
 public class RecordingViewModel extends AndroidViewModel {
 
-    private LiveData<List<Recording>> completedRecordings;
-    private LiveData<List<Recording>> scheduledRecordings;
-    private LiveData<List<Recording>> failedRecordings;
-    private LiveData<List<Recording>> removedRecordings;
+    private final LiveData<List<Recording>> completedRecordings;
+    private final LiveData<List<Recording>> scheduledRecordings;
+    private final LiveData<List<Recording>> failedRecordings;
+    private final LiveData<List<Recording>> removedRecordings;
     private Recording recording;
 
     @Inject

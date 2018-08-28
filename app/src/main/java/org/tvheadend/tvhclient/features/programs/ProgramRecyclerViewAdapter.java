@@ -22,13 +22,13 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import timber.log.Timber;
 
-public class ProgramRecyclerViewAdapter extends RecyclerView.Adapter<ProgramViewHolder> implements Filterable {
+class ProgramRecyclerViewAdapter extends RecyclerView.Adapter<ProgramViewHolder> implements Filterable {
 
     private final BottomReachedCallback onBottomReachedCallback;
     private final RecyclerViewClickCallback clickCallback;
-    private List<Program> programList = new ArrayList<>();
+    private final List<Program> programList = new ArrayList<>();
     private List<Program> programListFiltered = new ArrayList<>();
-    private Context context;
+    private final Context context;
     private List<Recording> recordingList = new ArrayList<>();
 
     ProgramRecyclerViewAdapter(Context context, RecyclerViewClickCallback clickCallback, BottomReachedCallback onBottomReachedCallback) {
