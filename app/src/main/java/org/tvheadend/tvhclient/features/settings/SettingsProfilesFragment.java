@@ -161,13 +161,17 @@ public class SettingsProfilesFragment extends BasePreferenceFragment implements 
         entryValues[0] = "0";
 
         // Add the available profiles to list preference
+        int index = 0;
         for (int i = 1; i < size; i++) {
             ServerProfile profile = serverProfileList.get(i - 1);
             entries[i] = profile.getName();
             entryValues[i] = String.valueOf(profile.getId());
+            if (selectedIndex == profile.getId()) {
+                index = i;
+            }
         }
         listPreference.setEntries(entries);
         listPreference.setEntryValues(entryValues);
-        listPreference.setValueIndex(selectedIndex);
+        listPreference.setValueIndex(index);
     }
 }
