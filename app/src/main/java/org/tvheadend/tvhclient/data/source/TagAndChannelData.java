@@ -14,7 +14,7 @@ import javax.inject.Inject;
 
 public class TagAndChannelData extends BaseData implements DataSourceInterface<TagAndChannel> {
 
-    private AppRoomDatabase db;
+    final private AppRoomDatabase db;
 
     @Inject
     public TagAndChannelData(AppRoomDatabase database) {
@@ -66,7 +66,7 @@ public class TagAndChannelData extends BaseData implements DataSourceInterface<T
         new ItemMiscTask(db, DELETE_BY_ID, tagId).execute();
     }
 
-    protected static class ItemHandlerTask extends AsyncTask<Void, Void, Void> {
+    private static class ItemHandlerTask extends AsyncTask<Void, Void, Void> {
         private final AppRoomDatabase db;
         private final TagAndChannel tagAndChannel;
         private final int type;
@@ -94,7 +94,7 @@ public class TagAndChannelData extends BaseData implements DataSourceInterface<T
         }
     }
 
-    protected static class ItemMiscTask extends AsyncTask<Void, Void, Void> {
+    private static class ItemMiscTask extends AsyncTask<Void, Void, Void> {
         private final AppRoomDatabase db;
         private final int type;
         private final Object arg;

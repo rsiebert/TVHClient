@@ -132,7 +132,7 @@ public class ServerProfileData extends BaseData implements DataSourceInterface<S
         }
     }
 
-    protected static class ItemsLoaderTask extends AsyncTask<Void, Void, List<ServerProfile>> {
+    private static class ItemsLoaderTask extends AsyncTask<Void, Void, List<ServerProfile>> {
         private final AppRoomDatabase db;
         private final int type;
 
@@ -154,7 +154,7 @@ public class ServerProfileData extends BaseData implements DataSourceInterface<S
         }
     }
 
-    protected static class ItemHandlerTask extends AsyncTask<Void, Void, Void> {
+    private static class ItemHandlerTask extends AsyncTask<Void, Void, Void> {
         private final AppRoomDatabase db;
         private final ServerProfile serverProfile;
         private final int type;

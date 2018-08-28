@@ -1,9 +1,9 @@
 package org.tvheadend.tvhclient.data.source;
 
 class BaseData {
-    protected static final int INSERT = 1;
-    protected static final int UPDATE = 2;
-    protected static final int DELETE = 3;
+    static final int INSERT = 1;
+    static final int UPDATE = 2;
+    static final int DELETE = 3;
     static final int INSERT_ALL = 4;
     static final int DELETE_ALL = 5;
     static final int DELETE_BY_TIME = 6;

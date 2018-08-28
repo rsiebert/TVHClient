@@ -12,9 +12,9 @@ import java.util.List;
 public class Recording {
 
     @Ignore
-    private long time = Calendar.getInstance().getTimeInMillis();
+    final private long time = Calendar.getInstance().getTimeInMillis();
     @Ignore
-    private long offset = 30 * 60 * 1000;
+    final private long offset = 30 * 60 * 1000;
 
     private int id = 0;                     // u32   required   ID of dvrEntry.
     @ColumnInfo(name = "channel_id")

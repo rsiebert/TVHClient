@@ -15,7 +15,7 @@ import javax.inject.Inject;
 
 public class MiscData extends BaseData {
 
-    private AppRoomDatabase db;
+    final private AppRoomDatabase db;
     private static WeakReference<DatabaseClearedInterface> callback;
 
     @Inject
@@ -28,7 +28,7 @@ public class MiscData extends BaseData {
         new ClearDatabaseTask(context, db).execute();
     }
 
-    protected static class ClearDatabaseTask extends AsyncTask<Void, Void, Void> {
+    private static class ClearDatabaseTask extends AsyncTask<Void, Void, Void> {
         private final AppRoomDatabase db;
         private final WeakReference<Context> context;
 

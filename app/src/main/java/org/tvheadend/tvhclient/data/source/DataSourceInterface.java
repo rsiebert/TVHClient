@@ -4,7 +4,7 @@ import android.arch.lifecycle.LiveData;
 
 import java.util.List;
 
-public interface DataSourceInterface<T> {
+interface DataSourceInterface<T> {
 
     void addItem(T item);
 

@@ -19,8 +19,8 @@ import javax.inject.Inject;
 
 public class ChannelData extends BaseData implements DataSourceInterface<Channel> {
 
-    private AppRoomDatabase db;
-    private Context context;
+    final private AppRoomDatabase db;
+    final private Context context;
 
     @Inject
     public ChannelData(AppRoomDatabase database, Context context) {
@@ -108,7 +108,7 @@ public class ChannelData extends BaseData implements DataSourceInterface<Channel
         return channels;
     }
 
-    protected static class ItemLoaderTask extends AsyncTask<Void, Void, Channel> {
+    private static class ItemLoaderTask extends AsyncTask<Void, Void, Channel> {
         private final AppRoomDatabase db;
         private final int id;
 
@@ -123,7 +123,7 @@ public class ChannelData extends BaseData implements DataSourceInterface<Channel
         }
     }
 
-    protected static class ItemsLoaderTask extends AsyncTask<Void, Void, List<Channel>> {
+    private static class ItemsLoaderTask extends AsyncTask<Void, Void, List<Channel>> {
         private final AppRoomDatabase db;
         private final int sortOrder;
         private final long currentTime;
@@ -155,7 +155,7 @@ public class ChannelData extends BaseData implements DataSourceInterface<Channel
         }
     }
 
-    protected static class ItemSubsetsLoaderTask extends AsyncTask<Void, Void, List<ChannelSubset>> {
+    private static class ItemSubsetsLoaderTask extends AsyncTask<Void, Void, List<ChannelSubset>> {
         private final AppRoomDatabase db;
         private final int sortOrder;
         private final int channelTagId;
@@ -176,7 +176,7 @@ public class ChannelData extends BaseData implements DataSourceInterface<Channel
         }
     }
 
-    protected static class ItemHandlerTask extends AsyncTask<Void, Void, Void> {
+    private static class ItemHandlerTask extends AsyncTask<Void, Void, Void> {
         private final AppRoomDatabase db;
         private final Channel channel;
         private final int type;
@@ -204,7 +204,7 @@ public class ChannelData extends BaseData implements DataSourceInterface<Channel
         }
     }
 
-    protected static class ItemsHandlerTask extends AsyncTask<Void, Void, Void> {
+    private static class ItemsHandlerTask extends AsyncTask<Void, Void, Void> {
         private final AppRoomDatabase db;
         private final List<Channel> channels;
         private final int type;

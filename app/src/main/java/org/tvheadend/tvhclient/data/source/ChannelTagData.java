@@ -15,7 +15,7 @@ import javax.inject.Inject;
 
 public class ChannelTagData extends BaseData implements DataSourceInterface<ChannelTag> {
 
-    private AppRoomDatabase db;
+    final private AppRoomDatabase db;
 
     @Inject
     public ChannelTagData(AppRoomDatabase database) {
@@ -74,7 +74,7 @@ public class ChannelTagData extends BaseData implements DataSourceInterface<Chan
         return channelTags;
     }
 
-    protected static class ItemLoaderTask extends AsyncTask<Void, Void, ChannelTag> {
+    private static class ItemLoaderTask extends AsyncTask<Void, Void, ChannelTag> {
         private final AppRoomDatabase db;
         private final int id;
 
@@ -89,7 +89,7 @@ public class ChannelTagData extends BaseData implements DataSourceInterface<Chan
         }
     }
 
-    protected static class ItemsLoaderTask extends AsyncTask<Void, Void, List<ChannelTag>> {
+    private static class ItemsLoaderTask extends AsyncTask<Void, Void, List<ChannelTag>> {
         private final AppRoomDatabase db;
 
         ItemsLoaderTask(AppRoomDatabase db) {
@@ -102,7 +102,7 @@ public class ChannelTagData extends BaseData implements DataSourceInterface<Chan
         }
     }
 
-    protected static class ItemHandlerTask extends AsyncTask<Void, Void, Void> {
+    private static class ItemHandlerTask extends AsyncTask<Void, Void, Void> {
         private final AppRoomDatabase db;
         private final ChannelTag channelTag;
         private final int type;

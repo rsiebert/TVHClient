@@ -15,7 +15,7 @@ import javax.inject.Inject;
 
 public class TimerRecordingData extends BaseData implements DataSourceInterface<TimerRecording> {
 
-    private AppRoomDatabase db;
+    final private AppRoomDatabase db;
 
     @Inject
     public TimerRecordingData(AppRoomDatabase database) {

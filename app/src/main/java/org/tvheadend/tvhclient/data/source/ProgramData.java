@@ -16,7 +16,7 @@ import javax.inject.Inject;
 
 public class ProgramData extends BaseData implements DataSourceInterface<Program> {
 
-    private AppRoomDatabase db;
+    final private AppRoomDatabase db;
 
     @Inject
     public ProgramData(AppRoomDatabase database) {
@@ -102,7 +102,7 @@ public class ProgramData extends BaseData implements DataSourceInterface<Program
         new ItemMiscTask(db, DELETE_BY_ID, id).execute();
     }
 
-    protected static class ItemLoaderTask extends AsyncTask<Void, Void, Program> {
+    private static class ItemLoaderTask extends AsyncTask<Void, Void, Program> {
         private final AppRoomDatabase db;
         private final int id;
         private final int type;
@@ -125,7 +125,7 @@ public class ProgramData extends BaseData implements DataSourceInterface<Program
         }
     }
 
-    protected static class ItemHandlerTask extends AsyncTask<Void, Void, Program> {
+    private static class ItemHandlerTask extends AsyncTask<Void, Void, Program> {
         private final AppRoomDatabase db;
         private final Program program;
         private final int type;
@@ -153,7 +153,7 @@ public class ProgramData extends BaseData implements DataSourceInterface<Program
         }
     }
 
-    protected static class ItemsHandlerTask extends AsyncTask<Void, Void, Void> {
+    private static class ItemsHandlerTask extends AsyncTask<Void, Void, Void> {
         private final AppRoomDatabase db;
         private final List<Program> programs;
         private final int type;
@@ -175,7 +175,7 @@ public class ProgramData extends BaseData implements DataSourceInterface<Program
         }
     }
 
-    protected static class ItemMiscTask extends AsyncTask<Void, Void, Void> {
+    private static class ItemMiscTask extends AsyncTask<Void, Void, Void> {
         private final AppRoomDatabase db;
         private final int type;
         private final Object arg;

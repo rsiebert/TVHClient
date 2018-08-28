@@ -16,7 +16,7 @@ import javax.inject.Inject;
 
 public class ConnectionData extends BaseData implements DataSourceInterface<Connection> {
 
-    private AppRoomDatabase db;
+    final private AppRoomDatabase db;
 
     @Inject
     public ConnectionData(AppRoomDatabase database) {
@@ -108,9 +108,8 @@ public class ConnectionData extends BaseData implements DataSourceInterface<Conn
         }
     }
 
-    protected static class ItemsLoaderTask extends AsyncTask<Void, Void, List<Connection>> {
+    private static class ItemsLoaderTask extends AsyncTask<Void, Void, List<Connection>> {
         private final AppRoomDatabase db;
-
 
         ItemsLoaderTask(AppRoomDatabase db) {
             this.db = db;

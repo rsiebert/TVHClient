@@ -16,7 +16,7 @@ import javax.inject.Inject;
 
 public class RecordingData extends BaseData implements DataSourceInterface<Recording> {
 
-    private AppRoomDatabase db;
+    final private AppRoomDatabase db;
 
     @Inject
     public RecordingData(AppRoomDatabase database) {
@@ -170,7 +170,7 @@ public class RecordingData extends BaseData implements DataSourceInterface<Recor
         }
     }
 
-    protected static class ItemsHandlerTask extends AsyncTask<Void, Void, Void> {
+    private static class ItemsHandlerTask extends AsyncTask<Void, Void, Void> {
         private final AppRoomDatabase db;
         private final List<Recording> recordings;
         private final int type;

@@ -15,7 +15,7 @@ import javax.inject.Inject;
 
 public class ServerStatusData extends BaseData implements DataSourceInterface<ServerStatus> {
 
-    private AppRoomDatabase db;
+    final private AppRoomDatabase db;
 
     @Inject
     public ServerStatusData(AppRoomDatabase database) {
@@ -77,7 +77,7 @@ public class ServerStatusData extends BaseData implements DataSourceInterface<Se
         return null;
     }
 
-    protected static class ItemLoaderTask extends AsyncTask<Void, Void, ServerStatus> {
+    private static class ItemLoaderTask extends AsyncTask<Void, Void, ServerStatus> {
         private final AppRoomDatabase db;
         private final int id;
 
@@ -101,7 +101,7 @@ public class ServerStatusData extends BaseData implements DataSourceInterface<Se
         }
     }
 
-    protected static class ItemHandlerTask extends AsyncTask<Void, Void, Void> {
+    private static class ItemHandlerTask extends AsyncTask<Void, Void, Void> {
         private final AppRoomDatabase db;
         private final ServerStatus serverStatus;
         private final int type;
