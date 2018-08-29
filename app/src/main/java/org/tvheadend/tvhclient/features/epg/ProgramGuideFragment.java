@@ -192,7 +192,7 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
 
         // Prevent the channel tag menu item from going into the overlay menu
         if (showChannelTagMenu) {
-            menu.findItem(R.id.menu_tags).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+            menu.findItem(R.id.menu_tags).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_IF_ROOM);
         }
     }
 
