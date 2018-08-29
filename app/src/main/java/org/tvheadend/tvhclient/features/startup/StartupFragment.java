@@ -39,7 +39,6 @@ import butterknife.Unbinder;
 import timber.log.Timber;
 
 // TODO add nice background image
-// TODO use translated strings
 
 public class StartupFragment extends Fragment implements EpgSyncStatusCallback {
 
