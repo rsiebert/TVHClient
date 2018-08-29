@@ -429,10 +429,10 @@
     <string name="pref_show_menu_search_imdb">Show menu \'Search on IMDB\'</string>
     <string name="pref_show_menu_search_fileaffinity">Show menu \'Search on FileAffinity website\'</string>
     <string name="pref_show_menu_search_epg">Show menu \'Search the EPG\'</string>
-    <string name="pref_enable_crash_reports">Enable sending anonymous crash reports</string>
-    <string name="pref_enable_crash_reports_sum">The reports will be used to improve the stability of the application.</string>
-    <string name="pref_enable_usage_statistics">Enable sending anonymous usage statistics</string>
-    <string name="pref_enable_usage_statistics_sum">This includes which screens were visited, how often a search was performed and how many interactions happened with the server.</string>
-    <string name="pref_epg_sync_duration">EPG Sync Duration</string>
-    <string name="pref_epg_sync_duration_sum">Amount of EPG data to sync</string>
+    <string name="pref_enable_crash_reports">Send anonymous crash reports</string>
+    <string name="pref_enable_crash_reports_sum">The reports contain the information required to improve the stability and user experience of the application.</string>
+    <string name="pref_enable_usage_statistics">Send anonymous usage statistics</string>
+    <string name="pref_enable_usage_statistics_sum">These reports provide information about the required google services availability and which features of the application are available used by the users. This information is also used to improve the stability and user experience further.</string>
+    <string name="pref_epg_sync_duration">Sync duration of program data</string>
+    <string name="pref_epg_sync_duration_sum">Amount of program guide data that shall be loaded from the server.</string>
 </resources>
