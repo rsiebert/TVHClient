@@ -387,4 +387,5 @@
     <string name="pref_show_program_subtitle_sum">Zeigt den Untertitel (falls vorhanden) eines Programmes an.</string>
     <string name="pref_show_program_subtitle">Zeige den Programmuntertitel</string>
     <string name="full_changelog">Full Changelog</string>
+    <string name="no_cast_session">Keine Cast-Session verfügbar</string>
 </resources>

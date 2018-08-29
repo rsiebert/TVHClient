@@ -14,6 +14,7 @@ import com.google.android.gms.cast.framework.CastSession;
 import com.google.android.gms.cast.framework.media.RemoteMediaClient;
 import com.google.android.gms.common.images.WebImage;
 
+import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.data.entity.ServerProfile;
 import org.tvheadend.tvhclient.data.service.EpgSyncService;
@@ -49,7 +50,7 @@ public class CastChannelActivity extends BasePlaybackActivity {
         super.onResume();
         if (castSession == null) {
             progressBar.setVisibility(View.GONE);
-            statusTextView.setText("No cast session available");
+            statusTextView.setText(getString(R.string.no_cast_session));
         }
     }
 

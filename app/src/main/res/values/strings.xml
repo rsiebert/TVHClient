@@ -1,19 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<resources
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:ignore="MissingTranslation">
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">TVHClient</string>
 
     <string name="media_route_menu_title">Play on&#8230;</string>
     <string name="intro_overlay_text">Touch to cast Live TV or recordings to your TV.\n\nPlease check that you meet the requirements described in the casting settings.</string>
     <string name="connection_temp_lost">Connection to the cast device is temporarily lost</string>
     <string name="connection_recovered">Connection to the cast device is recovered</string>
-    <string name="cast_profile_not_set">No casting serverProfile was selected in the settings. This is required before casting can be used.</string>
-    <string name="cast_profile_invalid">The selected serverProfile \'%1$s\' is not the recommended \'%2$s\' serverProfile. Please note that casting might not work correctly.</string>
+    <string name="cast_profile_not_set">No casting profile was selected in the settings. This is required before casting can be used.</string>
+    <string name="cast_profile_invalid">The selected profile \'%1$s\' is not the recommended \'%2$s\' one. Please note that casting might not work correctly.</string>
     <string name="pref_casting">Casting</string>
-    <string name="pref_casting_sum">Settings to enable and configure casting Live-TV or recordings to your TV. Please note that this requires tvheadend with transcoding enabled and a server which is powerful enough to transcode the data in realtime.</string>
+    <string name="pref_casting_sum">Configure casting of programs or recordings to your TV. The server must have transcoding enabled.</string>
     <string name="pref_enable_casting">Enable casting</string>
-    <string name="pref_enable_casting_sum">Only enable this feature if tvheadend is able to transcode and your server is powerful enough to convert the data in realtime.</string>
+    <string name="pref_enable_casting_sum">Enable this feature if your server supports transcoding the data in realtime.</string>
     <string name="pref_show_cast_minicontroller">Cast controls</string>
     <string name="pref_show_cast_minicontroller_sum">Show a cast minicontroller at the bottom of the screen to display some information about the current cast.</string>
     <string name="download_error_insufficient_space">Error downloading the recording \'%s\'. Not sufficient space on the device.</string>
@@ -30,7 +28,7 @@
     <string name="download">Download</string>
     <string name="search">Search</string>
     <string name="record_once">Record</string>
-    <string name="record_once_custom_profile">Record with different serverProfile</string>
+    <string name="record_once_custom_profile">Record with different profile</string>
     <string name="record_series">Record as series recording</string>
     <string name="record_stop">Stop recording</string>
     <string name="record_cancel">Cancel recording</string>
@@ -110,7 +108,7 @@
     <string name="pref_wol_broadcast">Use Broadcast</string>
     <string name="pref_wol_broadcast_sum">Send the WOL packet as a broadcast. Some routers do not allow this kind of WOL.</string>
     <string name="pref_wol_address_invalid">The MAC address is invalid.\nIt must have the pattern \'01:24:67:9a:cd:ef\'.</string>
-    
+
     <string name="pref_user_interface">User interface</string>
     <string name="pref_channels">Channels</string>
     <string name="pref_icons">Channel icons</string>
@@ -172,20 +170,20 @@
     <string name="pref_hide_menu_delete_all_recordings_sum">Do not show this menu to prevent an accidental deletion of all recorded programs.</string>
     <string name="pref_hide_menu_cancel_all_recordings">Hide the \'Cancel all recordings\' menu</string>
     <string name="pref_hide_menu_cancel_all_recordings_sum">Do not show this menu to accidentally prevent cancelling all scheduled programs.</string>
-    <string name="pref_visible_menu_icon_tags">Always show the \'Channel Tags\' menu</string>
-    <string name="pref_visible_menu_icon_tags_sum">Keep the channel tag menu visible in the action bar. Prevents the menu from being moved into the three dot menu if there is not enough space.</string>
+    <string name="pref_visible_menu_icon_tags">Show the \'Channel Tags\' menu</string>
+    <string name="pref_visible_menu_icon_tags_sum">Try to show the channel tag menu in the action bar and not in the three dot menu.</string>
     <string name="pref_profiles">Profiles</string>
-    <string name="pref_profiles_sum">Define the parameters or the profiles (if supported) how programs shall be recorded or how recordings shall be played.</string>
+    <string name="pref_profiles_sum">Define the profiles how content shall be recorded or played.</string>
     <string name="pref_recording_profiles">Recording profiles</string>
-    <string name="pref_recording_profiles_sum">Select a serverProfile that the server shall use to record a scheduled program.</string>
+    <string name="pref_recording_profiles_sum">Select a profile that the server shall use to record a scheduled program.</string>
     <string name="pref_playback_profiles">Playback profiles</string>
-    <string name="pref_playback_profiles_sum">Select a serverProfile that shall be used to play a recorded program.</string>
+    <string name="pref_playback_profiles_sum">Select a profile that shall be used to play a recorded program.</string>
     <string name="pref_cast_profiles">Cast playback profiles</string>
-    <string name="pref_cast_profiles_sum">Select a serverProfile that shall be used to cast a channel or recorded program to a chromecast or similar device.</string>
+    <string name="pref_cast_profiles_sum">Select a profile that shall be used to cast a channel or recorded program to a chromecast or similar device.</string>
     <string name="pref_enable_recording_profiles">Enable recording profiles</string>
-    <string name="pref_enable_recording_profiles_sum">Use the newer server serverProfile functionality for recordings. This overrides any defined video and audio parameters for recording a scheduled program.</string>
+    <string name="pref_enable_recording_profiles_sum">Use the newer server profile functionality for recordings. This overrides any defined video and audio parameters for recording a scheduled program.</string>
     <string name="pref_enable_playback_profiles">Enable playback profiles</string>
-    <string name="pref_enable_playback_profiles_sum">Use the newer server serverProfile functionality for programs. This overrides any defined video and audio parameters for playing a program.</string>
+    <string name="pref_enable_playback_profiles_sum">Use the newer server profile functionality for programs. This overrides any defined video and audio parameters for playing a program.</string>
     <string name="pref_notifications">Notifications</string>
     <string name="pref_download_directory">Download directory</string>
     <string name="pref_download_directory_sum">Recordings will be downloaded into the following directory: \'%s\'</string>
@@ -252,7 +250,7 @@
     <string name="minutes">%d min</string>
 
     <string name="not_set">Not set</string>
-    
+
     <string name="search_hint">Search the EPG</string>
     <string name="two_days_ago">Two days ago</string>
     <string name="yesterday">Yesterday</string>
@@ -304,7 +302,7 @@
     <string name="series_information">Series information</string>
     <string name="genre_color_list">List of genre colors and their meaning.</string>
     <string name="priority">Priority</string>
-    <string name="dvr_config">Recording serverProfile</string>
+    <string name="dvr_config">Recording profile</string>
 
     <string name="current_time">Current time</string>
     <string name="start_time">Start time</string>
@@ -352,7 +350,7 @@
     <string name="currently_recording">Currently recording</string>
     <string name="select_channel">Select channel</string>
     <string name="select_priority">Select priority</string>
-    <string name="select_dvr_config">Select recording serverProfile</string>
+    <string name="select_dvr_config">Select recording profile</string>
     <string name="select_log_file">Select logfile</string>
     <string name="select_duplicate_detection">Select duplicate detection method</string>
 
@@ -401,4 +399,40 @@
     <string name="add_reminder">Add reminder</string>
     <string name="full_changelog">Full Changelog</string>
 
+    <string name="no_cast_session">No cast session available</string>
+    <string name="error_starting_playback_no_connection">Error starting playback. Could not load required connection and server information.</string>
+    <string name="error_starting_playback_no_profile">Error starting playback. You did not select a playback profile in the settings.</string>
+    <string name="requesting_playback_information">Requesting playback information from server</string>
+    <string name="received_playback_information">Received playback information from server</string>
+    <string name="starting_playback">Starting playback</string>
+    <string name="connection_failed">Connection failed</string>
+    <string name="failed_connecting_to_server">Failed to connect to server</string>
+    <string name="failed_opening_socket">Failed to open socket to the server</string>
+    <string name="failed_during_connection_attempt">Error during connection attempt to server</string>
+    <string name="failed_to_resolve_address">Failed to resolve server address</string>
+    <string name="connecting_to_server">Connecting to server…</string>
+    <string name="connection_closed">Connection closed</string>
+    <string name="authentication_failed">Authentication failed</string>
+    <string name="bad_username_or_password">Probably bad username or password</string>
+    <string name="connected_to_server">Connected to server</string>
+    <string name="loading_data">Loading data from server</string>
+    <string name="loading_data_done">Loading data from server finished</string>
+    <string name="saving_data">Saving received data…</string>
+    <string name="saving_channel_logos">Saving received channel logos…</string>
+    <string name="saving_channels">Saving received channels…</string>
+    <string name="saving_recordings">Saving received recordings…</string>
+    <string name="saving_program_guide_data">Saving received program guide data…</string>
+    <string name="pref_clear_database">Clear database</string>
+    <string name="pref_clear_database_sum">Removes all information from the database. This includes all channels, channel tags, programs and recordings.</string>
+    <string name="pref_show_channel_name">Show channel name</string>
+    <string name="pref_show_channel_name_sum">Additionally to the channel icon display the channel name above the program title in the channel list.</string>
+    <string name="pref_show_menu_search_imdb">Show menu \'Search on IMDB\'</string>
+    <string name="pref_show_menu_search_fileaffinity">Show menu \'Search on FileAffinity website\'</string>
+    <string name="pref_show_menu_search_epg">Show menu \'Search the EPG\'</string>
+    <string name="pref_enable_crash_reports">Enable sending anonymous crash reports</string>
+    <string name="pref_enable_crash_reports_sum">The reports will be used to improve the stability of the application.</string>
+    <string name="pref_enable_usage_statistics">Enable sending anonymous usage statistics</string>
+    <string name="pref_enable_usage_statistics_sum">This includes which screens were visited, how often a search was performed and how many interactions happened with the server.</string>
+    <string name="pref_epg_sync_duration">EPG Sync Duration</string>
+    <string name="pref_epg_sync_duration_sum">Amount of EPG data to sync</string>
 </resources>

@@ -23,8 +23,8 @@
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="channel_name_enabled"
-            android:summary="Additionally to the channel icon display the channel name above the program title in the channel list."
-            android:title="Channel name" />
+            android:summary="@string/pref_show_channel_name_sum"
+            android:title="@string/pref_show_channel_name" />
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="channel_icon_starts_playback_enabled"
@@ -136,18 +136,15 @@
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="search_on_imdb_menu_enabled"
-            android:summary=""
-            android:title="Show menu 'Search on IMDB'" />
+            android:title="@string/pref_show_menu_search_imdb" />
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="search_on_fileaffinity_menu_enabled"
-            android:summary=""
-            android:title="Show menu 'Search on FileAffinity website'" />
+            android:title="@string/pref_show_menu_search_fileaffinity" />
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="search_epg_menu_enabled"
-            android:summary=""
-            android:title="Show menu 'Search the EPG'" />
+            android:title="@string/pref_show_menu_search_epg" />
     </PreferenceCategory>
 
 </PreferenceScreen>

@@ -95,35 +95,35 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         switch (state) {
             case FAILED:
                 sendEpgSyncStatusMessage(ServiceStatusReceiver.State.FAILED,
-                        "Connection failed.", "");
+                        context.getString(R.string.connection_failed), "");
                 break;
             case FAILED_CONNECTING_TO_SERVER:
                 sendEpgSyncStatusMessage(ServiceStatusReceiver.State.FAILED,
-                        "Connection failed.",
-                        "Failed to connect to server");
+                        context.getString(R.string.connection_failed),
+                        context.getString(R.string.failed_connecting_to_server));
                 break;
             case FAILED_EXCEPTION_OPENING_SOCKET:
                 sendEpgSyncStatusMessage(ServiceStatusReceiver.State.FAILED,
-                        "Connection failed.",
-                        "Failed to open socket to the server");
+                        context.getString(R.string.connection_failed),
+                        context.getString(R.string.failed_opening_socket));
                 break;
             case FAILED_INTERRUPTED:
                 sendEpgSyncStatusMessage(ServiceStatusReceiver.State.FAILED,
-                        "Connection failed.",
-                        "Error during connection attempt to server");
+                        context.getString(R.string.connection_failed),
+                        context.getString(R.string.failed_during_connection_attempt));
                 break;
             case FAILED_UNRESOLVED_ADDRESS:
                 sendEpgSyncStatusMessage(ServiceStatusReceiver.State.FAILED,
-                        "Connection failed.",
-                        "Failed to resolve server address");
+                        context.getString(R.string.connection_failed),
+                        context.getString(R.string.failed_to_resolve_address));
                 break;
             case CONNECTING:
                 sendEpgSyncStatusMessage(ServiceStatusReceiver.State.CONNECTED,
-                        "Connecting to server...", "");
+                        context.getString(R.string.connecting_to_server), "");
                 break;
             case CLOSED:
                 sendEpgSyncStatusMessage(ServiceStatusReceiver.State.CLOSED,
-                        "Connection closed.", "");
+                        context.getString(R.string.connection_closed), "");
                 break;
         }
     }
@@ -136,16 +136,16 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         switch (state) {
             case FAILED:
                 sendEpgSyncStatusMessage(ServiceStatusReceiver.State.FAILED,
-                        "Authentication failed.", "");
+                        context.getString(R.string.authentication_failed), "");
                 break;
             case FAILED_BAD_CREDENTIALS:
                 sendEpgSyncStatusMessage(ServiceStatusReceiver.State.FAILED,
-                        "Authentication failed.",
-                        "Probably bad username or password");
+                        context.getString(R.string.authentication_failed),
+                        context.getString(R.string.bad_username_or_password));
                 break;
             case AUTHENTICATED:
                 sendEpgSyncStatusMessage(ServiceStatusReceiver.State.CONNECTED,
-                        "Connected to server.", "");
+                        context.getString(R.string.connected_to_server), "");
                 // Continue with getting all initial data only if we are authenticated
                 startAsyncCommunicationWithServer();
                 break;
@@ -159,7 +159,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
 
         // Send the first sync message to any broadcast listeners
         sendEpgSyncStatusMessage(ServiceStatusReceiver.State.SYNC_STARTED,
-                "Loading data from server", "");
+                context.getString(R.string.loading_data), "");
 
         // Enable epg sync with the defined number of
         // seconds of data starting from the current time
@@ -790,7 +790,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     private void handleInitialSyncCompleted() {
         Timber.d("Received initial data from server");
         sendEpgSyncStatusMessage(ServiceStatusReceiver.State.SYNC_IN_PROGRESS,
-                "Saving received data...", "");
+                context.getString(R.string.saving_data), "");
 
         // Flush all received data to the database
         flushPendingChannelOps();
@@ -810,7 +810,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         initialSyncCompleted = true;
 
         sendEpgSyncStatusMessage(ServiceStatusReceiver.State.SYNC_DONE,
-                "Loading data from server finished.", "");
+                context.getString(R.string.loading_data_done), "");
 
         Timber.d("Done receiving initial data from server");
     }
@@ -818,7 +818,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     private void flushPendingChannelLogoFetches() {
         Timber.d("Downloading and saving channel logos...");
         sendEpgSyncStatusMessage(ServiceStatusReceiver.State.SYNC_IN_PROGRESS,
-                "Saving received channel logos...", "");
+                context.getString(R.string.saving_channel_logos), "");
 
         if (pendingChannelLogoFetches.isEmpty()) {
             return;
@@ -840,7 +840,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         }
         Timber.d("Saving " + pendingChannelOps.size() + " channels...");
         sendEpgSyncStatusMessage(ServiceStatusReceiver.State.SYNC_IN_PROGRESS,
-                "Saving received channels...", "");
+                context.getString(R.string.saving_channels), "");
 
         appRepository.getChannelData().addItems(pendingChannelOps);
         pendingChannelOps.clear();
@@ -858,7 +858,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         }
         Timber.d("Saving " + pendingRecordingOps.size() + " recordings...");
         sendEpgSyncStatusMessage(ServiceStatusReceiver.State.SYNC_IN_PROGRESS,
-                "Saving received recordings...", "");
+                context.getString(R.string.saving_recordings), "");
 
         appRepository.getRecordingData().addItems(pendingRecordingOps);
         pendingRecordingOps.clear();
@@ -870,7 +870,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         }
         Timber.d("Saving " + pendingEventOps.size() + " program data...");
         sendEpgSyncStatusMessage(ServiceStatusReceiver.State.SYNC_IN_PROGRESS,
-                "Saving received program guide data...", "");
+                context.getString(R.string.saving_program_guide_data), "");
 
         // Apply the batch of Operations
         final int steps = 250;

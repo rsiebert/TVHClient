@@ -4,16 +4,14 @@
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="crash_reports_enabled"
-            android:summaryOff="Crash reports disabled"
-            android:summaryOn="Crash reports enabled"
-            android:title="Enable sending anonymous crash reports" />
+            android:summary="@string/pref_enable_crash_reports_sum"
+            android:title="@string/pref_enable_crash_reports" />
 
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="usage_statistics_enabled"
-            android:summaryOff="Usage statistics disabled"
-            android:summaryOn="Usage statistics enabled"
-            android:title="Enable sending anonymous usage statistics" />
+            android:summary="@string/pref_enable_usage_statistics_sum"
+            android:title="@string/pref_enable_usage_statistics" />
 
         <CheckBoxPreference
             android:defaultValue="false"
@@ -35,7 +33,7 @@
             android:defaultValue="5"
             android:key="connection_timeout"
             android:numeric="integer"
-            android:summary="Defines the time in seconds until the server must have sent a reply. Increasing the value can improve the connectivity on slow networks."
+            android:summary="@string/pref_connection_timeout_sum"
             android:title="@string/pref_connection_timeout" />
     </PreferenceCategory>
 
@@ -46,8 +44,8 @@
             android:entries="@array/epg_max_time_names"
             android:entryValues="@array/epg_max_time_values"
             android:key="epg_max_time"
-            android:summary="Amount of EPG data to sync"
-            android:title="EPG Sync Duration" />
+            android:summary="@string/pref_epg_sync_duration_sum"
+            android:title="@string/pref_epg_sync_duration" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_misc">
@@ -59,7 +57,7 @@
             android:title="@string/pref_clear_icon_cache" />
         <Preference
             android:key="clear_database"
-            android:summary="Remove all information from the database. This includes all channels, channel tags, programs and recordings from the database."
-            android:title="Clear database" />
+            android:summary="@string/pref_clear_database_sum"
+            android:title="@string/pref_clear_database" />
     </PreferenceCategory>
 </PreferenceScreen>
