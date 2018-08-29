@@ -56,7 +56,10 @@ public class EpgSyncHandler {
 
     public void handleIntent(Intent intent) {
         if (intent != null && intent.getAction() != null) {
+            Timber.d("Passing intent action " + intent.getAction() + " to epg sync task");
             epgSyncTask.handleIntent(intent);
+        } else {
+            Timber.d("No intent action given");
         }
     }
 
