@@ -52,8 +52,6 @@ import timber.log.Timber;
 // TODO epg search in epg
 // TODO show recording state in details view
 // TODO add option to add recording and directly edit it
-// TODO cast menu popup
-// TODO onPreparePopupMenu in channel and recording menu
 
 public class MainActivity extends BaseActivity implements ToolbarInterface, WakeOnLanTaskCallback, NavigationDrawerCallback {
 
