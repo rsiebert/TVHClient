@@ -40,7 +40,8 @@ public class EpgSyncService extends Service {
         if (!epgSyncHandler.init()) {
             stopSelf();
         }
-        //startBackgroundWorker();
+
+        startBackgroundWorkers();
         Timber.d("end");
     }
 
@@ -66,7 +67,7 @@ public class EpgSyncService extends Service {
         Timber.d("end");
     }
 
-    private void startBackgroundWorker() {
+    private void startBackgroundWorkers() {
         Timber.d("Starting background workers");
 
         Constraints constraints = new Constraints.Builder()
