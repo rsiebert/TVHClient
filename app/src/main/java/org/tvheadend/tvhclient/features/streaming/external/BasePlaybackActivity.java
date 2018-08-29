@@ -24,6 +24,10 @@ import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.entity.ServerProfile;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
+import org.tvheadend.tvhclient.data.service.EpgSyncService;
+import org.tvheadend.tvhclient.data.service.EpgSyncStatusCallback;
+import org.tvheadend.tvhclient.data.service.EpgSyncTaskState;
+import org.tvheadend.tvhclient.features.shared.receivers.ServiceStatusReceiver;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
 import javax.inject.Inject;
@@ -32,21 +36,24 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
 
-public abstract class BasePlaybackActivity extends AppCompatActivity {
+// TODO handle not connected events
+
+public abstract class BasePlaybackActivity extends AppCompatActivity implements EpgSyncStatusCallback {
 
     @BindView(R.id.progress_bar)
     ProgressBar progressBar;
     @BindView(R.id.status)
-    protected TextView statusTextView;
+    TextView statusTextView;
 
-    protected Connection connection;
-    protected ServerStatus serverStatus;
+    Connection connection;
+    ServerStatus serverStatus;
     @Inject
     protected AppRepository appRepository;
     @Inject
     protected SharedPreferences sharedPreferences;
-    protected String baseUrl;
-    protected ServerProfile serverProfile;
+    String baseUrl;
+    ServerProfile serverProfile;
+    private ServiceStatusReceiver serviceStatusReceiver;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -58,11 +65,12 @@ public abstract class BasePlaybackActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
+        serviceStatusReceiver = new ServiceStatusReceiver(this);
         connection = appRepository.getConnectionData().getActiveItem();
         serverStatus = appRepository.getServerStatusData().getItemById(connection.getId());
 
         if (connection.getStreamingPort() != 80 && connection.getStreamingPort() != 443) {
-             baseUrl = connection.getHostname() + ":" + connection.getStreamingPort() + serverStatus.getWebroot();
+            baseUrl = connection.getHostname() + ":" + connection.getStreamingPort() + serverStatus.getWebroot();
         } else {
             baseUrl = connection.getHostname() + serverStatus.getWebroot();
         }
@@ -74,26 +82,32 @@ public abstract class BasePlaybackActivity extends AppCompatActivity {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("ticket");
         LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, intentFilter);
+        LocalBroadcastManager.getInstance(this).registerReceiver(serviceStatusReceiver, new IntentFilter(ServiceStatusReceiver.ACTION));
     }
 
     @Override
     public void onStop() {
         super.onStop();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(messageReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(serviceStatusReceiver);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        init();
+    }
 
+    private void init() {
         if (connection == null || serverStatus == null) {
             progressBar.setVisibility(View.GONE);
-            statusTextView.setText("Error starting playback. Could not load required connection and server information");
+            statusTextView.setText(getString(R.string.error_starting_playback_no_connection));
         } else if (serverProfile == null) {
             progressBar.setVisibility(View.GONE);
-            statusTextView.setText("Error starting playback. You did not select a playback profile in the settings.");
+            statusTextView.setText(getString(R.string.error_starting_playback_no_profile));
         } else {
-            statusTextView.setText("Requesting playback information from server");
+            progressBar.setVisibility(View.VISIBLE);
+            statusTextView.setText(getString(R.string.requesting_playback_information));
             getHttpTicket();
         }
     }
@@ -101,20 +115,21 @@ public abstract class BasePlaybackActivity extends AppCompatActivity {
     protected abstract void onHttpTicketReceived(String path, String ticket);
 
     protected abstract void getHttpTicket();
-    private BroadcastReceiver messageReceiver = new BroadcastReceiver() {
+
+    private final BroadcastReceiver messageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            statusTextView.setText("Received playback information from server");
+            statusTextView.setText(getString(R.string.received_playback_information));
             String path = intent.getStringExtra("path");
             String ticket = intent.getStringExtra("ticket");
             onHttpTicketReceived(path, ticket);
         }
     };
 
-    protected void startExternalPlayer(Intent intent) {
+    void startExternalPlayer(Intent intent) {
 
         progressBar.setVisibility(View.GONE);
-        statusTextView.setText("Starting playback");
+        statusTextView.setText(getString(R.string.starting_playback));
 
         // Start playing the video in the UI thread
         this.runOnUiThread(new Runnable() {
@@ -158,5 +173,28 @@ public abstract class BasePlaybackActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    @Override
+    public void onEpgTaskStateChanged(EpgSyncTaskState state) {
+        Timber.d("Epg task state changed, message is " + state.getMessage());
+        switch (state.getState()) {
+            case FAILED:
+                progressBar.setVisibility(View.GONE);
+                statusTextView.setText(state.getMessage());
+                stopService(new Intent(this, EpgSyncService.class));
+                startService(new Intent(this, EpgSyncService.class));
+                break;
+
+            case CONNECTING:
+                progressBar.setVisibility(View.GONE);
+                statusTextView.setText(state.getMessage());
+                break;
+
+            case CONNECTED:
+                progressBar.setVisibility(View.GONE);
+                init();
+                break;
+        }
     }
 }
