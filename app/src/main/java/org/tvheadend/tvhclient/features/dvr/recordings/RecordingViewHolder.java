@@ -3,6 +3,7 @@ package org.tvheadend.tvhclient.features.dvr.recordings;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.TextViewCompat;
 import android.support.v7.widget.RecyclerView;
@@ -16,8 +17,8 @@ import com.squareup.picasso.Picasso;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Recording;
-import org.tvheadend.tvhclient.utils.UIUtils;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback;
+import org.tvheadend.tvhclient.utils.UIUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -66,7 +67,7 @@ public class RecordingViewHolder extends RecyclerView.ViewHolder {
         ButterKnife.bind(this, view);
     }
 
-    public void bindData(Context context, final Recording recording, boolean selected, int htspVersion, RecyclerViewClickCallback clickCallback) {
+    public void bindData(Context context, @NonNull final Recording recording, boolean selected, int htspVersion, RecyclerViewClickCallback clickCallback) {
         itemView.setTag(recording);
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -89,8 +90,7 @@ public class RecordingViewHolder extends RecyclerView.ViewHolder {
         iconImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (playOnChannelIcon && recording != null
-                        && (recording.isCompleted() || recording.isRecording())) {
+                if (playOnChannelIcon && (recording.isCompleted() || recording.isRecording())) {
                     clickCallback.onClick(view, getAdapterPosition());
                 }
             }

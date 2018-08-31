@@ -3,6 +3,7 @@ package org.tvheadend.tvhclient.features.dvr.series_recordings;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.TextViewCompat;
 import android.support.v7.widget.RecyclerView;
@@ -53,7 +54,7 @@ public class SeriesRecordingViewHolder extends RecyclerView.ViewHolder {
         ButterKnife.bind(this, view);
     }
     
-    public void bindData(Context context, final SeriesRecording recording, boolean selected, int htspVersion, RecyclerViewClickCallback clickCallback) {
+    public void bindData(Context context, @NonNull final SeriesRecording recording, boolean selected, int htspVersion, RecyclerViewClickCallback clickCallback) {
         itemView.setTag(recording);
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);

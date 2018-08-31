@@ -3,6 +3,7 @@ package org.tvheadend.tvhclient.features.dvr.timer_recordings;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.TextViewCompat;
 import android.support.v7.widget.RecyclerView;
@@ -51,12 +52,10 @@ public class TimerRecordingViewHolder extends RecyclerView.ViewHolder {
         ButterKnife.bind(this, view);
     }
 
-    public void bindData(Context context, final TimerRecording recording, boolean selected, int htspVersion, RecyclerViewClickCallback clickCallback) {
+    public void bindData(Context context, @NonNull final TimerRecording recording, boolean selected, int htspVersion, RecyclerViewClickCallback clickCallback) {
         itemView.setTag(recording);
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        itemView.setTag(recording);
-
         boolean lightTheme = sharedPreferences.getBoolean("light_theme_enabled", true);
 
         itemView.setOnClickListener(new View.OnClickListener() {
