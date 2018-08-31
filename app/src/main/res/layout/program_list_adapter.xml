@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?android:attr/selectableItemBackground">
@@ -90,12 +91,14 @@
         style="?attr/ContentFont"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         android:layout_marginLeft="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:gravity="start"
         android:text="@string/date"
         android:textAlignment="viewStart"
+        app:layout_constraintBottom_toTopOf="@+id/progress"
         app:layout_constraintStart_toEndOf="@+id/genre"
         app:layout_constraintTop_toBottomOf="@+id/content_type" />
 
@@ -104,10 +107,12 @@
         style="?attr/ContentFont"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:text="@string/time"
+        app:layout_constraintBottom_toTopOf="@+id/progress"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.3"
         app:layout_constraintStart_toEndOf="@+id/genre"
@@ -118,6 +123,7 @@
         style="?attr/ContentFont"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         android:layout_marginEnd="16dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="16dp"
@@ -127,6 +133,7 @@
         android:gravity="end"
         android:text="@string/duration"
         android:textAlignment="textEnd"
+        app:layout_constraintBottom_toTopOf="@+id/progress"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@+id/genre"
@@ -137,28 +144,28 @@
         style="?attr/ContentFont"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
         android:singleLine="true"
         android:text="@string/progress"
+        app:layout_constraintBottom_toTopOf="@+id/series_info"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/genre"
-        app:layout_constraintTop_toBottomOf="@+id/date" />
+        app:layout_constraintStart_toEndOf="@+id/genre" />
 
     <TextView
         android:id="@+id/series_info"
         style="?attr/ContentFont"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
         android:ellipsize="end"
         android:text="@string/series_information"
+        app:layout_constraintBottom_toTopOf="@+id/description"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/genre"
-        app:layout_constraintTop_toBottomOf="@+id/progress" />
+        app:layout_constraintStart_toEndOf="@+id/genre" />
 
     <TextView
         android:id="@+id/description"
@@ -167,15 +174,14 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:layout_marginEnd="16dp"
+        android:layout_marginLeft="16dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
         android:ellipsize="end"
         android:maxLines="6"
         android:text="@string/description"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/genre"
-        app:layout_constraintTop_toBottomOf="@+id/series_info" />
+        app:layout_constraintStart_toEndOf="@+id/genre" />
 
 </android.support.constraint.ConstraintLayout>
 
