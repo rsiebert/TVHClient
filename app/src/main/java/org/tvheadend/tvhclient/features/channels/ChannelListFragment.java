@@ -176,7 +176,7 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
 
         // Prevent the channel tag menu item from going into the overlay menu
         if (showChannelTagMenu) {
-            menu.findItem(R.id.menu_tags).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+            menu.findItem(R.id.menu_tags).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
         }
     }
 
