@@ -91,7 +91,7 @@ class EpgProgramListRecyclerViewAdapter extends RecyclerView.Adapter<EpgProgramL
 
     @Override
     public int getItemCount() {
-        return programList != null ? programList.size() : 0;
+        return programList.size();
     }
 
     @Override

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -50,75 +51,72 @@ class EpgProgramListViewHolder extends RecyclerView.ViewHolder {
         ButterKnife.bind(this, view);
     }
 
-    public void bindData(Context context, final Program program, List<Recording> recordingList, RecyclerViewClickCallback clickCallback) {
+    public void bindData(Context context, @NonNull final Program program, List<Recording> recordingList, RecyclerViewClickCallback clickCallback) {
+        itemView.setTag(program);
 
-        if (program != null) {
-            itemView.setTag(program);
+        long startTime = (program.getStart() < fragmentStartTime) ? fragmentStartTime : program.getStart();
+        long stopTime = (program.getStop() > fragmentStopTime) ? fragmentStopTime : program.getStop();
+        int duration = (int) (((stopTime - startTime) / 1000 / 60) * pixelsPerMinute);
 
-            long startTime = (program.getStart() < fragmentStartTime) ? fragmentStartTime : program.getStart();
-            long stopTime = (program.getStop() > fragmentStopTime) ? fragmentStopTime : program.getStop();
-            int duration = (int) (((stopTime - startTime) / 1000 / 60) * pixelsPerMinute);
+        RecyclerView.LayoutParams layoutParams = (RecyclerView.LayoutParams) constraintLayout.getLayoutParams();
+        layoutParams.width = duration;
+        constraintLayout.setLayoutParams(layoutParams);
 
-            RecyclerView.LayoutParams layoutParams = (RecyclerView.LayoutParams) constraintLayout.getLayoutParams();
-            layoutParams.width = duration;
-            constraintLayout.setLayoutParams(layoutParams);
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        boolean showProgramSubtitle = sharedPreferences.getBoolean("program_subtitle_enabled", true);
+        boolean showGenreColors = sharedPreferences.getBoolean("genre_colors_for_program_guide_enabled", false);
 
-            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-            boolean showProgramSubtitle = sharedPreferences.getBoolean("program_subtitle_enabled", true);
-            boolean showGenreColors = sharedPreferences.getBoolean("genre_colors_for_program_guide_enabled", false);
-
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (clickCallback != null) {
-                        clickCallback.onClick(view, getAdapterPosition());
-                    }
+        itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (clickCallback != null) {
+                    clickCallback.onClick(view, getAdapterPosition());
                 }
-            });
-            itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View view) {
-                    if (clickCallback != null) {
-                        clickCallback.onLongClick(view, getAdapterPosition());
-                    }
-                    return true;
+            }
+        });
+        itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                if (clickCallback != null) {
+                    clickCallback.onLongClick(view, getAdapterPosition());
                 }
-            });
+                return true;
+            }
+        });
 
-            if (titleTextView != null) {
-                titleTextView.setText(program.getTitle());
-            }
-            if (stateImageView != null) {
-                Drawable stateDrawable = null;
-                for (Recording recording : recordingList) {
-                    if (recording.getEventId() == program.getEventId()) {
-                        stateDrawable = UIUtils.getRecordingState(context, recording);
-                        break;
-                    }
+        if (titleTextView != null) {
+            titleTextView.setText(program.getTitle());
+        }
+        if (stateImageView != null) {
+            Drawable stateDrawable = null;
+            for (Recording recording : recordingList) {
+                if (recording.getEventId() == program.getEventId()) {
+                    stateDrawable = UIUtils.getRecordingState(context, recording);
+                    break;
                 }
-                stateImageView.setVisibility(stateDrawable != null ? View.VISIBLE : View.GONE);
-                stateImageView.setImageDrawable(stateDrawable);
             }
-            if (durationTextView != null) {
-                String durationTime = context.getString(R.string.minutes, (int) ((program.getStop() - program.getStart()) / 1000 / 60));
-                durationTextView.setText(durationTime);
-            }
-            if (subtitleTextView != null) {
-                subtitleTextView.setVisibility(showProgramSubtitle && !TextUtils.isEmpty(program.getSubtitle()) ? View.VISIBLE : View.GONE);
-                subtitleTextView.setText(program.getSubtitle());
-            }
-            if (genreTextView != null) {
-                if (showGenreColors) {
-                    int offset = sharedPreferences.getInt("genre_color_transparency", 0);
-                    // The offset in the setting has a range from 30 to 100% opacity.
-                    // Reduce this a bit for the epg otherwise the colors would be to aggressive
-                    int reducedOffset = ((offset - 25 > 0) ? offset - 25 : offset);
-                    int color = UIUtils.getGenreColor(context, program.getContentType(), reducedOffset);
-                    genreTextView.setBackgroundColor(color);
-                    genreTextView.setVisibility(View.VISIBLE);
-                } else {
-                    genreTextView.setVisibility(View.GONE);
-                }
+            stateImageView.setVisibility(stateDrawable != null ? View.VISIBLE : View.GONE);
+            stateImageView.setImageDrawable(stateDrawable);
+        }
+        if (durationTextView != null) {
+            String durationTime = context.getString(R.string.minutes, (int) ((program.getStop() - program.getStart()) / 1000 / 60));
+            durationTextView.setText(durationTime);
+        }
+        if (subtitleTextView != null) {
+            subtitleTextView.setVisibility(showProgramSubtitle && !TextUtils.isEmpty(program.getSubtitle()) ? View.VISIBLE : View.GONE);
+            subtitleTextView.setText(program.getSubtitle());
+        }
+        if (genreTextView != null) {
+            if (showGenreColors) {
+                int offset = sharedPreferences.getInt("genre_color_transparency", 0);
+                // The offset in the setting has a range from 30 to 100% opacity.
+                // Reduce this a bit for the epg otherwise the colors would be to aggressive
+                int reducedOffset = ((offset - 25 > 0) ? offset - 25 : offset);
+                int color = UIUtils.getGenreColor(context, program.getContentType(), reducedOffset);
+                genreTextView.setBackgroundColor(color);
+                genreTextView.setVisibility(View.VISIBLE);
+            } else {
+                genreTextView.setVisibility(View.GONE);
             }
         }
     }
