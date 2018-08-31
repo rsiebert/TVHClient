@@ -23,8 +23,6 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-// TODO show no program data available when no data
-
 class EpgProgramListViewHolder extends RecyclerView.ViewHolder {
     private final float pixelsPerMinute;
     private final long fragmentStartTime;
