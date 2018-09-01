@@ -146,12 +146,12 @@ class ChannelRecyclerViewAdapter extends RecyclerView.Adapter<ChannelViewHolder>
      *
      * @param list List of recordings
      */
-    void addRecordings(List<Recording> list) {
+    void addRecordings(@NonNull List<Recording> list) {
         recordingList = list;
         updateRecordingState(channelList, recordingList);
     }
 
-    private void updateRecordingState(List<Channel> channels, List<Recording> recordings) {
+    private void updateRecordingState(@NonNull List<Channel> channels, @NonNull List<Recording> recordings) {
         for (int i = 0; i < channels.size(); i++) {
             Channel channel = channels.get(i);
             boolean recordingExists = false;

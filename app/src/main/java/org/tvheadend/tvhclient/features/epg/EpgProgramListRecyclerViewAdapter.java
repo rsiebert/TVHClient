@@ -27,7 +27,7 @@ class EpgProgramListRecyclerViewAdapter extends RecyclerView.Adapter<EpgProgramL
     private final List<Program> programList = new ArrayList<>();
     private List<Recording> recordingList = new ArrayList<>();
 
-    EpgProgramListRecyclerViewAdapter(Context context, float pixelsPerMinute, long fragmentStartTime, long fragmentStopTime, RecyclerViewClickCallback clickCallback) {
+    EpgProgramListRecyclerViewAdapter(Context context, float pixelsPerMinute, long fragmentStartTime, long fragmentStopTime, @NonNull RecyclerViewClickCallback clickCallback) {
         this.context = context;
         this.clickCallback = clickCallback;
         this.pixelsPerMinute = pixelsPerMinute;
@@ -63,12 +63,12 @@ class EpgProgramListRecyclerViewAdapter extends RecyclerView.Adapter<EpgProgramL
         programList.addAll(list);
     }
 
-    void addRecordings(List<Recording> list) {
+    void addRecordings(@NonNull List<Recording> list) {
         recordingList = list;
         updateRecordingState(programList, recordingList);
     }
 
-    private void updateRecordingState(List<Program> programs, List<Recording> recordings) {
+    private void updateRecordingState(@NonNull List<Program> programs, @NonNull List<Recording> recordings) {
         for (int i = 0; i < programs.size(); i++) {
             Program program = programs.get(i);
             boolean recordingExists = false;
