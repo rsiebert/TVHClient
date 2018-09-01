@@ -683,7 +683,7 @@ public class MenuUtils {
         if (activity == null) {
             return false;
         }
-        if (sharedPreferences.getBoolean("internal_player_enabled", false)) {
+        if (isUnlocked && sharedPreferences.getBoolean("internal_player_enabled", false)) {
             Intent intent = new Intent(activity, HtspPlaybackActivity.class);
             intent.putExtra("channelId", channelId);
             activity.startActivity(intent);
