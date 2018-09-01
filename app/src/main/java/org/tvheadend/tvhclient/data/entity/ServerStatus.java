@@ -24,7 +24,7 @@ public class ServerStatus {
     @ColumnInfo(name = "gmt_offset")
     private int gmtoffset = 0;
     @ColumnInfo(name = "htsp_version")
-    private int htspVersion = 9;
+    private int htspVersion = 13;
     @ColumnInfo(name = "free_disc_space")
     private long freeDiskSpace = 0;
     @ColumnInfo(name = "total_disc_space")
