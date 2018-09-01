@@ -19,6 +19,8 @@ public class ScheduledRecordingListFragment extends RecordingListFragment implem
         super.onActivityCreated(savedInstanceState);
         toolbarInterface.setTitle(getString(R.string.scheduled_recordings));
 
+        recyclerViewAdapter.setRecordingType(REC_TYPE_SCHEDULED);
+
         RecordingViewModel viewModel = ViewModelProviders.of(activity).get(RecordingViewModel.class);
         viewModel.getScheduledRecordings().observe(this, recordings -> {
             if (recordings != null) {

@@ -23,6 +23,9 @@ import org.tvheadend.tvhclient.utils.UIUtils;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static org.tvheadend.tvhclient.features.dvr.recordings.RecordingListFragment.REC_TYPE_COMPLETED;
+import static org.tvheadend.tvhclient.features.dvr.recordings.RecordingListFragment.REC_TYPE_SCHEDULED;
+
 public class RecordingViewHolder extends RecyclerView.ViewHolder {
 
     @BindView(R.id.icon)
@@ -62,8 +65,11 @@ public class RecordingViewHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.dual_pane_list_item_selection)
     ImageView dualPaneListItemSelection;
 
-    RecordingViewHolder(View view) {
+    private final int recordingType;
+
+    RecordingViewHolder(View view, int recordingType) {
         super(view);
+        this.recordingType = recordingType;
         ButterKnife.bind(this, view);
     }
 
@@ -152,9 +158,13 @@ public class RecordingViewHolder extends RecyclerView.ViewHolder {
         descriptionTextView.setVisibility(!TextUtils.isEmpty(recording.getDescription()) ? View.VISIBLE : View.GONE);
         descriptionTextView.setText(recording.getDescription());
 
-        String failedReasonText = UIUtils.getRecordingFailedReasonText(context, recording);
-        failedReasonTextView.setVisibility(!TextUtils.isEmpty(failedReasonText) ? View.VISIBLE : View.GONE);
-        failedReasonTextView.setText(failedReasonText);
+        if (recordingType == REC_TYPE_COMPLETED) {
+            failedReasonTextView.setVisibility(View.GONE);
+        } else {
+            String failedReasonText = UIUtils.getRecordingFailedReasonText(context, recording);
+            failedReasonTextView.setVisibility(!TextUtils.isEmpty(failedReasonText) ? View.VISIBLE : View.GONE);
+            failedReasonTextView.setText(failedReasonText);
+        }
 
         // Show only the recording icon
         if (stateImageView != null) {
@@ -170,9 +180,13 @@ public class RecordingViewHolder extends RecyclerView.ViewHolder {
         isSeriesRecordingTextView.setVisibility(TextUtils.isEmpty(recording.getAutorecId()) ? View.GONE : ImageView.VISIBLE);
         isTimerRecordingTextView.setVisibility(TextUtils.isEmpty(recording.getTimerecId()) ? View.GONE : ImageView.VISIBLE);
 
-        boolean hideEnabledView = recording.isFailed() || recording.isRemoved() || recording.isMissed() || recording.isAborted()
-                || htspVersion < 19 || recording.getEnabled() == 0;
-        isEnabledTextView.setVisibility(hideEnabledView ? View.GONE : View.VISIBLE);
-        isEnabledTextView.setText(recording.getEnabled() > 0 ? R.string.recording_enabled : R.string.recording_disabled);
+        if (recordingType != REC_TYPE_SCHEDULED) {
+            isEnabledTextView.setVisibility(View.GONE);
+        } else {
+            boolean hideEnabledView = recording.isFailed() || recording.isRemoved() || recording.isMissed() || recording.isAborted()
+                    || htspVersion < 19 || recording.getEnabled() == 0;
+            isEnabledTextView.setVisibility(hideEnabledView ? View.GONE : View.VISIBLE);
+            isEnabledTextView.setText(recording.getEnabled() > 0 ? R.string.recording_enabled : R.string.recording_disabled);
+        }
     }
 }

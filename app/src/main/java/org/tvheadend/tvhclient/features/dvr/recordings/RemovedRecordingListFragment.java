@@ -18,6 +18,8 @@ public class RemovedRecordingListFragment extends RecordingListFragment implemen
         super.onActivityCreated(savedInstanceState);
         toolbarInterface.setTitle(getString(R.string.removed_recordings));
 
+        recyclerViewAdapter.setRecordingType(REC_TYPE_REMOVED);
+
         RecordingViewModel viewModel = ViewModelProviders.of(activity).get(RecordingViewModel.class);
         viewModel.getRemovedRecordings().observe(this, recordings -> {
             if (recordings != null) {

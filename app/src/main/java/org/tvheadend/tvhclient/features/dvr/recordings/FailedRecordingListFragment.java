@@ -20,6 +20,8 @@ public class FailedRecordingListFragment extends RecordingListFragment implement
         super.onActivityCreated(savedInstanceState);
         toolbarInterface.setTitle(getString(R.string.failed_recordings));
 
+        recyclerViewAdapter.setRecordingType(REC_TYPE_FAILED);
+
         RecordingViewModel viewModel = ViewModelProviders.of(activity).get(RecordingViewModel.class);
         viewModel.getFailedRecordings().observe(this, recordings -> {
             if (recordings != null) {

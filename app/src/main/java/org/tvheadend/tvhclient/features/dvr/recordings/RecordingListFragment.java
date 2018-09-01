@@ -40,6 +40,11 @@ import butterknife.Unbinder;
 
 public class RecordingListFragment extends BaseFragment implements RecyclerViewClickCallback, Filter.FilterListener, DownloadPermissionGrantedInterface {
 
+    final static int REC_TYPE_COMPLETED = 1;
+    final static int REC_TYPE_SCHEDULED = 2;
+    final static int REC_TYPE_FAILED = 3;
+    final static int REC_TYPE_REMOVED = 4;
+
     RecordingRecyclerViewAdapter recyclerViewAdapter;
     @BindView(R.id.recycler_view)
     protected RecyclerView recyclerView;

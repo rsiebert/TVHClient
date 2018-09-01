@@ -23,6 +23,7 @@ class RecordingRecyclerViewAdapter extends RecyclerView.Adapter<RecordingViewHol
     private final RecyclerViewClickCallback clickCallback;
     private final boolean isDualPane;
     private final List<Recording> recordingList = new ArrayList<>();
+    private int recordingType;
     private List<Recording> recordingListFiltered = new ArrayList<>();
     private final int htspVersion;
     private final Context context;
@@ -39,7 +40,7 @@ class RecordingRecyclerViewAdapter extends RecyclerView.Adapter<RecordingViewHol
     @Override
     public RecordingViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         final View view = LayoutInflater.from(parent.getContext()).inflate(viewType, parent, false);
-        return new RecordingViewHolder(view);
+        return new RecordingViewHolder(view, recordingType);
     }
 
     @Override
@@ -132,5 +133,9 @@ class RecordingRecyclerViewAdapter extends RecyclerView.Adapter<RecordingViewHol
                 notifyDataSetChanged();
             }
         };
+    }
+
+    public void setRecordingType(int recordingType) {
+        this.recordingType = recordingType;
     }
 }
