@@ -110,9 +110,11 @@ class EpgSyncUtils {
             }
         }
         if (msg.containsKey("start")) {
+            // The message value is in seconds, convert to milliseconds
             recording.setStart(msg.getLong("start") * 1000);
         }
         if (msg.containsKey("stop")) {
+            // The message value is in seconds, convert to milliseconds
             recording.setStop(msg.getLong("stop") * 1000);
         }
         if (msg.containsKey("startExtra")) {
@@ -224,9 +226,11 @@ class EpgSyncUtils {
             program.setChannelId(msg.getInteger("channelId"));
         }
         if (msg.containsKey("start")) {
+            // The message value is in seconds, convert to milliseconds
             program.setStart(msg.getLong("start") * 1000);
         }
         if (msg.containsKey("stop")) {
+            // The message value is in seconds, convert to milliseconds
             program.setStop(msg.getLong("stop") * 1000);
         }
         if (msg.containsKey("title")) {
@@ -371,9 +375,11 @@ class EpgSyncUtils {
             seriesRecording.setApproxTime(msg.getInteger("approxTime"));
         }
         if (msg.containsKey("start")) {
+            // The message value is in minutes, convert to milliseconds
             seriesRecording.setStart(msg.getLong("start") * 1000 * 60);
         }
         if (msg.containsKey("startWindow")) {
+            // The message value is in minutes, convert to milliseconds
             seriesRecording.setStartWindow(msg.getLong("startWindow") * 1000 * 60);
         }
         if (msg.containsKey("startExtra")) {
@@ -455,9 +461,11 @@ class EpgSyncUtils {
             }
         }
         if (msg.containsKey("start")) {
+            // The message value is in minutes, convert to milliseconds
             timerRecording.setStart(msg.getLong("start") * 1000 * 60);
         }
         if (msg.containsKey("stop")) {
+            // The message value is in minutes, convert to milliseconds
             timerRecording.setStop(msg.getLong("stop") * 1000 * 60);
         }
         if (msg.containsKey("retention")) {
