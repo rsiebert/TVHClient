@@ -1,14 +1,16 @@
 $ 2.0.0
   % VERSION 2.0.0
-  _ 24.08.2018
-    * Small UI changes according to the material design guidelines (popup menus, new navigation menu and icons)
-    * Added database to store channels, recordings and epg data
+  _ 02.09.2018
+    * Some UI changes according to the material design guidelines (popup menus, new navigation menu and icons)
+    * Added database to store channels, recordings and epg data offline
     * Epg data will be periodically fetched in the background
     * Server profiles are now used as a default (The old transcoding profiles were removed)
     * Add notifications for programs (Only available in the unlocked version)
     * Added internal player to stream live TV and recordings (Only available in the unlocked version)
+    * Added popup menu to directly add and then edit a recording (Only available in the unlocked version)
+    * Added popup menu to search program details on fileaffinity.com
     * Updated Spanish translation
-    * Many many internal changes to the entire code
+    * Complete rewrite of the application code base
 $ 1.9.11
   % VERSION 1.9.11
   _ 29.11.2017
