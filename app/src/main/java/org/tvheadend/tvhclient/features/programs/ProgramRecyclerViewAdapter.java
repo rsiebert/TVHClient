@@ -133,12 +133,12 @@ class ProgramRecyclerViewAdapter extends RecyclerView.Adapter<ProgramViewHolder>
      *
      * @param list List of recordings
      */
-    void addRecordings(List<Recording> list) {
+    void addRecordings(@NonNull List<Recording> list) {
         recordingList = list;
         updateRecordingState(programList, recordingList);
     }
 
-    private void updateRecordingState(List<Program> programs, List<Recording> recordings) {
+    private void updateRecordingState(@NonNull List<Program> programs, @NonNull List<Recording> recordings) {
         for (int i = 0; i < programs.size(); i++) {
             Program program = programs.get(i);
             boolean recordingExists = false;
