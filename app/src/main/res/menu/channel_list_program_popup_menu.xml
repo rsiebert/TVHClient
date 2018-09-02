@@ -21,6 +21,12 @@
         android:visible="false"
         app:showAsAction="ifRoom" />
     <item
+        android:id="@+id/menu_record_once_and_edit"
+        android:icon="?attr/ic_menu_record_once"
+        android:title="@string/record_once"
+        android:visible="false"
+        app:showAsAction="ifRoom" />
+    <item
         android:id="@+id/menu_record_once_custom_profile"
         android:icon="?attr/ic_menu_record_once"
         android:title="@string/record_once_custom_profile"
