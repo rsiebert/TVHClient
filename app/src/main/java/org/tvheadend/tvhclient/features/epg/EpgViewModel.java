@@ -65,6 +65,10 @@ public class EpgViewModel extends AndroidViewModel {
         return channels;
     }
 
+    LiveData<List<Recording>> getAllRecordings() {
+        return appRepository.getRecordingData().getLiveDataItems();
+    }
+
     LiveData<List<Recording>> getRecordingsByChannel(int channelId) {
         return appRepository.getRecordingData().getLiveDataItemsByChannelId(channelId);
     }

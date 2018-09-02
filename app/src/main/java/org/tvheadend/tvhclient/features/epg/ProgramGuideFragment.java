@@ -34,6 +34,7 @@ import org.tvheadend.tvhclient.data.entity.ChannelSubset;
 import org.tvheadend.tvhclient.data.entity.ChannelTag;
 import org.tvheadend.tvhclient.data.entity.Program;
 import org.tvheadend.tvhclient.data.entity.Recording;
+import org.tvheadend.tvhclient.features.dvr.RecordingAddEditActivity;
 import org.tvheadend.tvhclient.features.search.SearchActivity;
 import org.tvheadend.tvhclient.features.search.SearchRequestInterface;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
@@ -75,6 +76,7 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
     private EpgViewPagerAdapter viewPagerAdapter;
     private boolean enableScrolling = true;
     private LinearLayoutManager channelListRecyclerViewLayoutManager;
+    private int programIdToBeEditedWhenBeingRecorded = 0;
 
     @Nullable
     @Override
@@ -166,6 +168,24 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
             toolbarInterface.setTitle((channelTag == null) ? getString(R.string.all_channels) : channelTag.getTagName());
             toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.items,
                     channelListRecyclerViewAdapter.getItemCount(), channelListRecyclerViewAdapter.getItemCount()));
+        });
+
+        // Observe all recordings here in case a recording shall be edited right after it was added.
+        // This needs to be done in this fragment because the popup menu handling is also done here.
+        viewModel.getAllRecordings().observe(this, recordings -> {
+            if (recordings != null) {
+                for (Recording recording : recordings) {
+                    if (recording.getEventId() == programIdToBeEditedWhenBeingRecorded
+                            && programIdToBeEditedWhenBeingRecorded > 0) {
+                        programIdToBeEditedWhenBeingRecorded = 0;
+                        Intent intent = new Intent(activity, RecordingAddEditActivity.class);
+                        intent.putExtra("id", recording.getId());
+                        intent.putExtra("type", "recording");
+                        activity.startActivity(intent);
+                        break;
+                    }
+                }
+            }
         });
     }
 
@@ -297,6 +317,10 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
                     return false;
 
                 case R.id.menu_record_once:
+                    return menuUtils.handleMenuRecordSelection(program.getEventId());
+
+                case R.id.menu_record_once_and_edit:
+                    programIdToBeEditedWhenBeingRecorded = program.getEventId();
                     return menuUtils.handleMenuRecordSelection(program.getEventId());
 
                 case R.id.menu_record_once_custom_profile:

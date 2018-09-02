@@ -557,6 +557,7 @@ public class MenuUtils {
         }
 
         MenuItem recordOnceMenuItem = menu.findItem(R.id.menu_record_once);
+        MenuItem recordOnceAndEditMenuItem = menu.findItem(R.id.menu_record_once_and_edit);
         MenuItem recordOnceCustomProfileMenuItem = menu.findItem(R.id.menu_record_once_custom_profile);
         MenuItem recordSeriesMenuItem = menu.findItem(R.id.menu_record_series);
         MenuItem recordRemoveMenuItem = menu.findItem(R.id.menu_record_remove);
@@ -567,6 +568,7 @@ public class MenuUtils {
         if (isNetworkAvailable) {
             if (recording == null || !recording.isRecording() && !recording.isScheduled()) {
                 recordOnceMenuItem.setVisible(true);
+                recordOnceAndEditMenuItem.setVisible(isUnlocked);
                 recordOnceCustomProfileMenuItem.setVisible(isUnlocked);
                 recordSeriesMenuItem.setVisible(serverStatus.getHtspVersion() >= 13);
 

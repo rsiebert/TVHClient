@@ -29,6 +29,7 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Program;
 import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.data.service.EpgSyncService;
+import org.tvheadend.tvhclient.features.dvr.RecordingAddEditActivity;
 import org.tvheadend.tvhclient.features.search.SearchActivity;
 import org.tvheadend.tvhclient.features.search.SearchRequestInterface;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
@@ -57,6 +58,7 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
     private Runnable loadingProgramsAllowedTask;
     private final Handler loadingProgramAllowedHandler = new Handler();
     private Unbinder unbinder;
+    private int programIdToBeEditedWhenBeingRecorded = 0;
 
     public static ProgramListFragment newInstance(String channelName, int channelId, long selectedTime) {
         ProgramListFragment f = new ProgramListFragment();
@@ -140,7 +142,22 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
         // Get all recordings for the given channel to check if it belongs to a certain program
         // so the recording status of the particular program can be updated. This is required
         // because the programs are not updated automatically when recordings change.
-        viewModel.getRecordingsByChannelId(channelId).observe(this, recordings -> recyclerViewAdapter.addRecordings(recordings));
+        viewModel.getRecordingsByChannelId(channelId).observe(this, recordings -> {
+            if (recordings != null) {
+                recyclerViewAdapter.addRecordings(recordings);
+                for (Recording recording : recordings) {
+                    if (recording.getEventId() == programIdToBeEditedWhenBeingRecorded
+                            && programIdToBeEditedWhenBeingRecorded > 0) {
+                        programIdToBeEditedWhenBeingRecorded = 0;
+                        Intent intent = new Intent(activity, RecordingAddEditActivity.class);
+                        intent.putExtra("id", recording.getId());
+                        intent.putExtra("type", "recording");
+                        activity.startActivity(intent);
+                        break;
+                    }
+                }
+            }
+        });
 
         loadingProgramAllowed = true;
         loadingProgramsAllowedTask = new Runnable() {
@@ -263,6 +280,10 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
                     return false;
 
                 case R.id.menu_record_once:
+                    return menuUtils.handleMenuRecordSelection(program.getEventId());
+
+                case R.id.menu_record_once_and_edit:
+                    programIdToBeEditedWhenBeingRecorded = program.getEventId();
                     return menuUtils.handleMenuRecordSelection(program.getEventId());
 
                 case R.id.menu_record_once_custom_profile:
