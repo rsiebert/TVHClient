@@ -28,6 +28,7 @@
     <string name="download">Download</string>
     <string name="search">Search</string>
     <string name="record_once">Record</string>
+    <string name="record_once_and_edit">Record and Edit</string>
     <string name="record_once_custom_profile">Record with different profile</string>
     <string name="record_series">Record as series recording</string>
     <string name="record_stop">Stop recording</string>

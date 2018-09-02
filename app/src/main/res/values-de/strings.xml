@@ -28,6 +28,7 @@
     <string name="download">Download</string>
     <string name="search">Suchen</string>
     <string name="record_once">Aufnehmen</string>
+    <string name="record_once_and_edit">Aufnehmen und Editieren</string>
     <string name="record_once_custom_profile">Aufnehmen mit anderem Profil</string>
     <string name="record_series">Automatisch Aufnehmen</string>
     <string name="record_stop">Aufnahme stoppen</string>
