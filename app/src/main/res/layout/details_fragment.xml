@@ -15,9 +15,19 @@
         android:alpha="0.12"
         android:background="@android:color/black" />
 
+    <TextView
+        android:id="@+id/status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="16dp"
+        android:visibility="gone" />
+
     <ScrollView
+        android:id="@+id/scrollview"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
+        android:layout_height="fill_parent"
+        android:paddingBottom="16dp">
 
         <ViewStub
             android:id="@+id/stub"
