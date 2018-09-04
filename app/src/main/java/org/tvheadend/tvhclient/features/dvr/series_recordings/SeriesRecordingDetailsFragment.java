@@ -4,7 +4,6 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -14,14 +13,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.SeriesRecording;
 import org.tvheadend.tvhclient.features.dvr.RecordingAddEditActivity;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
-import org.tvheadend.tvhclient.utils.UIUtils;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecordingRemovedCallback;
+import org.tvheadend.tvhclient.utils.UIUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -53,10 +53,12 @@ public class SeriesRecordingDetailsFragment extends BaseFragment implements Reco
     TextView nameTextView;
     @BindView(R.id.priority)
     TextView priorityTextView;
-
-    @Nullable
     @BindView(R.id.nested_toolbar)
     Toolbar nestedToolbar;
+    @BindView(R.id.scrollview)
+    ScrollView scrollView;
+    @BindView(R.id.status)
+    TextView statusTextView;
 
     private SeriesRecording recording;
     private String id;
@@ -108,18 +110,16 @@ public class SeriesRecordingDetailsFragment extends BaseFragment implements Reco
 
         SeriesRecordingViewModel viewModel = ViewModelProviders.of(activity).get(SeriesRecordingViewModel.class);
         viewModel.getRecordingById(id).observe(this, rec -> {
-            recording = rec;
-            updateUI();
-            activity.invalidateOptionsMenu();
+            if (rec != null) {
+                recording = rec;
+                updateUI();
+                activity.invalidateOptionsMenu();
+            } else {
+                scrollView.setVisibility(View.GONE);
+                statusTextView.setText(getString(R.string.error_loading_recording_details));
+                statusTextView.setVisibility(View.VISIBLE);
+            }
         });
-
-        // In dual pane mode the second toolbar will show certain
-        // menu items for the recording in the details frame view.
-        // Show the contents of the toolbar and handle the menu selection
-        if (nestedToolbar != null) {
-            nestedToolbar.inflateMenu(R.menu.recording_details_toolbar_menu);
-            nestedToolbar.setOnMenuItemClickListener(this::onOptionsItemSelected);
-        }
     }
 
     private void updateUI() {
@@ -162,7 +162,7 @@ public class SeriesRecordingDetailsFragment extends BaseFragment implements Reco
         if (!isDualPane) {
             menu.findItem(R.id.menu_search).setVisible(false);
         }
-        if (nestedToolbar == null || nestedToolbar.getMenu() == null) {
+        if (nestedToolbar.getMenu() == null) {
             return;
         }
         menu = nestedToolbar.getMenu();
@@ -180,6 +180,8 @@ public class SeriesRecordingDetailsFragment extends BaseFragment implements Reco
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.external_search_options_menu, menu);
+        nestedToolbar.inflateMenu(R.menu.recording_details_toolbar_menu);
+        nestedToolbar.setOnMenuItemClickListener(this::onOptionsItemSelected);
     }
 
     @Override

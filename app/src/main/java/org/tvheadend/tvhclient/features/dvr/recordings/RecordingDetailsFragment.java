@@ -2,9 +2,11 @@ package org.tvheadend.tvhclient.features.dvr.recordings;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -15,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import org.tvheadend.tvhclient.R;
@@ -22,8 +25,8 @@ import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.features.download.DownloadPermissionGrantedInterface;
 import org.tvheadend.tvhclient.features.dvr.RecordingAddEditActivity;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
-import org.tvheadend.tvhclient.utils.UIUtils;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecordingRemovedCallback;
+import org.tvheadend.tvhclient.utils.UIUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -31,6 +34,8 @@ import butterknife.Unbinder;
 
 public class RecordingDetailsFragment extends BaseFragment implements RecordingRemovedCallback, DownloadPermissionGrantedInterface {
 
+    @BindView(R.id.state)
+    ImageView stateImageView;
     @BindView(R.id.summary_label)
     TextView summaryLabelTextView;
     @BindView(R.id.summary)
@@ -86,12 +91,14 @@ public class RecordingDetailsFragment extends BaseFragment implements RecordingR
     TextView dataSizeTextView;
     @BindView(R.id.status_label)
     TextView statusLabelTextView;
-
-    @Nullable
     @BindView(R.id.nested_toolbar)
     Toolbar nestedToolbar;
+    @BindView(R.id.scrollview)
+    ScrollView scrollView;
+    @BindView(R.id.status)
+    TextView statusTextView;
 
-    private Recording recording;
+    private Recording recording = null;
     private int id;
     private Unbinder unbinder;
 
@@ -141,21 +148,23 @@ public class RecordingDetailsFragment extends BaseFragment implements RecordingR
 
         RecordingViewModel viewModel = ViewModelProviders.of(activity).get(RecordingViewModel.class);
         viewModel.getRecordingById(id).observe(this, rec -> {
-            recording = rec;
-            updateUI();
-            activity.invalidateOptionsMenu();
+            if (rec != null) {
+                recording = rec;
+                updateUI();
+                activity.invalidateOptionsMenu();
+            } else {
+                scrollView.setVisibility(View.GONE);
+                statusTextView.setText(getString(R.string.error_loading_recording_details));
+                statusTextView.setVisibility(View.VISIBLE);
+            }
         });
-
-        // In dual pane mode the second toolbar will show certain
-        // menu items for the recording in the details frame view.
-        // Show the contents of the toolbar and handle the menu selection
-        if (nestedToolbar != null) {
-            nestedToolbar.inflateMenu(R.menu.recording_details_toolbar_menu);
-            nestedToolbar.setOnMenuItemClickListener(this::onOptionsItemSelected);
-        }
     }
 
     private void updateUI() {
+
+        Drawable drawable = UIUtils.getRecordingState(activity, recording);
+        stateImageView.setVisibility(drawable != null ? View.VISIBLE : View.GONE);
+        stateImageView.setImageDrawable(drawable);
 
         dateTextView.setText(UIUtils.getDate(getContext(), recording.getStart()));
         startTimeTextView.setText(UIUtils.getTimeText(getContext(), recording.getStart()));
@@ -244,21 +253,29 @@ public class RecordingDetailsFragment extends BaseFragment implements RecordingR
         if (!isDualPane) {
             menu.findItem(R.id.menu_search).setVisible(false);
         }
-        if (nestedToolbar == null || nestedToolbar.getMenu() == null) {
-            return;
-        }
+
+        boolean lightTheme = sharedPreferences.getBoolean("light_theme_enabled", true);
         menu = nestedToolbar.getMenu();
+
         if (recording.isCompleted()) {
             menu.findItem(R.id.menu_record_remove).setVisible(true);
             menu.findItem(R.id.menu_play).setVisible(true);
             menu.findItem(R.id.menu_download).setVisible(isUnlocked);
 
         } else if (recording.isScheduled() && !recording.isRecording()) {
-            menu.findItem(R.id.menu_record_remove).setVisible(true);
+            final int icon = (lightTheme) ? R.drawable.ic_menu_cancel_light : R.drawable.ic_menu_cancel_dark;
+            menu.findItem(R.id.menu_record_remove)
+                    .setIcon(ContextCompat.getDrawable(activity, icon))
+                    .setTitle(R.string.cancel)
+                    .setVisible(true);
             menu.findItem(R.id.menu_edit).setVisible(isUnlocked);
 
         } else if (recording.isRecording()) {
-            menu.findItem(R.id.menu_record_stop).setVisible(true);
+            final int icon = (lightTheme) ? R.drawable.ic_menu_stop_light : R.drawable.ic_menu_stop_dark;
+            menu.findItem(R.id.menu_record_remove)
+                    .setIcon(ContextCompat.getDrawable(activity, icon))
+                    .setTitle(R.string.stop)
+                    .setVisible(true);
             menu.findItem(R.id.menu_play).setVisible(true);
             menu.findItem(R.id.menu_edit).setVisible(isUnlocked);
 
@@ -281,6 +298,8 @@ public class RecordingDetailsFragment extends BaseFragment implements RecordingR
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.external_search_options_menu, menu);
+        nestedToolbar.inflateMenu(R.menu.recording_details_toolbar_menu);
+        nestedToolbar.setOnMenuItemClickListener(this::onOptionsItemSelected);
     }
 
     @Override
@@ -291,12 +310,10 @@ public class RecordingDetailsFragment extends BaseFragment implements RecordingR
                 return true;
 
             case R.id.menu_play:
-                menuUtils.handleMenuPlayRecording(recording.getId());
-                return true;
+                return menuUtils.handleMenuPlayRecording(recording.getId());
 
             case R.id.menu_download:
-                menuUtils.handleMenuDownloadSelection(recording.getId());
-                return true;
+                return menuUtils.handleMenuDownloadSelection(recording.getId());
 
             case R.id.menu_edit:
                 Intent editIntent = new Intent(activity, RecordingAddEditActivity.class);
@@ -306,28 +323,28 @@ public class RecordingDetailsFragment extends BaseFragment implements RecordingR
                 return true;
 
             case R.id.menu_record_stop:
-                menuUtils.handleMenuStopRecordingSelection(recording.getId(), recording.getTitle());
                 return true;
 
             case R.id.menu_record_remove:
-                if (recording.isScheduled()) {
-                    menuUtils.handleMenuCancelRecordingSelection(recording.getId(), recording.getTitle(), this);
-                } else {
-                    menuUtils.handleMenuRemoveRecordingSelection(recording.getId(), recording.getTitle(), this);
+                if (recording != null) {
+                    if (recording.isRecording()) {
+                        return menuUtils.handleMenuStopRecordingSelection(recording.getId(), recording.getTitle());
+                    } else if (recording.isScheduled()) {
+                        return menuUtils.handleMenuCancelRecordingSelection(recording.getId(), recording.getTitle(), this);
+                    } else {
+                        return menuUtils.handleMenuRemoveRecordingSelection(recording.getId(), recording.getTitle(), this);
+                    }
                 }
-                return true;
+                return false;
 
             case R.id.menu_search_imdb:
-                menuUtils.handleMenuSearchImdbWebsite(recording.getTitle());
-                return true;
+                return menuUtils.handleMenuSearchImdbWebsite(recording.getTitle());
 
             case R.id.menu_search_fileaffinity:
-                menuUtils.handleMenuSearchFileAffinityWebsite(recording.getTitle());
-                return true;
+                return menuUtils.handleMenuSearchFileAffinityWebsite(recording.getTitle());
 
             case R.id.menu_search_epg:
-                menuUtils.handleMenuSearchEpgSelection(recording.getTitle());
-                return true;
+                return menuUtils.handleMenuSearchEpgSelection(recording.getTitle());
 
             default:
                 return super.onOptionsItemSelected(item);
