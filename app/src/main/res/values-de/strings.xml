@@ -389,4 +389,6 @@
     <string name="pref_show_program_subtitle">Zeige den Programmuntertitel</string>
     <string name="full_changelog">Full Changelog</string>
     <string name="no_cast_session">Keine Cast-Session verfügbar</string>
+    <string name="error_loading_program_details">Programdetails konnten nicht gefunden werden</string>
+    <string name="error_loading_recording_details">Aufnahmedetails konnten nicht gefunden werden</string>
 </resources>
