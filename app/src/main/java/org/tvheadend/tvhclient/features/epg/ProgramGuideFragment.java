@@ -175,6 +175,8 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
         viewModel.getAllRecordings().observe(this, recordings -> {
             if (recordings != null) {
                 for (Recording recording : recordings) {
+                    // Show the edit recording screen of the scheduled recording
+                    // in case the user has selected the record and edit menu item.
                     if (recording.getEventId() == programIdToBeEditedWhenBeingRecorded
                             && programIdToBeEditedWhenBeingRecorded > 0) {
                         programIdToBeEditedWhenBeingRecorded = 0;
@@ -276,7 +278,7 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
         }
 
         PopupMenu popupMenu = new PopupMenu(activity, view);
-        popupMenu.getMenuInflater().inflate(R.menu.channel_list_program_popup_menu, popupMenu.getMenu());
+        popupMenu.getMenuInflater().inflate(R.menu.program_popup_and_toolbar_menu, popupMenu.getMenu());
         popupMenu.getMenuInflater().inflate(R.menu.external_search_options_menu, popupMenu.getMenu());
         menuUtils.onPreparePopupMenu(popupMenu.getMenu(), program.getRecording(), isNetworkAvailable);
         menuUtils.onPreparePopupSearchMenu(popupMenu.getMenu(), isNetworkAvailable);

@@ -134,6 +134,8 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
             if (recordings != null) {
                 recyclerViewAdapter.addRecordings(recordings);
                 for (Recording recording : recordings) {
+                    // Show the edit recording screen of the scheduled recording
+                    // in case the user has selected the record and edit menu item.
                     if (recording.getEventId() == programIdToBeEditedWhenBeingRecorded
                             && programIdToBeEditedWhenBeingRecorded > 0) {
                         programIdToBeEditedWhenBeingRecorded = 0;
@@ -288,7 +290,7 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
         }
 
         PopupMenu popupMenu = new PopupMenu(activity, view);
-        popupMenu.getMenuInflater().inflate(R.menu.channel_list_program_popup_menu, popupMenu.getMenu());
+        popupMenu.getMenuInflater().inflate(R.menu.program_popup_and_toolbar_menu, popupMenu.getMenu());
         popupMenu.getMenuInflater().inflate(R.menu.external_search_options_menu, popupMenu.getMenu());
         menuUtils.onPreparePopupMenu(popupMenu.getMenu(), recording, isNetworkAvailable);
         menuUtils.onPreparePopupSearchMenu(popupMenu.getMenu(), isNetworkAvailable);
