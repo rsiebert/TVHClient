@@ -87,8 +87,7 @@ public abstract class BaseFragment extends Fragment implements NetworkAvailabili
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_refresh:
-                menuUtils.handleMenuReconnectSelection();
-                return true;
+                return menuUtils.handleMenuReconnectSelection();
         }
         return super.onOptionsItemSelected(item);
     }
