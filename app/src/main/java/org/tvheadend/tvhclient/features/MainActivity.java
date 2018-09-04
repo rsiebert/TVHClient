@@ -45,13 +45,10 @@ import butterknife.ButterKnife;
 import timber.log.Timber;
 
 // TODO check for gmtoffset
-// TODO move the conversion from ms to s or minutes from the intents into the entity getter and setter
 // TODO add option in menu to show file missing recordings
 // TODO give up after x reconnect retries
 // TODO reschedule work when not successful
 // TODO epg search in epg
-// TODO show recording state in details view
-// TODO add option to add recording and directly edit it
 
 public class MainActivity extends BaseActivity implements ToolbarInterface, WakeOnLanTaskCallback, NavigationDrawerCallback {
 
