@@ -10,6 +10,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -556,6 +557,13 @@ public class MenuUtils {
             return;
         }
 
+        boolean lightTheme = sharedPreferences.getBoolean("light_theme_enabled", true);
+
+        // Hide the menus because the ones in the toolbar are not hidden when set in the xml
+        for (int i = 0; i < menu.size(); i++) {
+            menu.getItem(i).setVisible(false);
+        }
+
         MenuItem recordOnceMenuItem = menu.findItem(R.id.menu_record_once);
         MenuItem recordOnceAndEditMenuItem = menu.findItem(R.id.menu_record_once_and_edit);
         MenuItem recordOnceCustomProfileMenuItem = menu.findItem(R.id.menu_record_once_custom_profile);
@@ -566,26 +574,51 @@ public class MenuUtils {
         MenuItem addReminderMenuItem = menu.findItem(R.id.menu_add_notification);
 
         if (isNetworkAvailable) {
-            if (recording == null || !recording.isRecording() && !recording.isScheduled()) {
+            if (recording == null || (!recording.isRecording()
+                    && !recording.isScheduled()
+                    && !recording.isCompleted())) {
+                Timber.d("Recording is not recording or scheduled");
                 recordOnceMenuItem.setVisible(true);
                 recordOnceAndEditMenuItem.setVisible(isUnlocked);
                 recordOnceCustomProfileMenuItem.setVisible(isUnlocked);
                 recordSeriesMenuItem.setVisible(serverStatus.getHtspVersion() >= 13);
 
-            } else if (recording.isRecording()) {
+            } else if (recording.isCompleted()) {
+                Timber.d("Recording is completed ");
                 playMenuItem.setVisible(true);
                 CastSession castSession = CastContext.getSharedInstance(activity).getSessionManager().getCurrentCastSession();
                 castMenuItem.setVisible(castSession != null);
-                recordRemoveMenuItem.setTitle(R.string.stop);
                 recordRemoveMenuItem.setVisible(true);
 
-            } else if (recording.isScheduled()) {
-                recordRemoveMenuItem.setTitle(R.string.cancel);
-                recordRemoveMenuItem.setVisible(true);
+            } else if (recording.isScheduled() && !recording.isRecording()) {
+                Timber.d("Recording is scheduled");
+                // Change the icon and text of the remove menu to cancel
+                final int icon = (lightTheme) ? R.drawable.ic_menu_cancel_light : R.drawable.ic_menu_cancel_dark;
+                recordRemoveMenuItem
+                        .setIcon(ContextCompat.getDrawable(activity, icon))
+                        .setTitle(R.string.cancel)
+                        .setVisible(true);
 
-            } else {
-                recordRemoveMenuItem.setTitle(R.string.remove);
-                recordRemoveMenuItem.setVisible(true);
+            } else if (recording.isRecording()) {
+                Timber.d("Recording is being recorded");
+                playMenuItem.setVisible(true);
+                CastSession castSession = CastContext.getSharedInstance(activity).getSessionManager().getCurrentCastSession();
+                castMenuItem.setVisible(castSession != null);
+                // Change the icon and text of the remove menu to stop
+                final int icon = (lightTheme) ? R.drawable.ic_menu_stop_light : R.drawable.ic_menu_stop_dark;
+                recordRemoveMenuItem
+                        .setIcon(ContextCompat.getDrawable(activity, icon))
+                        .setTitle(R.string.stop)
+                        .setVisible(true);
+
+            } else if (recording.isFailed() || recording.isRemoved() || recording.isMissed() || recording.isAborted()) {
+                Timber.d("Recording is something else");
+                // Change the icon and text of the remove menu to delete
+                final int icon = (lightTheme) ? R.drawable.ic_menu_delete_light : R.drawable.ic_menu_delete_dark;
+                recordRemoveMenuItem
+                        .setIcon(ContextCompat.getDrawable(activity, icon))
+                        .setTitle(R.string.remove)
+                        .setVisible(true);
             }
         }
         if (isUnlocked && sharedPreferences.getBoolean("notifications_enabled", true)) {
@@ -618,10 +651,10 @@ public class MenuUtils {
         }
     }
 
-    public void handleMenuReconnectSelection() {
+    public boolean handleMenuReconnectSelection() {
         Activity activity = this.activity.get();
         if (activity == null) {
-            return;
+            return false;
         }
         new MaterialDialog.Builder(activity)
                 .title("Reconnect to server?")
@@ -643,6 +676,7 @@ public class MenuUtils {
                     activity.startActivity(intent);
                 })
                 .show();
+        return true;
     }
 
     public boolean handleMenuAddNotificationSelection(Program program) {
