@@ -237,10 +237,12 @@ public class SettingsListConnectionsFragment extends ListFragment implements Bac
         Timber.d("Reconnecting to server, new initial sync will be done");
         activity.stopService(new Intent(activity, EpgSyncService.class));
 
-        Connection connection = appRepository.getConnectionData().getActiveItem();
-        connection.setSyncRequired(true);
-        connection.setLastUpdate(0);
-        appRepository.getConnectionData().updateItem(connection);
+        if (viewModel.getActiveConnectionId() >= 0) {
+            Connection connection = appRepository.getConnectionData().getItemById(viewModel.getActiveConnectionId());
+            connection.setSyncRequired(true);
+            connection.setLastUpdate(0);
+            appRepository.getConnectionData().updateItem(connection);
+        }
 
         Intent intent = new Intent(activity, SplashActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
