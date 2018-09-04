@@ -1,12 +1,12 @@
 package org.tvheadend.tvhclient.features.programs;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.view.ViewStub;
 import android.widget.ImageView;
 import android.widget.RatingBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Callback;
@@ -26,9 +27,11 @@ import com.squareup.picasso.Picasso;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Program;
 import org.tvheadend.tvhclient.data.entity.Recording;
+import org.tvheadend.tvhclient.features.dvr.RecordingAddEditActivity;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
-import org.tvheadend.tvhclient.utils.UIUtils;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecordingRemovedCallback;
+import org.tvheadend.tvhclient.features.streaming.external.CastChannelActivity;
+import org.tvheadend.tvhclient.utils.UIUtils;
 
 import java.util.Date;
 
@@ -41,7 +44,6 @@ import timber.log.Timber;
 
 public class ProgramDetailsFragment extends BaseFragment implements RecordingRemovedCallback {
 
-    @Nullable
     @BindView(R.id.state)
     ImageView stateImageView;
     @BindView(R.id.title)
@@ -84,17 +86,21 @@ public class ProgramDetailsFragment extends BaseFragment implements RecordingRem
     TextView ratingBarTextView;
     @BindView(R.id.star_rating)
     RatingBar ratingBar;
-    @Nullable
     @BindView(R.id.nested_toolbar)
     Toolbar nestedToolbar;
     @BindView(R.id.image)
     ImageView imageView;
+    @BindView(R.id.scrollview)
+    ScrollView scrollView;
+    @BindView(R.id.status)
+    TextView statusTextView;
 
     private int eventId;
     private int channelId;
     private Unbinder unbinder;
     private Program program;
     private Recording recording;
+    private int programIdToBeEditedWhenBeingRecorded = 0;
 
     public static ProgramDetailsFragment newInstance(int eventId) {
         ProgramDetailsFragment f = new ProgramDetailsFragment();
@@ -139,37 +145,64 @@ public class ProgramDetailsFragment extends BaseFragment implements RecordingRem
             }
         }
 
-        if (nestedToolbar != null) {
-            nestedToolbar.inflateMenu(R.menu.program_details_toolbar_menu);
-            nestedToolbar.setOnMenuItemClickListener(this::onOptionsItemSelected);
-        }
-
         ProgramViewModel viewModel = ViewModelProviders.of(activity).get(ProgramViewModel.class);
         program = viewModel.getProgramByIdSync(eventId);
-        recording = viewModel.getRecordingsById(program.getDvrId());
-        updateUI();
-        activity.invalidateOptionsMenu();
+        if (program != null) {
+            Timber.d("Loaded details for program " + program.getTitle());
+            updateUI();
+            activity.invalidateOptionsMenu();
+        } else {
+            scrollView.setVisibility(View.GONE);
+            statusTextView.setText(getString(R.string.error_loading_program_details));
+            statusTextView.setVisibility(View.VISIBLE);
+        }
 
         viewModel.getRecordingsByChannelId(channelId).observe(this, recordings -> {
+            Timber.d("Got recordings");
             if (recordings != null) {
+                boolean recordingExists = false;
                 for (Recording rec : recordings) {
-                    if (rec.getEventId() == program.getEventId()) {
-                        program.setRecording(rec);
+                    // Show the edit recording screen of the scheduled recording
+                    // in case the user has selected the record and edit menu item.
+                    // Otherwise remember the recording so that the state can be updated
+                    if (rec.getEventId() == programIdToBeEditedWhenBeingRecorded
+                            && programIdToBeEditedWhenBeingRecorded > 0) {
+                        programIdToBeEditedWhenBeingRecorded = 0;
+                        Intent intent = new Intent(activity, RecordingAddEditActivity.class);
+                        intent.putExtra("id", rec.getId());
+                        intent.putExtra("type", "recording");
+                        activity.startActivity(intent);
+                        break;
+
+                    } else if (rec.getEventId() == program.getEventId()) {
+                        Timber.d("Found recording for program " + program.getTitle());
+                        recording = rec;
+                        recordingExists = true;
                         break;
                     }
                 }
+                // If there is no recording for the program set the
+                // recording to null so that the correct state is shown
+                if (!recordingExists) {
+                    recording = null;
+                }
+                // Update the state of the recording (if there is one)
+                // and also the menu items in the nested toolbar
+                updateRecordingState();
+                activity.invalidateOptionsMenu();
             }
         });
     }
 
+    private void updateRecordingState() {
+        Drawable drawable = UIUtils.getRecordingState(activity, recording);
+        stateImageView.setVisibility(drawable != null ? View.VISIBLE : View.GONE);
+        stateImageView.setImageDrawable(drawable);
+    }
+
     private void updateUI() {
 
-        // Show the program information
-        if (stateImageView != null) {
-            Drawable drawable = UIUtils.getRecordingState(activity, program.getRecording());
-            stateImageView.setVisibility(drawable != null ? View.VISIBLE : View.GONE);
-            stateImageView.setImageDrawable(drawable);
-        }
+        updateRecordingState();
 
         startTimeTextView.setText(UIUtils.getTimeText(getContext(), program.getStart()));
         stopTimeTextView.setText(UIUtils.getTimeText(getContext(), program.getStop()));
@@ -251,38 +284,19 @@ public class ProgramDetailsFragment extends BaseFragment implements RecordingRem
             return;
         }
 
+        // Show or hide menus of the main toolbar
         menuUtils.onPreparePopupSearchMenu(menu, isNetworkAvailable);
-        if (!isDualPane) {
-            menu.findItem(R.id.menu_search).setVisible(false);
-        }
-        if (nestedToolbar == null || nestedToolbar.getMenu() == null) {
-            return;
-        }
+        menu.findItem(R.id.menu_search).setVisible(!isDualPane);
+
+        // Show or hide menus of the nested toolbar
         menu = nestedToolbar.getMenu();
+        menuUtils.onPreparePopupMenu(menu, recording, isNetworkAvailable);
+
         // Show the play menu item when the current
         // time is between the program start and end time
         long currentTime = new Date().getTime();
         if (currentTime > program.getStart() && currentTime < program.getStop()) {
             menu.findItem(R.id.menu_play).setVisible(true);
-        }
-
-        if (recording == null || (!recording.isRecording() && !recording.isScheduled())) {
-            menu.findItem(R.id.menu_record_once).setVisible(true);
-            menu.findItem(R.id.menu_record_once_custom_profile).setVisible(isUnlocked);
-            menu.findItem(R.id.menu_record_series).setVisible(htspVersion >= 13);
-
-        } else if (recording.isCompleted()) {
-            menu.findItem(R.id.menu_record_remove).setVisible(true);
-            menu.findItem(R.id.menu_play).setVisible(true);
-
-        } else if (recording.isScheduled() && !recording.isRecording()) {
-            menu.findItem(R.id.menu_record_remove).setVisible(true);
-
-        } else if (recording.isRecording()) {
-            menu.findItem(R.id.menu_record_stop).setVisible(true);
-
-        } else if (recording.isFailed() || recording.isRemoved() || recording.isMissed() || recording.isAborted()) {
-            menu.findItem(R.id.menu_record_remove).setVisible(true);
         }
     }
 
@@ -297,6 +311,8 @@ public class ProgramDetailsFragment extends BaseFragment implements RecordingRem
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.external_search_options_menu, menu);
+        nestedToolbar.inflateMenu(R.menu.program_popup_and_toolbar_menu);
+        nestedToolbar.setOnMenuItemClickListener(this::onOptionsItemSelected);
     }
 
     @Override
@@ -309,47 +325,49 @@ public class ProgramDetailsFragment extends BaseFragment implements RecordingRem
 
             case R.id.menu_record_remove:
                 if (recording != null) {
-                    if (recording.isScheduled()) {
-                        menuUtils.handleMenuCancelRecordingSelection(recording.getId(), recording.getTitle(), this);
+                    if (recording.isRecording()) {
+                        return menuUtils.handleMenuStopRecordingSelection(recording.getId(), recording.getTitle());
+                    } else if (recording.isScheduled()) {
+                        return menuUtils.handleMenuCancelRecordingSelection(recording.getId(), recording.getTitle(), null);
                     } else {
-                        menuUtils.handleMenuRemoveRecordingSelection(recording.getId(), recording.getTitle(), this);
+                        return menuUtils.handleMenuRemoveRecordingSelection(recording.getId(), recording.getTitle(), null);
                     }
                 }
-                return true;
-
-            case R.id.menu_record_stop:
-                if (recording != null && recording.isRecording()) {
-                    menuUtils.handleMenuStopRecordingSelection(recording.getId(), recording.getTitle());
-                }
-                return true;
+                return false;
 
             case R.id.menu_record_once:
-                menuUtils.handleMenuRecordSelection(program.getEventId());
-                return true;
+                return menuUtils.handleMenuRecordSelection(program.getEventId());
+
+            case R.id.menu_record_once_and_edit:
+                programIdToBeEditedWhenBeingRecorded = program.getEventId();
+                return menuUtils.handleMenuRecordSelection(program.getEventId());
 
             case R.id.menu_record_once_custom_profile:
-                menuUtils.handleMenuCustomRecordSelection(program.getEventId(), program.getChannelId());
-                return true;
+                return menuUtils.handleMenuCustomRecordSelection(program.getEventId(), program.getChannelId());
 
             case R.id.menu_record_series:
-                menuUtils.handleMenuSeriesRecordSelection(program.getTitle());
-                return true;
+                return menuUtils.handleMenuSeriesRecordSelection(program.getTitle());
 
             case R.id.menu_play:
-                menuUtils.handleMenuPlayChannel(program.getChannelId());
+                return menuUtils.handleMenuPlayChannel(program.getChannelId());
+
+            case R.id.menu_cast:
+                Intent intent = new Intent(activity, CastChannelActivity.class);
+                intent.putExtra("channelId", program.getChannelId());
+                startActivity(intent);
                 return true;
+
+            case R.id.menu_add_notification:
+                return menuUtils.handleMenuAddNotificationSelection(program);
 
             case R.id.menu_search_imdb:
-                menuUtils.handleMenuSearchImdbWebsite(program.getTitle());
-                return true;
+                return menuUtils.handleMenuSearchImdbWebsite(program.getTitle());
 
             case R.id.menu_search_fileaffinity:
-                menuUtils.handleMenuSearchFileAffinityWebsite(program.getTitle());
-                return true;
+                return menuUtils.handleMenuSearchFileAffinityWebsite(program.getTitle());
 
             case R.id.menu_search_epg:
-                menuUtils.handleMenuSearchEpgSelection(program.getTitle(), program.getChannelId());
-                return true;
+                return menuUtils.handleMenuSearchEpgSelection(program.getTitle(), program.getChannelId());
 
             default:
                 return super.onOptionsItemSelected(item);
