@@ -31,7 +31,6 @@ public abstract class BaseFragment extends Fragment implements NetworkAvailabili
     protected int htspVersion;
     protected boolean isNetworkAvailable;
 
-    private Connection connection;
     protected ServerStatus serverStatus;
 
     @Inject
@@ -59,7 +58,7 @@ public abstract class BaseFragment extends Fragment implements NetworkAvailabili
         mainFrameLayout = activity.findViewById(R.id.main);
         detailsFrameLayout = activity.findViewById(R.id.details);
 
-        connection = appRepository.getConnectionData().getActiveItem();
+        Connection connection = appRepository.getConnectionData().getActiveItem();
         serverStatus = appRepository.getServerStatusData().getItemById(connection.getId());
 
         htspVersion = serverStatus.getHtspVersion();
@@ -86,6 +85,10 @@ public abstract class BaseFragment extends Fragment implements NetworkAvailabili
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case android.R.id.home:
+                activity.finish();
+                return true;
+
             case R.id.menu_refresh:
                 return menuUtils.handleMenuReconnectSelection();
         }
