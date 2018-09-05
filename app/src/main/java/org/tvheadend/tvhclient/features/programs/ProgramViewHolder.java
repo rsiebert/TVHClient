@@ -5,11 +5,15 @@ import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.v4.widget.TextViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Program;
@@ -20,6 +24,11 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class ProgramViewHolder extends RecyclerView.ViewHolder {
+
+    @BindView(R.id.icon)
+    ImageView iconImageView;
+    @BindView(R.id.icon_text)
+    TextView iconTextView;
     @BindView(R.id.title)
     TextView titleTextView;
     @BindView(R.id.time)
@@ -45,8 +54,11 @@ public class ProgramViewHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.genre)
     TextView genreTextView;
 
-    ProgramViewHolder(View view) {
+    private final boolean showProgramChannelIcon;
+
+    ProgramViewHolder(View view, boolean showProgramChannelIcon) {
         super(view);
+        this.showProgramChannelIcon = showProgramChannelIcon;
         ButterKnife.bind(this, view);
     }
 
@@ -70,6 +82,28 @@ public class ProgramViewHolder extends RecyclerView.ViewHolder {
                 return true;
             }
         });
+
+        if (showProgramChannelIcon) {
+            TextViewCompat.setAutoSizeTextTypeWithDefaults(iconTextView, TextViewCompat.AUTO_SIZE_TEXT_TYPE_UNIFORM);
+            iconTextView.setText(program.getChannelName());
+            iconTextView.setVisibility(View.VISIBLE);
+
+            // Show the channel icons. Otherwise show the channel name only
+            Picasso.get()
+                    .load(UIUtils.getIconUrl(context, program.getChannelIcon()))
+                    .into(iconImageView, new Callback() {
+                        @Override
+                        public void onSuccess() {
+                            iconTextView.setVisibility(View.INVISIBLE);
+                            iconImageView.setVisibility(View.VISIBLE);
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
+
+                        }
+                    });
+        }
 
         titleTextView.setText(program.getTitle());
 

@@ -5,9 +5,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.Toolbar;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.features.MainActivity;
 import org.tvheadend.tvhclient.features.channels.ChannelListFragment;
 import org.tvheadend.tvhclient.features.dvr.recordings.CompletedRecordingListFragment;
 import org.tvheadend.tvhclient.features.dvr.recordings.FailedRecordingListFragment;
@@ -15,16 +15,27 @@ import org.tvheadend.tvhclient.features.dvr.recordings.RemovedRecordingListFragm
 import org.tvheadend.tvhclient.features.dvr.recordings.ScheduledRecordingListFragment;
 import org.tvheadend.tvhclient.features.dvr.series_recordings.SeriesRecordingListFragment;
 import org.tvheadend.tvhclient.features.dvr.timer_recordings.TimerRecordingListFragment;
-import org.tvheadend.tvhclient.features.epg.ProgramGuideFragment;
 import org.tvheadend.tvhclient.features.programs.ProgramListFragment;
+import org.tvheadend.tvhclient.features.shared.BaseActivity;
+import org.tvheadend.tvhclient.features.shared.callbacks.ToolbarInterface;
+import org.tvheadend.tvhclient.utils.MiscUtils;
 
 import timber.log.Timber;
 
-public class SearchActivity extends MainActivity {
+public class SearchActivity extends BaseActivity implements ToolbarInterface {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        setTheme(MiscUtils.getThemeId(this));
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.misc_content_activity);
+        MiscUtils.setLanguage(this);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         handleIntent(getIntent());
 
@@ -55,8 +66,6 @@ public class SearchActivity extends MainActivity {
                     fragment = new ChannelListFragment();
                     break;
                 case "program_guide":
-                    fragment = new ProgramGuideFragment();
-                    break;
                 case "programs":
                     fragment = new ProgramListFragment();
                     break;
@@ -79,7 +88,7 @@ public class SearchActivity extends MainActivity {
                     fragment = new TimerRecordingListFragment();
                     break;
             }
-            // TODO layout stuff needs to be done here as in the nav activity
+
             if (fragment != null) {
                 fragment.setArguments(getIntent().getExtras());
                 getSupportFragmentManager()
@@ -97,7 +106,6 @@ public class SearchActivity extends MainActivity {
     }
 
     private void handleIntent(Intent intent) {
-        Timber.d("handleIntent");
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
             // Save the query so it can be shown again.
@@ -106,6 +114,20 @@ public class SearchActivity extends MainActivity {
                             SuggestionProvider.AUTHORITY, SuggestionProvider.MODE);
             Timber.d("Saving suggestion " + query);
             suggestions.saveRecentQuery(query, null);
+        }
+    }
+
+    @Override
+    public void setTitle(String title) {
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(title);
+        }
+    }
+
+    @Override
+    public void setSubtitle(String subtitle) {
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setSubtitle(subtitle);
         }
     }
 }

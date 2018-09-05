@@ -12,13 +12,13 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Filter;
 import android.widget.ProgressBar;
 
 import com.google.android.gms.cast.framework.CastContext;
@@ -28,9 +28,9 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.features.download.DownloadPermissionGrantedInterface;
 import org.tvheadend.tvhclient.features.dvr.RecordingAddEditActivity;
-import org.tvheadend.tvhclient.features.streaming.external.PlayRecordingActivity;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback;
+import org.tvheadend.tvhclient.features.streaming.external.PlayRecordingActivity;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -38,7 +38,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-public class RecordingListFragment extends BaseFragment implements RecyclerViewClickCallback, Filter.FilterListener, DownloadPermissionGrantedInterface {
+public class RecordingListFragment extends BaseFragment implements RecyclerViewClickCallback, DownloadPermissionGrantedInterface {
 
     final static int REC_TYPE_COMPLETED = 1;
     final static int REC_TYPE_SCHEDULED = 2;
@@ -135,7 +135,8 @@ public class RecordingListFragment extends BaseFragment implements RecyclerViewC
         // Hide the casting icon as a default.
         menu.findItem(R.id.media_route_menu_item).setVisible(false);
         // Do not show the search icon when no recordings are available
-        menu.findItem(R.id.menu_search).setVisible((recyclerViewAdapter.getItemCount() > 0));
+        menu.findItem(R.id.menu_search).setVisible(
+                TextUtils.isEmpty(searchQuery) && (recyclerViewAdapter.getItemCount() > 0));
     }
 
     void showRecordingDetails(int position) {
@@ -258,12 +259,6 @@ public class RecordingListFragment extends BaseFragment implements RecyclerViewC
     @Override
     public void onLongClick(View view, int position) {
         showPopupMenu(view);
-    }
-
-    @Override
-    public void onFilterComplete(int i) {
-        toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.results,
-                recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
     }
 
     @Override

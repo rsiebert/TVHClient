@@ -7,17 +7,20 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.View;
+import android.widget.Filter;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.features.search.SearchActivity;
 import org.tvheadend.tvhclient.features.search.SearchRequestInterface;
 
-public class CompletedRecordingListFragment extends RecordingListFragment implements SearchRequestInterface {
+public class CompletedRecordingListFragment extends RecordingListFragment implements SearchRequestInterface, Filter.FilterListener {
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        toolbarInterface.setTitle(getString(R.string.completed_recordings));
+
+        toolbarInterface.setTitle(TextUtils.isEmpty(searchQuery)
+                ? getString(R.string.completed_recordings) : getString(R.string.search_results));
 
         recyclerViewAdapter.setRecordingType(REC_TYPE_COMPLETED);
 
@@ -31,7 +34,12 @@ public class CompletedRecordingListFragment extends RecordingListFragment implem
             }
             recyclerView.setVisibility(View.VISIBLE);
             progressBar.setVisibility(View.GONE);
-            toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.recordings, recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
+
+            if (TextUtils.isEmpty(searchQuery)) {
+                toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.items, recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
+            } else {
+                toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.completed_recordings, recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
+            }
 
             if (isDualPane && recyclerViewAdapter.getItemCount() > 0) {
                 showRecordingDetails(selectedListPosition);
@@ -56,5 +64,14 @@ public class CompletedRecordingListFragment extends RecordingListFragment implem
         searchIntent.setAction(Intent.ACTION_SEARCH);
         searchIntent.putExtra("type", "completed_recordings");
         startActivity(searchIntent);
+    }
+
+    @Override
+    public void onFilterComplete(int i) {
+        if (TextUtils.isEmpty(searchQuery)) {
+            toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.items, recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
+        } else {
+            toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.completed_recordings, recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
+        }
     }
 }

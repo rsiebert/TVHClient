@@ -156,9 +156,17 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
         // Show either all channels or the name of the selected
         // channel tag and the channel count in the toolbar
         ChannelTag channelTag = viewModel.getChannelTag();
-        toolbarInterface.setTitle((channelTag == null) ? getString(R.string.all_channels) : channelTag.getTagName());
-        toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.items,
-                recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
+
+        if (TextUtils.isEmpty(searchQuery)) {
+            toolbarInterface.setTitle((channelTag == null) ?
+                    getString(R.string.all_channels) : channelTag.getTagName());
+            toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.items,
+                    recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
+        } else {
+            toolbarInterface.setTitle(getString(R.string.search_results));
+            toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.channels,
+                    recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
+        }
     }
 
     @Override
@@ -189,13 +197,20 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
         final boolean showGenreColors = sharedPreferences.getBoolean("genre_colors_for_channels_enabled", false);
         final boolean showChannelTagMenu = sharedPreferences.getBoolean("channel_tag_menu_enabled", true);
 
-        menu.findItem(R.id.menu_genre_color_info_channels).setVisible(showGenreColors);
-        menu.findItem(R.id.menu_timeframe).setVisible(isUnlocked);
-        menu.findItem(R.id.menu_search).setVisible((recyclerViewAdapter.getItemCount() > 0));
+        if (TextUtils.isEmpty(searchQuery)) {
+            menu.findItem(R.id.menu_genre_color_info_channels).setVisible(showGenreColors);
+            menu.findItem(R.id.menu_timeframe).setVisible(isUnlocked);
+            menu.findItem(R.id.menu_search).setVisible((recyclerViewAdapter.getItemCount() > 0));
 
-        // Prevent the channel tag menu item from going into the overlay menu
-        if (showChannelTagMenu) {
-            menu.findItem(R.id.menu_tags).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+            // Prevent the channel tag menu item from going into the overlay menu
+            if (showChannelTagMenu) {
+                menu.findItem(R.id.menu_tags).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+            }
+        } else {
+            menu.findItem(R.id.menu_genre_color_info_channels).setVisible(false);
+            menu.findItem(R.id.menu_timeframe).setVisible(false);
+            menu.findItem(R.id.menu_search).setVisible(false);
+            menu.findItem(R.id.menu_tags).setVisible(false);
         }
     }
 

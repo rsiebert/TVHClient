@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?android:attr/selectableItemBackground">
@@ -9,13 +8,40 @@
     <TextView
         android:id="@+id/genre"
         android:layout_width="8dp"
-        android:layout_height="0dp"
+        android:layout_height="fill_parent"
         android:text="@null"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/icon"
+        android:layout_width="56dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:contentDescription="@null"
+        android:scaleType="fitStart"
+        android:visibility="gone"
+        app:layout_constraintStart_toEndOf="@+id/genre"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/icon_text"
+        style="?attr/ContentFont"
+        android:layout_width="56dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:visibility="gone"
+        app:layout_constraintStart_toEndOf="@+id/genre"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/title"
@@ -30,7 +56,7 @@
         android:ellipsize="end"
         android:text="@string/title"
         app:layout_constraintEnd_toStartOf="@+id/state"
-        app:layout_constraintStart_toEndOf="@+id/genre"
+        app:layout_constraintStart_toEndOf="@+id/icon_text"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
@@ -56,7 +82,7 @@
         android:singleLine="true"
         android:text="@string/subtitle"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/genre"
+        app:layout_constraintStart_toEndOf="@+id/icon_text"
         app:layout_constraintTop_toBottomOf="@+id/title" />
 
     <TextView
@@ -70,7 +96,7 @@
         android:singleLine="true"
         android:text="@string/summary"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/genre"
+        app:layout_constraintStart_toEndOf="@+id/icon_text"
         app:layout_constraintTop_toBottomOf="@+id/subtitle" />
 
     <TextView
@@ -83,7 +109,7 @@
         android:singleLine="true"
         android:text="@string/content_type"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/genre"
+        app:layout_constraintStart_toEndOf="@+id/icon_text"
         app:layout_constraintTop_toBottomOf="@+id/summary" />
 
     <TextView
@@ -99,7 +125,7 @@
         android:text="@string/date"
         android:textAlignment="viewStart"
         app:layout_constraintBottom_toTopOf="@+id/progress"
-        app:layout_constraintStart_toEndOf="@+id/genre"
+        app:layout_constraintStart_toEndOf="@+id/icon_text"
         app:layout_constraintTop_toBottomOf="@+id/content_type" />
 
     <TextView
@@ -115,7 +141,7 @@
         app:layout_constraintBottom_toTopOf="@+id/progress"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.3"
-        app:layout_constraintStart_toEndOf="@+id/genre"
+        app:layout_constraintStart_toEndOf="@+id/icon_text"
         app:layout_constraintTop_toBottomOf="@+id/content_type" />
 
     <TextView
@@ -136,7 +162,7 @@
         app:layout_constraintBottom_toTopOf="@+id/progress"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/genre"
+        app:layout_constraintStart_toEndOf="@+id/icon_text"
         app:layout_constraintTop_toBottomOf="@+id/content_type" />
 
     <TextView
@@ -151,7 +177,7 @@
         android:text="@string/progress"
         app:layout_constraintBottom_toTopOf="@+id/series_info"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/genre" />
+        app:layout_constraintStart_toEndOf="@+id/icon_text" />
 
     <TextView
         android:id="@+id/series_info"
@@ -165,7 +191,7 @@
         android:text="@string/series_information"
         app:layout_constraintBottom_toTopOf="@+id/description"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/genre" />
+        app:layout_constraintStart_toEndOf="@+id/icon_text" />
 
     <TextView
         android:id="@+id/description"
@@ -181,7 +207,7 @@
         android:text="@string/description"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/genre" />
+        app:layout_constraintStart_toEndOf="@+id/icon_text" />
 
 </android.support.constraint.ConstraintLayout>
 

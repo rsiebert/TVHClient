@@ -68,8 +68,6 @@ public class TimerRecordingListFragment extends BaseFragment implements Recycler
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        toolbarInterface.setTitle(getString(R.string.timer_recordings));
-
         if (savedInstanceState != null) {
             selectedListPosition = savedInstanceState.getInt("listPosition", 0);
             searchQuery = savedInstanceState.getString(SearchManager.QUERY);
@@ -80,6 +78,9 @@ public class TimerRecordingListFragment extends BaseFragment implements Recycler
                 searchQuery = bundle.getString(SearchManager.QUERY);
             }
         }
+
+        toolbarInterface.setTitle(TextUtils.isEmpty(searchQuery)
+                ? getString(R.string.timer_recordings) : getString(R.string.search_results));
 
         recyclerViewAdapter = new TimerRecordingRecyclerViewAdapter(activity, isDualPane, this, htspVersion);
         recyclerView.setLayoutManager(new LinearLayoutManager(activity));
@@ -97,7 +98,12 @@ public class TimerRecordingListFragment extends BaseFragment implements Recycler
             }
             recyclerView.setVisibility(View.VISIBLE);
             progressBar.setVisibility(View.GONE);
-            toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.recordings, recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
+
+            if (TextUtils.isEmpty(searchQuery)) {
+                toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.items, recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
+            } else {
+                toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.timer_recordings, recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
+            }
 
             if (isDualPane && recyclerViewAdapter.getItemCount() > 0) {
                 showRecordingDetails(selectedListPosition);
@@ -233,8 +239,11 @@ public class TimerRecordingListFragment extends BaseFragment implements Recycler
 
     @Override
     public void onFilterComplete(int i) {
-        toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.results,
-                recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
+        if (TextUtils.isEmpty(searchQuery)) {
+            toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.items, recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
+        } else {
+            toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.timer_recordings, recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
+        }
     }
 
     @Override

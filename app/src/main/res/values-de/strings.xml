@@ -391,4 +391,5 @@
     <string name="no_cast_session">Keine Cast-Session verfügbar</string>
     <string name="error_loading_program_details">Programdetails konnten nicht gefunden werden</string>
     <string name="error_loading_recording_details">Aufnahmedetails konnten nicht gefunden werden</string>
+    <string name="search_results">Suchergebnisse</string>
 </resources>

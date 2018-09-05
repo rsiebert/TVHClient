@@ -27,11 +27,19 @@ public class ProgramViewModel extends AndroidViewModel {
         return appRepository.getProgramData().getLiveDataItemByChannelIdAndTime(channelId, time);
     }
 
+    public LiveData<List<Program>> getProgramsFromTime(long time) {
+        return appRepository.getProgramData().getLiveDataItemsFromTime(time);
+    }
+
     Program getProgramByIdSync(int eventId) {
         return appRepository.getProgramData().getItemById(eventId);
     }
 
     LiveData<List<Recording>> getRecordingsByChannelId(int channelId) {
         return appRepository.getRecordingData().getLiveDataItemsByChannelId(channelId);
+    }
+
+    LiveData<List<Recording>> getRecordings() {
+        return appRepository.getRecordingData().getLiveDataItems();
     }
 }

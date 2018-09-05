@@ -438,4 +438,5 @@
     <string name="pref_epg_sync_duration_sum">Amount of program guide data that shall be loaded from the server.</string>
     <string name="error_loading_program_details">Could not load program details</string>
     <string name="error_loading_recording_details">Could not load recording details</string>
+    <string name="search_results">Search results</string>
 </resources>

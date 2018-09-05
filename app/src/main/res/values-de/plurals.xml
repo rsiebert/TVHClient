@@ -5,6 +5,10 @@
         <item quantity="one">%d Program</item>
         <item quantity="other">%d Programme</item>
     </plurals>
+    <plurals name="channels">
+        <item quantity="one">%d Sender</item>
+        <item quantity="other">%d Sender</item>
+    </plurals>
     <plurals name="items">
         <item quantity="one">%d Eintrag</item>
         <item quantity="other">%d Einträge</item>

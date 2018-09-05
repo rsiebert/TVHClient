@@ -49,7 +49,7 @@ public class ProgramData extends BaseData implements DataSourceInterface<Program
 
     @Override
     public LiveData<List<Program>> getLiveDataItems() {
-        return null;
+        return db.getProgramDao().loadPrograms();
     }
 
     @Override
@@ -71,6 +71,10 @@ public class ProgramData extends BaseData implements DataSourceInterface<Program
     @NonNull
     public List<Program> getItems() {
         return new ArrayList<>();
+    }
+
+    public LiveData<List<Program>> getLiveDataItemsFromTime(long time) {
+        return db.getProgramDao().loadProgramsFromTime(time);
     }
 
     public LiveData<List<Program>> getLiveDataItemByChannelIdAndTime(int channelId, long time) {

@@ -37,6 +37,7 @@ import org.tvheadend.tvhclient.features.shared.callbacks.BottomReachedCallback;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback;
 
 import java.util.Date;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -54,11 +55,12 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
     private int channelId;
     private String channelName;
     private String searchQuery;
-    private boolean loadingProgramAllowed;
+    private boolean loadingMoreProgramAllowed;
     private Runnable loadingProgramsAllowedTask;
     private final Handler loadingProgramAllowedHandler = new Handler();
     private Unbinder unbinder;
     private int programIdToBeEditedWhenBeingRecorded = 0;
+    private boolean isSearchActive;
 
     public static ProgramListFragment newInstance(String channelName, int channelId, long selectedTime) {
         ProgramListFragment f = new ProgramListFragment();
@@ -107,65 +109,88 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
             }
         }
 
+        isSearchActive = !TextUtils.isEmpty(searchQuery);
+
         if (!isDualPane) {
-            toolbarInterface.setTitle(channelName);
+            toolbarInterface.setTitle(isSearchActive ? getString(R.string.search_results) : channelName);
         }
 
-        recyclerViewAdapter = new ProgramRecyclerViewAdapter(activity, this, this);
+        // Show the channel icons when a search is active and all channels shall be searched
+        boolean showProgramChannelIcon = isSearchActive && channelId == 0;
+
+        recyclerViewAdapter = new ProgramRecyclerViewAdapter(activity, this, this, showProgramChannelIcon);
         recyclerView.setLayoutManager(new LinearLayoutManager(activity));
         recyclerView.addItemDecoration(new DividerItemDecoration(activity, LinearLayoutManager.VERTICAL));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(recyclerViewAdapter);
 
-        // Get all programs for the given channel starting from the current time.
-        // Get them as live data so that any newly added programs will be fetched automatically.
         ProgramViewModel viewModel = ViewModelProviders.of(activity).get(ProgramViewModel.class);
-        viewModel.getProgramsByChannelFromTime(channelId, selectedTime).observe(this, programs -> {
-            if (programs != null) {
-                recyclerViewAdapter.addItems(programs);
-            }
-            if (!TextUtils.isEmpty(searchQuery)) {
-                recyclerViewAdapter.getFilter().filter(searchQuery, this);
-            }
-            recyclerView.setVisibility(View.VISIBLE);
-            progressBar.setVisibility(View.GONE);
+        if (!isSearchActive) {
+            // A channel id and a channel name was given, load only the programs for the
+            // specific channel and from the current time. Also load only those recordings
+            // that belong to the given channel
+            viewModel.getProgramsByChannelFromTime(channelId, selectedTime).observe(this, this::handleObservedPrograms);
+            viewModel.getRecordingsByChannelId(channelId).observe(this, this::handleObservedRecordings);
+        } else {
+            // No channel and channel name was given, load all programs
+            // from the current time and all recordings from all channels
+            viewModel.getProgramsFromTime(selectedTime).observe(this, this::handleObservedPrograms);
+            viewModel.getRecordings().observe(this, this::handleObservedRecordings);
+        }
 
-            if (!isDualPane) {
-                toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.programs,
-                        recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
-            }
-            // Invalidate the menu so that the search menu item is shown in
-            // case the adapter contains items now.
-            activity.invalidateOptionsMenu();
-        });
-
-        // Get all recordings for the given channel to check if it belongs to a certain program
-        // so the recording status of the particular program can be updated. This is required
-        // because the programs are not updated automatically when recordings change.
-        viewModel.getRecordingsByChannelId(channelId).observe(this, recordings -> {
-            if (recordings != null) {
-                recyclerViewAdapter.addRecordings(recordings);
-                for (Recording recording : recordings) {
-                    if (recording.getEventId() == programIdToBeEditedWhenBeingRecorded
-                            && programIdToBeEditedWhenBeingRecorded > 0) {
-                        programIdToBeEditedWhenBeingRecorded = 0;
-                        Intent intent = new Intent(activity, RecordingAddEditActivity.class);
-                        intent.putExtra("id", recording.getId());
-                        intent.putExtra("type", "recording");
-                        activity.startActivity(intent);
-                        break;
-                    }
-                }
-            }
-        });
-
-        loadingProgramAllowed = true;
+        loadingMoreProgramAllowed = true;
         loadingProgramsAllowedTask = new Runnable() {
             @Override
             public void run() {
-                loadingProgramAllowed = true;
+                loadingMoreProgramAllowed = true;
             }
         };
+    }
+
+    private void handleObservedPrograms(List<Program> programs) {
+        if (programs != null) {
+            recyclerViewAdapter.addItems(programs);
+        }
+        if (isSearchActive) {
+            recyclerViewAdapter.getFilter().filter(searchQuery, this);
+        }
+        recyclerView.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.GONE);
+
+        if (!isDualPane) {
+            if (!isSearchActive) {
+                toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.items, recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
+            } else {
+                toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.programs, recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
+            }
+        }
+        // Invalidate the menu so that the search menu item is shown in
+        // case the adapter contains items now.
+        activity.invalidateOptionsMenu();
+    }
+
+    /**
+     * Check all recordings for the given channel to see if it belongs to a certain program
+     * so the recording status of the particular program can be updated. This is required
+     * because the programs are not updated automatically when recordings change.
+     *
+     * @param recordings The list of recordings
+     */
+    private void handleObservedRecordings(List<Recording> recordings) {
+        if (recordings != null) {
+            recyclerViewAdapter.addRecordings(recordings);
+            for (Recording recording : recordings) {
+                if (recording.getEventId() == programIdToBeEditedWhenBeingRecorded
+                        && programIdToBeEditedWhenBeingRecorded > 0) {
+                    programIdToBeEditedWhenBeingRecorded = 0;
+                    Intent intent = new Intent(activity, RecordingAddEditActivity.class);
+                    intent.putExtra("id", recording.getId());
+                    intent.putExtra("type", "recording");
+                    activity.startActivity(intent);
+                    break;
+                }
+            }
+        }
     }
 
     @Override
@@ -195,17 +220,19 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
         // Hide the genre color menu in dual pane mode or if no genre colors shall be shown
         final boolean showGenreColors = sharedPreferences.getBoolean("genre_colors_for_programs_enabled", false);
         menu.findItem(R.id.menu_genre_color_info_programs).setVisible(!isDualPane && showGenreColors);
-        menu.findItem(R.id.menu_search).setVisible((recyclerViewAdapter.getItemCount() > 0));
-        menu.findItem(R.id.menu_play).setVisible(isNetworkAvailable);
+
+        if (!isSearchActive) {
+            menu.findItem(R.id.menu_play).setVisible(isNetworkAvailable);
+            menu.findItem(R.id.menu_search).setVisible((recyclerViewAdapter.getItemCount() > 0));
+        } else {
+            menu.findItem(R.id.menu_play).setVisible(false);
+            menu.findItem(R.id.menu_search).setVisible(false);
+        }
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case android.R.id.home:
-                activity.finish();
-                return true;
-
             case R.id.menu_play:
                 menuUtils.handleMenuPlayChannel(channelId);
                 return true;
@@ -322,13 +349,12 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
 
     @Override
     public void onBottomReached(int position) {
-        // Do not load more programs when a search query was given.
-        // Show only the results of the existing programs
-        if (!TextUtils.isEmpty(searchQuery) || !loadingProgramAllowed) {
+        // Do not load more programs when a search query was given or all programs were loaded.
+        if (isSearchActive || !loadingMoreProgramAllowed) {
             return;
         }
 
-        loadingProgramAllowed = false;
+        loadingMoreProgramAllowed = false;
         loadingProgramAllowedHandler.postDelayed(loadingProgramsAllowedTask, 2000);
 
         Program lastProgram = recyclerViewAdapter.getItem(position);
@@ -344,7 +370,11 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
     @Override
     public void onFilterComplete(int count) {
         if (!isDualPane) {
-            toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.results, count, count));
+            if (!isSearchActive) {
+                toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.items, recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
+            } else {
+                toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.programs, recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
+            }
         }
     }
 

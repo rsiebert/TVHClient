@@ -2,8 +2,10 @@ package org.tvheadend.tvhclient.features.programs;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,35 +22,36 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import timber.log.Timber;
-
 class ProgramRecyclerViewAdapter extends RecyclerView.Adapter<ProgramViewHolder> implements Filterable {
 
     private final BottomReachedCallback onBottomReachedCallback;
     private final RecyclerViewClickCallback clickCallback;
     private final List<Program> programList = new ArrayList<>();
+    private final boolean showProgramChannelIcon;
     private List<Program> programListFiltered = new ArrayList<>();
     private final Context context;
     private List<Recording> recordingList = new ArrayList<>();
 
-    ProgramRecyclerViewAdapter(Context context, RecyclerViewClickCallback clickCallback, BottomReachedCallback onBottomReachedCallback) {
+    ProgramRecyclerViewAdapter(Context context, @NonNull RecyclerViewClickCallback clickCallback, @Nullable BottomReachedCallback onBottomReachedCallback, boolean showProgramChannelIcon) {
         this.context = context;
         this.clickCallback = clickCallback;
         this.onBottomReachedCallback = onBottomReachedCallback;
+        this.showProgramChannelIcon = showProgramChannelIcon;
     }
 
     @NonNull
     @Override
     public ProgramViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         final View view = LayoutInflater.from(parent.getContext()).inflate(viewType, parent, false);
-        return new ProgramViewHolder(view);
+        return new ProgramViewHolder(view, showProgramChannelIcon);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ProgramViewHolder holder, int position) {
         Program program = programListFiltered.get(position);
         holder.bindData(context, program, clickCallback);
-        if (position == programList.size() - 1) {
+        if (position == programList.size() - 1
+                && onBottomReachedCallback != null) {
             onBottomReachedCallback.onBottomReached(position);
         }
     }
@@ -103,7 +106,8 @@ class ProgramRecyclerViewAdapter extends RecyclerView.Adapter<ProgramViewHolder>
                     for (Program program : new CopyOnWriteArrayList<>(programList)) {
                         // name match condition. this might differ depending on your requirement
                         // here we are looking for a channel name match
-                        if (program.getTitle().toLowerCase().contains(charString.toLowerCase())) {
+                        if (!TextUtils.isEmpty(program.getTitle())
+                                && program.getTitle().toLowerCase().contains(charString.toLowerCase())) {
                             filteredList.add(program);
                         }
                     }
@@ -118,7 +122,6 @@ class ProgramRecyclerViewAdapter extends RecyclerView.Adapter<ProgramViewHolder>
             @SuppressWarnings("unchecked")
             @Override
             protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-                Timber.d("Done filtering");
                 programListFiltered = (ArrayList<Program>) filterResults.values;
                 notifyDataSetChanged();
             }

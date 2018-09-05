@@ -25,6 +25,14 @@ public interface ProgramDao {
     @Transaction
     @Query(base +
             "WHERE p.connection_id IN (SELECT id FROM connections WHERE active = 1) " +
+            " AND ((p.start >= :time) " +
+            "  OR (p.start <= :time AND p.stop >= :time)) " +
+            "ORDER BY p.start, p.channel_name ASC")
+    LiveData<List<Program>> loadProgramsFromTime(long time);
+
+    @Transaction
+    @Query(base +
+            "WHERE p.connection_id IN (SELECT id FROM connections WHERE active = 1) " +
             " AND p.channel_id = :channelId " +
             " AND ((p.start >= :time) " +
             "  OR (p.start <= :time AND p.stop >= :time)) " +
@@ -57,6 +65,12 @@ public interface ProgramDao {
             "  OR (p.start < :endTime AND p.stop >= :endTime)) " +
             "ORDER BY p.start ASC")
     LiveData<List<Program>> loadProgramsFromChannelByTagBetweenTime(int channelId, int tagId, long startTime, long endTime);
+
+    @Transaction
+    @Query(base +
+            "WHERE p.connection_id IN (SELECT id FROM connections WHERE active = 1) "
+            + "ORDER BY p.start, p.channel_name ASC")
+    LiveData<List<Program>> loadPrograms();
 
     @Transaction
     @Query(base +
