@@ -382,7 +382,7 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
                 Answers.getInstance().logContentView(new ContentViewEvent()
                         .putContentName("Settings screen"));
                 intent = new Intent(activity, SettingsActivity.class);
-                activity.startActivity(intent);
+                activity.startActivityForResult(intent, 1);
                 break;
             case NavigationDrawer.MENU_UNLOCKER:
                 Answers.getInstance().logContentView(new ContentViewEvent()
