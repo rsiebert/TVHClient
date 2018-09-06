@@ -153,7 +153,7 @@ public abstract class BaseActivity extends AppCompatActivity implements NetworkS
         Answers.getInstance().logSearch(new SearchEvent().putQuery(query));
 
         searchMenuItem.collapseActionView();
-        android.support.v4.app.Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main);
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main);
         if (fragment != null && fragment.isAdded() && fragment instanceof SearchRequestInterface) {
             ((SearchRequestInterface) fragment).onSearchRequested(query);
         }
