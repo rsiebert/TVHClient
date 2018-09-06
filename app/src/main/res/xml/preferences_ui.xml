@@ -69,6 +69,13 @@
             android:title="@string/pref_show_program_artwork" />
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="Recordings">
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="hide_duplicate_scheduled_recordings_enabled"
+            android:title="Hide duplicate scheduled recordings" />
+    </PreferenceCategory>
+
     <PreferenceCategory
         android:summary="@string/pref_program_guide_sum"
         android:title="@string/pref_program_guide">

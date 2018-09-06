@@ -10,10 +10,16 @@ import android.view.View;
 import android.widget.Filter;
 
 import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.features.search.SearchActivity;
 import org.tvheadend.tvhclient.features.search.SearchRequestInterface;
 
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 public class ScheduledRecordingListFragment extends RecordingListFragment implements SearchRequestInterface, Filter.FilterListener {
+
+    private RecordingViewModel viewModel;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -23,31 +29,48 @@ public class ScheduledRecordingListFragment extends RecordingListFragment implem
                 ? getString(R.string.scheduled_recordings) : getString(R.string.search_results));
 
         recyclerViewAdapter.setRecordingType(REC_TYPE_SCHEDULED);
+        viewModel = ViewModelProviders.of(activity).get(RecordingViewModel.class);
+    }
 
-        RecordingViewModel viewModel = ViewModelProviders.of(activity).get(RecordingViewModel.class);
-        viewModel.getScheduledRecordings().observe(this, recordings -> {
-            if (recordings != null) {
-                recyclerViewAdapter.addItems(recordings);
-            }
-            if (!TextUtils.isEmpty(searchQuery)) {
-                recyclerViewAdapter.getFilter().filter(searchQuery, this);
-            }
-            recyclerView.setVisibility(View.VISIBLE);
-            progressBar.setVisibility(View.GONE);
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Start observing the recordings here because the onActivityCreated method is not
+        // called when the user has returned from the settings activity. In this case
+        // the changes to the recording UI like hiding duplicates would not become active.
+        viewModel.getScheduledRecordings().observe(this, this::handleObservedRecordings);
+    }
 
-            if (TextUtils.isEmpty(searchQuery)) {
-                toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.items, recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
-            } else {
-                toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.upcoming_recordings, recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
+    private void handleObservedRecordings(List<Recording> recordings) {
+        if (recordings != null) {
+            // Remove all recordings from the list that are duplicated
+            if (sharedPreferences.getBoolean("hide_duplicate_scheduled_recordings_enabled", false)) {
+                for (Recording recording : new CopyOnWriteArrayList<>(recordings)) {
+                    if (recording.getDuplicate() == 1) {
+                        recordings.remove(recording);
+                    }
+                }
             }
+            recyclerViewAdapter.addItems(recordings);
+        }
+        if (!TextUtils.isEmpty(searchQuery)) {
+            recyclerViewAdapter.getFilter().filter(searchQuery, this);
+        }
+        recyclerView.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.GONE);
 
-            if (isDualPane && recyclerViewAdapter.getItemCount() > 0) {
-                showRecordingDetails(selectedListPosition);
-            }
-            // Invalidate the menu so that the search menu item is shown in
-            // case the adapter contains items now.
-            activity.invalidateOptionsMenu();
-        });
+        if (TextUtils.isEmpty(searchQuery)) {
+            toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.items, recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
+        } else {
+            toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.upcoming_recordings, recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
+        }
+
+        if (isDualPane && recyclerViewAdapter.getItemCount() > 0) {
+            showRecordingDetails(selectedListPosition);
+        }
+        // Invalidate the menu so that the search menu item is shown in
+        // case the adapter contains items now.
+        activity.invalidateOptionsMenu();
     }
 
     @Override
