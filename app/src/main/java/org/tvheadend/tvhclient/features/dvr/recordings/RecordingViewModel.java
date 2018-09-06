@@ -14,10 +14,6 @@ import javax.inject.Inject;
 
 public class RecordingViewModel extends AndroidViewModel {
 
-    private final LiveData<List<Recording>> completedRecordings;
-    private final LiveData<List<Recording>> scheduledRecordings;
-    private final LiveData<List<Recording>> failedRecordings;
-    private final LiveData<List<Recording>> removedRecordings;
     private Recording recording;
 
     @Inject
@@ -26,26 +22,22 @@ public class RecordingViewModel extends AndroidViewModel {
     public RecordingViewModel(Application application) {
         super(application);
         MainApplication.getComponent().inject(this);
-        completedRecordings = appRepository.getRecordingData().getLiveDataItemsByType("completed");
-        scheduledRecordings = appRepository.getRecordingData().getLiveDataItemsByType("scheduled");
-        failedRecordings = appRepository.getRecordingData().getLiveDataItemsByType("failed");
-        removedRecordings = appRepository.getRecordingData().getLiveDataItemsByType("removed");
     }
 
     public LiveData<List<Recording>> getCompletedRecordings() {
-        return completedRecordings;
+        return appRepository.getRecordingData().getLiveDataItemsByType("completed");
     }
 
     public LiveData<List<Recording>> getScheduledRecordings() {
-        return scheduledRecordings;
+        return appRepository.getRecordingData().getLiveDataItemsByType("scheduled");
     }
 
     public LiveData<List<Recording>> getFailedRecordings() {
-        return failedRecordings;
+        return appRepository.getRecordingData().getLiveDataItemsByType("failed");
     }
 
     public LiveData<List<Recording>> getRemovedRecordings() {
-        return removedRecordings;
+        return appRepository.getRecordingData().getLiveDataItemsByType("removed");
     }
 
     LiveData<Recording> getRecordingById(int id) {
