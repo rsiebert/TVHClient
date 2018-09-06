@@ -61,6 +61,8 @@ public class RecordingViewHolder extends RecyclerView.ViewHolder {
     TextView failedReasonTextView;
     @BindView(R.id.enabled)
     TextView isEnabledTextView;
+    @BindView(R.id.duplicate)
+    TextView isDuplicateTextView;
     @Nullable
     @BindView(R.id.dual_pane_list_item_selection)
     ImageView dualPaneListItemSelection;
@@ -182,9 +184,12 @@ public class RecordingViewHolder extends RecyclerView.ViewHolder {
 
         if (recordingType != REC_TYPE_SCHEDULED) {
             isEnabledTextView.setVisibility(View.GONE);
+            isDuplicateTextView.setVisibility(View.GONE);
         } else {
             isEnabledTextView.setVisibility(htspVersion < 19 || recording.getEnabled() == 0 ? View.GONE : View.VISIBLE);
             isEnabledTextView.setText(recording.getEnabled() > 0 ? R.string.recording_enabled : R.string.recording_disabled);
+
+            isDuplicateTextView.setVisibility(htspVersion < 33 || recording.getDuplicate() == 0 ? View.GONE : View.VISIBLE);
         }
     }
 }
