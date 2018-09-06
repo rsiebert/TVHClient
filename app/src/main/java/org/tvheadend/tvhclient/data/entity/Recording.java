@@ -53,6 +53,7 @@ public class Recording {
     @ColumnInfo(name = "data_size")
     private long dataSize;                  // s64   optional   Actual file size of the last recordings (Added in version 21).
     private int enabled = 1;                // u32   optional   Enabled flag (Added in version 23).
+    private int duplicate = 0;              // u32   optional   Duplicate flag (Added in version 33).
     private String episode;                 // str   optional   Episode (Added in version 18).
     private String comment;                 // str   optional   Comment (Added in version 18).
     @Ignore
@@ -352,5 +353,13 @@ public class Recording {
 
     public void setConnectionId(int connectionId) {
         this.connectionId = connectionId;
+    }
+
+    public int getDuplicate() {
+        return duplicate;
+    }
+
+    public void setDuplicate(int duplicate) {
+        this.duplicate = duplicate;
     }
 }
