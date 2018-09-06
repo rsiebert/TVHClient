@@ -45,10 +45,8 @@ import butterknife.ButterKnife;
 import timber.log.Timber;
 
 // TODO check for gmtoffset
-// TODO add option in menu to show file missing recordings
 // TODO give up after x reconnect retries
 // TODO reschedule work when not successful
-// TODO epg search in epg
 
 public class MainActivity extends BaseActivity implements ToolbarInterface, WakeOnLanTaskCallback, NavigationDrawerCallback {
 
