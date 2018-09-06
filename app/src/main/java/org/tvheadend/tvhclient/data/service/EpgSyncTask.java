@@ -1473,8 +1473,8 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     private void getStatus() {
         HtspMessage message = new HtspMessage();
         message.put("method", "hello");
-        // The app support API version up to 32
-        message.put("htspversion", 32);
+        // The application supports API version up to 33
+        message.put("htspversion", 33);
         message.put("clientname", "TVHClient");
         message.put("clientversion", BuildConfig.VERSION_NAME);
 
