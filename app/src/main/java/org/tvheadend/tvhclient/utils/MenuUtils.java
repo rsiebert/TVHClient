@@ -611,7 +611,7 @@ public class MenuUtils {
                         .setTitle(R.string.stop)
                         .setVisible(true);
 
-            } else if (recording.isFailed() || recording.isRemoved() || recording.isMissed() || recording.isAborted()) {
+            } else if (recording.isFailed() || recording.isFileMissing() || recording.isMissed() || recording.isAborted()) {
                 Timber.d("Recording is something else");
                 // Change the icon and text of the remove menu to delete
                 final int icon = (lightTheme) ? R.drawable.ic_menu_delete_light : R.drawable.ic_menu_delete_dark;

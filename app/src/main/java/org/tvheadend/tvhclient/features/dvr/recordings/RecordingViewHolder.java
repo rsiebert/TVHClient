@@ -183,7 +183,7 @@ public class RecordingViewHolder extends RecyclerView.ViewHolder {
         if (recordingType != REC_TYPE_SCHEDULED) {
             isEnabledTextView.setVisibility(View.GONE);
         } else {
-            boolean hideEnabledView = recording.isFailed() || recording.isRemoved() || recording.isMissed() || recording.isAborted()
+            boolean hideEnabledView = recording.isFailed() || recording.isFileMissing() || recording.isMissed() || recording.isAborted()
                     || htspVersion < 19 || recording.getEnabled() == 0;
             isEnabledTextView.setVisibility(hideEnabledView ? View.GONE : View.VISIBLE);
             isEnabledTextView.setText(recording.getEnabled() > 0 ? R.string.recording_enabled : R.string.recording_disabled);

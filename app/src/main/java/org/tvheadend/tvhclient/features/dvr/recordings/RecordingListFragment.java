@@ -197,7 +197,7 @@ public class RecordingListFragment extends BaseFragment implements RecyclerViewC
                 popupMenu.getMenu().findItem(R.id.menu_cast).setVisible(castSession != null);
                 popupMenu.getMenu().findItem(R.id.menu_edit).setVisible(isUnlocked);
 
-            } else if (recording.isFailed() || recording.isRemoved() || recording.isMissed() || recording.isAborted()) {
+            } else if (recording.isFailed() || recording.isFileMissing() || recording.isMissed() || recording.isAborted()) {
                 popupMenu.getMenu().findItem(R.id.menu_record_remove).setVisible(true);
             }
         }

@@ -106,7 +106,7 @@ public class Recording {
         return TextUtils.equals(error, "Aborted by user") && TextUtils.equals(state, "completed");
     }
 
-    public boolean isRemoved() {
+    public boolean isFileMissing() {
         return TextUtils.equals(error, "File missing") && TextUtils.equals(state, "completed");
     }
 
