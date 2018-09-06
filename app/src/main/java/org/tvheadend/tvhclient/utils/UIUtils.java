@@ -114,6 +114,8 @@ public class UIUtils {
             return context.getResources().getString(R.string.recording_time_missed);
         } else if (recording.isFailed()) {
             return context.getResources().getString(R.string.recording_file_invalid);
+        } else if (recording.isFileMissing()) {
+            return context.getResources().getString(R.string.recording_file_missing);
         } else {
             return null;
         }
