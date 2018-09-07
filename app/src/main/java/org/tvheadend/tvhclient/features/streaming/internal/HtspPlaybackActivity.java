@@ -32,6 +32,10 @@ import com.google.android.exoplayer2.util.Util;
 
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.data.entity.Connection;
+import org.tvheadend.tvhclient.data.entity.ServerProfile;
+import org.tvheadend.tvhclient.data.entity.ServerStatus;
+import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.data.service.EpgSyncHandler;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
@@ -52,6 +56,8 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
     protected SharedPreferences sharedPreferences;
     @Inject
     protected EpgSyncHandler epgSyncHandler;
+    @Inject
+    protected AppRepository appRepository;
     private Handler handler;
     private int channelId;
     private int recordingId;
@@ -74,10 +80,9 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         setTheme(MiscUtils.getThemeId(this));
         super.onCreate(savedInstanceState);
+        Timber.d("start");
         setContentView(R.layout.player_overlay_view);
         MiscUtils.setLanguage(this);
-
-        Timber.d("onCreate");
 
         MainApplication.getComponent().inject(this);
         ButterKnife.bind(this);
@@ -100,6 +105,7 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
                 recordingId = getIntent().getIntExtra("recordingId", -1);
             }
         }
+        Timber.d("end");
     }
 
     @Override
@@ -171,8 +177,14 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
         //player.addVideoDebugListener(eventLogger);
 
 
+        Connection connection = appRepository.getConnectionData().getActiveItem();
+        ServerStatus serverStatus = appRepository.getServerStatusData().getItemById(connection.getId());
+        ServerProfile playbackProfile = appRepository.getServerProfileData().getItemById(serverStatus.getPlaybackServerProfileId());
+        Timber.d("Playback profile is " + playbackProfile.getName());
+
         // Produces DataSource instances through which media data is loaded.
-        htspSubscriptionDataSourceFactory = new HtspSubscriptionDataSource.Factory(this, epgSyncHandler.getConnection(), sharedPreferences.getString("htsp_stream_profile", "htsp"));
+        //htspSubscriptionDataSourceFactory = new HtspSubscriptionDataSource.Factory(this, epgSyncHandler.getConnection(), sharedPreferences.getString("htsp_stream_profile", "htsp"));
+        htspSubscriptionDataSourceFactory = new HtspSubscriptionDataSource.Factory(this, epgSyncHandler.getConnection(), playbackProfile.getName());
         htspFileInputStreamDataSourceFactory = new HtspFileInputStreamDataSource.Factory(this, epgSyncHandler.getConnection());
 
         // Produces Extractor instances for parsing the media data.
