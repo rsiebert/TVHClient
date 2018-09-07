@@ -56,7 +56,7 @@ public class PlayChannelActivity extends BasePlaybackActivity {
         // https://github.com/tvheadend/tvheadend/blob/66d6161c563181e5a572337ab3509a835c5a57e2/src/webui/static/tv.js#L56
         // Currently it is not possible to determine which mime type to use from the profile name.
         Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setDataAndType(Uri.parse(url), "video/x-matroska");
+        intent.setDataAndType(Uri.parse(url), "video/*");
         intent.putExtra("itemTitle", channel.getName());
         intent.putExtra("title", channel.getName());
         startExternalPlayer(intent);
