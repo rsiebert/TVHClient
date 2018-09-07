@@ -18,32 +18,43 @@ import android.widget.ProgressBar;
 
 import org.tvheadend.tvhclient.BuildConfig;
 import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.features.shared.callbacks.BackPressedInterface;
+import org.tvheadend.tvhclient.features.shared.callbacks.ToolbarInterface;
 import org.tvheadend.tvhclient.features.shared.tasks.ChangeLogLoaderTask;
 import org.tvheadend.tvhclient.features.shared.tasks.FileLoaderCallback;
-import org.tvheadend.tvhclient.features.shared.callbacks.ToolbarInterface;
-import org.tvheadend.tvhclient.features.shared.callbacks.BackPressedInterface;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 public class ChangeLogFragment extends Fragment implements BackPressedInterface, FileLoaderCallback {
 
-    private WebView webView;
+    @BindView(R.id.webview)
+    protected WebView webView;
+    @BindView(R.id.loading)
+    protected ProgressBar progressBar;
+    private Unbinder unbinder;
     private boolean showFullChangeLog = false;
     private ChangeLogLoaderTask changeLogLoaderTask;
-    private ProgressBar loadingProgressBar;
     private AppCompatActivity activity;
     private String versionName = "";
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.webview_fragment, null);
-        webView = view.findViewById(R.id.webview);
-        loadingProgressBar = view.findViewById(R.id.loading);
+        unbinder = ButterKnife.bind(this, view);
         return view;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
         activity = (AppCompatActivity) getActivity();
         if (activity instanceof ToolbarInterface) {
             ToolbarInterface toolbarInterface = (ToolbarInterface) activity;
@@ -83,7 +94,7 @@ public class ChangeLogFragment extends Fragment implements BackPressedInterface,
 
     private void showChangelog(boolean showFullChangeLog) {
         webView.setVisibility(View.GONE);
-        loadingProgressBar.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.VISIBLE);
         changeLogLoaderTask = new ChangeLogLoaderTask(activity, versionName, this);
         changeLogLoaderTask.execute(showFullChangeLog);
     }
@@ -126,7 +137,7 @@ public class ChangeLogFragment extends Fragment implements BackPressedInterface,
     public void notify(String content) {
         if (content != null) {
             webView.loadDataWithBaseURL("file:///android_asset/", content, "text/html", "utf-8", null);
-            loadingProgressBar.setVisibility(View.GONE);
+            progressBar.setVisibility(View.GONE);
             webView.setVisibility(View.VISIBLE);
         }
     }
