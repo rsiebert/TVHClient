@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.data.entity.Recording;
+import org.tvheadend.tvhclient.data.entity.ServerProfile;
 import org.tvheadend.tvhclient.data.service.EpgSyncService;
 
 import java.io.File;
@@ -62,15 +63,15 @@ public class PlayRecordingActivity extends BasePlaybackActivity {
 
         if (file.exists() && MainApplication.getInstance().isUnlocked()) {
             Timber.d("Playing recording from local file: " + file.getAbsolutePath());
-            intent.setDataAndType(Uri.parse(file.getAbsolutePath()), "video/x-matroska");
+            intent.setDataAndType(Uri.parse(file.getAbsolutePath()), "video/*");
         } else {
-            String url = "http://" + baseUrl + path + "?ticket=" + ticket + "&mux=matroska";
-            /*ServerProfile serverProfile = appRepository.getServerProfileData().getItemById(serverStatus.getPlaybackServerProfileId());
+            String url = "http://" + baseUrl + path + "?ticket=" + ticket; //+ "&mux=matroska";
+            ServerProfile serverProfile = appRepository.getServerProfileData().getItemById(serverStatus.getPlaybackServerProfileId());
             if (serverProfile != null) {
                 url += "&profile=" + serverProfile.getName();
-            }*/
+            }
             Timber.d("Playing recording from server with url: " + url);
-            intent.setDataAndType(Uri.parse(url), "video/x-matroska");
+            intent.setDataAndType(Uri.parse(url), "video/*");
         }
         startExternalPlayer(intent);
     }
