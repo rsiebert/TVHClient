@@ -16,7 +16,6 @@ import com.google.android.gms.common.images.WebImage;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Channel;
-import org.tvheadend.tvhclient.data.entity.ServerProfile;
 import org.tvheadend.tvhclient.data.service.EpgSyncService;
 
 import timber.log.Timber;
@@ -40,9 +39,7 @@ public class CastChannelActivity extends BasePlaybackActivity {
         }
         CastContext castContext = CastContext.getSharedInstance(this);
         castSession = castContext.getSessionManager().getCurrentCastSession();
-
-        serverProfile = appRepository.getServerProfileData()
-                .getItemById(serverStatus.getCastingServerProfileId());
+        serverProfile = appRepository.getServerProfileData().getItemById(serverStatus.getCastingServerProfileId());
     }
 
     @Override
@@ -69,10 +66,9 @@ public class CastChannelActivity extends BasePlaybackActivity {
     }
 
     @Override
-    protected void onHttpTicketReceived(String path, String ticket) {
+    protected void onHttpTicketReceived() {
 
         Channel channel = appRepository.getChannelData().getItemById(channelId);
-        String baseUrl = connection.getHostname() + ":" + connection.getStreamingPort() + serverStatus.getWebroot();
         String iconUrl = baseUrl + "/" + channel.getIcon();
         Timber.d("Channel icon url: " + iconUrl);
 
@@ -82,14 +78,9 @@ public class CastChannelActivity extends BasePlaybackActivity {
         movieMetadata.addImage(new WebImage(Uri.parse(iconUrl)));   // small cast icon
         movieMetadata.addImage(new WebImage(Uri.parse(iconUrl)));   // large background icon
 
-        String url = "http://" + baseUrl + path + "?ticket=" + ticket; // + "&mux=matroska";
-        ServerProfile serverProfile = appRepository.getServerProfileData().getItemById(serverStatus.getCastingServerProfileId());
-        if (serverProfile != null) {
-            url += "&profile=" + serverProfile.getName();
-        }
-        Timber.d("Channel casting url: " + url);
+        Timber.d("Channel casting url: " + serverUrl);
 
-        MediaInfo mediaInfo = new MediaInfo.Builder(url)
+        MediaInfo mediaInfo = new MediaInfo.Builder(serverUrl)
                 .setStreamType(MediaInfo.STREAM_TYPE_LIVE)
                 .setContentType("video/webm")
                 .setMetadata(movieMetadata)

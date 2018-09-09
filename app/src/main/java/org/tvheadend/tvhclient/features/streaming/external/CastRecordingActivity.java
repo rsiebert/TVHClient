@@ -16,7 +16,6 @@ import com.google.android.gms.common.images.WebImage;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Recording;
-import org.tvheadend.tvhclient.data.entity.ServerProfile;
 import org.tvheadend.tvhclient.data.service.EpgSyncService;
 
 import timber.log.Timber;
@@ -40,6 +39,7 @@ public class CastRecordingActivity extends BasePlaybackActivity {
         }
         CastContext castContext = CastContext.getSharedInstance(this);
         castSession = castContext.getSessionManager().getCurrentCastSession();
+        serverProfile = appRepository.getServerProfileData().getItemById(serverStatus.getCastingServerProfileId());
     }
 
     @Override
@@ -66,7 +66,7 @@ public class CastRecordingActivity extends BasePlaybackActivity {
     }
 
     @Override
-    protected void onHttpTicketReceived(String path, String ticket) {
+    protected void onHttpTicketReceived() {
 
         Recording recording = appRepository.getRecordingData().getItemById(dvrId);
         String iconUrl = baseUrl + "/" + recording.getChannelIcon();
@@ -78,14 +78,9 @@ public class CastRecordingActivity extends BasePlaybackActivity {
         movieMetadata.addImage(new WebImage(Uri.parse(iconUrl)));   // small cast icon
         movieMetadata.addImage(new WebImage(Uri.parse(iconUrl)));   // large background icon
 
-        String url = "http://" + baseUrl + "/dvrfile/" + recording.getId();
-        ServerProfile serverProfile = appRepository.getServerProfileData().getItemById(serverStatus.getCastingServerProfileId());
-        if (serverProfile != null) {
-            url += "?profile=" + serverProfile.getName();
-        }
-        Timber.d("Recording casting url: " + url);
+        Timber.d("Recording casting url: " + serverUrl);
 
-        MediaInfo mediaInfo = new MediaInfo.Builder(url)
+        MediaInfo mediaInfo = new MediaInfo.Builder(serverUrl)
                 .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)
                 .setContentType("video/webm")
                 .setMetadata(movieMetadata)

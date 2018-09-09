@@ -30,13 +30,14 @@ import org.tvheadend.tvhclient.data.service.EpgSyncTaskState;
 import org.tvheadend.tvhclient.features.shared.receivers.ServiceStatusReceiver;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
-
-// TODO handle not connected events
 
 public abstract class BasePlaybackActivity extends AppCompatActivity implements EpgSyncStatusCallback {
 
@@ -51,7 +52,8 @@ public abstract class BasePlaybackActivity extends AppCompatActivity implements 
     protected AppRepository appRepository;
     @Inject
     protected SharedPreferences sharedPreferences;
-    String baseUrl;
+    protected String baseUrl;
+    protected String serverUrl;
     ServerProfile serverProfile;
     private ServiceStatusReceiver serviceStatusReceiver;
 
@@ -68,12 +70,7 @@ public abstract class BasePlaybackActivity extends AppCompatActivity implements 
         serviceStatusReceiver = new ServiceStatusReceiver(this);
         connection = appRepository.getConnectionData().getActiveItem();
         serverStatus = appRepository.getServerStatusData().getItemById(connection.getId());
-
-        if (connection.getStreamingPort() != 80 && connection.getStreamingPort() != 443) {
-            baseUrl = connection.getHostname() + ":" + connection.getStreamingPort() + serverStatus.getWebroot();
-        } else {
-            baseUrl = connection.getHostname() + serverStatus.getWebroot();
-        }
+        serverProfile = appRepository.getServerProfileData().getItemById(serverStatus.getPlaybackServerProfileId());
     }
 
     @Override
@@ -112,7 +109,7 @@ public abstract class BasePlaybackActivity extends AppCompatActivity implements 
         }
     }
 
-    protected abstract void onHttpTicketReceived(String path, String ticket);
+    protected abstract void onHttpTicketReceived();
 
     protected abstract void getHttpTicket();
 
@@ -122,9 +119,27 @@ public abstract class BasePlaybackActivity extends AppCompatActivity implements 
             statusTextView.setText(getString(R.string.received_playback_information));
             String path = intent.getStringExtra("path");
             String ticket = intent.getStringExtra("ticket");
-            onHttpTicketReceived(path, ticket);
+
+            createServerUrl(path, ticket);
+            onHttpTicketReceived();
         }
     };
+
+    private void createServerUrl(String path, String ticket) {
+        String hostAddress = "";
+        try {
+            hostAddress = InetAddress.getByName(connection.getHostname()).getHostAddress();
+        } catch (UnknownHostException e) {
+            Timber.d("Could not get ip address from " + connection.getHostname() + ", using hostname as fallback", e);
+            hostAddress = connection.getHostname();
+        }
+        if (connection.getStreamingPort() != 80 && connection.getStreamingPort() != 443) {
+            baseUrl = hostAddress + ":" + connection.getStreamingPort() + serverStatus.getWebroot();
+        } else {
+            baseUrl = hostAddress + serverStatus.getWebroot();
+        }
+        serverUrl = "http://" + baseUrl + path + "?ticket=" + ticket + "&profile=" + serverProfile.getName();
+    }
 
     void startExternalPlayer(Intent intent) {
 

@@ -8,7 +8,6 @@ import android.support.annotation.Nullable;
 
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.data.entity.Recording;
-import org.tvheadend.tvhclient.data.entity.ServerProfile;
 import org.tvheadend.tvhclient.data.service.EpgSyncService;
 
 import java.io.File;
@@ -31,8 +30,6 @@ public class PlayRecordingActivity extends BasePlaybackActivity {
                 dvrId = bundle.getInt("dvrId", -1);
             }
         }
-        serverProfile = appRepository.getServerProfileData()
-                .getItemById(serverStatus.getRecordingServerProfileId());
     }
 
     @Override
@@ -50,7 +47,7 @@ public class PlayRecordingActivity extends BasePlaybackActivity {
     }
 
     @Override
-    protected void onHttpTicketReceived(String path, String ticket) {
+    protected void onHttpTicketReceived() {
         Recording recording = appRepository.getRecordingData().getItemById(dvrId);
 
         Intent intent = new Intent(Intent.ACTION_VIEW);
@@ -65,13 +62,8 @@ public class PlayRecordingActivity extends BasePlaybackActivity {
             Timber.d("Playing recording from local file: " + file.getAbsolutePath());
             intent.setDataAndType(Uri.parse(file.getAbsolutePath()), "video/*");
         } else {
-            String url = "http://" + baseUrl + path + "?ticket=" + ticket; //+ "&mux=matroska";
-            ServerProfile serverProfile = appRepository.getServerProfileData().getItemById(serverStatus.getPlaybackServerProfileId());
-            if (serverProfile != null) {
-                url += "&profile=" + serverProfile.getName();
-            }
-            Timber.d("Playing recording from server with url: " + url);
-            intent.setDataAndType(Uri.parse(url), "video/*");
+            Timber.d("Playing recording from server with url: " + serverUrl);
+            intent.setDataAndType(Uri.parse(serverUrl), "video/*");
         }
         startExternalPlayer(intent);
     }

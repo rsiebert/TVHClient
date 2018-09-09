@@ -26,8 +26,6 @@ public class PlayChannelActivity extends BasePlaybackActivity {
                 channelId = bundle.getInt("channelId", -1);
             }
         }
-        serverProfile = appRepository.getServerProfileData()
-                .getItemById(serverStatus.getPlaybackServerProfileId());
     }
 
     @Override
@@ -45,18 +43,12 @@ public class PlayChannelActivity extends BasePlaybackActivity {
     }
 
     @Override
-    protected void onHttpTicketReceived(String path, String ticket) {
-
+    protected void onHttpTicketReceived() {
         Channel channel = appRepository.getChannelData().getItemById(channelId);
-        String url = "http://" + baseUrl + path + "?ticket=" + ticket + "&profile=" + serverProfile.getName();
 
-        Timber.d("Playing channel from server with url " + url);
-
-        // Mime types depending on the selected profile are available under the following link.
-        // https://github.com/tvheadend/tvheadend/blob/66d6161c563181e5a572337ab3509a835c5a57e2/src/webui/static/tv.js#L56
-        // Currently it is not possible to determine which mime type to use from the profile name.
+        Timber.d("Playing channel from server with url " + serverUrl);
         Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setDataAndType(Uri.parse(url), "video/*");
+        intent.setDataAndType(Uri.parse(serverUrl), "video/*");
         intent.putExtra("itemTitle", channel.getName());
         intent.putExtra("title", channel.getName());
         startExternalPlayer(intent);
