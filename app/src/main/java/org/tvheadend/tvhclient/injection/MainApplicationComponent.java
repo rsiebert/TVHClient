@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
-import org.tvheadend.tvhclient.data.service.EpgSyncHandler;
 import org.tvheadend.tvhclient.data.service.EpgSyncIntentService;
 import org.tvheadend.tvhclient.data.service.EpgSyncService;
 import org.tvheadend.tvhclient.data.service.EpgSyncTask;
@@ -17,19 +16,19 @@ import org.tvheadend.tvhclient.features.dvr.series_recordings.SeriesRecordingVie
 import org.tvheadend.tvhclient.features.dvr.timer_recordings.TimerRecordingViewModel;
 import org.tvheadend.tvhclient.features.epg.EpgViewModel;
 import org.tvheadend.tvhclient.features.epg.EpgViewPagerFragment;
-import org.tvheadend.tvhclient.features.streaming.external.BasePlaybackActivity;
-import org.tvheadend.tvhclient.features.streaming.internal.HtspPlaybackActivity;
 import org.tvheadend.tvhclient.features.programs.ProgramViewModel;
 import org.tvheadend.tvhclient.features.settings.BasePreferenceFragment;
 import org.tvheadend.tvhclient.features.settings.ConnectionViewModel;
 import org.tvheadend.tvhclient.features.settings.SettingsListConnectionsFragment;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
-import org.tvheadend.tvhclient.utils.MenuUtils;
 import org.tvheadend.tvhclient.features.startup.StartupFragment;
+import org.tvheadend.tvhclient.features.streaming.external.BasePlaybackActivity;
+import org.tvheadend.tvhclient.features.streaming.internal.HtspPlaybackActivity;
 import org.tvheadend.tvhclient.injection.modules.EpgSyncHandlerModule;
 import org.tvheadend.tvhclient.injection.modules.MainApplicationModule;
 import org.tvheadend.tvhclient.injection.modules.RepositoryModule;
 import org.tvheadend.tvhclient.injection.modules.SharedPreferencesModule;
+import org.tvheadend.tvhclient.utils.MenuUtils;
 import org.tvheadend.tvhclient.utils.MigrateUtils;
 
 import javax.inject.Singleton;
@@ -49,8 +48,6 @@ public interface MainApplicationComponent {
     SharedPreferences sharedPreferences();
 
     AppRepository appRepository();
-
-    EpgSyncHandler epgSyncHandler();
 
     void inject(MainApplication mainApplication);
 
