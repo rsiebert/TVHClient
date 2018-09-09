@@ -5,13 +5,11 @@ import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
-import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.tvheadend.tvhclient.R;
@@ -148,18 +146,9 @@ public abstract class SettingsConnectionBaseFragment extends BasePreferenceFragm
                     .content(R.string.confirm_discard_connection)
                     .positiveText(getString(R.string.discard))
                     .negativeText(getString(R.string.cancel))
-                    .onPositive(new MaterialDialog.SingleButtonCallback() {
-                        @Override
-                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            activity.finish();
-                        }
-                    })
-                    .onNegative(new MaterialDialog.SingleButtonCallback() {
-                        @Override
-                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            dialog.dismiss();
-                        }
-                    }).show();
+                    .onPositive((dialog, which) -> activity.finish())
+                    .onNegative((dialog, which) -> dialog.dismiss())
+                    .show();
         }
     }
 

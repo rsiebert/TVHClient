@@ -20,7 +20,6 @@ package org.tvheadend.tvhclient.features.settings;
 
 import android.os.Bundle;
 import android.preference.ListPreference;
-import android.preference.Preference;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Connection;
@@ -75,29 +74,20 @@ public class SettingsProfilesFragment extends BasePreferenceFragment implements 
         setRecordingProfileListSummary();
         setCastingProfileListSummary();
 
-        playbackProfilesPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object o) {
-                playbackServerProfileId = Integer.valueOf((String) o);
-                setPlaybackProfileListSummary();
-                return true;
-            }
+        playbackProfilesPreference.setOnPreferenceChangeListener((preference, o) -> {
+            playbackServerProfileId = Integer.valueOf((String) o);
+            setPlaybackProfileListSummary();
+            return true;
         });
-        recordingProfilesPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object o) {
-                recordingServerProfileId = Integer.valueOf((String) o);
-                setRecordingProfileListSummary();
-                return true;
-            }
+        recordingProfilesPreference.setOnPreferenceChangeListener((preference, o) -> {
+            recordingServerProfileId = Integer.valueOf((String) o);
+            setRecordingProfileListSummary();
+            return true;
         });
-        castingProfilesPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object o) {
-                castingServerProfileId = Integer.valueOf((String) o);
-                setCastingProfileListSummary();
-                return true;
-            }
+        castingProfilesPreference.setOnPreferenceChangeListener((preference, o) -> {
+            castingServerProfileId = Integer.valueOf((String) o);
+            setCastingProfileListSummary();
+            return true;
         });
 
         if (!isUnlocked) {

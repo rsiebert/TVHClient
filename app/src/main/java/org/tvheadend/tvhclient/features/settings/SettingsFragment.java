@@ -8,7 +8,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -27,7 +26,6 @@ import java.io.File;
 public class SettingsFragment extends BasePreferenceFragment implements Preference.OnPreferenceClickListener, SharedPreferences.OnSharedPreferenceChangeListener, ActivityCompat.OnRequestPermissionsResultCallback, FolderChooserDialogCallback {
 
     private Preference downloadDirectoryPreference;
-    private CheckBoxPreference internalPlayerPreference;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -92,14 +90,11 @@ public class SettingsFragment extends BasePreferenceFragment implements Preferen
         if (grantResults[0] == PackageManager.PERMISSION_GRANTED && permissions[0].equals("android.permission.READ_EXTERNAL_STORAGE")) {
             // The delay is needed, otherwise an illegalStateException would be thrown. This is
             // a known bug in android. Until it is fixed this workaround is required.
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    // Get the parent activity that implements the callback
-                    SettingsActivity activity = (SettingsActivity) getActivity();
-                    // Show the folder chooser dialog which defaults to the external storage dir
-                    new FolderChooserDialog.Builder(getActivity()).show(activity);
-                }
+            new Handler().postDelayed(() -> {
+                // Get the parent activity that implements the callback
+                SettingsActivity activity = (SettingsActivity) getActivity();
+                // Show the folder chooser dialog which defaults to the external storage dir
+                new FolderChooserDialog.Builder(getActivity()).show(activity);
             }, 200);
         }
     }

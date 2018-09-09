@@ -4,7 +4,6 @@ import android.app.ListFragment;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -15,7 +14,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 
-import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.tvheadend.tvhclient.MainApplication;
@@ -149,18 +147,9 @@ public class SettingsListConnectionsFragment extends ListFragment implements Bac
                         .content(getString(R.string.delete_connection, connection.getName()))
                         .positiveText(getString(R.string.delete))
                         .negativeText(getString(R.string.cancel))
-                        .onPositive(new MaterialDialog.SingleButtonCallback() {
-                            @Override
-                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                appRepository.getConnectionData().removeItem(connection);
-                            }
-                        })
-                        .onNegative(new MaterialDialog.SingleButtonCallback() {
-                            @Override
-                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                dialog.cancel();
-                            }
-                        }).show();
+                        .onPositive((dialog, which) -> appRepository.getConnectionData().removeItem(connection))
+                        .onNegative((dialog, which) -> dialog.cancel())
+                        .show();
                 mode.finish();
                 return true;
 

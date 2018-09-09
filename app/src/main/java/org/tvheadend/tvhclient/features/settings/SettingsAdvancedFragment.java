@@ -6,11 +6,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.provider.SearchRecentSuggestions;
-import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.FileProvider;
 
-import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.tvheadend.tvhclient.BuildConfig;
@@ -82,29 +80,21 @@ public class SettingsAdvancedFragment extends BasePreferenceFragment implements 
                 .content("The application will be restarted and a new initial sync will be done.")
                 .positiveText("Clear")
                 .negativeText(activity.getString(R.string.cancel))
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        Timber.d("Clear database requested, stopping service and clearing database");
+                .onPositive((dialog, which) -> {
+                    Timber.d("Clear database requested, stopping service and clearing database");
 
-                        activity.stopService(new Intent(activity, EpgSyncTask.class));
-                        // Update the connection with the information that a new sync is required.
-                        Connection connection = appRepository.getConnectionData().getActiveItem();
-                        connection.setSyncRequired(true);
-                        connection.setLastUpdate(0);
-                        appRepository.getConnectionData().updateItem(connection);
-                        // Clear the database contents, when done the callback
-                        // is triggered which will restart the application
-                        appRepository.getMiscData().clearDatabase(activity, SettingsAdvancedFragment.this);
-                        dialog.dismiss();
-                    }
+                    activity.stopService(new Intent(activity, EpgSyncTask.class));
+                    // Update the connection with the information that a new sync is required.
+                    Connection connection = appRepository.getConnectionData().getActiveItem();
+                    connection.setSyncRequired(true);
+                    connection.setLastUpdate(0);
+                    appRepository.getConnectionData().updateItem(connection);
+                    // Clear the database contents, when done the callback
+                    // is triggered which will restart the application
+                    appRepository.getMiscData().clearDatabase(activity, SettingsAdvancedFragment.this);
+                    dialog.dismiss();
                 })
-                .onNegative(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        dialog.dismiss();
-                    }
-                })
+                .onNegative((dialog, which) -> dialog.dismiss())
                 .show();
     }
 
@@ -115,12 +105,7 @@ public class SettingsAdvancedFragment extends BasePreferenceFragment implements 
         if (files == null) {
             new MaterialDialog.Builder(activity)
                     .title(R.string.select_log_file)
-                    .onPositive(new MaterialDialog.SingleButtonCallback() {
-                        @Override
-                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            dialog.dismiss();
-                        }
-                    })
+                    .onPositive((dialog, which) -> dialog.dismiss())
                     .show();
         } else {
             // Fill the items for the dialog
