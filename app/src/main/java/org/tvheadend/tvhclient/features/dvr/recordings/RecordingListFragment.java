@@ -30,6 +30,7 @@ import org.tvheadend.tvhclient.features.download.DownloadPermissionGrantedInterf
 import org.tvheadend.tvhclient.features.dvr.RecordingAddEditActivity;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback;
+import org.tvheadend.tvhclient.features.streaming.external.CastRecordingActivity;
 import org.tvheadend.tvhclient.features.streaming.external.PlayRecordingActivity;
 
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -225,6 +226,12 @@ public class RecordingListFragment extends BaseFragment implements RecyclerViewC
 
                 case R.id.menu_play:
                     return menuUtils.handleMenuPlayRecording(recording.getId());
+
+                case R.id.menu_cast:
+                    Intent castIntent = new Intent(activity, CastRecordingActivity.class);
+                    castIntent.putExtra("dvrId", recording.getId());
+                    startActivity(castIntent);
+                    return true;
 
                 case R.id.menu_download:
                     return menuUtils.handleMenuDownloadSelection(recording.getId());
