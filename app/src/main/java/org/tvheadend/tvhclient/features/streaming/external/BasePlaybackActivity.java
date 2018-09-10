@@ -30,8 +30,7 @@ import org.tvheadend.tvhclient.data.service.EpgSyncTaskState;
 import org.tvheadend.tvhclient.features.shared.receivers.ServiceStatusReceiver;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
+import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
 
@@ -120,26 +119,23 @@ public abstract class BasePlaybackActivity extends AppCompatActivity implements 
             String path = intent.getStringExtra("path");
             String ticket = intent.getStringExtra("ticket");
 
-            createServerUrl(path, ticket);
-            onHttpTicketReceived();
+            try {
+                String hostAddress = new ConvertHostnameToAddressTask(connection).execute().get();
+                if (connection.getStreamingPort() != 80 && connection.getStreamingPort() != 443) {
+                    baseUrl = "http://" + hostAddress + ":" + connection.getStreamingPort() + serverStatus.getWebroot();
+                } else {
+                    baseUrl = "http://" + hostAddress + serverStatus.getWebroot();
+                }
+                serverUrl = baseUrl + path + "?ticket=" + ticket + "&profile=" + serverProfile.getName();
+                onHttpTicketReceived();
+
+            } catch (InterruptedException | ExecutionException e) {
+                Timber.d("Could not execute task to get ip address from " + connection.getHostname(), e);
+                progressBar.setVisibility(View.GONE);
+                statusTextView.setText(getString(R.string.error_starting_playback_no_profile));
+            }
         }
     };
-
-    private void createServerUrl(String path, String ticket) {
-        String hostAddress = "";
-        try {
-            hostAddress = InetAddress.getByName(connection.getHostname()).getHostAddress();
-        } catch (UnknownHostException e) {
-            Timber.d("Could not get ip address from " + connection.getHostname() + ", using hostname as fallback", e);
-            hostAddress = connection.getHostname();
-        }
-        if (connection.getStreamingPort() != 80 && connection.getStreamingPort() != 443) {
-            baseUrl = hostAddress + ":" + connection.getStreamingPort() + serverStatus.getWebroot();
-        } else {
-            baseUrl = hostAddress + serverStatus.getWebroot();
-        }
-        serverUrl = "http://" + baseUrl + path + "?ticket=" + ticket + "&profile=" + serverProfile.getName();
-    }
 
     void startExternalPlayer(Intent intent) {
 
