@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.view.View;
 
 import com.google.android.gms.cast.MediaInfo;
@@ -69,17 +70,19 @@ public class CastRecordingActivity extends BasePlaybackActivity {
     protected void onHttpTicketReceived() {
 
         Recording recording = appRepository.getRecordingData().getItemById(dvrId);
-        String iconUrl = baseUrl + "/" + recording.getChannelIcon();
-        Timber.d("Recording icon url: " + iconUrl);
 
         MediaMetadata movieMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE);
         movieMetadata.putString(MediaMetadata.KEY_TITLE, recording.getTitle());
         movieMetadata.putString(MediaMetadata.KEY_SUBTITLE, recording.getSubtitle());
-        movieMetadata.addImage(new WebImage(Uri.parse(iconUrl)));   // small cast icon
-        movieMetadata.addImage(new WebImage(Uri.parse(iconUrl)));   // large background icon
+
+        if (!TextUtils.isEmpty(recording.getChannelIcon())) {
+            String iconUrl = baseUrl + "/" + recording.getChannelIcon();
+            Timber.d("Channel icon url: " + iconUrl);
+            movieMetadata.addImage(new WebImage(Uri.parse(iconUrl)));   // small cast icon
+            movieMetadata.addImage(new WebImage(Uri.parse(iconUrl)));   // large background icon
+        }
 
         Timber.d("Recording casting url: " + serverUrl);
-
         MediaInfo mediaInfo = new MediaInfo.Builder(serverUrl)
                 .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)
                 .setContentType("video/webm")
