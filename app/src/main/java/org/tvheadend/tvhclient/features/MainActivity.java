@@ -7,7 +7,6 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
@@ -33,10 +32,10 @@ import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.features.download.DownloadPermissionGrantedInterface;
 import org.tvheadend.tvhclient.features.navigation.NavigationDrawer;
 import org.tvheadend.tvhclient.features.navigation.NavigationDrawerCallback;
-import org.tvheadend.tvhclient.features.streaming.external.CastSessionManagerListener;
 import org.tvheadend.tvhclient.features.shared.BaseActivity;
 import org.tvheadend.tvhclient.features.shared.callbacks.ToolbarInterface;
 import org.tvheadend.tvhclient.features.shared.tasks.WakeOnLanTaskCallback;
+import org.tvheadend.tvhclient.features.streaming.external.CastSessionManagerListener;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
 import javax.inject.Inject;
@@ -106,12 +105,9 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Wake
         View miniController = findViewById(R.id.cast_mini_controller);
         miniController.setVisibility(showCastingMiniController ? View.VISIBLE : View.GONE);
 
-        getSupportFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
-            @Override
-            public void onBackStackChanged() {
-                Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main);
-                navigationDrawer.handleSelection(fragment);
-            }
+        getSupportFragmentManager().addOnBackStackChangedListener(() -> {
+            Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main);
+            navigationDrawer.handleSelection(fragment);
         });
 
         GoogleApiAvailability googleApiAvailability = GoogleApiAvailability.getInstance();
@@ -123,12 +119,10 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Wake
 
             castContext = CastContext.getSharedInstance(this);
             castSessionManagerListener = new CastSessionManagerListener(this, castSession);
-            castStateListener = new CastStateListener() {
-                @Override
-                public void onCastStateChanged(int newState) {
-                    if (newState != CastState.NO_DEVICES_AVAILABLE) {
-                        showIntroductoryOverlay();
-                    }
+            castStateListener = newState -> {
+                Timber.d("Cast state changed to " + newState);
+                if (newState != CastState.NO_DEVICES_AVAILABLE) {
+                    showIntroductoryOverlay();
                 }
             };
         } else {
@@ -204,24 +198,15 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Wake
             introductoryOverlay.remove();
         }
         if ((mediaRouteMenuItem != null) && mediaRouteMenuItem.isVisible()) {
-            new Handler().post(new Runnable() {
-                @Override
-                public void run() {
-                    introductoryOverlay = new IntroductoryOverlay.Builder(
-                            MainActivity.this, mediaRouteMenuItem)
-                            .setTitleText(getString(R.string.intro_overlay_text))
-                            .setOverlayColor(R.color.primary)
-                            .setSingleTime()
-                            .setOnOverlayDismissedListener(
-                                    new IntroductoryOverlay.OnOverlayDismissedListener() {
-                                        @Override
-                                        public void onOverlayDismissed() {
-                                            introductoryOverlay = null;
-                                        }
-                                    })
-                            .build();
-                    introductoryOverlay.show();
-                }
+            new Handler().post(() -> {
+                introductoryOverlay = new IntroductoryOverlay.Builder(
+                        MainActivity.this, mediaRouteMenuItem)
+                        .setTitleText(getString(R.string.intro_overlay_text))
+                        .setOverlayColor(R.color.primary)
+                        .setSingleTime()
+                        .setOnOverlayDismissedListener(() -> introductoryOverlay = null)
+                        .build();
+                introductoryOverlay.show();
             });
         }
     }
