@@ -36,6 +36,12 @@ android {
         buildConfigField "String", "PUBLIC_KEY_SALT", "\"\""
         buildConfigField "Integer", "BUILD_VERSION", "$versionCode"
 
+        def gitSha = 'git ref-parse --short HEAD'.execute([], project.rootDir).text.trim()
+        def buildTime = new GregorianCalendar().format("MM-dd-yyyy' 'h:mm:ss a z")
+
+        buildConfigField "String", "BUILD_TIME", "\"${buildTime}\""
+        buildConfigField "String", "GIT_SHA", "\"${gitSha}\""
+
         vectorDrawables.useSupportLibrary = true
 
         // used by Room, to test migrations
