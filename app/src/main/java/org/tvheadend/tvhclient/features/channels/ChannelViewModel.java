@@ -10,7 +10,6 @@ import android.support.annotation.NonNull;
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.data.entity.ChannelTag;
-import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
@@ -62,8 +61,7 @@ public class ChannelViewModel extends AndroidViewModel {
     }
 
     public LiveData<ServerStatus> getServerStatus() {
-        Connection connection = appRepository.getConnectionData().getActiveItem();
-        return appRepository.getServerStatusData().getLiveDataItemById(connection.getId());
+        return appRepository.getServerStatusData().getLiveDataActiveItem();
     }
 
     ChannelTag getChannelTag() {

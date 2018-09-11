@@ -11,7 +11,6 @@ import android.widget.LinearLayout;
 
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.features.shared.callbacks.NetworkAvailabilityChangedInterface;
@@ -58,9 +57,7 @@ public abstract class BaseFragment extends Fragment implements NetworkAvailabili
         mainFrameLayout = activity.findViewById(R.id.main);
         detailsFrameLayout = activity.findViewById(R.id.details);
 
-        Connection connection = appRepository.getConnectionData().getActiveItem();
-        serverStatus = appRepository.getServerStatusData().getItemById(connection.getId());
-
+        serverStatus = appRepository.getServerStatusData().getActiveItem();
         htspVersion = serverStatus.getHtspVersion();
         isUnlocked = MainApplication.getInstance().isUnlocked();
         menuUtils = new MenuUtils(activity);
