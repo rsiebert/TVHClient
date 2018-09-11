@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-class EpgChannelListRecyclerViewAdapter extends RecyclerView.Adapter implements Filterable {
+class EpgChannelListRecyclerViewAdapter extends RecyclerView.Adapter<EpgChannelViewHolder> implements Filterable {
 
     private final RecyclerViewClickCallback clickCallback;
     private final List<ChannelSubset> channelList = new ArrayList<>();
@@ -31,15 +31,15 @@ class EpgChannelListRecyclerViewAdapter extends RecyclerView.Adapter implements 
 
     @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public EpgChannelViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         final View view = LayoutInflater.from(parent.getContext()).inflate(viewType, parent, false);
         return new EpgChannelViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull EpgChannelViewHolder holder, int position) {
         ChannelSubset channel = channelListFiltered.get(position);
-        ((EpgChannelViewHolder) holder).bindData(context, channel, clickCallback);
+        holder.bindData(context, channel, clickCallback);
     }
 
     void addItems(@NonNull List<ChannelSubset> list) {
