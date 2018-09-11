@@ -139,7 +139,8 @@ public class ChannelViewHolder extends RecyclerView.ViewHolder {
 
                     @Override
                     public void onError(Exception e) {
-
+                        iconTextView.setVisibility(View.VISIBLE);
+                        iconImageView.setVisibility(View.INVISIBLE);
                     }
                 });
 

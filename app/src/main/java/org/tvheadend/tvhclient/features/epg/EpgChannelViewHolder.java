@@ -3,7 +3,6 @@ package org.tvheadend.tvhclient.features.epg;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.support.v4.widget.TextViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
@@ -14,11 +13,12 @@ import com.squareup.picasso.Picasso;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.ChannelSubset;
-import org.tvheadend.tvhclient.utils.UIUtils;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback;
+import org.tvheadend.tvhclient.utils.UIUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import timber.log.Timber;
 
 public class EpgChannelViewHolder extends RecyclerView.ViewHolder {
 
@@ -68,7 +68,7 @@ public class EpgChannelViewHolder extends RecyclerView.ViewHolder {
             }
         });
 
-        TextViewCompat.setAutoSizeTextTypeWithDefaults(iconTextView, TextViewCompat.AUTO_SIZE_TEXT_TYPE_UNIFORM);
+        //TextViewCompat.setAutoSizeTextTypeWithDefaults(iconTextView, TextViewCompat.AUTO_SIZE_TEXT_TYPE_UNIFORM);
         iconTextView.setText(channel.getName());
 
         // Show the channel icons. Otherwise show the channel name only
@@ -83,7 +83,8 @@ public class EpgChannelViewHolder extends RecyclerView.ViewHolder {
 
                     @Override
                     public void onError(Exception e) {
-
+                        iconTextView.setVisibility(View.VISIBLE);
+                        iconImageView.setVisibility(View.INVISIBLE);
                     }
                 });
     }
