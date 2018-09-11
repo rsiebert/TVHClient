@@ -1,6 +1,7 @@
 package org.tvheadend.tvhclient.features.epg;
 
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -21,13 +22,15 @@ class EpgViewPagerRecyclerViewAdapter extends RecyclerView.Adapter<EpgViewPagerV
     private final float pixelsPerMinute;
     private final long startTime;
     private final long endTime;
+    private final Fragment fragment;
     private final FragmentActivity activity;
     private final RecyclerView.RecycledViewPool viewPool;
     private final List<ChannelSubset> channelList = new ArrayList<>();
     private List<ChannelSubset> channelListFiltered = new ArrayList<>();
 
-    EpgViewPagerRecyclerViewAdapter(FragmentActivity activity, float pixelsPerMinute, long startTime, long endTime) {
+    EpgViewPagerRecyclerViewAdapter(FragmentActivity activity, Fragment fragment, float pixelsPerMinute, long startTime, long endTime) {
         this.activity = activity;
+        this.fragment = fragment;
         this.pixelsPerMinute = pixelsPerMinute;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -38,18 +41,13 @@ class EpgViewPagerRecyclerViewAdapter extends RecyclerView.Adapter<EpgViewPagerV
     @Override
     public EpgViewPagerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         final View view = LayoutInflater.from(parent.getContext()).inflate(viewType, parent, false);
-        return new EpgViewPagerViewHolder(activity, view, pixelsPerMinute, startTime, endTime, viewPool);
+        return new EpgViewPagerViewHolder(activity, fragment, view, pixelsPerMinute, startTime, endTime, viewPool);
     }
 
     @Override
     public void onBindViewHolder(@NonNull EpgViewPagerViewHolder holder, int position) {
         ChannelSubset channelSubset = channelListFiltered.get(position);
-        holder.bindData(channelSubset);
-    }
-
-    @Override
-    public void onBindViewHolder(@NonNull EpgViewPagerViewHolder holder, int position, @NonNull List<Object> payloads) {
-        onBindViewHolder(holder, position);
+        holder.bindData(channelSubset, position);
     }
 
     @Override

@@ -137,7 +137,7 @@ public class EpgViewPagerFragment extends Fragment implements EpgScrollInterface
         int hoursToShow = Integer.parseInt(sharedPreferences.getString("hours_of_epg_data_per_screen", "4"));
         pixelsPerMinute = ((float) (displayWidth - 221) / (60.0f * (float) hoursToShow));
 
-        recyclerViewAdapter = new EpgViewPagerRecyclerViewAdapter(activity, pixelsPerMinute, startTime, endTime);
+        recyclerViewAdapter = new EpgViewPagerRecyclerViewAdapter(activity, this, pixelsPerMinute, startTime, endTime);
         recyclerViewLinearLayoutManager = new LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(recyclerViewLinearLayoutManager);
         recyclerView.addItemDecoration(new DividerItemDecoration(activity, LinearLayoutManager.VERTICAL));
