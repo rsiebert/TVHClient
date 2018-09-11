@@ -234,6 +234,8 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
                     Connection connection = appRepository.getConnectionData().getActiveItem();
                     headerResult.setActiveProfile(connection.getId());
                 }))
+                .cancelable(false)
+                .canceledOnTouchOutside(false)
                 .show();
 
         return false;
