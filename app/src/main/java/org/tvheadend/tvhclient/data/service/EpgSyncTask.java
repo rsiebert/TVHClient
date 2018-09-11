@@ -393,10 +393,15 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     }
 
     private void handleInitialServerResponse(HtspMessage response) {
-        Timber.d("Received initial server response");
-        ServerStatus serverStatus = EpgSyncUtils.convertMessageToServerStatusModel(appRepository.getServerStatusData().getActiveItem(), response);
-        htspVersion = serverStatus.getHtspVersion();
-        appRepository.getServerStatusData().updateItem(serverStatus);
+        ServerStatus serverStatus = appRepository.getServerStatusData().getActiveItem();
+
+        ServerStatus updatedServerStatus = EpgSyncUtils.convertMessageToServerStatusModel(serverStatus, response);
+        updatedServerStatus.setConnectionId(connection.getId());
+        updatedServerStatus.setConnectionName(connection.getName());
+        Timber.d("Received initial response from server " + updatedServerStatus.getServerName() + ", api version: " + updatedServerStatus.getHtspVersion());
+
+        htspVersion = updatedServerStatus.getHtspVersion();
+        appRepository.getServerStatusData().updateItem(updatedServerStatus);
     }
 
     /**
@@ -429,6 +434,9 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
      */
     private void handleTagUpdate(HtspMessage msg) {
         ChannelTag tag = appRepository.getChannelTagData().getItemById(msg.getInteger("tagId"));
+        if (tag == null) {
+            return;
+        }
         ChannelTag updatedTag = EpgSyncUtils.convertMessageToChannelTagModel(tag, msg, appRepository.getChannelData().getItems());
         appRepository.getChannelTagData().updateItem(updatedTag);
         // Remove all entries of this tag from the database before
