@@ -87,33 +87,19 @@ public class ChannelViewHolder extends RecyclerView.ViewHolder {
             }
         }
 
-        itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        itemView.setOnClickListener(view -> clickCallback.onClick(view, getAdapterPosition()));
+        itemView.setOnLongClickListener(view -> {
+            clickCallback.onLongClick(view, getAdapterPosition());
+            return true;
+        });
+        iconImageView.setOnClickListener(view -> {
+            if (playUponChannelClick) {
                 clickCallback.onClick(view, getAdapterPosition());
             }
         });
-        itemView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                clickCallback.onLongClick(view, getAdapterPosition());
-                return true;
-            }
-        });
-        iconImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (playUponChannelClick) {
-                    clickCallback.onClick(view, getAdapterPosition());
-                }
-            }
-        });
-        iconTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (playUponChannelClick) {
-                    clickCallback.onClick(view, getAdapterPosition());
-                }
+        iconTextView.setOnClickListener(view -> {
+            if (playUponChannelClick) {
+                clickCallback.onClick(view, getAdapterPosition());
             }
         });
 

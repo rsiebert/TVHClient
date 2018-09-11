@@ -18,7 +18,6 @@ import org.tvheadend.tvhclient.utils.UIUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import timber.log.Timber;
 
 public class EpgChannelViewHolder extends RecyclerView.ViewHolder {
 
@@ -38,33 +37,19 @@ public class EpgChannelViewHolder extends RecyclerView.ViewHolder {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         boolean playUponChannelClick = sharedPreferences.getBoolean("channel_icon_starts_playback_enabled", true);
 
-        itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        itemView.setOnClickListener(view -> clickCallback.onClick(view, getAdapterPosition()));
+        itemView.setOnLongClickListener(view -> {
+            clickCallback.onLongClick(view, getAdapterPosition());
+            return true;
+        });
+        iconImageView.setOnClickListener(view -> {
+            if (playUponChannelClick) {
                 clickCallback.onClick(view, getAdapterPosition());
             }
         });
-        itemView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                clickCallback.onLongClick(view, getAdapterPosition());
-                return true;
-            }
-        });
-        iconImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (playUponChannelClick) {
-                    clickCallback.onClick(view, getAdapterPosition());
-                }
-            }
-        });
-        iconTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (playUponChannelClick) {
-                    clickCallback.onClick(view, getAdapterPosition());
-                }
+        iconTextView.setOnClickListener(view -> {
+            if (playUponChannelClick) {
+                clickCallback.onClick(view, getAdapterPosition());
             }
         });
 
