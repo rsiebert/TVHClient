@@ -880,19 +880,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         sendEpgSyncStatusMessage(ServiceStatusReceiver.State.SYNC_IN_PROGRESS,
                 context.getString(R.string.saving_program_guide_data), "");
 
-        // Apply the batch of Operations
-        final int steps = 250;
-        final int listSize = pendingEventOps.size();
-        int fromIndex = 0;
-        while (fromIndex < listSize) {
-            int toIndex = (fromIndex + steps >= listSize) ? listSize : fromIndex + steps;
-            // Apply the batch only as a sublist of the entire list
-            // so we can send out the number of saved operations to any listeners
-            appRepository.getProgramData().addItems(new ArrayList<>(pendingEventOps.subList(fromIndex, toIndex)));
-            fromIndex = toIndex;
-
-            Timber.d("flushPendingEventOps: Saving program data (" + fromIndex + " of " + listSize + ")");
-        }
+        appRepository.getProgramData().addItems(pendingEventOps);
         pendingEventOps.clear();
     }
 
