@@ -49,7 +49,7 @@ public class HtspFileInputStream extends InputStream {
         Timber.i("Opening HtspFileInputStream for " + this.fileName);
 
         sendFileOpen();
-        sendFileRead(1024000, 0);
+        sendFileRead(0);
     }
 
     public long getFileSize() {
@@ -78,7 +78,7 @@ public class HtspFileInputStream extends InputStream {
             return -1;
         }
 
-        sendFileRead(1024000, filePosition);
+        sendFileRead(filePosition);
 
         if (!buffer.hasRemaining() && fileSize == -1) {
             // If we still don't have any data, and we don't have a known size, then we're done.
@@ -150,13 +150,13 @@ public class HtspFileInputStream extends InputStream {
      * @see InputStream#read()
      */
     @Override
-    public int read(byte[] b, int off, int len) throws IOException {
+    public int read(@NonNull byte[] b, int off, int len) throws IOException {
         // If we've reached the end of the file, we're done :)
         if (fileSize == filePosition && !buffer.hasRemaining()) {
             return -1;
         }
 
-        sendFileRead(1024000, filePosition);
+        sendFileRead(filePosition);
 
         if (!buffer.hasRemaining() && fileSize == -1) {
             // If we still don't have any data, and we don't have a known size, then we're done.
@@ -219,11 +219,12 @@ public class HtspFileInputStream extends InputStream {
         }
     }
 
-    private void sendFileRead(long size, long offset) throws IOException {
+    private void sendFileRead(long offset) throws IOException {
         if (buffer != null && buffer.hasRemaining()) {
             return;
         }
 
+        long size = 1024000;
         if (fileSize != -1) {
             // Make sure we don't overrun the file
             if (offset + size > fileSize) {

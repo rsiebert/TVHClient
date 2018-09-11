@@ -17,18 +17,8 @@
 package org.tvheadend.tvhclient.data.service.htsp;
 
 public class HtspNotConnectedException extends HtspException {
-    public HtspNotConnectedException() {
-    }
 
-    public HtspNotConnectedException(String message) {
+    HtspNotConnectedException(String message) {
         super(message);
-    }
-
-    public HtspNotConnectedException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public HtspNotConnectedException(Throwable cause) {
-        super(cause);
     }
 }

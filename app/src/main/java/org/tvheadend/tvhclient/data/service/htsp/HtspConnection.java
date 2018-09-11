@@ -324,7 +324,7 @@ public class HtspConnection implements Runnable {
         return getState() == State.CLOSED;
     }
 
-    public boolean isClosing() {
+    private boolean isClosing() {
         return getState() == State.CLOSING;
     }
 
@@ -332,7 +332,7 @@ public class HtspConnection implements Runnable {
         return getState() == State.FAILED;
     }
 
-    public boolean isClosedOrFailed() {
+    private boolean isClosedOrFailed() {
         return isClosed() || isFailed();
     }
 
@@ -340,7 +340,7 @@ public class HtspConnection implements Runnable {
         return isClosed() || isClosing();
     }
 
-    public boolean isClosedOrClosingOrFailed() {
+    private boolean isClosedOrClosingOrFailed() {
         return isClosed() || isClosing() || isFailed();
     }
 
@@ -362,12 +362,7 @@ public class HtspConnection implements Runnable {
             if (handler == null) {
                 listener.onConnectionStateChange(state);
             } else {
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        listener.onConnectionStateChange(state);
-                    }
-                });
+                handler.post(() -> listener.onConnectionStateChange(state));
             }
         }
     }

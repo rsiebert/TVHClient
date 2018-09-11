@@ -35,7 +35,7 @@ public class HtspDataHandler implements HtspConnection.Reader, HtspConnection.Wr
     private final ByteBuffer readBuffer = ByteBuffer.allocateDirect(5242880); // 5MB
     private final ByteBuffer writeBuffer = ByteBuffer.allocateDirect(1024 * 1024); // 1024 * 1024 = Max TVH will accept
 
-    public HtspDataHandler(HtspMessageSerializer messageSerializer, HtspMessage.DispatcherInternal messageDispatcher) {
+    HtspDataHandler(HtspMessageSerializer messageSerializer, HtspMessage.DispatcherInternal messageDispatcher) {
         this.messageSerializer = messageSerializer;
         this.messageDispatcher = messageDispatcher;
     }
@@ -165,7 +165,7 @@ public class HtspDataHandler implements HtspConnection.Reader, HtspConnection.Wr
         writeBuffer.flip();
 
         try {
-            int bytesWritten = socketChannel.write(writeBuffer);
+            socketChannel.write(writeBuffer);
         } catch (IOException e) {
             Timber.e("Failed to write buffer to SocketChannel", e);
             return false;
