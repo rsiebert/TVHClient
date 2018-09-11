@@ -68,6 +68,10 @@ public class ServerStatusData extends BaseData implements DataSourceInterface<Se
         return new ArrayList<>();
     }
 
+    public LiveData<ServerStatus> getLiveDataActiveItem() {
+        return db.getServerStatusDao().loadServerStatus();
+    }
+
     public ServerStatus getActiveItem() {
         try {
             return new ItemLoaderTask(db).execute().get();
