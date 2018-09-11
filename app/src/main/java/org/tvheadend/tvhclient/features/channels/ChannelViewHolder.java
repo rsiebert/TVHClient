@@ -6,7 +6,6 @@ import android.graphics.drawable.Drawable;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.widget.TextViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
@@ -110,7 +109,7 @@ public class ChannelViewHolder extends RecyclerView.ViewHolder {
         channelTextView.setText(channel.getName());
         channelTextView.setVisibility(showChannelName ? View.VISIBLE : View.GONE);
 
-        TextViewCompat.setAutoSizeTextTypeWithDefaults(iconTextView, TextViewCompat.AUTO_SIZE_TEXT_TYPE_UNIFORM);
+        //TextViewCompat.setAutoSizeTextTypeWithDefaults(iconTextView, TextViewCompat.AUTO_SIZE_TEXT_TYPE_UNIFORM);
         iconTextView.setText(channel.getName());
 
         // Show the channel icons. Otherwise show the channel name only
