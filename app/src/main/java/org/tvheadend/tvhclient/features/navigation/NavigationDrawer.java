@@ -222,10 +222,9 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
         }
 
         new MaterialDialog.Builder(activity)
-                .title("Connect to new server?")
-                .content("The application will be restarted.")
+                .title(R.string.dialog_title_connect_to_server)
                 .negativeText(R.string.cancel)
-                .positiveText("Connect")
+                .positiveText(R.string.dialog_button_connect)
                 .onPositive((dialog, which) -> {
                     headerResult.setActiveProfile(profile.getIdentifier());
                     handleNewServerSelected((int) profile.getIdentifier());
