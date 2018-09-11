@@ -81,12 +81,14 @@ public class ProgramData extends BaseData implements DataSourceInterface<Program
         return db.getProgramDao().loadProgramsFromChannelFromTime(channelId, time);
     }
 
-    public LiveData<List<Program>> getLiveDataItemByChannelIdAndBetweenTime(int channelId, long startTime, long endTime) {
-        return db.getProgramDao().loadProgramsFromChannelBetweenTime(channelId, startTime, endTime);
-    }
-
-    public LiveData<List<Program>> getLiveDataItemByChannelIdAndByTagAndBetweenTime(int channelId, int channelTagId, long startTime, long endTime) {
-        return db.getProgramDao().loadProgramsFromChannelByTagBetweenTime(channelId, channelTagId, startTime, endTime);
+    public List<Program> getItemByChannelIdAndBetweenTime(int channelId, long startTime, long endTime) {
+        List<Program> programs = new ArrayList<>();
+        try {
+            programs.addAll(new ItemsLoaderTask(db, channelId, startTime, endTime).execute().get());
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        return programs;
     }
 
     public Program getLastItemByChannelId(int channelId) {
@@ -126,6 +128,25 @@ public class ProgramData extends BaseData implements DataSourceInterface<Program
                     return db.getProgramDao().loadProgramByIdSync(id);
             }
             return null;
+        }
+    }
+
+    private static class ItemsLoaderTask extends AsyncTask<Void, Void, List<Program>> {
+        private final AppRoomDatabase db;
+        private final int channelId;
+        private final long startTime;
+        private final long endTime;
+
+        ItemsLoaderTask(AppRoomDatabase db, int channelId, long startTime, long endTime) {
+            this.db = db;
+            this.channelId = channelId;
+            this.startTime = startTime;
+            this.endTime = endTime;
+        }
+
+        @Override
+        protected List<Program> doInBackground(Void... voids) {
+            return db.getProgramDao().loadProgramsFromChannelBetweenTimeSync(channelId, startTime, endTime);
         }
     }
 

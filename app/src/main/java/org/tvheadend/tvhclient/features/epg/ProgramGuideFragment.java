@@ -149,7 +149,7 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
 
         viewPagerAdapter = new EpgViewPagerAdapter(getChildFragmentManager(), startTimes, endTimes, fragmentCount, searchQuery);
         programViewPager.setAdapter(viewPagerAdapter);
-        programViewPager.setOffscreenPageLimit(1);
+        programViewPager.setOffscreenPageLimit(2);
         programViewPager.addOnPageChangeListener(this);
 
         viewModel = ViewModelProviders.of(activity).get(EpgViewModel.class);

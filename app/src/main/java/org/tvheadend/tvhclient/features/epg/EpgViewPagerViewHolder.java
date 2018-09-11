@@ -2,6 +2,8 @@ package org.tvheadend.tvhclient.features.epg;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -18,6 +20,8 @@ import org.tvheadend.tvhclient.data.entity.Program;
 import org.tvheadend.tvhclient.features.programs.ProgramDetailsActivity;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback;
 
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
@@ -29,6 +33,7 @@ public class EpgViewPagerViewHolder extends RecyclerView.ViewHolder implements R
     private final long startTime;
     private final long endTime;
     private final EpgViewModel viewModel;
+    private final Handler handler;
 
     @BindView(R.id.program_list_recycler_view)
     protected RecyclerView recyclerView;
@@ -52,10 +57,11 @@ public class EpgViewPagerViewHolder extends RecyclerView.ViewHolder implements R
         recyclerViewAdapter = new EpgProgramListRecyclerViewAdapter(activity, pixelsPerMinute, startTime, endTime, this);
         recyclerView.setAdapter(recyclerViewAdapter);
 
-        recyclerView.setVisibility(View.GONE);
-        progressBar.setVisibility(View.VISIBLE);
-        noProgramsTextView.setVisibility(View.GONE);
         viewModel = ViewModelProviders.of(activity).get(EpgViewModel.class);
+
+        HandlerThread handlerThread = new HandlerThread("EpgSyncService Handler Thread");
+        handlerThread.start();
+        handler = new Handler(handlerThread.getLooper());
     }
 
     @Override
@@ -85,20 +91,32 @@ public class EpgViewPagerViewHolder extends RecyclerView.ViewHolder implements R
         }
     }
 
-    public void bindData(ChannelSubset channelSubset) {
-        viewModel.getProgramsByChannelAndBetweenTime(channelSubset.getId(), startTime, endTime).observe(activity, programs -> {
+    public void bindData(final ChannelSubset channelSubset) {
+
+        recyclerView.setVisibility(View.GONE);
+        progressBar.setVisibility(View.VISIBLE);
+        noProgramsTextView.setVisibility(View.GONE);
+
+        handler.post(() -> {
+            List<Program> programs = viewModel.getProgramsByChannelAndBetweenTimeSync(channelSubset.getId(), startTime, endTime);
             if (programs != null && programs.size() > 0) {
                 Timber.d("Loaded " + programs.size() + " programs for channel " + channelSubset.getName());
-                recyclerViewAdapter.addItems(programs);
-                recyclerView.setVisibility(View.VISIBLE);
-                progressBar.setVisibility(View.GONE);
+                activity.runOnUiThread(() -> {
+                    recyclerViewAdapter.addItems(programs);
+                    recyclerView.setVisibility(View.VISIBLE);
+                    progressBar.setVisibility(View.GONE);
+                    noProgramsTextView.setVisibility(View.GONE);
+                });
             } else {
-                Timber.d("No program data available for channel " + channelSubset.getName());
-                recyclerView.setVisibility(View.GONE);
-                progressBar.setVisibility(View.GONE);
-                noProgramsTextView.setVisibility(View.VISIBLE);
+                Timber.d("Loaded no programs for channel " + channelSubset.getName());
+                activity.runOnUiThread(() -> {
+                    recyclerView.setVisibility(View.GONE);
+                    progressBar.setVisibility(View.GONE);
+                    noProgramsTextView.setVisibility(View.VISIBLE);
+                });
             }
         });
+
         viewModel.getRecordingsByChannel(channelSubset.getId()).observe(activity, recordings -> {
             if (recordings != null) {
                 recyclerViewAdapter.addRecordings(recordings);

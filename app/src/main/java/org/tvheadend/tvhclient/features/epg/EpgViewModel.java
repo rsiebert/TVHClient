@@ -41,14 +41,12 @@ public class EpgViewModel extends AndroidViewModel {
 
         // Initiate a timer that will update the view model data every minute
         // so that the progress bars will be displayed correctly
-        channelUpdateTask = new Runnable() {
-            public void run() {
-                long currentTime = new Date().getTime();
-                if (selectedTime < currentTime) {
-                    selectedTime = currentTime;
-                }
-                channels.setValue(appRepository.getChannelData().getChannelNamesByTimeAndTag(channelTagId));
+        channelUpdateTask = () -> {
+            long currentTime = new Date().getTime();
+            if (selectedTime < currentTime) {
+                selectedTime = currentTime;
             }
+            channels.setValue(appRepository.getChannelData().getChannelNamesByTimeAndTag(channelTagId));
         };
     }
 
@@ -82,12 +80,8 @@ public class EpgViewModel extends AndroidViewModel {
         handler.post(channelUpdateTask);
     }
 
-    LiveData<List<Program>> getProgramsByChannelAndBetweenTime(int channelId, long startTime, long endTime) {
-        if (channelTagId == 0) {
-            return appRepository.getProgramData().getLiveDataItemByChannelIdAndBetweenTime(channelId, startTime, endTime);
-        } else {
-            return appRepository.getProgramData().getLiveDataItemByChannelIdAndByTagAndBetweenTime(channelId, channelTagId, startTime, endTime);
-        }
+    List<Program> getProgramsByChannelAndBetweenTimeSync(int channelId, long startTime, long endTime) {
+        return appRepository.getProgramData().getItemByChannelIdAndBetweenTime(channelId, startTime, endTime);
     }
 
     void setVerticalScrollOffset(int offset) {
