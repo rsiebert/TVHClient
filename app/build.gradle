@@ -42,6 +42,8 @@ android {
         buildConfigField "String", "BUILD_TIME", "\"${buildTime}\""
         buildConfigField "String", "GIT_SHA", "\"${gitSha}\""
 
+        buildConfigField "String", "CAST_ID", "\"0531DF56\""
+
         vectorDrawables.useSupportLibrary = true
 
         // used by Room, to test migrations

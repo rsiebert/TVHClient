@@ -202,9 +202,8 @@ public class MainApplication extends Application implements BillingProcessor.IBi
 
     @Override
     public CastOptions getCastOptions(Context context) {
-        // TODO check if the CAST_ID can be moved to build configs
         return new CastOptions.Builder()
-                .setReceiverApplicationId("0531DF56")
+                .setReceiverApplicationId(BuildConfig.CAST_ID)
                 .build();
     }
 
