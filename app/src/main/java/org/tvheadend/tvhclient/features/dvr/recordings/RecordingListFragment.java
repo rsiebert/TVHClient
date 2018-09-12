@@ -188,7 +188,7 @@ public class RecordingListFragment extends BaseFragment implements RecyclerViewC
                 popupMenu.getMenu().findItem(R.id.menu_download).setVisible(isUnlocked);
 
             } else if (recording.isScheduled() && !recording.isRecording()) {
-                popupMenu.getMenu().findItem(R.id.menu_record_remove).setVisible(true);
+                popupMenu.getMenu().findItem(R.id.menu_record_cancel).setVisible(true);
                 popupMenu.getMenu().findItem(R.id.menu_edit).setVisible(isUnlocked);
 
             } else if (recording.isRecording()) {
@@ -215,14 +215,13 @@ public class RecordingListFragment extends BaseFragment implements RecyclerViewC
                     return menuUtils.handleMenuSearchEpgSelection(recording.getTitle());
 
                 case R.id.menu_record_stop:
-                    return menuUtils.handleMenuStopRecordingSelection(recording.getId(), recording.getTitle(), null);
+                    return menuUtils.handleMenuStopRecordingSelection(recording, null);
+
+                case R.id.menu_record_cancel:
+                    return menuUtils.handleMenuCancelRecordingSelection(recording, null);
 
                 case R.id.menu_record_remove:
-                    if (recording.isScheduled()) {
-                        return menuUtils.handleMenuCancelRecordingSelection(recording.getId(), recording.getTitle(), null);
-                    } else {
-                        return menuUtils.handleMenuRemoveRecordingSelection(recording.getId(), recording.getTitle(), null);
-                    }
+                    return menuUtils.handleMenuRemoveRecordingSelection(recording, null);
 
                 case R.id.menu_play:
                     return menuUtils.handleMenuPlayRecording(recording.getId());

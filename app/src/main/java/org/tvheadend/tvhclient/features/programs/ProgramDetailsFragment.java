@@ -323,17 +323,14 @@ public class ProgramDetailsFragment extends BaseFragment implements RecordingRem
                 activity.finish();
                 return true;
 
+            case R.id.menu_record_stop:
+                return menuUtils.handleMenuStopRecordingSelection(program.getRecording(), null);
+
+            case R.id.menu_record_cancel:
+                return menuUtils.handleMenuCancelRecordingSelection(program.getRecording(), null);
+
             case R.id.menu_record_remove:
-                if (recording != null) {
-                    if (recording.isRecording()) {
-                        return menuUtils.handleMenuStopRecordingSelection(recording.getId(), recording.getTitle(), null);
-                    } else if (recording.isScheduled()) {
-                        return menuUtils.handleMenuCancelRecordingSelection(recording.getId(), recording.getTitle(), null);
-                    } else {
-                        return menuUtils.handleMenuRemoveRecordingSelection(recording.getId(), recording.getTitle(), null);
-                    }
-                }
-                return false;
+                return menuUtils.handleMenuRemoveRecordingSelection(program.getRecording(), null);
 
             case R.id.menu_record_once:
                 return menuUtils.handleMenuRecordSelection(program.getEventId());

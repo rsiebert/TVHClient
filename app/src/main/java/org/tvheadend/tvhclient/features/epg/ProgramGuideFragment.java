@@ -305,18 +305,14 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
                 case R.id.menu_search_epg:
                     return menuUtils.handleMenuSearchEpgSelection(program.getTitle(), program.getChannelId());
 
+                case R.id.menu_record_stop:
+                    return menuUtils.handleMenuStopRecordingSelection(program.getRecording(), null);
+
+                case R.id.menu_record_cancel:
+                    return menuUtils.handleMenuCancelRecordingSelection(program.getRecording(), null);
+
                 case R.id.menu_record_remove:
-                    final Recording recording = program.getRecording();
-                    if (recording != null) {
-                        if (recording.isRecording()) {
-                            return menuUtils.handleMenuStopRecordingSelection(recording.getId(), recording.getTitle(), null);
-                        } else if (recording.isScheduled()) {
-                            return menuUtils.handleMenuCancelRecordingSelection(recording.getId(), recording.getTitle(), null);
-                        } else {
-                            return menuUtils.handleMenuRemoveRecordingSelection(recording.getId(), recording.getTitle(), null);
-                        }
-                    }
-                    return false;
+                    return menuUtils.handleMenuRemoveRecordingSelection(program.getRecording(), null);
 
                 case R.id.menu_record_once:
                     return menuUtils.handleMenuRecordSelection(program.getEventId());

@@ -201,7 +201,7 @@ public class SeriesRecordingDetailsFragment extends BaseFragment implements Reco
                 return true;
 
             case R.id.menu_record_remove:
-                return menuUtils.handleMenuRemoveSeriesRecordingSelection(recording.getId(), recording.getTitle(), this);
+                return menuUtils.handleMenuRemoveSeriesRecordingSelection(recording, this);
 
             case R.id.menu_search_imdb:
                 return menuUtils.handleMenuSearchImdbWebsite(recording.getTitle());

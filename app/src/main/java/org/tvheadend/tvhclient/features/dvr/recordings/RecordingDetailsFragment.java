@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -255,7 +254,6 @@ public class RecordingDetailsFragment extends BaseFragment implements RecordingR
             menu.findItem(R.id.menu_search).setVisible(false);
         }
 
-        boolean lightTheme = sharedPreferences.getBoolean("light_theme_enabled", true);
         menu = nestedToolbar.getMenu();
 
         if (recording.isCompleted()) {
@@ -264,19 +262,11 @@ public class RecordingDetailsFragment extends BaseFragment implements RecordingR
             menu.findItem(R.id.menu_download).setVisible(isUnlocked);
 
         } else if (recording.isScheduled() && !recording.isRecording()) {
-            final int icon = (lightTheme) ? R.drawable.ic_menu_cancel_light : R.drawable.ic_menu_cancel_dark;
-            menu.findItem(R.id.menu_record_remove)
-                    .setIcon(ContextCompat.getDrawable(activity, icon))
-                    .setTitle(R.string.cancel)
-                    .setVisible(true);
+            menu.findItem(R.id.menu_record_cancel).setVisible(true);
             menu.findItem(R.id.menu_edit).setVisible(isUnlocked);
 
         } else if (recording.isRecording()) {
-            final int icon = (lightTheme) ? R.drawable.ic_menu_stop_light : R.drawable.ic_menu_stop_dark;
-            menu.findItem(R.id.menu_record_remove)
-                    .setIcon(ContextCompat.getDrawable(activity, icon))
-                    .setTitle(R.string.stop)
-                    .setVisible(true);
+            menu.findItem(R.id.menu_record_stop).setVisible(true);
             menu.findItem(R.id.menu_play).setVisible(true);
             menu.findItem(R.id.menu_edit).setVisible(isUnlocked);
 
@@ -324,19 +314,13 @@ public class RecordingDetailsFragment extends BaseFragment implements RecordingR
                 return true;
 
             case R.id.menu_record_stop:
-                return true;
+                return menuUtils.handleMenuStopRecordingSelection(recording, this);
+
+            case R.id.menu_record_cancel:
+                return menuUtils.handleMenuCancelRecordingSelection(recording, this);
 
             case R.id.menu_record_remove:
-                if (recording != null) {
-                    if (recording.isRecording()) {
-                        return menuUtils.handleMenuStopRecordingSelection(recording.getId(), recording.getTitle(), this);
-                    } else if (recording.isScheduled()) {
-                        return menuUtils.handleMenuCancelRecordingSelection(recording.getId(), recording.getTitle(), this);
-                    } else {
-                        return menuUtils.handleMenuRemoveRecordingSelection(recording.getId(), recording.getTitle(), this);
-                    }
-                }
-                return false;
+                return menuUtils.handleMenuRemoveRecordingSelection(recording, this);
 
             case R.id.menu_search_imdb:
                 return menuUtils.handleMenuSearchImdbWebsite(recording.getTitle());

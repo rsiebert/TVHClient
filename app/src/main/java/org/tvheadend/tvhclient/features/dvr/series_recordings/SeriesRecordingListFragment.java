@@ -218,7 +218,7 @@ public class SeriesRecordingListFragment extends BaseFragment implements Recycle
                     return menuUtils.handleMenuSearchEpgSelection(seriesRecording.getTitle());
 
                 case R.id.menu_record_remove:
-                    return menuUtils.handleMenuRemoveSeriesRecordingSelection(seriesRecording.getId(), seriesRecording.getTitle(), null);
+                    return menuUtils.handleMenuRemoveSeriesRecordingSelection(seriesRecording, null);
 
                 default:
                     return false;

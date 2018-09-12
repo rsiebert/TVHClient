@@ -9,13 +9,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
+import android.support.annotation.Nullable;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
-import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.android.gms.cast.framework.CastContext;
 import com.google.android.gms.cast.framework.CastSession;
@@ -286,21 +283,22 @@ public class MenuUtils {
         return true;
     }
 
-    public boolean handleMenuStopRecordingSelection(int dvrId, String title, RecordingRemovedCallback callback) {
+    public boolean handleMenuStopRecordingSelection(@Nullable Recording recording, @Nullable RecordingRemovedCallback callback) {
         Activity activity = this.activity.get();
-        if (activity == null) {
+        if (activity == null || recording == null) {
             return false;
         }
+        Timber.d("Stopping recording " + recording.getTitle());
         // Show a confirmation dialog before stopping the recording
         new MaterialDialog.Builder(activity)
                 .title(R.string.record_stop)
-                .content(activity.getString(R.string.stop_recording, title))
+                .content(activity.getString(R.string.stop_recording, recording.getTitle()))
                 .negativeText(R.string.cancel)
                 .positiveText(R.string.stop)
                 .onPositive((dialog, which) -> {
                     final Intent intent = new Intent(activity, EpgSyncService.class);
                     intent.setAction("stopDvrEntry");
-                    intent.putExtra("id", dvrId);
+                    intent.putExtra("id", recording.getId());
                     activity.startService(intent);
                     if (callback != null) {
                         callback.onRecordingRemoved();
@@ -310,23 +308,22 @@ public class MenuUtils {
         return true;
     }
 
-    public boolean handleMenuRemoveRecordingSelection(int dvrId, String title, RecordingRemovedCallback callback) {
-        Timber.d("handleMenuRemoveRecordingSelection() called with: dvrId = [" + dvrId + "], title = [" + title + "]");
+    public boolean handleMenuRemoveRecordingSelection(@Nullable Recording recording, @Nullable RecordingRemovedCallback callback) {
         Activity activity = this.activity.get();
-        if (activity == null) {
+        if (activity == null || recording == null) {
             return false;
         }
-        Timber.d("handleMenuRemoveRecordingSelection: ");
+        Timber.d("Removing recording " + recording.getTitle());
         // Show a confirmation dialog before removing the recording
         new MaterialDialog.Builder(activity)
                 .title(R.string.record_remove)
-                .content(activity.getString(R.string.remove_recording, title))
+                .content(activity.getString(R.string.remove_recording, recording.getTitle()))
                 .negativeText(R.string.cancel)
                 .positiveText(R.string.remove)
                 .onPositive((dialog, which) -> {
                     final Intent intent = new Intent(activity, EpgSyncService.class);
                     intent.setAction("deleteDvrEntry");
-                    intent.putExtra("id", dvrId);
+                    intent.putExtra("id", recording.getId());
                     activity.startService(intent);
                     if (callback != null) {
                         callback.onRecordingRemoved();
@@ -336,21 +333,22 @@ public class MenuUtils {
         return true;
     }
 
-    public boolean handleMenuCancelRecordingSelection(int dvrId, String title, RecordingRemovedCallback callback) {
+    public boolean handleMenuCancelRecordingSelection(@Nullable Recording recording, @Nullable RecordingRemovedCallback callback) {
         Activity activity = this.activity.get();
-        if (activity == null) {
+        if (activity == null || recording == null) {
             return false;
         }
+        Timber.d("Cancelling recording " + recording.getTitle());
         // Show a confirmation dialog before cancelling the recording
         new MaterialDialog.Builder(activity)
                 .title(R.string.record_cancel)
-                .content(activity.getString(R.string.cancel_recording, title))
+                .content(activity.getString(R.string.cancel_recording, recording.getTitle()))
                 .negativeText(R.string.discard)
                 .positiveText(R.string.cancel)
                 .onPositive((dialog, which) -> {
                     final Intent intent = new Intent(activity, EpgSyncService.class);
                     intent.setAction("cancelDvrEntry");
-                    intent.putExtra("id", dvrId);
+                    intent.putExtra("id", recording.getId());
                     activity.startService(intent);
                     if (callback != null) {
                         callback.onRecordingRemoved();
@@ -360,21 +358,22 @@ public class MenuUtils {
         return true;
     }
 
-    public boolean handleMenuRemoveSeriesRecordingSelection(String id, String title, RecordingRemovedCallback callback) {
+    public boolean handleMenuRemoveSeriesRecordingSelection(@Nullable SeriesRecording recording, @Nullable RecordingRemovedCallback callback) {
         Activity activity = this.activity.get();
-        if (activity == null) {
+        if (activity == null || recording == null) {
             return false;
         }
+        Timber.d("Removing series recording " + recording.getTitle());
         // Show a confirmation dialog before removing the recording
         new MaterialDialog.Builder(activity)
                 .title(R.string.record_remove)
-                .content(activity.getString(R.string.remove_series_recording, title))
+                .content(activity.getString(R.string.remove_series_recording, recording.getTitle()))
                 .negativeText(R.string.cancel)
                 .positiveText(R.string.remove)
                 .onPositive((dialog, which) -> {
                     final Intent intent = new Intent(activity, EpgSyncService.class);
                     intent.setAction("deleteAutorecEntry");
-                    intent.putExtra("id", id);
+                    intent.putExtra("id", recording.getId());
                     activity.startService(intent);
                     if (callback != null) {
                         callback.onRecordingRemoved();
@@ -384,22 +383,27 @@ public class MenuUtils {
         return true;
     }
 
-    public boolean handleMenuRemoveTimerRecordingSelection(String id, String title, RecordingRemovedCallback callback) {
-        Timber.d("handleMenuRemoveTimerRecordingSelection() called with: id = [" + id + "], title = [" + title + "], callback = [" + callback + "]");
+    public boolean handleMenuRemoveTimerRecordingSelection(@Nullable TimerRecording recording, @Nullable RecordingRemovedCallback callback) {
         Activity activity = this.activity.get();
-        if (activity == null) {
+        if (activity == null || recording == null) {
             return false;
         }
+
+        final String name = (recording.getName() != null && recording.getName().length() > 0) ? recording.getName() : "";
+        final String title = recording.getTitle() != null ? recording.getTitle() : "";
+        final String displayTitle = (name.length() > 0 ? name : title);
+        Timber.d("Removing timer recording " + displayTitle);
+
         // Show a confirmation dialog before removing the recording
         new MaterialDialog.Builder(activity)
                 .title(R.string.record_remove)
-                .content(activity.getString(R.string.remove_timer_recording, title))
+                .content(activity.getString(R.string.remove_timer_recording, displayTitle))
                 .negativeText(R.string.cancel)
                 .positiveText(R.string.remove)
                 .onPositive((dialog, which) -> {
                     final Intent intent = new Intent(activity, EpgSyncService.class);
                     intent.setAction("deleteTimerecEntry");
-                    intent.putExtra("id", id);
+                    intent.putExtra("id", recording.getId());
                     activity.startService(intent);
                     if (callback != null) {
                         callback.onRecordingRemoved();
@@ -419,30 +423,25 @@ public class MenuUtils {
                 .content(R.string.confirm_remove_all)
                 .positiveText(activity.getString(R.string.remove))
                 .negativeText(activity.getString(R.string.cancel))
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        new Thread() {
-                            public void run() {
-                                for (Recording item : items) {
-                                    final Intent intent = new Intent(activity, EpgSyncService.class);
-                                    intent.putExtra("id", item.getId());
-                                    if (item.isRecording() || item.isScheduled()) {
-                                        intent.setAction("cancelDvrEntry");
-                                    } else {
-                                        intent.setAction("deleteDvrEntry");
-                                    }
-                                    activity.startService(intent);
-                                    try {
-                                        sleep(500);
-                                    } catch (InterruptedException e) {
-                                        // NOP
-                                    }
-                                }
+                .onPositive((dialog, which) -> new Thread() {
+                    public void run() {
+                        for (Recording item : items) {
+                            final Intent intent = new Intent(activity, EpgSyncService.class);
+                            intent.putExtra("id", item.getId());
+                            if (item.isRecording() || item.isScheduled()) {
+                                intent.setAction("cancelDvrEntry");
+                            } else {
+                                intent.setAction("deleteDvrEntry");
                             }
-                        }.start();
+                            activity.startService(intent);
+                            try {
+                                sleep(500);
+                            } catch (InterruptedException e) {
+                                // NOP
+                            }
+                        }
                     }
-                }).show();
+                }.start()).show();
         return true;
     }
 
@@ -456,26 +455,21 @@ public class MenuUtils {
                 .content(R.string.remove_all_recordings)
                 .positiveText(activity.getString(R.string.remove))
                 .negativeText(activity.getString(R.string.cancel))
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        new Thread() {
-                            public void run() {
-                                for (SeriesRecording item : items) {
-                                    final Intent intent = new Intent(activity, EpgSyncService.class);
-                                    intent.setAction("deleteAutorecEntry");
-                                    intent.putExtra("id", item.getId());
-                                    activity.startService(intent);
-                                    try {
-                                        sleep(500);
-                                    } catch (InterruptedException e) {
-                                        // NOP
-                                    }
-                                }
+                .onPositive((dialog, which) -> new Thread() {
+                    public void run() {
+                        for (SeriesRecording item : items) {
+                            final Intent intent = new Intent(activity, EpgSyncService.class);
+                            intent.setAction("deleteAutorecEntry");
+                            intent.putExtra("id", item.getId());
+                            activity.startService(intent);
+                            try {
+                                sleep(500);
+                            } catch (InterruptedException e) {
+                                // NOP
                             }
-                        }.start();
+                        }
                     }
-                }).show();
+                }.start()).show();
         return true;
     }
 
@@ -489,26 +483,21 @@ public class MenuUtils {
                 .content(R.string.remove_all_recordings)
                 .positiveText(activity.getString(R.string.remove))
                 .negativeText(activity.getString(R.string.cancel))
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        new Thread() {
-                            public void run() {
-                                for (TimerRecording item : items) {
-                                    final Intent intent = new Intent(activity, EpgSyncService.class);
-                                    intent.setAction("deleteTimerecEntry");
-                                    intent.putExtra("id", item.getId());
-                                    activity.startService(intent);
-                                    try {
-                                        sleep(500);
-                                    } catch (InterruptedException e) {
-                                        // NOP
-                                    }
-                                }
+                .onPositive((dialog, which) -> new Thread() {
+                    public void run() {
+                        for (TimerRecording item : items) {
+                            final Intent intent = new Intent(activity, EpgSyncService.class);
+                            intent.setAction("deleteTimerecEntry");
+                            intent.putExtra("id", item.getId());
+                            activity.startService(intent);
+                            try {
+                                sleep(500);
+                            } catch (InterruptedException e) {
+                                // NOP
                             }
-                        }.start();
+                        }
                     }
-                }).show();
+                }.start()).show();
         return true;
     }
 
@@ -537,18 +526,15 @@ public class MenuUtils {
         new MaterialDialog.Builder(activity)
                 .title(R.string.select_dvr_config)
                 .items(dvrConfigList)
-                .itemsCallbackSingleChoice(dvrConfigNameValue, new MaterialDialog.ListCallbackSingleChoice() {
-                    @Override
-                    public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
-                        // Pass over the
-                        Intent intent = new Intent(activity, EpgSyncService.class);
-                        intent.setAction("addDvrEntry");
-                        intent.putExtra("eventId", eventId);
-                        intent.putExtra("channelId", channelId);
-                        intent.putExtra("configName", dvrConfigList[which]);
-                        activity.startService(intent);
-                        return true;
-                    }
+                .itemsCallbackSingleChoice(dvrConfigNameValue, (dialog, view, which, text) -> {
+                    // Pass over the
+                    Intent intent = new Intent(activity, EpgSyncService.class);
+                    intent.setAction("addDvrEntry");
+                    intent.putExtra("eventId", eventId);
+                    intent.putExtra("channelId", channelId);
+                    intent.putExtra("configName", dvrConfigList[which]);
+                    activity.startService(intent);
+                    return true;
                 })
                 .show();
         return true;
@@ -560,8 +546,6 @@ public class MenuUtils {
             return;
         }
 
-        boolean lightTheme = sharedPreferences.getBoolean("light_theme_enabled", true);
-
         // Hide the menus because the ones in the toolbar are not hidden when set in the xml
         for (int i = 0; i < menu.size(); i++) {
             menu.getItem(i).setVisible(false);
@@ -572,6 +556,8 @@ public class MenuUtils {
         MenuItem recordOnceCustomProfileMenuItem = menu.findItem(R.id.menu_record_once_custom_profile);
         MenuItem recordSeriesMenuItem = menu.findItem(R.id.menu_record_series);
         MenuItem recordRemoveMenuItem = menu.findItem(R.id.menu_record_remove);
+        MenuItem recordStopMenuItem = menu.findItem(R.id.menu_record_stop);
+        MenuItem recordCancelMenuItem = menu.findItem(R.id.menu_record_cancel);
         MenuItem playMenuItem = menu.findItem(R.id.menu_play);
         MenuItem castMenuItem = menu.findItem(R.id.menu_cast);
         MenuItem addReminderMenuItem = menu.findItem(R.id.menu_add_notification);
@@ -595,33 +581,18 @@ public class MenuUtils {
 
             } else if (recording.isScheduled() && !recording.isRecording()) {
                 Timber.d("Recording is scheduled");
-                // Change the icon and text of the remove menu to cancel
-                final int icon = (lightTheme) ? R.drawable.ic_menu_cancel_light : R.drawable.ic_menu_cancel_dark;
-                recordRemoveMenuItem
-                        .setIcon(ContextCompat.getDrawable(activity, icon))
-                        .setTitle(R.string.cancel)
-                        .setVisible(true);
+                recordCancelMenuItem.setVisible(true);
 
             } else if (recording.isRecording()) {
                 Timber.d("Recording is being recorded");
                 playMenuItem.setVisible(true);
                 CastSession castSession = CastContext.getSharedInstance(activity).getSessionManager().getCurrentCastSession();
                 castMenuItem.setVisible(castSession != null);
-                // Change the icon and text of the remove menu to stop
-                final int icon = (lightTheme) ? R.drawable.ic_menu_stop_light : R.drawable.ic_menu_stop_dark;
-                recordRemoveMenuItem
-                        .setIcon(ContextCompat.getDrawable(activity, icon))
-                        .setTitle(R.string.stop)
-                        .setVisible(true);
+                recordStopMenuItem.setVisible(true);
 
             } else if (recording.isFailed() || recording.isFileMissing() || recording.isMissed() || recording.isAborted()) {
                 Timber.d("Recording is something else");
-                // Change the icon and text of the remove menu to delete
-                final int icon = (lightTheme) ? R.drawable.ic_menu_delete_light : R.drawable.ic_menu_delete_dark;
-                recordRemoveMenuItem
-                        .setIcon(ContextCompat.getDrawable(activity, icon))
-                        .setTitle(R.string.remove)
-                        .setVisible(true);
+                recordRemoveMenuItem.setVisible(true);
             }
         }
         if (isUnlocked && sharedPreferences.getBoolean("notifications_enabled", true)) {

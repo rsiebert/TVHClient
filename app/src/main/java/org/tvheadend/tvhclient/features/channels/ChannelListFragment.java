@@ -329,17 +329,14 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
                 case R.id.menu_search_epg:
                     return menuUtils.handleMenuSearchEpgSelection(channel.getProgramTitle(), channel.getId());
 
+                case R.id.menu_record_stop:
+                    return menuUtils.handleMenuStopRecordingSelection(program.getRecording(), null);
+
+                case R.id.menu_record_cancel:
+                    return menuUtils.handleMenuCancelRecordingSelection(program.getRecording(), null);
+
                 case R.id.menu_record_remove:
-                    if (recording != null) {
-                        if (recording.isRecording()) {
-                            return menuUtils.handleMenuStopRecordingSelection(recording.getId(), recording.getTitle(), null);
-                        } else if (recording.isScheduled()) {
-                            return menuUtils.handleMenuCancelRecordingSelection(recording.getId(), recording.getTitle(), null);
-                        } else {
-                            return menuUtils.handleMenuRemoveRecordingSelection(recording.getId(), recording.getTitle(), null);
-                        }
-                    }
-                    return false;
+                    return menuUtils.handleMenuRemoveRecordingSelection(program.getRecording(), null);
 
                 case R.id.menu_record_once:
                     return menuUtils.handleMenuRecordSelection(channel.getProgramId());

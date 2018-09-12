@@ -216,9 +216,7 @@ public class TimerRecordingListFragment extends BaseFragment implements Recycler
                     return menuUtils.handleMenuSearchEpgSelection(timerRecording.getTitle());
 
                 case R.id.menu_record_remove:
-                    final String name = (timerRecording.getName() != null && timerRecording.getName().length() > 0) ? timerRecording.getName() : "";
-                    final String title = timerRecording.getTitle() != null ? timerRecording.getTitle() : "";
-                    return menuUtils.handleMenuRemoveTimerRecordingSelection(timerRecording.getId(), (name.length() > 0 ? name : title), null);
+                    return menuUtils.handleMenuRemoveTimerRecordingSelection(timerRecording, null);
 
                 default:
                     return false;
