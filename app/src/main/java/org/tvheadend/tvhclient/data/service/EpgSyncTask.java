@@ -435,9 +435,11 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     private void handleTagUpdate(HtspMessage msg) {
         ChannelTag tag = appRepository.getChannelTagData().getItemById(msg.getInteger("tagId"));
         if (tag == null) {
+            Timber.d("Could not find a channel tag with id " + msg.getInteger("tagId") + " in the database");
             return;
         }
-        ChannelTag updatedTag = EpgSyncUtils.convertMessageToChannelTagModel(tag, msg, appRepository.getChannelData().getItems());
+        List<Channel> channels = appRepository.getChannelData().getItems();
+        ChannelTag updatedTag = EpgSyncUtils.convertMessageToChannelTagModel(tag, msg, channels);
         appRepository.getChannelTagData().updateItem(updatedTag);
         // Remove all entries of this tag from the database before
         // adding new ones which are defined in the members variable
@@ -517,6 +519,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     private void handleChannelUpdate(HtspMessage msg) {
         Channel channel = appRepository.getChannelData().getItemById(msg.getInteger("channelId"));
         if (channel == null) {
+            Timber.d("Could not find a channel with id " + msg.getInteger("channelId") + " in the database");
             return;
         }
         Channel updatedChannel = EpgSyncUtils.convertMessageToChannelModel(channel, msg);
@@ -577,6 +580,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         // Get the existing recording
         Recording recording = appRepository.getRecordingData().getItemById(msg.getInteger("id"));
         if (recording == null) {
+            Timber.d("Could not find a recording with id " + msg.getInteger("id") + " in the database");
             return;
         }
         Recording updatedRecording = EpgSyncUtils.convertMessageToRecordingModel(recording, msg);
@@ -619,6 +623,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     private void handleAutorecEntryUpdate(HtspMessage msg) {
         SeriesRecording recording = appRepository.getSeriesRecordingData().getItemById(msg.getString("id"));
         if (recording == null) {
+            Timber.d("Could not find a series recording with id " + msg.getString("id") + " in the database");
             return;
         }
         SeriesRecording updatedRecording = EpgSyncUtils.convertMessageToSeriesRecordingModel(recording, msg);
@@ -661,6 +666,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     private void handleTimerRecEntryUpdate(HtspMessage msg) {
         TimerRecording recording = appRepository.getTimerRecordingData().getItemById(msg.getString("id"));
         if (recording == null) {
+            Timber.d("Could not find a timer recording with id " + msg.getString("id") + " in the database");
             return;
         }
         TimerRecording updatedRecording = EpgSyncUtils.convertMessageToTimerRecordingModel(recording, msg);
@@ -707,6 +713,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     private void handleEventUpdate(HtspMessage msg) {
         Program program = appRepository.getProgramData().getItemById(msg.getInteger("eventId"));
         if (program == null) {
+            Timber.d("Could not find a program with id " + msg.getInteger("eventId") + " in the database");
             return;
         }
         Program updatedProgram = EpgSyncUtils.convertMessageToProgramModel(program, msg);
@@ -742,10 +749,11 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
                 serverProfile.setComment(msg.getString("comment"));
                 serverProfile.setType("playback");
 
-                Timber.d("Loaded playback profile " + serverProfile.getName());
                 if (serverProfile.getId() == 0) {
+                    Timber.d("Added new playback profile " + serverProfile.getName());
                     appRepository.getServerProfileData().addItem(serverProfile);
                 } else {
+                    Timber.d("Updated existing playback profile " + serverProfile.getName());
                     appRepository.getServerProfileData().updateItem(serverProfile);
                 }
             }
@@ -769,10 +777,11 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
                 serverProfile.setComment(msg.getString("comment"));
                 serverProfile.setType("recording");
 
-                Timber.d("Loaded recording profile " + serverProfile.getName());
                 if (serverProfile.getId() == 0) {
+                    Timber.d("Added new recording profile " + serverProfile.getName());
                     appRepository.getServerProfileData().addItem(serverProfile);
                 } else {
+                    Timber.d("Updated existing recording profile " + serverProfile.getName());
                     appRepository.getServerProfileData().updateItem(serverProfile);
                 }
             }
@@ -780,19 +789,25 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     }
 
     private void handleSystemTime(HtspMessage message) {
-        Timber.d("handleSystemTime() called with: message = [" + message + "]");
         ServerStatus serverStatus = appRepository.getServerStatusData().getActiveItem();
         serverStatus.setGmtoffset(message.getInteger("gmtoffset", 0));
         serverStatus.setTime(message.getLong("time", 0));
         appRepository.getServerStatusData().updateItem(serverStatus);
+
+        Timber.d("Received system time from server " + serverStatus.getServerName()
+                + ", server time: " + serverStatus.getTime()
+                + ", server gmt offset: " + serverStatus.getGmtoffset());
     }
 
     private void handleDiskSpace(HtspMessage message) {
-        Timber.d("handleDiskSpace() called with: message = [" + message + "]");
         ServerStatus serverStatus = appRepository.getServerStatusData().getActiveItem();
         serverStatus.setFreeDiskSpace(message.getLong("freediskspace", 0));
         serverStatus.setTotalDiskSpace(message.getLong("totaldiskspace", 0));
         appRepository.getServerStatusData().updateItem(serverStatus);
+
+        Timber.d("Received disk space information from server " + serverStatus.getServerName()
+                + ", free disk space: " + serverStatus.getFreeDiskSpace()
+                + ", total disk space: " + serverStatus.getTotalDiskSpace());
     }
 
     private void handleInitialSyncCompleted() {
