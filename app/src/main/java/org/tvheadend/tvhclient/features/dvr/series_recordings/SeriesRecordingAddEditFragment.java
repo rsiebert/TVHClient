@@ -11,7 +11,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -19,7 +18,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.tvheadend.tvhclient.R;
@@ -179,19 +177,16 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
         maxDurationEditText.setText(recording.getMaxDuration() > 0 ? String.valueOf(recording.getMaxDuration()) : getString(R.string.duration_sum));
 
         timeEnabledCheckBox.setChecked(recording.isTimeEnabled());
-        timeEnabledCheckBox.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                boolean checked = timeEnabledCheckBox.isChecked();
-                startTimeTextView.setEnabled(checked);
-                startTimeTextView.setVisibility(checked ? View.VISIBLE : View.GONE);
-                startTimeLabelTextView.setVisibility(checked ? View.VISIBLE : View.GONE);
-                startTimeTextView.setText(checked ? getTimeStringFromTimeInMillis(recording.getStart()) : "-");
-                startWindowTimeTextView.setEnabled(checked);
-                startWindowTimeTextView.setVisibility(checked ? View.VISIBLE : View.GONE);
-                startWindowTimeLabelTextView.setVisibility(checked ? View.VISIBLE : View.GONE);
-                startWindowTimeTextView.setText(checked ? getTimeStringFromTimeInMillis(recording.getStartWindow()) : "-");
-            }
+        timeEnabledCheckBox.setOnClickListener(view -> {
+            boolean checked = timeEnabledCheckBox.isChecked();
+            startTimeTextView.setEnabled(checked);
+            startTimeTextView.setVisibility(checked ? View.VISIBLE : View.GONE);
+            startTimeLabelTextView.setVisibility(checked ? View.VISIBLE : View.GONE);
+            startTimeTextView.setText(checked ? getTimeStringFromTimeInMillis(recording.getStart()) : "-");
+            startWindowTimeTextView.setEnabled(checked);
+            startWindowTimeTextView.setVisibility(checked ? View.VISIBLE : View.GONE);
+            startWindowTimeLabelTextView.setVisibility(checked ? View.VISIBLE : View.GONE);
+            startWindowTimeTextView.setText(checked ? getTimeStringFromTimeInMillis(recording.getStartWindow()) : "-");
         });
 
         duplicateDetectionLabelTextView.setVisibility(htspVersion >= 20 ? View.VISIBLE : View.GONE);
@@ -267,18 +262,8 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
                 .content(R.string.cancel_add_recording)
                 .positiveText(getString(R.string.discard))
                 .negativeText(getString(R.string.cancel))
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        activity.finish();
-                    }
-                })
-                .onNegative(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        dialog.cancel();
-                    }
-                })
+                .onPositive((dialog, which) -> activity.finish())
+                .onNegative((dialog, which) -> dialog.cancel())
                 .show();
     }
 
@@ -407,12 +392,9 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
         new MaterialDialog.Builder(activity)
                 .title(R.string.select_duplicate_detection)
                 .items(duplicateDetectionList)
-                .itemsCallbackSingleChoice(duplicateDetectionId, new MaterialDialog.ListCallbackSingleChoice() {
-                    @Override
-                    public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
-                        onDuplicateDetectionValueSelected(which);
-                        return true;
-                    }
+                .itemsCallbackSingleChoice(duplicateDetectionId, (dialog, view, which, text) -> {
+                    onDuplicateDetectionValueSelected(which);
+                    return true;
                 })
                 .show();
     }

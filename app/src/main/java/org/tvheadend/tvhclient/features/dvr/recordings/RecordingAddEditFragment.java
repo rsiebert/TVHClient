@@ -18,7 +18,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.tvheadend.tvhclient.R;
@@ -308,18 +307,9 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
                 .content(R.string.cancel_edit_recording)
                 .positiveText(getString(R.string.discard))
                 .negativeText(getString(R.string.cancel))
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        activity.finish();
-                    }
-                })
-                .onNegative(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        dialog.cancel();
-                    }
-                }).show();
+                .onPositive((dialog, which) -> activity.finish())
+                .onNegative((dialog, which) -> dialog.cancel())
+                .show();
     }
 
     @Override
