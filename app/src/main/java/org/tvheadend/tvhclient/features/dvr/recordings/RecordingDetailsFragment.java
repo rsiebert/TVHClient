@@ -329,7 +329,7 @@ public class RecordingDetailsFragment extends BaseFragment implements RecordingR
             case R.id.menu_record_remove:
                 if (recording != null) {
                     if (recording.isRecording()) {
-                        return menuUtils.handleMenuStopRecordingSelection(recording.getId(), recording.getTitle());
+                        return menuUtils.handleMenuStopRecordingSelection(recording.getId(), recording.getTitle(), this);
                     } else if (recording.isScheduled()) {
                         return menuUtils.handleMenuCancelRecordingSelection(recording.getId(), recording.getTitle(), this);
                     } else {

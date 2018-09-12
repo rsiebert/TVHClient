@@ -215,7 +215,7 @@ public class RecordingListFragment extends BaseFragment implements RecyclerViewC
                     return menuUtils.handleMenuSearchEpgSelection(recording.getTitle());
 
                 case R.id.menu_record_stop:
-                    return menuUtils.handleMenuStopRecordingSelection(recording.getId(), recording.getTitle());
+                    return menuUtils.handleMenuStopRecordingSelection(recording.getId(), recording.getTitle(), null);
 
                 case R.id.menu_record_remove:
                     if (recording.isScheduled()) {

@@ -309,7 +309,7 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
                     final Recording recording = program.getRecording();
                     if (recording != null) {
                         if (recording.isRecording()) {
-                            return menuUtils.handleMenuStopRecordingSelection(recording.getId(), recording.getTitle());
+                            return menuUtils.handleMenuStopRecordingSelection(recording.getId(), recording.getTitle(), null);
                         } else if (recording.isScheduled()) {
                             return menuUtils.handleMenuCancelRecordingSelection(recording.getId(), recording.getTitle(), null);
                         } else {

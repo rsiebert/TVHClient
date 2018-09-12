@@ -286,7 +286,7 @@ public class MenuUtils {
         return true;
     }
 
-    public boolean handleMenuStopRecordingSelection(int dvrId, String title) {
+    public boolean handleMenuStopRecordingSelection(int dvrId, String title, RecordingRemovedCallback callback) {
         Activity activity = this.activity.get();
         if (activity == null) {
             return false;
@@ -302,6 +302,9 @@ public class MenuUtils {
                     intent.setAction("stopDvrEntry");
                     intent.putExtra("id", dvrId);
                     activity.startService(intent);
+                    if (callback != null) {
+                        callback.onRecordingRemoved();
+                    }
                 })
                 .show();
         return true;
