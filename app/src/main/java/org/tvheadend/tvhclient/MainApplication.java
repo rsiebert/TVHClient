@@ -83,6 +83,8 @@ public class MainApplication extends Application implements BillingProcessor.IBi
 
         if (sharedPreferences.getBoolean("crash_reports_enabled", true)) {
             Fabric.with(this, new Crashlytics());
+            Crashlytics.setString("Git commit", BuildConfig.GIT_SHA);
+            Crashlytics.setString("Build time", BuildConfig.BUILD_TIME);
         }
 
         if (sharedPreferences.getBoolean("usage_statistics_enabled", true)) {
