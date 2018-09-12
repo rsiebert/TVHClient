@@ -74,10 +74,12 @@ public class MainApplication extends Application implements BillingProcessor.IBi
         // Inject the shared preferences
         component.inject(this);
 
-        Stetho.initialize(Stetho.newInitializerBuilder(this)
-                .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
-                .enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this))
-                .build());
+        if (BuildConfig.DEBUG_MODE) {
+            Stetho.initialize(Stetho.newInitializerBuilder(this)
+                    .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
+                    .enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this))
+                    .build());
+        }
 
         if (sharedPreferences.getBoolean("crash_reports_enabled", true)) {
             Fabric.with(this, new Crashlytics());
