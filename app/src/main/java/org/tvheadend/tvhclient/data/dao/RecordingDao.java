@@ -24,19 +24,22 @@ public interface RecordingDao {
 
     @Transaction
     @Query(base +
-            "WHERE rec.connection_id IN (SELECT id FROM connections WHERE active = 1) ")
+            "WHERE rec.connection_id IN (SELECT id FROM connections WHERE active = 1) " +
+            "ORDER BY rec.start DESC")
     LiveData<List<Recording>> loadAllRecordings();
 
     @Transaction
     @Query(base +
             "WHERE rec.connection_id IN (SELECT id FROM connections WHERE active = 1) " +
-            " AND rec.error IS NULL AND rec.state = 'completed'")
+            " AND rec.error IS NULL AND rec.state = 'completed'" +
+            "ORDER BY rec.start DESC")
     LiveData<List<Recording>> loadAllCompletedRecordings();
 
     @Transaction
     @Query(base +
             "WHERE rec.connection_id IN (SELECT id FROM connections WHERE active = 1) " +
-            " AND rec.error IS NULL AND (rec.state = 'recording' OR rec.state = 'scheduled')")
+            " AND rec.error IS NULL AND (rec.state = 'recording' OR rec.state = 'scheduled')" +
+            "ORDER BY rec.start DESC")
     LiveData<List<Recording>> loadAllScheduledRecordings();
 
     @Transaction
@@ -44,13 +47,15 @@ public interface RecordingDao {
             "WHERE rec.connection_id IN (SELECT id FROM connections WHERE active = 1) " +
             " AND (rec.error IS NOT NULL AND (rec.state='missed'  OR rec.state='invalid')) " +
             " OR (rec.error IS NULL  AND rec.state='missed') " +
-            " OR (rec.error='Aborted by user' AND rec.state='completed')")
+            " OR (rec.error='Aborted by user' AND rec.state='completed')" +
+            "ORDER BY rec.start DESC")
     LiveData<List<Recording>> loadAllFailedRecordings();
 
     @Transaction
     @Query(base +
             "WHERE rec.connection_id IN (SELECT id FROM connections WHERE active = 1) " +
-            " AND rec.error = 'File missing' AND rec.state = 'completed'")
+            " AND rec.error = 'File missing' AND rec.state = 'completed'" +
+            "ORDER BY rec.start DESC")
     LiveData<List<Recording>> loadAllRemovedRecordings();
 
     @Transaction
