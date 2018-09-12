@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -357,7 +358,17 @@ public class RecordingDetailsFragment extends BaseFragment implements RecordingR
 
     @Override
     public void onRecordingRemoved() {
-        activity.finish();
+        if (!isDualPane) {
+            activity.finish();
+        } else {
+            Fragment detailsFragment = activity.getSupportFragmentManager().findFragmentById(R.id.details);
+            if (detailsFragment != null) {
+                activity.getSupportFragmentManager()
+                        .beginTransaction()
+                        .remove(detailsFragment)
+                        .commit();
+            }
+        }
     }
 
     @Override

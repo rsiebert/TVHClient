@@ -4,6 +4,7 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -222,6 +223,16 @@ public class SeriesRecordingDetailsFragment extends BaseFragment implements Reco
 
     @Override
     public void onRecordingRemoved() {
-        activity.finish();
+        if (!isDualPane) {
+            activity.finish();
+        } else {
+            Fragment detailsFragment = activity.getSupportFragmentManager().findFragmentById(R.id.details);
+            if (detailsFragment != null) {
+                activity.getSupportFragmentManager()
+                        .beginTransaction()
+                        .remove(detailsFragment)
+                        .commit();
+            }
+        }
     }
 }
