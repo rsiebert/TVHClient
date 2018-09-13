@@ -43,9 +43,16 @@ import javax.inject.Inject;
 import butterknife.ButterKnife;
 import timber.log.Timber;
 
-// TODO check for gmtoffset
-// TODO give up after x reconnect retries
-// TODO reschedule work when not successful
+// TODO Use gmt offset when displaying or editing recordings
+// TODO give up after 3 reconnect retries
+// TODO change "record with different profile" icon in the toolbar
+// TODO duplicate programs are sometimes received from the server with different ids and time
+// TODO add info screen for opt-in to the crash and usage reports
+// TODO change cast overlay text
+// TODO Remove unused strings
+// TODO Translate more strings
+// TODO add more logging for the debug log file
+// TODO channel count in the channel tags are not populated on first sync?
 
 public class MainActivity extends BaseActivity implements ToolbarInterface, WakeOnLanTaskCallback, NavigationDrawerCallback {
 

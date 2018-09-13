@@ -45,11 +45,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
 
-// TODO use service that is called from the menu
-// TODO service starts htspsession
-// TODO tvheadendplayer needs to get the views
-// TODO in tvheadendplayer get playerview and setPlayer(...)
-
 public class HtspPlaybackActivity extends AppCompatActivity implements View.OnClickListener, PlaybackPreparer, PlayerControlView.VisibilityListener, Player.EventListener {
 
     @Inject

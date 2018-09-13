@@ -71,7 +71,6 @@ public class MiscUtils {
         }
     }
 
-    // TODO check if this can be optimized
     public static boolean isServerProfileEnabled(ServerProfile serverProfile, ServerStatus serverStatus) {
         return serverProfile != null && serverStatus.getHtspVersion() >= 16;
     }
