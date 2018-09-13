@@ -65,7 +65,6 @@ public class MainApplication extends Application implements BillingProcessor.IBi
     @Override
     public void onCreate() {
         super.onCreate();
-        Timber.d("start");
 
         instance = this;
         // Create the component upon start of the app. This component
@@ -74,6 +73,14 @@ public class MainApplication extends Application implements BillingProcessor.IBi
         // Inject the shared preferences
         component.inject(this);
 
+        // This process is dedicated to LeakCanary for heap analysis.
+        if (LeakCanary.isInAnalyzerProcess(this)) {
+            return;
+        }
+        refWatcher = LeakCanary.install(this);
+
+        // Enable stetho to enable accessing the database
+        // and other resources via the chrome browser
         if (BuildConfig.DEBUG_MODE) {
             Stetho.initialize(Stetho.newInitializerBuilder(this)
                     .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
@@ -81,31 +88,15 @@ public class MainApplication extends Application implements BillingProcessor.IBi
                     .build());
         }
 
-        if (sharedPreferences.getBoolean("crash_reports_enabled", true)) {
-            Fabric.with(this, new Crashlytics());
-            Crashlytics.setString("Git commit", BuildConfig.GIT_SHA);
-            Crashlytics.setString("Build time", BuildConfig.BUILD_TIME);
-        }
-
-        if (sharedPreferences.getBoolean("usage_statistics_enabled", true)) {
-            Fabric.with(this, new Answers());
-        }
-
-        // This process is dedicated to LeakCanary for heap analysis.
-        // You should not init your app in this process.
-        if (LeakCanary.isInAnalyzerProcess(this)) {
-            return;
-        }
-        refWatcher = LeakCanary.install(this);
-
-        initLogging();
+        initCrashlytics();
+        initTimber();
         initBilling();
+
+        Timber.d("Application build time is " + BuildConfig.BUILD_TIME + ", git commit hash is " + BuildConfig.GIT_SHA);
 
         // Migrates existing connections from the old database to the new room database.
         // Migrates existing preferences or remove old ones before starting the actual application
         new MigrateUtils().doMigrate();
-
-        Timber.d("end");
     }
 
     private MainApplicationComponent buildComponent() {
@@ -128,18 +119,25 @@ public class MainApplication extends Application implements BillingProcessor.IBi
         }
     }
 
-    private void initLogging() {
-        if (BuildConfig.DEBUG_MODE) {
-            Timber.plant(new DebugTree());
-        } else {
-            Timber.plant(new ReleaseTree());
-        }
+    private void initTimber() {
+        Timber.plant(BuildConfig.DEBUG_MODE ? new DebugTree() : new ReleaseTree());
 
         if (sharedPreferences.getBoolean("debug_mode_enabled", false)) {
             Timber.plant(new FileLoggingTree(getApplicationContext()));
         }
         if (sharedPreferences.getBoolean("crash_reports_enabled", true)) {
             Timber.plant(new CrashlyticsTree());
+        }
+    }
+
+    private void initCrashlytics() {
+        if (sharedPreferences.getBoolean("crash_reports_enabled", true)) {
+            Fabric.with(this, new Crashlytics());
+            Crashlytics.setString("Git commit", BuildConfig.GIT_SHA);
+            Crashlytics.setString("Build time", BuildConfig.BUILD_TIME);
+        }
+        if (sharedPreferences.getBoolean("usage_statistics_enabled", false)) {
+            Fabric.with(this, new Answers());
         }
     }
 
