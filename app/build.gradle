@@ -24,24 +24,28 @@ android {
 
         minSdkVersion 16
         targetSdkVersion 27
+        multiDexEnabled true
 
         versionCode project.ext.versionCode
         versionName project.ext.versionName
 
+        // Define the structure of the apk file name
         applicationId "org.tvheadend.tvhclient"
         setProperty("archivesBaseName", "${applicationId}-${versionName}-${versionCode}")
 
         // Set the default values for these build config fields
+        buildConfigField "Boolean", "DEBUG_MODE", "false"
         buildConfigField "String", "DEVELOPER_EMAIL", "\"\""
         buildConfigField "String", "PUBLIC_KEY_SALT", "\"\""
         buildConfigField "Integer", "BUILD_VERSION", "$versionCode"
 
-        def gitSha = 'git ref-parse --short HEAD'.execute([], project.rootDir).text.trim()
-        def buildTime = new GregorianCalendar().format("MM-dd-yyyy' 'h:mm:ss a z")
-
+        // Get the build time and git commit hash so it can be included in the crash reports
+        def gitSha = 'git rev-parse --short HEAD'.execute([], project.rootDir).text.trim()
+        def buildTime = new GregorianCalendar().format("yyyy.MM.dd HH:mm:ss")
         buildConfigField "String", "BUILD_TIME", "\"${buildTime}\""
         buildConfigField "String", "GIT_SHA", "\"${gitSha}\""
 
+        // The cast ID that the app shall use
         buildConfigField "String", "CAST_ID", "\"0531DF56\""
 
         vectorDrawables.useSupportLibrary = true
@@ -59,15 +63,15 @@ android {
             buildConfigField "Boolean", "DEBUG_MODE", "true"
         }
         release {
-            // Add the values from the local properties file
+            // The property file must exist in release mode so that the
+            // actual values can be assigned from the property file to these fields.
             if (tvhHasProperty("developerEmail")) {
                 buildConfigField "String", "DEVELOPER_EMAIL", "\"" + tvhProperty("developerEmail") + "\""
             }
             if (tvhHasProperty("publicKeySalt")) {
                 buildConfigField "String", "PUBLIC_KEY_SALT", "\"" + tvhProperty("publicKeySalt") + "\""
             }
-            // This must be done by the in-app purchase
-            buildConfigField "Boolean", "DEBUG_MODE", "false"
+
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -80,7 +84,6 @@ android {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.android.support:appcompat-v7:27.1.1'
-    implementation 'com.android.support:cardview-v7:27.1.1'
     implementation 'com.android.support:recyclerview-v7:27.1.1'
     implementation 'com.android.support:support-annotations:27.1.1'
     implementation 'com.android.support:design:27.1.1'
@@ -93,11 +96,13 @@ dependencies {
     implementation 'com.github.flavienlaurent.datetimepicker:library:0.0.2'
     implementation 'com.afollestad.material-dialogs:commons:0.9.6.0'
     implementation 'com.mikepenz:materialdrawer:6.0.8'
+    // View binding
     implementation 'com.jakewharton:butterknife:8.8.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
     // Memory leaks and crash analytics
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5.3'
-    releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.3'
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.1'
+    releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.6.1'
+    debugImplementation 'com.squareup.leakcanary:leakcanary-support-fragment:1.6.1'
     implementation 'com.crashlytics.sdk.android:crashlytics:2.9.5'
     // Architecture components
     implementation 'android.arch.lifecycle:extensions:1.1.1'
@@ -118,4 +123,6 @@ dependencies {
     implementation 'com.google.android.exoplayer:exoplayer-core:2.7.1k1'
     implementation 'com.google.android.exoplayer:exoplayer-ui:2.7.1k1'
     implementation 'com.google.android.exoplayer:extension-ffmpeg:2.7.1k1'
+    // Use multidex because the method count is over 64k
+    implementation 'com.android.support:multidex:1.0.3'
 }
