@@ -630,6 +630,7 @@ public class MenuUtils {
         if (activity == null) {
             return false;
         }
+        // TODO replace hardcoded strings
         new MaterialDialog.Builder(activity)
                 .title("Reconnect to server?")
                 .content("The application will be restarted and a new initial sync will be done.")
