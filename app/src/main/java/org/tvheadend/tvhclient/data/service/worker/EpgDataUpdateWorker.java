@@ -15,11 +15,10 @@ public class EpgDataUpdateWorker extends Worker {
         Timber.d("Loading more event data from server");
 
         // The work here will be done when the worker is first enqueued.
-        // This is done during startup. Delay the execution for 60
+        // This is done during startup. Delay the execution for 120
         // seconds to avoid having too much load during startup.
-        // TODO This can be removed when a periodic task supports the setInitialDelay call.
         try {
-            Thread.sleep(60000);
+            Thread.sleep(120000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -32,7 +31,7 @@ public class EpgDataUpdateWorker extends Worker {
 
         // Wait 30 seconds
         try {
-            Thread.sleep(30000);
+            Thread.sleep(60000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

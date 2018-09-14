@@ -17,7 +17,6 @@ public class EpgDataRemovalWorker extends Worker {
         // The work here will be done when the worker is first enqueued.
         // This is done during startup. Delay the execution for 90
         // seconds to avoid having too much load during startup.
-        // TODO This can be removed when a periodic task supports the setInitialDelay call.
         try {
             Thread.sleep(90000);
         } catch (InterruptedException e) {
@@ -32,7 +31,7 @@ public class EpgDataRemovalWorker extends Worker {
 
         // Wait 30 seconds
         try {
-            Thread.sleep(30000);
+            Thread.sleep(60000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
