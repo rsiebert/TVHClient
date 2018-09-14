@@ -36,8 +36,6 @@ import butterknife.Unbinder;
 
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 
-// TODO Show loading indication when channel tag changed
-
 public class EpgViewPagerFragment extends Fragment implements EpgScrollInterface, ChannelTagSelectionCallback {
 
     @BindView(R.id.constraint_layout)
