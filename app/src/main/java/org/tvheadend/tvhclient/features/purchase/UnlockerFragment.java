@@ -3,7 +3,6 @@ package org.tvheadend.tvhclient.features.purchase;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -13,6 +12,7 @@ import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.ProgressBar;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.anjlab.android.iab.v3.BillingProcessor;
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.PurchaseEvent;
@@ -22,6 +22,7 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
 import org.tvheadend.tvhclient.features.shared.tasks.FileLoaderCallback;
 import org.tvheadend.tvhclient.features.shared.tasks.HtmlFileLoaderTask;
+import org.tvheadend.tvhclient.features.startup.SplashActivity;
 import org.tvheadend.tvhclient.utils.Constants;
 
 import butterknife.BindView;
@@ -89,18 +90,26 @@ public class UnlockerFragment extends BaseFragment implements FileLoaderCallback
                 if (billingProcessor.isInitialized()) {
                     billingProcessor.purchase(activity, Constants.UNLOCKER);
                 }
-                // Check if the user has already made the purchase. We check this
-                // here because this activity is not information about any changes
-                // via the billing event interface.
+                // Check if the user has made the purchase and then restart the application.
+                // In this case all classes and variables that might use the unlocked
+                // information get initialized with the new value.
                 if (billingProcessor.isPurchased(Constants.UNLOCKER)) {
                     Answers.getInstance().logPurchase(new PurchaseEvent()
                             .putItemName("Unlocker")
                             .putSuccess(true));
-                    if (getView() != null) {
-                        Snackbar.make(getView(), getString(R.string.unlocker_already_purchased),
-                                Snackbar.LENGTH_SHORT).show();
-                    }
-                    activity.finish();
+
+                    new MaterialDialog.Builder(activity)
+                            .title(R.string.dialog_title_purchase_ok)
+                            .content(R.string.dialog_content_purchase_ok)
+                            .canceledOnTouchOutside(false)
+                            .positiveText(R.string.dialog_button_restart)
+                            .onPositive((dialog, which) -> {
+                                // Restart the app so that the unlocker will be activated
+                                Intent intent = new Intent(activity, SplashActivity.class);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                activity.startActivity(intent);
+                            })
+                            .show();
                 }
                 return true;
 
