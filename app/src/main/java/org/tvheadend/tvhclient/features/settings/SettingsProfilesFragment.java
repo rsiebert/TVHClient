@@ -20,6 +20,7 @@ package org.tvheadend.tvhclient.features.settings;
 
 import android.os.Bundle;
 import android.preference.ListPreference;
+import android.support.design.widget.Snackbar;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Connection;
@@ -84,14 +85,20 @@ public class SettingsProfilesFragment extends BasePreferenceFragment implements 
             setRecordingProfileListSummary();
             return true;
         });
-        castingProfilesPreference.setOnPreferenceChangeListener((preference, o) -> {
-            castingServerProfileId = Integer.valueOf((String) o);
-            setCastingProfileListSummary();
-            return true;
-        });
 
-        if (!isUnlocked) {
-            castingProfilesPreference.setEnabled(false);
+        if (isUnlocked) {
+            castingProfilesPreference.setOnPreferenceChangeListener((preference, o) -> {
+                castingServerProfileId = Integer.valueOf((String) o);
+                setCastingProfileListSummary();
+                return true;
+            });
+        } else {
+            castingProfilesPreference.setOnPreferenceClickListener(preference -> {
+                if (getView() != null) {
+                    Snackbar.make(getView(), R.string.feature_not_supported_by_server, Snackbar.LENGTH_SHORT).show();
+                }
+                return true;
+            });
         }
     }
 
