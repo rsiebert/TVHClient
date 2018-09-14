@@ -441,4 +441,16 @@
     <string name="search_results">Search results</string>
     <string name="dialog_title_connect_to_server">Connect to new server?</string>
     <string name="dialog_button_connect">Connect</string>
+    <string name="dialog_title_purchase_ok">Thank you!</string>
+    <string name="dialog_content_purchase_ok">The application will be restarted to enable all features.</string>
+    <string name="dialog_button_restart">Restart</string>
+    <string name="dialog_title_reconnect_to_server">Reconnect to server?</string>
+    <string name="dialog_content_reconnect_to_server">The application will be restarted and a new initial sync will be done.</string>
+    <string name="dialog_title_clear_database">Clear database contents?</string>
+    <string name="clear">Clear</string>
+    <string name="playback">Playback</string>
+    <string name="dialog_title_disconnect_from_server">Disconnect from server</string>
+    <string name="dialog_content_disconnect_from_server">No active connection is defined. The existing connection to the server will be closed.</string>
+    <string name="dialog_content_connection_changed">Connection settings have changed. The application will be restarted and a new initial sync will be performed.</string>
+    <string name="dialog_title_connection_changed">Connect to new server?</string>
 </resources>

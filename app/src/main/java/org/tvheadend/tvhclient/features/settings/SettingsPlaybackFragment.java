@@ -29,7 +29,7 @@ public class SettingsPlaybackFragment extends BasePreferenceFragment {
         super.onActivityCreated(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences_playback);
 
-        toolbarInterface.setTitle("Playback");
+        toolbarInterface.setTitle(getString(R.string.playback));
         toolbarInterface.setSubtitle("");
     }
 }

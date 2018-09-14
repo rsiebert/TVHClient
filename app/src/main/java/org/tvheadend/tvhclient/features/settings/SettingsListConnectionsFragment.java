@@ -199,15 +199,15 @@ public class SettingsListConnectionsFragment extends ListFragment implements Bac
     public void onBackPressed() {
         if (viewModel.getActiveConnectionId() < 0) {
             new MaterialDialog.Builder(activity)
-                    .title("Connection will be closed")
-                    .content("No active connection is defined. The existing connection to the server will be closed.")
+                    .title(R.string.dialog_title_disconnect_from_server)
+                    .content(R.string.dialog_content_disconnect_from_server)
                     .positiveText(android.R.string.ok)
                     .onPositive((dialog, which) -> reconnect())
                     .show();
         } else if (viewModel.getConnectionHasChanged()) {
             new MaterialDialog.Builder(activity)
-                    .title("Reconnect to server required")
-                    .content("Connection settings have changed. The application will be restarted and a new initial sync will be performed.")
+                    .title(R.string.dialog_title_connection_changed)
+                    .content(R.string.dialog_content_connection_changed)
                     .positiveText(android.R.string.ok)
                     .onPositive((dialog, which) -> reconnect())
                     .show();

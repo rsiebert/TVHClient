@@ -392,6 +392,18 @@
     <string name="error_loading_program_details">Programdetails konnten nicht gefunden werden</string>
     <string name="error_loading_recording_details">Aufnahmedetails konnten nicht gefunden werden</string>
     <string name="search_results">Suchergebnisse</string>
-    <string name="dialog_title_connect_to_server">Zu neuem Server verbinden?</string>
+    <string name="dialog_title_connect_to_server">Mit neuem Server verbinden?</string>
     <string name="dialog_button_connect">Verbinden</string>
+    <string name="dialog_title_purchase_ok">Vielen Dank!</string>
+    <string name="dialog_content_purchase_ok">Die Applikation wird neu gestartet, damit alle Funktionen zur Verfügung stehen.</string>
+    <string name="dialog_button_restart">Neu starten</string>
+    <string name="dialog_title_reconnect_to_server">Zum Server erneut verbinden?</string>
+    <string name="dialog_content_reconnect_to_server">Die Anwendung wird neu gestartet und eine neue initiale Synchronisierung durchgeführt.</string>
+    <string name="dialog_title_clear_database">Datenbankinhalte löschen?</string>
+    <string name="clear">Löschen</string>
+    <string name="playback">Wiedergabe</string>
+    <string name="dialog_title_disconnect_from_server">Verbindung zum Server trennen?</string>
+    <string name="dialog_content_disconnect_from_server">Es ist keine aktive Verbindung definiert. Die bestehende Verbindung zum Server wird geschlossen.</string>
+    <string name="dialog_content_connection_changed">Die Verbindungseinstellungen wurden geändert. Die Anwendung wird neu gestartet und eine neue initiale Synchronisierung durchgeführt.</string>
+    <string name="dialog_title_connection_changed">Mit neuem Server verbinden?</string>
 </resources>

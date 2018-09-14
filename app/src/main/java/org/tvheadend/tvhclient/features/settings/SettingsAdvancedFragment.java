@@ -76,10 +76,10 @@ public class SettingsAdvancedFragment extends BasePreferenceFragment implements 
 
     private void handlePreferenceClearDatabaseSelected() {
         new MaterialDialog.Builder(activity)
-                .title("Clear database contents?")
-                .content("The application will be restarted and a new initial sync will be done.")
-                .positiveText("Clear")
-                .negativeText(activity.getString(R.string.cancel))
+                .title(R.string.dialog_title_clear_database)
+                .content(R.string.dialog_content_reconnect_to_server)
+                .positiveText(R.string.clear)
+                .negativeText(R.string.cancel)
                 .onPositive((dialog, which) -> {
                     Timber.d("Clear database requested, stopping service and clearing database");
 

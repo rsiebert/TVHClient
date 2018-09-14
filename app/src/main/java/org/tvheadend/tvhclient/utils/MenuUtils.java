@@ -630,12 +630,12 @@ public class MenuUtils {
         if (activity == null) {
             return false;
         }
-        // TODO replace hardcoded strings
+
         new MaterialDialog.Builder(activity)
-                .title("Reconnect to server?")
-                .content("The application will be restarted and a new initial sync will be done.")
+                .title(R.string.dialog_title_reconnect_to_server)
+                .content(R.string.dialog_content_reconnect_to_server)
                 .negativeText(R.string.cancel)
-                .positiveText("Reconnect")
+                .positiveText(R.string.reconnect)
                 .onPositive((dialog, which) -> {
                     Timber.d("Reconnect requested, stopping service and clearing last update information");
 
