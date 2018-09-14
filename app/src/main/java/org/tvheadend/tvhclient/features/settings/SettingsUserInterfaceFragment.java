@@ -59,6 +59,4 @@ public class SettingsUserInterfaceFragment extends BasePreferenceFragment implem
             programArtworkEnabledPreference.setChecked(false);
         }
     }
-
-
 }
