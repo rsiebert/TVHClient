@@ -26,13 +26,9 @@
     <attr name="ic_menu_info" format="reference" />
     <attr name="ic_arrow_drop_down" format="reference" />
     <attr name="ic_arrow_drop_down_like_spinner" format="reference" />
-    <attr name="ActionbarTitleFont" format="reference" />
-    <attr name="ActionbarSubtitleFont" format="reference" />
     <attr name="TitleFont" format="reference" />
     <attr name="SubtitleFont" format="reference" />
     <attr name="ContentFont" format="reference" />
-    <attr name="MenuTitleFont" format="reference" />
-    <attr name="MenuSubtitleFont" format="reference" />
     <attr name="ProgramGuideTimelineFont" format="reference" />
     <attr name="ProgramGuideTitleFont" format="reference" />
     <attr name="ProgramGuideContentFont" format="reference" />

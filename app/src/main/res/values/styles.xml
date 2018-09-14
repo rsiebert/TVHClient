@@ -1,26 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- Font for the title text in the actionbar at the top -->
-    <style name="ActionbarTitleFont.Light" parent="@android:style/TextAppearance.Large">
-        <item name="android:textColor">#ce000000</item>
-        <item name="android:textSize">16sp</item>
-    </style>
-
-    <style name="ActionbarTitleFont.Dark" parent="ActionbarTitleFont.Light">
-        <item name="android:textColor">#ceffffff</item>
-    </style>
-
-    <!-- Font for the subtitle text in the actionbar at the top -->
-    <style name="ActionbarSubtitleFont.Light" parent="@android:style/TextAppearance.Medium">
-        <item name="android:textColor">#ac000000</item>
-        <item name="android:textSize">14sp</item>
-    </style>
-
-    <style name="ActionbarSubtitleFont.Dark" parent="ActionbarSubtitleFont.Light">
-        <item name="android:textColor">#acffffff</item>
-    </style>
-
     <!-- Font for the title texts in various screens -->
     <style name="TitleFont.Light" parent="@android:style/TextAppearance.Large">
         <item name="android:textColor">#ce000000</item>
@@ -48,25 +28,6 @@
     </style>
 
     <style name="ContentFont.Dark" parent="ContentFont.Light">
-        <item name="android:textColor">#7cffffff</item>
-    </style>
-
-    <!-- Font for the menu texts in the navigation drawer -->
-    <style name="MenuTitleFont.Light" parent="@android:style/TextAppearance">
-        <item name="android:textColor">#ae000000</item>
-        <item name="android:textSize">16sp</item>
-    </style>
-
-    <style name="MenuTitleFont.Dark" parent="MenuTitleFont.Light">
-        <item name="android:textColor">#aeffffff</item>
-    </style>
-
-    <style name="MenuSubtitleFont.Light" parent="@android:style/TextAppearance">
-        <item name="android:textColor">#7c000000</item>
-        <item name="android:textSize">16sp</item>
-    </style>
-
-    <style name="MenuSubtitleFont.Dark" parent="MenuSubtitleFont.Light">
         <item name="android:textColor">#7cffffff</item>
     </style>
 
