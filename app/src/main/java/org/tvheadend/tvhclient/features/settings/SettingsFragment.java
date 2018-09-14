@@ -128,7 +128,7 @@ public class SettingsFragment extends BasePreferenceFragment implements Preferen
                 handlePreferenceProfilesSelected();
                 break;
             case "playback":
-                showSelectedSettingsFragment("playback");
+                handlePreferencePlaybackSelected();
                 break;
             case "casting":
                 handlePreferenceCastingSelected();
@@ -185,6 +185,16 @@ public class SettingsFragment extends BasePreferenceFragment implements Preferen
             } else {
                 showSelectedSettingsFragment("casting");
             }
+        }
+    }
+
+    private void handlePreferencePlaybackSelected() {
+        if (!isUnlocked) {
+            if (getView() != null) {
+                Snackbar.make(getView(), R.string.feature_not_available_in_free_version, Snackbar.LENGTH_SHORT).show();
+            }
+        } else {
+            showSelectedSettingsFragment("playback");
         }
     }
 

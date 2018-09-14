@@ -19,15 +19,10 @@
 package org.tvheadend.tvhclient.features.settings;
 
 import android.os.Bundle;
-import android.preference.CheckBoxPreference;
-import android.preference.Preference;
-import android.support.design.widget.Snackbar;
 
 import org.tvheadend.tvhclient.R;
 
-public class SettingsPlaybackFragment extends BasePreferenceFragment implements Preference.OnPreferenceClickListener {
-
-    private CheckBoxPreference internalPlayerPreference;
+public class SettingsPlaybackFragment extends BasePreferenceFragment {
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -36,27 +31,5 @@ public class SettingsPlaybackFragment extends BasePreferenceFragment implements 
 
         toolbarInterface.setTitle("Playback");
         toolbarInterface.setSubtitle("");
-
-        internalPlayerPreference = (CheckBoxPreference) findPreference("internal_player_enabled");
-        internalPlayerPreference.setOnPreferenceClickListener(this);
-    }
-
-    @Override
-    public boolean onPreferenceClick(Preference preference) {
-        switch (preference.getKey()) {
-            case "playback":
-                handlePreferenceInternalPlayerSelected();
-                break;
-        }
-        return false;
-    }
-
-    private void handlePreferenceInternalPlayerSelected() {
-        if (getView() != null) {
-            if (!isUnlocked) {
-                Snackbar.make(getView(), R.string.feature_not_available_in_free_version, Snackbar.LENGTH_SHORT).show();
-                internalPlayerPreference.setChecked(false);
-            }
-        }
     }
 }
