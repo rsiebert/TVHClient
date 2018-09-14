@@ -56,6 +56,7 @@
             android:title="Enable Debug Text View" />
         <CheckBoxPreference
             android:defaultValue="@bool/pref_default_timeshift_enabled"
+            android:dependency="internal_player_enabled"
             android:key="timeshift_enabled"
             android:title="Enable timeshift support" />
     </PreferenceCategory>
