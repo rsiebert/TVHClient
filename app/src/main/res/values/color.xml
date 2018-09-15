@@ -28,14 +28,6 @@
 	<!-- other/unknown, dark grey -->
 	<color name="EPG_OTHER">#7f8185</color>
 
-	<!-- Drawer menu item background -->
-	<color name="drawer_background_light">#ffeeeeee</color>
-	<color name="drawer_background_dark">#ff191919</color>
-
-	<!-- Drawer menu background when it is selected  -->
-    <color name="drawer_selected_light">#aadedede</color>
-    <color name="drawer_selected_dark">#666e6e6e</color>
-
     <!-- Theme colors -->
     <color name="window_background_color_light">#fff5f5f5</color>
     <color name="window_background_color_dark">#ff141414</color>
