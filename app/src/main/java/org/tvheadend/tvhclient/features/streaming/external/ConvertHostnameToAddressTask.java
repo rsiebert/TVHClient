@@ -12,7 +12,7 @@ import timber.log.Timber;
 
 class ConvertHostnameToAddressTask extends AsyncTask<Void, Void, String> {
 
-    private Connection connection;
+    private final Connection connection;
 
     ConvertHostnameToAddressTask(@NonNull Connection connection) {
         this.connection = connection;

@@ -35,7 +35,7 @@ public class SimpleHtspConnection implements HtspMessage.Dispatcher, HtspConnect
 
     private boolean enableReconnect = false;
     private int retryCount = 0;
-    private int retryDelay;
+    private final int retryDelay;
 
     public SimpleHtspConnection(Context context, Connection connectionInfo) {
 
