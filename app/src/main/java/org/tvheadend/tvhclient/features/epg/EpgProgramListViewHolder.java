@@ -64,18 +64,10 @@ class EpgProgramListViewHolder extends RecyclerView.ViewHolder {
         boolean showProgramSubtitle = sharedPreferences.getBoolean("program_subtitle_enabled", true);
         boolean showGenreColors = sharedPreferences.getBoolean("genre_colors_for_program_guide_enabled", false);
 
-        itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                clickCallback.onClick(view, getAdapterPosition());
-            }
-        });
-        itemView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                clickCallback.onLongClick(view, getAdapterPosition());
-                return true;
-            }
+        itemView.setOnClickListener(view -> clickCallback.onClick(view, getAdapterPosition()));
+        itemView.setOnLongClickListener(view -> {
+            clickCallback.onLongClick(view, getAdapterPosition());
+            return true;
         });
 
         if (titleTextView != null) {

@@ -139,12 +139,7 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
         }
 
         loadingMoreProgramAllowed = true;
-        loadingProgramsAllowedTask = new Runnable() {
-            @Override
-            public void run() {
-                loadingMoreProgramAllowed = true;
-            }
-        };
+        loadingProgramsAllowedTask = () -> loadingMoreProgramAllowed = true;
     }
 
     private void handleObservedPrograms(List<Program> programs) {

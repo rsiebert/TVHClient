@@ -41,17 +41,15 @@ public class ChannelViewModel extends AndroidViewModel {
 
         // Initiate a timer that will update the view model data every minute
         // so that the progress bars will be displayed correctly
-        channelUpdateTask = new Runnable() {
-            public void run() {
-                long currentTime = new Date().getTime();
-                if (selectedTime < currentTime) {
-                    selectedTime = currentTime;
-                }
-                List<Channel> list = appRepository.getChannelData().getItemsByTimeAndTag(selectedTime, channelTagId);
-                channels.setValue(list);
-
-                channelUpdateHandler.postDelayed(channelUpdateTask, 60000);
+        channelUpdateTask = () -> {
+            long currentTime = new Date().getTime();
+            if (selectedTime < currentTime) {
+                selectedTime = currentTime;
             }
+            List<Channel> list = appRepository.getChannelData().getItemsByTimeAndTag(selectedTime, channelTagId);
+            channels.setValue(list);
+
+            channelUpdateHandler.postDelayed(channelUpdateTask, 60000);
         };
         channelUpdateHandler.post(channelUpdateTask);
     }

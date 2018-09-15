@@ -60,18 +60,10 @@ public class SeriesRecordingViewHolder extends RecyclerView.ViewHolder {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         boolean lightTheme = sharedPreferences.getBoolean("light_theme_enabled", true);
 
-        itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                clickCallback.onClick(view, getAdapterPosition());
-            }
-        });
-        itemView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                clickCallback.onLongClick(view, getAdapterPosition());
-                return true;
-            }
+        itemView.setOnClickListener(view -> clickCallback.onClick(view, getAdapterPosition()));
+        itemView.setOnLongClickListener(view -> {
+            clickCallback.onLongClick(view, getAdapterPosition());
+            return true;
         });
 
         if (dualPaneListItemSelection != null) {

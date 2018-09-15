@@ -116,18 +116,15 @@ public abstract class BaseRecordingAddEditFragment extends BaseFragment {
         new MaterialDialog.Builder(activity)
                 .title(R.string.days_of_week)
                 .items(R.array.day_long_names)
-                .itemsCallbackMultiChoice(selectedIndices, new MaterialDialog.ListCallbackMultiChoice() {
-                    @Override
-                    public boolean onSelection(MaterialDialog dialog, Integer[] which, CharSequence[] text) {
-                        int selectedDays = 0;
-                        for (Integer i : which) {
-                            selectedDays += (1 << i);
-                        }
-                        if (callback != null) {
-                            callback.onDaysOfWeekSelected(selectedDays);
-                        }
-                        return true;
+                .itemsCallbackMultiChoice(selectedIndices, (dialog, which, text) -> {
+                    int selectedDays = 0;
+                    for (Integer i : which) {
+                        selectedDays += (1 << i);
                     }
+                    if (callback != null) {
+                        callback.onDaysOfWeekSelected(selectedDays);
+                    }
+                    return true;
                 })
                 .positiveText(R.string.select)
                 .show();
@@ -170,14 +167,11 @@ public abstract class BaseRecordingAddEditFragment extends BaseFragment {
         new MaterialDialog.Builder(activity)
                 .title(R.string.select_priority)
                 .items(priorityList)
-                .itemsCallbackSingleChoice(selectedPriority, new MaterialDialog.ListCallbackSingleChoice() {
-                    @Override
-                    public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
-                        if (callback != null) {
-                            callback.onPrioritySelected(which);
-                        }
-                        return true;
+                .itemsCallbackSingleChoice(selectedPriority, (dialog, view, which, text) -> {
+                    if (callback != null) {
+                        callback.onPrioritySelected(which);
                     }
+                    return true;
                 })
                 .show();
     }
@@ -186,14 +180,11 @@ public abstract class BaseRecordingAddEditFragment extends BaseFragment {
         new MaterialDialog.Builder(activity)
                 .title(R.string.select_dvr_config)
                 .items(recordingProfilesList)
-                .itemsCallbackSingleChoice(selectedProfile, new MaterialDialog.ListCallbackSingleChoice() {
-                    @Override
-                    public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
-                        if (callback != null) {
-                            callback.onProfileSelected(which);
-                        }
-                        return true;
+                .itemsCallbackSingleChoice(selectedProfile, (dialog, view, which, text) -> {
+                    if (callback != null) {
+                        callback.onProfileSelected(which);
                     }
+                    return true;
                 })
                 .show();
     }

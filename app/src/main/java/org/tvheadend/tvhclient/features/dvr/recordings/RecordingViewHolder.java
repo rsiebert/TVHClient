@@ -82,25 +82,14 @@ public class RecordingViewHolder extends RecyclerView.ViewHolder {
         boolean playOnChannelIcon = sharedPreferences.getBoolean("channel_icon_starts_playback_enabled", true);
         boolean lightTheme = sharedPreferences.getBoolean("light_theme_enabled", true);
 
-        itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        itemView.setOnClickListener(view -> clickCallback.onClick(view, getAdapterPosition()));
+        itemView.setOnLongClickListener(view -> {
+            clickCallback.onLongClick(view, getAdapterPosition());
+            return true;
+        });
+        iconImageView.setOnClickListener(view -> {
+            if (playOnChannelIcon && (recording.isCompleted() || recording.isRecording())) {
                 clickCallback.onClick(view, getAdapterPosition());
-            }
-        });
-        itemView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                clickCallback.onLongClick(view, getAdapterPosition());
-                return true;
-            }
-        });
-        iconImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (playOnChannelIcon && (recording.isCompleted() || recording.isRecording())) {
-                    clickCallback.onClick(view, getAdapterPosition());
-                }
             }
         });
 

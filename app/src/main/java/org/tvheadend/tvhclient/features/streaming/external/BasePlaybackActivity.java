@@ -143,45 +143,43 @@ public abstract class BasePlaybackActivity extends AppCompatActivity implements 
         statusTextView.setText(getString(R.string.starting_playback));
 
         // Start playing the video in the UI thread
-        this.runOnUiThread(new Runnable() {
-            public void run() {
-                try {
-                    Timber.d("Starting external player");
-                    startActivity(intent);
-                    finish();
-                } catch (Throwable t) {
-                    Timber.d("Can't execute external media player");
-                    statusTextView.setText(R.string.no_media_player);
+        this.runOnUiThread(() -> {
+            try {
+                Timber.d("Starting external player");
+                startActivity(intent);
+                finish();
+            } catch (Throwable t) {
+                Timber.d("Can't execute external media player");
+                statusTextView.setText(R.string.no_media_player);
 
-                    // Show a confirmation dialog before deleting the recording
-                    new MaterialDialog.Builder(BasePlaybackActivity.this)
-                            .title(R.string.no_media_player)
-                            .content(R.string.show_play_store)
-                            .positiveText(getString(android.R.string.yes))
-                            .negativeText(getString(android.R.string.no))
-                            .onPositive(new MaterialDialog.SingleButtonCallback() {
-                                @Override
-                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                    try {
-                                        Timber.d("Opening play store to download external players");
-                                        Intent installIntent = new Intent(Intent.ACTION_VIEW);
-                                        installIntent.setData(Uri.parse("market://search?q=free%20video%20player&c=apps"));
-                                        startActivity(installIntent);
-                                    } catch (Throwable t2) {
-                                        Timber.d("Could not startPlayback google play store");
-                                    } finally {
-                                        finish();
-                                    }
-                                }
-                            })
-                            .onNegative(new MaterialDialog.SingleButtonCallback() {
-                                @Override
-                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                // Show a confirmation dialog before deleting the recording
+                new MaterialDialog.Builder(BasePlaybackActivity.this)
+                        .title(R.string.no_media_player)
+                        .content(R.string.show_play_store)
+                        .positiveText(getString(android.R.string.yes))
+                        .negativeText(getString(android.R.string.no))
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                try {
+                                    Timber.d("Opening play store to download external players");
+                                    Intent installIntent = new Intent(Intent.ACTION_VIEW);
+                                    installIntent.setData(Uri.parse("market://search?q=free%20video%20player&c=apps"));
+                                    startActivity(installIntent);
+                                } catch (Throwable t2) {
+                                    Timber.d("Could not startPlayback google play store");
+                                } finally {
                                     finish();
                                 }
-                            })
-                            .show();
-                }
+                            }
+                        })
+                        .onNegative(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                finish();
+                            }
+                        })
+                        .show();
             }
         });
     }

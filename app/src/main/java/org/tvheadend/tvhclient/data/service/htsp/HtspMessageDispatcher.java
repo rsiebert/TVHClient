@@ -170,12 +170,7 @@ public class HtspMessageDispatcher implements HtspMessage.DispatcherInternal, Ht
             if (handler == null) {
                 listener.onMessage(message);
             } else {
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        listener.onMessage(message);
-                    }
-                });
+                handler.post(() -> listener.onMessage(message));
             }
         }
     }
