@@ -4,19 +4,12 @@
 
     <string name="media_route_menu_title">Prehrať na&#8230;</string>
     <string name="intro_overlay_text">Ťuknite pre prenášanie kanálov alebo nahrávok do vášho televízora\n\nSkontrolujte, či spĺňate všetky podmienky pre casting v nastaveniach.</string>
-    <string name="connection_temp_lost">Prehrávanie na vašom zariadení bolo prerušené</string>
-    <string name="connection_recovered">Prehrávanie na vašom zariadení bolo obnovené</string>
-    <string name="cast_profile_not_set">Nieje nastavený žiaden profil pre casting. Prosím, nastavte profil pre casting.</string>
-    <string name="cast_profile_invalid">Vybraný profil \'%1$s\' nieje odporúčaný \'%2$s\' profil. Prehrávanie nemusí pracovať správne.</string>
     <string name="pref_casting">Casting</string>
     <string name="pref_casting_sum">Nastavenia pre casting kanálov alebo nahrávok do vášho televízora. Váš Tvheadend server musí podporovať transkódovanie v reálnom čase.</string>
-    <string name="pref_enable_casting">Zapnúť casting</string>
-    <string name="pref_enable_casting_sum">Ak váš Tvheadend server nepodporuje transkódovanie v reálnom čase, odporúčame vypnúť casting.</string>
     <string name="pref_show_cast_minicontroller">Ovládacie prvky</string>
     <string name="pref_show_cast_minicontroller_sum">Zobrazenie ovládacích prvkov vrátane informácii o aktuálnom prenose na spodku obrazovky.</string>
     <string name="download_error_insufficient_space">Chyba počas sťahovania nahrávky \'%s\'. Nedostatok miesta.</string>
     <string name="download_error_authentication_required">Chyba počas sťahovania nahrávky \'%s\'. Autentifikácia zlyhala.</string>
-    <string name="no_external_storage_available">Extérne úložisko nieje dostupné alebo je len na čítanie.</string>
 
     <string name="details">Podrobnosti</string>
     <string name="settings">Nastavenia</string>
@@ -66,12 +59,7 @@
     <string name="edit_recording">Upraviť nahrávanie</string>
     <string name="cancel_add_recording">Naozaj chcete zahodiť všetky neuložené zmeny? Nové nahrávanie nebude uložené.</string>
     <string name="cancel_edit_recording">Naozaj chcete zahodiť všetky neuložené zmeny?</string>
-    <string name="add_series_recording">Pridať sériové nahrávanie</string>
-    <string name="add_timer_recording">Pridať ručné nahrávanie</string>
-    <string name="edit_series_recording">Upraviť sériové nahrávanie</string>
-    <string name="edit_timer_recording">Upraviť ručné nahrávanie</string>
     <string name="activate_recording">Aktivovať nahrávanie</string>
-    <string name="selected_directory">Vybraný priečinok:</string>
     <string name="select">Vybrať</string>
     
     <string name="pref_manage_connections">Spravovať pripojenia</string>
@@ -79,17 +67,14 @@
     <string name="pref_connections">Pripojenia</string>
     <string name="pref_name">Názov pripojenia</string>
     <string name="pref_name_sum">Zadajte unikatný názov pre toto pripojenie</string>
-    <string name="pref_name_error_empty">Názov nesmie byť prázdný.</string>
     <string name="pref_name_error_invalid">Názov môže obsahovať len písmena, čísla, pomlčku a podtržítko.</string>
     <string name="pref_selected">Predvolené pripojenie</string>
     <string name="pref_selected_sum">Nastaviť toto pripojenie ako predvolené pri spustení aplikácie.</string>
     <string name="pref_host">Názov hostiteľa</string>
     <string name="pref_host_sum">Zadajte adresu servera (hostname alebo IP)</string>
-    <string name="pref_host_error_empty">Adresa servera nesmie byť prázdna.</string>
     <string name="pref_host_error_invalid">Neplatná adresa servera.</string>
     <string name="pref_port">HTSP Port</string>
     <string name="pref_port_sum">Zadajte port servera</string>
-    <string name="pref_port_error_empty">Číslo portu nesmie byť prázdne.</string>
     <string name="pref_port_error_invalid">Číslo portu je neplatné. Zadajte číslo v rozsahu 1 a 65535.</string>
     <string name="pref_streaming_port">HTTP Port pre media streaming</string>
     <string name="pref_streaming_port_sum">Port %d bude použitý pre media streaming. Predvolený port je 9981, ktorý je väčšinou správny.</string>
@@ -108,10 +93,6 @@
 
     <string name="pref_user_interface">Používateľské rozhranie</string>
     <string name="pref_channels">Kanály</string>
-    <string name="pref_icons">Loga kanálov</string>
-    <string name="pref_icons_sum">Zobraziť loga kanálov.</string>
-    <string name="pref_big_icons">Veľké loga kanálov</string>
-    <string name="pref_big_icons_sum">Zobraziť veľké loga kanálov.</string>
     <string name="pref_tag_icon">Skupiny kanálov</string>
     <string name="pref_tag_icon_sum">Zobrazenie ikony \'skupiny kanálov\' namiesto loga aplikácie.</string>
     <string name="pref_theme">Svetla téma</string>
@@ -122,18 +103,6 @@
     <string name="pref_default_menu_sum">Nadefinovanie obrazovky, ktorá sa zobrazí po štarte aplikácie.</string>
     <string name="pref_sort_channels">Poradie kanálov</string>
     <string name="pref_sort_channels_sum">Nadefinovanie poradia kanálov.</string>
-    <string name="pref_res">Rozlíšenie</string>
-    <string name="pref_res_sum">Zadajte maximálne rozlíšenie, ktoré použije transkóder.</string>
-    <string name="pref_acodec">Audio kodek</string>
-    <string name="pref_acodec_sum">Nadefinovanie typu zvuku, ktorý použije transkóder.</string>
-    <string name="pref_vcodec">Video kodek</string>
-    <string name="pref_vcodec_sum">Nadefinovanie typu videa, ktorý použije transkóder.</string>
-    <string name="pref_scodec">Titulkový kodek</string>
-    <string name="pref_scodec_sum">Nadefinovanie typu titulkov, ktoré použije transkóder.</string>
-    <string name="pref_container">Média kontajner</string>
-    <string name="pref_container_sum">Nadefinovanie Média kontajneru, ktorý sa použije pre prenos audio a video streamov. Matroska je väčšinou preferovanou voľbou.</string>
-    <string name="pref_transcode">Transkódovať stream</string>
-    <string name="pref_transcode_sum">Konvertovať program alebo nahrávku do iného formátu v priebehu prehrávania (toto musí podporovať TVHeadend server).</string>
     <string name="pref_information">Informácie</string>
     <string name="pref_changelog">Zoznam zmien</string>
     <string name="pref_changelog_sum">Zobraziť zoznam funkcií a zmien v jednotlivých verzií aplikácie.</string>
@@ -151,8 +120,6 @@
     <string name="pref_genre_colors_programs_sum">Žánrová farba bude zobrazená ako zvislá čiara na ľavej strane obrazovky so zoznamom kanálov a detailu programu.</string>
     <string name="pref_genre_colors_epg">Programový sprievodca</string>
     <string name="pref_genre_colors_epg_sum">Zobrazí farbu žánru na pozadí každej položky v programovom sprievodcovi.</string>
-    <string name="pref_genre_colors_search_results">Výsledky vyhľadávania</string>
-    <string name="pref_genre_colors_search_results_sum">Žánrová farba bude zobrazená ako zvislá čiara na ľavej strane zoznamu výsledku vyhľadávania.</string>
     <string name="pref_genre_colors_visibility_message">Nastaviť viditeľnosť farieb. Vyššie hodnoty znamenajú sýtejšie farby.</string>
     <string name="pref_genre_colors_visibility">Intenzita farby žánrov</string>
     <string name="pref_genre_colors_visibility_value">%1$d%% intenzity</string>
@@ -165,8 +132,6 @@
     <string name="pref_menu_visibility_sum">Zobrazenie alebo skrytie niektorých položiek v menu.</string>
     <string name="pref_hide_menu_delete_all_recordings">Skryť \'Vymazať všetky nahrávky\'</string>
     <string name="pref_hide_menu_delete_all_recordings_sum">Skrytie tejto položky v menu, aby sa zabránilo náhodnému vymazaniu všetkých nahrávok.</string>
-    <string name="pref_hide_menu_cancel_all_recordings">Skryť \'Zrušiť všetky nahrávania\'</string>
-    <string name="pref_hide_menu_cancel_all_recordings_sum">Skrytie tejto položky v menu, aby sa zabránilo náhodnému zrušeniu všetkých naplánovaných nahrávaní.</string>
     <string name="pref_visible_menu_icon_tags">Vždy zobrazovať menu \'Skupiny\'</string>
     <string name="pref_visible_menu_icon_tags_sum">Zobrazenie tejto položky v paneli. Nebude premiestnené do bočného menu, ak nebude dostatok miesta.</string>
     <string name="pref_profiles">Profily</string>
@@ -177,10 +142,6 @@
     <string name="pref_playback_profiles_sum">Nadefinovanie profilu pre prehrávanie nahraného programu.</string>
     <string name="pref_cast_profiles">Profily pre casting</string>
     <string name="pref_cast_profiles_sum">Zobraziť profil, ktorý bude použitý pre prenášanie kanálu či nahrávky do Chromecastu alebo podobného zariadenia.</string>
-    <string name="pref_enable_recording_profiles">Zapnúť nahrávacie profily</string>
-    <string name="pref_enable_recording_profiles_sum">Použije novú funkcionalitu pre profily na nahrávanie. Toto prepíše všetky nadefinované video a audio parametre pre nahrávanie naplánovaného programu.</string>
-    <string name="pref_enable_playback_profiles">Zapnúť prehrávacie profily</string>
-    <string name="pref_enable_playback_profiles_sum">Použije novú funkcionalitu pre profily na programy. Toto prepíše všetky nadefinované video a audio parametre pre prehrávanie programu.</string>
     <string name="pref_notifications">Notifikácie</string>
     <string name="pref_download_directory">Priečinok pre sťahovanie</string>
     <string name="pref_download_directory_sum">Nahrávky budú sťahované do nasledujúceho priečinka: \'%s\'</string>
@@ -194,9 +155,7 @@
     <string name="pref_play_when_channel_icon_selected_sum">Po kliknutí na logo kanálu v zozname kanálov, v programovom sprievodcovi alebo v zozname nahrávaní, začne prehrávanie aktuálneho programu alebo nahrávania.</string>
     <string name="pref_programs">Programy</string>
     <string name="pref_playback_and_recording">Prehrávanie a nahrávanie</string>
-    <string name="pref_transcoding">Video a audio parametre</string>
-    <string name="pref_transcoding_sum">Nadefinovanie video a audio parametrov pre nahrávanie programov a prehrávanie nahráviek.</string>
-    
+
     <string name="pref_advanced_settings">Pokročilé nastavenia</string>
     <string name="pref_debug_mode">Debug Mode</string>
     <string name="pref_debug_mode_sum">Zapisovať detailné informácie do log súboru na internej pamäti. Môže trošku spomaliť aplikáciu.</string>
@@ -217,10 +176,6 @@
     <string name="clear_icon_cache_sum">Naozaj chete vymazať všetky loga kanálov? Aktualizované loga kanálov budú znovunačítané zo servera.</string>
     <string name="clear_icon_cache_done">Cache s logami kanálov bola vymazaná</string>
 
-    <string name="err_auth">Prístup zamietnutý</string>
-    <string name="err_connect">Nepodarilo sa pripojiť k serveru</string>
-    <string name="err_con_lost">Pripojenie k serveru sa stratilo</string>
-    <string name="err_con_timeout">Časový limit pripojenia vypršal</string>
     <string name="err_no_network">Žiadne sieťové pripojenie nieje aktívne</string>
     <string name="error_adding_recording">Nahrávanie nebolo pridané! %s</string>
     <string name="error_removing_recording">Nahrávanie nebolo vymazané! %s</string>
@@ -242,7 +197,6 @@
     <string name="wol_address_invalid">MAC adresa nieje platná. Skontrolujte nastavenia.</string>
     <string name="wol_error">Chyba pri odosielaní Wake on LAN paketu na \'%1$s\'.\n Chybová správa: %2$s</string>
 
-    <string name="no_transmission">Žiadne vysielanie</string>
     <string name="no_data">Údaje o programe sú nedostupné</string>
     <string name="minutes">%d min</string>
 	
@@ -261,8 +215,6 @@
     <string name="friday">Piatok</string>
     <string name="saturday">Sobota</string>
     <string name="sunday">Nedeľa</string>
-    <string name="all_days">Všetky dni</string>
-    <string name="no_days">Žiadne dni</string>
 
     <string name="completed_recordings">Dokončené nahrávky</string>
     <string name="scheduled_recordings">Naplánované nahrávky</string>
@@ -283,7 +235,6 @@
     <string name="recordings">Nahrávania</string>
     <string name="status">Stav</string>
 
-    <string name="status_icon">Ikona stavu</string>
     <string name="directory">Priečinok</string>
     <string name="title">Názov</string>
     <string name="subtitle">Podtitulok</string>
@@ -313,7 +264,6 @@
     <string name="min_duration">Minimálne trvanie</string>
     <string name="max_duration">Maximálne trvanie</string>
     <string name="duration_sum">Trvanie v minútach (0 = žiadne)</string>
-    <string name="from_to_time">Od %1$s do %2$s</string>
     <string name="recording_time">Čas nahrávania</string>
     <string name="error_empty_title">Názov nesmie byť prázdny!</string>
     <string name="duplicate_detection">Detekovať duplicitné programy</string>
@@ -343,9 +293,7 @@
     <string name="unknown">Neznámy</string>
     <string name="ready">Pripravený</string>
     <string name="select_time">Zobraziť programy, ktoré vyhovujú zvolenému času.</string>
-    <string name="select_timeframe">Zobraziť programového sprievodcu pre zvolený dátum a čas.</string>
     <string name="currently_recording">Prebiehajúce nahrávanie</string>
-    <string name="select_channel">Vyberte kanál</string>
     <string name="select_priority">Nastavte prioritu</string>
     <string name="select_dvr_config">Vyberte nahrávací profil</string>
     <string name="select_log_file">Vyberte log súbor</string>
@@ -354,7 +302,6 @@
     <!-- Connection related -->
     <string name="no_connection_available_advice">Žiadne pripojenie nie je k dispozícii. Musíte pridať aspoň jedno pripojenie.</string>
     <string name="no_connection_available">K dispozícii nie je žiadne pripojenie.</string>
-    <string name="no_connection_active">Žiadne pripojenie nie je aktívne</string>
     <string name="no_connection_active_advice">Ani jedno dostupné pripojenie nie je aktivované.</string>
     
     <!-- Unlocker related -->
@@ -368,10 +315,6 @@
     <string name="show_play_store">Chcete otvoriť Obchod Google Play a nájsť dostupný prehrávač multimédií?</string>
 
     <!-- Optional strings for the navigation drawer -->
-    <string name="drawer_open">Zobraziť bočný panel</string>
-    <string name="drawer_close">Skryť bočný panel</string>
-
-    <string name="parent_directory">Rodičovský priečinok</string>
 
     <string name="pref_show_program_artwork_sum">Zobrazí artwork/plagát obrázok aktuálneho programu. Server musí poskytovať tieto informácie.</string>
     <string name="pref_show_program_artwork">Zobraziť artwork/plagát programu</string>
@@ -384,9 +327,6 @@
     <string name="pref_date_time_format_sum">Zobrazí dátum a čas, ktorý je používaný vo vašej krajine. V opačnom prípade bude použitý formát \'31.12.2017, 21:09\'.</string>
 
     <string name="pref_crash_reporting_settings">Nastavenie nahlasovania chýb</string>
-    <string name="pref_disable_acra">Zapnúť ACRA?</string>
-    <string name="pref_acra_enabled">ACRA zapnuté</string>
-    <string name="pref_acra_disabled">ACRA vypnuté</string>
     <string name="pref_show_program_subtitle_sum">Okrem názvu programu, zobrazí aj krátky obsah/popis</string>
     <string name="pref_show_program_subtitle">Zobraziť krátky popis programu</string>
 

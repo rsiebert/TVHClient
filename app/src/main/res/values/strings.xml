@@ -4,19 +4,12 @@
 
     <string name="media_route_menu_title">Play on&#8230;</string>
     <string name="intro_overlay_text">Touch to cast Live TV or recordings to your TV.\n\nPlease check that you meet the requirements described in the casting settings.</string>
-    <string name="connection_temp_lost">Connection to the cast device is temporarily lost</string>
-    <string name="connection_recovered">Connection to the cast device is recovered</string>
-    <string name="cast_profile_not_set">No casting profile was selected in the settings. This is required before casting can be used.</string>
-    <string name="cast_profile_invalid">The selected profile \'%1$s\' is not the recommended \'%2$s\' one. Please note that casting might not work correctly.</string>
     <string name="pref_casting">Casting</string>
     <string name="pref_casting_sum">Configure casting of programs or recordings to your TV. The server must have transcoding enabled.</string>
-    <string name="pref_enable_casting">Enable casting</string>
-    <string name="pref_enable_casting_sum">Enable this feature if your server supports transcoding the data in realtime.</string>
     <string name="pref_show_cast_minicontroller">Cast controls</string>
     <string name="pref_show_cast_minicontroller_sum">Show a cast minicontroller at the bottom of the screen to display some information about the current cast.</string>
     <string name="download_error_insufficient_space">Error downloading the recording \'%s\'. Not sufficient space on the device.</string>
     <string name="download_error_authentication_required">Error downloading the recording \'%s\'. Authentication not correct or missing.</string>
-    <string name="no_external_storage_available">External storage is not available or read only.</string>
 
     <string name="details">Details</string>
     <string name="settings">Settings</string>
@@ -70,12 +63,7 @@
     <string name="edit_recording">Edit recording</string>
     <string name="cancel_add_recording">Cancel adding a new recording? All values will be lost.</string>
     <string name="cancel_edit_recording">Cancel editing existing recording? All values will be lost.</string>
-    <string name="add_series_recording">Add new series recording</string>
-    <string name="add_timer_recording">Add new manual recording</string>
-    <string name="edit_series_recording">Edit series recording</string>
-    <string name="edit_timer_recording">Edit manual recording</string>
     <string name="activate_recording">Activate recording</string>
-    <string name="selected_directory">Selected directory:</string>
     <string name="select">Select</string>
 
     <string name="pref_manage_connections">Manage connections</string>
@@ -83,17 +71,14 @@
     <string name="pref_connections">Connections</string>
     <string name="pref_name">Connection name</string>
     <string name="pref_name_sum">Enter a unique name of the connection</string>
-    <string name="pref_name_error_empty">The name must not be empty.</string>
     <string name="pref_name_error_invalid">The name must not be empty and may only contain letters, numbers, minus and underscore.</string>
     <string name="pref_selected">Default connection</string>
     <string name="pref_selected_sum">Select to make this the default connection and use it after the application has started.</string>
     <string name="pref_host">Hostname</string>
     <string name="pref_host_sum">Enter the server hostname</string>
-    <string name="pref_host_error_empty">The IP-address or hostname must not be empty.</string>
     <string name="pref_host_error_invalid">The IP-address is not valid.</string>
     <string name="pref_port">HTSP Port</string>
     <string name="pref_port_sum">Enter the server port</string>
-    <string name="pref_port_error_empty">The port number must not be empty.</string>
     <string name="pref_port_error_invalid">The port number is not valid. Specify a number between 1 and 65535.</string>
     <string name="pref_streaming_port">HTTP Port for media streaming</string>
     <string name="pref_streaming_port_sum" tools:ignore="PluralsCandidate">Port %d will be used for media streaming. The default port is 9981 which is usually fine to use.</string>
@@ -112,10 +97,6 @@
 
     <string name="pref_user_interface">User interface</string>
     <string name="pref_channels">Channels</string>
-    <string name="pref_icons">Channel icons</string>
-    <string name="pref_icons_sum">Show the channel icons.</string>
-    <string name="pref_big_icons">Big channel icon</string>
-    <string name="pref_big_icons_sum">Show a larger version of the channel icon.</string>
     <string name="pref_tag_icon">Channel tag icon</string>
     <string name="pref_tag_icon_sum">Show the icon for a channel tag instead of the application logo.</string>
     <string name="pref_theme">Light theme</string>
@@ -126,18 +107,6 @@
     <string name="pref_default_menu_sum">Choose the screen that will be shown when the application starts.</string>
     <string name="pref_sort_channels">Channel Order</string>
     <string name="pref_sort_channels_sum">Choose in which order the channels will be displayed.</string>
-    <string name="pref_res">Resolution</string>
-    <string name="pref_res_sum">Specify the maximum resolution that the transcoder shall use.</string>
-    <string name="pref_acodec">Audio codec</string>
-    <string name="pref_acodec_sum">Define the type of audio that the transcoder shall use.</string>
-    <string name="pref_vcodec">Video codec</string>
-    <string name="pref_vcodec_sum">Define the type of video that the transcoder shall use.</string>
-    <string name="pref_scodec">Subtitle codec</string>
-    <string name="pref_scodec_sum">Define the subtitle type that the transcoder shall use.</string>
-    <string name="pref_container">Media container</string>
-    <string name="pref_container_sum">Define the media container that shall be used to transport the audio and video streams. Matroshka is usually the preferred choice.</string>
-    <string name="pref_transcode">Transcode stream</string>
-    <string name="pref_transcode_sum">Convert the program or recording into another format during playback. (This must be supported by the TVHeadend server)</string>
     <string name="pref_information">Information</string>
     <string name="pref_changelog">Changelog</string>
     <string name="pref_changelog_sum">Show a list of features and changes of the different application versions.</string>
@@ -155,8 +124,6 @@
     <string name="pref_genre_colors_programs_sum">The genre color will be shown as a vertical line on the left side of the program lists and the program details screen.</string>
     <string name="pref_genre_colors_epg">Program guide</string>
     <string name="pref_genre_colors_epg_sum">Shows the genre color in the background of each program guide item.</string>
-    <string name="pref_genre_colors_search_results">Search results</string>
-    <string name="pref_genre_colors_search_results_sum">The genre color will be shown as a vertical line on the left side of the search result list.</string>
     <string name="pref_genre_colors_visibility_message">Set the visibility of the colors. Higher values mean stronger colors.</string>
     <string name="pref_genre_colors_visibility">Genre color visibility</string>
     <string name="pref_genre_colors_visibility_value">%1$d%% visible</string>
@@ -169,8 +136,6 @@
     <string name="pref_menu_visibility_sum">Hide or show certain menu items.</string>
     <string name="pref_hide_menu_delete_all_recordings">Hide the \'Delete all recordings\' menu</string>
     <string name="pref_hide_menu_delete_all_recordings_sum">Do not show this menu to prevent an accidental deletion of all recorded programs.</string>
-    <string name="pref_hide_menu_cancel_all_recordings">Hide the \'Cancel all recordings\' menu</string>
-    <string name="pref_hide_menu_cancel_all_recordings_sum">Do not show this menu to accidentally prevent cancelling all scheduled programs.</string>
     <string name="pref_visible_menu_icon_tags">Show the \'Channel Tags\' menu</string>
     <string name="pref_visible_menu_icon_tags_sum">Try to show the channel tag menu in the action bar and not in the three dot menu.</string>
     <string name="pref_profiles">Profiles</string>
@@ -181,10 +146,6 @@
     <string name="pref_playback_profiles_sum">Select a profile that shall be used to play a recorded program.</string>
     <string name="pref_cast_profiles">Cast playback profiles</string>
     <string name="pref_cast_profiles_sum">Select a profile that shall be used to cast a channel or recorded program to a chromecast or similar device.</string>
-    <string name="pref_enable_recording_profiles">Enable recording profiles</string>
-    <string name="pref_enable_recording_profiles_sum">Use the newer server profile functionality for recordings. This overrides any defined video and audio parameters for recording a scheduled program.</string>
-    <string name="pref_enable_playback_profiles">Enable playback profiles</string>
-    <string name="pref_enable_playback_profiles_sum">Use the newer server profile functionality for programs. This overrides any defined video and audio parameters for playing a program.</string>
     <string name="pref_notifications">Notifications</string>
     <string name="pref_download_directory">Download directory</string>
     <string name="pref_download_directory_sum">Recordings will be downloaded into the following directory: \'%s\'</string>
@@ -198,8 +159,6 @@
     <string name="pref_play_when_channel_icon_selected_sum">Start playing the current program or recording when the channel icon is selected in the channel list, program guide or recording list screen.</string>
     <string name="pref_programs">Programs</string>
     <string name="pref_playback_and_recording">Playback and recording</string>
-    <string name="pref_transcoding">Video and audio parameters</string>
-    <string name="pref_transcoding_sum">Defines the video and audio parameters how programs shall be recorded or how recordings shall be played.</string>
 
     <string name="pref_advanced_settings">Advanced settings</string>
     <string name="pref_debug_mode">Debug Mode</string>
@@ -221,10 +180,6 @@
     <string name="clear_icon_cache_sum">Are you sure you want to remove all channel icons? You need to reconnect to load updated icons from the server.</string>
     <string name="clear_icon_cache_done">Channel icon cache cleared</string>
 
-    <string name="err_auth">Access denied</string>
-    <string name="err_connect">Can\'t connect to server</string>
-    <string name="err_con_lost">Lost connection to server</string>
-    <string name="err_con_timeout">Connection timeout</string>
     <string name="err_no_network">No network connection active</string>
     <string name="error_adding_recording">Recording was not added! %s</string>
     <string name="error_removing_recording">Recording was not removed! %s</string>
@@ -246,7 +201,6 @@
     <string name="wol_address_invalid">The MAC-address is not valid. Please check your settings.</string>
     <string name="wol_error">Error sending wake on LAN packet to \'%1$s\'.\n Error message: %2$s</string>
 
-    <string name="no_transmission">No transmission</string>
     <string name="no_data">No program data available</string>
     <string name="minutes">%d min</string>
 
@@ -265,8 +219,6 @@
     <string name="friday">Friday</string>
     <string name="saturday">Saturday</string>
     <string name="sunday">Sunday</string>
-    <string name="all_days">All days</string>
-    <string name="no_days">No days</string>
 
     <string name="completed_recordings">Completed recordings</string>
     <string name="scheduled_recordings">Scheduled recordings</string>
@@ -287,7 +239,6 @@
     <string name="recordings">Recordings</string>
     <string name="status">Status</string>
 
-    <string name="status_icon">Status icon</string>
     <string name="directory">Directory</string>
     <string name="title">Title</string>
     <string name="subtitle">Subtitle</string>
@@ -317,7 +268,6 @@
     <string name="min_duration">Minimum duration of the program</string>
     <string name="max_duration">Maximum duration of the program</string>
     <string name="duration_sum">Duration in minutes (0 = any)</string>
-    <string name="from_to_time">From %1$s to %2$s</string>
     <string name="recording_time">Recording Time</string>
     <string name="error_empty_title">The title must no be empty!</string>
     <string name="duplicate_detection">Detect duplicate shows</string>
@@ -347,9 +297,7 @@
     <string name="unknown">Unknown</string>
     <string name="ready">Ready</string>
     <string name="select_time">Show programs that are running at the selected time.</string>
-    <string name="select_timeframe">Show the program guide for the selected date and time.</string>
     <string name="currently_recording">Currently recording</string>
-    <string name="select_channel">Select channel</string>
     <string name="select_priority">Select priority</string>
     <string name="select_dvr_config">Select recording profile</string>
     <string name="select_log_file">Select logfile</string>
@@ -358,7 +306,6 @@
     <!-- Connection related -->
     <string name="no_connection_available">No connection available</string>
     <string name="no_connection_available_advice">No connection available. At least one is required.</string>
-    <string name="no_connection_active">No connection activated</string>
     <string name="no_connection_active_advice">At least one connection is defined, but not activated.</string>
 
     <!-- Unlcoker related -->
@@ -372,10 +319,6 @@
     <string name="show_play_store">Do you want to go to the Google Play Store and search for available media players?</string>
 
     <!-- Optional strings for the navigation drawer -->
-    <string name="drawer_open">Open navigation drawer</string>
-    <string name="drawer_close">Close navigation drawer</string>
-
-    <string name="parent_directory">Parent directory</string>
 
     <string name="pref_show_program_artwork_sum">Displays the artwork/poster image to the current program. The server must provide the information.</string>
     <string name="pref_show_program_artwork">Show program artwork/poster</string>
@@ -388,9 +331,6 @@
     <string name="pref_date_time_format_sum">Display the date and time as usually used in your country. Otherwise the format \'31.12.2017, 21:09\' is used.</string>
 
     <string name="pref_crash_reporting_settings">Crash Reporting Settings</string>
-    <string name="pref_disable_acra">Enable ACRA?</string>
-    <string name="pref_acra_enabled">ACRA enabled</string>
-    <string name="pref_acra_disabled">ACRA disabled</string>
     <string name="pref_show_program_subtitle_sum">Displays the subtitle to the current program</string>
     <string name="pref_show_program_subtitle">Show program subtitle</string>
     <string name="loading_more_programs">Loading more programs</string>
@@ -453,4 +393,6 @@
     <string name="dialog_content_disconnect_from_server">No active connection is defined. The existing connection to the server will be closed.</string>
     <string name="dialog_content_connection_changed">Connection settings have changed. The application will be restarted and a new initial sync will be performed.</string>
     <string name="dialog_title_connection_changed">Connect to new server?</string>
+    <string name="duplicate_recording">Recording is a duplicate</string>
+    <string name="pref_hide_duplicate_scheduled_recordings">Hide duplicate scheduled recordings</string>
 </resources>

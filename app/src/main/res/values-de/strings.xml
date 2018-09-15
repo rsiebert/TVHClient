@@ -4,19 +4,12 @@
 
     <string name="media_route_menu_title">Spiele auf&#8230;</string>
     <string name="intro_overlay_text">Zeige Live-TV oder Aufnahmen auf dem Casting Gerät deiner Wahl.\n\nBitte überprüfe, dass die Anforderungen zum Casting erfüllt werden. Diese sind in the Casting Einstellungen beschrieben.</string>
-    <string name="connection_temp_lost">Verbindung zum Casting Gerät verloren</string>
-    <string name="connection_recovered">Verbindung zum Casting Gerät wurde wieder hergestellt</string>
-    <string name="cast_profile_not_set">Es wurde kein Casting Profil in den Einstellungen gewählt. Dies ist zwingend erforderlich.</string>
-    <string name="cast_profile_invalid">Das gewählte Profil \'%1$s\' entspricht nicht dem empfohlenden Profil \'%2$s\'. Casting wird evtl. nicht korrekt funktionieren.</string>
     <string name="pref_casting">Casting</string>
     <string name="pref_casting_sum">Einstellungen für die Casting Funktionalität. Bitte beachte, dass Casting eine TVHeadend Version erfordert, die transkodieren kann. Außerdem muss der Server leistungsstark genug sein, um die Videodaten in Echtzeit konvertieren zu können. Andernfalls wird Casting nicht funktionieren!</string>
-    <string name="pref_enable_casting">Aktiviere Casting</string>
-    <string name="pref_enable_casting_sum">Diese Funktion nur aktivieren, wenn TVHeadend transkodieren kann und der Server leistungsstark genug ist, um die Videodaten in Echtzeit zu konvertieren.</string>
     <string name="pref_show_cast_minicontroller">Cast Ministeuerung</string>
     <string name="pref_show_cast_minicontroller_sum">Zeigt im unteren Bildschirmbereich die wichtigsten Informationen und Steuerelemente für den aktuellen Cast an.</string>
     <string name="download_error_insufficient_space">Fehler beim Downloaden der Aufnahme \'%s\'. Nicht genug Speicherplatz verfügbar.</string>
     <string name="download_error_authentication_required">Fehler beim Downloaden der Aufnahme \'%s\'. Authentifizierung war nicht korrekt bzw. fehlt.</string>
-    <string name="no_external_storage_available">Der externe Speicher ist entweder nicht verfügbar oder nicht beschreibbar.</string>
 
     <string name="details">Details</string>
     <string name="settings">Einstellungen</string>
@@ -70,12 +63,7 @@
     <string name="edit_recording">Aufnahme bearbeiten</string>
     <string name="cancel_add_recording">Hinzufügen der Aufnahme abbrechen? Alle Eingaben gehen verloren.</string>
     <string name="cancel_edit_recording">Bearbeiten der Aufnahme abbrechen? All values will be lost.</string>
-    <string name="add_series_recording">Neue Serienaufnahme hinzufügen</string>
-    <string name="add_timer_recording">Neue manuelle Aufnahme hinzufügen</string>
-    <string name="edit_series_recording">Serienaufnahme bearbeiten</string>
-    <string name="edit_timer_recording">Manuelle Aufnahme bearbeiten</string>
     <string name="activate_recording">Aufnahme aktivieren</string>
-    <string name="selected_directory">Gewähltes Verzeichnis:</string>
     <string name="select">Auswählen</string>
 
     <string name="pref_manage_connections">Verbindungen verwalten</string>
@@ -83,17 +71,14 @@
     <string name="pref_connections">Verbindungen</string>
     <string name="pref_name">Name der Verbindung</string>
     <string name="pref_name_sum">Bitte einen eindeutigen Namen eingeben.</string>
-    <string name="pref_name_error_empty">Der Name darf nicht leer sein.</string>
     <string name="pref_name_error_invalid">Der Name darf nicht leer sein und nur Buchstaben, Ziffern, Minus oder Unterstrich enthalten.</string>
     <string name="pref_selected">Standardverbindung</string>
     <string name="pref_selected_sum">Falls gesetzt, wird diese Verbindung beim Starten automatisch verwendet.</string>
     <string name="pref_host">Hostname</string>
     <string name="pref_host_sum">Hostname des Servers eingeben</string>
-    <string name="pref_host_error_empty">Die IP-Adresse oder der Hostname darf nicht leer sein.</string>
     <string name="pref_host_error_invalid">Die IP-Adresse ist ungültig.</string>
     <string name="pref_port">HTSP-Port</string>
     <string name="pref_port_sum">Server-Port eingeben</string>
-    <string name="pref_port_error_empty">Die Port-Nummer darf nicht leer sein.</string>
     <string name="pref_port_error_invalid">Die Port-Nummer ist ungültig. Der Wert muss zwischen 1 und 65535 liegen.</string>
     <string name="pref_streaming_port">HTTP-Port zum Streamen</string>
     <string name="pref_streaming_port_sum">%d wird zum Streamen von TV-Programmen oder Aufnahmen verwendet. Normalerweise ist 9981 der Standardport und kann meistens beibehalten werden.</string>
@@ -111,10 +96,6 @@
     <string name="pref_wol_address_invalid">Die MAC-Adresse ist ungültig.\nDas Format ist \'01:24:67:9a:cd:ef\'.</string>
     <string name="pref_user_interface">Benutzeroberfläche</string>
     <string name="pref_channels">Sender</string>
-    <string name="pref_icons">Senderlogos</string>
-    <string name="pref_icons_sum">Zeigt zu jedem Sender (falls verfügbar) das dazugehörige Logo als Icon an.</string>
-    <string name="pref_big_icons">Größere Senderlogos</string>
-    <string name="pref_big_icons_sum">Zeige ein größeres Senderlogo als Icon an.</string>
     <string name="pref_tag_icon">Logo für Sendergruppen</string>
     <string name="pref_tag_icon_sum">Zeigt für die gewählte Sendergruppe (falls verfügbar) das dazugehörige Logo. Ist keines konfiguriert, wird das Logo der Applikation verwendet.</string>
     <string name="pref_theme">Helles Theme</string>
@@ -125,18 +106,6 @@
     <string name="pref_default_menu_sum">Definiert den Bildschirm, der nach dem Start zuerst angezeigt werden soll. Standardmäßig wird die Senderliste als erstes angezeigt.</string>
     <string name="pref_sort_channels">Sender-Reihenfolge</string>
     <string name="pref_sort_channels_sum">Legt fest in welcher Reihenfolge die Sender angezeigt werden sollen.</string>
-    <string name="pref_res">Auflösung</string>
-    <string name="pref_res_sum">Maximale Auflösung, die der Transcoder verwenden soll.</string>
-    <string name="pref_acodec">Audio-Codec</string>
-    <string name="pref_acodec_sum">Definiert welche Art von Audio der Transcoder verwenden soll.</string>
-    <string name="pref_vcodec">Video-Codec</string>
-    <string name="pref_vcodec_sum">Definiert welche Art von Video der Transcoder verwenden soll.</string>
-    <string name="pref_scodec">Untertitel Codec</string>
-    <string name="pref_scodec_sum">Definiert welche Art von Untertiteln der Transcoder verwenden soll.</string>
-    <string name="pref_container">Medien-Container</string>
-    <string name="pref_container_sum">Die Art des Medien-Containers in dem die Audio- und Videoinformationen gesendet werden. Matroschka ist üblicherweise die bevorzugte Wahl.</string>
-    <string name="pref_transcode">Stream transkodieren</string>
-    <string name="pref_transcode_sum">Falls gesetzt, wird die Live-Wiedergabe oder das Program während der Übertragung in ein anderes Format konvertiert. (Der TVHeadend Server muss dies unterstützen)</string>
     <string name="pref_information">Informationen</string>
     <string name="pref_changelog">Änderungshistorie</string>
     <string name="pref_changelog_sum">Zeigt eine Liste aller Änderungen und Eigenschaften zwischen den Versionen.</string>
@@ -154,8 +123,6 @@
     <string name="pref_genre_colors_programs_sum">Falls gesetzt, wird die Genrefarbe als vertikale Linie im linken Bereich in der Programmliste und in der Detailansicht angezeigt.</string>
     <string name="pref_genre_colors_epg">Programübersicht</string>
     <string name="pref_genre_colors_epg_sum">Falls gesetzt, wird die Genrefarbe als farbiger Hintergrund für jedes Programm verwendet.</string>
-    <string name="pref_genre_colors_search_results">Suchergebnisse</string>
-    <string name="pref_genre_colors_search_results_sum">Falls gesetzt, wird die Genrefarbe wird als vertikale Linie im linken Bereich der Suchergebnissliste angezeigt.</string>
     <string name="pref_genre_colors_visibility_message">Definiere wie stark die Farben sichtbar sein sollen. Je höher der Wert, desto stärker wirken die Farben.</string>
     <string name="pref_genre_colors_visibility">Sichtbarkeit der Genrefarben</string>
     <string name="pref_genre_colors_visibility_value">%1$d%% sichtbar</string>
@@ -168,8 +135,6 @@
     <string name="pref_menu_visibility_sum">Aktiviert oder deaktiviert bestimmte Menüeinträge</string>
     <string name="pref_hide_menu_delete_all_recordings">Menü \'Alle Aufnahmen löschen\' ausblenden</string>
     <string name="pref_hide_menu_delete_all_recordings_sum">Versteckt den Menüeintrag um ein versehentliches Löschen aller aufgenommenen Programme zu vermeiden.</string>
-    <string name="pref_hide_menu_cancel_all_recordings">Menü \'Alle Aufnahmen abbrechen\' ausblenden</string>
-    <string name="pref_hide_menu_cancel_all_recordings_sum">Versteckt den Menüeintrag um ein versehentliches Abbrechen aller geplanter Aufnahmen zu vermeiden.</string>
     <string name="pref_visible_menu_icon_tags">Menü \'Anzeige filtern\' immer anzeigen</string>
     <string name="pref_visible_menu_icon_tags_sum">Zeige das Menü immer in der Actionbar an. Damit wird verhindert, dass der Menüeintrag ausgeblendet wird und in das \'Drei Punkte Menü\' wandert, wenn nicht genug Platz vorhanden ist.</string>
     <string name="pref_profiles">Profile</string>
@@ -180,10 +145,6 @@
     <string name="pref_playback_profiles_sum">Bestimmt das Profil, dass der Server für das Abspielen der Aufnahmen verwenden soll.</string>
     <string name="pref_cast_profiles">Cast Wiedergabeprofile</string>
     <string name="pref_cast_profiles_sum">Bestimmt das Profil, dass der Server für Abspielen von Live-TV oder Aufnahmen auf einem Cast Gerät verwenden soll.</string>
-    <string name="pref_enable_recording_profiles">Aktiviere Aufnahmeprofile</string>
-    <string name="pref_enable_recording_profiles_sum">Verwende die neueren Serverprofile für Aufnahmen. Deren Video und Audio-Einstellungen werden dann nicht mehr verwendet.</string>
-    <string name="pref_enable_playback_profiles">Aktiviere Wiedergabeprofile</string>
-    <string name="pref_enable_playback_profiles_sum">Verwende die neueren Serverprofile für Programme. Deren Video und Audio-Einstellungen werden dann nicht mehr verwendet.</string>
     <string name="pref_notifications">Benachrichtigungen</string>
     <string name="pref_download_directory">Download Verzeichnis</string>
     <string name="pref_download_directory_sum">Aufnahmen werden in folgendes Verzeichnis heruntergeladen: \'%s\'</string>
@@ -197,8 +158,6 @@
     <string name="pref_play_when_channel_icon_selected_sum">Startet das aktuelle Programm bzw. Aufnahme, wenn das Senderlogo in der Senderliste, Programmanzeige oder in der Aufnahmelist angeklickt wurde.</string>
     <string name="pref_programs">Programme</string>
     <string name="pref_playback_and_recording">Wiedergabe und Aufnahme</string>
-    <string name="pref_transcoding">Video- und Audio</string>
-    <string name="pref_transcoding_sum">Definiert die Einstellungen mit denen Programme aufgenommen und Aufnahmen abgespielt werden.</string>
 
     <string name="pref_advanced_settings">Erweiterte Einstellungen</string>
     <string name="pref_debug_mode">Debug Modus</string>
@@ -220,10 +179,6 @@
     <string name="clear_icon_cache_sum">Sollen alle Senderlogos gelöscht werden? Die Verbindung zum Server muss neu gestarted werden, um aktualisierte Senderlogos vom Server zu laden.</string>
     <string name="clear_icon_cache_done">Gespeicherte Senderlogos wurden gelöscht</string>
 
-    <string name="err_auth">Der Zugriff auf den Server wurde verweigert.</string>
-    <string name="err_connect">Verbindung mit dem Server konnte nicht hergestellt werden.</string>
-    <string name="err_con_lost">Verbindung zum Server wurde unterbrochen.</string>
-    <string name="err_con_timeout">Zeitüberschreitung beim Verbinden zum Server.</string>
     <string name="err_no_network">Keine Netzwerkverbindung aktiv</string>
     <string name="error_adding_recording">Aufnahme konnte nicht erstellt werden! %s</string>
     <string name="error_removing_recording">Aufnahme konnte nicht entfernt werden! %s</string>
@@ -244,8 +199,7 @@
     <string name="wol_send_broadcast">Wake on LAN Paket als Broadcast erfolgreich an \'%s\' gesendet.</string>
     <string name="wol_address_invalid">Die MAC-Adresse ist nicht gültig. Bitte in den Einstellungen überprüfen.</string>
     <string name="wol_error">Fehler beim Senden des Wake on LAN Pakets an \'%1$s\'.\n Fehlermeldung: %2$s</string>
-    
-    <string name="no_transmission">Keine Übertragung</string>
+
     <string name="no_data">Keine Programme verfügbar</string>
     <string name="minutes">%d Min</string>
     <string name="not_set">Nicht gesetzt</string>
@@ -263,8 +217,6 @@
     <string name="friday">Freitag</string>
     <string name="saturday">Samstag</string>
     <string name="sunday">Sonntag</string>
-    <string name="all_days">Alle Tage</string>
-    <string name="no_days">Keine Tage</string>
 
     <string name="completed_recordings">Fertige Aufnahmen</string>
     <string name="scheduled_recordings">Geplante Aufnahmen</string>
@@ -285,7 +237,6 @@
     <string name="recordings">Aufnahmen</string>
     <string name="status">Status</string>
 
-    <string name="status_icon">Statuslogo</string>
     <string name="directory">Verzeichnis</string>
     <string name="title">Titel</string>
     <string name="subtitle">Untertitel</string>
@@ -315,7 +266,6 @@
     <string name="min_duration">Minimale Dauer der Sendung</string>
     <string name="max_duration">Maximale Dauer der Sendung</string>
     <string name="duration_sum">Dauer in Minuten (0 = egal)</string>
-    <string name="from_to_time">Von %1$s bis %2$s</string>
     <string name="recording_time">Aufnahmezeit</string>
     <string name="error_empty_title">Bitte einen Aufnahmetitel angeben!</string>
     <string name="duplicate_detection">Erkenne doppelte Sendungen</string>
@@ -345,9 +295,7 @@
     <string name="unknown">Unbekannt</string>
     <string name="ready">Bereit</string>
     <string name="select_time">Zeige Programme die zur gewählten Zeit laufen.</string>
-    <string name="select_timeframe">Zeige die Programmübersicht für das gewählte Datum und Uhrzeit.</string>
     <string name="currently_recording">Laufende Aufnahmen</string>
-    <string name="select_channel">Sender auswählen</string>
     <string name="select_priority">Priorität auswählen</string>
     <string name="select_dvr_config">Wähle Aufnahmeprofil</string>
     <string name="select_log_file">Log-Datei auswählen</string>
@@ -356,7 +304,6 @@
     <!-- Connection related -->
     <string name="no_connection_available">Keine Verbindung verfügbar</string>
     <string name="no_connection_available_advice">Keine Verbindung definiert. Mindestens eine muss vorhanden sein.</string>
-    <string name="no_connection_active">Keine Verbindung aktiv</string>
     <string name="no_connection_active_advice">Mindestens eine Verbindung existiert, ist aber nicht aktiviert.</string>
 
     <!-- Unlcoker related -->
@@ -371,10 +318,6 @@
 
 
     <!-- Optional strings for the navigation drawer -->
-    <string name="drawer_open">Navigationsmenü öffnen</string>
-    <string name="drawer_close">Navigationsmenü schließen</string>
-
-    <string name="parent_directory">Übergeordnetes Verzeichnis</string>
 
     <string name="pref_show_program_artwork_sum">Zeigt das Programmcover (falls vorhanden) in der Detailansicht eines Programmes an. Der Server muss die Informationen liefern.</string>
     <string name="pref_show_program_artwork">Zeige das Programmcover</string>
@@ -419,11 +362,11 @@
     <string name="pref_show_channel_name">Zeige Senderlogo</string>
     <string name="pref_clear_database_sum">Entfernt alle Informationen aus der Datenbank. Dies umfasst alle Sender, Sender-Tags, Programme und Aufzeichnungen.</string>
     <string name="pref_clear_database">Lösche Datenbankinhalte</string>
-    <string name="saving_program_guide_data">Speichere empfanene Daten für die Programmübersicht...</string>
-    <string name="saving_recordings">Speichere empfangene Aufnahmen...</string>
-    <string name="saving_channels">Speichere empfangene Sender...</string>
-    <string name="saving_channel_logos">Speichere empfangene Senderlogos...</string>
-    <string name="saving_data">Speichere empfangene Daten...</string>
+    <string name="saving_program_guide_data">Speichere empfanene Daten für die Programmübersicht…</string>
+    <string name="saving_recordings">Speichere empfangene Aufnahmen…</string>
+    <string name="saving_channels">Speichere empfangene Sender…</string>
+    <string name="saving_channel_logos">Speichere empfangene Senderlogos…</string>
+    <string name="saving_data">Speichere empfangene Daten…</string>
     <string name="loading_data_done">Laden der Daten vom Server beendet</string>
     <string name="loading_data">Lade Daten vom Server</string>
     <string name="connected_to_server">Verbunden mit Server</string>
@@ -447,4 +390,6 @@
     <string name="loading_more_programs_finished">Laden der Programme abgeschlossen</string>
     <string name="loading_more_programs">Lade mehr Programme</string>
     <string name="pref_crash_reporting_settings">" Einstellungen für Absturzberichte"</string>
+    <string name="duplicate_recording">Aufnahme ist ein Duplikat</string>
+    <string name="pref_hide_duplicate_scheduled_recordings">Ausblenden von doppelten geplanten Aufnahmen</string>
 </resources>

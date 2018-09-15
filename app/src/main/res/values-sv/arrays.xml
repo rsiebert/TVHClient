@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="pref_scodec_list_display">
-        <item>Pass-through</item>
-        <item>None</item>
-    </string-array>
-    
+
     <string-array name="pref_menu_names">
         <item>Kanaler</item>
         <item>Programguide</item>

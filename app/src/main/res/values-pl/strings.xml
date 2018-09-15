@@ -6,19 +6,12 @@
     
     <string name="media_route_menu_title">Odtwarzaj na&#8230;</string>
     <string name="intro_overlay_text">Dotknij, aby rzucić telewizję na żywo lub nagrania na TV\n\nProszę włączyć rzucanie w ustawieniach i sprawdzić, czy serwer jest wystarczająco silny i wspiera transkodowanie.</string>
-    <string name="connection_temp_lost">Połączenie z urządzeniem odbiorczym tymczasowo utracone</string>
-    <string name="connection_recovered">Połączenie z urządzeniem odbiorczym odzyskane</string>
-    <string name="cast_profile_not_set">Nie wybrano profilu rzucania w ustawieniach. To jest wymagane zanim rzucanie zostanie użyte.</string>
-    <string name="cast_profile_invalid">Wybrany profil \'%1$s\' nie jest rekomendowanym \'%2$s\' profilem. Należy pamiętać, że rzucanie może nie działać prawidłowo.</string>
     <string name="pref_casting">Casting</string>
     <string name="pref_casting_sum">Ustawienia, aby włączyć i skonfigurować rzucanie telewizji na żywo lub nagrań na TV. Należy pamiętać, że wymaga to tvheadend z włączonym transkodowania i serwera, który jest wystarczająco silny, aby przekodować dane w czasie rzeczywistym.</string>
-    <string name="pref_enable_casting">Włącz oddawanie</string>
-    <string name="pref_enable_casting_sum">Tylko włączyć tę funkcję, jeśli tvheadend potrafi przekodować i serwer jest wystarczająco silne, aby przekształcić dane w czasie rzeczywistym.</string>
     <string name="pref_show_cast_minicontroller">Pokaż kontrolę rzucania</string>
     <string name="pref_show_cast_minicontroller_sum">bla </string>
     <string name="download_error_insufficient_space">Błąd pobierania nagrania \'%s\'. Nie wystarczająca ilość miejsca na urządzeniu.</string>
     <string name="download_error_authentication_required">Błąd pobierania nagrania \'%s\'. Uwierzytelnianie nieprawidłowe lub brakujące.</string>
-    <string name="no_external_storage_available">Pamięć zewnętrzna jest nie dostępna lub jest tylko do odczytu.</string>
 
     <string name="details">Szczegóły</string>
     <string name="settings">Ustawienia</string>
@@ -68,12 +61,7 @@
     <string name="edit_recording">Edytuj nagranie</string>
     <string name="cancel_add_recording">Anulować dodawanie nowego nagrywania? Wszystkie wartości zostaną utracone.</string>
     <string name="cancel_edit_recording">Anulować edytowanie istniejącego nagrania? Wszystkie wartości zostaną utracone.</string>
-    <string name="add_series_recording">Dodaj nową serie nagrań</string>
-    <string name="add_timer_recording">Dodaj nowe ręczne nagranie</string>
-    <string name="edit_series_recording">Edytuj serie nagrań</string>
-    <string name="edit_timer_recording">Edytuj ręczne nagranie</string>
     <string name="activate_recording">Aktywuj nagrywanie</string>
-    <string name="selected_directory">Wybrany katalog:</string>
     <string name="select">Wybierz</string>
 
     <string name="pref_manage_connections">Zarządzanie połączeniami</string>
@@ -81,17 +69,14 @@
     <string name="pref_connections">Połączenia</string>
     <string name="pref_name">Nazwa połączenia</string>
     <string name="pref_name_sum">Wpisz unikalną nazwę połączenia</string>
-    <string name="pref_name_error_empty">Nazwa nie może być pusta.</string>
     <string name="pref_name_error_invalid">Nazwa może zawierać tylko litery, cyfry, minus i podkreślenie.</string>
     <string name="pref_selected">Domyślne połączenie</string>
     <string name="pref_selected_sum">Zaznacz jako domyślne połaczenie i użyj po uruchomieniu aplikacji.</string>
     <string name="pref_host">Nazwa hosta</string>
     <string name="pref_host_sum">Wpisz adres serwera hosta</string>
-    <string name="pref_host_error_empty">IP adres lub nazwa hosta nie może być pusta.</string>
     <string name="pref_host_error_invalid">IP adres jest nie poprawny.</string>
     <string name="pref_port">HTSP Port</string>
     <string name="pref_port_sum">Wpisz port serwera</string>
-    <string name="pref_port_error_empty">Numer portu nie może być pusty.</string>
     <string name="pref_port_error_invalid">Numer portu jest nie poprawny. Powinien zawierać się pomiędzy 1 a 65535.</string>
     <string name="pref_streaming_port">HTTP Port dla strumieniowej transmisji multimediów</string>
     <string name="pref_streaming_port_sum">Port %d będzie wykorzystany do strumieniowej transmisji multimediów. Domyślnie jest to port 9981, który zazwyczaj jest najlepiej używać.</string>
@@ -110,10 +95,6 @@
 
     <string name="pref_user_interface">Interfejs użytkownika</string>
     <string name="pref_channels">Kanały</string>
-    <string name="pref_icons">Ikony kanałów</string>
-    <string name="pref_icons_sum">Pokaż ikony kanałów</string>
-    <string name="pref_big_icons">Duża ikona kanału</string>
-    <string name="pref_big_icons_sum">Pokaż większą wersję ikony kanału.</string>
     <string name="pref_tag_icon">Ikona tagu kanałów</string>
     <string name="pref_tag_icon_sum">Pokaż ikonę tagu kanałów zamiast logo aplikacji.</string>
     <string name="pref_theme">Jasny motyw</string>
@@ -124,18 +105,6 @@
     <string name="pref_default_menu_sum">Wybierz ekran który ma zostać wyświetlony po uruchomieniu aplikacji.</string>
     <string name="pref_sort_channels">Kolejność kanałów</string>
     <string name="pref_sort_channels_sum">Wybierz w jakiej kolejności mają być wyświetlane kanały.</string>
-    <string name="pref_res">Rozdzielczość</string>
-    <string name="pref_res_sum">Określa maksymalną rozdzielczość z jakiej transkoder powinien korzystać.</string>
-    <string name="pref_acodec">Kodek audio</string>
-    <string name="pref_acodec_sum">Kodek audio użyty przy transkodowaniu.</string>
-    <string name="pref_vcodec">Kodek video</string>
-    <string name="pref_vcodec_sum">Kodek video użyty przy transkodowaniu.</string>
-    <string name="pref_scodec">Kodek napisów</string>
-    <string name="pref_scodec_sum">Kodek napisów użyty przy transkodowaniu.</string>
-    <string name="pref_container">Kontener mediów</string>
-    <string name="pref_container_sum">Definiuje kontener mediów używany do transkodowania strumienia audio i video. Matroshka jest zwykle najlepszym wyborem.</string>
-    <string name="pref_transcode">Transkodowanie strumienia</string>
-    <string name="pref_transcode_sum">Konwersja programu lub nagrania na inny format podczas odtwarzania. (Opcja musi być obsługiwana przez serwer TVHeadend)</string>
     <string name="pref_information">Informacja</string>
     <string name="pref_changelog">Historia zmian</string>
     <string name="pref_changelog_sum">Pokaż listę funkcji i zmian dla poszczególnych wersji aplikacji.</string>
@@ -153,8 +122,6 @@
     <string name="pref_genre_colors_programs_sum">Rodzaj koloru będzie pokazywany jako linia pionowa po lewej stronie listy programów i ekranie szczegółów.</string>
     <string name="pref_genre_colors_epg">Przewodnik programów</string>
     <string name="pref_genre_colors_epg_sum">Pokazuje rodzaj koloru w tle na każdej pozycji prowadzonego programu.</string>
-    <string name="pref_genre_colors_search_results">Wyniki wyszukiwania</string>
-    <string name="pref_genre_colors_search_results_sum">Rodzaj koloru będzie pokazywany jako linia pionowa po lewej stronie listy wyszukiwania.</string>
     <string name="pref_genre_colors_visibility_message">Ustaw widoczność kolorów. Wyższe wartości oznaczją mocniejsze kolory.</string>
     <string name="pref_genre_colors_visibility">Widoczność rodzaju koloru</string>
     <string name="pref_genre_colors_visibility_value">%1$d%% widoczności</string>
@@ -167,8 +134,6 @@
     <string name="pref_menu_visibility_sum">Ukryj lub pokaż niektóre elemnty menu.</string>
     <string name="pref_hide_menu_delete_all_recordings">Ukryj w menu \'Usuń wszystkie nagrania\'</string>
     <string name="pref_hide_menu_delete_all_recordings_sum">Nie pokazuj tego menu, aby zapobiec przypadkowemu usunięciu wszystkich nagranych programów.</string>
-    <string name="pref_hide_menu_cancel_all_recordings">Ukryj w menu \'Anuluj wszystkie nagrania\'</string>
-    <string name="pref_hide_menu_cancel_all_recordings_sum">Nie pokazuj tego menu, aby zapobiec przypadkowemu anulowaniu wszystkich zaplanowanych nagrań programów.</string>
     <string name="pref_visible_menu_icon_tags">Pokaż \'Tagi Ikon\' menu</string>
     <string name="pref_visible_menu_icon_tags_sum">Pokaż Tagi Ikon dla dostępu z paska akcji.</string>
     <string name="pref_profiles">Profile</string>
@@ -179,10 +144,6 @@
     <string name="pref_playback_profiles_sum">Wybierz profil, który będzie używany do odtwarzania nagranego programu.</string>
     <string name="pref_cast_profiles">Profile odtwarzania Cast</string>
     <string name="pref_cast_profiles_sum">Wybierz profil, który zostanie użyty do rzucania kanału lub nagranego programu do Chromecast lub podobnego urządzenia.</string>
-    <string name="pref_enable_recording_profiles">Włącz serverProfile nagrywania</string>
-    <string name="pref_enable_recording_profiles_sum">Użyj nowej funkcjonalności serwera profili dla nagrywania. To zastępuje dowolne parametry video i audio dla nagrań i zaplanowanych programów.</string>
-    <string name="pref_enable_playback_profiles">Włącz serverProfile odtwarzania</string>
-    <string name="pref_enable_playback_profiles_sum">Użyj nowej funkcjonalności serwera profili dla programów. To zastępuje dowolne parametry video i audio dla odtwarzanych programów.</string>
     <string name="pref_notifications">Powiadomienia</string>
      <string name="pref_download_directory">Katalog pobierania</string>
     <string name="pref_download_directory_sum">Nagrania będą pobierane do następującego folderu: \'%s\'</string>
@@ -196,8 +157,6 @@
     <string name="pref_play_when_channel_icon_selected_sum">Zacznij odtwarzać bieżący program lub nagranie, gdy ikona kanał jest zaznaczony na ekranie listy kanałów, przewodnika po programach lub listy nagrywania.</string>
     <string name="pref_programs">Programy</string>
     <string name="pref_playback_and_recording">Odtwarzanie i nagrywanie</string>
-    <string name="pref_transcoding">Parametry Video i Audio</string>
-    <string name="pref_transcoding_sum">Zdefiniuj parametry video i audio jak programy mają być zapisywane lub jak powinny być odtwarzane nagrania.</string>
 
     <string name="pref_advanced_settings">Zaawansowane ustawienia</string>
     <string name="pref_debug_mode">Tryb debugowania</string>
@@ -219,10 +178,6 @@
     <string name="clear_icon_cache_sum">Jesteś pewny, że chcesz usunąć wszystkie ikony kanałów? Możesz to zrobić aby pobrać zaktualizowane ikony kanałów z serwera.</string>
     <string name="clear_icon_cache_done">Cache ikon kanałów wyczyszczony</string>
 
-    <string name="err_auth">Odmowa dostępu</string>
-    <string name="err_connect">Nie można połączyć się z serweram</string>
-    <string name="err_con_lost">Utracono połączenie z serwerem</string>
-    <string name="err_con_timeout">Limit czasu połączenia</string>
     <string name="err_no_network">Brak aktywnego połączenia sieciowego</string>
     <string name="error_adding_recording">Nagranie nie zostało dodane! %s</string>
     <string name="error_removing_recording">Nagranie nie zostało usunięte! %s</string>
@@ -244,7 +199,6 @@
     <string name="wol_address_invalid">MAC adres jest nieprawidłowy. Proszę sprawdzić ustawienia.</string>
     <string name="wol_error">Błąd wysyłania pakietu Wake On LAN do \'%1$s\'.\n Komunikat o błędzie: %2$s</string>
 
-    <string name="no_transmission">Brak transmisji</string>
     <string name="no_data">Brak dostępnych danych dla kanału</string>
     <string name="minutes">%d min</string>
     
@@ -263,8 +217,6 @@
     <string name="friday">Piątek</string>
     <string name="saturday">Sobota</string>
     <string name="sunday">Niedziela</string>
-    <string name="all_days">Wszystkie dni</string>
-    <string name="no_days">Brak dni</string>
 
     <string name="completed_recordings">Zakończone</string>
     <string name="scheduled_recordings">Zaplanowane</string>
@@ -285,7 +237,6 @@
     <string name="recordings">Nagrania</string>
     <string name="status">Status</string>
 
-    <string name="status_icon">Status ikon</string>
     <string name="directory">Katalog</string>
     <string name="title">Tytuł</string>
     <string name="subtitle">Podtytuł</string>
@@ -315,7 +266,6 @@
     <string name="min_duration">Minimalny czas programu</string>
     <string name="max_duration">Maksymalny czas programu</string>
     <string name="duration_sum">Czas trwania w minutach (0 = dowolny)</string>
-    <string name="from_to_time">Od %1$s do %2$s</string>
     <string name="recording_time">Czas nagrywania</string>
     <string name="error_empty_title">Tytuł nie może być pusty!</string>
     <string name="duplicate_detection">Pokazuj wykryte duplikaty</string>
@@ -345,9 +295,7 @@
     <string name="unknown">Nieznane</string>
     <string name="ready">Gotowy</string>
     <string name="select_time">Pokaż programy uruchomione w wybranym czasie.</string>
-    <string name="select_timeframe">Pokaż przewodnik po programach dla wybranej daty i czasu.</string>
     <string name="currently_recording">Aktualnie nagrywane</string>
-    <string name="select_channel">Wybierz kanał</string>
     <string name="select_priority">Wybierz priorytet</string>
     <string name="select_dvr_config">Wybierz profil nagrywania</string>
     <string name="select_log_file">Wybierz plik logu</string>
@@ -356,7 +304,6 @@
     <!-- Connection related -->
     <string name="no_connection_available">Nadal nie ma zdefiniowanego połączenia. Musisz dodać co najmniej jedno połączenie z menu ustawień.</string>
     <string name="no_connection_available_advice">Brak połaczenia. Musisz dodać conajmniej jedno z menu ustawień.</string>
-    <string name="no_connection_active">Brak aktywnych połączeń</string>
     <string name="no_connection_active_advice">Co najmniej jedno połączenie jest zdefioniowane, ale nie jest aktywowane.</string>
 
     <!-- Unlocker related -->
@@ -370,11 +317,7 @@
     <string name="show_play_store">Czy chcesz przejść do sklepu Google Play i poszukać dostępnych odtwarzaczy?</string>
 
     <!-- Optional strings for the navigation drawer -->
-    <string name="drawer_open">Otwórz szufladę nawigacji</string>
-    <string name="drawer_close">Zamknij szufladę nawigacji</string>
-    
-    <string name="parent_directory">Katalog nadrzędny</string>
-    
+
     <string name="pref_show_program_artwork_sum">Wyświetla obraz grafiki/plakatu dla bieżącego programu.Serwer musi dostarczać informacji.</string>
     <string name="pref_show_program_artwork">Pokaż grafikę/plakat programu</string>
     <string name="pref_show_progressbar_sum">Pokazuj na liście kanałów, ile aktualnego programu zostało już wyświetlone.</string>
@@ -384,10 +327,7 @@
     <string name="pref_general">Ogólne</string>
     <string name="pref_date_time_format">Format daty i czasu</string>
     <string name="pref_date_time_format_sum">Wyświetl datę i godzinę jaka jest zwykle uzywana w Twoim karju. W przeciwnym wypadku zostanie użyty format \'31.12.2017, 21:09\'.</string>
-    
-    <string name="pref_disable_acra">Włączyć ACRA?</string>
-    <string name="pref_acra_enabled">ACRA włączone</string>
-    <string name="pref_acra_disabled">ACRA wyłączone</string>
+
     <string name="pref_show_program_subtitle_sum">Pokaż napisy do bieżącego programu</string>
     <string name="pref_show_program_subtitle">Pokaż napisy programu</string>
 </resources>

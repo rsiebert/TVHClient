@@ -44,17 +44,14 @@
     <string name="pref_connections">Anslutningar</string>
     <string name="pref_name">Anslutningsnamn</string>
     <string name="pref_name_sum">Fyll i ett unikt namn på anslutningen</string>
-    <string name="pref_name_error_empty">Namnet får inte vara blankt.</string>
     <string name="pref_name_error_invalid">Namnet får endast innehålla bokstäver, siffror minus och understreck.</string>
     <string name="pref_selected">Standardanslutning</string>
     <string name="pref_selected_sum">Välj för att göra denna anslutning till standard och använda den när applikationen startar.</string>
     <string name="pref_host">Värdnamn</string>
     <string name="pref_host_sum">Fyll i serverns värdnamn</string>
-    <string name="pref_host_error_empty">Serverns IP-adress eller värdnamn får inte vara blankt.</string>
     <string name="pref_host_error_invalid">IP-adressen är inte giltig.</string>
     <string name="pref_port">HTSP Port</string>
     <string name="pref_port_sum">Fyll i serverport</string>
-    <string name="pref_port_error_empty">Portnummret får inte vara blankt.</string>
     <string name="pref_port_error_invalid">Portnummret är inte giltigt. Specificera ett värde mellan 1 och 65535.</string>
     <string name="pref_streaming_port">HTTP Port för medieström</string>
     <string name="pref_streaming_port_sum">%d är standardport för medieström.</string>
@@ -71,8 +68,6 @@
     <string name="pref_wol_broadcast_sum">Skicka WOL paket som broadcast. Vissa routrar stödjer inte denna typ av WOL.</string>
     <string name="pref_wol_address_invalid">MAC adressen är ogiltig.\nDen måste skrivas enligt mönster \'01:24:67:9a:cd:ef\' och får endast innehålla hexadecimala tecknen 0\-9 och a\-f samt separeras med \':\' eller \'\-\'.</string>
     <string name="pref_user_interface">Användargränssnitt</string>
-    <string name="pref_icons">Kanalikoner</string>
-    <string name="pref_icons_sum">Visa kanalikoner?</string>
     <string name="pref_tag_icon">Kanaltaggikon</string>
     <string name="pref_tag_icon_sum">Visa ikonen för en kanaltagg istället för applikationslogon.</string>
     <string name="pref_theme">Ljust tema</string>
@@ -83,18 +78,6 @@
     <string name="pref_default_menu_sum">Välj skärm som skall visas när applikationen startas.</string>
     <string name="pref_sort_channels">Kanalordning</string>
     <string name="pref_sort_channels_sum">Välj i vilken ordning kanaler skall visas.</string>
-    <string name="pref_res">Upplösning</string>
-    <string name="pref_res_sum">Specificera högsta upplösning som transkoderingen skall använda.</string>
-    <string name="pref_acodec">Ljudformat</string>
-    <string name="pref_acodec_sum">Definiera ljudformat som transkoderingen skall använda.</string>
-    <string name="pref_vcodec">Videoformat</string>
-    <string name="pref_vcodec_sum">Definiera videoformat som transkoderingen skall använda.</string>
-    <string name="pref_scodec">Undertextformat</string>
-    <string name="pref_scodec_sum">Definiera undertextformat som transkoderingen skall använda.</string>
-    <string name="pref_container">Mediakontainer</string>
-    <string name="pref_container_sum">Definiera mediakontainer som skall användas för ljud och videoströmmar. Matroska är normalt det föredragna alternativet.</string>
-    <string name="pref_transcode">Transkodera ström</string>
-    <string name="pref_transcode_sum">Konvertera Live-TV eller inspelning till ett annat format under uppspelning. (Stöd för detta i TVHeadend-servern krävs)</string>
     <string name="pref_information">Information</string>
     <string name="pref_changelog">Ändringslogg</string>
     <string name="pref_changelog_sum">Visa en lista på funktioner och ändringar i de olika versionerna av applikationen.</string>
@@ -112,8 +95,6 @@
     <string name="pref_genre_colors_programs_sum">Genrefärgen visas som en vertikal linje på vänster sida av programlistan och programdetaljvyn.</string>
     <string name="pref_genre_colors_epg">Programguide</string>
     <string name="pref_genre_colors_epg_sum">Genrefärgen visas i bakgrunden för varje program i programguidevyn.</string>
-    <string name="pref_genre_colors_search_results">Sökresultat</string>
-    <string name="pref_genre_colors_search_results_sum">Genrefärgen visas som en vertikal linje på vänster sida i sökresultatvyn.</string>
     <string name="pref_genre_colors_visibility_message">Konfigurera färgernas synlighet. Högre värden ger starkare färg.</string>
     <string name="pref_genre_colors_visibility">Genrefärgstyrka</string>
     <string name="pref_genre_colors_visibility_value">%1$d%% styrka</string>
@@ -126,8 +107,6 @@
     <string name="pref_menu_visibility_sum">Göm eller visa vissa menyposter.</string>
     <string name="pref_hide_menu_delete_all_recordings">Göm \'Ta bort alla inspelningar\' menyn</string>
     <string name="pref_hide_menu_delete_all_recordings_sum">Visa inte denna meny för att undvika att alla inspelade program tas bort av misstag.</string>
-    <string name="pref_hide_menu_cancel_all_recordings">Göm \'Avbryt alla inspelningar\' menyn</string>
-    <string name="pref_hide_menu_cancel_all_recordings_sum">Visa inte denna meny för att undvika att avbryta alla schemalagda inspelningar.</string>
     <string name="pref_profiles">Profiler</string>
     <string name="pref_profiles_sum">Definera parametrar eller profiler (om det stöds) för hur program ska spelas in eller hur inspelningar ska spelas upp.</string>
     <string name="pref_recording_profiles">Inspelningsprofiler</string>
@@ -149,11 +128,6 @@
     <string name="clear_icon_cache_sum">Är du säker på att du vill ta bort alla kanalikoner? Du kan göra detta för att uppdatera ikonerna från servern.</string>
     <string name="clear_icon_cache_done">Kanalikon cache rensad</string>
 
-    <string name="err_auth">Åtkomst nekad</string>
-    <string name="err_connect">Kan ej ansluta till server</string>
-    <string name="err_con_lost">Anslutning till server tappad</string>
-    <string name="err_con_timeout">Anslutningstimeout</string>
-
     <string name="recording_file_missing">Inspelad fil saknas</string>
     <string name="recording_time_missed">Schemalagd inspelning missades</string>
     <string name="recording_file_invalid">Inspelningen är ogiltig</string>
@@ -166,7 +140,6 @@
     <string name="wol_address_invalid">MAC-adressen är ogiltig. Vänligen kolla dina inställningar.</string>
     <string name="wol_error">Misslyckades skicka wake on LAN paket till \'%1$s\'.\n Felmeddelande: %2$s</string>
 
-    <string name="no_transmission">Ingen sändning</string>
     <string name="no_data">Programinformation ej tillgänglig</string>
     <string name="minutes">%d min</string>
     <string name="not_set">Inte satt</string>
@@ -184,8 +157,6 @@
     <string name="friday">Fredag</string>
     <string name="saturday">Lördag</string>
     <string name="sunday">Söndag</string>
-    <string name="all_days">Alla dagar</string>
-    <string name="no_days">Inga dagar</string>
 
     <string name="completed_recordings">Färdiga</string>
     <string name="scheduled_recordings">Kommande</string>
@@ -206,7 +177,6 @@
     <string name="recordings">Inspelningar</string>
     <string name="status">Status</string>
 
-    <string name="status_icon">Statusikoner</string>
     <string name="title">Titel</string>
     <string name="channel">Kanaler</string>
     <string name="time">Tid</string>
@@ -227,7 +197,6 @@
     <string name="extra_stop_time">Extra stoppminuter (post-tid)</string>
     <string name="min_duration">Minsta varaktighet</string>
     <string name="max_duration">Maximal varaktighet</string>
-    <string name="from_to_time">Från %1$s till %2$s</string>
     <string name="recording_time">Inspelningstid</string>
     <string name="error_empty_title">Titeln får inte vara tom!</string>
 
@@ -248,19 +217,15 @@
     <string name="available">Tillgängligt</string>
     <string name="unknown">Okänd</string>
     <string name="ready">Redo</string>
-    <string name="select_timeframe">Visa programguide för valt datum och tid.</string>
     <string name="currently_recording">Pågående inspelning</string>
 
     <string name="no_connection_available_advice">Ingen anslutning är tillgänglig. Du behöver åtminstone en från inställningsmenyn.</string>
     <string name="no_connection_available">Fortfarande ingen anslutning definierad. Du måste lägga till minst en anslutning från inställningsmenyn.</string>
-    <string name="no_connection_active">Minst en anslutning är definierad, men är ej aktiverad.</string>
-    
+
     <string name="no_media_player">Ingen mediaspelare hittad</string>
     <string name="show_play_store">Vill du söka efter tillgängliga mediaspelare på Google Play Store?</string>
     <string name="feature_not_available_in_free_version">Den här funktionen är inte tillgänglig i den fria versionen! Du kan låsa upp denna funktion och stödja ytterligare utveckling genom att köpa programmet från Play Store.</string>
     
     <!-- Optional strings for the navigation drawer -->
-    <string name="drawer_open">Öppna navigationslådan</string>
-    <string name="drawer_close">Stäng navigationslådan</string>
 
 </resources>
