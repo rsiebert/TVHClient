@@ -363,5 +363,17 @@
     <!-- Optional strings for the navigation drawer -->
     <string name="drawer_open">Ouvrir le dessinateur de navigation</string>
     <string name="drawer_close">Fermer le dessinateur de navigation</string>
+    <string name="reconnect">Rétablir</string>
+    <string name="cast">Cast</string>
+    <string name="record_once_and_edit">Enregistrer et modifier</string>
+    <string name="search_fileaffinity">Rechercher sur FileAffinity</string>
+    <string name="add_recording_directory">Enregistrer le répertoire de l\'enregistrement</string>
+    <string name="selected_directory">Répertoire sélectionné</string>
+    <string name="select">Sélectionnez</string>
+    <string name="pref_download_directory">Répertoire des téléchargements</string>
+    <string name="pref_download_directory_sum">Les enregistrements seront téléchargés dans le répertoire suivant</string>
+    <string name="directory">Répertoire</string>
+    <string name="pref_show_program_artwork_sum">Affiche l\'image de l\'illustration / affiche dans le programme en cours. Le serveur doit fournir les informations.</string>
+    <string name="pref_show_program_artwork">Afficher le dessin du programme / affiche</string>
 
 </resources>
