@@ -25,7 +25,7 @@ import java.util.Locale;
 
 import timber.log.Timber;
 
-public class SettingsAdvancedFragment extends BasePreferenceFragment implements Preference.OnPreferenceClickListener, SharedPreferences.OnSharedPreferenceChangeListener, DatabaseClearedInterface {
+public class SettingsAdvancedFragment extends BasePreferenceFragment implements Preference.OnPreferenceClickListener, SharedPreferences.OnSharedPreferenceChangeListener, DatabaseClearedCallback {
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {

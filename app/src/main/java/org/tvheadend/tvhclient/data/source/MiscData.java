@@ -6,7 +6,7 @@ import android.os.AsyncTask;
 import android.support.v4.content.LocalBroadcastManager;
 
 import org.tvheadend.tvhclient.data.db.AppRoomDatabase;
-import org.tvheadend.tvhclient.features.settings.DatabaseClearedInterface;
+import org.tvheadend.tvhclient.features.settings.DatabaseClearedCallback;
 import org.tvheadend.tvhclient.features.shared.receivers.SnackbarMessageReceiver;
 
 import java.lang.ref.WeakReference;
@@ -16,14 +16,14 @@ import javax.inject.Inject;
 public class MiscData extends BaseData {
 
     private final AppRoomDatabase db;
-    private static WeakReference<DatabaseClearedInterface> callback;
+    private static WeakReference<DatabaseClearedCallback> callback;
 
     @Inject
     public MiscData(AppRoomDatabase database) {
         this.db = database;
     }
 
-    public void clearDatabase(Context context, DatabaseClearedInterface callback) {
+    public void clearDatabase(Context context, DatabaseClearedCallback callback) {
         MiscData.callback = new WeakReference<>(callback);
         new ClearDatabaseTask(context, db).execute();
     }
@@ -60,9 +60,9 @@ public class MiscData extends BaseData {
             intent.putExtra(SnackbarMessageReceiver.CONTENT, "Database cleared");
             LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 
-            DatabaseClearedInterface databaseClearedInterface = callback.get();
-            if (databaseClearedInterface != null) {
-                databaseClearedInterface.onDatabaseCleared();
+            DatabaseClearedCallback databaseClearedCallback = callback.get();
+            if (databaseClearedCallback != null) {
+                databaseClearedCallback.onDatabaseCleared();
             }
         }
     }

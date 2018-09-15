@@ -1,5 +1,5 @@
 package org.tvheadend.tvhclient.features.settings;
 
-public interface DatabaseClearedInterface {
+public interface DatabaseClearedCallback {
     void onDatabaseCleared();
 }
