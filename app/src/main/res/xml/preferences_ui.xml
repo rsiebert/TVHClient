@@ -73,7 +73,7 @@
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="hide_duplicate_scheduled_recordings_enabled"
-            android:title="Hide duplicate scheduled recordings" />
+            android:title="@string/pref_hide_duplicate_scheduled_recordings" />
     </PreferenceCategory>
 
     <PreferenceCategory
