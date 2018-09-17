@@ -48,11 +48,13 @@ class ProgramRecyclerViewAdapter extends RecyclerView.Adapter<ProgramViewHolder>
 
     @Override
     public void onBindViewHolder(@NonNull ProgramViewHolder holder, int position) {
-        Program program = programListFiltered.get(position);
-        holder.bindData(context, program, clickCallback);
-        if (position == programList.size() - 1
-                && onBottomReachedCallback != null) {
-            onBottomReachedCallback.onBottomReached(position);
+        if (programListFiltered.size() > position) {
+            Program program = programListFiltered.get(position);
+            holder.bindData(context, program, clickCallback);
+            if (position == programList.size() - 1
+                    && onBottomReachedCallback != null) {
+                onBottomReachedCallback.onBottomReached(position);
+            }
         }
     }
 

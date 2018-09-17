@@ -45,8 +45,10 @@ class RecordingRecyclerViewAdapter extends RecyclerView.Adapter<RecordingViewHol
 
     @Override
     public void onBindViewHolder(@NonNull RecordingViewHolder holder, int position) {
-        Recording recording = recordingListFiltered.get(position);
-        holder.bindData(context, recording, (selectedPosition == position), htspVersion, clickCallback);
+        if (recordingListFiltered.size() > position) {
+            Recording recording = recordingListFiltered.get(position);
+            holder.bindData(context, recording, (selectedPosition == position), htspVersion, clickCallback);
+        }
     }
 
     @Override

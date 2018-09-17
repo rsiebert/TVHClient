@@ -43,8 +43,10 @@ class TimerRecordingRecyclerViewAdapter extends RecyclerView.Adapter<TimerRecord
 
     @Override
     public void onBindViewHolder(@NonNull TimerRecordingViewHolder holder, int position) {
-       TimerRecording recording = recordingListFiltered.get(position);
-        holder.bindData(context, recording, (selectedPosition == position), htspVersion, clickCallback);
+        if (recordingListFiltered.size() > position) {
+            TimerRecording recording = recordingListFiltered.get(position);
+            holder.bindData(context, recording, (selectedPosition == position), htspVersion, clickCallback);
+        }
     }
 
     @Override

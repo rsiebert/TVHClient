@@ -44,8 +44,10 @@ class EpgProgramListRecyclerViewAdapter extends RecyclerView.Adapter<EpgProgramL
 
     @Override
     public void onBindViewHolder(@NonNull EpgProgramListViewHolder holder, int position) {
-        Program program = programList.get(position);
-        holder.bindData(context, program, recordingList, clickCallback);
+        if (programList.size() > position) {
+            Program program = programList.get(position);
+            holder.bindData(context, program, recordingList, clickCallback);
+        }
     }
 
     @Override

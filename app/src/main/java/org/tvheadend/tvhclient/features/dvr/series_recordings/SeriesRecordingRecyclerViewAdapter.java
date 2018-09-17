@@ -43,8 +43,10 @@ class SeriesRecordingRecyclerViewAdapter extends RecyclerView.Adapter<SeriesReco
 
     @Override
     public void onBindViewHolder(@NonNull SeriesRecordingViewHolder holder, int position) {
-        SeriesRecording recording = recordingListFiltered.get(position);
-        holder.bindData(context, recording, (selectedPosition == position), htspVersion, clickCallback);
+        if (recordingListFiltered.size() > position) {
+            SeriesRecording recording = recordingListFiltered.get(position);
+            holder.bindData(context, recording, (selectedPosition == position), htspVersion, clickCallback);
+        }
     }
 
     @Override
