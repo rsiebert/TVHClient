@@ -53,6 +53,7 @@ import timber.log.Timber;
 // TODO Translate more strings
 // TODO add more logging for the debug log file
 // TODO channel count in the channel tags are not populated on first sync?
+// TODO replace time date pickers with the ones from google
 
 public class MainActivity extends BaseActivity implements ToolbarInterface, WakeOnLanTaskCallback, NavigationDrawerCallback {
 
