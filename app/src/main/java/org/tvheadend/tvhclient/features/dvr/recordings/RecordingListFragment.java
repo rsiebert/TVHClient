@@ -253,10 +253,12 @@ public class RecordingListFragment extends BaseFragment implements RecyclerViewC
     public void onClick(View view, int position) {
         selectedListPosition = position;
         if (view.getId() == R.id.icon || view.getId() == R.id.icon_text) {
-            Recording recording = recyclerViewAdapter.getItem(position);
-            Intent playIntent = new Intent(activity, PlayRecordingActivity.class);
-            playIntent.putExtra("dvrId", recording.getId());
-            activity.startActivity(playIntent);
+            if (recyclerViewAdapter.getItemCount() > 0) {
+                Recording recording = recyclerViewAdapter.getItem(position);
+                Intent playIntent = new Intent(activity, PlayRecordingActivity.class);
+                playIntent.putExtra("dvrId", recording.getId());
+                activity.startActivity(playIntent);
+            }
         } else {
             showRecordingDetails(position);
         }
