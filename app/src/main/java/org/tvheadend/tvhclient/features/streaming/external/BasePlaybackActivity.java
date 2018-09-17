@@ -7,7 +7,6 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
@@ -15,7 +14,6 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.tvheadend.tvhclient.MainApplication;
@@ -68,7 +66,7 @@ public abstract class BasePlaybackActivity extends AppCompatActivity implements 
 
         serviceStatusReceiver = new ServiceStatusReceiver(this);
         connection = appRepository.getConnectionData().getActiveItem();
-        serverStatus = appRepository.getServerStatusData().getItemById(connection.getId());
+        serverStatus = appRepository.getServerStatusData().getActiveItem();
         serverProfile = appRepository.getServerProfileData().getItemById(serverStatus.getPlaybackServerProfileId());
     }
 
@@ -158,27 +156,19 @@ public abstract class BasePlaybackActivity extends AppCompatActivity implements 
                         .content(R.string.show_play_store)
                         .positiveText(getString(android.R.string.yes))
                         .negativeText(getString(android.R.string.no))
-                        .onPositive(new MaterialDialog.SingleButtonCallback() {
-                            @Override
-                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                try {
-                                    Timber.d("Opening play store to download external players");
-                                    Intent installIntent = new Intent(Intent.ACTION_VIEW);
-                                    installIntent.setData(Uri.parse("market://search?q=free%20video%20player&c=apps"));
-                                    startActivity(installIntent);
-                                } catch (Throwable t2) {
-                                    Timber.d("Could not startPlayback google play store");
-                                } finally {
-                                    finish();
-                                }
-                            }
-                        })
-                        .onNegative(new MaterialDialog.SingleButtonCallback() {
-                            @Override
-                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        .onPositive((dialog, which) -> {
+                            try {
+                                Timber.d("Opening play store to download external players");
+                                Intent installIntent = new Intent(Intent.ACTION_VIEW);
+                                installIntent.setData(Uri.parse("market://search?q=free%20video%20player&c=apps"));
+                                startActivity(installIntent);
+                            } catch (Throwable t2) {
+                                Timber.d("Could not startPlayback google play store");
+                            } finally {
                                 finish();
                             }
                         })
+                        .onNegative((dialog, which) -> finish())
                         .show();
             }
         });
