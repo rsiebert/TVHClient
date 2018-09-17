@@ -3,6 +3,7 @@ package org.tvheadend.tvhclient.features.information;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -92,7 +93,7 @@ public class InfoFragment extends BaseFragment implements FileLoaderCallback {
 
     @Override
     public void notify(String content) {
-        if (content != null) {
+        if (!TextUtils.isEmpty(content)) {
             // Replace the placeholder in the html file with the real version
             String version = BuildConfig.VERSION_NAME + " (" + BuildConfig.BUILD_VERSION + ")";
             content = (Pattern.compile("APP_VERSION").matcher(content).replaceAll(version));
