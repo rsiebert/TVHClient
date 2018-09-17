@@ -327,7 +327,7 @@ class EpgSyncUtils {
             }
         }
         if (msg.containsKey("episodeOnscreen")) {
-            if (msg.getInteger("episodeOnscreen") > 0) {
+            if (!TextUtils.isEmpty(msg.getString("episodeOnscreen"))) {
                 program.setEpisodeOnscreen(msg.getString("episodeOnscreen"));
             }
         }
