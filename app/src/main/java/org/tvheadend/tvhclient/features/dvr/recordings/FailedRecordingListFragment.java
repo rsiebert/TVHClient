@@ -5,12 +5,10 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.Menu;
 import android.view.View;
 import android.widget.Filter;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.features.search.SearchActivity;
 import org.tvheadend.tvhclient.features.search.SearchRequestInterface;
 
@@ -49,17 +47,6 @@ public class FailedRecordingListFragment extends RecordingListFragment implement
             // case the adapter contains items now.
             activity.invalidateOptionsMenu();
         });
-    }
-
-    @Override
-    public void onPrepareOptionsMenu(Menu menu) {
-        super.onPrepareOptionsMenu(menu);
-
-        Recording recording = recyclerViewAdapter.getItem(selectedListPosition);
-        // Allow playing a failed recording which size is not zero
-        if (recording != null && recording.getDataSize() > 0) {
-            menu.findItem(R.id.menu_play).setVisible(true);
-        }
     }
 
     @Override
