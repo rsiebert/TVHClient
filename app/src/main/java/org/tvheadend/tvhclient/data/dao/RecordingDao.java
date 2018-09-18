@@ -39,7 +39,7 @@ public interface RecordingDao {
     @Query(base +
             "WHERE rec.connection_id IN (SELECT id FROM connections WHERE active = 1) " +
             " AND rec.error IS NULL AND (rec.state = 'recording' OR rec.state = 'scheduled')" +
-            "ORDER BY rec.start DESC")
+            "ORDER BY rec.start ASC")
     LiveData<List<Recording>> loadAllScheduledRecordings();
 
     @Transaction
