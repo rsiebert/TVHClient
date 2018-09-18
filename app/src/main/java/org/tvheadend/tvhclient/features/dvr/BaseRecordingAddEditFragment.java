@@ -1,12 +1,10 @@
 package org.tvheadend.tvhclient.features.dvr;
 
 import android.os.Bundle;
-import android.view.View;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.fourmob.datetimepicker.date.DatePickerDialog;
-import com.sleepbot.datetimepicker.time.RadialPickerLayout;
-import com.sleepbot.datetimepicker.time.TimePickerDialog;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Channel;
@@ -14,7 +12,6 @@ import org.tvheadend.tvhclient.data.entity.ServerProfile;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
 import org.tvheadend.tvhclient.features.shared.adapter.ChannelListSelectionAdapter;
 import org.tvheadend.tvhclient.features.shared.callbacks.ChannelListSelectionCallback;
-import org.tvheadend.tvhclient.features.shared.callbacks.DateTimePickerCallback;
 import org.tvheadend.tvhclient.features.shared.callbacks.DaysOfWeekSelectionCallback;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecordingPriorityListCallback;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecordingProfileListCallback;
@@ -189,52 +186,21 @@ public abstract class BaseRecordingAddEditFragment extends BaseFragment {
                 .show();
     }
 
-    protected void handleDateSelection(long milliSeconds, DateTimePickerCallback callback, String tag) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(milliSeconds);
-        int year = calendar.get(Calendar.YEAR);
-        int month = calendar.get(Calendar.MONTH);
-        int day = calendar.get(Calendar.DAY_OF_MONTH);
-
-        DatePickerDialog datePicker = DatePickerDialog.newInstance(
-                new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(DatePickerDialog datePickerDialog, int year, int month, int day) {
-                        Calendar calendar = Calendar.getInstance();
-                        calendar.set(Calendar.YEAR, year);
-                        calendar.set(Calendar.MONTH, month);
-                        calendar.set(Calendar.DAY_OF_MONTH, day);
-
-                        if (callback != null) {
-                            callback.onDateSelected(calendar.getTimeInMillis(), tag);
-                        }
-                    }
-                }, year, month, day, false);
-
-        datePicker.setCloseOnSingleTapDay(false);
-        datePicker.show(activity.getSupportFragmentManager(), "");
+    protected void handleDateSelection(long milliSeconds, Fragment callback, String tag) {
+        DialogFragment newFragment = new DatePickerFragment();
+        Bundle bundle = new Bundle();
+        bundle.putLong("milliSeconds", milliSeconds);
+        newFragment.setArguments(bundle);
+        newFragment.setTargetFragment(callback, 1);
+        newFragment.show(activity.getSupportFragmentManager(), tag);
     }
 
-    protected void handleTimeSelection(long milliSeconds, DateTimePickerCallback callback, String tag) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(milliSeconds);
-        int hour = calendar.get(Calendar.HOUR_OF_DAY);
-        int minute = calendar.get(Calendar.MINUTE);
-
-        TimePickerDialog timePickerDialog = TimePickerDialog.newInstance(
-                new TimePickerDialog.OnTimeSetListener() {
-                    @Override
-                    public void onTimeSet(RadialPickerLayout timePicker, int selectedHour, int selectedMinute) {
-                        Calendar calendar = Calendar.getInstance();
-                        calendar.set(Calendar.HOUR_OF_DAY, selectedHour);
-                        calendar.set(Calendar.MINUTE, selectedMinute);
-                        if (callback != null) {
-                            callback.onTimeSelected(calendar.getTimeInMillis(), tag);
-                        }
-                    }
-                }, hour, minute, true, false);
-
-        timePickerDialog.setCloseOnSingleTapMinute(false);
-        timePickerDialog.show(activity.getSupportFragmentManager(), "");
+    protected void handleTimeSelection(long milliSeconds, Fragment callback, String tag) {
+        DialogFragment newFragment = new TimePickerFragment();
+        Bundle bundle = new Bundle();
+        bundle.putLong("milliSeconds", milliSeconds);
+        newFragment.setArguments(bundle);
+        newFragment.setTargetFragment(callback, 1);
+        newFragment.show(activity.getSupportFragmentManager(), tag);
     }
 }

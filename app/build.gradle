@@ -100,7 +100,6 @@ dependencies {
     implementation 'com.android.support:mediarouter-v7:27.1.1'
     // Misc libraries
     implementation 'com.anjlab.android.iab.v3:library:1.0.44'
-    implementation 'com.github.flavienlaurent.datetimepicker:library:0.0.2'
     implementation 'com.afollestad.material-dialogs:commons:0.9.6.0'
     implementation 'com.mikepenz:materialdrawer:6.0.8'
     // View binding
