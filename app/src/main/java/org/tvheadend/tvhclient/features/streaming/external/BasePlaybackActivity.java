@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -120,9 +121,12 @@ public abstract class BasePlaybackActivity extends AppCompatActivity implements 
             try {
                 String hostAddress = new ConvertHostnameToAddressTask(connection).execute().get();
                 if (connection.getStreamingPort() != 80 && connection.getStreamingPort() != 443) {
-                    baseUrl = "http://" + hostAddress + ":" + connection.getStreamingPort() + serverStatus.getWebroot();
+                    baseUrl = "http://" + hostAddress + ":" + connection.getStreamingPort();
                 } else {
-                    baseUrl = "http://" + hostAddress + serverStatus.getWebroot();
+                    baseUrl = "http://" + hostAddress;
+                }
+                if (!TextUtils.isEmpty(serverStatus.getWebroot())) {
+                    baseUrl += serverStatus.getWebroot();
                 }
                 serverUrl = baseUrl + path + "?ticket=" + ticket + "&profile=" + serverProfile.getName();
                 onHttpTicketReceived();
