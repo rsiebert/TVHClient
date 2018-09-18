@@ -6,7 +6,6 @@ import android.preference.PreferenceFragment;
 import android.support.v7.app.AppCompatActivity;
 
 import org.tvheadend.tvhclient.MainApplication;
-import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.features.shared.callbacks.ToolbarInterface;
@@ -35,11 +34,8 @@ public class BasePreferenceFragment extends PreferenceFragment {
 
         MainApplication.getComponent().inject(this);
 
-        Connection connection = appRepository.getConnectionData().getActiveItem();
-        if (connection != null) {
-            serverStatus = appRepository.getServerStatusData().getItemById(connection.getId());
-            htspVersion = serverStatus.getHtspVersion();
-        }
+        serverStatus = appRepository.getServerStatusData().getActiveItem();
+        htspVersion = serverStatus.getHtspVersion();
         isUnlocked = MainApplication.getInstance().isUnlocked();
     }
 }
