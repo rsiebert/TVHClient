@@ -202,7 +202,9 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
 
     private void stopPlayback() {
         Timber.d("Stopping player");
-        player.stop();
+        if (player != null) {
+            player.stop();
+        }
         trackSelector.clearSelectionOverrides();
         htspSubscriptionDataSourceFactory.releaseCurrentDataSource();
         htspFileInputStreamDataSourceFactory.releaseCurrentDataSource();
@@ -241,8 +243,10 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
         }
 
         // Prepare the media source
-        player.prepare(mediaSource);
-        player.setPlayWhenReady(true);
+        if (player != null) {
+            player.prepare(mediaSource);
+            player.setPlayWhenReady(true);
+        }
     }
 
     /*
