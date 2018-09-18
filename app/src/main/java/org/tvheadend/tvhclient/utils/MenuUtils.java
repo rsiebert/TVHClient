@@ -242,6 +242,7 @@ public class MenuUtils {
         Intent intent = new Intent(activity, SearchActivity.class);
         intent.setAction(Intent.ACTION_SEARCH);
         intent.putExtra(SearchManager.QUERY, title);
+        intent.putExtra("type", "program_guide");
         intent.putExtra("channelId", channelId);
         activity.startActivity(intent);
         activity.finish();
