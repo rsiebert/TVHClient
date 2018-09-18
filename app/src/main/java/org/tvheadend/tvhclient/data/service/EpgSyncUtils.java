@@ -1,6 +1,7 @@
 package org.tvheadend.tvhclient.data.service;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import org.tvheadend.tvhclient.data.entity.Channel;
@@ -19,7 +20,7 @@ class EpgSyncUtils {
         throw new IllegalAccessError("Utility class");
     }
 
-    static ChannelTag convertMessageToChannelTagModel(ChannelTag tag, HtspMessage msg, List<Channel> channels) {
+    static ChannelTag convertMessageToChannelTagModel(@NonNull ChannelTag tag, @NonNull HtspMessage msg, @NonNull List<Channel> channels) {
         if (msg.containsKey("tagId")) {
             tag.setTagId(msg.getInteger("tagId"));
         }
@@ -59,7 +60,7 @@ class EpgSyncUtils {
         return tag;
     }
 
-    static Channel convertMessageToChannelModel(Channel channel, HtspMessage msg) {
+    static Channel convertMessageToChannelModel(@NonNull Channel channel, @NonNull HtspMessage msg) {
         if (msg.containsKey("channelId")) {
             channel.setId(msg.getInteger("channelId"));
         }
@@ -100,7 +101,7 @@ class EpgSyncUtils {
         return channel;
     }
 
-    static Recording convertMessageToRecordingModel(Recording recording, HtspMessage msg) {
+    static Recording convertMessageToRecordingModel(@NonNull Recording recording, @NonNull HtspMessage msg) {
         if (msg.containsKey("id")) {
             recording.setId(msg.getInteger("id"));
         }
@@ -221,7 +222,7 @@ class EpgSyncUtils {
         return recording;
     }
 
-    static Program convertMessageToProgramModel(Program program, HtspMessage msg) {
+    static Program convertMessageToProgramModel(@NonNull Program program, @NonNull HtspMessage msg) {
         if (msg.containsKey("eventId")) {
             program.setEventId(msg.getInteger("eventId"));
         }
@@ -349,7 +350,7 @@ class EpgSyncUtils {
         return program;
     }
 
-    static SeriesRecording convertMessageToSeriesRecordingModel(SeriesRecording seriesRecording, HtspMessage msg) {
+    static SeriesRecording convertMessageToSeriesRecordingModel(@NonNull SeriesRecording seriesRecording, @NonNull HtspMessage msg) {
         if (msg.containsKey("id")) {
             seriesRecording.setId(msg.getString("id"));
         }
@@ -429,7 +430,7 @@ class EpgSyncUtils {
         return seriesRecording;
     }
 
-    static TimerRecording convertMessageToTimerRecordingModel(TimerRecording timerRecording, HtspMessage msg) {
+    static TimerRecording convertMessageToTimerRecordingModel(@NonNull TimerRecording timerRecording, @NonNull HtspMessage msg) {
         if (msg.containsKey("id")) {
             timerRecording.setId(msg.getString("id"));
         }
@@ -489,7 +490,7 @@ class EpgSyncUtils {
         return timerRecording;
     }
 
-    static HtspMessage convertIntentToAutorecMessage(Intent intent, int htspVersion) {
+    static HtspMessage convertIntentToAutorecMessage(@NonNull Intent intent, int htspVersion) {
         final long enabled = intent.getIntExtra("enabled", 1);
         final String title = intent.getStringExtra("title");
         final String fulltext = intent.getStringExtra("fulltext");
@@ -564,7 +565,7 @@ class EpgSyncUtils {
         return request;
     }
 
-    static HtspMessage convertIntentToDvrMessage(Intent intent, int htspVersion) {
+    static HtspMessage convertIntentToDvrMessage(@NonNull Intent intent, int htspVersion) {
         final long eventId = intent.getIntExtra("eventId", 0);
         final long channelId = intent.getIntExtra("channelId", 0);
         final long start = intent.getLongExtra("start", 0);
@@ -631,7 +632,7 @@ class EpgSyncUtils {
         return request;
     }
 
-    static HtspMessage convertIntentToTimerecMessage(Intent intent, int htspVersion) {
+    static HtspMessage convertIntentToTimerecMessage(@NonNull Intent intent, int htspVersion) {
         final long enabled = intent.getIntExtra("enabled", 1);
         final String title = intent.getStringExtra("title");
         final String directory = intent.getStringExtra("directory");
@@ -680,7 +681,7 @@ class EpgSyncUtils {
         return request;
     }
 
-    static ServerStatus convertMessageToServerStatusModel(ServerStatus serverStatus, HtspMessage msg) {
+    static ServerStatus convertMessageToServerStatusModel(@NonNull ServerStatus serverStatus, @NonNull HtspMessage msg) {
         if (msg.containsKey("htspversion")) {
             serverStatus.setHtspVersion(msg.getInteger("htspversion", 13));
         }
