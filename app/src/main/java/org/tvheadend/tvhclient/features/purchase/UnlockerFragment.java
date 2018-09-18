@@ -3,6 +3,7 @@ package org.tvheadend.tvhclient.features.purchase;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -129,7 +130,7 @@ public class UnlockerFragment extends BaseFragment implements FileLoaderCallback
 
     @Override
     public void notify(String content) {
-        if (content != null) {
+        if (!TextUtils.isEmpty(content)) {
             webView.loadDataWithBaseURL("file:///android_asset/", content, "text/html", "utf-8", null);
             progressBar.setVisibility(View.GONE);
             webView.setVisibility(View.VISIBLE);
