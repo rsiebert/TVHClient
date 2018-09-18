@@ -22,7 +22,7 @@ import javax.inject.Inject;
 import timber.log.Timber;
 
 public class MigrateUtils {
-    private static final int VERSION_102 = 102;
+    private static final int VERSION_101 = 101;
     @Inject
     protected Context context;
     @Inject
@@ -39,7 +39,7 @@ public class MigrateUtils {
         Timber.i("Migrating from " + lastInstalledApplicationVersion + " to " + currentApplicationVersion);
 
         if (currentApplicationVersion != lastInstalledApplicationVersion) {
-            if (lastInstalledApplicationVersion < VERSION_102) {
+            if (lastInstalledApplicationVersion < VERSION_101) {
                 migrateConvertStartScreenPreference();
                 migrateConnectionsFromDatabase();
                 migratePreferences();
