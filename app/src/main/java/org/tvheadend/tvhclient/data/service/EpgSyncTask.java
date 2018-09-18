@@ -394,6 +394,10 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
 
     private void handleInitialServerResponse(HtspMessage response) {
         ServerStatus serverStatus = appRepository.getServerStatusData().getActiveItem();
+        if (serverStatus == null) {
+            Timber.d("Server status for connection " + connection.getId() + " is null, this should not be ");
+            serverStatus = new ServerStatus();
+        }
 
         ServerStatus updatedServerStatus = EpgSyncUtils.convertMessageToServerStatusModel(serverStatus, response);
         updatedServerStatus.setConnectionId(connection.getId());
