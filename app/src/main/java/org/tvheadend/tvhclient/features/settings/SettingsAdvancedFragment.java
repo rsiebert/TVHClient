@@ -14,7 +14,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import org.tvheadend.tvhclient.BuildConfig;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Connection;
-import org.tvheadend.tvhclient.data.service.EpgSyncTask;
+import org.tvheadend.tvhclient.data.service.EpgSyncService;
 import org.tvheadend.tvhclient.features.search.SuggestionProvider;
 import org.tvheadend.tvhclient.features.startup.SplashActivity;
 
@@ -83,7 +83,7 @@ public class SettingsAdvancedFragment extends BasePreferenceFragment implements 
                 .onPositive((dialog, which) -> {
                     Timber.d("Clear database requested, stopping service and clearing database");
 
-                    activity.stopService(new Intent(activity, EpgSyncTask.class));
+                    activity.stopService(new Intent(activity, EpgSyncService.class));
                     // Update the connection with the information that a new sync is required.
                     Connection connection = appRepository.getConnectionData().getActiveItem();
                     connection.setSyncRequired(true);
@@ -174,6 +174,7 @@ public class SettingsAdvancedFragment extends BasePreferenceFragment implements 
 
     @Override
     public void onDatabaseCleared() {
+        Timber.d("Database has been cleared, restarting application");
         Intent intent = new Intent(activity, SplashActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         activity.startActivity(intent);
