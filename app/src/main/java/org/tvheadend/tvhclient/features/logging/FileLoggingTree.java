@@ -4,6 +4,8 @@ import android.content.Context;
 import android.os.Build;
 import android.util.Log;
 
+import org.tvheadend.tvhclient.BuildConfig;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -11,7 +13,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import timber.log.BuildConfig;
 import timber.log.Timber;
 
 public class FileLoggingTree extends BaseDebugTree {
@@ -57,7 +58,7 @@ public class FileLoggingTree extends BaseDebugTree {
             if (file.createNewFile() || file.exists()) {
                 FileOutputStream stream = new FileOutputStream(file, true);
                 stream.write(("Logging started\n").getBytes());
-                stream.write(("Application version: " + BuildConfig.VERSION_NAME + "(" + BuildConfig.VERSION_CODE + ")\n").getBytes());
+                stream.write(("Application version: " + BuildConfig.VERSION_NAME + "(" + BuildConfig.BUILD_VERSION + ")\n").getBytes());
                 stream.write(("Android version: " + Build.VERSION.RELEASE + "(" + Build.VERSION.SDK_INT + ")\n").getBytes());
                 stream.close();
             }
@@ -73,6 +74,8 @@ public class FileLoggingTree extends BaseDebugTree {
         }
         try {
             FileOutputStream stream = new FileOutputStream(file, true);
+            stream.write(tag.getBytes());
+            stream.write((" ").getBytes());
             stream.write((message + "\n").getBytes());
             stream.close();
         } catch (IOException e) {
