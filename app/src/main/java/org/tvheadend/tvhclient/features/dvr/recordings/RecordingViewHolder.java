@@ -66,6 +66,10 @@ public class RecordingViewHolder extends RecyclerView.ViewHolder {
     @Nullable
     @BindView(R.id.dual_pane_list_item_selection)
     ImageView dualPaneListItemSelection;
+    @BindView(R.id.data_size)
+    TextView dataSizeTextView;
+    @BindView(R.id.data_errors)
+    TextView dataErrorsTextView;
 
     private final int recordingType;
 
@@ -81,6 +85,7 @@ public class RecordingViewHolder extends RecyclerView.ViewHolder {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         boolean playOnChannelIcon = sharedPreferences.getBoolean("channel_icon_starts_playback_enabled", true);
         boolean lightTheme = sharedPreferences.getBoolean("light_theme_enabled", true);
+        boolean showRecordingFileStatus = sharedPreferences.getBoolean("show_recording_file_status_enabled", false);
 
         itemView.setOnClickListener(view -> clickCallback.onClick(view, getAdapterPosition()));
         itemView.setOnLongClickListener(view -> {
@@ -179,6 +184,21 @@ public class RecordingViewHolder extends RecyclerView.ViewHolder {
             isEnabledTextView.setText(recording.getEnabled() > 0 ? R.string.recording_enabled : R.string.recording_disabled);
 
             isDuplicateTextView.setVisibility(htspVersion < 33 || recording.getDuplicate() == 0 ? View.GONE : View.VISIBLE);
+        }
+
+        if (showRecordingFileStatus) {
+            dataErrorsTextView.setVisibility(View.VISIBLE);
+            dataSizeTextView.setVisibility(View.VISIBLE);
+
+            if (recording.getDataSize() > 1048576) {
+                dataSizeTextView.setText(context.getResources().getString(R.string.data_size, recording.getDataSize() / 1048576, "MB"));
+            } else {
+                dataSizeTextView.setText(context.getResources().getString(R.string.data_size, recording.getDataSize() / 1024, "KB"));
+            }
+            dataErrorsTextView.setText(context.getResources().getString(R.string.data_errors, recording.getDataErrors() == null ? "0" : recording.getDataErrors()));
+        } else {
+            dataErrorsTextView.setVisibility(View.GONE);
+            dataSizeTextView.setVisibility(View.GONE);
         }
     }
 }

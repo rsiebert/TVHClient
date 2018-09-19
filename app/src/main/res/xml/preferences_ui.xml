@@ -74,6 +74,11 @@
             android:defaultValue="false"
             android:key="hide_duplicate_scheduled_recordings_enabled"
             android:title="@string/pref_hide_duplicate_scheduled_recordings" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="show_recording_file_status_enabled"
+            android:title="@string/pref_show_recording_file_status"
+            android:summary="@string/pref_show_recording_file_status_sum"/>
     </PreferenceCategory>
 
     <PreferenceCategory
