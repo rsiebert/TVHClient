@@ -149,6 +149,7 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
     }
 
     private void init() {
+        Timber.d("Initializing");
         if (serverStatus == null) {
             statusTextView.setText(getString(R.string.error_starting_playback_no_connection));
         } else if (serverProfile == null) {
@@ -205,9 +206,15 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
         if (player != null) {
             player.stop();
         }
-        trackSelector.clearSelectionOverrides();
-        htspSubscriptionDataSourceFactory.releaseCurrentDataSource();
-        htspFileInputStreamDataSourceFactory.releaseCurrentDataSource();
+        if (trackSelector != null) {
+            trackSelector.clearSelectionOverrides();
+        }
+        if (htspSubscriptionDataSourceFactory != null) {
+            htspSubscriptionDataSourceFactory.releaseCurrentDataSource();
+        }
+        if (htspFileInputStreamDataSourceFactory != null) {
+            htspFileInputStreamDataSourceFactory.releaseCurrentDataSource();
+        }
         if (mediaSource != null) {
             mediaSource.releaseSource();
         }
@@ -223,7 +230,7 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
     }
 
     private void startPlayback() {
-        Timber.d("startPlayback");
+        Timber.d("Starting playback");
         stopPlayback();
 
         // Create the media source
@@ -244,6 +251,7 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
 
         // Prepare the media source
         if (player != null) {
+            Timber.d("Preparing player and starting when ready");
             player.prepare(mediaSource);
             player.setPlayWhenReady(true);
         }
