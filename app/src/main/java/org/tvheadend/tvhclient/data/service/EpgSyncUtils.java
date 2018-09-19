@@ -74,7 +74,7 @@ class EpgSyncUtils {
         } else if (msg.containsKey("channelNumber")) {
             int channelNumber = msg.getInteger("channelNumber");
             channel.setNumber(channelNumber);
-            channel.setDisplayNumber(String.valueOf(channelNumber));
+            channel.setDisplayNumber(String.valueOf(channelNumber) + ".0");
         }
         if (msg.containsKey("channelName")) {
             channel.setName(msg.getString("channelName"));
