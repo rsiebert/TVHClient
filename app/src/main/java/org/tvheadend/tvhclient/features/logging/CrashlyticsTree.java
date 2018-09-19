@@ -5,6 +5,8 @@ import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 
+import org.tvheadend.tvhclient.BuildConfig;
+
 import io.fabric.sdk.android.Fabric;
 
 public class CrashlyticsTree extends BaseDebugTree {
@@ -22,6 +24,8 @@ public class CrashlyticsTree extends BaseDebugTree {
             Crashlytics.setInt(CRASHLYTICS_KEY_PRIORITY, priority);
             Crashlytics.setString(CRASHLYTICS_KEY_TAG, tag);
             Crashlytics.setString(CRASHLYTICS_KEY_MESSAGE, message);
+            Crashlytics.setString("Git commit", BuildConfig.GIT_SHA);
+            Crashlytics.setString("Build time", BuildConfig.BUILD_TIME);
 
             if (t == null) {
                 Crashlytics.logException(new Exception(message));
