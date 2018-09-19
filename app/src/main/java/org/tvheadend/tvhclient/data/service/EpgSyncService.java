@@ -34,20 +34,20 @@ public class EpgSyncService extends Service {
 
     @Override
     public void onCreate() {
-        Timber.d("start");
         MainApplication.getComponent().inject(this);
 
         if (!epgSyncHandler.init()) {
+            Timber.i("No connection available, not starting service");
             stopSelf();
         }
+        Timber.i("Connection available, starting service");
 
         startBackgroundWorkers();
-        Timber.d("end");
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Timber.d("start");
+        Timber.d("Received start command");
         if (!epgSyncHandler.isConnected()) {
             Timber.d("Not connected to server");
             epgSyncHandler.connect();
@@ -55,16 +55,15 @@ public class EpgSyncService extends Service {
             Timber.d("Connected to server, passing intent to epg sync task");
             epgSyncHandler.handleIntent(intent);
         }
-        Timber.d("end");
         return START_STICKY;
     }
 
     @Override
     public void onDestroy() {
-        Timber.d("start");
+        Timber.d("Stopping service");
         epgSyncHandler.stop();
+        Timber.d("Stopping all background worker");
         WorkManager.getInstance().cancelAllWorkByTag(REQUEST_TAG);
-        Timber.d("end");
     }
 
     private void startBackgroundWorkers() {
@@ -89,5 +88,7 @@ public class EpgSyncService extends Service {
         WorkManager.getInstance().cancelAllWorkByTag(REQUEST_TAG);
         WorkManager.getInstance().enqueue(updateWorkRequest);
         WorkManager.getInstance().enqueue(removalWorkRequest);
+
+        Timber.d("Finished starting background workers");
     }
 }
