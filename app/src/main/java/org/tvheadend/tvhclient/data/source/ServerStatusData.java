@@ -4,6 +4,8 @@ import android.arch.lifecycle.LiveData;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
+import com.crashlytics.android.Crashlytics;
+
 import org.tvheadend.tvhclient.data.db.AppRoomDatabase;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
 
@@ -74,7 +76,12 @@ public class ServerStatusData extends BaseData implements DataSourceInterface<Se
 
     public ServerStatus getActiveItem() {
         try {
-            return new ItemLoaderTask(db).execute().get();
+            ServerStatus serverStatus = new ItemLoaderTask(db).execute().get();
+            if (serverStatus == null) {
+                Throwable assertionError = new Throwable("getActiveItem: Server status is null");
+                Crashlytics.logException(assertionError);
+            }
+            return serverStatus;
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
