@@ -396,5 +396,6 @@
     <string name="duplicate_recording">Recording is a duplicate</string>
     <string name="pref_hide_duplicate_scheduled_recordings">Hide duplicate scheduled recordings</string>
     <string name="pref_show_recording_file_status">Show recording file status</string>
-    <string name="pref_show_recording_file_status_sum">The file size and data errors of each recording will be shown in the recording list</string>
+    <string name="pref_show_recording_file_status_sum">The file size and number of data errors of each recording will be shown in the recording lists.</string>
+    <string name="programs">Programs</string>
 </resources>
