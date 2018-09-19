@@ -29,13 +29,8 @@ public class EpgSyncHandler {
     }
 
     public boolean init() {
-        Timber.d("Init called");
         connection = appRepository.getConnectionData().getActiveItem();
-        if (connection == null) {
-            Timber.i("No account configured, not starting handler");
-            return false;
-        }
-        return true;
+        return connection != null;
     }
 
     public boolean isConnected() {
@@ -73,8 +68,9 @@ public class EpgSyncHandler {
         }
         if (simpleHtspConnection != null) {
             simpleHtspConnection.stop();
+            simpleHtspConnection = null;
         }
-        simpleHtspConnection = null;
+        Timber.d("Connection to server closed");
     }
 
     public SimpleHtspConnection getConnection() {
