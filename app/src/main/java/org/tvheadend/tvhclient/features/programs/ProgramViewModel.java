@@ -42,4 +42,8 @@ public class ProgramViewModel extends AndroidViewModel {
     LiveData<List<Recording>> getRecordings() {
         return appRepository.getRecordingData().getLiveDataItems();
     }
+
+    public LiveData<Integer> getNumberOfPrograms() {
+        return appRepository.getProgramData().getLiveDataItemCount();
+    }
 }

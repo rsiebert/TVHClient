@@ -21,6 +21,7 @@ import org.tvheadend.tvhclient.features.channels.ChannelViewModel;
 import org.tvheadend.tvhclient.features.dvr.recordings.RecordingViewModel;
 import org.tvheadend.tvhclient.features.dvr.series_recordings.SeriesRecordingViewModel;
 import org.tvheadend.tvhclient.features.dvr.timer_recordings.TimerRecordingViewModel;
+import org.tvheadend.tvhclient.features.programs.ProgramViewModel;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
 import org.tvheadend.tvhclient.features.shared.tasks.WakeOnLanTask;
 import org.tvheadend.tvhclient.features.shared.tasks.WakeOnLanTaskCallback;
@@ -35,6 +36,8 @@ public class StatusFragment extends BaseFragment implements WakeOnLanTaskCallbac
     TextView connectionTextView;
     @BindView(R.id.channels)
     TextView channelsTextView;
+    @BindView(R.id.programs)
+    TextView programsTextView;
     @BindView(R.id.completed_recordings)
     TextView completedRecordingsTextView;
     @BindView(R.id.upcoming_recordings)
@@ -141,6 +144,9 @@ public class StatusFragment extends BaseFragment implements WakeOnLanTaskCallbac
     }
 
     private void showRecordings() {
+
+        ProgramViewModel programViewModel = ViewModelProviders.of(this).get(ProgramViewModel.class);
+        programViewModel.getNumberOfPrograms().observe(this, count -> programsTextView.setText(getResources().getQuantityString(R.plurals.programs, count != null ? count : 0, count)));
 
         SeriesRecordingViewModel seriesRecordingViewModel = ViewModelProviders.of(this).get(SeriesRecordingViewModel.class);
         seriesRecordingViewModel.getNumberOfRecordings().observe(this, count -> seriesRecordingsTextView.setText(getResources().getQuantityString(R.plurals.series_recordings, count != null ? count : 0, count)));
