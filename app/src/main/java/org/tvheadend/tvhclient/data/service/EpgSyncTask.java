@@ -28,7 +28,6 @@ import org.tvheadend.tvhclient.data.entity.ServerStatus;
 import org.tvheadend.tvhclient.data.entity.TagAndChannel;
 import org.tvheadend.tvhclient.data.entity.TimerRecording;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
-import org.tvheadend.tvhclient.data.service.htsp.HtspConnection;
 import org.tvheadend.tvhclient.data.service.htsp.HtspFileInputStream;
 import org.tvheadend.tvhclient.data.service.htsp.HtspMessage;
 import org.tvheadend.tvhclient.data.service.htsp.HtspNotConnectedException;
@@ -54,7 +53,7 @@ import javax.inject.Inject;
 
 import timber.log.Timber;
 
-public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener, HtspConnection.Listener {
+public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener {
 
     @Inject
     protected AppRepository appRepository;
@@ -87,47 +86,6 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         this.connectionTimeout = Integer.valueOf(sharedPreferences.getString("connectionTimeout", "5")) * 1000;
         this.htspVersion = 13;
         this.connection = connection;
-    }
-
-    // HtspConnection.Listener Methods
-    @Override
-    public void onConnectionStateChange(@NonNull HtspConnection.State state) {
-        Timber.d("Connection state changed to " + state);
-
-        switch (state) {
-            case FAILED:
-                sendEpgSyncStatusMessage(ServiceStatusReceiver.State.FAILED,
-                        context.getString(R.string.connection_failed), "");
-                break;
-            case FAILED_CONNECTING_TO_SERVER:
-                sendEpgSyncStatusMessage(ServiceStatusReceiver.State.FAILED,
-                        context.getString(R.string.connection_failed),
-                        context.getString(R.string.failed_connecting_to_server));
-                break;
-            case FAILED_EXCEPTION_OPENING_SOCKET:
-                sendEpgSyncStatusMessage(ServiceStatusReceiver.State.FAILED,
-                        context.getString(R.string.connection_failed),
-                        context.getString(R.string.failed_opening_socket));
-                break;
-            case FAILED_INTERRUPTED:
-                sendEpgSyncStatusMessage(ServiceStatusReceiver.State.FAILED,
-                        context.getString(R.string.connection_failed),
-                        context.getString(R.string.failed_during_connection_attempt));
-                break;
-            case FAILED_UNRESOLVED_ADDRESS:
-                sendEpgSyncStatusMessage(ServiceStatusReceiver.State.FAILED,
-                        context.getString(R.string.connection_failed),
-                        context.getString(R.string.failed_to_resolve_address));
-                break;
-            case CONNECTING:
-                sendEpgSyncStatusMessage(ServiceStatusReceiver.State.CONNECTED,
-                        context.getString(R.string.connecting_to_server), "");
-                break;
-            case CLOSED:
-                sendEpgSyncStatusMessage(ServiceStatusReceiver.State.CLOSED,
-                        context.getString(R.string.connection_closed), "");
-                break;
-        }
     }
 
     // Authenticator.Listener Methods
@@ -208,11 +166,6 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     @Override
     public Handler getHandler() {
         return handler;
-    }
-
-    @Override
-    public void setConnection(@NonNull HtspConnection connection) {
-
     }
 
     @Override
