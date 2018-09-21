@@ -155,6 +155,7 @@ public class HtspConnection implements Runnable {
             }
 
             try {
+                Timber.d("Select a set of keys whose corresponding channels are ready for I/O operations");
                 mSelector.select();
             } catch (IOException e) {
                 Timber.e("Failed to select from socket channel", e);
@@ -163,9 +164,11 @@ public class HtspConnection implements Runnable {
             }
 
             if (mSelector == null || !mSelector.isOpen()) {
+                Timber.d("Selector is null or selector is not open");
                 break;
             }
 
+            Timber.d("Retrieving selected set of keys");
             Set<SelectionKey> keys = mSelector.selectedKeys();
             Iterator<SelectionKey> i = keys.iterator();
 
@@ -175,6 +178,7 @@ public class HtspConnection implements Runnable {
                     i.remove();
 
                     if (!selectionKey.isValid()) {
+                        Timber.d("Selected key is not valid");
                         break;
                     }
 
@@ -221,7 +225,7 @@ public class HtspConnection implements Runnable {
 
             switch (getState()) {
                 case CLOSED:
-                    Timber.i("HTSP Connection thread wrapped up cleanly");
+                    Timber.d("HTSP Connection thread wrapped up cleanly");
                     break;
                 case FAILED:
                     Timber.e("HTSP Connection thread wrapped up upon failure");
@@ -237,10 +241,11 @@ public class HtspConnection implements Runnable {
 
     // Internal Methods
     private void processConnectableSelectionKey(SelectionKey selectionKey) throws IOException {
-
+        Timber.d("Processing selection key");
         SocketChannel socketChannel = (SocketChannel) selectionKey.channel();
 
         try {
+            Timber.d("Finish the process of connecting a socket channel");
             socketChannel.finishConnect();
         } catch (ConnectException e) {
             Timber.e("Failed to connect to HTSP server address:", e);
@@ -248,7 +253,7 @@ public class HtspConnection implements Runnable {
             return;
         }
 
-        Timber.i("HTSP Connected");
+        Timber.d("HTSP connection established");
         setState(State.CONNECTED);
     }
 
@@ -349,7 +354,7 @@ public class HtspConnection implements Runnable {
     }
 
     private void setState(final State state) {
-        Timber.d("setState() called with: state = [" + state + "]");
+        Timber.d("Setting state " + state);
         lock.lock();
         try {
             this.state = state;
@@ -368,7 +373,7 @@ public class HtspConnection implements Runnable {
     }
 
     private boolean openConnection() throws HtspException {
-        Timber.i("Opening HTSP Connection");
+        Timber.d("Opening HTSP Connection");
 
         lock.lock();
         try {
@@ -379,10 +384,14 @@ public class HtspConnection implements Runnable {
             setState(State.CONNECTING);
 
             try {
+                Timber.d("Opening socket to server");
                 mSocketChannel = SocketChannel.open();
                 mSocketChannel.configureBlocking(false);
+                Timber.d("Connecting via socket to " + connection.getHostname() + ":" + connection.getPort());
                 mSocketChannel.connect(new InetSocketAddress(connection.getHostname(), connection.getPort()));
+                Timber.d("Opening selector");
                 mSelector = Selector.open();
+
             } catch (ClosedByInterruptException e) {
                 Timber.e("Failed to open HTSP connection, interrupted");
                 closeConnection(State.FAILED_INTERRUPTED);
@@ -401,6 +410,7 @@ public class HtspConnection implements Runnable {
         }
 
         try {
+            Timber.d("Register the socket channel with the given selector");
             int operations = SelectionKey.OP_CONNECT | SelectionKey.OP_READ;
             mSocketChannel.register(mSelector, operations);
         } catch (ClosedChannelException e) {
@@ -408,19 +418,20 @@ public class HtspConnection implements Runnable {
             closeConnection(State.FAILED);
             return false;
         }
+        Timber.d("Opened HTSP Connection");
         return true;
     }
 
     void closeConnection() {
-        Timber.d("closeConnection() called");
+        Timber.d("Closing HTSP connection");
         closeConnection(State.CLOSED);
     }
 
     private void closeConnection(State finalState) {
-        Timber.d("closeConnection() called with: finalState = [" + finalState + "]");
+        Timber.d("Closing HTSP connection, finalState is " + finalState);
 
         if (isClosedOrClosingOrFailed()) {
-            Timber.w("Attempting to close while already closed, closing or failed");
+            Timber.w("Attempting to close connection while already closed, closing or failed");
             return;
         }
 
