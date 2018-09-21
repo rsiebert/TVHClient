@@ -8,6 +8,7 @@ import android.os.HandlerThread;
 import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.data.service.htsp.SimpleHtspConnection;
+import org.tvheadend.tvhclient.data.service.worker.EpgWorkerHandler;
 
 import timber.log.Timber;
 
@@ -18,6 +19,7 @@ public class EpgSyncHandler {
     private Connection connection;
     private SimpleHtspConnection simpleHtspConnection;
     private EpgSyncTask epgSyncTask;
+    private EpgWorkerHandler epgWorkerHandler;
 
     public EpgSyncHandler(Context context, AppRepository appRepository) {
         this.appRepository = appRepository;
@@ -42,9 +44,12 @@ public class EpgSyncHandler {
     public void connect() {
         Timber.d("Opening connection to server");
         simpleHtspConnection = new SimpleHtspConnection(context, connection);
+
         epgSyncTask = new EpgSyncTask(simpleHtspConnection, connection);
+        epgWorkerHandler = new EpgWorkerHandler();
+
         simpleHtspConnection.addMessageListener(epgSyncTask);
-        simpleHtspConnection.addConnectionListener(epgSyncTask);
+        simpleHtspConnection.addConnectionListener(epgWorkerHandler);
         simpleHtspConnection.addAuthenticationListener(epgSyncTask);
         simpleHtspConnection.start();
     }
@@ -60,15 +65,20 @@ public class EpgSyncHandler {
 
     public void stop() {
         Timber.d("Closing connection to server");
+
         if (epgSyncTask != null) {
             simpleHtspConnection.removeMessageListener(epgSyncTask);
-            simpleHtspConnection.removeConnectionListener(epgSyncTask);
+            simpleHtspConnection.removeConnectionListener(epgWorkerHandler);
             simpleHtspConnection.removeAuthenticationListener(epgSyncTask);
             epgSyncTask = null;
         }
         if (simpleHtspConnection != null) {
             simpleHtspConnection.stop();
             simpleHtspConnection = null;
+        }
+        if (epgWorkerHandler != null) {
+            epgWorkerHandler.stop();
+            epgWorkerHandler = null;
         }
         Timber.d("Connection to server closed");
     }
