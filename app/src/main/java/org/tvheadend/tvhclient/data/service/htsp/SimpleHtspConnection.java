@@ -16,13 +16,16 @@
 package org.tvheadend.tvhclient.data.service.htsp;
 
 import android.content.Context;
-import android.content.SharedPreferences;
+import android.content.Intent;
 import android.os.Handler;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.v4.content.LocalBroadcastManager;
+import android.text.TextUtils;
 
+import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.service.htsp.tasks.Authenticator;
+import org.tvheadend.tvhclient.features.shared.receivers.ServiceStatusReceiver;
 
 import timber.log.Timber;
 
@@ -31,67 +34,56 @@ public class SimpleHtspConnection implements HtspMessage.Dispatcher, HtspConnect
     private final HtspMessageDispatcher messageDispatcher;
     private final Authenticator authenticator;
     private final HtspConnection htspConnection;
+    private final Context context;
     private Thread connectionThread;
 
-    private boolean enableReconnect = false;
-    private int retryCount = 0;
-    private final int retryDelay;
+    //private int reconnectCount;
+    //private final int reconnectDelay;
 
-    public SimpleHtspConnection(Context context, Connection connectionInfo) {
-
+    public SimpleHtspConnection(Context context, Connection connection) {
+        this.context = context;
         messageDispatcher = new HtspMessageDispatcher();
 
         HtspDataHandler htspDataHandler = new HtspDataHandler(new HtspMessageSerializer(), messageDispatcher);
-        authenticator = new Authenticator(messageDispatcher, connectionInfo);
+        authenticator = new Authenticator(messageDispatcher, connection);
 
-        htspConnection = new HtspConnection(connectionInfo, htspDataHandler, htspDataHandler);
+        htspConnection = new HtspConnection(connection, htspDataHandler, htspDataHandler);
         htspConnection.addConnectionListener(this);
         htspConnection.addConnectionListener(messageDispatcher);
         htspConnection.addConnectionListener(htspDataHandler);
         htspConnection.addConnectionListener(authenticator);
 
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        retryDelay = Integer.valueOf(sharedPreferences.getString("connection_timeout", "5")) * 1000;
+        //SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        //reconnectDelay = Integer.valueOf(sharedPreferences.getString("connection_timeout", "5")) * 1000;
     }
 
     public void start() {
-        start(true);
-    }
+        Timber.d("Starting simple HTSP connection");
 
-    private void start(boolean allowRestart) {
         if (connectionThread != null) {
-            Timber.w("SimpleHtspConnection already started");
+            Timber.w("Simple HTSP connection already started");
             return;
-        }
-
-        if (allowRestart) {
-            enableReconnect = true;
         }
 
         connectionThread = new Thread(htspConnection);
         connectionThread.start();
     }
-
+/*
     private void restart() {
+        Timber.d("Restarting simple HTSP connection");
         if (connectionThread != null) {
-            stop(false);
+            stop();
         }
 
-        start(false);
+        start();
     }
-
+*/
     public void stop() {
-        stop(true);
-    }
+        Timber.d("Stopping simple HTSP connection");
 
-    private void stop(boolean preventRestart) {
         if (connectionThread == null) {
-            Timber.w("SimpleHtspConnection not started");
+            Timber.w("Simple HTSP connection not started");
             return;
-        }
-
-        if (preventRestart) {
-            enableReconnect = false;
         }
 
         htspConnection.closeConnection();
@@ -172,33 +164,88 @@ public class SimpleHtspConnection implements HtspMessage.Dispatcher, HtspConnect
 
     @Override
     public void onConnectionStateChange(@NonNull HtspConnection.State state) {
+        Timber.d("Simple HTSP connection state changed, state is " + state);
 
-        // Simple HTSP Connections will take care of reconnecting upon failure for you..
-        if (enableReconnect
-                && (state == HtspConnection.State.FAILED
+        switch (state) {
+            case FAILED:
+                sendEpgSyncStatusMessage(ServiceStatusReceiver.State.FAILED,
+                        context.getString(R.string.connection_failed),
+                        null);
+                break;
+            case FAILED_CONNECTING_TO_SERVER:
+                sendEpgSyncStatusMessage(ServiceStatusReceiver.State.FAILED,
+                        context.getString(R.string.connection_failed),
+                        context.getString(R.string.failed_connecting_to_server));
+                break;
+            case FAILED_EXCEPTION_OPENING_SOCKET:
+                sendEpgSyncStatusMessage(ServiceStatusReceiver.State.FAILED,
+                        context.getString(R.string.connection_failed),
+                        context.getString(R.string.failed_opening_socket));
+                break;
+            case FAILED_INTERRUPTED:
+                sendEpgSyncStatusMessage(ServiceStatusReceiver.State.FAILED,
+                        context.getString(R.string.connection_failed),
+                        context.getString(R.string.failed_during_connection_attempt));
+                break;
+            case FAILED_UNRESOLVED_ADDRESS:
+                sendEpgSyncStatusMessage(ServiceStatusReceiver.State.FAILED,
+                        context.getString(R.string.connection_failed),
+                        context.getString(R.string.failed_to_resolve_address));
+                break;
+            case CONNECTING:
+                sendEpgSyncStatusMessage(ServiceStatusReceiver.State.CONNECTING,
+                        context.getString(R.string.connecting_to_server), "");
+                break;
+            case CLOSED:
+                sendEpgSyncStatusMessage(ServiceStatusReceiver.State.CLOSED,
+                        context.getString(R.string.connection_closed), "");
+                break;
+        }
+
+        // Simple HTSP Connections will take care of reconnecting upon failure for you.
+        if (state == HtspConnection.State.FAILED
                 || state == HtspConnection.State.FAILED_CONNECTING_TO_SERVER
                 || state == HtspConnection.State.FAILED_EXCEPTION_OPENING_SOCKET
                 || state == HtspConnection.State.FAILED_INTERRUPTED
-                || state == HtspConnection.State.FAILED_UNRESOLVED_ADDRESS)) {
+                || state == HtspConnection.State.FAILED_UNRESOLVED_ADDRESS) {
 
-            // Wait half of the retry delay time so that the user
+            stop();
+        }
+/*
+            // Wait the retry delay time so that the user
             // can read the message about the connection status.
+            Timber.d("Simple HTSP connection failed, waiting " + reconnectDelay + "ms before trying to restart");
             try {
-                Thread.sleep(retryDelay);
+                Thread.sleep(reconnectDelay);
             } catch (InterruptedException e) {
                 // NOP
             }
 
-            if (retryCount < 3) {
+            if (reconnectCount < 3) {
+                Timber.d("Restarting simple HTSP connection, retry counter is " + reconnectCount);
+                reconnectCount++;
                 restart();
             } else {
+                Timber.d("Stopping simple HTSP connection");
                 stop();
             }
-            retryCount++;
-
         } else if (state == HtspConnection.State.CONNECTED) {
+            Timber.d("Simple HTSP connection is connected, resetting retry counter");
             // Reset our retry counter and delay back to zero
-            retryCount = 0;
+            reconnectCount = 0;
         }
+*/
+    }
+
+    private void sendEpgSyncStatusMessage(ServiceStatusReceiver.State state, String msg, String details) {
+        Intent intent = new Intent(ServiceStatusReceiver.ACTION);
+        intent.putExtra(ServiceStatusReceiver.STATE, state);
+        if (!TextUtils.isEmpty(msg)) {
+            intent.putExtra(ServiceStatusReceiver.MESSAGE, msg);
+        }
+        if (!TextUtils.isEmpty(details)) {
+            intent.putExtra(ServiceStatusReceiver.DETAILS, details);
+        }
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 }
