@@ -377,7 +377,7 @@
     <string name="failed_to_resolve_address">Fehler beim Auflösen der Serveradresse</string>
     <string name="failed_during_connection_attempt">Fehler beim Verbindungsversuch zum Server</string>
     <string name="failed_opening_socket">Fehler beim Öffnen des Sockets für den Server</string>
-    <string name="failed_connecting_to_server">Verbindung zum Server fehlgeschlagen</string>
+    <string name="failed_connecting_to_server">Verbindung zum Server fehlgeschlagen.\nSind die Adresse, Hostname und Port korrekt?\nBlockiert die Firewall evtl. den Port?</string>
     <string name="connection_failed">Verbindung fehlgeschlagen</string>
     <string name="starting_playback">Starte Wiedergabe</string>
     <string name="received_playback_information">Wiedergabeinformationen vom Server empfangen</string>

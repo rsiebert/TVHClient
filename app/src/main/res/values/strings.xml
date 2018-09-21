@@ -347,7 +347,7 @@
     <string name="received_playback_information">Received playback information from server</string>
     <string name="starting_playback">Starting playback</string>
     <string name="connection_failed">Connection failed</string>
-    <string name="failed_connecting_to_server">Failed to connect to server</string>
+    <string name="failed_connecting_to_server">Could not connect to server.\nIs the ip address, hostname and port correct?\nIs a firewall not blocking the port?</string>
     <string name="failed_opening_socket">Failed to open socket to the server</string>
     <string name="failed_during_connection_attempt">Error during connection attempt to server</string>
     <string name="failed_to_resolve_address">Failed to resolve server address</string>
