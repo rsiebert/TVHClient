@@ -24,10 +24,10 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.data.service.EpgSyncService;
 import org.tvheadend.tvhclient.data.service.EpgSyncStatusCallback;
-import org.tvheadend.tvhclient.features.shared.receivers.ServiceStatusReceiver;
 import org.tvheadend.tvhclient.data.service.EpgSyncTaskState;
 import org.tvheadend.tvhclient.features.MainActivity;
 import org.tvheadend.tvhclient.features.settings.SettingsActivity;
+import org.tvheadend.tvhclient.features.shared.receivers.ServiceStatusReceiver;
 import org.tvheadend.tvhclient.utils.MenuUtils;
 import org.tvheadend.tvhclient.utils.NetworkUtils;
 
@@ -63,6 +63,7 @@ public class StartupFragment extends Fragment implements EpgSyncStatusCallback {
     private boolean isServiceStarted;
     private String stateText;
     private String detailsText;
+    private ServiceStatusReceiver.State state;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -85,10 +86,12 @@ public class StartupFragment extends Fragment implements EpgSyncStatusCallback {
         setHasOptionsMenu(true);
 
         if (savedInstanceState != null) {
+            state = ((ServiceStatusReceiver.State) savedInstanceState.getSerializable("state"));
             stateText = savedInstanceState.getString("stateText");
             detailsText = savedInstanceState.getString("detailsText");
             isServiceStarted = savedInstanceState.getBoolean("isServiceStarted");
         } else {
+            state = ServiceStatusReceiver.State.IDLE;
             stateText = getString(R.string.initializing);
             detailsText = "";
             isServiceStarted = false;
@@ -130,6 +133,10 @@ public class StartupFragment extends Fragment implements EpgSyncStatusCallback {
 
         } else {
             Timber.d("Database is empty and network is active, starting service to perform initial sync");
+            progressBar.setVisibility(View.INVISIBLE);
+            settingsFab.setVisibility(View.VISIBLE);
+            settingsFab.setOnClickListener(v -> showConnectionListSettings());
+
             // Create and register the broadcast receiver to get the sync status
             serviceStatusReceiver = new ServiceStatusReceiver(this);
             LocalBroadcastManager.getInstance(activity).registerReceiver(serviceStatusReceiver, new IntentFilter(ServiceStatusReceiver.ACTION));
@@ -153,10 +160,23 @@ public class StartupFragment extends Fragment implements EpgSyncStatusCallback {
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putSerializable("state", state);
         outState.putString("stateText", stateTextView.getText().toString());
         outState.putString("detailsText", detailsTextView.getText().toString());
         outState.putBoolean("isServiceStarted", isServiceStarted);
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        Timber.d("Resuming, state is " + this.state);
+        onEpgTaskStateChanged(new EpgSyncTaskState.EpgSyncTaskStateBuilder()
+                .state(this.state)
+                .message(stateText)
+                .details(detailsText)
+                .build());
     }
 
     @Override
@@ -210,6 +230,9 @@ public class StartupFragment extends Fragment implements EpgSyncStatusCallback {
 
     @Override
     public void onEpgTaskStateChanged(EpgSyncTaskState state) {
+        Timber.d("Epg task state changed to " + state.getState());
+        this.state = state.getState();
+
         switch (state.getState()) {
             case CONNECTING:
             case CONNECTED:
@@ -236,6 +259,7 @@ public class StartupFragment extends Fragment implements EpgSyncStatusCallback {
                 progressBar.setVisibility(View.INVISIBLE);
                 settingsFab.setVisibility(View.VISIBLE);
                 settingsFab.setOnClickListener(v -> showConnectionListSettings());
+                // TODO Show a retry fab
                 break;
         }
     }

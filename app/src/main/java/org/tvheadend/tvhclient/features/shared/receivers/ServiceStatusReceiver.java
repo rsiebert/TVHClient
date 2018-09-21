@@ -23,6 +23,7 @@ public class ServiceStatusReceiver extends BroadcastReceiver {
         SYNC_STARTED,
         SYNC_IN_PROGRESS,
         SYNC_DONE,
+        IDLE,
         FAILED
     }
 
