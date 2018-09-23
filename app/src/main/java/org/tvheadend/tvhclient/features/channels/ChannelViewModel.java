@@ -51,7 +51,6 @@ public class ChannelViewModel extends AndroidViewModel {
 
             channelUpdateHandler.postDelayed(channelUpdateTask, 60000);
         };
-        channelUpdateHandler.post(channelUpdateTask);
     }
 
     LiveData<List<Recording>> getAllRecordings() {
@@ -87,7 +86,6 @@ public class ChannelViewModel extends AndroidViewModel {
 
     public void setSelectedTime(long selectedTime) {
         this.selectedTime = selectedTime;
-        channelUpdateHandler.post(channelUpdateTask);
     }
 
     public int getChannelTagId() {
@@ -96,6 +94,12 @@ public class ChannelViewModel extends AndroidViewModel {
 
     public void setChannelTagId(int channelTagId) {
         this.channelTagId = channelTagId;
+        ServerStatus serverStatus = appRepository.getServerStatusData().getActiveItem();
+        serverStatus.setChannelTagId(channelTagId);
+        appRepository.getServerStatusData().updateItem(serverStatus);
+    }
+
+    public void updateChannels() {
         channelUpdateHandler.post(channelUpdateTask);
     }
 }
