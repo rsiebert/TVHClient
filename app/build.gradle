@@ -34,7 +34,6 @@ android {
         setProperty("archivesBaseName", "${applicationId}-${versionName}-${versionCode}")
 
         // Set the default values for these build config fields
-        buildConfigField "Boolean", "DEBUG_MODE", "false"
         buildConfigField "String", "DEVELOPER_EMAIL", "\"\""
         buildConfigField "String", "PUBLIC_KEY_SALT", "\"\""
         buildConfigField "Integer", "BUILD_VERSION", "$versionCode"
@@ -70,6 +69,8 @@ android {
             buildConfigField "Boolean", "DEBUG_MODE", "true"
         }
         release {
+            // When set to true all features are unlocked and full logging is available
+            buildConfigField "Boolean", "DEBUG_MODE", "false"
             // The property file must exist in release mode so that the
             // actual values can be assigned from the property file to these fields.
             if (tvhHasProperty("developerEmail")) {
