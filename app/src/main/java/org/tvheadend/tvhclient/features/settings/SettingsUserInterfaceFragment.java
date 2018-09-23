@@ -52,7 +52,7 @@ public class SettingsUserInterfaceFragment extends BasePreferenceFragment implem
     }
 
     private void handlePreferenceShowArtworkSelected() {
-        if (isUnlocked) {
+        if (!isUnlocked) {
             if (getView() != null) {
                 Snackbar.make(getView(), R.string.feature_not_available_in_free_version, Snackbar.LENGTH_SHORT).show();
             }
