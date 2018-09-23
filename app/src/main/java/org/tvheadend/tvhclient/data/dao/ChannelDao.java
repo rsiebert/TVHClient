@@ -29,7 +29,7 @@ public interface ChannelDao {
             "FROM channels AS c ";
 
     String orderBy = "ORDER BY CASE :sortOrder " +
-            "   WHEN 0 THEN c.id" +
+            "   WHEN 0 THEN (c.display_number + 0) " +
             "   WHEN 1 THEN c.name " +
             "   WHEN 2 THEN (c.display_number + 0) " +
             "END";
