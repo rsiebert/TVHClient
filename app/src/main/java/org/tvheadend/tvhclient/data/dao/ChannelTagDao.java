@@ -15,7 +15,8 @@ import java.util.List;
 public interface ChannelTagDao {
 
     @Query("SELECT * FROM channel_tags " +
-            "WHERE connection_id IN (SELECT id FROM connections WHERE active = 1)")
+            "WHERE connection_id IN (SELECT id FROM connections WHERE active = 1) " +
+            "ORDER BY tag_name")
     List<ChannelTag> loadAllChannelTagsSync();
 
     @Query("SELECT * FROM channel_tags " +
