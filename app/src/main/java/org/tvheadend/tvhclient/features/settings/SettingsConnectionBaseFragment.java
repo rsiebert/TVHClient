@@ -177,8 +177,6 @@ public abstract class SettingsConnectionBaseFragment extends PreferenceFragment 
 
     @Override
     public boolean onPreferenceChange(Preference preference, Object o) {
-        connectionValuesChanged = true;
-
         String value = String.valueOf(o);
         switch (preference.getKey()) {
             case "name":
@@ -194,6 +192,7 @@ public abstract class SettingsConnectionBaseFragment extends PreferenceFragment 
                 }
                 break;
             case "hostname":
+                connectionValuesChanged = true;
                 if (connection.isIpAddressValid(value)) {
                     connection.setHostname(value);
                     hostnamePreference.setText(value);
@@ -206,6 +205,7 @@ public abstract class SettingsConnectionBaseFragment extends PreferenceFragment 
                 }
                 break;
             case "htsp_port":
+                connectionValuesChanged = true;
                 try {
                     int port = Integer.parseInt(value);
                     if (connection.isPortValid(port)) {
@@ -223,6 +223,7 @@ public abstract class SettingsConnectionBaseFragment extends PreferenceFragment 
                 }
                 break;
             case "streaming_port":
+                connectionValuesChanged = true;
                 try {
                     int port = Integer.parseInt(value);
                     if (connection.isPortValid(port)) {
@@ -240,16 +241,19 @@ public abstract class SettingsConnectionBaseFragment extends PreferenceFragment 
                 }
                 break;
             case "username":
+                connectionValuesChanged = true;
                 connection.setUsername(value);
                 usernamePreference.setText(value);
                 usernamePreference.setSummary(value.isEmpty() ? getString(R.string.pref_user_sum) : value);
                 break;
             case "password":
+                connectionValuesChanged = true;
                 connection.setPassword(value);
                 passwordPreference.setText(value);
                 passwordPreference.setSummary(value.isEmpty() ? getString(R.string.pref_pass_sum) : getString(R.string.pref_pass_set_sum));
                 break;
             case "active_enabled":
+                connectionValuesChanged = true;
                 // When the connection was set as the new active
                 // connection, an initial sync is required
                 boolean isActive = Boolean.valueOf(value);
