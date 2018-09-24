@@ -71,7 +71,7 @@ public class ServerStatusData extends BaseData implements DataSourceInterface<Se
     }
 
     public LiveData<ServerStatus> getLiveDataActiveItem() {
-        return db.getServerStatusDao().loadServerStatus();
+        return db.getServerStatusDao().loadActiveServerStatus();
     }
 
     public ServerStatus getActiveItem() {
@@ -105,7 +105,7 @@ public class ServerStatusData extends BaseData implements DataSourceInterface<Se
         @Override
         protected ServerStatus doInBackground(Void... voids) {
             if (id < 0) {
-                return db.getServerStatusDao().loadServerStatusSync();
+                return db.getServerStatusDao().loadActiveServerStatusSync();
             } else {
                 return db.getServerStatusDao().loadServerStatusByIdSync(id);
             }
