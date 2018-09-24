@@ -19,13 +19,13 @@ public interface ServerStatusDao {
             "c.name AS connection_name " +
             "FROM server_status AS s " +
             "JOIN connections AS c ON c.id = s.connection_id AND c.active = 1")
-    ServerStatus loadServerStatusSync();
+    ServerStatus loadActiveServerStatusSync();
 
     @Query("SELECT s.*, " +
             "c.name AS connection_name " +
             "FROM server_status AS s " +
             "JOIN connections AS c ON c.id = s.connection_id AND c.active = 1")
-    LiveData<ServerStatus> loadServerStatus();
+    LiveData<ServerStatus> loadActiveServerStatus();
 
     @Insert
     void insert(ServerStatus serverStatus);
