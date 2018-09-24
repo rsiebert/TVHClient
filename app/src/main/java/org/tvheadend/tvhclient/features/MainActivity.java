@@ -223,6 +223,8 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Wake
             if (fragment != null && fragment instanceof DownloadPermissionGrantedInterface) {
                 ((DownloadPermissionGrantedInterface) fragment).downloadRecording();
             }
+        } else {
+            Timber.d("Storage permission could not be granted");
         }
     }
 

@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -68,7 +69,7 @@ public class MenuUtils {
     private final ServerStatus serverStatus;
     private final WeakReference<Activity> activity;
 
-    public MenuUtils(Activity activity) {
+    public MenuUtils(@NonNull Activity activity) {
         MainApplication.getComponent().inject(this);
 
         this.activity = new WeakReference<>(activity);
@@ -103,7 +104,7 @@ public class MenuUtils {
         return true;
     }
 
-    public boolean handleMenuTimeSelection(int currentSelection, int intervalInHours, int maxIntervalsToShow, ChannelTimeSelectionCallback callback) {
+    public boolean handleMenuTimeSelection(int currentSelection, int intervalInHours, int maxIntervalsToShow, @Nullable ChannelTimeSelectionCallback callback) {
         Activity activity = this.activity.get();
         if (activity == null) {
             return false;
@@ -142,7 +143,7 @@ public class MenuUtils {
         return true;
     }
 
-    public boolean handleMenuChannelTagsSelection(int channelTagId, ChannelTagSelectionCallback callback) {
+    public boolean handleMenuChannelTagsSelection(int channelTagId, @Nullable ChannelTagSelectionCallback callback) {
         Activity activity = this.activity.get();
         if (activity == null) {
             return false;
@@ -184,8 +185,10 @@ public class MenuUtils {
     }
 
     public boolean handleMenuDownloadSelection(int dvrId) {
+        Timber.d("Stating download of recording id " + dvrId);
         Activity activity = this.activity.get();
         if (activity == null) {
+            Timber.d("Weak reference to activity is null");
             return false;
         }
         new DownloadRecordingManager(activity, dvrId);
@@ -195,6 +198,7 @@ public class MenuUtils {
     public boolean handleMenuSearchImdbWebsite(String title) {
         Activity activity = this.activity.get();
         if (activity == null) {
+            Timber.d("Weak reference to activity is null");
             return false;
         }
         try {
@@ -216,6 +220,7 @@ public class MenuUtils {
     public boolean handleMenuSearchFileAffinityWebsite(String title) {
         Activity activity = this.activity.get();
         if (activity == null) {
+            Timber.d("Weak reference to activity is null");
             return false;
         }
         try {
@@ -237,6 +242,7 @@ public class MenuUtils {
     public boolean handleMenuSearchEpgSelection(String title, int channelId) {
         Activity activity = this.activity.get();
         if (activity == null) {
+            Timber.d("Weak reference to activity is null");
             return false;
         }
         Intent intent = new Intent(activity, SearchActivity.class);
@@ -252,6 +258,7 @@ public class MenuUtils {
     public boolean handleMenuRecordSelection(int eventId) {
         Activity activity = this.activity.get();
         if (activity == null) {
+            Timber.d("Weak reference to activity is null");
             return false;
         }
         Timber.d("handleMenuRecordSelection() called with: eventId = [" + eventId + "]");
@@ -270,6 +277,7 @@ public class MenuUtils {
     public boolean handleMenuSeriesRecordSelection(String title) {
         Activity activity = this.activity.get();
         if (activity == null) {
+            Timber.d("Weak reference to activity is null");
             return false;
         }
         final Intent intent = new Intent(activity, EpgSyncService.class);
@@ -287,6 +295,7 @@ public class MenuUtils {
     public boolean handleMenuStopRecordingSelection(@Nullable Recording recording, @Nullable RecordingRemovedCallback callback) {
         Activity activity = this.activity.get();
         if (activity == null || recording == null) {
+            Timber.d("Weak reference to activity is null");
             return false;
         }
         Timber.d("Stopping recording " + recording.getTitle());
@@ -312,6 +321,7 @@ public class MenuUtils {
     public boolean handleMenuRemoveRecordingSelection(@Nullable Recording recording, @Nullable RecordingRemovedCallback callback) {
         Activity activity = this.activity.get();
         if (activity == null || recording == null) {
+            Timber.d("Weak reference to activity is null");
             return false;
         }
         Timber.d("Removing recording " + recording.getTitle());
@@ -337,6 +347,7 @@ public class MenuUtils {
     public boolean handleMenuCancelRecordingSelection(@Nullable Recording recording, @Nullable RecordingRemovedCallback callback) {
         Activity activity = this.activity.get();
         if (activity == null || recording == null) {
+            Timber.d("Weak reference to activity is null");
             return false;
         }
         Timber.d("Cancelling recording " + recording.getTitle());
@@ -362,6 +373,7 @@ public class MenuUtils {
     public boolean handleMenuRemoveSeriesRecordingSelection(@Nullable SeriesRecording recording, @Nullable RecordingRemovedCallback callback) {
         Activity activity = this.activity.get();
         if (activity == null || recording == null) {
+            Timber.d("Weak reference to activity is null");
             return false;
         }
         Timber.d("Removing series recording " + recording.getTitle());
@@ -387,6 +399,7 @@ public class MenuUtils {
     public boolean handleMenuRemoveTimerRecordingSelection(@Nullable TimerRecording recording, @Nullable RecordingRemovedCallback callback) {
         Activity activity = this.activity.get();
         if (activity == null || recording == null) {
+            Timber.d("Weak reference to activity is null");
             return false;
         }
 
@@ -414,9 +427,10 @@ public class MenuUtils {
         return true;
     }
 
-    public boolean handleMenuRemoveAllRecordingsSelection(List<Recording> items) {
+    public boolean handleMenuRemoveAllRecordingsSelection(@NonNull List<Recording> items) {
         Activity activity = this.activity.get();
         if (activity == null) {
+            Timber.d("Weak reference to activity is null");
             return false;
         }
         new MaterialDialog.Builder(activity)
@@ -446,9 +460,10 @@ public class MenuUtils {
         return true;
     }
 
-    public boolean handleMenuRemoveAllSeriesRecordingSelection(List<SeriesRecording> items) {
+    public boolean handleMenuRemoveAllSeriesRecordingSelection(@NonNull List<SeriesRecording> items) {
         Activity activity = this.activity.get();
         if (activity == null) {
+            Timber.d("Weak reference to activity is null");
             return false;
         }
         new MaterialDialog.Builder(activity)
@@ -474,9 +489,10 @@ public class MenuUtils {
         return true;
     }
 
-    public boolean handleMenuRemoveAllTimerRecordingSelection(List<TimerRecording> items) {
+    public boolean handleMenuRemoveAllTimerRecordingSelection(@NonNull List<TimerRecording> items) {
         Activity activity = this.activity.get();
         if (activity == null) {
+            Timber.d("Weak reference to activity is null");
             return false;
         }
         new MaterialDialog.Builder(activity)
@@ -505,6 +521,7 @@ public class MenuUtils {
     public boolean handleMenuCustomRecordSelection(final int eventId, final int channelId) {
         Activity activity = this.activity.get();
         if (activity == null) {
+            Timber.d("Weak reference to activity is null");
             return false;
         }
 
@@ -541,9 +558,10 @@ public class MenuUtils {
         return true;
     }
 
-    public void onPreparePopupMenu(Menu menu, Recording recording, boolean isNetworkAvailable) {
+    public void onPreparePopupMenu(@NonNull Menu menu, @Nullable Recording recording, boolean isNetworkAvailable) {
         Activity activity = this.activity.get();
         if (activity == null) {
+            Timber.d("Weak reference to activity is null");
             return;
         }
 
@@ -601,9 +619,10 @@ public class MenuUtils {
         }
     }
 
-    public void onPreparePopupSearchMenu(Menu menu, boolean isNetworkAvailable) {
+    public void onPreparePopupSearchMenu(@NonNull Menu menu, boolean isNetworkAvailable) {
         Activity activity = this.activity.get();
         if (activity == null) {
+            Timber.d("Weak reference to activity is null");
             return;
         }
 
@@ -629,6 +648,7 @@ public class MenuUtils {
     public boolean handleMenuReconnectSelection() {
         Activity activity = this.activity.get();
         if (activity == null) {
+            Timber.d("Weak reference to activity is null");
             return false;
         }
 
@@ -655,10 +675,12 @@ public class MenuUtils {
         return true;
     }
 
-    public boolean handleMenuAddNotificationSelection(Program program) {
-        Timber.d("handleMenuAddNotificationSelection: program " + program.getEventId() + ", " + program.getTitle());
+    public boolean handleMenuAddNotificationSelection(@NonNull Program program) {
+        Timber.d("Adding notification for program " + program.getTitle());
+
         Activity activity = this.activity.get();
         if (activity == null) {
+            Timber.d("Weak reference to activity is null");
             return false;
         }
 
@@ -693,8 +715,10 @@ public class MenuUtils {
     public boolean handleMenuPlayChannel(int channelId) {
         Activity activity = this.activity.get();
         if (activity == null) {
+            Timber.d("Weak reference to activity is null");
             return false;
         }
+
         if (isUnlocked && sharedPreferences.getBoolean("internal_player_enabled", false)) {
             Intent intent = new Intent(activity, HtspPlaybackActivity.class);
             intent.putExtra("channelId", channelId);
@@ -710,6 +734,7 @@ public class MenuUtils {
     public boolean handleMenuPlayRecording(int dvrId) {
         Activity activity = this.activity.get();
         if (activity == null) {
+            Timber.d("Weak reference to activity is null");
             return false;
         }
         Intent intent = new Intent(activity, PlayRecordingActivity.class);

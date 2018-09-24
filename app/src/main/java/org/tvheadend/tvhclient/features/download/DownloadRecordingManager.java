@@ -45,6 +45,7 @@ public class DownloadRecordingManager {
     private long lastDownloadId;
 
     public DownloadRecordingManager(Activity activity, int dvrId) {
+        Timber.d("Initializing download manager for recording id " + dvrId);
         MainApplication.getComponent().inject(this);
 
         this.activity = activity;
@@ -57,6 +58,8 @@ public class DownloadRecordingManager {
             if (isStoragePermissionGranted()) {
                 startDownload();
             }
+        } else {
+            Timber.d("Recording or download manager is null");
         }
     }
 
@@ -69,11 +72,14 @@ public class DownloadRecordingManager {
      * notification.
      */
     private void startDownload() {
+        Timber.d("Starting download of recording " + recording.getTitle());
 
         Answers.getInstance().logCustom(new CustomEvent("Download")
                 .putCustomAttribute("Recording title", recording.getTitle()));
 
         lastDownloadId = downloadManager.enqueue(getDownloadRequest());
+        Timber.d("Started download with id " + lastDownloadId);
+
         // Check after a certain delay the status of the download and that for
         // example the download has not failed due to insufficient storage space.
         // The download manager does not sent a broadcast if this error occurs.
@@ -94,7 +100,6 @@ public class DownloadRecordingManager {
         String credentials = "Basic " + Base64.encodeToString((connection.getUsername() + ":" + connection.getPassword()).getBytes(), Base64.NO_WRAP);
 
         Timber.d("Download recording from url " + downloadUrl + " to " + downloadDirectory);
-
         return new DownloadManager.Request(Uri.parse(downloadUrl))
                 .addRequestHeader("Authorization", credentials)
                 .setTitle(activity.getString(R.string.download))
@@ -104,11 +109,12 @@ public class DownloadRecordingManager {
     }
 
     private void showDownloadStatusMessage() {
+        Timber.d("Checking the download status of recording " + recording.getTitle());
 
         String msg;
         Cursor cursor = downloadManager.query(new DownloadManager.Query().setFilterById(lastDownloadId));
         if (cursor == null) {
-            msg = "Download was not found";
+            msg = "Download of recording " + recording.getTitle() + " was not found";
         } else {
             cursor.moveToFirst();
             int status = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS));
@@ -150,8 +156,8 @@ public class DownloadRecordingManager {
                     break;
             }
         }
-        Timber.d("Download status is " + msg);
 
+        Timber.d("Download status of recording " + recording.getTitle() + " is " + msg);
         if (!TextUtils.isEmpty(msg)) {
             Intent intent = new Intent("message");
             intent.putExtra("message", msg);
@@ -168,14 +174,18 @@ public class DownloadRecordingManager {
      * @return True if permission is granted, otherwise false
      */
     private boolean isStoragePermissionGranted() {
+        Timber.d("Checking for storage permission");
         if (Build.VERSION.SDK_INT >= 23) {
             if (activity.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                Timber.d("Storage permissios were granted (API >= 23)");
                 return true;
             } else {
+                Timber.d("Storage permissios are not yet granted (API >= 23)");
                 ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
                 return false;
             }
         } else {
+            Timber.d("Storage permissios were granted (API < 23)");
             return true;
         }
     }
