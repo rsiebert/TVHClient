@@ -1,14 +1,11 @@
 package org.tvheadend.tvhclient.features.purchase;
 
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.MenuItem;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.features.shared.callbacks.ToolbarInterface;
-import org.tvheadend.tvhclient.features.shared.callbacks.BackPressedInterface;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
 public class UnlockerActivity extends AppCompatActivity implements ToolbarInterface {
@@ -22,29 +19,14 @@ public class UnlockerActivity extends AppCompatActivity implements ToolbarInterf
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         if (savedInstanceState == null) {
             UnlockerFragment fragment = new UnlockerFragment();
             fragment.setArguments(getIntent().getExtras());
             getSupportFragmentManager().beginTransaction().add(R.id.main, fragment).commit();
-        }
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onBackPressed() {
-        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main);
-        if (fragment != null && fragment instanceof BackPressedInterface) {
-            ((BackPressedInterface) fragment).onBackPressed();
         }
     }
 

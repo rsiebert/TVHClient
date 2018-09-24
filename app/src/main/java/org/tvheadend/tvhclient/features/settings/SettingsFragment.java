@@ -20,6 +20,7 @@ import com.afollestad.materialdialogs.folderselector.FolderChooserDialog;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.features.MainActivity;
 import org.tvheadend.tvhclient.features.changelog.ChangeLogActivity;
+import org.tvheadend.tvhclient.features.purchase.UnlockerActivity;
 
 import java.io.File;
 
@@ -204,7 +205,8 @@ public class SettingsFragment extends BasePreferenceFragment implements Preferen
                 Snackbar.make(getView(), getString(R.string.unlocker_already_purchased), Snackbar.LENGTH_SHORT).show();
             }
         } else {
-            showSelectedSettingsFragment("unlocker");
+            Intent intent = new Intent(activity, UnlockerActivity.class);
+            startActivity(intent);
         }
     }
 

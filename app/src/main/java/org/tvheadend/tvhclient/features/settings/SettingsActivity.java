@@ -14,8 +14,6 @@ import com.afollestad.materialdialogs.folderselector.FolderChooserDialog;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.features.changelog.ChangeLogActivity;
-import org.tvheadend.tvhclient.features.information.InfoActivity;
-import org.tvheadend.tvhclient.features.purchase.UnlockerActivity;
 import org.tvheadend.tvhclient.features.shared.callbacks.BackPressedInterface;
 import org.tvheadend.tvhclient.features.shared.callbacks.ToolbarInterface;
 import org.tvheadend.tvhclient.features.shared.receivers.SnackbarMessageReceiver;
@@ -79,14 +77,6 @@ public class SettingsActivity extends AppCompatActivity implements ToolbarInterf
                         break;
                     case "advanced":
                         fragment = new SettingsAdvancedFragment();
-                        break;
-                    case "information":
-                        intent = new Intent(this, InfoActivity.class);
-                        startActivity(intent);
-                        break;
-                    case "unlocker":
-                        intent = new Intent(this, UnlockerActivity.class);
-                        startActivity(intent);
                         break;
                     case "changelog":
                         intent = new Intent(this, ChangeLogActivity.class);
