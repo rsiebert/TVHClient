@@ -155,7 +155,6 @@ public class HtspConnection implements Runnable {
             }
 
             try {
-                Timber.d("Select a set of keys whose corresponding channels are ready for I/O operations");
                 mSelector.select();
             } catch (IOException e) {
                 Timber.e("Failed to select from socket channel", e);
@@ -168,7 +167,6 @@ public class HtspConnection implements Runnable {
                 break;
             }
 
-            Timber.d("Retrieving selected set of keys");
             Set<SelectionKey> keys = mSelector.selectedKeys();
             Iterator<SelectionKey> i = keys.iterator();
 
