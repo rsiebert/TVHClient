@@ -37,9 +37,6 @@ public class SimpleHtspConnection implements HtspMessage.Dispatcher, HtspConnect
     private final Context context;
     private Thread connectionThread;
 
-    //private int reconnectCount;
-    //private final int reconnectDelay;
-
     public SimpleHtspConnection(Context context, Connection connection) {
         this.context = context;
         messageDispatcher = new HtspMessageDispatcher();
@@ -52,9 +49,6 @@ public class SimpleHtspConnection implements HtspMessage.Dispatcher, HtspConnect
         htspConnection.addConnectionListener(messageDispatcher);
         htspConnection.addConnectionListener(htspDataHandler);
         htspConnection.addConnectionListener(authenticator);
-
-        //SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        //reconnectDelay = Integer.valueOf(sharedPreferences.getString("connection_timeout", "5")) * 1000;
     }
 
     public void start() {
@@ -68,16 +62,7 @@ public class SimpleHtspConnection implements HtspMessage.Dispatcher, HtspConnect
         connectionThread = new Thread(htspConnection);
         connectionThread.start();
     }
-/*
-    private void restart() {
-        Timber.d("Restarting simple HTSP connection");
-        if (connectionThread != null) {
-            stop();
-        }
 
-        start();
-    }
-*/
     public void stop() {
         Timber.d("Stopping simple HTSP connection");
 
@@ -211,30 +196,6 @@ public class SimpleHtspConnection implements HtspMessage.Dispatcher, HtspConnect
 
             stop();
         }
-/*
-            // Wait the retry delay time so that the user
-            // can read the message about the connection status.
-            Timber.d("Simple HTSP connection failed, waiting " + reconnectDelay + "ms before trying to restart");
-            try {
-                Thread.sleep(reconnectDelay);
-            } catch (InterruptedException e) {
-                // NOP
-            }
-
-            if (reconnectCount < 3) {
-                Timber.d("Restarting simple HTSP connection, retry counter is " + reconnectCount);
-                reconnectCount++;
-                restart();
-            } else {
-                Timber.d("Stopping simple HTSP connection");
-                stop();
-            }
-        } else if (state == HtspConnection.State.CONNECTED) {
-            Timber.d("Simple HTSP connection is connected, resetting retry counter");
-            // Reset our retry counter and delay back to zero
-            reconnectCount = 0;
-        }
-*/
     }
 
     private void sendEpgSyncStatusMessage(ServiceStatusReceiver.State state, String msg, String details) {
