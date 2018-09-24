@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import com.crashlytics.android.Crashlytics;
 
 import org.tvheadend.tvhclient.data.db.AppRoomDatabase;
+import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
 
 import java.util.ArrayList;
@@ -78,8 +79,8 @@ public class ServerStatusData extends BaseData implements DataSourceInterface<Se
         try {
             ServerStatus serverStatus = new ItemLoaderTask(db).execute().get();
             if (serverStatus == null) {
-                Throwable assertionError = new Throwable("getActiveItem: Server status is null");
-                Crashlytics.logException(assertionError);
+                Connection connection = db.getConnectionDao().loadActiveConnectionSync();
+                Crashlytics.log("Active server status for connection " + connection.getId() + " is null");
             }
             return serverStatus;
         } catch (InterruptedException | ExecutionException e) {
