@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import com.crashlytics.android.Crashlytics;
 
 import org.tvheadend.tvhclient.data.db.AppRoomDatabase;
+import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
 
 import java.util.ArrayList;
@@ -71,17 +72,14 @@ public class ServerStatusData extends BaseData implements DataSourceInterface<Se
     }
 
     public LiveData<ServerStatus> getLiveDataActiveItem() {
-        return db.getServerStatusDao().loadServerStatus();
+        Crashlytics.log("Trying to load active live data server status");
+        return db.getServerStatusDao().loadActiveServerStatus();
     }
 
     public ServerStatus getActiveItem() {
         try {
-            ServerStatus serverStatus = new ItemLoaderTask(db).execute().get();
-            if (serverStatus == null) {
-                Throwable assertionError = new Throwable("getActiveItem: Server status is null");
-                Crashlytics.logException(assertionError);
-            }
-            return serverStatus;
+            Crashlytics.log("Trying to load active server status");
+            return new ItemLoaderTask(db).execute().get();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
@@ -98,14 +96,29 @@ public class ServerStatusData extends BaseData implements DataSourceInterface<Se
         }
 
         ItemLoaderTask(AppRoomDatabase db) {
+            Crashlytics.log("Initialized async task to load server status");
             this.db = db;
             this.id = -1;
         }
 
         @Override
         protected ServerStatus doInBackground(Void... voids) {
+            Connection connection = db.getConnectionDao().loadActiveConnectionSync();
+            Crashlytics.log("Starting async task to load server status for connection " + connection.getName() + ", id " + connection.getId());
             if (id < 0) {
-                return db.getServerStatusDao().loadServerStatusSync();
+                Crashlytics.log("Async task done loading server status");
+                ServerStatus serverStatus = db.getServerStatusDao().loadActiveServerStatusSync();
+                Crashlytics.log("Server status is " + ((serverStatus == null) ? "null" : "not null"));
+
+                if (serverStatus == null) {
+                    Crashlytics.log("Server status is null, inserting new server status with connection id " + connection.getId());
+                    serverStatus = new ServerStatus();
+                    serverStatus.setId(connection.getId());
+                    long newId = db.getServerStatusDao().insert(serverStatus);
+                    Crashlytics.log("Inserted server status with new id " + newId);
+                }
+
+                return serverStatus;
             } else {
                 return db.getServerStatusDao().loadServerStatusByIdSync(id);
             }
