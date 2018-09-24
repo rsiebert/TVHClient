@@ -4,8 +4,6 @@ import android.arch.lifecycle.LiveData;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
-import com.crashlytics.android.Crashlytics;
-
 import org.tvheadend.tvhclient.data.db.AppRoomDatabase;
 import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
@@ -142,25 +140,11 @@ public class ConnectionData extends BaseData implements DataSourceInterface<Conn
                         db.getConnectionDao().disableActiveConnection();
                     }
                     long newId = db.getConnectionDao().insert(connection);
-                    Crashlytics.log("Inserted new connection with id " + newId);
-
                     // Create a new server status row in the database
                     // that is linked to the newly added connection
-                    Crashlytics.log("Inserting new server status with connection id " + newId);
-                    ServerStatus newServerStatus = new ServerStatus();
-                    newServerStatus.setConnectionId((int) newId);
-                    newId = db.getServerStatusDao().insert(newServerStatus);
-
-                    ServerStatus serverStatus = db.getServerStatusDao().loadActiveServerStatusSync();
-                    Crashlytics.log("Inserted server status with new id " + newId + " is " + ((serverStatus == null) ? "null" : "not null"));
-
-                    if (serverStatus == null) {
-                        Crashlytics.log("Server status is null, inserted new server status with connection id " + connection.getId());
-                        serverStatus = new ServerStatus();
-                        serverStatus.setId(connection.getId());
-                        newId = db.getServerStatusDao().insert(serverStatus);
-                        Crashlytics.log("Inserted server status with new id " + newId);
-                    }
+                    ServerStatus serverStatus = new ServerStatus();
+                    serverStatus.setConnectionId((int) newId);
+                    db.getServerStatusDao().insert(serverStatus);
                     break;
 
                 case UPDATE:

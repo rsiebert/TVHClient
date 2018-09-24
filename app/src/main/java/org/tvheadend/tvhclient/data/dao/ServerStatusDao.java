@@ -28,7 +28,7 @@ public interface ServerStatusDao {
     LiveData<ServerStatus> loadActiveServerStatus();
 
     @Insert
-    long insert(ServerStatus serverStatus);
+    void insert(ServerStatus serverStatus);
 
     @Update
     void update(ServerStatus serverStatus);
