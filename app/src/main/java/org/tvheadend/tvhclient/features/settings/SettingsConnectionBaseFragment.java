@@ -5,19 +5,31 @@ import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
+import android.preference.PreferenceFragment;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 
+import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Connection;
+import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.features.shared.callbacks.BackPressedInterface;
+import org.tvheadend.tvhclient.features.shared.callbacks.ToolbarInterface;
 
-public abstract class SettingsConnectionBaseFragment extends BasePreferenceFragment implements BackPressedInterface, Preference.OnPreferenceChangeListener {
+import javax.inject.Inject;
 
+public abstract class SettingsConnectionBaseFragment extends PreferenceFragment implements BackPressedInterface, Preference.OnPreferenceChangeListener {
+
+    @Inject
+    protected AppRepository appRepository;
+
+    protected AppCompatActivity activity;
+    protected ToolbarInterface toolbarInterface;
     boolean connectionValuesChanged;
     Connection connection;
     ConnectionViewModel viewModel;
@@ -38,6 +50,12 @@ public abstract class SettingsConnectionBaseFragment extends BasePreferenceFragm
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences_add_connection);
+        activity = (AppCompatActivity) getActivity();
+        if (activity instanceof ToolbarInterface) {
+            toolbarInterface = (ToolbarInterface) activity;
+        }
+        MainApplication.getComponent().inject(this);
+
         viewModel = ViewModelProviders.of(activity).get(ConnectionViewModel.class);
         setHasOptionsMenu(true);
 

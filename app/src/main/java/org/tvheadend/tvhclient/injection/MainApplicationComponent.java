@@ -19,6 +19,7 @@ import org.tvheadend.tvhclient.features.epg.EpgViewPagerFragment;
 import org.tvheadend.tvhclient.features.programs.ProgramViewModel;
 import org.tvheadend.tvhclient.features.settings.BasePreferenceFragment;
 import org.tvheadend.tvhclient.features.settings.ConnectionViewModel;
+import org.tvheadend.tvhclient.features.settings.SettingsConnectionBaseFragment;
 import org.tvheadend.tvhclient.features.settings.SettingsListConnectionsFragment;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
 import org.tvheadend.tvhclient.features.startup.StartupFragment;
@@ -92,4 +93,6 @@ public interface MainApplicationComponent {
     void inject(EpgSyncIntentService epgSyncIntentService);
 
     void inject(HtspPlaybackActivity htspPlaybackActivity);
+
+    void inject(SettingsConnectionBaseFragment settingsConnectionBaseFragment);
 }
