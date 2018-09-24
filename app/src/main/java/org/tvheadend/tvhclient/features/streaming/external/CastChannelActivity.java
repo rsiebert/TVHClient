@@ -76,7 +76,12 @@ public class CastChannelActivity extends BasePlaybackActivity {
         movieMetadata.putString(MediaMetadata.KEY_SUBTITLE, channel.getProgramSubtitle());
 
         if (!TextUtils.isEmpty(channel.getIcon())) {
-            String iconUrl = baseUrl + "/" + channel.getIcon();
+            String iconUrl = "";
+            if (channel.getIcon().startsWith("http")) {
+                iconUrl = channel.getIcon();
+            } else {
+                iconUrl = baseUrl + "/" + channel.getIcon();
+            }
             Timber.d("Channel icon url: " + iconUrl);
             movieMetadata.addImage(new WebImage(Uri.parse(iconUrl)));   // small cast icon
             movieMetadata.addImage(new WebImage(Uri.parse(iconUrl)));   // large background icon
