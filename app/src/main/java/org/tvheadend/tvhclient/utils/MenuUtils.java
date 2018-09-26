@@ -2,8 +2,6 @@ package org.tvheadend.tvhclient.utils;
 
 
 import android.app.Activity;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -31,7 +29,6 @@ import org.tvheadend.tvhclient.data.entity.TimerRecording;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.data.service.EpgSyncService;
 import org.tvheadend.tvhclient.features.download.DownloadRecordingManager;
-import org.tvheadend.tvhclient.features.notifications.ProgramNotificationReceiver;
 import org.tvheadend.tvhclient.features.search.SearchActivity;
 import org.tvheadend.tvhclient.features.shared.adapter.ChannelTagListAdapter;
 import org.tvheadend.tvhclient.features.shared.adapter.GenreColorDialogAdapter;
@@ -49,15 +46,12 @@ import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 import javax.inject.Inject;
 
 import timber.log.Timber;
-
-import static android.content.Context.ALARM_SERVICE;
 
 public class MenuUtils {
 
@@ -353,10 +347,10 @@ public class MenuUtils {
         Timber.d("Cancelling recording " + recording.getTitle());
         // Show a confirmation dialog before cancelling the recording
         new MaterialDialog.Builder(activity)
-                .title(R.string.record_cancel)
+                .title(R.string.record_remove)
                 .content(activity.getString(R.string.cancel_recording, recording.getTitle()))
-                .negativeText(R.string.discard)
-                .positiveText(R.string.cancel)
+                .negativeText(R.string.cancel)
+                .positiveText(R.string.remove)
                 .onPositive((dialog, which) -> {
                     final Intent intent = new Intent(activity, EpgSyncService.class);
                     intent.setAction("cancelDvrEntry");
@@ -685,30 +679,8 @@ public class MenuUtils {
         }
 
         Integer offset = Integer.valueOf(sharedPreferences.getString("notification_lead_time", "0"));
-
-        // TODO time handling weird
-        long currentTime = new Date().getTime();
-        long notificationTime = (program.getStart() - (offset * 1000 * 60));
-        if (notificationTime < currentTime) {
-            notificationTime = currentTime;
-        }
-
-        Intent intent = new Intent(activity, ProgramNotificationReceiver.class);
-        intent.putExtra("eventTitle", program.getTitle());
-        intent.putExtra("eventId", program.getEventId());
-        intent.putExtra("channelId", program.getChannelId());
-        intent.putExtra("start", program.getStart());
-
         ServerProfile profile = appRepository.getServerProfileData().getItemById(serverStatus.getRecordingServerProfileId());
-        if (MiscUtils.isServerProfileEnabled(profile, serverStatus)) {
-            intent.putExtra("configName", profile.getName());
-        }
-
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(activity, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        AlarmManager am = (AlarmManager) activity.getSystemService(ALARM_SERVICE);
-        if (am != null) {
-            am.set(AlarmManager.RTC_WAKEUP, notificationTime, pendingIntent);
-        }
+        NotificationUtils.addProgramNotification(activity, program, offset, profile, serverStatus);
         return true;
     }
 

@@ -35,6 +35,7 @@ import org.tvheadend.tvhclient.data.service.htsp.tasks.Authenticator;
 import org.tvheadend.tvhclient.features.shared.receivers.ServiceStatusReceiver;
 import org.tvheadend.tvhclient.features.shared.receivers.SnackbarMessageReceiver;
 import org.tvheadend.tvhclient.utils.MiscUtils;
+import org.tvheadend.tvhclient.utils.NotificationUtils;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -528,6 +529,15 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         } else {
             appRepository.getRecordingData().addItem(recording);
         }
+
+        if (sharedPreferences.getBoolean("notifications_enabled", false)) {
+            Timber.d("Notification are enabled for recording " + recording.getTitle());
+            if (recording.isScheduled()) {
+                Timber.d("Adding notification for recording " + recording.getTitle());
+                Integer offset = Integer.valueOf(sharedPreferences.getString("notification_lead_time", "0"));
+                NotificationUtils.addRecordingNotification(context, recording, offset);
+            }
+        }
     }
 
     /**
@@ -545,6 +555,18 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         }
         Recording updatedRecording = EpgSyncUtils.convertMessageToRecordingModel(recording, msg);
         appRepository.getRecordingData().updateItem(updatedRecording);
+
+        if (sharedPreferences.getBoolean("notifications_enabled", false)) {
+            Timber.d("Notification are enabled for recording " + recording.getTitle());
+            if (recording.isScheduled()) {
+                Integer offset = Integer.valueOf(sharedPreferences.getString("notification_lead_time", "0"));
+                Timber.d("Adding notification for recording " + recording.getTitle());
+                NotificationUtils.addRecordingNotification(context, recording, offset);
+            } else {
+                Timber.d("Removing notification for recording " + recording.getTitle());
+                NotificationUtils.removeRecordingNotification(context, recording.getId());
+            }
+        }
     }
 
     /**
@@ -558,6 +580,11 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
             Recording recording = appRepository.getRecordingData().getItemById(msg.getInteger("id"));
             if (recording != null) {
                 appRepository.getRecordingData().removeItem(recording);
+                if (sharedPreferences.getBoolean("notifications_enabled", false)) {
+                    Timber.d("Notification are enabled for recording " + recording.getTitle());
+                    Timber.d("Removing notification for recording " + recording.getTitle());
+                    NotificationUtils.removeRecordingNotification(context, recording.getId());
+                }
             }
         }
     }
