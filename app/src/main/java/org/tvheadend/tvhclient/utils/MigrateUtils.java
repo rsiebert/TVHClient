@@ -24,7 +24,7 @@ import timber.log.Timber;
 
 public class MigrateUtils {
     private static final int VERSION_101 = 101;
-    private static final int VERSION_108 = 108;
+    private static final int VERSION_109 = 109;
     @Inject
     protected Context context;
     @Inject
@@ -46,7 +46,7 @@ public class MigrateUtils {
                 migrateConnectionsFromDatabase();
                 migratePreferences();
             }
-            if (lastInstalledApplicationVersion < VERSION_108) {
+            if (lastInstalledApplicationVersion < VERSION_109) {
                 checkServerStatus();
             }
         }
