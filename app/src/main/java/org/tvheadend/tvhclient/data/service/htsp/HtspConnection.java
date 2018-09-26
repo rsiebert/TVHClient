@@ -129,6 +129,7 @@ public class HtspConnection implements Runnable {
     private Selector mSelector;
 
     HtspConnection(Connection connection, Reader reader, Writer writer) {
+        Timber.d("Initializing HTSP connection thread");
         this.connection = connection;
         this.reader = reader;
         this.writer = writer;
@@ -137,6 +138,7 @@ public class HtspConnection implements Runnable {
     // Runnable Methods
     @Override
     public void run() {
+        Timber.d("Starting HTSP connection thread");
         // Do the initial connection
         try {
             running = openConnection();
@@ -151,6 +153,7 @@ public class HtspConnection implements Runnable {
         // Main Loop
         while (running) {
             if (mSelector == null) {
+                Timber.d("Selector is null");
                 break;
             }
 
@@ -165,6 +168,10 @@ public class HtspConnection implements Runnable {
             if (mSelector == null || !mSelector.isOpen()) {
                 Timber.d("Selector is null or selector is not open");
                 break;
+            }
+
+            if (mSelector == null) {
+                Timber.d("Selector is null right before getting the selected keys");
             }
 
             Set<SelectionKey> keys = mSelector.selectedKeys();
@@ -456,7 +463,7 @@ public class HtspConnection implements Runnable {
                     Timber.d("Calling Selector close");
                     mSelector.close();
                 } catch (IOException e) {
-                    Timber.w("Failed to close socket channel:", e);
+                    Timber.e("Failed to close socket channel:", e);
                 } finally {
                     mSelector = null;
                 }

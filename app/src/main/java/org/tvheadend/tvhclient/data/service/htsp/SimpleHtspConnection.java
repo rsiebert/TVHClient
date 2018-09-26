@@ -71,12 +71,14 @@ public class SimpleHtspConnection implements HtspMessage.Dispatcher, HtspConnect
             return;
         }
 
+        Timber.d("Closing HTSP connection thread");
         htspConnection.closeConnection();
         connectionThread.interrupt();
         try {
+            Timber.d("Waiting for the thread to die");
             connectionThread.join();
         } catch (InterruptedException e) {
-            // Ignore.
+            Timber.e("Thread got interrupted while waiting to die");
         }
         connectionThread = null;
     }
@@ -98,7 +100,6 @@ public class SimpleHtspConnection implements HtspMessage.Dispatcher, HtspConnect
     }
 
     public boolean isAuthenticated() {
-        Timber.d("isAuthenticated is " + authenticator.isAuthenticated());
         return authenticator.isAuthenticated();
     }
 
@@ -187,7 +188,7 @@ public class SimpleHtspConnection implements HtspMessage.Dispatcher, HtspConnect
                 break;
         }
 
-        // Simple HTSP Connections will take care of reconnecting upon failure for you.
+        // Stop the connection if a failure occurred
         if (state == HtspConnection.State.FAILED
                 || state == HtspConnection.State.FAILED_CONNECTING_TO_SERVER
                 || state == HtspConnection.State.FAILED_EXCEPTION_OPENING_SOCKET
