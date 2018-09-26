@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +15,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -48,10 +48,12 @@ public class StartupFragment extends Fragment implements EpgSyncStatusCallback {
     TextView stateTextView;
     @BindView(R.id.details)
     TextView detailsTextView;
-    @BindView(R.id.add_connection_fab)
-    FloatingActionButton addConnectionFab;
-    @BindView(R.id.settings_fab)
-    FloatingActionButton settingsFab;
+    @BindView(R.id.add_connection_button)
+    ImageButton addConnectionButton;
+    @BindView(R.id.settings_button)
+    ImageButton settingsButton;
+    @BindView(R.id.retry_button)
+    ImageButton retryButton;
 
     private Unbinder unbinder;
     private AppCompatActivity activity;
@@ -106,15 +108,15 @@ public class StartupFragment extends Fragment implements EpgSyncStatusCallback {
             Timber.d("No connection available, showing settings");
             stateText = getString(R.string.no_connection_available);
             progressBar.setVisibility(View.INVISIBLE);
-            addConnectionFab.setVisibility(View.VISIBLE);
-            addConnectionFab.setOnClickListener(v -> showSettingsAddNewConnection());
+            addConnectionButton.setVisibility(View.VISIBLE);
+            addConnectionButton.setOnClickListener(v -> showSettingsAddNewConnection());
 
         } else if (appRepository.getConnectionData().getActiveItem() == null) {
             Timber.d("No active connection available, showing settings");
             stateText = getString(R.string.no_connection_active_advice);
             progressBar.setVisibility(View.INVISIBLE);
-            settingsFab.setVisibility(View.VISIBLE);
-            settingsFab.setOnClickListener(v -> showConnectionListSettings());
+            settingsButton.setVisibility(View.VISIBLE);
+            settingsButton.setOnClickListener(v -> showConnectionListSettings());
 
         } else if (NetworkUtils.isNetworkAvailable(activity)
                 && appRepository.getChannelData().getItems().size() > 0) {
@@ -125,8 +127,8 @@ public class StartupFragment extends Fragment implements EpgSyncStatusCallback {
             Timber.d("No network is active to perform initial sync, showing settings");
             stateText = getString(R.string.err_no_network);
             progressBar.setVisibility(View.INVISIBLE);
-            settingsFab.setVisibility(View.VISIBLE);
-            settingsFab.setOnClickListener(v -> {
+            settingsButton.setVisibility(View.VISIBLE);
+            settingsButton.setOnClickListener(v -> {
                 Intent intent = new Intent(Settings.ACTION_WIRELESS_SETTINGS);
                 startActivity(intent);
             });
@@ -134,8 +136,8 @@ public class StartupFragment extends Fragment implements EpgSyncStatusCallback {
         } else {
             Timber.d("Database is empty and network is active, starting service to perform initial sync");
             progressBar.setVisibility(View.INVISIBLE);
-            settingsFab.setVisibility(View.VISIBLE);
-            settingsFab.setOnClickListener(v -> showConnectionListSettings());
+            settingsButton.setVisibility(View.VISIBLE);
+            settingsButton.setOnClickListener(v -> showConnectionListSettings());
 
             // Create and register the broadcast receiver to get the sync status
             serviceStatusReceiver = new ServiceStatusReceiver(this);
@@ -253,13 +255,19 @@ public class StartupFragment extends Fragment implements EpgSyncStatusCallback {
                 break;
 
             case FAILED:
-                Timber.d("Service sync failed, showing settings");
+                Timber.d("Connection to server or server sync failed, showing buttons to list connections and refresh");
                 stateTextView.setText(state.getMessage());
                 detailsTextView.setText(state.getDetails());
                 progressBar.setVisibility(View.INVISIBLE);
-                settingsFab.setVisibility(View.VISIBLE);
-                settingsFab.setOnClickListener(v -> showConnectionListSettings());
-                // TODO Show a retry fab
+
+                settingsButton.setVisibility(View.VISIBLE);
+                settingsButton.setOnClickListener(v -> showConnectionListSettings());
+
+                retryButton.setVisibility(View.VISIBLE);
+                retryButton.setOnClickListener(v -> {
+                    activity.stopService(new Intent(activity, EpgSyncService.class));
+                    activity.startService(new Intent(activity, EpgSyncService.class));
+                });
                 break;
         }
     }
