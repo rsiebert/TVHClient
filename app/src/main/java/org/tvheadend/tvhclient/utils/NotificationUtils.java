@@ -43,10 +43,10 @@ public class NotificationUtils {
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, program.getEventId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager am = (AlarmManager) context.getSystemService(ALARM_SERVICE);
         if (am != null) {
-            Timber.d("Created notification for program " + program.getTitle());
+            Timber.d("Created notification for program " + program.getTitle() + " with id " + program.getEventId());
             am.set(AlarmManager.RTC_WAKEUP, notificationTime, pendingIntent);
         } else {
-            Timber.e("Could not get alarm manager to create notification for program " + program.getTitle());
+            Timber.e("Could not get alarm manager to create notification for program " + program.getTitle() + " with id " + program.getEventId());
         }
     }
 
@@ -61,10 +61,10 @@ public class NotificationUtils {
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, recording.getId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager am = (AlarmManager) context.getSystemService(ALARM_SERVICE);
         if (am != null) {
-            Timber.d("Created notification for recording " + recording.getTitle());
+            Timber.d("Created notification for recording " + recording.getTitle() + " with id " + recording.getId());
             am.set(AlarmManager.RTC_WAKEUP, notificationTime, pendingIntent);
         } else {
-            Timber.e("Could not get alarm manager to create notification for recording " + recording.getTitle());
+            Timber.e("Could not get alarm manager to create notification for recording " + recording.getTitle() + " with id " + recording.getId());
         }
     }
 
@@ -74,6 +74,7 @@ public class NotificationUtils {
         if (notificationTime < currentTime) {
             notificationTime = currentTime;
         }
+        Timber.d("Notification time is " + notificationTime + " ms, startTime is " + startTime + " ms, offset is " + offset + " minutes");
         return notificationTime;
     }
 
