@@ -12,6 +12,7 @@ import org.tvheadend.tvhclient.BuildConfig;
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.data.db.DatabaseHelperForMigration;
 import org.tvheadend.tvhclient.data.entity.Connection;
+import org.tvheadend.tvhclient.data.entity.ServerStatus;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
 
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ import timber.log.Timber;
 
 public class MigrateUtils {
     private static final int VERSION_101 = 101;
+    private static final int VERSION_108 = 108;
     @Inject
     protected Context context;
     @Inject
@@ -44,6 +46,9 @@ public class MigrateUtils {
                 migrateConnectionsFromDatabase();
                 migratePreferences();
             }
+            if (lastInstalledApplicationVersion < VERSION_108) {
+                checkServerStatus();
+            }
         }
 
         // Store the current version as the last installed version
@@ -52,15 +57,31 @@ public class MigrateUtils {
         editor.apply();
     }
 
+    private void checkServerStatus() {
+        Timber.d("Checking if a server status entry exists for each connection");
+        List<Connection> connections = appRepository.getConnectionData().getItems();
+        for (Connection connection : connections) {
+            Timber.d("Checking connection " + connection.getName() + " with id " + connection.getId());
+            ServerStatus serverStatus = appRepository.getServerStatusData().getItemById(connection.getId());
+            if (serverStatus != null) {
+                Timber.d("Server status exists for connection " + connection.getId() + ", assigned connection id is " + serverStatus.getConnectionId());
+            } else {
+                Timber.d("No server status exists for connection " + connection.getId() + ", creating new one");
+                serverStatus = new ServerStatus();
+                serverStatus.setConnectionId(connection.getId());
+            }
+        }
+    }
+
     private void migrateConnectionsFromDatabase() {
-        Timber.d("migrateConnectionsFromDatabase() called with: context = [" + context + "]");
+        Timber.d("Migrating existing connections to the new room database");
         SQLiteDatabase db = DatabaseHelperForMigration.getInstance(context).getReadableDatabase();
 
         List<Connection> connectionList = new ArrayList<>();
 
         // Save the connection credentials in a file and drop the database
         try {
-            Timber.d("migrateConnectionsFromDatabase: database is open " + db.isOpen());
+            Timber.d("Database is readable " + db.isOpen());
             Cursor c = db.rawQuery("SELECT * FROM connections", null);
             while (c.moveToNext()) {
                 Connection connection = new Connection();
@@ -79,20 +100,20 @@ public class MigrateUtils {
                 connection.setLastUpdate(0);
                 connection.setSyncRequired(true);
 
-                Timber.d("migrateConnectionsFromDatabase: Added existing connection " + connection.getName());
+                Timber.d("Saving existing connection " + connection.getName() + " into temporary list");
                 connectionList.add(connection);
             }
             c.close();
         } catch (SQLiteException ex) {
-            Timber.d("migrateConnectionsFromDatabase: error executing query " + ex.getLocalizedMessage());
+            Timber.d("Error getting connection information from cursor, " + ex.getLocalizedMessage());
         }
         db.close();
 
         // delete the entire database so we can restart with version one in room
-        Timber.d("migrateConnectionsFromDatabase: deleting old database");
+        Timber.d("Deleting old database");
         context.deleteDatabase("tvhclient");
 
-        Timber.d("migrateConnectionsFromDatabase: adding old connections to room db");
+        Timber.d("Adding existing connections to the new room database");
         for (Connection connection : connectionList) {
             appRepository.getConnectionData().addItem(connection);
         }
