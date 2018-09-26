@@ -62,7 +62,7 @@
     <string name="add_recording">Neue Aufnahme hinzufügen</string>
     <string name="edit_recording">Aufnahme bearbeiten</string>
     <string name="cancel_add_recording">Hinzufügen der Aufnahme abbrechen? Alle Eingaben gehen verloren.</string>
-    <string name="cancel_edit_recording">Bearbeiten der Aufnahme abbrechen? All values will be lost.</string>
+    <string name="cancel_edit_recording">Alle Änderungen der Aufnahme verwerfen? Alle Eingaben gehen verloren.</string>
     <string name="activate_recording">Aufnahme aktivieren</string>
     <string name="select">Auswählen</string>
 
