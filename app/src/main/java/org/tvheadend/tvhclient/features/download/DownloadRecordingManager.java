@@ -14,7 +14,6 @@ import android.os.Environment;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
-import android.text.TextUtils;
 import android.util.Base64;
 
 import com.crashlytics.android.answers.Answers;
@@ -45,7 +44,7 @@ public class DownloadRecordingManager {
     private long lastDownloadId;
 
     public DownloadRecordingManager(Activity activity, int dvrId) {
-        Timber.d("Initializing download manager for recording id " + dvrId);
+        Timber.d("Initializing download manager, given recording id is " + dvrId);
         MainApplication.getComponent().inject(this);
 
         this.activity = activity;
@@ -54,12 +53,13 @@ public class DownloadRecordingManager {
         this.serverStatus = appRepository.getServerStatusData().getActiveItem();
         this.downloadManager = (DownloadManager) this.activity.getSystemService(Service.DOWNLOAD_SERVICE);
 
-        if (recording != null && downloadManager != null) {
+        if (recording == null) {
+            Timber.d("Recording is null");
             if (isStoragePermissionGranted()) {
                 startDownload();
             }
         } else {
-            Timber.d("Recording or download manager is null");
+            Timber.d("Recording is null");
         }
     }
 
@@ -102,67 +102,95 @@ public class DownloadRecordingManager {
         Timber.d("Download recording from url " + downloadUrl + " to " + downloadDirectory);
         return new DownloadManager.Request(Uri.parse(downloadUrl))
                 .addRequestHeader("Authorization", credentials)
-                .setTitle(activity.getString(R.string.download))
-                .setDescription(recording.getTitle())
+                .setTitle(recording.getTitle())
+                .setDescription(recording.getDescription())
                 .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-                .setDestinationInExternalPublicDir(downloadDirectory, recording.getTitle() + ".mkv");
+                .setDestinationInExternalPublicDir(downloadDirectory, recording.getTitle().replace(" ", "_") + ".mkv");
     }
 
     private void showDownloadStatusMessage() {
-        Timber.d("Checking the download status of recording " + recording.getTitle());
+        Timber.d("Checking download status of recording " + recording.getTitle());
 
-        String msg;
+        // Initialize the default status message
+        String msg = "Download of recording " + recording.getTitle() + " was not found";
+
         Cursor cursor = downloadManager.query(new DownloadManager.Query().setFilterById(lastDownloadId));
-        if (cursor == null) {
-            msg = "Download of recording " + recording.getTitle() + " was not found";
-        } else {
+        if (cursor != null) {
             cursor.moveToFirst();
             int status = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS));
             int reason = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_REASON));
 
             switch (status) {
                 case DownloadManager.STATUS_FAILED:
-                    // Check different failure reasons
                     switch (reason) {
-                        case DownloadManager.ERROR_FILE_ALREADY_EXISTS:
-                            msg = "Recording " + recording.getTitle() + " exists already";
-                            break;
-                        case DownloadManager.ERROR_INSUFFICIENT_SPACE:
-                            msg = activity.getString(R.string.download_error_insufficient_space, recording.getTitle());
-                            break;
                         case 401:
                         case 407:
                             msg = activity.getString(R.string.download_error_authentication_required, recording.getTitle());
                             break;
-                        default:
-                            msg = "Download failed with error code " + reason;
+                        case DownloadManager.ERROR_CANNOT_RESUME:
+                            msg = "Download failed, cannot resume";
+                            break;
+                        case DownloadManager.ERROR_DEVICE_NOT_FOUND:
+                            msg = "Download failed, device not found";
+                            break;
+                        case DownloadManager.ERROR_FILE_ALREADY_EXISTS:
+                            msg = "Download failed, file exists already";
+                            break;
+                        case DownloadManager.ERROR_FILE_ERROR:
+                            msg = "Download failed, file error";
+                            break;
+                        case DownloadManager.ERROR_HTTP_DATA_ERROR:
+                            msg = "Download failed, HTTP data error";
+                            break;
+                        case DownloadManager.ERROR_INSUFFICIENT_SPACE:
+                            msg = activity.getString(R.string.download_error_insufficient_space, recording.getTitle());
+                            break;
+                        case DownloadManager.ERROR_TOO_MANY_REDIRECTS:
+                            msg = "Download failed, too many redirects";
+                            break;
+                        case DownloadManager.ERROR_UNHANDLED_HTTP_CODE:
+                            msg = "Download failed, unhandled HTTP code";
+                            break;
+                        case DownloadManager.ERROR_UNKNOWN:
+                            msg = "Download failed, unknown error";
                             break;
                     }
                     break;
                 case DownloadManager.STATUS_PAUSED:
-                    msg = "Download paused";
+                    switch (reason) {
+                        case DownloadManager.PAUSED_QUEUED_FOR_WIFI:
+                            msg = "Download paused, queued for Wifi";
+                            break;
+                        case DownloadManager.PAUSED_UNKNOWN:
+                            msg = "Download paused, unknown reason";
+                            break;
+                        case DownloadManager.PAUSED_WAITING_FOR_NETWORK:
+                            msg = "Download paused, waiting for network";
+                            break;
+                        case DownloadManager.PAUSED_WAITING_TO_RETRY:
+                            msg = "Download paused, waiting for retry";
+                            break;
+                    }
                     break;
                 case DownloadManager.STATUS_PENDING:
                     msg = "Download pending";
                     break;
                 case DownloadManager.STATUS_RUNNING:
-                    msg = "Download in progress";
+                    msg = "Download is running";
                     break;
                 case DownloadManager.STATUS_SUCCESSFUL:
-                    msg = "Download complete";
+                    msg = "Downloading " + recording.getTitle();
                     break;
                 default:
-                    msg = "Download is nowhere in sight";
+                    msg = "Download is not available";
                     break;
             }
         }
 
         Timber.d("Download status of recording " + recording.getTitle() + " is " + msg);
-        if (!TextUtils.isEmpty(msg)) {
-            Intent intent = new Intent("message");
-            intent.putExtra("message", msg);
-            LocalBroadcastManager.getInstance(activity).sendBroadcast(intent);
-        }
+        Intent intent = new Intent("message");
+        intent.putExtra("message", msg);
+        LocalBroadcastManager.getInstance(activity).sendBroadcast(intent);
     }
 
     /**
@@ -174,18 +202,18 @@ public class DownloadRecordingManager {
      * @return True if permission is granted, otherwise false
      */
     private boolean isStoragePermissionGranted() {
-        Timber.d("Checking for storage permission");
+        Timber.d("Checking if storage permission was granted");
         if (Build.VERSION.SDK_INT >= 23) {
             if (activity.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                Timber.d("Storage permissios were granted (API >= 23)");
+                Timber.d("Storage permissions were granted (API >= 23)");
                 return true;
             } else {
-                Timber.d("Storage permissios are not yet granted (API >= 23)");
+                Timber.d("Storage permissions are not yet granted (API >= 23)");
                 ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
                 return false;
             }
         } else {
-            Timber.d("Storage permissios were granted (API < 23)");
+            Timber.d("Storage permissions were granted (API < 23)");
             return true;
         }
     }
