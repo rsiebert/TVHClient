@@ -48,7 +48,7 @@ public class MiscUtils {
      * @param context Context
      * @return Id of the light or dark theme
      */
-    public static int getThemeId(final Context context) {
+    public static int getThemeId(@NonNull final Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         Boolean theme = prefs.getBoolean("light_theme_enabled", true);
         return (theme ? R.style.CustomTheme_Light : R.style.CustomTheme);
@@ -61,7 +61,7 @@ public class MiscUtils {
      *
      * @param context Context context
      */
-    public static void setLanguage(final Context context) {
+    public static void setLanguage(@NonNull final Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String locale = prefs.getString("language", "default");
         if (!locale.equals("default")) {
@@ -71,7 +71,7 @@ public class MiscUtils {
         }
     }
 
-    public static boolean isServerProfileEnabled(ServerProfile serverProfile, ServerStatus serverStatus) {
+    public static boolean isServerProfileEnabled(ServerProfile serverProfile, @NonNull ServerStatus serverStatus) {
         return serverProfile != null && serverStatus.getHtspVersion() >= 16;
     }
 }
