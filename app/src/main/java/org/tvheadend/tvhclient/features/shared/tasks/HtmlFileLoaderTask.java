@@ -12,8 +12,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
 import java.util.Locale;
+
+import timber.log.Timber;
 
 public class HtmlFileLoaderTask extends AsyncTask<Void, Void, String> {
 
@@ -67,32 +70,49 @@ public class HtmlFileLoaderTask extends AsyncTask<Void, Void, String> {
         // the defaultLocale. If the file doesn't exist, open the default (English)
         InputStream is = null;
         try {
+            Timber.d("Trying to open file " + htmlFile);
             is = context.getAssets().open(htmlFile);
         } catch (IOException ex1) {
+            Timber.d("Could not open file " + htmlFile);
+        }
+        if (is == null) {
             try {
+                Timber.d("Trying to open default file " + defaultHtmlFile);
                 is = context.getAssets().open(defaultHtmlFile);
             } catch (IOException ex2) {
-                // NOP
+                Timber.d("Trying to open default file " + defaultHtmlFile);
             }
         }
 
         // Try to parse the HTML contents from the given asset file. It
         // contains the feature description with the required HTML tags.
-        try {
-            String htmlData;
-            if (is != null) {
-                BufferedReader in = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+        if (is != null) {
+            try {
+                String htmlData;
+                Timber.d("Creating buffered reader to get contents from input stream");
+                BufferedReader in = new BufferedReader(new InputStreamReader(is, "utf-8"));
                 while ((htmlData = in.readLine()) != null) {
                     sb.append(htmlData);
                 }
                 in.close();
+
+            } catch (UnsupportedEncodingException uee) {
+                Timber.d("Could not create buffered reader, unsupported encoding");
+                sb.append("Error parsing feature list");
+            } catch (IOException ioe) {
+                Timber.d("Error while reading contents from input stream or closing it");
+                sb.append("Error parsing feature list");
             }
-        } catch (Exception e) {
-            sb.append("Error parsing feature list");
+            try {
+                is.close();
+            } catch (IOException e) {
+                Timber.d("Error closing input stream");
+            }
         }
 
         // Add the closing HTML tags and load show the page
         sb.append("</body></html>");
+        Timber.d("Done loading file, returning content");
         return sb.toString();
     }
 }
