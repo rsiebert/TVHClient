@@ -531,7 +531,6 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         }
 
         if (sharedPreferences.getBoolean("notifications_enabled", false)) {
-            Timber.d("Notification are enabled for recording " + recording.getTitle());
             if (recording.isScheduled()) {
                 Timber.d("Adding notification for recording " + recording.getTitle());
                 Integer offset = Integer.valueOf(sharedPreferences.getString("notification_lead_time", "0"));
@@ -557,7 +556,6 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         appRepository.getRecordingData().updateItem(updatedRecording);
 
         if (sharedPreferences.getBoolean("notifications_enabled", false)) {
-            Timber.d("Notification are enabled for recording " + recording.getTitle());
             if (recording.isScheduled()) {
                 Integer offset = Integer.valueOf(sharedPreferences.getString("notification_lead_time", "0"));
                 Timber.d("Adding notification for recording " + recording.getTitle());
@@ -581,7 +579,6 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
             if (recording != null) {
                 appRepository.getRecordingData().removeItem(recording);
                 if (sharedPreferences.getBoolean("notifications_enabled", false)) {
-                    Timber.d("Notification are enabled for recording " + recording.getTitle());
                     Timber.d("Removing notification for recording " + recording.getTitle());
                     NotificationUtils.removeRecordingNotification(context, recording.getId());
                 }
