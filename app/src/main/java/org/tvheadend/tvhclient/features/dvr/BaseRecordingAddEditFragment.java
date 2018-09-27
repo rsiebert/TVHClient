@@ -21,6 +21,8 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import timber.log.Timber;
+
 public abstract class BaseRecordingAddEditFragment extends BaseFragment {
 
     private String[] daysOfWeekList;
@@ -36,7 +38,10 @@ public abstract class BaseRecordingAddEditFragment extends BaseFragment {
 
         daysOfWeekList = activity.getResources().getStringArray(R.array.day_short_names);
         recordingProfilesList = appRepository.getServerProfileData().getRecordingProfileNames();
+        Timber.d("Recording profile list size is " + recordingProfilesList.length);
+
         priorityList = activity.getResources().getStringArray(R.array.dvr_priorities);
+        Timber.d("Priority list size is " + priorityList.length);
 
         channelList = appRepository.getChannelData().getItems();
 
