@@ -17,8 +17,8 @@ import com.squareup.picasso.Picasso;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.SeriesRecording;
-import org.tvheadend.tvhclient.utils.UIUtils;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback;
+import org.tvheadend.tvhclient.utils.UIUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -53,7 +53,7 @@ public class SeriesRecordingViewHolder extends RecyclerView.ViewHolder {
         super(view);
         ButterKnife.bind(this, view);
     }
-    
+
     public void bindData(Context context, @NonNull final SeriesRecording recording, boolean selected, int htspVersion, RecyclerViewClickCallback clickCallback) {
         itemView.setTag(recording);
 
@@ -79,50 +79,48 @@ public class SeriesRecordingViewHolder extends RecyclerView.ViewHolder {
             }
         }
 
-        if (recording != null) {
-            titleTextView.setText(recording.getTitle());
+        titleTextView.setText(recording.getTitle());
 
-            if (!TextUtils.isEmpty(recording.getName())) {
-                nameTextView.setVisibility(View.VISIBLE);
-                nameTextView.setText(recording.getName());
-            } else {
-                nameTextView.setVisibility(View.GONE);
-            }
-
-            TextViewCompat.setAutoSizeTextTypeWithDefaults(iconTextView, TextViewCompat.AUTO_SIZE_TEXT_TYPE_UNIFORM);
-
-            if (!TextUtils.isEmpty(recording.getChannelName())) {
-                iconTextView.setText(recording.getChannelName());
-                channelTextView.setText(recording.getChannelName());
-            } else {
-                iconTextView.setText(R.string.all_channels);
-                channelTextView.setText(R.string.all_channels);
-            }
-
-            Picasso.get()
-                    .load(UIUtils.getIconUrl(context, recording.getChannelIcon()))
-                    .into(iconImageView, new Callback() {
-                        @Override
-                        public void onSuccess() {
-                            iconTextView.setVisibility(View.INVISIBLE);
-                            iconImageView.setVisibility(View.VISIBLE);
-                        }
-
-                        @Override
-                        public void onError(Exception e) {
-
-                        }
-                    });
-
-            daysOfWeekTextView.setText(UIUtils.getDaysOfWeekText(context, recording.getDaysOfWeek()));
-
-            startTimeTextView.setText(UIUtils.getTimeText(context, recording.getStart()));
-            stopTimeTextView.setText(UIUtils.getTimeText(context, recording.getStartWindow()));
-
-            durationTextView.setText(context.getString(R.string.minutes, recording.getDuration()));
-
-            isEnabledTextView.setVisibility(htspVersion >= 19 ? View.VISIBLE : View.GONE);
-            isEnabledTextView.setText(recording.getEnabled() > 0 ? R.string.recording_enabled : R.string.recording_disabled);
+        if (!TextUtils.isEmpty(recording.getName())) {
+            nameTextView.setVisibility(View.VISIBLE);
+            nameTextView.setText(recording.getName());
+        } else {
+            nameTextView.setVisibility(View.GONE);
         }
+
+        TextViewCompat.setAutoSizeTextTypeWithDefaults(iconTextView, TextViewCompat.AUTO_SIZE_TEXT_TYPE_UNIFORM);
+
+        if (!TextUtils.isEmpty(recording.getChannelName())) {
+            iconTextView.setText(recording.getChannelName());
+            channelTextView.setText(recording.getChannelName());
+        } else {
+            iconTextView.setText(R.string.all_channels);
+            channelTextView.setText(R.string.all_channels);
+        }
+
+        Picasso.get()
+                .load(UIUtils.getIconUrl(context, recording.getChannelIcon()))
+                .into(iconImageView, new Callback() {
+                    @Override
+                    public void onSuccess() {
+                        iconTextView.setVisibility(View.INVISIBLE);
+                        iconImageView.setVisibility(View.VISIBLE);
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+
+                    }
+                });
+
+        daysOfWeekTextView.setText(UIUtils.getDaysOfWeekText(context, recording.getDaysOfWeek()));
+
+        startTimeTextView.setText(UIUtils.getTimeText(context, recording.getStart()));
+        stopTimeTextView.setText(UIUtils.getTimeText(context, recording.getStartWindow()));
+
+        durationTextView.setText(context.getString(R.string.minutes, recording.getDuration()));
+
+        isEnabledTextView.setVisibility(htspVersion >= 19 ? View.VISIBLE : View.GONE);
+        isEnabledTextView.setText(recording.getEnabled() > 0 ? R.string.recording_enabled : R.string.recording_disabled);
     }
 }

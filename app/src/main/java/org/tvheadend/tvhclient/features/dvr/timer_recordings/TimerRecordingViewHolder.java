@@ -17,8 +17,8 @@ import com.squareup.picasso.Picasso;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.TimerRecording;
-import org.tvheadend.tvhclient.utils.UIUtils;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback;
+import org.tvheadend.tvhclient.utils.UIUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -77,47 +77,46 @@ public class TimerRecordingViewHolder extends RecyclerView.ViewHolder {
             }
         }
 
-        if (recording != null) {
-            String title = !TextUtils.isEmpty(recording.getTitle()) ? recording.getTitle() : recording.getName();
-            titleTextView.setText(title);
 
-            TextViewCompat.setAutoSizeTextTypeWithDefaults(iconTextView, TextViewCompat.AUTO_SIZE_TEXT_TYPE_UNIFORM);
+        String title = !TextUtils.isEmpty(recording.getTitle()) ? recording.getTitle() : recording.getName();
+        titleTextView.setText(title);
 
-            if (!TextUtils.isEmpty(recording.getChannelName())) {
-                iconTextView.setText(recording.getChannelName());
-                channelTextView.setText(recording.getChannelName());
-            } else {
-                iconTextView.setText(R.string.all_channels);
-                channelTextView.setText(R.string.all_channels);
-            }
+        TextViewCompat.setAutoSizeTextTypeWithDefaults(iconTextView, TextViewCompat.AUTO_SIZE_TEXT_TYPE_UNIFORM);
 
-            Picasso.get()
-                    .load(UIUtils.getIconUrl(context, recording.getChannelIcon()))
-                    .into(iconImageView, new Callback() {
-                        @Override
-                        public void onSuccess() {
-                            iconTextView.setVisibility(View.INVISIBLE);
-                            iconImageView.setVisibility(View.VISIBLE);
-                        }
-
-                        @Override
-                        public void onError(Exception e) {
-
-                        }
-                    });
-
-            String daysOfWeek = UIUtils.getDaysOfWeekText(context, recording.getDaysOfWeek());
-            daysOfWeekTextView.setText(daysOfWeek);
-
-            startTimeTextView.setText(UIUtils.getTimeText(context, recording.getStart()));
-            stopTimeTextView.setText(UIUtils.getTimeText(context, recording.getStop()));
-
-            String duration = context.getString(R.string.minutes, recording.getDuration());
-            durationTextView.setText(duration);
-
-            String isEnabled = context.getString((recording.getEnabled() > 0) ? R.string.recording_enabled : R.string.recording_disabled);
-            isEnabledTextView.setVisibility(htspVersion >= 19 ? View.VISIBLE : View.GONE);
-            isEnabledTextView.setText(isEnabled);
+        if (!TextUtils.isEmpty(recording.getChannelName())) {
+            iconTextView.setText(recording.getChannelName());
+            channelTextView.setText(recording.getChannelName());
+        } else {
+            iconTextView.setText(R.string.all_channels);
+            channelTextView.setText(R.string.all_channels);
         }
+
+        Picasso.get()
+                .load(UIUtils.getIconUrl(context, recording.getChannelIcon()))
+                .into(iconImageView, new Callback() {
+                    @Override
+                    public void onSuccess() {
+                        iconTextView.setVisibility(View.INVISIBLE);
+                        iconImageView.setVisibility(View.VISIBLE);
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+
+                    }
+                });
+
+        String daysOfWeek = UIUtils.getDaysOfWeekText(context, recording.getDaysOfWeek());
+        daysOfWeekTextView.setText(daysOfWeek);
+
+        startTimeTextView.setText(UIUtils.getTimeText(context, recording.getStart()));
+        stopTimeTextView.setText(UIUtils.getTimeText(context, recording.getStop()));
+
+        String duration = context.getString(R.string.minutes, recording.getDuration());
+        durationTextView.setText(duration);
+
+        String isEnabled = context.getString((recording.getEnabled() > 0) ? R.string.recording_enabled : R.string.recording_disabled);
+        isEnabledTextView.setVisibility(htspVersion >= 19 ? View.VISIBLE : View.GONE);
+        isEnabledTextView.setText(isEnabled);
     }
 }
