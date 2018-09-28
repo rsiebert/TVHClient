@@ -30,13 +30,13 @@
     </string-array>
 
     <string-array name="day_short_names">
-        <item>Maa</item>
-        <item>Din</item>
-        <item>Woe</item>
-        <item>Don</item>
-        <item>Vri</item>
-        <item>Zat</item>
-        <item>Zon</item>
+        <item>Ma</item>
+        <item>Di</item>
+        <item>Wo</item>
+        <item>Do</item>
+        <item>Vr</item>
+        <item>Za</item>
+        <item>Zo</item>
     </string-array>
 
     <string-array name="pr_content_type0">

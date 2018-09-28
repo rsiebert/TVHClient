@@ -92,7 +92,7 @@
     <string name="pref_user_interface">Interface utilisateur</string>
 	<string name="pref_channels">Chaînes</string>
     <string name="pref_tag_icon">Icone du tag de la chaine</string>
-    <string name="pref_tag_icon_sum">Montre l\icône de la chaine au lieu du logo de l\application.</string>
+    <string name="pref_tag_icon_sum">Montre licône de la chaine.</string>
     <string name="pref_theme">Thème soft</string>
     <string name="pref_theme_sum">Utiliser le thème soft</string>
     <string name="pref_language">Langue</string>
@@ -162,7 +162,7 @@
     <string name="pref_buffer_size">Taille du buffer des messages</string>
     <string name="pref_buffer_size_sum">Taille en MB du buffer qui stocke les données reçues du serveur. La valeur par défaut est 4 MB. Si parfois aucunes données ne peuvent être chargée augmenter la valeur peut résoudre le problème. Un trop gros buffer peut pénaliser les vieux équipements.</string>
 
-    <string name="feature_not_supported_by_server">Le serveur TVHeadend ne supporte pas cette fonctionnalité. Une nouvelle version est nécessaire.</string>
+    <string name="feature_not_supported_by_server">Votre serveur TVHeadend ne supporte pas cette fonctionnalité. Veuillez mettre à jour vers une version plus récente.</string>
     <string name="loading_profiles">Chargement des profils</string>
 
     <string name="clear_search_history">Effacer l\'historique de recherche?</string>
@@ -320,5 +320,6 @@
     <string name="directory">Répertoire</string>
     <string name="pref_show_program_artwork_sum">Affiche l\'image de l\'illustration / affiche dans le programme en cours. Le serveur doit fournir les informations.</string>
     <string name="pref_show_program_artwork">Afficher le dessin du programme / affiche</string>
+    <string name="clear">Clair</string>
 
 </resources>

@@ -126,7 +126,7 @@
     <string name="pref_streaming_port">HTTP Porta per lo streaming multimediale</string>
     <string name="pref_streaming_port_sum">Per lo streaming multimediale sarà usata la porta %d. La porta predefinita 9981 va in genere bene.</string>
     <string name="pref_tag_icon">Icone etichette canali</string>
-    <string name="pref_tag_icon_sum">"Visualizzare l'icona dell'etichetta del canale invece del logo dell'applicazione?"</string>
+    <string name="pref_tag_icon_sum">Visualizzare l\'icona dell\'etichetta del canale.</string>
     <string name="pref_theme">Tema chiaro</string>
     <string name="pref_theme_sum">Usa un tema dai colori chiari</string>
     <string name="pref_unlocker">ACQUISTA VERSIONE COMPLETA</string>
@@ -231,7 +231,7 @@ L'indirizzo deve essere nella forma '01:24:67:9a:cd:ef' e può contenere solo ci
     <string name="error_adding_recording">Registrazione non aggiunta! %s</string>
     <string name="error_removing_recording">Registrazione non rimossa! %s</string>
     <string name="error_updating_recording">Registrazione non aggiornata! %s</string>
-    <string name="feature_not_supported_by_server">Il server TVHeadend non supporta questa funzione. È richiesta una versione aggiornata.</string>
+    <string name="feature_not_supported_by_server">Il server TVHeadend non supporta questa funzione. Effettuare l\'aggiornamento alla versione più recente.</string>
     <string name="intro_overlay_text">"Tocca per trasmettere TV live o registrare nel TV
 
 Verifica che siano soddsifatti i requisiti descritti nelle impostazioni trasmissione."</string>
@@ -291,4 +291,13 @@ Verifica che siano soddsifatti i requisiti descritti nelle impostazioni trasmiss
     <string name="unlocker_already_purchased">Tutte le funzioni aggiuntive sono disponibili! Grazie per il tuo supporto!</string>
     <string name="unlocker_purchase_not_successful">Acquisto non completato correttamente. Contatta lo sviluppatore.</string>
     <string name="unlocker_purchase_successful">Acquisto effettuato! Grazie per il tuo supporto! Tutte le funzioni sono ora disponibili.</string>
+    <string name="clear">Chiaro</string>
+    <string name="directory">Directory</string>
+    <string name="reconnect">Ricollegare</string>
+    <string name="cast">Cast</string>
+    <string name="record_once_and_edit">Registrare e modificare</string>
+    <string name="search_fileaffinity">Ricerca sul sito FileAffinity</string>
+    <string name="add_recording_directory">Salvare la directory di salvataggio della registrazione</string>
+    <string name="pref_show_progressbar_sum">Indica nella lista dei canali quanto del programma corrente è già stato mostrato.</string>
+    <string name="pref_show_progressbar">Mostra barra di avanzamento</string>
 </resources>

@@ -69,7 +69,7 @@
     <string name="pref_wol_address_invalid">MAC adressen är ogiltig.\nDen måste skrivas enligt mönster \'01:24:67:9a:cd:ef\' och får endast innehålla hexadecimala tecknen 0\-9 och a\-f samt separeras med \':\' eller \'\-\'.</string>
     <string name="pref_user_interface">Användargränssnitt</string>
     <string name="pref_tag_icon">Kanaltaggikon</string>
-    <string name="pref_tag_icon_sum">Visa ikonen för en kanaltagg istället för applikationslogon.</string>
+    <string name="pref_tag_icon_sum">Visa ikonen för en kanaltagg.</string>
     <string name="pref_theme">Ljust tema</string>
     <string name="pref_theme_sum">Använd ett ljust tema</string>
     <string name="pref_language">Språk</string>

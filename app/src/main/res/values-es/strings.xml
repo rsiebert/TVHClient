@@ -60,7 +60,7 @@
     <string name="extra_stop_time">Minutos adicionales de parada (pos-tempo)</string>
     <string name="failed_recordings">Grabaciones fallidas</string>
     <string name="feature_not_available_in_free_version">Esta característica no está disponible en la versión gratuita!</string>
-    <string name="feature_not_supported_by_server">El servidor TVHeadend no es compatible con esta característica. Se requiere una versión más nueva.</string>
+    <string name="feature_not_supported_by_server">Su servidor TVHeadend no admite esta función. Por favor, actualice a una versión más reciente.</string>
     <string name="friday">Viernes</string>
     <string name="genre_color_info">Explicar los colores del género</string>
     <string name="genre_color_list">Lista de colores de género y su significado.</string>
@@ -183,7 +183,7 @@ Verifique que cumpla con los requisitos descritos en la configuración de transm
     <string name="pref_streaming_port">Puerto para transmisión de medios</string>
     <string name="pref_streaming_port_sum">Puerto %d se usará para la transmisión multimedia. El puerto predeterminado es 9981, que generalmente está bien de usar.</string>
     <string name="pref_tag_icon">Icono de etiqueta de canal</string>
-    <string name="pref_tag_icon_sum">Mostrar el icono de una etiqueta de canal en lugar del logotipo de la aplicación.</string>
+    <string name="pref_tag_icon_sum">Mostrar el icono de una etiqueta de canal.</string>
     <string name="pref_theme">Tema Luz</string>
     <string name="pref_theme_sum">Usar tema Luz</string>
     <string name="pref_unlocker">Características adicionales</string>
@@ -292,4 +292,14 @@ Debe tener el patrón '01:24:67:9a:cd:ef'."</string>
     <string name="wol_send">"Envió exitosamente del paquete de activación de LAN a '%s'"</string>
     <string name="wol_send_broadcast">"Envió exitosamente el paquete de activación de LAN como una transmisión a '%s'"</string>
     <string name="yesterday">Ayer</string>
+    <string name="details">Pormenores</string>
+    <string name="directory">Directorio</string>
+    <string name="record_cancel">Cancelar la grabación</string>
+    <string name="removed_recordings">Grabaciones eliminadas</string>
+    <string name="reconnect">Reconectar</string>
+    <string name="cast">Cast</string>
+    <string name="record_once_and_edit">Grabar y editar</string>
+    <string name="search_fileaffinity">Buscar en el sitio web de FileAffinity</string>
+    <string name="add_recording_directory">Guardar directorio de la grabación</string>
+    <string name="pref_show_progressbar_sum">Indica en la lista de canales qué parte del programa actual ya se ha mostrado.</string>
 </resources>

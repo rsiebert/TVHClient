@@ -94,7 +94,7 @@
     <string name="pref_user_interface">Používateľské rozhranie</string>
     <string name="pref_channels">Kanály</string>
     <string name="pref_tag_icon">Skupiny kanálov</string>
-    <string name="pref_tag_icon_sum">Zobrazenie ikony \'skupiny kanálov\' namiesto loga aplikácie.</string>
+    <string name="pref_tag_icon_sum">Zobrazenie ikony \'skupiny kanálov\'.</string>
     <string name="pref_theme">Svetla téma</string>
     <string name="pref_theme_sum">Použiť svetlú tému.</string>
     <string name="pref_language">Jazyk</string>

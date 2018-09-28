@@ -97,7 +97,7 @@
     <string name="pref_user_interface">Benutzeroberfläche</string>
     <string name="pref_channels">Sender</string>
     <string name="pref_tag_icon">Logo für Sendergruppen</string>
-    <string name="pref_tag_icon_sum">Zeigt für die gewählte Sendergruppe (falls verfügbar) das dazugehörige Logo. Ist keines konfiguriert, wird das Logo der Applikation verwendet.</string>
+    <string name="pref_tag_icon_sum">Zeigt für die gewählte Sendergruppe (falls verfügbar) das dazugehörige Logo.</string>
     <string name="pref_theme">Helles Theme</string>
     <string name="pref_theme_sum">Zeigt den Hintergrund und alle Elemente in helleren Farben an. Alternativ wird ein Theme mit fast schwarzem Hintergrund und dunkleren Farben verwendet.</string>
     <string name="pref_language">Sprache</string>
@@ -169,7 +169,7 @@
     <string name="pref_buffer_size">Größe des Datenpuffers</string>
     <string name="pref_buffer_size_sum">Größe des Puffers in Megabyte der die Daten vom Server speichert. Standard ist 4 MB. Können Daten nicht vollständig vom Server geladen werden, kann ein größerer Datenpuffer Abhilfe schaffen. Bei älteren Geräten kann ein zu großer Puffer evtl. zu Speicherproblemen führen.</string>
 
-    <string name="feature_not_supported_by_server">Der TVHeadend Server unterstützt diese Funktion nicht. Eine neuere Version wird benötigt.</string>
+    <string name="feature_not_supported_by_server">Ihr TVHeadend-Server unterstützt diese Funktion nicht. Bitte aktualisieren Sie auf eine neuere Version.</string>
     <string name="loading_profiles">Lade Profile</string>
 
     <string name="clear_search_history">Lösche Suchhistorie?</string>

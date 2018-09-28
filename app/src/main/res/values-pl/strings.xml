@@ -96,7 +96,7 @@
     <string name="pref_user_interface">Interfejs użytkownika</string>
     <string name="pref_channels">Kanały</string>
     <string name="pref_tag_icon">Ikona tagu kanałów</string>
-    <string name="pref_tag_icon_sum">Pokaż ikonę tagu kanałów zamiast logo aplikacji.</string>
+    <string name="pref_tag_icon_sum">Pokaż ikonę tagu kanałów.</string>
     <string name="pref_theme">Jasny motyw</string>
     <string name="pref_theme_sum">Użyj jasnego motywu</string>
     <string name="pref_language">Język</string>

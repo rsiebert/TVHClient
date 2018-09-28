@@ -69,7 +69,7 @@
     <string name="pref_wol_address_invalid">MAC adresa je neplatná. \nAdresa musí odpovídat vzoru \'01:24:67:9a:cd:ef\' a může obsahovat pouze hexadecimální čísla 0\-9 a a\-f a oddělovač \':\' nebo \'\-\'.</string>
     <string name="pref_user_interface">Uživatelské rozhraní</string>
     <string name="pref_tag_icon">Ikona štítku kanálu</string>
-    <string name="pref_tag_icon_sum">Zobrazit ikonu pro štítek kanálu místo loga aplikace.</string>
+    <string name="pref_tag_icon_sum">Zobrazit ikonu pro štítek kanálu.</string>
     <string name="pref_theme">Světlé téma</string>
     <string name="pref_theme_sum">Použít světlé téma.</string>
     <string name="pref_language">Jazyk</string>

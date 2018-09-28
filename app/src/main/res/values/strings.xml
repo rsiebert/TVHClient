@@ -57,7 +57,7 @@
     <string name="cancel_recording">Do you really want to remove the scheduled recording \'%s\'?</string>
     <string name="stop_recording">Do you really want to stop the running recording \'%s\'?</string>
     <string name="add_recording_directory">Save directory of the recording</string>
-    <string name="add_title">The title for the recording</string>
+    <string name="add_title">The title of the recording</string>
     <string name="add_name">Name for this entry</string>
     <string name="add_recording">Add new recording</string>
     <string name="edit_recording">Edit recording</string>
@@ -98,7 +98,7 @@
     <string name="pref_user_interface">User interface</string>
     <string name="pref_channels">Channels</string>
     <string name="pref_tag_icon">Channel tag icon</string>
-    <string name="pref_tag_icon_sum">Show the icon for a channel tag instead of the application logo.</string>
+    <string name="pref_tag_icon_sum">Show the icon for a channel tag.</string>
     <string name="pref_theme">Light theme</string>
     <string name="pref_theme_sum">Use a light theme</string>
     <string name="pref_language">Language</string>
@@ -170,7 +170,7 @@
     <string name="pref_buffer_size">Message buffer size</string>
     <string name="pref_buffer_size_sum">Size in MB of the buffer that stores the received data from the server. Default is 4 MB. If sometimes no data could be loaded a larger buffer size might solve the problem. Please not that a larger buffer size might lead to low memory on older devices.</string>
 
-    <string name="feature_not_supported_by_server">The TVHeadend server does not supported this feature. A newer version is required.</string>
+    <string name="feature_not_supported_by_server">Your TVHeadend server does not support this feature. Please upgrade to newer version.</string>
     <string name="loading_profiles">Loading profiles</string>
 
     <string name="clear_search_history">Clear search history?</string>
@@ -261,7 +261,7 @@
     <string name="stop_time">Stop time</string>
     <string name="time_window">Time window to start recording</string>
     <string name="enable_time_window">Activate times for recording</string>
-    <string name="start_after_time">Beginn</string>
+    <string name="start_after_time">Start</string>
     <string name="start_before_time">End</string>
     <string name="extra_start_time">Extra start minutes (pre-time)</string>
     <string name="extra_stop_time">Extra stop minutes (post-time)</string>
@@ -347,19 +347,19 @@
     <string name="received_playback_information">Received playback information from server</string>
     <string name="starting_playback">Starting playback</string>
     <string name="connection_failed">Connection failed</string>
-    <string name="failed_connecting_to_server">Could not connect to server.\nIs the ip address, hostname and port correct?\nIs a firewall not blocking the port?</string>
+    <string name="failed_connecting_to_server">Could not connect to server. Is the ip address, hostname and port correct? Is a firewall not blocking the port?</string>
     <string name="failed_opening_socket">Failed to open socket to the server</string>
     <string name="failed_during_connection_attempt">Error during connection attempt to server</string>
     <string name="failed_to_resolve_address">Failed to resolve server address</string>
     <string name="connecting_to_server">Connecting to server…</string>
     <string name="connection_closed">Connection closed</string>
     <string name="authentication_failed">Authentication failed</string>
-    <string name="bad_username_or_password">Bad username or password</string>
+    <string name="bad_username_or_password">Wrong username or password</string>
     <string name="connected_to_server">Connected to server</string>
     <string name="loading_data">Loading data from server</string>
     <string name="loading_data_done">Loading data from server finished</string>
     <string name="saving_data">Saving received data…</string>
-    <string name="saving_channel_logos">Saving received channel logos…</string>
+    <string name="saving_channel_logos">Saving received channel icons…</string>
     <string name="saving_channels">Saving received channels…</string>
     <string name="saving_recordings">Saving received recordings…</string>
     <string name="saving_program_guide_data">Saving received program guide data…</string>
@@ -389,7 +389,7 @@
     <string name="dialog_title_clear_database">Clear database contents?</string>
     <string name="clear">Clear</string>
     <string name="playback">Playback</string>
-    <string name="dialog_title_disconnect_from_server">Disconnect from server</string>
+    <string name="dialog_title_disconnect_from_server">Disconnect from server?</string>
     <string name="dialog_content_disconnect_from_server">No active connection is defined. The existing connection to the server will be closed.</string>
     <string name="dialog_content_connection_changed">Connection settings have changed. The application will be restarted and a new initial sync will be performed.</string>
     <string name="dialog_title_connection_changed">Connect to new server?</string>
