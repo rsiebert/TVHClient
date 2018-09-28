@@ -24,7 +24,6 @@ import android.widget.TextView;
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.utils.UIUtils;
-import org.tvheadend.tvhclient.features.shared.callbacks.ChannelTagSelectionCallback;
 
 import java.util.Calendar;
 
@@ -36,7 +35,7 @@ import butterknife.Unbinder;
 
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 
-public class EpgViewPagerFragment extends Fragment implements EpgScrollInterface, ChannelTagSelectionCallback {
+public class EpgViewPagerFragment extends Fragment implements EpgScrollInterface {
 
     @BindView(R.id.constraint_layout)
     ConstraintLayout constraintLayout;
@@ -244,10 +243,5 @@ public class EpgViewPagerFragment extends Fragment implements EpgScrollInterface
     @Override
     public void onScrollStateChanged() {
 
-    }
-
-    @Override
-    public void onChannelTagIdSelected(int id) {
-        // NOP
     }
 }
