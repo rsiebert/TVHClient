@@ -199,6 +199,12 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        viewModel.checkAndUpdateChannels();
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.channel_list_options_menu, menu);

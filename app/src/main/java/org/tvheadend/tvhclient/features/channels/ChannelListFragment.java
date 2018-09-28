@@ -43,7 +43,6 @@ import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallba
 import org.tvheadend.tvhclient.features.streaming.external.CastChannelActivity;
 
 import java.util.Calendar;
-import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -180,16 +179,11 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
     @Override
     public void onResume() {
         super.onResume();
-        Timber.d("start");
         // When the user returns from the settings only the onResume method is called, not the
-        // onActivityCreated, so we need to updated the view model with these possibly updated
-        // values so that the changes will be effective immediately and not only when the channel
-        // list fragment is selected again.
-        viewModel.setChannelSortOrder(Integer.valueOf(sharedPreferences.getString("channel_sort_order", "0")));
-        viewModel.setChannelTagId(appRepository.getServerStatusData().getActiveItem().getChannelTagId());
-        viewModel.setSelectedTime(new Date().getTime());
-        viewModel.updateChannels();
-        Timber.d("end");
+        // onActivityCreated, so we need to check if any values that affect the representation
+        // of the channel list have changed. This can be the case when returning from the
+        // settings screen or when a channel tag has changed from another screen.
+        viewModel.checkAndUpdateChannels();
     }
 
     @Override
@@ -248,7 +242,6 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
         long timeInMillis = Calendar.getInstance().getTimeInMillis();
         timeInMillis += (1000 * 60 * 60 * which * intervalInHours);
         viewModel.setSelectedTime(timeInMillis);
-        viewModel.updateChannels();
     }
 
     @Override
@@ -256,7 +249,6 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
         recyclerView.setVisibility(View.GONE);
         progressBar.setVisibility(View.VISIBLE);
         viewModel.setChannelTagId(id);
-        viewModel.updateChannels();
     }
 
     /**

@@ -4,6 +4,7 @@ import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 
@@ -19,11 +20,15 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import timber.log.Timber;
+
 public class ChannelViewModel extends AndroidViewModel {
 
     private final MutableLiveData<List<Channel>> channels = new MutableLiveData<>();
     @Inject
     protected AppRepository appRepository;
+    @Inject
+    protected SharedPreferences sharedPreferences;
 
     private long selectedTime;
     private int channelTagId;
@@ -35,9 +40,9 @@ public class ChannelViewModel extends AndroidViewModel {
         super(application);
         MainApplication.getComponent().inject(this);
 
-        channelTagId = 0;
+        channelTagId = appRepository.getServerStatusData().getActiveItem().getChannelTagId();
         selectedTime = new Date().getTime();
-        channelSortOrder = 0;
+        channelSortOrder = Integer.valueOf(sharedPreferences.getString("channel_sort_order", "0"));
 
         // Initiate a timer that will update the view model data every minute
         // so that the progress bars will be displayed correctly
@@ -51,6 +56,7 @@ public class ChannelViewModel extends AndroidViewModel {
 
             channelUpdateHandler.postDelayed(channelUpdateTask, 60000);
         };
+        channelUpdateHandler.post(channelUpdateTask);
     }
 
     LiveData<List<Recording>> getAllRecordings() {
@@ -74,18 +80,13 @@ public class ChannelViewModel extends AndroidViewModel {
         return channels;
     }
 
-    public void setChannelSortOrder(int sortOrder) {
-        if (channelSortOrder != sortOrder) {
-            channelSortOrder = sortOrder;
-        }
-    }
-
     public long getSelectedTime() {
         return selectedTime;
     }
 
     public void setSelectedTime(long selectedTime) {
         this.selectedTime = selectedTime;
+        channelUpdateHandler.post(channelUpdateTask);
     }
 
     public int getChannelTagId() {
@@ -97,9 +98,27 @@ public class ChannelViewModel extends AndroidViewModel {
         ServerStatus serverStatus = appRepository.getServerStatusData().getActiveItem();
         serverStatus.setChannelTagId(channelTagId);
         appRepository.getServerStatusData().updateItem(serverStatus);
+        channelUpdateHandler.post(channelUpdateTask);
     }
 
-    public void updateChannels() {
-        channelUpdateHandler.post(channelUpdateTask);
+    public void checkAndUpdateChannels() {
+        Timber.d("Checking if channels need to be updated");
+        boolean updateChannels = false;
+
+        int newChannelTagId = appRepository.getServerStatusData().getActiveItem().getChannelTagId();
+        if (channelTagId != newChannelTagId) {
+            Timber.d("Channel tag has changed from " + channelTagId + " to " + newChannelTagId);
+            channelTagId = newChannelTagId;
+            updateChannels = true;
+        }
+        int newChannelSortOrder = Integer.valueOf(sharedPreferences.getString("channel_sort_order", "0"));
+        if (channelSortOrder != newChannelSortOrder) {
+            Timber.d("Sort order has changed from " + channelSortOrder + " to " + newChannelSortOrder);
+            channelSortOrder = newChannelSortOrder;
+            updateChannels = true;
+        }
+        if (updateChannels) {
+            channelUpdateHandler.post(channelUpdateTask);
+        }
     }
 }
