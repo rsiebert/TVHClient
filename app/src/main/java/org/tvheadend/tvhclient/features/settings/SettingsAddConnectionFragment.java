@@ -30,6 +30,11 @@ public class SettingsAddConnectionFragment extends SettingsConnectionBaseFragmen
             showMessage(getString(R.string.pref_port_error_invalid));
         } else {
             appRepository.getConnectionData().addItem(connection);
+            // Save the information in the view model that a new connection is active.
+            // This will then trigger a reconnect when the user leaves the connection list screen
+            if (connection.isActive()) {
+                viewModel.setConnectionHasChanged(true);
+            }
             activity.finish();
         }
     }
