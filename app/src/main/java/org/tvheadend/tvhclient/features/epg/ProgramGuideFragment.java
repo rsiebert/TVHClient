@@ -153,7 +153,7 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
         programViewPager.addOnPageChangeListener(this);
 
         viewModel = ViewModelProviders.of(activity).get(EpgViewModel.class);
-        viewModel.getChannels().observe(this, channels -> {
+        viewModel.getChannelSubsets().observe(this, channels -> {
 
             progressBar.setVisibility(View.GONE);
             channelListRecyclerView.setVisibility(View.VISIBLE);

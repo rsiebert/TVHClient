@@ -174,7 +174,7 @@ public class EpgViewPagerFragment extends Fragment implements EpgScrollInterface
         });
 
         EpgViewModel viewModel = ViewModelProviders.of(activity).get(EpgViewModel.class);
-        viewModel.getChannels().observe(this, channels -> {
+        viewModel.getChannelSubsets().observe(this, channels -> {
             if (channels != null) {
                 recyclerViewAdapter.addItems(channels);
             }

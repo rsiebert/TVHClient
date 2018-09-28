@@ -30,11 +30,11 @@ public class ChannelViewModel extends AndroidViewModel {
     @Inject
     protected SharedPreferences sharedPreferences;
 
-    private long selectedTime;
-    private int channelTagId;
-    private int channelSortOrder;
-    private Runnable channelUpdateTask;
-    private final Handler channelUpdateHandler = new Handler();
+    protected long selectedTime;
+    protected int channelTagId;
+    protected int channelSortOrder;
+    protected Runnable channelUpdateTask;
+    protected final Handler channelUpdateHandler = new Handler();
 
     public ChannelViewModel(Application application) {
         super(application);
@@ -59,7 +59,7 @@ public class ChannelViewModel extends AndroidViewModel {
         channelUpdateHandler.post(channelUpdateTask);
     }
 
-    LiveData<List<Recording>> getAllRecordings() {
+    public LiveData<List<Recording>> getAllRecordings() {
         return appRepository.getRecordingData().getLiveDataItems();
     }
 
@@ -67,7 +67,7 @@ public class ChannelViewModel extends AndroidViewModel {
         return appRepository.getServerStatusData().getLiveDataActiveItem();
     }
 
-    ChannelTag getChannelTag() {
+    public ChannelTag getChannelTag() {
         return appRepository.getChannelTagData().getItemById(channelTagId);
     }
 
