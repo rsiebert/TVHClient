@@ -76,7 +76,7 @@ public class CastRecordingActivity extends BasePlaybackActivity {
         movieMetadata.putString(MediaMetadata.KEY_SUBTITLE, recording.getSubtitle());
 
         if (!TextUtils.isEmpty(recording.getChannelIcon())) {
-            String iconUrl = "";
+            String iconUrl;
             if (recording.getChannelIcon().startsWith("http")) {
                 iconUrl = recording.getChannelIcon();
             } else {

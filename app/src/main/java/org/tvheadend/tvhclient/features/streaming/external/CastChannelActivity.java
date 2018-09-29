@@ -76,7 +76,7 @@ public class CastChannelActivity extends BasePlaybackActivity {
         movieMetadata.putString(MediaMetadata.KEY_SUBTITLE, channel.getProgramSubtitle());
 
         if (!TextUtils.isEmpty(channel.getIcon())) {
-            String iconUrl = "";
+            String iconUrl;
             if (channel.getIcon().startsWith("http")) {
                 iconUrl = channel.getIcon();
             } else {
