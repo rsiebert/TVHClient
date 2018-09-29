@@ -52,7 +52,10 @@ public class FileLoggingTree extends BaseDebugTree {
         }
         // Open the log file with the current date. This ensures that the log files are rotated daily
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
-        file = new File(logPath, "tvhclient_" + simpleDateFormat.format(new Date().getTime()) + ".log");
+        file = new File(logPath, "tvhclient_" +
+                BuildConfig.VERSION_NAME + "_" +
+                BuildConfig.BUILD_VERSION + "_" +
+                simpleDateFormat.format(new Date().getTime()) + ".log");
 
         try {
             if (file.createNewFile() || file.exists()) {
