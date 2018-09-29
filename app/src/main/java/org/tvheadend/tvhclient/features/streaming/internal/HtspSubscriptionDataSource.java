@@ -42,10 +42,9 @@ public class HtspSubscriptionDataSource extends HtspDataSource implements Subscr
     private static final String TAG = HtspSubscriptionDataSource.class.getName();
     private static final AtomicInteger sDataSourceCount = new AtomicInteger();
     private static final int BUFFER_SIZE = 10 * 1024 * 1024;
-    public static final byte[] HEADER = new byte[]{0, 1, 0, 1, 0, 1, 0, 1};
+    static final byte[] HEADER = new byte[]{0, 1, 0, 1, 0, 1, 0, 1};
 
     public static class Factory extends HtspDataSource.Factory {
-        private static final String TAG = Factory.class.getName();
 
         private final Context mContext;
         private final SimpleHtspConnection mConnection;
@@ -66,7 +65,6 @@ public class HtspSubscriptionDataSource extends HtspDataSource implements Subscr
 
     private final String mStreamProfile;
 
-    private final SharedPreferences mSharedPreferences;
     private int mTimeshiftPeriod = 0;
 
     private final int mDataSourceNumber;
@@ -83,7 +81,7 @@ public class HtspSubscriptionDataSource extends HtspDataSource implements Subscr
 
         mStreamProfile = streamProfile;
 
-        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+        SharedPreferences mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
 
         boolean timeshiftEnabled = mSharedPreferences.getBoolean(
                 "timeshift_enabled",
@@ -331,9 +329,7 @@ public class HtspSubscriptionDataSource extends HtspDataSource implements Subscr
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
         mLock.lock();
-        try (
-                ObjectOutputStream objectOutput = new ObjectOutputStream(outputStream)
-        ) {
+        try (ObjectOutputStream objectOutput = new ObjectOutputStream(outputStream)) {
             objectOutput.writeUnshared(message);
             objectOutput.flush();
 

@@ -15,7 +15,7 @@ import timber.log.Timber;
 
 public class EpgWorkerHandler implements HtspConnection.Listener {
 
-    String REQUEST_TAG = "tvhclient_worker";
+    private final String REQUEST_TAG = "tvhclient_worker";
 
     @Override
     public Handler getHandler() {

@@ -24,7 +24,7 @@ public interface ServerProfileDao {
     List<ServerProfile> loadAllRecordingProfilesSync();
 
     @Insert
-    long insert(ServerProfile serverProfile);
+    void insert(ServerProfile serverProfile);
 
     @Update
     void update(ServerProfile serverProfile);
