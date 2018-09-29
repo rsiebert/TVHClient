@@ -73,10 +73,18 @@ public class SimpleHtspConnection implements HtspMessage.Dispatcher, HtspConnect
 
         Timber.d("Closing HTSP connection thread");
         htspConnection.closeConnection();
-        connectionThread.interrupt();
+        if (connectionThread != null) {
+            connectionThread.interrupt();
+        } else {
+            Timber.e("Could not call interrupt, HTSP connection thread is null");
+        }
         try {
             Timber.d("Waiting for the thread to die");
-            connectionThread.join();
+            if (connectionThread != null) {
+                connectionThread.join();
+            } else {
+                Timber.e("Could not call join, HTSP connection thread is null");
+            }
         } catch (InterruptedException e) {
             Timber.e("Thread got interrupted while waiting to die");
         }
