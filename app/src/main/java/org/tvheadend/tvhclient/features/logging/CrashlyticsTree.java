@@ -17,7 +17,7 @@ public class CrashlyticsTree extends BaseDebugTree {
 
     @Override
     protected void log(int priority, @Nullable String tag, @Nullable String message, @Nullable Throwable t) {
-        if (priority == Log.VERBOSE || priority == Log.DEBUG || priority == Log.INFO) {
+        if (priority == Log.VERBOSE || priority == Log.INFO) {
             return;
         }
         if (Fabric.isInitialized()) {
@@ -26,6 +26,11 @@ public class CrashlyticsTree extends BaseDebugTree {
             Crashlytics.setString(CRASHLYTICS_KEY_MESSAGE, message);
             Crashlytics.setString("Git commit", BuildConfig.GIT_SHA);
             Crashlytics.setString("Build time", BuildConfig.BUILD_TIME);
+
+            // Logs the given message when a crash occurred.
+            // In addition to writing to the next crash report, it will also
+            // write to the LogCat using android.util.Log.println(priority, tag, msg)
+            Crashlytics.log(priority, tag, message);
 
             if (t == null) {
                 Crashlytics.logException(new Exception(message));
