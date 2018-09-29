@@ -63,7 +63,7 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
 
     private Handler handler;
     private int channelId;
-    private int recordingId;
+    private int dvrId;
     private SimpleExoPlayer player;
     //private EventLogger eventLogger;
     private TvheadendTrackSelector trackSelector;
@@ -96,12 +96,12 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
 
         if (savedInstanceState != null) {
             channelId = getIntent().getIntExtra("channelId", -1);
-            recordingId = getIntent().getIntExtra("recordingId", -1);
+            dvrId = getIntent().getIntExtra("dvrId", -1);
         } else {
             Bundle bundle = getIntent().getExtras();
             if (bundle != null) {
                 channelId = bundle.getInt("channelId", -1);
-                recordingId = getIntent().getIntExtra("recordingId", -1);
+                dvrId = getIntent().getIntExtra("dvrId", -1);
             }
         }
 
@@ -241,8 +241,8 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
                     .setExtractorsFactory(extractorsFactory)
                     .createMediaSource(channelUri, handler, null);
 
-        } else if (recordingId > 0) {
-            Uri recordingUri = Uri.parse("htsp://dvrfile/" + recordingId);
+        } else if (dvrId > 0) {
+            Uri recordingUri = Uri.parse("htsp://dvrfile/" + dvrId);
             Timber.d("Playing recording uri " + recordingUri);
             mediaSource = new ExtractorMediaSource.Factory(htspFileInputStreamDataSourceFactory)
                     .setExtractorsFactory(extractorsFactory)

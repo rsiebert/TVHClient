@@ -709,9 +709,15 @@ public class MenuUtils {
             Timber.d("Weak reference to activity is null");
             return false;
         }
-        Intent intent = new Intent(activity, PlayRecordingActivity.class);
-        intent.putExtra("dvrId", dvrId);
-        activity.startActivity(intent);
+        if (isUnlocked && sharedPreferences.getBoolean("internal_player_enabled", false)) {
+            Intent intent = new Intent(activity, HtspPlaybackActivity.class);
+            intent.putExtra("dvrId", dvrId);
+            activity.startActivity(intent);
+        } else {
+            Intent intent = new Intent(activity, PlayRecordingActivity.class);
+            intent.putExtra("dvrId", dvrId);
+            activity.startActivity(intent);
+        }
         return true;
     }
 }
