@@ -53,7 +53,7 @@ public class DownloadRecordingManager {
         this.serverStatus = appRepository.getServerStatusData().getActiveItem();
         this.downloadManager = (DownloadManager) this.activity.getSystemService(Service.DOWNLOAD_SERVICE);
 
-        if (recording == null) {
+        if (recording != null) {
             Timber.d("Recording is null");
             if (isStoragePermissionGranted()) {
                 startDownload();
