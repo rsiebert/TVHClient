@@ -21,7 +21,6 @@ import com.squareup.leakcanary.RefWatcher;
 import org.tvheadend.tvhclient.features.logging.CrashlyticsTree;
 import org.tvheadend.tvhclient.features.logging.DebugTree;
 import org.tvheadend.tvhclient.features.logging.FileLoggingTree;
-import org.tvheadend.tvhclient.features.logging.ReleaseTree;
 import org.tvheadend.tvhclient.features.purchase.BillingUtils;
 import org.tvheadend.tvhclient.injection.DaggerMainApplicationComponent;
 import org.tvheadend.tvhclient.injection.MainApplicationComponent;
@@ -120,7 +119,9 @@ public class MainApplication extends Application implements BillingProcessor.IBi
     }
 
     private void initTimber() {
-        Timber.plant(BuildConfig.DEBUG_MODE ? new DebugTree() : new ReleaseTree());
+        if (BuildConfig.DEBUG_MODE) {
+            Timber.plant(new DebugTree());
+        }
 
         if (sharedPreferences.getBoolean("debug_mode_enabled", false)) {
             Timber.plant(new FileLoggingTree(getApplicationContext()));
