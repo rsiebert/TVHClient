@@ -220,7 +220,7 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Wake
                 && permissions[0].equals("android.permission.WRITE_EXTERNAL_STORAGE")) {
             Timber.d("Storage permission granted");
             Fragment fragment = getSupportFragmentManager().findFragmentById(isDualPane ? R.id.details : R.id.main);
-            if (fragment != null && fragment instanceof DownloadPermissionGrantedInterface) {
+            if (fragment instanceof DownloadPermissionGrantedInterface) {
                 ((DownloadPermissionGrantedInterface) fragment).downloadRecording();
             }
         } else {
