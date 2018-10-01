@@ -17,7 +17,6 @@
 package org.tvheadend.tvhclient.data.service.htsp;
 
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -31,7 +30,6 @@ import timber.log.Timber;
  * Fetches a file over a HTSP Connection
  */
 public class HtspFileInputStream extends InputStream {
-    private static final String TAG = HtspFileInputStream.class.getSimpleName();
 
     private final HtspMessage.Dispatcher dispatcher;
     private final String fileName;
@@ -213,9 +211,9 @@ public class HtspFileInputStream extends InputStream {
         if (fileOpenResponse.containsKey("size")) {
             // Size is optional
             fileSize = fileOpenResponse.getLong("size");
-            Log.v(TAG, "Opened file " + fileName + " of size " + fileSize + " successfully");
+            Timber.v("Opened file " + fileName + " of size " + fileSize + " successfully");
         } else {
-            Log.v(TAG, "Opened file " + fileName + " successfully");
+            Timber.v("Opened file " + fileName + " successfully");
         }
     }
 
@@ -265,7 +263,7 @@ public class HtspFileInputStream extends InputStream {
     }
 
     private void sendFileClose() throws IOException {
-        Log.v(TAG, "Closing file " + fileName);
+        Timber.v("Closing file " + fileName);
 
         HtspMessage fileCloseRequest = new HtspMessage();
 

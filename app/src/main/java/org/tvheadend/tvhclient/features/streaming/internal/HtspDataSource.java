@@ -34,8 +34,6 @@ public abstract class HtspDataSource implements DataSource, Closeable {
 
     public static abstract class Factory implements DataSource.Factory {
 
-        private static final String TAG = HtspDataSource.Factory.class.getName();
-
         private WeakReference<HtspDataSource> mCurrentDataSource;
 
         @Override

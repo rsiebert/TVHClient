@@ -19,7 +19,6 @@ package org.tvheadend.tvhclient.features.streaming.internal.reader;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Format;
@@ -32,8 +31,9 @@ import org.tvheadend.tvhclient.features.streaming.internal.utils.TvhMappings;
 import java.util.ArrayList;
 import java.util.List;
 
+import timber.log.Timber;
+
 class VorbisStreamReader extends PlainStreamReader {
-    private static final String TAG = VorbisStreamReader.class.getName();
 
     VorbisStreamReader(Context context) {
         super(context, C.TRACK_TYPE_AUDIO);
@@ -48,7 +48,7 @@ class VorbisStreamReader extends PlainStreamReader {
             try {
                 initializationData = parseVorbisCodecPrivate(stream.getByteArray("meta"));
             } catch (ParserException e) {
-                Log.e(TAG, "Failed to parse Vorbis meta, discarding");
+                Timber.e("Failed to parse Vorbis meta, discarding");
             }
         }
 

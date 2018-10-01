@@ -21,7 +21,6 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.Renderer;
@@ -40,10 +39,11 @@ import com.google.android.exoplayer2.video.VideoRendererEventListener;
 
 import java.util.ArrayList;
 
-class TvheadendRenderersFactory extends DefaultRenderersFactory {
-    private static final String TAG = TvheadendRenderersFactory.class.getName();
+import timber.log.Timber;
 
-    public TvheadendRenderersFactory(Context context) {
+class TvheadendRenderersFactory extends DefaultRenderersFactory {
+
+    TvheadendRenderersFactory(Context context) {
         super(context, null, EXTENSION_RENDERER_MODE_ON, DEFAULT_ALLOWED_VIDEO_JOINING_TIME_MS);
     }
 
@@ -69,7 +69,7 @@ class TvheadendRenderersFactory extends DefaultRenderersFactory {
         final boolean enableShieldWorkaround = sharedPreferences.getBoolean("shield_workaround_enabled", true);
 
         if (Build.MODEL.equals("SHIELD Android TV") && enableShieldWorkaround) {
-            Log.d(TAG, "Adding ShieldVideoRenderer");
+            Timber.d("Adding ShieldVideoRenderer");
             out.add(new ShieldVideoRenderer(
                     context,
                     MediaCodecSelector.DEFAULT,
@@ -80,7 +80,7 @@ class TvheadendRenderersFactory extends DefaultRenderersFactory {
                     eventListener,
                     MAX_DROPPED_VIDEO_FRAME_COUNT_TO_NOTIFY));
         } else {
-            Log.d(TAG, "Adding MediaCodecVideoRenderer");
+            Timber.d("Adding MediaCodecVideoRenderer");
             out.add(new MediaCodecVideoRenderer(
                     context,
                     MediaCodecSelector.DEFAULT,
@@ -120,7 +120,7 @@ class TvheadendRenderersFactory extends DefaultRenderersFactory {
                 false);
 
         // Native Audio Decoders
-        Log.d(TAG, "Adding MediaCodecAudioRenderer");
+        Timber.d("Adding MediaCodecAudioRenderer");
         MediaCodecSelector mediaCodecSelector = buildMediaCodecSelector(enablePassthroughDecoder);
         out.add(new MediaCodecAudioRenderer(mediaCodecSelector, drmSessionManager,
                 true, eventHandler, eventListener, audioCapabilities));
@@ -132,7 +132,7 @@ class TvheadendRenderersFactory extends DefaultRenderersFactory {
         );
 
         if (enableFfmpegAudioRenderer) {
-            Log.d(TAG, "Adding FfmpegAudioRenderer");
+            Timber.d("Adding FfmpegAudioRenderer");
             out.add(new FfmpegAudioRenderer(eventHandler, eventListener, audioProcessors));
         }
     }

@@ -286,7 +286,7 @@ public class HtspConnection implements Runnable {
         }
     }
 
-    public void addConnectionListener(Listener listener) {
+    void addConnectionListener(Listener listener) {
         if (mListeners.contains(listener)) {
             Timber.w("Attempted to add duplicate connection listener");
             return;
@@ -295,7 +295,7 @@ public class HtspConnection implements Runnable {
         mListeners.add(listener);
     }
 
-    public void removeConnectionListener(Listener listener) {
+    void removeConnectionListener(Listener listener) {
         if (!mListeners.contains(listener)) {
             Timber.w("Attempted to remove non existing connection listener");
             return;
@@ -303,8 +303,7 @@ public class HtspConnection implements Runnable {
         mListeners.remove(listener);
     }
 
-    public void setWritePending() {
-
+    void setWritePending() {
         lock.lock();
         try {
             if (isClosedOrClosingOrFailed()) {
@@ -346,7 +345,7 @@ public class HtspConnection implements Runnable {
         return isClosed() || isFailed();
     }
 
-    public boolean isClosedOrClosing() {
+    boolean isClosedOrClosing() {
         return isClosed() || isClosing();
     }
 

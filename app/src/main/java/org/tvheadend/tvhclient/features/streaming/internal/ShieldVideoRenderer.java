@@ -20,7 +20,6 @@ import android.content.Context;
 import android.media.MediaCodec;
 import android.media.MediaCrypto;
 import android.os.Handler;
-import android.util.Log;
 
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.Format;
@@ -32,14 +31,15 @@ import com.google.android.exoplayer2.mediacodec.MediaCodecUtil;
 import com.google.android.exoplayer2.video.MediaCodecVideoRenderer;
 import com.google.android.exoplayer2.video.VideoRendererEventListener;
 
+import timber.log.Timber;
+
 class ShieldVideoRenderer extends MediaCodecVideoRenderer {
-    private static final String TAG = ShieldVideoRenderer.class.getName();
     private static final int THIRTEEN_MINUTES = 13 * 60 * 1000;
 
     private long startTime;
     private boolean enabled;
 
-    public ShieldVideoRenderer(Context context, MediaCodecSelector mediaCodecSelector, long allowedJoiningTimeMs, DrmSessionManager<FrameworkMediaCrypto> drmSessionManager, boolean playClearSamplesWithoutKeys, Handler eventHandler, VideoRendererEventListener eventListener, int maxDroppedFramesToNotify) {
+    ShieldVideoRenderer(Context context, MediaCodecSelector mediaCodecSelector, long allowedJoiningTimeMs, DrmSessionManager<FrameworkMediaCrypto> drmSessionManager, boolean playClearSamplesWithoutKeys, Handler eventHandler, VideoRendererEventListener eventListener, int maxDroppedFramesToNotify) {
         super(context, mediaCodecSelector, allowedJoiningTimeMs, drmSessionManager, playClearSamplesWithoutKeys, eventHandler, eventListener, maxDroppedFramesToNotify);
     }
 
@@ -57,7 +57,7 @@ class ShieldVideoRenderer extends MediaCodecVideoRenderer {
         long diffMs = currentTime - startTime;
 
         if (enabled && diffMs > THIRTEEN_MINUTES) {
-            Log.d(TAG, "Resetting codecs as nVidia Shield workaround");
+            Timber.d("Resetting codecs as nVidia Shield workaround");
             releaseCodec();
         }
 

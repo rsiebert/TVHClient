@@ -20,7 +20,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.util.Log;
+import android.text.TextUtils;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.upstream.DataSpec;
@@ -38,8 +38,9 @@ import java.nio.ByteBuffer;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 
+import timber.log.Timber;
+
 public class HtspSubscriptionDataSource extends HtspDataSource implements Subscriber.Listener {
-    private static final String TAG = HtspSubscriptionDataSource.class.getName();
     private static final AtomicInteger sDataSourceCount = new AtomicInteger();
     private static final int BUFFER_SIZE = 10 * 1024 * 1024;
     static final byte[] HEADER = new byte[]{0, 1, 0, 1, 0, 1, 0, 1};
@@ -94,7 +95,7 @@ public class HtspSubscriptionDataSource extends HtspDataSource implements Subscr
 
         mDataSourceNumber = sDataSourceCount.incrementAndGet();
 
-        Log.d(TAG, "New HtspSubscriptionDataSource instantiated (" + mDataSourceNumber + ")");
+        Timber.d("New HtspSubscriptionDataSource instantiated (" + mDataSourceNumber + ")");
 
         try {
             // Create the buffer, and place the HtspSubscriptionDataSource header in place.
@@ -121,18 +122,8 @@ public class HtspSubscriptionDataSource extends HtspDataSource implements Subscr
         // https://github.com/google/ExoPlayer/issues/2662 - Luckily, i've not found it's actually
         // been used anywhere at this moment.
         if (mSubscriber != null || mConnection != null) {
-            Log.e(TAG, "Datasource finalize relied upon to release the subscription");
-
+            Timber.e("Datasource finalize relied upon to release the subscription");
             release();
-
-            try {
-                // If we see this in the wild, I want to know about it. Fake an exception and send
-                // and crash report.
-                //ACRA.getErrorReporter().handleException(new Exception(
-                //        "Datasource finalize relied upon to release the subscription"));
-            } catch (IllegalStateException e) {
-                // Ignore, ACRA is not available.
-            }
         }
 
         super.finalize();
@@ -141,14 +132,17 @@ public class HtspSubscriptionDataSource extends HtspDataSource implements Subscr
     // DataSource Methods
     @Override
     public long open(DataSpec dataSpec) throws IOException {
-        Log.i(TAG, "Opening HtspSubscriptionDataSource (" + mDataSourceNumber + ")");
+        Timber.i("Opening HtspSubscriptionDataSource (" + mDataSourceNumber + ")");
         mDataSpec = dataSpec;
 
         if (!mIsSubscribed) {
             try {
-                long channelId = Long.parseLong(dataSpec.uri.getPath().substring(1));
-                mSubscriber.subscribe(channelId, mStreamProfile, mTimeshiftPeriod);
-                mIsSubscribed = true;
+                String path = dataSpec.uri.getPath();
+                if (!TextUtils.isEmpty(path)) {
+                    long channelId = Long.parseLong(path.substring(1));
+                    mSubscriber.subscribe(channelId, mStreamProfile, mTimeshiftPeriod);
+                    mIsSubscribed = true;
+                }
             } catch (HtspNotConnectedException e) {
                 throw new IOException("Failed to startPlayback HtspSubscriptionDataSource, HTSP not connected (" + mDataSourceNumber + ")", e);
             }
@@ -156,7 +150,7 @@ public class HtspSubscriptionDataSource extends HtspDataSource implements Subscr
 
         long seekPosition = mDataSpec.position;
         if (seekPosition > 0 && mTimeshiftPeriod > 0) {
-            Log.d(TAG, "Seek to time PTS: " + seekPosition);
+            Timber.d("Seek to time PTS: " + seekPosition);
 
             mSubscriber.skip(seekPosition);
             mBuffer.clear();
@@ -177,11 +171,11 @@ public class HtspSubscriptionDataSource extends HtspDataSource implements Subscr
         // If the buffer is empty, block until we have at least 1 byte
         while (mIsOpen && mBuffer.remaining() == 0) {
             try {
-                Log.v(TAG, "Blocking for more data (" + mDataSourceNumber + ")");
+                Timber.v("Blocking for more data (" + mDataSourceNumber + ")");
                 Thread.sleep(250);
             } catch (InterruptedException e) {
                 // Ignore.
-                Log.w(TAG, "Caught InterruptedException (" + mDataSourceNumber + ")");
+                Timber.w("Caught InterruptedException (" + mDataSourceNumber + ")");
                 return 0;
             }
         }
@@ -209,14 +203,14 @@ public class HtspSubscriptionDataSource extends HtspDataSource implements Subscr
 
     @Override
     public void close() {
-        Log.i(TAG, "Closing HTSP DataSource (" + mDataSourceNumber + ")");
+        Timber.i("Closing HTSP DataSource (" + mDataSourceNumber + ")");
         mIsOpen = false;
     }
 
     // Subscription.Listener Methods
     @Override
     public void onSubscriptionStart(@NonNull HtspMessage message) {
-        Log.d(TAG, "Received subscriptionStart (" + mDataSourceNumber + ")");
+        Timber.d("Received subscriptionStart (" + mDataSourceNumber + ")");
         serializeMessageToBuffer(message);
     }
 
@@ -237,7 +231,7 @@ public class HtspSubscriptionDataSource extends HtspDataSource implements Subscr
 
     @Override
     public void onSubscriptionStop(@NonNull HtspMessage message) {
-        Log.d(TAG, "Received subscriptionStop (" + mDataSourceNumber + ")");
+        Timber.d("Received subscriptionStop (" + mDataSourceNumber + ")");
         mIsOpen = false;
     }
 
@@ -326,10 +320,11 @@ public class HtspSubscriptionDataSource extends HtspDataSource implements Subscr
 
     // Misc Internal Methods
     private void serializeMessageToBuffer(@NonNull HtspMessage message) {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
         mLock.lock();
-        try (ObjectOutputStream objectOutput = new ObjectOutputStream(outputStream)) {
+        try {
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            ObjectOutputStream objectOutput = new ObjectOutputStream(outputStream);
             objectOutput.writeUnshared(message);
             objectOutput.flush();
 
@@ -341,14 +336,10 @@ public class HtspSubscriptionDataSource extends HtspDataSource implements Subscr
             mBuffer.flip();
         } catch (IOException e) {
             // Ignore?
-            Log.w(TAG, "Caught IOException, ignoring (" + mDataSourceNumber + ")", e);
+            Timber.w("Caught IOException, ignoring (" + mDataSourceNumber + ")", e);
         } finally {
             mLock.unlock();
-            try {
-                outputStream.close();
-            } catch (IOException ex) {
-                // Ignore
-            }
+            // Ignore
         }
     }
 }

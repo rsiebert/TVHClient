@@ -18,7 +18,6 @@ package org.tvheadend.tvhclient.features.streaming.internal.reader;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Format;
@@ -31,8 +30,9 @@ import org.tvheadend.tvhclient.data.service.htsp.HtspMessage;
 
 import java.util.List;
 
+import timber.log.Timber;
+
 class H265StreamReader extends PlainStreamReader {
-    private static final String TAG = H265StreamReader.class.getName();
 
     H265StreamReader(Context context) {
         super(context, C.TRACK_TYPE_VIDEO);
@@ -48,7 +48,7 @@ class H265StreamReader extends PlainStreamReader {
                 HevcConfig hevcConfig = HevcConfig.parse(new ParsableByteArray(stream.getByteArray("meta")));
                 initializationData = hevcConfig.initializationData;
             } catch (ParserException e) {
-                Log.e(TAG, "Failed to parse H265 meta, discarding");
+                Timber.e("Failed to parse H265 meta, discarding");
             }
         }
 

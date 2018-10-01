@@ -17,7 +17,6 @@
 package org.tvheadend.tvhclient.features.streaming.internal;
 
 import android.media.tv.TvTrackInfo;
-import android.util.Log;
 
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.Format;
@@ -29,23 +28,21 @@ import com.google.android.exoplayer2.trackselection.FixedTrackSelection;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.util.MimeTypes;
 
+import timber.log.Timber;
+
 
 class TvheadendTrackSelector extends DefaultTrackSelector {
-    private static final String TAG = TvheadendTrackSelector.class.getName();
 
     private String mVideoTrackId;
     private String mAudioTrackId;
     private String mSubtitleTrackId;
 
-    private TvheadendTrackSelector() {
-    }
-
-    public TvheadendTrackSelector(TrackSelection.Factory adaptiveVideoTrackSelectionFactory) {
+    TvheadendTrackSelector(TrackSelection.Factory adaptiveVideoTrackSelectionFactory) {
         super(adaptiveVideoTrackSelectionFactory);
     }
 
     public boolean selectTrack(int type, String trackId) {
-        Log.d(TAG, "TrackSelector selectTrack: " + type + " / " + trackId);
+        Timber.d("TrackSelector selectTrack: " + type + " / " + trackId);
 
         switch (type) {
             case TvTrackInfo.TYPE_VIDEO:
@@ -93,7 +90,7 @@ class TvheadendTrackSelector extends DefaultTrackSelector {
             if (selectedAudioRendererIndex != -1) {
                 // If we already made a selection, discard this extra selection
                 trackSelections[trackSelectionIndex] = null;
-                Log.d(TAG, "Discarding Audio Track Selection");
+                Timber.d("Discarding Audio Track Selection");
                 continue;
             }
 
@@ -113,7 +110,7 @@ class TvheadendTrackSelector extends DefaultTrackSelector {
             TrackSelection.Factory adaptiveTrackSelectionFactory)
             throws ExoPlaybackException {
 
-        Log.d(TAG, "TrackSelector selectVideoTrack");
+        Timber.d("TrackSelector selectVideoTrack");
 
         // If we haven't explicitly chosen a track, defer to the DefaultTrackSelector implementation.
         if (mVideoTrackId == null) {
@@ -144,7 +141,7 @@ class TvheadendTrackSelector extends DefaultTrackSelector {
             int[][] formatSupport,
             DefaultTrackSelector.Parameters params,
             TrackSelection.Factory adaptiveTrackSelectionFactory) {
-        Log.d(TAG, "TrackSelector selectAudioTrack");
+        Timber.d("TrackSelector selectAudioTrack");
 
         // If we haven't explicitly chosen a track, defer to the DefaultTrackSelector implementation.
         if (mAudioTrackId == null) {
@@ -163,7 +160,7 @@ class TvheadendTrackSelector extends DefaultTrackSelector {
                         Format format = trackGroup.getFormat(trackIndex);
 
                         if (mAudioTrackId.equals(format.id)) {
-                            Log.d(TAG, "Matched audio track, create FixedTrackSelection");
+                            Timber.d("Matched audio track, create FixedTrackSelection");
                             return new FixedTrackSelection(trackGroup, trackIndex);
                         }
                     }
@@ -179,7 +176,7 @@ class TvheadendTrackSelector extends DefaultTrackSelector {
             TrackGroupArray groups,
             int[][] formatSupport,
             DefaultTrackSelector.Parameters params) {
-        Log.d(TAG, "TrackSelector selectTextTrack");
+        Timber.d("TrackSelector selectTextTrack");
 
         // If we haven't explicitly chosen a track, defer to the DefaultTrackSelector implementation.
         if (mSubtitleTrackId == null) {
