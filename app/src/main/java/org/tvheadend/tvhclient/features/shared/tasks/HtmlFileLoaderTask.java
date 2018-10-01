@@ -16,6 +16,7 @@ import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
 import java.util.Locale;
 
+import androidx.annotation.NonNull;
 import timber.log.Timber;
 
 public class HtmlFileLoaderTask extends AsyncTask<Void, Void, String> {
@@ -25,7 +26,7 @@ public class HtmlFileLoaderTask extends AsyncTask<Void, Void, String> {
     private final WeakReference<Context> context;
     private final FileLoaderCallback callback;
 
-    public HtmlFileLoaderTask(Context context, String file, String defaultLocale, FileLoaderCallback callback) {
+    public HtmlFileLoaderTask(Context context, String file, String defaultLocale, @NonNull FileLoaderCallback callback) {
         this.context = new WeakReference<>(context);
         this.file = file;
         this.defaultLocale = defaultLocale;
@@ -70,17 +71,15 @@ public class HtmlFileLoaderTask extends AsyncTask<Void, Void, String> {
         // the defaultLocale. If the file doesn't exist, open the default (English)
         InputStream is = null;
         try {
-            Timber.d("Trying to open file " + htmlFile);
             is = context.getAssets().open(htmlFile);
         } catch (IOException ex1) {
-            Timber.d("Could not open file " + htmlFile);
+            Timber.e("Could not open file " + htmlFile);
         }
         if (is == null) {
             try {
-                Timber.d("Trying to open default file " + defaultHtmlFile);
                 is = context.getAssets().open(defaultHtmlFile);
             } catch (IOException ex2) {
-                Timber.d("Trying to open default file " + defaultHtmlFile);
+                Timber.e("Could not open default file " + defaultHtmlFile);
             }
         }
 
@@ -89,7 +88,6 @@ public class HtmlFileLoaderTask extends AsyncTask<Void, Void, String> {
         if (is != null) {
             try {
                 String htmlData;
-                Timber.d("Creating buffered reader to get contents from input stream");
                 BufferedReader in = new BufferedReader(new InputStreamReader(is, "utf-8"));
                 while ((htmlData = in.readLine()) != null) {
                     sb.append(htmlData);
@@ -97,22 +95,22 @@ public class HtmlFileLoaderTask extends AsyncTask<Void, Void, String> {
                 in.close();
 
             } catch (UnsupportedEncodingException uee) {
-                Timber.d("Could not create buffered reader, unsupported encoding");
+                Timber.e("Could not create buffered reader, unsupported encoding");
                 sb.append("Error parsing feature list");
             } catch (IOException ioe) {
-                Timber.d("Error while reading contents from input stream or closing it");
+                Timber.e("Error while reading contents from input stream or closing it");
                 sb.append("Error parsing feature list");
             }
             try {
                 is.close();
             } catch (IOException e) {
-                Timber.d("Error closing input stream");
+                Timber.e("Error closing input stream");
             }
         }
 
         // Add the closing HTML tags and load show the page
         sb.append("</body></html>");
-        Timber.d("Done loading file, returning content");
+        Timber.d("Done loading file");
         return sb.toString();
     }
 }
