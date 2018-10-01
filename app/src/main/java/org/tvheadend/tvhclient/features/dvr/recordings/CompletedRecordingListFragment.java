@@ -32,8 +32,12 @@ public class CompletedRecordingListFragment extends RecordingListFragment implem
             if (!TextUtils.isEmpty(searchQuery)) {
                 recyclerViewAdapter.getFilter().filter(searchQuery, this);
             }
-            recyclerView.setVisibility(View.VISIBLE);
-            progressBar.setVisibility(View.GONE);
+            if (recyclerView != null) {
+                recyclerView.setVisibility(View.VISIBLE);
+            }
+            if (progressBar != null) {
+                progressBar.setVisibility(View.GONE);
+            }
 
             if (TextUtils.isEmpty(searchQuery)) {
                 toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.items, recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));

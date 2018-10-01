@@ -117,8 +117,12 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
             if (!TextUtils.isEmpty(searchQuery)) {
                 recyclerViewAdapter.getFilter().filter(searchQuery, this);
             }
-            recyclerView.setVisibility(View.VISIBLE);
-            progressBar.setVisibility(View.GONE);
+            if (recyclerView != null) {
+                recyclerView.setVisibility(View.VISIBLE);
+            }
+            if (progressBar != null) {
+                progressBar.setVisibility(View.GONE);
+            }
             showChannelTagOrChannelCount();
 
             if (isDualPane && recyclerViewAdapter.getItemCount() > 0) {

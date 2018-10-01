@@ -124,6 +124,9 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(recyclerViewAdapter);
 
+        recyclerView.setVisibility(View.GONE);
+        progressBar.setVisibility(View.VISIBLE);
+
         ProgramViewModel viewModel = ViewModelProviders.of(activity).get(ProgramViewModel.class);
         if (!isSearchActive) {
             // A channel id and a channel name was given, load only the programs for the
@@ -149,8 +152,12 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
         if (isSearchActive) {
             recyclerViewAdapter.getFilter().filter(searchQuery, this);
         }
-        recyclerView.setVisibility(View.VISIBLE);
-        progressBar.setVisibility(View.GONE);
+        if (recyclerView != null) {
+            recyclerView.setVisibility(View.VISIBLE);
+        }
+        if (progressBar != null) {
+            progressBar.setVisibility(View.GONE);
+        }
 
         if (!isDualPane) {
             if (!isSearchActive) {

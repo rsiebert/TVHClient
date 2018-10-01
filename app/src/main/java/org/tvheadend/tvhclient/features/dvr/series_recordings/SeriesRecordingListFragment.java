@@ -88,6 +88,9 @@ public class SeriesRecordingListFragment extends BaseFragment implements Recycle
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(recyclerViewAdapter);
 
+        recyclerView.setVisibility(View.GONE);
+        progressBar.setVisibility(View.VISIBLE);
+
         SeriesRecordingViewModel viewModel = ViewModelProviders.of(activity).get(SeriesRecordingViewModel.class);
         viewModel.getRecordings().observe(this, recordings -> {
             if (recordings != null) {
@@ -96,9 +99,12 @@ public class SeriesRecordingListFragment extends BaseFragment implements Recycle
             if (!TextUtils.isEmpty(searchQuery)) {
                 recyclerViewAdapter.getFilter().filter(searchQuery, this);
             }
-            recyclerView.setVisibility(View.VISIBLE);
-            progressBar.setVisibility(View.GONE);
-
+            if (recyclerView != null) {
+                recyclerView.setVisibility(View.VISIBLE);
+            }
+            if (progressBar != null) {
+                progressBar.setVisibility(View.GONE);
+            }
             if (TextUtils.isEmpty(searchQuery)) {
                 toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.items, recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
             } else {

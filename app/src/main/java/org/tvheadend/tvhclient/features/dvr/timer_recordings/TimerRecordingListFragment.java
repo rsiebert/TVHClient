@@ -88,6 +88,9 @@ public class TimerRecordingListFragment extends BaseFragment implements Recycler
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(recyclerViewAdapter);
 
+        recyclerView.setVisibility(View.GONE);
+        progressBar.setVisibility(View.VISIBLE);
+
         TimerRecordingViewModel viewModel = ViewModelProviders.of(activity).get(TimerRecordingViewModel.class);
         viewModel.getRecordings().observe(activity, recordings -> {
             if (recordings != null) {
@@ -96,8 +99,12 @@ public class TimerRecordingListFragment extends BaseFragment implements Recycler
             if (!TextUtils.isEmpty(searchQuery)) {
                 recyclerViewAdapter.getFilter().filter(searchQuery, this);
             }
-            recyclerView.setVisibility(View.VISIBLE);
-            progressBar.setVisibility(View.GONE);
+            if (recyclerView != null) {
+                recyclerView.setVisibility(View.VISIBLE);
+            }
+            if (progressBar != null) {
+                progressBar.setVisibility(View.GONE);
+            }
 
             if (TextUtils.isEmpty(searchQuery)) {
                 toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.items, recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
@@ -112,6 +119,12 @@ public class TimerRecordingListFragment extends BaseFragment implements Recycler
             // case the adapter contains items now.
             activity.invalidateOptionsMenu();
         });
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
     }
 
     @Override
