@@ -125,7 +125,7 @@ public class SeriesRecordingListFragment extends BaseFragment implements Recycle
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_add:
-                Intent intent = new Intent(getActivity(), RecordingAddEditActivity.class);
+                Intent intent = new Intent(activity, RecordingAddEditActivity.class);
                 intent.putExtra("type", "series_recording");
                 activity.startActivity(intent);
                 return true;
