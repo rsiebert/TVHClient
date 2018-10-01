@@ -556,11 +556,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         appRepository.getRecordingData().updateItem(updatedRecording);
 
         if (sharedPreferences.getBoolean("notifications_enabled", false)) {
-            if (recording.isScheduled()) {
-                Integer offset = Integer.valueOf(sharedPreferences.getString("notification_lead_time", "0"));
-                Timber.d("Adding notification for recording " + recording.getTitle());
-                NotificationUtils.addRecordingNotification(context, recording, offset);
-            } else {
+            if (!recording.isScheduled()) {
                 Timber.d("Removing notification for recording " + recording.getTitle());
                 NotificationUtils.removeRecordingNotification(context, recording.getId());
             }
