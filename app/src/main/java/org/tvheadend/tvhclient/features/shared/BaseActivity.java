@@ -94,12 +94,12 @@ public abstract class BaseActivity extends AppCompatActivity implements NetworkS
         isNetworkAvailable = isAvailable;
 
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main);
-        if (fragment != null && fragment instanceof NetworkAvailabilityChangedInterface) {
+        if (fragment instanceof NetworkAvailabilityChangedInterface) {
             ((NetworkAvailabilityChangedInterface) fragment).onNetworkAvailabilityChanged(isAvailable);
         }
 
         fragment = getSupportFragmentManager().findFragmentById(R.id.details);
-        if (fragment != null && fragment instanceof NetworkAvailabilityChangedInterface) {
+        if (fragment instanceof NetworkAvailabilityChangedInterface) {
             ((NetworkAvailabilityChangedInterface) fragment).onNetworkAvailabilityChanged(isAvailable);
         }
         Timber.d("Network availability changed, invalidating menu");
