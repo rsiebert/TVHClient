@@ -282,8 +282,7 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
         } else {
             // Check if the fragment for the selected channel is already shown, if not replace it with a new fragment.
             Fragment fragment = fm.findFragmentById(R.id.details);
-            if (fragment == null
-                    || !(fragment instanceof ProgramListFragment)
+            if (!(fragment instanceof ProgramListFragment)
                     || ((ProgramListFragment) fragment).getShownChannelId() != channel.getId()) {
                 fragment = ProgramListFragment.newInstance(channel.getName(), channel.getId(), viewModel.getSelectedTime());
                 fm.beginTransaction()

@@ -408,7 +408,7 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
 
         for (int i = 0; i < viewPagerAdapter.getRegisteredFragmentCount(); i++) {
             Fragment fragment = viewPagerAdapter.getRegisteredFragment(i);
-            if (fragment != null && fragment instanceof EpgScrollInterface) {
+            if (fragment instanceof EpgScrollInterface) {
                 ((EpgScrollInterface) fragment).onScroll(position, offset);
             }
         }
@@ -426,8 +426,7 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
         // except the currently visible one from the viewpager to the saved position and offset.
         for (int i = (position - 1); i <= (position + 1); i++) {
             Fragment fragment = viewPagerAdapter.getRegisteredFragment(i);
-            if (fragment != null
-                    && i != position
+            if (i != position
                     && fragment instanceof EpgScrollInterface) {
                 ((EpgScrollInterface) fragment).onScroll(viewModel.getVerticalScrollPosition(), viewModel.getVerticalScrollOffset());
             }

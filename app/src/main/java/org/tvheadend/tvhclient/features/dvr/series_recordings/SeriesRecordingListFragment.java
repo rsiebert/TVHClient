@@ -174,8 +174,7 @@ public class SeriesRecordingListFragment extends BaseFragment implements Recycle
         } else {
             // Check what fragment is currently shown, replace if needed.
             Fragment fragment = activity.getSupportFragmentManager().findFragmentById(R.id.details);
-            if (fragment == null
-                    || !(fragment instanceof SeriesRecordingDetailsFragment)
+            if (!(fragment instanceof SeriesRecordingDetailsFragment)
                     || ((SeriesRecordingDetailsFragment) fragment).getShownId().equals(recording.getId())) {
                 // Make new fragment to show this selection.
                 fragment = SeriesRecordingDetailsFragment.newInstance(recording.getId());

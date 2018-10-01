@@ -156,8 +156,7 @@ public class RecordingListFragment extends BaseFragment implements RecyclerViewC
         } else {
             // Check what fragment is currently shown, replace if needed.
             Fragment fragment = activity.getSupportFragmentManager().findFragmentById(R.id.details);
-            if (fragment == null
-                    || !(fragment instanceof RecordingDetailsFragment)
+            if (!(fragment instanceof RecordingDetailsFragment)
                     || ((RecordingDetailsFragment) fragment).getShownDvrId() != recording.getId()) {
                 // Make new fragment to show this selection.
                 fragment = RecordingDetailsFragment.newInstance(recording.getId());

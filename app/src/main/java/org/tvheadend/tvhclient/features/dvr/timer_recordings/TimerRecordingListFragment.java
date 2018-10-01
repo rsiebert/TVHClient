@@ -174,8 +174,7 @@ public class TimerRecordingListFragment extends BaseFragment implements Recycler
         } else {
             // Check what fragment is currently shown, replace if needed.
             Fragment fragment = activity.getSupportFragmentManager().findFragmentById(R.id.main);
-            if (fragment == null
-                    || !(fragment instanceof TimerRecordingDetailsFragment)
+            if (!(fragment instanceof TimerRecordingDetailsFragment)
                     || !((TimerRecordingDetailsFragment) fragment).getShownId().equals(recording.getId())) {
                 // Make new fragment to show this selection.
                 fragment = TimerRecordingDetailsFragment.newInstance(recording.getId());
