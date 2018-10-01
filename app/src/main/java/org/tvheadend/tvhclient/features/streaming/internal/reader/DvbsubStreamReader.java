@@ -31,7 +31,6 @@ import java.util.List;
 import static com.google.android.exoplayer2.C.SELECTION_FLAG_DEFAULT;
 
 class DvbsubStreamReader extends PlainStreamReader {
-    private static final String TAG = DvbsubStreamReader.class.getName();
 
     DvbsubStreamReader(Context context) {
         super(context, C.TRACK_TYPE_TEXT);

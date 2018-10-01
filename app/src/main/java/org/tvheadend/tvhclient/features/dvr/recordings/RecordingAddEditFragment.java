@@ -159,7 +159,7 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
             channelNameTextView.setOnClickListener(view -> {
                 // Determine if the server supports recording on all channels
                 boolean allowRecordingOnAllChannels = serverStatus.getHtspVersion() >= 21;
-                handleChannelListSelection(recording.getChannelId(), RecordingAddEditFragment.this, allowRecordingOnAllChannels);
+                handleChannelListSelection(RecordingAddEditFragment.this, allowRecordingOnAllChannels);
             });
         }
 

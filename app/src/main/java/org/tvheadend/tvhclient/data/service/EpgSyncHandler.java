@@ -30,7 +30,7 @@ public class EpgSyncHandler {
         Handler handler = new Handler(handlerThread.getLooper());
     }
 
-    public boolean init() {
+    boolean init() {
         connection = appRepository.getConnectionData().getActiveItem();
         return connection != null;
     }
@@ -41,7 +41,7 @@ public class EpgSyncHandler {
                 && simpleHtspConnection.isConnected());
     }
 
-    public void connect() {
+    void connect() {
         Timber.d("Opening connection to server");
         simpleHtspConnection = new SimpleHtspConnection(context, connection);
 
@@ -54,7 +54,7 @@ public class EpgSyncHandler {
         simpleHtspConnection.start();
     }
 
-    public void handleIntent(Intent intent) {
+    void handleIntent(Intent intent) {
         if (intent != null && intent.getAction() != null) {
             Timber.d("Passing intent action " + intent.getAction() + " to epg sync task");
             epgSyncTask.handleIntent(intent);

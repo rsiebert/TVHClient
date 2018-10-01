@@ -30,11 +30,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 import timber.log.Timber;
 
 public class HtspFileInputStreamDataSource extends HtspDataSource {
-    private static final int BUFFER_SIZE = 10 * 1024 * 1024;
+
     private static final AtomicInteger sDataSourceCount = new AtomicInteger();
 
     public static class Factory extends HtspDataSource.Factory {
-        private static final String TAG = Factory.class.getName();
 
         private final Context mContext;
         private final SimpleHtspConnection mConnection;
@@ -69,17 +68,7 @@ public class HtspFileInputStreamDataSource extends HtspDataSource {
         // been used anywhere at this moment.
         if (mConnection != null) {
             Timber.e("Datasource finalize relied upon to release the subscription");
-
             release();
-
-            try {
-                // If we see this in the wild, I want to know about it. Fake an exception and send
-                // and crash report.
-                //ACRA.getErrorReporter().handleException(new Exception(
-                //        "Datasource finalize relied upon to release the subscription"));
-            } catch (IllegalStateException e) {
-                // Ignore, ACRA is not available.
-            }
         }
 
         super.finalize();

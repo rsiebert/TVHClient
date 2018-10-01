@@ -53,7 +53,7 @@ public class RecordingAddEditActivity extends AppCompatActivity implements Toolb
     @Override
     public void onBackPressed() {
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main);
-        if (fragment != null && fragment instanceof BackPressedInterface) {
+        if (fragment instanceof BackPressedInterface) {
             ((BackPressedInterface) fragment).onBackPressed();
         } else {
             super.onBackPressed();

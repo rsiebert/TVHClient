@@ -32,7 +32,7 @@ public class ChannelViewModel extends AndroidViewModel {
 
     protected long selectedTime;
     protected int channelTagId;
-    protected int channelSortOrder;
+    private int channelSortOrder;
     protected Runnable channelUpdateTask;
     protected final Handler channelUpdateHandler = new Handler();
 
@@ -80,11 +80,11 @@ public class ChannelViewModel extends AndroidViewModel {
         return channels;
     }
 
-    public long getSelectedTime() {
+    long getSelectedTime() {
         return selectedTime;
     }
 
-    public void setSelectedTime(long selectedTime) {
+    void setSelectedTime(long selectedTime) {
         this.selectedTime = selectedTime;
         channelUpdateHandler.post(channelUpdateTask);
     }

@@ -27,7 +27,7 @@ public class NotificationUtils {
         throw new IllegalAccessError("Utility class");
     }
 
-    public static void addProgramNotification(@NonNull Context context, @NonNull Program program, Integer offset, @Nullable ServerProfile profile, @NonNull ServerStatus serverStatus) {
+    static void addProgramNotification(@NonNull Context context, @NonNull Program program, Integer offset, @Nullable ServerProfile profile, @NonNull ServerStatus serverStatus) {
         Intent intent = new Intent(context, ProgramNotificationReceiver.class);
         intent.putExtra("eventTitle", program.getTitle());
         intent.putExtra("eventId", program.getEventId());

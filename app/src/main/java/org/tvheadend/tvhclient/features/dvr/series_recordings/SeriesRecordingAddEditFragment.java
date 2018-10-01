@@ -144,7 +144,7 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
         channelNameTextView.setOnClickListener(view -> {
             // Determine if the server supports recording on all channels
             boolean allowRecordingOnAllChannels = htspVersion >= 21;
-            handleChannelListSelection(recording.getChannelId(), SeriesRecordingAddEditFragment.this, allowRecordingOnAllChannels);
+            handleChannelListSelection(SeriesRecordingAddEditFragment.this, allowRecordingOnAllChannels);
         });
 
         priorityTextView.setText(priorityList[recording.getPriority()]);

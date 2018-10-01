@@ -108,7 +108,7 @@ public class SettingsActivity extends AppCompatActivity implements ToolbarInterf
         // If a settings fragment is currently visible, let the fragment
         // handle the back press, otherwise the setting activity.
         Fragment fragment = getFragmentManager().findFragmentById(R.id.main);
-        if (fragment != null && fragment instanceof BackPressedInterface) {
+        if (fragment instanceof BackPressedInterface) {
             ((BackPressedInterface) fragment).onBackPressed();
         } else {
             super.onBackPressed();

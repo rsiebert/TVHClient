@@ -27,7 +27,6 @@ import timber.log.Timber;
 
 public class HtspMessageSerializer implements HtspMessage.Serializer {
 
-    private static final String TAG = HtspMessageSerializer.class.getSimpleName();
     private static final boolean DEBUG = false;
 
     private static final byte FIELD_MAP = 1;

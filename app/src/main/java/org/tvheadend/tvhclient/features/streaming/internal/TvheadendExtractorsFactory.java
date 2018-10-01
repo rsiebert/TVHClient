@@ -33,11 +33,10 @@ import com.google.android.exoplayer2.extractor.ts.TsExtractor;
 import com.google.android.exoplayer2.extractor.wav.WavExtractor;
 
 class TvheadendExtractorsFactory implements ExtractorsFactory {
-    private static final String TAG = TvheadendExtractorsFactory.class.getName();
 
     private final Context mContext;
 
-    public TvheadendExtractorsFactory(Context context) {
+    TvheadendExtractorsFactory(Context context) {
         mContext = context;
     }
 

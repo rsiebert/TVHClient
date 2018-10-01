@@ -36,7 +36,6 @@ import java.util.List;
 // See https://wiki.multimedia.cx/index.php?title=ADTS
 
 class AacStreamReader implements StreamReader {
-    private static final String TAG = AacStreamReader.class.getName();
 
     private static final int ADTS_HEADER_SIZE = 7;
     private static final int ADTS_CRC_SIZE = 2;

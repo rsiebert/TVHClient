@@ -124,7 +124,7 @@ public class TimerRecordingAddEditFragment extends BaseRecordingAddEditFragment 
         channelNameTextView.setOnClickListener(view -> {
             // Determine if the server supports recording on all channels
             boolean allowRecordingOnAllChannels = htspVersion >= 21;
-            handleChannelListSelection(recording.getChannelId(), TimerRecordingAddEditFragment.this, allowRecordingOnAllChannels);
+            handleChannelListSelection(TimerRecordingAddEditFragment.this, allowRecordingOnAllChannels);
         });
 
         priorityTextView.setText(priorityList[recording.getPriority()]);

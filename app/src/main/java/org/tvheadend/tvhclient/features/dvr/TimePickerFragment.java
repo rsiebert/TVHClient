@@ -37,7 +37,7 @@ public class TimePickerFragment extends DialogFragment implements TimePickerDial
         calendar.set(Calendar.MINUTE, minute);
 
         Fragment fragment = getTargetFragment();
-        if (fragment != null && fragment instanceof DateTimePickerCallback) {
+        if (fragment instanceof DateTimePickerCallback) {
             ((DateTimePickerCallback) fragment).onTimeSelected(calendar.getTimeInMillis(), getTag());
         }
     }

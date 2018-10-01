@@ -36,7 +36,6 @@ import java.util.Arrays;
 import java.util.Locale;
 
 class TextsubStreamReader implements StreamReader {
-    private static final String TAG = TextsubStreamReader.class.getName();
 
     /**
      * A template for the prefix that must be added to each subrip sample. The 12 byte end timecode

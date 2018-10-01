@@ -54,7 +54,7 @@ public class ChangeLogActivity extends AppCompatActivity implements ToolbarInter
     @Override
     public void onBackPressed() {
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main);
-        if (fragment != null && fragment instanceof BackPressedInterface) {
+        if (fragment instanceof BackPressedInterface) {
             ((BackPressedInterface) fragment).onBackPressed();
         }
     }

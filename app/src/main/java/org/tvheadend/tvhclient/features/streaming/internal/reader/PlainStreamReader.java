@@ -32,7 +32,6 @@ import org.tvheadend.tvhclient.data.service.htsp.HtspMessage;
  * A PlainStreamReader simply copies the raw bytes from muxpkt's over onto the track output
  */
 abstract class PlainStreamReader implements StreamReader {
-    private static final String TAG = PlainStreamReader.class.getName();
 
     private final Context mContext;
     private final int mTrackType;

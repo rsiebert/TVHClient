@@ -151,7 +151,7 @@ public class EpgViewPagerFragment extends Fragment implements EpgScrollInterface
                 } else if (enableScrolling) {
                     enableScrolling = false;
                     Fragment fragment = activity.getSupportFragmentManager().findFragmentById(R.id.main);
-                    if (fragment != null && fragment instanceof EpgScrollInterface) {
+                    if (fragment instanceof EpgScrollInterface) {
                         ((EpgScrollInterface) fragment).onScrollStateChanged();
                     }
                 }
@@ -166,7 +166,7 @@ public class EpgViewPagerFragment extends Fragment implements EpgScrollInterface
                     int offset = (v == null) ? 0 : v.getTop() - recyclerView.getPaddingTop();
 
                     Fragment fragment = activity.getSupportFragmentManager().findFragmentById(R.id.main);
-                    if (fragment != null && fragment instanceof EpgScrollInterface) {
+                    if (fragment instanceof EpgScrollInterface) {
                         ((EpgScrollInterface) fragment).onScroll(position, offset);
                     }
                 }

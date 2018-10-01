@@ -38,7 +38,7 @@ public class DatePickerFragment extends DialogFragment implements DatePickerDial
         calendar.set(Calendar.DAY_OF_MONTH, day);
 
         Fragment fragment = getTargetFragment();
-        if (fragment != null && fragment instanceof DateTimePickerCallback) {
+        if (fragment instanceof DateTimePickerCallback) {
             ((DateTimePickerCallback) fragment).onDateSelected(calendar.getTimeInMillis(), getTag());
         }
     }

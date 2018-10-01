@@ -132,7 +132,7 @@ public abstract class BaseRecordingAddEditFragment extends BaseFragment {
                 .show();
     }
 
-    protected void handleChannelListSelection(long selectedChannelId, ChannelListSelectionCallback callback, boolean showAllChannelsListEntry) {
+    protected void handleChannelListSelection(ChannelListSelectionCallback callback, boolean showAllChannelsListEntry) {
         // Fill the channel tag adapter with the available channel tags
         CopyOnWriteArrayList<Channel> channels = new CopyOnWriteArrayList<>(channelList);
 
