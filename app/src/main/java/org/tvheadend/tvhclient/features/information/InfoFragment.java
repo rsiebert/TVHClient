@@ -56,7 +56,11 @@ public class InfoFragment extends BaseFragment implements FileLoaderCallback {
 
         toolbarInterface.setTitle(getString(R.string.pref_information));
         toolbarInterface.setSubtitle(null);
+    }
 
+    @Override
+    public void onResume() {
+        super.onResume();
         htmlFileLoaderTask = new HtmlFileLoaderTask(activity, "info_help", "en", this);
         htmlFileLoaderTask.execute();
     }
@@ -64,7 +68,9 @@ public class InfoFragment extends BaseFragment implements FileLoaderCallback {
     @Override
     public void onPause() {
         super.onPause();
-        htmlFileLoaderTask.cancel(true);
+        if (htmlFileLoaderTask != null) {
+            htmlFileLoaderTask.cancel(true);
+        }
     }
 
     @Override
