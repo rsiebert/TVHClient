@@ -17,18 +17,15 @@ public class TimerRecordingViewModel extends AndroidViewModel {
 
     @Inject
     protected AppRepository appRepository;
-    private final LiveData<List<TimerRecording>> recordings;
     private TimerRecording recording;
 
     public TimerRecordingViewModel(Application application) {
         super(application);
         MainApplication.getComponent().inject(this);
-
-        recordings = appRepository.getTimerRecordingData().getLiveDataItems();
     }
 
     public LiveData<List<TimerRecording>> getRecordings() {
-        return recordings;
+        return appRepository.getTimerRecordingData().getLiveDataItems();
     }
 
     LiveData<TimerRecording> getRecordingById(String id) {

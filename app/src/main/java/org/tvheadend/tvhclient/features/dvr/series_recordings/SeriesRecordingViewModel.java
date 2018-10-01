@@ -17,25 +17,22 @@ public class SeriesRecordingViewModel extends AndroidViewModel {
 
     @Inject
     protected AppRepository appRepository;
-    private final LiveData<List<SeriesRecording>> recordings;
     private SeriesRecording recording;
 
     public SeriesRecordingViewModel(Application application) {
         super(application);
         MainApplication.getComponent().inject(this);
-
-        recordings = appRepository.getSeriesRecordingData().getLiveDataItems();
     }
 
     public LiveData<List<SeriesRecording>> getRecordings() {
-        return recordings;
+        return appRepository.getSeriesRecordingData().getLiveDataItems();
     }
 
     LiveData<SeriesRecording> getRecordingById(String id) {
         return appRepository.getSeriesRecordingData().getLiveDataItemById(id);
     }
 
-    public SeriesRecording getRecordingByIdSync(String id) {
+    SeriesRecording getRecordingByIdSync(String id) {
         if (recording == null) {
             if (!TextUtils.isEmpty(id)) {
                 recording = appRepository.getSeriesRecordingData().getItemById(id);
