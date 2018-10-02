@@ -39,7 +39,7 @@ class ChannelRecyclerViewAdapter extends RecyclerView.Adapter<ChannelViewHolder>
     @Override
     public ChannelViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         final View view = LayoutInflater.from(parent.getContext()).inflate(viewType, parent, false);
-        return new ChannelViewHolder(view);
+        return new ChannelViewHolder(view, isDualPane);
     }
 
     @Override
@@ -78,7 +78,7 @@ class ChannelRecyclerViewAdapter extends RecyclerView.Adapter<ChannelViewHolder>
 
     @Override
     public int getItemViewType(final int position) {
-        return isDualPane ? R.layout.channel_list_adapter_dualpane : R.layout.channel_list_adapter;
+        return R.layout.channel_list_adapter;
     }
 
     public void setPosition(int pos) {

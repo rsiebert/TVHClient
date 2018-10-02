@@ -38,7 +38,7 @@ class SeriesRecordingRecyclerViewAdapter extends RecyclerView.Adapter<SeriesReco
     @Override
     public SeriesRecordingViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         final View view = LayoutInflater.from(parent.getContext()).inflate(viewType, parent, false);
-        return new SeriesRecordingViewHolder(view);
+        return new SeriesRecordingViewHolder(view, isDualPane);
     }
 
     @Override
@@ -73,7 +73,7 @@ class SeriesRecordingRecyclerViewAdapter extends RecyclerView.Adapter<SeriesReco
 
     @Override
     public int getItemViewType(final int position) {
-        return isDualPane ? R.layout.series_recording_list_adapter_dualpane : R.layout.series_recording_list_adapter;
+        return R.layout.series_recording_list_adapter;
     }
 
     public void setPosition(int pos) {

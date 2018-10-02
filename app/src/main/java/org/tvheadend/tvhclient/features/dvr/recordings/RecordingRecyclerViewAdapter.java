@@ -40,7 +40,7 @@ class RecordingRecyclerViewAdapter extends RecyclerView.Adapter<RecordingViewHol
     @Override
     public RecordingViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         final View view = LayoutInflater.from(parent.getContext()).inflate(viewType, parent, false);
-        return new RecordingViewHolder(view, recordingType);
+        return new RecordingViewHolder(view, recordingType, isDualPane);
     }
 
     @Override
@@ -77,7 +77,7 @@ class RecordingRecyclerViewAdapter extends RecyclerView.Adapter<RecordingViewHol
 
     @Override
     public int getItemViewType(final int position) {
-        return isDualPane ? R.layout.recording_list_adapter_dualpane : R.layout.recording_list_adapter;
+        return R.layout.recording_list_adapter;
     }
 
     public void setPosition(int pos) {

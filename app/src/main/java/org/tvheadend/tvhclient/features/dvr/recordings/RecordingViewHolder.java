@@ -63,7 +63,6 @@ public class RecordingViewHolder extends RecyclerView.ViewHolder {
     TextView isEnabledTextView;
     @BindView(R.id.duplicate)
     TextView isDuplicateTextView;
-    @Nullable
     @BindView(R.id.dual_pane_list_item_selection)
     ImageView dualPaneListItemSelection;
     @BindView(R.id.data_size)
@@ -72,10 +71,12 @@ public class RecordingViewHolder extends RecyclerView.ViewHolder {
     TextView dataErrorsTextView;
 
     private final int recordingType;
+    private final boolean isDualPane;
 
-    RecordingViewHolder(View view, int recordingType) {
+    RecordingViewHolder(View view, int recordingType, boolean isDualPane) {
         super(view);
         this.recordingType = recordingType;
+        this.isDualPane = isDualPane;
         ButterKnife.bind(this, view);
     }
 
@@ -84,7 +85,6 @@ public class RecordingViewHolder extends RecyclerView.ViewHolder {
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         boolean playOnChannelIcon = sharedPreferences.getBoolean("channel_icon_starts_playback_enabled", true);
-        boolean lightTheme = sharedPreferences.getBoolean("light_theme_enabled", true);
         boolean showRecordingFileStatus = sharedPreferences.getBoolean("show_recording_file_status_enabled", false);
 
         itemView.setOnClickListener(view -> clickCallback.onClick(view, getAdapterPosition()));
@@ -98,17 +98,21 @@ public class RecordingViewHolder extends RecyclerView.ViewHolder {
             }
         });
 
-        if (dualPaneListItemSelection != null) {
-            // Set the correct indication when the dual pane mode is active
-            // If the item is selected the the arrow will be shown, otherwise
-            // only a vertical separation line is displayed.
+        // Set the correct indication when the dual pane mode is active
+        // If the item is selected the the arrow will be shown, otherwise
+        // only a vertical separation line is displayed.
+        if (isDualPane) {
+            dualPaneListItemSelection.setVisibility(View.VISIBLE);
             if (selected) {
+                boolean lightTheme = sharedPreferences.getBoolean("light_theme_enabled", true);
                 final int icon = (lightTheme) ? R.drawable.dual_pane_selector_active_light : R.drawable.dual_pane_selector_active_dark;
                 dualPaneListItemSelection.setBackgroundResource(icon);
             } else {
                 final int icon = R.drawable.dual_pane_selector_inactive;
                 dualPaneListItemSelection.setBackgroundResource(icon);
             }
+        } else {
+            dualPaneListItemSelection.setVisibility(View.GONE);
         }
 
         titleTextView.setText(recording.getTitle());

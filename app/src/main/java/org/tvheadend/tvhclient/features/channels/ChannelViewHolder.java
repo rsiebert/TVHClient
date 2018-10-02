@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
@@ -27,6 +26,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class ChannelViewHolder extends RecyclerView.ViewHolder {
+
+    private final boolean isDualPane;
 
     @BindView(R.id.icon)
     ImageView iconImageView;
@@ -52,12 +53,12 @@ public class ChannelViewHolder extends RecyclerView.ViewHolder {
     TextView genreTextView;
     @BindView(R.id.no_programs)
     TextView noProgramsTextView;
-    @Nullable
     @BindView(R.id.dual_pane_list_item_selection)
     ImageView dualPaneListItemSelection;
 
-    ChannelViewHolder(View view) {
+    ChannelViewHolder(View view, boolean isDualPane) {
         super(view);
+        this.isDualPane = isDualPane;
         ButterKnife.bind(this, view);
     }
 
@@ -75,15 +76,18 @@ public class ChannelViewHolder extends RecyclerView.ViewHolder {
         // Sets the correct indication when the dual pane mode is active
         // If the item is selected the the arrow will be shown, otherwise
         // only a vertical separation line is displayed.
-        if (dualPaneListItemSelection != null) {
-            boolean lightTheme = sharedPreferences.getBoolean("light_theme_enabled", true);
+        if (isDualPane) {
+            dualPaneListItemSelection.setVisibility(View.VISIBLE);
             if (selected) {
+                boolean lightTheme = sharedPreferences.getBoolean("light_theme_enabled", true);
                 final int icon = (lightTheme) ? R.drawable.dual_pane_selector_active_light : R.drawable.dual_pane_selector_active_dark;
                 dualPaneListItemSelection.setBackgroundResource(icon);
             } else {
                 final int icon = R.drawable.dual_pane_selector_inactive;
                 dualPaneListItemSelection.setBackgroundResource(icon);
             }
+        } else {
+            dualPaneListItemSelection.setVisibility(View.GONE);
         }
 
         itemView.setOnClickListener(view -> clickCallback.onClick(view, getAdapterPosition()));

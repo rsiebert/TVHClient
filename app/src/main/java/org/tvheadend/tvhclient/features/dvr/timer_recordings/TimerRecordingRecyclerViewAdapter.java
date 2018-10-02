@@ -38,7 +38,7 @@ class TimerRecordingRecyclerViewAdapter extends RecyclerView.Adapter<TimerRecord
     @Override
     public TimerRecordingViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         final View view = LayoutInflater.from(parent.getContext()).inflate(viewType, parent, false);
-        return new TimerRecordingViewHolder(view);
+        return new TimerRecordingViewHolder(view, isDualPane);
     }
 
     @Override
@@ -73,7 +73,7 @@ class TimerRecordingRecyclerViewAdapter extends RecyclerView.Adapter<TimerRecord
 
     @Override
     public int getItemViewType(final int position) {
-        return isDualPane ? R.layout.timer_recording_list_adapter_dualpane : R.layout.timer_recording_list_adapter;
+        return R.layout.timer_recording_list_adapter;
     }
 
     public void setPosition(int pos) {
