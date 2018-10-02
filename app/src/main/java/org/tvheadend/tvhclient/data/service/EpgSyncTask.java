@@ -12,8 +12,6 @@ import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 
-import com.crashlytics.android.Crashlytics;
-
 import org.tvheadend.tvhclient.BuildConfig;
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
@@ -350,12 +348,6 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
 
     private void handleInitialServerResponse(HtspMessage response) {
         ServerStatus serverStatus = appRepository.getServerStatusData().getActiveItem();
-        if (serverStatus == null) {
-            Throwable assertionError = new Throwable("handleInitialServerResponse: Server status for connection " + connection.getId() + " is null");
-            Crashlytics.logException(assertionError);
-            serverStatus = new ServerStatus();
-        }
-
         ServerStatus updatedServerStatus = EpgSyncUtils.convertMessageToServerStatusModel(serverStatus, response);
         updatedServerStatus.setConnectionId(connection.getId());
         updatedServerStatus.setConnectionName(connection.getName());
