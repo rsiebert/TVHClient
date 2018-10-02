@@ -14,6 +14,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.text.TextUtils;
 import android.util.Base64;
 
 import com.crashlytics.android.answers.Answers;
@@ -54,7 +55,7 @@ public class DownloadRecordingManager {
         this.downloadManager = (DownloadManager) this.activity.getSystemService(Service.DOWNLOAD_SERVICE);
 
         if (recording != null) {
-            Timber.d("Recording is null");
+            Timber.d("Recording is not null");
             if (isStoragePermissionGranted()) {
                 startDownload();
             }
@@ -93,7 +94,8 @@ public class DownloadRecordingManager {
         String downloadUrl = "http://" +
                 connection.getHostname() + ":" +
                 connection.getStreamingPort() +
-                serverStatus.getWebroot() + "/dvrfile/" +
+                (!TextUtils.isEmpty(serverStatus.getWebroot()) ? serverStatus.getWebroot() : "") +
+                "/dvrfile/" +
                 recording.getId();
 
         // The user and password are required for authentication. They need to be encoded.
