@@ -46,7 +46,7 @@ public class EpgSyncHandler {
         simpleHtspConnection = new SimpleHtspConnection(context, connection);
 
         epgSyncTask = new EpgSyncTask(simpleHtspConnection, connection);
-        epgWorkerHandler = new EpgWorkerHandler();
+        epgWorkerHandler = new EpgWorkerHandler(context);
 
         simpleHtspConnection.addMessageListener(epgSyncTask);
         simpleHtspConnection.addConnectionListener(epgWorkerHandler);
