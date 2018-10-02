@@ -128,7 +128,12 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Wake
             AnswersWrapper.getInstance().logCustom(new CustomEvent("Startup")
                     .putCustomAttribute("Google API", "Available"));
 
-            castContext = CastContext.getSharedInstance(this);
+            try {
+                castContext = CastContext.getSharedInstance(this);
+            } catch (Exception e) {
+                Timber.e("Could not get cast context", e);
+            }
+
             castSessionManagerListener = new CastSessionManagerListener(this, castSession);
             castStateListener = newState -> {
                 Timber.d("Cast state changed to " + newState);
@@ -202,7 +207,11 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Wake
         getMenuInflater().inflate(R.menu.main_options_menu, menu);
 
         mediaRouteMenuItem = menu.findItem(R.id.media_route_menu_item);
-        CastButtonFactory.setUpMediaRouteButton(getApplicationContext(), menu, R.id.media_route_menu_item);
+        try {
+            CastButtonFactory.setUpMediaRouteButton(getApplicationContext(), menu, R.id.media_route_menu_item);
+        } catch (Exception e) {
+            Timber.e("Could not setup media route button", e);
+        }
 
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         if (searchManager != null) {
