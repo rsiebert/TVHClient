@@ -15,11 +15,11 @@ import android.widget.ProgressBar;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.anjlab.android.iab.v3.BillingProcessor;
-import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.PurchaseEvent;
 
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.features.logging.AnswersWrapper;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
 import org.tvheadend.tvhclient.features.shared.tasks.FileLoaderCallback;
 import org.tvheadend.tvhclient.features.shared.tasks.HtmlFileLoaderTask;
@@ -95,7 +95,7 @@ public class UnlockerFragment extends BaseFragment implements FileLoaderCallback
                 // In this case all classes and variables that might use the unlocked
                 // information get initialized with the new value.
                 if (billingProcessor.isPurchased(Constants.UNLOCKER)) {
-                    Answers.getInstance().logPurchase(new PurchaseEvent()
+                    AnswersWrapper.getInstance().logPurchase(new PurchaseEvent()
                             .putItemName("Unlocker")
                             .putSuccess(true));
 

@@ -18,7 +18,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.CustomEvent;
 import com.crashlytics.android.answers.SearchEvent;
 import com.google.android.gms.cast.framework.CastButtonFactory;
@@ -35,6 +34,7 @@ import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.features.download.DownloadPermissionGrantedInterface;
+import org.tvheadend.tvhclient.features.logging.AnswersWrapper;
 import org.tvheadend.tvhclient.features.navigation.NavigationDrawer;
 import org.tvheadend.tvhclient.features.navigation.NavigationDrawerCallback;
 import org.tvheadend.tvhclient.features.search.SearchRequestInterface;
@@ -124,7 +124,8 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Wake
         int status = googleApiAvailability.isGooglePlayServicesAvailable(this);
         if (status == ConnectionResult.SUCCESS) {
             Timber.d("Google API is available");
-            Answers.getInstance().logCustom(new CustomEvent("Startup")
+
+            AnswersWrapper.getInstance().logCustom(new CustomEvent("Startup")
                     .putCustomAttribute("Google API", "Available"));
 
             castContext = CastContext.getSharedInstance(this);
@@ -137,7 +138,7 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Wake
             };
         } else {
             Timber.d("Google API is not available, casting will no be enabled");
-            Answers.getInstance().logCustom(new CustomEvent("Startup")
+            AnswersWrapper.getInstance().logCustom(new CustomEvent("Startup")
                     .putCustomAttribute("Google API", "Not available"));
         }
 
@@ -337,7 +338,7 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Wake
 
     @Override
     public boolean onQueryTextSubmit(String query) {
-        Answers.getInstance().logSearch(new SearchEvent().putQuery(query));
+        AnswersWrapper.getInstance().logSearch(new SearchEvent().putQuery(query));
 
         searchMenuItem.collapseActionView();
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main);

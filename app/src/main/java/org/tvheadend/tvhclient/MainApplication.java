@@ -10,7 +10,6 @@ import android.support.v4.content.LocalBroadcastManager;
 import com.anjlab.android.iab.v3.BillingProcessor;
 import com.anjlab.android.iab.v3.TransactionDetails;
 import com.crashlytics.android.Crashlytics;
-import com.crashlytics.android.answers.Answers;
 import com.facebook.stetho.Stetho;
 import com.google.android.gms.cast.framework.CastOptions;
 import com.google.android.gms.cast.framework.OptionsProvider;
@@ -18,6 +17,7 @@ import com.google.android.gms.cast.framework.SessionProvider;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
 
+import org.tvheadend.tvhclient.features.logging.AnswersWrapper;
 import org.tvheadend.tvhclient.features.logging.CrashlyticsTree;
 import org.tvheadend.tvhclient.features.logging.DebugTree;
 import org.tvheadend.tvhclient.features.logging.FileLoggingTree;
@@ -135,9 +135,7 @@ public class MainApplication extends Application implements BillingProcessor.IBi
         if (sharedPreferences.getBoolean("crash_reports_enabled", true)) {
             Fabric.with(this, new Crashlytics());
         }
-        if (sharedPreferences.getBoolean("usage_statistics_enabled", false)) {
-            Fabric.with(this, new Answers());
-        }
+        AnswersWrapper.init(this);
     }
 
     /**

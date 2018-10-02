@@ -17,7 +17,6 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.util.Base64;
 
-import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.CustomEvent;
 
 import org.tvheadend.tvhclient.MainApplication;
@@ -26,6 +25,7 @@ import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
+import org.tvheadend.tvhclient.features.logging.AnswersWrapper;
 
 import javax.inject.Inject;
 
@@ -74,9 +74,6 @@ public class DownloadRecordingManager {
      */
     private void startDownload() {
         Timber.d("Starting download of recording " + recording.getTitle());
-
-        Answers.getInstance().logCustom(new CustomEvent("Download")
-                .putCustomAttribute("Recording title", recording.getTitle()));
 
         lastDownloadId = downloadManager.enqueue(getDownloadRequest());
         Timber.d("Started download with id " + lastDownloadId);
@@ -188,6 +185,10 @@ public class DownloadRecordingManager {
                     break;
             }
         }
+
+        AnswersWrapper.getInstance().logCustom(new CustomEvent("Download")
+                .putCustomAttribute("Recording title", recording.getTitle())
+                .putCustomAttribute("Download status", msg));
 
         Timber.d("Download status of recording " + recording.getTitle() + " is " + msg);
         Intent intent = new Intent("message");

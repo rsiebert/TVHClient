@@ -7,10 +7,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
-import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.ContentViewEvent;
 
 import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.features.logging.AnswersWrapper;
 import org.tvheadend.tvhclient.features.shared.callbacks.BackPressedInterface;
 import org.tvheadend.tvhclient.features.shared.callbacks.ToolbarInterface;
 import org.tvheadend.tvhclient.utils.MiscUtils;
@@ -24,7 +24,7 @@ public class ChangeLogActivity extends AppCompatActivity implements ToolbarInter
         setContentView(R.layout.changelog_activity);
         MiscUtils.setLanguage(this);
 
-        Answers.getInstance().logContentView(new ContentViewEvent()
+        AnswersWrapper.getInstance().logContentView(new ContentViewEvent()
                 .putContentName("Changelog screen"));
 
         // Get the toolbar so that the fragments can set the title
