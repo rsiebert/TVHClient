@@ -20,12 +20,6 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
         <meta-data
-            android:name="android.app.default_searchable"
-            android:value=".features.shared.SearchActivity" />
-        <meta-data
-            android:name="android.app.searchable"
-            android:resource="@xml/searchable" />
-        <meta-data
             android:name="android.max_aspect"
             android:value="2.1" />
         <meta-data
@@ -56,11 +50,9 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".features.search.SearchActivity">
+        <activity android:name=".features.search.SearchActivity">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
-                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
             <meta-data
                 android:name="android.app.searchable"
@@ -78,8 +70,8 @@
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
         <provider
-            android:name=".features.search.SuggestionProvider"
-            android:authorities="SuggestionProvider"
+            android:name="org.tvheadend.tvhclient.features.search.SuggestionProvider"
+            android:authorities="org.tvheadend.tvhclient.features.search.SuggestionProvider"
             android:exported="false" />
 
         <receiver android:name=".features.notifications.ProgramNotificationReceiver" />
@@ -88,7 +80,11 @@
         <activity android:name=".features.dvr.RecordingAddEditActivity" />
         <activity android:name=".features.dvr.recordings.RecordingDetailsActivity" />
         <activity android:name=".features.changelog.ChangeLogActivity" />
-        <activity android:name=".features.MainActivity" />
+        <activity android:name=".features.MainActivity">
+            <meta-data
+                android:name="android.app.default_searchable"
+                android:value=".features.search.SearchActivity" />
+        </activity>
         <activity
             android:name=".features.programs.ProgramDetailsActivity"
             android:excludeFromRecents="true"
