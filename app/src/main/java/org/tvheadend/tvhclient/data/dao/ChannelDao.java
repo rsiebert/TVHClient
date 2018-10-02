@@ -45,15 +45,6 @@ public interface ChannelDao {
     List<Channel> loadAllChannelsSync(int sortOrder);
 
     @Transaction
-    @Query(base +
-            "LEFT JOIN programs AS program ON program.start <= :time AND program.stop > :time AND program.channel_id = c.id " +
-            "LEFT JOIN programs AS next_program ON next_program.id = program.id AND next_program.channel_id = c.id " +
-            "WHERE c.connection_id IN (SELECT id FROM connections WHERE active = 1) " +
-            " AND c.id IN (SELECT channel_id FROM tags_and_channels WHERE tag_id = :tagId) " +
-            "GROUP BY c.id " + orderBy)
-    List<Channel> loadAllChannelsByTimeAndTagSync(long time, int tagId, int sortOrder);
-
-    @Transaction
     @Query("SELECT c.id, c.name, c.icon, c.number, c.number_minor " +
             "FROM channels AS c " +
             "WHERE c.connection_id IN (SELECT id FROM connections WHERE active = 1) " +
@@ -71,11 +62,19 @@ public interface ChannelDao {
     @Transaction
     @Query(base +
             "LEFT JOIN programs AS program ON program.start <= :time AND program.stop > :time AND program.channel_id = c.id " +
-            "LEFT JOIN programs AS next_program ON next_program.id = program.id AND next_program.channel_id = c.id " +
+            "LEFT JOIN programs AS next_program ON next_program.start = program.stop AND next_program.channel_id = c.id " +
             "WHERE c.connection_id IN (SELECT id FROM connections WHERE active = 1) " +
             "GROUP BY c.id " + orderBy)
     List<Channel> loadAllChannelsByTimeSync(long time, int sortOrder);
 
+    @Transaction
+    @Query(base +
+            "LEFT JOIN programs AS program ON program.start <= :time AND program.stop > :time AND program.channel_id = c.id " +
+            "LEFT JOIN programs AS next_program ON next_program.start = program.stop AND next_program.channel_id = c.id " +
+            "WHERE c.connection_id IN (SELECT id FROM connections WHERE active = 1) " +
+            " AND c.id IN (SELECT channel_id FROM tags_and_channels WHERE tag_id = :tagId) " +
+            "GROUP BY c.id " + orderBy)
+    List<Channel> loadAllChannelsByTimeAndTagSync(long time, int tagId, int sortOrder);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Channel channel);
