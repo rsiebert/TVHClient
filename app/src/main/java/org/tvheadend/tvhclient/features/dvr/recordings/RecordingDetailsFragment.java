@@ -250,9 +250,6 @@ public class RecordingDetailsFragment extends BaseFragment implements RecordingR
         }
 
         menuUtils.onPreparePopupSearchMenu(menu, isNetworkAvailable);
-        if (!isDualPane) {
-            menu.findItem(R.id.menu_search).setVisible(false);
-        }
 
         menu = nestedToolbar.getMenu();
 

@@ -12,7 +12,6 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -135,9 +134,6 @@ public class RecordingListFragment extends BaseFragment implements RecyclerViewC
         }
         // Hide the casting icon as a default.
         menu.findItem(R.id.media_route_menu_item).setVisible(false);
-        // Do not show the search icon when no recordings are available
-        menu.findItem(R.id.menu_search).setVisible(
-                TextUtils.isEmpty(searchQuery) && (recyclerViewAdapter.getItemCount() > 0));
     }
 
     void showRecordingDetails(int position) {

@@ -27,7 +27,6 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.TimerRecording;
 import org.tvheadend.tvhclient.features.dvr.RecordingAddEditActivity;
 import org.tvheadend.tvhclient.features.dvr.recordings.RecordingDetailsActivity;
-import org.tvheadend.tvhclient.features.search.SearchActivity;
 import org.tvheadend.tvhclient.features.search.SearchRequestInterface;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback;
@@ -258,10 +257,18 @@ public class TimerRecordingListFragment extends BaseFragment implements Recycler
 
     @Override
     public void onSearchRequested(String query) {
-        Intent searchIntent = new Intent(activity, SearchActivity.class);
-        searchIntent.putExtra(SearchManager.QUERY, query);
-        searchIntent.setAction(Intent.ACTION_SEARCH);
-        searchIntent.putExtra("type", "timer_recordings");
-        startActivity(searchIntent);
+        searchQuery = query;
+        recyclerViewAdapter.getFilter().filter(query, this);
+    }
+
+    @Override
+    public boolean onSearchResultsCleared() {
+        if (!TextUtils.isEmpty(searchQuery)) {
+            searchQuery = "";
+            recyclerViewAdapter.getFilter().filter("", this);
+            return true;
+        } else {
+            return false;
+        }
     }
 }

@@ -30,7 +30,6 @@ import org.tvheadend.tvhclient.data.entity.Program;
 import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.data.service.EpgSyncService;
 import org.tvheadend.tvhclient.features.dvr.RecordingAddEditActivity;
-import org.tvheadend.tvhclient.features.search.SearchActivity;
 import org.tvheadend.tvhclient.features.search.SearchRequestInterface;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
 import org.tvheadend.tvhclient.features.shared.callbacks.BottomReachedCallback;
@@ -42,6 +41,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import timber.log.Timber;
 
 public class ProgramListFragment extends BaseFragment implements RecyclerViewClickCallback, BottomReachedCallback, SearchRequestInterface, Filter.FilterListener {
 
@@ -129,12 +129,14 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
 
         ProgramViewModel viewModel = ViewModelProviders.of(activity).get(ProgramViewModel.class);
         if (!isSearchActive) {
+            Timber.d("Search is not active, loading programs for channel " + channelName + " and from current time");
             // A channel id and a channel name was given, load only the programs for the
             // specific channel and from the current time. Also load only those recordings
             // that belong to the given channel
             viewModel.getProgramsByChannelFromTime(channelId, selectedTime).observe(this, this::handleObservedPrograms);
             viewModel.getRecordingsByChannelId(channelId).observe(this, this::handleObservedRecordings);
         } else {
+            Timber.d("Search is active, loading programs from current time only");
             // No channel and channel name was given, load all programs
             // from the current time and all recordings from all channels
             viewModel.getProgramsFromTime(selectedTime).observe(this, this::handleObservedPrograms);
@@ -225,10 +227,8 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
 
         if (!isSearchActive) {
             menu.findItem(R.id.menu_play).setVisible(isNetworkAvailable);
-            menu.findItem(R.id.menu_search).setVisible((recyclerViewAdapter.getItemCount() > 0));
         } else {
             menu.findItem(R.id.menu_play).setVisible(false);
-            menu.findItem(R.id.menu_search).setVisible(false);
         }
     }
 
@@ -336,6 +336,10 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
 
     @Override
     public void onSearchRequested(String query) {
+        Timber.d("Searching for " + query + " on channel " + channelId + ", " + channelName);
+        recyclerViewAdapter.getFilter().filter(query, this);
+
+        /*
         Intent searchIntent = new Intent(activity, SearchActivity.class);
         searchIntent.setAction(Intent.ACTION_SEARCH);
         searchIntent.putExtra(SearchManager.QUERY, query);
@@ -343,6 +347,18 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
         searchIntent.putExtra("channelId", channelId);
         searchIntent.putExtra("channelName", channelName);
         startActivity(searchIntent);
+        */
+    }
+
+    @Override
+    public boolean onSearchResultsCleared() {
+        if (!TextUtils.isEmpty(searchQuery)) {
+            searchQuery = "";
+            recyclerViewAdapter.getFilter().filter("", this);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override

@@ -34,7 +34,6 @@ import org.tvheadend.tvhclient.data.entity.Program;
 import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.features.dvr.RecordingAddEditActivity;
 import org.tvheadend.tvhclient.features.programs.ProgramListFragment;
-import org.tvheadend.tvhclient.features.search.SearchActivity;
 import org.tvheadend.tvhclient.features.search.SearchRequestInterface;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
 import org.tvheadend.tvhclient.features.shared.callbacks.ChannelTagSelectionCallback;
@@ -375,12 +374,23 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
 
     @Override
     public void onSearchRequested(String query) {
-        // Start searching for programs on all channels
-        Intent searchIntent = new Intent(activity, SearchActivity.class);
-        searchIntent.putExtra(SearchManager.QUERY, query);
-        searchIntent.setAction(Intent.ACTION_SEARCH);
-        searchIntent.putExtra("type", "channels");
-        startActivity(searchIntent);
+        Timber.d("Searching for " + query);
+        searchQuery = query;
+        recyclerViewAdapter.getFilter().filter(query, this);
+    }
+
+    @Override
+    public boolean onSearchResultsCleared() {
+        Timber.d("Clearing search results");
+        if (!TextUtils.isEmpty(searchQuery)) {
+            Timber.d("Search result not empty, clearing filter and returning true");
+            searchQuery = "";
+            recyclerViewAdapter.getFilter().filter("", this);
+            return true;
+        } else {
+            Timber.d("Search results empty, returning false");
+            return false;
+        }
     }
 
     @Override

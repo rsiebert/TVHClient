@@ -8,13 +8,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.features.channels.ChannelListFragment;
-import org.tvheadend.tvhclient.features.dvr.recordings.CompletedRecordingListFragment;
-import org.tvheadend.tvhclient.features.dvr.recordings.FailedRecordingListFragment;
-import org.tvheadend.tvhclient.features.dvr.recordings.RemovedRecordingListFragment;
-import org.tvheadend.tvhclient.features.dvr.recordings.ScheduledRecordingListFragment;
-import org.tvheadend.tvhclient.features.dvr.series_recordings.SeriesRecordingListFragment;
-import org.tvheadend.tvhclient.features.dvr.timer_recordings.TimerRecordingListFragment;
 import org.tvheadend.tvhclient.features.programs.ProgramListFragment;
 import org.tvheadend.tvhclient.features.shared.BaseActivity;
 import org.tvheadend.tvhclient.features.shared.callbacks.ToolbarInterface;
@@ -40,52 +33,15 @@ public class SearchActivity extends BaseActivity implements ToolbarInterface {
         handleIntent(getIntent());
 
         if (savedInstanceState == null) {
-
-            // Example: If an initial search was performed from the ChannelListFragment its
-            // Activity would call the onSearchRequested(...) method of the ChannelListFragment
-            // which then starts the SearchActivity. It will show the ProgramListFragment with
-            // the results.
-
-            // Example 2: If an advanced search dialog was performed from the NavigationActivity
-            // all relevant information is directly passed as a bundle to the SearchActivity.
-            // It will check the query and forward the bundle information to the relevant
-            // fragment that shall show the results.
-
-            // Get the query from the intent. All other information is included in the bundle
-            // which was added in the fragment that implemented the onSearchRequested method.
-            //String query = getIntent().getStringExtra(SearchManager.QUERY);
-
-            // Analyze the query for special words that determine what the
-            // user wants to search for. If nothing was passed except text
-            // then assume he wants to search for programs
-
+            // If a search was performed from a fragment the activity would call
+            // the onSearchRequested(...) method of that fragment which will start
+            // the SearchActivity (if implemented). Depending on the given search type
+            // the corresponding fragment will be shown which will present the results.
             String type = getIntent().getStringExtra("type");
             Fragment fragment = null;
             switch (type) {
-                case "channels":
-                    fragment = new ChannelListFragment();
-                    break;
                 case "program_guide":
-                case "programs":
                     fragment = new ProgramListFragment();
-                    break;
-                case "completed_recordings":
-                    fragment = new CompletedRecordingListFragment();
-                    break;
-                case "scheduled_recordings":
-                    fragment = new ScheduledRecordingListFragment();
-                    break;
-                case "removed_recordings":
-                    fragment = new RemovedRecordingListFragment();
-                    break;
-                case "failed_recordings":
-                    fragment = new FailedRecordingListFragment();
-                    break;
-                case "series_recordings":
-                    fragment = new SeriesRecordingListFragment();
-                    break;
-                case "timer_recordings":
-                    fragment = new TimerRecordingListFragment();
                     break;
             }
 

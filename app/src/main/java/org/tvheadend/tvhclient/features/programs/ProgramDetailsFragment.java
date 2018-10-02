@@ -286,7 +286,6 @@ public class ProgramDetailsFragment extends BaseFragment implements RecordingRem
 
         // Show or hide menus of the main toolbar
         menuUtils.onPreparePopupSearchMenu(menu, isNetworkAvailable);
-        menu.findItem(R.id.menu_search).setVisible(!isDualPane);
 
         // Show or hide menus of the nested toolbar
         menu = nestedToolbar.getMenu();

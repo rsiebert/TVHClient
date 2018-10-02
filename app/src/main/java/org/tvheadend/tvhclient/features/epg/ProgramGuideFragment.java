@@ -448,6 +448,11 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
         startActivity(searchIntent);
     }
 
+    @Override
+    public boolean onSearchResultsCleared() {
+        return false;
+    }
+
     private static class EpgViewPagerAdapter extends FragmentStatePagerAdapter {
 
         private final SparseArray<Fragment> registeredFragments = new SparseArray<>();

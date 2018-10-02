@@ -160,9 +160,6 @@ public class SeriesRecordingDetailsFragment extends BaseFragment implements Reco
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         menuUtils.onPreparePopupSearchMenu(menu, isNetworkAvailable);
-        if (!isDualPane) {
-            menu.findItem(R.id.menu_search).setVisible(false);
-        }
         if (nestedToolbar.getMenu() == null) {
             return;
         }

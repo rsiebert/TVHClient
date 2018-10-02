@@ -1,13 +1,17 @@
 package org.tvheadend.tvhclient.features;
 
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -16,6 +20,7 @@ import android.view.View;
 
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.CustomEvent;
+import com.crashlytics.android.answers.SearchEvent;
 import com.google.android.gms.cast.framework.CastButtonFactory;
 import com.google.android.gms.cast.framework.CastContext;
 import com.google.android.gms.cast.framework.CastSession;
@@ -32,6 +37,7 @@ import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.features.download.DownloadPermissionGrantedInterface;
 import org.tvheadend.tvhclient.features.navigation.NavigationDrawer;
 import org.tvheadend.tvhclient.features.navigation.NavigationDrawerCallback;
+import org.tvheadend.tvhclient.features.search.SearchRequestInterface;
 import org.tvheadend.tvhclient.features.shared.BaseActivity;
 import org.tvheadend.tvhclient.features.shared.callbacks.ToolbarInterface;
 import org.tvheadend.tvhclient.features.shared.tasks.WakeOnLanTaskCallback;
@@ -49,8 +55,10 @@ import timber.log.Timber;
 // TODO add more logging for the debug log file
 // TODO what happens when no connection to the server is active and the user presses an action in a notification?
 
-public class MainActivity extends BaseActivity implements ToolbarInterface, WakeOnLanTaskCallback, NavigationDrawerCallback {
+public class MainActivity extends BaseActivity implements ToolbarInterface, WakeOnLanTaskCallback, NavigationDrawerCallback, SearchView.OnQueryTextListener, SearchView.OnSuggestionListener {
 
+    private MenuItem searchMenuItem;
+    private SearchView searchView;
     private MenuItem mediaRouteMenuItem;
     private IntroductoryOverlay introductoryOverlay;
     private CastSession castSession;
@@ -190,8 +198,20 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Wake
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.main_options_menu, menu);
+
         mediaRouteMenuItem = menu.findItem(R.id.media_route_menu_item);
         CastButtonFactory.setUpMediaRouteButton(getApplicationContext(), menu, R.id.media_route_menu_item);
+
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        if (searchManager != null) {
+            searchMenuItem = menu.findItem(R.id.menu_search);
+            searchView = (SearchView) searchMenuItem.getActionView();
+            searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+            searchView.setIconifiedByDefault(true);
+            searchView.setOnQueryTextListener(this);
+            searchView.setOnSuggestionListener(this);
+        }
         return true;
     }
 
@@ -225,15 +245,6 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Wake
             }
         } else {
             Timber.d("Storage permission could not be granted");
-        }
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (getSupportFragmentManager().getBackStackEntryCount() <= 1) {
-            finish();
-        } else {
-            super.onBackPressed();
         }
     }
 
@@ -321,6 +332,54 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Wake
         Timber.d("Newly selected menu id is " + id + ", current selection id is " + selectedNavigationMenuId);
         if (selectedNavigationMenuId != id) {
             handleDrawerItemSelected(id);
+        }
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        Answers.getInstance().logSearch(new SearchEvent().putQuery(query));
+
+        searchMenuItem.collapseActionView();
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main);
+        if (fragment != null && fragment.isAdded() && fragment instanceof SearchRequestInterface) {
+            ((SearchRequestInterface) fragment).onSearchRequested(query);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        return false;
+    }
+
+    @Override
+    public boolean onSuggestionSelect(int position) {
+        return false;
+    }
+
+    @Override
+    public boolean onSuggestionClick(int position) {
+        searchMenuItem.collapseActionView();
+        // Set the search query and return true so that the onQueryTextSubmit
+        // is called. This is required to pass additional data to the search activity
+        Cursor cursor = (Cursor) searchView.getSuggestionsAdapter().getItem(position);
+        String suggestion = cursor.getString(cursor.getColumnIndex(SearchManager.SUGGEST_COLUMN_TEXT_1));
+        searchView.setQuery(suggestion, true);
+        return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        Timber.d("Back pressed");
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main);
+        if (fragment != null && fragment.isAdded() && fragment instanceof SearchRequestInterface) {
+            Timber.d("Found fragment");
+            if (!((SearchRequestInterface) fragment).onSearchResultsCleared()) {
+                Timber.d("Search results were not cleared");
+                super.onBackPressed();
+            }
+        } else {
+            super.onBackPressed();
         }
     }
 }
