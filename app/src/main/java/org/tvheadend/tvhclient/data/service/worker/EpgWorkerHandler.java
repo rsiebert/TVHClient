@@ -61,12 +61,14 @@ public class EpgWorkerHandler implements HtspConnection.Listener {
         long epgMaxTime = Long.parseLong(sharedPreferences.getString("epg_max_time", defaultEpgMaxTime));
         long time = epgMaxTime - (epgMaxTime / 10);
 
+        Timber.d("Epg data update worker interval is " + time + " minutes");
         PeriodicWorkRequest updateWorkRequest =
                 new PeriodicWorkRequest.Builder(EpgDataUpdateWorker.class, time, TimeUnit.SECONDS)
                         .setConstraints(constraints)
                         .addTag(REQUEST_TAG)
                         .build();
 
+        Timber.d("Epg data removal worker interval is 1 day");
         PeriodicWorkRequest removalWorkRequest =
                 new PeriodicWorkRequest.Builder(EpgDataRemovalWorker.class, 1, TimeUnit.DAYS)
                         .setConstraints(constraints)
