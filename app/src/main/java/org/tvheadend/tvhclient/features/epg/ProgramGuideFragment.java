@@ -274,6 +274,8 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
             return;
         }
 
+        Recording recording = appRepository.getRecordingData().getItemByEventId(program.getEventId());
+
         PopupMenu popupMenu = new PopupMenu(activity, view);
         popupMenu.getMenuInflater().inflate(R.menu.program_popup_and_toolbar_menu, popupMenu.getMenu());
         popupMenu.getMenuInflater().inflate(R.menu.external_search_options_menu, popupMenu.getMenu());
@@ -303,13 +305,13 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
                     return menuUtils.handleMenuSearchEpgSelection(program.getTitle(), program.getChannelId());
 
                 case R.id.menu_record_stop:
-                    return menuUtils.handleMenuStopRecordingSelection(program.getRecording(), null);
+                    return menuUtils.handleMenuStopRecordingSelection(recording, null);
 
                 case R.id.menu_record_cancel:
-                    return menuUtils.handleMenuCancelRecordingSelection(program.getRecording(), null);
+                    return menuUtils.handleMenuCancelRecordingSelection(recording, null);
 
                 case R.id.menu_record_remove:
-                    return menuUtils.handleMenuRemoveRecordingSelection(program.getRecording(), null);
+                    return menuUtils.handleMenuRemoveRecordingSelection(recording, null);
 
                 case R.id.menu_record_once:
                     return menuUtils.handleMenuRecordSelection(program.getEventId());
