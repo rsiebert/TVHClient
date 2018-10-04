@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
@@ -75,6 +76,7 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Wake
     protected SharedPreferences sharedPreferences;
     @Inject
     protected AppRepository appRepository;
+    private boolean isSavedInstanceStateNull;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -106,8 +108,10 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Wake
         // navigation menu position and show the associated fragment with it. When the device
         // was rotated just restore the position from the saved instance.
         if (savedInstanceState == null) {
+            isSavedInstanceStateNull = true;
             selectedNavigationMenuId = Integer.parseInt(sharedPreferences.getString("start_screen", "0"));
         } else {
+            isSavedInstanceStateNull = false;
             selectedNavigationMenuId = savedInstanceState.getInt("navigationMenuId", NavigationDrawer.MENU_CHANNELS);
         }
 
@@ -266,8 +270,25 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Wake
      * @param position Selected position within the menu array
      */
     private void handleDrawerItemSelected(int position) {
-        Timber.d("start");
-        Fragment fragment = navigationDrawer.getFragmentFromSelection(position);
+        Fragment fragment;
+        boolean addFragmentToBackStack = true;
+
+        // Get the already created fragment when the device orientation changes. In this
+        // case the saved instance is not null. This avoids recreating fragments after
+        // every orientation change which would reset any saved states in these fragments.
+        if (isSavedInstanceStateNull || selectedNavigationMenuId != position) {
+            fragment = navigationDrawer.getFragmentFromSelection(position);
+        } else {
+            fragment = getSupportFragmentManager().findFragmentById(R.id.main);
+            addFragmentToBackStack = false;
+        }
+
+        // Create a new fragment when the app was started for the first time.
+        // In this case the saved instance is not null and no fragment can be found.
+        if (fragment == null) {
+            fragment = navigationDrawer.getFragmentFromSelection(position);
+        }
+
         if (fragment != null) {
             // Save the menu position so we know which one was selected
             selectedNavigationMenuId = position;
@@ -284,13 +305,21 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Wake
                             .commit();
                 }
             }
+
             // Show the new fragment that represents the selected menu entry.
             fragment.setArguments(getIntent().getExtras());
-            getSupportFragmentManager()
+            FragmentTransaction fm = getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.main, fragment)
-                    .addToBackStack(null)
-                    .commit();
+                    .replace(R.id.main, fragment);
+            // Only add the fragment to the back stack if a new one has been created.
+            // Existing fragments that were already available due to an orientation
+            // change shall not be added to the back stack. This prevents having to
+            // press the back key as often as the device was rotated.
+            if (addFragmentToBackStack) {
+                fm.addToBackStack(null);
+            }
+            fm.commit();
+
         }
         Timber.d("end");
     }
