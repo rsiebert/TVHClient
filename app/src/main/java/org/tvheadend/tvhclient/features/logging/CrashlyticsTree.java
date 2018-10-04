@@ -28,9 +28,7 @@ public class CrashlyticsTree extends BaseDebugTree {
             Crashlytics.setString("Build time", BuildConfig.BUILD_TIME);
 
             // Logs the given message when a crash occurred.
-            // In addition to writing to the next crash report, it will also
-            // write to the LogCat using android.util.Log.println(priority, tag, msg)
-            Crashlytics.log(priority, tag, message);
+            Crashlytics.log(message);
 
             if (t == null) {
                 Crashlytics.logException(new Exception(message));
