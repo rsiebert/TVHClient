@@ -523,7 +523,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         }
 
         if (sharedPreferences.getBoolean("notifications_enabled", false)) {
-            if (recording.isScheduled()) {
+            if (recording.isScheduled() && recording.getStart() > new Date().getTime()) {
                 Timber.d("Adding notification for recording " + recording.getTitle());
                 Integer offset = Integer.valueOf(sharedPreferences.getString("notification_lead_time", "0"));
                 NotificationUtils.addRecordingNotification(context, recording, offset);

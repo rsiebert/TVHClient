@@ -46,6 +46,7 @@ import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -552,7 +553,7 @@ public class MenuUtils {
         return true;
     }
 
-    public void onPreparePopupMenu(@NonNull Menu menu, @Nullable Recording recording, boolean isNetworkAvailable) {
+    public void onPreparePopupMenu(@NonNull Menu menu, @Nullable Program program, @Nullable Recording recording, boolean isNetworkAvailable) {
         Activity activity = this.activity.get();
         if (activity == null) {
             Timber.d("Weak reference to activity is null");
@@ -608,8 +609,15 @@ public class MenuUtils {
                 recordRemoveMenuItem.setVisible(true);
             }
         }
+        // Show the add reminder menu only for programs and
+        // recordings where the start time is in the future.
         if (isUnlocked && sharedPreferences.getBoolean("notifications_enabled", true)) {
-            addReminderMenuItem.setVisible(true);
+            long currentTime = new Date().getTime();
+            long startTime = currentTime;
+            if (program != null) {
+                startTime = program.getStart();
+            }
+            addReminderMenuItem.setVisible(startTime > currentTime);
         }
     }
 

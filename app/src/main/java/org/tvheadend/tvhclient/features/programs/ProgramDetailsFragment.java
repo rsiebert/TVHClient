@@ -289,7 +289,7 @@ public class ProgramDetailsFragment extends BaseFragment implements RecordingRem
 
         // Show or hide menus of the nested toolbar
         menu = nestedToolbar.getMenu();
-        menuUtils.onPreparePopupMenu(menu, recording, isNetworkAvailable);
+        menuUtils.onPreparePopupMenu(menu, program, recording, isNetworkAvailable);
 
         // Show the play menu item when the current
         // time is between the program start and end time
