@@ -283,7 +283,9 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
                     .addToBackStack(null)
                     .commit();
         } else {
-            // Check if the fragment for the selected channel is already shown, if not replace it with a new fragment.
+            // Check if an instance of the program list fragment for the selected channel is
+            // already available. If an instance exist already then update the selected time
+            // that was selected from the channel list.
             Fragment fragment = fm.findFragmentById(R.id.details);
             if (!(fragment instanceof ProgramListFragment)
                     || ((ProgramListFragment) fragment).getShownChannelId() != channel.getId()) {
@@ -292,6 +294,8 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
                         .replace(R.id.details, fragment)
                         .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                         .commit();
+            } else {
+                ((ProgramListFragment) fragment).updatePrograms(viewModel.getSelectedTime());
             }
         }
     }

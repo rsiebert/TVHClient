@@ -61,6 +61,7 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
     private Unbinder unbinder;
     private int programIdToBeEditedWhenBeingRecorded = 0;
     private boolean isSearchActive;
+    private ProgramViewModel viewModel;
 
     public static ProgramListFragment newInstance(String channelName, int channelId, long selectedTime) {
         ProgramListFragment f = new ProgramListFragment();
@@ -99,12 +100,12 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
             searchQuery = savedInstanceState.getString(SearchManager.QUERY);
         } else {
             selectedListPosition = 0;
-            selectedTime = new Date().getTime();
 
             Bundle bundle = getArguments();
             if (bundle != null) {
                 channelId = bundle.getInt("channelId", 0);
                 channelName = bundle.getString("channelName");
+                selectedTime = bundle.getLong("selectedTime");
                 searchQuery = bundle.getString(SearchManager.QUERY);
             }
         }
@@ -127,16 +128,16 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
         recyclerView.setVisibility(View.GONE);
         progressBar.setVisibility(View.VISIBLE);
 
-        ProgramViewModel viewModel = ViewModelProviders.of(activity).get(ProgramViewModel.class);
+        viewModel = ViewModelProviders.of(activity).get(ProgramViewModel.class);
         if (!isSearchActive) {
-            Timber.d("Search is not active, loading programs for channel " + channelName + " and from current time");
+            Timber.d("Search is not active, loading programs for channel " + channelName + " from time " + selectedTime);
             // A channel id and a channel name was given, load only the programs for the
             // specific channel and from the current time. Also load only those recordings
             // that belong to the given channel
             viewModel.getProgramsByChannelFromTime(channelId, selectedTime).observe(this, this::handleObservedPrograms);
             viewModel.getRecordingsByChannelId(channelId).observe(this, this::handleObservedRecordings);
         } else {
-            Timber.d("Search is active, loading programs from current time only");
+            Timber.d("Search is active, loading programs from current time " + selectedTime);
             // No channel and channel name was given, load all programs
             // from the current time and all recordings from all channels
             viewModel.getProgramsFromTime(selectedTime).observe(this, this::handleObservedPrograms);
@@ -400,5 +401,10 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
     @Override
     public void onLongClick(View view, int position) {
         showPopupMenu(view);
+    }
+
+    public void updatePrograms(long selectedTime) {
+        this.selectedTime = selectedTime;
+        viewModel.getProgramsByChannelFromTime(channelId, selectedTime).observe(this, this::handleObservedPrograms);
     }
 }
