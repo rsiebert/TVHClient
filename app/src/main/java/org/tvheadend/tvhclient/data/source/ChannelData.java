@@ -110,18 +110,39 @@ public class ChannelData extends BaseData implements DataSourceInterface<Channel
         return channels;
     }
 
+    public Channel getItemByIdWithPrograms(int id, long selectedTime) {
+        try {
+            return new ItemLoaderTask(db, id, selectedTime).execute().get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     private static class ItemLoaderTask extends AsyncTask<Void, Void, Channel> {
         private final AppRoomDatabase db;
         private final int id;
+        private final long selectedTime;
 
         ItemLoaderTask(AppRoomDatabase db, int id) {
             this.db = db;
             this.id = id;
+            this.selectedTime = 0;
+        }
+
+        ItemLoaderTask(AppRoomDatabase db, int id, long selectedTime) {
+            this.db = db;
+            this.id = id;
+            this.selectedTime = selectedTime;
         }
 
         @Override
         protected Channel doInBackground(Void... voids) {
-            return db.getChannelDao().loadChannelByIdSync(id);
+            if (selectedTime > 0) {
+                return db.getChannelDao().loadChannelByIdWithProgramsSync(id, selectedTime);
+            } else {
+                return db.getChannelDao().loadChannelByIdSync(id);
+            }
         }
     }
 

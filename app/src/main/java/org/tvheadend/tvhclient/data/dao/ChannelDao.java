@@ -39,6 +39,13 @@ public interface ChannelDao {
             " AND c.id = :id")
     Channel loadChannelByIdSync(int id);
 
+    @Transaction
+    @Query(base +
+            "LEFT JOIN programs AS program ON program.start <= :time AND program.stop > :time AND program.channel_id = c.id " +
+            "LEFT JOIN programs AS next_program ON next_program.start = program.stop AND next_program.channel_id = c.id " +
+            "WHERE c.connection_id IN (SELECT id FROM connections WHERE active = 1) AND c.id = :id")
+    Channel loadChannelByIdWithProgramsSync(int id, long time);
+
     @Query("SELECT c.* FROM channels AS c " +
             "WHERE c.connection_id IN (SELECT id FROM connections WHERE active = 1) " +
             orderBy)
