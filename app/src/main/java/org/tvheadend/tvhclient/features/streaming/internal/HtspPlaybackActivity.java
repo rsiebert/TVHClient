@@ -8,7 +8,9 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -26,18 +28,26 @@ import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
+import com.google.android.exoplayer2.ui.DefaultTimeBar;
 import com.google.android.exoplayer2.ui.PlayerControlView;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultAllocator;
 import com.google.android.exoplayer2.util.Util;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
 
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.data.entity.Channel;
+import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.data.entity.ServerProfile;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.data.service.EpgSyncHandler;
 import org.tvheadend.tvhclient.utils.MiscUtils;
+import org.tvheadend.tvhclient.utils.UIUtils;
+
+import java.util.Date;
 
 import javax.inject.Inject;
 
@@ -60,6 +70,20 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
     protected LinearLayout debugRootView;
     @BindView(R.id.player_view)
     protected PlayerView playerView;
+    @BindView(R.id.exo_channel_icon)
+    protected ImageView iconImageView;
+    @BindView(R.id.exo_channel_name)
+    protected TextView iconTextView;
+    @BindView(R.id.exo_program_title)
+    protected TextView titleTextView;
+    @BindView(R.id.exo_program_subtitle)
+    protected TextView subtitleTextView;
+    @BindView(R.id.exo_next_program_title)
+    protected TextView nextTitleTextView;
+    @BindView(R.id.exo_progress)
+    protected DefaultTimeBar progressBar;
+    @BindView(R.id.exo_duration)
+    protected TextView durationTextView;
 
     private Handler handler;
     private int channelId;
@@ -156,7 +180,58 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
             statusTextView.setText(getString(R.string.error_starting_playback_no_profile));
         } else {
             initializePlayer();
+            initializeStatusViews();
             startPlayback();
+        }
+    }
+
+    private void initializeStatusViews() {
+        if (channelId > 0) {
+            Channel channel = appRepository.getChannelData().getItemByIdWithPrograms(channelId, new Date().getTime());
+            iconTextView.setText(channel.getName());
+            Picasso.get()
+                    .load(UIUtils.getIconUrl(this, channel.getIcon()))
+                    .into(iconImageView, new Callback() {
+                        @Override
+                        public void onSuccess() {
+                            iconTextView.setVisibility(View.INVISIBLE);
+                            iconImageView.setVisibility(View.VISIBLE);
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
+                            iconTextView.setVisibility(View.VISIBLE);
+                            iconImageView.setVisibility(View.INVISIBLE);
+                        }
+                    });
+
+            titleTextView.setText(channel.getProgramTitle());
+            subtitleTextView.setVisibility(!TextUtils.isEmpty(channel.getProgramSubtitle()) ? View.VISIBLE : View.GONE);
+            subtitleTextView.setText(channel.getProgramSubtitle());
+            nextTitleTextView.setVisibility(!TextUtils.isEmpty(channel.getNextProgramTitle()) ? View.VISIBLE : View.GONE);
+            nextTitleTextView.setText(getString(R.string.next_program, channel.getNextProgramTitle()));
+
+        } else if (dvrId > 0) {
+            Recording recording = appRepository.getRecordingData().getItemById(dvrId);
+            iconTextView.setText(recording.getChannelName());
+            Picasso.get()
+                    .load(UIUtils.getIconUrl(this, recording.getChannelIcon()))
+                    .into(iconImageView, new Callback() {
+                        @Override
+                        public void onSuccess() {
+                            iconTextView.setVisibility(View.INVISIBLE);
+                            iconImageView.setVisibility(View.VISIBLE);
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
+                            iconTextView.setVisibility(View.VISIBLE);
+                            iconImageView.setVisibility(View.INVISIBLE);
+                        }
+                    });
+            titleTextView.setText(recording.getTitle());
+            subtitleTextView.setVisibility(!TextUtils.isEmpty(recording.getSubtitle()) ? View.VISIBLE : View.GONE);
+            nextTitleTextView.setVisibility(View.GONE);
         }
     }
 
