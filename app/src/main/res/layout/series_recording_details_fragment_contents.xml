@@ -89,9 +89,12 @@
         style="?attr/ContentFont"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="8dp"
         android:text="@string/start_after_time"
-        tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="199dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/time_window_label" />
 
     <TextView
         android:id="@+id/start_after_time"
