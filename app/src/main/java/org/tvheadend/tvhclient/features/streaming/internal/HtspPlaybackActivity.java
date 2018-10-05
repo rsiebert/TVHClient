@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -66,8 +67,10 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
 
     @BindView(R.id.status)
     TextView statusTextView;
+    @BindView(R.id.player_root_view)
+    protected FrameLayout playerRootView;
     @BindView(R.id.controls_root)
-    protected LinearLayout debugRootView;
+    protected LinearLayout playerControlsRootView;
     @BindView(R.id.player_view)
     protected PlayerView playerView;
     @BindView(R.id.exo_channel_icon)
@@ -175,10 +178,14 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
     private void init() {
         Timber.d("Initializing");
         if (serverStatus == null) {
+            Timber.d("Server status is null");
             statusTextView.setText(getString(R.string.error_starting_playback_no_connection));
         } else if (serverProfile == null) {
+            Timber.d("Server profile is null");
             statusTextView.setText(getString(R.string.error_starting_playback_no_profile));
         } else {
+            Timber.d("Server status and profile are available");
+            playerRootView.setVisibility(View.VISIBLE);
             initializePlayer();
             initializeStatusViews();
             startPlayback();
@@ -186,6 +193,7 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
     }
 
     private void initializeStatusViews() {
+        Timber.d("Initializing status views");
         if (channelId > 0) {
             Channel channel = appRepository.getChannelData().getItemByIdWithPrograms(channelId, new Date().getTime());
             iconTextView.setText(channel.getName());
