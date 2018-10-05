@@ -12,7 +12,11 @@ import org.tvheadend.tvhclient.data.entity.ServerStatus;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
+
+import timber.log.Timber;
 
 public class MiscUtils {
 
@@ -73,5 +77,24 @@ public class MiscUtils {
 
     public static boolean isServerProfileEnabled(ServerProfile serverProfile, @NonNull ServerStatus serverStatus) {
         return serverProfile != null && serverStatus.getHtspVersion() >= 16;
+    }
+
+    public static int getDaylightSavingOffset() {
+        // Current timezone and date
+        TimeZone timeZone = TimeZone.getDefault();
+        Date nowDate = new Date();
+        int offsetFromUtc = timeZone.getOffset(nowDate.getTime());
+        Timber.d("Offset from UTC is " + offsetFromUtc);
+
+        if (timeZone.useDaylightTime()) {
+            Timber.d("Daylight saving is used");
+            int dstOffset = timeZone.getDSTSavings();
+            if (timeZone.inDaylightTime(nowDate)) {
+                Timber.d("Daylight saving offset is " + dstOffset);
+                return dstOffset;
+            }
+        }
+        Timber.d("Daylight saving is not used");
+        return 0;
     }
 }

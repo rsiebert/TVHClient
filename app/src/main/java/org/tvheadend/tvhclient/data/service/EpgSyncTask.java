@@ -761,8 +761,13 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     }
 
     private void handleSystemTime(HtspMessage message) {
+        int gmtOffsetFromServer = message.getInteger("gmtoffset", 0) * 60 * 1000;
+        int gmtOffset = gmtOffsetFromServer - MiscUtils.getDaylightSavingOffset();
+        Timber.d("GMT offset from server is " + gmtOffsetFromServer +
+                ", GMT offset considering daylight saving offset is " + gmtOffset);
+
         ServerStatus serverStatus = appRepository.getServerStatusData().getActiveItem();
-        serverStatus.setGmtoffset(message.getInteger("gmtoffset", 0));
+        serverStatus.setGmtoffset(gmtOffset);
         serverStatus.setTime(message.getLong("time", 0));
         appRepository.getServerStatusData().updateItem(serverStatus);
 
