@@ -190,7 +190,8 @@ public class RecordingViewHolder extends RecyclerView.ViewHolder {
             isDuplicateTextView.setVisibility(htspVersion < 33 || recording.getDuplicate() == 0 ? View.GONE : View.VISIBLE);
         }
 
-        if (showRecordingFileStatus) {
+        if (showRecordingFileStatus
+                && (!recording.isScheduled() || recording.isScheduled() && recording.isRecording())) {
             dataErrorsTextView.setVisibility(View.VISIBLE);
             dataSizeTextView.setVisibility(View.VISIBLE);
 
