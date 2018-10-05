@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.SeriesRecording;
+import org.tvheadend.tvhclient.data.entity.ServerStatus;
 import org.tvheadend.tvhclient.features.dvr.RecordingAddEditActivity;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecordingRemovedCallback;
@@ -153,8 +154,10 @@ public class SeriesRecordingDetailsFragment extends BaseFragment implements Reco
             maxDurationTextView.setText(getString(R.string.minutes, (int) (recording.getMaxDuration() / 60)));
         }
 
-        startTimeTextView.setText(UIUtils.getTimeText(getContext(), recording.getStart()));
-        startWindowTimeTextView.setText(UIUtils.getTimeText(getContext(), recording.getStartWindow()));
+        ServerStatus serverStatus = appRepository.getServerStatusData().getActiveItem();
+        int gmtOffset = serverStatus.getGmtoffset();
+        startTimeTextView.setText(UIUtils.getTimeText(getContext(), recording.getStart() - gmtOffset));
+        startWindowTimeTextView.setText(UIUtils.getTimeText(getContext(), recording.getStartWindow() - gmtOffset));
     }
 
     @Override

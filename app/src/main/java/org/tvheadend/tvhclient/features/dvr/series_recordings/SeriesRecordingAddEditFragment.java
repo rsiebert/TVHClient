@@ -23,6 +23,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.data.entity.SeriesRecording;
+import org.tvheadend.tvhclient.data.entity.ServerStatus;
 import org.tvheadend.tvhclient.data.service.EpgSyncService;
 import org.tvheadend.tvhclient.features.dvr.BaseRecordingAddEditFragment;
 import org.tvheadend.tvhclient.features.shared.callbacks.BackPressedInterface;
@@ -131,6 +132,8 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
     }
 
     private void updateUI() {
+        ServerStatus serverStatus = appRepository.getServerStatusData().getActiveItem();
+        int gmtOffset = serverStatus.getGmtoffset();
 
         isEnabledCheckbox.setVisibility(htspVersion >= 19 ? View.VISIBLE : View.GONE);
         isEnabledCheckbox.setChecked(recording.getEnabled() == 1);
@@ -161,11 +164,11 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
             recordingProfileNameTextView.setOnClickListener(view -> handleRecordingProfileSelection(recordingProfilesList, recordingProfileNameId, this));
         }
 
-        startTimeTextView.setText(getTimeStringFromTimeInMillis(recording.getStart()));
-        startTimeTextView.setOnClickListener(view -> handleTimeSelection(recording.getStart(), SeriesRecordingAddEditFragment.this, "startTime"));
+        startTimeTextView.setText(getTimeStringFromTimeInMillis(recording.getStart() - gmtOffset));
+        startTimeTextView.setOnClickListener(view -> handleTimeSelection(recording.getStart() - gmtOffset, SeriesRecordingAddEditFragment.this, "startTime"));
 
-        startWindowTimeTextView.setText(getTimeStringFromTimeInMillis(recording.getStartWindow()));
-        startWindowTimeTextView.setOnClickListener(view -> handleTimeSelection(recording.getStartWindow(), SeriesRecordingAddEditFragment.this, "startWindowTime"));
+        startWindowTimeTextView.setText(getTimeStringFromTimeInMillis(recording.getStartWindow() - gmtOffset));
+        startWindowTimeTextView.setOnClickListener(view -> handleTimeSelection(recording.getStartWindow() - gmtOffset, SeriesRecordingAddEditFragment.this, "startWindowTime"));
 
         startExtraTimeTextView.setText(String.valueOf(recording.getStartExtra()));
         stopExtraTimeTextView.setText(String.valueOf(recording.getStopExtra()));

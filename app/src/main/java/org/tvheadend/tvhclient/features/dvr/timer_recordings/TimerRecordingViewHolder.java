@@ -53,7 +53,7 @@ public class TimerRecordingViewHolder extends RecyclerView.ViewHolder {
         ButterKnife.bind(this, view);
     }
 
-    public void bindData(Context context, @NonNull final TimerRecording recording, boolean selected, int htspVersion, RecyclerViewClickCallback clickCallback) {
+    public void bindData(Context context, @NonNull final TimerRecording recording, boolean selected, int htspVersion, int gmtOffset, RecyclerViewClickCallback clickCallback) {
         itemView.setTag(recording);
 
         itemView.setOnClickListener(view -> clickCallback.onClick(view, getAdapterPosition()));
@@ -111,8 +111,8 @@ public class TimerRecordingViewHolder extends RecyclerView.ViewHolder {
         String daysOfWeek = UIUtils.getDaysOfWeekText(context, recording.getDaysOfWeek());
         daysOfWeekTextView.setText(daysOfWeek);
 
-        startTimeTextView.setText(UIUtils.getTimeText(context, recording.getStart()));
-        stopTimeTextView.setText(UIUtils.getTimeText(context, recording.getStop()));
+        startTimeTextView.setText(UIUtils.getTimeText(context, recording.getStart() - gmtOffset));
+        stopTimeTextView.setText(UIUtils.getTimeText(context, recording.getStop() - gmtOffset));
 
         String duration = context.getString(R.string.minutes, recording.getDuration());
         durationTextView.setText(duration);

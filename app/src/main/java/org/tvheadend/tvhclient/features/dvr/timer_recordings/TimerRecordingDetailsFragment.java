@@ -18,6 +18,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.data.entity.ServerStatus;
 import org.tvheadend.tvhclient.data.entity.TimerRecording;
 import org.tvheadend.tvhclient.features.dvr.RecordingAddEditActivity;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
@@ -135,8 +136,10 @@ public class TimerRecordingDetailsFragment extends BaseFragment implements Recor
             priorityTextView.setText(priorityItems[recording.getPriority()]);
         }
 
-        startTimeTextView.setText(UIUtils.getTimeText(activity, recording.getStart()));
-        stopTimeTextView.setText(UIUtils.getTimeText(activity, recording.getStop()));
+        ServerStatus serverStatus = appRepository.getServerStatusData().getActiveItem();
+        int gmtOffset = serverStatus.getGmtoffset();
+        startTimeTextView.setText(UIUtils.getTimeText(activity, recording.getStart() - gmtOffset));
+        stopTimeTextView.setText(UIUtils.getTimeText(activity, recording.getStop() - gmtOffset));
 
         durationTextView.setText(getString(R.string.minutes, recording.getDuration()));
     }

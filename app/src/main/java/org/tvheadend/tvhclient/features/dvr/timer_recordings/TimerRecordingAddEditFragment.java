@@ -22,6 +22,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Channel;
+import org.tvheadend.tvhclient.data.entity.ServerStatus;
 import org.tvheadend.tvhclient.data.entity.TimerRecording;
 import org.tvheadend.tvhclient.data.service.EpgSyncService;
 import org.tvheadend.tvhclient.features.dvr.BaseRecordingAddEditFragment;
@@ -110,6 +111,8 @@ public class TimerRecordingAddEditFragment extends BaseRecordingAddEditFragment 
     }
 
     private void updateUI() {
+        ServerStatus serverStatus = appRepository.getServerStatusData().getActiveItem();
+        int gmtOffset = serverStatus.getGmtoffset();
 
         isEnabledCheckbox.setVisibility(htspVersion >= 19 ? View.VISIBLE : View.GONE);
         isEnabledCheckbox.setChecked(recording.getEnabled() == 1);
@@ -141,11 +144,11 @@ public class TimerRecordingAddEditFragment extends BaseRecordingAddEditFragment 
             recordingProfileNameTextView.setOnClickListener(view -> handleRecordingProfileSelection(recordingProfilesList, recordingProfileNameId, TimerRecordingAddEditFragment.this));
         }
 
-        startTimeTextView.setText(getTimeStringFromTimeInMillis(recording.getStart()));
-        startTimeTextView.setOnClickListener(view -> handleTimeSelection(recording.getStart(), TimerRecordingAddEditFragment.this, "startTime"));
+        startTimeTextView.setText(getTimeStringFromTimeInMillis(recording.getStart() - gmtOffset));
+        startTimeTextView.setOnClickListener(view -> handleTimeSelection(recording.getStart() - gmtOffset, TimerRecordingAddEditFragment.this, "startTime"));
 
-        stopTimeTextView.setText(getTimeStringFromTimeInMillis(recording.getStop()));
-        stopTimeTextView.setOnClickListener(view -> handleTimeSelection(recording.getStop(), TimerRecordingAddEditFragment.this, "stopTime"));
+        stopTimeTextView.setText(getTimeStringFromTimeInMillis(recording.getStop() - gmtOffset));
+        stopTimeTextView.setOnClickListener(view -> handleTimeSelection(recording.getStop() - gmtOffset, TimerRecordingAddEditFragment.this, "stopTime"));
 
         daysOfWeekTextView.setText(getSelectedDaysOfWeekText(recording.getDaysOfWeek()));
         daysOfWeekTextView.setOnClickListener(view -> handleDayOfWeekSelection(recording.getDaysOfWeek(), TimerRecordingAddEditFragment.this));

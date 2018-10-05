@@ -24,13 +24,15 @@ class SeriesRecordingRecyclerViewAdapter extends RecyclerView.Adapter<SeriesReco
     private final List<SeriesRecording> recordingList = new ArrayList<>();
     private List<SeriesRecording> recordingListFiltered = new ArrayList<>();
     private final int htspVersion;
+    private final int gmtOffset;
     private final Context context;
     private int selectedPosition = 0;
 
-    SeriesRecordingRecyclerViewAdapter(Context context, boolean isDualPane, RecyclerViewClickCallback clickCallback, int htspVersion) {
+    SeriesRecordingRecyclerViewAdapter(Context context, boolean isDualPane, RecyclerViewClickCallback clickCallback, int htspVersion, int gmtOffset) {
         this.context = context;
         this.clickCallback = clickCallback;
         this.htspVersion = htspVersion;
+        this.gmtOffset = gmtOffset;
         this.isDualPane = isDualPane;
     }
 
@@ -45,7 +47,7 @@ class SeriesRecordingRecyclerViewAdapter extends RecyclerView.Adapter<SeriesReco
     public void onBindViewHolder(@NonNull SeriesRecordingViewHolder holder, int position) {
         if (recordingListFiltered.size() > position) {
             SeriesRecording recording = recordingListFiltered.get(position);
-            holder.bindData(context, recording, (selectedPosition == position), htspVersion, clickCallback);
+            holder.bindData(context, recording, (selectedPosition == position), htspVersion, gmtOffset, clickCallback);
         }
     }
 
