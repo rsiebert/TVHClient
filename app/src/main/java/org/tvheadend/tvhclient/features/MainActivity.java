@@ -277,16 +277,12 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Wake
         // case the saved instance is not null. This avoids recreating fragments after
         // every orientation change which would reset any saved states in these fragments.
         if (isSavedInstanceStateNull || selectedNavigationMenuId != position) {
+            Timber.d("Saved instance is null or selected id has changed, creating new fragment");
             fragment = navigationDrawer.getFragmentFromSelection(position);
         } else {
+            Timber.d("Saved instance is not null, trying to existing fragment");
             fragment = getSupportFragmentManager().findFragmentById(R.id.main);
             addFragmentToBackStack = false;
-        }
-
-        // Create a new fragment when the app was started for the first time.
-        // In this case the saved instance is not null and no fragment can be found.
-        if (fragment == null) {
-            fragment = navigationDrawer.getFragmentFromSelection(position);
         }
 
         if (fragment != null) {

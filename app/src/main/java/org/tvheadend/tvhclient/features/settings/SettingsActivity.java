@@ -21,6 +21,8 @@ import org.tvheadend.tvhclient.utils.MiscUtils;
 
 import java.io.File;
 
+import timber.log.Timber;
+
 public class SettingsActivity extends AppCompatActivity implements ToolbarInterface, FolderChooserDialog.FolderCallback {
 
     private SnackbarMessageReceiver snackbarMessageReceiver;
@@ -40,55 +42,67 @@ public class SettingsActivity extends AppCompatActivity implements ToolbarInterf
 
         snackbarMessageReceiver = new SnackbarMessageReceiver(this);
 
-        if (savedInstanceState == null) {
-            String settingType = getIntent().getStringExtra("setting_type");
-            if (settingType == null) {
-                // Show the default fragment Create the default settings
-                SettingsFragment fragment = new SettingsFragment();
-                fragment.setArguments(getIntent().getExtras());
-                getFragmentManager().beginTransaction().add(R.id.main, fragment).commit();
-            } else {
-                Fragment fragment = null;
-                Intent intent;
-                switch (settingType) {
-                    case "list_connections":
-                        fragment = new SettingsListConnectionsFragment();
-                        break;
-                    case "add_connection":
-                        fragment = new SettingsAddConnectionFragment();
-                        break;
-                    case "edit_connection":
-                        fragment = new SettingsEditConnectionFragment();
-                        break;
-                    case "user_interface":
-                        fragment = new SettingsUserInterfaceFragment();
-                        break;
-                    case "notifications":
-                        fragment = new SettingsNotificationFragment();
-                        break;
-                    case "profiles":
-                        fragment = new SettingsProfilesFragment();
-                        break;
-                    case "casting":
-                        fragment = new SettingsCastingFragment();
-                        break;
-                    case "playback":
-                        fragment = new SettingsPlaybackFragment();
-                        break;
-                    case "advanced":
-                        fragment = new SettingsAdvancedFragment();
-                        break;
-                    case "changelog":
-                        intent = new Intent(this, ChangeLogActivity.class);
-                        startActivity(intent);
-                        break;
-                }
-                if (fragment != null) {
-                    fragment.setArguments(getIntent().getExtras());
-                    getFragmentManager().beginTransaction().add(R.id.main, fragment).commit();
-                }
-            }
+        String settingType = "default";
+        if (getIntent().hasExtra("setting_type")) {
+            settingType = getIntent().getStringExtra("setting_type");
         }
+
+        Fragment fragment;
+        if (savedInstanceState == null) {
+            Timber.d("Saved instance is null, creating settings fragment");
+            fragment = getSettingsFragment(settingType);
+            fragment.setArguments(getIntent().getExtras());
+        } else {
+            Timber.d("Saved instance is not null, trying to find settings fragment");
+            fragment = getFragmentManager().findFragmentById(R.id.main);
+        }
+
+        Timber.d("Replacing fragment");
+        getFragmentManager().beginTransaction().replace(R.id.main, fragment).commit();
+    }
+
+    private Fragment getSettingsFragment(@NonNull String type) {
+        Timber.d("Getting settings fragment for type '" + type + "'");
+        Fragment fragment = null;
+        Intent intent;
+        switch (type) {
+            case "list_connections":
+                fragment = new SettingsListConnectionsFragment();
+                break;
+            case "add_connection":
+                fragment = new SettingsAddConnectionFragment();
+                break;
+            case "edit_connection":
+                fragment = new SettingsEditConnectionFragment();
+                break;
+            case "user_interface":
+                fragment = new SettingsUserInterfaceFragment();
+                break;
+            case "notifications":
+                fragment = new SettingsNotificationFragment();
+                break;
+            case "profiles":
+                fragment = new SettingsProfilesFragment();
+                break;
+            case "casting":
+                fragment = new SettingsCastingFragment();
+                break;
+            case "playback":
+                fragment = new SettingsPlaybackFragment();
+                break;
+            case "advanced":
+                fragment = new SettingsAdvancedFragment();
+                break;
+            case "changelog":
+                intent = new Intent(this, ChangeLogActivity.class);
+                startActivity(intent);
+                break;
+            default:
+                fragment = new SettingsFragment();
+                fragment.setArguments(getIntent().getExtras());
+                break;
+        }
+        return fragment;
     }
 
     @Override
@@ -108,9 +122,11 @@ public class SettingsActivity extends AppCompatActivity implements ToolbarInterf
         // If a settings fragment is currently visible, let the fragment
         // handle the back press, otherwise the setting activity.
         Fragment fragment = getFragmentManager().findFragmentById(R.id.main);
-        if (fragment instanceof BackPressedInterface) {
+        if (fragment != null && fragment.isAdded() && fragment instanceof BackPressedInterface) {
+            Timber.d("Calling back press in the fragment");
             ((BackPressedInterface) fragment).onBackPressed();
         } else {
+            Timber.d("Calling back press of super");
             super.onBackPressed();
         }
     }
