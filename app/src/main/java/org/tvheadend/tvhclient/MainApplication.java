@@ -14,6 +14,8 @@ import com.facebook.stetho.Stetho;
 import com.google.android.gms.cast.framework.CastOptions;
 import com.google.android.gms.cast.framework.OptionsProvider;
 import com.google.android.gms.cast.framework.SessionProvider;
+import com.google.android.gms.cast.framework.media.CastMediaOptions;
+import com.google.android.gms.cast.framework.media.NotificationOptions;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
 
@@ -22,6 +24,7 @@ import org.tvheadend.tvhclient.features.logging.CrashlyticsTree;
 import org.tvheadend.tvhclient.features.logging.DebugTree;
 import org.tvheadend.tvhclient.features.logging.FileLoggingTree;
 import org.tvheadend.tvhclient.features.purchase.BillingUtils;
+import org.tvheadend.tvhclient.features.streaming.external.ExpandedControlsActivity;
 import org.tvheadend.tvhclient.injection.DaggerMainApplicationComponent;
 import org.tvheadend.tvhclient.injection.MainApplicationComponent;
 import org.tvheadend.tvhclient.injection.modules.EpgSyncHandlerModule;
@@ -197,8 +200,17 @@ public class MainApplication extends Application implements BillingProcessor.IBi
 
     @Override
     public CastOptions getCastOptions(Context context) {
+        NotificationOptions notificationOptions = new NotificationOptions.Builder()
+                .setTargetActivityClassName(ExpandedControlsActivity.class.getName())
+                .build();
+        CastMediaOptions mediaOptions = new CastMediaOptions.Builder()
+                .setNotificationOptions(notificationOptions)
+                .setExpandedControllerActivityClassName(ExpandedControlsActivity.class.getName())
+                .build();
+
         return new CastOptions.Builder()
                 .setReceiverApplicationId(BuildConfig.CAST_ID)
+                .setCastMediaOptions(mediaOptions)
                 .build();
     }
 

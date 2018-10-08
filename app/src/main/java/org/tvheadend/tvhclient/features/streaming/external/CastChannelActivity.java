@@ -102,7 +102,23 @@ public class CastChannelActivity extends BasePlaybackActivity {
                 .setAutoplay(true)
                 .setPlayPosition(0)
                 .build();
+
+        remoteMediaClient.registerCallback(new RemoteMediaClient.Callback() {
+            @Override
+            public void onStatusUpdated() {
+                Timber.d("Status updated");
+                Intent intent = new Intent(CastChannelActivity.this, ExpandedControlsActivity.class);
+                startActivity(intent);
+                remoteMediaClient.unregisterCallback(this);
+                finish();
+            }
+
+            @Override
+            public void onSendingRemoteMediaRequest() {
+                Timber.d("Sending remote media request");
+            }
+        });
+
         remoteMediaClient.load(mediaInfo, mediaLoadOptions);
-        finish();
     }
 }
