@@ -63,7 +63,7 @@ public class SettingsListConnectionsFragment extends ListFragment implements Bac
                 connectionListAdapter.clear();
                 connectionListAdapter.addAll(connections);
                 connectionListAdapter.notifyDataSetChanged();
-                toolbarInterface.setSubtitle(getResources().getQuantityString(
+                toolbarInterface.setSubtitle(activity.getResources().getQuantityString(
                         R.plurals.number_of_connections,
                         connectionListAdapter.getCount(),
                         connectionListAdapter.getCount()));
