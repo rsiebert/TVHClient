@@ -166,7 +166,7 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
             // channel tag and the channel count in the toolbar
             ChannelTag channelTag = viewModel.getChannelTag();
             toolbarInterface.setTitle((channelTag == null) ? getString(R.string.all_channels) : channelTag.getTagName());
-            toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.items,
+            toolbarInterface.setSubtitle(activity.getResources().getQuantityString(R.plurals.items,
                     channelListRecyclerViewAdapter.getItemCount(), channelListRecyclerViewAdapter.getItemCount()));
         });
 
@@ -345,7 +345,7 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
         // channel tag and the channel count in the toolbar
         ChannelTag channelTag = viewModel.getChannelTag();
         toolbarInterface.setTitle((channelTag == null) ? getString(R.string.all_channels) : channelTag.getTagName());
-        toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.results,
+        toolbarInterface.setSubtitle(activity.getResources().getQuantityString(R.plurals.results,
                 channelListRecyclerViewAdapter.getItemCount(), channelListRecyclerViewAdapter.getItemCount()));
     }
 

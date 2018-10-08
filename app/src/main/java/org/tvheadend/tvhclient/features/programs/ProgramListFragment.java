@@ -164,9 +164,9 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
 
         if (!isDualPane) {
             if (!isSearchActive) {
-                toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.items, recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
+                toolbarInterface.setSubtitle(activity.getResources().getQuantityString(R.plurals.items, recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
             } else {
-                toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.programs, recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
+                toolbarInterface.setSubtitle(activity.getResources().getQuantityString(R.plurals.programs, recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
             }
         }
         // Invalidate the menu so that the search menu item is shown in
@@ -388,9 +388,9 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
     public void onFilterComplete(int count) {
         if (!isDualPane) {
             if (!isSearchActive) {
-                toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.items, recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
+                toolbarInterface.setSubtitle(activity.getResources().getQuantityString(R.plurals.items, recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
             } else {
-                toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.programs, recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
+                toolbarInterface.setSubtitle(activity.getResources().getQuantityString(R.plurals.programs, recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
             }
         }
     }

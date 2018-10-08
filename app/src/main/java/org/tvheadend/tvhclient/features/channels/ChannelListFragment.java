@@ -162,11 +162,11 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
         if (TextUtils.isEmpty(searchQuery)) {
             toolbarInterface.setTitle((channelTag == null) ?
                     getString(R.string.all_channels) : channelTag.getTagName());
-            toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.items,
+            toolbarInterface.setSubtitle(activity.getResources().getQuantityString(R.plurals.items,
                     recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
         } else {
             toolbarInterface.setTitle(getString(R.string.search_results));
-            toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.channels,
+            toolbarInterface.setSubtitle(activity.getResources().getQuantityString(R.plurals.channels,
                     recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
         }
     }

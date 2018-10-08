@@ -36,9 +36,9 @@ public class RemovedRecordingListFragment extends RecordingListFragment implemen
             }
 
             if (TextUtils.isEmpty(searchQuery)) {
-                toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.items, recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
+                toolbarInterface.setSubtitle(activity.getResources().getQuantityString(R.plurals.items, recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
             } else {
-                toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.removed_recordings, recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
+                toolbarInterface.setSubtitle(activity.getResources().getQuantityString(R.plurals.removed_recordings, recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
             }
 
             if (isDualPane && recyclerViewAdapter.getItemCount() > 0) {
@@ -70,9 +70,9 @@ public class RemovedRecordingListFragment extends RecordingListFragment implemen
     @Override
     public void onFilterComplete(int i) {
         if (TextUtils.isEmpty(searchQuery)) {
-            toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.items, recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
+            toolbarInterface.setSubtitle(activity.getResources().getQuantityString(R.plurals.items, recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
         } else {
-            toolbarInterface.setSubtitle(getResources().getQuantityString(R.plurals.removed_recordings, recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
+            toolbarInterface.setSubtitle(activity.getResources().getQuantityString(R.plurals.removed_recordings, recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
         }
     }
 }
