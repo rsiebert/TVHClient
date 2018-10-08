@@ -78,12 +78,7 @@ public class ServerStatusData extends BaseData implements DataSourceInterface<Se
     public ServerStatus getActiveItem() {
         Timber.d("Loading active server status");
         try {
-            ServerStatus serverStatus = new ItemLoaderTask(db).execute().get();
-            if (serverStatus == null) {
-                Connection connection = db.getConnectionDao().loadActiveConnectionSync();
-                Timber.e("Server status for active connection " + connection.getId() + " is null");
-            }
-            return serverStatus;
+            return new ItemLoaderTask(db).execute().get();
         } catch (InterruptedException e) {
             Timber.e("Failed loading active server status due to interrupt", e);
         } catch (ExecutionException e) {
@@ -109,7 +104,12 @@ public class ServerStatusData extends BaseData implements DataSourceInterface<Se
         @Override
         protected ServerStatus doInBackground(Void... voids) {
             if (id < 0) {
-                return db.getServerStatusDao().loadActiveServerStatusSync();
+                ServerStatus serverStatus = db.getServerStatusDao().loadActiveServerStatusSync();
+                if (serverStatus == null) {
+                    Connection connection = db.getConnectionDao().loadActiveConnectionSync();
+                    Timber.e("Server status for active connection " + connection.getId() + " is null");
+                }
+                return serverStatus;
             } else {
                 return db.getServerStatusDao().loadServerStatusByIdSync(id);
             }
