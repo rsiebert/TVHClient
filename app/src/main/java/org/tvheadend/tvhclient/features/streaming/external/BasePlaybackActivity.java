@@ -114,6 +114,7 @@ public abstract class BasePlaybackActivity extends AppCompatActivity implements 
     private final BroadcastReceiver messageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            progressBar.setVisibility(View.GONE);
             statusTextView.setText(getString(R.string.received_playback_information));
             String path = intent.getStringExtra("path");
             String ticket = intent.getStringExtra("ticket");
