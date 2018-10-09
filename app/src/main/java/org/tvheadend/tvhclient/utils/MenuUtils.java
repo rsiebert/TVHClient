@@ -202,7 +202,7 @@ public class MenuUtils {
             intent.setData(Uri.parse("imdb:///find?s=tt&q=" + url));
             PackageManager packageManager = activity.getPackageManager();
             if (packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY).isEmpty()) {
-                intent.setData(Uri.parse("http://www.imdb.org/find?s=tt&q=" + url));
+                intent.setData(Uri.parse("http://www.imdb.com/find?s=tt&q=" + url));
             }
             activity.startActivity(intent);
             activity.finish();
