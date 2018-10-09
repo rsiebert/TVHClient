@@ -278,13 +278,8 @@ public class ProgramDetailsFragment extends BaseFragment implements RecordingRem
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
-        if (program == null) {
-            return;
-        }
-
         // Show or hide menus of the main toolbar
         menuUtils.onPreparePopupSearchMenu(menu, isNetworkAvailable);
-
         // Show or hide menus of the nested toolbar
         menu = nestedToolbar.getMenu();
         menuUtils.onPreparePopupMenu(menu, program, recording, isNetworkAvailable);
