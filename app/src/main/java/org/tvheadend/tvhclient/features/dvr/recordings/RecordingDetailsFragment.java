@@ -29,7 +29,6 @@ import org.tvheadend.tvhclient.features.download.DownloadPermissionGrantedInterf
 import org.tvheadend.tvhclient.features.dvr.RecordingAddEditActivity;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecordingRemovedCallback;
-import org.tvheadend.tvhclient.features.streaming.external.CastRecordingActivity;
 import org.tvheadend.tvhclient.utils.UIUtils;
 
 import butterknife.BindView;
@@ -312,10 +311,7 @@ public class RecordingDetailsFragment extends BaseFragment implements RecordingR
                 return menuUtils.handleMenuPlayRecording(recording.getId());
 
             case R.id.menu_cast:
-                Intent intent = new Intent(activity, CastRecordingActivity.class);
-                intent.putExtra("dvrId", recording.getId());
-                startActivity(intent);
-                return true;
+                return menuUtils.handleMenuCast("dvrId", recording.getId());
 
             case R.id.menu_download:
                 return menuUtils.handleMenuDownloadSelection(recording.getId());

@@ -36,7 +36,6 @@ import org.tvheadend.tvhclient.features.shared.BaseFragment;
 import org.tvheadend.tvhclient.features.shared.callbacks.ChannelTagSelectionCallback;
 import org.tvheadend.tvhclient.features.shared.callbacks.ChannelTimeSelectionCallback;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback;
-import org.tvheadend.tvhclient.features.streaming.external.CastChannelActivity;
 
 import java.util.Calendar;
 
@@ -356,10 +355,7 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
                     return menuUtils.handleMenuPlayChannel(channel.getId());
 
                 case R.id.menu_cast:
-                    Intent intent = new Intent(activity, CastChannelActivity.class);
-                    intent.putExtra("channelId", channel.getId());
-                    startActivity(intent);
-                    return true;
+                    return menuUtils.handleMenuCast("channelId", channel.getId());
 
                 case R.id.menu_add_notification:
                     return menuUtils.handleMenuAddNotificationSelection(program);

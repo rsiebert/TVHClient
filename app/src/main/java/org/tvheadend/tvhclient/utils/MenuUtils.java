@@ -36,6 +36,8 @@ import org.tvheadend.tvhclient.features.shared.callbacks.ChannelTagSelectionCall
 import org.tvheadend.tvhclient.features.shared.callbacks.ChannelTimeSelectionCallback;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecordingRemovedCallback;
 import org.tvheadend.tvhclient.features.startup.SplashActivity;
+import org.tvheadend.tvhclient.features.streaming.external.CastChannelActivity;
+import org.tvheadend.tvhclient.features.streaming.external.CastRecordingActivity;
 import org.tvheadend.tvhclient.features.streaming.external.PlayChannelActivity;
 import org.tvheadend.tvhclient.features.streaming.external.PlayRecordingActivity;
 import org.tvheadend.tvhclient.features.streaming.internal.HtspPlaybackActivity;
@@ -769,5 +771,27 @@ public class MenuUtils {
             // NOP
         }
         return true;
+    }
+
+    public boolean handleMenuCast(String type, int id) {
+        Activity activity = this.activity.get();
+        if (activity == null) {
+            Timber.d("Weak reference to activity is null");
+            return false;
+        }
+        Intent intent;
+        switch (type) {
+            case "dvrId":
+                intent = new Intent(activity, CastRecordingActivity.class);
+                intent.putExtra("dvrId", id);
+                activity.startActivity(intent);
+                return true;
+            case "channelId":
+                intent = new Intent(activity, CastChannelActivity.class);
+                intent.putExtra("channelId", id);
+                activity.startActivity(intent);
+                return true;
+        }
+        return false;
     }
 }

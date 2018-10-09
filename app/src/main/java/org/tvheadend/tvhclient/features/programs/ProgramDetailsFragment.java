@@ -30,7 +30,6 @@ import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.features.dvr.RecordingAddEditActivity;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecordingRemovedCallback;
-import org.tvheadend.tvhclient.features.streaming.external.CastChannelActivity;
 import org.tvheadend.tvhclient.utils.UIUtils;
 
 import butterknife.BindView;
@@ -334,10 +333,7 @@ public class ProgramDetailsFragment extends BaseFragment implements RecordingRem
                 return menuUtils.handleMenuPlayChannel(program.getChannelId());
 
             case R.id.menu_cast:
-                Intent intent = new Intent(activity, CastChannelActivity.class);
-                intent.putExtra("channelId", program.getChannelId());
-                startActivity(intent);
-                return true;
+                return menuUtils.handleMenuCast("channelId", program.getChannelId());
 
             case R.id.menu_add_notification:
                 return menuUtils.handleMenuAddNotificationSelection(program);

@@ -34,7 +34,6 @@ import org.tvheadend.tvhclient.features.search.SearchRequestInterface;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
 import org.tvheadend.tvhclient.features.shared.callbacks.BottomReachedCallback;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback;
-import org.tvheadend.tvhclient.features.streaming.external.CastChannelActivity;
 
 import java.util.List;
 
@@ -244,10 +243,7 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
                 return true;
 
             case R.id.menu_cast:
-                Intent intent = new Intent(activity, CastChannelActivity.class);
-                intent.putExtra("channelId", channelId);
-                startActivity(intent);
-                return true;
+                return menuUtils.handleMenuCast("channelId", channelId);
 
             case R.id.menu_genre_color_info_programs:
                 menuUtils.handleMenuGenreColorSelection();
@@ -328,10 +324,7 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
                     return menuUtils.handleMenuPlayChannel(channelId);
 
                 case R.id.menu_cast:
-                    Intent intent = new Intent(activity, CastChannelActivity.class);
-                    intent.putExtra("channelId", channelId);
-                    startActivity(intent);
-                    return true;
+                    return menuUtils.handleMenuCast("channelId", channelId);
 
                 case R.id.menu_add_notification:
                     return menuUtils.handleMenuAddNotificationSelection(program);
