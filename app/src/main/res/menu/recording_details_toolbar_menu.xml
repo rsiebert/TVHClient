@@ -10,7 +10,7 @@
         app:showAsAction="ifRoom|withText" />
     <item
         android:id="@+id/menu_cast"
-        android:icon="?attr/ic_menu_play"
+        android:icon="?attr/ic_menu_cast"
         android:title="@string/cast"
         android:visible="false"
         app:showAsAction="ifRoom|withText" />

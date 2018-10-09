@@ -99,7 +99,7 @@
         <item name="ic_menu_tags">@drawable/ic_menu_tag_dark</item>
         <item name="ic_menu_record_once">@drawable/ic_menu_record_dark</item>
         <item name="ic_menu_record_once_and_edit">@drawable/ic_menu_record_and_edit_dark</item>
-        <item name="ic_menu_record_once_custom_profile">@drawable/ic_menu_record_custom_dark</item>
+        <item name="ic_menu_record_once_custom_profile">@drawable/ic_menu_record_profile_dark</item>
         <item name="ic_menu_record_series">@drawable/ic_menu_record_series_dark</item>
         <item name="ic_menu_record_cancel">@drawable/ic_menu_cancel_dark</item>
         <item name="ic_menu_record_remove">@drawable/ic_menu_delete_dark</item>
@@ -107,6 +107,7 @@
         <item name="ic_menu_refresh">@drawable/ic_menu_refresh_dark</item>
         <item name="ic_menu_settings">@drawable/ic_menu_settings_dark</item>
         <item name="ic_menu_play">@drawable/ic_menu_play_dark</item>
+        <item name="ic_menu_cast">@drawable/ic_menu_cast_dark</item>
         <item name="ic_menu_delete">@drawable/ic_menu_delete_dark</item>
         <item name="ic_menu_edit">@drawable/ic_menu_edit_dark</item>
         <item name="ic_menu_timeframe">@drawable/ic_menu_timeframe_dark</item>
@@ -173,7 +174,7 @@
         <item name="ic_menu_tags">@drawable/ic_menu_tag_light</item>
         <item name="ic_menu_record_once">@drawable/ic_menu_record_light</item>
         <item name="ic_menu_record_once_and_edit">@drawable/ic_menu_record_and_edit_light</item>
-        <item name="ic_menu_record_once_custom_profile">@drawable/ic_menu_record_custom_light</item>
+        <item name="ic_menu_record_once_custom_profile">@drawable/ic_menu_record_profile_light</item>
         <item name="ic_menu_record_series">@drawable/ic_menu_record_series_light</item>
         <item name="ic_menu_record_cancel">@drawable/ic_menu_cancel_light</item>
         <item name="ic_menu_record_remove">@drawable/ic_menu_delete_light</item>
@@ -181,6 +182,7 @@
         <item name="ic_menu_refresh">@drawable/ic_menu_refresh_light</item>
         <item name="ic_menu_settings">@drawable/ic_menu_settings_light</item>
         <item name="ic_menu_play">@drawable/ic_menu_play_light</item>
+        <item name="ic_menu_cast">@drawable/ic_menu_cast_light</item>
         <item name="ic_menu_delete">@drawable/ic_menu_delete_light</item>
         <item name="ic_menu_edit">@drawable/ic_menu_edit_light</item>
         <item name="ic_menu_timeframe">@drawable/ic_menu_timeframe_light</item>
