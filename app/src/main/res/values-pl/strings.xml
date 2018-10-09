@@ -29,6 +29,9 @@
     <string name="record_remove_all">Usuń wszystkie nagrania</string>
     <string name="confirm_remove_all">Czy na pewno chcesz usunąć wszystkie nagrania?</string>
     <string name="search_imdb">Szukaj na IMDB</string>
+    <string name="search_fileaffinity">Szukaj na FileAffinity</string>
+    <string name="search_youtube">Szukaj na YouTube</string>
+    <string name="search_google">Szukaj na Google</string>
     <string name="search_epg">Szukaj w przewodniku programów</string>
     <string name="add">Dodaj</string>
     <string name="save">Zapisz</string>

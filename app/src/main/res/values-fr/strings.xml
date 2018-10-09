@@ -27,6 +27,9 @@
     <string name="record_remove_all">Effacer tous les enregistrements</string>
     <string name="confirm_remove_all">Etes-vous sur de vouloir effacer tous les enregistrements?</string>
     <string name="search_imdb">Rechercher sur IMDB</string>
+    <string name="search_fileaffinity">Rechercher sur FileAffinity</string>
+    <string name="search_youtube">Rechercher sur YouTube</string>
+    <string name="search_google">Rechercher sur Google</string>
     <string name="search_epg">Recherche dans le guide des programmes</string>
     <string name="add">Ajouter</string>
     <string name="save">Sauvegarder</string>
@@ -312,7 +315,6 @@
     <string name="reconnect">Rétablir</string>
     <string name="cast">Cast</string>
     <string name="record_once_and_edit">Enregistrer et modifier</string>
-    <string name="search_fileaffinity">Rechercher sur FileAffinity</string>
     <string name="add_recording_directory">Enregistrer le répertoire de l\'enregistrement</string>
     <string name="select">Sélectionnez</string>
     <string name="pref_download_directory">Répertoire des téléchargements</string>

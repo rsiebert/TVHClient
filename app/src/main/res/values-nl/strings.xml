@@ -13,6 +13,9 @@
     <string name="record_remove">Verwijder opname</string>
     <string name="record_remove_all">Verwijder alle opnames</string>
     <string name="search_imdb">Zoek op IMDB</string>
+    <string name="search_fileaffinity">Zoek op FileAffinity</string>
+    <string name="search_youtube">Zoek op YouTube</string>
+    <string name="search_google">Zoek op Google</string>
     <string name="search_epg">Zoek in programma gids</string>
     <string name="add">Toevoegen</string>
     <string name="save">Opslaan</string>
@@ -253,7 +256,6 @@
     <string name="feature_not_available_in_free_version">Deze functie is niet beschikbaar in de gratis versie!</string>
     <string name="record_once_and_edit">Opnemen en bewerken</string>
     <string name="record_once_custom_profile">Opname met ander profiel</string>
-    <string name="search_fileaffinity">Zoeken op de FileAffinity website</string>
     <string name="stop">Halte</string>
     <string name="reconnect">Opnieuw verbinden</string>
     <string name="stop_recording">Wilt u de lopende opname \'%s\' echt stoppen?</string>

@@ -16,6 +16,9 @@
     <string name="record_stop">Sluta inspelning</string>
     <string name="record_remove_all">Ta bort alla inspelningar</string>
     <string name="search_imdb">Sök på IMDB</string>
+    <string name="search_fileaffinity">Sök på FileAffinity</string>
+    <string name="search_youtube">Sök på YouTube</string>
+    <string name="search_google">Sök på Google</string>
     <string name="search_epg">Sök i EPG</string>
     <string name="add">Lägg till</string>
     <string name="save">Spara</string>

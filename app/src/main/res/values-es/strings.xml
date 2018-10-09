@@ -236,6 +236,9 @@ Debe tener el patrón '01:24:67:9a:cd:ef'."</string>
     <string name="search_epg">Buscar en la guía de programas</string>
     <string name="search_hint">Buscar el EPG</string>
     <string name="search_imdb">Buscar en IMDB</string>
+    <string name="search_fileaffinity">Buscar en FileAffinity</string>
+    <string name="search_youtube">Buscar en YouTube</string>
+    <string name="search_google">Buscar en Google</string>
     <string name="season">Temporada</string>
     <string name="select">Seleccionar</string>
     <string name="select_connection">Seleccionar conexión</string>
@@ -299,7 +302,6 @@ Debe tener el patrón '01:24:67:9a:cd:ef'."</string>
     <string name="reconnect">Reconectar</string>
     <string name="cast">Cast</string>
     <string name="record_once_and_edit">Grabar y editar</string>
-    <string name="search_fileaffinity">Buscar en el sitio web de FileAffinity</string>
     <string name="add_recording_directory">Guardar directorio de la grabación</string>
     <string name="pref_show_progressbar_sum">Indica en la lista de canales qué parte del programa actual ya se ha mostrado.</string>
 </resources>

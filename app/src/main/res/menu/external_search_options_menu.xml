@@ -3,13 +3,29 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/menu_search_imdb"
-        android:title="@string/search_imdb"
-        app:showAsAction="never|withText" />
-    <item
-        android:id="@+id/menu_search_fileaffinity"
-        android:title="@string/search_fileaffinity"
-        app:showAsAction="never|withText" />
+        android:id="@+id/menu_search"
+        android:icon="?attr/ic_menu_search"
+        android:title="@string/search">
+        <menu>
+            <item
+                android:id="@+id/menu_search_imdb"
+                android:title="@string/search_imdb"
+                app:showAsAction="never|withText" />
+            <item
+                android:id="@+id/menu_search_fileaffinity"
+                android:title="@string/search_fileaffinity"
+                app:showAsAction="never|withText" />
+            <item
+                android:id="@+id/menu_search_youtube"
+                android:title="@string/search_youtube"
+                app:showAsAction="never|withText" />
+            <item
+                android:id="@+id/menu_search_google"
+                android:title="@string/search_google"
+                app:showAsAction="never|withText" />
+
+        </menu>
+    </item>
     <item
         android:id="@+id/menu_search_epg"
         android:title="@string/search_epg"

@@ -16,6 +16,9 @@
     <string name="record_remove">Smazat nahrávku</string>
     <string name="record_remove_all">Smazat všechny nahrávky</string>
     <string name="search_imdb">Hledat v IMDB</string>
+    <string name="search_fileaffinity">Hledat v FileAffinity</string>
+    <string name="search_youtube">Hledat v YouTube</string>
+    <string name="search_google">Hledat v Google</string>
     <string name="search_epg">Hledat v programovém průvodci</string>
     <string name="add">Přidat</string>
     <string name="save">Uložit</string>

@@ -27,6 +27,9 @@
     <string name="record_remove_all">Vymazať všetky nahrávky</string>
     <string name="confirm_remove_all">Naozaj chcete vymazať všetky nahrávky?</string>
     <string name="search_imdb">Hľadať v IMDB</string>
+    <string name="search_fileaffinity">Hľadať v FileAffinity</string>
+    <string name="search_youtube">Hľadať v YouTube</string>
+    <string name="search_google">Hľadať v Google</string>
     <string name="search_epg">Hľadať v programovom sprievodcovi</string>
     <string name="add">Pridať</string>
     <string name="save">Uložiť</string>
