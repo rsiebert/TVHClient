@@ -608,6 +608,15 @@ public class MenuUtils {
                 Timber.d("Recording is something else");
                 recordRemoveMenuItem.setVisible(true);
             }
+
+            // Show the play menu item and the cast menu item (if available)
+            // when the current time is between the program start and end time
+            long currentTime = new Date().getTime();
+            if (program != null && currentTime > program.getStart() && currentTime < program.getStop()) {
+                menu.findItem(R.id.menu_play).setVisible(true);
+                CastSession castSession = CastContext.getSharedInstance(activity).getSessionManager().getCurrentCastSession();
+                menu.findItem(R.id.menu_cast).setVisible(castSession != null);
+            }
         }
         // Show the add reminder menu only for programs and
         // recordings where the start time is in the future.

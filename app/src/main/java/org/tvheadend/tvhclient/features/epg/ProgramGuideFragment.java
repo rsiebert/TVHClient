@@ -26,9 +26,6 @@ import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.ProgressBar;
 
-import com.google.android.gms.cast.framework.CastContext;
-import com.google.android.gms.cast.framework.CastSession;
-
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.ChannelSubset;
 import org.tvheadend.tvhclient.data.entity.ChannelTag;
@@ -44,7 +41,6 @@ import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallba
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -281,17 +277,6 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
         popupMenu.getMenuInflater().inflate(R.menu.external_search_options_menu, popupMenu.getMenu());
         menuUtils.onPreparePopupMenu(popupMenu.getMenu(), program, program.getRecording(), isNetworkAvailable);
         menuUtils.onPreparePopupSearchMenu(popupMenu.getMenu(), isNetworkAvailable);
-
-        // Show the play menu item and the cast menu item (if available)
-        // when the current time is between the program start and end time
-        if (isNetworkAvailable) {
-            long currentTime = new Date().getTime();
-            if (currentTime > program.getStart() && currentTime < program.getStop()) {
-                popupMenu.getMenu().findItem(R.id.menu_play).setVisible(true);
-                CastSession castSession = CastContext.getSharedInstance(activity).getSessionManager().getCurrentCastSession();
-                popupMenu.getMenu().findItem(R.id.menu_cast).setVisible(castSession != null);
-            }
-        }
 
         popupMenu.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {

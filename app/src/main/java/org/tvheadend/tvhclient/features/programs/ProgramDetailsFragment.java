@@ -21,8 +21,6 @@ import android.widget.RatingBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.google.android.gms.cast.framework.CastContext;
-import com.google.android.gms.cast.framework.CastSession;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -34,8 +32,6 @@ import org.tvheadend.tvhclient.features.shared.BaseFragment;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecordingRemovedCallback;
 import org.tvheadend.tvhclient.features.streaming.external.CastChannelActivity;
 import org.tvheadend.tvhclient.utils.UIUtils;
-
-import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -292,16 +288,6 @@ public class ProgramDetailsFragment extends BaseFragment implements RecordingRem
         // Show or hide menus of the nested toolbar
         menu = nestedToolbar.getMenu();
         menuUtils.onPreparePopupMenu(menu, program, recording, isNetworkAvailable);
-
-        // Show the play menu item when the current
-        // time is between the program start and end time
-        long currentTime = new Date().getTime();
-        if (currentTime > program.getStart() && currentTime < program.getStop()
-                && isNetworkAvailable) {
-            menu.findItem(R.id.menu_play).setVisible(true);
-            CastSession castSession = CastContext.getSharedInstance(activity).getSessionManager().getCurrentCastSession();
-            menu.findItem(R.id.menu_cast).setVisible(castSession != null);
-        }
     }
 
     @Override

@@ -36,7 +36,6 @@ import org.tvheadend.tvhclient.features.shared.callbacks.BottomReachedCallback;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback;
 import org.tvheadend.tvhclient.features.streaming.external.CastChannelActivity;
 
-import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -285,17 +284,6 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
         popupMenu.getMenuInflater().inflate(R.menu.external_search_options_menu, popupMenu.getMenu());
         menuUtils.onPreparePopupMenu(popupMenu.getMenu(), program, program.getRecording(), isNetworkAvailable);
         menuUtils.onPreparePopupSearchMenu(popupMenu.getMenu(), isNetworkAvailable);
-
-        // Show the play menu item when the current
-        // time is between the program start and end time
-        if (isNetworkAvailable) {
-            long currentTime = new Date().getTime();
-            if (currentTime > program.getStart() && currentTime < program.getStop()) {
-                popupMenu.getMenu().findItem(R.id.menu_play).setVisible(true);
-                CastSession castSession = CastContext.getSharedInstance(activity).getSessionManager().getCurrentCastSession();
-                popupMenu.getMenu().findItem(R.id.menu_cast).setVisible(castSession != null);
-            }
-        }
 
         popupMenu.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {
