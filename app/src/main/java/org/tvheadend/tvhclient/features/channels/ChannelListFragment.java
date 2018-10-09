@@ -24,9 +24,6 @@ import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.ProgressBar;
 
-import com.google.android.gms.cast.framework.CastContext;
-import com.google.android.gms.cast.framework.CastSession;
-
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.data.entity.ChannelTag;
@@ -315,14 +312,6 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
         popupMenu.getMenuInflater().inflate(R.menu.external_search_options_menu, popupMenu.getMenu());
         menuUtils.onPreparePopupMenu(popupMenu.getMenu(), program, recording, isNetworkAvailable);
         menuUtils.onPreparePopupSearchMenu(popupMenu.getMenu(), isNetworkAvailable);
-
-        // Show the play menu item if the network is available because the channel
-        // can be played as live TV. Also show the cast menu item if available
-        if (isNetworkAvailable) {
-            popupMenu.getMenu().findItem(R.id.menu_play).setVisible(true);
-            CastSession castSession = CastContext.getSharedInstance(activity).getSessionManager().getCurrentCastSession();
-            popupMenu.getMenu().findItem(R.id.menu_cast).setVisible(castSession != null);
-        }
 
         popupMenu.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {
