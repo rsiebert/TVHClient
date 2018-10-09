@@ -436,9 +436,11 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     private void handleTagDelete(HtspMessage msg) {
         if (msg.containsKey("tagId")) {
             ChannelTag tag = appRepository.getChannelTagData().getItemById(msg.getInteger("tagId"));
-            deleteIconFileFromCache(tag.getTagIcon());
-            appRepository.getChannelTagData().removeItem(tag);
-            appRepository.getTagAndChannelData().removeItemByTagId(tag.getTagId());
+            if (tag != null) {
+                deleteIconFileFromCache(tag.getTagIcon());
+                appRepository.getChannelTagData().removeItem(tag);
+                appRepository.getTagAndChannelData().removeItemByTagId(tag.getTagId());
+            }
         }
     }
 
