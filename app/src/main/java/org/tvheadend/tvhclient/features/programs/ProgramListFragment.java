@@ -34,6 +34,7 @@ import org.tvheadend.tvhclient.features.search.SearchRequestInterface;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
 import org.tvheadend.tvhclient.features.shared.callbacks.BottomReachedCallback;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback;
+import org.tvheadend.tvhclient.features.streaming.external.CastChannelActivity;
 
 import java.util.Date;
 import java.util.List;
@@ -226,10 +227,13 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
         final boolean showGenreColors = sharedPreferences.getBoolean("genre_colors_for_programs_enabled", false);
         menu.findItem(R.id.menu_genre_color_info_programs).setVisible(!isDualPane && showGenreColors);
 
-        if (!isSearchActive) {
-            menu.findItem(R.id.menu_play).setVisible(isNetworkAvailable);
+        if (!isSearchActive && isNetworkAvailable) {
+            menu.findItem(R.id.menu_play).setVisible(true);
+            CastSession castSession = CastContext.getSharedInstance(activity).getSessionManager().getCurrentCastSession();
+            menu.findItem(R.id.menu_cast).setVisible(castSession != null);
         } else {
             menu.findItem(R.id.menu_play).setVisible(false);
+            menu.findItem(R.id.menu_cast).setVisible(false);
         }
     }
 
@@ -238,6 +242,12 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
         switch (item.getItemId()) {
             case R.id.menu_play:
                 menuUtils.handleMenuPlayChannel(channelId);
+                return true;
+
+            case R.id.menu_cast:
+                Intent intent = new Intent(activity, CastChannelActivity.class);
+                intent.putExtra("channelId", channelId);
+                startActivity(intent);
                 return true;
 
             case R.id.menu_genre_color_info_programs:
@@ -322,6 +332,12 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
 
                 case R.id.menu_play:
                     return menuUtils.handleMenuPlayChannel(channelId);
+
+                case R.id.menu_cast:
+                    Intent intent = new Intent(activity, CastChannelActivity.class);
+                    intent.putExtra("channelId", channelId);
+                    startActivity(intent);
+                    return true;
 
                 case R.id.menu_add_notification:
                     return menuUtils.handleMenuAddNotificationSelection(program);

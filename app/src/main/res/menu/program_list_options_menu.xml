@@ -7,6 +7,13 @@
         android:icon="?attr/ic_menu_play"
         android:title="@string/play"
         app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/menu_cast"
+        android:icon="?attr/ic_menu_play"
+        android:title="@string/cast"
+        app:showAsAction="ifRoom" />
+
     <item
         android:id="@+id/menu_genre_color_info_programs"
         android:title="@string/genre_color_info" />

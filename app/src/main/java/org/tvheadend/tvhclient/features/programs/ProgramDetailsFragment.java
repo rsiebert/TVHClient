@@ -21,6 +21,8 @@ import android.widget.RatingBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.google.android.gms.cast.framework.CastContext;
+import com.google.android.gms.cast.framework.CastSession;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -294,8 +296,11 @@ public class ProgramDetailsFragment extends BaseFragment implements RecordingRem
         // Show the play menu item when the current
         // time is between the program start and end time
         long currentTime = new Date().getTime();
-        if (currentTime > program.getStart() && currentTime < program.getStop()) {
+        if (currentTime > program.getStart() && currentTime < program.getStop()
+                && isNetworkAvailable) {
             menu.findItem(R.id.menu_play).setVisible(true);
+            CastSession castSession = CastContext.getSharedInstance(activity).getSessionManager().getCurrentCastSession();
+            menu.findItem(R.id.menu_cast).setVisible(castSession != null);
         }
     }
 
