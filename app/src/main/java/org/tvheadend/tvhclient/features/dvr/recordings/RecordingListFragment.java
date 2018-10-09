@@ -206,6 +206,12 @@ public class RecordingListFragment extends BaseFragment implements RecyclerViewC
                 case R.id.menu_search_fileaffinity:
                     return menuUtils.handleMenuSearchFileAffinityWebsite(recording.getTitle());
 
+                case R.id.menu_search_youtube:
+                    return menuUtils.handleMenuSearchYoutube(recording.getTitle());
+
+                case R.id.menu_search_google:
+                    return menuUtils.handleMenuSearchGoogle(recording.getTitle());
+
                 case R.id.menu_search_epg:
                     return menuUtils.handleMenuSearchEpgSelection(recording.getTitle());
 

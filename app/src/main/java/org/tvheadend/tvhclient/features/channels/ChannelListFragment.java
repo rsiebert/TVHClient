@@ -321,6 +321,12 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
                 case R.id.menu_search_fileaffinity:
                     return menuUtils.handleMenuSearchFileAffinityWebsite(channel.getProgramTitle());
 
+                case R.id.menu_search_youtube:
+                    return menuUtils.handleMenuSearchYoutube(channel.getProgramTitle());
+
+                case R.id.menu_search_google:
+                    return menuUtils.handleMenuSearchGoogle(channel.getProgramTitle());
+
                 case R.id.menu_search_epg:
                     return menuUtils.handleMenuSearchEpgSelection(channel.getProgramTitle(), channel.getId());
 

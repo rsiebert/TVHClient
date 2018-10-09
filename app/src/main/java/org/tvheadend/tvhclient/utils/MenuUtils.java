@@ -199,13 +199,13 @@ public class MenuUtils {
         try {
             String url = URLEncoder.encode(title, "utf-8");
             Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse("imdb:///find?s=tt&q=" + url));
             PackageManager packageManager = activity.getPackageManager();
             if (packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY).isEmpty()) {
                 intent.setData(Uri.parse("http://www.imdb.com/find?s=tt&q=" + url));
+            } else {
+                intent.setData(Uri.parse("imdb:///find?s=tt&q=" + url));
             }
             activity.startActivity(intent);
-            activity.finish();
         } catch (UnsupportedEncodingException e) {
             // NOP
         }
@@ -223,7 +223,6 @@ public class MenuUtils {
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setData(Uri.parse("https://www.filmaffinity.com/es/search.php?stext=" + url));
             activity.startActivity(intent);
-            activity.finish();
         } catch (UnsupportedEncodingException e) {
             // NOP
         }
@@ -246,7 +245,6 @@ public class MenuUtils {
         intent.putExtra("type", "program_guide");
         intent.putExtra("channelId", channelId);
         activity.startActivity(intent);
-        activity.finish();
         return true;
     }
 
@@ -637,22 +635,14 @@ public class MenuUtils {
             return;
         }
 
-        MenuItem searchImdbMenuItem = menu.findItem(R.id.menu_search_imdb);
-        if (searchImdbMenuItem != null) {
-            searchImdbMenuItem.setVisible(
-                    isNetworkAvailable && sharedPreferences.getBoolean("search_on_imdb_menu_enabled", true));
-        }
-
-        MenuItem searchFileAffinityMenuItem = menu.findItem(R.id.menu_search_fileaffinity);
-        if (searchFileAffinityMenuItem != null) {
-            searchFileAffinityMenuItem.setVisible(
-                    isNetworkAvailable && sharedPreferences.getBoolean("search_on_fileaffinity_menu_enabled", true));
-        }
-
-        MenuItem searchEpgMenuItem = menu.findItem(R.id.menu_search_epg);
-        if (searchEpgMenuItem != null) {
-            searchEpgMenuItem.setVisible(
-                    isNetworkAvailable && sharedPreferences.getBoolean("search_epg_menu_enabled", true));
+        MenuItem searchMenuItem = menu.findItem(R.id.menu_search);
+        if (searchMenuItem != null) {
+            searchMenuItem.setVisible(isNetworkAvailable);
+            menu.findItem(R.id.menu_search_imdb).setVisible(isNetworkAvailable && sharedPreferences.getBoolean("search_on_imdb_menu_enabled", true));
+            menu.findItem(R.id.menu_search_fileaffinity).setVisible(isNetworkAvailable && sharedPreferences.getBoolean("search_on_fileaffinity_menu_enabled", true));
+            menu.findItem(R.id.menu_search_youtube).setVisible(isNetworkAvailable && sharedPreferences.getBoolean("search_on_youtube_menu_enabled", true));
+            menu.findItem(R.id.menu_search_google).setVisible(isNetworkAvailable && sharedPreferences.getBoolean("search_on_google_menu_enabled", true));
+            menu.findItem(R.id.menu_search_epg).setVisible(isNetworkAvailable && sharedPreferences.getBoolean("search_epg_menu_enabled", true));
         }
     }
 
@@ -734,6 +724,49 @@ public class MenuUtils {
             Intent intent = new Intent(activity, PlayRecordingActivity.class);
             intent.putExtra("dvrId", dvrId);
             activity.startActivity(intent);
+        }
+        return true;
+    }
+
+    public boolean handleMenuSearchYoutube(String title) {
+        Activity activity = this.activity.get();
+        if (activity == null) {
+            Timber.d("Weak reference to activity is null");
+            return false;
+        }
+        try {
+            String url = URLEncoder.encode(title, "utf-8");
+            // Search for the given title using the installed youtube application
+            Intent intent = new Intent(Intent.ACTION_SEARCH, Uri.parse("vnd.youtube:"));
+            intent.putExtra("query", url);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+            PackageManager packageManager = activity.getPackageManager();
+            if (packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY).isEmpty()) {
+                // No app is installed, fall back to the website version
+                intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse("https://www.youtube.com/results?search_query=" + url));
+            }
+            activity.startActivity(intent);
+        } catch (UnsupportedEncodingException e) {
+            // NOP
+        }
+        return true;
+    }
+
+    public boolean handleMenuSearchGoogle(String title) {
+        Activity activity = this.activity.get();
+        if (activity == null) {
+            Timber.d("Weak reference to activity is null");
+            return false;
+        }
+        try {
+            String url = URLEncoder.encode(title, "utf-8");
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse("https://www.google.com/search?q=" + url));
+            activity.startActivity(intent);
+        } catch (UnsupportedEncodingException e) {
+            // NOP
         }
         return true;
     }

@@ -223,6 +223,12 @@ public class TimerRecordingListFragment extends BaseFragment implements Recycler
                 case R.id.menu_search_fileaffinity:
                     return menuUtils.handleMenuSearchFileAffinityWebsite(timerRecording.getTitle());
 
+                case R.id.menu_search_youtube:
+                    return menuUtils.handleMenuSearchYoutube(timerRecording.getTitle());
+
+                case R.id.menu_search_google:
+                    return menuUtils.handleMenuSearchGoogle(timerRecording.getTitle());
+
                 case R.id.menu_search_epg:
                     return menuUtils.handleMenuSearchEpgSelection(timerRecording.getTitle());
 
