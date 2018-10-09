@@ -112,6 +112,7 @@ public class MainApplication extends Application implements BillingProcessor.IBi
 
     private void initBilling() {
         billingProcessor = new BillingProcessor(this, BillingUtils.getPublicKey(this), this);
+        billingProcessor.initialize();
         if (!BillingProcessor.isIabServiceAvailable(this)) {
             Timber.d("Billing not available");
         } else {
