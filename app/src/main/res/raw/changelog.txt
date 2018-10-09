@@ -1,19 +1,21 @@
 $ 2.0.0
   % VERSION 2.0.0
-  _ 17.09.2018
+  _ 09.10.2018
     * Some UI changes according to the material design guidelines (popup menus, new navigation menu and icons)
     * Channels, recordings and epg data are now stored in a database
     * Epg data will be periodically fetched in the background
     * Server profiles are now used as a default (The old transcoding profiles were removed)
-    * Add notifications for programs (Only available in the unlocked version)
-    * Added internal player to stream live TV and recordings (Experimental and only available in the unlocked version)
-    * Added popup menu to directly add and then edit a recording (Only available in the unlocked version)
-    * Added popup menu to search program details on fileaffinity.com
-    * Added option to hide duplicate scheduled recordings
+    * Create notifications for programs (Only available in the unlocked version)
+    * New internal player to stream live TV and recordings (Experimental and only available in the unlocked version)
+    * New popup menu to directly add and then edit a recording (Only available in the unlocked version)
+    * New popup menu to search program details on the fileaffinity website
+    * New popup menus to search program details on google and youtube (Only available in the unlocked version)
+    * New option to hide duplicate scheduled recordings
+    * New options to hide certain popup menu items
     * Updated Spanish translation
-    * Added options to hide certain popup menu items
-    * Replaced crash reporting library TracePot with Crashlytics (enabled by default in the advanced settings)
-    * Added Answers to gather anonymous user statistics (disabled by default in the advanced settings)
+    * Updated Dutch translation
+    * Crashlytics is used in favour of the previous crash reporting library TracePot (enabled by default in the advanced settings)
+    * Answers is used to gather anonymous user statistics (disabled by default in the advanced settings)
     * Relevant menu items are enabled or disabled based on the network status
     * Complete rewrite of the application code base
 $ 1.9.11
