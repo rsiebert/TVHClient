@@ -77,7 +77,6 @@ public class EpgSyncHandler {
             simpleHtspConnection = null;
         }
         if (epgWorkerHandler != null) {
-            epgWorkerHandler.stop();
             epgWorkerHandler = null;
         }
         Timber.d("Connection to server closed");
