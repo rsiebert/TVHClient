@@ -34,7 +34,7 @@ public class EpgDataUpdateWorker extends Worker {
         // the server exists. If not then a reconnect will be performed.
         // Then call the service again with the desired action.
         EpgSyncIntentService.enqueueWork(
-                getApplicationContext(), new Intent());
+                getApplicationContext(), new Intent().setAction("getStatus"));
 
         // Wait 30 seconds
         try {
