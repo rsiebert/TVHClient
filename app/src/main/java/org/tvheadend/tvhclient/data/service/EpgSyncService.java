@@ -39,6 +39,7 @@ public class EpgSyncService extends Service {
         Timber.d("Received start command");
         if (!epgSyncHandler.isConnected()) {
             Timber.d("Not connected to server");
+            epgSyncHandler.stop();
             epgSyncHandler.connect();
         } else {
             Timber.d("Connected to server, passing intent to epg sync task");
