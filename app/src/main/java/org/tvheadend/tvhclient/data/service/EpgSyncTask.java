@@ -1468,10 +1468,17 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         message.put("clientname", "TVHClient");
         message.put("clientversion", BuildConfig.VERSION_NAME);
 
+        HtspMessage response = null;
         try {
-            dispatcher.sendMessage(message);
+            response = dispatcher.sendMessage(message, connectionTimeout);
         } catch (HtspNotConnectedException e) {
             Timber.e("Failed to send getStatus - not connected", e);
+            sendEpgSyncStatusMessage(ServiceStatusReceiver.State.CLOSED,
+                    "Not connected to server", null);
+        }
+        if (response == null) {
+            sendEpgSyncStatusMessage(ServiceStatusReceiver.State.CLOSED,
+                    "Not connected to server", null);
         }
     }
 
