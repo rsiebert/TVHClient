@@ -66,7 +66,7 @@ public class EpgSyncHandler {
     public void stop() {
         Timber.d("Closing connection to server");
 
-        if (epgSyncTask != null) {
+        if (epgSyncTask != null && simpleHtspConnection != null) {
             simpleHtspConnection.removeMessageListener(epgSyncTask);
             simpleHtspConnection.removeConnectionListener(epgWorkerHandler);
             simpleHtspConnection.removeAuthenticationListener(epgSyncTask);
