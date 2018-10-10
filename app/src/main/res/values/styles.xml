@@ -3,62 +3,82 @@
 
     <!-- Font for the title texts in various screens -->
     <style name="TitleFont.Light" parent="@android:style/TextAppearance.Large">
-        <item name="android:textColor">#ce000000</item>
+        <item name="android:textColor">@color/title_text_light</item>
         <item name="android:textSize">16sp</item>
     </style>
 
     <style name="TitleFont.Dark" parent="TitleFont.Light">
-        <item name="android:textColor">#ceffffff</item>
+        <item name="android:textColor">@color/title_text_dark</item>
     </style>
 
     <!-- Font for the subtitles in various screens -->
     <style name="SubtitleFont.Light" parent="@android:style/TextAppearance.Medium">
-        <item name="android:textColor">#ac000000</item>
+        <item name="android:textColor">@color/subtitle_text_light</item>
         <item name="android:textSize">14sp</item>
     </style>
 
     <style name="SubtitleFont.Dark" parent="SubtitleFont.Light">
-        <item name="android:textColor">#acffffff</item>
+        <item name="android:textColor">@color/subtitle_text_dark</item>
     </style>
 
     <!-- Font for the content in various screens -->
     <style name="ContentFont.Light" parent="@android:style/TextAppearance.Medium">
-        <item name="android:textColor">#7c000000</item>
+        <item name="android:textColor">@color/content_text_light</item>
         <item name="android:textSize">14sp</item>
     </style>
 
     <style name="ContentFont.Dark" parent="ContentFont.Light">
-        <item name="android:textColor">#7cffffff</item>
+        <item name="android:textColor">@color/content_text_dark</item>
     </style>
 
     <!-- Font for the program title in the program guide screen -->
     <style name="ProgramGuideTimelineFont.Light" parent="@android:style/TextAppearance.Small">
-        <item name="android:textColor">#ce000000</item>
+        <item name="android:textColor">@color/title_text_light</item>
         <item name="android:textSize">14sp</item>
     </style>
 
     <style name="ProgramGuideTimelineFont.Dark" parent="ProgramGuideTimelineFont.Light">
-        <item name="android:textColor">#ceffffff</item>
+        <item name="android:textColor">@color/title_text_dark</item>
     </style>
 
     <!-- Font for the program title in the program guide screen -->
     <style name="ProgramGuideTitleFont.Light" parent="@android:style/TextAppearance.Small">
-        <item name="android:textColor">#ac000000</item>
+        <item name="android:textColor">@color/subtitle_text_light</item>
         <item name="android:textSize">13sp</item>
     </style>
 
     <style name="ProgramGuideTitleFont.Dark" parent="ProgramGuideTitleFont.Light">
-        <item name="android:textColor">#acffffff</item>
+        <item name="android:textColor">@color/subtitle_text_dark</item>
     </style>
 
     <!-- Font for the additional information in the program guide screen -->
     <style name="ProgramGuideContentFont.Light" parent="@android:style/TextAppearance.Small">
-        <item name="android:textColor">#7c000000</item>
+        <item name="android:textColor">@color/content_text_light</item>
         <item name="android:textSize">11sp</item>
     </style>
 
     <style name="ProgramGuideContentFont.Dark" parent="ProgramGuideContentFont.Light">
-        <item name="android:textColor">#7cffffff</item>
+        <item name="android:textColor">@color/content_text_dark</item>
+    </style>
+
+    <!-- Font for the title texts in various screens -->
+    <style name="PlayerTitleFont.Light" parent="@android:style/TextAppearance.Large">
+        <item name="android:textColor">@color/title_text_dark</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="PlayerTitleFont.Dark" parent="TitleFont.Light">
+        <item name="android:textColor">@color/title_text_light</item>
+    </style>
+
+    <!-- Font for the subtitles in various screens -->
+    <style name="PlayerSubtitleFont.Light" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textColor">@color/subtitle_text_dark</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="PlayerSubtitleFont.Dark" parent="SubtitleFont.Light">
+        <item name="android:textColor">@color/subtitle_text_light</item>
     </style>
 
     <style name="spinnerItemStyle">
@@ -66,10 +86,10 @@
         <item name="android:textSize">14sp</item>
     </style>
     <style name="spinnerItemStyle.Light" parent="spinnerItemStyle">
-        <item name="android:textColor">#7c000000</item>
+        <item name="android:textColor">@color/content_text_light</item>
     </style>
     <style name="spinnerItemStyle.Dark" parent="spinnerItemStyle.Light">
-        <item name="android:textColor">#7cffffff</item>
+        <item name="android:textColor">@color/content_text_dark</item>
     </style>
 
     <style name="spinnerDropDownItemStyle">
@@ -77,10 +97,10 @@
         <item name="android:textSize">14sp</item>
     </style>
     <style name="spinnerDropDownItemStyle.Light" parent="spinnerDropDownItemStyle">
-        <item name="android:textColor">#7c000000</item>
+        <item name="android:textColor">@color/content_text_light</item>
     </style>
     <style name="spinnerDropDownItemStyle.Dark" parent="spinnerDropDownItemStyle.Light">
-        <item name="android:textColor">#7cffffff</item>
+        <item name="android:textColor">@color/content_text_dark</item>
     </style>
 
     <!-- Styles that will be used for the dark holo theme -->
@@ -125,6 +145,8 @@
         <item name="ProgramGuideTimelineFont">@style/ProgramGuideTimelineFont.Dark</item>
         <item name="ProgramGuideTitleFont">@style/ProgramGuideTitleFont.Dark</item>
         <item name="ProgramGuideContentFont">@style/ProgramGuideContentFont.Dark</item>
+        <item name="PlayerTitleFont">@style/PlayerTitleFont.Dark</item>
+        <item name="PlayerSubtitleFont">@style/PlayerSubtitleFont.Dark</item>
 
         <item name="fab_background_color">@color/fab_background_color_dark</item>
 
@@ -200,6 +222,8 @@
         <item name="ProgramGuideTimelineFont">@style/ProgramGuideTimelineFont.Light</item>
         <item name="ProgramGuideTitleFont">@style/ProgramGuideTitleFont.Light</item>
         <item name="ProgramGuideContentFont">@style/ProgramGuideContentFont.Light</item>
+        <item name="PlayerTitleFont">@style/PlayerTitleFont.Light</item>
+        <item name="PlayerSubtitleFont">@style/PlayerSubtitleFont.Light</item>
 
         <item name="fab_background_color">@color/fab_background_color_light</item>
 

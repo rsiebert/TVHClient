@@ -4,8 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="bottom"
-    android:background="#CC000000"
-    android:orientation="vertical">
+    android:background="#CC000000">
 
     <ImageView
         android:id="@+id/exo_channel_icon"
@@ -20,6 +19,7 @@
 
     <TextView
         android:id="@+id/exo_channel_name"
+        style="?attr/PlayerTitleFont"
         android:layout_width="70dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -30,6 +30,7 @@
 
     <TextView
         android:id="@+id/exo_program_title"
+        style="?attr/PlayerTitleFont"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -43,6 +44,7 @@
 
     <TextView
         android:id="@+id/exo_program_subtitle"
+        style="?attr/PlayerSubtitleFont"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -55,6 +57,7 @@
 
     <TextView
         android:id="@+id/exo_next_program_title"
+        style="?attr/PlayerSubtitleFont"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -71,7 +74,7 @@
         style="@style/ExoMediaButton.Rewind"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="48dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:contentDescription="@null"

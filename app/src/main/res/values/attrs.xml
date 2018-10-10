@@ -34,6 +34,8 @@
     <attr name="ProgramGuideTimelineFont" format="reference" />
     <attr name="ProgramGuideTitleFont" format="reference" />
     <attr name="ProgramGuideContentFont" format="reference" />
+    <attr name="PlayerTitleFont" format="reference" />
+    <attr name="PlayerSubtitleFont" format="reference" />
 
     <attr name="fab_background_color" format="reference" />
 
