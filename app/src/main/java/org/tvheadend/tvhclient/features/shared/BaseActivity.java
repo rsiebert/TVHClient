@@ -74,6 +74,11 @@ public abstract class BaseActivity extends AppCompatActivity implements NetworkS
             if (!isNetworkAvailable) {
                 Timber.d("Network changed from offline to online, starting service");
                 startService(new Intent(this, EpgSyncService.class));
+            } else {
+                Timber.d("Network still active, pinging server");
+                Intent intent = new Intent(this, EpgSyncService.class);
+                intent.setAction("getStatus");
+                startService(intent);
             }
         } else {
             Timber.d("Network is not available anymore, stopping service");
@@ -101,8 +106,16 @@ public abstract class BaseActivity extends AppCompatActivity implements NetworkS
 
     @Override
     public void onEpgTaskStateChanged(EpgSyncTaskState state) {
-        Timber.d("Epg task state changed, message is " + state.getMessage());
+        Timber.d("Epg task state changed to " + state.getState() + ", message is " + state.getMessage());
         switch (state.getState()) {
+            case CLOSED:
+                if (getCurrentFocus() != null) {
+                    Snackbar.make(getCurrentFocus(), state.getMessage(), Snackbar.LENGTH_SHORT).show();
+                }
+                stopService(new Intent(this, EpgSyncService.class));
+                startService(new Intent(this, EpgSyncService.class));
+                break;
+
             case FAILED:
                 if (getCurrentFocus() != null) {
                     Snackbar.make(getCurrentFocus(), state.getMessage(), Snackbar.LENGTH_SHORT).show();
