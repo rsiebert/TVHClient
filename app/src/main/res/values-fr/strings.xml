@@ -377,7 +377,7 @@
     <string name="pref_enable_usage_statistics">Envois des statistiques anonymisées</string>
     <string name="pref_enable_usage_statistics_sum">Ce rapport contient des informations au sujet de services Google et de quelles fonctionnalitées de l\'application sont disponibles pour l\'utilisateur. Ces informations sont aussi utilisées pour améliorer la stabilité et l\'expérience utilisateur.</string>
     <string name="pref_epg_sync_duration">Synchronisation des durées des programmes</string>
-    <string name="pref_epg_sync_duration_sum">Quantité du guid des programmes qui doit être chargé depuis le serveur.</string>
+    <string name="pref_epg_sync_duration_sum">Quantité du guide des programmes qui doit être chargé depuis le serveur.</string>
     <string name="error_loading_program_details">Impossible de charger les détails du programme</string>
     <string name="error_loading_recording_details">Impossible de charger les détails de l\'enregistrement</string>
     <string name="search_results">Résultat de la recherche</string>
