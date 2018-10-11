@@ -365,7 +365,10 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
      * @param msg The message with the new tag data
      */
     private void handleTagAdd(HtspMessage msg) {
-        ChannelTag tag = EpgSyncUtils.convertMessageToChannelTagModel(new ChannelTag(), msg, appRepository.getChannelData().getItems());
+        // During initial sync no channels are yet saved. So use the temporarily
+        // stored channels to calculate the channel count for the channel tag
+        List<Channel> channels = initialSyncCompleted ? appRepository.getChannelData().getItems() : pendingChannelOps;
+        ChannelTag tag = EpgSyncUtils.convertMessageToChannelTagModel(new ChannelTag(), msg, channels);
         tag.setConnectionId(connection.getId());
         appRepository.getChannelTagData().addItem(tag);
         // Get the tag id and all channel ids of the tag so that
@@ -391,7 +394,10 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
             Timber.d("Could not find a channel tag with id " + msg.getInteger("tagId") + " in the database");
             return;
         }
-        List<Channel> channels = appRepository.getChannelData().getItems();
+
+        // During initial sync no channels are yet saved. So use the temporarily
+        // stored channels to calculate the channel count for the channel tag
+        List<Channel> channels = initialSyncCompleted ? appRepository.getChannelData().getItems() : pendingChannelOps;
         ChannelTag updatedTag = EpgSyncUtils.convertMessageToChannelTagModel(tag, msg, channels);
         appRepository.getChannelTagData().updateItem(updatedTag);
         // Remove all entries of this tag from the database before
