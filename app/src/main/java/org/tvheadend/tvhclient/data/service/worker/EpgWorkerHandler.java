@@ -18,13 +18,15 @@ import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 import timber.log.Timber;
 
-public class EpgWorkerHandler implements HtspConnection.Listener {
+public class EpgWorkerHandler implements HtspConnection.Listener, SharedPreferences.OnSharedPreferenceChangeListener {
 
-    private final String REQUEST_TAG = "tvhclient_worker";
+    private final String WORKER_TAG = "tvhclient_worker";
     private final Context context;
 
     public EpgWorkerHandler(Context context) {
         this.context = context;
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        sharedPreferences.registerOnSharedPreferenceChangeListener(this);
     }
 
     @Override
@@ -66,14 +68,14 @@ public class EpgWorkerHandler implements HtspConnection.Listener {
         PeriodicWorkRequest updateWorkRequest =
                 new PeriodicWorkRequest.Builder(EpgDataUpdateWorker.class, time, TimeUnit.SECONDS)
                         .setConstraints(constraints)
-                        .addTag(REQUEST_TAG)
+                        .addTag(WORKER_TAG)
                         .build();
 
         Timber.d("Epg data removal worker interval is 1 day");
         PeriodicWorkRequest removalWorkRequest =
                 new PeriodicWorkRequest.Builder(EpgDataRemovalWorker.class, 1, TimeUnit.DAYS)
                         .setConstraints(constraints)
-                        .addTag(REQUEST_TAG)
+                        .addTag(WORKER_TAG)
                         .build();
 
         Timber.d("Enqueuing periodic background workers");
@@ -81,5 +83,17 @@ public class EpgWorkerHandler implements HtspConnection.Listener {
         WorkManager.getInstance().enqueueUniquePeriodicWork("remove_outdated_epg", ExistingPeriodicWorkPolicy.KEEP, removalWorkRequest);
 
         Timber.d("Finished starting background workers");
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+        Timber.d("Preference has changed");
+        switch (key) {
+            case "epg_max_time":
+                Timber.d("Epg max time preference has changed, restarting workers");
+                WorkManager.getInstance().cancelAllWorkByTag(WORKER_TAG);
+                startBackgroundWorkers();
+                break;
+        }
     }
 }
