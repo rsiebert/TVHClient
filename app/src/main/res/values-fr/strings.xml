@@ -66,7 +66,7 @@
     <string name="cancel_add_recording">Annuler l\'ajout d\'un nouvel enregistrement? Toutes les valeurs seront perdues.</string>
     <string name="cancel_edit_recording">Annuler l\'édition de l\'enregistrement existant? Toutes les valeurs seront perdues.</string>
     <string name="activate_recording">Activer un enregistrement</string>
-    <string name="select">Séléctonner</string>
+    <string name="select">Séléctionner</string>
 
     <string name="pref_manage_connections">Gestions des connexions</string>
     <string name="pref_manage_connections_sum">Choisir votre connexion active au serveur TVHeadend ou ajouter, éditer ou effacer des connexions.</string>
@@ -349,7 +349,7 @@
     <string name="received_playback_information">Informations pour le lancement du programme reçu du serveur</string>
     <string name="starting_playback">Début du programme</string>
     <string name="connection_failed">Erreur de connection</string>
-    <string name="failed_connecting_to_server">Impossible de se connecter au serveur.L\'adresse IP, le nom du serveur et le port sont-ils corrects? Un firewall bloquerait-il le port?</string>
+    <string name="failed_connecting_to_server">Impossible de se connecter au serveur. L\'adresse IP, le nom du serveur et le port sont-ils corrects? Un firewall bloquerait-il le port?</string>
     <string name="failed_opening_socket">Erreur à l\'ouverture du port vers le serveur</string>
     <string name="failed_during_connection_attempt">Erreur lors du test de connection au serveur</string>
     <string name="failed_to_resolve_address">Erreur lors de la résolution de l\'adresse du serveur</string>
@@ -375,7 +375,7 @@
     <string name="pref_enable_crash_reports">Envois un rapport de crash anonymisé</string>
     <string name="pref_enable_crash_reports_sum">Le rapport contient des informations qui nous aide a améliorer la stabilité et l\'expérience utilisateur de l\'application.</string>
     <string name="pref_enable_usage_statistics">Envois des statistiques anonymisées</string>
-    <string name="pref_enable_usage_statistics_sum">Ce rapport contient des informations au sujet de services Google et de quelles fonctionnalitées de l\'application sont disponibles pour l'utilisateur. Ces informations sont aussi utilisées pour améliorer la stabilité et l\'expérience utilisateur.</string>
+    <string name="pref_enable_usage_statistics_sum">Ce rapport contient des informations au sujet de services Google et de quelles fonctionnalitées de l\'application sont disponibles pour l\'utilisateur. Ces informations sont aussi utilisées pour améliorer la stabilité et l\'expérience utilisateur.</string>
     <string name="pref_epg_sync_duration">Synchronisation des durées des programmes</string>
     <string name="pref_epg_sync_duration_sum">Quantité du guid des programmes qui doit être chargé depuis le serveur.</string>
     <string name="error_loading_program_details">Impossible de charger les détails du programme</string>
