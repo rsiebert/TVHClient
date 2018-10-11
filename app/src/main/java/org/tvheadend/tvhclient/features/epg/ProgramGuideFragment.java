@@ -320,6 +320,9 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
                 case R.id.menu_play:
                     return menuUtils.handleMenuPlayChannel(program.getChannelId());
 
+                case R.id.menu_cast:
+                    return menuUtils.handleMenuCast("channelId", program.getChannelId());
+
                 case R.id.menu_add_notification:
                     return menuUtils.handleMenuAddNotificationSelection(program);
 
