@@ -732,6 +732,29 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
                 }
             }
         }
+
+        addMissingPlaybackProfileIfNotExists("htsp");
+        addMissingPlaybackProfileIfNotExists("matroska");
+        addMissingPlaybackProfileIfNotExists("pass");
+    }
+
+    private void addMissingPlaybackProfileIfNotExists(String name) {
+        boolean profileExists = false;
+
+        String[] profileNames = appRepository.getServerProfileData().getPlaybackProfileNames();
+        for (String profileName : profileNames) {
+            if (profileName.equals(name)) {
+                Timber.d("Default playback profile " + name + " exists already");
+                profileExists = true;
+            }
+        }
+        if (!profileExists) {
+            Timber.d("Default playback profile " + name + " does not exist, adding manually");
+            ServerProfile serverProfile = new ServerProfile();
+            serverProfile.setName(name);
+            serverProfile.setType("playback");
+            appRepository.getServerProfileData().addItem(serverProfile);
+        }
     }
 
     private void handleDvrConfigs(HtspMessage message) {
