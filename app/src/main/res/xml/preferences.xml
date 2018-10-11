@@ -33,10 +33,6 @@
             android:summary="@string/pref_profiles_sum"
             android:title="@string/pref_profiles" />
         <PreferenceScreen
-            android:key="casting"
-            android:summary="@string/pref_casting_sum"
-            android:title="@string/pref_casting" />
-        <PreferenceScreen
             android:key="playback"
             android:summary="Choose how live TV programs or recordings are played."
             android:title="Playback" />
@@ -47,9 +43,6 @@
             android:key="unlocker"
             android:summary="@string/pref_unlocker_sum"
             android:title="@string/pref_unlocker" />
-        <PreferenceScreen
-            android:key="notifications"
-            android:title="@string/pref_notifications" />
         <Preference
             android:key="download_directory"
             android:summary="@string/pref_download_directory_sum"

@@ -49,6 +49,25 @@
             android:title="@string/pref_epg_sync_duration" />
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="@string/pref_notifications">
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="notifications_enabled"
+            android:summary="@string/pref_show_notifications_sum"
+            android:title="@string/pref_show_notifications" />
+
+        <ListPreference
+            android:name="@string/pref_show_notification_offset"
+            android:defaultValue="0"
+            android:dependency="notifications_enabled"
+            android:dialogTitle="@string/pref_show_notification_offset"
+            android:entries="@array/pref_show_notification_offset_list_display"
+            android:entryValues="@array/pref_show_notification_offset_list"
+            android:key="notification_lead_time"
+            android:summary="@string/pref_show_notification_offset_sum"
+            android:title="@string/pref_show_notification_offset" />
+    </PreferenceCategory>
+
     <PreferenceCategory android:title="@string/pref_misc">
         <Preference
             android:key="clear_search_history"

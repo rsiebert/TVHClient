@@ -77,8 +77,8 @@
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="show_recording_file_status_enabled"
-            android:title="@string/pref_show_recording_file_status"
-            android:summary="@string/pref_show_recording_file_status_sum"/>
+            android:summary="@string/pref_show_recording_file_status_sum"
+            android:title="@string/pref_show_recording_file_status" />
     </PreferenceCategory>
 
     <PreferenceCategory
@@ -102,7 +102,22 @@
             android:summary="@string/pref_epg_max_days_sum"
             android:title="@string/pref_epg_max_days" />
     </PreferenceCategory>
+    <PreferenceCategory
+        android:summary="@string/pref_casting_sum"
+        android:title="@string/pref_casting">
 
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="casting_minicontroller_enabled"
+            android:summary="@string/pref_show_cast_minicontroller_sum"
+            android:title="@string/pref_show_cast_minicontroller" />
+
+        <!--         <CheckBoxPreference -->
+        <!--             android:defaultValue="false" -->
+        <!--             android:key="pref_show_cast_program_duration" -->
+        <!--             android:summary="@string/pref_pref_show_cast_program_duration_sum" -->
+        <!--             android:title="@string/pref_pref_show_cast_program_duration" /> -->
+    </PreferenceCategory>
     <PreferenceCategory
         android:summary="@string/pref_genre_colors_sum"
         android:title="@string/pref_genre_colors">

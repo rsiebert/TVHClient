@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.provider.SearchRecentSuggestions;
 import android.support.design.widget.Snackbar;
@@ -27,20 +28,22 @@ import timber.log.Timber;
 
 public class SettingsAdvancedFragment extends BasePreferenceFragment implements Preference.OnPreferenceClickListener, SharedPreferences.OnSharedPreferenceChangeListener, DatabaseClearedCallback {
 
+    private CheckBoxPreference notificationsEnabledPreference;
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences_advanced);
         toolbarInterface.setTitle(getString(R.string.pref_advanced_settings));
 
-        Preference prefSendLogfile = findPreference("send_debug_logfile_enabled");
-        Preference prefClearDatabase = findPreference("clear_database");
-        Preference clearSearchHistoryPreference = findPreference("clear_search_history");
-        Preference clearIconCachePreference = findPreference("clear_icon_cache");
-        prefSendLogfile.setOnPreferenceClickListener(this);
-        prefClearDatabase.setOnPreferenceClickListener(this);
-        clearIconCachePreference.setOnPreferenceClickListener(this);
-        clearSearchHistoryPreference.setOnPreferenceClickListener(this);
+        findPreference("send_debug_logfile_enabled").setOnPreferenceClickListener(this);
+        findPreference("clear_database").setOnPreferenceClickListener(this);
+        findPreference("clear_search_history").setOnPreferenceClickListener(this);
+        findPreference("clear_icon_cache").setOnPreferenceClickListener(this);
+
+        notificationsEnabledPreference = (CheckBoxPreference) findPreference("notifications_enabled");
+        notificationsEnabledPreference.setOnPreferenceClickListener(this);
+        notificationsEnabledPreference.setEnabled(isUnlocked);
     }
 
     @Override
@@ -70,8 +73,20 @@ public class SettingsAdvancedFragment extends BasePreferenceFragment implements 
             case "clear_icon_cache":
                 handlePreferenceClearIconCacheSelected();
                 break;
+            case "notifications":
+                handlePreferenceNotificationsSelected();
+                break;
         }
         return true;
+    }
+
+    private void handlePreferenceNotificationsSelected() {
+        if (!isUnlocked) {
+            if (getView() != null) {
+                Snackbar.make(getView(), R.string.feature_not_available_in_free_version, Snackbar.LENGTH_SHORT).show();
+                notificationsEnabledPreference.setChecked(false);
+            }
+        }
     }
 
     private void handlePreferenceClearDatabaseSelected() {

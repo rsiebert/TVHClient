@@ -78,14 +78,8 @@ public class SettingsActivity extends AppCompatActivity implements ToolbarInterf
             case "user_interface":
                 fragment = new SettingsUserInterfaceFragment();
                 break;
-            case "notifications":
-                fragment = new SettingsNotificationFragment();
-                break;
             case "profiles":
                 fragment = new SettingsProfilesFragment();
-                break;
-            case "casting":
-                fragment = new SettingsCastingFragment();
                 break;
             case "playback":
                 fragment = new SettingsPlaybackFragment();

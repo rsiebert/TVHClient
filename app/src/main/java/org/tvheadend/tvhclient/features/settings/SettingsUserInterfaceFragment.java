@@ -28,6 +28,7 @@ import org.tvheadend.tvhclient.R;
 public class SettingsUserInterfaceFragment extends BasePreferenceFragment implements Preference.OnPreferenceClickListener {
 
     private CheckBoxPreference programArtworkEnabledPreference;
+    private CheckBoxPreference castMiniControllerPreference;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -39,6 +40,8 @@ public class SettingsUserInterfaceFragment extends BasePreferenceFragment implem
 
         programArtworkEnabledPreference = (CheckBoxPreference) findPreference("program_artwork_enabled");
         programArtworkEnabledPreference.setOnPreferenceClickListener(this);
+        castMiniControllerPreference = (CheckBoxPreference) findPreference("casting_minicontroller_enabled");
+        castMiniControllerPreference.setOnPreferenceClickListener(this);
     }
 
     @Override
@@ -46,6 +49,9 @@ public class SettingsUserInterfaceFragment extends BasePreferenceFragment implem
         switch (preference.getKey()) {
             case "program_artwork_enabled":
                 handlePreferenceShowArtworkSelected();
+                break;
+            case "casting":
+                handlePreferenceCastingSelected();
                 break;
         }
         return true;
@@ -57,6 +63,18 @@ public class SettingsUserInterfaceFragment extends BasePreferenceFragment implem
                 Snackbar.make(getView(), R.string.feature_not_available_in_free_version, Snackbar.LENGTH_SHORT).show();
             }
             programArtworkEnabledPreference.setChecked(false);
+        }
+    }
+
+    private void handlePreferenceCastingSelected() {
+        if (getView() != null) {
+            if (htspVersion < 16) {
+                Snackbar.make(getView(), R.string.feature_not_supported_by_server, Snackbar.LENGTH_SHORT).show();
+                castMiniControllerPreference.setChecked(false);
+            } else if (!isUnlocked) {
+                Snackbar.make(getView(), R.string.feature_not_available_in_free_version, Snackbar.LENGTH_SHORT).show();
+                castMiniControllerPreference.setChecked(false);
+            }
         }
     }
 }

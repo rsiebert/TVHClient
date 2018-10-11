@@ -40,9 +40,7 @@ public class SettingsFragment extends BasePreferenceFragment implements Preferen
 
         findPreference("list_connections").setOnPreferenceClickListener(this);
         findPreference("user_interface").setOnPreferenceClickListener(this);
-        findPreference("notifications").setOnPreferenceClickListener(this);
         findPreference("profiles").setOnPreferenceClickListener(this);
-        findPreference("casting").setOnPreferenceClickListener(this);
         findPreference("playback").setOnPreferenceClickListener(this);
         findPreference("unlocker").setOnPreferenceClickListener(this);
         findPreference("advanced").setOnPreferenceClickListener(this);
@@ -122,17 +120,11 @@ public class SettingsFragment extends BasePreferenceFragment implements Preferen
             case "light_theme_enabled":
                 handlePreferenceThemeSelected();
                 break;
-            case "notifications":
-                handlePreferenceNotificationsSelected();
-                break;
             case "profiles":
                 handlePreferenceProfilesSelected();
                 break;
             case "playback":
                 handlePreferencePlaybackSelected();
-                break;
-            case "casting":
-                handlePreferenceCastingSelected();
                 break;
             case "advanced":
                 showSelectedSettingsFragment("advanced");
@@ -157,34 +149,12 @@ public class SettingsFragment extends BasePreferenceFragment implements Preferen
                 .startActivities();
     }
 
-    private void handlePreferenceNotificationsSelected() {
-        if (!isUnlocked) {
-            if (getView() != null) {
-                Snackbar.make(getView(), R.string.feature_not_available_in_free_version, Snackbar.LENGTH_SHORT).show();
-            }
-        } else {
-            showSelectedSettingsFragment("notifications");
-        }
-    }
-
     private void handlePreferenceProfilesSelected() {
         if (getView() != null) {
             if (htspVersion < 16) {
                 Snackbar.make(getView(), R.string.feature_not_supported_by_server, Snackbar.LENGTH_SHORT).show();
             } else {
                 showSelectedSettingsFragment("profiles");
-            }
-        }
-    }
-
-    private void handlePreferenceCastingSelected() {
-        if (getView() != null) {
-            if (htspVersion < 16) {
-                Snackbar.make(getView(), R.string.feature_not_supported_by_server, Snackbar.LENGTH_SHORT).show();
-            } else if (!isUnlocked) {
-                Snackbar.make(getView(), R.string.feature_not_available_in_free_version, Snackbar.LENGTH_SHORT).show();
-            } else {
-                showSelectedSettingsFragment("casting");
             }
         }
     }
