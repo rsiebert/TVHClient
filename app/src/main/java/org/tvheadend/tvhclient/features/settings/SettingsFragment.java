@@ -170,14 +170,8 @@ public class SettingsFragment extends BasePreferenceFragment implements Preferen
     }
 
     private void handlePreferenceUnlockerSelected() {
-        /*if (isUnlocked) {
-            if (getView() != null) {
-                Snackbar.make(getView(), getString(R.string.unlocker_already_purchased), Snackbar.LENGTH_SHORT).show();
-            }
-        } else {*/
-            Intent intent = new Intent(activity, UnlockerActivity.class);
-            startActivity(intent);
-        //}
+        Intent intent = new Intent(activity, UnlockerActivity.class);
+        startActivity(intent);
     }
 
     private void handlePreferenceChangelogSelected() {
