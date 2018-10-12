@@ -166,12 +166,12 @@ public class HtspConnection implements Runnable {
             }
 
             if (mSelector == null || !mSelector.isOpen()) {
-                Timber.d("Selector is null or selector is not open");
+                Timber.w("Selector is null or selector is not open");
                 break;
             }
 
             if (mSelector == null) {
-                Timber.d("Selector is null right before getting the selected keys");
+                Timber.e("Selector is null right before getting the selected keys");
             }
 
             Set<SelectionKey> keys = mSelector.selectedKeys();
@@ -230,7 +230,7 @@ public class HtspConnection implements Runnable {
 
             switch (getState()) {
                 case CLOSED:
-                    Timber.d("HTSP Connection thread wrapped up cleanly");
+                    Timber.i("HTSP Connection thread wrapped up cleanly");
                     break;
                 case FAILED:
                     Timber.e("HTSP Connection thread wrapped up upon failure");
@@ -246,11 +246,9 @@ public class HtspConnection implements Runnable {
 
     // Internal Methods
     private void processConnectableSelectionKey(SelectionKey selectionKey) throws IOException {
-        Timber.d("Processing selection key");
         SocketChannel socketChannel = (SocketChannel) selectionKey.channel();
 
         try {
-            Timber.d("Finish the process of connecting a socket channel");
             socketChannel.finishConnect();
         } catch (ConnectException e) {
             Timber.e("Failed to connect to HTSP server address:", e);
@@ -258,7 +256,6 @@ public class HtspConnection implements Runnable {
             return;
         }
 
-        Timber.d("HTSP connection established");
         setState(State.CONNECTED);
     }
 
@@ -358,7 +355,6 @@ public class HtspConnection implements Runnable {
     }
 
     private void setState(final State state) {
-        Timber.d("Setting state " + state);
         lock.lock();
         try {
             this.state = state;
@@ -377,7 +373,7 @@ public class HtspConnection implements Runnable {
     }
 
     private boolean openConnection() throws HtspException {
-        Timber.d("Opening HTSP Connection");
+        Timber.i("Opening HTSP Connection");
 
         lock.lock();
         try {
@@ -432,7 +428,7 @@ public class HtspConnection implements Runnable {
     }
 
     private void closeConnection(State finalState) {
-        Timber.d("Closing HTSP connection, finalState is " + finalState);
+        Timber.d("Closing HTSP connection, final state is " + finalState);
 
         if (isClosedOrClosingOrFailed()) {
             Timber.w("Attempting to close connection while already closed, closing or failed");
@@ -462,7 +458,7 @@ public class HtspConnection implements Runnable {
                     Timber.d("Calling Selector close");
                     mSelector.close();
                 } catch (IOException e) {
-                    Timber.e("Failed to close socket channel:", e);
+                    Timber.w("Failed to close socket channel:", e);
                 } finally {
                     mSelector = null;
                 }
