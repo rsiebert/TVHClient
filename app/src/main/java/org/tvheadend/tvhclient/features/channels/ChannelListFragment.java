@@ -79,7 +79,6 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        Timber.d("start");
 
         if (savedInstanceState != null) {
             selectedListPosition = savedInstanceState.getInt("listPosition", 0);
@@ -105,7 +104,6 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
 
         viewModel = ViewModelProviders.of(activity).get(ChannelViewModel.class);
         viewModel.getChannels().observe(this, channels -> {
-            Timber.d("observe start");
             if (channels != null) {
                 recyclerViewAdapter.addItems(channels);
             }
@@ -123,8 +121,8 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
             if (isDualPane && recyclerViewAdapter.getItemCount() > 0) {
                 showChannelDetails(selectedListPosition);
             }
-            Timber.d("observe end");
         });
+
         // Get all recordings for the given channel to check if it belongs to a certain program
         // so the recording status of the particular program can be updated. This is required
         // because the programs are not updated automatically when recordings change.
@@ -146,8 +144,6 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
                 }
             }
         });
-
-        Timber.d("end");
     }
 
     private void showChannelTagOrChannelCount() {
@@ -369,14 +365,12 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
 
     @Override
     public void onSearchRequested(String query) {
-        Timber.d("Searching for " + query);
         searchQuery = query;
         recyclerViewAdapter.getFilter().filter(query, this);
     }
 
     @Override
     public boolean onSearchResultsCleared() {
-        Timber.d("Clearing search results");
         if (!TextUtils.isEmpty(searchQuery)) {
             Timber.d("Search result not empty, clearing filter and returning true");
             searchQuery = "";

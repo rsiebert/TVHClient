@@ -102,7 +102,6 @@ public class StartupFragment extends Fragment implements EpgSyncStatusCallback {
     }
 
     private void handleStartupProcedure() {
-        Timber.d("start");
 
         if (appRepository.getConnectionData().getItems().size() == 0) {
             Timber.d("No connection available, showing settings");
@@ -157,7 +156,6 @@ public class StartupFragment extends Fragment implements EpgSyncStatusCallback {
 
         stateTextView.setText(stateText);
         detailsTextView.setText(detailsText);
-        Timber.d("end");
     }
 
     @Override

@@ -21,13 +21,11 @@ public class EpgSyncIntentService extends JobIntentService {
     }
 
     public static void enqueueWork(Context context, Intent work) {
-        Timber.d("enqueuing work");
         enqueueWork(context, EpgSyncIntentService.class, 1, work);
     }
 
     @Override
     protected void onHandleWork(@NonNull Intent intent) {
-        Timber.d("start");
         if (!epgSyncHandler.isConnected()) {
             Timber.d("Not connected to server");
             epgSyncHandler.connect();
@@ -35,6 +33,5 @@ public class EpgSyncIntentService extends JobIntentService {
             Timber.d("Connected to server, passing intent to epg sync task");
             epgSyncHandler.handleIntent(intent);
         }
-        Timber.d("end");
     }
 }

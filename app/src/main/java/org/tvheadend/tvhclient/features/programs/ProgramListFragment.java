@@ -342,18 +342,7 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
 
     @Override
     public void onSearchRequested(String query) {
-        Timber.d("Searching for " + query + " on channel " + channelId + ", " + channelName);
         recyclerViewAdapter.getFilter().filter(query, this);
-
-        /*
-        Intent searchIntent = new Intent(activity, SearchActivity.class);
-        searchIntent.setAction(Intent.ACTION_SEARCH);
-        searchIntent.putExtra(SearchManager.QUERY, query);
-        searchIntent.putExtra("type", "programs");
-        searchIntent.putExtra("channelId", channelId);
-        searchIntent.putExtra("channelName", channelName);
-        startActivity(searchIntent);
-        */
     }
 
     @Override

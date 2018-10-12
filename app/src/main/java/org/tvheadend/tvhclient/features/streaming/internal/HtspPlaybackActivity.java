@@ -106,7 +106,6 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         setTheme(MiscUtils.getThemeId(this));
         super.onCreate(savedInstanceState);
-        Timber.d("start");
         setContentView(R.layout.player_overlay_view);
         MiscUtils.setLanguage(this);
 
@@ -134,7 +133,6 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
 
         serverStatus = appRepository.getServerStatusData().getActiveItem();
         serverProfile = appRepository.getServerProfileData().getItemById(serverStatus.getPlaybackServerProfileId());
-        Timber.d("end");
     }
 
     @Override

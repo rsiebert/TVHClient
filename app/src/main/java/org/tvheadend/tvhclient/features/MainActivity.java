@@ -82,7 +82,7 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Wake
     public void onCreate(Bundle savedInstanceState) {
         setTheme(MiscUtils.getThemeId(this));
         super.onCreate(savedInstanceState);
-        Timber.d("start");
+
         setContentView(R.layout.main_activity);
         MiscUtils.setLanguage(this);
         ButterKnife.bind(this);
@@ -157,7 +157,6 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Wake
         navigationDrawer.showConnectionsInDrawerHeader();
         navigationDrawer.startObservingViewModels();
         handleDrawerItemSelected(selectedNavigationMenuId);
-        Timber.d("end");
     }
 
     @Override
@@ -170,7 +169,6 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Wake
 
     @Override
     protected void onResume() {
-        Timber.d("start");
         if (castContext != null) {
             castContext.addCastStateListener(castStateListener);
             castContext.getSessionManager().addSessionManagerListener(castSessionManagerListener, CastSession.class);
@@ -179,7 +177,6 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Wake
             }
         }
         super.onResume();
-        Timber.d("end");
     }
 
     @Override
@@ -317,7 +314,6 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Wake
             fm.commit();
 
         }
-        Timber.d("end");
     }
 
     @Override

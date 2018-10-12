@@ -32,32 +32,26 @@ public abstract class BaseActivity extends AppCompatActivity implements NetworkS
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Timber.d("start");
         isNetworkAvailable = false;
         networkStatusReceiver = new NetworkStatusReceiver(this);
         serviceStatusReceiver = new ServiceStatusReceiver(this);
         snackbarMessageReceiver = new SnackbarMessageReceiver(this);
-        Timber.d("end");
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        Timber.d("start");
         LocalBroadcastManager.getInstance(this).registerReceiver(snackbarMessageReceiver, new IntentFilter(SnackbarMessageReceiver.ACTION));
         LocalBroadcastManager.getInstance(this).registerReceiver(serviceStatusReceiver, new IntentFilter(ServiceStatusReceiver.ACTION));
         registerReceiver(networkStatusReceiver, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
-        Timber.d("end");
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        Timber.d("start");
         LocalBroadcastManager.getInstance(this).unregisterReceiver(snackbarMessageReceiver);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(serviceStatusReceiver);
         unregisterReceiver(networkStatusReceiver);
-        Timber.d("end");
     }
 
     @Override
@@ -70,7 +64,6 @@ public abstract class BaseActivity extends AppCompatActivity implements NetworkS
 
     private void onNetworkAvailabilityChanged(boolean isAvailable) {
         if (isAvailable) {
-            Timber.d("Network is available");
             if (!isNetworkAvailable) {
                 Timber.d("Network changed from offline to online, starting service");
                 startService(new Intent(this, EpgSyncService.class));
@@ -134,12 +127,9 @@ public abstract class BaseActivity extends AppCompatActivity implements NetworkS
 
     @Override
     public void onBackPressed() {
-        Timber.d("Back pressed");
         if (getSupportFragmentManager().getBackStackEntryCount() <= 1) {
-            Timber.d("Back stack < 1, finishing application");
             finish();
         } else {
-            Timber.d("Back stack >= 1, calling super");
             super.onBackPressed();
         }
     }

@@ -52,8 +52,6 @@ import org.tvheadend.tvhclient.utils.MiscUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-import timber.log.Timber;
-
 public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, Drawer.OnDrawerItemClickListener {
 
     // The index for the navigation drawer menus
@@ -80,18 +78,15 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
     private final AppRepository appRepository;
 
     public NavigationDrawer(AppCompatActivity activity, Bundle savedInstanceState, Toolbar toolbar, AppRepository appRepository, NavigationDrawerCallback callback) {
-        Timber.d("start");
         this.activity = activity;
         this.savedInstanceState = savedInstanceState;
         this.toolbar = toolbar;
         this.callback = callback;
         this.isUnlocked = MainApplication.getInstance().isUnlocked();
         this.appRepository = appRepository;
-        Timber.d("end");
     }
 
     public void createHeader() {
-        Timber.d("start");
         headerResult = new AccountHeaderBuilder()
                 .withActivity(activity)
                 .withCompactStyle(true)
@@ -101,11 +96,9 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
                 .withOnAccountHeaderListener(this)
                 .withSavedInstance(savedInstanceState)
                 .build();
-        Timber.d("end");
     }
 
     public void createMenu() {
-        Timber.d("start");
         BadgeStyle badgeStyle = new BadgeStyle()
                 .withColorRes(getResourceIdFromAttr(R.attr.material_drawer_badge));
 
@@ -179,7 +172,6 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
         if (!isUnlocked) {
             result.addItem(extrasItem);
         }
-        Timber.d("end");
     }
 
     private int getResourceIdFromAttr(@AttrRes int attr) {
@@ -281,7 +273,7 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
     }
 
     public void startObservingViewModels() {
-        Timber.d("start");
+
         ChannelViewModel channelViewModel = ViewModelProviders.of(activity).get(ChannelViewModel.class);
         channelViewModel.getNumberOfChannels().observe(activity, count -> result.updateBadge(MENU_CHANNELS, new StringHolder(count + "")));
 
@@ -296,7 +288,6 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
         recordingViewModel.getNumberOfScheduledRecordings().observe(activity, count -> result.updateBadge(MENU_SCHEDULED_RECORDINGS, new StringHolder(count + "")));
         recordingViewModel.getNumberOfFailedRecordings().observe(activity, count -> result.updateBadge(MENU_FAILED_RECORDINGS, new StringHolder(count + "")));
         recordingViewModel.getNumberOfRemovedRecordings().observe(activity, count -> result.updateBadge(MENU_REMOVED_RECORDINGS, new StringHolder(count + "")));
-        Timber.d("end");
     }
 
     public void handleSelection(Fragment fragment) {

@@ -78,19 +78,17 @@ public class EpgWorkerHandler implements HtspConnection.Listener, SharedPreferen
                         .addTag(WORKER_TAG)
                         .build();
 
-        Timber.d("Enqueuing periodic background workers");
         WorkManager.getInstance().enqueueUniquePeriodicWork("update_epg", ExistingPeriodicWorkPolicy.KEEP, updateWorkRequest);
         WorkManager.getInstance().enqueueUniquePeriodicWork("remove_outdated_epg", ExistingPeriodicWorkPolicy.KEEP, removalWorkRequest);
 
-        Timber.d("Finished starting background workers");
+        Timber.d("Started background workers");
     }
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-        Timber.d("Preference has changed");
         switch (key) {
             case "epg_max_time":
-                Timber.d("Epg max time preference has changed, restarting workers");
+                Timber.d("Preference " + key + " has changed, restarting background workers");
                 WorkManager.getInstance().cancelAllWorkByTag(WORKER_TAG);
                 startBackgroundWorkers();
                 break;
