@@ -50,10 +50,7 @@ import javax.inject.Inject;
 import butterknife.ButterKnife;
 import timber.log.Timber;
 
-// TODO Use gmt offset when displaying or editing recordings
 // TODO duplicate programs are sometimes received from the server with different ids and time
-// TODO Translate more strings
-// TODO add more logging for the debug log file
 // TODO what happens when no connection to the server is active and the user presses an action in a notification?
 
 public class MainActivity extends BaseActivity implements ToolbarInterface, WakeOnLanTaskCallback, NavigationDrawerCallback, SearchView.OnQueryTextListener, SearchView.OnSuggestionListener {
@@ -324,17 +321,11 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Wake
             case NavigationDrawer.MENU_STATUS:
             case NavigationDrawer.MENU_INFORMATION:
             case NavigationDrawer.MENU_UNLOCKER:
-                if (mediaRouteMenuItem != null) {
-                    mediaRouteMenuItem.setVisible(false);
-                }
-                MenuItem searchMenuItem = menu.findItem(R.id.menu_search);
-                if (searchMenuItem != null) {
-                    searchMenuItem.setVisible(false);
-                }
-                MenuItem reconnectMenuItem = menu.findItem(R.id.menu_refresh);
-                if (reconnectMenuItem != null) {
-                    reconnectMenuItem.setVisible(false);
-                }
+            case NavigationDrawer.MENU_HELP:
+                // Do not show these menus in one of those fragments
+                mediaRouteMenuItem.setVisible(false);
+                menu.findItem(R.id.menu_search).setVisible(false);
+                menu.findItem(R.id.menu_refresh).setVisible(false);
                 break;
             default:
                 mediaRouteMenuItem.setVisible(isUnlocked);

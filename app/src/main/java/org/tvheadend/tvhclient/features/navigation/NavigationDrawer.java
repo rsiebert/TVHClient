@@ -41,6 +41,7 @@ import org.tvheadend.tvhclient.features.dvr.series_recordings.SeriesRecordingVie
 import org.tvheadend.tvhclient.features.dvr.timer_recordings.TimerRecordingListFragment;
 import org.tvheadend.tvhclient.features.dvr.timer_recordings.TimerRecordingViewModel;
 import org.tvheadend.tvhclient.features.epg.ProgramGuideFragment;
+import org.tvheadend.tvhclient.features.information.HelpFragment;
 import org.tvheadend.tvhclient.features.information.InfoFragment;
 import org.tvheadend.tvhclient.features.information.StatusFragment;
 import org.tvheadend.tvhclient.features.logging.AnswersWrapper;
@@ -64,9 +65,10 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
     private static final int MENU_FAILED_RECORDINGS = 6;
     private static final int MENU_REMOVED_RECORDINGS = 7;
     public static final int MENU_STATUS = 8;
-    public static final int MENU_INFORMATION = 9;
-    private static final int MENU_SETTINGS = 10;
-    public static final int MENU_UNLOCKER = 11;
+    private static final int MENU_SETTINGS = 9;
+    public static final int MENU_UNLOCKER = 10;
+    public static final int MENU_INFORMATION = 11;
+    public static final int MENU_HELP = 12;
 
     private final Bundle savedInstanceState;
     private final AppCompatActivity activity;
@@ -146,32 +148,40 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
         PrimaryDrawerItem extrasItem = new PrimaryDrawerItem()
                 .withIdentifier(MENU_UNLOCKER).withName(R.string.pref_unlocker)
                 .withIcon(getResourceIdFromAttr(R.attr.ic_menu_extras));
+        PrimaryDrawerItem helpItem = new PrimaryDrawerItem()
+                .withIdentifier(MENU_HELP).withName(R.string.help)
+                .withIcon(getResourceIdFromAttr(R.attr.ic_menu_help));
 
-        result = new DrawerBuilder()
-                .withActivity(activity)
+        DrawerBuilder drawerBuilder = new DrawerBuilder();
+        drawerBuilder.withActivity(activity)
                 .withAccountHeader(headerResult)
                 .withToolbar(toolbar)
-                .addDrawerItems(channelItem,
-                        programGuideItem,
-                        new DividerDrawerItem(),
-                        completedRecordingsItem,
-                        scheduledRecordingsItem,
-                        seriesRecordingsItem,
-                        timerRecordingsItem,
-                        failedRecordingsItem,
-                        removedRecordingsItem,
-                        new DividerDrawerItem(),
-                        statusItem,
-                        informationItem,
-                        settingsItem
-                )
                 .withOnDrawerItemClickListener(this)
-                .withSavedInstance(savedInstanceState)
-                .build();
+                .withSavedInstance(savedInstanceState);
 
+        drawerBuilder.addDrawerItems(
+                channelItem,
+                programGuideItem,
+                new DividerDrawerItem(),
+                completedRecordingsItem,
+                scheduledRecordingsItem,
+                seriesRecordingsItem,
+                timerRecordingsItem,
+                failedRecordingsItem,
+                removedRecordingsItem);
         if (!isUnlocked) {
-            result.addItem(extrasItem);
+            drawerBuilder.addDrawerItems(
+                    new DividerDrawerItem(),
+                    extrasItem);
         }
+        drawerBuilder.addDrawerItems(
+                new DividerDrawerItem(),
+                settingsItem,
+                helpItem,
+                informationItem,
+                statusItem);
+
+        result = drawerBuilder.build();
     }
 
     private int getResourceIdFromAttr(@AttrRes int attr) {
@@ -313,6 +323,8 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
             setSelection(MENU_INFORMATION);
         } else if (fragment instanceof UnlockerFragment) {
             setSelection(MENU_UNLOCKER);
+        } else if (fragment instanceof HelpFragment) {
+            setSelection(MENU_HELP);
         }
     }
 
@@ -380,6 +392,11 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
                 AnswersWrapper.getInstance().logContentView(new ContentViewEvent()
                         .putContentName("Unlocker screen"));
                 fragment = new UnlockerFragment();
+                break;
+            case NavigationDrawer.MENU_HELP:
+                AnswersWrapper.getInstance().logContentView(new ContentViewEvent()
+                        .putContentName("Contact screen"));
+                fragment = new HelpFragment();
                 break;
         }
         return fragment;
