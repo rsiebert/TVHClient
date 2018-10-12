@@ -80,6 +80,12 @@ public class UnlockerFragment extends BaseFragment implements FileLoaderCallback
     }
 
     @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        menu.findItem(R.id.menu_purchase).setVisible(!isUnlocked);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
