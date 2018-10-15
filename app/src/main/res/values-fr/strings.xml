@@ -14,11 +14,14 @@
     <string name="details">Détails</string>
     <string name="settings">Paramètres</string>
     <string name="refresh">Rafraichir</string>
+    <string name="reconnect">Reconnecter</string>
     <string name="tags">Etiquettes</string>
     <string name="play">Lancer</string>
+    <string name="cast">Lancer</string>
     <string name="download">Télécharger</string>
     <string name="search">Recherche</string>
     <string name="record_once">Enregistrer</string>
+    <string name="record_once_and_edit">Enregistrer et éditer</string>
     <string name="record_once_custom_profile">Enregistrer avec un profil différent</string>
     <string name="record_series">Enregistrement auto(Autorec)</string>
     <string name="record_stop">Arreter l\'enregistrement</string>
@@ -34,7 +37,7 @@
     <string name="add">Ajouter</string>
     <string name="save">Sauvegarder</string>
     <string name="cancel">Annuler</string>
-	<string name="stop">Stop</string>
+    <string name="stop">Stop</string>
     <string name="set_active">Activer</string>
     <string name="set_not_active">Désactiver</string>
     <string name="edit">Editer</string>
@@ -56,12 +59,14 @@
     <string name="cancel_recording">Voulez-vous vraiment annuler l\'enregistrement \'%s\'?</string>
     <string name="stop_recording">Voulez-vous vraiment arrêter l\'enregistrement \'%s\' en cours ?</string>
     <string name="add_title">Ajouter un titre</string>
+    <string name="add_recording_directory">Répertoire des enregistrements</string>
     <string name="add_name">Ajouter un nom</string>
     <string name="add_recording">Ajouter un nouvel enregistrement</string>
     <string name="edit_recording">Editer un enregistrement</string>
     <string name="cancel_add_recording">Annuler l\'ajout d\'un nouvel enregistrement? Toutes les valeurs seront perdues.</string>
     <string name="cancel_edit_recording">Annuler l\'édition de l\'enregistrement existant? Toutes les valeurs seront perdues.</string>
     <string name="activate_recording">Activer un enregistrement</string>
+    <string name="select">Séléctionner</string>
 
     <string name="pref_manage_connections">Gestions des connexions</string>
     <string name="pref_manage_connections_sum">Choisir votre connexion active au serveur TVHeadend ou ajouter, éditer ou effacer des connexions.</string>
@@ -141,16 +146,18 @@
     <string name="pref_recording_profiles_sum">Choisir un profil que le serveur doit utiliser pour enregistrer une émission programmée.</string>
     <string name="pref_playback_profiles">Profils de lecture</string>
     <string name="pref_playback_profiles_sum">Choisir un profil qui doit utiliser pour lire un enregistrement.</string>
-	<string name="pref_cast_profiles">Profiles de diffusion</string>
+    <string name="pref_cast_profiles">Profiles de diffusion</string>
     <string name="pref_cast_profiles_sum">Sélectionner un serverProfile à utiliser pour diffuser une chaine ou un enregistrement vers un équipement de type chromecast.</string>
     <string name="pref_notifications">Notifications</string>
+    <string name="pref_download_directory">Répertoire de téléchargement</string>
+    <string name="pref_download_directory_sum">Les enregistrements vont être récupéré dans le répertoire suivant : \'%s\'</string>
     <string name="pref_show_notifications">Lister les notifications</string>
     <string name="pref_show_notifications_sum">Informe l\'utilisateur dès qu\'un enregistrement a commencé ou est fini.</string>
-	<string name="pref_show_notification_offset">Heure de notification </string>
+    <string name="pref_show_notification_offset">Heure de notification </string>
     <string name="pref_show_notification_offset_sum">Définir le moment ou la notification doit être affichée avant le début de l\'enregistrement.</string>
     <string name="pref_show_next_program">Affiche le programme suivant dans la liste de chaines</string>
     <string name="pref_show_next_program_sum">Le nom du programme arrivant ensuite est affiché dans la liste des chaines. Il est affiché en dessous de l\'indicateur de progression.</string>
-	<string name="pref_play_when_channel_icon_selected">Icone de la chaine diffusée ou de l\'enregistrement</string>
+    <string name="pref_play_when_channel_icon_selected">Icone de la chaine diffusée ou de l\'enregistrement</string>
     <string name="pref_play_when_channel_icon_selected_sum">Lancer la diffusion du programme en cours ou de l\'enregistrement quand l\icone de de la chaine est sélectionnée dans la liste des chaine, le guide des programmes ou la liste des enregistrements.</string>
     <string name="pref_programs">Programmes</string>
     <string name="pref_playback_and_recording">Lecture et enregistrements</string>
@@ -188,7 +195,7 @@
     <string name="recording_file_invalid">Le fichier est défectueux</string>
     <string name="recording_canceled">L\'enregistrement a été effacé</string>
     <string name="recording_started">L\'enregistrement a commencé</string>
-	<string name="recording_starts_in">L\'enregistrement commencera dans %d min.</string>
+    <string name="recording_starts_in">L\'enregistrement commencera dans %d min.</string>
     <string name="recording_completed">L\'enregistrement est terminé</string>
 
     <string name="wol_send">Paquet de WoL envoyé avec succès à \'%s\'</string>
@@ -198,6 +205,7 @@
 
     <string name="no_data">Aucun programme disponible</string>
     <string name="minutes">%d min</string>
+
     <string name="not_set">Non défini</string>
 
     <string name="search_hint">Recherche de l\'EPG</string>
@@ -233,6 +241,7 @@
     <string name="recordings">Enregistrements</string>
     <string name="status">Etat</string>
 
+    <string name="directory">Répertoire</string>
     <string name="title">Titre</string>
     <string name="subtitle">Sous-titre</string>
     <string name="channel">Chaîne</string>
@@ -247,7 +256,7 @@
     <string name="series_information">Informations</string>
     <string name="genre_color_list">Liste des couleurs de genre et leurs significations.</string>
     <string name="priority">Priorité</string>
-	<string name="dvr_config">Profil d\'enregistrement</string>
+    <string name="dvr_config">Profil d\'enregistrement</string>
 
     <string name="current_time">Heure courante</string>
     <string name="start_time">Heure de début</string>
@@ -312,16 +321,84 @@
     <string name="show_play_store">Voulez-vous utiliser Google Play Store pour trouver un lecteur de média?</string>
 
     <!-- Optional strings for the navigation drawer -->
-    <string name="reconnect">Rétablir</string>
-    <string name="cast">Cast</string>
-    <string name="record_once_and_edit">Enregistrer et modifier</string>
-    <string name="add_recording_directory">Enregistrer le répertoire de l\'enregistrement</string>
-    <string name="select">Sélectionnez</string>
-    <string name="pref_download_directory">Répertoire des téléchargements</string>
-    <string name="pref_download_directory_sum">Les enregistrements seront téléchargés dans le répertoire suivant: \'%s\'</string>
-    <string name="directory">Répertoire</string>
+	
     <string name="pref_show_program_artwork_sum">Affiche l\'image de l\'illustration / affiche dans le programme en cours. Le serveur doit fournir les informations.</string>
-    <string name="pref_show_program_artwork">Afficher le dessin du programme / affiche</string>
-    <string name="clear">Clair</string>
+    <string name="pref_show_program_artwork">Afficher l\'image du programme / affiche</string>
+    <string name="pref_show_progressbar_sum">Indique dans la liste des chaine l\état d\'avancement de la diffusion du programme.</string>
+    <string name="pref_show_progressbar">Affiche la barre de progression</string>
+    <string name="pref_customize_user_interface_sum">Choisir depuis une liste d\'option quelles informations doivent être affichées dans chaque écrans.</string>
+    <string name="pref_customize_user_interface">Personnalisation de l\'interface utilisateur</string>
+    <string name="pref_general">Général</string>
+    <string name="pref_date_time_format">Format de l\'heure et de la date</string>
+    <string name="pref_date_time_format_sum">Affiche l\'heure et la date tel qu\'affichée habituellement. Sinon le format \'31.12.2017, 21:09\' sera utilisé.</string>
+
+    <string name="pref_crash_reporting_settings">Paramétrage des rapports de crash</string>
+    <string name="pref_show_program_subtitle_sum">Affiche les sous-titre du programme en cours</string>
+    <string name="pref_show_program_subtitle">Affiche les sous-titre du programme</string>
+    <string name="loading_more_programs">Chargement de programmes supplémentaire</string>
+    <string name="loading_more_programs_finished">Fin du chargement de programmes supplémentaire</string>
+    <string name="startup">Démarrage</string>
+    <string name="initializing">Initialisation</string>
+    <string name="add_reminder">Ajoute un rappel</string>
+    <string name="full_changelog">Changelog complet</string>
+
+    <string name="no_cast_session">Pas de session de diffusion disponible</string>
+    <string name="error_starting_playback_no_connection">Erreur au lancement du programme. Impossible de trouver la connection et les informations du serveur.</string>
+    <string name="error_starting_playback_no_profile">Erreur au lancement du programme. Aucun profile de lancement de programme séléctionné dans les paramétres.</string>
+    <string name="requesting_playback_information">Demande d\'informations au serveur pour le lancement du programme</string>
+    <string name="received_playback_information">Informations pour le lancement du programme reçu du serveur</string>
+    <string name="starting_playback">Début du programme</string>
+    <string name="connection_failed">Erreur de connection</string>
+    <string name="failed_connecting_to_server">Impossible de se connecter au serveur. L\'adresse IP, le nom du serveur et le port sont-ils corrects? Un firewall bloquerait-il le port?</string>
+    <string name="failed_opening_socket">Erreur à l\'ouverture du port vers le serveur</string>
+    <string name="failed_during_connection_attempt">Erreur lors du test de connection au serveur</string>
+    <string name="failed_to_resolve_address">Erreur lors de la résolution de l\'adresse du serveur</string>
+    <string name="connecting_to_server">Connection au serveur…</string>
+    <string name="connection_closed">Connection fermée</string>
+    <string name="authentication_failed">Erreur d\'authentification</string>
+    <string name="bad_username_or_password">Mauvais nom d\'utilisateur ou mot de passe</string>
+    <string name="connected_to_server">Connecté au serveur</string>
+    <string name="loading_data">Chargement des données depuis le serveur</string>
+    <string name="loading_data_done">Chargement des données depuis le serveur terminé</string>
+    <string name="saving_data">Sauvegarde des données reçues…</string>
+    <string name="saving_channel_logos">Sauvegarde des logos des chaines reçus…</string>
+    <string name="saving_channels">Sauvegarde des chaines reçues…</string>
+    <string name="saving_recordings">Sauvegarde des enregistrements reçus…</string>
+    <string name="saving_program_guide_data">Sauvegarde du guide des programmes reçu…</string>
+    <string name="pref_clear_database">Effacement de la base de données</string>
+    <string name="pref_clear_database_sum">Supprime toutes les informations de la base de données. Cela inclus les chaines et leurs tags, programmes et enregistrements.</string>
+    <string name="pref_show_channel_name">Affiche le nom des chaines</string>
+    <string name="pref_show_channel_name_sum">En plus du logo affiche le nom de la chaine en dessous du titre du programme dans la liste des chaines.</string>
+    <string name="pref_show_menu_search_imdb">Affiche le menu \'Recherche sur IMDB\'</string>
+    <string name="pref_show_menu_search_fileaffinity">Affiche le menu \'Recherche sur le site FileAffinity\'</string>
+    <string name="pref_show_menu_search_epg">Affiche le menu \'Recherche dans l\'EPG\'</string>
+    <string name="pref_enable_crash_reports">Envois un rapport de crash anonymisé</string>
+    <string name="pref_enable_crash_reports_sum">Le rapport contient des informations qui nous aide a améliorer la stabilité et l\'expérience utilisateur de l\'application.</string>
+    <string name="pref_enable_usage_statistics">Envois des statistiques anonymisées</string>
+    <string name="pref_enable_usage_statistics_sum">Ce rapport contient des informations au sujet de services Google et de quelles fonctionnalitées de l\'application sont disponibles pour l\'utilisateur. Ces informations sont aussi utilisées pour améliorer la stabilité et l\'expérience utilisateur.</string>
+    <string name="pref_epg_sync_duration">Synchronisation des durées des programmes</string>
+    <string name="pref_epg_sync_duration_sum">Quantité du guide des programmes qui doit être chargé depuis le serveur.</string>
+    <string name="error_loading_program_details">Impossible de charger les détails du programme</string>
+    <string name="error_loading_recording_details">Impossible de charger les détails de l\'enregistrement</string>
+    <string name="search_results">Résultat de la recherche</string>
+    <string name="dialog_title_connect_to_server">Se connecter au nouveau serveur?</string>
+    <string name="dialog_button_connect">Connection</string>
+    <string name="dialog_title_purchase_ok">Merci!</string>
+    <string name="dialog_content_purchase_ok">L\'application doit être relancée pour charger les nouvelles fonctionnalités.</string>
+    <string name="dialog_button_restart">Redémarrage</string>
+    <string name="dialog_title_reconnect_to_server">Reconnection au serveur?</string>
+    <string name="dialog_content_reconnect_to_server">L\'application doit être redémarrée et une nouvelle synchro doit être faite.</string>
+    <string name="dialog_title_clear_database">Effacer le contenu de la base de données?</string>
+    <string name="clear">Effacement</string>
+    <string name="playback">Jouer</string>
+    <string name="dialog_title_disconnect_from_server">Se déconnecter du serveur?</string>
+    <string name="dialog_content_disconnect_from_server">Aucune connection active définie. La connection existante au serveur doit être fermée.</string>
+    <string name="dialog_content_connection_changed">Le paramétre de connection à changé. L\'application doit être redémarrée et une synchro initiale relancée.</string>
+    <string name="dialog_title_connection_changed">Se connecter au nouveau serveur?</string>
+    <string name="duplicate_recording">L\'enrgistrement est dupliqué</string>
+    <string name="pref_hide_duplicate_scheduled_recordings">Cacher les enregistrements dupliqués</string>
+    <string name="pref_show_recording_file_status">Afficher l\'état d\'enregistrements des fichiers</string>
+    <string name="pref_show_recording_file_status_sum">La taille du fichier et le nombre d\'erreurs de chaque enregistrements et affiché dans la liste des enregistrements.</string>
+    <string name="programs">Programmes</string>
 
 </resources>
