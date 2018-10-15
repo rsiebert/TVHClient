@@ -369,7 +369,13 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Wake
 
     @Override
     public boolean onQueryTextChange(String newText) {
-        return false;
+        if (newText.length() >= 3) {
+            Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main);
+            if (fragment != null && fragment.isAdded() && fragment instanceof SearchRequestInterface) {
+                ((SearchRequestInterface) fragment).onSearchRequested(newText);
+            }
+        }
+        return true;
     }
 
     @Override
