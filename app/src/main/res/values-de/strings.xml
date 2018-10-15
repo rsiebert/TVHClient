@@ -109,6 +109,7 @@
     <string name="pref_sort_channels">Sender-Reihenfolge</string>
     <string name="pref_sort_channels_sum">Legt fest in welcher Reihenfolge die Sender angezeigt werden sollen.</string>
     <string name="pref_information">Informationen</string>
+    <string name="pref_information_sum">Zeige die Datenschutzverordnung, eine Erklärung der benötigten Berechtigungen, die verwendete Bibliotheken und eine Danksagung an alle, die bei der Entwicklung geholfen haben.</string>
     <string name="pref_changelog">Änderungshistorie</string>
     <string name="pref_changelog_sum">Zeigt eine Liste aller Änderungen und Eigenschaften zwischen den Versionen.</string>
     <string name="pref_program_guide">Programmübersicht</string>
