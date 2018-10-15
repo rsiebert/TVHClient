@@ -20,6 +20,7 @@ import com.afollestad.materialdialogs.folderselector.FolderChooserDialog;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.features.MainActivity;
 import org.tvheadend.tvhclient.features.changelog.ChangeLogActivity;
+import org.tvheadend.tvhclient.features.information.InfoActivity;
 import org.tvheadend.tvhclient.features.purchase.UnlockerActivity;
 
 import java.io.File;
@@ -47,6 +48,7 @@ public class SettingsFragment extends BasePreferenceFragment implements Preferen
         findPreference("changelog").setOnPreferenceClickListener(this);
         findPreference("language").setOnPreferenceClickListener(this);
         findPreference("light_theme_enabled").setOnPreferenceClickListener(this);
+        findPreference("information").setOnPreferenceClickListener(this);
 
         downloadDirectoryPreference = findPreference("download_directory");
         downloadDirectoryPreference.setOnPreferenceClickListener(this);
@@ -135,6 +137,9 @@ public class SettingsFragment extends BasePreferenceFragment implements Preferen
             case "changelog":
                 handlePreferenceChangelogSelected();
                 break;
+            case "information":
+                handlePreferenceInformationSelected();
+                break;
             case "download_directory":
                 handlePreferenceDownloadDirectorySelected();
                 break;
@@ -177,6 +182,11 @@ public class SettingsFragment extends BasePreferenceFragment implements Preferen
     private void handlePreferenceChangelogSelected() {
         Intent intent = new Intent(getActivity(), ChangeLogActivity.class);
         intent.putExtra("showFullChangelog", true);
+        startActivity(intent);
+    }
+
+    private void handlePreferenceInformationSelected() {
+        Intent intent = new Intent(getActivity(), InfoActivity.class);
         startActivity(intent);
     }
 

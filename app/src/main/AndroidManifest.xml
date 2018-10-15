@@ -113,6 +113,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".features.streaming.internal.HtspPlaybackActivity" />
+        <activity android:name=".features.information.InfoActivity" />
 
     </application>
 </manifest>

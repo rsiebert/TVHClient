@@ -61,7 +61,7 @@ public class InfoFragment extends BaseFragment implements FileLoaderCallback {
     @Override
     public void onResume() {
         super.onResume();
-        htmlFileLoaderTask = new HtmlFileLoaderTask(activity, "info_help", "en", this);
+        htmlFileLoaderTask = new HtmlFileLoaderTask(activity, "information", "en", this);
         htmlFileLoaderTask.execute();
     }
 

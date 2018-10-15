@@ -319,7 +319,6 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Wake
 
         switch (selectedNavigationMenuId) {
             case NavigationDrawer.MENU_STATUS:
-            case NavigationDrawer.MENU_INFORMATION:
             case NavigationDrawer.MENU_UNLOCKER:
             case NavigationDrawer.MENU_HELP:
                 // Do not show these menus in one of those fragments

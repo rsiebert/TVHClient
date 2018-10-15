@@ -42,7 +42,6 @@ import org.tvheadend.tvhclient.features.dvr.timer_recordings.TimerRecordingListF
 import org.tvheadend.tvhclient.features.dvr.timer_recordings.TimerRecordingViewModel;
 import org.tvheadend.tvhclient.features.epg.ProgramGuideFragment;
 import org.tvheadend.tvhclient.features.information.HelpFragment;
-import org.tvheadend.tvhclient.features.information.InfoFragment;
 import org.tvheadend.tvhclient.features.information.StatusFragment;
 import org.tvheadend.tvhclient.features.logging.AnswersWrapper;
 import org.tvheadend.tvhclient.features.purchase.UnlockerFragment;
@@ -67,8 +66,7 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
     public static final int MENU_STATUS = 8;
     private static final int MENU_SETTINGS = 9;
     public static final int MENU_UNLOCKER = 10;
-    public static final int MENU_INFORMATION = 11;
-    public static final int MENU_HELP = 12;
+    public static final int MENU_HELP = 11;
 
     private final Bundle savedInstanceState;
     private final AppCompatActivity activity;
@@ -138,9 +136,6 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
         PrimaryDrawerItem statusItem = new PrimaryDrawerItem()
                 .withIdentifier(MENU_STATUS).withName(R.string.status)
                 .withIcon(getResourceIdFromAttr(R.attr.ic_menu_status));
-        PrimaryDrawerItem informationItem = new PrimaryDrawerItem()
-                .withIdentifier(MENU_INFORMATION).withName(R.string.pref_information)
-                .withIcon(getResourceIdFromAttr(R.attr.ic_menu_info));
         PrimaryDrawerItem settingsItem = new PrimaryDrawerItem()
                 .withIdentifier(MENU_SETTINGS).withName(R.string.settings)
                 .withIcon(getResourceIdFromAttr(R.attr.ic_menu_settings))
@@ -178,7 +173,6 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
                 new DividerDrawerItem(),
                 settingsItem,
                 helpItem,
-                informationItem,
                 statusItem);
 
         result = drawerBuilder.build();
@@ -319,8 +313,6 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
             setSelection(MENU_REMOVED_RECORDINGS);
         } else if (fragment instanceof StatusFragment) {
             setSelection(MENU_STATUS);
-        } else if (fragment instanceof InfoFragment) {
-            setSelection(MENU_INFORMATION);
         } else if (fragment instanceof UnlockerFragment) {
             setSelection(MENU_UNLOCKER);
         } else if (fragment instanceof HelpFragment) {
@@ -376,11 +368,6 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
                 AnswersWrapper.getInstance().logContentView(new ContentViewEvent()
                         .putContentName("Status screen"));
                 fragment = new StatusFragment();
-                break;
-            case NavigationDrawer.MENU_INFORMATION:
-                AnswersWrapper.getInstance().logContentView(new ContentViewEvent()
-                        .putContentName("Information screen"));
-                fragment = new InfoFragment();
                 break;
             case NavigationDrawer.MENU_SETTINGS:
                 AnswersWrapper.getInstance().logContentView(new ContentViewEvent()
