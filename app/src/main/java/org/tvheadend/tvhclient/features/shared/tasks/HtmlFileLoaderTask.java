@@ -48,18 +48,6 @@ public class HtmlFileLoaderTask extends AsyncTask<Void, Void, String> {
     }
 
     private String loadHtmlFromFile(Context context, String filename, String defaultLocale) {
-        // Create the string that is later used to display the HTML page.
-        // The string contains all feature information and HTML tags.
-        // Depending on the theme the correct style sheet will be loaded
-        // from the asset folder.
-        StringBuilder sb = new StringBuilder();
-        sb.append("<html><head>");
-        if (MiscUtils.getThemeId(context) == R.style.CustomTheme_Light) {
-            sb.append("<link href=\"html/styles_light.css\" type=\"text/css\" rel=\"stylesheet\"/>");
-        } else {
-            sb.append("<link href=\"html/styles_dark.css\" type=\"text/css\" rel=\"stylesheet\"/>");
-        }
-        sb.append("</head><body>");
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         final Locale current = context.getResources().getConfiguration().locale;
@@ -83,6 +71,7 @@ public class HtmlFileLoaderTask extends AsyncTask<Void, Void, String> {
             }
         }
 
+        StringBuilder sb = new StringBuilder();
         // Try to parse the HTML contents from the given asset file. It
         // contains the feature description with the required HTML tags.
         if (is != null) {
@@ -90,7 +79,15 @@ public class HtmlFileLoaderTask extends AsyncTask<Void, Void, String> {
                 String htmlData;
                 BufferedReader in = new BufferedReader(new InputStreamReader(is, "utf-8"));
                 while ((htmlData = in.readLine()) != null) {
-                    sb.append(htmlData);
+                    if (htmlData.contains("styles_light.css")) {
+                        if (MiscUtils.getThemeId(context) == R.style.CustomTheme_Light) {
+                            sb.append(htmlData);
+                        } else {
+                            sb.append(htmlData.replace("styles_light.css", "styles_dark.css"));
+                        }
+                    } else {
+                        sb.append(htmlData);
+                    }
                 }
                 in.close();
 
@@ -109,7 +106,6 @@ public class HtmlFileLoaderTask extends AsyncTask<Void, Void, String> {
         }
 
         // Add the closing HTML tags and load show the page
-        sb.append("</body></html>");
         Timber.d("Done loading file");
         return sb.toString();
     }
