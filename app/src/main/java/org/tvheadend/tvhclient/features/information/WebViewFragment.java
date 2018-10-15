@@ -77,6 +77,12 @@ public class WebViewFragment extends BaseFragment implements FileLoaderCallback 
     }
 
     @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("website", website);
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         htmlFileLoaderTask = new HtmlFileLoaderTask(activity, website, "en", this);
