@@ -297,7 +297,6 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Wake
             }
 
             // Show the new fragment that represents the selected menu entry.
-            fragment.setArguments(getIntent().getExtras());
             FragmentTransaction fm = getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.main, fragment);

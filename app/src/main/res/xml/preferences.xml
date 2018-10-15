@@ -50,6 +50,8 @@
         <PreferenceScreen
             android:key="advanced"
             android:title="@string/pref_advanced_settings" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/pref_information">
         <Preference
             android:key="changelog"
             android:summary="@string/pref_changelog_sum"
@@ -58,6 +60,9 @@
             android:key="information"
             android:summary="@string/pref_information_sum"
             android:title="@string/pref_information" />
+        <Preference
+            android:key="privacy_policy"
+            android:title="@string/pref_privacy_policy" />
     </PreferenceCategory>
 
 </PreferenceScreen>

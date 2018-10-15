@@ -41,7 +41,7 @@ import org.tvheadend.tvhclient.features.dvr.series_recordings.SeriesRecordingVie
 import org.tvheadend.tvhclient.features.dvr.timer_recordings.TimerRecordingListFragment;
 import org.tvheadend.tvhclient.features.dvr.timer_recordings.TimerRecordingViewModel;
 import org.tvheadend.tvhclient.features.epg.ProgramGuideFragment;
-import org.tvheadend.tvhclient.features.information.HelpFragment;
+import org.tvheadend.tvhclient.features.information.WebViewFragment;
 import org.tvheadend.tvhclient.features.information.StatusFragment;
 import org.tvheadend.tvhclient.features.logging.AnswersWrapper;
 import org.tvheadend.tvhclient.features.purchase.UnlockerFragment;
@@ -144,7 +144,7 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
                 .withIdentifier(MENU_UNLOCKER).withName(R.string.pref_unlocker)
                 .withIcon(getResourceIdFromAttr(R.attr.ic_menu_extras));
         PrimaryDrawerItem helpItem = new PrimaryDrawerItem()
-                .withIdentifier(MENU_HELP).withName(R.string.help)
+                .withIdentifier(MENU_HELP).withName(R.string.help_and_support)
                 .withIcon(getResourceIdFromAttr(R.attr.ic_menu_help));
 
         DrawerBuilder drawerBuilder = new DrawerBuilder();
@@ -315,7 +315,7 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
             setSelection(MENU_STATUS);
         } else if (fragment instanceof UnlockerFragment) {
             setSelection(MENU_UNLOCKER);
-        } else if (fragment instanceof HelpFragment) {
+        } else if (fragment instanceof WebViewFragment) {
             setSelection(MENU_HELP);
         }
     }
@@ -382,8 +382,11 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
                 break;
             case NavigationDrawer.MENU_HELP:
                 AnswersWrapper.getInstance().logContentView(new ContentViewEvent()
-                        .putContentName("Contact screen"));
-                fragment = new HelpFragment();
+                        .putContentName("Help screen"));
+                fragment = new WebViewFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString("website", "help_and_support");
+                fragment.setArguments(bundle);
                 break;
         }
         return fragment;

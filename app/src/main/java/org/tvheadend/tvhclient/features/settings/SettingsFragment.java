@@ -20,7 +20,7 @@ import com.afollestad.materialdialogs.folderselector.FolderChooserDialog;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.features.MainActivity;
 import org.tvheadend.tvhclient.features.changelog.ChangeLogActivity;
-import org.tvheadend.tvhclient.features.information.InfoActivity;
+import org.tvheadend.tvhclient.features.information.WebViewActivity;
 import org.tvheadend.tvhclient.features.purchase.UnlockerActivity;
 
 import java.io.File;
@@ -33,7 +33,7 @@ public class SettingsFragment extends BasePreferenceFragment implements Preferen
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        PreferenceManager.setDefaultValues(getActivity(), R.xml.preferences, false);
+        PreferenceManager.setDefaultValues(activity, R.xml.preferences, false);
         addPreferencesFromResource(R.xml.preferences);
 
         toolbarInterface.setTitle(getString(R.string.settings));
@@ -49,6 +49,7 @@ public class SettingsFragment extends BasePreferenceFragment implements Preferen
         findPreference("language").setOnPreferenceClickListener(this);
         findPreference("light_theme_enabled").setOnPreferenceClickListener(this);
         findPreference("information").setOnPreferenceClickListener(this);
+        findPreference("privacy_policy").setOnPreferenceClickListener(this);
 
         downloadDirectoryPreference = findPreference("download_directory");
         downloadDirectoryPreference.setOnPreferenceClickListener(this);
@@ -93,9 +94,9 @@ public class SettingsFragment extends BasePreferenceFragment implements Preferen
             // a known bug in android. Until it is fixed this workaround is required.
             new Handler().postDelayed(() -> {
                 // Get the parent activity that implements the callback
-                SettingsActivity activity = (SettingsActivity) getActivity();
+                SettingsActivity settingsActivity = (SettingsActivity) activity;
                 // Show the folder chooser dialog which defaults to the external storage dir
-                new FolderChooserDialog.Builder(getActivity()).show(activity);
+                new FolderChooserDialog.Builder(settingsActivity).show(settingsActivity);
             }, 200);
         }
     }
@@ -104,8 +105,8 @@ public class SettingsFragment extends BasePreferenceFragment implements Preferen
     public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
         switch (key) {
             case "language":
-                Intent intent = new Intent(getActivity(), MainActivity.class);
-                getActivity().startActivity(intent);
+                Intent intent = new Intent(activity, MainActivity.class);
+                activity.startActivity(intent);
                 break;
         }
     }
@@ -140,6 +141,9 @@ public class SettingsFragment extends BasePreferenceFragment implements Preferen
             case "information":
                 handlePreferenceInformationSelected();
                 break;
+            case "privacy_policy":
+                handlePreferencePrivacySelected();
+                break;
             case "download_directory":
                 handlePreferenceDownloadDirectorySelected();
                 break;
@@ -148,9 +152,9 @@ public class SettingsFragment extends BasePreferenceFragment implements Preferen
     }
 
     private void handlePreferenceThemeSelected() {
-        TaskStackBuilder.create(getActivity())
-                .addNextIntent(new Intent(getActivity(), MainActivity.class))
-                .addNextIntent(getActivity().getIntent())
+        TaskStackBuilder.create(activity)
+                .addNextIntent(new Intent(activity, MainActivity.class))
+                .addNextIntent(activity.getIntent())
                 .startActivities();
     }
 
@@ -180,18 +184,25 @@ public class SettingsFragment extends BasePreferenceFragment implements Preferen
     }
 
     private void handlePreferenceChangelogSelected() {
-        Intent intent = new Intent(getActivity(), ChangeLogActivity.class);
+        Intent intent = new Intent(activity, ChangeLogActivity.class);
         intent.putExtra("showFullChangelog", true);
         startActivity(intent);
     }
 
     private void handlePreferenceInformationSelected() {
-        Intent intent = new Intent(getActivity(), InfoActivity.class);
+        Intent intent = new Intent(activity, WebViewActivity.class);
+        intent.putExtra("website", "information");
+        startActivity(intent);
+    }
+
+    private void handlePreferencePrivacySelected() {
+        Intent intent = new Intent(activity, WebViewActivity.class);
+        intent.putExtra("website", "privacy_policy");
         startActivity(intent);
     }
 
     private void showSelectedSettingsFragment(String settingType) {
-        Intent intent = new Intent(getActivity(), SettingsActivity.class);
+        Intent intent = new Intent(activity, SettingsActivity.class);
         intent.putExtra("setting_type", settingType);
         startActivity(intent);
     }
@@ -204,8 +215,8 @@ public class SettingsFragment extends BasePreferenceFragment implements Preferen
         } else {
             if (isReadPermissionGranted()) {
                 // Get the parent activity that implements the callback
-                SettingsActivity activity = (SettingsActivity) getActivity();
-                new FolderChooserDialog.Builder(getActivity()).show(activity);
+                SettingsActivity settingsActivity = (SettingsActivity) activity;
+                new FolderChooserDialog.Builder(settingsActivity).show(settingsActivity);
             }
         }
     }
@@ -213,7 +224,7 @@ public class SettingsFragment extends BasePreferenceFragment implements Preferen
     @Override
     public void onFolderSelected(File folder) {
         String strippedPath = folder.getAbsolutePath().replace(Environment.getExternalStorageDirectory().getAbsolutePath(), "");
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
         prefs.edit().putString("download_directory", strippedPath).apply();
 
         updateDownloadDirSummary();

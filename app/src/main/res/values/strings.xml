@@ -110,7 +110,7 @@
     <string name="pref_sort_channels">Channel Order</string>
     <string name="pref_sort_channels_sum">Choose in which order the channels will be displayed.</string>
     <string name="pref_information">Information</string>
-    <string name="pref_information_sum">Show the privacy statement including an explanation of the used permissions, the used libraries and thanks to people that contributed to the development</string>
+    <string name="pref_information_sum">Show an explanation of the used permissions, the used libraries and thanks to people that contributed to the development</string>
     <string name="pref_changelog">Changelog</string>
     <string name="pref_changelog_sum">Show a list of features and changes of the different application versions.</string>
     <string name="pref_program_guide">Program guide</string>
@@ -401,5 +401,6 @@
     <string name="pref_show_recording_file_status">Show recording file status</string>
     <string name="pref_show_recording_file_status_sum">The file size and number of data errors of each recording will be shown in the recording lists.</string>
     <string name="programs">Programs</string>
-    <string name="help">Help and Support</string>
+    <string name="help_and_support">Help and Support</string>
+    <string name="pref_privacy_policy">Privacy Policy</string>
 </resources>

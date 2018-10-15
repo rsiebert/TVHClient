@@ -8,7 +8,7 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.features.shared.callbacks.ToolbarInterface;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
-public class InfoActivity extends AppCompatActivity implements ToolbarInterface {
+public class WebViewActivity extends AppCompatActivity implements ToolbarInterface {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,9 +24,9 @@ public class InfoActivity extends AppCompatActivity implements ToolbarInterface 
         }
 
         if (savedInstanceState == null) {
-            InfoFragment fragment = new InfoFragment();
+            WebViewFragment fragment = new WebViewFragment();
             fragment.setArguments(getIntent().getExtras());
-            getSupportFragmentManager().beginTransaction().add(R.id.main, fragment).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.main, fragment).commit();
         }
     }
 

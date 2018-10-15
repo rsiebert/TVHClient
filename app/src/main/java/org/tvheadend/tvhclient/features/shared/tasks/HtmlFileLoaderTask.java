@@ -5,9 +5,6 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 
-import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.utils.MiscUtils;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -79,24 +76,14 @@ public class HtmlFileLoaderTask extends AsyncTask<Void, Void, String> {
                 String htmlData;
                 BufferedReader in = new BufferedReader(new InputStreamReader(is, "utf-8"));
                 while ((htmlData = in.readLine()) != null) {
-                    if (htmlData.contains("styles_light.css")) {
-                        if (MiscUtils.getThemeId(context) == R.style.CustomTheme_Light) {
-                            sb.append(htmlData);
-                        } else {
-                            sb.append(htmlData.replace("styles_light.css", "styles_dark.css"));
-                        }
-                    } else {
-                        sb.append(htmlData);
-                    }
+                    sb.append(htmlData);
                 }
                 in.close();
 
             } catch (UnsupportedEncodingException uee) {
                 Timber.e("Could not create buffered reader, unsupported encoding");
-                sb.append("Error parsing feature list");
             } catch (IOException ioe) {
                 Timber.e("Error while reading contents from input stream or closing it");
-                sb.append("Error parsing feature list");
             }
             try {
                 is.close();

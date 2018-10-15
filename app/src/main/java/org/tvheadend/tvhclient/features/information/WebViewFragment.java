@@ -1,12 +1,9 @@
 package org.tvheadend.tvhclient.features.information;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,10 +12,10 @@ import android.widget.ProgressBar;
 
 import org.tvheadend.tvhclient.BuildConfig;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.features.changelog.ChangeLogActivity;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
 import org.tvheadend.tvhclient.features.shared.tasks.FileLoaderCallback;
 import org.tvheadend.tvhclient.features.shared.tasks.HtmlFileLoaderTask;
+import org.tvheadend.tvhclient.utils.MiscUtils;
 
 import java.util.regex.Pattern;
 
@@ -26,7 +23,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-public class InfoFragment extends BaseFragment implements FileLoaderCallback {
+public class WebViewFragment extends BaseFragment implements FileLoaderCallback {
 
     @BindView(R.id.webview)
     protected WebView webView;
@@ -34,6 +31,7 @@ public class InfoFragment extends BaseFragment implements FileLoaderCallback {
     protected ProgressBar progressBar;
     private HtmlFileLoaderTask htmlFileLoaderTask;
     private Unbinder unbinder;
+    private String website;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -54,14 +52,34 @@ public class InfoFragment extends BaseFragment implements FileLoaderCallback {
         super.onActivityCreated(savedInstanceState);
         forceSingleScreenLayout();
 
-        toolbarInterface.setTitle(getString(R.string.pref_information));
+        if (savedInstanceState != null) {
+            website = savedInstanceState.getString("website");
+        } else {
+            Bundle bundle = getArguments();
+            if (bundle != null) {
+                website = bundle.getString("website");
+            }
+        }
+
+        switch (website) {
+            case "information":
+                toolbarInterface.setTitle(getString(R.string.pref_information));
+                break;
+            case "help_and_support":
+                toolbarInterface.setTitle(getString(R.string.help_and_support));
+                break;
+            case "privacy_policy":
+                toolbarInterface.setTitle(getString(R.string.pref_privacy_policy));
+                break;
+        }
+
         toolbarInterface.setSubtitle(null);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        htmlFileLoaderTask = new HtmlFileLoaderTask(activity, "information", "en", this);
+        htmlFileLoaderTask = new HtmlFileLoaderTask(activity, website, "en", this);
         htmlFileLoaderTask.execute();
     }
 
@@ -74,22 +92,10 @@ public class InfoFragment extends BaseFragment implements FileLoaderCallback {
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.information_options_menu, menu);
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 activity.finish();
-                return true;
-
-            case R.id.menu_changelog:
-                Intent intent = new Intent(activity, ChangeLogActivity.class);
-                intent.putExtra("showFullChangelog", true);
-                startActivity(intent);
                 return true;
 
             default:
@@ -100,9 +106,19 @@ public class InfoFragment extends BaseFragment implements FileLoaderCallback {
     @Override
     public void notify(String content) {
         if (!TextUtils.isEmpty(content)) {
-            // Replace the placeholder in the html file with the real version
-            String version = BuildConfig.VERSION_NAME + " (" + BuildConfig.BUILD_VERSION + ")";
-            content = (Pattern.compile("APP_VERSION").matcher(content).replaceAll(version));
+
+            if (content.contains("styles_light.css")) {
+                if (MiscUtils.getThemeId(activity) == R.style.CustomTheme_Light) {
+                    content = content.replace("styles_light.css", "html/styles_light.css");
+                } else {
+                    content = content.replace("styles_light.css", "html/styles_dark.css");
+                }
+            }
+            if (content.contains("APP_VERSION")) {
+                // Replace the placeholder in the html file with the real version
+                String version = BuildConfig.VERSION_NAME + " (" + BuildConfig.BUILD_VERSION + ")";
+                content = Pattern.compile("APP_VERSION").matcher(content).replaceAll(version);
+            }
 
             webView.loadDataWithBaseURL("file:///android_asset/", content, "text/html", "utf-8", null);
             progressBar.setVisibility(View.GONE);
