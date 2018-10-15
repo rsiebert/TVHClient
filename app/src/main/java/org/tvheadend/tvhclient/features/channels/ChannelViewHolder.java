@@ -71,7 +71,7 @@ public class ChannelViewHolder extends RecyclerView.ViewHolder {
         boolean showSubtitle = sharedPreferences.getBoolean("program_subtitle_enabled", true);
         boolean showNextProgramTitle = sharedPreferences.getBoolean("next_program_title_enabled", true);
         boolean showGenreColors = sharedPreferences.getBoolean("genre_colors_for_channels_enabled", false);
-        boolean playUponChannelClick = sharedPreferences.getBoolean("channel_icon_starts_playback_enabled", true);
+        int playUponChannelClick = Integer.valueOf(sharedPreferences.getString("channel_icon_action", "0"));
 
         // Sets the correct indication when the dual pane mode is active
         // If the item is selected the the arrow will be shown, otherwise
@@ -96,12 +96,12 @@ public class ChannelViewHolder extends RecyclerView.ViewHolder {
             return true;
         });
         iconImageView.setOnClickListener(view -> {
-            if (playUponChannelClick) {
+            if (playUponChannelClick > 0) {
                 clickCallback.onClick(view, getAdapterPosition());
             }
         });
         iconTextView.setOnClickListener(view -> {
-            if (playUponChannelClick) {
+            if (playUponChannelClick > 0) {
                 clickCallback.onClick(view, getAdapterPosition());
             }
         });

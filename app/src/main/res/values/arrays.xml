@@ -54,6 +54,18 @@
         <item>Status</item>
     </string-array>
 
+    <string-array name="pref_channel_icon_action_ids" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
+    <string-array name="pref_channel_icon_action_names">
+        <item>Do nothing</item>
+        <item>Play</item>
+        <item>Cast if available, otherwise play</item>
+    </string-array>
+
     <string-array name="pref_sort_channels_ids" translatable="false">
         <item>0</item>
         <item>1</item>

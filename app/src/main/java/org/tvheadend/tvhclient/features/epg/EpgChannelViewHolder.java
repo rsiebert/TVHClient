@@ -35,7 +35,7 @@ public class EpgChannelViewHolder extends RecyclerView.ViewHolder {
         itemView.setTag(channel);
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        boolean playUponChannelClick = sharedPreferences.getBoolean("channel_icon_starts_playback_enabled", true);
+        int playUponChannelClick = Integer.valueOf(sharedPreferences.getString("channel_icon_action", "0"));
 
         itemView.setOnClickListener(view -> clickCallback.onClick(view, getAdapterPosition()));
         itemView.setOnLongClickListener(view -> {
@@ -43,12 +43,12 @@ public class EpgChannelViewHolder extends RecyclerView.ViewHolder {
             return true;
         });
         iconImageView.setOnClickListener(view -> {
-            if (playUponChannelClick) {
+            if (playUponChannelClick > 0) {
                 clickCallback.onClick(view, getAdapterPosition());
             }
         });
         iconTextView.setOnClickListener(view -> {
-            if (playUponChannelClick) {
+            if (playUponChannelClick > 0) {
                 clickCallback.onClick(view, getAdapterPosition());
             }
         });

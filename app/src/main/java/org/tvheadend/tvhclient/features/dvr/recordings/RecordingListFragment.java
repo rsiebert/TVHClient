@@ -29,7 +29,6 @@ import org.tvheadend.tvhclient.features.download.DownloadPermissionGrantedInterf
 import org.tvheadend.tvhclient.features.dvr.RecordingAddEditActivity;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback;
-import org.tvheadend.tvhclient.features.streaming.external.PlayRecordingActivity;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -252,9 +251,13 @@ public class RecordingListFragment extends BaseFragment implements RecyclerViewC
         if (view.getId() == R.id.icon || view.getId() == R.id.icon_text) {
             if (recyclerViewAdapter.getItemCount() > 0) {
                 Recording recording = recyclerViewAdapter.getItem(position);
-                Intent playIntent = new Intent(activity, PlayRecordingActivity.class);
-                playIntent.putExtra("dvrId", recording.getId());
-                activity.startActivity(playIntent);
+
+                int channelIconAction = Integer.valueOf(sharedPreferences.getString("channel_icon_action", "0"));
+                if (channelIconAction  == 1) {
+                    menuUtils.handleMenuPlayRecording(recording.getId());
+                } else if (channelIconAction == 2) {
+                    menuUtils.handleMenuCast("dvrId", recording.getId());
+                }
             }
         } else {
             showRecordingDetails(position);

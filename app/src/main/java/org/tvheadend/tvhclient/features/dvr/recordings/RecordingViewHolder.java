@@ -84,7 +84,7 @@ public class RecordingViewHolder extends RecyclerView.ViewHolder {
         itemView.setTag(recording);
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        boolean playOnChannelIcon = sharedPreferences.getBoolean("channel_icon_starts_playback_enabled", true);
+        int playOnChannelIcon = Integer.valueOf(sharedPreferences.getString("channel_icon_action", "0"));
         boolean showRecordingFileStatus = sharedPreferences.getBoolean("show_recording_file_status_enabled", false);
 
         itemView.setOnClickListener(view -> clickCallback.onClick(view, getAdapterPosition()));
@@ -93,7 +93,7 @@ public class RecordingViewHolder extends RecyclerView.ViewHolder {
             return true;
         });
         iconImageView.setOnClickListener(view -> {
-            if (playOnChannelIcon && (recording.isCompleted() || recording.isRecording())) {
+            if (playOnChannelIcon > 0 && (recording.isCompleted() || recording.isRecording())) {
                 clickCallback.onClick(view, getAdapterPosition());
             }
         });

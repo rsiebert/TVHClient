@@ -13,6 +13,12 @@
         <item>Status</item>
     </string-array>
 
+    <string-array name="pref_channel_icon_action_names">
+        <item>Nichts unternehmen</item>
+        <item>Abspielen</item>
+        <item>Cast falls verfügbar, ansonsten Abspielen</item>
+    </string-array>
+
     <string-array name="pref_sort_channels_names">
         <item>Definiert durch Server</item>
         <item>Sendername</item>

@@ -25,9 +25,12 @@
             android:key="channel_name_enabled"
             android:summary="@string/pref_show_channel_name_sum"
             android:title="@string/pref_show_channel_name" />
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:key="channel_icon_starts_playback_enabled"
+        <ListPreference
+            android:name="@string/pref_play_when_channel_icon_selected"
+            android:defaultValue="0"
+            android:entries="@array/pref_channel_icon_action_names"
+            android:entryValues="@array/pref_channel_icon_action_ids"
+            android:key="channel_icon_action"
             android:summary="@string/pref_play_when_channel_icon_selected_sum"
             android:title="@string/pref_play_when_channel_icon_selected" />
         <ListPreference
