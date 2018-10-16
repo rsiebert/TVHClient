@@ -6,7 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.design.widget.Snackbar;
 
-import timber.log.Timber;
+import java.lang.ref.WeakReference;
 
 /**
  * This receiver handles the data that was given from an intent via the LocalBroadcastManager.
@@ -16,18 +16,18 @@ public class SnackbarMessageReceiver extends BroadcastReceiver {
 
     public final static String ACTION = "message";
     public final static String CONTENT = "content";
-    private final Activity activity;
+    private final WeakReference<Activity> activity;
 
     public SnackbarMessageReceiver(Activity activity) {
-        this.activity = activity;
+        this.activity = new WeakReference<>(activity);
     }
 
     @Override
     public void onReceive(Context context, Intent intent) {
         if (intent.hasExtra(CONTENT)) {
-            if (activity.getCurrentFocus() != null) {
+            Activity activity = this.activity.get();
+            if (activity != null && activity.getCurrentFocus() != null) {
                 String msg = intent.getStringExtra(CONTENT);
-                Timber.d("Showing snackbar with message '" + msg + "'");
                 Snackbar.make(activity.getCurrentFocus(), msg, Snackbar.LENGTH_SHORT).show();
             }
         }
