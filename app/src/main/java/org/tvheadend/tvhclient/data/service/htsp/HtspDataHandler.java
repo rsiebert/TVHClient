@@ -32,12 +32,16 @@ public class HtspDataHandler implements HtspConnection.Reader, HtspConnection.Wr
     private final HtspMessageSerializer messageSerializer;
     private final HtspMessage.DispatcherInternal messageDispatcher;
 
-    private final ByteBuffer readBuffer = ByteBuffer.allocateDirect(5242880); // 5MB
-    private final ByteBuffer writeBuffer = ByteBuffer.allocateDirect(1024 * 1024); // 1024 * 1024 = Max TVH will accept
+    private ByteBuffer readBuffer;
+    private ByteBuffer writeBuffer;
 
     HtspDataHandler(HtspMessageSerializer messageSerializer, HtspMessage.DispatcherInternal messageDispatcher) {
         this.messageSerializer = messageSerializer;
         this.messageDispatcher = messageDispatcher;
+
+        Timber.d("Allocating direct buffers");
+        this.readBuffer = ByteBuffer.allocateDirect(5242880); // 5MB
+        this.writeBuffer = ByteBuffer.allocateDirect(1024 * 1024); // 1024 * 1024 = Max TVH will accept
     }
 
     // HtspConnection.Listener Methods
@@ -52,9 +56,20 @@ public class HtspDataHandler implements HtspConnection.Reader, HtspConnection.Wr
 
     @Override
     public void onConnectionStateChange(@NonNull HtspConnection.State state) {
-        // Clear buffers out etc as we close the connection
+        Timber.d("Connection state changed to " + state);
+
         if (state == HtspConnection.State.CLOSED) {
-            // TODO..
+            Timber.d("Clearing buffers because we close the connection");
+            if (readBuffer != null) {
+                readBuffer.clear();
+            }
+            if (writeBuffer != null) {
+                writeBuffer.clear();
+            }
+            readBuffer = null;
+            writeBuffer = null;
+            System.gc();
+            Timber.d("Clearing buffers done");
         }
     }
 
