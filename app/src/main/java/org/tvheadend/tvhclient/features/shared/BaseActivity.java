@@ -127,7 +127,7 @@ public abstract class BaseActivity extends AppCompatActivity implements NetworkS
 
     @Override
     public void onBackPressed() {
-        if (getSupportFragmentManager().getBackStackEntryCount() <= 1) {
+        if (getSupportFragmentManager().getBackStackEntryCount() < 1) {
             finish();
         } else {
             super.onBackPressed();
