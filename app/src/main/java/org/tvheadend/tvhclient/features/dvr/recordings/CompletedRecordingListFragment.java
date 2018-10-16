@@ -1,6 +1,5 @@
 package org.tvheadend.tvhclient.features.dvr.recordings;
 
-import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -21,7 +20,6 @@ public class CompletedRecordingListFragment extends RecordingListFragment implem
 
         recyclerViewAdapter.setRecordingType(REC_TYPE_COMPLETED);
 
-        RecordingViewModel viewModel = ViewModelProviders.of(activity).get(RecordingViewModel.class);
         viewModel.getCompletedRecordings().observe(this, recordings -> {
             if (recordings != null) {
                 recyclerViewAdapter.addItems(recordings);

@@ -1,6 +1,5 @@
 package org.tvheadend.tvhclient.features.dvr.recordings;
 
-import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -16,8 +15,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ScheduledRecordingListFragment extends RecordingListFragment implements SearchRequestInterface, Filter.FilterListener {
 
-    private RecordingViewModel viewModel;
-
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -26,7 +23,6 @@ public class ScheduledRecordingListFragment extends RecordingListFragment implem
                 ? getString(R.string.scheduled_recordings) : getString(R.string.search_results));
 
         recyclerViewAdapter.setRecordingType(REC_TYPE_SCHEDULED);
-        viewModel = ViewModelProviders.of(activity).get(RecordingViewModel.class);
     }
 
     @Override

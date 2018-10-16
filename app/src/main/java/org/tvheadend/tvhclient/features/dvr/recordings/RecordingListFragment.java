@@ -1,6 +1,7 @@
 package org.tvheadend.tvhclient.features.dvr.recordings;
 
 import android.app.SearchManager;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -43,6 +44,7 @@ public class RecordingListFragment extends BaseFragment implements RecyclerViewC
     final static int REC_TYPE_FAILED = 3;
     final static int REC_TYPE_REMOVED = 4;
 
+    RecordingViewModel viewModel;
     RecordingRecyclerViewAdapter recyclerViewAdapter;
     @BindView(R.id.recycler_view)
     protected RecyclerView recyclerView;
@@ -86,6 +88,7 @@ public class RecordingListFragment extends BaseFragment implements RecyclerViewC
         recyclerView.addItemDecoration(new DividerItemDecoration(activity, LinearLayoutManager.VERTICAL));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(recyclerViewAdapter);
+        viewModel = ViewModelProviders.of(activity).get(RecordingViewModel.class);
 
         recyclerView.setVisibility(View.GONE);
         progressBar.setVisibility(View.VISIBLE);
