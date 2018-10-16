@@ -359,7 +359,7 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
     @Override
     public void onBottomReached(int position) {
         // Do not load more programs when a search query was given or all programs were loaded.
-        if (isSearchActive || !loadingMoreProgramAllowed) {
+        if (isSearchActive || !loadingMoreProgramAllowed || !isNetworkAvailable) {
             return;
         }
 
