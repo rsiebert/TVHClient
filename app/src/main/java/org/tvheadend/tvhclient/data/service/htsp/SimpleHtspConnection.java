@@ -38,6 +38,8 @@ public class SimpleHtspConnection implements HtspMessage.Dispatcher, HtspConnect
     private Thread connectionThread;
 
     public SimpleHtspConnection(Context context, Connection connection) {
+        Timber.d("Creating simple HTSP connection");
+
         this.context = context;
         messageDispatcher = new HtspMessageDispatcher();
 
