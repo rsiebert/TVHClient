@@ -24,7 +24,6 @@ import timber.log.Timber;
 public class CastChannelActivity extends BasePlaybackActivity {
 
     private int channelId;
-    private CastSession castSession;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -38,18 +37,8 @@ public class CastChannelActivity extends BasePlaybackActivity {
                 channelId = bundle.getInt("channelId", -1);
             }
         }
-        CastContext castContext = CastContext.getSharedInstance(this);
-        castSession = castContext.getSessionManager().getCurrentCastSession();
-        serverProfile = appRepository.getServerProfileData().getItemById(serverStatus.getCastingServerProfileId());
-    }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (castSession == null) {
-            progressBar.setVisibility(View.GONE);
-            statusTextView.setText(getString(R.string.no_cast_session));
-        }
+        serverProfile = appRepository.getServerProfileData().getItemById(serverStatus.getCastingServerProfileId());
     }
 
     @Override
@@ -68,6 +57,13 @@ public class CastChannelActivity extends BasePlaybackActivity {
 
     @Override
     protected void onHttpTicketReceived() {
+
+        CastSession castSession = CastContext.getSharedInstance(this).getSessionManager().getCurrentCastSession();
+        if (castSession == null) {
+            progressBar.setVisibility(View.GONE);
+            statusTextView.setText(getString(R.string.no_cast_session));
+            return;
+        }
 
         Channel channel = appRepository.getChannelData().getItemById(channelId);
 
