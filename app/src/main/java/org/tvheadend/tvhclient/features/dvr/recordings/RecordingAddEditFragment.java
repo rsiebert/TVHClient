@@ -151,7 +151,7 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
 
         stopExtraEditText.setText(String.valueOf(recording.getStopExtra()));
 
-        if (recording.isScheduled() || recording.isRecording()) {
+        if (recording.isRecording()) {
             channelNameLabelTextView.setVisibility(View.GONE);
             channelNameTextView.setVisibility(View.GONE);
         } else {
