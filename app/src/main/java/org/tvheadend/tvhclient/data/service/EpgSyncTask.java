@@ -1194,7 +1194,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     private void updateDvrEntry(final Intent intent) {
         HtspMessage request = EpgSyncUtils.convertIntentToDvrMessage(intent, htspVersion);
         request.put("method", "updateDvrEntry");
-        request.put("id", intent.getIntExtra("eventId", 0));
+        request.put("id", intent.getIntExtra("id", 0));
 
         HtspMessage response = null;
         try {
