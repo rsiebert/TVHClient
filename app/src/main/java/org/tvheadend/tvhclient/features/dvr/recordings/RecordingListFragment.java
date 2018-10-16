@@ -135,6 +135,8 @@ public class RecordingListFragment extends BaseFragment implements RecyclerViewC
         }
         // Hide the casting icon as a default.
         menu.findItem(R.id.media_route_menu_item).setVisible(false);
+        // Do not show the search menu when no recordings are available
+        menu.findItem(R.id.menu_search).setVisible(recyclerViewAdapter.getItemCount() > 0);
     }
 
     void showRecordingDetails(int position) {
