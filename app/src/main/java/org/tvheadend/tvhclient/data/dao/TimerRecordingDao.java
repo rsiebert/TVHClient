@@ -16,7 +16,7 @@ import java.util.List;
 @Dao
 public interface TimerRecordingDao {
 
-    String base = "SELECT rec.*, " +
+    String base = "SELECT DISTINCT rec.*, " +
             "c.name AS channel_name, " +
             "c.icon AS channel_icon " +
             "FROM timer_recordings AS rec " +

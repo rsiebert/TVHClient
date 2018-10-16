@@ -16,7 +16,7 @@ import java.util.List;
 @Dao
 public interface ProgramDao {
 
-    String base = "SELECT p.*," +
+    String base = "SELECT DISTINCT p.*," +
             "c.name AS channel_name, " +
             "c.icon AS channel_icon " +
             "FROM programs AS p " +

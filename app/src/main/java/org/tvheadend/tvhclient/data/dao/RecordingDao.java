@@ -16,7 +16,7 @@ import java.util.List;
 @Dao
 public interface RecordingDao {
 
-    String base = "SELECT rec.*, " +
+    String base = "SELECT DISTINCT rec.*, " +
             "c.name AS channel_name, " +
             "c.icon AS channel_icon " +
             "FROM recordings AS rec " +
