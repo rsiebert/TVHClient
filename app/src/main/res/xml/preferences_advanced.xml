@@ -68,6 +68,14 @@
             android:title="@string/pref_show_notification_offset" />
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="@string/pref_navigation">
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="navigation_history_enabled"
+            android:summary="@string/pref_navigation_history_enabled_sum"
+            android:title="@string/pref_navigation_history_enabled" />
+    </PreferenceCategory>
+
     <PreferenceCategory android:title="@string/pref_misc">
         <Preference
             android:key="clear_search_history"

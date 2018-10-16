@@ -265,7 +265,7 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Wake
      */
     private void handleDrawerItemSelected(int position) {
         Fragment fragment;
-        boolean addFragmentToBackStack = true;
+        boolean addFragmentToBackStack = sharedPreferences.getBoolean("navigation_history_enabled", true);
 
         // Get the already created fragment when the device orientation changes. In this
         // case the saved instance is not null. This avoids recreating fragments after
@@ -308,7 +308,6 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Wake
                 fm.addToBackStack(null);
             }
             fm.commit();
-
         }
     }
 
