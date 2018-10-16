@@ -275,10 +275,8 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
         intent.putExtra("stop", recording.getStop() / 1000);
         intent.putExtra("stopExtra", recording.getStopExtra());
 
-        if (!recording.isScheduled()) {
-            intent.putExtra("channelId", recording.getChannelId());
-        }
         if (!recording.isRecording()) {
+            intent.putExtra("channelId", recording.getChannelId());
             // Pass on seconds not milliseconds
             intent.putExtra("start", recording.getStart() / 1000);
             intent.putExtra("startExtra", recording.getStartExtra());
