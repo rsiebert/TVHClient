@@ -113,7 +113,7 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
 
         calculateViewPagerFragmentStartAndEndTimes();
 
-        channelListRecyclerViewAdapter = new EpgChannelListRecyclerViewAdapter(activity, this);
+        channelListRecyclerViewAdapter = new EpgChannelListRecyclerViewAdapter(activity.getApplicationContext(), this);
         channelListRecyclerViewLayoutManager = new LinearLayoutManager(activity);
         channelListRecyclerView.setLayoutManager(channelListRecyclerViewLayoutManager);
         channelListRecyclerView.addItemDecoration(new DividerItemDecoration(activity, LinearLayoutManager.VERTICAL));

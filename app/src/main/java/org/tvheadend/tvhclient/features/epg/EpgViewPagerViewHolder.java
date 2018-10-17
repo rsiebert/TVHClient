@@ -50,11 +50,11 @@ public class EpgViewPagerViewHolder extends RecyclerView.ViewHolder implements R
         this.startTime = startTime;
         this.endTime = endTime;
 
-        recyclerView.setLayoutManager(new CustomHorizontalLayoutManager(activity));
-        recyclerView.addItemDecoration(new DividerItemDecoration(activity, LinearLayoutManager.HORIZONTAL));
+        recyclerView.setLayoutManager(new CustomHorizontalLayoutManager(activity.getApplicationContext()));
+        recyclerView.addItemDecoration(new DividerItemDecoration(activity.getApplicationContext(), LinearLayoutManager.HORIZONTAL));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setRecycledViewPool(viewPool);
-        recyclerViewAdapter = new EpgProgramListRecyclerViewAdapter(activity, pixelsPerMinute, startTime, endTime, this);
+        recyclerViewAdapter = new EpgProgramListRecyclerViewAdapter(activity.getApplicationContext(), pixelsPerMinute, startTime, endTime, this);
         recyclerView.setAdapter(recyclerViewAdapter);
 
         viewModel = ViewModelProviders.of(activity).get(EpgViewModel.class);

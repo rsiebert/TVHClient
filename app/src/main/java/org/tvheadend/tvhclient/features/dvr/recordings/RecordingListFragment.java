@@ -83,9 +83,9 @@ public class RecordingListFragment extends BaseFragment implements RecyclerViewC
             }
         }
 
-        recyclerViewAdapter = new RecordingRecyclerViewAdapter(activity, isDualPane, this, htspVersion);
-        recyclerView.setLayoutManager(new LinearLayoutManager(activity));
-        recyclerView.addItemDecoration(new DividerItemDecoration(activity, LinearLayoutManager.VERTICAL));
+        recyclerViewAdapter = new RecordingRecyclerViewAdapter(activity.getApplicationContext(), isDualPane, this, htspVersion);
+        recyclerView.setLayoutManager(new LinearLayoutManager(activity.getApplicationContext()));
+        recyclerView.addItemDecoration(new DividerItemDecoration(activity.getApplicationContext(), LinearLayoutManager.VERTICAL));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(recyclerViewAdapter);
         viewModel = ViewModelProviders.of(activity).get(RecordingViewModel.class);

@@ -81,9 +81,9 @@ public class TimerRecordingListFragment extends BaseFragment implements Recycler
         toolbarInterface.setTitle(TextUtils.isEmpty(searchQuery)
                 ? getString(R.string.timer_recordings) : getString(R.string.search_results));
 
-        recyclerViewAdapter = new TimerRecordingRecyclerViewAdapter(activity, isDualPane, this, htspVersion, serverStatus.getGmtoffset());
-        recyclerView.setLayoutManager(new LinearLayoutManager(activity));
-        recyclerView.addItemDecoration(new DividerItemDecoration(activity, LinearLayoutManager.VERTICAL));
+        recyclerViewAdapter = new TimerRecordingRecyclerViewAdapter(activity.getApplicationContext(), isDualPane, this, htspVersion, serverStatus.getGmtoffset());
+        recyclerView.setLayoutManager(new LinearLayoutManager(activity.getApplicationContext()));
+        recyclerView.addItemDecoration(new DividerItemDecoration(activity.getApplicationContext(), LinearLayoutManager.VERTICAL));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(recyclerViewAdapter);
 

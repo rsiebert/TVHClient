@@ -118,9 +118,9 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
         // Show the channel icons when a search is active and all channels shall be searched
         boolean showProgramChannelIcon = isSearchActive && channelId == 0;
 
-        recyclerViewAdapter = new ProgramRecyclerViewAdapter(activity, this, this, showProgramChannelIcon);
-        recyclerView.setLayoutManager(new LinearLayoutManager(activity));
-        recyclerView.addItemDecoration(new DividerItemDecoration(activity, LinearLayoutManager.VERTICAL));
+        recyclerViewAdapter = new ProgramRecyclerViewAdapter(activity.getApplicationContext(), this, this, showProgramChannelIcon);
+        recyclerView.setLayoutManager(new LinearLayoutManager(activity.getApplicationContext()));
+        recyclerView.addItemDecoration(new DividerItemDecoration(activity.getApplicationContext(), LinearLayoutManager.VERTICAL));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(recyclerViewAdapter);
 

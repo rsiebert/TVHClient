@@ -93,9 +93,9 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
             }
         }
 
-        recyclerViewAdapter = new ChannelRecyclerViewAdapter(activity, isDualPane, this);
-        recyclerView.setLayoutManager(new LinearLayoutManager(activity));
-        recyclerView.addItemDecoration(new DividerItemDecoration(activity, LinearLayoutManager.VERTICAL));
+        recyclerViewAdapter = new ChannelRecyclerViewAdapter(activity.getApplicationContext(), isDualPane, this);
+        recyclerView.setLayoutManager(new LinearLayoutManager(activity.getApplicationContext()));
+        recyclerView.addItemDecoration(new DividerItemDecoration(activity.getApplicationContext(), LinearLayoutManager.VERTICAL));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(recyclerViewAdapter);
 
