@@ -148,7 +148,7 @@
         <item name="PlayerTitleFont">@style/PlayerTitleFont.Dark</item>
         <item name="PlayerSubtitleFont">@style/PlayerSubtitleFont.Dark</item>
 
-        <item name="fab_background_color">@color/fab_background_color_dark</item>
+        <item name="rounded_corners">@drawable/rounded_corners_dark</item>
 
         <item name="ic_menu_channels">@drawable/ic_menu_channels_dark</item>
         <item name="ic_menu_program_guide">@drawable/ic_menu_program_guide_dark</item>
@@ -225,7 +225,7 @@
         <item name="PlayerTitleFont">@style/PlayerTitleFont.Light</item>
         <item name="PlayerSubtitleFont">@style/PlayerSubtitleFont.Light</item>
 
-        <item name="fab_background_color">@color/fab_background_color_light</item>
+        <item name="rounded_corners">@drawable/rounded_corners_light</item>
 
         <item name="ic_menu_channels">@drawable/ic_menu_channels_light</item>
         <item name="ic_menu_program_guide">@drawable/ic_menu_program_guide_light</item>

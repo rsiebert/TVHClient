@@ -37,7 +37,7 @@
     <attr name="PlayerTitleFont" format="reference" />
     <attr name="PlayerSubtitleFont" format="reference" />
 
-    <attr name="fab_background_color" format="reference" />
+    <attr name="rounded_corners" format="reference" />
 
     <attr name="ic_menu_channels" format="reference" />
     <attr name="ic_menu_program_guide" format="reference" />
