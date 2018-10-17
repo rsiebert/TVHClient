@@ -200,14 +200,13 @@ public class MenuUtils {
         }
         try {
             String url = URLEncoder.encode(title, "utf-8");
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            PackageManager packageManager = activity.getPackageManager();
-            if (packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY).isEmpty()) {
-                intent.setData(Uri.parse("http://www.imdb.com/find?s=tt&q=" + url));
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("imdb:///find?s=tt&q=" + url));
+            if (intent.resolveActivity(activity.getPackageManager()) != null) {
+                activity.startActivity(intent);
             } else {
-                intent.setData(Uri.parse("imdb:///find?s=tt&q=" + url));
+                intent.setData(Uri.parse("http://www.imdb.com/find?s=tt&q=" + url));
+                activity.startActivity(intent);
             }
-            activity.startActivity(intent);
         } catch (UnsupportedEncodingException e) {
             // NOP
         }
