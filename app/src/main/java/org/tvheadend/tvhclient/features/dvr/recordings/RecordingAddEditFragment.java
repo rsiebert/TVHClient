@@ -40,6 +40,8 @@ import butterknife.Unbinder;
 
 public class RecordingAddEditFragment extends BaseRecordingAddEditFragment implements BackPressedInterface, ChannelListSelectionCallback, DateTimePickerCallback, RecordingPriorityListCallback, RecordingProfileListCallback {
 
+    @BindView(R.id.start_time_label)
+    TextView startTimeLabelTextView;
     @BindView(R.id.start_time)
     TextView startTimeTextView;
     @BindView(R.id.stop_time)
@@ -181,18 +183,19 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
             recordingProfileNameTextView.setOnClickListener(view -> handleRecordingProfileSelection(recordingProfilesList, recordingProfileNameId, RecordingAddEditFragment.this));
         }
 
-        startTimeTextView.setVisibility(!recording.isRecording() ? View.VISIBLE : View.GONE);
-        startTimeTextView.setText(getTimeStringFromTimeInMillis(recording.getStart()));
-        startTimeTextView.setOnClickListener(view -> handleTimeSelection(recording.getStart(), RecordingAddEditFragment.this, "startTime"));
-
-        startDateTextView.setVisibility(!recording.isRecording() ? View.VISIBLE : View.GONE);
-        startDateTextView.setText(getDateStringFromTimeInMillis(recording.getStart()));
-        startDateTextView.setOnClickListener(view -> handleDateSelection(recording.getStart(), RecordingAddEditFragment.this, "startDate"));
-
-        // Add the additional pre- and post recording values in minutes
-        startExtraLabelTextView.setVisibility(!recording.isRecording() ? View.VISIBLE : View.GONE);
-        startExtraEditText.setVisibility(!recording.isRecording() ? View.VISIBLE : View.GONE);
-        startExtraEditText.setText(String.valueOf(recording.getStartExtra()));
+        if (recording.isRecording()) {
+            startTimeLabelTextView.setVisibility(View.GONE);
+            startTimeTextView.setVisibility(View.GONE);
+            startDateTextView.setVisibility(View.GONE);
+            startExtraLabelTextView.setVisibility(View.GONE);
+            startExtraEditText.setVisibility(View.GONE);
+        } else {
+            startTimeTextView.setText(getTimeStringFromTimeInMillis(recording.getStart()));
+            startTimeTextView.setOnClickListener(view -> handleTimeSelection(recording.getStart(), RecordingAddEditFragment.this, "startTime"));
+            startDateTextView.setText(getDateStringFromTimeInMillis(recording.getStart()));
+            startDateTextView.setOnClickListener(view -> handleDateSelection(recording.getStart(), RecordingAddEditFragment.this, "startDate"));
+            startExtraEditText.setText(String.valueOf(recording.getStartExtra()));
+        }
     }
 
     @Override
@@ -237,12 +240,20 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
             }
             return;
         }
-        if (recording.getChannelId() == 0) {
+        if (recording.getChannelId() == 0 && serverStatus.getHtspVersion() < 21) {
             if (activity.getCurrentFocus() != null) {
-                Snackbar.make(activity.getCurrentFocus(), "Please select a channel", Toast.LENGTH_SHORT).show();
+                Snackbar.make(activity.getCurrentFocus(), getString(R.string.error_no_channel_selected), Toast.LENGTH_SHORT).show();
             }
             return;
         }
+
+        if (recording.getStart() >= recording.getStop()) {
+            if (activity.getCurrentFocus() != null) {
+                Snackbar.make(activity.getCurrentFocus(), getString(R.string.error_start_time_past_stop_time), Toast.LENGTH_SHORT).show();
+            }
+            return;
+        }
+
         if (id > 0) {
             updateRecording();
         } else {
@@ -321,24 +332,9 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
         if (tag.equals("startTime")) {
             recording.setStart(milliSeconds);
             startTimeTextView.setText(getTimeStringFromTimeInMillis(milliSeconds));
-
-            // If the start time is after the stop time,
-            // update the stop time with the start value
-            if (milliSeconds > recording.getStop()) {
-                recording.setStop(milliSeconds);
-                stopTimeTextView.setText(getTimeStringFromTimeInMillis(milliSeconds));
-            }
-
         } else if (tag.equals("stopTime")) {
             recording.setStop(milliSeconds);
             stopTimeTextView.setText(getTimeStringFromTimeInMillis(milliSeconds));
-
-            // If the stop time is before the start time,
-            // update the start time with the stop value
-            if (milliSeconds < recording.getStart()) {
-                recording.setStart(milliSeconds);
-                startTimeTextView.setText(getTimeStringFromTimeInMillis(milliSeconds));
-            }
         }
     }
 
