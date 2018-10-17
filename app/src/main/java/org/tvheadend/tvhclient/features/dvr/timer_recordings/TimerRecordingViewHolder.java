@@ -53,8 +53,9 @@ public class TimerRecordingViewHolder extends RecyclerView.ViewHolder {
         ButterKnife.bind(this, view);
     }
 
-    public void bindData(Context context, @NonNull final TimerRecording recording, boolean selected, int htspVersion, int gmtOffset, RecyclerViewClickCallback clickCallback) {
+    public void bindData(@NonNull final TimerRecording recording, boolean selected, int htspVersion, int gmtOffset, RecyclerViewClickCallback clickCallback) {
         itemView.setTag(recording);
+        Context context = itemView.getContext();
 
         itemView.setOnClickListener(view -> clickCallback.onClick(view, getAdapterPosition()));
         itemView.setOnLongClickListener(view -> {

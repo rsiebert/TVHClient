@@ -59,6 +59,7 @@ public class SeriesRecordingListFragment extends BaseFragment implements Recycle
 
     @Override
     public void onDestroyView() {
+        recyclerView.setAdapter(null);
         super.onDestroyView();
         unbinder.unbind();
     }
@@ -81,7 +82,7 @@ public class SeriesRecordingListFragment extends BaseFragment implements Recycle
         toolbarInterface.setTitle(TextUtils.isEmpty(searchQuery)
                 ? getString(R.string.series_recordings) : getString(R.string.search_results));
 
-        recyclerViewAdapter = new SeriesRecordingRecyclerViewAdapter(activity.getApplicationContext(), isDualPane, this, htspVersion, serverStatus.getGmtoffset());
+        recyclerViewAdapter = new SeriesRecordingRecyclerViewAdapter(isDualPane, this, htspVersion, serverStatus.getGmtoffset());
         recyclerView.setLayoutManager(new LinearLayoutManager(activity.getApplicationContext()));
         recyclerView.addItemDecoration(new DividerItemDecoration(activity.getApplicationContext(), LinearLayoutManager.VERTICAL));
         recyclerView.setItemAnimator(new DefaultItemAnimator());

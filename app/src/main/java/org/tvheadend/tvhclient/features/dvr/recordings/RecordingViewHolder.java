@@ -80,8 +80,9 @@ public class RecordingViewHolder extends RecyclerView.ViewHolder {
         ButterKnife.bind(this, view);
     }
 
-    public void bindData(Context context, @NonNull final Recording recording, boolean selected, int htspVersion, RecyclerViewClickCallback clickCallback) {
+    public void bindData(@NonNull final Recording recording, boolean selected, int htspVersion, RecyclerViewClickCallback clickCallback) {
         itemView.setTag(recording);
+        Context context = itemView.getContext();
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         int playOnChannelIcon = Integer.valueOf(sharedPreferences.getString("channel_icon_action", "0"));

@@ -1,6 +1,5 @@
 package org.tvheadend.tvhclient.features.programs;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.util.DiffUtil;
@@ -29,11 +28,9 @@ class ProgramRecyclerViewAdapter extends RecyclerView.Adapter<ProgramViewHolder>
     private final List<Program> programList = new ArrayList<>();
     private final boolean showProgramChannelIcon;
     private List<Program> programListFiltered = new ArrayList<>();
-    private final Context context;
     private List<Recording> recordingList = new ArrayList<>();
 
-    ProgramRecyclerViewAdapter(Context context, @NonNull RecyclerViewClickCallback clickCallback, @Nullable BottomReachedCallback onBottomReachedCallback, boolean showProgramChannelIcon) {
-        this.context = context;
+    ProgramRecyclerViewAdapter(@NonNull RecyclerViewClickCallback clickCallback, @Nullable BottomReachedCallback onBottomReachedCallback, boolean showProgramChannelIcon) {
         this.clickCallback = clickCallback;
         this.onBottomReachedCallback = onBottomReachedCallback;
         this.showProgramChannelIcon = showProgramChannelIcon;
@@ -50,7 +47,7 @@ class ProgramRecyclerViewAdapter extends RecyclerView.Adapter<ProgramViewHolder>
     public void onBindViewHolder(@NonNull ProgramViewHolder holder, int position) {
         if (programListFiltered.size() > position) {
             Program program = programListFiltered.get(position);
-            holder.bindData(context, program, clickCallback);
+            holder.bindData(program, clickCallback);
             if (position == programList.size() - 1
                     && onBottomReachedCallback != null) {
                 onBottomReachedCallback.onBottomReached(position);

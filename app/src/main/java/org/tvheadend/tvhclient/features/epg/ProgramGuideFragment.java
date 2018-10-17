@@ -85,6 +85,7 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
 
     @Override
     public void onDestroyView() {
+        channelListRecyclerView.setAdapter(null);
         super.onDestroyView();
         unbinder.unbind();
     }
@@ -113,7 +114,7 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
 
         calculateViewPagerFragmentStartAndEndTimes();
 
-        channelListRecyclerViewAdapter = new EpgChannelListRecyclerViewAdapter(activity.getApplicationContext(), this);
+        channelListRecyclerViewAdapter = new EpgChannelListRecyclerViewAdapter(this);
         channelListRecyclerViewLayoutManager = new LinearLayoutManager(activity);
         channelListRecyclerView.setLayoutManager(channelListRecyclerViewLayoutManager);
         channelListRecyclerView.addItemDecoration(new DividerItemDecoration(activity, LinearLayoutManager.VERTICAL));
@@ -121,7 +122,7 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
         channelListRecyclerView.setAdapter(channelListRecyclerViewAdapter);
         channelListRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 if (newState != SCROLL_STATE_IDLE) {
                     enableScrolling = true;
@@ -132,7 +133,7 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
             }
 
             @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
                 if (enableScrolling) {
                     int position = channelListRecyclerViewLayoutManager.findFirstVisibleItemPosition();

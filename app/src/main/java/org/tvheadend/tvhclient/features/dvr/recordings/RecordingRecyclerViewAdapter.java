@@ -1,6 +1,5 @@
 package org.tvheadend.tvhclient.features.dvr.recordings;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
@@ -26,11 +25,9 @@ class RecordingRecyclerViewAdapter extends RecyclerView.Adapter<RecordingViewHol
     private int recordingType;
     private List<Recording> recordingListFiltered = new ArrayList<>();
     private final int htspVersion;
-    private final Context context;
     private int selectedPosition = 0;
 
-    RecordingRecyclerViewAdapter(Context context, boolean isDualPane, RecyclerViewClickCallback clickCallback, int htspVersion) {
-        this.context = context;
+    RecordingRecyclerViewAdapter(boolean isDualPane, RecyclerViewClickCallback clickCallback, int htspVersion) {
         this.clickCallback = clickCallback;
         this.htspVersion = htspVersion;
         this.isDualPane = isDualPane;
@@ -47,7 +44,7 @@ class RecordingRecyclerViewAdapter extends RecyclerView.Adapter<RecordingViewHol
     public void onBindViewHolder(@NonNull RecordingViewHolder holder, int position) {
         if (recordingListFiltered.size() > position) {
             Recording recording = recordingListFiltered.get(position);
-            holder.bindData(context, recording, (selectedPosition == position), htspVersion, clickCallback);
+            holder.bindData(recording, (selectedPosition == position), htspVersion, clickCallback);
         }
     }
 

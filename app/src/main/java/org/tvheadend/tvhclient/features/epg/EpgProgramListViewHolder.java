@@ -49,8 +49,9 @@ class EpgProgramListViewHolder extends RecyclerView.ViewHolder {
         ButterKnife.bind(this, view);
     }
 
-    public void bindData(Context context, @NonNull final Program program, @NonNull List<Recording> recordingList, @NonNull RecyclerViewClickCallback clickCallback) {
+    public void bindData(@NonNull final Program program, @NonNull List<Recording> recordingList, @NonNull RecyclerViewClickCallback clickCallback) {
         itemView.setTag(program);
+        Context context = itemView.getContext();
 
         long startTime = (program.getStart() < fragmentStartTime) ? fragmentStartTime : program.getStart();
         long stopTime = (program.getStop() > fragmentStopTime) ? fragmentStopTime : program.getStop();

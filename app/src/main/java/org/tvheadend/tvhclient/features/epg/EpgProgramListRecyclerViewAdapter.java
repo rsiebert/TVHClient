@@ -1,6 +1,5 @@
 package org.tvheadend.tvhclient.features.epg;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
@@ -23,12 +22,10 @@ class EpgProgramListRecyclerViewAdapter extends RecyclerView.Adapter<EpgProgramL
     private final float pixelsPerMinute;
     private final long fragmentStartTime;
     private final long fragmentStopTime;
-    private final Context context;
     private final List<Program> programList = new ArrayList<>();
     private List<Recording> recordingList = new ArrayList<>();
 
-    EpgProgramListRecyclerViewAdapter(Context context, float pixelsPerMinute, long fragmentStartTime, long fragmentStopTime, @NonNull RecyclerViewClickCallback clickCallback) {
-        this.context = context;
+    EpgProgramListRecyclerViewAdapter(float pixelsPerMinute, long fragmentStartTime, long fragmentStopTime, @NonNull RecyclerViewClickCallback clickCallback) {
         this.clickCallback = clickCallback;
         this.pixelsPerMinute = pixelsPerMinute;
         this.fragmentStartTime = fragmentStartTime;
@@ -46,7 +43,7 @@ class EpgProgramListRecyclerViewAdapter extends RecyclerView.Adapter<EpgProgramL
     public void onBindViewHolder(@NonNull EpgProgramListViewHolder holder, int position) {
         if (programList.size() > position) {
             Program program = programList.get(position);
-            holder.bindData(context, program, recordingList, clickCallback);
+            holder.bindData(program, recordingList, clickCallback);
         }
     }
 

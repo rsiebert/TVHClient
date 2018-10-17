@@ -83,6 +83,7 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
 
     @Override
     public void onDestroyView() {
+        recyclerView.setAdapter(null);
         super.onDestroyView();
         unbinder.unbind();
     }
@@ -118,7 +119,7 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
         // Show the channel icons when a search is active and all channels shall be searched
         boolean showProgramChannelIcon = isSearchActive && channelId == 0;
 
-        recyclerViewAdapter = new ProgramRecyclerViewAdapter(activity.getApplicationContext(), this, this, showProgramChannelIcon);
+        recyclerViewAdapter = new ProgramRecyclerViewAdapter(this, this, showProgramChannelIcon);
         recyclerView.setLayoutManager(new LinearLayoutManager(activity.getApplicationContext()));
         recyclerView.addItemDecoration(new DividerItemDecoration(activity.getApplicationContext(), LinearLayoutManager.VERTICAL));
         recyclerView.setItemAnimator(new DefaultItemAnimator());

@@ -62,8 +62,9 @@ public class ChannelViewHolder extends RecyclerView.ViewHolder {
         ButterKnife.bind(this, view);
     }
 
-    public void bindData(Context context, @NonNull final Channel channel, boolean selected, RecyclerViewClickCallback clickCallback) {
+    public void bindData(@NonNull final Channel channel, boolean selected, RecyclerViewClickCallback clickCallback) {
         itemView.setTag(channel);
+        Context context = itemView.getContext();
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         boolean showChannelName = sharedPreferences.getBoolean("channel_name_enabled", true);

@@ -1,6 +1,7 @@
 package org.tvheadend.tvhclient.features.epg;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -50,11 +51,13 @@ public class EpgViewPagerViewHolder extends RecyclerView.ViewHolder implements R
         this.startTime = startTime;
         this.endTime = endTime;
 
-        recyclerView.setLayoutManager(new CustomHorizontalLayoutManager(activity.getApplicationContext()));
-        recyclerView.addItemDecoration(new DividerItemDecoration(activity.getApplicationContext(), LinearLayoutManager.HORIZONTAL));
+        Context context = itemView.getContext();
+
+        recyclerView.setLayoutManager(new CustomHorizontalLayoutManager(context));
+        recyclerView.addItemDecoration(new DividerItemDecoration(context, LinearLayoutManager.HORIZONTAL));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setRecycledViewPool(viewPool);
-        recyclerViewAdapter = new EpgProgramListRecyclerViewAdapter(activity.getApplicationContext(), pixelsPerMinute, startTime, endTime, this);
+        recyclerViewAdapter = new EpgProgramListRecyclerViewAdapter(pixelsPerMinute, startTime, endTime, this);
         recyclerView.setAdapter(recyclerViewAdapter);
 
         viewModel = ViewModelProviders.of(activity).get(EpgViewModel.class);

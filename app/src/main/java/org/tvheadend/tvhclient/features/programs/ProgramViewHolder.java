@@ -62,8 +62,9 @@ public class ProgramViewHolder extends RecyclerView.ViewHolder {
         ButterKnife.bind(this, view);
     }
 
-    public void bindData(Context context, @NonNull final Program program, RecyclerViewClickCallback clickCallback) {
+    public void bindData(@NonNull final Program program, RecyclerViewClickCallback clickCallback) {
         itemView.setTag(program);
+        Context context = itemView.getContext();
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         boolean showProgramSubtitle = sharedPreferences.getBoolean("program_subtitle_enabled", true);

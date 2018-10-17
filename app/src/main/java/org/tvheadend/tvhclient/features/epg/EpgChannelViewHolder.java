@@ -31,8 +31,9 @@ public class EpgChannelViewHolder extends RecyclerView.ViewHolder {
         ButterKnife.bind(this, view);
     }
 
-    public void bindData(Context context, final ChannelSubset channel, RecyclerViewClickCallback clickCallback) {
+    public void bindData(final ChannelSubset channel, RecyclerViewClickCallback clickCallback) {
         itemView.setTag(channel);
+        Context context = itemView.getContext();
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         int playUponChannelClick = Integer.valueOf(sharedPreferences.getString("channel_icon_action", "0"));

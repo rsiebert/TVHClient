@@ -1,6 +1,5 @@
 package org.tvheadend.tvhclient.features.dvr.series_recordings;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -25,11 +24,9 @@ class SeriesRecordingRecyclerViewAdapter extends RecyclerView.Adapter<SeriesReco
     private List<SeriesRecording> recordingListFiltered = new ArrayList<>();
     private final int htspVersion;
     private final int gmtOffset;
-    private final Context context;
     private int selectedPosition = 0;
 
-    SeriesRecordingRecyclerViewAdapter(Context context, boolean isDualPane, RecyclerViewClickCallback clickCallback, int htspVersion, int gmtOffset) {
-        this.context = context;
+    SeriesRecordingRecyclerViewAdapter(boolean isDualPane, RecyclerViewClickCallback clickCallback, int htspVersion, int gmtOffset) {
         this.clickCallback = clickCallback;
         this.htspVersion = htspVersion;
         this.gmtOffset = gmtOffset;
@@ -47,7 +44,7 @@ class SeriesRecordingRecyclerViewAdapter extends RecyclerView.Adapter<SeriesReco
     public void onBindViewHolder(@NonNull SeriesRecordingViewHolder holder, int position) {
         if (recordingListFiltered.size() > position) {
             SeriesRecording recording = recordingListFiltered.get(position);
-            holder.bindData(context, recording, (selectedPosition == position), htspVersion, gmtOffset, clickCallback);
+            holder.bindData(recording, (selectedPosition == position), htspVersion, gmtOffset, clickCallback);
         }
     }
 

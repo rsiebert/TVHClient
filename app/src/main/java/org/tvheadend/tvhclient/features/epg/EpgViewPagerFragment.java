@@ -91,6 +91,7 @@ public class EpgViewPagerFragment extends Fragment implements EpgScrollInterface
 
     @Override
     public void onDestroyView() {
+        recyclerView.setAdapter(null);
         super.onDestroyView();
         unbinder.unbind();
     }

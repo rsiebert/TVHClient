@@ -1,6 +1,5 @@
 package org.tvheadend.tvhclient.features.epg;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -22,10 +21,8 @@ class EpgChannelListRecyclerViewAdapter extends RecyclerView.Adapter<EpgChannelV
     private final RecyclerViewClickCallback clickCallback;
     private final List<ChannelSubset> channelList = new ArrayList<>();
     private List<ChannelSubset> channelListFiltered = new ArrayList<>();
-    private final Context context;
 
-    EpgChannelListRecyclerViewAdapter(Context context, RecyclerViewClickCallback clickCallback) {
-        this.context = context;
+    EpgChannelListRecyclerViewAdapter(RecyclerViewClickCallback clickCallback) {
         this.clickCallback = clickCallback;
     }
 
@@ -39,7 +36,7 @@ class EpgChannelListRecyclerViewAdapter extends RecyclerView.Adapter<EpgChannelV
     @Override
     public void onBindViewHolder(@NonNull EpgChannelViewHolder holder, int position) {
         ChannelSubset channel = channelListFiltered.get(position);
-        holder.bindData(context, channel, clickCallback);
+        holder.bindData(channel, clickCallback);
     }
 
     void addItems(@NonNull List<ChannelSubset> list) {

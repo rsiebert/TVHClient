@@ -65,6 +65,7 @@ public class RecordingListFragment extends BaseFragment implements RecyclerViewC
 
     @Override
     public void onDestroyView() {
+        recyclerView.setAdapter(null);
         super.onDestroyView();
         unbinder.unbind();
     }
@@ -83,7 +84,7 @@ public class RecordingListFragment extends BaseFragment implements RecyclerViewC
             }
         }
 
-        recyclerViewAdapter = new RecordingRecyclerViewAdapter(activity.getApplicationContext(), isDualPane, this, htspVersion);
+        recyclerViewAdapter = new RecordingRecyclerViewAdapter(isDualPane, this, htspVersion);
         recyclerView.setLayoutManager(new LinearLayoutManager(activity.getApplicationContext()));
         recyclerView.addItemDecoration(new DividerItemDecoration(activity.getApplicationContext(), LinearLayoutManager.VERTICAL));
         recyclerView.setItemAnimator(new DefaultItemAnimator());

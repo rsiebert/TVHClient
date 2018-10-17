@@ -1,6 +1,5 @@
 package org.tvheadend.tvhclient.features.channels;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
@@ -26,11 +25,9 @@ class ChannelRecyclerViewAdapter extends RecyclerView.Adapter<ChannelViewHolder>
     private List<Recording> recordingList = new ArrayList<>();
     private final List<Channel> channelList = new ArrayList<>();
     private List<Channel> channelListFiltered = new ArrayList<>();
-    private final Context context;
     private int selectedPosition = 0;
 
-    ChannelRecyclerViewAdapter(Context context, boolean isDualPane, RecyclerViewClickCallback clickCallback) {
-        this.context = context;
+    ChannelRecyclerViewAdapter(boolean isDualPane, RecyclerViewClickCallback clickCallback) {
         this.clickCallback = clickCallback;
         this.isDualPane = isDualPane;
     }
@@ -46,7 +43,7 @@ class ChannelRecyclerViewAdapter extends RecyclerView.Adapter<ChannelViewHolder>
     public void onBindViewHolder(@NonNull ChannelViewHolder holder, int position) {
         if (channelListFiltered.size() > position) {
             Channel channel = channelListFiltered.get(position);
-            holder.bindData(context, channel, (selectedPosition == position), clickCallback);
+            holder.bindData(channel, (selectedPosition == position), clickCallback);
         }
     }
 

@@ -72,6 +72,7 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
 
     @Override
     public void onDestroyView() {
+        recyclerView.setAdapter(null);
         super.onDestroyView();
         unbinder.unbind();
     }
@@ -93,7 +94,7 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
             }
         }
 
-        recyclerViewAdapter = new ChannelRecyclerViewAdapter(activity.getApplicationContext(), isDualPane, this);
+        recyclerViewAdapter = new ChannelRecyclerViewAdapter(isDualPane, this);
         recyclerView.setLayoutManager(new LinearLayoutManager(activity.getApplicationContext()));
         recyclerView.addItemDecoration(new DividerItemDecoration(activity.getApplicationContext(), LinearLayoutManager.VERTICAL));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
