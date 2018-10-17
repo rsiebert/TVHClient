@@ -256,13 +256,7 @@ public class RecordingListFragment extends BaseFragment implements RecyclerViewC
         if (view.getId() == R.id.icon || view.getId() == R.id.icon_text) {
             if (recyclerViewAdapter.getItemCount() > 0) {
                 Recording recording = recyclerViewAdapter.getItem(position);
-
-                int channelIconAction = Integer.valueOf(sharedPreferences.getString("channel_icon_action", "0"));
-                if (channelIconAction  == 1) {
-                    menuUtils.handleMenuPlayRecording(recording.getId());
-                } else if (channelIconAction == 2) {
-                    menuUtils.handleMenuCast("dvrId", recording.getId());
-                }
+                menuUtils.handleMenuPlayRecordingIcon(recording.getId());
             }
         } else {
             showRecordingDetails(position);

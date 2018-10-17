@@ -255,12 +255,7 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
     public void onClick(View view, int position) {
         if (view.getId() == R.id.icon || view.getId() == R.id.icon_text) {
             ChannelSubset channel = channelListRecyclerViewAdapter.getItem(position);
-            int channelIconAction = Integer.valueOf(sharedPreferences.getString("channel_icon_action", "0"));
-            if (channelIconAction  == 1) {
-                menuUtils.handleMenuPlayChannel(channel.getId());
-            } else if (channelIconAction == 2) {
-                menuUtils.handleMenuCast("channelId", channel.getId());
-            }
+            menuUtils.handleMenuPlayChannelIcon(channel.getId());
         }
     }
 

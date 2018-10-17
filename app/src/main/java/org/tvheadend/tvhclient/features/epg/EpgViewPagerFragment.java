@@ -144,7 +144,7 @@ public class EpgViewPagerFragment extends Fragment implements EpgScrollInterface
 
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 if (newState != SCROLL_STATE_IDLE) {
                     enableScrolling = true;
@@ -158,7 +158,7 @@ public class EpgViewPagerFragment extends Fragment implements EpgScrollInterface
             }
 
             @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
                 if (enableScrolling) {
                     int position = recyclerViewLinearLayoutManager.findFirstVisibleItemPosition();

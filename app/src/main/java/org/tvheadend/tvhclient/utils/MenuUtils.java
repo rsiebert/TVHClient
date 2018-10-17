@@ -794,4 +794,34 @@ public class MenuUtils {
         }
         return false;
     }
+
+    public void handleMenuPlayChannelIcon(int channelId) {
+        int channelIconAction = Integer.valueOf(sharedPreferences.getString("channel_icon_action", "0"));
+        if (channelIconAction == 1) {
+            handleMenuPlayChannel(channelId);
+        } else if (channelIconAction == 2) {
+            Activity activity = this.activity.get();
+            CastSession castSession = CastContext.getSharedInstance(activity.getApplicationContext()).getSessionManager().getCurrentCastSession();
+            if (castSession != null) {
+                handleMenuCast("channelId", channelId);
+            } else {
+                handleMenuPlayChannel(channelId);
+            }
+        }
+    }
+
+    public void handleMenuPlayRecordingIcon(int recordingId) {
+        int channelIconAction = Integer.valueOf(sharedPreferences.getString("channel_icon_action", "0"));
+        if (channelIconAction == 1) {
+            handleMenuPlayRecording(recordingId);
+        } else if (channelIconAction == 2) {
+            Activity activity = this.activity.get();
+            CastSession castSession = CastContext.getSharedInstance(activity.getApplicationContext()).getSessionManager().getCurrentCastSession();
+            if (castSession != null) {
+                handleMenuCast("dvrId", recordingId);
+            } else {
+                handleMenuPlayRecording(recordingId);
+            }
+        }
+    }
 }

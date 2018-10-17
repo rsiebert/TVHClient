@@ -387,13 +387,7 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
         if (view.getId() == R.id.icon || view.getId() == R.id.icon_text) {
             if (recyclerViewAdapter.getItemCount() > 0) {
                 Channel channel = recyclerViewAdapter.getItem(position);
-
-                int channelIconAction = Integer.valueOf(sharedPreferences.getString("channel_icon_action", "0"));
-                if (channelIconAction  == 1) {
-                    menuUtils.handleMenuPlayChannel(channel.getId());
-                } else if (channelIconAction == 2) {
-                    menuUtils.handleMenuCast("channelId", channel.getId());
-                }
+                menuUtils.handleMenuPlayChannelIcon(channel.getId());
             }
         } else {
             showChannelDetails(position);
