@@ -406,4 +406,6 @@
     <string name="pref_navigation">Navigation</string>
     <string name="pref_navigation_history_enabled">Navigation history</string>
     <string name="pref_navigation_history_enabled_sum">Saves the history of the selected navigation menus. The Back button displays the previous navigation menu and its screen. When this setting is disabled, the app closes.</string>
+    <string name="error_no_channel_selected">Please select a channel. You server version does not support recording on all channels.</string>
+    <string name="error_start_time_past_stop_time">The start time must not be past the stop time.</string>
 </resources>
