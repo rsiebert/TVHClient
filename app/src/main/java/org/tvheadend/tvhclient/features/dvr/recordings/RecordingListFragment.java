@@ -181,7 +181,7 @@ public class RecordingListFragment extends BaseFragment implements RecyclerViewC
             if (recording.isCompleted()) {
                 popupMenu.getMenu().findItem(R.id.menu_record_remove).setVisible(true);
                 popupMenu.getMenu().findItem(R.id.menu_play).setVisible(true);
-                CastSession castSession = CastContext.getSharedInstance(activity).getSessionManager().getCurrentCastSession();
+                CastSession castSession = CastContext.getSharedInstance(activity.getApplicationContext()).getSessionManager().getCurrentCastSession();
                 popupMenu.getMenu().findItem(R.id.menu_cast).setVisible(castSession != null);
                 popupMenu.getMenu().findItem(R.id.menu_download).setVisible(isUnlocked);
 
@@ -192,7 +192,7 @@ public class RecordingListFragment extends BaseFragment implements RecyclerViewC
             } else if (recording.isRecording()) {
                 popupMenu.getMenu().findItem(R.id.menu_record_stop).setVisible(true);
                 popupMenu.getMenu().findItem(R.id.menu_play).setVisible(true);
-                CastSession castSession = CastContext.getSharedInstance(activity).getSessionManager().getCurrentCastSession();
+                CastSession castSession = CastContext.getSharedInstance(activity.getApplicationContext()).getSessionManager().getCurrentCastSession();
                 popupMenu.getMenu().findItem(R.id.menu_cast).setVisible(castSession != null);
                 popupMenu.getMenu().findItem(R.id.menu_edit).setVisible(isUnlocked);
 

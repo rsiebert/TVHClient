@@ -130,7 +130,7 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Wake
                     .putCustomAttribute("Google API", "Available"));
 
             try {
-                castContext = CastContext.getSharedInstance(this);
+                castContext = CastContext.getSharedInstance(this.getApplicationContext());
             } catch (Exception e) {
                 Timber.e("Could not get cast context", e);
             }
