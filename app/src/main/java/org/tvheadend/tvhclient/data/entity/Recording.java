@@ -22,9 +22,9 @@ public class Recording {
     private long start = time;              // s64   required   Time of when this entry was scheduled to start recording.
     private long stop = time + offset;      // s64   required   Time of when this entry was scheduled to stop recording.
     @ColumnInfo(name = "start_extra")
-    private long startExtra = 0;            // s64   required   Extra start time (pre-time) in minutes (Added in version 13).
+    private long startExtra = 1;            // s64   required   Extra start time (pre-time) in minutes (Added in version 13).
     @ColumnInfo(name = "stop_extra")
-    private long stopExtra = 0;             // s64   required   Extra stop time (post-time) in minutes (Added in version 13).
+    private long stopExtra = 15;             // s64   required   Extra stop time (post-time) in minutes (Added in version 13).
     private long retention = 0;             // s64   required   DVR Entry retention time in days (Added in version 13).
     private int priority = 2;               // u32   required   Priority (0 = Important, 1 = High, 2 = Normal, 3 = Low, 4 = Unimportant, 5 = Not set) (Added in version 13).
     @ColumnInfo(name = "event_id")
