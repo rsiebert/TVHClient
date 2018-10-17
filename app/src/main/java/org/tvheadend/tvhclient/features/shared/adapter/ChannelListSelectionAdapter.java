@@ -16,11 +16,12 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.utils.UIUtils;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 
 public class ChannelListSelectionAdapter extends RecyclerView.Adapter<ChannelListSelectionAdapter.ViewHolder> {
 
-    private final Context context;
+    private final WeakReference<Context> context;
     private Callback callback;
     private final List<Channel> channelList;
 
@@ -29,7 +30,7 @@ public class ChannelListSelectionAdapter extends RecyclerView.Adapter<ChannelLis
     }
 
     public ChannelListSelectionAdapter(Context context, List<Channel> channelList) {
-        this.context = context;
+        this.context = new WeakReference<>(context);
         this.channelList = channelList;
     }
 
@@ -49,7 +50,8 @@ public class ChannelListSelectionAdapter extends RecyclerView.Adapter<ChannelLis
         final Channel channel = channelList.get(position);
         if (channel != null) {
             holder.itemView.setTag(channel);
-            if (holder.iconImageView != null && !TextUtils.isEmpty(channel.getIcon())) {
+            Context context = this.context.get();
+            if (context != null && holder.iconImageView != null && !TextUtils.isEmpty(channel.getIcon())) {
                 Picasso.get()
                         .load(UIUtils.getIconUrl(context, channel.getIcon()))
                         .into(holder.iconImageView);
