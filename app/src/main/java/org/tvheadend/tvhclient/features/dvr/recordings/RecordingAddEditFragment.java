@@ -16,7 +16,6 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 
@@ -236,20 +235,20 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
     private void save() {
         if (TextUtils.isEmpty(recording.getTitle()) && serverStatus.getHtspVersion() >= 21) {
             if (activity.getCurrentFocus() != null) {
-                Snackbar.make(activity.getCurrentFocus(), getString(R.string.error_empty_title), Toast.LENGTH_SHORT).show();
+                Snackbar.make(activity.getCurrentFocus(), getString(R.string.error_empty_title), Snackbar.LENGTH_SHORT).show();
             }
             return;
         }
         if (recording.getChannelId() == 0 && serverStatus.getHtspVersion() < 21) {
             if (activity.getCurrentFocus() != null) {
-                Snackbar.make(activity.getCurrentFocus(), getString(R.string.error_no_channel_selected), Toast.LENGTH_SHORT).show();
+                Snackbar.make(activity.getCurrentFocus(), getString(R.string.error_no_channel_selected), Snackbar.LENGTH_SHORT).show();
             }
             return;
         }
 
         if (recording.getStart() >= recording.getStop()) {
             if (activity.getCurrentFocus() != null) {
-                Snackbar.make(activity.getCurrentFocus(), getString(R.string.error_start_time_past_stop_time), Toast.LENGTH_SHORT).show();
+                Snackbar.make(activity.getCurrentFocus(), getString(R.string.error_start_time_past_stop_time), Snackbar.LENGTH_SHORT).show();
             }
             return;
         }

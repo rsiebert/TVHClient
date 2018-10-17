@@ -16,7 +16,6 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 
@@ -236,7 +235,7 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
     private void save() {
         if (TextUtils.isEmpty(recording.getTitle())) {
             if (activity.getCurrentFocus() != null) {
-                Snackbar.make(activity.getCurrentFocus(), getString(R.string.error_empty_title), Toast.LENGTH_SHORT).show();
+                Snackbar.make(activity.getCurrentFocus(), getString(R.string.error_empty_title), Snackbar.LENGTH_SHORT).show();
             }
             return;
         }
