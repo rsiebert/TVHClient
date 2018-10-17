@@ -3,6 +3,7 @@ package org.tvheadend.tvhclient.features.shared;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -127,7 +128,15 @@ public abstract class BaseActivity extends AppCompatActivity implements NetworkS
 
     @Override
     public void onBackPressed() {
-        if (getSupportFragmentManager().getBackStackEntryCount() < 1) {
+
+        int count = getSupportFragmentManager().getBackStackEntryCount();
+        boolean navHistoryEnabled = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("navigation_history_enabled", true);
+
+        if (navHistoryEnabled && count <= 1) {
+            finish();
+        } else if (!navHistoryEnabled && count < 1) {
+            // Only exit the app when there is no more fragments in the stack.
+            // When the program list is visible a back press shall show the channel list again
             finish();
         } else {
             super.onBackPressed();
