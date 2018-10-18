@@ -37,8 +37,6 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import timber.log.Timber;
 
-// TODO update icons (same color, record with profile must differ from regular record...)
-
 public class ProgramDetailsFragment extends BaseFragment implements RecordingRemovedCallback {
 
     @BindView(R.id.state)
