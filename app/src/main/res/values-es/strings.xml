@@ -1,10 +1,11 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
     <string name="activate_recording">Activar la grabación</string>
     <string name="add">Añadir</string>
     <string name="add_connection">Agregar conexión</string>
     <string name="add_name">Nombre para esta entrada</string>
     <string name="add_recording">Añadir nueva grabación</string>
+    <string name="add_recording_directory">Guardar directorio de la grabación</string>
     <string name="add_title">El título para la grabación</string>
     <string name="airing">Al aire</string>
     <string name="all_channels">Todos los canales</string>
@@ -14,6 +15,7 @@
     <string name="cancel_add_recording">Cancelar nueva grabación agregada? Todos los valores se perderán.</string>
     <string name="cancel_edit_recording">¿Cancelar la edición de la grabación existente? Todos los valores se perderán.</string>
     <string name="cancel_recording">"¿De verdad quieres eliminar la grabación programada? '%s'?"</string>
+    <string name="cast">Cast</string>
     <string name="channel">Canal</string>
     <string name="channels">Canales</string>
     <string name="clear_icon_cache">Limpiar cache de iconos?</string>
@@ -37,6 +39,14 @@
     <string name="delete">Eliminar</string>
     <string name="delete_connection">"¿De verdad quieres eliminar la conexión? '%s'?"</string>
     <string name="description">Descripción</string>
+    <string name="details">Pormenores</string>
+    <string name="dialog_content_purchase_already_made">Todas las características adicionales ya están disponibles!</string>
+    <string name="dialog_content_purchase_not_successful">Desafortunadamente, la compra no pudo ser completada, por favor contacte al desarrollador.</string>
+    <string name="dialog_content_purchase_successful">La aplicación se reiniciará para que todas las funciones estén disponibles.</string>
+    <string name="dialog_title_purchase_already_made">Muchísimas gracias.</string>
+    <string name="dialog_title_purchase_not_successful">Compra no exitosa!</string>
+    <string name="dialog_title_purchase_successful">Compra exitosa!</string>
+    <string name="directory">Directorio</string>
     <string name="disc_space">Espacio en disco</string>
     <string name="discard">Descartar</string>
     <string name="download">Descargar</string>
@@ -59,6 +69,7 @@
     <string name="extra_start_time">Minutos adicionales de inicio (pre-tiempo)</string>
     <string name="extra_stop_time">Minutos adicionales de parada (pos-tempo)</string>
     <string name="failed_recordings">Grabaciones fallidas</string>
+    <string name="feature_not_available_in_free_version">Esta característica no está disponible en la versión gratuita!</string>
     <string name="feature_not_supported_by_server">Su servidor TVHeadend no admite esta función. Por favor, actualice a una versión más reciente.</string>
     <string name="friday">Viernes</string>
     <string name="genre_color_info">Explicar los colores del género</string>
@@ -177,6 +188,7 @@ Verifique que cumpla con los requisitos descritos en la configuración de transm
     <string name="pref_show_program_artwork_sum">Muestra la imagen de la obra de arte/póster en el programa actual. El servidor debe proporcionar la información.</string>
     <string name="pref_show_program_subtitle">Mostrar subtítulo del programa</string>
     <string name="pref_show_progressbar">Mostrar barra de progreso</string>
+    <string name="pref_show_progressbar_sum">Indica en la lista de canales qué parte del programa actual ya se ha mostrado.</string>
     <string name="pref_sort_channels">Orden de canales</string>
     <string name="pref_sort_channels_sum">Elija en qué orden se mostrarán los canales.</string>
     <string name="pref_streaming_port">Puerto para transmisión de medios</string>
@@ -202,9 +214,13 @@ Debe tener el patrón '01:24:67:9a:cd:ef'."</string>
     <string name="pref_wol_port_sum">Puerto %d sera usado para activar el servidor. Por defecto es 9.</string>
     <string name="priority">Prioridad</string>
     <string name="progress">%1$d%% del evento ya mostrado</string>
+    <string name="purchase">Comprar</string>
     <string name="rating">Clasificación</string>
     <string name="ready">Preparado</string>
+    <string name="reconnect">Reconectar</string>
+    <string name="record_cancel">Cancelar la grabación</string>
     <string name="record_once">Grabar</string>
+    <string name="record_once_and_edit">Grabar y editar</string>
     <string name="record_once_custom_profile">Grabar con perfil diferente</string>
     <string name="record_remove">Eliminar grabación</string>
     <string name="record_remove_all">Eliminar todas las grabaciones</string>
@@ -227,16 +243,17 @@ Debe tener el patrón '01:24:67:9a:cd:ef'."</string>
     <string name="remove_recording">"¿De verdad quieres eliminar la grabación '%s'?"</string>
     <string name="remove_series_recording">"¿De verdad quieres eliminar la grabación de la serie '%s'? Esto eliminará todas las grabaciones programadas que se ven afectadas por esta regla de grabación de la serie."</string>
     <string name="remove_timer_recording">"¿De verdad quieres eliminar la grabación con temporizador '%s'?"</string>
+    <string name="removed_recordings">Grabaciones eliminadas</string>
     <string name="saturday">Sabado</string>
     <string name="save">Guardar</string>
     <string name="scheduled_recordings">Grabaciones programadas</string>
     <string name="search">Buscar</string>
     <string name="search_epg">Buscar en la guía de programas</string>
+    <string name="search_fileaffinity">Buscar en FileAffinity</string>
+    <string name="search_google">Buscar en Google</string>
     <string name="search_hint">Buscar el EPG</string>
     <string name="search_imdb">Buscar en IMDB</string>
-    <string name="search_fileaffinity">Buscar en FileAffinity</string>
     <string name="search_youtube">Buscar en YouTube</string>
-    <string name="search_google">Buscar en Google</string>
     <string name="season">Temporada</string>
     <string name="select">Seleccionar</string>
     <string name="select_connection">Seleccionar conexión</string>
@@ -290,23 +307,4 @@ Debe tener el patrón '01:24:67:9a:cd:ef'."</string>
     <string name="wol_send">"Envió exitosamente del paquete de activación de LAN a '%s'"</string>
     <string name="wol_send_broadcast">"Envió exitosamente el paquete de activación de LAN como una transmisión a '%s'"</string>
     <string name="yesterday">Ayer</string>
-    <string name="details">Pormenores</string>
-    <string name="directory">Directorio</string>
-    <string name="record_cancel">Cancelar la grabación</string>
-    <string name="removed_recordings">Grabaciones eliminadas</string>
-    <string name="reconnect">Reconectar</string>
-    <string name="cast">Cast</string>
-    <string name="record_once_and_edit">Grabar y editar</string>
-    <string name="add_recording_directory">Guardar directorio de la grabación</string>
-    <string name="pref_show_progressbar_sum">Indica en la lista de canales qué parte del programa actual ya se ha mostrado.</string>
-
-    <string name="purchase">Comprar</string>
-    <string name="feature_not_available_in_free_version">Esta característica no está disponible en la versión gratuita!</string>
-    <string name="dialog_title_purchase_not_successful">Compra no exitosa!</string>
-    <string name="dialog_content_purchase_not_successful">Desafortunadamente, la compra no pudo ser completada, por favor contacte al desarrollador.</string>
-    <string name="dialog_title_purchase_already_made">Muchísimas gracias.</string>
-    <string name="dialog_content_purchase_already_made">Todas las características adicionales ya están disponibles!</string>
-    <string name="dialog_title_purchase_successful">Compra exitosa!</string>
-    <string name="dialog_content_purchase_successful">La aplicación se reiniciará para que todas las funciones estén disponibles.</string>
-
 </resources>
