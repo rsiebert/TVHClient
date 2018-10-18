@@ -20,23 +20,25 @@ TVHClient is developed by Robert Siebert.<br />
 
 <div class='title'>Casting</div>
 <div class='content'>
-    To get casting working properly certain things need to be considered.
-    Transcoding must be enabled on the tvheadend server. This is usually the case on server versions > 4. Especially vaapi hardware assisted transcoding works best on recent tvheadend versions 4.3 and above.
-    <p>
-    A casting profile must exist with the following configuration:
-    </p>
+    <b>Requirements</b>
     <ul>
-        <li>Container <i>WEBM/built-in</i></li>
-        <li>Video codec <i>libvpx VP8</i>, preset <i>hq: nvenc(h264 / h265)</i></li>
-        <li>Audio codec <i>libvorbis</i></li>
+        <li>You have purchased the full version of TVHClient.</li>
+        <li>You need transcoding support working on the TVH server side.</li>
+        <li>Transcoding, especially VAAPI hardware-assisted transcoding, works best on recent unstable TVH 4.3 versions.</li>
     </ul>
-    <p>
-    Another profile for maximum compatibility with casting, browsers, external players and the internal player contains the following configuration:
-    </p>
+
+    <b>Setup Transcoding</b>
+    <p>For maximum compatibility (Casting, most browsers, players and the internal player) use a stream profile with the following settings:</p>
     <ul>
-        <li>Container <i>av-lib/MP4</i></li>
-        <li>Video codec <i>h.264 high profile</i></li>
-        <li>Audio codec <i>AAC LC profile</i></li>
+        <li>Container: av-lib/MP4 (<a href="https://i.imgur.com/SqEFdtl.png" rel="nofollow">example</a>)</li>
+        <li>Video codec: H.264, High profile (<a href="https://i.imgur.com/q2rZMpu.png" rel="nofollow">example</a>)</li>
+        <li>Audio codec: AAC LC profile (<a href="https://i.imgur.com/T60IN3w.png" rel="nofollow">example</a>)</li>
+    </ul>
+
+    <b>Setup TVHClient</b>
+    <ul>
+        <li>You can either use an IP-address or a DNS name for the connection. Before casting is started the DNS name will be converted to an IP-address so that casting will work.</li>
+        <li>Select the appropriate casting playback profile.</li>
     </ul>
 </div>
 
