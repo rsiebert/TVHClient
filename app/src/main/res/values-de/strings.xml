@@ -400,7 +400,7 @@
     <string name="pref_show_recording_file_status_sum">Die Dateigröße und die Anzahl der Datenfehler jeder Aufnahme werden in den Aufnahmelisten angezeigt.</string>
     <string name="programs">Programme</string>
     <string name="help_and_support">Hilfe &amp; Support</string>
-    <string name="pref_privacy_policy">Datenschutzvereinbarung</string>
+    <string name="pref_privacy_policy">Datenschutzerklärung</string>
     <string name="pref_navigation">Navigation</string>
     <string name="pref_navigation_history_enabled">Navigationshistorie</string>
     <string name="pref_navigation_history_enabled_sum">Speichert den Verlauf der gewählten Navigationsmenüs. Mit der Zurück-Taste wird das vorherige Navigationsmenü mit dessen Bildschirm angezeigt. Wenn diese Einstellung deaktiviert ist, wird die App geschlossen.</string>
