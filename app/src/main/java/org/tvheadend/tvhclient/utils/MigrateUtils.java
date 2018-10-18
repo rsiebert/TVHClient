@@ -25,6 +25,7 @@ import timber.log.Timber;
 public class MigrateUtils {
     private static final int VERSION_101 = 101;
     private static final int VERSION_109 = 109;
+    private static final int VERSION_116 = 116;
     @Inject
     protected Context context;
     @Inject
@@ -48,6 +49,13 @@ public class MigrateUtils {
             }
             if (lastInstalledApplicationVersion < VERSION_109) {
                 checkServerStatus();
+            }
+            if (lastInstalledApplicationVersion < VERSION_116) {
+                // Convert the previous boolean channel icon action to the corresponding list entry
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                boolean enabled = sharedPreferences.getBoolean("channel_icon_starts_playback_enabled", true);
+                editor.putString("channel_icon_action", enabled ? "2" : "0");
+                editor.apply();
             }
         }
 
