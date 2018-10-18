@@ -1,6 +1,6 @@
 $ 2.0.0
   % VERSION 2.0.0
-  _ 09.10.2018
+  _ 18.10.2018
     * Some UI changes according to the material design guidelines (popup menus, new navigation menu and icons)
     * Channels, recordings and epg data are now stored in a database
     * Epg data will be periodically fetched in the background
@@ -12,11 +12,14 @@ $ 2.0.0
     * New popup menus to search program details on google and youtube (Only available in the unlocked version)
     * New option to hide duplicate scheduled recordings
     * New options to hide certain popup menu items
+    * New option to disable the navigation history. The back button will then close the app.
     * Updated Spanish translation
     * Updated Dutch translation
     * Crashlytics is used in favour of the previous crash reporting library TracePot (enabled by default in the advanced settings)
     * Answers is used to gather anonymous user statistics (disabled by default in the advanced settings)
     * Relevant menu items are enabled or disabled based on the network status
+    * Added option to show the privacy policy
+    * Added a new help and support navigation menu item
     * Complete rewrite of the application code base
 $ 1.9.11
   % VERSION 1.9.11
