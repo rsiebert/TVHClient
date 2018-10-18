@@ -14,12 +14,31 @@ TVHClient wird entwickelt von Robert Siebert.<br />
 </ul>
 </div>
 
-<div class='title'>
-Kauf der Vollversion
-</div>
-<div class='content'>
-Sie können die Vollversion per Inapp-Kauf freischalten. Bei der Transaktion gelten die <a href="https://policies.google.com/privacy?hl=de">Nutzungsbedingungen von Google</a>.
-</div>
+<div class='title'>Wiedergabe mit einem externen Player</div>
 
+<div class='title'>Wiedergabe mit dem internen Player</div>
+
+<div class='title'>Casting</div>
+<div class='content'>
+    Damit Casting richtig funktioniert, müssen bestimmte Dinge berücksichtigt werden.
+    Die Transcodierung muss auf dem tvheadend-Server aktiviert sein. Dies ist in der Regel bei Serverversionen > 4 der Fall. Insbesondere die hardwareunterstützte Transcodierung von vaapi funktioniert am besten mit den neuesten tvheadend Versionen 4.3 und höher.
+    <p>
+    Es muss ein Casting-Profile mit folgenden Einstellungen vorhanden sein
+    </p>
+    <ul>
+        <li>Container <i>WEBM/built-in</i></li>
+        <li>Video codec <i>libvpx VP8</i>, preset <i>hq: nvenc(h264 / h265)</i></li>
+        <li>Audio codec <i>libvorbis</i></li>
+    </ul>
+    <p>
+    Ein weiteres Profil für maximale Kompatibilität mit Casting, Browsern, externen Playern und dem internen Player enthält die folgenden Einstellungen:
+    </p>
+    <ul>
+        <li>Container <i>av-lib/MP4</i></li>
+        <li>Video codec <i>h.264 high profile</i></li>
+        <li>Audio codec <i>AAC LC profile</i></li>
+    </ul>
+
+</div>
 </body>
 </html>

@@ -4,7 +4,7 @@
 </head>
 <body>
 
-<div class='title'>Kontakt</div>
+<div class='title'>Contact</div>
 <div class='content'>
 TVHClient is developed by Robert Siebert.<br />
 <ul>
@@ -14,11 +14,30 @@ TVHClient is developed by Robert Siebert.<br />
 </ul>
 </div>
 
-<div class='title'>
-Purchase of the full version
-</div>
+<div class='title'>Playback using an external player</div>
+
+<div class='title'>Playback using the internal player</div>
+
+<div class='title'>Casting</div>
 <div class='content'>
-You can get the full version by purchasing an unlocker from inside the app. The transaction is subject to the <a href="https://policies.google.com/privacy?hl=en">Google Terms of Use</a>.
+    To get casting working properly certain things need to be considered.
+    Transcoding must be enabled on the tvheadend server. This is usually the case on server versions > 4. Especially vaapi hardware assisted transcoding works best on recent tvheadend versions 4.3 and above.
+    <p>
+    A casting profile must exist with the following configuration:
+    </p>
+    <ul>
+        <li>Container <i>WEBM/built-in</i></li>
+        <li>Video codec <i>libvpx VP8</i>, preset <i>hq: nvenc(h264 / h265)</i></li>
+        <li>Audio codec <i>libvorbis</i></li>
+    </ul>
+    <p>
+    Another profile for maximum compatibility with casting, browsers, external players and the internal player contains the following configuration:
+    </p>
+    <ul>
+        <li>Container <i>av-lib/MP4</i></li>
+        <li>Video codec <i>h.264 high profile</i></li>
+        <li>Audio codec <i>AAC LC profile</i></li>
+    </ul>
 </div>
 
 </body>
