@@ -48,6 +48,7 @@ import org.tvheadend.tvhclient.data.service.EpgSyncHandler;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 import org.tvheadend.tvhclient.utils.UIUtils;
 
+import java.lang.ref.WeakReference;
 import java.util.Date;
 
 import javax.inject.Inject;
@@ -96,7 +97,7 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
     private TvheadendTrackSelector trackSelector;
     private HtspDataSource.Factory htspSubscriptionDataSourceFactory;
     private HtspDataSource.Factory htspFileInputStreamDataSourceFactory;
-    private HtspDataSource dataSource;
+    private WeakReference<HtspDataSource> dataSource;
     private MediaSource mediaSource;
     private TvheadendExtractorsFactory extractorsFactory;
     private ServerStatus serverStatus;
@@ -492,11 +493,10 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
         Timber.d("onLoadingChanged is loading " + isLoading);
         if (isLoading) {
             // Fetch the current DataSource for later use
-            // TODO: Hold a WeakReference to the DataSource instead...
             // TODO: We should know if we're playing a channel or a recording...
-            dataSource = htspSubscriptionDataSourceFactory.getCurrentDataSource();
-            if (dataSource == null) {
-                dataSource = htspFileInputStreamDataSourceFactory.getCurrentDataSource();
+            dataSource = new WeakReference<>(htspSubscriptionDataSourceFactory.getCurrentDataSource());
+            if (dataSource.get() == null) {
+                dataSource = new WeakReference<>(htspFileInputStreamDataSourceFactory.getCurrentDataSource());
             }
         }
     }
