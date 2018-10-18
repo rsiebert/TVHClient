@@ -15,23 +15,22 @@ import timber.log.Timber;
 public class EpgSyncHandler {
 
     private final Context context;
-    private final AppRepository appRepository;
     private Connection connection;
     private SimpleHtspConnection simpleHtspConnection;
     private EpgSyncTask epgSyncTask;
     private EpgWorkerHandler epgWorkerHandler;
 
     public EpgSyncHandler(Context context, AppRepository appRepository) {
-        this.appRepository = appRepository;
         this.context = context;
 
         HandlerThread handlerThread = new HandlerThread("EpgSyncService Handler Thread");
         handlerThread.start();
         Handler handler = new Handler(handlerThread.getLooper());
+
+        connection = appRepository.getConnectionData().getActiveItem();
     }
 
     boolean init() {
-        connection = appRepository.getConnectionData().getActiveItem();
         return connection != null;
     }
 
