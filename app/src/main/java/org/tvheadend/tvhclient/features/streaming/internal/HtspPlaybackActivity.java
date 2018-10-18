@@ -340,27 +340,6 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
     }
 
     /*
-
-        @Override
-        public void onResume() {
-            super.onResume();
-            Timber.d("onResume, playing channel id " + channelId);
-            handler.removeCallbacks(mPlayRunnable);
-            mPlayRunnable = new PlayChannelRunnable(mTvheadendPlayer, channelId);
-            handler.post(mPlayRunnable);
-        }
-
-        @Override
-        public void onPause() {
-            super.onPause();
-            mTvheadendPlayer.release();
-        }
-
-        @Override
-        public void onPlayerError(ExoPlaybackException error) {
-            Timber.d("Session onPlayerError " + error.getMessage());
-        }
-
         @Override
         public void onTracksChanged(List<TvTrackInfo> tracks, SparseArray<String> selectedTracks) {
             Timber.d("Session : onTracksChanged " + tracks.size());
@@ -374,25 +353,8 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
                 //notifyTrackSelected(selectedTrackType, selectedTrackId);
             }
         }
-
-        public boolean onPlayChannel(int channelId) {
-            Timber.d("Start Playback of a Live Channel " + channelId);
-
-            handler.removeCallbacks(mPlayRunnable);
-            mPlayRunnable = new PlayChannelRunnable(mTvheadendPlayer, channelId);
-            handler.post(mPlayRunnable);
-
-            return true;
-        }
-
-        public void onPlayRecording(int recordedProgramId) {
-            Timber.d("Start Playback of a Recorded Program " + recordedProgramId);
-
-            handler.removeCallbacks(mPlayRunnable);
-            mPlayRunnable = new PlayRecordedProgramRunnable(mTvheadendPlayer, recordedProgramId);
-            handler.post(mPlayRunnable);
-        }
     */
+
     @Override
     public void onClick(View view) {
         Timber.d("Clicked");
@@ -421,6 +383,7 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
                     && selection.indexOf(trackIndex) != C.INDEX_UNSET;
         }
     */
+
     @Override
     public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
         Timber.d("onTracksChanged");
