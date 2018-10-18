@@ -25,7 +25,9 @@ public class UnlockerActivity extends AppCompatActivity implements ToolbarInterf
 
         if (savedInstanceState == null) {
             UnlockerFragment fragment = new UnlockerFragment();
-            fragment.setArguments(getIntent().getExtras());
+            Bundle bundle = new Bundle();
+            bundle.putString("website", "features");
+            fragment.setArguments(bundle);
             getSupportFragmentManager().beginTransaction().add(R.id.main, fragment).commit();
         }
     }
