@@ -2,10 +2,8 @@ package org.tvheadend.tvhclient;
 
 import android.app.Application;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
-import android.support.v4.content.LocalBroadcastManager;
 
 import com.anjlab.android.iab.v3.BillingProcessor;
 import com.anjlab.android.iab.v3.TransactionDetails;
@@ -182,16 +180,7 @@ public class MainApplication extends Application implements BillingProcessor.IBi
 
     @Override
     public void onProductPurchased(@NonNull String productId, TransactionDetails details) {
-        String msg;
-        if (billingProcessor.isValidTransactionDetails(details)) {
-            msg = getString(R.string.unlocker_purchase_successful);
-        } else {
-            msg = getString(R.string.unlocker_purchase_not_successful);
-        }
-
-        Intent intent = new Intent("message");
-        intent.putExtra("message", msg);
-        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+        // NOP
     }
 
     @Override
