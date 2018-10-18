@@ -39,7 +39,6 @@
     <string name="extra_stop_time">Minuti extra fine (post-time)</string>
     <string name="failed_recordings">Registrazioni fallite</string>
     <string name="removed_recordings">Registrazioni rimosse</string>
-    <string name="feature_not_available_in_free_version">"Questa opzione non è disponibile nella versione gratuita! Puoi sbloccare questa opzione acquistando l'applicazione dal Play Store di Google."</string>
     <string name="friday">Venerdì</string>
     <string name="genre_color_info">Illustra colori generi</string>
     <string name="genre_color_list">Elenco dei colori generi e loro significato.</string>
@@ -269,7 +268,6 @@ Verifica che siano soddsifatti i requisiti descritti nelle impostazioni trasmiss
     <string name="pref_show_program_artwork_sum">"Visualizza l'immagine del poster del programma attuale. Il server deve fornire questa informazione."</string>
     <string name="pref_visible_menu_icon_tags">"Visualizza sempre il menu 'Tag canale'"</string>
     <string name="pref_visible_menu_icon_tags_sum">"Mantiene sempre visibile il menu tag canale nella barra azioni. Previene lo spostamento del menu se non c'è spazio sufficiente nel menu tre punti."</string>
-    <string name="purchase">Acquista</string>
     <string name="record_once_custom_profile">Registra con profilo differente</string>
     <string name="record_stop">Ferma registrazione</string>
     <string name="recording_starts_in">La registrazione partirà tra %d min.</string>
@@ -291,9 +289,6 @@ Verifica che siano soddsifatti i requisiti descritti nelle impostazioni trasmiss
     <string name="success_removing_recording">Registrazione rimossa.</string>
     <string name="success_updating_recording">Registrazione aggiornata.</string>
     <string name="time_window">Finestra orario avvio registrazione</string>
-    <string name="unlocker_already_purchased">Tutte le funzioni aggiuntive sono disponibili! Grazie per il tuo supporto!</string>
-    <string name="unlocker_purchase_not_successful">Acquisto non completato correttamente. Contatta lo sviluppatore.</string>
-    <string name="unlocker_purchase_successful">Acquisto effettuato! Grazie per il tuo supporto! Tutte le funzioni sono ora disponibili.</string>
     <string name="clear">Chiaro</string>
     <string name="directory">Directory</string>
     <string name="reconnect">Ricollegare</string>
@@ -302,4 +297,14 @@ Verifica che siano soddsifatti i requisiti descritti nelle impostazioni trasmiss
     <string name="add_recording_directory">Salvare la directory di salvataggio della registrazione</string>
     <string name="pref_show_progressbar_sum">Indica nella lista dei canali quanto del programma corrente è già stato mostrato.</string>
     <string name="pref_show_progressbar">Mostra barra di avanzamento</string>
+
+    <string name="purchase">Acquista</string>
+    <string name="feature_not_available_in_free_version">"Questa opzione non è disponibile nella versione gratuita! Puoi sbloccare questa opzione acquistando l'applicazione dal Play Store di Google."</string>
+    <string name="dialog_title_purchase_not_successful">L\'acquisto non ha avuto successo!</string>
+    <string name="dialog_content_purchase_not_successful">Purtroppo l\'acquisto non ha potuto essere completato, si prega di contattare lo sviluppatore.</string>
+    <string name="dialog_title_purchase_already_made">Grazie!</string>
+    <string name="dialog_content_purchase_already_made">Tutte le funzioni aggiuntive sono già disponibili!</string>
+    <string name="dialog_title_purchase_successful">Acquisto riuscito!</string>
+    <string name="dialog_content_purchase_successful">L\'applicazione verrà riavviata per abilitare tutte le funzioni.</string>
+
 </resources>

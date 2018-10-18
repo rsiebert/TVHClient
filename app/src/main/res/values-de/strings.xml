@@ -310,11 +310,14 @@
     <string name="no_connection_active_advice">Mindestens eine Verbindung existiert, ist aber nicht aktiviert.</string>
 
     <!-- Unlcoker related -->
-    <string name="unlocker_purchase_successful">Kauf erfolgreich! Vielen Dank! Alle Funktionen sind nun freigeschaltet.</string>
-    <string name="unlocker_purchase_not_successful">Der Kauf war nicht erfolgreich. Bitte kontaktiere den Entwickler.</string>
-    <string name="feature_not_available_in_free_version">Diese Funktion ist in der kostenlosen Version nicht enthalten!</string>
-    <string name="unlocker_already_purchased">Alle zusätzlichen Funktionen sind bereits aktiviert. Vielen Dank!</string>
     <string name="purchase">Kaufen</string>
+    <string name="feature_not_available_in_free_version">Diese Funktion ist in der kostenlosen Version nicht enthalten!</string>
+    <string name="dialog_title_purchase_not_successful">Kauf nicht erfolgreich!</string>
+    <string name="dialog_content_purchase_not_successful">Leider konnte der Kauf nicht abgeschlossen werden, bitte kontaktieren Sie den Entwickler.</string>
+    <string name="dialog_title_purchase_already_made">Vielen Dank!</string>
+    <string name="dialog_content_purchase_already_made">Alle zusätzlichen Funktionen sind bereits verfügbar!</string>
+    <string name="dialog_title_purchase_successful">Kauf erfolgreich!</string>
+    <string name="dialog_content_purchase_successful">Die Applikation wird nun neu gestartet, damit alle Funktionen zur Verfügung stehen.</string>
 
     <string name="no_media_player">Konnte keinen Mediaplayer finden.</string>
     <string name="show_play_store">Möchtest Du im Google Play Store nach einem geeigneten Mediaplayer suchen?</string>
@@ -340,8 +343,6 @@
     <string name="search_results">Suchergebnisse</string>
     <string name="dialog_title_connect_to_server">Mit neuem Server verbinden?</string>
     <string name="dialog_button_connect">Verbinden</string>
-    <string name="dialog_title_purchase_ok">Vielen Dank!</string>
-    <string name="dialog_content_purchase_ok">Die Applikation wird neu gestartet, damit alle Funktionen zur Verfügung stehen.</string>
     <string name="dialog_button_restart">Neu starten</string>
     <string name="dialog_title_reconnect_to_server">Zum Server erneut verbinden?</string>
     <string name="dialog_content_reconnect_to_server">Die Anwendung wird neu gestartet und eine neue initiale Synchronisierung durchgeführt.</string>

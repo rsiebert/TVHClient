@@ -310,11 +310,14 @@
     <string name="no_connection_active_advice">Co najmniej jedno połączenie jest zdefioniowane, ale nie jest aktywowane.</string>
 
     <!-- Unlocker related -->
-    <string name="unlocker_purchase_successful">Zakup udany! Dziękujemy za wsparcie! Wszystkie funkcje są teraz dostępne.</string>
-    <string name="unlocker_purchase_not_successful">Niestety zakupu nie powiódł się. Prosimy o kontakt z deweloperem.</string>
-    <string name="feature_not_available_in_free_version">Ta opcja nie jest dostępna w darmowej wersji!</string>
-    <string name="unlocker_already_purchased">Wszystkie dodatkowe funkcje są dostępne! Dziękuję za Twoje wsparcie!</string>
     <string name="purchase">Zakup</string>
+    <string name="feature_not_available_in_free_version">Ta opcja nie jest dostępna w darmowej wersji!</string>
+    <string name="dialog_title_purchase_not_successful">Zakup nie udany!</string>
+    <string name="dialog_content_purchase_not_successful">Niestety zakup nie mógł zostać zrealizowany, prosimy o kontakt z deweloperem.</string>
+    <string name="dialog_title_purchase_already_made">Dziękujemy!</string>
+    <string name="dialog_content_purchase_already_made">Wszystkie dodatkowe funkcje są już dostępne!</string>
+    <string name="dialog_title_purchase_successful">Zakup udany!</string>
+    <string name="dialog_content_purchase_successful">Aplikacja zostanie teraz uruchomiona ponownie, aby umożliwić korzystanie z wszystkich funkcji.</string>
 
     <string name="no_media_player">Nie znaleziono odtwarzacza multimedialnego</string>
     <string name="show_play_store">Czy chcesz przejść do sklepu Google Play i poszukać dostępnych odtwarzaczy?</string>

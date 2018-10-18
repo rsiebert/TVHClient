@@ -311,11 +311,14 @@
     <string name="no_connection_active_advice">Au moins une connexion est définie, mais n\'est pas activée.</string>
 
     <!-- Unlocker related -->
-    <string name="unlocker_purchase_successful">Achat réussi, merci de votre aide. Toutes les fonctionnalités sont maintenant disponibles.</string>
-    <string name="unlocker_purchase_not_successful">Malheureusement l\'achat ne c\'est pas bien passé. Veuillez contacter le développeur.</string>
-    <string name="feature_not_available_in_free_version">Cette fonctionnalité n\'est pas disponible dans la version gratuite!</string>
-    <string name="unlocker_already_purchased">Toutes les fonctionnalités sont maintenant disponibles. Merci de votre aide!</string>
     <string name="purchase">Achat</string>
+    <string name="feature_not_available_in_free_version">Cette fonctionnalité n\'est pas disponible dans la version gratuite!</string>
+    <string name="dialog_title_purchase_not_successful">L\'achat n\'a pas réussi !</string>
+    <string name="dialog_content_purchase_not_successful">Malheureusement, l\'achat n\'a pas pu être effectué, veuillez contacter le développeur.</string>
+    <string name="dialog_title_purchase_already_made">Je vous remercie beaucoup.!</string>
+    <string name="dialog_content_purchase_already_made">Toutes les fonctions supplémentaires sont déjà disponibles !</string>
+    <string name="dialog_title_purchase_successful">Achat réussi !</string>
+    <string name="dialog_content_purchase_successful">L\'application va maintenant être redémarrée pour activer toutes les fonctions.</string>
 
     <string name="no_media_player">Aucun lecteur de média trouvé</string>
     <string name="show_play_store">Voulez-vous utiliser Google Play Store pour trouver un lecteur de média?</string>
@@ -383,8 +386,6 @@
     <string name="search_results">Résultat de la recherche</string>
     <string name="dialog_title_connect_to_server">Se connecter au nouveau serveur?</string>
     <string name="dialog_button_connect">Connection</string>
-    <string name="dialog_title_purchase_ok">Merci!</string>
-    <string name="dialog_content_purchase_ok">L\'application doit être relancée pour charger les nouvelles fonctionnalités.</string>
     <string name="dialog_button_restart">Redémarrage</string>
     <string name="dialog_title_reconnect_to_server">Reconnection au serveur?</string>
     <string name="dialog_content_reconnect_to_server">L\'application doit être redémarrée et une nouvelle synchro doit être faite.</string>

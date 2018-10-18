@@ -145,7 +145,7 @@
     <string name="no_data">Žádná dostupná data o programu</string>
     <string name="minutes">%d min</string>
     <string name="not_set">Není nastaveno</string>
-    
+
     <string name="search_hint">Vyhledat v EPG</string>
     <string name="two_days_ago">Před dvěma dny</string>
     <string name="yesterday">Včera</string>
@@ -220,14 +220,21 @@
     <string name="unknown">Neznámý</string>
     <string name="ready">Připraven</string>
     <string name="currently_recording">Probíhající nahrávání</string>
-    
+
     <string name="no_connection_available_advice">Žádné připojení není k dispozici. Musíte přidat alespoň jedno připojení v menu nastavení.</string>
     <string name="no_connection_available">K dispozici není žádné připojení.</string>
 
     <string name="no_media_player">Nebyl nalezen žádný přehrávač multimédií.</string>
     <string name="show_play_store">Chcete jít na Google Play Store a vyhledat dostupné přehrávače multimédií?</string>
-    <string name="feature_not_available_in_free_version">Tato funkce není k dispozici v bezplatné verzi! Tuto funkci můžete odemknout a podpořit další vývoj zakoupením aplikace z obchodu Play.</string>
 
+    <string name="purchase">Nákup</string>
+    <string name="feature_not_available_in_free_version">Tato funkce není k dispozici ve volné verzi! Tuto funkci můžete odemknout a podpořit další vývoj zakoupením aplikace z obchodu Play.</string>
+    <string name="dialog_title_purchase_not_successful">Nákup neúspěšný!</string>
+    <string name="dialog_content_purchase_not_successful">Bohužel nákup nebyl dokončen, kontaktujte prosím vývojáře.</string>
+    <string name="dialog_title_purchase_already_made">Děkujeme!</string>
+    <string name="dialog_content_purchase_already_made">Všechny další funkce jsou již k dispozici!</string>
+    <string name="dialog_title_purchase_successful">Nákup úspěšný!</string>
+    <string name="dialog_content_purchase_successful">Aplikace bude nyní restartována, aby povolila všechny funkce.</string>
     <!-- Optional strings for the navigation drawer -->
 
 </resources>

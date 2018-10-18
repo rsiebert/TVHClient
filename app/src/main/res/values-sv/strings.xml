@@ -146,7 +146,7 @@
     <string name="no_data">Programinformation ej tillgänglig</string>
     <string name="minutes">%d min</string>
     <string name="not_set">Inte satt</string>
-    
+
     <string name="search_hint">Sök i programguide</string>
     <string name="two_days_ago">Två dagar sedan</string>
     <string name="yesterday">Igår</string>
@@ -175,7 +175,7 @@
     <string name="days_of_week">Veckodagar</string>
     <string name="comment">Kommentar</string>
     <string name="name">Namn</string>
-    
+
     <string name="channels">Kanaler</string>
     <string name="recordings">Inspelningar</string>
     <string name="status">Status</string>
@@ -212,7 +212,7 @@
     <string name="part">Del</string>
     <string name="progress">%1$d%% av serien redan visad</string>
     <string name="next_program">Nästa program: %s</string>
-    
+
     <string name="server">Server</string>
     <string name="connection">Anslutning</string>
     <string name="disc_space">Diskyta</string>
@@ -227,8 +227,14 @@
 
     <string name="no_media_player">Ingen mediaspelare hittad</string>
     <string name="show_play_store">Vill du söka efter tillgängliga mediaspelare på Google Play Store?</string>
+
+    <string name="purchase">Köp</string>
     <string name="feature_not_available_in_free_version">Den här funktionen är inte tillgänglig i den fria versionen! Du kan låsa upp denna funktion och stödja ytterligare utveckling genom att köpa programmet från Play Store.</string>
-    
-    <!-- Optional strings for the navigation drawer -->
+    <string name="dialog_title_purchase_not_successful">Köpet misslyckades!</string>
+    <string name="dialog_content_purchase_not_successful">Tyvärr kan köpet inte slutföras, kontakta utvecklaren.</string>
+    <string name="dialog_title_purchase_already_made">Tack!</string>
+    <string name="dialog_content_purchase_already_made">Alla ytterligare funktioner är redan tillgängliga!</string>
+    <string name="dialog_title_purchase_successful">Köp framgångsrikt!</string>
+    <string name="dialog_content_purchase_successful">Programmet startas nu om att aktivera alla funktioner.</string>
 
 </resources>

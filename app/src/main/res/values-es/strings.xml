@@ -59,7 +59,6 @@
     <string name="extra_start_time">Minutos adicionales de inicio (pre-tiempo)</string>
     <string name="extra_stop_time">Minutos adicionales de parada (pos-tempo)</string>
     <string name="failed_recordings">Grabaciones fallidas</string>
-    <string name="feature_not_available_in_free_version">Esta característica no está disponible en la versión gratuita!</string>
     <string name="feature_not_supported_by_server">Su servidor TVHeadend no admite esta función. Por favor, actualice a una versión más reciente.</string>
     <string name="friday">Viernes</string>
     <string name="genre_color_info">Explicar los colores del género</string>
@@ -203,7 +202,6 @@ Debe tener el patrón '01:24:67:9a:cd:ef'."</string>
     <string name="pref_wol_port_sum">Puerto %d sera usado para activar el servidor. Por defecto es 9.</string>
     <string name="priority">Prioridad</string>
     <string name="progress">%1$d%% del evento ya mostrado</string>
-    <string name="purchase">Comprar</string>
     <string name="rating">Clasificación</string>
     <string name="ready">Preparado</string>
     <string name="record_once">Grabar</string>
@@ -284,9 +282,6 @@ Debe tener el patrón '01:24:67:9a:cd:ef'."</string>
     <string name="tuesday">Martes</string>
     <string name="two_days_ago">Hace dos dias</string>
     <string name="unknown">Desconocido</string>
-    <string name="unlocker_already_purchased">¡Todas las características adicionales están disponibles! Gracias por tu apoyo!</string>
-    <string name="unlocker_purchase_not_successful">Desafortunadamente la compra no fue exitosa. Por favor contacte al desarrollador.</string>
-    <string name="unlocker_purchase_successful">Compra exitosa! ¡Gracias por su apoyo! Todas las características están ahora disponibles.</string>
     <string name="updating">Actualizando …</string>
     <string name="wednesday">Miercoles</string>
     <string name="wol_address_invalid">La dirección MAC no es válida. Por favor verifica tu configuración.</string>
@@ -304,4 +299,14 @@ Debe tener el patrón '01:24:67:9a:cd:ef'."</string>
     <string name="record_once_and_edit">Grabar y editar</string>
     <string name="add_recording_directory">Guardar directorio de la grabación</string>
     <string name="pref_show_progressbar_sum">Indica en la lista de canales qué parte del programa actual ya se ha mostrado.</string>
+
+    <string name="purchase">Comprar</string>
+    <string name="feature_not_available_in_free_version">Esta característica no está disponible en la versión gratuita!</string>
+    <string name="dialog_title_purchase_not_successful">Compra no exitosa!</string>
+    <string name="dialog_content_purchase_not_successful">Desafortunadamente, la compra no pudo ser completada, por favor contacte al desarrollador.</string>
+    <string name="dialog_title_purchase_already_made">Muchísimas gracias.</string>
+    <string name="dialog_content_purchase_already_made">Todas las características adicionales ya están disponibles!</string>
+    <string name="dialog_title_purchase_successful">Compra exitosa!</string>
+    <string name="dialog_content_purchase_successful">La aplicación se reiniciará para que todas las funciones estén disponibles.</string>
+
 </resources>

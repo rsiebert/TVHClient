@@ -253,7 +253,6 @@
     <string name="error_empty_title">De titel mag niet leeg zijn!</string>
     <string name="recording_time">Opnametijd</string>
     <string name="server">Server</string>
-    <string name="feature_not_available_in_free_version">Deze functie is niet beschikbaar in de gratis versie!</string>
     <string name="record_once_and_edit">Opnemen en bewerken</string>
     <string name="record_once_custom_profile">Opname met ander profiel</string>
     <string name="stop">Halte</string>
@@ -281,15 +280,19 @@
     <string name="select_dvr_config">Selecteer opnameprofiel</string>
     <string name="select_log_file">Selecteer logbestand</string>
     <string name="select_duplicate_detection">Selecteer de methode voor dubbele detectie</string>
-    <string name="unlocker_purchase_successful">Koop succesvol! Bedankt voor uw steun! Alle functies zijn nu beschikbaar.</string>
-    <string name="unlocker_purchase_not_successful">Helaas was de aankoop niet succesvol. Neem contact op met de ontwikkelaar.</string>
-    <string name="unlocker_already_purchased">Alle extra functies zijn beschikbaar! Bedankt voor uw steun!</string>
+
     <string name="purchase">Aankoop</string>
+    <string name="feature_not_available_in_free_version">Deze functie is niet beschikbaar in de gratis versie!</string>
+    <string name="dialog_title_purchase_not_successful">Aankoop niet succesvol!</string>
+    <string name="dialog_content_purchase_not_successful">Helaas was de aankoop niet succesvol. Neem contact op met de ontwikkelaar.</string>
+    <string name="dialog_title_purchase_already_made">Dank u wel!</string>
+    <string name="dialog_content_purchase_already_made">Alle extra functies zijn beschikbaar!</string>
+    <string name="dialog_title_purchase_successful">Koop succesvol!</string>
+    <string name="dialog_content_purchase_successful">De applicatie wordt opnieuw opgestart om alle functies mogelijk te maken.</string>
+
     <string name="search_results">Zoekresultaten</string>
     <string name="dialog_title_connect_to_server">Verbinding maken met een nieuwe server?</string>
     <string name="dialog_button_connect">Verbinden</string>
-    <string name="dialog_title_purchase_ok">Dank u wel!</string>
-    <string name="dialog_content_purchase_ok">De applicatie wordt opnieuw opgestart om alle functies mogelijk te maken.</string>
     <string name="dialog_button_restart">Herstarten</string>
     <string name="dialog_title_reconnect_to_server">Opnieuw verbinding maken met de server?</string>
     <string name="dialog_content_reconnect_to_server">De applicatie wordt opnieuw opgestart en er wordt een nieuwe initiële synchronisatie uitgevoerd.</string>

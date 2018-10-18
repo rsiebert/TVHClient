@@ -312,11 +312,14 @@
     <string name="no_connection_active_advice">At least one connection is defined, but not activated.</string>
 
     <!-- Unlcoker related -->
-    <string name="unlocker_purchase_successful">Purchase successful! Thank you for support! All features are now available.</string>
-    <string name="unlocker_purchase_not_successful">Unfortunately the purchase was not successful. Please contact the developer.</string>
-    <string name="feature_not_available_in_free_version">This feature is not available in the free version!</string>
-    <string name="unlocker_already_purchased">All additional features are available! Thank you for your support!</string>
     <string name="purchase">Purchase</string>
+    <string name="feature_not_available_in_free_version">This feature is not available in the free version!</string>
+    <string name="dialog_title_purchase_not_successful">Purchase not successful!</string>
+    <string name="dialog_content_purchase_not_successful">Unfortunately the purchase could not be completed, please contact the developer.</string>
+    <string name="dialog_title_purchase_already_made">Thank you!</string>
+    <string name="dialog_content_purchase_already_made">All additional features are already available!</string>
+    <string name="dialog_title_purchase_successful">Purchase successful!</string>
+    <string name="dialog_content_purchase_successful">The application will now be restarted to enable all features.</string>
 
     <string name="no_media_player">No media player found</string>
     <string name="show_play_store">Do you want to go to the Google Play Store and search for available media players?</string>
@@ -384,8 +387,6 @@
     <string name="search_results">Search results</string>
     <string name="dialog_title_connect_to_server">Connect to new server?</string>
     <string name="dialog_button_connect">Connect</string>
-    <string name="dialog_title_purchase_ok">Thank you!</string>
-    <string name="dialog_content_purchase_ok">The application will be restarted to enable all features.</string>
     <string name="dialog_button_restart">Restart</string>
     <string name="dialog_title_reconnect_to_server">Reconnect to server?</string>
     <string name="dialog_content_reconnect_to_server">The application will be restarted and a new initial sync will be done.</string>

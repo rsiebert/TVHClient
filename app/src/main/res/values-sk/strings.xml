@@ -64,7 +64,7 @@
     <string name="cancel_edit_recording">Naozaj chcete zahodiť všetky neuložené zmeny?</string>
     <string name="activate_recording">Aktivovať nahrávanie</string>
     <string name="select">Vybrať</string>
-    
+
     <string name="pref_manage_connections">Spravovať pripojenia</string>
     <string name="pref_manage_connections_sum">Nastaviť aktívne pripojenie k TVHeadend serveru alebo pridať, upraviť či vymazať pripojenie.</string>
     <string name="pref_connections">Pripojenia</string>
@@ -154,7 +154,7 @@
     <string name="pref_show_notification_offset_sum">Nadefinovanie času, kedy sa zobrazí notifikácia pred samotným začiatkom nahrávania.</string>
     <string name="pref_show_next_program">Zobrazenie nasl. programu</string>
     <string name="pref_show_next_program_sum">Názov nasledujúceho programu bude zobrazený v zozname kanálov pod ukazovateľom priebehu.</string>
-	<string name="pref_play_when_channel_icon_selected">Začať prehrávanie po kliknutí na logo kanálu</string>
+    <string name="pref_play_when_channel_icon_selected">Začať prehrávanie po kliknutí na logo kanálu</string>
     <string name="pref_play_when_channel_icon_selected_sum">Po kliknutí na logo kanálu v zozname kanálov, v programovom sprievodcovi alebo v zozname nahrávaní, začne prehrávanie aktuálneho programu alebo nahrávania.</string>
     <string name="pref_programs">Programy</string>
     <string name="pref_playback_and_recording">Prehrávanie a nahrávanie</string>
@@ -171,7 +171,7 @@
 
     <string name="feature_not_supported_by_server">TVHeadend server nepodporuje túto funkciu. Aktualizujte server na novšiu verziu.</string>
     <string name="loading_profiles">Nahrávanie profilov</string>
-    
+
     <string name="clear_search_history">Vymazať históriu vyhľadávania?</string>
     <string name="clear_search_history_sum">Naozaj chcete vymazať všetky položky z histórie vyhľadavania?</string>
     <string name="clear_search_history_done">História vyhľadávania bola vymazaná.</string>
@@ -192,7 +192,7 @@
     <string name="recording_file_invalid">Nahrávanie je neplatné</string>
     <string name="recording_canceled">Nahrávanie bolo odstránené</string>
     <string name="recording_started">Nahrávanie sa začalo</string>
-	<string name="recording_starts_in">Nahrávanie začne za %d min.</string>
+    <string name="recording_starts_in">Nahrávanie začne za %d min.</string>
     <string name="recording_completed">Nahrávanie bolo dokončené</string>
 
     <string name="wol_send">Wake on LAN paket na \'%s\' bol úspešne poslaný</string>
@@ -202,7 +202,7 @@
 
     <string name="no_data">Údaje o programe sú nedostupné</string>
     <string name="minutes">%d min</string>
-	
+
     <string name="not_set">Nie je nastavené</string>
 
     <string name="search_hint">Vyhľadať v EPG</string>
@@ -233,7 +233,7 @@
     <string name="days_of_week">Dni v týždni</string>
     <string name="comment">Komentár</string>
     <string name="name">Meno</string>
-    
+
     <string name="channels">Kanály</string>
     <string name="recordings">Nahrávania</string>
     <string name="status">Stav</string>
@@ -275,7 +275,7 @@
     <string name="stream_errors">Chyby streamu: %1$s</string>
     <string name="data_errors">Chyby dát: %1$s</string>
     <string name="data_size">Veľkosť súboru: %1$d %2$s</string>
-	
+
     <string name="nothing">Žiadne</string>
     <string name="loading">Načítavanie&#8230;</string>
     <string name="updating">Aktualizovanie&#8230;</string>
@@ -286,7 +286,7 @@
     <string name="part">Časť</string>
     <string name="progress">%1$d%% z programu už ubehlo.</string>
     <string name="next_program">Ďalší: %s</string>
-    
+
     <string name="server">Server</string>
     <string name="connection">Pripojenie</string>
     <string name="disc_space">Miesto na disku</string>
@@ -301,19 +301,22 @@
     <string name="select_dvr_config">Vyberte nahrávací profil</string>
     <string name="select_log_file">Vyberte log súbor</string>
     <string name="select_duplicate_detection">Vybrať metódu detekovania duplicít</string>
-    
+
     <!-- Connection related -->
     <string name="no_connection_available_advice">Žiadne pripojenie nie je k dispozícii. Musíte pridať aspoň jedno pripojenie.</string>
     <string name="no_connection_available">K dispozícii nie je žiadne pripojenie.</string>
     <string name="no_connection_active_advice">Ani jedno dostupné pripojenie nie je aktivované.</string>
-    
+
     <!-- Unlocker related -->
-    <string name="unlocker_purchase_successful">Objednávka úspešná! Ďakujeme za vašu podporu! Všetky funkcie sú aktivované.</string>
-    <string name="unlocker_purchase_not_successful">Nanešťastie, objednávka nebola úspešna. Kontaktujte vývojara.</string>
-    <string name="feature_not_available_in_free_version">Táto funkcia nie je k dispozícii v bezplatnej verzii!</string>
-    <string name="unlocker_already_purchased">Všetky extra funkcie sú už aktivované! Ďakujeme za vašu podporu!</string>
     <string name="purchase">Objednávka</string>
-    
+    <string name="feature_not_available_in_free_version">Táto funkcia nie je k dispozícii v bezplatnej verzii!</string>
+    <string name="dialog_title_purchase_not_successful">Nákup neúspešný!</string>
+    <string name="dialog_content_purchase_not_successful">Bohužiaľ nákup nebolo možné dokončiť, obráťte sa na vývojára.</string>
+    <string name="dialog_title_purchase_already_made">Ďakujeme!</string>
+    <string name="dialog_content_purchase_already_made">Všetky ďalšie funkcie sú už k dispozícii!</string>
+    <string name="dialog_title_purchase_successful">Nákup úspešný!</string>
+    <string name="dialog_content_purchase_successful">Aplikácia sa teraz reštartuje, aby sa povolili všetky funkcie.</string>
+
     <string name="no_media_player">Nebol nájdený žiaden prehrávač multimédií.</string>
     <string name="show_play_store">Chcete otvoriť Obchod Google Play a nájsť dostupný prehrávač multimédií?</string>
 
