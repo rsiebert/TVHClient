@@ -130,7 +130,7 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Wake
 
             try {
                 castContext = CastContext.getSharedInstance(this.getApplicationContext());
-            } catch (Exception e) {
+            } catch (IllegalStateException e) {
                 Timber.e("Could not get cast context", e);
             }
 
@@ -166,10 +166,16 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Wake
     @Override
     protected void onResume() {
         if (castContext != null) {
-            castContext.addCastStateListener(castStateListener);
-            castContext.getSessionManager().addSessionManagerListener(castSessionManagerListener, CastSession.class);
-            if (castSession == null) {
-                castSession = CastContext.getSharedInstance(this).getSessionManager().getCurrentCastSession();
+            try {
+                castContext.addCastStateListener(castStateListener);
+                castContext.getSessionManager().addSessionManagerListener(castSessionManagerListener, CastSession.class);
+                if (castSession == null) {
+                    castSession = castContext.getSessionManager().getCurrentCastSession();
+                }
+            } catch (IllegalStateException e) {
+                Timber.e("Could not add cast state listener or get cast session manager");
+            } catch (NullPointerException npe) {
+                Timber.e("Could not add cast state listener");
             }
         }
         super.onResume();
@@ -178,8 +184,13 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Wake
     @Override
     protected void onPause() {
         if (castContext != null) {
-            castContext.removeCastStateListener(castStateListener);
-            castContext.getSessionManager().removeSessionManagerListener(castSessionManagerListener, CastSession.class);
+            try {
+                castContext.removeCastStateListener(castStateListener);
+                castContext.getSessionManager().removeSessionManagerListener(castSessionManagerListener, CastSession.class);
+            } catch (IllegalStateException e) {
+                Timber.e("Could not remove cast state listener or get cast session manager");
+            }
+
         }
         super.onPause();
     }

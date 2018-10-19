@@ -58,7 +58,13 @@ public class CastChannelActivity extends BasePlaybackActivity {
     @Override
     protected void onHttpTicketReceived() {
 
-        CastSession castSession = CastContext.getSharedInstance(this).getSessionManager().getCurrentCastSession();
+        CastSession castSession = null;
+        try {
+            castSession = CastContext.getSharedInstance(this).getSessionManager().getCurrentCastSession();
+        } catch (IllegalStateException e) {
+            Timber.e("Could not get casting session");
+        }
+
         if (castSession == null) {
             progressBar.setVisibility(View.GONE);
             statusTextView.setText(getString(R.string.no_cast_session));
@@ -92,6 +98,12 @@ public class CastChannelActivity extends BasePlaybackActivity {
                 .build();
 
         RemoteMediaClient remoteMediaClient = castSession.getRemoteMediaClient();
+        if (remoteMediaClient == null) {
+            progressBar.setVisibility(View.GONE);
+            statusTextView.setText("Could not get the remote media client from the cast session.");
+            return;
+        }
+
         remoteMediaClient.registerCallback(new CastRemoteMediaClientCallback(remoteMediaClient));
 
         MediaLoadOptions mediaLoadOptions = new MediaLoadOptions.Builder()

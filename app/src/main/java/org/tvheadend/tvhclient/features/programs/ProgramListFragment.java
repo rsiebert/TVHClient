@@ -228,7 +228,12 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
 
         if (!isSearchActive && isNetworkAvailable) {
             menu.findItem(R.id.menu_play).setVisible(true);
-            CastSession castSession = CastContext.getSharedInstance(activity.getApplicationContext()).getSessionManager().getCurrentCastSession();
+            CastSession castSession = null;
+            try {
+                castSession = CastContext.getSharedInstance(activity.getApplicationContext()).getSessionManager().getCurrentCastSession();
+            } catch (IllegalStateException e) {
+                Timber.e("Could not get casting session");
+            }
             menu.findItem(R.id.menu_cast).setVisible(castSession != null);
         } else {
             menu.findItem(R.id.menu_play).setVisible(false);

@@ -34,6 +34,7 @@ import org.tvheadend.tvhclient.utils.UIUtils;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import timber.log.Timber;
 
 public class RecordingDetailsFragment extends BaseFragment implements RecordingRemovedCallback, DownloadPermissionGrantedInterface {
 
@@ -254,12 +255,18 @@ public class RecordingDetailsFragment extends BaseFragment implements RecordingR
 
         menuUtils.onPreparePopupSearchMenu(menu, isNetworkAvailable);
 
+        CastSession castSession = null;
+        try {
+            castSession = CastContext.getSharedInstance(activity.getApplicationContext()).getSessionManager().getCurrentCastSession();
+        } catch (IllegalStateException e) {
+            Timber.e("Could not get casting session");
+        }
+
         menu = nestedToolbar.getMenu();
         if (isNetworkAvailable) {
             if (recording.isCompleted()) {
                 menu.findItem(R.id.menu_record_remove).setVisible(true);
                 menu.findItem(R.id.menu_play).setVisible(true);
-                CastSession castSession = CastContext.getSharedInstance(activity.getApplicationContext()).getSessionManager().getCurrentCastSession();
                 menu.findItem(R.id.menu_cast).setVisible(castSession != null);
                 menu.findItem(R.id.menu_download).setVisible(isUnlocked);
 
@@ -270,7 +277,6 @@ public class RecordingDetailsFragment extends BaseFragment implements RecordingR
             } else if (recording.isRecording()) {
                 menu.findItem(R.id.menu_record_stop).setVisible(true);
                 menu.findItem(R.id.menu_play).setVisible(true);
-                CastSession castSession = CastContext.getSharedInstance(activity.getApplicationContext()).getSessionManager().getCurrentCastSession();
                 menu.findItem(R.id.menu_cast).setVisible(castSession != null);
                 menu.findItem(R.id.menu_edit).setVisible(isUnlocked);
 
@@ -279,7 +285,6 @@ public class RecordingDetailsFragment extends BaseFragment implements RecordingR
                 // Allow playing a failed recording which size is not zero
                 if (recording.getDataSize() > 0) {
                     menu.findItem(R.id.menu_play).setVisible(true);
-                    CastSession castSession = CastContext.getSharedInstance(activity.getApplicationContext()).getSessionManager().getCurrentCastSession();
                     menu.findItem(R.id.menu_cast).setVisible(castSession != null);
                 }
             }
