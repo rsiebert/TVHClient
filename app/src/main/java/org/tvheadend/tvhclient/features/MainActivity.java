@@ -50,7 +50,6 @@ import javax.inject.Inject;
 import butterknife.ButterKnife;
 import timber.log.Timber;
 
-// TODO duplicate programs are sometimes received from the server with different ids and time
 // TODO what happens when no connection to the server is active and the user presses an action in a notification?
 
 public class MainActivity extends BaseActivity implements ToolbarInterface, WakeOnLanTaskCallback, NavigationDrawerCallback, SearchView.OnQueryTextListener, SearchView.OnSuggestionListener {
