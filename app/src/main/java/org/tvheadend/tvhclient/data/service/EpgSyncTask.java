@@ -12,6 +12,9 @@ import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.tvheadend.tvhclient.BuildConfig;
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
@@ -738,10 +741,6 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
                 }
             }
         }
-
-        addMissingPlaybackProfileIfNotExists("htsp");
-        addMissingPlaybackProfileIfNotExists("matroska");
-        addMissingPlaybackProfileIfNotExists("pass");
     }
 
     private void addMissingPlaybackProfileIfNotExists(String name) {
@@ -760,6 +759,44 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
             serverProfile.setName(name);
             serverProfile.setType("playback");
             appRepository.getServerProfileData().addItem(serverProfile);
+        }
+    }
+
+    private void handleHttpProfiles(HtspMessage message) {
+        Timber.d("Handling http profiles");
+        if (message.containsKey("response")) {
+            try {
+                JSONObject response = new JSONObject(message.getString("response"));
+                if (response.has("entries")) {
+                    JSONArray entries = response.getJSONArray("entries");
+                    if (entries.length() > 0) {
+                        ServerStatus serverStatus = appRepository.getServerStatusData().getActiveItem();
+
+                        for (int i = 0, totalObject = entries.length(); i < totalObject; i++) {
+                            JSONObject profile = entries.getJSONObject(i);
+                            if (profile.has("key") && profile.has("val")) {
+                                String uuid = profile.getString("key");
+                                String name = profile.getString("val");
+
+                                ServerProfile serverProfile = appRepository.getServerProfileData().getItemById(uuid);
+                                if (serverProfile == null) {
+                                    serverProfile = new ServerProfile();
+                                    serverProfile.setConnectionId(serverStatus.getConnectionId());
+                                    serverProfile.setUuid(uuid);
+                                    serverProfile.setName(name);
+                                    serverProfile.setType("playback");
+                                    Timber.d("Added new playback profile " + serverProfile.getName());
+                                    appRepository.getServerProfileData().addItem(serverProfile);
+                                } else {
+                                    Timber.d("Playback profile " + serverProfile.getName() + " exists already");
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch (JSONException e) {
+                Timber.d("Error parsing JSON data", e);
+            }
         }
     }
 
@@ -833,6 +870,12 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         getDiscSpace();
         getSystemTime();
         getProfiles();
+        getHttpProfiles();
+
+        addMissingPlaybackProfileIfNotExists("htsp");
+        addMissingPlaybackProfileIfNotExists("matroska");
+        addMissingPlaybackProfileIfNotExists("pass");
+
         getDvrConfigs();
 
         connection.setSyncRequired(false);
@@ -1445,6 +1488,23 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
 
         if (response != null) {
             handleProfiles(response);
+        }
+    }
+
+    private void getHttpProfiles() {
+        HtspMessage request = new HtspMessage();
+        request.put("method", "api");
+        request.put("path", "profile/list");
+
+        HtspMessage response = null;
+        try {
+            response = dispatcher.sendMessage(request, connectionTimeout);
+        } catch (HtspNotConnectedException e) {
+            Timber.e("Failed to send getHttpProfiles - not connected", e);
+        }
+
+        if (response != null) {
+            handleHttpProfiles(response);
         }
     }
 
