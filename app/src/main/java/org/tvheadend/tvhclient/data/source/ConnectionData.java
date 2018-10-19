@@ -14,6 +14,8 @@ import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
 
+import timber.log.Timber;
+
 public class ConnectionData extends BaseData implements DataSourceInterface<Connection> {
 
     private final AppRoomDatabase db;
@@ -140,6 +142,7 @@ public class ConnectionData extends BaseData implements DataSourceInterface<Conn
                         db.getConnectionDao().disableActiveConnection();
                     }
                     long newId = db.getConnectionDao().insert(connection);
+                    Timber.d("Added new connection " + connection.getName() + " with id " + newId);
                     // Create a new server status row in the database
                     // that is linked to the newly added connection
                     ServerStatus serverStatus = new ServerStatus();
@@ -148,6 +151,7 @@ public class ConnectionData extends BaseData implements DataSourceInterface<Conn
                     break;
 
                 case UPDATE:
+                    Timber.d("Updating connection " + connection.getName());
                     if (connection.isActive()) {
                         db.getConnectionDao().disableActiveConnection();
                     }
@@ -155,6 +159,7 @@ public class ConnectionData extends BaseData implements DataSourceInterface<Conn
                     break;
 
                 case DELETE:
+                    Timber.d("Deleting connection " + connection.getName());
                     db.getConnectionDao().delete(connection);
                     db.getServerStatusDao().deleteByConnectionId(connection.getId());
                     break;
