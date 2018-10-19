@@ -15,6 +15,7 @@ import timber.log.Timber;
 public class EpgSyncHandler {
 
     private final Context context;
+    private final AppRepository appRepository;
     private Connection connection;
     private SimpleHtspConnection simpleHtspConnection;
     private EpgSyncTask epgSyncTask;
@@ -22,15 +23,15 @@ public class EpgSyncHandler {
 
     public EpgSyncHandler(Context context, AppRepository appRepository) {
         this.context = context;
+        this.appRepository = appRepository;
 
         HandlerThread handlerThread = new HandlerThread("EpgSyncService Handler Thread");
         handlerThread.start();
         Handler handler = new Handler(handlerThread.getLooper());
-
-        connection = appRepository.getConnectionData().getActiveItem();
     }
 
     boolean init() {
+        connection = appRepository.getConnectionData().getActiveItem();
         return connection != null;
     }
 
@@ -64,6 +65,7 @@ public class EpgSyncHandler {
 
     public void stop() {
         Timber.d("Closing connection to server");
+        connection = null;
 
         if (epgSyncTask != null && simpleHtspConnection != null) {
             simpleHtspConnection.removeMessageListener(epgSyncTask);
@@ -78,6 +80,8 @@ public class EpgSyncHandler {
         if (epgWorkerHandler != null) {
             epgWorkerHandler = null;
         }
+
+
         Timber.d("Connection to server closed");
     }
 

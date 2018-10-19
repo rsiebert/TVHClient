@@ -26,20 +26,19 @@ public class EpgSyncService extends Service {
     @Override
     public void onCreate() {
         MainApplication.getComponent().inject(this);
-
-        if (!epgSyncHandler.init()) {
-            Timber.i("No connection available, not starting service");
-            stopSelf();
-        }
-        Timber.i("Connection available, starting service");
+        Timber.i("Starting service");
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Timber.d("Received start command");
         if (!epgSyncHandler.isConnected()) {
-            Timber.d("Not connected to server");
+            Timber.d("Not connected to server, initializing and connecting to server");
             epgSyncHandler.stop();
+            if (!epgSyncHandler.init()) {
+                Timber.i("No connection available, not starting service");
+                stopSelf();
+            }
             epgSyncHandler.connect();
         } else {
             Timber.d("Connected to server, passing intent to epg sync task");
