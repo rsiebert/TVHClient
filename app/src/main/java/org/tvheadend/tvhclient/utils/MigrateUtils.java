@@ -77,6 +77,7 @@ public class MigrateUtils {
                 Timber.d("No server status exists for connection " + connection.getId() + ", creating new one");
                 serverStatus = new ServerStatus();
                 serverStatus.setConnectionId(connection.getId());
+                appRepository.getServerStatusData().addItem(serverStatus);
             }
         }
     }
