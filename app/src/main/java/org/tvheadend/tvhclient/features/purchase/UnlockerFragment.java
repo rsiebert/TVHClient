@@ -16,9 +16,13 @@ import org.tvheadend.tvhclient.features.information.WebViewFragment;
 import org.tvheadend.tvhclient.features.logging.AnswersWrapper;
 import org.tvheadend.tvhclient.features.shared.tasks.FileLoaderCallback;
 import org.tvheadend.tvhclient.features.startup.SplashActivity;
-import org.tvheadend.tvhclient.utils.Constants;
+
+import java.math.BigDecimal;
+import java.util.Currency;
 
 import timber.log.Timber;
+
+import static org.tvheadend.tvhclient.utils.Constants.UNLOCKER;
 
 public class UnlockerFragment extends WebViewFragment implements FileLoaderCallback {
 
@@ -46,12 +50,15 @@ public class UnlockerFragment extends WebViewFragment implements FileLoaderCallb
                 return true;
 
             case R.id.menu_purchase:
-                if (!billingProcessor.isPurchased(Constants.UNLOCKER)) {
+                if (!billingProcessor.isPurchased(UNLOCKER)) {
                     AnswersWrapper.getInstance().logPurchase(new PurchaseEvent()
+                            .putItemId(UNLOCKER)
                             .putItemName("Unlocker")
+                            .putCurrency(Currency.getInstance("EUR"))
+                            .putItemPrice(BigDecimal.valueOf(1.99))
                             .putSuccess(true));
 
-                    if (billingProcessor.purchase(activity, Constants.UNLOCKER)) {
+                    if (billingProcessor.purchase(activity, UNLOCKER)) {
                         showPurchaseSuccessfulDialg();
                     } else {
                         showPurchaseNotSuccessfulDialog();
