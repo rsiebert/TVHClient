@@ -106,7 +106,7 @@ public class Authenticator implements HtspMessage.Listener, HtspConnection.Liste
         listeners.remove(listener);
     }
 
-    public State getState() {
+    private State getState() {
         return state;
     }
 

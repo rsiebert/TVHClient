@@ -44,14 +44,14 @@ public abstract class BasePlaybackActivity extends AppCompatActivity implements 
     @BindView(R.id.status)
     TextView statusTextView;
 
-    Connection connection;
+    private Connection connection;
     ServerStatus serverStatus;
     @Inject
     protected AppRepository appRepository;
     @Inject
     protected SharedPreferences sharedPreferences;
-    protected String baseUrl;
-    protected String serverUrl;
+    String baseUrl;
+    String serverUrl;
     ServerProfile serverProfile;
     private ServiceStatusReceiver serviceStatusReceiver;
 

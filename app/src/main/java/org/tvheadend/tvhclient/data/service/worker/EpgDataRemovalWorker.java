@@ -10,7 +10,7 @@ import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 import timber.log.Timber;
 
-public class EpgDataRemovalWorker extends Worker {
+class EpgDataRemovalWorker extends Worker {
 
     public EpgDataRemovalWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);

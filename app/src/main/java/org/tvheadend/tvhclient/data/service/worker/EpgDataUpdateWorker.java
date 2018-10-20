@@ -10,7 +10,7 @@ import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 import timber.log.Timber;
 
-public class EpgDataUpdateWorker extends Worker {
+class EpgDataUpdateWorker extends Worker {
 
     public EpgDataUpdateWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);

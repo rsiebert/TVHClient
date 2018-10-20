@@ -28,8 +28,8 @@ public abstract class SettingsConnectionBaseFragment extends PreferenceFragment 
     @Inject
     protected AppRepository appRepository;
 
-    protected AppCompatActivity activity;
-    protected ToolbarInterface toolbarInterface;
+    AppCompatActivity activity;
+    ToolbarInterface toolbarInterface;
     boolean connectionValuesChanged;
     Connection connection;
     ConnectionViewModel viewModel;
