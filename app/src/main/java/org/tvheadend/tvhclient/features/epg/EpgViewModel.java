@@ -13,15 +13,20 @@ import org.tvheadend.tvhclient.features.channels.ChannelViewModel;
 import java.util.Date;
 import java.util.List;
 
+import timber.log.Timber;
+
 public class EpgViewModel extends ChannelViewModel {
 
     private MutableLiveData<List<ChannelSubset>> channels;
 
     private int verticalOffset = 0;
     private int verticalPosition = 0;
+    private boolean showGenreColors;
 
     public EpgViewModel(Application application) {
         super(application);
+
+        showGenreColors = sharedPreferences.getBoolean("genre_colors_for_program_guide_enabled", false);
 
         // Initiate a timer that will update the view model data every minute
         // so that the progress bars will be displayed correctly
@@ -65,5 +70,21 @@ public class EpgViewModel extends ChannelViewModel {
 
     int getVerticalScrollPosition() {
         return this.verticalPosition;
+    }
+
+    public void checkAndUpdateChannels() {
+        super.checkAndUpdateChannels();
+
+        boolean updateChannels = false;
+
+        boolean newShowGenreColors = sharedPreferences.getBoolean("genre_colors_for_program_guide_enabled", false);
+        if (showGenreColors != newShowGenreColors) {
+            Timber.d("Epg genre color has changed from " + showGenreColors + " to " + newShowGenreColors);
+            showGenreColors = newShowGenreColors;
+            updateChannels = true;
+        }
+        if (updateChannels) {
+            channelUpdateHandler.post(channelUpdateTask);
+        }
     }
 }

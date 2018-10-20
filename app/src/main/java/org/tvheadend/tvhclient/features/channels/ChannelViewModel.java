@@ -33,6 +33,7 @@ public class ChannelViewModel extends AndroidViewModel {
     protected long selectedTime;
     protected int channelTagId;
     private int channelSortOrder;
+    private boolean showGenreColors;
     protected Runnable channelUpdateTask;
     protected final Handler channelUpdateHandler = new Handler();
 
@@ -43,6 +44,7 @@ public class ChannelViewModel extends AndroidViewModel {
         channelTagId = appRepository.getServerStatusData().getActiveItem().getChannelTagId();
         selectedTime = new Date().getTime();
         channelSortOrder = Integer.valueOf(sharedPreferences.getString("channel_sort_order", "0"));
+        showGenreColors = sharedPreferences.getBoolean("genre_colors_for_channels_enabled", false);
 
         // Initiate a timer that will update the view model data every minute
         // so that the progress bars will be displayed correctly
@@ -115,6 +117,12 @@ public class ChannelViewModel extends AndroidViewModel {
         if (channelSortOrder != newChannelSortOrder) {
             Timber.d("Sort order has changed from " + channelSortOrder + " to " + newChannelSortOrder);
             channelSortOrder = newChannelSortOrder;
+            updateChannels = true;
+        }
+        boolean newShowGenreColors = sharedPreferences.getBoolean("genre_colors_for_channels_enabled", false);
+        if (showGenreColors != newShowGenreColors) {
+            Timber.d("Channel genre color has changed from " + showGenreColors + " to " + newShowGenreColors);
+            showGenreColors = newShowGenreColors;
             updateChannels = true;
         }
         if (updateChannels) {
