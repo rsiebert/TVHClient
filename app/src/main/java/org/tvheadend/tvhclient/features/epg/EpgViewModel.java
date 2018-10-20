@@ -40,7 +40,7 @@ public class EpgViewModel extends ChannelViewModel {
     }
 
     @NonNull
-    public MutableLiveData<List<ChannelSubset>> getChannelSubsets() {
+    MutableLiveData<List<ChannelSubset>> getChannelSubsets() {
         if (channels == null) {
             channels = new MutableLiveData<>();
             channelUpdateHandler.post(channelUpdateTask);
