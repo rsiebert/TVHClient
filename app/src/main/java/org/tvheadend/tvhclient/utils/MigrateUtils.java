@@ -92,25 +92,28 @@ public class MigrateUtils {
         try {
             Timber.d("Database is readable " + db.isOpen());
             Cursor c = db.rawQuery("SELECT * FROM connections", null);
-            while (c.moveToNext()) {
-                Connection connection = new Connection();
-                connection.setId(c.getInt(c.getColumnIndex("_id")));
-                connection.setName(c.getString(c.getColumnIndex("name")));
-                connection.setHostname(c.getString(c.getColumnIndex("address")));
-                connection.setPort(c.getInt(c.getColumnIndex("port")));
-                connection.setUsername(c.getString(c.getColumnIndex("username")));
-                connection.setPassword(c.getString(c.getColumnIndex("password")));
-                connection.setActive((c.getInt(c.getColumnIndex("selected")) > 0));
-                connection.setStreamingPort(c.getInt(c.getColumnIndex("streaming_port")));
-                connection.setWolMacAddress(c.getString(c.getColumnIndex("wol_address")));
-                connection.setWolPort(c.getInt(c.getColumnIndex("wol_port")));
-                connection.setWolUseBroadcast((c.getInt(c.getColumnIndex("wol_broadcast")) > 0));
-                connection.setWolEnabled((!TextUtils.isEmpty(connection.getWolMacAddress())));
-                connection.setLastUpdate(0);
-                connection.setSyncRequired(true);
+            if (c.getCount() > 0) {
+                c.moveToFirst();
+                do {
+                    Connection connection = new Connection();
+                    connection.setId(c.getInt(c.getColumnIndex("_id")));
+                    connection.setName(c.getString(c.getColumnIndex("name")));
+                    connection.setHostname(c.getString(c.getColumnIndex("address")));
+                    connection.setPort(c.getInt(c.getColumnIndex("port")));
+                    connection.setUsername(c.getString(c.getColumnIndex("username")));
+                    connection.setPassword(c.getString(c.getColumnIndex("password")));
+                    connection.setActive((c.getInt(c.getColumnIndex("selected")) > 0));
+                    connection.setStreamingPort(c.getInt(c.getColumnIndex("streaming_port")));
+                    connection.setWolMacAddress(c.getString(c.getColumnIndex("wol_address")));
+                    connection.setWolPort(c.getInt(c.getColumnIndex("wol_port")));
+                    connection.setWolUseBroadcast((c.getInt(c.getColumnIndex("wol_broadcast")) > 0));
+                    connection.setWolEnabled((!TextUtils.isEmpty(connection.getWolMacAddress())));
+                    connection.setLastUpdate(0);
+                    connection.setSyncRequired(true);
 
-                Timber.d("Saving existing connection " + connection.getName() + " into temporary list");
-                connectionList.add(connection);
+                    Timber.d("Saving existing connection " + connection.getName() + " into temporary list");
+                    connectionList.add(connection);
+                } while (c.moveToNext());
             }
             c.close();
         } catch (SQLiteException ex) {
