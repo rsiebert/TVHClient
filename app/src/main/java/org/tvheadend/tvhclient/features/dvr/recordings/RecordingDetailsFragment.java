@@ -20,21 +20,18 @@ import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.google.android.gms.cast.framework.CastContext;
-import com.google.android.gms.cast.framework.CastSession;
-
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.features.download.DownloadPermissionGrantedInterface;
 import org.tvheadend.tvhclient.features.dvr.RecordingAddEditActivity;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecordingRemovedCallback;
+import org.tvheadend.tvhclient.utils.MiscUtils;
 import org.tvheadend.tvhclient.utils.UIUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import timber.log.Timber;
 
 public class RecordingDetailsFragment extends BaseFragment implements RecordingRemovedCallback, DownloadPermissionGrantedInterface {
 
@@ -255,19 +252,12 @@ public class RecordingDetailsFragment extends BaseFragment implements RecordingR
 
         menuUtils.onPreparePopupSearchMenu(menu, isNetworkAvailable);
 
-        CastSession castSession = null;
-        try {
-            castSession = CastContext.getSharedInstance(activity.getApplicationContext()).getSessionManager().getCurrentCastSession();
-        } catch (IllegalStateException e) {
-            Timber.e("Could not get casting session");
-        }
-
         menu = nestedToolbar.getMenu();
         if (isNetworkAvailable) {
             if (recording.isCompleted()) {
                 menu.findItem(R.id.menu_record_remove).setVisible(true);
                 menu.findItem(R.id.menu_play).setVisible(true);
-                menu.findItem(R.id.menu_cast).setVisible(castSession != null);
+                menu.findItem(R.id.menu_cast).setVisible(MiscUtils.getCastSession(activity) != null);
                 menu.findItem(R.id.menu_download).setVisible(isUnlocked);
 
             } else if (recording.isScheduled() && !recording.isRecording()) {
@@ -277,7 +267,7 @@ public class RecordingDetailsFragment extends BaseFragment implements RecordingR
             } else if (recording.isRecording()) {
                 menu.findItem(R.id.menu_record_stop).setVisible(true);
                 menu.findItem(R.id.menu_play).setVisible(true);
-                menu.findItem(R.id.menu_cast).setVisible(castSession != null);
+                menu.findItem(R.id.menu_cast).setVisible(MiscUtils.getCastSession(activity) != null);
                 menu.findItem(R.id.menu_edit).setVisible(isUnlocked);
 
             } else if (recording.isFailed() || recording.isFileMissing() || recording.isMissed() || recording.isAborted()) {
@@ -285,7 +275,7 @@ public class RecordingDetailsFragment extends BaseFragment implements RecordingR
                 // Allow playing a failed recording which size is not zero
                 if (recording.getDataSize() > 0) {
                     menu.findItem(R.id.menu_play).setVisible(true);
-                    menu.findItem(R.id.menu_cast).setVisible(castSession != null);
+                    menu.findItem(R.id.menu_cast).setVisible(MiscUtils.getCastSession(activity) != null);
                 }
             }
         }

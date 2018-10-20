@@ -22,7 +22,6 @@ import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.ProgressBar;
 
-import com.google.android.gms.cast.framework.CastContext;
 import com.google.android.gms.cast.framework.CastSession;
 
 import org.tvheadend.tvhclient.R;
@@ -34,6 +33,7 @@ import org.tvheadend.tvhclient.features.search.SearchRequestInterface;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
 import org.tvheadend.tvhclient.features.shared.callbacks.BottomReachedCallback;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback;
+import org.tvheadend.tvhclient.utils.MiscUtils;
 
 import java.util.List;
 
@@ -228,13 +228,7 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
 
         if (!isSearchActive && isNetworkAvailable) {
             menu.findItem(R.id.menu_play).setVisible(true);
-            CastSession castSession = null;
-            try {
-                castSession = CastContext.getSharedInstance(activity.getApplicationContext()).getSessionManager().getCurrentCastSession();
-            } catch (IllegalStateException e) {
-                Timber.e("Could not get casting session");
-            }
-            menu.findItem(R.id.menu_cast).setVisible(castSession != null);
+            menu.findItem(R.id.menu_cast).setVisible(MiscUtils.getCastSession(activity) != null);
         } else {
             menu.findItem(R.id.menu_play).setVisible(false);
             menu.findItem(R.id.menu_cast).setVisible(false);

@@ -13,8 +13,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.google.android.gms.cast.framework.CastContext;
-import com.google.android.gms.cast.framework.CastSession;
 
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
@@ -575,13 +573,6 @@ public class MenuUtils {
         MenuItem castMenuItem = menu.findItem(R.id.menu_cast);
         MenuItem addReminderMenuItem = menu.findItem(R.id.menu_add_notification);
 
-        CastSession castSession = null;
-        try {
-            castSession = CastContext.getSharedInstance(activity.getApplicationContext()).getSessionManager().getCurrentCastSession();
-        } catch (IllegalStateException e) {
-            Timber.e("Could not get casting session");
-        }
-
         if (isNetworkAvailable) {
             if (recording == null || (!recording.isRecording()
                     && !recording.isScheduled()
@@ -595,7 +586,7 @@ public class MenuUtils {
             } else if (recording.isCompleted()) {
                 Timber.d("Recording is completed ");
                 playMenuItem.setVisible(true);
-                castMenuItem.setVisible(castSession != null);
+                castMenuItem.setVisible(MiscUtils.getCastSession(activity) != null);
                 recordRemoveMenuItem.setVisible(true);
 
             } else if (recording.isScheduled() && !recording.isRecording()) {
@@ -605,7 +596,7 @@ public class MenuUtils {
             } else if (recording.isRecording()) {
                 Timber.d("Recording is being recorded");
                 playMenuItem.setVisible(true);
-                castMenuItem.setVisible(castSession != null);
+                castMenuItem.setVisible(MiscUtils.getCastSession(activity) != null);
                 recordStopMenuItem.setVisible(true);
 
             } else if (recording.isFailed() || recording.isFileMissing() || recording.isMissed() || recording.isAborted()) {
@@ -618,7 +609,7 @@ public class MenuUtils {
             long currentTime = new Date().getTime();
             if (program != null && currentTime > program.getStart() && currentTime < program.getStop()) {
                 menu.findItem(R.id.menu_play).setVisible(true);
-                menu.findItem(R.id.menu_cast).setVisible(castSession != null);
+                menu.findItem(R.id.menu_cast).setVisible(MiscUtils.getCastSession(activity) != null);
             }
         }
         // Show the add reminder menu only for programs and
@@ -805,14 +796,7 @@ public class MenuUtils {
         } else if (channelIconAction == 2) {
             Activity activity = this.activity.get();
 
-            CastSession castSession = null;
-            try {
-                castSession = CastContext.getSharedInstance(activity.getApplicationContext()).getSessionManager().getCurrentCastSession();
-            } catch (IllegalStateException e) {
-                Timber.e("Could not get casting session");
-            }
-
-            if (castSession != null) {
+            if (MiscUtils.getCastSession(activity) != null) {
                 handleMenuCast("channelId", channelId);
             } else {
                 handleMenuPlayChannel(channelId);
@@ -827,14 +811,7 @@ public class MenuUtils {
         } else if (channelIconAction == 2) {
             Activity activity = this.activity.get();
 
-            CastSession castSession = null;
-            try {
-                castSession = CastContext.getSharedInstance(activity.getApplicationContext()).getSessionManager().getCurrentCastSession();
-            } catch (IllegalStateException e) {
-                Timber.e("Could not get casting session");
-            }
-
-            if (castSession != null) {
+            if (MiscUtils.getCastSession(activity) != null) {
                 handleMenuCast("dvrId", recordingId);
             } else {
                 handleMenuPlayRecording(recordingId);

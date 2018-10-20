@@ -6,6 +6,11 @@ import android.content.res.Configuration;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 
+import com.google.android.gms.cast.framework.CastContext;
+import com.google.android.gms.cast.framework.CastSession;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
+
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.ServerProfile;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
@@ -96,5 +101,29 @@ public class MiscUtils {
         }
         Timber.d("Daylight saving is not used");
         return 0;
+    }
+
+    public static CastSession getCastSession(Context context) {
+        CastContext castContext = getCastContext(context);
+        if (castContext != null) {
+            try {
+                return castContext.getSessionManager().getCurrentCastSession();
+            } catch (IllegalStateException e) {
+                Timber.e("Could not get current cast session");
+            }
+        }
+        return null;
+    }
+
+    public static CastContext getCastContext(Context context) {
+        int playServicesAvailable = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context);
+        if (playServicesAvailable == ConnectionResult.SUCCESS) {
+            try {
+                return CastContext.getSharedInstance(context);
+            } catch (IllegalStateException e) {
+                Timber.e("Could not get cast context");
+            }
+        }
+        return null;
     }
 }

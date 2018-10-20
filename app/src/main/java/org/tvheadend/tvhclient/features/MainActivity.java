@@ -28,8 +28,6 @@ import com.google.android.gms.cast.framework.CastState;
 import com.google.android.gms.cast.framework.CastStateListener;
 import com.google.android.gms.cast.framework.IntroductoryOverlay;
 import com.google.android.gms.cast.framework.SessionManagerListener;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GoogleApiAvailability;
 
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
@@ -120,19 +118,11 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Wake
             navigationDrawer.handleSelection(fragment);
         });
 
-        GoogleApiAvailability googleApiAvailability = GoogleApiAvailability.getInstance();
-        int status = googleApiAvailability.isGooglePlayServicesAvailable(this);
-        if (status == ConnectionResult.SUCCESS) {
+        castContext = MiscUtils.getCastContext(this);
+        if (castContext != null) {
             Timber.d("Google API is available");
-
-            AnswersWrapper.getInstance().logCustom(new CustomEvent("Startup")
-                    .putCustomAttribute("Google API", "Available"));
-
-            try {
-                castContext = CastContext.getSharedInstance(this.getApplicationContext());
-            } catch (IllegalStateException e) {
-                Timber.e("Could not get cast context", e);
-            }
+            AnswersWrapper.getInstance().logCustom(new CustomEvent("Status")
+                    .putCustomAttribute("Casting", "available"));
 
             castSessionManagerListener = new CastSessionManagerListener(this, castSession);
             castStateListener = newState -> {
@@ -142,9 +132,9 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Wake
                 }
             };
         } else {
-            Timber.d("Google API is not available, casting will no be enabled");
-            AnswersWrapper.getInstance().logCustom(new CustomEvent("Startup")
-                    .putCustomAttribute("Google API", "Not available"));
+            Timber.d("Casting is not available, casting will no be enabled");
+            AnswersWrapper.getInstance().logCustom(new CustomEvent("Status")
+                    .putCustomAttribute("Casting", "not available"));
         }
 
         // Update the drawer menu so that all available menu items are
@@ -165,19 +155,7 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Wake
 
     @Override
     protected void onResume() {
-        if (castContext != null) {
-            try {
-                castContext.addCastStateListener(castStateListener);
-                castContext.getSessionManager().addSessionManagerListener(castSessionManagerListener, CastSession.class);
-                if (castSession == null) {
-                    castSession = castContext.getSessionManager().getCurrentCastSession();
-                }
-            } catch (IllegalStateException e) {
-                Timber.e("Could not add cast state listener or get cast session manager");
-            } catch (NullPointerException npe) {
-                Timber.e("Could not add cast state listener");
-            }
-        }
+        castSession = MiscUtils.getCastSession(this);
         super.onResume();
     }
 
@@ -190,7 +168,6 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Wake
             } catch (IllegalStateException e) {
                 Timber.e("Could not remove cast state listener or get cast session manager");
             }
-
         }
         super.onPause();
     }

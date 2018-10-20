@@ -10,7 +10,6 @@ import android.view.View;
 import com.google.android.gms.cast.MediaInfo;
 import com.google.android.gms.cast.MediaLoadOptions;
 import com.google.android.gms.cast.MediaMetadata;
-import com.google.android.gms.cast.framework.CastContext;
 import com.google.android.gms.cast.framework.CastSession;
 import com.google.android.gms.cast.framework.media.RemoteMediaClient;
 import com.google.android.gms.common.images.WebImage;
@@ -18,6 +17,7 @@ import com.google.android.gms.common.images.WebImage;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.data.service.EpgSyncService;
+import org.tvheadend.tvhclient.utils.MiscUtils;
 
 import timber.log.Timber;
 
@@ -58,13 +58,7 @@ public class CastChannelActivity extends BasePlaybackActivity {
     @Override
     protected void onHttpTicketReceived() {
 
-        CastSession castSession = null;
-        try {
-            castSession = CastContext.getSharedInstance(this).getSessionManager().getCurrentCastSession();
-        } catch (IllegalStateException e) {
-            Timber.e("Could not get casting session");
-        }
-
+        CastSession castSession = MiscUtils.getCastSession(this);
         if (castSession == null) {
             progressBar.setVisibility(View.GONE);
             statusTextView.setText(getString(R.string.no_cast_session));

@@ -21,7 +21,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
-import com.google.android.gms.cast.framework.CastContext;
 import com.google.android.gms.cast.framework.CastSession;
 
 import org.tvheadend.tvhclient.R;
@@ -30,13 +29,13 @@ import org.tvheadend.tvhclient.features.download.DownloadPermissionGrantedInterf
 import org.tvheadend.tvhclient.features.dvr.RecordingAddEditActivity;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback;
+import org.tvheadend.tvhclient.utils.MiscUtils;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import timber.log.Timber;
 
 public class RecordingListFragment extends BaseFragment implements RecyclerViewClickCallback, DownloadPermissionGrantedInterface {
 
@@ -179,18 +178,11 @@ public class RecordingListFragment extends BaseFragment implements RecyclerViewC
         popupMenu.getMenuInflater().inflate(R.menu.external_search_options_menu, popupMenu.getMenu());
         menuUtils.onPreparePopupSearchMenu(popupMenu.getMenu(), isNetworkAvailable);
 
-        CastSession castSession = null;
-        try {
-            castSession = CastContext.getSharedInstance(activity.getApplicationContext()).getSessionManager().getCurrentCastSession();
-        } catch (IllegalStateException e) {
-            Timber.e("Could not get casting session");
-        }
-
         if (isNetworkAvailable) {
             if (recording.isCompleted()) {
                 popupMenu.getMenu().findItem(R.id.menu_record_remove).setVisible(true);
                 popupMenu.getMenu().findItem(R.id.menu_play).setVisible(true);
-                popupMenu.getMenu().findItem(R.id.menu_cast).setVisible(castSession != null);
+                popupMenu.getMenu().findItem(R.id.menu_cast).setVisible(MiscUtils.getCastSession(activity) != null);
                 popupMenu.getMenu().findItem(R.id.menu_download).setVisible(isUnlocked);
 
             } else if (recording.isScheduled() && !recording.isRecording()) {
@@ -200,7 +192,7 @@ public class RecordingListFragment extends BaseFragment implements RecyclerViewC
             } else if (recording.isRecording()) {
                 popupMenu.getMenu().findItem(R.id.menu_record_stop).setVisible(true);
                 popupMenu.getMenu().findItem(R.id.menu_play).setVisible(true);
-                popupMenu.getMenu().findItem(R.id.menu_cast).setVisible(castSession != null);
+                popupMenu.getMenu().findItem(R.id.menu_cast).setVisible(MiscUtils.getCastSession(activity) != null);
                 popupMenu.getMenu().findItem(R.id.menu_edit).setVisible(isUnlocked);
 
             } else if (recording.isFailed() || recording.isFileMissing() || recording.isMissed() || recording.isAborted()) {
