@@ -186,7 +186,7 @@ public class DownloadRecordingManager {
             }
         }
 
-        AnswersWrapper.getInstance().logCustom(new CustomEvent("Download")
+        AnswersWrapper.getInstance().logCustom(new CustomEvent("Status")
                 .putCustomAttribute("Recording title", recording.getTitle())
                 .putCustomAttribute("Download status", msg));
 
