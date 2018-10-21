@@ -42,7 +42,7 @@ import org.tvheadend.tvhclient.data.entity.TimerRecording;
                 ServerProfile.class,
                 ServerStatus.class
         },
-        version = 5)
+        version = 6)
 public abstract class AppRoomDatabase extends RoomDatabase {
 
     private static AppRoomDatabase instance;
@@ -55,6 +55,7 @@ public abstract class AppRoomDatabase extends RoomDatabase {
                         .addMigrations(MIGRATION_2_3)
                         .addMigrations(MIGRATION_3_4)
                         .addMigrations(MIGRATION_4_5)
+                        .addMigrations(MIGRATION_5_6)
                         .build();
             }
         }
@@ -86,6 +87,13 @@ public abstract class AppRoomDatabase extends RoomDatabase {
         @Override
         public void migrate(@NonNull SupportSQLiteDatabase database) {
             database.execSQL("ALTER TABLE recordings ADD COLUMN duplicate INTEGER NOT NULL DEFAULT 0;");
+        }
+    };
+
+    private static final Migration MIGRATION_5_6 = new Migration(5, 6) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            database.execSQL("ALTER TABLE server_status ADD COLUMN http_playback_server_profile_id INTEGER NOT NULL DEFAULT 0;");
         }
     };
 

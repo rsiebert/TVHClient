@@ -32,7 +32,9 @@ public class ServerStatus {
     @ColumnInfo(name = "channel_tag_id")
     private int channelTagId = 0;
     @ColumnInfo(name = "playback_server_profile_id")
-    private int playbackServerProfileId = 0;
+    private int htspPlaybackServerProfileId = 0;
+    @ColumnInfo(name = "http_playback_server_profile_id")
+    private int httpPlaybackServerProfileId = 0;
     @ColumnInfo(name = "recording_server_profile_id")
     private int recordingServerProfileId = 0;
     @ColumnInfo(name = "casting_server_profile_id")
@@ -122,14 +124,6 @@ public class ServerStatus {
         this.channelTagId = channelTagId;
     }
 
-    public int getPlaybackServerProfileId() {
-        return playbackServerProfileId;
-    }
-
-    public void setPlaybackServerProfileId(int playbackServerProfileId) {
-        this.playbackServerProfileId = playbackServerProfileId;
-    }
-
     public int getRecordingServerProfileId() {
         return recordingServerProfileId;
     }
@@ -184,5 +178,21 @@ public class ServerStatus {
 
     public void setWebroot(String webroot) {
         this.webroot = webroot;
+    }
+
+    public int getHtspPlaybackServerProfileId() {
+        return htspPlaybackServerProfileId;
+    }
+
+    public void setHtspPlaybackServerProfileId(int htspPlaybackServerProfileId) {
+        this.htspPlaybackServerProfileId = htspPlaybackServerProfileId;
+    }
+
+    public int getHttpPlaybackServerProfileId() {
+        return httpPlaybackServerProfileId;
+    }
+
+    public void setHttpPlaybackServerProfileId(int httpPlaybackServerProfileId) {
+        this.httpPlaybackServerProfileId = httpPlaybackServerProfileId;
     }
 }
