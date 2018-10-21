@@ -16,6 +16,7 @@ import org.tvheadend.tvhclient.data.service.EpgSyncIntentService;
 import org.tvheadend.tvhclient.data.service.EpgSyncService;
 import org.tvheadend.tvhclient.data.service.EpgSyncStatusCallback;
 import org.tvheadend.tvhclient.data.service.EpgSyncTaskState;
+import org.tvheadend.tvhclient.features.programs.ProgramListFragment;
 import org.tvheadend.tvhclient.features.shared.callbacks.NetworkAvailabilityChangedInterface;
 import org.tvheadend.tvhclient.features.shared.callbacks.NetworkStatusInterface;
 import org.tvheadend.tvhclient.features.shared.callbacks.NetworkStatusReceiverCallback;
@@ -138,18 +139,20 @@ public abstract class BaseActivity extends AppCompatActivity implements NetworkS
 
     @Override
     public void onBackPressed() {
-
-        int count = getSupportFragmentManager().getBackStackEntryCount();
         boolean navHistoryEnabled = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("navigation_history_enabled", true);
-
-        if (navHistoryEnabled && count <= 1) {
-            finish();
-        } else if (!navHistoryEnabled && count < 1) {
-            // Only exit the app when there is no more fragments in the stack.
-            // When the program list is visible a back press shall show the channel list again
-            finish();
+        if (!navHistoryEnabled) {
+            Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main);
+            if (fragment instanceof ProgramListFragment) {
+                super.onBackPressed();
+            } else {
+                finish();
+            }
         } else {
-            super.onBackPressed();
+            if (getSupportFragmentManager().getBackStackEntryCount() <= 1) {
+                finish();
+            } else {
+                super.onBackPressed();
+            }
         }
     }
 }
