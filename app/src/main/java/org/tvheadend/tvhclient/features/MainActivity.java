@@ -33,6 +33,7 @@ import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.features.download.DownloadPermissionGrantedInterface;
+import org.tvheadend.tvhclient.features.epg.ProgramGuideFragment;
 import org.tvheadend.tvhclient.features.logging.AnswersWrapper;
 import org.tvheadend.tvhclient.features.navigation.NavigationDrawer;
 import org.tvheadend.tvhclient.features.navigation.NavigationDrawerCallback;
@@ -357,7 +358,10 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Wake
     public boolean onQueryTextChange(String newText) {
         if (newText.length() >= 3) {
             Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main);
-            if (fragment != null && fragment.isAdded() && fragment instanceof SearchRequestInterface) {
+            if (fragment != null
+                    && fragment.isAdded()
+                    && !(fragment instanceof ProgramGuideFragment)
+                    && fragment instanceof SearchRequestInterface) {
                 ((SearchRequestInterface) fragment).onSearchRequested(newText);
             }
         }
