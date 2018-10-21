@@ -6,6 +6,8 @@ import android.os.AsyncTask;
 import android.support.v4.content.LocalBroadcastManager;
 
 import org.tvheadend.tvhclient.data.db.AppRoomDatabase;
+import org.tvheadend.tvhclient.data.entity.Connection;
+import org.tvheadend.tvhclient.data.entity.ServerStatus;
 import org.tvheadend.tvhclient.features.settings.DatabaseClearedCallback;
 import org.tvheadend.tvhclient.features.shared.receivers.SnackbarMessageReceiver;
 
@@ -47,6 +49,16 @@ public class MiscData extends BaseData {
             db.getSeriesRecordingDao().deleteAll();
             db.getTimerRecordingDao().deleteAll();
             db.getServerProfileDao().deleteAll();
+
+            // Clear all assigned profiles
+            for (Connection connection : db.getConnectionDao().loadAllConnectionsSync()) {
+                ServerStatus serverStatus = db.getServerStatusDao().loadServerStatusByIdSync(connection.getId());
+                serverStatus.setHtspPlaybackServerProfileId(0);
+                serverStatus.setHttpPlaybackServerProfileId(0);
+                serverStatus.setCastingServerProfileId(0);
+                serverStatus.setRecordingServerProfileId(0);
+                db.getServerStatusDao().update(serverStatus);
+            }
             return null;
         }
 
