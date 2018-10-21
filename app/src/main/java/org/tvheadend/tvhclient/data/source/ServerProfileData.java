@@ -16,7 +16,8 @@ import javax.inject.Inject;
 public class ServerProfileData extends BaseData implements DataSourceInterface<ServerProfile> {
 
     private final static int RECORDINGS = 1;
-    private final static int PROGRAMS = 2;
+    private final static int HTSP_PLAYBACK = 2;
+    private final static int HTTP_PLAYBACK = 3;
     private final AppRoomDatabase db;
 
     @Inject
@@ -82,8 +83,20 @@ public class ServerProfileData extends BaseData implements DataSourceInterface<S
         return null;
     }
 
-    public String[] getPlaybackProfileNames() {
-        List<ServerProfile> serverProfiles = getPlaybackProfiles();
+    public String[] getHtspPlaybackProfileNames() {
+        List<ServerProfile> serverProfiles = getHtspPlaybackProfiles();
+        if (serverProfiles != null) {
+            String[] names = new String[serverProfiles.size()];
+            for (int i = 0; i < serverProfiles.size(); i++) {
+                names[i] = serverProfiles.get(i).getName();
+            }
+            return names;
+        }
+        return null;
+    }
+
+    public String[] getHttpPlaybackProfileNames() {
+        List<ServerProfile> serverProfiles = getHttpPlaybackProfiles();
         if (serverProfiles != null) {
             String[] names = new String[serverProfiles.size()];
             for (int i = 0; i < serverProfiles.size(); i++) {
@@ -103,9 +116,18 @@ public class ServerProfileData extends BaseData implements DataSourceInterface<S
         return null;
     }
 
-    public List<ServerProfile> getPlaybackProfiles() {
+    public List<ServerProfile> getHtspPlaybackProfiles() {
         try {
-            return new ItemsLoaderTask(db, PROGRAMS).execute().get();
+            return new ItemsLoaderTask(db, HTSP_PLAYBACK).execute().get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public List<ServerProfile> getHttpPlaybackProfiles() {
+        try {
+            return new ItemsLoaderTask(db, HTTP_PLAYBACK).execute().get();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
@@ -144,8 +166,10 @@ public class ServerProfileData extends BaseData implements DataSourceInterface<S
         @Override
         protected List<ServerProfile> doInBackground(Void... voids) {
             switch (type) {
-                case PROGRAMS:
-                    return db.getServerProfileDao().loadAllPlaybackProfilesSync();
+                case HTSP_PLAYBACK:
+                    return db.getServerProfileDao().loadHtspPlaybackProfilesSync();
+                case HTTP_PLAYBACK:
+                    return db.getServerProfileDao().loadHttpPlaybackProfilesSync();
                 case RECORDINGS:
                     return db.getServerProfileDao().loadAllRecordingProfilesSync();
                 default:

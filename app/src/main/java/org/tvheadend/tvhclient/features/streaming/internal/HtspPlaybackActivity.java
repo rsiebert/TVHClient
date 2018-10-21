@@ -133,7 +133,7 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
         }
 
         serverStatus = appRepository.getServerStatusData().getActiveItem();
-        serverProfile = appRepository.getServerProfileData().getItemById(serverStatus.getPlaybackServerProfileId());
+        serverProfile = appRepository.getServerProfileData().getItemById(serverStatus.getHtspPlaybackServerProfileId());
     }
 
     @Override

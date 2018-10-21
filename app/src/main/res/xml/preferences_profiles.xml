@@ -10,11 +10,18 @@
             android:title="@string/pref_recording_profiles" />
 
         <ListPreference
-            android:name="@string/pref_playback_profiles"
-            android:dialogTitle="@string/pref_playback_profiles"
-            android:key="playback_profiles"
-            android:summary="@string/pref_playback_profiles_sum"
-            android:title="@string/pref_playback_profiles" />
+            android:name="@string/pref_htsp_playback_profiles"
+            android:dialogTitle="@string/pref_htsp_playback_profiles"
+            android:key="htsp_playback_profiles"
+            android:summary="@string/pref_htsp_playback_profiles_sum"
+            android:title="@string/pref_htsp_playback_profiles" />
+
+        <ListPreference
+            android:name="@string/pref_http_playback_profiles"
+            android:dialogTitle="@string/pref_http_playback_profiles"
+            android:key="http_playback_profiles"
+            android:summary="@string/pref_http_playback_profiles_sum"
+            android:title="@string/pref_http_playback_profiles" />
 
         <ListPreference
             android:name="@string/pref_cast_profiles"

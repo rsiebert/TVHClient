@@ -32,9 +32,11 @@ import java.util.List;
 public class SettingsProfilesFragment extends BasePreferenceFragment implements BackPressedInterface {
 
     private ListPreference recordingProfilesPreference;
-    private ListPreference playbackProfilesPreference;
+    private ListPreference htspPlaybackProfilesPreference;
+    private ListPreference httpPlaybackProfilesPreference;
     private ListPreference castingProfilesPreference;
-    private int playbackServerProfileId;
+    private int htspPlaybackServerProfileId;
+    private int httpPlaybackServerProfileId;
     private int recordingServerProfileId;
     private int castingServerProfileId;
 
@@ -47,37 +49,49 @@ public class SettingsProfilesFragment extends BasePreferenceFragment implements 
         toolbarInterface.setTitle(getString(R.string.pref_profiles));
         toolbarInterface.setSubtitle(connection.getName());
 
-        playbackProfilesPreference = (ListPreference) findPreference("playback_profiles");
+        htspPlaybackProfilesPreference = (ListPreference) findPreference("htsp_playback_profiles");
+        httpPlaybackProfilesPreference = (ListPreference) findPreference("http_playback_profiles");
         recordingProfilesPreference = (ListPreference) findPreference("recording_profiles");
         castingProfilesPreference = (ListPreference) findPreference("casting_profiles");
 
         if (savedInstanceState != null) {
-            playbackServerProfileId = savedInstanceState.getInt("playback_profile_id");
+            htspPlaybackServerProfileId = savedInstanceState.getInt("htsp_playback_profile_id");
+            httpPlaybackServerProfileId = savedInstanceState.getInt("http_playback_profile_id");
             recordingServerProfileId = savedInstanceState.getInt("recording_profile_id");
             castingServerProfileId = savedInstanceState.getInt("casting_profile_id");
         } else {
-            playbackServerProfileId = serverStatus.getPlaybackServerProfileId();
+            htspPlaybackServerProfileId = serverStatus.getHtspPlaybackServerProfileId();
+            httpPlaybackServerProfileId = serverStatus.getHttpPlaybackServerProfileId();
             recordingServerProfileId = serverStatus.getRecordingServerProfileId();
             castingServerProfileId = serverStatus.getCastingServerProfileId();
         }
 
-        addProfiles(playbackProfilesPreference,
-                appRepository.getServerProfileData().getPlaybackProfiles(),
-                playbackServerProfileId);
+        addProfiles(htspPlaybackProfilesPreference,
+                appRepository.getServerProfileData().getHtspPlaybackProfiles(),
+                htspPlaybackServerProfileId);
+        addProfiles(httpPlaybackProfilesPreference,
+                appRepository.getServerProfileData().getHttpPlaybackProfiles(),
+                httpPlaybackServerProfileId);
         addProfiles(recordingProfilesPreference,
                 appRepository.getServerProfileData().getRecordingProfiles(),
                 recordingServerProfileId);
         addProfiles(castingProfilesPreference,
-                appRepository.getServerProfileData().getPlaybackProfiles(),
+                appRepository.getServerProfileData().getHttpPlaybackProfiles(),
                 castingServerProfileId);
 
-        setPlaybackProfileListSummary();
+        setHttpPlaybackProfileListSummary();
+        setHtspPlaybackProfileListSummary();
         setRecordingProfileListSummary();
         setCastingProfileListSummary();
 
-        playbackProfilesPreference.setOnPreferenceChangeListener((preference, o) -> {
-            playbackServerProfileId = Integer.valueOf((String) o);
-            setPlaybackProfileListSummary();
+        htspPlaybackProfilesPreference.setOnPreferenceChangeListener((preference, o) -> {
+            htspPlaybackServerProfileId = Integer.valueOf((String) o);
+            setHtspPlaybackProfileListSummary();
+            return true;
+        });
+        httpPlaybackProfilesPreference.setOnPreferenceChangeListener((preference, o) -> {
+            httpPlaybackServerProfileId = Integer.valueOf((String) o);
+            setHttpPlaybackProfileListSummary();
             return true;
         });
         recordingProfilesPreference.setOnPreferenceChangeListener((preference, o) -> {
@@ -102,12 +116,21 @@ public class SettingsProfilesFragment extends BasePreferenceFragment implements 
         }
     }
 
-    private void setPlaybackProfileListSummary() {
-        if (playbackServerProfileId == 0) {
-            playbackProfilesPreference.setSummary("None");
+    private void setHtspPlaybackProfileListSummary() {
+        if (htspPlaybackServerProfileId == 0) {
+            htspPlaybackProfilesPreference.setSummary("None");
         } else {
-            ServerProfile playbackProfile = appRepository.getServerProfileData().getItemById(playbackServerProfileId);
-            playbackProfilesPreference.setSummary(playbackProfile != null ? playbackProfile.getName() : null);
+            ServerProfile playbackProfile = appRepository.getServerProfileData().getItemById(htspPlaybackServerProfileId);
+            htspPlaybackProfilesPreference.setSummary(playbackProfile != null ? playbackProfile.getName() : null);
+        }
+    }
+
+    private void setHttpPlaybackProfileListSummary() {
+        if (httpPlaybackServerProfileId == 0) {
+            httpPlaybackProfilesPreference.setSummary("None");
+        } else {
+            ServerProfile playbackProfile = appRepository.getServerProfileData().getItemById(httpPlaybackServerProfileId);
+            httpPlaybackProfilesPreference.setSummary(playbackProfile != null ? playbackProfile.getName() : null);
         }
     }
 
@@ -131,7 +154,8 @@ public class SettingsProfilesFragment extends BasePreferenceFragment implements 
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putInt("playback_profile_id", playbackServerProfileId);
+        outState.putInt("htsp_playback_profile_id", htspPlaybackServerProfileId);
+        outState.putInt("http_playback_profile_id", httpPlaybackServerProfileId);
         outState.putInt("recording_profile_id", recordingServerProfileId);
         outState.putInt("casting_profile_id", castingServerProfileId);
         super.onSaveInstanceState(outState);
@@ -139,7 +163,8 @@ public class SettingsProfilesFragment extends BasePreferenceFragment implements 
 
     @Override
     public void onBackPressed() {
-        serverStatus.setPlaybackServerProfileId(playbackServerProfileId);
+        serverStatus.setHtspPlaybackServerProfileId(htspPlaybackServerProfileId);
+        serverStatus.setHttpPlaybackServerProfileId(httpPlaybackServerProfileId);
         serverStatus.setRecordingServerProfileId(recordingServerProfileId);
         if (isUnlocked) {
             serverStatus.setCastingServerProfileId(castingServerProfileId);

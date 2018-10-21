@@ -246,7 +246,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
                 handleDiskSpace(message);
                 break;
             case "getProfiles":
-                handleProfiles(message);
+                handleHtspProfiles(message);
                 break;
             case "getDvrConfigs":
                 handleDvrConfigs(message);
@@ -716,54 +716,76 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     }
 
 
-    private void handleProfiles(HtspMessage message) {
-        Timber.d("Loading playback profiles");
+    private void handleHtspProfiles(HtspMessage message) {
+        Timber.d("Handling htsp playback profiles");
         if (message.containsKey("profiles")) {
             ServerStatus serverStatus = appRepository.getServerStatusData().getActiveItem();
             for (HtspMessage msg : message.getHtspMessageArray("profiles")) {
-                ServerProfile serverProfile = appRepository.getServerProfileData().getItemById(msg.getString("uuid"));
-                if (serverProfile == null) {
-                    serverProfile = new ServerProfile();
+                String name = msg.getString("name");
+
+                String[] profileNames = appRepository.getServerProfileData().getHtspPlaybackProfileNames();
+                boolean profileExists = false;
+                for (String profileName : profileNames) {
+                    if (profileName.equals(name)) {
+                        profileExists = true;
+                        break;
+                    }
                 }
+                if (!profileExists) {
+                    ServerProfile serverProfile = new ServerProfile();
+                    serverProfile.setConnectionId(serverStatus.getConnectionId());
+                    serverProfile.setName(name);
+                    serverProfile.setUuid(msg.getString("uuid"));
+                    serverProfile.setComment(msg.getString("comment"));
+                    serverProfile.setType("htsp_playback");
 
-                serverProfile.setConnectionId(serverStatus.getConnectionId());
-                serverProfile.setUuid(msg.getString("uuid"));
-                serverProfile.setName(msg.getString("name"));
-                serverProfile.setComment(msg.getString("comment"));
-                serverProfile.setType("playback");
-
-                if (serverProfile.getId() == 0) {
-                    Timber.d("Added new playback profile " + serverProfile.getName());
+                    Timber.d("Adding htsp playback profile " + serverProfile.getName());
                     appRepository.getServerProfileData().addItem(serverProfile);
-                } else {
-                    Timber.d("Updated existing playback profile " + serverProfile.getName());
-                    appRepository.getServerProfileData().updateItem(serverProfile);
                 }
             }
         }
     }
 
-    private void addMissingPlaybackProfileIfNotExists(String name) {
+    private void addMissingHtspPlaybackProfileIfNotExists(String name) {
         boolean profileExists = false;
 
-        String[] profileNames = appRepository.getServerProfileData().getPlaybackProfileNames();
+        String[] profileNames = appRepository.getServerProfileData().getHtspPlaybackProfileNames();
         for (String profileName : profileNames) {
             if (profileName.equals(name)) {
-                Timber.d("Default playback profile " + name + " exists already");
+                Timber.d("Default htsp playback profile " + name + " exists already");
                 profileExists = true;
             }
         }
         if (!profileExists) {
-            Timber.d("Default playback profile " + name + " does not exist, adding manually");
+            Timber.d("Default htsp playback profile " + name + " does not exist, adding manually");
             ServerProfile serverProfile = new ServerProfile();
             serverProfile.setName(name);
-            serverProfile.setType("playback");
+            serverProfile.setType("htsp_playback");
+            appRepository.getServerProfileData().addItem(serverProfile);
+        }
+    }
+
+    private void addMissingHttpPlaybackProfileIfNotExists(String name) {
+        boolean profileExists = false;
+
+        String[] profileNames = appRepository.getServerProfileData().getHttpPlaybackProfileNames();
+        for (String profileName : profileNames) {
+            if (profileName.equals(name)) {
+                Timber.d("Default http playback profile " + name + " exists already");
+                profileExists = true;
+            }
+        }
+        if (!profileExists) {
+            Timber.d("Default http playback profile " + name + " does not exist, adding manually");
+            ServerProfile serverProfile = new ServerProfile();
+            serverProfile.setName(name);
+            serverProfile.setType("http_playback");
             appRepository.getServerProfileData().addItem(serverProfile);
         }
     }
 
     private void handleHttpProfiles(HtspMessage message) {
-        Timber.d("Handling http profiles");
+        Timber.d("Handling http playback profiles");
         if (message.containsKey("response")) {
             try {
                 JSONObject response = new JSONObject(message.getString("response"));
@@ -775,20 +797,25 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
                         for (int i = 0, totalObject = entries.length(); i < totalObject; i++) {
                             JSONObject profile = entries.getJSONObject(i);
                             if (profile.has("key") && profile.has("val")) {
-                                String uuid = profile.getString("key");
                                 String name = profile.getString("val");
 
-                                ServerProfile serverProfile = appRepository.getServerProfileData().getItemById(uuid);
-                                if (serverProfile == null) {
-                                    serverProfile = new ServerProfile();
+                                String[] profileNames = appRepository.getServerProfileData().getHttpPlaybackProfileNames();
+                                boolean profileExists = false;
+                                for (String profileName : profileNames) {
+                                    if (profileName.equals(name)) {
+                                        profileExists = true;
+                                        break;
+                                    }
+                                }
+                                if (!profileExists) {
+                                    ServerProfile serverProfile = new ServerProfile();
                                     serverProfile.setConnectionId(serverStatus.getConnectionId());
-                                    serverProfile.setUuid(uuid);
                                     serverProfile.setName(name);
-                                    serverProfile.setType("playback");
-                                    Timber.d("Added new playback profile " + serverProfile.getName());
+                                    serverProfile.setUuid(profile.getString("key"));
+                                    serverProfile.setType("http_playback");
+
+                                    Timber.d("Adding http playback profile " + serverProfile.getName());
                                     appRepository.getServerProfileData().addItem(serverProfile);
-                                } else {
-                                    Timber.d("Playback profile " + serverProfile.getName() + " exists already");
                                 }
                             }
                         }
@@ -801,7 +828,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     }
 
     private void handleDvrConfigs(HtspMessage message) {
-        Timber.d("Loading recording profiles");
+        Timber.d("Handling recording profiles");
         if (message.containsKey("dvrconfigs")) {
             ServerStatus serverStatus = appRepository.getServerStatusData().getActiveItem();
             for (HtspMessage msg : message.getHtspMessageArray("dvrconfigs")) {
@@ -871,12 +898,11 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         getSystemTime();
         getProfiles();
         getHttpProfiles();
-
-        addMissingPlaybackProfileIfNotExists("htsp");
-        addMissingPlaybackProfileIfNotExists("matroska");
-        addMissingPlaybackProfileIfNotExists("pass");
-
         getDvrConfigs();
+
+        addMissingHtspPlaybackProfileIfNotExists("htsp");
+        addMissingHttpPlaybackProfileIfNotExists("matroska");
+        addMissingHttpPlaybackProfileIfNotExists("pass");
 
         connection.setSyncRequired(false);
         appRepository.getConnectionData().updateItem(connection);
@@ -1483,11 +1509,11 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         try {
             response = dispatcher.sendMessage(request, connectionTimeout);
         } catch (HtspNotConnectedException e) {
-            Timber.e("Failed to send getProfiles - not connected", e);
+            Timber.e("Failed to send getHtspProfiles - not connected", e);
         }
 
         if (response != null) {
-            handleProfiles(response);
+            handleHtspProfiles(response);
         }
     }
 

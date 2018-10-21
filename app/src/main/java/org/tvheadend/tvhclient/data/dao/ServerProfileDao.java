@@ -15,8 +15,13 @@ public interface ServerProfileDao {
 
     @Query("SELECT p.* FROM server_profiles AS p " +
             "LEFT JOIN connections AS c ON c.id = p.connection_id AND c.active = 1 " +
-            "WHERE p.type = 'playback'")
-    List<ServerProfile> loadAllPlaybackProfilesSync();
+            "WHERE p.type = 'htsp_playback'")
+    List<ServerProfile> loadHtspPlaybackProfilesSync();
+
+    @Query("SELECT p.* FROM server_profiles AS p " +
+            "LEFT JOIN connections AS c ON c.id = p.connection_id AND c.active = 1 " +
+            "WHERE p.type = 'http_playback'")
+    List<ServerProfile> loadHttpPlaybackProfilesSync();
 
     @Query("SELECT p.* FROM server_profiles AS p " +
             "LEFT JOIN connections AS c ON c.id = p.connection_id AND c.active = 1 " +

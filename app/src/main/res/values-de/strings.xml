@@ -190,8 +190,12 @@
     <string name="pref_host">Hostname</string>
     <string name="pref_host_error_invalid">Die IP-Adresse ist ungültig.</string>
     <string name="pref_host_sum">Hostname des Servers eingeben</string>
+    <string name="pref_htsp_playback_profiles">Wiedergabeprofile (Interner Player)</string>
+    <string name="pref_htsp_playback_profiles_sum">Wählen Sie ein Profil aus, das vom internen Player verwendet wird, um ein aufgenommenes Programm mit dem internen Player abzuspielen.</string>
+    <string name="pref_http_playback_profiles">Wiedergabeprofile (Externe Player)</string>
+    <string name="pref_http_playback_profiles_sum">Wählen Sie ein Profil aus, das von einem externen Player verwendet wird, um ein aufgenommenes Programm mit einem externen Player abzuspielen.</string>
     <string name="pref_information">Informationen</string>
-    <string name="pref_information_sum">Zeige eine Erklärung der benötigten Berechtigungen, die verwendete Bibliotheken und eine Danksagung an alle, die bei der Entwicklung geholfen haben.</string>
+    <string name="pref_information_sum">Zeige eine Beschreibung der benötigten Berechtigungen, eine Liste der verwendeten Bibliotheken und der Personen, die an der Entwicklung beteiligt waren.</string>
     <string name="pref_language">Sprache</string>
     <string name="pref_language_sum">Definiert die Sprache, die verwendet werden soll.</string>
     <string name="pref_manage_connections">Verbindungen verwalten</string>

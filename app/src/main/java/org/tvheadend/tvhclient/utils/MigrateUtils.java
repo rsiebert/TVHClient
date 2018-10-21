@@ -12,6 +12,7 @@ import org.tvheadend.tvhclient.BuildConfig;
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.data.db.DatabaseHelperForMigration;
 import org.tvheadend.tvhclient.data.entity.Connection;
+import org.tvheadend.tvhclient.data.entity.ServerProfile;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
 
@@ -26,6 +27,8 @@ public class MigrateUtils {
     private static final int VERSION_101 = 101;
     private static final int VERSION_109 = 109;
     private static final int VERSION_116 = 116;
+    private static final int VERSION_119 = 119;
+
     @Inject
     protected Context context;
     @Inject
@@ -56,6 +59,18 @@ public class MigrateUtils {
                 boolean enabled = sharedPreferences.getBoolean("channel_icon_starts_playback_enabled", true);
                 editor.putString("channel_icon_action", enabled ? "2" : "0");
                 editor.apply();
+            }
+            if (lastInstalledApplicationVersion < VERSION_119) {
+                // Clear the currently selected htsp playback profile
+                ServerStatus serverStatus = appRepository.getServerStatusData().getActiveItem();
+                serverStatus.setHtspPlaybackServerProfileId(0);
+                appRepository.getServerStatusData().updateItem(serverStatus);
+
+                // Remove all playback profiles so we can save them again separately as htsp or http profiles
+                List<ServerProfile> serverProfiles = appRepository.getServerProfileData().getHtspPlaybackProfiles();
+                for (ServerProfile serverProfile : serverProfiles) {
+                    appRepository.getServerProfileData().removeItem(serverProfile);
+                }
             }
         }
 

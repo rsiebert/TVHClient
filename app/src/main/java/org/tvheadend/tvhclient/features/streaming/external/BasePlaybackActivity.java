@@ -68,7 +68,8 @@ public abstract class BasePlaybackActivity extends AppCompatActivity implements 
         serviceStatusReceiver = new ServiceStatusReceiver(this);
         connection = appRepository.getConnectionData().getActiveItem();
         serverStatus = appRepository.getServerStatusData().getActiveItem();
-        serverProfile = appRepository.getServerProfileData().getItemById(serverStatus.getPlaybackServerProfileId());
+
+        serverProfile = appRepository.getServerProfileData().getItemById(serverStatus.getHttpPlaybackServerProfileId());
     }
 
     @Override
