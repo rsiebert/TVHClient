@@ -72,5 +72,9 @@ public class FailedRecordingListFragment extends RecordingListFragment implement
         } else {
             toolbarInterface.setSubtitle(activity.getResources().getQuantityString(R.plurals.failed_recordings, recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
         }
+        // Preselect the first result item in the details screen
+        if (isDualPane && recyclerViewAdapter.getItemCount() > 0) {
+            showRecordingDetails(0);
+        }
     }
 }

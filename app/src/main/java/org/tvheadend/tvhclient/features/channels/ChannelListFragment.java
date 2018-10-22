@@ -403,5 +403,9 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
     @Override
     public void onFilterComplete(int count) {
         showChannelTagOrChannelCount();
+        // Preselect the first result item in the details screen
+        if (isDualPane && recyclerViewAdapter.getItemCount() > 0) {
+            showChannelDetails(0);
+        }
     }
 }
