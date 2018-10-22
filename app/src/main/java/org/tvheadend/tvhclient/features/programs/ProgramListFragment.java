@@ -28,6 +28,7 @@ import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.data.service.EpgSyncService;
 import org.tvheadend.tvhclient.features.dvr.RecordingAddEditActivity;
 import org.tvheadend.tvhclient.features.search.SearchRequestInterface;
+import org.tvheadend.tvhclient.features.search.StartSearchInterface;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
 import org.tvheadend.tvhclient.features.shared.callbacks.BottomReachedCallback;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback;
@@ -151,7 +152,9 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
             recyclerViewAdapter.addItems(programs);
         }
         if (isSearchActive) {
-            recyclerViewAdapter.getFilter().filter(searchQuery, this);
+            if (activity instanceof StartSearchInterface) {
+                ((StartSearchInterface) activity).startSearch();
+            }
         }
         if (recyclerView != null) {
             recyclerView.setVisibility(View.VISIBLE);

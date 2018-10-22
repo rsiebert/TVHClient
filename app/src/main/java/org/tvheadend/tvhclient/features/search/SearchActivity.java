@@ -15,7 +15,7 @@ import org.tvheadend.tvhclient.utils.MiscUtils;
 
 import timber.log.Timber;
 
-public class SearchActivity extends BaseActivity implements ToolbarInterface {
+public class SearchActivity extends BaseActivity implements ToolbarInterface, StartSearchInterface {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -52,6 +52,14 @@ public class SearchActivity extends BaseActivity implements ToolbarInterface {
                         .replace(R.id.main, fragment)
                         .commit();
             }
+        }
+    }
+
+    public void startSearch() {
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main);
+        if (fragment != null && fragment.isAdded()) {
+            String query = getIntent().getStringExtra(SearchManager.QUERY);
+            ((SearchRequestInterface) fragment).onSearchRequested(query);
         }
     }
 
