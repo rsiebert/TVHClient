@@ -96,9 +96,6 @@ public class TimerRecordingListFragment extends BaseFragment implements Recycler
             if (recordings != null) {
                 recyclerViewAdapter.addItems(recordings);
             }
-            if (!TextUtils.isEmpty(searchQuery)) {
-                recyclerViewAdapter.getFilter().filter(searchQuery, this);
-            }
             if (recyclerView != null) {
                 recyclerView.setVisibility(View.VISIBLE);
             }

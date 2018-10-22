@@ -108,9 +108,6 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
             if (channels != null) {
                 recyclerViewAdapter.addItems(channels);
             }
-            if (!TextUtils.isEmpty(searchQuery)) {
-                recyclerViewAdapter.getFilter().filter(searchQuery, this);
-            }
             if (recyclerView != null) {
                 recyclerView.setVisibility(View.VISIBLE);
             }

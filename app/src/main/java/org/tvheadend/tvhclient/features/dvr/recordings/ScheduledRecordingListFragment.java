@@ -46,9 +46,6 @@ public class ScheduledRecordingListFragment extends RecordingListFragment implem
             }
             recyclerViewAdapter.addItems(recordings);
         }
-        if (!TextUtils.isEmpty(searchQuery)) {
-            recyclerViewAdapter.getFilter().filter(searchQuery, this);
-        }
         if (recyclerView != null) {
             recyclerView.setVisibility(View.VISIBLE);
         }
