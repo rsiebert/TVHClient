@@ -67,20 +67,15 @@ public class EpgSyncHandler {
         Timber.d("Closing connection to server");
         connection = null;
 
-        if (epgSyncTask != null && simpleHtspConnection != null) {
-            simpleHtspConnection.removeMessageListener(epgSyncTask);
-            simpleHtspConnection.removeConnectionListener(epgWorkerHandler);
-            simpleHtspConnection.removeAuthenticationListener(epgSyncTask);
-            epgSyncTask = null;
-        }
         if (simpleHtspConnection != null) {
+            simpleHtspConnection.removeMessageListener(epgSyncTask);
+            simpleHtspConnection.removeAuthenticationListener(epgSyncTask);
+            simpleHtspConnection.removeConnectionListener(epgWorkerHandler);
             simpleHtspConnection.stop();
-            simpleHtspConnection = null;
         }
-        if (epgWorkerHandler != null) {
-            epgWorkerHandler = null;
-        }
-
+        simpleHtspConnection = null;
+        epgSyncTask = null;
+        epgWorkerHandler = null;
 
         Timber.d("Connection to server closed");
     }
