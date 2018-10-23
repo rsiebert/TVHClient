@@ -902,6 +902,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
 
         addMissingHtspPlaybackProfileIfNotExists("htsp");
         addMissingHttpPlaybackProfileIfNotExists("matroska");
+        addMissingHttpPlaybackProfileIfNotExists("audio");
         addMissingHttpPlaybackProfileIfNotExists("pass");
 
         connection.setSyncRequired(false);
