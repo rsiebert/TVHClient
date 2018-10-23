@@ -76,6 +76,7 @@ public class SimpleHtspConnection implements HtspMessage.Dispatcher, HtspConnect
         Timber.d("Closing HTSP connection thread");
         htspConnection.closeConnection();
         if (connectionThread != null) {
+            Timber.d("Interrupting thread");
             connectionThread.interrupt();
         } else {
             Timber.e("Could not call interrupt, HTSP connection thread is null");
@@ -145,7 +146,8 @@ public class SimpleHtspConnection implements HtspMessage.Dispatcher, HtspConnect
     }
 
     @Override
-    public HtspMessage sendMessage(@NonNull HtspMessage message, int timeout) throws HtspNotConnectedException {
+    public HtspMessage sendMessage(@NonNull HtspMessage message, int timeout) throws
+            HtspNotConnectedException {
         return messageDispatcher.sendMessage(message, timeout);
     }
 
@@ -199,14 +201,15 @@ public class SimpleHtspConnection implements HtspMessage.Dispatcher, HtspConnect
         }
 
         // Stop the connection if a failure occurred
+/*
         if (state == HtspConnection.State.FAILED
                 || state == HtspConnection.State.FAILED_CONNECTING_TO_SERVER
                 || state == HtspConnection.State.FAILED_EXCEPTION_OPENING_SOCKET
                 || state == HtspConnection.State.FAILED_INTERRUPTED
                 || state == HtspConnection.State.FAILED_UNRESOLVED_ADDRESS) {
-
             stop();
         }
+*/
     }
 
     private void sendEpgSyncStatusMessage(ServiceStatusReceiver.State state, String msg, String details) {
