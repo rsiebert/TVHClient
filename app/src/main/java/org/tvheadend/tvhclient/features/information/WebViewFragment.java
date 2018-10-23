@@ -55,6 +55,7 @@ public class WebViewFragment extends BaseFragment implements FileLoaderCallback 
         if (savedInstanceState != null) {
             website = savedInstanceState.getString("website");
         } else {
+            website = "";
             Bundle bundle = getArguments();
             if (bundle != null) {
                 website = bundle.getString("website");
