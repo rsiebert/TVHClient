@@ -719,7 +719,6 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     private void handleHtspProfiles(HtspMessage message) {
         Timber.d("Handling htsp playback profiles");
         if (message.containsKey("profiles")) {
-            ServerStatus serverStatus = appRepository.getServerStatusData().getActiveItem();
             for (HtspMessage msg : message.getHtspMessageArray("profiles")) {
                 String name = msg.getString("name");
 
@@ -733,7 +732,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
                 }
                 if (!profileExists) {
                     ServerProfile serverProfile = new ServerProfile();
-                    serverProfile.setConnectionId(serverStatus.getConnectionId());
+                    serverProfile.setConnectionId(connection.getId());
                     serverProfile.setName(name);
                     serverProfile.setUuid(msg.getString("uuid"));
                     serverProfile.setComment(msg.getString("comment"));
@@ -759,6 +758,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         if (!profileExists) {
             Timber.d("Default htsp playback profile " + name + " does not exist, adding manually");
             ServerProfile serverProfile = new ServerProfile();
+            serverProfile.setConnectionId(connection.getId());
             serverProfile.setName(name);
             serverProfile.setType("htsp_playback");
             appRepository.getServerProfileData().addItem(serverProfile);
@@ -778,6 +778,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         if (!profileExists) {
             Timber.d("Default http playback profile " + name + " does not exist, adding manually");
             ServerProfile serverProfile = new ServerProfile();
+            serverProfile.setConnectionId(connection.getId());
             serverProfile.setName(name);
             serverProfile.setType("http_playback");
             appRepository.getServerProfileData().addItem(serverProfile);
@@ -792,8 +793,6 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
                 if (response.has("entries")) {
                     JSONArray entries = response.getJSONArray("entries");
                     if (entries.length() > 0) {
-                        ServerStatus serverStatus = appRepository.getServerStatusData().getActiveItem();
-
                         for (int i = 0, totalObject = entries.length(); i < totalObject; i++) {
                             JSONObject profile = entries.getJSONObject(i);
                             if (profile.has("key") && profile.has("val")) {
@@ -809,7 +808,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
                                 }
                                 if (!profileExists) {
                                     ServerProfile serverProfile = new ServerProfile();
-                                    serverProfile.setConnectionId(serverStatus.getConnectionId());
+                                    serverProfile.setConnectionId(connection.getId());
                                     serverProfile.setName(name);
                                     serverProfile.setUuid(profile.getString("key"));
                                     serverProfile.setType("http_playback");
@@ -830,14 +829,13 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     private void handleDvrConfigs(HtspMessage message) {
         Timber.d("Handling recording profiles");
         if (message.containsKey("dvrconfigs")) {
-            ServerStatus serverStatus = appRepository.getServerStatusData().getActiveItem();
             for (HtspMessage msg : message.getHtspMessageArray("dvrconfigs")) {
                 ServerProfile serverProfile = appRepository.getServerProfileData().getItemById(msg.getString("uuid"));
                 if (serverProfile == null) {
                     serverProfile = new ServerProfile();
                 }
 
-                serverProfile.setConnectionId(serverStatus.getConnectionId());
+                serverProfile.setConnectionId(connection.getId());
                 serverProfile.setUuid(msg.getString("uuid"));
                 String name = msg.getString("name");
                 serverProfile.setName(TextUtils.isEmpty(name) ? "Default Profile" : name);
