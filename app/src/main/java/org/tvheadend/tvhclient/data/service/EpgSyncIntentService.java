@@ -23,11 +23,21 @@ public class EpgSyncIntentService extends JobIntentService {
     public static void enqueueWork(Context context, Intent work) {
         enqueueWork(context, EpgSyncIntentService.class, 1, work);
     }
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Timber.d("All work complete");
+    }
 
     @Override
     protected void onHandleWork(@NonNull Intent intent) {
         if (!epgSyncHandler.isConnected()) {
-            Timber.d("Not connected to server");
+            Timber.d("Not connected to server, initializing and connecting to server");
+            epgSyncHandler.stop();
+            if (!epgSyncHandler.init()) {
+                Timber.i("No connection available, not starting service");
+                stopSelf();
+            }
             epgSyncHandler.connect();
         } else {
             Timber.d("Connected to server, passing intent to epg sync task");
