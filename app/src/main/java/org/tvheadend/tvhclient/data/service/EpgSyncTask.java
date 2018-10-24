@@ -145,7 +145,12 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
 
             // Load only the defined time of epg data to reduce the received data during sync
             enableAsyncMetadataRequest.put("epg", 1);
-            enableAsyncMetadataRequest.put("epgMaxTime", epgMaxTime + (System.currentTimeMillis() / 1000L));
+            if (connection.isSyncRequired()) {
+                Timber.d("Initial sync is required, loading maximum time of programs");
+            } else {
+                Timber.d("Initial sync is not required, loading " + epgMaxTime + " seconds of programs");
+                enableAsyncMetadataRequest.put("epgMaxTime", epgMaxTime + (System.currentTimeMillis() / 1000L));
+            }
 
             if (lastUpdateEnabled) {
                 Timber.d("Setting last update field to " + connection.getLastUpdate());
@@ -287,7 +292,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
                 getChannel(intent);
                 break;
             case "getMoreEvents":
-                getMoreEvents();
+                getMoreEvents(intent.getIntExtra("numFollowing", 25));
                 break;
             case "getEvent":
                 getEvent(intent);
@@ -1549,7 +1554,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         }
     }
 
-    private void getMoreEvents() {
+    private void getMoreEvents(int numberOfProgramsToLoad) {
         Timber.d("getMoreEvents() called");
         List<Channel> channelList = appRepository.getChannelData().getItems();
         for (Channel channel : channelList) {
@@ -1560,7 +1565,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
                 intent.putExtra("eventId", program.getNextEventId());
                 intent.putExtra("channelId", channel.getId());
                 //intent.putExtra("maxTime", 4);
-                intent.putExtra("numFollowing", 25);
+                intent.putExtra("numFollowing", numberOfProgramsToLoad);
                 getEvents(intent);
             }
         }
