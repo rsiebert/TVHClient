@@ -25,6 +25,7 @@ import java.net.ConnectException;
 import java.net.InetSocketAddress;
 import java.nio.channels.ClosedByInterruptException;
 import java.nio.channels.ClosedChannelException;
+import java.nio.channels.ClosedSelectorException;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
@@ -160,7 +161,11 @@ public class HtspConnection implements Runnable {
             try {
                 mSelector.select();
             } catch (IOException e) {
-                Timber.e("Failed to select from socket channel", e);
+                Timber.e("Failed to select from socket channel, I/O error occurred", e);
+                closeConnection(State.FAILED);
+                break;
+            } catch (ClosedSelectorException cse) {
+                Timber.e("Failed to select from socket channel, selector is already closed", cse);
                 closeConnection(State.FAILED);
                 break;
             }
