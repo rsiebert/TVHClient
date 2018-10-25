@@ -120,7 +120,6 @@ public class MigrateUtils {
                 c.moveToFirst();
                 do {
                     Connection connection = new Connection();
-                    connection.setId(c.getInt(c.getColumnIndex("_id")));
                     connection.setName(c.getString(c.getColumnIndex("name")));
                     connection.setHostname(c.getString(c.getColumnIndex("address")));
                     connection.setPort(c.getInt(c.getColumnIndex("port")));
