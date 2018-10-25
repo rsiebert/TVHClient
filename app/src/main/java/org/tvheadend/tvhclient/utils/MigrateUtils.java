@@ -12,7 +12,6 @@ import org.tvheadend.tvhclient.BuildConfig;
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.data.db.DatabaseHelperForMigration;
 import org.tvheadend.tvhclient.data.entity.Connection;
-import org.tvheadend.tvhclient.data.entity.ServerProfile;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
 
@@ -27,7 +26,7 @@ public class MigrateUtils {
     private static final int VERSION_101 = 101;
     private static final int VERSION_109 = 109;
     private static final int VERSION_116 = 116;
-    private static final int VERSION_119 = 119;
+    private static final int VERSION_120 = 120;
 
     @Inject
     protected Context context;
@@ -60,17 +59,8 @@ public class MigrateUtils {
                 editor.putString("channel_icon_action", enabled ? "2" : "0");
                 editor.apply();
             }
-            if (lastInstalledApplicationVersion < VERSION_119) {
-                // Clear the currently selected htsp playback profile
-                ServerStatus serverStatus = appRepository.getServerStatusData().getActiveItem();
-                serverStatus.setHtspPlaybackServerProfileId(0);
-                appRepository.getServerStatusData().updateItem(serverStatus);
-
-                // Remove all playback profiles so we can save them again separately as htsp or http profiles
-                List<ServerProfile> serverProfiles = appRepository.getServerProfileData().getHtspPlaybackProfiles();
-                for (ServerProfile serverProfile : serverProfiles) {
-                    appRepository.getServerProfileData().removeItem(serverProfile);
-                }
+            if (lastInstalledApplicationVersion < VERSION_120) {
+                migratePlaybackProfiles();
             }
         }
 
@@ -78,6 +68,25 @@ public class MigrateUtils {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putInt("build_version_for_migration", currentApplicationVersion);
         editor.apply();
+    }
+
+    private void migratePlaybackProfiles() {
+        for (Connection connection : appRepository.getConnectionData().getItems()) {
+            if (connection != null) {
+                ServerStatus serverStatus = appRepository.getServerStatusData().getItemById(connection.getId());
+                if (serverStatus != null) {
+                    Timber.d("Clearing playback profile for connection " + connection.getName());
+                    // Clear the currently selected htsp playback profile
+                    serverStatus.setHtspPlaybackServerProfileId(0);
+                    serverStatus.setHttpPlaybackServerProfileId(0);
+                    serverStatus.setCastingServerProfileId(0);
+                    serverStatus.setRecordingServerProfileId(0);
+                    appRepository.getServerStatusData().updateItem(serverStatus);
+                }
+            }
+        }
+        // Remove all playback profiles so we can save them again separately as htsp or http profiles
+        appRepository.getServerProfileData().removeAll();
     }
 
     private void checkServerStatus() {

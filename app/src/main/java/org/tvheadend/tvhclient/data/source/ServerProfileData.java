@@ -40,6 +40,10 @@ public class ServerProfileData extends BaseData implements DataSourceInterface<S
         new ItemHandlerTask(db, item, DELETE).execute();
     }
 
+    public void removeAll() {
+        new ItemHandlerTask(db, DELETE_ALL).execute();
+    }
+
     @Override
     public LiveData<Integer> getLiveDataItemCount() {
         return null;
@@ -189,6 +193,12 @@ public class ServerProfileData extends BaseData implements DataSourceInterface<S
             this.type = type;
         }
 
+        ItemHandlerTask(AppRoomDatabase db, int type) {
+            this.db = db;
+            this.serverProfile = null;
+            this.type = type;
+        }
+
         @Override
         protected Void doInBackground(Void... voids) {
             switch (type) {
@@ -200,6 +210,9 @@ public class ServerProfileData extends BaseData implements DataSourceInterface<S
                     break;
                 case DELETE:
                     db.getServerProfileDao().delete(serverProfile);
+                    break;
+                case DELETE_ALL:
+                    db.getServerProfileDao().deleteAll();
                     break;
             }
             return null;
