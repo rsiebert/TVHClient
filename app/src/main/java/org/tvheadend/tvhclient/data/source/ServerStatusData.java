@@ -107,7 +107,11 @@ public class ServerStatusData extends BaseData implements DataSourceInterface<Se
                 ServerStatus serverStatus = db.getServerStatusDao().loadActiveServerStatusSync();
                 if (serverStatus == null) {
                     Connection connection = db.getConnectionDao().loadActiveConnectionSync();
-                    Timber.e("Server status for active connection " + connection.getId() + " is null");
+                    if (connection != null) {
+                        Timber.e("Server status for active connection " + connection.getId() + " is null");
+                    } else {
+                        Timber.e("Server status is null because no active connection is available");
+                    }
                 }
                 return serverStatus;
             } else {
