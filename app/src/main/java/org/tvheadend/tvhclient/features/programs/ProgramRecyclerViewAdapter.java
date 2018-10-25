@@ -96,10 +96,10 @@ class ProgramRecyclerViewAdapter extends RecyclerView.Adapter<ProgramViewHolder>
             @Override
             protected FilterResults performFiltering(CharSequence charSequence) {
                 String charString = charSequence.toString();
+                List<Program> filteredList = new ArrayList<>();
                 if (charString.isEmpty()) {
-                    programListFiltered = programList;
+                    filteredList = programList;
                 } else {
-                    List<Program> filteredList = new ArrayList<>();
                     // Iterate over the available program. Use a copy on write
                     // array in case the program list changes during filtering.
                     for (Program program : new CopyOnWriteArrayList<>(programList)) {
@@ -110,11 +110,10 @@ class ProgramRecyclerViewAdapter extends RecyclerView.Adapter<ProgramViewHolder>
                             filteredList.add(program);
                         }
                     }
-                    programListFiltered = filteredList;
                 }
 
                 FilterResults filterResults = new FilterResults();
-                filterResults.values = programListFiltered;
+                filterResults.values = filteredList;
                 return filterResults;
             }
 
