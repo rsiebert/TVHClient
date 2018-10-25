@@ -34,6 +34,7 @@ import org.tvheadend.tvhclient.features.shared.callbacks.BottomReachedCallback;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -104,7 +105,7 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
             if (bundle != null) {
                 channelId = bundle.getInt("channelId", 0);
                 channelName = bundle.getString("channelName");
-                selectedTime = bundle.getLong("selectedTime");
+                selectedTime = bundle.getLong("selectedTime", new Date().getTime());
                 searchQuery = bundle.getString(SearchManager.QUERY);
             }
         }
