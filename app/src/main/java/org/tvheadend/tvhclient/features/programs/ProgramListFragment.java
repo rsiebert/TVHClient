@@ -135,16 +135,19 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
             // that belong to the given channel
             viewModel.getProgramsByChannelFromTime(channelId, selectedTime).observe(this, this::handleObservedPrograms);
             viewModel.getRecordingsByChannelId(channelId).observe(this, this::handleObservedRecordings);
+
+            loadingMoreProgramAllowed = true;
+            loadingProgramsAllowedTask = () -> loadingMoreProgramAllowed = true;
+
         } else {
             Timber.d("Search is active, loading programs from current time " + selectedTime);
             // No channel and channel name was given, load all programs
             // from the current time and all recordings from all channels
             viewModel.getProgramsFromTime(selectedTime).observe(this, this::handleObservedPrograms);
             viewModel.getRecordings().observe(this, this::handleObservedRecordings);
-        }
 
-        loadingMoreProgramAllowed = true;
-        loadingProgramsAllowedTask = () -> loadingMoreProgramAllowed = true;
+            loadingMoreProgramAllowed = false;
+        }
     }
 
     private void handleObservedPrograms(List<Program> programs) {
