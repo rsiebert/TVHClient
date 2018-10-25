@@ -148,6 +148,7 @@ class ChannelRecyclerViewAdapter extends RecyclerView.Adapter<ChannelViewHolder>
     void addRecordings(@NonNull List<Recording> list) {
         recordingList = list;
         updateRecordingState(channelList, recordingList);
+        updateRecordingState(channelListFiltered, recordingList);
     }
 
     private void updateRecordingState(@NonNull List<Channel> channels, @NonNull List<Recording> recordings) {

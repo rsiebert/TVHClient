@@ -137,6 +137,7 @@ class ProgramRecyclerViewAdapter extends RecyclerView.Adapter<ProgramViewHolder>
     void addRecordings(@NonNull List<Recording> list) {
         recordingList = list;
         updateRecordingState(programList, recordingList);
+        updateRecordingState(programListFiltered, recordingList);
     }
 
     private void updateRecordingState(@NonNull List<Program> programs, @NonNull List<Recording> recordings) {
