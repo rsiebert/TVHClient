@@ -41,8 +41,8 @@ import org.tvheadend.tvhclient.features.dvr.series_recordings.SeriesRecordingVie
 import org.tvheadend.tvhclient.features.dvr.timer_recordings.TimerRecordingListFragment;
 import org.tvheadend.tvhclient.features.dvr.timer_recordings.TimerRecordingViewModel;
 import org.tvheadend.tvhclient.features.epg.ProgramGuideFragment;
-import org.tvheadend.tvhclient.features.information.WebViewFragment;
 import org.tvheadend.tvhclient.features.information.StatusFragment;
+import org.tvheadend.tvhclient.features.information.WebViewFragment;
 import org.tvheadend.tvhclient.features.logging.AnswersWrapper;
 import org.tvheadend.tvhclient.features.purchase.UnlockerFragment;
 import org.tvheadend.tvhclient.features.settings.SettingsActivity;
@@ -197,7 +197,13 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
         final List<Connection> connectionList = appRepository.getConnectionData().getItems();
         if (connectionList.size() > 0) {
             for (Connection c : connectionList) {
-                headerResult.addProfiles(new ProfileDrawerItem().withIdentifier(c.getId()).withName(c.getName()).withEmail(c.getHostname()));
+                headerResult.addProfiles(
+                        new CustomProfileDrawerItem()
+                                .withEmailShown(true)
+                                .withNameShown(true)
+                                .withIdentifier(c.getId())
+                                .withName(c.getName())
+                                .withEmail(c.getHostname()));
             }
         } else {
             headerResult.addProfiles(new ProfileDrawerItem().withName(R.string.no_connection_available));
