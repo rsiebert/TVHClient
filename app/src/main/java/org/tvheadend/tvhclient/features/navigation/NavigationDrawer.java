@@ -45,6 +45,7 @@ import org.tvheadend.tvhclient.features.information.StatusFragment;
 import org.tvheadend.tvhclient.features.information.WebViewFragment;
 import org.tvheadend.tvhclient.features.logging.AnswersWrapper;
 import org.tvheadend.tvhclient.features.purchase.UnlockerFragment;
+import org.tvheadend.tvhclient.features.settings.ConnectionViewModel;
 import org.tvheadend.tvhclient.features.settings.SettingsActivity;
 import org.tvheadend.tvhclient.features.startup.SplashActivity;
 import org.tvheadend.tvhclient.utils.MiscUtils;
@@ -283,6 +284,9 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
     }
 
     public void startObservingViewModels() {
+
+        ConnectionViewModel connectionViewModel = ViewModelProviders.of(activity).get(ConnectionViewModel.class);
+        connectionViewModel.getAllConnections().observe(activity, connections -> showConnectionsInDrawerHeader());
 
         ChannelViewModel channelViewModel = ViewModelProviders.of(activity).get(ChannelViewModel.class);
         channelViewModel.getNumberOfChannels().observe(activity, count -> result.updateBadge(MENU_CHANNELS, new StringHolder(count + "")));

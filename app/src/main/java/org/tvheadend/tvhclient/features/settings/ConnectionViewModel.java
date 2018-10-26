@@ -25,7 +25,7 @@ public class ConnectionViewModel extends AndroidViewModel {
         MainApplication.getComponent().inject(this);
     }
 
-    LiveData<List<Connection>> getAllConnections() {
+    public LiveData<List<Connection>> getAllConnections() {
         return appRepository.getConnectionData().getLiveDataItems();
     }
 
