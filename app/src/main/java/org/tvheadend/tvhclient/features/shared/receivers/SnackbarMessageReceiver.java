@@ -16,6 +16,7 @@ public class SnackbarMessageReceiver extends BroadcastReceiver {
 
     public final static String ACTION = "message";
     public final static String CONTENT = "content";
+    public final static String DURATION = "duration";
     private final WeakReference<Activity> activity;
 
     public SnackbarMessageReceiver(Activity activity) {
@@ -28,7 +29,8 @@ public class SnackbarMessageReceiver extends BroadcastReceiver {
             Activity activity = this.activity.get();
             if (activity != null && activity.getCurrentFocus() != null) {
                 String msg = intent.getStringExtra(CONTENT);
-                Snackbar.make(activity.getCurrentFocus(), msg, Snackbar.LENGTH_SHORT).show();
+                int duration = intent.getIntExtra(DURATION, Snackbar.LENGTH_SHORT);
+                Snackbar.make(activity.getCurrentFocus(), msg, duration).show();
             }
         }
     }

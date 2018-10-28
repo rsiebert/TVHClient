@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
@@ -194,6 +195,7 @@ public class DownloadRecordingManager {
         Timber.d("Download status of recording " + recording.getTitle() + " is " + msg);
         Intent intent = new Intent(SnackbarMessageReceiver.ACTION);
         intent.putExtra(SnackbarMessageReceiver.CONTENT, msg);
+        intent.putExtra(SnackbarMessageReceiver.DURATION, Snackbar.LENGTH_LONG);
         LocalBroadcastManager.getInstance(activity).sendBroadcast(intent);
     }
 
