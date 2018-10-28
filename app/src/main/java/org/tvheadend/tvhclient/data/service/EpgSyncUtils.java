@@ -15,6 +15,8 @@ import org.tvheadend.tvhclient.data.service.htsp.HtspMessage;
 
 import java.util.List;
 
+import timber.log.Timber;
+
 class EpgSyncUtils {
     private EpgSyncUtils() {
         throw new IllegalAccessError("Utility class");
@@ -694,6 +696,11 @@ class EpgSyncUtils {
         if (msg.containsKey("webroot")) {
             String webroot = msg.getString("webroot");
             serverStatus.setWebroot(webroot == null ? "" : webroot);
+        }
+        if (msg.containsKey("servercapability")) {
+            for (String capabilitiy : msg.getStringArray("servercapability")) {
+                Timber.d("Server supports " + capabilitiy);
+            }
         }
         return serverStatus;
     }
