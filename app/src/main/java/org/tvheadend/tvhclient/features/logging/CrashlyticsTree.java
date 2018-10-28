@@ -27,9 +27,6 @@ public class CrashlyticsTree extends BaseDebugTree {
             Crashlytics.setString("Git commit", BuildConfig.GIT_SHA);
             Crashlytics.setString("Build time", BuildConfig.BUILD_TIME);
 
-            // Logs the given message when a crash occurred.
-            Crashlytics.log(message);
-
             if (t == null) {
                 Crashlytics.logException(new Exception(message));
             } else {
