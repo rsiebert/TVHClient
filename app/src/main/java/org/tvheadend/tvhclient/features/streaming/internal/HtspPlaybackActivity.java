@@ -2,17 +2,20 @@ package org.tvheadend.tvhclient.features.streaming.internal;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.PlaybackParams;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.android.exoplayer2.C;
@@ -30,7 +33,6 @@ import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.ui.DefaultTimeBar;
-import com.google.android.exoplayer2.ui.PlayerControlView;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultAllocator;
 import com.google.android.exoplayer2.util.Util;
@@ -40,24 +42,32 @@ import com.squareup.picasso.Picasso;
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Channel;
+import org.tvheadend.tvhclient.data.entity.Program;
 import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.data.entity.ServerProfile;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.data.service.EpgSyncHandler;
+import org.tvheadend.tvhclient.features.streaming.internal.utils.ExoPlayerUtils;
+import org.tvheadend.tvhclient.features.streaming.internal.utils.TvhMappings;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 import org.tvheadend.tvhclient.utils.UIUtils;
 
 import java.lang.ref.WeakReference;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import javax.inject.Inject;
 
+import androidx.annotation.RequiresApi;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
 
-public class HtspPlaybackActivity extends AppCompatActivity implements View.OnClickListener, PlaybackPreparer, PlayerControlView.VisibilityListener, Player.EventListener {
+import static org.tvheadend.tvhclient.features.streaming.internal.HtspDataSource.INVALID_TIMESHIFT_TIME;
+
+public class HtspPlaybackActivity extends AppCompatActivity implements View.OnClickListener, PlaybackPreparer, Player.EventListener {
 
     @Inject
     protected SharedPreferences sharedPreferences;
@@ -70,24 +80,31 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
     TextView statusTextView;
     @BindView(R.id.player_root_view)
     protected FrameLayout playerRootView;
-    @BindView(R.id.controls_root)
-    protected LinearLayout playerControlsRootView;
     @BindView(R.id.player_view)
     protected PlayerView playerView;
-    @BindView(R.id.exo_channel_icon)
+    @BindView(R.id.channel_icon)
     protected ImageView iconImageView;
-    @BindView(R.id.exo_channel_name)
+    @BindView(R.id.channel_name)
     protected TextView iconTextView;
-    @BindView(R.id.exo_program_title)
+    @BindView(R.id.program_title)
     protected TextView titleTextView;
-    @BindView(R.id.exo_program_subtitle)
+    @BindView(R.id.program_subtitle)
     protected TextView subtitleTextView;
-    @BindView(R.id.exo_next_program_title)
+    @BindView(R.id.next_program_title)
     protected TextView nextTitleTextView;
-    @BindView(R.id.exo_progress)
+    @BindView(R.id.progress)
     protected DefaultTimeBar progressBar;
-    @BindView(R.id.exo_duration)
+    @BindView(R.id.duration)
     protected TextView durationTextView;
+
+    @BindView(R.id.player_rewind)
+    protected ImageButton rewindImageView;
+    @BindView(R.id.player_pause)
+    protected ImageButton pauseImageView;
+    @BindView(R.id.player_play)
+    protected ImageButton playImageView;
+    @BindView(R.id.player_forward)
+    protected ImageButton forwardImageView;
 
     private Handler handler;
     private int channelId;
@@ -97,11 +114,12 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
     private TvheadendTrackSelector trackSelector;
     private HtspDataSource.Factory htspSubscriptionDataSourceFactory;
     private HtspDataSource.Factory htspFileInputStreamDataSourceFactory;
-    private WeakReference<HtspDataSource> dataSource;
+    private WeakReference<HtspDataSource> htspDataSource;
     private MediaSource mediaSource;
     private TvheadendExtractorsFactory extractorsFactory;
     private ServerStatus serverStatus;
     private ServerProfile serverProfile;
+    private boolean playerIsPaused = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -117,14 +135,14 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
         handlerThread.start();
         handler = new Handler(handlerThread.getLooper());
 
-        playerView = findViewById(R.id.player_view);
-        playerView.setControllerVisibilityListener(this);
         playerView.requestFocus();
 
         if (savedInstanceState != null) {
             channelId = getIntent().getIntExtra("channelId", -1);
             dvrId = getIntent().getIntExtra("dvrId", -1);
+            playerIsPaused = getIntent().getBooleanExtra("playerIsPaused", false);
         } else {
+            playerIsPaused = false;
             Bundle bundle = getIntent().getExtras();
             if (bundle != null) {
                 channelId = bundle.getInt("channelId", -1);
@@ -134,6 +152,29 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
 
         serverStatus = appRepository.getServerStatusData().getActiveItem();
         serverProfile = appRepository.getServerProfileData().getItemById(serverStatus.getHtspPlaybackServerProfileId());
+
+        rewindImageView.setOnClickListener(this);
+        pauseImageView.setOnClickListener(this);
+        playImageView.setOnClickListener(this);
+        forwardImageView.setOnClickListener(this);
+
+        updatePlayerButtonStates();
+    }
+
+    private void updatePlayerButtonStates() {
+        if (playerIsPaused) {
+            pauseImageView.setVisibility(View.GONE);
+            playImageView.setVisibility(View.VISIBLE);
+        } else {
+            pauseImageView.setVisibility(View.VISIBLE);
+            playImageView.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean("playerIsPaused", playerIsPaused);
     }
 
     @Override
@@ -146,7 +187,7 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
     public void onStart() {
         super.onStart();
         if (Util.SDK_INT > 23) {
-            init();
+            initialize();
         }
     }
 
@@ -154,7 +195,7 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
     public void onResume() {
         super.onResume();
         if (Util.SDK_INT <= 23 || player == null) {
-            init();
+            initialize();
         }
     }
 
@@ -174,7 +215,7 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
         }
     }
 
-    private void init() {
+    private void initialize() {
         Timber.d("Initializing");
         if (serverStatus == null) {
             Timber.d("Server status is null");
@@ -186,60 +227,56 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
             Timber.d("Server status and profile are available");
             playerRootView.setVisibility(View.VISIBLE);
             initializePlayer();
-            initializeStatusViews();
+
+            if (channelId > 0) {
+                Channel channel = appRepository.getChannelData().getItemByIdWithPrograms(channelId, new Date().getTime());
+                Program program = appRepository.getProgramData().getItemById(channel.getProgramId());
+                showPlaybackInformation(channel.getName(),
+                        channel.getIcon(),
+                        channel.getProgramTitle(),
+                        channel.getProgramSubtitle(),
+                        channel.getNextProgramTitle(),
+                        (program.getStop() - new Date().getTime()));
+
+            } else if (dvrId > 0) {
+                Recording recording = appRepository.getRecordingData().getItemById(dvrId);
+                showPlaybackInformation(recording.getChannelName(),
+                        recording.getChannelIcon(),
+                        recording.getTitle(),
+                        recording.getSubtitle(),
+                        null,
+                        (recording.getStop() - recording.getStart()));
+            }
             startPlayback();
         }
     }
 
-    private void initializeStatusViews() {
-        Timber.d("Initializing status views");
-        if (channelId > 0) {
-            Channel channel = appRepository.getChannelData().getItemByIdWithPrograms(channelId, new Date().getTime());
-            iconTextView.setText(channel.getName());
-            Picasso.get()
-                    .load(UIUtils.getIconUrl(this, channel.getIcon()))
-                    .into(iconImageView, new Callback() {
-                        @Override
-                        public void onSuccess() {
-                            iconTextView.setVisibility(View.INVISIBLE);
-                            iconImageView.setVisibility(View.VISIBLE);
-                        }
+    private void showPlaybackInformation(String channelName, String channelIcon, String title, String subtitle, String nextTitle, long duration) {
+        Picasso.get()
+                .load(UIUtils.getIconUrl(this, channelIcon))
+                .into(iconImageView, new Callback() {
+                    @Override
+                    public void onSuccess() {
+                        iconTextView.setVisibility(View.INVISIBLE);
+                        iconImageView.setVisibility(View.VISIBLE);
+                    }
 
-                        @Override
-                        public void onError(Exception e) {
-                            iconTextView.setVisibility(View.VISIBLE);
-                            iconImageView.setVisibility(View.INVISIBLE);
-                        }
-                    });
+                    @Override
+                    public void onError(Exception e) {
+                        iconTextView.setText(channelName);
+                        iconTextView.setVisibility(!TextUtils.isEmpty(channelName) ? View.VISIBLE : View.GONE);
+                        iconImageView.setVisibility(View.INVISIBLE);
+                    }
+                });
 
-            titleTextView.setText(channel.getProgramTitle());
-            subtitleTextView.setVisibility(!TextUtils.isEmpty(channel.getProgramSubtitle()) ? View.VISIBLE : View.GONE);
-            subtitleTextView.setText(channel.getProgramSubtitle());
-            nextTitleTextView.setVisibility(!TextUtils.isEmpty(channel.getNextProgramTitle()) ? View.VISIBLE : View.GONE);
-            nextTitleTextView.setText(getString(R.string.next_program, channel.getNextProgramTitle()));
+        titleTextView.setText(title);
+        subtitleTextView.setVisibility(!TextUtils.isEmpty(subtitle) ? View.VISIBLE : View.GONE);
+        subtitleTextView.setText(subtitle);
+        nextTitleTextView.setVisibility(!TextUtils.isEmpty(nextTitle) ? View.VISIBLE : View.GONE);
+        nextTitleTextView.setText(getString(R.string.next_program, nextTitle));
 
-        } else if (dvrId > 0) {
-            Recording recording = appRepository.getRecordingData().getItemById(dvrId);
-            iconTextView.setText(recording.getChannelName());
-            Picasso.get()
-                    .load(UIUtils.getIconUrl(this, recording.getChannelIcon()))
-                    .into(iconImageView, new Callback() {
-                        @Override
-                        public void onSuccess() {
-                            iconTextView.setVisibility(View.INVISIBLE);
-                            iconImageView.setVisibility(View.VISIBLE);
-                        }
-
-                        @Override
-                        public void onError(Exception e) {
-                            iconTextView.setVisibility(View.VISIBLE);
-                            iconImageView.setVisibility(View.INVISIBLE);
-                        }
-                    });
-            titleTextView.setText(recording.getTitle());
-            subtitleTextView.setVisibility(!TextUtils.isEmpty(recording.getSubtitle()) ? View.VISIBLE : View.GONE);
-            nextTitleTextView.setVisibility(View.GONE);
-        }
+        SimpleDateFormat sdf = new SimpleDateFormat("mm:ss", Locale.US);
+        durationTextView.setText(sdf.format(duration));
     }
 
     private void initializePlayer() {
@@ -266,12 +303,12 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
         playerView.setPlaybackPreparer(this);
 
         // Add the EventLogger
-        //eventLogger = new EventLogger(trackSelector);
-        //player.addListener(eventLogger);
-        //player.addAudioDebugListener(eventLogger);
-        //player.addVideoDebugListener(eventLogger);
-
-        Timber.d("Playback profile is " + serverProfile.getName());
+        /*
+        eventLogger = new EventLogger(trackSelector);
+        player.addListener(eventLogger);
+        player.addAudioDebugListener(eventLogger);
+        player.addVideoDebugListener(eventLogger);
+        */
 
         // Produces DataSource instances through which media data is loaded.
         htspSubscriptionDataSourceFactory = new HtspSubscriptionDataSource.Factory(
@@ -284,7 +321,8 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
     }
 
     private void stopPlayback() {
-        Timber.d("Stopping player");
+        Timber.d("Stopping playback and releasing data and media sources");
+
         if (player != null) {
             player.stop();
         }
@@ -304,6 +342,7 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
 
     private void releasePlayer() {
         Timber.d("Releasing player");
+
         stopPlayback();
         if (player != null) {
             player.release();
@@ -318,14 +357,14 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
         // Create the media source
         if (channelId > 0) {
             Uri channelUri = Uri.parse("htsp://channel/" + channelId);
-            Timber.d("Playing channel uri " + channelUri);
+            Timber.d("Channel uri " + channelUri);
             mediaSource = new ExtractorMediaSource.Factory(htspSubscriptionDataSourceFactory)
                     .setExtractorsFactory(extractorsFactory)
                     .createMediaSource(channelUri, handler, null);
 
         } else if (dvrId > 0) {
             Uri recordingUri = Uri.parse("htsp://dvrfile/" + dvrId);
-            Timber.d("Playing recording uri " + recordingUri);
+            Timber.d("Recording uri " + recordingUri);
             mediaSource = new ExtractorMediaSource.Factory(htspFileInputStreamDataSourceFactory)
                     .setExtractorsFactory(extractorsFactory)
                     .createMediaSource(recordingUri, handler, null);
@@ -335,7 +374,7 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
         if (player != null) {
             Timber.d("Preparing player and starting when ready");
             player.prepare(mediaSource);
-            player.setPlayWhenReady(true);
+            onPlayButtonSelected();
         }
     }
 
@@ -357,18 +396,91 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
 
     @Override
     public void onClick(View view) {
-        Timber.d("Clicked");
+        switch (view.getId()) {
+            case R.id.player_rewind:
+                Timber.d("Rewind clicked");
+                //onSeekButtonSelected(Math.max(getTimeshiftCurrentPosition() - (-5000), getTimeshiftStartPosition()));
+                break;
+
+            case R.id.player_pause:
+                Timber.d("Pause clicked");
+                onPauseButtonSelected();
+                break;
+
+            case R.id.player_play:
+                Timber.d("Play clicked");
+                onPlayButtonSelected();
+                break;
+
+            case R.id.player_forward:
+                Timber.d("Forward clicked");
+                //onSeekButtonSelected(Math.max(getTimeshiftCurrentPosition() - 5000, getTimeshiftStartPosition()));
+                break;
+        }
+    }
+
+
+    public void onPlayButtonSelected() {
+        player.setPlayWhenReady(true);
+        if (playerIsPaused) {
+            onResumeButtonSelected();
+        }
+        playerIsPaused = false;
+        updatePlayerButtonStates();
+    }
+
+    public void onResumeButtonSelected() {
+        HtspDataSource dataSource = htspDataSource.get();
+        if (dataSource != null) {
+            Timber.d("Resuming HtspDataSource");
+            dataSource.resume();
+                /*
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    PlaybackParams normalParams = new PlaybackParams();
+                    normalParams.setSpeed(1);
+                    onTimeShiftSetPlaybackParams(normalParams);
+                }
+                */
+        } else {
+            Timber.w("Unable to resume, no HtspDataSource available");
+        }
+    }
+
+    public void onPauseButtonSelected() {
+        player.setPlayWhenReady(false);
+        playerIsPaused = true;
+        updatePlayerButtonStates();
+
+        HtspDataSource dataSource = htspDataSource.get();
+        if (dataSource != null) {
+            Timber.d("Pausing HtspDataSource");
+            dataSource.pause();
+        } else {
+            Timber.w("Unable to pause, no HtspDataSource available");
+        }
+    }
+
+    public void onSeekButtonSelected(long timeMs) {
+        Timber.d("Seeking to " + timeMs);
+
+        HtspDataSource dataSource = htspDataSource.get();
+        if (dataSource != null) {
+            Timber.d("Timeshift start time " + dataSource.getTimeshiftStartTime());
+            Timber.d("Timeshift start pts " + dataSource.getTimeshiftStartPts());
+
+            long seekPts = (timeMs * 1000) - dataSource.getTimeshiftStartTime();
+            seekPts = Math.max(seekPts, dataSource.getTimeshiftStartPts()) / 1000;
+            Timber.d("Seeking to PTS: " + seekPts);
+
+            player.seekTo(seekPts);
+        } else {
+            Timber.w("Unable to seek, no HtspDataSource available");
+        }
     }
 
     @Override
     public void preparePlayback() {
         Timber.d("Prepare Playback");
-    }
-
-    @Override
-    public void onVisibilityChange(int visibility) {
-        Timber.d("onVisibilityChange");
-        Timber.d("Player is " + (visibility != View.VISIBLE ? " not " : "") + "visible");
     }
 
     @Override
@@ -453,22 +565,22 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
 
     @Override
     public void onLoadingChanged(boolean isLoading) {
-        Timber.d("onLoadingChanged is loading " + isLoading);
         if (isLoading) {
             // Fetch the current DataSource for later use
-            // TODO: We should know if we're playing a channel or a recording...
-            dataSource = new WeakReference<>(htspSubscriptionDataSourceFactory.getCurrentDataSource());
-            if (dataSource.get() == null) {
-                dataSource = new WeakReference<>(htspFileInputStreamDataSourceFactory.getCurrentDataSource());
+            if (channelId > 0) {
+                htspDataSource = new WeakReference<>(htspSubscriptionDataSourceFactory.getCurrentDataSource());
+            } else if (dvrId > 0) {
+                htspDataSource = new WeakReference<>(htspFileInputStreamDataSourceFactory.getCurrentDataSource());
             }
         }
     }
 
     @Override
     public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-        Timber.d("onPlayerStateChanged: " + playbackState);
-
         switch (playbackState) {
+            case Player.STATE_IDLE:
+                Timber.d("Player is idle");
+                break;
             case Player.STATE_READY:
                 Timber.d("Player is ready");
                 break;
@@ -483,31 +595,111 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
 
     @Override
     public void onRepeatModeChanged(int repeatMode) {
-        Timber.d("onRepeatModeChanged");
+        // NOP
     }
 
     @Override
     public void onShuffleModeEnabledChanged(boolean shuffleModeEnabled) {
-        Timber.d("onShuffleModeEnabledChanged");
+        // NOP
     }
 
     @Override
     public void onPlayerError(ExoPlaybackException error) {
-        Timber.d("onPlayerError");
+        Timber.d("Player error occurred", error);
     }
 
     @Override
     public void onPositionDiscontinuity(int reason) {
-        Timber.d("onPositionDiscontinuity");
+        Timber.d("Could seek within media source, reason " + reason);
+        switch (reason) {
+            case Player.DISCONTINUITY_REASON_PERIOD_TRANSITION:
+                Timber.d("Automatic playback transition from one period in the timeline to the next.");
+                break;
+            case Player.DISCONTINUITY_REASON_SEEK:
+                Timber.d("Seek within the current period or to another period.");
+                break;
+            case Player.DISCONTINUITY_REASON_SEEK_ADJUSTMENT:
+                Timber.d("Seek adjustment due to being unable to seek to the requested position or because the seek was permitted to be inexact.");
+                break;
+            case Player.DISCONTINUITY_REASON_AD_INSERTION:
+                Timber.d("Discontinuity to or from an ad within one period in the timeline.");
+                break;
+            case Player.DISCONTINUITY_REASON_INTERNAL:
+                Timber.d("Discontinuity introduced internally by the source.");
+                break;
+        }
     }
 
     @Override
     public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {
-        Timber.d("onPlaybackParametersChanged");
+        // NOP
     }
 
     @Override
     public void onSeekProcessed() {
-        Timber.d("onSeekProcessed");
+        // NOP
+    }
+
+    public long getTimeshiftStartPosition() {
+        HtspDataSource dataSource = this.htspDataSource.get();
+        if (dataSource != null) {
+            long startTime = dataSource.getTimeshiftStartTime();
+            if (startTime != INVALID_TIMESHIFT_TIME) {
+                // For live content
+                return startTime / 1000;
+            } else {
+                // For recorded content
+                return 0;
+            }
+        } else {
+            Timber.w("Unable to get timeshift start position, no HtspDataSource available");
+        }
+
+        return INVALID_TIMESHIFT_TIME;
+    }
+
+    public long getTimeshiftCurrentPosition() {
+        HtspDataSource dataSource = this.htspDataSource.get();
+        if (dataSource != null) {
+            long offset = dataSource.getTimeshiftOffsetPts();
+            if (offset != INVALID_TIMESHIFT_TIME) {
+                // For live content
+                return System.currentTimeMillis() + (offset / 1000);
+            } else {
+                // For recorded content
+                return player.getCurrentPosition();
+            }
+        } else {
+            Timber.w("Unable to get current timeshift position, no HtspDataSource available");
+        }
+        return INVALID_TIMESHIFT_TIME;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    public void onTimeShiftSetPlaybackParams(PlaybackParams params) {
+        Timber.d("Setting playback speed to " + params.getSpeed());
+
+        HtspDataSource dataSource = htspDataSource.get();
+        if (dataSource != null) {
+
+            float speed = params.getSpeed();
+            if (params.getSpeed() == 1) {
+                player.setVolume(1.0f);
+            } else {
+                player.setVolume(0f);
+            }
+
+            if (speed > 0) {
+                // Forward Playback. Convert from TIF speed format, over to TVH and ExoPlayer formats
+                int tvhSpeed = TvhMappings.androidSpeedToTvhSpeed(speed);
+                float exoSpeed = ExoPlayerUtils.androidSpeedToExoPlayerSpeed(speed);
+                dataSource.setSpeed(tvhSpeed);
+                player.setPlaybackParameters(new PlaybackParameters(exoSpeed, 1));
+
+            } else {
+                // Reverse Playback
+                Snackbar.make(getCurrentFocus(), "Rewind unsupported", Snackbar.LENGTH_SHORT).show();
+            }
+        }
     }
 }
