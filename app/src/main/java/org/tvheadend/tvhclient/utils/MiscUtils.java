@@ -115,7 +115,7 @@ public class MiscUtils {
         return null;
     }
 
-    public static CastContext getCastContext(Context context) {
+    public static CastContext getCastContext(@NonNull Context context) {
         int playServicesAvailable = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context);
         if (playServicesAvailable == ConnectionResult.SUCCESS) {
             try {
