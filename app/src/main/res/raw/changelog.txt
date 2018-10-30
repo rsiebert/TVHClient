@@ -1,6 +1,6 @@
 $ 2.0.0
   % VERSION 2.0.0
-  _ 18.10.2018
+  _ 30.10.2018
     * Some UI changes according to the material design guidelines (popup menus, new navigation menu and icons)
     * Channels, recordings and epg data are now stored in a database
     * Epg data will be periodically fetched in the background
@@ -15,6 +15,7 @@ $ 2.0.0
     * New option to disable the navigation history. The back button will then close the app.
     * Updated Spanish translation
     * Updated Dutch translation
+    * Updated Polish translation
     * Crashlytics is used in favour of the previous crash reporting library TracePot (enabled by default in the advanced settings)
     * Answers is used to gather anonymous user statistics (disabled by default in the advanced settings)
     * Relevant menu items are enabled or disabled based on the network status
