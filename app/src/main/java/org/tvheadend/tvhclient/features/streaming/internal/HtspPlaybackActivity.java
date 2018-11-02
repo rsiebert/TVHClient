@@ -1,6 +1,9 @@
 package org.tvheadend.tvhclient.features.streaming.internal;
 
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.media.PlaybackParams;
 import android.net.Uri;
@@ -8,6 +11,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -47,7 +51,7 @@ import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.data.entity.ServerProfile;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
-import org.tvheadend.tvhclient.data.service.EpgSyncHandler;
+import org.tvheadend.tvhclient.data.service.HtspConnectionService;
 import org.tvheadend.tvhclient.features.streaming.internal.utils.ExoPlayerUtils;
 import org.tvheadend.tvhclient.features.streaming.internal.utils.TvhMappings;
 import org.tvheadend.tvhclient.utils.MiscUtils;
@@ -71,8 +75,6 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
 
     @Inject
     protected SharedPreferences sharedPreferences;
-    @Inject
-    protected EpgSyncHandler epgSyncHandler;
     @Inject
     protected AppRepository appRepository;
 
@@ -120,6 +122,7 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
     private ServerStatus serverStatus;
     private ServerProfile serverProfile;
     private boolean playerIsPaused = false;
+    private HtspConnectionService htspConnectionService;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -186,6 +189,8 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
     @Override
     public void onStart() {
         super.onStart();
+        Intent intent = new Intent(this, HtspConnectionService.class);
+        bindService(intent, connection, Context.BIND_AUTO_CREATE);
         if (Util.SDK_INT > 23) {
             initialize();
         }
@@ -213,41 +218,19 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
         if (Util.SDK_INT > 23) {
             releasePlayer();
         }
+        unbindService(connection);
     }
 
     private void initialize() {
-        Timber.d("Initializing");
         if (serverStatus == null) {
             Timber.d("Server status is null");
-            statusTextView.setText(getString(R.string.error_starting_playback_no_connection));
+            statusTextView.setText(R.string.error_starting_playback_no_connection);
         } else if (serverProfile == null) {
             Timber.d("Server profile is null");
-            statusTextView.setText(getString(R.string.error_starting_playback_no_profile));
+            statusTextView.setText(R.string.error_starting_playback_no_profile);
         } else {
-            Timber.d("Server status and profile are available");
-            playerRootView.setVisibility(View.VISIBLE);
-            initializePlayer();
-
-            if (channelId > 0) {
-                Channel channel = appRepository.getChannelData().getItemByIdWithPrograms(channelId, new Date().getTime());
-                Program program = appRepository.getProgramData().getItemById(channel.getProgramId());
-                showPlaybackInformation(channel.getName(),
-                        channel.getIcon(),
-                        channel.getProgramTitle(),
-                        channel.getProgramSubtitle(),
-                        channel.getNextProgramTitle(),
-                        (program.getStop() - new Date().getTime()));
-
-            } else if (dvrId > 0) {
-                Recording recording = appRepository.getRecordingData().getItemById(dvrId);
-                showPlaybackInformation(recording.getChannelName(),
-                        recording.getChannelIcon(),
-                        recording.getTitle(),
-                        recording.getSubtitle(),
-                        null,
-                        (recording.getStop() - recording.getStart()));
-            }
-            startPlayback();
+            Timber.d("Starting htsp connection service");
+            statusTextView.setText(R.string.connecting_to_server);
         }
     }
 
@@ -312,9 +295,9 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
 
         // Produces DataSource instances through which media data is loaded.
         htspSubscriptionDataSourceFactory = new HtspSubscriptionDataSource.Factory(
-                this, epgSyncHandler.getConnection(), serverProfile.getName());
+                this, htspConnectionService.getSimpleHtspConnection(), serverProfile.getName());
         htspFileInputStreamDataSourceFactory = new HtspFileInputStreamDataSource.Factory(
-                this, epgSyncHandler.getConnection());
+                this, htspConnectionService.getSimpleHtspConnection());
 
         // Produces Extractor instances for parsing the media data.
         extractorsFactory = new TvheadendExtractorsFactory(this);
@@ -342,7 +325,6 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
 
     private void releasePlayer() {
         Timber.d("Releasing player");
-
         stopPlayback();
         if (player != null) {
             player.release();
@@ -354,8 +336,19 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
         Timber.d("Starting playback");
         stopPlayback();
 
+        playerRootView.setVisibility(View.VISIBLE);
+
         // Create the media source
         if (channelId > 0) {
+            Channel channel = appRepository.getChannelData().getItemByIdWithPrograms(channelId, new Date().getTime());
+            Program program = appRepository.getProgramData().getItemById(channel.getProgramId());
+            showPlaybackInformation(channel.getName(),
+                    channel.getIcon(),
+                    channel.getProgramTitle(),
+                    channel.getProgramSubtitle(),
+                    channel.getNextProgramTitle(),
+                    (program.getStop() - new Date().getTime()));
+
             Uri channelUri = Uri.parse("htsp://channel/" + channelId);
             Timber.d("Channel uri " + channelUri);
             mediaSource = new ExtractorMediaSource.Factory(htspSubscriptionDataSourceFactory)
@@ -363,6 +356,14 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
                     .createMediaSource(channelUri, handler, null);
 
         } else if (dvrId > 0) {
+            Recording recording = appRepository.getRecordingData().getItemById(dvrId);
+            showPlaybackInformation(recording.getChannelName(),
+                    recording.getChannelIcon(),
+                    recording.getTitle(),
+                    recording.getSubtitle(),
+                    null,
+                    (recording.getStop() - recording.getStart()));
+
             Uri recordingUri = Uri.parse("htsp://dvrfile/" + dvrId);
             Timber.d("Recording uri " + recordingUri);
             mediaSource = new ExtractorMediaSource.Factory(htspFileInputStreamDataSourceFactory)
@@ -702,4 +703,21 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
             }
         }
     }
+
+    private ServiceConnection connection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            Timber.d("Connected to service, starting player");
+            // We've bound to LocalService, cast the IBinder and get LocalService instance
+            HtspConnectionService.LocalBinder binder = (HtspConnectionService.LocalBinder) service;
+            htspConnectionService = binder.getService();
+            initializePlayer();
+            startPlayback();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            Timber.d("Service disconnected");
+        }
+    };
 }

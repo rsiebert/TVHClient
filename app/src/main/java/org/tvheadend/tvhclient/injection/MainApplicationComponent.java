@@ -24,6 +24,7 @@ import org.tvheadend.tvhclient.features.settings.SettingsListConnectionsFragment
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
 import org.tvheadend.tvhclient.features.startup.StartupFragment;
 import org.tvheadend.tvhclient.features.streaming.external.BasePlaybackActivity;
+import org.tvheadend.tvhclient.data.service.HtspConnectionService;
 import org.tvheadend.tvhclient.features.streaming.internal.HtspPlaybackActivity;
 import org.tvheadend.tvhclient.injection.modules.EpgSyncHandlerModule;
 import org.tvheadend.tvhclient.injection.modules.MainApplicationModule;
@@ -95,4 +96,6 @@ public interface MainApplicationComponent {
     void inject(HtspPlaybackActivity htspPlaybackActivity);
 
     void inject(SettingsConnectionBaseFragment settingsConnectionBaseFragment);
+
+    void inject(HtspConnectionService htspConnectionService);
 }
