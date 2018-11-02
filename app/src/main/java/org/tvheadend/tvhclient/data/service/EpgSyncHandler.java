@@ -43,13 +43,14 @@ public class EpgSyncHandler {
 
     void connect() {
         Timber.d("Opening connection to server");
-        simpleHtspConnection = new SimpleHtspConnection(context, connection);
+        simpleHtspConnection = new SimpleHtspConnection(connection);
 
         epgSyncTask = new EpgSyncTask(simpleHtspConnection, connection);
         epgWorkerHandler = new EpgWorkerHandler(context);
 
         simpleHtspConnection.addMessageListener(epgSyncTask);
         simpleHtspConnection.addConnectionListener(epgWorkerHandler);
+        simpleHtspConnection.addConnectionListener(epgSyncTask);
         simpleHtspConnection.addAuthenticationListener(epgSyncTask);
         simpleHtspConnection.start();
     }
@@ -70,6 +71,7 @@ public class EpgSyncHandler {
         if (simpleHtspConnection != null) {
             simpleHtspConnection.removeMessageListener(epgSyncTask);
             simpleHtspConnection.removeAuthenticationListener(epgSyncTask);
+            simpleHtspConnection.removeConnectionListener(epgSyncTask);
             simpleHtspConnection.removeConnectionListener(epgWorkerHandler);
             simpleHtspConnection.stop();
         }
