@@ -8,6 +8,7 @@ import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.data.service.EpgSyncIntentService;
 import org.tvheadend.tvhclient.data.service.EpgSyncService;
 import org.tvheadend.tvhclient.data.service.EpgSyncTask;
+import org.tvheadend.tvhclient.data.service.HtspConnectionService;
 import org.tvheadend.tvhclient.features.MainActivity;
 import org.tvheadend.tvhclient.features.channels.ChannelViewModel;
 import org.tvheadend.tvhclient.features.download.DownloadRecordingManager;
@@ -24,9 +25,7 @@ import org.tvheadend.tvhclient.features.settings.SettingsListConnectionsFragment
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
 import org.tvheadend.tvhclient.features.startup.StartupFragment;
 import org.tvheadend.tvhclient.features.streaming.external.BasePlaybackActivity;
-import org.tvheadend.tvhclient.data.service.HtspConnectionService;
 import org.tvheadend.tvhclient.features.streaming.internal.HtspPlaybackActivity;
-import org.tvheadend.tvhclient.injection.modules.EpgSyncHandlerModule;
 import org.tvheadend.tvhclient.injection.modules.MainApplicationModule;
 import org.tvheadend.tvhclient.injection.modules.RepositoryModule;
 import org.tvheadend.tvhclient.injection.modules.SharedPreferencesModule;
@@ -40,8 +39,7 @@ import dagger.Component;
 @Component(modules = {
         MainApplicationModule.class,
         SharedPreferencesModule.class,
-        RepositoryModule.class,
-        EpgSyncHandlerModule.class})
+        RepositoryModule.class})
 @Singleton
 public interface MainApplicationComponent {
 
