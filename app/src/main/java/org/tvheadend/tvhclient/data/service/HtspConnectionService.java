@@ -13,6 +13,7 @@ import org.tvheadend.tvhclient.data.service.htsp.SimpleHtspConnection;
 import javax.inject.Inject;
 
 import androidx.annotation.Nullable;
+import timber.log.Timber;
 
 public class HtspConnectionService extends Service {
 
@@ -43,6 +44,8 @@ public class HtspConnectionService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        Timber.d("Starting service");
+
         MainApplication.getComponent().inject(this);
         connection = appRepository.getConnectionData().getActiveItem();
         simpleHtspConnection = new SimpleHtspConnection(connection);
@@ -51,12 +54,14 @@ public class HtspConnectionService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        Timber.d("Received command for service");
         return START_STICKY;
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Timber.d("Stopping service");
         if (simpleHtspConnection != null) {
             simpleHtspConnection.stop();
         }
