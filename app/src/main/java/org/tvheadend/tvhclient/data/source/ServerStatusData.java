@@ -4,6 +4,8 @@ import android.arch.lifecycle.LiveData;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
+import com.crashlytics.android.Crashlytics;
+
 import org.tvheadend.tvhclient.data.db.AppRoomDatabase;
 import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
@@ -14,6 +16,7 @@ import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
 
+import io.fabric.sdk.android.Fabric;
 import timber.log.Timber;
 
 public class ServerStatusData extends BaseData implements DataSourceInterface<ServerStatus> {
@@ -78,11 +81,25 @@ public class ServerStatusData extends BaseData implements DataSourceInterface<Se
     public ServerStatus getActiveItem() {
         Timber.d("Loading active server status");
         try {
-            return new ItemLoaderTask(db).execute().get();
+            ServerStatus serverStatus = new ItemLoaderTask(db).execute().get();
+            if (serverStatus == null) {
+                Timber.e("Failed loading active server status, database returned null");
+                if (Fabric.isInitialized()) {
+                    Crashlytics.logException(new Exception("Failed loading active server status, database returned null"));
+                }
+                serverStatus = new ServerStatus();
+            }
+            return serverStatus;
         } catch (InterruptedException e) {
             Timber.e("Failed loading active server status due to interrupt", e);
+            if (Fabric.isInitialized()) {
+                Crashlytics.logException(e);
+            }
         } catch (ExecutionException e) {
             Timber.e("Failed loading active server status, execution error. Cause " + e.getCause(), e);
+            if (Fabric.isInitialized()) {
+                Crashlytics.logException(e);
+            }
         }
         return null;
     }
