@@ -5,7 +5,9 @@ import android.content.Intent;
 import android.os.IBinder;
 
 import org.tvheadend.tvhclient.MainApplication;
+import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
+import org.tvheadend.tvhclient.data.service.htsp.SimpleHtspConnection;
 
 import javax.inject.Inject;
 
@@ -15,8 +17,9 @@ public class EpgSyncService extends Service {
 
     @Inject
     protected AppRepository appRepository;
-    @Inject
-    protected EpgSyncHandler epgSyncHandler;
+    private SimpleHtspConnection simpleHtspConnection;
+    private Connection connection;
+    private EpgSyncTask epgSyncTask;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -25,31 +28,47 @@ public class EpgSyncService extends Service {
 
     @Override
     public void onCreate() {
+        super.onCreate();
+        Timber.d("Starting service");
+
         MainApplication.getComponent().inject(this);
-        Timber.i("Starting service");
+        connection = appRepository.getConnectionData().getActiveItem();
+        simpleHtspConnection = new SimpleHtspConnection(connection);
+
+        epgSyncTask = new EpgSyncTask(simpleHtspConnection, connection);
+
+        simpleHtspConnection.addMessageListener(epgSyncTask);
+        simpleHtspConnection.addConnectionListener(epgSyncTask);
+        simpleHtspConnection.addAuthenticationListener(epgSyncTask);
+        simpleHtspConnection.start();
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Timber.d("Received start command");
-        if (!epgSyncHandler.isConnected()) {
-            Timber.d("Not connected to server, initializing and connecting to server");
-            epgSyncHandler.stop();
-            if (!epgSyncHandler.init()) {
-                Timber.i("No connection available, not starting service");
-                stopSelf();
-            }
-            epgSyncHandler.connect();
+        Timber.d("Received command for service");
+
+        if (simpleHtspConnection != null
+                && simpleHtspConnection.isConnected()
+                && simpleHtspConnection.isAuthenticated()) {
+            Timber.d("Connected to server, passing command to epg sync task");
+            epgSyncTask.handleIntent(intent);
         } else {
-            Timber.d("Connected to server, passing intent to epg sync task");
-            epgSyncHandler.handleIntent(intent);
+            Timber.d("Not connected to server");
         }
         return START_STICKY;
     }
 
     @Override
     public void onDestroy() {
+        super.onDestroy();
         Timber.d("Stopping service");
-        epgSyncHandler.stop();
+        if (simpleHtspConnection != null) {
+            simpleHtspConnection.removeMessageListener(epgSyncTask);
+            simpleHtspConnection.removeConnectionListener(epgSyncTask);
+            simpleHtspConnection.removeAuthenticationListener(epgSyncTask);
+            simpleHtspConnection.stop();
+        }
+        simpleHtspConnection = null;
+        connection = null;
     }
 }
