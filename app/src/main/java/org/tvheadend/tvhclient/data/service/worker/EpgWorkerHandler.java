@@ -2,12 +2,9 @@ package org.tvheadend.tvhclient.data.service.worker;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.data.service.htsp.HtspConnection;
 
 import java.util.concurrent.TimeUnit;
 
@@ -18,38 +15,11 @@ import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 import timber.log.Timber;
 
-public class EpgWorkerHandler implements HtspConnection.Listener, SharedPreferences.OnSharedPreferenceChangeListener {
+public class EpgWorkerHandler {
 
-    private final String WORKER_TAG = "tvhclient_worker";
-    private final Context context;
+    public static final String WORKER_TAG = "tvhclient_worker";
 
-    public EpgWorkerHandler(Context context) {
-        this.context = context;
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        sharedPreferences.registerOnSharedPreferenceChangeListener(this);
-    }
-
-    @Override
-    public Handler getHandler() {
-        return null;
-    }
-
-    @Override
-    public void setConnection(@NonNull HtspConnection connection) {
-
-    }
-
-    @Override
-    public void onConnectionStateChange(@NonNull HtspConnection.State state) {
-        Timber.d("Connection state changed to " + state);
-        switch (state) {
-            case CONNECTED:
-                startBackgroundWorkers();
-                break;
-        }
-    }
-
-    private void startBackgroundWorkers() {
+    public static void startBackgroundWorkers(Context context) {
         Timber.d("Starting background workers");
 
         Constraints constraints = new Constraints.Builder()
@@ -82,16 +52,5 @@ public class EpgWorkerHandler implements HtspConnection.Listener, SharedPreferen
         WorkManager.getInstance().enqueueUniquePeriodicWork("remove_outdated_epg", ExistingPeriodicWorkPolicy.KEEP, removalWorkRequest);
 
         Timber.d("Started background workers");
-    }
-
-    @Override
-    public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-        switch (key) {
-            case "epg_max_time":
-                Timber.d("Preference " + key + " has changed, restarting background workers");
-                WorkManager.getInstance().cancelAllWorkByTag(WORKER_TAG);
-                startBackgroundWorkers();
-                break;
-        }
     }
 }

@@ -6,7 +6,6 @@ import android.arch.lifecycle.OnLifecycleEvent;
 import android.arch.lifecycle.ProcessLifecycleOwner;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
@@ -16,10 +15,10 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.data.service.EpgSyncIntentService;
 import org.tvheadend.tvhclient.data.service.EpgSyncService;
 import org.tvheadend.tvhclient.data.service.EpgSyncStatusCallback;
 import org.tvheadend.tvhclient.data.service.EpgSyncTaskState;
+import org.tvheadend.tvhclient.data.service.worker.EpgWorkerHandler;
 import org.tvheadend.tvhclient.features.programs.ProgramListFragment;
 import org.tvheadend.tvhclient.features.shared.callbacks.NetworkAvailabilityChangedInterface;
 import org.tvheadend.tvhclient.features.shared.callbacks.NetworkStatusInterface;
@@ -86,17 +85,9 @@ public abstract class BaseActivity extends AppCompatActivity implements Lifecycl
                 startService(new Intent(this, EpgSyncService.class));
             } else {
                 Timber.d("Network still active, pinging server");
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-                    Timber.d("Android version is below oreo, pinging server using default epg service");
-                    Intent intent = new Intent(this, EpgSyncService.class);
-                    intent.setAction("getStatus");
-                    startService(intent);
-                } else {
-                    Timber.d("Android version is oreo or higher, pinging server using epg intent service");
-                    Intent intent = new Intent();
-                    intent.setAction("getStatus");
-                    EpgSyncIntentService.enqueueWork(getApplicationContext(), intent);
-                }
+                Intent intent = new Intent(this, EpgSyncService.class);
+                intent.setAction("getStatus");
+                startService(intent);
             }
         } else {
             Timber.d("Network is not available anymore, stopping service");
@@ -159,6 +150,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Lifecycl
                 }
                 // Reset the start service retry count
                 serverConnectionRetryCounter = 0;
+                EpgWorkerHandler.startBackgroundWorkers(getApplicationContext());
                 break;
         }
     }
@@ -187,6 +179,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Lifecycl
         Timber.d("Application is in background");
         appIsInForeground = false;
     }
+
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     public void onAppForegrounded() {
         Timber.d("Application is in foreground");
