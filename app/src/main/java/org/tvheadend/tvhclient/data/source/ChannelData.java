@@ -17,8 +17,6 @@ import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
 
-import timber.log.Timber;
-
 public class ChannelData extends BaseData implements DataSourceInterface<Channel> {
 
     private final AppRoomDatabase db;
@@ -168,7 +166,6 @@ public class ChannelData extends BaseData implements DataSourceInterface<Channel
 
         @Override
         protected List<Channel> doInBackground(Void... voids) {
-            Timber.d("Loading channels by time " + currentTime + ", tag id " + channelTagId + " and sort order " + sortOrder);
             if (currentTime == 0) {
                 return db.getChannelDao().loadAllChannelsSync(sortOrder);
             } else if (currentTime > 0 && channelTagId == 0) {
@@ -192,7 +189,6 @@ public class ChannelData extends BaseData implements DataSourceInterface<Channel
 
         @Override
         protected List<ChannelSubset> doInBackground(Void... voids) {
-            Timber.d("Loading channels by tag id " + channelTagId + " and sort order " + sortOrder);
             if (channelTagId == 0) {
                 return db.getChannelDao().loadAllChannelsNamesOnlySync(sortOrder);
             } else {
