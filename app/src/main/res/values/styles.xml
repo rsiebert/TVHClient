@@ -62,23 +62,15 @@
     </style>
 
     <!-- Font for the title texts in various screens -->
-    <style name="PlayerTitleFont.Light" parent="@android:style/TextAppearance.Large">
+    <style name="PlayerTitleFont" parent="@android:style/TextAppearance.Large">
         <item name="android:textColor">@color/title_text_dark</item>
         <item name="android:textSize">16sp</item>
     </style>
 
-    <style name="PlayerTitleFont.Dark" parent="TitleFont.Light">
-        <item name="android:textColor">@color/title_text_light</item>
-    </style>
-
     <!-- Font for the subtitles in various screens -->
-    <style name="PlayerSubtitleFont.Light" parent="@android:style/TextAppearance.Medium">
+    <style name="PlayerSubtitleFont" parent="@android:style/TextAppearance.Medium">
         <item name="android:textColor">@color/subtitle_text_dark</item>
         <item name="android:textSize">14sp</item>
-    </style>
-
-    <style name="PlayerSubtitleFont.Dark" parent="SubtitleFont.Light">
-        <item name="android:textColor">@color/subtitle_text_light</item>
     </style>
 
     <style name="spinnerItemStyle">
@@ -145,8 +137,6 @@
         <item name="ProgramGuideTimelineFont">@style/ProgramGuideTimelineFont.Dark</item>
         <item name="ProgramGuideTitleFont">@style/ProgramGuideTitleFont.Dark</item>
         <item name="ProgramGuideContentFont">@style/ProgramGuideContentFont.Dark</item>
-        <item name="PlayerTitleFont">@style/PlayerTitleFont.Dark</item>
-        <item name="PlayerSubtitleFont">@style/PlayerSubtitleFont.Dark</item>
 
         <item name="rounded_corners">@drawable/rounded_corners_dark</item>
 
@@ -222,8 +212,6 @@
         <item name="ProgramGuideTimelineFont">@style/ProgramGuideTimelineFont.Light</item>
         <item name="ProgramGuideTitleFont">@style/ProgramGuideTitleFont.Light</item>
         <item name="ProgramGuideContentFont">@style/ProgramGuideContentFont.Light</item>
-        <item name="PlayerTitleFont">@style/PlayerTitleFont.Light</item>
-        <item name="PlayerSubtitleFont">@style/PlayerSubtitleFont.Light</item>
 
         <item name="rounded_corners">@drawable/rounded_corners_light</item>
 

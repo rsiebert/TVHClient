@@ -19,7 +19,7 @@
 
     <TextView
         android:id="@+id/channel_name"
-        style="?attr/PlayerTitleFont"
+        style="@style/PlayerTitleFont"
         android:layout_width="70dp"
         android:layout_height="50dp"
         android:layout_marginStart="16dp"
@@ -30,7 +30,7 @@
 
     <TextView
         android:id="@+id/program_title"
-        style="?attr/PlayerTitleFont"
+        style="@style/PlayerTitleFont"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -44,7 +44,7 @@
 
     <TextView
         android:id="@+id/program_subtitle"
-        style="?attr/PlayerSubtitleFont"
+        style="@style/PlayerSubtitleFont"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -58,7 +58,7 @@
 
     <TextView
         android:id="@+id/next_program_title"
-        style="?attr/PlayerSubtitleFont"
+        style="@style/PlayerSubtitleFont"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
