@@ -342,12 +342,13 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
         if (channelId > 0) {
             Channel channel = appRepository.getChannelData().getItemByIdWithPrograms(channelId, new Date().getTime());
             Program program = appRepository.getProgramData().getItemById(channel.getProgramId());
+            long duration = (program != null ? (program.getStop() - new Date().getTime()) : 0);
             showPlaybackInformation(channel.getName(),
                     channel.getIcon(),
                     channel.getProgramTitle(),
                     channel.getProgramSubtitle(),
                     channel.getNextProgramTitle(),
-                    (program.getStop() - new Date().getTime()));
+                    duration);
 
             Uri channelUri = Uri.parse("htsp://channel/" + channelId);
             Timber.d("Channel uri " + channelUri);
