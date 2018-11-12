@@ -156,7 +156,7 @@ Verifica che siano soddsifatti i requisiti descritti nelle impostazioni trasmiss
     <string name="pref_pass">Password</string>
     <string name="pref_pass_set_sum">La password è impostata ma non è visualizzata.</string>
     <string name="pref_pass_sum">Inserisci la password</string>
-    <string name="pref_play_when_channel_icon_selected">Icona canale riproduzione o registrazione</string>
+    <string name="pref_play_when_channel_icon_selected">Azione dell\'icona del canale</string>
     <string name="pref_play_when_channel_icon_selected_sum">"Avvia la riproduzione del canale o registrazione attuale quando l'icona del canale è selezionata nell'elenco canali, guida programmi e elenco registrazioni."</string>
     <string name="pref_playback_and_recording">Riproduzione e registrazione</string>
     <string name="pref_playback_profiles">Profili riproduzione</string>

@@ -158,7 +158,7 @@
     <string name="pref_pass">Hasło</string>
     <string name="pref_pass_set_sum">Hasło jest ustawione ale nie jest wyświetlane.</string>
     <string name="pref_pass_sum">Wpisz hasło</string>
-    <string name="pref_play_when_channel_icon_selected">Ikona kanału odtwarza TV lub nagranie</string>
+    <string name="pref_play_when_channel_icon_selected">Akcja ikony kanału</string>
     <string name="pref_play_when_channel_icon_selected_sum">Zacznij odtwarzać bieżący program lub nagranie, gdy ikona kanał jest zaznaczony na ekranie listy kanałów, przewodnika po programach lub listy nagrywania.</string>
     <string name="pref_playback_and_recording">Odtwarzanie i nagrywanie</string>
     <string name="pref_playback_profiles">Profile odtwarzania</string>

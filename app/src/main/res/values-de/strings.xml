@@ -213,7 +213,7 @@
     <string name="pref_pass">Passwort</string>
     <string name="pref_pass_set_sum">Passwort ist gesetzt, wird aber nicht angezeigt.</string>
     <string name="pref_pass_sum">Passwort eingeben</string>
-    <string name="pref_play_when_channel_icon_selected">Senderlogo startet Live-TV oder Aufnahme</string>
+    <string name="pref_play_when_channel_icon_selected">Senderlogo-Aktion</string>
     <string name="pref_play_when_channel_icon_selected_sum">Startet das aktuelle Programm bzw. Aufnahme, wenn das Senderlogo in der Senderliste, Programmanzeige oder in der Aufnahmelist angeklickt wurde.</string>
     <string name="pref_playback_and_recording">Wiedergabe und Aufnahme</string>
     <string name="pref_playback_profiles">Wiedergabeprofile</string>
