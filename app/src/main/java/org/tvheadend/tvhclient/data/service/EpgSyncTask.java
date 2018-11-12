@@ -954,6 +954,8 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         addMissingHttpPlaybackProfileIfNotExists("audio");
         addMissingHttpPlaybackProfileIfNotExists("pass");
 
+        setDefaultProfileSelection();
+
         connection.setSyncRequired(false);
         appRepository.getConnectionData().updateItem(connection);
 
@@ -963,6 +965,41 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
                 context.getString(R.string.loading_data_done), "");
 
         Timber.d("Done receiving initial data from server");
+    }
+
+    private void setDefaultProfileSelection() {
+        Timber.d("Setting default profiles in case none are selected yet");
+        ServerStatus serverStatus = appRepository.getServerStatusData().getActiveItem();
+        if (serverStatus != null) {
+            if (serverStatus.getHtspPlaybackServerProfileId() == 0) {
+                for (ServerProfile serverProfile : appRepository.getServerProfileData().getHtspPlaybackProfiles()) {
+                    if (serverProfile.getName().equals("htsp")) {
+                        Timber.d("Setting htsp profile to htsp");
+                        serverStatus.setHtspPlaybackServerProfileId(serverProfile.getId());
+                        break;
+                    }
+                }
+            }
+            if (serverStatus.getHttpPlaybackServerProfileId() == 0) {
+                for (ServerProfile serverProfile : appRepository.getServerProfileData().getHttpPlaybackProfiles()) {
+                    if (serverProfile.getName().equals("pass")) {
+                        Timber.d("Setting http profile to pass");
+                        serverStatus.setHttpPlaybackServerProfileId(serverProfile.getId());
+                        break;
+                    }
+                }
+            }
+            if (serverStatus.getRecordingServerProfileId() == 0) {
+                for (ServerProfile serverProfile : appRepository.getServerProfileData().getRecordingProfiles()) {
+                    if (serverProfile.getName().equals("Default Profile")) {
+                        Timber.d("Setting recording profile to default");
+                        serverStatus.setRecordingServerProfileId(serverProfile.getId());
+                        break;
+                    }
+                }
+            }
+            appRepository.getServerStatusData().updateItem(serverStatus);
+        }
     }
 
     private void flushPendingChannelLogoFetches() {
