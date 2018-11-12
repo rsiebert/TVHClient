@@ -227,9 +227,6 @@
     <string name="pref_show_cast_minicontroller_sum">Montrer un mini contrôleur de diffusion en bas de l\'écran pour afficher des informations sur la diffusion en cours.</string>
     <string name="pref_show_channel_name">Affiche le nom des chaines</string>
     <string name="pref_show_channel_name_sum">En plus du logo affiche le nom de la chaine en dessous du titre du programme dans la liste des chaines.</string>
-    <string name="pref_show_menu_search_epg">Affiche le menu \'Recherche dans l\'EPG\'</string>
-    <string name="pref_show_menu_search_fileaffinity">Affiche le menu \'Recherche sur le site FileAffinity\'</string>
-    <string name="pref_show_menu_search_imdb">Affiche le menu \'Recherche sur IMDB\'</string>
     <string name="pref_show_next_program">Affiche le programme suivant dans la liste de chaines</string>
     <string name="pref_show_next_program_sum">Le nom du programme arrivant ensuite est affiché dans la liste des chaines. Il est affiché en dessous de l\'indicateur de progression.</string>
     <string name="pref_show_notification_offset">Heure de notification </string>

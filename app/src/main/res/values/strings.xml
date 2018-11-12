@@ -239,9 +239,6 @@
     <string name="pref_show_cast_minicontroller_sum">Show a cast minicontroller at the bottom of the screen to display some information about the current cast.</string>
     <string name="pref_show_channel_name">Show channel name</string>
     <string name="pref_show_channel_name_sum">Additionally to the channel icon display the channel name above the program title in the channel list.</string>
-    <string name="pref_show_menu_search_epg">Show menu \'Search the EPG\'</string>
-    <string name="pref_show_menu_search_fileaffinity">Show menu \'Search on FileAffinity website\'</string>
-    <string name="pref_show_menu_search_imdb">Show menu \'Search on IMDB\'</string>
     <string name="pref_show_next_program">Show next program in channel list</string>
     <string name="pref_show_next_program_sum">The name of the program coming up next is displayed in the channel list. It is shown below the progress indicator.</string>
     <string name="pref_show_notification_offset">Notification time </string>

@@ -237,9 +237,6 @@
     <string name="pref_show_cast_minicontroller_sum">Zeigt im unteren Bildschirmbereich die wichtigsten Informationen und Steuerelemente für den aktuellen Cast an.</string>
     <string name="pref_show_channel_name">Zeige Senderlogo</string>
     <string name="pref_show_channel_name_sum">Zusätzlich zum Senderlogo wird der Name über dem Programmtitel in der Senderliste angezeigt.</string>
-    <string name="pref_show_menu_search_epg">Menü \'Suche den EPG\' anzeigen</string>
-    <string name="pref_show_menu_search_fileaffinity">Menü \'Suche auf FileAffinity-Website\' anzeigen</string>
-    <string name="pref_show_menu_search_imdb">Menü \'Suche auf IMDB-Website\' anzeigen</string>
     <string name="pref_show_next_program">Nachfolgende Sendung anzeigen</string>
     <string name="pref_show_next_program_sum">Zeigt den Namen der nachfolgenden Sendung in der Senderliste unter der Fortschrittsanzeige an.</string>
     <string name="pref_show_notification_offset">Benachrichtigungszeitpunkt</string>

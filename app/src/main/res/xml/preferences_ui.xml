@@ -163,18 +163,6 @@
             android:key="channel_tag_menu_enabled"
             android:summary="@string/pref_visible_menu_icon_tags_sum"
             android:title="@string/pref_visible_menu_icon_tags" />
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:key="search_on_imdb_menu_enabled"
-            android:title="@string/pref_show_menu_search_imdb" />
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="search_on_fileaffinity_menu_enabled"
-            android:title="@string/pref_show_menu_search_fileaffinity" />
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:key="search_epg_menu_enabled"
-            android:title="@string/pref_show_menu_search_epg" />
     </PreferenceCategory>
 
 </PreferenceScreen>

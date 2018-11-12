@@ -634,11 +634,11 @@ public class MenuUtils {
         MenuItem searchMenuItem = menu.findItem(R.id.menu_search);
         if (searchMenuItem != null) {
             searchMenuItem.setVisible(isNetworkAvailable);
-            menu.findItem(R.id.menu_search_imdb).setVisible(isNetworkAvailable && sharedPreferences.getBoolean("search_on_imdb_menu_enabled", true));
-            menu.findItem(R.id.menu_search_fileaffinity).setVisible(isNetworkAvailable && sharedPreferences.getBoolean("search_on_fileaffinity_menu_enabled", true));
-            menu.findItem(R.id.menu_search_youtube).setVisible(isNetworkAvailable && sharedPreferences.getBoolean("search_on_youtube_menu_enabled", true));
-            menu.findItem(R.id.menu_search_google).setVisible(isNetworkAvailable && sharedPreferences.getBoolean("search_on_google_menu_enabled", true));
-            menu.findItem(R.id.menu_search_epg).setVisible(isNetworkAvailable && sharedPreferences.getBoolean("search_epg_menu_enabled", true));
+            menu.findItem(R.id.menu_search_imdb).setVisible(isNetworkAvailable);
+            menu.findItem(R.id.menu_search_fileaffinity).setVisible(isNetworkAvailable);
+            menu.findItem(R.id.menu_search_youtube).setVisible(isNetworkAvailable);
+            menu.findItem(R.id.menu_search_google).setVisible(isNetworkAvailable);
+            menu.findItem(R.id.menu_search_epg).setVisible(isNetworkAvailable);
         }
     }
 
