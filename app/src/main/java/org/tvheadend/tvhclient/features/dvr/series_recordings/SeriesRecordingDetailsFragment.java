@@ -135,9 +135,15 @@ public class SeriesRecordingDetailsFragment extends BaseFragment implements Reco
 
         channelNameTextView.setText(!TextUtils.isEmpty(recording.getChannelName()) ? recording.getChannelName() : getString(R.string.all_channels));
 
-        nameLabelTextView.setVisibility(!TextUtils.isEmpty(recording.getName()) ? View.VISIBLE : View.GONE);
-        nameTextView.setVisibility(!TextUtils.isEmpty(recording.getName()) ? View.VISIBLE : View.GONE);
-        nameTextView.setText(recording.getName());
+        if (TextUtils.isEmpty(recording.getName()) && TextUtils.isEmpty(recording.getTitle())) {
+            nameLabelTextView.setVisibility(View.GONE);
+            nameTextView.setVisibility(View.GONE);
+        } else {
+            nameLabelTextView.setVisibility(View.VISIBLE);
+            nameTextView.setVisibility(View.VISIBLE);
+
+            nameTextView.setText(!TextUtils.isEmpty(recording.getName()) ? recording.getName() : recording.getTitle());
+        }
 
         daysOfWeekTextView.setText(UIUtils.getDaysOfWeekText(activity, recording.getDaysOfWeek()));
 
