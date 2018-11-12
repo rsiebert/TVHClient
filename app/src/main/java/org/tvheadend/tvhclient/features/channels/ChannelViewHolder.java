@@ -115,24 +115,28 @@ public class ChannelViewHolder extends RecyclerView.ViewHolder {
         channelTextView.setVisibility(showChannelName ? View.VISIBLE : View.GONE);
 
         //TextViewCompat.setAutoSizeTextTypeWithDefaults(iconTextView, TextViewCompat.AUTO_SIZE_TEXT_TYPE_UNIFORM);
-        iconTextView.setText(channel.getName());
 
         // Show the channel icons. Otherwise show the channel name only
-        Picasso.get()
-                .load(UIUtils.getIconUrl(context, channel.getIcon()))
-                .into(iconImageView, new Callback() {
-                    @Override
-                    public void onSuccess() {
-                        iconTextView.setVisibility(View.INVISIBLE);
-                        iconImageView.setVisibility(View.VISIBLE);
-                    }
+        if (!TextUtils.isEmpty(channel.getIcon())) {
+            Picasso.get()
+                    .load(UIUtils.getIconUrl(context, channel.getIcon()))
+                    .into(iconImageView, new Callback() {
+                        @Override
+                        public void onSuccess() {
+                            iconTextView.setVisibility(View.INVISIBLE);
+                            iconImageView.setVisibility(View.VISIBLE);
+                        }
 
-                    @Override
-                    public void onError(Exception e) {
-                        iconTextView.setVisibility(View.VISIBLE);
-                        iconImageView.setVisibility(View.INVISIBLE);
-                    }
-                });
+                        @Override
+                        public void onError(Exception e) {
+
+                        }
+                    });
+        } else {
+            iconTextView.setText(channel.getName());
+            iconTextView.setVisibility(View.VISIBLE);
+            iconImageView.setVisibility(View.INVISIBLE);
+        }
 
         if (channel.getProgramId() > 0) {
             noProgramsTextView.setVisibility(View.GONE);

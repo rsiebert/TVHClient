@@ -131,27 +131,26 @@ public class RecordingViewHolder extends RecyclerView.ViewHolder {
         if (!TextUtils.isEmpty(recording.getChannelName())) {
             iconTextView.setText(recording.getChannelName());
             channelTextView.setText(recording.getChannelName());
+            Picasso.get()
+                    .load(UIUtils.getIconUrl(context, recording.getChannelIcon()))
+                    .into(iconImageView, new Callback() {
+                        @Override
+                        public void onSuccess() {
+                            iconTextView.setVisibility(View.INVISIBLE);
+                            iconImageView.setVisibility(View.VISIBLE);
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
+
+                        }
+                    });
         } else {
+            iconTextView.setVisibility(View.VISIBLE);
+            iconImageView.setVisibility(View.INVISIBLE);
             iconTextView.setText(R.string.all_channels);
             channelTextView.setText(R.string.all_channels);
         }
-
-        // Show the channel icon if available and set in the preferences.
-        // If not chosen, hide the imageView and show the channel name.
-        Picasso.get()
-                .load(UIUtils.getIconUrl(context, recording.getChannelIcon()))
-                .into(iconImageView, new Callback() {
-                    @Override
-                    public void onSuccess() {
-                        iconTextView.setVisibility(View.INVISIBLE);
-                        iconImageView.setVisibility(View.VISIBLE);
-                    }
-
-                    @Override
-                    public void onError(Exception e) {
-
-                    }
-                });
 
         dateTextView.setText(UIUtils.getDate(context, recording.getStart()));
 

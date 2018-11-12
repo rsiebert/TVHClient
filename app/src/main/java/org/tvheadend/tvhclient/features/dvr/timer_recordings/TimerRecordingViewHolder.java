@@ -89,25 +89,27 @@ public class TimerRecordingViewHolder extends RecyclerView.ViewHolder {
         if (!TextUtils.isEmpty(recording.getChannelName())) {
             iconTextView.setText(recording.getChannelName());
             channelTextView.setText(recording.getChannelName());
+            Picasso.get()
+                    .load(UIUtils.getIconUrl(context, recording.getChannelIcon()))
+                    .into(iconImageView, new Callback() {
+                        @Override
+                        public void onSuccess() {
+                            iconTextView.setVisibility(View.INVISIBLE);
+                            iconImageView.setVisibility(View.VISIBLE);
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
+
+                        }
+                    });
         } else {
+            iconTextView.setVisibility(View.VISIBLE);
+            iconImageView.setVisibility(View.INVISIBLE);
             iconTextView.setText(R.string.all_channels);
             channelTextView.setText(R.string.all_channels);
         }
 
-        Picasso.get()
-                .load(UIUtils.getIconUrl(context, recording.getChannelIcon()))
-                .into(iconImageView, new Callback() {
-                    @Override
-                    public void onSuccess() {
-                        iconTextView.setVisibility(View.INVISIBLE);
-                        iconImageView.setVisibility(View.VISIBLE);
-                    }
-
-                    @Override
-                    public void onError(Exception e) {
-
-                    }
-                });
 
         String daysOfWeek = UIUtils.getDaysOfWeekText(context, recording.getDaysOfWeek());
         daysOfWeekTextView.setText(daysOfWeek);
