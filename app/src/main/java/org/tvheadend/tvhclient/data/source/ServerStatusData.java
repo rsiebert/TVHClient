@@ -81,15 +81,7 @@ public class ServerStatusData extends BaseData implements DataSourceInterface<Se
     public ServerStatus getActiveItem() {
         Timber.d("Loading active server status");
         try {
-            ServerStatus serverStatus = new ItemLoaderTask(db).execute().get();
-            if (serverStatus == null) {
-                Timber.e("Failed loading active server status, database returned null");
-                if (Fabric.isInitialized()) {
-                    Crashlytics.logException(new Exception("Failed loading active server status, database returned null"));
-                }
-                serverStatus = new ServerStatus();
-            }
-            return serverStatus;
+            return new ItemLoaderTask(db).execute().get();
         } catch (InterruptedException e) {
             Timber.e("Failed loading active server status due to interrupt", e);
             if (Fabric.isInitialized()) {
@@ -123,11 +115,24 @@ public class ServerStatusData extends BaseData implements DataSourceInterface<Se
             if (id < 0) {
                 ServerStatus serverStatus = db.getServerStatusDao().loadActiveServerStatusSync();
                 if (serverStatus == null) {
+                    Timber.e("Failed loading active server status, database returned null");
+                    if (Fabric.isInitialized()) {
+                        Crashlytics.logException(new Exception("Failed loading active server status, database returned null"));
+                    }
                     Connection connection = db.getConnectionDao().loadActiveConnectionSync();
                     if (connection != null) {
-                        Timber.e("Server status for active connection " + connection.getId() + " is null");
+                        Timber.e("Adding new server status for active connection " + connection.getId());
+                        if (Fabric.isInitialized()) {
+                            Crashlytics.logException(new Exception("Adding new server status for active connection " + connection.getId()));
+                        }
+                        serverStatus = new ServerStatus();
+                        serverStatus.setConnectionId(connection.getId());
+                        db.getServerStatusDao().insert(serverStatus);
                     } else {
                         Timber.e("Server status is null because no active connection is available");
+                        if (Fabric.isInitialized()) {
+                            Crashlytics.logException(new Exception("Server status is null because no active connection is available"));
+                        }
                     }
                 }
                 return serverStatus;
