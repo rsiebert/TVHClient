@@ -31,8 +31,8 @@ import butterknife.Unbinder;
 
 public class SeriesRecordingDetailsFragment extends BaseFragment implements RecordingRemovedCallback {
 
-    @BindView(R.id.is_enabled)
-    TextView isEnabledTextView;
+    @BindView(R.id.disabled)
+    TextView isDisabledTextView;
     @BindView(R.id.directory_label)
     TextView directoryLabelTextView;
     @BindView(R.id.directory)
@@ -126,8 +126,8 @@ public class SeriesRecordingDetailsFragment extends BaseFragment implements Reco
 
     private void updateUI() {
 
-        isEnabledTextView.setVisibility(htspVersion >= 19 ? View.VISIBLE : View.GONE);
-        isEnabledTextView.setText(recording.getEnabled() > 0 ? R.string.recording_enabled : R.string.recording_disabled);
+        isDisabledTextView.setVisibility(htspVersion >= 19 && recording.getEnabled() == 0 ? View.VISIBLE : View.GONE);
+        isDisabledTextView.setText(recording.getEnabled() > 0 ? R.string.recording_enabled : R.string.recording_disabled);
 
         directoryLabelTextView.setVisibility(!TextUtils.isEmpty(recording.getDirectory()) && htspVersion >= 19 ? View.VISIBLE : View.GONE);
         directoryTextView.setVisibility(!TextUtils.isEmpty(recording.getDirectory()) && htspVersion >= 19 ? View.VISIBLE : View.GONE);

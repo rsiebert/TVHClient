@@ -59,8 +59,8 @@ public class RecordingViewHolder extends RecyclerView.ViewHolder {
     TextView descriptionTextView;
     @BindView(R.id.failed_reason)
     TextView failedReasonTextView;
-    @BindView(R.id.enabled)
-    TextView isEnabledTextView;
+    @BindView(R.id.disabled)
+    TextView isDisabledTextView;
     @BindView(R.id.duplicate)
     TextView isDuplicateTextView;
     @BindView(R.id.dual_pane_list_item_selection)
@@ -126,10 +126,15 @@ public class RecordingViewHolder extends RecyclerView.ViewHolder {
         summaryTextView.setVisibility(hideSummaryView ? View.GONE : View.VISIBLE);
         summaryTextView.setText(recording.getSummary());
 
-        channelTextView.setText(recording.getChannelName());
-
         TextViewCompat.setAutoSizeTextTypeWithDefaults(iconTextView, TextViewCompat.AUTO_SIZE_TEXT_TYPE_UNIFORM);
-        iconTextView.setText(recording.getChannelName());
+
+        if (!TextUtils.isEmpty(recording.getChannelName())) {
+            iconTextView.setText(recording.getChannelName());
+            channelTextView.setText(recording.getChannelName());
+        } else {
+            iconTextView.setText(R.string.all_channels);
+            channelTextView.setText(R.string.all_channels);
+        }
 
         // Show the channel icon if available and set in the preferences.
         // If not chosen, hide the imageView and show the channel name.
@@ -182,11 +187,11 @@ public class RecordingViewHolder extends RecyclerView.ViewHolder {
         isTimerRecordingTextView.setVisibility(TextUtils.isEmpty(recording.getTimerecId()) ? View.GONE : ImageView.VISIBLE);
 
         if (recordingType != REC_TYPE_SCHEDULED) {
-            isEnabledTextView.setVisibility(View.GONE);
+            isDisabledTextView.setVisibility(View.GONE);
             isDuplicateTextView.setVisibility(View.GONE);
         } else {
-            isEnabledTextView.setVisibility(htspVersion < 19 || recording.getEnabled() == 0 ? View.GONE : View.VISIBLE);
-            isEnabledTextView.setText(recording.getEnabled() > 0 ? R.string.recording_enabled : R.string.recording_disabled);
+            isDisabledTextView.setVisibility(htspVersion >= 19 && recording.getEnabled() == 0 ? View.VISIBLE : View.GONE);
+            isDisabledTextView.setText(recording.getEnabled() > 0 ? R.string.recording_enabled : R.string.recording_disabled);
 
             isDuplicateTextView.setVisibility(htspVersion < 33 || recording.getDuplicate() == 0 ? View.GONE : View.VISIBLE);
         }

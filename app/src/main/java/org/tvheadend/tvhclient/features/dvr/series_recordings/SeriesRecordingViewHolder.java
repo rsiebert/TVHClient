@@ -42,8 +42,8 @@ public class SeriesRecordingViewHolder extends RecyclerView.ViewHolder {
     TextView stopTimeTextView;
     @BindView(R.id.duration)
     TextView durationTextView;
-    @BindView(R.id.enabled)
-    TextView isEnabledTextView;
+    @BindView(R.id.disabled)
+    TextView isDisabledTextView;
     @BindView(R.id.dual_pane_list_item_selection)
     ImageView dualPaneListItemSelection;
 
@@ -124,7 +124,7 @@ public class SeriesRecordingViewHolder extends RecyclerView.ViewHolder {
 
         durationTextView.setText(context.getString(R.string.minutes, recording.getDuration()));
 
-        isEnabledTextView.setVisibility(htspVersion >= 19 ? View.VISIBLE : View.GONE);
-        isEnabledTextView.setText(recording.getEnabled() > 0 ? R.string.recording_enabled : R.string.recording_disabled);
+        isDisabledTextView.setVisibility(htspVersion >= 19 && recording.getEnabled() == 0 ? View.VISIBLE : View.GONE);
+        isDisabledTextView.setText(recording.getEnabled() > 0 ? R.string.recording_enabled : R.string.recording_disabled);
     }
 }

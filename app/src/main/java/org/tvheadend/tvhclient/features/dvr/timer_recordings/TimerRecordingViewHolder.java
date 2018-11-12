@@ -40,8 +40,8 @@ public class TimerRecordingViewHolder extends RecyclerView.ViewHolder {
     TextView stopTimeTextView;
     @BindView(R.id.duration)
     TextView durationTextView;
-    @BindView(R.id.enabled)
-    TextView isEnabledTextView;
+    @BindView(R.id.disabled)
+    TextView isDisabledTextView;
     @BindView(R.id.dual_pane_list_item_selection)
     ImageView dualPaneListItemSelection;
 
@@ -118,8 +118,7 @@ public class TimerRecordingViewHolder extends RecyclerView.ViewHolder {
         String duration = context.getString(R.string.minutes, recording.getDuration());
         durationTextView.setText(duration);
 
-        String isEnabled = context.getString((recording.getEnabled() > 0) ? R.string.recording_enabled : R.string.recording_disabled);
-        isEnabledTextView.setVisibility(htspVersion >= 19 ? View.VISIBLE : View.GONE);
-        isEnabledTextView.setText(isEnabled);
+        isDisabledTextView.setVisibility(htspVersion >= 19 && recording.getEnabled() == 0 ? View.VISIBLE : View.GONE);
+        isDisabledTextView.setText(recording.getEnabled() > 0 ? R.string.recording_enabled : R.string.recording_disabled);
     }
 }

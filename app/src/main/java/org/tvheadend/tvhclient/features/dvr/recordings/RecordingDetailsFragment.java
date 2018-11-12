@@ -71,8 +71,8 @@ public class RecordingDetailsFragment extends BaseFragment implements RecordingR
     TextView isSeriesRecordingTextView;
     @BindView(R.id.is_timer_recording)
     TextView isTimerRecordingTextView;
-    @BindView(R.id.is_enabled)
-    TextView isEnabledTextView;
+    @BindView(R.id.disabled)
+    TextView isDisabledTextView;
 
     @BindView(R.id.episode)
     TextView episodeTextView;
@@ -211,8 +211,8 @@ public class RecordingDetailsFragment extends BaseFragment implements RecordingR
         isSeriesRecordingTextView.setVisibility(!TextUtils.isEmpty(recording.getAutorecId()) ? ImageView.VISIBLE : ImageView.GONE);
         isTimerRecordingTextView.setVisibility(!TextUtils.isEmpty(recording.getTimerecId()) ? ImageView.VISIBLE : ImageView.GONE);
 
-        isEnabledTextView.setVisibility((htspVersion >= 23 && recording.getEnabled() == 0) ? View.VISIBLE : View.GONE);
-        isEnabledTextView.setText(recording.getEnabled() > 0 ? R.string.recording_enabled : R.string.recording_disabled);
+        isDisabledTextView.setVisibility(htspVersion >= 23 && recording.getEnabled() == 0 ? View.VISIBLE : View.GONE);
+        isDisabledTextView.setText(recording.getEnabled() > 0 ? R.string.recording_enabled : R.string.recording_disabled);
 
         // Only show the status details in the 
         // completed and failed details screens
