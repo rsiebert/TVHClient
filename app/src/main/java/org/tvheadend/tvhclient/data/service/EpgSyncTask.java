@@ -520,7 +520,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         }
         // Update the icon only if a full sync was required
         final String icon = msg.getString("channelIcon");
-        if (icon != null && connection.isSyncRequired()) {
+        if (icon != null) {
             pendingChannelLogoFetches.add(icon);
         }
     }
