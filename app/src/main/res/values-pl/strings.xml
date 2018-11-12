@@ -123,7 +123,7 @@
     <string name="pref_download_directory">Katalog pobierania</string>
     <string name="pref_download_directory_sum">Nagrania będą pobierane do następującego folderu: \'%s\'</string>
     <string name="pref_epg_hours_visible">Widoczne godziny</string>
-    <string name="pref_epg_hours_visible_sum">Definiuje ile godzin przewodnika programów zostanie wyświetlone na jednym ekranie. Zbyt duża ilość godzin i programów wyświetlanych na tym samym ekranie zmniejsza czytelność.</string>
+    <string name="pref_epg_hours_visible_sum">Liczba godzin danych programu wyświetlanych na ekranie dla każdego nadawcy. Zbyt wiele godzin wpływa na czytelność.</string>
     <string name="pref_epg_max_days">Maksimum dni do wyświetlenia</string>
     <string name="pref_epg_max_days_sum">Definiuje maksymalną liczbę dni przewodnika programów która zostanie wyświetlona.</string>
     <string name="pref_general">Ogólne</string>

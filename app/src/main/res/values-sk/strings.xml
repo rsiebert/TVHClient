@@ -124,7 +124,7 @@
     <string name="pref_download_directory">Priečinok pre sťahovanie</string>
     <string name="pref_download_directory_sum">Nahrávky budú sťahované do nasledujúceho priečinka: \'%s\'</string>
     <string name="pref_epg_hours_visible">Počet zobrazených hodín</string>
-    <string name="pref_epg_hours_visible_sum">Nadefinovanie počtu hodín, ktoré budú zobrazené na jednej obrazovke v EPG. Nastavenie príliš veľa hodín môže spôsobiť horšiu čitateľnosť.</string>
+    <string name="pref_epg_hours_visible_sum">Počet hodín programových údajov, ktoré sa majú zobrazovať na obrazovke pre každého odosielateľa. Príliš veľa hodín ovplyvňuje čitateľnosť.</string>
     <string name="pref_epg_max_days">Maximálny počet dní pre zobrazenie</string>
     <string name="pref_epg_max_days_sum">Nadefinovanie maximalného počtu dní zobrazených v programovom sprievodcovi.</string>
     <string name="pref_general">General</string>

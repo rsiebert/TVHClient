@@ -167,7 +167,6 @@
     <string name="pref_enable_usage_statistics">Senden Sie anonyme Nutzungsstatistiken</string>
     <string name="pref_enable_usage_statistics_sum">Diese Berichte enthalten Informationen über die erforderliche Verfügbarkeit von Google-Diensten und welche Funktionen der Anwendung verfügbar sind, die von den Benutzern verwendet werden. Diese Information wird auch verwendet, um die Stabilität und Benutzerfreundlichkeit weiter zu verbessern.</string>
     <string name="pref_epg_hours_visible">Sichtbare Stunden</string>
-    <string name="pref_epg_hours_visible_sum">Legt fest, wieviele Stunden auf einem Bildschirm angezeigt werden sollen. Je höher die Anzahl, desto mehr Programme werden gleichzeitig pro Sender angezeigt. Dies verringert die Lesbarkeit und benötigt mehr Rechenleistung für die Darstellung.</string>
     <string name="pref_epg_max_days">Anzahl der Tage</string>
     <string name="pref_epg_max_days_sum">Begrenzt die Programmübersicht auf eine maximale Anzahl an Tagen.</string>
     <string name="pref_epg_sync_duration">Zeitraum der zu ladenen Programdaten</string>
@@ -195,7 +194,7 @@
     <string name="pref_http_playback_profiles">Wiedergabeprofile (Externe Player)</string>
     <string name="pref_http_playback_profiles_sum">Wählen Sie ein Profil aus, das von einem externen Player verwendet wird, um ein aufgenommenes Programm mit einem externen Player abzuspielen.</string>
     <string name="pref_information">Informationen</string>
-    <string name="pref_information_sum">Zeige eine Beschreibung der benötigten Berechtigungen, eine Liste der verwendeten Bibliotheken und der Personen, die an der Entwicklung beteiligt waren.</string>
+    <string name="pref_information_sum">Zeige eine Liste der verwendeten Bibliotheken und der Personen, die an der Entwicklung beteiligt waren.</string>
     <string name="pref_language">Sprache</string>
     <string name="pref_language_sum">Definiert die Sprache, die verwendet werden soll.</string>
     <string name="pref_manage_connections">Verbindungen verwalten</string>
@@ -380,4 +379,5 @@
     <string name="wol_send">Wake on LAN Paket erfolgreich an \'%s\' gesendet.</string>
     <string name="wol_send_broadcast">Wake on LAN Paket als Broadcast erfolgreich an \'%s\' gesendet.</string>
     <string name="yesterday">Gestern</string>
+    <string name="pref_epg_hours_visible_sum">Anzahl der Stunden von Programmdaten, die für jeden Sender auf einem Bildschirm angezeigt werden sollen. Zu viele Stunden beeinträchtigen die Lesbarkeit.</string>
 </resources>

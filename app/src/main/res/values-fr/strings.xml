@@ -166,7 +166,7 @@
     <string name="pref_enable_usage_statistics">Envois des statistiques anonymisées</string>
     <string name="pref_enable_usage_statistics_sum">Ce rapport contient des informations au sujet de services Google et de quelles fonctionnalitées de l\'application sont disponibles pour l\'utilisateur. Ces informations sont aussi utilisées pour améliorer la stabilité et l\'expérience utilisateur.</string>
     <string name="pref_epg_hours_visible">Heures visible</string>
-    <string name="pref_epg_hours_visible_sum">Défini le nombre d\’heure de la plage horaire. Un temps trop grand montrera trop de programmes et baissera la lisibilité de la grille.</string>
+    <string name="pref_epg_hours_visible_sum">Nombre d\'heures de données de programme à afficher sur un écran pour chaque expéditeur. Trop d\'heures affectent la lisibilité.</string>
     <string name="pref_epg_max_days">Nombre de jours a présenter</string>
     <string name="pref_epg_max_days_sum">Défini le nombre maximum de jour que doit présenter le guide des programmes.</string>
     <string name="pref_epg_sync_duration">Synchronisation des durées des programmes</string>

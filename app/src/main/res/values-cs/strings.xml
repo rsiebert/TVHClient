@@ -75,7 +75,7 @@
     <string name="pref_default_menu">Výchozí obrazovka</string>
     <string name="pref_default_menu_sum">Vyberte obrazovku, která se zobrazí po spuštění aplikace.</string>
     <string name="pref_epg_hours_visible">Počet zobrazených hodin</string>
-    <string name="pref_epg_hours_visible_sum">Určete kolik hodin z programového průvodce má být zobrazeno na jedné obrazovce. Nastavením příliš mnoha hodin způsobíte zobrazení příliš mnoha informací o programech, což způsobí zmatek a sníží čitelnost.</string>
+    <string name="pref_epg_hours_visible_sum">Počet hodin programových dat, které mají být zobrazeny na obrazovce pro každého odesílatele. Příliš mnoho hodin ovlivňuje čitelnost.</string>
     <string name="pref_epg_max_days">Největší množství dní k zobrazení</string>
     <string name="pref_epg_max_days_sum">Určuje maximální počet dní zobrazených v programovém průvodci.</string>
     <string name="pref_genre_colors">Barvy žánrů</string>

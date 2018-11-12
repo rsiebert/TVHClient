@@ -122,7 +122,7 @@ Verifica che siano soddsifatti i requisiti descritti nelle impostazioni trasmiss
     <string name="pref_download_directory">Cartella download</string>
     <string name="pref_download_directory_sum">"Le registrazioni scaricate verranno salvate in questa cartella: '%s'"</string>
     <string name="pref_epg_hours_visible">Ore visibili</string>
-    <string name="pref_epg_hours_visible_sum">Definisce quante ore della guida programmi saranno visualizzate in una schermata. Inserire troppe ore visulizzerà  troppi programmi rendendo la schermata confusa e diminuendone la leggibilità.</string>
+    <string name="pref_epg_hours_visible_sum">Numero di ore di dati del programma da visualizzare su uno schermo per ciascun mittente. Troppe ore influiscono sulla leggibilità.</string>
     <string name="pref_epg_max_days">Numero massimo giorni da visualizzare</string>
     <string name="pref_epg_max_days_sum">Definisce il numero massimo di giorni della guida programmi che verranno visualizzati.</string>
     <string name="pref_genre_colors">Colori generi</string>

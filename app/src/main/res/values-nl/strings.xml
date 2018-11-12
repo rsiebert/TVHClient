@@ -144,7 +144,7 @@
     <string name="pref_default_menu">Startscherm</string>
     <string name="pref_default_menu_sum">Kies het scherm dat wordt getoond wanneer de applicatie wordt gestart.</string>
     <string name="pref_epg_hours_visible">Toon uren</string>
-    <string name="pref_epg_hours_visible_sum">Definieer hoeveel uur aan programmagids getoond zal worden op één scherm. Teveel uren zal tot gevolg hebben dat te veel programma\'s worden getoond wat tot gevolg heeft dat het scherm te vol staat en slecht te lezen zal zijn.</string>
+    <string name="pref_epg_hours_visible_sum">Aantal uren programmagegevens dat op een scherm voor elke afzender moet worden weergegeven. Te veel uren zijn van invloed op de leesbaarheid.</string>
     <string name="pref_epg_max_days">Maximum aantal dagen tonen</string>
     <string name="pref_epg_max_days_sum">Definieer het maximum aantal programmagids dagen dat getoond moet worden.</string>
     <string name="pref_genre_colors">Genre kleuren</string>
