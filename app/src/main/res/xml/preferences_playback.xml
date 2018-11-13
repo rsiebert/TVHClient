@@ -36,11 +36,6 @@
             android:dependency="internal_player_enabled"
             android:key="ffmpeg_audio_enabled"
             android:title="Enable FFMpeg Audio Codecs" />
-        <CheckBoxPreference
-            android:defaultValue="@bool/pref_default_captions_apply_embedded_styles"
-            android:dependency="internal_player_enabled"
-            android:key="captions_apply_embedded_styles"
-            android:title="Apply embedded caption styles" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="Advanced">
