@@ -18,7 +18,6 @@ package org.tvheadend.tvhclient.features.streaming.internal;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 
@@ -64,33 +63,17 @@ class TvheadendRenderersFactory extends DefaultRenderersFactory {
                                        DrmSessionManager<FrameworkMediaCrypto> drmSessionManager, long allowedVideoJoiningTimeMs,
                                        Handler eventHandler, VideoRendererEventListener eventListener,
                                        @ExtensionRendererMode int extensionRendererMode, ArrayList<Renderer> out) {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
 
-        final boolean enableShieldWorkaround = sharedPreferences.getBoolean("shield_workaround_enabled", true);
-
-        if (Build.MODEL.equals("SHIELD Android TV") && enableShieldWorkaround) {
-            Timber.d("Adding ShieldVideoRenderer");
-            out.add(new ShieldVideoRenderer(
-                    context,
-                    MediaCodecSelector.DEFAULT,
-                    allowedVideoJoiningTimeMs,
-                    drmSessionManager,
-                    false,
-                    eventHandler,
-                    eventListener,
-                    MAX_DROPPED_VIDEO_FRAME_COUNT_TO_NOTIFY));
-        } else {
-            Timber.d("Adding MediaCodecVideoRenderer");
-            out.add(new MediaCodecVideoRenderer(
-                    context,
-                    MediaCodecSelector.DEFAULT,
-                    allowedVideoJoiningTimeMs,
-                    drmSessionManager,
-                    false,
-                    eventHandler,
-                    eventListener,
-                    MAX_DROPPED_VIDEO_FRAME_COUNT_TO_NOTIFY));
-        }
+        Timber.d("Adding MediaCodecVideoRenderer");
+        out.add(new MediaCodecVideoRenderer(
+                context,
+                MediaCodecSelector.DEFAULT,
+                allowedVideoJoiningTimeMs,
+                drmSessionManager,
+                false,
+                eventHandler,
+                eventListener,
+                MAX_DROPPED_VIDEO_FRAME_COUNT_TO_NOTIFY));
     }
 
     /**

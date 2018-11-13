@@ -45,11 +45,6 @@
 
     <PreferenceCategory android:title="Advanced">
         <CheckBoxPreference
-            android:defaultValue="@bool/pref_default_shield_workaround_enabled"
-            android:dependency="internal_player_enabled"
-            android:key="shield_workaround_enabled"
-            android:title="Enable nVidia Shield Workaround" />
-        <CheckBoxPreference
             android:defaultValue="@bool/pref_default_debug_text_view_enabled"
             android:dependency="internal_player_enabled"
             android:key="debug_text_view_enabled"
