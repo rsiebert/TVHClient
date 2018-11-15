@@ -182,16 +182,16 @@ public class HtspConnection implements Runnable {
             Set<SelectionKey> keys = mSelector.selectedKeys();
             Iterator<SelectionKey> i = keys.iterator();
 
-            try {
-                while (i.hasNext()) {
-                    SelectionKey selectionKey = i.next();
-                    i.remove();
+            while (i.hasNext()) {
+                SelectionKey selectionKey = i.next();
+                i.remove();
 
-                    if (!selectionKey.isValid()) {
-                        Timber.d("Selected key is not valid");
-                        break;
-                    }
+                if (!selectionKey.isValid()) {
+                    Timber.d("Selected key is not valid");
+                    break;
+                }
 
+                try {
                     if (selectionKey.isValid() && selectionKey.isConnectable()) {
                         processConnectableSelectionKey(selectionKey);
                     }
@@ -203,23 +203,29 @@ public class HtspConnection implements Runnable {
                     if (selectionKey.isValid() && selectionKey.isWritable()) {
                         processWritableSelectionKey(selectionKey);
                     }
-
-                    if (isClosedOrClosingOrFailed()) {
-                        break;
-                    }
+                } catch (IOException e) {
+                    Timber.e("Exception during processing selection key - shutting down", e);
+                    closeConnection(State.FAILED);
+                    break;
                 }
 
                 if (isClosedOrClosingOrFailed()) {
                     break;
                 }
+            }
 
+            if (isClosedOrClosingOrFailed()) {
+                break;
+            }
+
+            try {
                 if (mSocketChannel != null && mSocketChannel.isConnected() && writer.hasPendingData()) {
                     mSocketChannel.register(mSelector, SelectionKey.OP_READ | SelectionKey.OP_WRITE);
                 } else if (mSocketChannel != null && mSocketChannel.isConnected()) {
                     mSocketChannel.register(mSelector, SelectionKey.OP_READ);
                 }
-            } catch (Exception e) {
-                Timber.e("Something failed - shutting down", e);
+            } catch (ClosedChannelException e) {
+                Timber.e("Channel is closed exception while registering selector - shutting down", e);
                 closeConnection(State.FAILED);
                 break;
             }
