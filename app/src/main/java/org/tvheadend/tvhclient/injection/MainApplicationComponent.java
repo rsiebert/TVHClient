@@ -8,7 +8,6 @@ import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.data.service.EpgSyncIntentService;
 import org.tvheadend.tvhclient.data.service.EpgSyncService;
 import org.tvheadend.tvhclient.data.service.EpgSyncTask;
-import org.tvheadend.tvhclient.data.service.HtspConnectionService;
 import org.tvheadend.tvhclient.features.MainActivity;
 import org.tvheadend.tvhclient.features.channels.ChannelViewModel;
 import org.tvheadend.tvhclient.features.download.DownloadRecordingManager;
@@ -94,6 +93,4 @@ public interface MainApplicationComponent {
     void inject(HtspPlaybackActivity htspPlaybackActivity);
 
     void inject(SettingsConnectionBaseFragment settingsConnectionBaseFragment);
-
-    void inject(HtspConnectionService htspConnectionService);
 }

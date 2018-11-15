@@ -1,9 +1,6 @@
 package org.tvheadend.tvhclient.features.streaming.internal;
 
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.media.PlaybackParams;
 import android.net.Uri;
@@ -11,7 +8,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.os.IBinder;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -39,19 +36,20 @@ import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.ui.DefaultTimeBar;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultAllocator;
-import com.google.android.exoplayer2.util.Util;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Channel;
+import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.entity.Program;
 import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.data.entity.ServerProfile;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
-import org.tvheadend.tvhclient.data.service.HtspConnectionService;
+import org.tvheadend.tvhclient.data.service.htsp.SimpleHtspConnection;
+import org.tvheadend.tvhclient.data.service.htsp.tasks.Authenticator;
 import org.tvheadend.tvhclient.features.streaming.internal.utils.ExoPlayerUtils;
 import org.tvheadend.tvhclient.features.streaming.internal.utils.TvhMappings;
 import org.tvheadend.tvhclient.utils.MiscUtils;
@@ -71,7 +69,7 @@ import timber.log.Timber;
 
 import static org.tvheadend.tvhclient.features.streaming.internal.HtspDataSource.INVALID_TIMESHIFT_TIME;
 
-public class HtspPlaybackActivity extends AppCompatActivity implements View.OnClickListener, PlaybackPreparer, Player.EventListener {
+public class HtspPlaybackActivity extends AppCompatActivity implements View.OnClickListener, PlaybackPreparer, Player.EventListener, Authenticator.Listener {
 
     @Inject
     protected SharedPreferences sharedPreferences;
@@ -122,7 +120,7 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
     private ServerStatus serverStatus;
     private ServerProfile serverProfile;
     private boolean playerIsPaused = false;
-    private HtspConnectionService htspConnectionService;
+    private SimpleHtspConnection simpleHtspConnection;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -130,6 +128,7 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
         super.onCreate(savedInstanceState);
         setContentView(R.layout.player_overlay_view);
         MiscUtils.setLanguage(this);
+        Timber.d("Creating");
 
         MainApplication.getComponent().inject(this);
         ButterKnife.bind(this);
@@ -182,43 +181,45 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
 
     @Override
     public void onNewIntent(Intent intent) {
+        Timber.d("New intent");
         releasePlayer();
         setIntent(intent);
     }
 
     @Override
-    public void onStart() {
+    protected void onStart() {
         super.onStart();
-        Intent intent = new Intent(this, HtspConnectionService.class);
-        bindService(intent, connection, Context.BIND_AUTO_CREATE);
-        if (Util.SDK_INT > 23) {
-            initialize();
-        }
+        Timber.d("Starting");
+        Connection connection = appRepository.getConnectionData().getActiveItem();
+        simpleHtspConnection = new SimpleHtspConnection(connection);
+        simpleHtspConnection.addAuthenticationListener(this);
+        simpleHtspConnection.start();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        if (Util.SDK_INT <= 23 || player == null) {
-            initialize();
-        }
+        Timber.d("Resuming");
+        initialize();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        if (Util.SDK_INT <= 23) {
-            releasePlayer();
-        }
+        Timber.d("Pausing");
+        releasePlayer();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        if (Util.SDK_INT > 23) {
-            releasePlayer();
+        Timber.d("Stopping");
+
+        if (simpleHtspConnection != null) {
+            simpleHtspConnection.removeAuthenticationListener(this);
+            simpleHtspConnection.stop();
         }
-        unbindService(connection);
+        simpleHtspConnection = null;
     }
 
     private void initialize() {
@@ -295,9 +296,9 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
 
         // Produces DataSource instances through which media data is loaded.
         htspSubscriptionDataSourceFactory = new HtspSubscriptionDataSource.Factory(
-                this, htspConnectionService.getSimpleHtspConnection(), serverProfile.getName());
+                this, simpleHtspConnection, serverProfile.getName());
         htspFileInputStreamDataSourceFactory = new HtspFileInputStreamDataSource.Factory(
-                this, htspConnectionService.getSimpleHtspConnection());
+                this, simpleHtspConnection);
 
         // Produces Extractor instances for parsing the media data.
         extractorsFactory = new TvheadendExtractorsFactory(this);
@@ -334,7 +335,6 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
 
     private void startPlayback() {
         Timber.d("Starting playback");
-        stopPlayback();
 
         playerRootView.setVisibility(View.VISIBLE);
 
@@ -376,7 +376,7 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
         if (player != null) {
             Timber.d("Preparing player and starting when ready");
             player.prepare(mediaSource);
-            onPlayButtonSelected();
+            player.setPlayWhenReady(true);
         }
     }
 
@@ -459,24 +459,6 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
             dataSource.pause();
         } else {
             Timber.w("Unable to pause, no HtspDataSource available");
-        }
-    }
-
-    public void onSeekButtonSelected(long timeMs) {
-        Timber.d("Seeking to " + timeMs);
-
-        HtspDataSource dataSource = htspDataSource.get();
-        if (dataSource != null) {
-            Timber.d("Timeshift start time " + dataSource.getTimeshiftStartTime());
-            Timber.d("Timeshift start pts " + dataSource.getTimeshiftStartPts());
-
-            long seekPts = (timeMs * 1000) - dataSource.getTimeshiftStartTime();
-            seekPts = Math.max(seekPts, dataSource.getTimeshiftStartPts()) / 1000;
-            Timber.d("Seeking to PTS: " + seekPts);
-
-            player.seekTo(seekPts);
-        } else {
-            Timber.w("Unable to seek, no HtspDataSource available");
         }
     }
 
@@ -642,6 +624,24 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
         // NOP
     }
 
+    public void onSeekButtonSelected(long timeMs) {
+        Timber.d("Seeking to " + timeMs);
+
+        HtspDataSource dataSource = htspDataSource.get();
+        if (dataSource != null) {
+            Timber.d("Timeshift start time " + dataSource.getTimeshiftStartTime());
+            Timber.d("Timeshift start pts " + dataSource.getTimeshiftStartPts());
+
+            long seekPts = (timeMs * 1000) - dataSource.getTimeshiftStartTime();
+            seekPts = Math.max(seekPts, dataSource.getTimeshiftStartPts()) / 1000;
+            Timber.d("Seeking to PTS: " + seekPts);
+
+            player.seekTo(seekPts);
+        } else {
+            Timber.w("Unable to seek, no HtspDataSource available");
+        }
+    }
+
     public long getTimeshiftStartPosition() {
         HtspDataSource dataSource = this.htspDataSource.get();
         if (dataSource != null) {
@@ -705,20 +705,19 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
         }
     }
 
-    private ServiceConnection connection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName className, IBinder service) {
-            Timber.d("Connected to service, starting player");
-            // We've bound to LocalService, cast the IBinder and get LocalService instance
-            HtspConnectionService.LocalBinder binder = (HtspConnectionService.LocalBinder) service;
-            htspConnectionService = binder.getService();
-            initializePlayer();
-            startPlayback();
-        }
+    @Override
+    public Handler getHandler() {
+        return null;
+    }
 
-        @Override
-        public void onServiceDisconnected(ComponentName arg0) {
-            Timber.d("Service disconnected");
+    @Override
+    public void onAuthenticationStateChange(@NonNull Authenticator.State state) {
+        Timber.d("Authentication changed to " + state);
+        if (state == Authenticator.State.AUTHENTICATED) {
+            runOnUiThread(() -> {
+                initializePlayer();
+                startPlayback();
+            });
         }
-    };
+    }
 }
