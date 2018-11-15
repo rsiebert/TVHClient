@@ -18,15 +18,12 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.util.Base64;
 
-import com.crashlytics.android.answers.CustomEvent;
-
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
-import org.tvheadend.tvhclient.features.logging.AnswersWrapper;
 import org.tvheadend.tvhclient.features.shared.receivers.SnackbarMessageReceiver;
 
 import javax.inject.Inject;
@@ -187,10 +184,6 @@ public class DownloadRecordingManager {
                     break;
             }
         }
-
-        AnswersWrapper.getInstance().logCustom(new CustomEvent("Status")
-                .putCustomAttribute("Recording title", recording.getTitle())
-                .putCustomAttribute("Download status", msg));
 
         Timber.d("Download status of recording " + recording.getTitle() + " is " + msg);
         Intent intent = new Intent(SnackbarMessageReceiver.ACTION);

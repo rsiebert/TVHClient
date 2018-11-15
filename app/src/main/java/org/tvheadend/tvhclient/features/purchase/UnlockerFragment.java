@@ -8,17 +8,12 @@ import android.view.MenuItem;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.anjlab.android.iab.v3.BillingProcessor;
-import com.crashlytics.android.answers.PurchaseEvent;
 
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.features.information.WebViewFragment;
-import org.tvheadend.tvhclient.features.logging.AnswersWrapper;
 import org.tvheadend.tvhclient.features.shared.tasks.FileLoaderCallback;
 import org.tvheadend.tvhclient.features.startup.SplashActivity;
-
-import java.math.BigDecimal;
-import java.util.Currency;
 
 import timber.log.Timber;
 
@@ -51,13 +46,6 @@ public class UnlockerFragment extends WebViewFragment implements FileLoaderCallb
 
             case R.id.menu_purchase:
                 if (!billingProcessor.isPurchased(UNLOCKER)) {
-                    AnswersWrapper.getInstance().logPurchase(new PurchaseEvent()
-                            .putItemId(UNLOCKER)
-                            .putItemName("Unlocker")
-                            .putCurrency(Currency.getInstance("EUR"))
-                            .putItemPrice(BigDecimal.valueOf(1.99))
-                            .putSuccess(true));
-
                     if (billingProcessor.purchase(activity, UNLOCKER)) {
                         showPurchaseSuccessfulDialg();
                     } else {

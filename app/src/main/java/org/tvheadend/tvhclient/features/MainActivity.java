@@ -19,8 +19,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.crashlytics.android.answers.CustomEvent;
-import com.crashlytics.android.answers.SearchEvent;
 import com.google.android.gms.cast.framework.CastButtonFactory;
 import com.google.android.gms.cast.framework.CastContext;
 import com.google.android.gms.cast.framework.CastSession;
@@ -34,7 +32,6 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.features.download.DownloadPermissionGrantedInterface;
 import org.tvheadend.tvhclient.features.epg.ProgramGuideFragment;
-import org.tvheadend.tvhclient.features.logging.AnswersWrapper;
 import org.tvheadend.tvhclient.features.navigation.NavigationDrawer;
 import org.tvheadend.tvhclient.features.navigation.NavigationDrawerCallback;
 import org.tvheadend.tvhclient.features.search.SearchRequestInterface;
@@ -121,10 +118,7 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Wake
 
         castContext = MiscUtils.getCastContext(this);
         if (castContext != null) {
-            Timber.d("Google API is available");
-            AnswersWrapper.getInstance().logCustom(new CustomEvent("Status")
-                    .putCustomAttribute("Casting", "available"));
-
+            Timber.d("Casting is available");
             castSessionManagerListener = new CastSessionManagerListener(this, castSession);
             castStateListener = newState -> {
                 Timber.d("Cast state changed to " + newState);
@@ -134,8 +128,6 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Wake
             };
         } else {
             Timber.d("Casting is not available, casting will no be enabled");
-            AnswersWrapper.getInstance().logCustom(new CustomEvent("Status")
-                    .putCustomAttribute("Casting", "not available"));
         }
 
         // Update the drawer menu so that all available menu items are
@@ -344,8 +336,6 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Wake
 
     @Override
     public boolean onQueryTextSubmit(String query) {
-        AnswersWrapper.getInstance().logSearch(new SearchEvent().putQuery(query));
-
         searchMenuItem.collapseActionView();
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main);
         if (fragment != null && fragment.isAdded() && fragment instanceof SearchRequestInterface) {

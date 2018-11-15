@@ -11,7 +11,6 @@ import android.util.TypedValue;
 import android.view.View;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.crashlytics.android.answers.ContentViewEvent;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
@@ -43,7 +42,6 @@ import org.tvheadend.tvhclient.features.dvr.timer_recordings.TimerRecordingViewM
 import org.tvheadend.tvhclient.features.epg.ProgramGuideFragment;
 import org.tvheadend.tvhclient.features.information.StatusFragment;
 import org.tvheadend.tvhclient.features.information.WebViewFragment;
-import org.tvheadend.tvhclient.features.logging.AnswersWrapper;
 import org.tvheadend.tvhclient.features.purchase.UnlockerFragment;
 import org.tvheadend.tvhclient.features.settings.ConnectionViewModel;
 import org.tvheadend.tvhclient.features.settings.SettingsActivity;
@@ -335,64 +333,40 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
         Fragment fragment = null;
         switch (position) {
             case NavigationDrawer.MENU_CHANNELS:
-                AnswersWrapper.getInstance().logContentView(new ContentViewEvent()
-                        .putContentName("Channel screen"));
                 fragment = new ChannelListFragment();
                 break;
             case NavigationDrawer.MENU_PROGRAM_GUIDE:
-                AnswersWrapper.getInstance().logContentView(new ContentViewEvent()
-                        .putContentName("Program guide screen"));
                 fragment = new ProgramGuideFragment();
                 break;
             case NavigationDrawer.MENU_COMPLETED_RECORDINGS:
-                AnswersWrapper.getInstance().logContentView(new ContentViewEvent()
-                        .putContentName("Completed recordings screen"));
                 fragment = new CompletedRecordingListFragment();
                 break;
             case NavigationDrawer.MENU_SCHEDULED_RECORDINGS:
-                AnswersWrapper.getInstance().logContentView(new ContentViewEvent()
-                        .putContentName("Scheduled recordings screen"));
                 fragment = new ScheduledRecordingListFragment();
                 break;
             case NavigationDrawer.MENU_SERIES_RECORDINGS:
-                AnswersWrapper.getInstance().logContentView(new ContentViewEvent()
-                        .putContentName("Series recordings screen"));
                 fragment = new SeriesRecordingListFragment();
                 break;
             case NavigationDrawer.MENU_TIMER_RECORDINGS:
-                AnswersWrapper.getInstance().logContentView(new ContentViewEvent()
-                        .putContentName("Timer recordings screen"));
                 fragment = new TimerRecordingListFragment();
                 break;
             case NavigationDrawer.MENU_FAILED_RECORDINGS:
-                AnswersWrapper.getInstance().logContentView(new ContentViewEvent()
-                        .putContentName("Failed recordings screen"));
                 fragment = new FailedRecordingListFragment();
                 break;
             case NavigationDrawer.MENU_REMOVED_RECORDINGS:
-                AnswersWrapper.getInstance().logContentView(new ContentViewEvent()
-                        .putContentName("Removed recordings screen"));
                 fragment = new RemovedRecordingListFragment();
                 break;
             case NavigationDrawer.MENU_STATUS:
-                AnswersWrapper.getInstance().logContentView(new ContentViewEvent()
-                        .putContentName("Status screen"));
                 fragment = new StatusFragment();
                 break;
             case NavigationDrawer.MENU_SETTINGS:
-                AnswersWrapper.getInstance().logContentView(new ContentViewEvent()
-                        .putContentName("Settings screen"));
                 intent = new Intent(activity, SettingsActivity.class);
                 activity.startActivity(intent);
                 break;
             case NavigationDrawer.MENU_UNLOCKER:
-                AnswersWrapper.getInstance().logContentView(new ContentViewEvent()
-                        .putContentName("Unlocker screen"));
                 fragment = new UnlockerFragment();
                 break;
             case NavigationDrawer.MENU_HELP:
-                AnswersWrapper.getInstance().logContentView(new ContentViewEvent()
-                        .putContentName("Help screen"));
                 fragment = new WebViewFragment();
                 Bundle bundle = new Bundle();
                 bundle.putString("website", "help_and_support");

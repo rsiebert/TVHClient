@@ -17,7 +17,6 @@ import com.google.android.gms.cast.framework.media.NotificationOptions;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
 
-import org.tvheadend.tvhclient.features.logging.AnswersWrapper;
 import org.tvheadend.tvhclient.features.logging.CrashlyticsTree;
 import org.tvheadend.tvhclient.features.logging.DebugTree;
 import org.tvheadend.tvhclient.features.logging.FileLoggingTree;
@@ -135,7 +134,6 @@ public class MainApplication extends Application implements BillingProcessor.IBi
         if (sharedPreferences.getBoolean("crash_reports_enabled", true)) {
             Fabric.with(this, new Crashlytics());
         }
-        AnswersWrapper.init(this);
     }
 
     /**
