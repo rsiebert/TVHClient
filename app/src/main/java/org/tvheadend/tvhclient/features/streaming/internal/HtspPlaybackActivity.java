@@ -34,6 +34,7 @@ import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.ui.DefaultTimeBar;
+import com.google.android.exoplayer2.ui.PlayerControlView;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultAllocator;
 import com.squareup.picasso.Callback;
@@ -69,7 +70,7 @@ import timber.log.Timber;
 
 import static org.tvheadend.tvhclient.features.streaming.internal.HtspDataSource.INVALID_TIMESHIFT_TIME;
 
-public class HtspPlaybackActivity extends AppCompatActivity implements View.OnClickListener, PlaybackPreparer, Player.EventListener, Authenticator.Listener {
+public class HtspPlaybackActivity extends AppCompatActivity implements View.OnClickListener, PlaybackPreparer, Player.EventListener, Authenticator.Listener, PlayerControlView.VisibilityListener {
 
     @Inject
     protected SharedPreferences sharedPreferences;
@@ -110,7 +111,6 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
     private int channelId;
     private int dvrId;
     private SimpleExoPlayer player;
-    //private EventLogger eventLogger;
     private TvheadendTrackSelector trackSelector;
     private HtspDataSource.Factory htspSubscriptionDataSourceFactory;
     private HtspDataSource.Factory htspFileInputStreamDataSourceFactory;
@@ -137,18 +137,16 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
         handlerThread.start();
         handler = new Handler(handlerThread.getLooper());
 
-        playerView.requestFocus();
-
         if (savedInstanceState != null) {
             channelId = getIntent().getIntExtra("channelId", -1);
             dvrId = getIntent().getIntExtra("dvrId", -1);
             playerIsPaused = getIntent().getBooleanExtra("playerIsPaused", false);
         } else {
-            playerIsPaused = false;
+            playerIsPaused = true;
             Bundle bundle = getIntent().getExtras();
             if (bundle != null) {
                 channelId = bundle.getInt("channelId", -1);
-                dvrId = getIntent().getIntExtra("dvrId", -1);
+                dvrId = bundle.getInt("dvrId", -1);
             }
         }
 
@@ -159,6 +157,9 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
         pauseImageView.setOnClickListener(this);
         playImageView.setOnClickListener(this);
         forwardImageView.setOnClickListener(this);
+
+        playerView.setControllerVisibilityListener(this);
+        playerView.requestFocus();
 
         updatePlayerButtonStates();
     }
@@ -427,8 +428,6 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
         if (playerIsPaused) {
             onResumeButtonSelected();
         }
-        playerIsPaused = false;
-        updatePlayerButtonStates();
     }
 
     public void onResumeButtonSelected() {
@@ -450,8 +449,6 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
 
     public void onPauseButtonSelected() {
         player.setPlayWhenReady(false);
-        playerIsPaused = true;
-        updatePlayerButtonStates();
 
         HtspDataSource dataSource = htspDataSource.get();
         if (dataSource != null) {
@@ -575,6 +572,20 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
                 Timber.d("A generic reason. Video is not available due to an unspecified error.");
                 break;
         }
+
+        if (playWhenReady && playbackState == Player.STATE_READY) {
+            Timber.d("Media is playing");
+            playerIsPaused = false;
+        } else if (playWhenReady) {
+            Timber.d("Player might be idle (plays after prepare()), " +
+                    "buffering (plays when data available) " +
+                    "or ended (plays when seek away from end)");
+        } else {
+            Timber.d("Player is paused in any state");
+            playerIsPaused = true;
+        }
+
+        updatePlayerButtonStates();
     }
 
     @Override
@@ -718,6 +729,27 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
                 initializePlayer();
                 startPlayback();
             });
+        }
+    }
+
+    @Override
+    public void onVisibilityChange(int visibility) {
+        Timber.d("Visibility changed to " + visibility);
+        if (visibility != View.VISIBLE) {
+            if (Build.VERSION.SDK_INT >= 19) {
+
+                View decorView = getWindow().getDecorView();
+                decorView.setSystemUiVisibility(
+                        View.SYSTEM_UI_FLAG_IMMERSIVE
+                                // Set the content to appear under the system bars so that the
+                                // content doesn't resize when the system bars hide and show.
+                                | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                                // Hide the nav bar and status bar
+                                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                                | View.SYSTEM_UI_FLAG_FULLSCREEN);
+            }
         }
     }
 }
