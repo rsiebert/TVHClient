@@ -168,6 +168,10 @@ public class HtspDataHandler implements HtspConnection.Reader, HtspConnection.Wr
      */
     @Override
     public boolean write(@NonNull SocketChannel socketChannel) {
+        if (!messageDispatcher.hasPendingMessages()) {
+            return false;
+        }
+
         // Clear the buffer out, ready for a new message.
         writeBuffer.clear();
 
