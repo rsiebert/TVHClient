@@ -34,6 +34,7 @@ import org.tvheadend.tvhclient.data.service.htsp.tasks.Subscriber;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.nio.BufferOverflowException;
 import java.nio.ByteBuffer;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
@@ -338,6 +339,8 @@ public class HtspSubscriptionDataSource extends HtspDataSource implements Subscr
         } catch (IOException e) {
             // Ignore?
             Timber.w("Caught IOException, ignoring (" + mDataSourceNumber + ")", e);
+        } catch (BufferOverflowException boe) {
+            Timber.w("Caught BufferOverflowException, ignoring (" + mDataSourceNumber + ")", boe);
         } finally {
             mLock.unlock();
             // Ignore
