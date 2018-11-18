@@ -98,7 +98,6 @@
     <string name="failed_opening_socket">Nie można otworzyć gniazda na serwerze</string>
     <string name="failed_recordings">Utracone / Nieprawidłowe</string>
     <string name="feature_not_available_in_free_version">Ta opcja nie jest dostępna w darmowej wersji!</string>
-    <string name="feature_not_supported_by_server">Serwer TVHeadend nie wspiera tej funkcji. Wymagana jest nowsza wersja.</string>
     <string name="feature_not_supported_by_server">Twój serwer TVHeadend nie obsługuje tej funkcji. Uaktualnij do nowszej wersji.</string>
     <string name="friday">Piątek</string>
     <string name="full_changelog">Pełny dziennik zmian</string>
@@ -235,9 +234,6 @@
     <string name="pref_show_cast_minicontroller_sum">bla </string>
     <string name="pref_show_channel_name">Pokaż nazwę kanału</string>
     <string name="pref_show_channel_name_sum">Oprócz ikony kanału wyświetlana jest nazwa kanału nad tytułem programu na liście kanałów.</string>
-    <string name="pref_show_menu_search_epg">Pokaż menu \ 'Wyszukaj EPG \'</string>
-    <string name="pref_show_menu_search_fileaffinity">Pokaż menu \ 'Wyszukaj na stronie FileAffinity \'</string>
-    <string name="pref_show_menu_search_imdb">Show menu \'Search on IMDB\'</string>
     <string name="pref_show_next_program">Pokazuj następny program na liście kanałów</string>
     <string name="pref_show_next_program_sum">Nazwa zbliżającego się programu jest wyświetlana na liście kanałów. Nazwa jest wyświetlana poniżej paska postępu nadawanego programu.</string>
     <string name="pref_show_notification_offset">Czas powiadomienia</string>
@@ -313,11 +309,11 @@
     <string name="requesting_playback_information">Żądanie informacji o odtwarzaniu z serwera</string>
     <string name="saturday">Sobota</string>
     <string name="save">Zapisz</string>
-    <string name="saving_channel_logos">Zapisywanie odebranych ikon kanałów...</string>
-    <string name="saving_channels">Zapisywanie odebranych kanałów...</string>
-    <string name="saving_data">Zapisywanie odebranych danych...</string>
-    <string name="saving_program_guide_data">Zapisywanie odebranych danych przewodnika programowego...</string>
-    <string name="saving_recordings">Zapisywanie otrzymanych nagrań...</string>
+    <string name="saving_channel_logos">Zapisywanie odebranych ikon kanałów…</string>
+    <string name="saving_channels">Zapisywanie odebranych kanałów…</string>
+    <string name="saving_data">Zapisywanie odebranych danych…</string>
+    <string name="saving_program_guide_data">Zapisywanie odebranych danych przewodnika programowego…</string>
+    <string name="saving_recordings">Zapisywanie otrzymanych nagrań…</string>
     <string name="scheduled_recordings">Zaplanowane</string>
     <string name="search">Szukaj</string>
     <string name="search_epg">Szukaj w przewodniku programów</string>
