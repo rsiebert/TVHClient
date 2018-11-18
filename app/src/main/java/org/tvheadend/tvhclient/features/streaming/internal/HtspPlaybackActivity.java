@@ -33,6 +33,7 @@ import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
+import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.ui.DefaultTimeBar;
 import com.google.android.exoplayer2.ui.PlayerControlView;
 import com.google.android.exoplayer2.ui.PlayerView;
@@ -286,8 +287,11 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
         player = ExoPlayerFactory.newSimpleInstance(
                 new TvheadendRenderersFactory(this), trackSelector, loadControl);
         player.addListener(this);
+        player.setVideoScalingMode(C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING);
+
         playerView.setPlayer(player);
         playerView.setPlaybackPreparer(this);
+        playerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIXED_WIDTH);
 
         // Add the EventLogger
         /*
