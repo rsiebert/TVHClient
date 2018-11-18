@@ -120,8 +120,8 @@ public class MiscUtils {
         if (playServicesAvailable == ConnectionResult.SUCCESS) {
             try {
                 return CastContext.getSharedInstance(context);
-            } catch (IllegalStateException e) {
-                Timber.e("Could not get cast context");
+            } catch (RuntimeException e) {
+                Timber.e("Could not get cast context", e);
             }
         }
         return null;
