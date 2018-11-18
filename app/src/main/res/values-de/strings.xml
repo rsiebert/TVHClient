@@ -382,4 +382,6 @@
     <string name="wol_send_broadcast">Wake on LAN Paket als Broadcast erfolgreich an \'%s\' gesendet.</string>
     <string name="yesterday">Gestern</string>
     <string name="pref_epg_hours_visible_sum">Anzahl der Stunden von Programmdaten, die für jeden Sender auf einem Bildschirm angezeigt werden sollen. Zu viele Stunden beeinträchtigen die Lesbarkeit.</string>
+    <string name="error_no_channel_selected">Bitte wählen Sie einen Sender aus. Ihre Server-Version unterstützt nicht die Aufzeichnung auf allen Sendern.</string>
+    <string name="error_start_time_past_stop_time">Die Startzeit darf nicht nach der Stoppzeit liegen.</string>
 </resources>

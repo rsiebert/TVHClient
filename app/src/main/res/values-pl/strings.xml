@@ -377,4 +377,11 @@
     <string name="wol_send">Pomyślnie wysłano pakiet Wake On LAN do \'%s\'</string>
     <string name="wol_send_broadcast">Pomyślnie wysłano Wake On LAN jako pakiet transmisji do \'%s\'</string>
     <string name="yesterday">Wczoraj</string>
+    <string name="failed_to_resolve_address">Nie udało się rozwiązać adresu serwera</string>
+    <string name="pref_htsp_playback_profiles">Profile odtwarzania (odtwarzacz wewnętrzny)</string>
+    <string name="pref_htsp_playback_profiles_sum">Wybierz profil, który jest używany przez odtwarzacz wewnętrzny, aby odtwarzać nagrany program za pomocą odtwarzacza wewnętrznego.</string>
+    <string name="pref_http_playback_profiles">Profile odtwarzania (odtwarzacze zewnętrzne)</string>
+    <string name="pref_http_playback_profiles_sum">Wybierz profil używany przez odtwarzacz zewnętrzny, aby odtwarzać nagrany program za pomocą odtwarzacza zewnętrznego.</string>
+    <string name="error_starting_playback_no_channel">Błąd podczas rozpoczynania odtwarzania. Nie można załadować żadnego kanału.</string>
+    <string name="error_starting_playback_no_recording">Błąd podczas rozpoczynania odtwarzania. Nie można załadować żadnego nagrania.</string>
 </resources>
