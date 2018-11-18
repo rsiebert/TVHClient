@@ -91,10 +91,10 @@ public abstract class BasePlaybackActivity extends AppCompatActivity implements 
     @Override
     protected void onResume() {
         super.onResume();
-        init();
+        initialize();
     }
 
-    private void init() {
+    private void initialize() {
         if (connection == null || serverStatus == null) {
             progressBar.setVisibility(View.GONE);
             statusTextView.setText(getString(R.string.error_starting_playback_no_connection));
@@ -198,7 +198,7 @@ public abstract class BasePlaybackActivity extends AppCompatActivity implements 
 
             case CONNECTED:
                 progressBar.setVisibility(View.GONE);
-                init();
+                initialize();
                 break;
         }
     }
