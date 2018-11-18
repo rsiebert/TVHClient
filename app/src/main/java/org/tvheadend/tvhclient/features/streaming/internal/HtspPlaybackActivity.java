@@ -194,7 +194,6 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
         Connection connection = appRepository.getConnectionData().getActiveItem();
         simpleHtspConnection = new SimpleHtspConnection(connection);
         simpleHtspConnection.addAuthenticationListener(this);
-        simpleHtspConnection.start();
     }
 
     @Override
@@ -233,6 +232,9 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
         } else {
             Timber.d("Starting htsp connection service");
             statusTextView.setText(R.string.connecting_to_server);
+            // start the connection here so that the authentication callback
+            // will not fire before the server profile is checked here
+            simpleHtspConnection.start();
         }
     }
 
