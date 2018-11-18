@@ -4,7 +4,9 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.view.View;
 
+import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.data.service.EpgSyncService;
 
@@ -36,10 +38,15 @@ public class PlayChannelActivity extends BasePlaybackActivity {
 
     @Override
     protected void getHttpTicket() {
-        Intent intent = new Intent(this, EpgSyncService.class);
-        intent.setAction("getTicket");
-        intent.putExtra("channelId", channelId);
-        startService(intent);
+        if (channelId > 0) {
+            Intent intent = new Intent(this, EpgSyncService.class);
+            intent.setAction("getTicket");
+            intent.putExtra("channelId", channelId);
+            startService(intent);
+        } else {
+            progressBar.setVisibility(View.GONE);
+            statusTextView.setText(getString(R.string.error_starting_playback_no_channel));
+        }
     }
 
     @Override

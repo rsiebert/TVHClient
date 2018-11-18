@@ -5,8 +5,10 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
+import android.view.View;
 
 import org.tvheadend.tvhclient.MainApplication;
+import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.data.service.EpgSyncService;
 
@@ -40,10 +42,15 @@ public class PlayRecordingActivity extends BasePlaybackActivity {
 
     @Override
     protected void getHttpTicket() {
-        Intent intent = new Intent(this, EpgSyncService.class);
-        intent.setAction("getTicket");
-        intent.putExtra("dvrId", dvrId);
-        startService(intent);
+        if (dvrId > 0) {
+            Intent intent = new Intent(this, EpgSyncService.class);
+            intent.setAction("getTicket");
+            intent.putExtra("dvrId", dvrId);
+            startService(intent);
+        } else {
+            progressBar.setVisibility(View.GONE);
+            statusTextView.setText(getString(R.string.error_starting_playback_no_recording));
+        }
     }
 
     @Override

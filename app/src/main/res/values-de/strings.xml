@@ -88,6 +88,8 @@
     <string name="error_removing_recording">Aufnahme konnte nicht entfernt werden! %s</string>
     <string name="error_starting_playback_no_connection">Fehler beim Starten der Wiedergabe. Die erforderlichen Verbindungs- und Serverinformationen konnten nicht geladen werden.</string>
     <string name="error_starting_playback_no_profile">Fehler beim Starten der Wiedergabe. In den Einstellungen ist kein Wiedergabe-Profil ausgewählt.</string>
+    <string name="error_starting_playback_no_channel">Fehler beim Starten der Wiedergabe. Es konnte kein Sender geladen werden.</string>
+    <string name="error_starting_playback_no_recording">Fehler beim Starten der Wiedergabe. Es konnte keine Aufnahme geladen werden.</string>
     <string name="error_updating_recording">Aufnahme konnte nicht aktualisiert werden! %s</string>
     <string name="extra_start_time">Zusätzliche Minuten (Vorlaufzeit)</string>
     <string name="extra_stop_time">Zusätzliche Minuten (Nachlaufzeit)</string>

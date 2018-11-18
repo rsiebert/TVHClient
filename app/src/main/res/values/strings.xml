@@ -90,6 +90,8 @@
     <string name="error_start_time_past_stop_time">The start time must not be past the stop time.</string>
     <string name="error_starting_playback_no_connection">Error starting playback. Could not load required connection and server information.</string>
     <string name="error_starting_playback_no_profile">Error starting playback. No playback profile is selected in the settings.</string>
+    <string name="error_starting_playback_no_channel">Error starting playback. No channel could be loaded.</string>
+    <string name="error_starting_playback_no_recording">Error starting playback. No recording could be loaded.</string>
     <string name="error_updating_recording">Recording was not updated! %s</string>
     <string name="extra_start_time">Extra start minutes (pre-time)</string>
     <string name="extra_stop_time">Extra stop minutes (post-time)</string>
