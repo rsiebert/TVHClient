@@ -17,6 +17,7 @@ package org.tvheadend.tvhclient.data.service.htsp.tasks;
 
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 
 import org.tvheadend.tvhclient.BuildConfig;
 import org.tvheadend.tvhclient.data.entity.Connection;
@@ -164,6 +165,15 @@ public class Authenticator implements HtspMessage.Listener, HtspConnection.Liste
     @Override
     public void onMessage(@NonNull HtspMessage message) {
         final String method = message.getString("method");
+
+        if (TextUtils.isEmpty(method)) {
+            Timber.e("Received no method message in request");
+            setState(State.FAILED);
+            // Remove myself as a message listener, I'm all done for now.
+            dispatcher.removeMessageListener(this);
+            return;
+        }
+
         if (method.equals("hello")) {
             handleHelloResponse(message);
         } else if (method.equals("authenticate")) {
