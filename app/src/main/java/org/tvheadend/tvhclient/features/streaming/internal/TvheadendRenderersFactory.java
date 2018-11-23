@@ -29,7 +29,6 @@ import com.google.android.exoplayer2.audio.AudioRendererEventListener;
 import com.google.android.exoplayer2.audio.MediaCodecAudioRenderer;
 import com.google.android.exoplayer2.drm.DrmSessionManager;
 import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
-import com.google.android.exoplayer2.ext.ffmpeg.FfmpegAudioRenderer;
 import com.google.android.exoplayer2.mediacodec.MediaCodecInfo;
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.google.android.exoplayer2.mediacodec.MediaCodecUtil;
@@ -105,9 +104,9 @@ class TvheadendRenderersFactory extends DefaultRenderersFactory {
         // Native Audio Decoders
         Timber.d("Adding MediaCodecAudioRenderer");
         MediaCodecSelector mediaCodecSelector = buildMediaCodecSelector(enablePassthroughDecoder);
-        out.add(new MediaCodecAudioRenderer(mediaCodecSelector, drmSessionManager,
+        out.add(new MediaCodecAudioRenderer(context, mediaCodecSelector, drmSessionManager,
                 true, eventHandler, eventListener, audioCapabilities));
-
+/*
         // FFMpeg Audio Decoder
         final boolean enableFfmpegAudioRenderer = sharedPreferences.getBoolean(
                 "ffmpeg_audio_enabled",
@@ -118,6 +117,7 @@ class TvheadendRenderersFactory extends DefaultRenderersFactory {
             Timber.d("Adding FfmpegAudioRenderer");
             out.add(new FfmpegAudioRenderer(eventHandler, eventListener, audioProcessors));
         }
+        */
     }
 
     /**

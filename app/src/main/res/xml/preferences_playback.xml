@@ -31,11 +31,6 @@
             android:key="audio_tunneling_enabled"
             android:summary="Enable support for DSP audio tunneling"
             android:title="Enable Audio Tunneling" />
-        <CheckBoxPreference
-            android:defaultValue="@bool/pref_default_audio_ffmpeg_audio_enabled"
-            android:dependency="internal_player_enabled"
-            android:key="ffmpeg_audio_enabled"
-            android:title="Enable FFMpeg Audio Codecs" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="Advanced">
