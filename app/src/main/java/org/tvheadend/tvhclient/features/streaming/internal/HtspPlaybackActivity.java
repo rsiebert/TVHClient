@@ -292,14 +292,6 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
         playerView.setPlayer(player);
         playerView.setPlaybackPreparer(this);
 
-        // Add the EventLogger
-        /*
-        eventLogger = new EventLogger(trackSelector);
-        player.addListener(eventLogger);
-        player.addAudioDebugListener(eventLogger);
-        player.addVideoDebugListener(eventLogger);
-        */
-
         // Produces DataSource instances through which media data is loaded.
         htspSubscriptionDataSourceFactory = new HtspSubscriptionDataSource.Factory(
                 this, simpleHtspConnection, serverProfile.getName());
