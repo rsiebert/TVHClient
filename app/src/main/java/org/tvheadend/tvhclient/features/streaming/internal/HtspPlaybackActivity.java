@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -38,6 +39,7 @@ import com.google.android.exoplayer2.ui.DefaultTimeBar;
 import com.google.android.exoplayer2.ui.PlayerControlView;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultAllocator;
+import com.google.android.exoplayer2.video.VideoListener;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -64,14 +66,13 @@ import java.util.Locale;
 
 import javax.inject.Inject;
 
-import androidx.annotation.RequiresApi;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
 
 import static org.tvheadend.tvhclient.features.streaming.internal.HtspDataSource.INVALID_TIMESHIFT_TIME;
 
-public class HtspPlaybackActivity extends AppCompatActivity implements View.OnClickListener, PlaybackPreparer, Player.EventListener, Authenticator.Listener, PlayerControlView.VisibilityListener {
+public class HtspPlaybackActivity extends AppCompatActivity implements View.OnClickListener, PlaybackPreparer, Player.EventListener, Authenticator.Listener, PlayerControlView.VisibilityListener, VideoListener, MediaSource.SourceInfoRefreshListener {
 
     @Inject
     protected SharedPreferences sharedPreferences;
@@ -272,7 +273,7 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
 
         trackSelector = new TvheadendTrackSelector(new AdaptiveTrackSelection.Factory(null));
         if (sharedPreferences.getBoolean("audio_tunneling_enabled", false)) {
-            trackSelector.setTunnelingAudioSessionId(C.generateAudioSessionIdV21(this));
+            trackSelector.buildUponParameters().setTunnelingAudioSessionId(C.generateAudioSessionIdV21(this));
         }
 
         DefaultLoadControl loadControl = new DefaultLoadControl(
@@ -288,6 +289,7 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
                 new TvheadendRenderersFactory(this), trackSelector, loadControl);
         player.addListener(this);
         player.setVideoScalingMode(C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING);
+        player.addVideoListener(this);
 
         playerView.setPlayer(player);
         playerView.setPlaybackPreparer(this);
@@ -318,16 +320,13 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
             player.stop();
         }
         if (trackSelector != null) {
-            trackSelector.clearSelectionOverrides();
+            trackSelector.buildUponParameters().clearSelectionOverrides();
         }
         if (htspSubscriptionDataSourceFactory != null) {
             htspSubscriptionDataSourceFactory.releaseCurrentDataSource();
         }
         if (htspFileInputStreamDataSourceFactory != null) {
             htspFileInputStreamDataSourceFactory.releaseCurrentDataSource();
-        }
-        if (mediaSource != null) {
-            mediaSource.releaseSource();
         }
     }
 
@@ -361,7 +360,7 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
             Timber.d("Channel uri " + channelUri);
             mediaSource = new ExtractorMediaSource.Factory(htspSubscriptionDataSourceFactory)
                     .setExtractorsFactory(extractorsFactory)
-                    .createMediaSource(channelUri, handler, null);
+                    .createMediaSource(channelUri);
 
         } else if (dvrId > 0) {
             Recording recording = appRepository.getRecordingData().getItemById(dvrId);
@@ -376,7 +375,7 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
             Timber.d("Recording uri " + recordingUri);
             mediaSource = new ExtractorMediaSource.Factory(htspFileInputStreamDataSourceFactory)
                     .setExtractorsFactory(extractorsFactory)
-                    .createMediaSource(recordingUri, handler, null);
+                    .createMediaSource(recordingUri);
         }
 
         // Prepare the media source
@@ -757,5 +756,20 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
                                 | View.SYSTEM_UI_FLAG_FULLSCREEN);
             }
         }
+    }
+
+    @Override
+    public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
+        Timber.d("Video size changed to width " + width + ", height " + height + ", pixel aspect ratio " + pixelWidthHeightRatio);
+    }
+
+    @Override
+    public void onRenderedFirstFrame() {
+        // NOP
+    }
+
+    @Override
+    public void onSourceInfoRefreshed(MediaSource source, Timeline timeline, @Nullable Object manifest) {
+        Timber.d("Source info has been refreshed");
     }
 }
