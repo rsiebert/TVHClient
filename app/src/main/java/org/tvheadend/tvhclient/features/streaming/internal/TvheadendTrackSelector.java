@@ -18,15 +18,8 @@ package org.tvheadend.tvhclient.features.streaming.internal;
 
 import android.media.tv.TvTrackInfo;
 
-import com.google.android.exoplayer2.ExoPlaybackException;
-import com.google.android.exoplayer2.Format;
-import com.google.android.exoplayer2.RendererCapabilities;
-import com.google.android.exoplayer2.source.TrackGroup;
-import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.FixedTrackSelection;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
-import com.google.android.exoplayer2.util.MimeTypes;
 
 import timber.log.Timber;
 
@@ -62,7 +55,7 @@ class TvheadendTrackSelector extends DefaultTrackSelector {
 
         return true;
     }
-
+/*
     @Override
     protected TrackSelection[] selectTracks(
             RendererCapabilities[] rendererCapabilities,
@@ -204,4 +197,5 @@ class TvheadendTrackSelector extends DefaultTrackSelector {
             return null;
         }
     }
+    */
 }
