@@ -382,6 +382,11 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
     }
 
     @Override
+    public String getQueryHint() {
+        return getString(R.string.search_channels);
+    }
+
+    @Override
     public void onClick(View view, int position) {
         if (view.getId() == R.id.icon || view.getId() == R.id.icon_text) {
             if (recyclerViewAdapter.getItemCount() > 0) {

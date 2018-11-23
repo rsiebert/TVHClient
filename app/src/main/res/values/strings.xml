@@ -384,4 +384,13 @@
     <string name="wol_send">Successfully sent wake on LAN packet to \'%s\'</string>
     <string name="wol_send_broadcast">Successfully sent wake on LAN packet as a broadcast to \'%s\'</string>
     <string name="yesterday">Yesterday</string>
+    <string name="search_completed_recordings">Search completed recordings</string>
+    <string name="search_scheduled_recordings">Search scheduled recordings</string>
+    <string name="search_removed_recordings">Search removed recordings</string>
+    <string name="search_failed_recordings">Search failed recordings</string>
+    <string name="search_series_recordings">Search series recordings</string>
+    <string name="search_timer_recordings">Search timer recordings</string>
+    <string name="search_programs">Search programs</string>
+    <string name="search_channels">Search channels</string>
+    <string name="search_program_guide">Search program guide</string>
 </resources>

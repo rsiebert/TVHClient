@@ -273,4 +273,9 @@ public class TimerRecordingListFragment extends BaseFragment implements Recycler
             return false;
         }
     }
+
+    @Override
+    public String getQueryHint() {
+        return getString(R.string.search_timer_recordings);
+    }
 }

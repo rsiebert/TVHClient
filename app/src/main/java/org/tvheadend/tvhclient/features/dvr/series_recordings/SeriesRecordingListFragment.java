@@ -274,4 +274,9 @@ public class SeriesRecordingListFragment extends BaseFragment implements Recycle
             return false;
         }
     }
+
+    @Override
+    public String getQueryHint() {
+        return getString(R.string.search_series_recordings);
+    }
 }

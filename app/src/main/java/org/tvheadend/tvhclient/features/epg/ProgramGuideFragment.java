@@ -450,6 +450,11 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
         return false;
     }
 
+    @Override
+    public String getQueryHint() {
+        return getString(R.string.search_program_guide);
+    }
+
     private static class EpgViewPagerAdapter extends FragmentStatePagerAdapter {
 
         private final SparseArray<Fragment> registeredFragments = new SparseArray<>();

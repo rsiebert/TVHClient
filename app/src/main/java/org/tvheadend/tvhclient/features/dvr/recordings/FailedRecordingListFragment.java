@@ -74,4 +74,9 @@ public class FailedRecordingListFragment extends RecordingListFragment implement
             showRecordingDetails(0);
         }
     }
+
+    @Override
+    public String getQueryHint() {
+        return getString(R.string.search_failed_recordings);
+    }
 }

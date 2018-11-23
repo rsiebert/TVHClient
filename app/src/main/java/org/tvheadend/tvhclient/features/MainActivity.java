@@ -199,6 +199,11 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Wake
             searchView.setIconifiedByDefault(true);
             searchView.setOnQueryTextListener(this);
             searchView.setOnSuggestionListener(this);
+
+            Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main);
+            if (fragment instanceof SearchRequestInterface) {
+                searchView.setQueryHint(((SearchRequestInterface) fragment).getQueryHint());
+            }
         }
         return true;
     }

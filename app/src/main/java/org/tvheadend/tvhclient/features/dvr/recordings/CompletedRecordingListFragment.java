@@ -82,4 +82,9 @@ public class CompletedRecordingListFragment extends RecordingListFragment implem
             showRecordingDetails(0);
         }
     }
+
+    @Override
+    public String getQueryHint() {
+        return getString(R.string.search_completed_recordings);
+    }
 }

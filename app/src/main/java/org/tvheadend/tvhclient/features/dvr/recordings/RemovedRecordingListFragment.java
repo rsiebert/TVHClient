@@ -74,4 +74,9 @@ public class RemovedRecordingListFragment extends RecordingListFragment implemen
             showRecordingDetails(0);
         }
     }
+
+    @Override
+    public String getQueryHint() {
+        return getString(R.string.search_removed_recordings);
+    }
 }
