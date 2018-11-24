@@ -307,19 +307,17 @@ Debe tener el patrón '01:24:67:9a:cd:ef'."</string>
     <string name="wol_send">"Envió exitosamente del paquete de activación de LAN a '%s'"</string>
     <string name="wol_send_broadcast">"Envió exitosamente el paquete de activación de LAN como una transmisión a '%s'"</string>
     <string name="yesterday">Ayer</string>
-
-
-
-    <string name="add_reminder">Add reminder</string>
-    <string name="authentication_failed">Authentication failed</string>
-    <string name="bad_username_or_password">Wrong username or password</string>
-    <string name="clear">Clear</string>
-    <string name="connected_to_server">Connected to server</string>
-    <string name="connecting_to_server">Connecting to server…</string>
-    <string name="connection_closed">Connection closed</string>
-    <string name="connection_failed">Connection failed</string>
-    <string name="dialog_button_connect">Connect</string>
-    <string name="dialog_button_restart">Restart</string>
+    <string name="add_reminder">Añadir recordatorio</string>
+    <string name="authentication_failed">Fallo de autenticación</string>
+    <string name="bad_username_or_password">Usuario y contraseña incorrectas</string>
+    <string name="clear">Limpiar</string>
+    <string name="connected_to_server">Conectado al servidor</string>
+    <string name="connecting_to_server">Conectando al servidor...</string>
+    <string name="connection_closed">Conexión cerrada</string>
+    <string name="connection_failed">Conexión fallida</string>
+    <string name="dialog_button_connect">Conectar</string>
+    <string name="dialog_button_restart">Reiniciar</string>
+    
     <string name="dialog_content_connection_changed">Connection settings have changed. The application will be restarted and a new initial sync will be performed.</string>
     <string name="dialog_content_disconnect_from_server">No active connection is defined. The existing connection to the server will be closed.</string>
     <string name="dialog_content_reconnect_to_server">The application will be restarted and a new initial sync will be done.</string>
