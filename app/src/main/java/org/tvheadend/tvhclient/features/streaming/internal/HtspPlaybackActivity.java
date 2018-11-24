@@ -20,6 +20,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlaybackException;
@@ -60,7 +61,9 @@ import org.tvheadend.tvhclient.utils.UIUtils;
 
 import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import javax.inject.Inject;
@@ -98,6 +101,8 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
     protected DefaultTimeBar progressBar;
     @BindView(R.id.duration)
     protected TextView durationTextView;
+    @BindView(R.id.player_menu)
+    protected ImageButton playerMenuImageView;
 
     @BindView(R.id.player_rewind)
     protected ImageButton rewindImageView;
@@ -122,6 +127,7 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
     private ServerProfile serverProfile;
     private boolean playerIsPaused = false;
     private SimpleHtspConnection simpleHtspConnection;
+    private float videoAspectRatio;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -158,6 +164,7 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
         pauseImageView.setOnClickListener(this);
         playImageView.setOnClickListener(this);
         forwardImageView.setOnClickListener(this);
+        playerMenuImageView.setOnClickListener(this);
 
         playerView.setControllerVisibilityListener(this);
         playerView.requestFocus();
@@ -413,7 +420,45 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
                 Timber.d("Forward clicked");
                 //onSeekButtonSelected(Math.max(getTimeshiftCurrentPosition() - 5000, getTimeshiftStartPosition()));
                 break;
+
+            case R.id.player_menu:
+                onChangeAspectRatioSelected();
+                break;
         }
+    }
+
+    private void onChangeAspectRatioSelected() {
+        String[] aspectRatioNameList = new String[]{
+                "5:4 (1.25:1)",
+                "4:3 (1.3:1)",
+                "16:9 (1.7:1)"
+        };
+        List<Float> aspectRatioValueList = Arrays.asList(1.25f, 1.3f, 1.7f);
+
+        int selectedAspectRatioListIndex = 2;
+        for (int i = 0; i < aspectRatioValueList.size(); i++) {
+            if (aspectRatioValueList.get(i) == videoAspectRatio) {
+                selectedAspectRatioListIndex = i;
+            }
+        }
+
+        new MaterialDialog.Builder(this)
+                .title("Select the video aspect ratio")
+                .items(aspectRatioNameList)
+                .itemsCallbackSingleChoice(selectedAspectRatioListIndex, (dialog, dialogView, which, text) -> {
+                    Timber.d("Selected aspect ratio index is " + which + ", value " + aspectRatioNameList[which]);
+                    videoAspectRatio = aspectRatioValueList.get(which);
+
+
+                    /*
+                    ViewGroup.LayoutParams layoutParams = playerView.getVideoSurfaceView().getLayoutParams();
+                    layoutParams.height = height;
+                    layoutParams.width = width;
+                    playerView.getVideoSurfaceView().setLayoutParams(layoutParams);
+                    */
+                    return true;
+                })
+                .show();
     }
 
 
@@ -749,7 +794,8 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
 
     @Override
     public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
-        Timber.d("Video size changed to width " + width + ", height " + height + ", pixel aspect ratio " + pixelWidthHeightRatio);
+        videoAspectRatio = ((float) width / (float) height);
+        Timber.d("Video size changed to width " + width + ", height " + height + ", pixel aspect ratio " + videoAspectRatio);
     }
 
     @Override
