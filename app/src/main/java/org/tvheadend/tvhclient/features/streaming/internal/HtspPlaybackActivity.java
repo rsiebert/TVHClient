@@ -2,6 +2,8 @@ package org.tvheadend.tvhclient.features.streaming.internal;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.graphics.Point;
 import android.media.PlaybackParams;
 import android.net.Uri;
 import android.os.Build;
@@ -14,7 +16,9 @@ import android.support.annotation.RequiresApi;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.view.Display;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -74,6 +78,8 @@ import timber.log.Timber;
 
 import static org.tvheadend.tvhclient.features.streaming.internal.HtspDataSource.INVALID_TIMESHIFT_TIME;
 
+// TODO Disable buttons until data source has been loaded and video is playing
+
 public class HtspPlaybackActivity extends AppCompatActivity implements View.OnClickListener, PlaybackPreparer, Player.EventListener, Authenticator.Listener, PlayerControlView.VisibilityListener, VideoListener, MediaSource.SourceInfoRefreshListener {
 
     @Inject
@@ -128,6 +134,8 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
     private boolean playerIsPaused = false;
     private SimpleHtspConnection simpleHtspConnection;
     private float videoAspectRatio;
+    private int videoWidth;
+    private int videoHeight;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -148,8 +156,10 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
             channelId = getIntent().getIntExtra("channelId", -1);
             dvrId = getIntent().getIntExtra("dvrId", -1);
             playerIsPaused = getIntent().getBooleanExtra("playerIsPaused", false);
+            videoAspectRatio = getIntent().getFloatExtra("videoAspectRatio", 1.0f);
         } else {
             playerIsPaused = true;
+            videoAspectRatio = 1.0f;
             Bundle bundle = getIntent().getExtras();
             if (bundle != null) {
                 channelId = bundle.getInt("channelId", -1);
@@ -159,12 +169,6 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
 
         serverStatus = appRepository.getServerStatusData().getActiveItem();
         serverProfile = appRepository.getServerProfileData().getItemById(serverStatus.getHtspPlaybackServerProfileId());
-
-        rewindImageView.setOnClickListener(this);
-        pauseImageView.setOnClickListener(this);
-        playImageView.setOnClickListener(this);
-        forwardImageView.setOnClickListener(this);
-        playerMenuImageView.setOnClickListener(this);
 
         playerView.setControllerVisibilityListener(this);
         playerView.requestFocus();
@@ -186,6 +190,7 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean("playerIsPaused", playerIsPaused);
+        outState.putFloat("videoAspectRatio", videoAspectRatio);
     }
 
     @Override
@@ -282,14 +287,16 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
             trackSelector.buildUponParameters().setTunnelingAudioSessionId(C.generateAudioSessionIdV21(this));
         }
 
-        DefaultLoadControl loadControl = new DefaultLoadControl(
-                new DefaultAllocator(true, C.DEFAULT_BUFFER_SEGMENT_SIZE),
-                DefaultLoadControl.DEFAULT_MIN_BUFFER_MS,
-                DefaultLoadControl.DEFAULT_MAX_BUFFER_MS,
-                Integer.parseInt(sharedPreferences.getString("buffer_playback_ms", "500")),
-                DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS,
-                C.DEFAULT_BUFFER_SEGMENT_SIZE,
-                true);
+        DefaultLoadControl loadControl = new DefaultLoadControl.Builder()
+                .setAllocator(new DefaultAllocator(true, C.DEFAULT_BUFFER_SEGMENT_SIZE))
+                .setBufferDurationsMs(
+                        DefaultLoadControl.DEFAULT_MIN_BUFFER_MS,
+                        DefaultLoadControl.DEFAULT_MAX_BUFFER_MS,
+                        Integer.parseInt(sharedPreferences.getString("buffer_playback_ms", "500")),
+                        DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS)
+                .setTargetBufferBytes(C.DEFAULT_BUFFER_SEGMENT_SIZE)
+                .setPrioritizeTimeOverSizeThresholds(true)
+                .createDefaultLoadControl();
 
         player = ExoPlayerFactory.newSimpleInstance(
                 new TvheadendRenderersFactory(this), trackSelector, loadControl);
@@ -449,13 +456,39 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
                     Timber.d("Selected aspect ratio index is " + which + ", value " + aspectRatioNameList[which]);
                     videoAspectRatio = aspectRatioValueList.get(which);
 
+                    Timber.d("Old video dimensions are w:" + videoWidth + ", h:" + videoHeight);
+                    videoWidth = (int) (videoHeight * videoAspectRatio);
+                    Timber.d("New video dimensions are w:" + videoWidth + ", h:" + videoHeight);
 
+                    Display display = getWindowManager().getDefaultDisplay();
+                    Point size = new Point();
+                    display.getSize(size);
+                    int screenWidth = size.x;
+                    int screenHeight = size.y;
+                    Timber.d("Screen dimensions are w:" + screenWidth + ", h:" + screenHeight);
+
+                    if (videoWidth < screenWidth) {
+                        Timber.d("Video width is less that the screen width");
+                        float factor = screenWidth / videoWidth;
+
+                        videoWidth = (int) (videoWidth * factor);
+                        videoHeight = (int) (videoHeight * factor);
+                        Timber.d("New scaled video dimensions are w:" + videoWidth + ", h:" + videoHeight);
+                    }
                     /*
-                    ViewGroup.LayoutParams layoutParams = playerView.getVideoSurfaceView().getLayoutParams();
-                    layoutParams.height = height;
-                    layoutParams.width = width;
-                    playerView.getVideoSurfaceView().setLayoutParams(layoutParams);
+                    int orientation = getResources().getConfiguration().orientation;
+                    if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                        Timber.d("Device is in landscape");
+                    } else {
+                        Timber.d("Device is in portrait");
+                    }
                     */
+                    Timber.d("Setting layout params");
+                    ViewGroup.LayoutParams layoutParams = playerView.getVideoSurfaceView().getLayoutParams();
+                    layoutParams.width = videoWidth;
+                    layoutParams.height = videoHeight;
+                    playerView.getVideoSurfaceView().setLayoutParams(layoutParams);
+
                     return true;
                 })
                 .show();
@@ -463,13 +496,18 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
 
 
     public void onPlayButtonSelected() {
-        player.setPlayWhenReady(true);
+        if (player != null) {
+            player.setPlayWhenReady(true);
+        }
         if (playerIsPaused) {
             onResumeButtonSelected();
         }
     }
 
     public void onResumeButtonSelected() {
+        if (htspDataSource == null) {
+            return;
+        }
         HtspDataSource dataSource = htspDataSource.get();
         if (dataSource != null) {
             Timber.d("Resuming HtspDataSource");
@@ -487,8 +525,12 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
     }
 
     public void onPauseButtonSelected() {
-        player.setPlayWhenReady(false);
-
+        if (htspDataSource == null) {
+            return;
+        }
+        if (player != null) {
+            player.setPlayWhenReady(false);
+        }
         HtspDataSource dataSource = htspDataSource.get();
         if (dataSource != null) {
             Timber.d("Pausing HtspDataSource");
@@ -585,6 +627,8 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
 
     @Override
     public void onLoadingChanged(boolean isLoading) {
+        Timber.d("Loading has changed to " + isLoading);
+
         if (isLoading) {
             // Fetch the current DataSource for later use
             if (channelId > 0) {
@@ -592,6 +636,13 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
             } else if (dvrId > 0) {
                 htspDataSource = new WeakReference<>(htspFileInputStreamDataSourceFactory.getCurrentDataSource());
             }
+
+            Timber.d("Adding click listeners to the player buttons");
+            rewindImageView.setOnClickListener(this);
+            pauseImageView.setOnClickListener(this);
+            playImageView.setOnClickListener(this);
+            forwardImageView.setOnClickListener(this);
+            playerMenuImageView.setOnClickListener(this);
         }
     }
 
@@ -615,10 +666,12 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
         if (playWhenReady && playbackState == Player.STATE_READY) {
             Timber.d("Media is playing");
             playerIsPaused = false;
+
         } else if (playWhenReady) {
             Timber.d("Player might be idle (plays after prepare()), " +
                     "buffering (plays when data available) " +
                     "or ended (plays when seek away from end)");
+
         } else {
             Timber.d("Player is paused in any state");
             playerIsPaused = true;
@@ -794,8 +847,10 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
 
     @Override
     public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
+        Timber.d("Video size changed to width " + width + ", height " + height + ", pixel aspect ratio " + pixelWidthHeightRatio);
+        videoWidth = width;
+        videoHeight = height;
         videoAspectRatio = ((float) width / (float) height);
-        Timber.d("Video size changed to width " + width + ", height " + height + ", pixel aspect ratio " + videoAspectRatio);
     }
 
     @Override
