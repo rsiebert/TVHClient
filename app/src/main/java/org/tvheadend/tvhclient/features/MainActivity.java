@@ -147,13 +147,13 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Wake
     }
 
     @Override
-    protected void onResume() {
-        castSession = MiscUtils.getCastSession(this);
+    public void onResume() {
         super.onResume();
+        castSession = MiscUtils.getCastSession(this);
     }
 
     @Override
-    protected void onPause() {
+    public void onPause() {
         if (castContext != null) {
             try {
                 castContext.removeCastStateListener(castStateListener);

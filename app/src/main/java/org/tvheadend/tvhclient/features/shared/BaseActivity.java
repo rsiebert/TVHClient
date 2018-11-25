@@ -50,16 +50,16 @@ public abstract class BaseActivity extends AppCompatActivity implements Lifecycl
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
+    public void onResume() {
+        super.onResume();
         LocalBroadcastManager.getInstance(this).registerReceiver(snackbarMessageReceiver, new IntentFilter(SnackbarMessageReceiver.ACTION));
         LocalBroadcastManager.getInstance(this).registerReceiver(serviceStatusReceiver, new IntentFilter(ServiceStatusReceiver.ACTION));
         registerReceiver(networkStatusReceiver, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
+    public void onPause() {
+        super.onPause();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(snackbarMessageReceiver);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(serviceStatusReceiver);
         unregisterReceiver(networkStatusReceiver);
