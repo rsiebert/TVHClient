@@ -23,6 +23,7 @@ import org.tvheadend.tvhclient.data.entity.Connection;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.net.InetSocketAddress;
+import java.nio.channels.CancelledKeyException;
 import java.nio.channels.ClosedByInterruptException;
 import java.nio.channels.ClosedChannelException;
 import java.nio.channels.ClosedSelectorException;
@@ -203,8 +204,14 @@ public class HtspConnection implements Runnable {
                     if (selectionKey.isValid() && selectionKey.isWritable()) {
                         processWritableSelectionKey(selectionKey);
                     }
+
+                } catch (CancelledKeyException cke) {
+                    Timber.e("Key has been cancelled exception during processing selection key - shutting down", cke);
+                    closeConnection(State.FAILED);
+                    break;
+
                 } catch (IOException e) {
-                    Timber.e("Exception during processing selection key - shutting down", e);
+                    Timber.e("IO exception during processing selection key - shutting down", e);
                     closeConnection(State.FAILED);
                     break;
                 }
@@ -274,7 +281,7 @@ public class HtspConnection implements Runnable {
 
         SocketChannel socketChannel = (SocketChannel) selectionKey.channel();
 
-        if (!isClosedOrClosing()) {
+        if (!isConnected()) {
             if (!reader.read(socketChannel)) {
                 Timber.e("Failed to process readable selection key");
                 closeConnection(State.FAILED);
@@ -286,7 +293,7 @@ public class HtspConnection implements Runnable {
 
         SocketChannel socketChannel = (SocketChannel) selectionKey.channel();
 
-        if (!isClosedOrClosing()) {
+        if (!isConnected()) {
             if (!writer.write(socketChannel)) {
                 Timber.e("Failed to process writable selection key");
                 closeConnection(State.FAILED);

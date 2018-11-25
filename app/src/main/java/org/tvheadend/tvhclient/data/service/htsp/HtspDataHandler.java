@@ -20,6 +20,7 @@ import android.support.annotation.NonNull;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.channels.NotYetConnectedException;
 import java.nio.channels.SocketChannel;
 
 import timber.log.Timber;
@@ -88,8 +89,11 @@ public class HtspDataHandler implements HtspConnection.Reader, HtspConnection.Wr
 
         try {
             bytesRead = socketChannel.read(readBuffer);
+        } catch (NotYetConnectedException nyce) {
+            Timber.e("Failed to read from SocketChannel, not yet connected", nyce);
+            return false;
         } catch (IOException e) {
-            Timber.e("Failed to read from SocketChannel", e);
+            Timber.e("Failed to read from SocketChannel, IO error", e);
             return false;
         }
 
