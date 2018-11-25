@@ -44,7 +44,7 @@ public abstract class HtspDataSource implements DataSource, Closeable {
             return mCurrentDataSource.get();
         }
 
-        public HtspDataSource getCurrentDataSource() {
+        HtspDataSource getCurrentDataSource() {
             if (mCurrentDataSource != null) {
                 return mCurrentDataSource.get();
             }
@@ -52,9 +52,11 @@ public abstract class HtspDataSource implements DataSource, Closeable {
             return null;
         }
 
-        public void releaseCurrentDataSource() {
+        void releaseCurrentDataSource() {
             if (mCurrentDataSource != null) {
-                mCurrentDataSource.get().release();
+                if (mCurrentDataSource.get() != null) {
+                    mCurrentDataSource.get().release();
+                }
                 mCurrentDataSource.clear();
                 mCurrentDataSource = null;
             }
