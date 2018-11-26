@@ -240,6 +240,7 @@ public class StartupFragment extends Fragment implements EpgSyncStatusCallback {
             case SYNC_IN_PROGRESS:
                 Timber.d("Service sync is starting or loading data");
                 progressBar.setVisibility(View.VISIBLE);
+                retryButton.setVisibility(View.INVISIBLE);
                 stateTextView.setText(state.getMessage());
                 detailsTextView.setText(state.getDetails());
                 break;
