@@ -50,16 +50,16 @@ public abstract class BaseActivity extends AppCompatActivity implements Lifecycl
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    public void onStart() {
+        super.onStart();
         LocalBroadcastManager.getInstance(this).registerReceiver(snackbarMessageReceiver, new IntentFilter(SnackbarMessageReceiver.ACTION));
         LocalBroadcastManager.getInstance(this).registerReceiver(serviceStatusReceiver, new IntentFilter(ServiceStatusReceiver.ACTION));
         registerReceiver(networkStatusReceiver, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
+    public void onStop() {
+        super.onStop();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(snackbarMessageReceiver);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(serviceStatusReceiver);
         unregisterReceiver(networkStatusReceiver);
@@ -174,13 +174,13 @@ public abstract class BaseActivity extends AppCompatActivity implements Lifecycl
         }
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
     public void onAppBackgrounded() {
         Timber.d("Application is in background");
         appIsInForeground = false;
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_START)
+    @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     public void onAppForegrounded() {
         Timber.d("Application is in foreground");
         appIsInForeground = true;
