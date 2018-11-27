@@ -281,7 +281,7 @@ public class HtspConnection implements Runnable {
 
         SocketChannel socketChannel = (SocketChannel) selectionKey.channel();
 
-        if (!isConnected()) {
+        if (!isClosedOrClosing()) {
             if (!reader.read(socketChannel)) {
                 Timber.e("Failed to process readable selection key");
                 closeConnection(State.FAILED);
@@ -293,7 +293,7 @@ public class HtspConnection implements Runnable {
 
         SocketChannel socketChannel = (SocketChannel) selectionKey.channel();
 
-        if (!isConnected()) {
+        if (!isClosedOrClosing()) {
             if (!writer.write(socketChannel)) {
                 Timber.e("Failed to process writable selection key");
                 closeConnection(State.FAILED);
