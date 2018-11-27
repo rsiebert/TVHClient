@@ -17,9 +17,9 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.Display;
+import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -89,10 +89,10 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
 
     @BindView(R.id.status)
     TextView statusTextView;
-    @BindView(R.id.player_root_view)
-    protected FrameLayout playerRootView;
     @BindView(R.id.player_view)
     protected PlayerView playerView;
+    @BindView(R.id.player_surface_view)
+    protected SurfaceView playerSurfaceView;
     @BindView(R.id.channel_icon)
     protected ImageView iconImageView;
     @BindView(R.id.channel_name)
@@ -133,9 +133,12 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
     private ServerProfile serverProfile;
     private boolean playerIsPaused = false;
     private SimpleHtspConnection simpleHtspConnection;
-    private float videoAspectRatio;
     private int videoWidth;
     private int videoHeight;
+    private float videoAspectRatio;
+    private int selectedAspectRatioListIndex;
+    private List<Float> aspectRatioValueList;
+    private String[] aspectRatioNameList;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -157,15 +160,25 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
             dvrId = getIntent().getIntExtra("dvrId", -1);
             playerIsPaused = getIntent().getBooleanExtra("playerIsPaused", false);
             videoAspectRatio = getIntent().getFloatExtra("videoAspectRatio", 1.0f);
+            selectedAspectRatioListIndex = getIntent().getIntExtra("selectedAspectRatioListIndex", 2);
         } else {
             playerIsPaused = true;
             videoAspectRatio = 1.0f;
+            selectedAspectRatioListIndex = 2;
             Bundle bundle = getIntent().getExtras();
             if (bundle != null) {
                 channelId = bundle.getInt("channelId", -1);
                 dvrId = bundle.getInt("dvrId", -1);
             }
         }
+
+        aspectRatioNameList = new String[]{
+                "5:4 (1.25:1)",
+                "4:3 (1.3:1)",
+                "16:9 (1.7:1)",
+                "16:10 (1.6:1)"
+        };
+        aspectRatioValueList = Arrays.asList(1.25f, 1.3f, 1.7f, 1.6f);
 
         serverStatus = appRepository.getServerStatusData().getActiveItem();
         serverProfile = appRepository.getServerProfileData().getItemById(serverStatus.getHtspPlaybackServerProfileId());
@@ -191,6 +204,7 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
         super.onSaveInstanceState(outState);
         outState.putBoolean("playerIsPaused", playerIsPaused);
         outState.putFloat("videoAspectRatio", videoAspectRatio);
+        outState.putInt("selectedAspectRatioListIndex", selectedAspectRatioListIndex);
     }
 
     @Override
@@ -302,6 +316,7 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
                 new TvheadendRenderersFactory(this), trackSelector, loadControl);
         player.addListener(this);
         player.addVideoListener(this);
+        player.setVideoSurfaceView(playerSurfaceView);
 
         playerView.setPlayer(player);
         playerView.setPlaybackPreparer(this);
@@ -344,8 +359,6 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
 
     private void startPlayback() {
         Timber.d("Starting playback");
-
-        playerRootView.setVisibility(View.VISIBLE);
 
         // Create the media source
         if (channelId > 0) {
@@ -435,14 +448,7 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
     }
 
     private void onChangeAspectRatioSelected() {
-        String[] aspectRatioNameList = new String[]{
-                "5:4 (1.25:1)",
-                "4:3 (1.3:1)",
-                "16:9 (1.7:1)"
-        };
-        List<Float> aspectRatioValueList = Arrays.asList(1.25f, 1.3f, 1.7f);
 
-        int selectedAspectRatioListIndex = 2;
         for (int i = 0; i < aspectRatioValueList.size(); i++) {
             if (aspectRatioValueList.get(i) == videoAspectRatio) {
                 selectedAspectRatioListIndex = i;
@@ -455,40 +461,8 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
                 .itemsCallbackSingleChoice(selectedAspectRatioListIndex, (dialog, dialogView, which, text) -> {
                     Timber.d("Selected aspect ratio index is " + which + ", value " + aspectRatioNameList[which]);
                     videoAspectRatio = aspectRatioValueList.get(which);
-
-                    Timber.d("Old video dimensions are w:" + videoWidth + ", h:" + videoHeight);
-                    videoWidth = (int) (videoHeight * videoAspectRatio);
-                    Timber.d("New video dimensions are w:" + videoWidth + ", h:" + videoHeight);
-
-                    Display display = getWindowManager().getDefaultDisplay();
-                    Point size = new Point();
-                    display.getSize(size);
-                    int screenWidth = size.x;
-                    int screenHeight = size.y;
-                    Timber.d("Screen dimensions are w:" + screenWidth + ", h:" + screenHeight);
-
-                    if (videoWidth < screenWidth) {
-                        Timber.d("Video width is less that the screen width");
-                        float factor = screenWidth / videoWidth;
-
-                        videoWidth = (int) (videoWidth * factor);
-                        videoHeight = (int) (videoHeight * factor);
-                        Timber.d("New scaled video dimensions are w:" + videoWidth + ", h:" + videoHeight);
-                    }
-                    /*
-                    int orientation = getResources().getConfiguration().orientation;
-                    if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                        Timber.d("Device is in landscape");
-                    } else {
-                        Timber.d("Device is in portrait");
-                    }
-                    */
-                    Timber.d("Setting layout params");
-                    ViewGroup.LayoutParams layoutParams = playerView.getVideoSurfaceView().getLayoutParams();
-                    layoutParams.width = videoWidth;
-                    layoutParams.height = videoHeight;
-                    playerView.getVideoSurfaceView().setLayoutParams(layoutParams);
-
+                    selectedAspectRatioListIndex = which;
+                    changeAspectRatio();
                     return true;
                 })
                 .show();
@@ -851,6 +825,50 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
         videoWidth = width;
         videoHeight = height;
         videoAspectRatio = ((float) width / (float) height);
+        changeAspectRatio();
+    }
+
+    private void changeAspectRatio() {
+        Timber.d("Old video dimensions are w:" + videoWidth + ", h:" + videoHeight);
+        videoWidth = (int) (videoHeight * videoAspectRatio);
+        Timber.d("New video dimensions are w:" + videoWidth + ", h:" + videoHeight);
+
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int screenWidth = size.x;
+        int screenHeight = size.y;
+        Timber.d("Screen dimensions are w:" + screenWidth + ", h:" + screenHeight);
+
+        int orientation = getResources().getConfiguration().orientation;
+        int newVideoWidth = videoWidth;
+        int newVideoHeight = videoHeight;
+
+        if (orientation == Configuration.ORIENTATION_PORTRAIT
+                && (videoWidth != screenWidth || videoHeight != screenHeight)) {
+            Timber.d("Video width is less that the screen width");
+            float factor = (float) screenWidth / (float) videoWidth;
+
+            newVideoWidth = (int) (videoWidth * factor);
+            newVideoHeight = (int) (videoHeight * factor);
+            Timber.d("New scaled video dimensions are w:" + newVideoWidth + ", h:" + newVideoHeight);
+        }
+
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE
+                && (videoWidth != screenWidth || videoHeight != screenHeight)) {
+            Timber.d("Video height is less that the screen height");
+            float factor = (float) screenHeight / (float) videoHeight;
+
+            newVideoWidth = (int) (videoWidth * factor);
+            newVideoHeight = (int) (videoHeight * factor);
+            Timber.d("New scaled video dimensions are w:" + newVideoWidth + ", h:" + newVideoHeight);
+        }
+
+        Timber.d("Setting layout params");
+        ViewGroup.LayoutParams surfaceViewLayoutParams = playerView.getVideoSurfaceView().getLayoutParams();
+        surfaceViewLayoutParams.width = newVideoWidth;
+        surfaceViewLayoutParams.height = newVideoHeight;
+        playerView.getVideoSurfaceView().setLayoutParams(surfaceViewLayoutParams);
     }
 
     @Override
