@@ -79,6 +79,8 @@ import timber.log.Timber;
 import static org.tvheadend.tvhclient.features.streaming.internal.HtspDataSource.INVALID_TIMESHIFT_TIME;
 
 // TODO Disable buttons until data source has been loaded and video is playing
+// TODO center the surfaceview when scaled
+// TODO Change the three dot menu to a separate icon
 
 public class HtspPlaybackActivity extends AppCompatActivity implements View.OnClickListener, PlaybackPreparer, Player.EventListener, Authenticator.Listener, PlayerControlView.VisibilityListener, VideoListener, MediaSource.SourceInfoRefreshListener {
 
