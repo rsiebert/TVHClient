@@ -9,7 +9,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.HandlerThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
@@ -20,6 +19,7 @@ import android.view.Display;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -89,12 +89,14 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
     @Inject
     protected AppRepository appRepository;
 
+    @BindView(R.id.exo_player_frame)
+    protected FrameLayout playerMainFrame;
+    @BindView(R.id.exo_player_surface_view)
+    protected SurfaceView playerSurfaceView;
     @BindView(R.id.status)
-    TextView statusTextView;
+    protected TextView statusTextView;
     @BindView(R.id.player_view)
     protected PlayerView playerView;
-    @BindView(R.id.player_surface_view)
-    protected SurfaceView playerSurfaceView;
     @BindView(R.id.channel_icon)
     protected ImageView iconImageView;
     @BindView(R.id.channel_name)
@@ -121,7 +123,6 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
     @BindView(R.id.player_forward)
     protected ImageButton forwardImageView;
 
-    private Handler handler;
     private int channelId;
     private int dvrId;
     private SimpleExoPlayer player;
@@ -152,10 +153,6 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
 
         MainApplication.getComponent().inject(this);
         ButterKnife.bind(this);
-
-        HandlerThread handlerThread = new HandlerThread("PlaybackSession Handler Thread");
-        handlerThread.start();
-        handler = new Handler(handlerThread.getLooper());
 
         if (savedInstanceState != null) {
             channelId = getIntent().getIntExtra("channelId", -1);
@@ -845,32 +842,40 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
         int orientation = getResources().getConfiguration().orientation;
         int newVideoWidth = videoWidth;
         int newVideoHeight = videoHeight;
+        int offsetStart = 0;
+        int offsetTop = 0;
 
         if (orientation == Configuration.ORIENTATION_PORTRAIT
                 && (videoWidth != screenWidth || videoHeight != screenHeight)) {
-            Timber.d("Video width is less that the screen width");
+            Timber.d("Video is in portrait");
             float factor = (float) screenWidth / (float) videoWidth;
 
             newVideoWidth = (int) (videoWidth * factor);
             newVideoHeight = (int) (videoHeight * factor);
-            Timber.d("New scaled video dimensions are w:" + newVideoWidth + ", h:" + newVideoHeight);
+
+            offsetTop = (screenHeight - newVideoHeight) / 2;
+            Timber.d("New scaled video dimensions are w:" + newVideoWidth + ", h:" + newVideoHeight + ", offset " + offsetTop);
         }
 
         if (orientation == Configuration.ORIENTATION_LANDSCAPE
                 && (videoWidth != screenWidth || videoHeight != screenHeight)) {
-            Timber.d("Video height is less that the screen height");
+            Timber.d("Video is in landscape");
             float factor = (float) screenHeight / (float) videoHeight;
 
             newVideoWidth = (int) (videoWidth * factor);
             newVideoHeight = (int) (videoHeight * factor);
-            Timber.d("New scaled video dimensions are w:" + newVideoWidth + ", h:" + newVideoHeight);
+
+            offsetStart = (screenWidth - newVideoWidth) / 2;
+            Timber.d("New scaled video dimensions are w:" + newVideoWidth + ", h:" + newVideoHeight + ", offset " + offsetStart);
         }
 
         Timber.d("Setting layout params");
-        ViewGroup.LayoutParams surfaceViewLayoutParams = playerView.getVideoSurfaceView().getLayoutParams();
-        surfaceViewLayoutParams.width = newVideoWidth;
-        surfaceViewLayoutParams.height = newVideoHeight;
-        playerView.getVideoSurfaceView().setLayoutParams(surfaceViewLayoutParams);
+
+        ViewGroup.LayoutParams layoutParams = playerMainFrame.getLayoutParams();
+        layoutParams.width = newVideoWidth;
+        layoutParams.height = newVideoHeight;
+        playerMainFrame.setLayoutParams(layoutParams);
+        playerMainFrame.requestLayout();
     }
 
     @Override

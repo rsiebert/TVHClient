@@ -37,15 +37,6 @@
         app:layout_constraintStart_toStartOf="@+id/status_background"
         app:layout_constraintTop_toTopOf="@+id/status_background" />
 
-    <SurfaceView
-        android:id="@+id/player_surface_view"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <com.google.android.exoplayer2.ui.PlayerView
         android:id="@+id/player_view"
         android:layout_width="0dp"
