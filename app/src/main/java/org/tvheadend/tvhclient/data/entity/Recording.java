@@ -88,11 +88,11 @@ public class Recording {
     }
 
     public boolean isRecording() {
-        return error == null && (TextUtils.equals(state, "recording") && !TextUtils.equals(state, "scheduled"));
+        return error == null && TextUtils.equals(state, "recording");
     }
 
     public boolean isScheduled() {
-        return error == null && (TextUtils.equals(state, "recording") || TextUtils.equals(state, "scheduled"));
+        return error == null && TextUtils.equals(state, "scheduled");
     }
 
     public boolean isFailed() {
