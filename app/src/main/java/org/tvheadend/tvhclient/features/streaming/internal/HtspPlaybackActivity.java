@@ -111,8 +111,10 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
     protected DefaultTimeBar progressBar;
     @BindView(R.id.duration)
     protected TextView durationTextView;
-    @BindView(R.id.player_menu)
-    protected ImageButton playerMenuImageView;
+    @BindView(R.id.player_menu_subtitle)
+    protected ImageButton playerMenuSubtitleImageView;
+    @BindView(R.id.player_menu_aspect_ratio)
+    protected ImageButton playerMenuAspectRatioImageView;
 
     @BindView(R.id.player_rewind)
     protected ImageButton rewindImageView;
@@ -177,7 +179,7 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
                 "16:9 (1.7:1)",
                 "16:10 (1.6:1)"
         };
-        aspectRatioValueList = Arrays.asList(1.25f, 1.3f, 1.7f, 1.6f);
+        aspectRatioValueList = Arrays.asList(1.25f, 1.333f, 1.778f, 1.6f);
 
         serverStatus = appRepository.getServerStatusData().getActiveItem();
         serverProfile = appRepository.getServerProfileData().getItemById(serverStatus.getHtspPlaybackServerProfileId());
@@ -440,20 +442,27 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
                 //onSeekButtonSelected(Math.max(getTimeshiftCurrentPosition() - 5000, getTimeshiftStartPosition()));
                 break;
 
-            case R.id.player_menu:
+            case R.id.player_menu_aspect_ratio:
                 onChangeAspectRatioSelected();
+                break;
+
+            case R.id.player_menu_subtitle:
+                onSubtitleSelected();
                 break;
         }
     }
 
-    private void onChangeAspectRatioSelected() {
+    private void onSubtitleSelected() {
 
+    }
+
+    private void onChangeAspectRatioSelected() {
+        Timber.d("Aspect ration button selected");
         for (int i = 0; i < aspectRatioValueList.size(); i++) {
             if (aspectRatioValueList.get(i) == videoAspectRatio) {
                 selectedAspectRatioListIndex = i;
             }
         }
-
         new MaterialDialog.Builder(this)
                 .title("Select the video aspect ratio")
                 .items(aspectRatioNameList)
@@ -615,7 +624,8 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
             pauseImageView.setOnClickListener(this);
             playImageView.setOnClickListener(this);
             forwardImageView.setOnClickListener(this);
-            playerMenuImageView.setOnClickListener(this);
+            playerMenuSubtitleImageView.setOnClickListener(this);
+            playerMenuAspectRatioImageView.setOnClickListener(this);
         }
     }
 
@@ -828,48 +838,32 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
     }
 
     private void changeAspectRatio() {
-        Timber.d("Old video dimensions are w:" + videoWidth + ", h:" + videoHeight);
-        videoWidth = (int) (videoHeight * videoAspectRatio);
-        Timber.d("New video dimensions are w:" + videoWidth + ", h:" + videoHeight);
+        Timber.d("Original video dimensions are " + videoWidth + ":" + videoHeight);
 
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
         int screenWidth = size.x;
         int screenHeight = size.y;
-        Timber.d("Screen dimensions are w:" + screenWidth + ", h:" + screenHeight);
 
-        int orientation = getResources().getConfiguration().orientation;
         int newVideoWidth = videoWidth;
         int newVideoHeight = videoHeight;
-        int offsetStart = 0;
-        int offsetTop = 0;
+        int orientation = getResources().getConfiguration().orientation;
 
-        if (orientation == Configuration.ORIENTATION_PORTRAIT
-                && (videoWidth != screenWidth || videoHeight != screenHeight)) {
-            Timber.d("Video is in portrait");
-            float factor = (float) screenWidth / (float) videoWidth;
+        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+            if (newVideoWidth != screenWidth) {
+                newVideoWidth = screenWidth;
+            }
+            newVideoHeight = (int) ((float) newVideoWidth / videoAspectRatio);
+            Timber.d("New portrait video dimensions are " + newVideoWidth + ":" + newVideoHeight);
 
-            newVideoWidth = (int) (videoWidth * factor);
-            newVideoHeight = (int) (videoHeight * factor);
-
-            offsetTop = (screenHeight - newVideoHeight) / 2;
-            Timber.d("New scaled video dimensions are w:" + newVideoWidth + ", h:" + newVideoHeight + ", offset " + offsetTop);
+        } else if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            if (newVideoHeight != screenHeight) {
+                newVideoHeight = screenHeight;
+            }
+            newVideoWidth = (int) ((float) newVideoHeight * videoAspectRatio);
+            Timber.d("New landscape video dimensions are " + newVideoWidth + ":" + newVideoHeight);
         }
-
-        if (orientation == Configuration.ORIENTATION_LANDSCAPE
-                && (videoWidth != screenWidth || videoHeight != screenHeight)) {
-            Timber.d("Video is in landscape");
-            float factor = (float) screenHeight / (float) videoHeight;
-
-            newVideoWidth = (int) (videoWidth * factor);
-            newVideoHeight = (int) (videoHeight * factor);
-
-            offsetStart = (screenWidth - newVideoWidth) / 2;
-            Timber.d("New scaled video dimensions are w:" + newVideoWidth + ", h:" + newVideoHeight + ", offset " + offsetStart);
-        }
-
-        Timber.d("Setting layout params");
 
         ViewGroup.LayoutParams layoutParams = playerMainFrame.getLayoutParams();
         layoutParams.width = newVideoWidth;
