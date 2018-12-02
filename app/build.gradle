@@ -102,7 +102,7 @@ dependencies {
     // Misc libraries
     implementation 'com.anjlab.android.iab.v3:library:1.0.44'
     implementation 'com.afollestad.material-dialogs:commons:0.9.6.0'
-    implementation 'com.mikepenz:materialdrawer:6.0.8'
+    implementation 'com.mikepenz:materialdrawer:6.0.9'
     // View binding
     implementation 'com.jakewharton:butterknife:8.8.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
