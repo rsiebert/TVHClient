@@ -1,9 +1,5 @@
 package org.tvheadend.tvhclient.features.shared;
 
-import android.arch.lifecycle.Lifecycle;
-import android.arch.lifecycle.LifecycleObserver;
-import android.arch.lifecycle.OnLifecycleEvent;
-import android.arch.lifecycle.ProcessLifecycleOwner;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
@@ -29,19 +25,17 @@ import org.tvheadend.tvhclient.features.shared.receivers.SnackbarMessageReceiver
 
 import timber.log.Timber;
 
-public abstract class BaseActivity extends AppCompatActivity implements LifecycleObserver, NetworkStatusReceiverCallback, NetworkStatusInterface, EpgSyncStatusCallback {
+public abstract class BaseActivity extends AppCompatActivity implements NetworkStatusReceiverCallback, NetworkStatusInterface, EpgSyncStatusCallback {
 
     private NetworkStatusReceiver networkStatusReceiver;
     private boolean isNetworkAvailable;
     private ServiceStatusReceiver serviceStatusReceiver;
     private SnackbarMessageReceiver snackbarMessageReceiver;
     private int serverConnectionRetryCounter;
-    private boolean appIsInForeground;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
         isNetworkAvailable = false;
         networkStatusReceiver = new NetworkStatusReceiver(this);
         serviceStatusReceiver = new ServiceStatusReceiver(this);
@@ -74,11 +68,6 @@ public abstract class BaseActivity extends AppCompatActivity implements Lifecycl
     }
 
     private void onNetworkAvailabilityChanged(boolean isAvailable) {
-        if (!appIsInForeground) {
-            Timber.d("App is in the background, not doing anything");
-            return;
-        }
-
         if (isAvailable) {
             if (!isNetworkAvailable) {
                 Timber.d("Network changed from offline to online, starting service");
@@ -172,17 +161,5 @@ public abstract class BaseActivity extends AppCompatActivity implements Lifecycl
                 super.onBackPressed();
             }
         }
-    }
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
-    public void onAppBackgrounded() {
-        Timber.d("Application is in background");
-        appIsInForeground = false;
-    }
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
-    public void onAppForegrounded() {
-        Timber.d("Application is in foreground");
-        appIsInForeground = true;
     }
 }
