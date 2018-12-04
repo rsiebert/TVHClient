@@ -298,10 +298,6 @@ public class RecordingDetailsFragment extends BaseFragment implements RecordingR
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case android.R.id.home:
-                activity.finish();
-                return true;
-
             case R.id.menu_play:
                 return menuUtils.handleMenuPlayRecording(recording.getId());
 
@@ -353,16 +349,12 @@ public class RecordingDetailsFragment extends BaseFragment implements RecordingR
 
     @Override
     public void onRecordingRemoved() {
-        if (!isDualPane) {
-            activity.finish();
-        } else {
-            Fragment detailsFragment = activity.getSupportFragmentManager().findFragmentById(R.id.details);
-            if (detailsFragment != null) {
-                activity.getSupportFragmentManager()
-                        .beginTransaction()
-                        .remove(detailsFragment)
-                        .commit();
-            }
+        Fragment detailsFragment = activity.getSupportFragmentManager().findFragmentById(isDualPane ? R.id.details : R.id.main);
+        if (detailsFragment != null) {
+            activity.getSupportFragmentManager()
+                    .beginTransaction()
+                    .remove(detailsFragment)
+                    .commit();
         }
     }
 

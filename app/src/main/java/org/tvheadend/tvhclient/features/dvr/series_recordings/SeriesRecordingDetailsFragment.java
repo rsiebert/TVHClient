@@ -194,10 +194,6 @@ public class SeriesRecordingDetailsFragment extends BaseFragment implements Reco
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case android.R.id.home:
-                activity.finish();
-                return true;
-
             case R.id.menu_edit:
                 Intent intent = new Intent(activity, RecordingAddEditActivity.class);
                 intent.putExtra("type", "series_recording");
@@ -235,16 +231,12 @@ public class SeriesRecordingDetailsFragment extends BaseFragment implements Reco
 
     @Override
     public void onRecordingRemoved() {
-        if (!isDualPane) {
-            activity.finish();
-        } else {
-            Fragment detailsFragment = activity.getSupportFragmentManager().findFragmentById(R.id.details);
-            if (detailsFragment != null) {
-                activity.getSupportFragmentManager()
-                        .beginTransaction()
-                        .remove(detailsFragment)
-                        .commit();
-            }
+        Fragment detailsFragment = activity.getSupportFragmentManager().findFragmentById(isDualPane ? R.id.details : R.id.main);
+        if (detailsFragment != null) {
+            activity.getSupportFragmentManager()
+                    .beginTransaction()
+                    .remove(detailsFragment)
+                    .commit();
         }
     }
 }
