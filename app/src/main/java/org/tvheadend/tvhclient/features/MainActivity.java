@@ -282,7 +282,7 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Wake
             }
 
             // Show the new fragment that represents the selected menu entry.
-            FragmentTransaction fm = getSupportFragmentManager()
+            FragmentTransaction ft = getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.main, fragment);
             // Only add the fragment to the back stack if a new one has been created.
@@ -290,9 +290,9 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Wake
             // change shall not be added to the back stack. This prevents having to
             // press the back key as often as the device was rotated.
             if (addFragmentToBackStack) {
-                fm.addToBackStack(null);
+                ft.addToBackStack(null);
             }
-            fm.commit();
+            ft.commit();
         }
     }
 
