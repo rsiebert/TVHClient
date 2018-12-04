@@ -340,6 +340,10 @@ public class HtspConnection implements Runnable {
         }
     }
 
+    public boolean isConnecting() {
+        return getState() == State.CONNECTING;
+    }
+
     public boolean isConnected() {
         return getState() == State.CONNECTED;
     }

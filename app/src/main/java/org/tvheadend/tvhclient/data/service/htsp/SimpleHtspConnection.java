@@ -100,6 +100,10 @@ public class SimpleHtspConnection implements HtspMessage.Dispatcher {
         return htspConnection.isConnected();
     }
 
+    public boolean isConnecting() {
+        return htspConnection.isConnecting();
+    }
+
     public boolean isAuthenticated() {
         return authenticator.isAuthenticated();
     }
