@@ -42,7 +42,7 @@ import org.tvheadend.tvhclient.data.entity.TimerRecording;
                 ServerProfile.class,
                 ServerStatus.class
         },
-        version = 6)
+        version = 7)
 public abstract class AppRoomDatabase extends RoomDatabase {
 
     private static AppRoomDatabase instance;
@@ -56,6 +56,7 @@ public abstract class AppRoomDatabase extends RoomDatabase {
                         .addMigrations(MIGRATION_3_4)
                         .addMigrations(MIGRATION_4_5)
                         .addMigrations(MIGRATION_5_6)
+                        .addMigrations(MIGRATION_6_7)
                         .build();
             }
         }
@@ -94,6 +95,28 @@ public abstract class AppRoomDatabase extends RoomDatabase {
         @Override
         public void migrate(@NonNull SupportSQLiteDatabase database) {
             database.execSQL("ALTER TABLE server_status ADD COLUMN http_playback_server_profile_id INTEGER NOT NULL DEFAULT 0;");
+        }
+    };
+
+    private static final Migration MIGRATION_6_7 = new Migration(6, 7) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            database.execSQL("ALTER TABLE recordings ADD COLUMN image TEXT;");
+            database.execSQL("ALTER TABLE recordings ADD COLUMN fanart_image TEXT;");
+            database.execSQL("ALTER TABLE recordings ADD COLUMN copyright_year INTEGER NOT NULL DEFAULT 0;");
+            database.execSQL("ALTER TABLE recordings ADD COLUMN removal INTEGER NOT NULL DEFAULT 0;");
+
+            database.execSQL("ALTER TABLE timer_recordings ADD COLUMN removal INTEGER NOT NULL DEFAULT 0;");
+            database.execSQL("ALTER TABLE series_recordings ADD COLUMN removal INTEGER NOT NULL DEFAULT 0;");
+
+            database.execSQL("ALTER TABLE series_recordings ADD COLUMN max_count INTEGER NOT NULL DEFAULT 0;");
+
+            database.execSQL("ALTER TABLE programs ADD COLUMN credits TEXT;");
+            database.execSQL("ALTER TABLE programs ADD COLUMN category TEXT;");
+            database.execSQL("ALTER TABLE programs ADD COLUMN keyword TEXT;");
+            database.execSQL("ALTER TABLE programs ADD COLUMN series_link_uri TEXT;");
+            database.execSQL("ALTER TABLE programs ADD COLUMN episode_uri TEXT;");
+            database.execSQL("ALTER TABLE programs ADD COLUMN copyright_year INTEGER NOT NULL DEFAULT 0;");
         }
     };
 

@@ -56,12 +56,18 @@ public class Recording {
     private int duplicate = 0;              // u32   optional   Duplicate flag (Added in version 33).
     private String episode;                 // str   optional   Episode (Added in version 18).
     private String comment;                 // str   optional   Comment (Added in version 18).
+    private String image;                   // str   optional   Artwork for a recording
+    @ColumnInfo(name = "fanart_image")
+    private String fanartImage;             // str   optional   Fanbased artwork for a recording (Added in version 33)
+    @ColumnInfo(name = "copyright_year")
+    private int copyrightYear;              // str   optional   The copyright year (Added in version 33)
+    private int removal;                    // u32   optional   Number of days to keep recorded files (Added in version 32)
+
     @Ignore
     private List<String> files;             // msg   optional   All recorded files for playback (Added in version 21).
 
     @ColumnInfo(name = "connection_id")
     private int connectionId;
-
     @ColumnInfo(name = "channel_name")
     private String channelName;
     @ColumnInfo(name = "channel_icon")
@@ -361,5 +367,37 @@ public class Recording {
 
     public void setDuplicate(int duplicate) {
         this.duplicate = duplicate;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public String getFanartImage() {
+        return fanartImage;
+    }
+
+    public void setFanartImage(String fanartImage) {
+        this.fanartImage = fanartImage;
+    }
+
+    public int getCopyrightYear() {
+        return copyrightYear;
+    }
+
+    public void setCopyrightYear(int copyrightYear) {
+        this.copyrightYear = copyrightYear;
+    }
+
+    public int getRemoval() {
+        return removal;
+    }
+
+    public void setRemoval(int removal) {
+        this.removal = removal;
     }
 }

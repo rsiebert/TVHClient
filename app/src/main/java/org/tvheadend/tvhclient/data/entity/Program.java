@@ -17,6 +17,9 @@ public class Program {
     private String subtitle;                // str   optional   Subtitle of event.
     private String summary;                 // str   optional   Short description of the event (Added in version 6).
     private String description;             // str   optional   Long description of the event.
+    private String credits;                 // str   optional
+    private String category;                // str   optional
+    private String keyword;                 // str   optional
     @ColumnInfo(name = "series_link_id")
     private int serieslinkId;               // u32   optional   Series Link ID (Added in version 6).
     @ColumnInfo(name = "episode_id")
@@ -31,6 +34,8 @@ public class Program {
     private int ageRating;                  // u32   optional   Minimum age rating (Added in version 6).
     @ColumnInfo(name = "star_rating")
     private int starRating;                 // u32   optional   Star rating (1-5) (Added in version 6).
+    @ColumnInfo(name = "copyright_year")
+    private int copyrightYear;              // str   optional   The copyright year (Added in version 33)
     @ColumnInfo(name = "first_aired")
     private long firstAired;                // s64   optional   Original broadcast time, UNIX time (Added in version 6).
     @ColumnInfo(name = "season_number")
@@ -52,10 +57,13 @@ public class Program {
     private int dvrId;                      // u32   optional   ID of a recording (Added in version 5).
     @ColumnInfo(name = "next_event_id")
     private int nextEventId;                // u32   optional   ID of next event on the same channel.
+    @ColumnInfo(name = "series_link_uri")
+    private String serieslinkUri;           // str   optional
+    @ColumnInfo(name = "episode_uri")
+    private String episodeUri;              // str   optional
 
     @ColumnInfo(name = "connection_id")
     private int connectionId;
-
     @ColumnInfo(name = "channel_name")
     private String channelName;
     @ColumnInfo(name = "channel_icon")
@@ -302,5 +310,53 @@ public class Program {
 
     public void setConnectionId(int connectionId) {
         this.connectionId = connectionId;
+    }
+
+    public String getSerieslinkUri() {
+        return serieslinkUri;
+    }
+
+    public void setSerieslinkUri(String serieslinkUri) {
+        this.serieslinkUri = serieslinkUri;
+    }
+
+    public String getEpisodeUri() {
+        return episodeUri;
+    }
+
+    public void setEpisodeUri(String episodeUri) {
+        this.episodeUri = episodeUri;
+    }
+
+    public String getCredits() {
+        return credits;
+    }
+
+    public void setCredits(String credits) {
+        this.credits = credits;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public String getKeyword() {
+        return keyword;
+    }
+
+    public void setKeyword(String keyword) {
+        this.keyword = keyword;
+    }
+
+    public int getCopyrightYear() {
+        return copyrightYear;
+    }
+
+    public void setCopyrightYear(int copyrightYear) {
+        this.copyrightYear = copyrightYear;
     }
 }

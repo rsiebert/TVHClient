@@ -25,10 +25,10 @@ public class TimerRecording {
     private int retention;              // u32   optional   Retention in days.
     private String owner;               // str   optional   Owner of this timerec entry.
     private String creator;             // str   optional   Creator of this timerec entry.
+    private int removal;                // u32   optional   Number of days to keep recorded files (Added in version 32)
 
     @ColumnInfo(name = "connection_id")
     private int connectionId;
-
     @ColumnInfo(name = "channel_name")
     private String channelName;
     @ColumnInfo(name = "channel_icon")
@@ -176,5 +176,13 @@ public class TimerRecording {
 
     public void setConnectionId(int connectionId) {
         this.connectionId = connectionId;
+    }
+
+    public int getRemoval() {
+        return removal;
+    }
+
+    public void setRemoval(int removal) {
+        this.removal = removal;
     }
 }

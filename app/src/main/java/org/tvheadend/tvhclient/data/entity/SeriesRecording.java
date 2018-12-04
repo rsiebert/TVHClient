@@ -45,10 +45,12 @@ public class SeriesRecording {
     private String creator;                     // str   optional   Creator of this autorec entry (Added in version 18).
     @ColumnInfo(name = "dup_detect")
     private int dupDetect;                      // u32   optional   Duplicate detection (see addAutorecEntry) (Added in version 20).
+    private int removal;                        // u32   optional   Number of days to keep recorded files (Added in version 32)
+    @ColumnInfo(name = "max_count")
+    private int maxCount;                       // u32   optional   The maximum number of entries that can be matched (Added in version 32)
 
     @ColumnInfo(name = "connection_id")
     private int connectionId;
-
     @ColumnInfo(name = "channel_name")
     private String channelName;
     @ColumnInfo(name = "channel_icon")
@@ -255,5 +257,21 @@ public class SeriesRecording {
 
     public void setConnectionId(int connectionId) {
         this.connectionId = connectionId;
+    }
+
+    public int getRemoval() {
+        return removal;
+    }
+
+    public void setRemoval(int removal) {
+        this.removal = removal;
+    }
+
+    public int getMaxCount() {
+        return maxCount;
+    }
+
+    public void setMaxCount(int maxCount) {
+        this.maxCount = maxCount;
     }
 }
