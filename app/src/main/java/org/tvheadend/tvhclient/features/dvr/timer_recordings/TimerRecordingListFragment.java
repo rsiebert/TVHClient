@@ -26,7 +26,6 @@ import android.widget.ProgressBar;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.TimerRecording;
 import org.tvheadend.tvhclient.features.dvr.RecordingAddEditActivity;
-import org.tvheadend.tvhclient.features.dvr.recordings.RecordingDetailsActivity;
 import org.tvheadend.tvhclient.features.search.SearchRequestInterface;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback;
@@ -170,11 +169,12 @@ public class TimerRecordingListFragment extends BaseFragment implements Recycler
             return;
         }
         if (!isDualPane) {
-            // Launch a new activity to display the program list of the selected channel.
-            Intent intent = new Intent(activity, RecordingDetailsActivity.class);
-            intent.putExtra("id", recording.getId());
-            intent.putExtra("type", "timer_recording");
-            activity.startActivity(intent);
+            Fragment fragment = TimerRecordingDetailsFragment.newInstance(recording.getId());
+            FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
+            ft.replace(R.id.main, fragment);
+            ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+            ft.addToBackStack(null);
+            ft.commit();
         } else {
             // Check what fragment is currently shown, replace if needed.
             Fragment fragment = activity.getSupportFragmentManager().findFragmentById(R.id.main);

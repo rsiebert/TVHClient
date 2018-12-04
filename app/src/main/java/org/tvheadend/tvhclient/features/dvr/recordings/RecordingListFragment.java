@@ -145,12 +145,14 @@ public class RecordingListFragment extends BaseFragment implements RecyclerViewC
         if (recording == null) {
             return;
         }
+
         if (!isDualPane) {
-            // Launch a new activity to display the program list of the selected channel.
-            Intent intent = new Intent(activity, RecordingDetailsActivity.class);
-            intent.putExtra("id", recording.getId());
-            intent.putExtra("type", "recording");
-            activity.startActivity(intent);
+            Fragment fragment = RecordingDetailsFragment.newInstance(recording.getId());
+            FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
+            ft.replace(R.id.main, fragment);
+            ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+            ft.addToBackStack(null);
+            ft.commit();
         } else {
             // Check what fragment is currently shown, replace if needed.
             Fragment fragment = activity.getSupportFragmentManager().findFragmentById(R.id.details);
