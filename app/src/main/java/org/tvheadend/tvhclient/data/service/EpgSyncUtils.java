@@ -221,6 +221,27 @@ class EpgSyncUtils {
         if (msg.containsKey("duplicate")) {
             recording.setDuplicate(msg.getInteger("duplicate"));
         }
+
+        if (msg.containsKey("image")) {
+            if (!TextUtils.isEmpty(msg.getString("image"))) {
+                recording.setImage(msg.getString("image"));
+            }
+        }
+        if (msg.containsKey("fanart_image")) {
+            if (!TextUtils.isEmpty(msg.getString("fanart_image"))) {
+                recording.setFanartImage(msg.getString("fanart_image"));
+            }
+        }
+        if (msg.containsKey("copyright_year")) {
+            if (msg.getInteger("copyright_year") > 0) {
+                recording.setCopyrightYear(msg.getInteger("copyright_year"));
+            }
+        }
+        if (msg.containsKey("removal")) {
+            if (msg.getInteger("removal") > 0) {
+                recording.setRemoval(msg.getInteger("removal"));
+            }
+        }
         return recording;
     }
 
@@ -349,6 +370,52 @@ class EpgSyncUtils {
                 program.setNextEventId(msg.getInteger("nextEventId"));
             }
         }
+        if (msg.containsKey("episodeOnscreen")) {
+            if (!TextUtils.isEmpty(msg.getString("episodeOnscreen"))) {
+                program.setEpisodeOnscreen(msg.getString("episodeOnscreen"));
+            }
+        }
+        if (msg.containsKey("serieslinkUri")) {
+            if (!TextUtils.isEmpty(msg.getString("serieslinkUri"))) {
+                program.setSerieslinkUri(msg.getString("serieslinkUri"));
+            }
+        }
+        if (msg.containsKey("episodeUri")) {
+            if (!TextUtils.isEmpty(msg.getString("episodeUri"))) {
+                program.setEpisodeUri(msg.getString("episodeUri"));
+            }
+        }
+        if (msg.containsKey("copyright_year")) {
+            if (msg.getInteger("copyright_year") > 0) {
+                program.setCopyrightYear(msg.getInteger("copyright_year"));
+            }
+        }
+        if (msg.containsKey("credits")) {
+            StringBuilder sb = new StringBuilder();
+            for (String credit : msg.getStringArray("credits")) {
+                sb.append(credit).append(",");
+            }
+            // Remove the last separator character
+            program.setCredits(sb.substring(0, sb.lastIndexOf(",")));
+        }
+        if (msg.containsKey("category")) {
+            StringBuilder sb = new StringBuilder();
+            for (String s : msg.getStringArray("category")) {
+                sb.append(s).append(",");
+            }
+            // Remove the last separator character
+            program.setCredits(sb.substring(0, sb.lastIndexOf(",")));
+
+        }
+        if (msg.containsKey("keyword")) {
+            StringBuilder sb = new StringBuilder();
+            for (String s : msg.getStringArray("keyword")) {
+                sb.append(s).append(",");
+            }
+            // Remove the last separator character
+            program.setKeyword(sb.substring(0, sb.lastIndexOf(",")));
+
+        }
         return program;
     }
 
@@ -429,6 +496,16 @@ class EpgSyncUtils {
                 seriesRecording.setDupDetect(msg.getInteger("dupDetect"));
             }
         }
+        if (msg.containsKey("maxCount")) {
+            if (msg.getInteger("maxCount") > 0) {
+                seriesRecording.setMaxCount(msg.getInteger("maxCount"));
+            }
+        }
+        if (msg.containsKey("removal")) {
+            if (msg.getInteger("removal") > 0) {
+                seriesRecording.setRemoval(msg.getInteger("removal"));
+            }
+        }
         return seriesRecording;
     }
 
@@ -487,6 +564,11 @@ class EpgSyncUtils {
         if (msg.containsKey("creator")) {
             if (!TextUtils.isEmpty(msg.getString("creator"))) {
                 timerRecording.setCreator(msg.getString("creator"));
+            }
+        }
+        if (msg.containsKey("removal")) {
+            if (msg.getInteger("removal") > 0) {
+                timerRecording.setRemoval(msg.getInteger("removal"));
             }
         }
         return timerRecording;
