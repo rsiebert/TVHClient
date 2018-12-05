@@ -254,6 +254,8 @@ public class StartupFragment extends Fragment implements EpgSyncStatusCallback {
 
             case FAILED:
                 Timber.d("Connection to server or server sync failed, showing buttons to list connections and refresh");
+                activity.stopService(new Intent(activity, EpgSyncService.class));
+
                 stateTextView.setText(state.getMessage());
                 detailsTextView.setText(state.getDetails());
                 progressBar.setVisibility(View.INVISIBLE);
@@ -263,7 +265,6 @@ public class StartupFragment extends Fragment implements EpgSyncStatusCallback {
 
                 retryButton.setVisibility(View.VISIBLE);
                 retryButton.setOnClickListener(v -> {
-                    activity.stopService(new Intent(activity, EpgSyncService.class));
                     activity.startService(new Intent(activity, EpgSyncService.class));
                 });
                 break;
