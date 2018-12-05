@@ -19,3 +19,28 @@
 -keep        class android.support.v13.** { *; }
 -keep        class android.support.v7.** { *; }
 -keep        class android.support.v4.** { *; }
+
+-dontwarn okhttp3.internal.platform.*
+
+# Crashlytics
+-keepattributes *Annotation*
+-keepattributes SourceFile,LineNumberTable
+-keep public class * extends java.lang.Exception
+-keep class com.crashlytics.** { *; }
+-dontwarn com.crashlytics.**
+
+# Google play services
+#-keep class com.google.android.gms.**
+#-dontwarn com.google.android.gms.**
+
+# Exoplayer
+#-keep class com.google.android.exoplayer2.**
+#-dontwarn com.google.android.exoplayer2.**
+
+# Material dialogs
+#-keep class com.afollestad.materialdialogs.**
+#-dontwarn com.afollestad.materialdialogs.**
+
+# Material drawer
+#-keep class com.mikepenz.materialize.**
+#-dontwarn com.mikepenz.materialize.**
