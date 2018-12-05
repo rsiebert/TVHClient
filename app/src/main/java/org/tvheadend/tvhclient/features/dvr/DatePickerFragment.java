@@ -14,6 +14,9 @@ import java.util.Calendar;
 
 public class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
 
+    int hourOfDay;
+    int minute;
+
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -27,7 +30,8 @@ public class DatePickerFragment extends DialogFragment implements DatePickerDial
         int year = c.get(Calendar.YEAR);
         int month = c.get(Calendar.MONTH);
         int day = c.get(Calendar.DAY_OF_MONTH);
-
+        hourOfDay = c.get(Calendar.HOUR_OF_DAY);
+        minute = c.get(Calendar.MINUTE);
         return new DatePickerDialog(getActivity(), this, year, month, day);
     }
 
@@ -37,6 +41,8 @@ public class DatePickerFragment extends DialogFragment implements DatePickerDial
         calendar.set(Calendar.YEAR, year);
         calendar.set(Calendar.MONTH, month);
         calendar.set(Calendar.DAY_OF_MONTH, day);
+        calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+        calendar.set(Calendar.MINUTE, minute);
 
         Fragment fragment = getTargetFragment();
         if (fragment instanceof DateTimePickerCallback) {
