@@ -57,7 +57,10 @@ public class HtspMessageSerializer implements HtspMessage.Serializer {
         }
 
         if (buffer.capacity() < fullLength) {
-            throw new RuntimeException("Message exceeds buffer capacity: " + fullLength);
+            Timber.d("Message exceeds buffer capacity: " + fullLength);
+            //throw new RuntimeException("Message exceeds buffer capacity: " + fullLength);
+            // TODO return some kind of information for the user
+            return null;
         }
 
         // Keep reading until we have the entire message
@@ -120,7 +123,9 @@ public class HtspMessageSerializer implements HtspMessage.Serializer {
             // the bug (it may even be a TVHeadend bug?)
             if (valueLength > 50000000) {
                 Timber.e("Attempted to deserialize an improbably large field (" + valueLength + " bytes)");
-                throw new RuntimeException("Attempted to deserialize an improbably large field");
+                //throw new RuntimeException("Attempted to deserialize an improbably large field");
+                // TODO return some kind of information for the user
+                return null;
             }
 
             // Deserialize the Key
