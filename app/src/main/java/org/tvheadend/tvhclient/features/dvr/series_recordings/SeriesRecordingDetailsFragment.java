@@ -231,12 +231,16 @@ public class SeriesRecordingDetailsFragment extends BaseFragment implements Reco
 
     @Override
     public void onRecordingRemoved() {
-        Fragment detailsFragment = activity.getSupportFragmentManager().findFragmentById(isDualPane ? R.id.details : R.id.main);
-        if (detailsFragment != null) {
-            activity.getSupportFragmentManager()
-                    .beginTransaction()
-                    .remove(detailsFragment)
-                    .commit();
+        if (!isDualPane) {
+            activity.onBackPressed();
+        } else {
+            Fragment detailsFragment = activity.getSupportFragmentManager().findFragmentById(R.id.details);
+            if (detailsFragment != null) {
+                activity.getSupportFragmentManager()
+                        .beginTransaction()
+                        .remove(detailsFragment)
+                        .commit();
+            }
         }
     }
 }
