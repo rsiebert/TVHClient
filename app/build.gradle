@@ -80,6 +80,8 @@ android {
                 buildConfigField "String", "PUBLIC_KEY_SALT", "\"" + tvhProperty("publicKeySalt") + "\""
             }
 
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -129,7 +131,6 @@ dependencies {
     // Internal player
     implementation 'com.google.android.exoplayer:exoplayer-core:2.8.4'
     implementation 'com.google.android.exoplayer:exoplayer-ui:2.8.4'
-    //implementation 'com.google.android.exoplayer:extension-ffmpeg:2.7.1k1'
     // Use multidex because the method count is over 64k
     implementation 'com.android.support:multidex:1.0.3'
 }
