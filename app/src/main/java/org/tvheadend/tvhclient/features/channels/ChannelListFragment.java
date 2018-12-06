@@ -211,7 +211,7 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_tags:
-                return menuUtils.handleMenuChannelTagsSelection(viewModel.getChannelTagId(), this);
+                return menuUtils.handleMenuChannelTagSelection(viewModel.getChannelTagId(), this);
 
             case R.id.menu_timeframe:
                 return menuUtils.handleMenuTimeSelection(selectedTimeOffset, intervalInHours, 12, this);
@@ -242,6 +242,11 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
         recyclerView.setVisibility(View.GONE);
         progressBar.setVisibility(View.VISIBLE);
         viewModel.setChannelTagId(id);
+    }
+
+    @Override
+    public void onMultipleChannelTagIdsSelected(Integer[] ids) {
+
     }
 
     /**

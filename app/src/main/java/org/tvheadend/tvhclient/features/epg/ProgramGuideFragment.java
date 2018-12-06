@@ -225,7 +225,7 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_tags:
-                return menuUtils.handleMenuChannelTagsSelection(viewModel.getChannelTagId(), this);
+                return menuUtils.handleMenuChannelTagSelection(viewModel.getChannelTagId(), this);
 
             case R.id.menu_timeframe:
                 return menuUtils.handleMenuTimeSelection(selectedTimeOffset, hoursToShow, (hoursToShow * daysToShow), this);
@@ -250,6 +250,11 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
         programViewPager.setVisibility(View.GONE);
         progressBar.setVisibility(View.VISIBLE);
         viewModel.setChannelTagId(id);
+    }
+
+    @Override
+    public void onMultipleChannelTagIdsSelected(Integer[] ids) {
+
     }
 
     @Override
