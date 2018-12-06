@@ -20,27 +20,15 @@
 -keep        class android.support.v7.** { *; }
 -keep        class android.support.v4.** { *; }
 
+# These warnings are safe to ignore
 -dontwarn okhttp3.internal.platform.*
 
 # Crashlytics
+# Skip proguard on stuff that crashlytics uses internally
 -keepattributes *Annotation*
 -keepattributes SourceFile,LineNumberTable
+# Keep custom exceptions
 -keep public class * extends java.lang.Exception
+# Speeds up build time
 -keep class com.crashlytics.** { *; }
 -dontwarn com.crashlytics.**
-
-# Google play services
-#-keep class com.google.android.gms.**
-#-dontwarn com.google.android.gms.**
-
-# Exoplayer
-#-keep class com.google.android.exoplayer2.**
-#-dontwarn com.google.android.exoplayer2.**
-
-# Material dialogs
-#-keep class com.afollestad.materialdialogs.**
-#-dontwarn com.afollestad.materialdialogs.**
-
-# Material drawer
-#-keep class com.mikepenz.materialize.**
-#-dontwarn com.mikepenz.materialize.**
