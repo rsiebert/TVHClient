@@ -34,7 +34,7 @@ public class EpgWorkerHandler {
         long epgMaxTime = Long.parseLong(sharedPreferences.getString("epg_max_time", defaultEpgMaxTime));
         long time = epgMaxTime - (epgMaxTime / 10);
 
-        Timber.d("Epg data update worker interval is " + time + " minutes");
+        Timber.d("Epg data update worker interval is " + time + " seconds");
         PeriodicWorkRequest updateWorkRequest =
                 new PeriodicWorkRequest.Builder(EpgDataUpdateWorker.class, time, TimeUnit.SECONDS)
                         .setConstraints(constraints)
