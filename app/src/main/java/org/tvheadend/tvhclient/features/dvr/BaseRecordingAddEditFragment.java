@@ -16,9 +16,11 @@ import org.tvheadend.tvhclient.features.shared.callbacks.DaysOfWeekSelectionCall
 import org.tvheadend.tvhclient.features.shared.callbacks.RecordingPriorityListCallback;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecordingProfileListCallback;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import timber.log.Timber;
@@ -60,14 +62,8 @@ public abstract class BaseRecordingAddEditFragment extends BaseFragment {
     }
 
     protected String getDateStringFromTimeInMillis(long milliSeconds) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(milliSeconds);
-        int day = calendar.get(Calendar.DAY_OF_MONTH);
-        int month = calendar.get(Calendar.MONTH) + 1;
-        int year = calendar.get(Calendar.YEAR);
-
-        return ((day < 10) ? "0" + day : day) + "."
-                + ((month < 10) ? "0" + month : month) + "." + year;
+        SimpleDateFormat sdf = new SimpleDateFormat("dd:MM", Locale.US);
+        return sdf.format(milliSeconds);
     }
 
     protected long getMinutesFromTimeInMillis(long milliSeconds) {
@@ -79,13 +75,8 @@ public abstract class BaseRecordingAddEditFragment extends BaseFragment {
     }
 
     protected String getTimeStringFromTimeInMillis(long milliSeconds) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(milliSeconds);
-        int hour = calendar.get(Calendar.HOUR_OF_DAY);
-        int minute = calendar.get(Calendar.MINUTE);
-
-        return ((hour < 10) ? "0" + hour : hour) + ":"
-                + ((minute < 10) ? "0" + minute : minute);
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.US);
+        return sdf.format(milliSeconds);
     }
 
     protected String getSelectedDaysOfWeekText(int daysOfWeek) {
