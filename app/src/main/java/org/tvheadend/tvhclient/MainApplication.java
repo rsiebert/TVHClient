@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import com.anjlab.android.iab.v3.BillingProcessor;
 import com.anjlab.android.iab.v3.TransactionDetails;
 import com.crashlytics.android.Crashlytics;
+import com.crashlytics.android.core.CrashlyticsCore;
 import com.facebook.stetho.Stetho;
 import com.google.android.gms.cast.framework.CastOptions;
 import com.google.android.gms.cast.framework.OptionsProvider;
@@ -79,7 +80,7 @@ public class MainApplication extends Application implements BillingProcessor.IBi
 
         // Enable stetho to enable accessing the database
         // and other resources via the chrome browser
-        if (BuildConfig.DEBUG_MODE) {
+        if (BuildConfig.DEBUG) {
             Stetho.initialize(Stetho.newInitializerBuilder(this)
                     .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
                     .enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this))
@@ -118,7 +119,7 @@ public class MainApplication extends Application implements BillingProcessor.IBi
     }
 
     private void initTimber() {
-        if (BuildConfig.DEBUG_MODE) {
+        if (BuildConfig.DEBUG || BuildConfig.DEBUG_LOG) {
             Timber.plant(new DebugTree());
         }
 
@@ -132,7 +133,13 @@ public class MainApplication extends Application implements BillingProcessor.IBi
 
     private void initCrashlytics() {
         if (sharedPreferences.getBoolean("crash_reports_enabled", true)) {
-            Fabric.with(this, new Crashlytics());
+            // Set up Crashlytics, disabled for debug builds
+            Crashlytics crashlyticsKit = new Crashlytics.Builder()
+                    .core(new CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build())
+                    .build();
+
+            // Initialize Fabric with the debug-disabled crashlytics.
+            Fabric.with(this, crashlyticsKit);
         }
     }
 
@@ -143,7 +150,9 @@ public class MainApplication extends Application implements BillingProcessor.IBi
      * @return True if the application is unlocked otherwise false
      */
     public boolean isUnlocked() {
-        return BuildConfig.DEBUG_MODE || billingProcessor.isPurchased(Constants.UNLOCKER);
+        return BuildConfig.DEBUG
+                || BuildConfig.UNLOCKED
+                || billingProcessor.isPurchased(Constants.UNLOCKER);
     }
 
     @Override
