@@ -7,16 +7,10 @@ buildscript {
         classpath 'io.fabric.tools:gradle:1.25.4'
     }
 }
+
 apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
-
-repositories {
-    maven { url 'https://maven.fabric.io/public' }
-}
-
-apply from: '../version.gradle'
 apply from: '../signing.gradle'
-apply from: '../git.gradle'
 
 android {
     compileSdkVersion 28
@@ -25,10 +19,10 @@ android {
         minSdkVersion 16
         targetSdkVersion 28
 
-        versionCode project.ext.versionCode
-        versionName project.ext.versionName
+        versionCode 124
+        versionName "2.0.0"
 
-        // Define the structure of the apk file name
+        // Define the apk naming convention
         applicationId "org.tvheadend.tvhclient"
         setProperty("archivesBaseName", "${applicationId}-${versionName}-${versionCode}")
 
@@ -37,7 +31,7 @@ android {
         buildConfigField "String", "PUBLIC_KEY_SALT", "\"\""
         buildConfigField "Integer", "BUILD_VERSION", "$versionCode"
 
-        // Get the build time and git commit hash so it can be included in the crash reports
+        // Include the build time and git commit hash in the crash reports
         def gitSha = 'git rev-parse --short HEAD'.execute([], project.rootDir).text.trim()
         def buildTime = new GregorianCalendar().format("yyyy.MM.dd HH:mm:ss")
         buildConfigField "String", "BUILD_TIME", "\"${buildTime}\""
@@ -46,30 +40,27 @@ android {
         // The cast ID that the app shall use
         buildConfigField "String", "CAST_ID", "\"0531DF56\""
 
+        // Support vector drawable and animated vector drawable on devices
+        // running platform versions lower than Android 5.0 (API level 21)
         vectorDrawables.useSupportLibrary = true
 
-        // used by Room, to test migrations
-        javaCompileOptions {
-            annotationProcessorOptions {
-                arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
-            }
-        }
-
         lintOptions {
+            // Do not check for lint errors to reduce the  build time.
+            // Lint checks will be done manually before a release
             checkReleaseBuilds false
-            // Or, if you prefer, you can continue to check for errors in release builds,
-            // but continue the build even when errors are found:
-            //abortOnError false
         }
     }
     buildTypes {
         debug {
-            // Show all features of the app when the app is not released and under development
-            buildConfigField "Boolean", "DEBUG_MODE", "true"
+            // Disable fabric build ID generation for debug builds
+            ext.enableCrashlytics = false
         }
         release {
-            // When set to true all features are unlocked and full logging is available
-            buildConfigField "Boolean", "DEBUG_MODE", "false"
+            // Show all features when true
+            buildConfigField "Boolean", "UNLOCKED", "true"
+            // Enable all logging, otherwise it is suppressed
+            buildConfigField "Boolean", "DEBUG_LOG", "true"
+
             // The property file must exist in release mode so that the
             // actual values can be assigned from the property file to these fields.
             if (tvhHasProperty("developerEmail")) {
@@ -79,6 +70,7 @@ android {
                 buildConfigField "String", "PUBLIC_KEY_SALT", "\"" + tvhProperty("publicKeySalt") + "\""
             }
 
+            // Reduce the apk file size by enabling proguard
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
@@ -91,42 +83,55 @@ android {
 }
 
 dependencies {
+    // Dependency on local binaries
     implementation fileTree(include: ['*.jar'], dir: 'libs')
+
+    // Support library basics
     implementation 'com.android.support:appcompat-v7:28.0.0'
     implementation 'com.android.support:recyclerview-v7:28.0.0'
     implementation 'com.android.support:support-annotations:28.0.0'
     implementation 'com.android.support:design:28.0.0'
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+
     // Casting
     implementation 'com.google.android.gms:play-services-cast-framework:16.1.0'
     implementation 'com.android.support:mediarouter-v7:28.0.0'
+
     // Misc libraries
     implementation 'com.anjlab.android.iab.v3:library:1.0.44'
     implementation 'com.afollestad.material-dialogs:commons:0.9.6.0'
     implementation 'com.mikepenz:materialdrawer:6.0.9'
+
     // View binding
     implementation 'com.jakewharton:butterknife:8.8.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+
     // Memory leaks and crash analytics
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.2'
     releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.6.2'
     debugImplementation 'com.squareup.leakcanary:leakcanary-support-fragment:1.6.2'
     implementation 'com.crashlytics.sdk.android:crashlytics:2.9.6'
+
     // Architecture components
     implementation 'android.arch.lifecycle:extensions:1.1.1'
     implementation 'android.arch.lifecycle:common-java8:1.1.1'
     implementation 'android.arch.persistence.room:runtime:1.1.1'
     implementation "android.arch.work:work-runtime:1.0.0-alpha11"
     annotationProcessor "android.arch.persistence.room:compiler:1.1.1"
+
     // Dependency injection
     implementation 'com.google.dagger:dagger:2.11'
     annotationProcessor 'com.google.dagger:dagger-compiler:2.11'
+
     // Logging library
     implementation 'com.jakewharton.timber:timber:4.5.1'
+
     // Image loading library
     implementation 'com.squareup.picasso:picasso:2.71828'
+
     // App data access via browser
     implementation 'com.facebook.stetho:stetho:1.5.0'
+
     // Internal player
     implementation 'com.google.android.exoplayer:exoplayer-core:2.8.4'
     implementation 'com.google.android.exoplayer:exoplayer-ui:2.8.4'
