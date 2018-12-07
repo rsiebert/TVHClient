@@ -3,6 +3,7 @@ package org.tvheadend.tvhclient.features.channels;
 import android.support.annotation.NonNull;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -158,8 +159,17 @@ class ChannelRecyclerViewAdapter extends RecyclerView.Adapter<ChannelViewHolder>
 
             for (Recording recording : recordings) {
                 if (channel.getProgramId() == recording.getEventId()) {
+                    Recording oldRecording = channel.getRecording();
                     channel.setRecording(recording);
-                    notifyItemChanged(i);
+
+                    // Do a full update only when a new recording was added or the recording
+                    // state has changed which results in a different recording state icon
+                    // Otherwise do not update the UI
+                    if (oldRecording == null
+                            || (!TextUtils.equals(oldRecording.getError(), recording.getError())
+                            || !TextUtils.equals(oldRecording.getState(), recording.getState()))) {
+                        notifyItemChanged(i);
+                    }
                     recordingExists = true;
                     break;
                 }
