@@ -138,7 +138,7 @@ public class MenuUtils {
         return true;
     }
 
-    public boolean handleMenuChannelTagsSelection(int channelTagId, @Nullable ChannelTagSelectionCallback callback) {
+    public boolean handleMenuChannelTagSelection(int selectedChannelTagId, @Nullable ChannelTagSelectionCallback callback) {
         Activity activity = this.activity.get();
         if (activity == null) {
             return false;
@@ -155,7 +155,7 @@ public class MenuUtils {
         channelTagList.add(0, tag);
 
         ChannelTagListAdapter channelTagListAdapter = new ChannelTagListAdapter(
-                activity, channelTagList, channelTagId,
+                activity, channelTagList, selectedChannelTagId,
                 appRepository.getChannelData().getItems().size());
 
         // Show the dialog that shows all available channel tags. When the
@@ -176,6 +176,16 @@ public class MenuUtils {
             }
         });
         dialog.show();
+        return true;
+    }
+
+    public boolean handleMenuMultipleChannelTagsSelection(Integer[] selectedChannelTagIds, @Nullable ChannelTagSelectionCallback callback) {
+        Activity activity = this.activity.get();
+        if (activity == null) {
+            return false;
+        }
+        // TODO
+
         return true;
     }
 
