@@ -5,9 +5,11 @@ import android.content.Intent;
 import android.os.IBinder;
 
 import org.tvheadend.tvhclient.MainApplication;
+import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.data.service.htsp.SimpleHtspConnection;
+import org.tvheadend.tvhclient.features.shared.receivers.ServiceStatusReceiver;
 
 import javax.inject.Inject;
 
@@ -52,8 +54,12 @@ public class EpgSyncService extends Service {
                 && simpleHtspConnection.isAuthenticated()) {
             Timber.d("Connected to server, passing command to epg sync task");
             epgSyncTask.handleIntent(intent);
-        } else {
-            Timber.d("Not connected to server");
+
+        } else if (simpleHtspConnection != null
+                && !simpleHtspConnection.isIdle()) {
+            Timber.d("Server connection has been closed");
+            epgSyncTask.sendEpgSyncStatusMessage(ServiceStatusReceiver.State.CLOSED,
+                    getString(R.string.connection_closed), "");
         }
         return START_STICKY;
     }
