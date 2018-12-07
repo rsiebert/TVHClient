@@ -9,6 +9,11 @@ buildscript {
 }
 
 apply plugin: 'com.android.application'
+
+repositories {
+    maven { url 'https://maven.fabric.io/public' }
+}
+
 apply plugin: 'io.fabric'
 apply from: '../signing.gradle'
 
@@ -50,6 +55,7 @@ android {
             checkReleaseBuilds false
         }
     }
+
     buildTypes {
         debug {
             // Disable fabric build ID generation for debug builds
@@ -76,6 +82,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
