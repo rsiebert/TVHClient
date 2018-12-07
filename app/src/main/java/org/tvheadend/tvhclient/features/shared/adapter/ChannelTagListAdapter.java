@@ -31,17 +31,17 @@ public class ChannelTagListAdapter extends RecyclerView.Adapter<ChannelTagListAd
     private final int channelCount;
     private Callback callback;
     private final List<ChannelTag> channelTagList;
-    private final int channelTagId;
+    private final int selectedChannelTagId;
     private boolean showChannelTagIcons;
 
     public interface Callback {
         void onItemClicked(int index);
     }
 
-    public ChannelTagListAdapter(Context context, List<ChannelTag> channelTagList, int channelTagId, int channelCount) {
+    public ChannelTagListAdapter(Context context, List<ChannelTag> channelTagList, int selectedChannelTagId, int channelCount) {
         this.context = context;
         this.channelTagList = channelTagList;
-        this.channelTagId = channelTagId;
+        this.selectedChannelTagId = selectedChannelTagId;
         this.channelCount = channelCount;
     }
 
@@ -63,7 +63,7 @@ public class ChannelTagListAdapter extends RecyclerView.Adapter<ChannelTagListAd
         final ChannelTag channelTag = channelTagList.get(position);
         if (channelTag != null) {
 
-            if (channelTag.getTagId() == channelTagId) {
+            if (channelTag.getTagId() == selectedChannelTagId) {
                 holder.radioButton.setChecked(true);
             } else {
                 holder.radioButton.setChecked(false);
