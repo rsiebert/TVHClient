@@ -88,12 +88,12 @@ public class SimpleHtspConnection implements HtspMessage.Dispatcher {
         return messageDispatcher;
     }
 
-    public boolean isClosed() {
-        return htspConnection.isClosed();
+    public boolean isIdle() {
+        return htspConnection.isIdle();
     }
 
-    public boolean isClosedOrClosing() {
-        return htspConnection.isClosedOrClosing();
+    public boolean isClosed() {
+        return htspConnection.isClosed();
     }
 
     public boolean isConnected() {

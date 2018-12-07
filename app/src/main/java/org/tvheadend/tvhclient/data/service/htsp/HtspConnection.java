@@ -107,6 +107,7 @@ public class HtspConnection implements Runnable {
     }
 
     public enum State {
+        IDLE,
         CLOSED,
         CONNECTING,
         CONNECTED,
@@ -124,7 +125,7 @@ public class HtspConnection implements Runnable {
 
     private boolean running = false;
     private final Lock lock = new ReentrantLock();
-    private State state = State.CLOSED;
+    private State state = State.IDLE;
 
     private final Set<Listener> mListeners = new CopyOnWriteArraySet<>();
     private SocketChannel mSocketChannel;
@@ -281,7 +282,7 @@ public class HtspConnection implements Runnable {
 
         SocketChannel socketChannel = (SocketChannel) selectionKey.channel();
 
-        if (!isClosedOrClosing()) {
+        if (!isClosed() && !isClosing()) {
             if (!reader.read(socketChannel)) {
                 Timber.e("Failed to process readable selection key");
                 closeConnection(State.FAILED);
@@ -293,7 +294,7 @@ public class HtspConnection implements Runnable {
 
         SocketChannel socketChannel = (SocketChannel) selectionKey.channel();
 
-        if (!isClosedOrClosing()) {
+        if (!isClosed() && !isClosing()) {
             if (!writer.write(socketChannel)) {
                 Timber.e("Failed to process writable selection key");
                 closeConnection(State.FAILED);
@@ -340,15 +341,19 @@ public class HtspConnection implements Runnable {
         }
     }
 
-    public boolean isConnecting() {
+    boolean isIdle() {
+        return getState() == State.IDLE;
+    }
+
+    boolean isConnecting() {
         return getState() == State.CONNECTING;
     }
 
-    public boolean isConnected() {
+    boolean isConnected() {
         return getState() == State.CONNECTED;
     }
 
-    public boolean isClosed() {
+    boolean isClosed() {
         return getState() == State.CLOSED;
     }
 
@@ -356,16 +361,12 @@ public class HtspConnection implements Runnable {
         return getState() == State.CLOSING;
     }
 
-    public boolean isFailed() {
+    private boolean isFailed() {
         return getState() == State.FAILED;
     }
 
-    private boolean isClosedOrFailed() {
-        return isClosed() || isFailed();
-    }
-
-    boolean isClosedOrClosing() {
-        return isClosed() || isClosing();
+    private boolean isClosedOrFailedOrIdle() {
+        return isClosed() || isFailed() || isIdle();
     }
 
     private boolean isClosedOrClosingOrFailed() {
@@ -399,7 +400,7 @@ public class HtspConnection implements Runnable {
 
         lock.lock();
         try {
-            if (!isClosedOrFailed()) {
+            if (!isClosedOrFailedOrIdle()) {
                 throw new HtspException("Attempting to connect while already connected");
             }
 
