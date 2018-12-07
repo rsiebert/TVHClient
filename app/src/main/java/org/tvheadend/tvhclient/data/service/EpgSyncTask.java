@@ -1034,21 +1034,22 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     }
 
     private void flushPendingRecordingsOps() {
+        Timber.d("Flushing all received recordings");
         // Remove all recordings from the database to prevent being out of sync with the server.
         // This could be the case when the app was offline for a while and it did not receive
         // any recording removal information from the server. During the initial sync the
         // server only provides the list of available recordings.
-        appRepository.getRecordingData().removeItems();
-
         if (pendingRecordingOps.isEmpty()) {
-            return;
-        }
-        Timber.d("Saving " + pendingRecordingOps.size() + " recordings...");
-        sendEpgSyncStatusMessage(ServiceStatusReceiver.State.SYNC_IN_PROGRESS,
-                context.getString(R.string.saving_recordings), "");
+            Timber.d("Removing previously existing recordings");
+            appRepository.getRecordingData().removeItems();
+        } else {
+            Timber.d("Replacing all existing recordings with " + pendingRecordingOps.size() + " recordings...");
+            sendEpgSyncStatusMessage(ServiceStatusReceiver.State.SYNC_IN_PROGRESS,
+                    context.getString(R.string.saving_recordings), "");
 
-        appRepository.getRecordingData().addItems(pendingRecordingOps);
-        pendingRecordingOps.clear();
+            appRepository.getRecordingData().replaceItems(pendingRecordingOps);
+            pendingRecordingOps.clear();
+        }
     }
 
     private void flushPendingEventOps() {
@@ -1684,7 +1685,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         }
     }
 
-    private void sendEpgSyncStatusMessage(ServiceStatusReceiver.State state, String msg, String details) {
+    public void sendEpgSyncStatusMessage(ServiceStatusReceiver.State state, String msg, String details) {
         Intent intent = new Intent(ServiceStatusReceiver.ACTION);
         intent.putExtra(ServiceStatusReceiver.STATE, state);
         if (!TextUtils.isEmpty(msg)) {

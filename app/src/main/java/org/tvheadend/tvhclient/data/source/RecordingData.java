@@ -46,6 +46,10 @@ public class RecordingData extends BaseData implements DataSourceInterface<Recor
         new ItemsHandlerTask(db, DELETE_ALL).execute();
     }
 
+    public void replaceItems(@NonNull List<Recording> items) {
+        new ItemsHandlerTask(db, items, DELETE_ALL_AND_INSERT).execute();
+    }
+
     @Override
     public LiveData<Integer> getLiveDataItemCount() {
         return null;
@@ -198,6 +202,10 @@ public class RecordingData extends BaseData implements DataSourceInterface<Recor
                     }
                     break;
                 case INSERT_ALL:
+                    db.getRecordingDao().insert(recordings);
+                    break;
+                case DELETE_ALL_AND_INSERT:
+                    db.getRecordingDao().deleteAll();
                     db.getRecordingDao().insert(recordings);
                     break;
             }

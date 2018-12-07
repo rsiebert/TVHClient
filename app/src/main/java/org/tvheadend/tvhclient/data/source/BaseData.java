@@ -11,4 +11,5 @@ class BaseData {
     static final int LOAD_LAST_IN_CHANNEL = 7;
     static final int LOAD_BY_ID = 8;
     static final int LOAD_BY_EVENT_ID = 9;
+    static final int DELETE_ALL_AND_INSERT = 10;
 }
