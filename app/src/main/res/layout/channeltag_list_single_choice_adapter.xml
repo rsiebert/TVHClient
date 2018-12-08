@@ -19,7 +19,7 @@
         android:scaleType="fitCenter"
         android:src="@null"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/radioButton"
+        app:layout_constraintStart_toEndOf="@+id/selected"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0" />
 
@@ -40,7 +40,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <RadioButton
-        android:id="@+id/radioButton"
+        android:id="@+id/selected"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"

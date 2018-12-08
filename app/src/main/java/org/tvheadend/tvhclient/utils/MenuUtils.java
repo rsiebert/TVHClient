@@ -28,7 +28,7 @@ import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.data.service.EpgSyncService;
 import org.tvheadend.tvhclient.features.download.DownloadRecordingManager;
 import org.tvheadend.tvhclient.features.search.SearchActivity;
-import org.tvheadend.tvhclient.features.shared.adapter.ChannelTagListAdapter;
+import org.tvheadend.tvhclient.features.shared.adapter.ChannelTagRecyclerViewAdapter;
 import org.tvheadend.tvhclient.features.shared.adapter.GenreColorDialogAdapter;
 import org.tvheadend.tvhclient.features.shared.callbacks.ChannelTagSelectionCallback;
 import org.tvheadend.tvhclient.features.shared.callbacks.ChannelTimeSelectionCallback;
@@ -138,7 +138,7 @@ public class MenuUtils {
         return true;
     }
 
-    public boolean handleMenuChannelTagSelection(int selectedChannelTagId, @Nullable ChannelTagSelectionCallback callback) {
+    public boolean handleMenuChannelTagSelection(int selectedChannelTagId, @NonNull ChannelTagSelectionCallback callback) {
         Activity activity = this.activity.get();
         if (activity == null) {
             return false;
@@ -154,38 +154,69 @@ public class MenuUtils {
         List<ChannelTag> channelTagList = appRepository.getChannelTagData().getItems();
         channelTagList.add(0, tag);
 
-        ChannelTagListAdapter channelTagListAdapter = new ChannelTagListAdapter(
-                activity, channelTagList, selectedChannelTagId,
-                appRepository.getChannelData().getItems().size());
+        // In case only a single channel tag id is given, fill integer array
+        // with defaults so that the adapter can then check or uncheck the tags
+        Integer[] selectedIds = new Integer[channelTagList.size()];
+        for (int i = 0; i < channelTagList.size(); i++) {
+            ChannelTag t = channelTagList.get(i);
+            if (t.getTagId() == selectedChannelTagId) {
+                selectedIds[i] = t.getTagId();
+            } else {
+                selectedIds[i] = -1;
+            }
+        }
+
+        ChannelTagRecyclerViewAdapter adapter = new ChannelTagRecyclerViewAdapter(
+                channelTagList, selectedIds,
+                appRepository.getChannelData().getItems().size(),
+                false);
 
         // Show the dialog that shows all available channel tags. When the
         // user has selected a tag, restart the loader to loadRecordingById the updated channel list
-        final MaterialDialog dialog = new MaterialDialog.Builder(activity)
+        MaterialDialog dialog = new MaterialDialog.Builder(activity)
                 .title(R.string.tags)
-                .adapter(channelTagListAdapter, null)
+                .adapter(adapter, null)
+                .dismissListener(d -> callback.onChannelTagIdSelected(adapter.getSelectedTagId()))
                 .build();
 
-        // Set the callback to handle clicks. This needs to be done after the
-        // dialog creation so that the inner method has access to the dialog variable
-        channelTagListAdapter.setCallback(which -> {
-            if (callback != null) {
-                callback.onChannelTagIdSelected(which);
-            }
-            if (dialog != null) {
-                dialog.dismiss();
-            }
-        });
+        adapter.setCallback(dialog);
         dialog.show();
         return true;
     }
 
-    public boolean handleMenuMultipleChannelTagsSelection(Integer[] selectedChannelTagIds, @Nullable ChannelTagSelectionCallback callback) {
+    public boolean handleMenuMultipleChannelTagsSelection(Integer[] selectedChannelTagIds, @NonNull ChannelTagSelectionCallback callback) {
         Activity activity = this.activity.get();
         if (activity == null) {
             return false;
         }
-        // TODO
+        // Create a default tag (All channels)
+        ChannelTag tag = new ChannelTag();
+        tag.setTagId(0);
+        tag.setTagName(activity.getString(R.string.all_channels));
 
+        // Add the default tag to the beginning of the list to indicate
+        // that no tag is selected and all channels shall be shown
+        List<ChannelTag> channelTagList = appRepository.getChannelTagData().getItems();
+        channelTagList.add(0, tag);
+
+        ChannelTagRecyclerViewAdapter adapter = new ChannelTagRecyclerViewAdapter(
+                channelTagList, selectedChannelTagIds,
+                appRepository.getChannelData().getItems().size(),
+                true);
+
+        // Show the dialog that shows all available channel tags. When the
+        // user has selected a tag, restart the loader to loadRecordingById the updated channel list
+        MaterialDialog dialog = new MaterialDialog.Builder(activity)
+                .title(R.string.tags)
+                .adapter(adapter, null)
+                .positiveText(android.R.string.ok)
+                .onPositive((d, which) -> {
+                    callback.onMultipleChannelTagIdsSelected(adapter.getSelectedTagIds());
+                })
+                .build();
+
+        adapter.setCallback(dialog);
+        dialog.show();
         return true;
     }
 
