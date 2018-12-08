@@ -24,7 +24,7 @@ android {
         minSdkVersion 16
         targetSdkVersion 28
 
-        versionCode 124
+        versionCode 125
         versionName "2.0.0"
 
         // Define the apk naming convention
@@ -63,9 +63,9 @@ android {
         }
         release {
             // Show all features when true
-            buildConfigField "Boolean", "UNLOCKED", "true"
+            buildConfigField "Boolean", "UNLOCKED", "false"
             // Enable all logging, otherwise it is suppressed
-            buildConfigField "Boolean", "DEBUG_LOG", "true"
+            buildConfigField "Boolean", "DEBUG_LOG", "false"
 
             // The property file must exist in release mode so that the
             // actual values can be assigned from the property file to these fields.
