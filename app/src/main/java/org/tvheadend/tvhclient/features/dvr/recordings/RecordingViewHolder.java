@@ -86,7 +86,6 @@ public class RecordingViewHolder extends RecyclerView.ViewHolder {
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         int playOnChannelIcon = Integer.valueOf(sharedPreferences.getString("channel_icon_action", "0"));
-        boolean showRecordingFileStatus = sharedPreferences.getBoolean("show_recording_file_status_enabled", false);
 
         itemView.setOnClickListener(view -> clickCallback.onClick(view, getAdapterPosition()));
         itemView.setOnLongClickListener(view -> {
@@ -194,6 +193,12 @@ public class RecordingViewHolder extends RecyclerView.ViewHolder {
 
             isDuplicateTextView.setVisibility(htspVersion < 33 || recording.getDuplicate() == 0 ? View.GONE : View.VISIBLE);
         }
+    }
+
+    void bindDataInfo(@NonNull final Recording recording) {
+        Context context = itemView.getContext();
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        boolean showRecordingFileStatus = sharedPreferences.getBoolean("show_recording_file_status_enabled", false);
 
         if (showRecordingFileStatus
                 && (!recording.isScheduled() || recording.isScheduled() && recording.isRecording())) {

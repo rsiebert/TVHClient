@@ -2,12 +2,19 @@ package org.tvheadend.tvhclient.features.dvr.recordings;
 
 import android.support.annotation.Nullable;
 import android.support.v7.util.DiffUtil;
+import android.text.TextUtils;
 
 import org.tvheadend.tvhclient.data.entity.Recording;
 
 import java.util.List;
 
+import timber.log.Timber;
+
 class RecordingListDiffCallback extends DiffUtil.Callback {
+
+    public static final int PAYLOAD_DATA_SIZE = 1;
+    public static final int PAYLOAD_FULL = 2;
+
     private final List<Recording> oldList;
     private final List<Recording> newList;
 
@@ -33,39 +40,42 @@ class RecordingListDiffCallback extends DiffUtil.Callback {
 
     @Override
     public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
-        return newList.get(newItemPosition).equals(oldList.get(oldItemPosition));
-        /*
-        Recording newRecording = newList.get(newItemPosition);
         Recording oldRecording = oldList.get(oldItemPosition);
+        Recording newRecording = newList.get(newItemPosition);
 
-        boolean areContentsTheSame = TextUtils.equals(newRecording.getState(), oldRecording.getState())
-                && TextUtils.equals(newRecording.getError(), oldRecording.getError());
+        return (newRecording.getId() == oldRecording.getId())
+                && TextUtils.equals(newRecording.getTitle(), oldRecording.getTitle())
+                && TextUtils.equals(newRecording.getSubtitle(), oldRecording.getSubtitle())
+                && TextUtils.equals(newRecording.getSummary(), oldRecording.getSummary())
+                && TextUtils.equals(newRecording.getDescription(), oldRecording.getDescription())
+                && TextUtils.equals(newRecording.getChannelName(), oldRecording.getChannelName())
+                && TextUtils.equals(newRecording.getAutorecId(), oldRecording.getAutorecId())
+                && TextUtils.equals(newRecording.getTimerecId(), oldRecording.getTimerecId())
+                && TextUtils.equals(newRecording.getDataErrors(), oldRecording.getDataErrors())
 
-        Timber.d("areContentsTheSame " + areContentsTheSame);
-        return areContentsTheSame;
-        */
+                && (newRecording.getStart() == oldRecording.getStart())
+                && (newRecording.getStop() == oldRecording.getStop())
+                && (newRecording.getEnabled() == oldRecording.getEnabled())
+                && (newRecording.getDuplicate() == oldRecording.getDuplicate())
+                && (newRecording.getDataSize() == oldRecording.getDataSize())
+
+                && TextUtils.equals(newRecording.getError(), oldRecording.getError())
+                && TextUtils.equals(newRecording.getState(), oldRecording.getState());
     }
 
     @Nullable
     @Override
     public Object getChangePayload(int oldItemPosition, int newItemPosition) {
-        // One can return particular field for changed item.
-        return super.getChangePayload(oldItemPosition, newItemPosition);
-        /*
-        Channel newProduct = newList.get(newItemPosition);
-        Channel oldProduct = oldList.get(oldItemPosition);
-        Bundle diffBundle = new Bundle();
-        if (newProduct.hasDiscount() != oldProduct.hasDiscount()) {
-            diffBundle.putBoolean(KEY_DISCOUNT, newProduct.hasDiscount());
+        Recording oldRecording = oldList.get(oldItemPosition);
+        Recording newRecording = newList.get(newItemPosition);
+        Timber.d("Checking payload for recording " + newRecording.getTitle());
+
+        Timber.d("Recording " + newRecording.getTitle() + " datasize " + newRecording.getDataSize() + ", " + oldRecording.getDataSize());
+        if (newRecording.getDataSize() != oldRecording.getDataSize()) {
+            Timber.d("Recording " + newRecording.getTitle() + " datasize is " + newRecording.getDataSize());
+            return PAYLOAD_DATA_SIZE;
+        } else {
+            return PAYLOAD_FULL;
         }
-        if (newProduct.getReviews().size() != oldProduct.getReviews().size()) {
-            diffBundle.putInt(Product.KEY_REVIEWS_COUNT, newProduct.getReviews().size());
-        }
-        if (newProduct.getPrice() != oldProduct.getPrice()) {
-            diffBundle.putFloat(Product.KEY_PRICE, newProduct.getPrice());
-        }
-        if (diffBundle.size() == 0) return null;
-        return diffBundle;
-        */
     }
 }

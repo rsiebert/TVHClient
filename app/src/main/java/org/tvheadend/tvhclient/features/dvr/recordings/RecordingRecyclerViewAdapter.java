@@ -17,6 +17,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import timber.log.Timber;
+
+import static org.tvheadend.tvhclient.features.dvr.recordings.RecordingListDiffCallback.PAYLOAD_DATA_SIZE;
+
 class RecordingRecyclerViewAdapter extends RecyclerView.Adapter<RecordingViewHolder> implements Filterable {
 
     private final RecyclerViewClickCallback clickCallback;
@@ -42,19 +46,32 @@ class RecordingRecyclerViewAdapter extends RecyclerView.Adapter<RecordingViewHol
 
     @Override
     public void onBindViewHolder(@NonNull RecordingViewHolder holder, int position) {
-        if (recordingListFiltered.size() > position) {
-            Recording recording = recordingListFiltered.get(position);
-            holder.bindData(recording, (selectedPosition == position), htspVersion, clickCallback);
-        }
+        // NOP
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecordingViewHolder holder, int position, @NonNull List<Object> payloads) {
-        onBindViewHolder(holder, position);
+        Recording recording = recordingListFiltered.get(position);
+
+        if (payloads.isEmpty()) {
+            Timber.d("Recording '" + recording.getTitle() + "' has changed a lot");
+            holder.bindData(recording, (selectedPosition == position), htspVersion, clickCallback);
+            holder.bindDataInfo(recording);
+
+        } else {
+            Timber.d("Recording '" + recording.getTitle() + "' has changed partially " + payloads.size());
+            for (final Object payload : payloads) {
+                if (payload.equals(PAYLOAD_DATA_SIZE)) {
+                    Timber.d("Received PAYLOAD_DATA_SIZE");
+                    // in this case only name will be updated
+                    holder.bindDataInfo(recording);
+                }
+            }
+        }
     }
 
     void addItems(@NonNull List<Recording> list) {
-        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new RecordingListDiffCallback(recordingList, list));
+        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new RecordingListDiffCallback(recordingListFiltered, list));
         diffResult.dispatchUpdatesTo(this);
 
         recordingList.clear();
