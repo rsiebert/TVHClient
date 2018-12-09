@@ -1,6 +1,6 @@
 $ 2.0.0
   % VERSION 2.0.0
-  _ 08.12.2018
+  _ 09.12.2018
     * Some UI changes according to the material design guidelines (popup menus, new navigation menu and icons)
     * Channels, recordings and epg data are now stored in a database
     * Epg data will be periodically fetched in the background
