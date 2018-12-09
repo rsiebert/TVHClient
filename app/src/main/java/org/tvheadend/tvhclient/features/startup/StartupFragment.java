@@ -265,9 +265,7 @@ public class StartupFragment extends Fragment implements EpgSyncStatusCallback {
                 settingsButton.setOnClickListener(v -> showConnectionListSettings());
 
                 retryButton.setVisibility(View.VISIBLE);
-                retryButton.setOnClickListener(v -> {
-                    activity.startService(new Intent(activity, EpgSyncService.class));
-                });
+                retryButton.setOnClickListener(v -> activity.startService(new Intent(activity, EpgSyncService.class)));
                 break;
         }
     }
