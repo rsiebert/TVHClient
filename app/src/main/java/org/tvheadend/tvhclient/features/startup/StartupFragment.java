@@ -98,7 +98,6 @@ public class StartupFragment extends Fragment implements EpgSyncStatusCallback {
             detailsText = "";
             isServiceStarted = false;
         }
-        handleStartupProcedure();
     }
 
     private void handleStartupProcedure() {
@@ -177,6 +176,8 @@ public class StartupFragment extends Fragment implements EpgSyncStatusCallback {
                 .message(stateText)
                 .details(detailsText)
                 .build());
+
+        handleStartupProcedure();
     }
 
     @Override
