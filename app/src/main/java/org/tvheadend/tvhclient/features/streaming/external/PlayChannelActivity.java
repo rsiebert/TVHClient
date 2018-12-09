@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.view.View;
 
 import org.tvheadend.tvhclient.R;
@@ -56,8 +57,10 @@ public class PlayChannelActivity extends BasePlaybackActivity {
         Timber.d("Playing channel from server with url " + serverUrl);
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setDataAndType(Uri.parse(serverUrl), "video/*");
-        intent.putExtra("itemTitle", channel.getName());
-        intent.putExtra("title", channel.getName());
+        if (!TextUtils.isEmpty(channel.getName())) {
+            intent.putExtra("itemTitle", channel.getName());
+            intent.putExtra("title", channel.getName());
+        }
         startExternalPlayer(intent);
     }
 }
