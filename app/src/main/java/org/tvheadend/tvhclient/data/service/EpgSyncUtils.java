@@ -390,6 +390,7 @@ class EpgSyncUtils {
                 program.setCopyrightYear(msg.getInteger("copyright_year"));
             }
         }
+        /*
         if (msg.containsKey("credits")) {
             StringBuilder sb = new StringBuilder();
             for (String credit : msg.getStringArray("credits")) {
@@ -414,8 +415,8 @@ class EpgSyncUtils {
             }
             // Remove the last separator character
             program.setKeyword(sb.substring(0, sb.lastIndexOf(",")));
-
         }
+        */
         return program;
     }
 
