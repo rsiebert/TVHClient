@@ -18,6 +18,7 @@ package org.tvheadend.tvhclient.data.service.htsp;
 import android.support.annotation.NonNull;
 
 import java.math.BigInteger;
+import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -128,6 +129,11 @@ public class HtspMessageSerializer implements HtspMessage.Serializer {
                 return null;
             }
 
+            if (valueLength < 0) {
+                Timber.e("Attempted to deserialize an negative field (" + valueLength + " bytes)");
+                return null;
+            }
+
             // Deserialize the Key
             if (keyLength == 0) {
                 // Working on a list...
@@ -141,7 +147,12 @@ public class HtspMessageSerializer implements HtspMessage.Serializer {
 
             // Extract Value bytes
             valueBytes = new byte[(int) valueLength];
-            buffer.get(valueBytes);
+            try {
+                buffer.get(valueBytes);
+            } catch (BufferUnderflowException e) {
+                Timber.e("Attempted to read from buffer with not enough data");
+                return null;
+            }
 
             // Deserialize the Value
             switch (fieldType) {
