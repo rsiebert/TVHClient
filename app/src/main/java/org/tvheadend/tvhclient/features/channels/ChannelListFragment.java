@@ -259,7 +259,7 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
         selectedListPosition = position;
         recyclerViewAdapter.setPosition(position);
         Channel channel = recyclerViewAdapter.getItem(position);
-        if (channel == null) {
+        if (channel == null || !isVisible()) {
             return;
         }
 

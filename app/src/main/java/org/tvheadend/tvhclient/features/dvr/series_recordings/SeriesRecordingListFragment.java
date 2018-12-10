@@ -164,7 +164,7 @@ public class SeriesRecordingListFragment extends BaseFragment implements Recycle
         selectedListPosition = position;
         recyclerViewAdapter.setPosition(position);
         SeriesRecording recording = recyclerViewAdapter.getItem(position);
-        if (recording == null) {
+        if (recording == null || !isVisible()) {
             return;
         }
         if (!isDualPane) {

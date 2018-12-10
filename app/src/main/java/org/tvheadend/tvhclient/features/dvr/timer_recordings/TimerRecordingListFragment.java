@@ -165,7 +165,7 @@ public class TimerRecordingListFragment extends BaseFragment implements Recycler
         selectedListPosition = position;
         recyclerViewAdapter.setPosition(position);
         TimerRecording recording = recyclerViewAdapter.getItem(position);
-        if (recording == null) {
+        if (recording == null || !isVisible()) {
             return;
         }
         if (!isDualPane) {

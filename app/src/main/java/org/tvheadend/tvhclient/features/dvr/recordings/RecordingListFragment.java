@@ -142,7 +142,7 @@ public class RecordingListFragment extends BaseFragment implements RecyclerViewC
         selectedListPosition = position;
         recyclerViewAdapter.setPosition(position);
         Recording recording = recyclerViewAdapter.getItem(position);
-        if (recording == null) {
+        if (recording == null || !isVisible()) {
             return;
         }
 
