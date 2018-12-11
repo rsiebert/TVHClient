@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -262,14 +264,16 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
     private void showProgramDetails(int position) {
         selectedListPosition = position;
         Program program = recyclerViewAdapter.getItem(position);
-        if (program == null) {
+        if (program == null || !isVisible()) {
             return;
         }
-        // Launch a new activity to display the program list of the selected channelTextView.
-        Intent intent = new Intent(activity, ProgramDetailsActivity.class);
-        intent.putExtra("eventId", program.getEventId());
-        intent.putExtra("channelId", program.getChannelId());
-        activity.startActivity(intent);
+
+        Fragment fragment = ProgramDetailsFragment.newInstance(program.getEventId(), program.getChannelId());
+        FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.main, fragment);
+        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+        ft.addToBackStack(null);
+        ft.commit();
     }
 
     private void showPopupMenu(View view) {

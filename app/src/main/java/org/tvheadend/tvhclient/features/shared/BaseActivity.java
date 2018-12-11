@@ -18,6 +18,7 @@ import org.tvheadend.tvhclient.data.service.worker.EpgWorkerHandler;
 import org.tvheadend.tvhclient.features.dvr.recordings.RecordingDetailsFragment;
 import org.tvheadend.tvhclient.features.dvr.series_recordings.SeriesRecordingDetailsFragment;
 import org.tvheadend.tvhclient.features.dvr.timer_recordings.TimerRecordingDetailsFragment;
+import org.tvheadend.tvhclient.features.programs.ProgramDetailsFragment;
 import org.tvheadend.tvhclient.features.programs.ProgramListFragment;
 import org.tvheadend.tvhclient.features.shared.callbacks.NetworkAvailabilityChangedInterface;
 import org.tvheadend.tvhclient.features.shared.callbacks.NetworkStatusInterface;
@@ -153,6 +154,7 @@ public abstract class BaseActivity extends AppCompatActivity implements NetworkS
         if (!navigationHistoryEnabled) {
             Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main);
             if (fragment instanceof ProgramListFragment
+                    || fragment instanceof ProgramDetailsFragment
                     || fragment instanceof RecordingDetailsFragment
                     || fragment instanceof SeriesRecordingDetailsFragment
                     || fragment instanceof TimerRecordingDetailsFragment) {
