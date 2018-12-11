@@ -70,7 +70,6 @@ public class TimerRecordingDetailsFragment extends BaseFragment implements Recor
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.details_fragment, container, false);
         ViewStub stub = view.findViewById(R.id.stub);
         stub.setLayoutResource(R.layout.timer_recording_details_fragment_contents);

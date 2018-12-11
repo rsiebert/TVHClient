@@ -90,7 +90,6 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.recording_add_edit_fragment, container, false);
         unbinder = ButterKnife.bind(this, view);
         return view;

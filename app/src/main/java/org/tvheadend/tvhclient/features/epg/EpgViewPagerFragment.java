@@ -83,7 +83,6 @@ public class EpgViewPagerFragment extends Fragment implements EpgScrollInterface
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.epg_viewpager_fragment, container, false);
         unbinder = ButterKnife.bind(this, view);
         return view;

@@ -50,7 +50,6 @@ public class TimerRecordingListFragment extends BaseFragment implements Recycler
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.recyclerview_fragment, container, false);
         unbinder = ButterKnife.bind(this, view);
         return view;

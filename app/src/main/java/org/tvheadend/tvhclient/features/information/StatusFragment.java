@@ -64,7 +64,6 @@ public class StatusFragment extends BaseFragment implements WakeOnLanTaskCallbac
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.status_fragment, container, false);
         unbinder = ButterKnife.bind(this, view);
         return view;
