@@ -162,6 +162,9 @@ public class RecordingDetailsFragment extends BaseFragment implements RecordingR
     }
 
     private void updateUI() {
+        // The toolbar is hidden as a default to prevent pressing any icons if no recording
+        // has been loaded yet. The toolbar is shown here because a recording was loaded
+        nestedToolbar.setVisibility(View.VISIBLE);
 
         Drawable drawable = UIUtils.getRecordingState(activity, recording);
         stateImageView.setVisibility(drawable != null ? View.VISIBLE : View.GONE);
@@ -297,6 +300,12 @@ public class RecordingDetailsFragment extends BaseFragment implements RecordingR
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        // The recording might be null in case the viewmodel
+        // has not yet loaded the recording for the given id
+        if (recording == null) {
+            return super.onOptionsItemSelected(item);
+        }
+
         switch (item.getItemId()) {
             case R.id.menu_play:
                 return menuUtils.handleMenuPlayRecording(recording.getId());

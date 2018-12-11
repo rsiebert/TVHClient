@@ -97,10 +97,11 @@ public class ProgramDetailsFragment extends BaseFragment implements RecordingRem
     private Recording recording;
     private int programIdToBeEditedWhenBeingRecorded = 0;
 
-    public static ProgramDetailsFragment newInstance(int eventId) {
+    public static ProgramDetailsFragment newInstance(int eventId, int channelId) {
         ProgramDetailsFragment f = new ProgramDetailsFragment();
         Bundle args = new Bundle();
         args.putInt("eventId", eventId);
+        args.putInt("channelId", channelId);
         f.setArguments(args);
         return f;
     }
@@ -196,6 +197,9 @@ public class ProgramDetailsFragment extends BaseFragment implements RecordingRem
     }
 
     private void updateUI() {
+        // The toolbar is hidden as a default to prevent pressing any icons if no recording
+        // has been loaded yet. The toolbar is shown here because a recording was loaded
+        nestedToolbar.setVisibility(View.VISIBLE);
 
         updateRecordingState();
 
@@ -299,6 +303,11 @@ public class ProgramDetailsFragment extends BaseFragment implements RecordingRem
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        // The program might be null in case the viewmodel
+        // has not yet loaded the program for the given id
+        if (program == null) {
+            return super.onOptionsItemSelected(item);
+        }
 
         switch (item.getItemId()) {
             case android.R.id.home:

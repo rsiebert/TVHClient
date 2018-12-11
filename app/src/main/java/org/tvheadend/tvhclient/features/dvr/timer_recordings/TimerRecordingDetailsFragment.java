@@ -119,6 +119,9 @@ public class TimerRecordingDetailsFragment extends BaseFragment implements Recor
     }
 
     private void updateUI() {
+        // The toolbar is hidden as a default to prevent pressing any icons if no recording
+        // has been loaded yet. The toolbar is shown here because a recording was loaded
+        nestedToolbar.setVisibility(View.VISIBLE);
 
         isDisabledTextView.setVisibility(htspVersion >= 19 && recording.getEnabled() == 0 ? View.VISIBLE : View.GONE);
         isDisabledTextView.setText(recording.getEnabled() > 0 ? R.string.recording_enabled : R.string.recording_disabled);
@@ -171,6 +174,12 @@ public class TimerRecordingDetailsFragment extends BaseFragment implements Recor
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        // The recording might be null in case the viewmodel
+        // has not yet loaded the recording for the given id
+        if (recording == null) {
+            return super.onOptionsItemSelected(item);
+        }
+
         switch (item.getItemId()) {
             case R.id.menu_edit:
                 Intent intent = new Intent(activity, RecordingAddEditActivity.class);
