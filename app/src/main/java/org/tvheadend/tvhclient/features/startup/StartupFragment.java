@@ -69,7 +69,7 @@ public class StartupFragment extends Fragment implements EpgSyncStatusCallback {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.startup_fragment, null);
+        View view = inflater.inflate(R.layout.startup_fragment, container, false);
         unbinder = ButterKnife.bind(this, view);
         return view;
     }
