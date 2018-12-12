@@ -48,6 +48,11 @@
             android:summary="@string/pref_tag_icon_sum"
             android:title="@string/pref_tag_icon" />
         <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="multiple_channel_tags_enabled"
+            android:summary="Filter channels by selecting more than one channel tag"
+            android:title="Select multiple channel tags" />
+        <CheckBoxPreference
             android:defaultValue="true"
             android:key="program_progressbar_enabled"
             android:summary="@string/pref_show_progressbar_sum"

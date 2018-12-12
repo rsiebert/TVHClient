@@ -29,6 +29,7 @@ public class SettingsUserInterfaceFragment extends BasePreferenceFragment implem
 
     private CheckBoxPreference programArtworkEnabledPreference;
     private CheckBoxPreference castMiniControllerPreference;
+    private CheckBoxPreference multipleChannelTagsPreference;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -42,11 +43,16 @@ public class SettingsUserInterfaceFragment extends BasePreferenceFragment implem
         programArtworkEnabledPreference.setOnPreferenceClickListener(this);
         castMiniControllerPreference = (CheckBoxPreference) findPreference("casting_minicontroller_enabled");
         castMiniControllerPreference.setOnPreferenceClickListener(this);
+        multipleChannelTagsPreference = (CheckBoxPreference) findPreference("multiple_channel_tags_enabled");
+        multipleChannelTagsPreference.setOnPreferenceClickListener(this);
     }
 
     @Override
     public boolean onPreferenceClick(Preference preference) {
         switch (preference.getKey()) {
+            case "multiple_channel_tags_enabled":
+                handlePreferenceMultipleChannelTagsSelected();
+                break;
             case "program_artwork_enabled":
                 handlePreferenceShowArtworkSelected();
                 break;
@@ -55,6 +61,15 @@ public class SettingsUserInterfaceFragment extends BasePreferenceFragment implem
                 break;
         }
         return true;
+    }
+
+    private void handlePreferenceMultipleChannelTagsSelected() {
+        if (!isUnlocked) {
+            if (getView() != null) {
+                Snackbar.make(getView(), R.string.feature_not_available_in_free_version, Snackbar.LENGTH_SHORT).show();
+            }
+            multipleChannelTagsPreference.setChecked(false);
+        }
     }
 
     private void handlePreferenceShowArtworkSelected() {
