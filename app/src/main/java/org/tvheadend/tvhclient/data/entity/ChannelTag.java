@@ -24,6 +24,8 @@ public class ChannelTag {
 
     @ColumnInfo(name = "connection_id")
     private int connectionId;
+    @ColumnInfo(name = "is_selected")
+    private int isSelected;
 
     @Ignore
     private List<Integer> members;          // u32[] optional   Channel IDs of those that belong to the tag
@@ -90,5 +92,13 @@ public class ChannelTag {
 
     public void setConnectionId(int connectionId) {
         this.connectionId = connectionId;
+    }
+
+    public int getIsSelected() {
+        return isSelected;
+    }
+
+    public void setIsSelected(int isSelected) {
+        this.isSelected = isSelected;
     }
 }
