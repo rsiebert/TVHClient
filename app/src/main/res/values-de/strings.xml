@@ -166,8 +166,6 @@
     <string name="pref_download_directory_sum">Aufnahmen werden in folgendes Verzeichnis heruntergeladen: \'%s\'</string>
     <string name="pref_enable_crash_reports">Senden Sie anonyme Absturzberichte</string>
     <string name="pref_enable_crash_reports_sum">Die Berichte enthalten die Informationen, die helfen, die Stabilität und Benutzerfreundlichkeit der Anwendung zu verbessern.</string>
-    <string name="pref_enable_usage_statistics">Senden Sie anonyme Nutzungsstatistiken</string>
-    <string name="pref_enable_usage_statistics_sum">Diese Berichte enthalten Informationen über die erforderliche Verfügbarkeit von Google-Diensten und welche Funktionen der Anwendung verfügbar sind, die von den Benutzern verwendet werden. Diese Information wird auch verwendet, um die Stabilität und Benutzerfreundlichkeit weiter zu verbessern.</string>
     <string name="pref_epg_hours_visible">Sichtbare Stunden</string>
     <string name="pref_epg_max_days">Anzahl der Tage</string>
     <string name="pref_epg_max_days_sum">Begrenzt die Programmübersicht auf eine maximale Anzahl an Tagen.</string>
@@ -387,4 +385,13 @@
     <string name="multiple_channel_tags">Multiple Sendergruppen</string>
     <string name="pref_multiple_channel_tags_enabled">Auswahl mehrerer Sendergruppen</string>
     <string name="pref_multiple_channel_tags_enabled_sum">Filtere die Liste der angezeigten Sender über mehrere Sendergruppen hinweg</string>
+    <string name="search_completed_recordings">Suche fertige Aufnahmen</string>
+    <string name="search_scheduled_recordings">Suche geplante Aufnahmen</string>
+    <string name="search_removed_recordings">Suche gelöschte  Aufnahmen</string>
+    <string name="search_failed_recordings">Suche fehlerhafte Aufnahmen</string>
+    <string name="search_series_recordings">Suche Serienaufnahmen</string>
+    <string name="search_timer_recordings">Suche manuelle Aufnahmen</string>
+    <string name="search_programs">Suche Programme</string>
+    <string name="search_channels">Suche Sender</string>
+    <string name="search_program_guide">Suche in der Programübersicht</string>
 </resources>

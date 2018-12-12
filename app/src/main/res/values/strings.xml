@@ -109,7 +109,7 @@
     <string name="help_and_support">Help and Support</string>
     <string name="in_2_days">In 2 days</string>
     <string name="initializing">Initializing</string>
-    <string name="intro_overlay_text">Touch to cast Live TV or recordings to your TV.\n\nPlease check that you meet the requirements described in the casting settings.</string>
+    <string name="intro_overlay_text">Touch to cast Live TV or recordings to your TV.  Please check that you meet the requirements described in the casting settings.</string>
     <string name="is_series_recording">This recording is part of a series recording</string>
     <string name="is_timer_recording">This recording was created by a timer</string>
     <string name="loading">Loading…</string>
@@ -168,8 +168,6 @@
     <string name="pref_download_directory_sum">Recordings will be downloaded into the following directory: \'%s\'</string>
     <string name="pref_enable_crash_reports">Send anonymous crash reports</string>
     <string name="pref_enable_crash_reports_sum">The reports contain the information that help to improve the stability and user experience of the application.</string>
-    <string name="pref_enable_usage_statistics">Send anonymous usage statistics</string>
-    <string name="pref_enable_usage_statistics_sum">These reports provide information about the required google services availability and which features of the application are available used by the users. This information is also used to improve the stability and user experience further.</string>
     <string name="pref_epg_hours_visible">Hours visible</string>
     <string name="pref_epg_hours_visible_sum">Number of hours of program data to be displayed on a screen for each sender. Too many hours affect readability.</string>
     <string name="pref_epg_max_days">Maximum days to show</string>
@@ -227,7 +225,7 @@
     <string name="pref_port_sum">Enter the server port</string>
     <string name="pref_privacy_policy">Privacy Policy</string>
     <string name="pref_profiles">Profiles</string>
-    <string name="pref_profiles_sum">Define the profiles how content shall be recorded or played.</string>
+    <string name="pref_profiles_sum">Define the profiles how content should be recorded or played.</string>
     <string name="pref_program_guide">Program guide</string>
     <string name="pref_program_guide_sum">Configure the program guide screen and how the data shall be displayed.</string>
     <string name="pref_programs">Programs</string>
@@ -238,7 +236,7 @@
     <string name="pref_send_logfile">Send log to developer</string>
     <string name="pref_send_logfile_sum">Mail the log file to the developer to support him improving the program. Only status information from TVHClient is sent!</string>
     <string name="pref_show_cast_minicontroller">Cast controls</string>
-    <string name="pref_show_cast_minicontroller_sum">Show a cast minicontroller at the bottom of the screen to display some information about the current cast.</string>
+    <string name="pref_show_cast_minicontroller_sum">Show a cast mini controller at the bottom of the screen to display some information about the current cast.</string>
     <string name="pref_show_channel_name">Show channel name</string>
     <string name="pref_show_channel_name_sum">Additionally to the channel icon display the channel name above the program title in the channel list.</string>
     <string name="pref_show_next_program">Show next program in channel list</string>

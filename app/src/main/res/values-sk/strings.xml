@@ -308,4 +308,6 @@
     <string name="wol_send">Wake on LAN paket na \'%s\' bol úspešne poslaný</string>
     <string name="wol_send_broadcast">Wake on LAN paket ako broadcast na \'%s\' bol úspešne poslaný</string>
     <string name="yesterday">Včera</string>
+    <string name="cast">Cast</string>
+    <string name="clear">Jasný</string>
 </resources>

@@ -14,7 +14,7 @@
     <string name="cancel">Annulla</string>
     <string name="cancel_add_recording">"Annullare l'aggiunta di una nuova registrazione? Tutti i valori saranno persi."</string>
     <string name="cancel_edit_recording">Annullare modifica registrazione esistente? Tutti i valori modificati verrannmo persi.</string>
-    <string name="cancel_recording">"Vuoi veramente annullare la registrazione programmata '%s'?"</string>
+    <string name="cancel_recording">"Vuoi veramente annullare la registrazione programmata \'%s\'?"</string>
     <string name="cast">Cast</string>
     <string name="channel">Canale</string>
     <string name="channels">Canali</string>
@@ -38,7 +38,7 @@
     <string name="date">Data</string>
     <string name="days_of_week">Giorni della settimana</string>
     <string name="delete">Elimina</string>
-    <string name="delete_connection">"Vuoi veramente eliminare la connessione '%s'?"</string>
+    <string name="delete_connection">"Vuoi veramente eliminare la connessione \'%s\'?"</string>
     <string name="description">Descrizione</string>
     <string name="details">Dettagli</string>
     <string name="dialog_content_purchase_already_made">Tutte le funzioni aggiuntive sono già disponibili!</string>
@@ -51,8 +51,8 @@
     <string name="disc_space">Spazio su disco</string>
     <string name="discard">Annulla</string>
     <string name="download">Download</string>
-    <string name="download_error_authentication_required">"Errore download registrazione '%s'. Autentificazione non corretta o mancante."</string>
-    <string name="download_error_insufficient_space">"Errore download registrazione '%s'. Spazio insufficiente nel dispositivo."</string>
+    <string name="download_error_authentication_required">"Errore download registrazione \'%s\'. Autentificazione non corretta o mancante."</string>
+    <string name="download_error_insufficient_space">"Errore download registrazione \'%s\'. Spazio insufficiente nel dispositivo."</string>
     <string name="duplicate_detection">Rileva show duplicati</string>
     <string name="duration">Durata</string>
     <string name="duration_sum">Durata in min. (0 = illimitata)</string>
@@ -120,7 +120,7 @@ Verifica che siano soddsifatti i requisiti descritti nelle impostazioni trasmiss
     <string name="pref_default_menu">Schermata di avvio</string>
     <string name="pref_default_menu_sum">"Scegli la schermata che sarà visualizzata all'avvio dell'applicazione."</string>
     <string name="pref_download_directory">Cartella download</string>
-    <string name="pref_download_directory_sum">"Le registrazioni scaricate verranno salvate in questa cartella: '%s'"</string>
+    <string name="pref_download_directory_sum">"Le registrazioni scaricate verranno salvate in questa cartella: \'%s\'"</string>
     <string name="pref_epg_hours_visible">Ore visibili</string>
     <string name="pref_epg_hours_visible_sum">Numero di ore di dati del programma da visualizzare su uno schermo per ciascun mittente. Troppe ore influiscono sulla leggibilità.</string>
     <string name="pref_epg_max_days">Numero massimo giorni da visualizzare</string>
@@ -238,9 +238,9 @@ L'indirizzo deve essere nella forma '01:24:67:9a:cd:ef' e può contenere solo ci
     <string name="refresh">Aggiorna</string>
     <string name="remove">Rimuovi</string>
     <string name="remove_all_recordings">Vuoi veramente eliminare TUTTE le registrazioni fallite?</string>
-    <string name="remove_recording">"Vuoi veramente eliminare la registrazione '%s'?"</string>
-    <string name="remove_series_recording">"Vuoi veramente eliminare la registrazione della serie '%s'? Questo rimuoverà tutte le registrazioni programmate che appartengono a quella regola di registrazione della serie."</string>
-    <string name="remove_timer_recording">"Vuoi veramente eliminare la registrazione manuale '%s'?"</string>
+    <string name="remove_recording">"Vuoi veramente eliminare la registrazione \'%s\'?"</string>
+    <string name="remove_series_recording">"Vuoi veramente eliminare la registrazione della serie \'%s\'? Questo rimuoverà tutte le registrazioni programmate che appartengono a quella regola di registrazione della serie."</string>
+    <string name="remove_timer_recording">"Vuoi veramente eliminare la registrazione manuale \'%s\'?"</string>
     <string name="removed_recordings">Registrazioni rimosse</string>
     <string name="saturday">Sabato</string>
     <string name="save">Salva</string>
@@ -274,7 +274,7 @@ L'indirizzo deve essere nella forma '01:24:67:9a:cd:ef' e può contenere solo ci
     <string name="start_time">"Orario inizio"</string>
     <string name="status">Stato</string>
     <string name="stop">Stop</string>
-    <string name="stop_recording">"Vuoi veramente fermare la registrazione '%s'?"</string>
+    <string name="stop_recording">"Vuoi veramente fermare la registrazione \'%s\'?"</string>
     <string name="stop_time">Orario fine</string>
     <string name="stream_errors">Errori stream: %1$s</string>
     <string name="subscription_error">Errore sottoscrizione: %1$s</string>
@@ -300,9 +300,9 @@ L'indirizzo deve essere nella forma '01:24:67:9a:cd:ef' e può contenere solo ci
     <string name="updating">Aggiornamento…</string>
     <string name="wednesday">Mercoledì</string>
     <string name="wol_address_invalid">"L'indirizzo MAC non è valido. Controlla le impostazioni."</string>
-    <string name="wol_error">"Errore durante l'invio del pacchetto Wake On LAN a '%1$s'.
+    <string name="wol_error">"Errore durante l'invio del pacchetto Wake On LAN a \'%1$s\'.
  Messaggio d'errore: %2$s"</string>
-    <string name="wol_send">"Invio completato pacchetto Wake On LAN a '%s'"</string>
-    <string name="wol_send_broadcast">"Invio completato pacchetto Wake On LAN in broadcast a '%s'"</string>
+    <string name="wol_send">"Invio completato pacchetto Wake On LAN a \'%s\'"</string>
+    <string name="wol_send_broadcast">"Invio completato pacchetto Wake On LAN in broadcast a \'%s\'"</string>
     <string name="yesterday">Ieri</string>
 </resources>
