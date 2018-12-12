@@ -8,7 +8,9 @@ import org.tvheadend.tvhclient.data.entity.ChannelTag;
 import org.tvheadend.tvhclient.data.db.AppRoomDatabase;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
@@ -72,6 +74,17 @@ public class ChannelTagData extends BaseData implements DataSourceInterface<Chan
             e.printStackTrace();
         }
         return channelTags;
+    }
+
+    public Set<Integer> getSelectedChannelTagIds() {
+        List<ChannelTag> channelTags = getItems();
+        Set<Integer> selectedTagIds = new HashSet<>();
+        for (ChannelTag channelTag : channelTags) {
+            if (channelTag.getIsSelected() > 0) {
+                selectedTagIds.add(channelTag.getTagId());
+            }
+        }
+        return selectedTagIds;
     }
 
     private static class ItemLoaderTask extends AsyncTask<Void, Void, ChannelTag> {
