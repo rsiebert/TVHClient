@@ -13,6 +13,7 @@ import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.data.entity.ChannelSubset;
 
 import java.util.List;
+import java.util.Set;
 
 @Dao
 public interface ChannelDao {
@@ -62,9 +63,9 @@ public interface ChannelDao {
     @Query("SELECT c.id, c.name, c.icon, c.number, c.number_minor " +
             "FROM channels AS c " +
             "WHERE c.connection_id IN (SELECT id FROM connections WHERE active = 1) " +
-            " AND c.id IN (SELECT channel_id FROM tags_and_channels WHERE tag_id = :tagId) " +
+            " AND c.id IN (SELECT channel_id FROM tags_and_channels WHERE tag_id IN (:tagIds)) " +
             "GROUP BY c.id " + orderBy)
-    List<ChannelSubset> loadAllChannelsNamesOnlyByTagSync(int tagId, int sortOrder);
+    List<ChannelSubset> loadAllChannelsNamesOnlyByTagSync(Set<Integer> tagIds, int sortOrder);
 
     @Transaction
     @Query(base +
@@ -79,9 +80,9 @@ public interface ChannelDao {
             "LEFT JOIN programs AS program ON program.start <= :time AND program.stop > :time AND program.channel_id = c.id " +
             "LEFT JOIN programs AS next_program ON next_program.start = program.stop AND next_program.channel_id = c.id " +
             "WHERE c.connection_id IN (SELECT id FROM connections WHERE active = 1) " +
-            " AND c.id IN (SELECT channel_id FROM tags_and_channels WHERE tag_id = :tagId) " +
+            " AND c.id IN (SELECT channel_id FROM tags_and_channels WHERE tag_id IN (:tagIds)) " +
             "GROUP BY c.id " + orderBy)
-    List<Channel> loadAllChannelsByTimeAndTagSync(long time, int tagId, int sortOrder);
+    List<Channel> loadAllChannelsByTimeAndTagSync(long time, Set<Integer> tagIds, int sortOrder);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Channel channel);

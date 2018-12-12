@@ -11,7 +11,9 @@ import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.data.entity.ChannelSubset;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
 
@@ -86,22 +88,22 @@ public class ChannelData extends BaseData implements DataSourceInterface<Channel
     }
 
     @NonNull
-    public List<Channel> getItemsByTimeAndTag(long currentTime, int channelTagId) {
+    public List<Channel> getItemsByTimeAndTags(long currentTime, Set<Integer> channelTagIds) {
         int channelSortOrder = Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(context).getString("channel_sort_order", "0"));
         List<Channel> channels = new ArrayList<>();
         try {
-            channels.addAll(new ItemsLoaderTask(db, currentTime, channelTagId, channelSortOrder).execute().get());
+            channels.addAll(new ItemsLoaderTask(db, currentTime, channelTagIds, channelSortOrder).execute().get());
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
         return channels;
     }
 
-    public List<ChannelSubset> getChannelNamesByTimeAndTag(int channelTagId) {
+    public List<ChannelSubset> getChannelNamesByTimeAndTag(Set<Integer> channelTagIds) {
         int channelSortOrder = Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(context).getString("channel_sort_order", "0"));
         List<ChannelSubset> channels = new ArrayList<>();
         try {
-            channels.addAll(new ItemSubsetsLoaderTask(db, channelTagId, channelSortOrder).execute().get());
+            channels.addAll(new ItemSubsetsLoaderTask(db, channelTagIds, channelSortOrder).execute().get());
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
@@ -148,19 +150,19 @@ public class ChannelData extends BaseData implements DataSourceInterface<Channel
         private final AppRoomDatabase db;
         private final int sortOrder;
         private final long currentTime;
-        private final int channelTagId;
+        private final Set<Integer> channelTagIds;
 
         ItemsLoaderTask(AppRoomDatabase db, int sortOrder) {
             this.db = db;
             this.currentTime = 0;
-            this.channelTagId = 0;
+            this.channelTagIds = new HashSet<>();
             this.sortOrder = sortOrder;
         }
 
-        ItemsLoaderTask(AppRoomDatabase db, long currentTime, int channelTagId, int sortOrder) {
+        ItemsLoaderTask(AppRoomDatabase db, long currentTime, Set<Integer> channelTagIds, int sortOrder) {
             this.db = db;
             this.currentTime = currentTime;
-            this.channelTagId = channelTagId;
+            this.channelTagIds = channelTagIds;
             this.sortOrder = sortOrder;
         }
 
@@ -168,10 +170,10 @@ public class ChannelData extends BaseData implements DataSourceInterface<Channel
         protected List<Channel> doInBackground(Void... voids) {
             if (currentTime == 0) {
                 return db.getChannelDao().loadAllChannelsSync(sortOrder);
-            } else if (currentTime > 0 && channelTagId == 0) {
+            } else if (currentTime > 0 && channelTagIds.size() == 0) {
                 return db.getChannelDao().loadAllChannelsByTimeSync(currentTime, sortOrder);
             } else {
-                return db.getChannelDao().loadAllChannelsByTimeAndTagSync(currentTime, channelTagId, sortOrder);
+                return db.getChannelDao().loadAllChannelsByTimeAndTagSync(currentTime, channelTagIds, sortOrder);
             }
         }
     }
@@ -179,20 +181,20 @@ public class ChannelData extends BaseData implements DataSourceInterface<Channel
     private static class ItemSubsetsLoaderTask extends AsyncTask<Void, Void, List<ChannelSubset>> {
         private final AppRoomDatabase db;
         private final int sortOrder;
-        private final int channelTagId;
+        private final Set<Integer> channelTagIds;
 
-        ItemSubsetsLoaderTask(AppRoomDatabase db, int channelTagId, int sortOrder) {
+        ItemSubsetsLoaderTask(AppRoomDatabase db, Set<Integer> channelTagIds, int sortOrder) {
             this.db = db;
-            this.channelTagId = channelTagId;
+            this.channelTagIds = channelTagIds;
             this.sortOrder = sortOrder;
         }
 
         @Override
         protected List<ChannelSubset> doInBackground(Void... voids) {
-            if (channelTagId == 0) {
+            if (channelTagIds.size() == 0) {
                 return db.getChannelDao().loadAllChannelsNamesOnlySync(sortOrder);
             } else {
-                return db.getChannelDao().loadAllChannelsNamesOnlyByTagSync(channelTagId, sortOrder);
+                return db.getChannelDao().loadAllChannelsNamesOnlyByTagSync(channelTagIds, sortOrder);
             }
         }
     }
