@@ -49,6 +49,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -138,83 +139,47 @@ public class MenuUtils {
         return true;
     }
 
-    public boolean handleMenuChannelTagSelection(int selectedChannelTagId, @NonNull ChannelTagSelectionCallback callback) {
+    public boolean handleMenuChannelTagsSelection(Set<Integer> selectedChannelTagIds, @NonNull ChannelTagSelectionCallback callback) {
         Activity activity = this.activity.get();
         if (activity == null) {
             return false;
         }
 
-        // Create a default tag (All channels)
-        ChannelTag tag = new ChannelTag();
-        tag.setTagId(0);
-        tag.setTagName(activity.getString(R.string.all_channels));
+        boolean isMultipleChoice = sharedPreferences.getBoolean("multiple_channel_tags_enabled", false);
 
         // Add the default tag to the beginning of the list to indicate
         // that no tag is selected and all channels shall be shown
         List<ChannelTag> channelTagList = appRepository.getChannelTagData().getItems();
-        channelTagList.add(0, tag);
 
-        // In case only a single channel tag id is given, fill integer array
-        // with defaults so that the adapter can then check or uncheck the tags
-        Integer[] selectedIds = new Integer[channelTagList.size()];
-        for (int i = 0; i < channelTagList.size(); i++) {
-            ChannelTag t = channelTagList.get(i);
-            if (t.getTagId() == selectedChannelTagId) {
-                selectedIds[i] = t.getTagId();
-            } else {
-                selectedIds[i] = -1;
-            }
-        }
-
-        ChannelTagRecyclerViewAdapter adapter = new ChannelTagRecyclerViewAdapter(
-                channelTagList, selectedIds,
-                appRepository.getChannelData().getItems().size(),
-                false);
-
-        // Show the dialog that shows all available channel tags. When the
-        // user has selected a tag, restart the loader to loadRecordingById the updated channel list
-        MaterialDialog dialog = new MaterialDialog.Builder(activity)
-                .title(R.string.tags)
-                .adapter(adapter, null)
-                .dismissListener(d -> callback.onChannelTagIdSelected(adapter.getSelectedTagId()))
-                .build();
-
-        adapter.setCallback(dialog);
-        dialog.show();
-        return true;
-    }
-
-    public boolean handleMenuMultipleChannelTagsSelection(Integer[] selectedChannelTagIds, @NonNull ChannelTagSelectionCallback callback) {
-        Activity activity = this.activity.get();
-        if (activity == null) {
-            return false;
-        }
         // Create a default tag (All channels)
-        ChannelTag tag = new ChannelTag();
-        tag.setTagId(0);
-        tag.setTagName(activity.getString(R.string.all_channels));
-
-        // Add the default tag to the beginning of the list to indicate
-        // that no tag is selected and all channels shall be shown
-        List<ChannelTag> channelTagList = appRepository.getChannelTagData().getItems();
-        channelTagList.add(0, tag);
+        if (!isMultipleChoice) {
+            ChannelTag tag = new ChannelTag();
+            tag.setTagId(0);
+            tag.setTagName(activity.getString(R.string.all_channels));
+            channelTagList.add(0, tag);
+        }
 
         ChannelTagRecyclerViewAdapter adapter = new ChannelTagRecyclerViewAdapter(
-                channelTagList, selectedChannelTagIds,
+                channelTagList,
+                selectedChannelTagIds,
                 appRepository.getChannelData().getItems().size(),
-                true);
+                isMultipleChoice);
 
         // Show the dialog that shows all available channel tags. When the
         // user has selected a tag, restart the loader to loadRecordingById the updated channel list
-        MaterialDialog dialog = new MaterialDialog.Builder(activity)
+        MaterialDialog.Builder builder = new MaterialDialog.Builder(activity)
                 .title(R.string.tags)
-                .adapter(adapter, null)
-                .positiveText(android.R.string.ok)
-                .onPositive((d, which) -> {
-                    callback.onMultipleChannelTagIdsSelected(adapter.getSelectedTagIds());
-                })
-                .build();
+                .adapter(adapter, null);
 
+        if (isMultipleChoice) {
+            builder.content("Select one or more channel tags for a subset of channels. Otherwise all channels will be displayed.")
+                    .positiveText(R.string.save)
+                    .onPositive((dialog, which) -> callback.onChannelTagIdsSelected(adapter.getSelectedTagIds()));
+        } else {
+            builder.dismissListener(dialog -> callback.onChannelTagIdsSelected(adapter.getSelectedTagIds()));
+        }
+
+        MaterialDialog dialog = builder.build();
         adapter.setCallback(dialog);
         dialog.show();
         return true;
