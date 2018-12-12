@@ -46,7 +46,7 @@ public class ChannelViewModel extends AndroidViewModel {
         MainApplication.getComponent().inject(this);
 
         allChannelsSelectedText = application.getString(R.string.all_channels);
-        multipleChannelTagsSelectedText = "Multiple channel tags";
+        multipleChannelTagsSelectedText = application.getString(R.string.multiple_channel_tags);
 
         channelTagIds = appRepository.getChannelTagData().getSelectedChannelTagIds();
         selectedTime = new Date().getTime();

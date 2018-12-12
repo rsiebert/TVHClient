@@ -393,4 +393,7 @@
     <string name="search_programs">Search programs</string>
     <string name="search_channels">Search channels</string>
     <string name="search_program_guide">Search program guide</string>
+    <string name="multiple_channel_tags">Multiple channel tags</string>
+    <string name="pref_multiple_channel_tags_enabled">Select multiple channel tags</string>
+    <string name="pref_multiple_channel_tags_enabled_sum">Filter channels by selecting more than one channel tag</string>
 </resources>
