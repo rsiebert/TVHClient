@@ -139,7 +139,7 @@ public class MainApplication extends Application implements BillingProcessor.IBi
                     .build();
 
             // Initialize Fabric with the debug-disabled crashlytics.
-            Fabric.with(this, crashlyticsKit);
+            Fabric.with(this, crashlyticsKit, new Crashlytics());
         }
     }
 
