@@ -26,7 +26,6 @@ import android.widget.ProgressBar;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Channel;
-import org.tvheadend.tvhclient.data.entity.ChannelTag;
 import org.tvheadend.tvhclient.data.entity.Program;
 import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.features.dvr.RecordingAddEditActivity;
@@ -38,6 +37,7 @@ import org.tvheadend.tvhclient.features.shared.callbacks.ChannelTimeSelectionCal
 import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback;
 
 import java.util.Calendar;
+import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -146,11 +146,9 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
     private void showChannelTagOrChannelCount() {
         // Show either all channels or the name of the selected
         // channel tag and the channel count in the toolbar
-        ChannelTag channelTag = viewModel.getChannelTag();
-
+        String toolbarTitle = viewModel.getSelectedChannelTagName();
         if (TextUtils.isEmpty(searchQuery)) {
-            toolbarInterface.setTitle((channelTag == null) ?
-                    getString(R.string.all_channels) : channelTag.getTagName());
+            toolbarInterface.setTitle(toolbarTitle);
             toolbarInterface.setSubtitle(activity.getResources().getQuantityString(R.plurals.items,
                     recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
         } else {
@@ -210,7 +208,7 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_tags:
-                return menuUtils.handleMenuChannelTagSelection(viewModel.getChannelTagId(), this);
+                return menuUtils.handleMenuChannelTagsSelection(viewModel.getChannelTagIds(), this);
 
             case R.id.menu_timeframe:
                 return menuUtils.handleMenuTimeSelection(selectedTimeOffset, intervalInHours, 12, this);
@@ -237,15 +235,10 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
     }
 
     @Override
-    public void onChannelTagIdSelected(int id) {
+    public void onChannelTagIdsSelected(Set<Integer> ids) {
         recyclerView.setVisibility(View.GONE);
         progressBar.setVisibility(View.VISIBLE);
-        viewModel.setChannelTagId(id);
-    }
-
-    @Override
-    public void onMultipleChannelTagIdsSelected(Integer[] ids) {
-
+        viewModel.setChannelTagIds(ids);
     }
 
     /**

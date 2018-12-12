@@ -28,7 +28,6 @@ import android.widget.ProgressBar;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.ChannelSubset;
-import org.tvheadend.tvhclient.data.entity.ChannelTag;
 import org.tvheadend.tvhclient.data.entity.Program;
 import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.features.dvr.RecordingAddEditActivity;
@@ -42,6 +41,7 @@ import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallba
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -160,8 +160,8 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
             }
             // Show either all channels or the name of the selected
             // channel tag and the channel count in the toolbar
-            ChannelTag channelTag = viewModel.getChannelTag();
-            toolbarInterface.setTitle((channelTag == null) ? getString(R.string.all_channels) : channelTag.getTagName());
+            String toolbarTitle = viewModel.getSelectedChannelTagName();
+            toolbarInterface.setTitle(toolbarTitle);
             toolbarInterface.setSubtitle(activity.getResources().getQuantityString(R.plurals.items,
                     channelListRecyclerViewAdapter.getItemCount(), channelListRecyclerViewAdapter.getItemCount()));
         });
@@ -224,7 +224,7 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_tags:
-                return menuUtils.handleMenuChannelTagSelection(viewModel.getChannelTagId(), this);
+                return menuUtils.handleMenuChannelTagsSelection(viewModel.getChannelTagIds(), this);
 
             case R.id.menu_timeframe:
                 return menuUtils.handleMenuTimeSelection(selectedTimeOffset, hoursToShow, (hoursToShow * daysToShow), this);
@@ -244,16 +244,11 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
     }
 
     @Override
-    public void onChannelTagIdSelected(int id) {
+    public void onChannelTagIdsSelected(Set<Integer> ids) {
         channelListRecyclerView.setVisibility(View.GONE);
         programViewPager.setVisibility(View.GONE);
         progressBar.setVisibility(View.VISIBLE);
-        viewModel.setChannelTagId(id);
-    }
-
-    @Override
-    public void onMultipleChannelTagIdsSelected(Integer[] ids) {
-
+        viewModel.setChannelTagIds(ids);
     }
 
     @Override
@@ -342,8 +337,8 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
     public void onFilterComplete(int i) {
         // Show either all channels or the name of the selected
         // channel tag and the channel count in the toolbar
-        ChannelTag channelTag = viewModel.getChannelTag();
-        toolbarInterface.setTitle((channelTag == null) ? getString(R.string.all_channels) : channelTag.getTagName());
+        String toolbarTitle = viewModel.getSelectedChannelTagName();
+        toolbarInterface.setTitle(toolbarTitle);
         toolbarInterface.setSubtitle(activity.getResources().getQuantityString(R.plurals.results,
                 channelListRecyclerViewAdapter.getItemCount(), channelListRecyclerViewAdapter.getItemCount()));
     }

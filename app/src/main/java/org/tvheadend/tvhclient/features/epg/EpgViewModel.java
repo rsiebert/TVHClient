@@ -35,7 +35,7 @@ public class EpgViewModel extends ChannelViewModel {
             if (selectedTime < currentTime) {
                 selectedTime = currentTime;
             }
-            channels.setValue(appRepository.getChannelData().getChannelNamesByTimeAndTag(channelTagId));
+            channels.setValue(appRepository.getChannelData().getChannelNamesByTimeAndTag(channelTagIds));
         };
     }
 

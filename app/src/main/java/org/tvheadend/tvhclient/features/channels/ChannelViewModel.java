@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 
 import org.tvheadend.tvhclient.MainApplication;
+import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.data.entity.ChannelTag;
 import org.tvheadend.tvhclient.data.entity.Recording;
@@ -17,6 +18,7 @@ import org.tvheadend.tvhclient.data.repository.AppRepository;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -25,13 +27,15 @@ import timber.log.Timber;
 public class ChannelViewModel extends AndroidViewModel {
 
     private final MutableLiveData<List<Channel>> channels = new MutableLiveData<>();
+    private final String allChannelsSelectedText;
+    private final String multipleChannelTagsSelectedText;
     @Inject
     protected AppRepository appRepository;
     @Inject
     protected SharedPreferences sharedPreferences;
 
     protected long selectedTime;
-    protected int channelTagId;
+    protected Set<Integer> channelTagIds;
     private int channelSortOrder;
     private boolean showGenreColors;
     protected Runnable channelUpdateTask;
@@ -41,7 +45,10 @@ public class ChannelViewModel extends AndroidViewModel {
         super(application);
         MainApplication.getComponent().inject(this);
 
-        channelTagId = appRepository.getServerStatusData().getActiveItem().getChannelTagId();
+        allChannelsSelectedText = application.getString(R.string.all_channels);
+        multipleChannelTagsSelectedText = "Multiple channel tags";
+
+        channelTagIds = appRepository.getChannelTagData().getSelectedChannelTagIds();
         selectedTime = new Date().getTime();
         channelSortOrder = Integer.valueOf(sharedPreferences.getString("channel_sort_order", "0"));
         showGenreColors = sharedPreferences.getBoolean("genre_colors_for_channels_enabled", false);
@@ -53,7 +60,7 @@ public class ChannelViewModel extends AndroidViewModel {
             if (selectedTime < currentTime) {
                 selectedTime = currentTime;
             }
-            List<Channel> list = appRepository.getChannelData().getItemsByTimeAndTag(selectedTime, channelTagId);
+            List<Channel> list = appRepository.getChannelData().getItemsByTimeAndTags(selectedTime, channelTagIds);
             channels.setValue(list);
 
             channelUpdateHandler.postDelayed(channelUpdateTask, 60000);
@@ -69,8 +76,14 @@ public class ChannelViewModel extends AndroidViewModel {
         return appRepository.getServerStatusData().getLiveDataActiveItem();
     }
 
-    public ChannelTag getChannelTag() {
-        return appRepository.getChannelTagData().getItemById(channelTagId);
+    public String getSelectedChannelTagName() {
+        if (channelTagIds.size() == 1) {
+            return appRepository.getChannelTagData().getItemById(channelTagIds.iterator().next()).getTagName();
+        } else if (channelTagIds.size() == 0) {
+            return allChannelsSelectedText;
+        } else {
+            return multipleChannelTagsSelectedText;
+        }
     }
 
     public LiveData<Integer> getNumberOfChannels() {
@@ -91,15 +104,21 @@ public class ChannelViewModel extends AndroidViewModel {
         channelUpdateHandler.post(channelUpdateTask);
     }
 
-    public int getChannelTagId() {
-        return channelTagId;
+    public Set<Integer> getChannelTagIds() {
+        return channelTagIds;
     }
 
-    public void setChannelTagId(int channelTagId) {
-        this.channelTagId = channelTagId;
-        ServerStatus serverStatus = appRepository.getServerStatusData().getActiveItem();
-        serverStatus.setChannelTagId(channelTagId);
-        appRepository.getServerStatusData().updateItem(serverStatus);
+    public void setChannelTagIds(Set<Integer> channelTagIds) {
+        this.channelTagIds = channelTagIds;
+
+        List<ChannelTag> channelTags = appRepository.getChannelTagData().getItems();
+        for (ChannelTag channelTag : channelTags) {
+            channelTag.setIsSelected(0);
+            if (channelTagIds.contains(channelTag.getTagId())) {
+                channelTag.setIsSelected(1);
+            }
+            appRepository.getChannelTagData().updateItem(channelTag);
+        }
         channelUpdateHandler.post(channelUpdateTask);
     }
 
@@ -107,10 +126,9 @@ public class ChannelViewModel extends AndroidViewModel {
         Timber.d("Checking if channels need to be updated");
         boolean updateChannels = false;
 
-        int newChannelTagId = appRepository.getServerStatusData().getActiveItem().getChannelTagId();
-        if (channelTagId != newChannelTagId) {
-            Timber.d("Channel tag has changed from " + channelTagId + " to " + newChannelTagId);
-            channelTagId = newChannelTagId;
+        Set<Integer> newChannelTagIds = appRepository.getChannelTagData().getSelectedChannelTagIds();
+        if (channelTagIds != newChannelTagIds) {
+            channelTagIds = newChannelTagIds;
             updateChannels = true;
         }
         int newChannelSortOrder = Integer.valueOf(sharedPreferences.getString("channel_sort_order", "0"));
