@@ -34,8 +34,8 @@
             android:title="@string/pref_profiles" />
         <PreferenceScreen
             android:key="playback"
-            android:summary="Choose how live TV programs or recordings are played."
-            android:title="Playback" />
+            android:summary="@string/pref_playback_sum"
+            android:title="@string/pref_playback" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_misc">
