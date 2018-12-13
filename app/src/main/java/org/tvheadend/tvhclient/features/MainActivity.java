@@ -201,7 +201,8 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Wake
             searchView.setOnSuggestionListener(this);
 
             Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main);
-            if (fragment instanceof SearchRequestInterface) {
+            if (fragment instanceof SearchRequestInterface
+                    && fragment.isVisible()) {
                 searchView.setQueryHint(((SearchRequestInterface) fragment).getQueryHint());
             }
         }
@@ -343,7 +344,8 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Wake
     public boolean onQueryTextSubmit(String query) {
         searchMenuItem.collapseActionView();
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main);
-        if (fragment != null && fragment.isAdded() && fragment instanceof SearchRequestInterface) {
+        if (fragment instanceof SearchRequestInterface
+                && fragment.isVisible()) {
             ((SearchRequestInterface) fragment).onSearchRequested(query);
         }
         return true;
@@ -353,10 +355,9 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Wake
     public boolean onQueryTextChange(String newText) {
         if (newText.length() >= 3) {
             Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main);
-            if (fragment != null
-                    && fragment.isAdded()
-                    && !(fragment instanceof ProgramGuideFragment)
-                    && fragment instanceof SearchRequestInterface) {
+            if (fragment instanceof SearchRequestInterface
+                    && fragment.isVisible()
+                    && !(fragment instanceof ProgramGuideFragment)) {
                 ((SearchRequestInterface) fragment).onSearchRequested(newText);
             }
         }
@@ -383,7 +384,8 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Wake
     public void onBackPressed() {
         Timber.d("Back pressed");
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main);
-        if (fragment != null && fragment.isAdded() && fragment instanceof SearchRequestInterface) {
+        if (fragment instanceof SearchRequestInterface
+                && fragment.isVisible()) {
             Timber.d("Found fragment");
             if (!((SearchRequestInterface) fragment).onSearchResultsCleared()) {
                 Timber.d("Search results were not cleared");

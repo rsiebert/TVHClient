@@ -86,10 +86,9 @@ public class EpgViewPagerViewHolder extends RecyclerView.ViewHolder implements R
             return;
         }
         Fragment fragment = activity.getSupportFragmentManager().findFragmentById(R.id.main);
-        if (fragment != null
+        if (fragment instanceof ProgramGuideFragment
                 && fragment.isAdded()
-                && fragment.isResumed()
-                && fragment instanceof ProgramGuideFragment) {
+                && fragment.isResumed()) {
             ((ProgramGuideFragment) fragment).showPopupMenu(view, program);
         }
     }

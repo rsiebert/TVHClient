@@ -57,7 +57,7 @@ public class SearchActivity extends BaseActivity implements ToolbarInterface, St
 
     public void startSearch() {
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main);
-        if (fragment != null && fragment.isAdded()) {
+        if (fragment != null && fragment.isVisible()) {
             String query = getIntent().getStringExtra(SearchManager.QUERY);
             ((SearchRequestInterface) fragment).onSearchRequested(query);
         }
