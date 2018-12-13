@@ -229,7 +229,7 @@
     <string name="pref_send_logfile">Wyślij log do autora</string>
     <string name="pref_send_logfile_sum">Wysyła plik logu dziennika do autora w celu wspierania i ulepszania programu. Tylko informacje o stanie są wysyłane z TVHClient!</string>
     <string name="pref_show_cast_minicontroller">Pokaż kontrolę rzucania</string>
-    <string name="pref_show_cast_minicontroller_sum">bla </string>
+    <string name="pref_show_cast_minicontroller_sum">Pokaż miniaturowy kontroler w dolnej części ekranu, aby wyświetlić pewne informacje o aktualnym rzucie.</string>
     <string name="pref_show_channel_name">Pokaż nazwę kanału</string>
     <string name="pref_show_channel_name_sum">Oprócz ikony kanału wyświetlana jest nazwa kanału nad tytułem programu na liście kanałów.</string>
     <string name="pref_show_next_program">Pokazuj następny program na liście kanałów</string>

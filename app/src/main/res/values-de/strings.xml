@@ -394,4 +394,16 @@
     <string name="search_programs">Suche Programme</string>
     <string name="search_channels">Suche Sender</string>
     <string name="search_program_guide">Suche in der Programübersicht</string>
+    <string name="pref_playback">Wiedergabe</string>
+    <string name="pref_playback_sum">Wählen Sie, wie Live-TV-Programme oder -Aufzeichnungen abgespielt werden.</string>
+    <string name="pref_internal_player_enabled">Internen Player aktivieren</string>
+    <string name="pref_internal_player_enabled_sum">Schaue Live-TV oder Aufnahmen über den internen player. Dieser verwendet das HTSP-Protokoll.</string>
+    <string name="pref_internal_player_buffer_duration">Pufferdauer</string>
+    <string name="pref_internal_player_buffer_duration_sum">Wie viele Sekunden sollen zwischengespeichert werden, bevor die Wiedergabe gestartet wird.</string>
+    <string name="pref_internal_player_audio_passthrough_enabled">Aktiviere Audio-Passthrough</string>
+    <string name="pref_internal_player_audio_passthrough_enabled_sum">Sie müssen auch sicherstellen, dass die Audioeinstellungen des Systems Audio-Passthrough zulassen.</string>
+    <string name="pref_internal_player_buffer_duration_dialog_title">Pufferdauer in Sekunden</string>
+    <string name="pref_internal_player_audio_tunneling_enabled">Audio-Tunneling aktivieren</string>
+    <string name="pref_internal_player_audio_tunneling_enabled_sum">Unterstützung für DSP-Audio-Tunneling aktivieren</string>
+    <string name="pref_internal_player_timeshift_enabled">Timeshift-Unterstützung aktivieren</string>
 </resources>

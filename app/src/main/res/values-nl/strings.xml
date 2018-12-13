@@ -391,4 +391,16 @@
     <string name="search_programs">Zoek programma\'s</string>
     <string name="search_channels">Zoek kanalen</string>
     <string name="search_program_guide">Zoek programmagids</string>
+    <string name="pref_internal_player_timeshift_enabled">Schakel timeshift ondersteuning in</string>
+    <string name="pref_internal_player_audio_tunneling_enabled_sum">Ondersteuning voor DSP-audiotunneling inschakelen</string>
+    <string name="pref_internal_player_audio_tunneling_enabled">Audiotunnelbouw inschakelen</string>
+    <string name="pref_internal_player_audio_passthrough_enabled_sum">U moet er ook voor zorgen dat de systeemaudio-instellingen een doorgang mogelijk maken.</string>
+    <string name="pref_internal_player_audio_passthrough_enabled">Audio Passthrough inschakelen</string>
+    <string name="pref_internal_player_buffer_duration_dialog_title">Buffertijd in seconden</string>
+    <string name="pref_internal_player_buffer_duration_sum">Hoeveel seconden om te bufferen voordat u begint met afspelen</string>
+    <string name="pref_internal_player_buffer_duration">Buffer Duur</string>
+    <string name="pref_internal_player_enabled_sum">Speel live TV of opnames af met de interne speler die gebruik maakt van het HTSP-protocol</string>
+    <string name="pref_internal_player_enabled">Interne speler inschakelen</string>
+    <string name="pref_playback_sum">Kies hoe live tv-programma\'s of opnames worden afgespeeld.</string>
+    <string name="pref_playback">Afspelen</string>
 </resources>
