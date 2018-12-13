@@ -21,6 +21,7 @@ import com.squareup.leakcanary.RefWatcher;
 import org.tvheadend.tvhclient.features.logging.CrashlyticsTree;
 import org.tvheadend.tvhclient.features.logging.DebugTree;
 import org.tvheadend.tvhclient.features.logging.FileLoggingTree;
+import org.tvheadend.tvhclient.features.purchase.BillingHandler;
 import org.tvheadend.tvhclient.features.purchase.BillingUtils;
 import org.tvheadend.tvhclient.features.streaming.external.ExpandedControlsActivity;
 import org.tvheadend.tvhclient.injection.DaggerMainApplicationComponent;
@@ -41,6 +42,7 @@ import timber.log.Timber;
 public class MainApplication extends Application implements BillingProcessor.IBillingHandler, OptionsProvider {
 
     private BillingProcessor billingProcessor;
+    private BillingHandler billingHandler;
     private static MainApplication instance;
     private RefWatcher refWatcher;
     @Inject
@@ -71,6 +73,9 @@ public class MainApplication extends Application implements BillingProcessor.IBi
         component = buildComponent();
         // Inject the shared preferences
         component.inject(this);
+
+        billingHandler = new BillingHandler();
+        billingHandler.addListener(this);
 
         // This process is dedicated to LeakCanary for heap analysis.
         if (LeakCanary.isInAnalyzerProcess(this)) {
@@ -107,7 +112,7 @@ public class MainApplication extends Application implements BillingProcessor.IBi
     }
 
     private void initBilling() {
-        billingProcessor = new BillingProcessor(this, BillingUtils.getPublicKey(this), this);
+        billingProcessor = new BillingProcessor(this, BillingUtils.getPublicKey(this), billingHandler);
         billingProcessor.initialize();
         if (!BillingProcessor.isIabServiceAvailable(this)) {
             Timber.d("Billing not available");
@@ -157,6 +162,7 @@ public class MainApplication extends Application implements BillingProcessor.IBi
 
     @Override
     public void onTerminate() {
+        billingHandler.removeListener(this);
         if (billingProcessor != null) {
             billingProcessor.release();
         }
@@ -180,7 +186,7 @@ public class MainApplication extends Application implements BillingProcessor.IBi
 
     @Override
     public void onBillingInitialized() {
-        // NOP
+        Timber.d("Billing has been initialized");
     }
 
     @Override
@@ -190,7 +196,7 @@ public class MainApplication extends Application implements BillingProcessor.IBi
 
     @Override
     public void onPurchaseHistoryRestored() {
-        // NOP
+        Timber.d("Purchase history has been restored");
     }
 
     @Override
@@ -212,5 +218,9 @@ public class MainApplication extends Application implements BillingProcessor.IBi
     @Override
     public List<SessionProvider> getAdditionalSessionProviders(Context context) {
         return null;
+    }
+
+    public BillingHandler getBillingHandler() {
+        return billingHandler;
     }
 }
