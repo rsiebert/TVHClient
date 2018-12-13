@@ -329,8 +329,8 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
     }
 
     public Fragment getFragmentFromSelection(int position) {
-        Intent intent;
         Fragment fragment = null;
+        Bundle bundle = new Bundle();
         switch (position) {
             case NavigationDrawer.MENU_CHANNELS:
                 fragment = new ChannelListFragment();
@@ -360,15 +360,15 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
                 fragment = new StatusFragment();
                 break;
             case NavigationDrawer.MENU_SETTINGS:
-                intent = new Intent(activity, SettingsActivity.class);
-                activity.startActivity(intent);
+                activity.startActivity(new Intent(activity, SettingsActivity.class));
                 break;
             case NavigationDrawer.MENU_UNLOCKER:
                 fragment = new UnlockerFragment();
+                bundle.putString("website", "features");
+                fragment.setArguments(bundle);
                 break;
             case NavigationDrawer.MENU_HELP:
                 fragment = new WebViewFragment();
-                Bundle bundle = new Bundle();
                 bundle.putString("website", "help_and_support");
                 fragment.setArguments(bundle);
                 break;
