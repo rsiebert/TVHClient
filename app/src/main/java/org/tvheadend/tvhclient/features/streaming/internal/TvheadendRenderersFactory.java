@@ -42,7 +42,7 @@ import timber.log.Timber;
 class TvheadendRenderersFactory extends DefaultRenderersFactory {
 
     TvheadendRenderersFactory(Context context) {
-        super(context, null, EXTENSION_RENDERER_MODE_ON, DEFAULT_ALLOWED_VIDEO_JOINING_TIME_MS);
+        super(context, EXTENSION_RENDERER_MODE_PREFER, DEFAULT_ALLOWED_VIDEO_JOINING_TIME_MS);
     }
 
     /**
@@ -59,9 +59,12 @@ class TvheadendRenderersFactory extends DefaultRenderersFactory {
      * @param out                       An array to which the built renderers should be appended.
      */
     protected void buildVideoRenderers(Context context,
-                                       DrmSessionManager<FrameworkMediaCrypto> drmSessionManager, long allowedVideoJoiningTimeMs,
-                                       Handler eventHandler, VideoRendererEventListener eventListener,
-                                       @ExtensionRendererMode int extensionRendererMode, ArrayList<Renderer> out) {
+                                       DrmSessionManager<FrameworkMediaCrypto> drmSessionManager,
+                                       long allowedVideoJoiningTimeMs,
+                                       Handler eventHandler,
+                                       VideoRendererEventListener eventListener,
+                                       @ExtensionRendererMode int extensionRendererMode,
+                                       ArrayList<Renderer> out) {
 
         Timber.d("Adding MediaCodecVideoRenderer");
         out.add(new MediaCodecVideoRenderer(
@@ -90,11 +93,13 @@ class TvheadendRenderersFactory extends DefaultRenderersFactory {
      */
     protected void buildAudioRenderers(Context context,
                                        DrmSessionManager<FrameworkMediaCrypto> drmSessionManager,
-                                       AudioProcessor[] audioProcessors, Handler eventHandler,
-                                       AudioRendererEventListener eventListener, @ExtensionRendererMode int extensionRendererMode,
+                                       AudioProcessor[] audioProcessors,
+                                       Handler eventHandler,
+                                       AudioRendererEventListener eventListener,
+                                       @ExtensionRendererMode int extensionRendererMode,
                                        ArrayList<Renderer> out) {
-        AudioCapabilities audioCapabilities = AudioCapabilities.getCapabilities(context);
 
+        AudioCapabilities audioCapabilities = AudioCapabilities.getCapabilities(context);
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
 
         final boolean enablePassthroughDecoder = sharedPreferences.getBoolean(
