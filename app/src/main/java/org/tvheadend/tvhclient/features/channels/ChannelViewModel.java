@@ -29,6 +29,7 @@ public class ChannelViewModel extends AndroidViewModel {
     private final MutableLiveData<List<Channel>> channels = new MutableLiveData<>();
     private final String allChannelsSelectedText;
     private final String multipleChannelTagsSelectedText;
+    private final String unknownChannelTagText;
     @Inject
     protected AppRepository appRepository;
     @Inject
@@ -47,6 +48,7 @@ public class ChannelViewModel extends AndroidViewModel {
 
         allChannelsSelectedText = application.getString(R.string.all_channels);
         multipleChannelTagsSelectedText = application.getString(R.string.multiple_channel_tags);
+        unknownChannelTagText = application.getString(R.string.unknown);
 
         channelTagIds = appRepository.getChannelTagData().getSelectedChannelTagIds();
         selectedTime = new Date().getTime();
@@ -78,7 +80,12 @@ public class ChannelViewModel extends AndroidViewModel {
 
     public String getSelectedChannelTagName() {
         if (channelTagIds.size() == 1) {
-            return appRepository.getChannelTagData().getItemById(channelTagIds.iterator().next()).getTagName();
+            ChannelTag channelTag = appRepository.getChannelTagData().getItemById(channelTagIds.iterator().next());
+            if (channelTag != null) {
+                return channelTag.getTagName();
+            } else {
+                return unknownChannelTagText;
+            }
         } else if (channelTagIds.size() == 0) {
             return allChannelsSelectedText;
         } else {
