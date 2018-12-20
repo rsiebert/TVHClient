@@ -38,23 +38,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-        <ProgressBar
-            android:id="@id/exo_buffering"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:indeterminate="true" />
-
-        <TextView
-            android:id="@id/exo_error_message"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:background="@color/exo_error_message_background_color"
-            android:gravity="center"
-            android:padding="16dp" />
-
-
     </FrameLayout>
 
     <FrameLayout

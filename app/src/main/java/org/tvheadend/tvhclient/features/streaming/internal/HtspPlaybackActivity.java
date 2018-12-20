@@ -82,7 +82,7 @@ import static org.tvheadend.tvhclient.features.streaming.internal.HtspDataSource
 // TODO center the surfaceview when scaled
 // TODO Change the three dot menu to a separate icon
 
-public class HtspPlaybackActivity extends AppCompatActivity implements View.OnClickListener, PlaybackPreparer, Player.EventListener, Authenticator.Listener, PlayerControlView.VisibilityListener, VideoListener, MediaSource.SourceInfoRefreshListener {
+public class HtspPlaybackActivity extends AppCompatActivity implements View.OnClickListener, PlaybackPreparer, Player.EventListener, Authenticator.Listener, PlayerControlView.VisibilityListener, VideoListener {
 
     @Inject
     protected SharedPreferences sharedPreferences;
@@ -299,19 +299,17 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
 
         trackSelector = new TvheadendTrackSelector(new AdaptiveTrackSelection.Factory(null));
         if (sharedPreferences.getBoolean("audio_tunneling_enabled", false)) {
-            trackSelector.buildUponParameters().setTunnelingAudioSessionId(C.generateAudioSessionIdV21(this));
+            trackSelector.setTunnelingAudioSessionId(C.generateAudioSessionIdV21(this));
         }
 
-        DefaultLoadControl loadControl = new DefaultLoadControl.Builder()
-                .setAllocator(new DefaultAllocator(true, C.DEFAULT_BUFFER_SEGMENT_SIZE))
-                .setBufferDurationsMs(
-                        DefaultLoadControl.DEFAULT_MIN_BUFFER_MS,
-                        DefaultLoadControl.DEFAULT_MAX_BUFFER_MS,
-                        Integer.parseInt(sharedPreferences.getString("buffer_playback_ms", "500")),
-                        DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS)
-                .setTargetBufferBytes(C.DEFAULT_BUFFER_SEGMENT_SIZE)
-                .setPrioritizeTimeOverSizeThresholds(true)
-                .createDefaultLoadControl();
+        DefaultLoadControl loadControl = new DefaultLoadControl(
+                new DefaultAllocator(true, C.DEFAULT_BUFFER_SEGMENT_SIZE),
+                DefaultLoadControl.DEFAULT_MIN_BUFFER_MS,
+                DefaultLoadControl.DEFAULT_MAX_BUFFER_MS,
+                Integer.parseInt(sharedPreferences.getString("buffer_playback_ms", "500")),
+                DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS,
+                C.DEFAULT_BUFFER_SEGMENT_SIZE,
+                true);
 
         player = ExoPlayerFactory.newSimpleInstance(
                 new TvheadendRenderersFactory(this), trackSelector, loadControl);
@@ -339,7 +337,7 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
             player.stop();
         }
         if (trackSelector != null) {
-            trackSelector.buildUponParameters().clearSelectionOverrides();
+            trackSelector.clearSelectionOverrides();
         }
         if (htspSubscriptionDataSourceFactory != null) {
             htspSubscriptionDataSourceFactory.releaseCurrentDataSource();
@@ -875,10 +873,5 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
     @Override
     public void onRenderedFirstFrame() {
         // NOP
-    }
-
-    @Override
-    public void onSourceInfoRefreshed(MediaSource source, Timeline timeline, @Nullable Object manifest) {
-        Timber.d("Source info has been refreshed");
     }
 }

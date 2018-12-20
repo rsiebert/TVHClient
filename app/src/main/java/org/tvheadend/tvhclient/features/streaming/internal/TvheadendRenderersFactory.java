@@ -42,7 +42,7 @@ import timber.log.Timber;
 class TvheadendRenderersFactory extends DefaultRenderersFactory {
 
     TvheadendRenderersFactory(Context context) {
-        super(context, EXTENSION_RENDERER_MODE_PREFER, DEFAULT_ALLOWED_VIDEO_JOINING_TIME_MS);
+        super(context, null, EXTENSION_RENDERER_MODE_PREFER, DEFAULT_ALLOWED_VIDEO_JOINING_TIME_MS);
     }
 
     /**
@@ -109,8 +109,9 @@ class TvheadendRenderersFactory extends DefaultRenderersFactory {
         // Native Audio Decoders
         Timber.d("Adding MediaCodecAudioRenderer");
         MediaCodecSelector mediaCodecSelector = buildMediaCodecSelector(enablePassthroughDecoder);
-        out.add(new MediaCodecAudioRenderer(context, mediaCodecSelector, drmSessionManager,
+        out.add(new MediaCodecAudioRenderer(mediaCodecSelector, drmSessionManager,
                 true, eventHandler, eventListener, audioCapabilities));
+
 /*
         // FFMpeg Audio Decoder
         final boolean enableFfmpegAudioRenderer = sharedPreferences.getBoolean(

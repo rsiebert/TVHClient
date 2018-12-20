@@ -12,6 +12,7 @@ apply plugin: 'com.android.application'
 
 repositories {
     maven { url 'https://maven.fabric.io/public' }
+    maven { url "http://dl.bintray.com/kiall/exoplayer" }
 }
 
 apply plugin: 'io.fabric'
@@ -24,7 +25,7 @@ android {
         minSdkVersion 16
         targetSdkVersion 28
 
-        versionCode 128
+        versionCode 129
         versionName "2.0.0"
 
         // Define the apk naming convention
@@ -128,8 +129,8 @@ dependencies {
     implementation 'android.arch.lifecycle:extensions:1.1.1'
     implementation 'android.arch.lifecycle:common-java8:1.1.1'
     implementation 'android.arch.persistence.room:runtime:1.1.1'
-    implementation "android.arch.work:work-runtime:1.0.0-alpha11"
-    annotationProcessor "android.arch.persistence.room:compiler:1.1.1"
+    implementation 'android.arch.work:work-runtime:1.0.0-alpha11'
+    annotationProcessor 'android.arch.persistence.room:compiler:1.1.1'
 
     // Dependency injection
     implementation 'com.google.dagger:dagger:2.11'
@@ -145,8 +146,9 @@ dependencies {
     implementation 'com.facebook.stetho:stetho:1.5.0'
 
     // Internal player
-    implementation 'com.google.android.exoplayer:exoplayer-core:2.8.4'
-    implementation 'com.google.android.exoplayer:exoplayer-ui:2.8.4'
+    implementation 'com.google.android.exoplayer:exoplayer-core:2.7.1k1'
+    implementation 'com.google.android.exoplayer:exoplayer-ui:2.7.1k1'
+    implementation 'com.google.android.exoplayer:extension-ffmpeg:2.7.1k1'
 
     // Use multidex because the method count is over 64k
     debugImplementation 'com.android.support:multidex:1.0.3'
