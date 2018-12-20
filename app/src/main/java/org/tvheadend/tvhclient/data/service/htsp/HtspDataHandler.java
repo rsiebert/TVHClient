@@ -115,6 +115,12 @@ public class HtspDataHandler implements HtspConnection.Reader, HtspConnection.Wr
         int bytesConsumed = -1;
 
         while (bytesConsumed != 0 && bytesToBeConsumed > 0) {
+
+            // Return error if the buffer is null
+            if (readBuffer == null) {
+                return false;
+            }
+
             // Ensure the buffer is at the start each of iteration, as we'll always have the
             // start of a message at this point (or it'll be empty)
             readBuffer.position(0);
@@ -166,7 +172,6 @@ public class HtspDataHandler implements HtspConnection.Reader, HtspConnection.Wr
     }
 
     /**
-     *
      * @param socketChannel The SocketChannel to write to
      * @return true on success, false on error
      */
