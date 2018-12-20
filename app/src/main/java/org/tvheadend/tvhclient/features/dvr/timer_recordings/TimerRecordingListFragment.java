@@ -1,6 +1,7 @@
 package org.tvheadend.tvhclient.features.dvr.timer_recordings;
 
 import android.app.SearchManager;
+import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
@@ -164,7 +165,8 @@ public class TimerRecordingListFragment extends BaseFragment implements Recycler
         selectedListPosition = position;
         recyclerViewAdapter.setPosition(position);
         TimerRecording recording = recyclerViewAdapter.getItem(position);
-        if (recording == null || !isVisible()) {
+        if (recording == null || !isVisible()
+                || !activity.getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED)) {
             return;
         }
         if (!isDualPane) {

@@ -1,6 +1,7 @@
 package org.tvheadend.tvhclient.features.channels;
 
 import android.app.SearchManager;
+import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
@@ -251,7 +252,8 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
         selectedListPosition = position;
         recyclerViewAdapter.setPosition(position);
         Channel channel = recyclerViewAdapter.getItem(position);
-        if (channel == null || !isVisible()) {
+        if (channel == null || !isVisible()
+                || !activity.getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED)) {
             return;
         }
 

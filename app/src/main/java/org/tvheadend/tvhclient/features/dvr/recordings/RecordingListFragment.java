@@ -1,6 +1,7 @@
 package org.tvheadend.tvhclient.features.dvr.recordings;
 
 import android.app.SearchManager;
+import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
@@ -141,7 +142,8 @@ public class RecordingListFragment extends BaseFragment implements RecyclerViewC
         selectedListPosition = position;
         recyclerViewAdapter.setPosition(position);
         Recording recording = recyclerViewAdapter.getItem(position);
-        if (recording == null || !isVisible()) {
+        if (recording == null || !isVisible()
+                || !activity.getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED)) {
             return;
         }
 

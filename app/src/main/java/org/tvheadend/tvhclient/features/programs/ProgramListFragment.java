@@ -1,6 +1,7 @@
 package org.tvheadend.tvhclient.features.programs;
 
 import android.app.SearchManager;
+import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
@@ -263,7 +264,8 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
     private void showProgramDetails(int position) {
         selectedListPosition = position;
         Program program = recyclerViewAdapter.getItem(position);
-        if (program == null || !isVisible()) {
+        if (program == null || !isVisible()
+                || !activity.getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED)) {
             return;
         }
 
