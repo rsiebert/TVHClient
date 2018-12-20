@@ -53,11 +53,13 @@ public class MiscData extends BaseData {
             // Clear all assigned profiles
             for (Connection connection : db.getConnectionDao().loadAllConnectionsSync()) {
                 ServerStatus serverStatus = db.getServerStatusDao().loadServerStatusByIdSync(connection.getId());
-                serverStatus.setHtspPlaybackServerProfileId(0);
-                serverStatus.setHttpPlaybackServerProfileId(0);
-                serverStatus.setCastingServerProfileId(0);
-                serverStatus.setRecordingServerProfileId(0);
-                db.getServerStatusDao().update(serverStatus);
+                if (serverStatus != null) {
+                    serverStatus.setHtspPlaybackServerProfileId(0);
+                    serverStatus.setHttpPlaybackServerProfileId(0);
+                    serverStatus.setCastingServerProfileId(0);
+                    serverStatus.setRecordingServerProfileId(0);
+                    db.getServerStatusDao().update(serverStatus);
+                }
             }
             return null;
         }
