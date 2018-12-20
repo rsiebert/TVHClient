@@ -169,7 +169,8 @@ public class ProgramDetailsFragment extends BaseFragment implements RecordingRem
                         activity.startActivity(intent);
                         break;
 
-                    } else if (rec.getEventId() == program.getEventId()) {
+                    } else if (program != null
+                            && rec.getEventId() == program.getEventId()) {
                         Timber.d("Found recording for program " + program.getTitle());
                         recording = rec;
                         recordingExists = true;
