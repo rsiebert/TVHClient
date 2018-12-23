@@ -225,9 +225,12 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
     @Override
     public void onTimeSelected(int which) {
         selectedTimeOffset = which;
-        recyclerView.setVisibility(View.GONE);
-        progressBar.setVisibility(View.VISIBLE);
-
+        if (recyclerView != null) {
+            recyclerView.setVisibility(View.GONE);
+        }
+        if (progressBar != null) {
+            progressBar.setVisibility(View.VISIBLE);
+        }
         // Add the selected list index as extra hours to the current time.
         // If the first index was selected then use the current time.
         long timeInMillis = Calendar.getInstance().getTimeInMillis();
@@ -237,8 +240,12 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
 
     @Override
     public void onChannelTagIdsSelected(Set<Integer> ids) {
-        recyclerView.setVisibility(View.GONE);
-        progressBar.setVisibility(View.VISIBLE);
+        if (recyclerView != null) {
+            recyclerView.setVisibility(View.GONE);
+        }
+        if (progressBar != null) {
+            progressBar.setVisibility(View.VISIBLE);
+        }
         viewModel.setChannelTagIds(ids);
     }
 
