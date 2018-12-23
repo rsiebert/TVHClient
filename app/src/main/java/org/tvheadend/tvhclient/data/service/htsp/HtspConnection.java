@@ -172,7 +172,7 @@ public class HtspConnection implements Runnable {
                 break;
             }
 
-            if (mSelector == null || !mSelector.isOpen()) {
+            if (mSelector == null || (mSelector != null && !mSelector.isOpen())) {
                 Timber.w("Selector is null or selector is not open");
                 break;
             }
