@@ -922,13 +922,15 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
 
     private void handleDiskSpace(HtspMessage message) {
         ServerStatus serverStatus = appRepository.getServerStatusData().getActiveItem();
-        serverStatus.setFreeDiskSpace(message.getLong("freediskspace", 0));
-        serverStatus.setTotalDiskSpace(message.getLong("totaldiskspace", 0));
-        appRepository.getServerStatusData().updateItem(serverStatus);
+        if (serverStatus != null) {
+            serverStatus.setFreeDiskSpace(message.getLong("freediskspace", 0));
+            serverStatus.setTotalDiskSpace(message.getLong("totaldiskspace", 0));
+            appRepository.getServerStatusData().updateItem(serverStatus);
 
-        Timber.d("Received disk space information from server " + serverStatus.getServerName()
-                + ", free disk space: " + serverStatus.getFreeDiskSpace()
-                + ", total disk space: " + serverStatus.getTotalDiskSpace());
+            Timber.d("Received disk space information from server " + serverStatus.getServerName()
+                    + ", free disk space: " + serverStatus.getFreeDiskSpace()
+                    + ", total disk space: " + serverStatus.getTotalDiskSpace());
+        }
     }
 
     private void handleInitialSyncCompleted() {
