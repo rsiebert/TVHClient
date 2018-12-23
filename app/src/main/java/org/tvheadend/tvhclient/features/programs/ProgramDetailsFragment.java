@@ -271,7 +271,7 @@ public class ProgramDetailsFragment extends BaseFragment implements RecordingRem
 
                         @Override
                         public void onError(Exception e) {
-                            imageView.setVisibility(View.GONE);
+
                         }
                     });
         }
