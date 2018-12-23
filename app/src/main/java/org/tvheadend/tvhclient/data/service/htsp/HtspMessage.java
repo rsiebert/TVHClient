@@ -25,6 +25,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import timber.log.Timber;
+
 /*
  * See: https://tvheadend.org/projects/tvheadend/wiki/Htsp
  * See: https://tvheadend.org/projects/tvheadend/wiki/Htsmsgbinary
@@ -156,10 +158,10 @@ public class HtspMessage extends HashMap<String, Object> {
     }
 
     @Override
-    public Object put(String key, Object value) {
+    public Object put(@NonNull String key, Object value) {
         if (value == null) {
             // HTSP Messages can't have null values. Remove was probably more appropriate.
-            throw new RuntimeException("HTSP Messages can't have a null value (field: " + key + ")");
+            Timber.e("HTSP Messages can't have a null value (field: " + key + ")");
         }
 
         return super.put(key, value);
