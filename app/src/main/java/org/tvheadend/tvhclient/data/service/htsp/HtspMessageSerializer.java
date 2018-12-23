@@ -138,11 +138,14 @@ public class HtspMessageSerializer implements HtspMessage.Serializer {
             if (keyLength == 0) {
                 // Working on a list...
                 key = Integer.toString(listIndex++);
-            } else {
+            } else if (keyLength > 0) {
                 // Working on a map..
                 byte[] keyBytes = new byte[keyLength];
                 buffer.get(keyBytes);
                 key = new String(keyBytes);
+            } else {
+                Timber.e("Attempted to deserialize an negative key (" + keyLength + " bytes)");
+                return null;
             }
 
             // Extract Value bytes
@@ -158,35 +161,35 @@ public class HtspMessageSerializer implements HtspMessage.Serializer {
             switch (fieldType) {
                 case FIELD_STR:
                     if (DEBUG) {
-                        Timber.v("Deserializaing a STR with key " + key);
+                        Timber.v("Deserializing a STR with key " + key);
                     }
                     value = new String(valueBytes);
                     break;
 
                 case FIELD_S64:
                     if (DEBUG) {
-                        Timber.v("Deserializaing a S64 with key " + key + " and valueBytes length " + valueBytes.length);
+                        Timber.v("Deserializing a S64 with key " + key + " and valueBytes length " + valueBytes.length);
                     }
                     value = toBigInteger(valueBytes);
                     break;
 
                 case FIELD_MAP:
                     if (DEBUG) {
-                        Timber.v("Deserializaing a MAP with key " + key);
+                        Timber.v("Deserializing a MAP with key " + key);
                     }
                     value = deserialize(ByteBuffer.wrap(valueBytes));
                     break;
 
                 case FIELD_LIST:
                     if (DEBUG) {
-                        Timber.v("Deserializaing a LIST with key " + key);
+                        Timber.v("Deserializing a LIST with key " + key);
                     }
                     value = new ArrayList<>(deserialize(ByteBuffer.wrap(valueBytes)).values());
                     break;
 
                 case FIELD_BIN:
                     if (DEBUG) {
-                        Timber.v("Deserializaing a BIN with key " + key);
+                        Timber.v("Deserializing a BIN with key " + key);
                     }
                     value = valueBytes;
                     break;
