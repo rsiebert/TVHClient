@@ -184,7 +184,13 @@ public class HtspMessageSerializer implements HtspMessage.Serializer {
                     if (DEBUG) {
                         Timber.v("Deserializing a LIST with key " + key);
                     }
-                    value = new ArrayList<>(deserialize(ByteBuffer.wrap(valueBytes)).values());
+                    HtspMessage msg = deserialize(ByteBuffer.wrap(valueBytes));
+                    if (msg != null) {
+                        value = new ArrayList<>(msg.values());
+                    } else {
+                        Timber.e("Cannot deserialize LIST with key, message is null");
+                        value = null;
+                    }
                     break;
 
                 case FIELD_BIN:
@@ -195,7 +201,8 @@ public class HtspMessageSerializer implements HtspMessage.Serializer {
                     break;
 
                 default:
-                    throw new RuntimeException("Cannot deserialize unknown data type, derp: " + fieldType);
+                    Timber.e("Cannot deserialize unknown data type, derp: " + fieldType);
+                    value = null;
             }
 
             if (value != null) {
