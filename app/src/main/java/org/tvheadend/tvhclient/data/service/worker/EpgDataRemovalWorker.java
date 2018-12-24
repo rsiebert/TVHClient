@@ -31,6 +31,6 @@ public class EpgDataRemovalWorker extends Worker {
         }
 
         EpgSyncIntentService.enqueueWork(getApplicationContext(), new Intent().setAction("deleteEvents"));
-        return Result.SUCCESS;
+        return Result.success();
     }
 }

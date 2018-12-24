@@ -31,6 +31,6 @@ public class EpgDataUpdateWorker extends Worker {
         }
 
         EpgSyncIntentService.enqueueWork(getApplicationContext(), new Intent().setAction("getMoreEvents"));
-        return Result.SUCCESS;
+        return Result.success();
     }
 }
