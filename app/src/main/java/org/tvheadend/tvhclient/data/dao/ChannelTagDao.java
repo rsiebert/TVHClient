@@ -27,9 +27,6 @@ public interface ChannelTagDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(ChannelTag channelTag);
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insert(List<ChannelTag> channelTag);
-
     @Update
     void update(ChannelTag channelTags);
 
