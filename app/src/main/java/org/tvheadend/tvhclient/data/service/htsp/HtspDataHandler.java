@@ -32,6 +32,7 @@ public class HtspDataHandler implements HtspConnection.Reader, HtspConnection.Wr
 
     private final HtspMessageSerializer messageSerializer;
     private final HtspMessage.DispatcherInternal messageDispatcher;
+    private boolean connectionClosed;
 
     private ByteBuffer readBuffer;
     private ByteBuffer writeBuffer;
@@ -43,6 +44,8 @@ public class HtspDataHandler implements HtspConnection.Reader, HtspConnection.Wr
         Timber.d("Allocating direct buffers");
         this.readBuffer = ByteBuffer.allocateDirect(5242880); // 5MB
         this.writeBuffer = ByteBuffer.allocateDirect(1024 * 1024); // 1024 * 1024 = Max TVH will accept
+
+        this.connectionClosed = false;
     }
 
     // HtspConnection.Listener Methods
@@ -60,17 +63,16 @@ public class HtspDataHandler implements HtspConnection.Reader, HtspConnection.Wr
         Timber.d("Connection state changed to " + state);
 
         if (state == HtspConnection.State.CLOSED) {
-            Timber.d("Clearing buffers because we close the connection");
+            connectionClosed = true;
+
+            Timber.d("Connection is closed, clearing buffers");
             if (readBuffer != null) {
                 readBuffer.clear();
             }
             if (writeBuffer != null) {
                 writeBuffer.clear();
             }
-            readBuffer = null;
-            writeBuffer = null;
-            System.gc();
-            Timber.d("Clearing buffers done");
+            Timber.d("Connection is closed, clearing buffers done");
         }
     }
 
@@ -117,7 +119,8 @@ public class HtspDataHandler implements HtspConnection.Reader, HtspConnection.Wr
         while (bytesConsumed != 0 && bytesToBeConsumed > 0) {
 
             // Return error if the buffer is null
-            if (readBuffer == null) {
+            if (connectionClosed) {
+                Timber.d("Connection closed, stopping to read data");
                 return false;
             }
 
