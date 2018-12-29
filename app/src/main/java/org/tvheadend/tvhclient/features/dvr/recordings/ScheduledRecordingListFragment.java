@@ -31,7 +31,7 @@ public class ScheduledRecordingListFragment extends RecordingListFragment implem
         // Start observing the recordings here because the onActivityCreated method is not
         // called when the user has returned from the settings activity. In this case
         // the changes to the recording UI like hiding duplicates would not become active.
-        viewModel.getScheduledRecordings().observe(this, this::handleObservedRecordings);
+        viewModel.getScheduledRecordings().observe(getViewLifecycleOwner(), this::handleObservedRecordings);
     }
 
     private void handleObservedRecordings(List<Recording> recordings) {

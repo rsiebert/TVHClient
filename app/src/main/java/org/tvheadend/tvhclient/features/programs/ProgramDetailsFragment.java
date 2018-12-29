@@ -152,7 +152,7 @@ public class ProgramDetailsFragment extends BaseFragment implements RecordingRem
             statusTextView.setVisibility(View.VISIBLE);
         }
 
-        viewModel.getRecordingsByChannelId(channelId).observe(this, recordings -> {
+        viewModel.getRecordingsByChannelId(channelId).observe(getViewLifecycleOwner(), recordings -> {
             Timber.d("Got recordings");
             if (recordings != null) {
                 boolean recordingExists = false;

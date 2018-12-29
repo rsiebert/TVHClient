@@ -91,7 +91,7 @@ public class SeriesRecordingListFragment extends BaseFragment implements Recycle
         progressBar.setVisibility(View.VISIBLE);
 
         SeriesRecordingViewModel viewModel = ViewModelProviders.of(activity).get(SeriesRecordingViewModel.class);
-        viewModel.getRecordings().observe(this, recordings -> {
+        viewModel.getRecordings().observe(getViewLifecycleOwner(), recordings -> {
             if (recordings != null) {
                 recyclerViewAdapter.addItems(recordings);
             }

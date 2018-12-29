@@ -136,8 +136,8 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
             // A channel id and a channel name was given, load only the programs for the
             // specific channel and from the current time. Also load only those recordings
             // that belong to the given channel
-            viewModel.getProgramsByChannelFromTime(channelId, selectedTime).observe(this, this::handleObservedPrograms);
-            viewModel.getRecordingsByChannelId(channelId).observe(this, this::handleObservedRecordings);
+            viewModel.getProgramsByChannelFromTime(channelId, selectedTime).observe(getViewLifecycleOwner(), this::handleObservedPrograms);
+            viewModel.getRecordingsByChannelId(channelId).observe(getViewLifecycleOwner(), this::handleObservedRecordings);
 
             loadingMoreProgramAllowed = true;
             loadingProgramsAllowedTask = () -> loadingMoreProgramAllowed = true;
@@ -146,8 +146,8 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
             Timber.d("Search is active, loading programs from current time " + selectedTime);
             // No channel and channel name was given, load all programs
             // from the current time and all recordings from all channels
-            viewModel.getProgramsFromTime(selectedTime).observe(this, this::handleObservedPrograms);
-            viewModel.getRecordings().observe(this, this::handleObservedRecordings);
+            viewModel.getProgramsFromTime(selectedTime).observe(getViewLifecycleOwner(), this::handleObservedPrograms);
+            viewModel.getRecordings().observe(getViewLifecycleOwner(), this::handleObservedRecordings);
 
             loadingMoreProgramAllowed = false;
         }
@@ -414,6 +414,6 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
 
     public void updatePrograms(long selectedTime) {
         this.selectedTime = selectedTime;
-        viewModel.getProgramsByChannelFromTime(channelId, selectedTime).observe(this, this::handleObservedPrograms);
+        viewModel.getProgramsByChannelFromTime(channelId, selectedTime).observe(getViewLifecycleOwner(), this::handleObservedPrograms);
     }
 }

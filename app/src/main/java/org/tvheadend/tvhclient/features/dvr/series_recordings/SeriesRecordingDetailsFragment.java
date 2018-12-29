@@ -110,7 +110,7 @@ public class SeriesRecordingDetailsFragment extends BaseFragment implements Reco
         }
 
         SeriesRecordingViewModel viewModel = ViewModelProviders.of(activity).get(SeriesRecordingViewModel.class);
-        viewModel.getRecordingById(id).observe(this, rec -> {
+        viewModel.getRecordingById(id).observe(getViewLifecycleOwner(), rec -> {
             if (rec != null) {
                 recording = rec;
                 updateUI();

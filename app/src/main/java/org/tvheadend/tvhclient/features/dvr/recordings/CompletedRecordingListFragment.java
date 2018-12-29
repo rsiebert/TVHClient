@@ -20,7 +20,7 @@ public class CompletedRecordingListFragment extends RecordingListFragment implem
 
         recyclerViewAdapter.setRecordingType(REC_TYPE_COMPLETED);
 
-        viewModel.getCompletedRecordings().observe(this, recordings -> {
+        viewModel.getCompletedRecordings().observe(getViewLifecycleOwner(), recordings -> {
             if (recordings != null) {
                 recyclerViewAdapter.addItems(recordings);
             }

@@ -145,22 +145,22 @@ public class StatusFragment extends BaseFragment implements WakeOnLanTaskCallbac
     private void showRecordings() {
 
         ProgramViewModel programViewModel = ViewModelProviders.of(this).get(ProgramViewModel.class);
-        programViewModel.getNumberOfPrograms().observe(this, count -> programsTextView.setText(getResources().getQuantityString(R.plurals.programs, count != null ? count : 0, count)));
+        programViewModel.getNumberOfPrograms().observe(getViewLifecycleOwner(), count -> programsTextView.setText(getResources().getQuantityString(R.plurals.programs, count != null ? count : 0, count)));
 
         SeriesRecordingViewModel seriesRecordingViewModel = ViewModelProviders.of(this).get(SeriesRecordingViewModel.class);
-        seriesRecordingViewModel.getNumberOfRecordings().observe(this, count -> seriesRecordingsTextView.setText(getResources().getQuantityString(R.plurals.series_recordings, count != null ? count : 0, count)));
+        seriesRecordingViewModel.getNumberOfRecordings().observe(getViewLifecycleOwner(), count -> seriesRecordingsTextView.setText(getResources().getQuantityString(R.plurals.series_recordings, count != null ? count : 0, count)));
 
         TimerRecordingViewModel timerRecordingViewModel = ViewModelProviders.of(this).get(TimerRecordingViewModel.class);
-        timerRecordingViewModel.getNumberOfRecordings().observe(this, count -> timerRecordingsTextView.setText(getResources().getQuantityString(R.plurals.timer_recordings, count != null ? count : 0, count)));
+        timerRecordingViewModel.getNumberOfRecordings().observe(getViewLifecycleOwner(), count -> timerRecordingsTextView.setText(getResources().getQuantityString(R.plurals.timer_recordings, count != null ? count : 0, count)));
 
         RecordingViewModel recordingViewModel = ViewModelProviders.of(this).get(RecordingViewModel.class);
-        recordingViewModel.getNumberOfCompletedRecordings().observe(this, count -> completedRecordingsTextView.setText(getResources().getQuantityString(R.plurals.completed_recordings, count != null ? count : 0, count)));
-        recordingViewModel.getNumberOfScheduledRecordings().observe(this, count -> upcomingRecordingsTextView.setText(getResources().getQuantityString(R.plurals.upcoming_recordings, count != null ? count : 0, count)));
-        recordingViewModel.getNumberOfFailedRecordings().observe(this, count -> failedRecordingsTextView.setText(getResources().getQuantityString(R.plurals.failed_recordings, count != null ? count : 0, count)));
-        recordingViewModel.getNumberOfRemovedRecordings().observe(this, count -> removedRecordingsTextView.setText(getResources().getQuantityString(R.plurals.removed_recordings, count != null ? count : 0, count)));
+        recordingViewModel.getNumberOfCompletedRecordings().observe(getViewLifecycleOwner(), count -> completedRecordingsTextView.setText(getResources().getQuantityString(R.plurals.completed_recordings, count != null ? count : 0, count)));
+        recordingViewModel.getNumberOfScheduledRecordings().observe(getViewLifecycleOwner(), count -> upcomingRecordingsTextView.setText(getResources().getQuantityString(R.plurals.upcoming_recordings, count != null ? count : 0, count)));
+        recordingViewModel.getNumberOfFailedRecordings().observe(getViewLifecycleOwner(), count -> failedRecordingsTextView.setText(getResources().getQuantityString(R.plurals.failed_recordings, count != null ? count : 0, count)));
+        recordingViewModel.getNumberOfRemovedRecordings().observe(getViewLifecycleOwner(), count -> removedRecordingsTextView.setText(getResources().getQuantityString(R.plurals.removed_recordings, count != null ? count : 0, count)));
 
         // Get the programs that are currently being recorded
-        recordingViewModel.getScheduledRecordings().observe(this, recordings -> {
+        recordingViewModel.getScheduledRecordings().observe(getViewLifecycleOwner(), recordings -> {
             if (recordings != null) {
                 StringBuilder currentRecText = new StringBuilder();
                 for (Recording rec : recordings) {
@@ -180,11 +180,11 @@ public class StatusFragment extends BaseFragment implements WakeOnLanTaskCallbac
 
     private void showAdditionalInformation() {
         ChannelViewModel channelViewModel = ViewModelProviders.of(activity).get(ChannelViewModel.class);
-        channelViewModel.getNumberOfChannels().observe(this, count -> {
+        channelViewModel.getNumberOfChannels().observe(getViewLifecycleOwner(), count -> {
             final String text = count + " " + getString(R.string.available);
             channelsTextView.setText(text);
         });
-        channelViewModel.getServerStatus().observe(this, serverStatus -> {
+        channelViewModel.getServerStatus().observe(getViewLifecycleOwner(), serverStatus -> {
             if (serverStatus != null) {
                 seriesRecordingsTextView.setVisibility((serverStatus.getHtspVersion() >= 13) ? View.VISIBLE : View.GONE);
                 timerRecordingsTextView.setVisibility((serverStatus.getHtspVersion() >= 18 && isUnlocked) ? View.VISIBLE : View.GONE);

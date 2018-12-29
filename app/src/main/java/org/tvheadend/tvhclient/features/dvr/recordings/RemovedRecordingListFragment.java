@@ -19,7 +19,7 @@ public class RemovedRecordingListFragment extends RecordingListFragment implemen
 
         recyclerViewAdapter.setRecordingType(REC_TYPE_REMOVED);
 
-        viewModel.getRemovedRecordings().observe(this, recordings -> {
+        viewModel.getRemovedRecordings().observe(getViewLifecycleOwner(), recordings -> {
             if (recordings != null) {
                 recyclerViewAdapter.addItems(recordings);
             }

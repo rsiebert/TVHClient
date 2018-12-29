@@ -104,7 +104,7 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
         progressBar.setVisibility(View.VISIBLE);
 
         viewModel = ViewModelProviders.of(activity).get(ChannelViewModel.class);
-        viewModel.getChannels().observe(this, channels -> {
+        viewModel.getChannels().observe(getViewLifecycleOwner(), channels -> {
             if (channels != null) {
                 recyclerViewAdapter.addItems(channels);
             }
@@ -124,7 +124,7 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
         // Get all recordings for the given channel to check if it belongs to a certain program
         // so the recording status of the particular program can be updated. This is required
         // because the programs are not updated automatically when recordings change.
-        viewModel.getAllRecordings().observe(this, recordings -> {
+        viewModel.getAllRecordings().observe(getViewLifecycleOwner(), recordings -> {
             if (recordings != null) {
                 recyclerViewAdapter.addRecordings(recordings);
                 for (Recording recording : recordings) {

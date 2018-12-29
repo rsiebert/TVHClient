@@ -149,7 +149,7 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
         programViewPager.addOnPageChangeListener(this);
 
         viewModel = ViewModelProviders.of(activity).get(EpgViewModel.class);
-        viewModel.getChannelSubsets().observe(this, channels -> {
+        viewModel.getChannelSubsets().observe(getViewLifecycleOwner(), channels -> {
 
             progressBar.setVisibility(View.GONE);
             channelListRecyclerView.setVisibility(View.VISIBLE);
@@ -168,7 +168,7 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
 
         // Observe all recordings here in case a recording shall be edited right after it was added.
         // This needs to be done in this fragment because the popup menu handling is also done here.
-        viewModel.getAllRecordings().observe(this, recordings -> {
+        viewModel.getAllRecordings().observe(getViewLifecycleOwner(), recordings -> {
             if (recordings != null) {
                 for (Recording recording : recordings) {
                     // Show the edit recording screen of the scheduled recording

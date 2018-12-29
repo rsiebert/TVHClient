@@ -19,7 +19,7 @@ public class FailedRecordingListFragment extends RecordingListFragment implement
 
         recyclerViewAdapter.setRecordingType(REC_TYPE_FAILED);
 
-        viewModel.getFailedRecordings().observe(this, recordings -> {
+        viewModel.getFailedRecordings().observe(getViewLifecycleOwner(), recordings -> {
             if (recordings != null) {
                 recyclerViewAdapter.addItems(recordings);
             }
