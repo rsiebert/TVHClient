@@ -64,12 +64,11 @@ class ProgramRecyclerViewAdapter extends RecyclerView.Adapter<ProgramViewHolder>
         updateRecordingState(list, recordingList);
 
         DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new ProgramListDiffCallback(programList, list));
-        diffResult.dispatchUpdatesTo(this);
-
         programList.clear();
         programListFiltered.clear();
         programList.addAll(list);
         programListFiltered.addAll(list);
+        diffResult.dispatchUpdatesTo(this);
     }
 
     @Override

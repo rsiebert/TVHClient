@@ -57,12 +57,11 @@ class ChannelRecyclerViewAdapter extends RecyclerView.Adapter<ChannelViewHolder>
         updateRecordingState(list, recordingList);
 
         DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new ChannelListDiffCallback(channelList, list));
-        diffResult.dispatchUpdatesTo(this);
-
         channelList.clear();
         channelListFiltered.clear();
         channelList.addAll(list);
         channelListFiltered.addAll(list);
+        diffResult.dispatchUpdatesTo(this);
 
         if (selectedPosition > list.size()) {
             selectedPosition = 0;

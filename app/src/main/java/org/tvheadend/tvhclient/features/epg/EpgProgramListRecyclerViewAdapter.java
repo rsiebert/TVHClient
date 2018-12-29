@@ -57,10 +57,9 @@ class EpgProgramListRecyclerViewAdapter extends RecyclerView.Adapter<EpgProgramL
         updateRecordingState(list, recordingList);
 
         DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new ProgramListDiffCallback(programList, list));
-        diffResult.dispatchUpdatesTo(this);
-
         programList.clear();
         programList.addAll(list);
+        diffResult.dispatchUpdatesTo(this);
     }
 
     void addRecordings(@NonNull List<Recording> list) {
