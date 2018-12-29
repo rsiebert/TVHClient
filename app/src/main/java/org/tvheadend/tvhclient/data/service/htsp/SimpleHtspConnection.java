@@ -27,6 +27,7 @@ public class SimpleHtspConnection implements HtspMessage.Dispatcher {
     private final HtspMessageDispatcher messageDispatcher;
     private final Authenticator authenticator;
     private final HtspConnection htspConnection;
+    private final HtspDataHandler htspDataHandler;
     private Thread connectionThread;
 
     public SimpleHtspConnection(Connection connection) {
@@ -34,7 +35,7 @@ public class SimpleHtspConnection implements HtspMessage.Dispatcher {
 
         messageDispatcher = new HtspMessageDispatcher();
 
-        HtspDataHandler htspDataHandler = new HtspDataHandler(new HtspMessageSerializer(), messageDispatcher);
+        htspDataHandler = new HtspDataHandler(new HtspMessageSerializer(), messageDispatcher);
         authenticator = new Authenticator(messageDispatcher, connection);
 
         htspConnection = new HtspConnection(connection, htspDataHandler, htspDataHandler);
@@ -65,6 +66,12 @@ public class SimpleHtspConnection implements HtspMessage.Dispatcher {
 
         Timber.d("Closing HTSP connection thread");
         htspConnection.closeConnection();
+
+        Timber.d("Removing listeners from HTSP connection");
+        htspConnection.removeConnectionListener(messageDispatcher);
+        htspConnection.removeConnectionListener(htspDataHandler);
+        htspConnection.removeConnectionListener(authenticator);
+
         if (connectionThread != null) {
             Timber.d("Interrupting thread");
             connectionThread.interrupt();
@@ -81,11 +88,6 @@ public class SimpleHtspConnection implements HtspMessage.Dispatcher {
         } catch (InterruptedException e) {
             Timber.e("Thread got interrupted while waiting to die");
         }
-        connectionThread = null;
-    }
-
-    public HtspMessageDispatcher getMessageDispatcher() {
-        return messageDispatcher;
     }
 
     public boolean isIdle() {
@@ -140,8 +142,7 @@ public class SimpleHtspConnection implements HtspMessage.Dispatcher {
     }
 
     @Override
-    public HtspMessage sendMessage(@NonNull HtspMessage message, int timeout) throws
-            HtspNotConnectedException {
+    public HtspMessage sendMessage(@NonNull HtspMessage message, int timeout) throws HtspNotConnectedException {
         return messageDispatcher.sendMessage(message, timeout);
     }
 }
