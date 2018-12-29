@@ -44,7 +44,7 @@ class TvheadendExtractorsFactory implements ExtractorsFactory {
     public Extractor[] createExtractors() {
         Extractor[] extractors = new Extractor[12];
 
-        extractors[0] = new HtspExtractor(mContext);
+        extractors[0] = new HtspSubscriptionExtractor(mContext);
         extractors[1] = new MatroskaExtractor(0);
         extractors[2] = new FragmentedMp4Extractor(0);
         extractors[3] = new Mp4Extractor();

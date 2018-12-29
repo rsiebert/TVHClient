@@ -39,8 +39,7 @@ import java.util.Arrays;
 
 import timber.log.Timber;
 
-// TODO: Rename HtspSubscriptionExtractor
-class HtspExtractor implements Extractor {
+class HtspSubscriptionExtractor implements Extractor {
 
     private class HtspSeekMap implements SeekMap {
         @Override
@@ -66,7 +65,7 @@ class HtspExtractor implements Extractor {
 
     private final byte[] mRawBytes = new byte[1024 * 1024];
 
-    public HtspExtractor(Context context) {
+    public HtspSubscriptionExtractor(Context context) {
         mContext = context;
         Timber.d( "New HtspExtractor instantiated");
     }
