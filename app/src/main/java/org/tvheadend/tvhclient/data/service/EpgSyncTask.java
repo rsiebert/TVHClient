@@ -422,12 +422,12 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         // During initial sync no channels are yet saved. So use the temporarily
         // stored channels to calculate the channel count for the channel tag
         List<Channel> channels = initialSyncCompleted ? appRepository.getChannelData().getItems() : pendingChannelOps;
-        ChannelTag tag = EpgSyncUtils.convertMessageToChannelTagModel(new ChannelTag(), msg, channels);
-        tag.setConnectionId(connection.getId());
-        appRepository.getChannelTagData().addItem(tag);
+        ChannelTag addedTag = EpgSyncUtils.convertMessageToChannelTagModel(new ChannelTag(), msg, channels);
+        addedTag.setConnectionId(connection.getId());
+        appRepository.getChannelTagData().addItem(addedTag);
         // Get the tag id and all channel ids of the tag so that
         // new entries where the tagId is present can be added to the database
-        handleTagAndChannelRelation(tag);
+        handleTagAndChannelRelation(addedTag);
 
         // Update the icon if required
         final String icon = msg.getString("tagIcon", null);
@@ -443,8 +443,8 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
      * @param msg The message with the updated tag data
      */
     private void handleTagUpdate(HtspMessage msg) {
-        ChannelTag tag = appRepository.getChannelTagData().getItemById(msg.getInteger("tagId"));
-        if (tag == null) {
+        ChannelTag channelTag = appRepository.getChannelTagData().getItemById(msg.getInteger("tagId"));
+        if (channelTag == null) {
             Timber.d("Could not find a channel tag with id " + msg.getInteger("tagId") + " in the database");
             return;
         }
@@ -452,7 +452,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         // During initial sync no channels are yet saved. So use the temporarily
         // stored channels to calculate the channel count for the channel tag
         List<Channel> channels = initialSyncCompleted ? appRepository.getChannelData().getItems() : pendingChannelOps;
-        ChannelTag updatedTag = EpgSyncUtils.convertMessageToChannelTagModel(tag, msg, channels);
+        ChannelTag updatedTag = EpgSyncUtils.convertMessageToChannelTagModel(channelTag, msg, channels);
         appRepository.getChannelTagData().updateItem(updatedTag);
         // Remove all entries of this tag from the database before
         // adding new ones which are defined in the members variable
