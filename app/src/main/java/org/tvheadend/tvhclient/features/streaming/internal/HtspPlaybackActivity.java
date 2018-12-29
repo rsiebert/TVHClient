@@ -79,8 +79,6 @@ import timber.log.Timber;
 import static org.tvheadend.tvhclient.features.streaming.internal.HtspDataSource.INVALID_TIMESHIFT_TIME;
 
 // TODO Disable buttons until data source has been loaded and video is playing
-// TODO center the surfaceview when scaled
-// TODO Change the three dot menu to a separate icon
 
 public class HtspPlaybackActivity extends AppCompatActivity implements View.OnClickListener, PlaybackPreparer, Player.EventListener, Authenticator.Listener, PlayerControlView.VisibilityListener, VideoListener {
 
@@ -228,7 +226,20 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
     public void onResume() {
         super.onResume();
         Timber.d("Resuming");
-        initialize();
+
+        if (serverStatus == null) {
+            Timber.d("Server status is null");
+            statusTextView.setText(R.string.error_starting_playback_no_connection);
+        } else if (serverProfile == null) {
+            Timber.d("Server profile is null");
+            statusTextView.setText(R.string.error_starting_playback_no_profile);
+        } else {
+            Timber.d("Starting htsp connection service");
+            statusTextView.setText(R.string.connecting_to_server);
+            // start the connection here so that the authentication callback
+            // will not fire before the server profile is checked here
+            simpleHtspConnection.start();
+        }
     }
 
     @Override
@@ -248,22 +259,6 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
             simpleHtspConnection.stop();
         }
         simpleHtspConnection = null;
-    }
-
-    private void initialize() {
-        if (serverStatus == null) {
-            Timber.d("Server status is null");
-            statusTextView.setText(R.string.error_starting_playback_no_connection);
-        } else if (serverProfile == null) {
-            Timber.d("Server profile is null");
-            statusTextView.setText(R.string.error_starting_playback_no_profile);
-        } else {
-            Timber.d("Starting htsp connection service");
-            statusTextView.setText(R.string.connecting_to_server);
-            // start the connection here so that the authentication callback
-            // will not fire before the server profile is checked here
-            simpleHtspConnection.start();
-        }
     }
 
     private void showPlaybackInformation(String channelName, String channelIcon, String title, String subtitle, String nextTitle, long duration) {
