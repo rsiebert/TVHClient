@@ -24,7 +24,7 @@ public interface ChannelTagDao {
             "AND connection_id IN (SELECT id FROM connections WHERE active = 1)")
     ChannelTag loadChannelTagByIdSync(int id);
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insert(ChannelTag channelTag);
 
     @Update
