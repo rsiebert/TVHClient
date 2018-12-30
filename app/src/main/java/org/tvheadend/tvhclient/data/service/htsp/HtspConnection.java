@@ -123,7 +123,7 @@ public class HtspConnection implements Runnable {
     private final Reader reader;
     private final Writer writer;
 
-    private boolean running = false;
+    private volatile boolean running = false;
     private final Lock lock = new ReentrantLock();
     private State state = State.IDLE;
 
@@ -154,7 +154,7 @@ public class HtspConnection implements Runnable {
         }
 
         // Main Loop
-        while (running) {
+        while (running && !Thread.currentThread().isInterrupted()) {
             if (mSelector == null) {
                 Timber.d("Selector is null");
                 break;
@@ -184,7 +184,7 @@ public class HtspConnection implements Runnable {
             Set<SelectionKey> keys = mSelector.selectedKeys();
             Iterator<SelectionKey> i = keys.iterator();
 
-            while (i.hasNext()) {
+            while (i.hasNext() && !Thread.currentThread().isInterrupted()) {
                 SelectionKey selectionKey = i.next();
                 i.remove();
 
