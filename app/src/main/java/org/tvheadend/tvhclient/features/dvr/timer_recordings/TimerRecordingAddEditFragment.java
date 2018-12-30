@@ -21,7 +21,6 @@ import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Channel;
-import org.tvheadend.tvhclient.data.entity.ServerStatus;
 import org.tvheadend.tvhclient.data.entity.TimerRecording;
 import org.tvheadend.tvhclient.data.service.EpgSyncService;
 import org.tvheadend.tvhclient.features.dvr.BaseRecordingAddEditFragment;
@@ -109,7 +108,6 @@ public class TimerRecordingAddEditFragment extends BaseRecordingAddEditFragment 
     }
 
     private void updateUI() {
-        ServerStatus serverStatus = appRepository.getServerStatusData().getActiveItem();
         int gmtOffset = serverStatus.getGmtoffset();
 
         isEnabledCheckbox.setVisibility(htspVersion >= 19 ? View.VISIBLE : View.GONE);

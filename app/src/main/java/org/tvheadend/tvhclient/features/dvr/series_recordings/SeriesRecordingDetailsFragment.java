@@ -163,7 +163,6 @@ public class SeriesRecordingDetailsFragment extends BaseFragment implements Reco
             maxDurationTextView.setText(getString(R.string.minutes, (int) (recording.getMaxDuration() / 60)));
         }
 
-        ServerStatus serverStatus = appRepository.getServerStatusData().getActiveItem();
         int gmtOffset = serverStatus.getGmtoffset();
         startTimeTextView.setText(UIUtils.getTimeText(getContext(), recording.getStart() - gmtOffset));
         startWindowTimeTextView.setText(UIUtils.getTimeText(getContext(), recording.getStartWindow() - gmtOffset));
