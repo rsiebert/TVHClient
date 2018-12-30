@@ -6,7 +6,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
 
 import org.tvheadend.tvhclient.data.entity.ChannelSubset;
-import org.tvheadend.tvhclient.data.entity.Program;
+import org.tvheadend.tvhclient.data.entity.ProgramSubset;
 import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.features.channels.ChannelViewModel;
 
@@ -52,7 +52,7 @@ public class EpgViewModel extends ChannelViewModel {
         return appRepository.getRecordingData().getLiveDataItemsByChannelId(channelId);
     }
 
-    List<Program> getProgramsByChannelAndBetweenTimeSync(int channelId, long startTime, long endTime) {
+    List<ProgramSubset> getProgramsByChannelAndBetweenTimeSync(int channelId, long startTime, long endTime) {
         return appRepository.getProgramData().getItemByChannelIdAndBetweenTime(channelId, startTime, endTime);
     }
 

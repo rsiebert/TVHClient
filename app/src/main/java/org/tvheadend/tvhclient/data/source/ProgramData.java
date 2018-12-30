@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 
 import org.tvheadend.tvhclient.data.db.AppRoomDatabase;
 import org.tvheadend.tvhclient.data.entity.Program;
+import org.tvheadend.tvhclient.data.entity.ProgramSubset;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,8 +82,8 @@ public class ProgramData extends BaseData implements DataSourceInterface<Program
         return db.getProgramDao().loadProgramsFromChannelFromTime(channelId, time);
     }
 
-    public List<Program> getItemByChannelIdAndBetweenTime(int channelId, long startTime, long endTime) {
-        List<Program> programs = new ArrayList<>();
+    public List<ProgramSubset> getItemByChannelIdAndBetweenTime(int channelId, long startTime, long endTime) {
+        List<ProgramSubset> programs = new ArrayList<>();
         try {
             programs.addAll(new ItemsLoaderTask(db, channelId, startTime, endTime).execute().get());
         } catch (InterruptedException | ExecutionException e) {
@@ -131,7 +132,7 @@ public class ProgramData extends BaseData implements DataSourceInterface<Program
         }
     }
 
-    private static class ItemsLoaderTask extends AsyncTask<Void, Void, List<Program>> {
+    private static class ItemsLoaderTask extends AsyncTask<Void, Void, List<ProgramSubset>> {
         private final AppRoomDatabase db;
         private final int channelId;
         private final long startTime;
@@ -145,7 +146,7 @@ public class ProgramData extends BaseData implements DataSourceInterface<Program
         }
 
         @Override
-        protected List<Program> doInBackground(Void... voids) {
+        protected List<ProgramSubset> doInBackground(Void... voids) {
             return db.getProgramDao().loadProgramsFromChannelBetweenTimeSync(channelId, startTime, endTime);
         }
     }

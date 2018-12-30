@@ -13,10 +13,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.data.entity.Program;
+import org.tvheadend.tvhclient.data.entity.ProgramSubset;
 import org.tvheadend.tvhclient.data.entity.Recording;
-import org.tvheadend.tvhclient.utils.UIUtils;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback;
+import org.tvheadend.tvhclient.utils.UIUtils;
 
 import java.util.List;
 
@@ -49,7 +49,7 @@ class EpgProgramListViewHolder extends RecyclerView.ViewHolder {
         ButterKnife.bind(this, view);
     }
 
-    public void bindData(@NonNull final Program program, @NonNull List<Recording> recordingList, @NonNull RecyclerViewClickCallback clickCallback) {
+    public void bindData(@NonNull final ProgramSubset program, @NonNull List<Recording> recordingList, @NonNull RecyclerViewClickCallback clickCallback) {
         itemView.setTag(program);
         Context context = itemView.getContext();
 

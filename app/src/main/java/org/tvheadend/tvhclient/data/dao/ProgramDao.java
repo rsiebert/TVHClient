@@ -6,10 +6,12 @@ import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
+import android.arch.persistence.room.RoomWarnings;
 import android.arch.persistence.room.Transaction;
 import android.arch.persistence.room.Update;
 
 import org.tvheadend.tvhclient.data.entity.Program;
+import org.tvheadend.tvhclient.data.entity.ProgramSubset;
 
 import java.util.List;
 
@@ -39,18 +41,23 @@ public interface ProgramDao {
             "ORDER BY p.start ASC")
     LiveData<List<Program>> loadProgramsFromChannelFromTime(int channelId, long time);
 
+    @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
     @Transaction
-    @Query(base +
+    @Query("SELECT DISTINCT p.id, p.title, p.subtitle, p.channel_id, p.connection_id, p.start, p.stop, p.content_type, " +
+            "c.name AS channel_name, " +
+            "c.icon AS channel_icon " +
+            "FROM programs AS p " +
+            "LEFT JOIN channels AS c ON c.id = channel_id " +
             "WHERE p.connection_id IN (SELECT id FROM connections WHERE active = 1) " +
-            " AND p.channel_id = :channelId " +
+            " AND channel_id = :channelId " +
             // Program is within time slot
-            " AND ((p.start >= :startTime AND p.stop <= :endTime) " +
+            " AND ((start >= :startTime AND stop <= :endTime) " +
             // Program is at the beginning of time slot
-            "  OR (p.start <= :startTime AND p.stop > :startTime) " +
+            "  OR (start <= :startTime AND stop > :startTime) " +
             // Program is at the end of the time slot
-            "  OR (p.start < :endTime AND p.stop >= :endTime)) " +
-            "ORDER BY p.start ASC")
-    List<Program> loadProgramsFromChannelBetweenTimeSync(int channelId, long startTime, long endTime);
+            "  OR (start < :endTime AND stop >= :endTime)) " +
+            "ORDER BY start ASC")
+    List<ProgramSubset> loadProgramsFromChannelBetweenTimeSync(int channelId, long startTime, long endTime);
 
     @Transaction
     @Query(base +

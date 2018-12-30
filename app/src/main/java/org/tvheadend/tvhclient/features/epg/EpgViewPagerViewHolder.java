@@ -18,6 +18,7 @@ import android.widget.TextView;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.ChannelSubset;
 import org.tvheadend.tvhclient.data.entity.Program;
+import org.tvheadend.tvhclient.data.entity.ProgramSubset;
 import org.tvheadend.tvhclient.features.programs.ProgramDetailsActivity;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback;
 
@@ -69,7 +70,7 @@ public class EpgViewPagerViewHolder extends RecyclerView.ViewHolder implements R
 
     @Override
     public void onClick(View view, int position) {
-        Program program = recyclerViewAdapter.getItem(position);
+        ProgramSubset program = recyclerViewAdapter.getItem(position);
         if (program == null) {
             return;
         }
@@ -100,7 +101,7 @@ public class EpgViewPagerViewHolder extends RecyclerView.ViewHolder implements R
         noProgramsTextView.setVisibility(View.GONE);
 
         handler.post(() -> {
-            List<Program> programs = viewModel.getProgramsByChannelAndBetweenTimeSync(channelSubset.getId(), startTime, endTime);
+            List<ProgramSubset> programs = viewModel.getProgramsByChannelAndBetweenTimeSync(channelSubset.getId(), startTime, endTime);
             if (programs != null && programs.size() > 0) {
                 Timber.d("Loaded " + programs.size() + " programs for channel " + channelSubset.getName());
                 activity.runOnUiThread(() -> {
