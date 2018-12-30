@@ -95,7 +95,7 @@
     <string name="error_updating_recording">Recording was not updated! %s</string>
     <string name="extra_start_time">Extra start minutes (pre-time)</string>
     <string name="extra_stop_time">Extra stop minutes (post-time)</string>
-    <string name="failed_connecting_to_server">Could not connect to server. Is the ip address, hostname and port correct? Is a firewall not blocking the port?</string>
+    <string name="failed_connecting_to_server">Could not connect to server. Is the IP address, hostname and port correct? Is a firewall not blocking the port?</string>
     <string name="failed_during_connection_attempt">Error during connection attempt to server</string>
     <string name="failed_opening_socket">Failed to open socket to the server</string>
     <string name="failed_recordings">Failed recordings</string>
@@ -189,9 +189,10 @@
     <string name="pref_hide_duplicate_scheduled_recordings">Hide duplicate scheduled recordings</string>
     <string name="pref_hide_menu_delete_all_recordings">Hide the \'Delete all recordings\' menu</string>
     <string name="pref_hide_menu_delete_all_recordings_sum">Do not show this menu to prevent an accidental deletion of all recorded programs.</string>
-    <string name="pref_host">Hostname</string>
+    <string name="pref_host">Hostname or IP address</string>
+    <string name="pref_host_hint">www.server.com or 192.168.0.10</string>
     <string name="pref_host_error_invalid">The IP-address is not valid.</string>
-    <string name="pref_host_sum">Enter the server hostname</string>
+    <string name="pref_host_sum">Enter the server hostname or IP address</string>
     <string name="pref_htsp_playback_profiles">Playback profiles (Internal player)</string>
     <string name="pref_htsp_playback_profiles_sum">Select a profile that is used by the internal player to play a recorded program using the internal player.</string>
     <string name="pref_http_playback_profiles">Playback profiles (External players)</string>

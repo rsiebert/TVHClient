@@ -186,9 +186,10 @@
     <string name="pref_hide_duplicate_scheduled_recordings">Ausblenden von doppelten geplanten Aufnahmen</string>
     <string name="pref_hide_menu_delete_all_recordings">Menü \'Alle Aufnahmen löschen\' ausblenden</string>
     <string name="pref_hide_menu_delete_all_recordings_sum">Versteckt den Menüeintrag um ein versehentliches Löschen aller aufgenommenen Programme zu vermeiden.</string>
-    <string name="pref_host">Hostname</string>
+    <string name="pref_host">Hostname oder IP-Adresse</string>
+    <string name="pref_host_hint">www.server.de oder 192.168.0.10</string>
     <string name="pref_host_error_invalid">Die IP-Adresse ist ungültig.</string>
-    <string name="pref_host_sum">Hostname des Servers eingeben</string>
+    <string name="pref_host_sum">Hostname oder IP-Adresse des Servers eingeben</string>
     <string name="pref_htsp_playback_profiles">Wiedergabeprofile (Interner Player)</string>
     <string name="pref_htsp_playback_profiles_sum">Wählen Sie ein Profil aus, das vom internen Player verwendet wird, um ein aufgenommenes Programm mit dem internen Player abzuspielen.</string>
     <string name="pref_http_playback_profiles">Wiedergabeprofile (Externe Player)</string>
