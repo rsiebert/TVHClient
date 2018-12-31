@@ -9,7 +9,7 @@ import android.widget.Filter;
 import android.widget.Filterable;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.data.entity.ChannelSubset;
+import org.tvheadend.tvhclient.data.entity.EpgChannel;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback;
 
 import java.util.ArrayList;
@@ -19,8 +19,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 class EpgChannelListRecyclerViewAdapter extends RecyclerView.Adapter<EpgChannelViewHolder> implements Filterable {
 
     private final RecyclerViewClickCallback clickCallback;
-    private final List<ChannelSubset> channelList = new ArrayList<>();
-    private List<ChannelSubset> channelListFiltered = new ArrayList<>();
+    private final List<EpgChannel> channelList = new ArrayList<>();
+    private List<EpgChannel> channelListFiltered = new ArrayList<>();
 
     EpgChannelListRecyclerViewAdapter(RecyclerViewClickCallback clickCallback) {
         this.clickCallback = clickCallback;
@@ -35,11 +35,11 @@ class EpgChannelListRecyclerViewAdapter extends RecyclerView.Adapter<EpgChannelV
 
     @Override
     public void onBindViewHolder(@NonNull EpgChannelViewHolder holder, int position) {
-        ChannelSubset channel = channelListFiltered.get(position);
+        EpgChannel channel = channelListFiltered.get(position);
         holder.bindData(channel, clickCallback);
     }
 
-    void addItems(@NonNull List<ChannelSubset> list) {
+    void addItems(@NonNull List<EpgChannel> list) {
         channelList.clear();
         channelListFiltered.clear();
         channelList.addAll(list);
@@ -58,7 +58,7 @@ class EpgChannelListRecyclerViewAdapter extends RecyclerView.Adapter<EpgChannelV
         return R.layout.epg_channel_list_adapter;
     }
 
-    public ChannelSubset getItem(int position) {
+    public EpgChannel getItem(int position) {
         if (channelListFiltered.size() > position && position >= 0) {
             return channelListFiltered.get(position);
         } else {
@@ -75,10 +75,10 @@ class EpgChannelListRecyclerViewAdapter extends RecyclerView.Adapter<EpgChannelV
                 if (charString.isEmpty()) {
                     channelListFiltered = channelList;
                 } else {
-                    List<ChannelSubset> filteredList = new ArrayList<>();
+                    List<EpgChannel> filteredList = new ArrayList<>();
                     // Iterate over the available channels. Use a copy on write
                     // array in case the channel list changes during filtering.
-                    for (ChannelSubset channel : new CopyOnWriteArrayList<>(channelList)) {
+                    for (EpgChannel channel : new CopyOnWriteArrayList<>(channelList)) {
                         // name match condition. this might differ depending on your requirement
                         // here we are looking for a channel name match
                         if (channel.getName().toLowerCase().contains(charString.toLowerCase())) {
@@ -96,7 +96,7 @@ class EpgChannelListRecyclerViewAdapter extends RecyclerView.Adapter<EpgChannelV
             @SuppressWarnings("unchecked")
             @Override
             protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-                channelListFiltered = (ArrayList<ChannelSubset>) filterResults.values;
+                channelListFiltered = (ArrayList<EpgChannel>) filterResults.values;
                 notifyDataSetChanged();
             }
         };

@@ -1,11 +1,9 @@
 package org.tvheadend.tvhclient.data.entity;
 
 import android.arch.persistence.room.ColumnInfo;
-import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 
-@Entity(tableName = "programs", primaryKeys = {"id", "connection_id"})
-public class ProgramSubset {
+public class EpgProgram {
 
     @ColumnInfo(name = "id")
     private int eventId;                    // u32   required   Event ID

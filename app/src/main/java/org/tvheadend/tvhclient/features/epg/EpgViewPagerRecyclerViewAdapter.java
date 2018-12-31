@@ -10,7 +10,7 @@ import android.widget.Filter;
 import android.widget.Filterable;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.data.entity.ChannelSubset;
+import org.tvheadend.tvhclient.data.entity.EpgChannel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,8 +23,8 @@ class EpgViewPagerRecyclerViewAdapter extends RecyclerView.Adapter<EpgViewPagerV
     private final long endTime;
     private final FragmentActivity activity;
     private final RecyclerView.RecycledViewPool viewPool;
-    private final List<ChannelSubset> channelList = new ArrayList<>();
-    private List<ChannelSubset> channelListFiltered = new ArrayList<>();
+    private final List<EpgChannel> channelList = new ArrayList<>();
+    private List<EpgChannel> channelListFiltered = new ArrayList<>();
 
     EpgViewPagerRecyclerViewAdapter(FragmentActivity activity, float pixelsPerMinute, long startTime, long endTime) {
         this.activity = activity;
@@ -43,8 +43,8 @@ class EpgViewPagerRecyclerViewAdapter extends RecyclerView.Adapter<EpgViewPagerV
 
     @Override
     public void onBindViewHolder(@NonNull EpgViewPagerViewHolder holder, int position) {
-        ChannelSubset channelSubset = channelListFiltered.get(position);
-        holder.bindData(channelSubset);
+        EpgChannel epgChannel = channelListFiltered.get(position);
+        holder.bindData(epgChannel);
     }
 
     @Override
@@ -66,10 +66,10 @@ class EpgViewPagerRecyclerViewAdapter extends RecyclerView.Adapter<EpgViewPagerV
                 if (charString.isEmpty()) {
                     channelListFiltered = channelList;
                 } else {
-                    List<ChannelSubset> filteredList = new ArrayList<>();
+                    List<EpgChannel> filteredList = new ArrayList<>();
                     // Iterate over the available channels. Use a copy on write
                     // array in case the channel list changes during filtering.
-                    for (ChannelSubset channel : new CopyOnWriteArrayList<>(channelList)) {
+                    for (EpgChannel channel : new CopyOnWriteArrayList<>(channelList)) {
                         if (channel.getName().toLowerCase().contains(charString.toLowerCase())) {
                             filteredList.add(channel);
                         }
@@ -85,13 +85,13 @@ class EpgViewPagerRecyclerViewAdapter extends RecyclerView.Adapter<EpgViewPagerV
             @SuppressWarnings("unchecked")
             @Override
             protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-                channelListFiltered = (ArrayList<ChannelSubset>) filterResults.values;
+                channelListFiltered = (ArrayList<EpgChannel>) filterResults.values;
                 notifyDataSetChanged();
             }
         };
     }
 
-    public void addItems(@NonNull List<ChannelSubset> channels) {
+    public void addItems(@NonNull List<EpgChannel> channels) {
         channelList.clear();
         channelListFiltered.clear();
         channelList.addAll(channels);

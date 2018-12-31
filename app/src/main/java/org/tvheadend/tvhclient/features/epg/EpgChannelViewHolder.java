@@ -12,7 +12,7 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.data.entity.ChannelSubset;
+import org.tvheadend.tvhclient.data.entity.EpgChannel;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback;
 import org.tvheadend.tvhclient.utils.UIUtils;
 
@@ -31,7 +31,7 @@ public class EpgChannelViewHolder extends RecyclerView.ViewHolder {
         ButterKnife.bind(this, view);
     }
 
-    public void bindData(final ChannelSubset channel, RecyclerViewClickCallback clickCallback) {
+    public void bindData(final EpgChannel channel, RecyclerViewClickCallback clickCallback) {
         itemView.setTag(channel);
         Context context = itemView.getContext();
 

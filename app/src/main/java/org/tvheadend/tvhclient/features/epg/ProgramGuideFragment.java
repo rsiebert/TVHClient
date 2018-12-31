@@ -27,7 +27,7 @@ import android.widget.Filter;
 import android.widget.ProgressBar;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.data.entity.ChannelSubset;
+import org.tvheadend.tvhclient.data.entity.EpgChannel;
 import org.tvheadend.tvhclient.data.entity.Program;
 import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.features.dvr.RecordingAddEditActivity;
@@ -254,7 +254,7 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
     @Override
     public void onClick(View view, int position) {
         if (view.getId() == R.id.icon || view.getId() == R.id.icon_text) {
-            ChannelSubset channel = channelListRecyclerViewAdapter.getItem(position);
+            EpgChannel channel = channelListRecyclerViewAdapter.getItem(position);
             menuUtils.handleMenuPlayChannelIcon(channel.getId());
         }
     }

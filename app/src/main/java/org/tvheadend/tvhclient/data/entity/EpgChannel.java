@@ -2,7 +2,7 @@ package org.tvheadend.tvhclient.data.entity;
 
 import android.arch.persistence.room.ColumnInfo;
 
-public class ChannelSubset {
+public class EpgChannel {
 
     @ColumnInfo(name = "id")
     private int id;

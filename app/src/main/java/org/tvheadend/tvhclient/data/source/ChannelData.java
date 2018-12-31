@@ -8,7 +8,7 @@ import android.support.annotation.NonNull;
 
 import org.tvheadend.tvhclient.data.db.AppRoomDatabase;
 import org.tvheadend.tvhclient.data.entity.Channel;
-import org.tvheadend.tvhclient.data.entity.ChannelSubset;
+import org.tvheadend.tvhclient.data.entity.EpgChannel;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -99,9 +99,9 @@ public class ChannelData extends BaseData implements DataSourceInterface<Channel
         return channels;
     }
 
-    public List<ChannelSubset> getChannelNamesByTimeAndTag(Set<Integer> channelTagIds) {
+    public List<EpgChannel> getChannelNamesByTimeAndTag(Set<Integer> channelTagIds) {
         int channelSortOrder = Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(context).getString("channel_sort_order", "0"));
-        List<ChannelSubset> channels = new ArrayList<>();
+        List<EpgChannel> channels = new ArrayList<>();
         try {
             channels.addAll(new ItemSubsetsLoaderTask(db, channelTagIds, channelSortOrder).execute().get());
         } catch (InterruptedException | ExecutionException e) {
@@ -178,7 +178,7 @@ public class ChannelData extends BaseData implements DataSourceInterface<Channel
         }
     }
 
-    private static class ItemSubsetsLoaderTask extends AsyncTask<Void, Void, List<ChannelSubset>> {
+    private static class ItemSubsetsLoaderTask extends AsyncTask<Void, Void, List<EpgChannel>> {
         private final AppRoomDatabase db;
         private final int sortOrder;
         private final Set<Integer> channelTagIds;
@@ -190,7 +190,7 @@ public class ChannelData extends BaseData implements DataSourceInterface<Channel
         }
 
         @Override
-        protected List<ChannelSubset> doInBackground(Void... voids) {
+        protected List<EpgChannel> doInBackground(Void... voids) {
             if (channelTagIds.size() == 0) {
                 return db.getChannelDao().loadAllChannelsNamesOnlySync(sortOrder);
             } else {

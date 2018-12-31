@@ -16,9 +16,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.data.entity.ChannelSubset;
+import org.tvheadend.tvhclient.data.entity.EpgChannel;
 import org.tvheadend.tvhclient.data.entity.Program;
-import org.tvheadend.tvhclient.data.entity.ProgramSubset;
+import org.tvheadend.tvhclient.data.entity.EpgProgram;
 import org.tvheadend.tvhclient.features.programs.ProgramDetailsActivity;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback;
 
@@ -70,7 +70,7 @@ public class EpgViewPagerViewHolder extends RecyclerView.ViewHolder implements R
 
     @Override
     public void onClick(View view, int position) {
-        ProgramSubset program = recyclerViewAdapter.getItem(position);
+        EpgProgram program = recyclerViewAdapter.getItem(position);
         if (program == null) {
             return;
         }
@@ -94,16 +94,16 @@ public class EpgViewPagerViewHolder extends RecyclerView.ViewHolder implements R
         }
     }
 
-    public void bindData(final ChannelSubset channelSubset) {
+    public void bindData(final EpgChannel epgChannel) {
 
         recyclerView.setVisibility(View.GONE);
         progressBar.setVisibility(View.VISIBLE);
         noProgramsTextView.setVisibility(View.GONE);
 
         handler.post(() -> {
-            List<ProgramSubset> programs = viewModel.getProgramsByChannelAndBetweenTimeSync(channelSubset.getId(), startTime, endTime);
+            List<EpgProgram> programs = viewModel.getProgramsByChannelAndBetweenTimeSync(epgChannel.getId(), startTime, endTime);
             if (programs != null && programs.size() > 0) {
-                Timber.d("Loaded " + programs.size() + " programs for channel " + channelSubset.getName());
+                Timber.d("Loaded " + programs.size() + " programs for channel " + epgChannel.getName());
                 activity.runOnUiThread(() -> {
                     recyclerViewAdapter.addItems(programs);
                     recyclerView.setVisibility(View.VISIBLE);
@@ -111,7 +111,7 @@ public class EpgViewPagerViewHolder extends RecyclerView.ViewHolder implements R
                     noProgramsTextView.setVisibility(View.GONE);
                 });
             } else {
-                Timber.d("Loaded no programs for channel " + channelSubset.getName());
+                Timber.d("Loaded no programs for channel " + epgChannel.getName());
                 activity.runOnUiThread(() -> {
                     recyclerView.setVisibility(View.GONE);
                     progressBar.setVisibility(View.GONE);
@@ -120,7 +120,7 @@ public class EpgViewPagerViewHolder extends RecyclerView.ViewHolder implements R
             }
         });
 
-        viewModel.getRecordingsByChannel(channelSubset.getId()).observe(activity, recordings -> {
+        viewModel.getRecordingsByChannel(epgChannel.getId()).observe(activity, recordings -> {
             if (recordings != null) {
                 recyclerViewAdapter.addRecordings(recordings);
             }

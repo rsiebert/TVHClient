@@ -11,7 +11,7 @@ import android.arch.persistence.room.Transaction;
 import android.arch.persistence.room.Update;
 
 import org.tvheadend.tvhclient.data.entity.Program;
-import org.tvheadend.tvhclient.data.entity.ProgramSubset;
+import org.tvheadend.tvhclient.data.entity.EpgProgram;
 
 import java.util.List;
 
@@ -57,7 +57,7 @@ public interface ProgramDao {
             // Program is at the end of the time slot
             "  OR (start < :endTime AND stop >= :endTime)) " +
             "ORDER BY start ASC")
-    List<ProgramSubset> loadProgramsFromChannelBetweenTimeSync(int channelId, long startTime, long endTime);
+    List<EpgProgram> loadProgramsFromChannelBetweenTimeSync(int channelId, long startTime, long endTime);
 
     @Transaction
     @Query(base +

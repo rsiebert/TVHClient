@@ -5,8 +5,8 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
 
-import org.tvheadend.tvhclient.data.entity.ChannelSubset;
-import org.tvheadend.tvhclient.data.entity.ProgramSubset;
+import org.tvheadend.tvhclient.data.entity.EpgChannel;
+import org.tvheadend.tvhclient.data.entity.EpgProgram;
 import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.features.channels.ChannelViewModel;
 
@@ -17,7 +17,7 @@ import timber.log.Timber;
 
 public class EpgViewModel extends ChannelViewModel {
 
-    private MutableLiveData<List<ChannelSubset>> channels;
+    private MutableLiveData<List<EpgChannel>> channels;
 
     private int verticalOffset = 0;
     private int verticalPosition = 0;
@@ -40,7 +40,7 @@ public class EpgViewModel extends ChannelViewModel {
     }
 
     @NonNull
-    MutableLiveData<List<ChannelSubset>> getChannelSubsets() {
+    MutableLiveData<List<EpgChannel>> getChannelSubsets() {
         if (channels == null) {
             channels = new MutableLiveData<>();
             channelUpdateHandler.post(channelUpdateTask);
@@ -52,7 +52,7 @@ public class EpgViewModel extends ChannelViewModel {
         return appRepository.getRecordingData().getLiveDataItemsByChannelId(channelId);
     }
 
-    List<ProgramSubset> getProgramsByChannelAndBetweenTimeSync(int channelId, long startTime, long endTime) {
+    List<EpgProgram> getProgramsByChannelAndBetweenTimeSync(int channelId, long startTime, long endTime) {
         return appRepository.getProgramData().getItemByChannelIdAndBetweenTime(channelId, startTime, endTime);
     }
 

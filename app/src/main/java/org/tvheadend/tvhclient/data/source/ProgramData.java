@@ -5,8 +5,8 @@ import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
 import org.tvheadend.tvhclient.data.db.AppRoomDatabase;
+import org.tvheadend.tvhclient.data.entity.EpgProgram;
 import org.tvheadend.tvhclient.data.entity.Program;
-import org.tvheadend.tvhclient.data.entity.ProgramSubset;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -82,8 +82,8 @@ public class ProgramData extends BaseData implements DataSourceInterface<Program
         return db.getProgramDao().loadProgramsFromChannelFromTime(channelId, time);
     }
 
-    public List<ProgramSubset> getItemByChannelIdAndBetweenTime(int channelId, long startTime, long endTime) {
-        List<ProgramSubset> programs = new ArrayList<>();
+    public List<EpgProgram> getItemByChannelIdAndBetweenTime(int channelId, long startTime, long endTime) {
+        List<EpgProgram> programs = new ArrayList<>();
         try {
             programs.addAll(new ItemsLoaderTask(db, channelId, startTime, endTime).execute().get());
         } catch (InterruptedException | ExecutionException e) {
@@ -132,7 +132,7 @@ public class ProgramData extends BaseData implements DataSourceInterface<Program
         }
     }
 
-    private static class ItemsLoaderTask extends AsyncTask<Void, Void, List<ProgramSubset>> {
+    private static class ItemsLoaderTask extends AsyncTask<Void, Void, List<EpgProgram>> {
         private final AppRoomDatabase db;
         private final int channelId;
         private final long startTime;
@@ -146,7 +146,7 @@ public class ProgramData extends BaseData implements DataSourceInterface<Program
         }
 
         @Override
-        protected List<ProgramSubset> doInBackground(Void... voids) {
+        protected List<EpgProgram> doInBackground(Void... voids) {
             return db.getProgramDao().loadProgramsFromChannelBetweenTimeSync(channelId, startTime, endTime);
         }
     }

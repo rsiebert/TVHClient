@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.data.entity.ProgramSubset;
+import org.tvheadend.tvhclient.data.entity.EpgProgram;
 import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback;
 
@@ -22,7 +22,7 @@ class EpgProgramListRecyclerViewAdapter extends RecyclerView.Adapter<EpgProgramL
     private final float pixelsPerMinute;
     private final long fragmentStartTime;
     private final long fragmentStopTime;
-    private final List<ProgramSubset> programList = new ArrayList<>();
+    private final List<EpgProgram> programList = new ArrayList<>();
     private List<Recording> recordingList = new ArrayList<>();
 
     EpgProgramListRecyclerViewAdapter(float pixelsPerMinute, long fragmentStartTime, long fragmentStopTime, @NonNull RecyclerViewClickCallback clickCallback) {
@@ -42,7 +42,7 @@ class EpgProgramListRecyclerViewAdapter extends RecyclerView.Adapter<EpgProgramL
     @Override
     public void onBindViewHolder(@NonNull EpgProgramListViewHolder holder, int position) {
         if (programList.size() > position) {
-            ProgramSubset program = programList.get(position);
+            EpgProgram program = programList.get(position);
             holder.bindData(program, recordingList, clickCallback);
         }
     }
@@ -52,7 +52,7 @@ class EpgProgramListRecyclerViewAdapter extends RecyclerView.Adapter<EpgProgramL
         onBindViewHolder(holder, position);
     }
 
-    void addItems(@NonNull List<ProgramSubset> list) {
+    void addItems(@NonNull List<EpgProgram> list) {
         updateRecordingState(list, recordingList);
 
         DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new EpgProgramListDiffCallback(programList, list));
@@ -66,9 +66,9 @@ class EpgProgramListRecyclerViewAdapter extends RecyclerView.Adapter<EpgProgramL
         updateRecordingState(programList, recordingList);
     }
 
-    private void updateRecordingState(@NonNull List<ProgramSubset> programs, @NonNull List<Recording> recordings) {
+    private void updateRecordingState(@NonNull List<EpgProgram> programs, @NonNull List<Recording> recordings) {
         for (int i = 0; i < programs.size(); i++) {
-            ProgramSubset program = programs.get(i);
+            EpgProgram program = programs.get(i);
             boolean recordingExists = false;
 
             for (Recording recording : recordings) {
@@ -106,7 +106,7 @@ class EpgProgramListRecyclerViewAdapter extends RecyclerView.Adapter<EpgProgramL
         return R.layout.epg_program_item_adapter;
     }
 
-    public ProgramSubset getItem(int position) {
+    public EpgProgram getItem(int position) {
         if (programList.size() > position && position >= 0) {
             return programList.get(position);
         } else {

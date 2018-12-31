@@ -3,15 +3,15 @@ package org.tvheadend.tvhclient.features.epg;
 import android.support.annotation.Nullable;
 import android.support.v7.util.DiffUtil;
 
-import org.tvheadend.tvhclient.data.entity.ProgramSubset;
+import org.tvheadend.tvhclient.data.entity.EpgProgram;
 
 import java.util.List;
 
 public class EpgProgramListDiffCallback extends DiffUtil.Callback {
-    private final List<ProgramSubset> oldList;
-    private final List<ProgramSubset> newList;
+    private final List<EpgProgram> oldList;
+    private final List<EpgProgram> newList;
 
-    public EpgProgramListDiffCallback(List<ProgramSubset> oldList, List<ProgramSubset> newList) {
+    public EpgProgramListDiffCallback(List<EpgProgram> oldList, List<EpgProgram> newList) {
         this.oldList = oldList;
         this.newList = newList;
     }
