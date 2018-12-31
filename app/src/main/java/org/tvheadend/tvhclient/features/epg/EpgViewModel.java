@@ -3,39 +3,42 @@ package org.tvheadend.tvhclient.features.epg;
 import android.app.Application;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 
 import org.tvheadend.tvhclient.data.entity.EpgChannel;
 import org.tvheadend.tvhclient.data.entity.EpgProgram;
 import org.tvheadend.tvhclient.data.entity.Recording;
-import org.tvheadend.tvhclient.features.channels.ChannelViewModel;
+import org.tvheadend.tvhclient.features.shared.models.BaseChannelViewModel;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import timber.log.Timber;
 
-public class EpgViewModel extends ChannelViewModel {
+public class EpgViewModel extends BaseChannelViewModel {
 
     private MutableLiveData<List<EpgChannel>> channels;
+    private Runnable epgChannelUpdateTask;
+    private final Handler epgChannelUpdateHandler = new Handler();
 
     private int verticalOffset = 0;
     private int verticalPosition = 0;
-    private boolean showGenreColors;
 
     public EpgViewModel(Application application) {
         super(application);
 
-        showGenreColors = sharedPreferences.getBoolean("genre_colors_for_program_guide_enabled", false);
-
         // Initiate a timer that will update the view model data every minute
         // so that the progress bars will be displayed correctly
-        channelUpdateTask = () -> {
+        epgChannelUpdateTask = () -> {
             long currentTime = new Date().getTime();
             if (selectedTime < currentTime) {
                 selectedTime = currentTime;
             }
-            channels.setValue(appRepository.getChannelData().getChannelNamesByTimeAndTag(channelTagIds));
+            Timber.d("Loading channels from epg update task");
+            channels.setValue(appRepository.getChannelData().getChannelNamesByTag(channelTagIds));
+            Timber.d("Loaded channels from epg update task");
         };
     }
 
@@ -43,7 +46,7 @@ public class EpgViewModel extends ChannelViewModel {
     MutableLiveData<List<EpgChannel>> getChannelSubsets() {
         if (channels == null) {
             channels = new MutableLiveData<>();
-            channelUpdateHandler.post(channelUpdateTask);
+            epgChannelUpdateHandler.post(epgChannelUpdateTask);
         }
         return channels;
     }
@@ -72,19 +75,23 @@ public class EpgViewModel extends ChannelViewModel {
         return this.verticalPosition;
     }
 
-    public void checkAndUpdateChannels() {
-        super.checkAndUpdateChannels();
+    @Override
+    protected void setSelectedTime(long selectedTime) {
+        super.setSelectedTime(selectedTime);
+        epgChannelUpdateHandler.post(epgChannelUpdateTask);
+    }
 
-        boolean updateChannels = false;
+    @Override
+    public void setChannelTagIds(Set<Integer> channelTagIds) {
+        super.setChannelTagIds(channelTagIds);
+        epgChannelUpdateHandler.post(epgChannelUpdateTask);
+    }
 
-        boolean newShowGenreColors = sharedPreferences.getBoolean("genre_colors_for_program_guide_enabled", false);
-        if (showGenreColors != newShowGenreColors) {
-            Timber.d("Epg genre color has changed from " + showGenreColors + " to " + newShowGenreColors);
-            showGenreColors = newShowGenreColors;
-            updateChannels = true;
+    void checkAndUpdateChannels() {
+        Timber.d("Checking if channels need to be updated");
+        if (isUpdateOfChannelsRequired()) {
+            epgChannelUpdateHandler.post(epgChannelUpdateTask);
         }
-        if (updateChannels) {
-            channelUpdateHandler.post(channelUpdateTask);
-        }
+        Timber.d("Done checking if channels need to be updated");
     }
 }
