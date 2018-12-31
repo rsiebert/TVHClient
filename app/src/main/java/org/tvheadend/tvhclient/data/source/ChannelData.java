@@ -99,7 +99,7 @@ public class ChannelData extends BaseData implements DataSourceInterface<Channel
         return channels;
     }
 
-    public List<EpgChannel> getChannelNamesByTimeAndTag(Set<Integer> channelTagIds) {
+    public List<EpgChannel> getChannelNamesByTag(Set<Integer> channelTagIds) {
         int channelSortOrder = Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(context).getString("channel_sort_order", "0"));
         List<EpgChannel> channels = new ArrayList<>();
         try {
