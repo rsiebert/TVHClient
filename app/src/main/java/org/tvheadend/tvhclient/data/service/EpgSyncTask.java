@@ -523,6 +523,12 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         if (icon != null) {
             pendingChannelLogoFetches.add(icon);
         }
+
+        if (pendingChannelOps.size() % 10 == 0) {
+            sendEpgSyncStatusMessage(ServiceStatusReceiver.State.SYNC_IN_PROGRESS,
+                    context.getString(R.string.saving_data),
+                    "Received " + pendingChannelOps.size() + " channels");
+        }
     }
 
     /**
@@ -590,6 +596,12 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
                 Integer offset = Integer.valueOf(sharedPreferences.getString("notification_lead_time", "0"));
                 NotificationUtils.addRecordingNotification(context, recording, offset);
             }
+        }
+
+        if (pendingRecordingOps.size() % 5 == 0) {
+            sendEpgSyncStatusMessage(ServiceStatusReceiver.State.SYNC_IN_PROGRESS,
+                    context.getString(R.string.saving_data),
+                    "Received " + pendingRecordingOps.size() + " recordings");
         }
     }
 
@@ -735,6 +747,12 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
             pendingEventOps.add(program);
         } else {
             appRepository.getProgramData().addItem(program);
+        }
+
+        if (pendingEventOps.size() % 20 == 0) {
+            sendEpgSyncStatusMessage(ServiceStatusReceiver.State.SYNC_IN_PROGRESS,
+                    context.getString(R.string.saving_data),
+                    "Received " + pendingEventOps.size() + " program guide events");
         }
     }
 
