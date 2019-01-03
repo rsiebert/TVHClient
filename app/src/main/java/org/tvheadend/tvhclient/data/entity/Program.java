@@ -3,8 +3,10 @@ package org.tvheadend.tvhclient.data.entity;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
+import android.arch.persistence.room.Index;
 
-@Entity(tableName = "programs", primaryKeys = {"id", "connection_id"})
+@Entity(tableName = "programs", primaryKeys = {"id", "connection_id"},
+        indices = {@Index(value = {"start"}), @Index(value = {"channel_id"})})
 public class Program {
 
     @ColumnInfo(name = "id")
