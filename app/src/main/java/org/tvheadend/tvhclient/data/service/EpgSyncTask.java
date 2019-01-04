@@ -49,14 +49,10 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.inject.Inject;
 
 import timber.log.Timber;
-
-// TODO add logic to sync new channel icons if they were cleared from the settings
 
 public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener, HtspConnection.Listener {
 
@@ -66,6 +62,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     protected SharedPreferences sharedPreferences;
     @Inject
     protected Context context;
+
     private final int connectionTimeout;
     private final Connection connection;
     private int htspVersion;
@@ -78,7 +75,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     private final ArrayList<Channel> pendingChannelOps = new ArrayList<>();
     private final ArrayList<Recording> pendingRecordingOps = new ArrayList<>();
     private final ArrayList<Program> pendingEventOps = new ArrayList<>();
-    private final Queue<String> pendingChannelLogoFetches = new ConcurrentLinkedQueue<>();
+    private final ArrayList<String> pendingChannelLogoFetches = new ArrayList<>();
 
     EpgSyncTask(@NonNull HtspMessage.Dispatcher dispatcher, Connection connection) {
         MainApplication.getComponent().inject(this);
@@ -824,6 +821,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         }
     }
 
+    @SuppressWarnings("SameParameterValue")
     private void addMissingHtspPlaybackProfileIfNotExists(String name) {
         boolean profileExists = false;
 
@@ -1344,6 +1342,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
 
         if (response != null) {
             // Contains the ids of those events that were returned by the query
+            //noinspection MismatchedQueryAndUpdateOfCollection
             List<Integer> eventIdList = new ArrayList<>();
             if (response.containsKey("events")) {
                 // List of events that match the query. Add the eventIds
