@@ -27,6 +27,7 @@ import android.widget.Filter;
 import android.widget.ProgressBar;
 
 import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.data.entity.ChannelTag;
 import org.tvheadend.tvhclient.data.entity.EpgChannel;
 import org.tvheadend.tvhclient.data.entity.Program;
 import org.tvheadend.tvhclient.data.entity.Recording;
@@ -46,6 +47,7 @@ import java.util.Set;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import timber.log.Timber;
 
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 
@@ -73,6 +75,8 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
     private boolean enableScrolling = true;
     private LinearLayoutManager channelListRecyclerViewLayoutManager;
     private int programIdToBeEditedWhenBeingRecorded = 0;
+    private List<ChannelTag> channelTags;
+    private Long selectedTime;
 
     @Nullable
     @Override
@@ -149,7 +153,23 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
         programViewPager.addOnPageChangeListener(this);
 
         viewModel = ViewModelProviders.of(activity).get(EpgViewModel.class);
+
+        viewModel.getSelectedTime().observe(getViewLifecycleOwner(), time -> {
+            Timber.d("Loaded selected time");
+            this.selectedTime = time;
+        });
+
+        Timber.d("Loading channel tags");
+        viewModel.getChannelTags().observe(getViewLifecycleOwner(), channelTags -> {
+            if (channelTags != null) {
+                Timber.d("Loaded channel tags");
+                this.channelTags = channelTags;
+            }
+        });
+
+        Timber.d("Loading epg channels");
         viewModel.getChannelSubsets().observe(getViewLifecycleOwner(), channels -> {
+            Timber.d("Done loading epg channels");
 
             progressBar.setVisibility(View.GONE);
             channelListRecyclerView.setVisibility(View.VISIBLE);
@@ -197,7 +217,7 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
     @Override
     public void onResume() {
         super.onResume();
-        viewModel.checkAndUpdateChannels();
+        //viewModel.checkAndUpdateChannels();
     }
 
     @Override
@@ -224,7 +244,7 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_tags:
-                return menuUtils.handleMenuChannelTagsSelection(viewModel.getChannelTagIds(), this);
+                return menuUtils.handleMenuChannelTagsSelection(channelTags, this);
 
             case R.id.menu_timeframe:
                 return menuUtils.handleMenuTimeSelection(selectedTimeOffset, hoursToShow, (hoursToShow * daysToShow), this);
@@ -241,6 +261,13 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
     public void onTimeSelected(int which) {
         selectedTimeOffset = which;
         programViewPager.setCurrentItem(which);
+
+        // TODO check if this is required
+        // Add the selected list index as extra hours to the current time.
+        // If the first index was selected then use the current time.
+        long timeInMillis = Calendar.getInstance().getTimeInMillis();
+        timeInMillis += (1000 * 60 * 60 * which * hoursToShow);
+        viewModel.setSelectedTime(timeInMillis);
     }
 
     @Override
@@ -248,7 +275,7 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
         channelListRecyclerView.setVisibility(View.GONE);
         programViewPager.setVisibility(View.GONE);
         progressBar.setVisibility(View.VISIBLE);
-        viewModel.setChannelTagIds(ids);
+        viewModel.setSelectedChannelTagIds(ids);
     }
 
     @Override
