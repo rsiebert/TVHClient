@@ -12,13 +12,13 @@ interface DataSourceInterface<T> {
 
     void removeItem(T item);
 
+    T getItemById(Object id);
+
+    List<T> getItems();
+
     LiveData<Integer> getLiveDataItemCount();
 
     LiveData<List<T>> getLiveDataItems();
 
     LiveData<T> getLiveDataItemById(Object id);
-
-    T getItemById(Object id);
-
-    List<T> getItems();
 }
