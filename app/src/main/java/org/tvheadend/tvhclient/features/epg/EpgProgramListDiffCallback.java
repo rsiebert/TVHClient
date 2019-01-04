@@ -11,7 +11,7 @@ public class EpgProgramListDiffCallback extends DiffUtil.Callback {
     private final List<EpgProgram> oldList;
     private final List<EpgProgram> newList;
 
-    public EpgProgramListDiffCallback(List<EpgProgram> oldList, List<EpgProgram> newList) {
+    EpgProgramListDiffCallback(List<EpgProgram> oldList, List<EpgProgram> newList) {
         this.oldList = oldList;
         this.newList = newList;
     }

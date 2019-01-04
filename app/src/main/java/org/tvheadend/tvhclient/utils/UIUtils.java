@@ -342,7 +342,7 @@ public class UIUtils {
     }
 
     public static String getIconUrl(Context context, @Nullable final String url) {
-        if (TextUtils.isEmpty(url)) {
+        if (url == null) {
             return null;
         }
         return "file://" + context.getCacheDir() + "/" + convertUrlToHashString(url) + ".png";

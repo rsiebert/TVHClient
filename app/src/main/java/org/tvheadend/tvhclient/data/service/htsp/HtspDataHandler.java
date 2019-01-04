@@ -34,8 +34,8 @@ public class HtspDataHandler implements HtspConnection.Reader, HtspConnection.Wr
     private final HtspMessage.DispatcherInternal messageDispatcher;
     private boolean connectionClosed;
 
-    private ByteBuffer readBuffer;
-    private ByteBuffer writeBuffer;
+    private final ByteBuffer readBuffer;
+    private final ByteBuffer writeBuffer;
 
     HtspDataHandler(HtspMessageSerializer messageSerializer, HtspMessage.DispatcherInternal messageDispatcher) {
         this.messageSerializer = messageSerializer;

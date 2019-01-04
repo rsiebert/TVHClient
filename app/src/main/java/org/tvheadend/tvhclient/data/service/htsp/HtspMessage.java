@@ -232,7 +232,7 @@ public class HtspMessage extends HashMap<String, Object> {
         return getBoolean(key);
     }
 
-    public boolean getBoolean(String key) {
+    private boolean getBoolean(String key) {
         return getInteger(key) == 1;
     }
 
@@ -247,6 +247,7 @@ public class HtspMessage extends HashMap<String, Object> {
     public ArrayList getArrayList(String key) {
         Object obj = get(key);
 
+        //noinspection unchecked
         return (ArrayList<String>) obj;
     }
 

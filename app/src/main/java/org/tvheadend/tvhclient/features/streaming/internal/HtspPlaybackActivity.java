@@ -470,7 +470,7 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
     }
 
 
-    public void onPlayButtonSelected() {
+    private void onPlayButtonSelected() {
         if (player != null) {
             player.setPlayWhenReady(true);
         }
@@ -479,7 +479,7 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
         }
     }
 
-    public void onResumeButtonSelected() {
+    private void onResumeButtonSelected() {
         if (htspDataSource == null) {
             return;
         }
@@ -499,7 +499,7 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
         }
     }
 
-    public void onPauseButtonSelected() {
+    private void onPauseButtonSelected() {
         if (htspDataSource == null) {
             return;
         }

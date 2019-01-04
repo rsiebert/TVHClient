@@ -18,8 +18,8 @@ import java.util.Set;
 public class ChannelTagRecyclerViewAdapter extends RecyclerView.Adapter<ChannelTagViewHolder> {
 
     private final boolean isMultiChoice;
-    private List<ChannelTag> channelTagList;
-    private Set<Integer> selectedChannelTagIds;
+    private final List<ChannelTag> channelTagList;
+    private final Set<Integer> selectedChannelTagIds;
     private MaterialDialog dialog;
 
     public ChannelTagRecyclerViewAdapter(@NonNull List<ChannelTag> channelTagList, boolean isMultiChoice) {
@@ -45,9 +45,8 @@ public class ChannelTagRecyclerViewAdapter extends RecyclerView.Adapter<ChannelT
             int tagId = channelTagList.get(position).getTagId();
             if (isMultiChoice) {
                 if (holder.selectedCheckBox != null) {
-                    holder.selectedCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                        channelTagList.get(position).setIsSelected(isChecked ? 1 : 0);
-                    });
+                    holder.selectedCheckBox.setOnCheckedChangeListener((buttonView, isChecked) ->
+                            channelTagList.get(position).setIsSelected(isChecked ? 1 : 0));
                 }
             } else {
                 if (holder.selectedRadioButton != null) {

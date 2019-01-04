@@ -12,8 +12,8 @@ import timber.log.Timber;
 
 class RecordingListDiffCallback extends DiffUtil.Callback {
 
-    public static final int PAYLOAD_DATA_SIZE = 1;
-    public static final int PAYLOAD_FULL = 2;
+    static final int PAYLOAD_DATA_SIZE = 1;
+    private static final int PAYLOAD_FULL = 2;
 
     private final List<Recording> oldList;
     private final List<Recording> newList;

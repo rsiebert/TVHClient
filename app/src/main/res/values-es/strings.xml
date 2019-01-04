@@ -312,7 +312,7 @@ Debe tener el patrón '01:24:67:9a:cd:ef'."</string>
     <string name="bad_username_or_password">Usuario y contraseña incorrectas</string>
     <string name="clear">Limpiar</string>
     <string name="connected_to_server">Conectado al servidor</string>
-    <string name="connecting_to_server">Conectando al servidor...</string>
+    <string name="connecting_to_server">Conectando al servidor…</string>
     <string name="connection_closed">Conexión cerrada</string>
     <string name="connection_failed">Conexión fallida</string>
     <string name="dialog_button_connect">Conectar</string>

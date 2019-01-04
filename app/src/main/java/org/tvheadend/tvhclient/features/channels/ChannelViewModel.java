@@ -39,15 +39,15 @@ public class ChannelViewModel extends AndroidViewModel {
     private final String multipleChannelTagsSelectedText;
     private final String unknownChannelTagText;
 
-    private LiveData<List<Channel>> channels;
-    private LiveData<List<ChannelTag>> channelTags;
-    private LiveData<Integer> channelCount;
-    private LiveData<List<Recording>> recordings;
-    private LiveData<ServerStatus> serverStatus;
+    private final LiveData<List<Channel>> channels;
+    private final LiveData<List<ChannelTag>> channelTags;
+    private final LiveData<Integer> channelCount;
+    private final LiveData<List<Recording>> recordings;
+    private final LiveData<ServerStatus> serverStatus;
 
-    private MutableLiveData<Long> selectedTime = new MutableLiveData<>();
-    private MutableLiveData<Integer> channelSortOrder = new MutableLiveData<>();
-    private MutableLiveData<Set<Integer>> selectedChannelTagIds = new MutableLiveData<>();
+    private final MutableLiveData<Long> selectedTime = new MutableLiveData<>();
+    private final MutableLiveData<Integer> channelSortOrder = new MutableLiveData<>();
+    private final MutableLiveData<Set<Integer>> selectedChannelTagIds = new MutableLiveData<>();
 
     public ChannelViewModel(Application application) {
         super(application);

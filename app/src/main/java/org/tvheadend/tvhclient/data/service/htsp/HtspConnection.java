@@ -373,7 +373,7 @@ public class HtspConnection implements Runnable {
         return isClosed() || isClosing() || isFailed();
     }
 
-    public State getState() {
+    private State getState() {
         return state;
     }
 

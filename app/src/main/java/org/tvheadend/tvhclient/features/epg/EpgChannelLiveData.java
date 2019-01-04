@@ -6,9 +6,9 @@ import android.support.v4.util.Pair;
 
 import java.util.Set;
 
-public class EpgChannelLiveData extends MediatorLiveData<Pair<Integer, Set<Integer>>> {
+class EpgChannelLiveData extends MediatorLiveData<Pair<Integer, Set<Integer>>> {
 
-    public EpgChannelLiveData(LiveData<Integer> selectedChannelSortOrder,
+    EpgChannelLiveData(LiveData<Integer> selectedChannelSortOrder,
                               LiveData<Set<Integer>> selectedChannelTagIds) {
 
         addSource(selectedChannelSortOrder, order ->

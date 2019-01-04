@@ -15,7 +15,7 @@ public class Triple<F, S, T> {
      * @param first the first object in the Pair
      * @param second the second object in the pair
      */
-    public Triple(F first, S second, T third) {
+    private Triple(F first, S second, T third) {
         this.first = first;
         this.second = second;
         this.third = third;
@@ -62,6 +62,6 @@ public class Triple<F, S, T> {
      * @return a Triple that is templatized with the types of a and b
      */
     public static <A, B, C> Triple <A, B, C> create(A a, B b, C c) {
-        return new Triple<A, B, C>(a, b, c);
+        return new Triple<>(a, b, c);
     }
 }

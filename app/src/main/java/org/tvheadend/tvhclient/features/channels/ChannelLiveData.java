@@ -7,11 +7,11 @@ import org.tvheadend.tvhclient.utils.Triple;
 
 import java.util.Set;
 
-public class ChannelLiveData extends MediatorLiveData<Triple<Long, Integer, Set<Integer>>> {
+class ChannelLiveData extends MediatorLiveData<Triple<Long, Integer, Set<Integer>>> {
 
-    public ChannelLiveData(LiveData<Long> selectedTime,
-                           LiveData<Integer> selectedChannelSortOrder,
-                           LiveData<Set<Integer>> selectedChannelTagIds) {
+    ChannelLiveData(LiveData<Long> selectedTime,
+                    LiveData<Integer> selectedChannelSortOrder,
+                    LiveData<Set<Integer>> selectedChannelTagIds) {
 
         addSource(selectedTime, time ->
                 setValue(Triple.create(time, selectedChannelSortOrder.getValue(), selectedChannelTagIds.getValue()))

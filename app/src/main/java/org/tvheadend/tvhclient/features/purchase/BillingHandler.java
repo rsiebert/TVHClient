@@ -11,7 +11,7 @@ import java.util.Set;
 
 public class BillingHandler implements BillingProcessor.IBillingHandler {
 
-    private Set<BillingProcessor.IBillingHandler> listeners = new HashSet<>();
+    private final Set<BillingProcessor.IBillingHandler> listeners = new HashSet<>();
 
     @Override
     public void onProductPurchased(@NonNull String productId, @Nullable TransactionDetails details) {

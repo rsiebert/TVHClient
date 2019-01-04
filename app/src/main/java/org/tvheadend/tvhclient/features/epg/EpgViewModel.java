@@ -36,15 +36,16 @@ public class EpgViewModel extends AndroidViewModel {
     private final String multipleChannelTagsSelectedText;
     private final String unknownChannelTagText;
 
-    private LiveData<List<EpgChannel>> channels;
-    private LiveData<List<ChannelTag>> channelTags;
-    private LiveData<Integer> channelCount;
-    private LiveData<List<Recording>> recordings;
-    private LiveData<ServerStatus> serverStatus;
+    private final LiveData<List<EpgChannel>> channels;
+    private final LiveData<List<ChannelTag>> channelTags;
+    private final LiveData<Integer> channelCount;
+    private final LiveData<List<Recording>> recordings;
+    private final LiveData<ServerStatus> serverStatus;
 
-    private MutableLiveData<Long> selectedTime = new MutableLiveData<>();
-    private MutableLiveData<Integer> channelSortOrder = new MutableLiveData<>();
-    private MutableLiveData<Set<Integer>> selectedChannelTagIds = new MutableLiveData<>();
+    private final MutableLiveData<Long> selectedTime = new MutableLiveData<>();
+    private final MutableLiveData<Integer> channelSortOrder = new MutableLiveData<>();
+    private final MutableLiveData<Set<Integer>> selectedChannelTagIds = new MutableLiveData<>();
+
     private int verticalOffset = 0;
     private int verticalPosition = 0;
 

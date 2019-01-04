@@ -14,8 +14,8 @@ import java.util.Calendar;
 
 public class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
 
-    int hourOfDay;
-    int minute;
+    private int hourOfDay;
+    private int minute;
 
     @NonNull
     @Override
