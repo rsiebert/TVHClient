@@ -5,6 +5,7 @@ import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -27,6 +28,7 @@ import android.widget.ProgressBar;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Channel;
+import org.tvheadend.tvhclient.data.entity.ChannelTag;
 import org.tvheadend.tvhclient.data.entity.Program;
 import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.features.dvr.RecordingAddEditActivity;
@@ -38,6 +40,8 @@ import org.tvheadend.tvhclient.features.shared.callbacks.ChannelTimeSelectionCal
 import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback;
 
 import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 import butterknife.BindView;
@@ -61,6 +65,11 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
     // Used in the time selection dialog to show a time entry every x hours.
     private final int intervalInHours = 2;
     private int programIdToBeEditedWhenBeingRecorded = 0;
+    private List<ChannelTag> channelTags;
+    private Long selectedTime;
+
+    private Runnable currentTimeUpdateTask;
+    private final Handler currentTimeUpdateHandler = new Handler();
 
     @Nullable
     @Override
@@ -104,7 +113,41 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
         progressBar.setVisibility(View.VISIBLE);
 
         viewModel = ViewModelProviders.of(activity).get(ChannelViewModel.class);
+
+        viewModel.getSelectedTime().observe(getViewLifecycleOwner(), time -> {
+            Timber.d("Loaded selected time");
+            this.selectedTime = time;
+        });
+
+        Timber.d("Loading channel tags");
+        viewModel.getChannelTags().observe(getViewLifecycleOwner(), channelTags -> {
+            if (channelTags != null) {
+                Timber.d("Loaded channel tags");
+                this.channelTags = channelTags;
+            }
+        });
+
+        Timber.d("Loading channels");
         viewModel.getChannels().observe(getViewLifecycleOwner(), channels -> {
+
+            if (channels != null) {
+                Timber.d("Loaded " + channels.size() + " channels");
+                recyclerViewAdapter.addItems(channels);
+            }
+            if (recyclerView != null) {
+                recyclerView.setVisibility(View.VISIBLE);
+            }
+            if (progressBar != null) {
+                progressBar.setVisibility(View.GONE);
+            }
+            showChannelTagOrChannelCount();
+
+            if (isDualPane && recyclerViewAdapter.getItemCount() > 0) {
+                showChannelDetails(selectedListPosition);
+            }
+        });
+/*
+        viewModel.getChannelsFromTask().observe(getViewLifecycleOwner(), channels -> {
             if (channels != null) {
                 recyclerViewAdapter.addItems(channels);
             }
@@ -120,7 +163,7 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
                 showChannelDetails(selectedListPosition);
             }
         });
-
+*/
         // Get all recordings for the given channel to check if it belongs to a certain program
         // so the recording status of the particular program can be updated. This is required
         // because the programs are not updated automatically when recordings change.
@@ -142,6 +185,18 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
                 }
             }
         });
+
+        // Initiate a timer that will update the view model data every minute
+        // so that the progress bars will be displayed correctly
+        currentTimeUpdateTask = () -> {
+            long currentTime = new Date().getTime();
+            if (selectedTime < currentTime) {
+                viewModel.setSelectedTime(currentTime);
+            }
+            Timber.d("Updated current time");
+            currentTimeUpdateHandler.postDelayed(currentTimeUpdateTask, 60000);
+        };
+        currentTimeUpdateHandler.post(currentTimeUpdateTask);
     }
 
     private void showChannelTagOrChannelCount() {
@@ -157,6 +212,8 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
             toolbarInterface.setSubtitle(activity.getResources().getQuantityString(R.plurals.channels,
                     recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
         }
+
+
     }
 
     @Override
@@ -174,7 +231,7 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
         // onActivityCreated, so we need to check if any values that affect the representation
         // of the channel list have changed. This can be the case when returning from the
         // settings screen or when a channel tag has changed from another screen.
-        viewModel.checkAndUpdateChannels();
+        //viewModel.checkAndUpdateChannels();
     }
 
     @Override
@@ -209,7 +266,7 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_tags:
-                return menuUtils.handleMenuChannelTagsSelection(viewModel.getChannelTagIds(), this);
+                return menuUtils.handleMenuChannelTagsSelection(channelTags, this);
 
             case R.id.menu_timeframe:
                 return menuUtils.handleMenuTimeSelection(selectedTimeOffset, intervalInHours, 12, this);
@@ -246,7 +303,7 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
         if (progressBar != null) {
             progressBar.setVisibility(View.VISIBLE);
         }
-        viewModel.setChannelTagIds(ids);
+        viewModel.setSelectedChannelTagIds(ids);
     }
 
     /**
@@ -270,7 +327,7 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
             Bundle bundle = new Bundle();
             bundle.putString("channelName", channel.getName());
             bundle.putInt("channelId", channel.getId());
-            bundle.putLong("selectedTime", viewModel.getSelectedTime());
+            bundle.putLong("selectedTime", selectedTime);
 
             ProgramListFragment fragment = new ProgramListFragment();
             fragment.setArguments(bundle);
@@ -285,13 +342,13 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
             Fragment fragment = fm.findFragmentById(R.id.details);
             if (!(fragment instanceof ProgramListFragment)
                     || ((ProgramListFragment) fragment).getShownChannelId() != channel.getId()) {
-                fragment = ProgramListFragment.newInstance(channel.getName(), channel.getId(), viewModel.getSelectedTime());
+                fragment = ProgramListFragment.newInstance(channel.getName(), channel.getId(), selectedTime);
                 fm.beginTransaction()
                         .replace(R.id.details, fragment)
                         .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                         .commit();
             } else {
-                ((ProgramListFragment) fragment).updatePrograms(viewModel.getSelectedTime());
+                ((ProgramListFragment) fragment).updatePrograms(selectedTime);
             }
         }
     }
