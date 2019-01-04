@@ -15,7 +15,7 @@ import java.lang.ref.WeakReference;
 
 import javax.inject.Inject;
 
-public class MiscData extends BaseData {
+public class MiscData {
 
     private final AppRoomDatabase db;
     private static WeakReference<DatabaseClearedCallback> callback;
@@ -52,6 +52,10 @@ public class MiscData extends BaseData {
 
             // Clear all assigned profiles
             for (Connection connection : db.getConnectionDao().loadAllConnectionsSync()) {
+                connection.setLastUpdate(0);
+                connection.setSyncRequired(true);
+                db.getConnectionDao().update(connection);
+
                 ServerStatus serverStatus = db.getServerStatusDao().loadServerStatusByIdSync(connection.getId());
                 if (serverStatus != null) {
                     serverStatus.setHtspPlaybackServerProfileId(0);
