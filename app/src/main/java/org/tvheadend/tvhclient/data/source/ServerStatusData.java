@@ -40,7 +40,7 @@ public class ServerStatusData implements DataSourceInterface<ServerStatus> {
 
     @Override
     public void removeItem(ServerStatus item) {
-        db.getServerStatusDao().delete(item);
+        // NOP
     }
 
     @Override

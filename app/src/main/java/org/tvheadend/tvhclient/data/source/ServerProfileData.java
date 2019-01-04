@@ -37,7 +37,7 @@ public class ServerProfileData implements DataSourceInterface<ServerProfile> {
 
     @Override
     public void removeItem(ServerProfile item) {
-        db.getServerProfileDao().delete(item);
+        // NOP
     }
 
     public void removeAll() {

@@ -169,7 +169,7 @@ public class SettingsProfilesFragment extends BasePreferenceFragment implements 
         if (isUnlocked) {
             serverStatus.setCastingServerProfileId(castingServerProfileId);
         }
-        appRepository.getServerStatusData().updateItem(serverStatus);
+        new Thread(() ->appRepository.getServerStatusData().updateItem(serverStatus)).start();
         activity.finish();
     }
 
