@@ -128,6 +128,13 @@ public class EpgViewModel extends AndroidViewModel {
         }
     }
 
+    void setChannelSortOrder(int order) {
+        if (channelSortOrder.getValue() != null && channelSortOrder.getValue() != order) {
+            Timber.d("Saving newly selected channel sort order");
+            channelSortOrder.setValue(order);
+        }
+    }
+
     LiveData<List<Recording>> getAllRecordings() {
         return recordings;
     }

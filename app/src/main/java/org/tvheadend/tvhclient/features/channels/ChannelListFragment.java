@@ -51,15 +51,16 @@ import timber.log.Timber;
 
 public class ChannelListFragment extends BaseFragment implements RecyclerViewClickCallback, ChannelTimeSelectionCallback, ChannelTagSelectionCallback, SearchRequestInterface, Filter.FilterListener {
 
-    private ChannelRecyclerViewAdapter recyclerViewAdapter;
     @BindView(R.id.recycler_view)
     protected RecyclerView recyclerView;
     @BindView(R.id.progress_bar)
     protected ProgressBar progressBar;
+
+    private ChannelRecyclerViewAdapter recyclerViewAdapter;
+    private ChannelViewModel viewModel;
     private int selectedTimeOffset;
     private int selectedListPosition;
     private String searchQuery;
-    private ChannelViewModel viewModel;
     private Unbinder unbinder;
 
     // Used in the time selection dialog to show a time entry every x hours.
@@ -146,24 +147,7 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
                 showChannelDetails(selectedListPosition);
             }
         });
-/*
-        viewModel.getChannelsFromTask().observe(getViewLifecycleOwner(), channels -> {
-            if (channels != null) {
-                recyclerViewAdapter.addItems(channels);
-            }
-            if (recyclerView != null) {
-                recyclerView.setVisibility(View.VISIBLE);
-            }
-            if (progressBar != null) {
-                progressBar.setVisibility(View.GONE);
-            }
-            showChannelTagOrChannelCount();
 
-            if (isDualPane && recyclerViewAdapter.getItemCount() > 0) {
-                showChannelDetails(selectedListPosition);
-            }
-        });
-*/
         // Get all recordings for the given channel to check if it belongs to a certain program
         // so the recording status of the particular program can be updated. This is required
         // because the programs are not updated automatically when recordings change.
@@ -212,8 +196,6 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
             toolbarInterface.setSubtitle(activity.getResources().getQuantityString(R.plurals.channels,
                     recyclerViewAdapter.getItemCount(), recyclerViewAdapter.getItemCount()));
         }
-
-
     }
 
     @Override
@@ -229,9 +211,8 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
         super.onResume();
         // When the user returns from the settings only the onResume method is called, not the
         // onActivityCreated, so we need to check if any values that affect the representation
-        // of the channel list have changed. This can be the case when returning from the
-        // settings screen or when a channel tag has changed from another screen.
-        //viewModel.checkAndUpdateChannels();
+        // of the channel list have changed.
+        viewModel.setChannelSortOrder(Integer.valueOf(sharedPreferences.getString("channel_sort_order", "0")));
     }
 
     @Override

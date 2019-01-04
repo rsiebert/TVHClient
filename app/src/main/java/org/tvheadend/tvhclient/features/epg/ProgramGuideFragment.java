@@ -217,7 +217,10 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
     @Override
     public void onResume() {
         super.onResume();
-        //viewModel.checkAndUpdateChannels();
+        // When the user returns from the settings only the onResume method is called, not the
+        // onActivityCreated, so we need to check if any values that affect the representation
+        // of the channel list have changed.
+        viewModel.setChannelSortOrder(Integer.valueOf(sharedPreferences.getString("channel_sort_order", "0")));
     }
 
     @Override

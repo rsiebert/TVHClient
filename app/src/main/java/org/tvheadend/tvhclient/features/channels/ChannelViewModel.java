@@ -27,6 +27,7 @@ import timber.log.Timber;
 // TODO move some stuff to the repo
 // TODO check if sort order setting has changed
 // TODO add comments
+// TODO use common class for the identical stuff in here and in the epg view model
 
 public class ChannelViewModel extends AndroidViewModel {
 
@@ -117,6 +118,13 @@ public class ChannelViewModel extends AndroidViewModel {
         if (selectedTime.getValue() != null && selectedTime.getValue() != time) {
             Timber.d("Saving newly selected time");
             selectedTime.setValue(time);
+        }
+    }
+
+    void setChannelSortOrder(int order) {
+        if (channelSortOrder.getValue() != null && channelSortOrder.getValue() != order) {
+            Timber.d("Saving newly selected channel sort order");
+            channelSortOrder.setValue(order);
         }
     }
 
