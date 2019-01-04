@@ -24,7 +24,7 @@
     <string name="clear">Clear</string>
     <string name="clear_icon_cache">Clear channel icon cache?</string>
     <string name="clear_icon_cache_done">Channel icon cache cleared</string>
-    <string name="clear_icon_cache_sum">Are you sure you want to remove all channel icons? You need to reconnect to load updated icons from the server.</string>
+    <string name="clear_icon_cache_sum">Are you sure you want to remove all channel icons? You need to reconnect to the server to load the updated icons.</string>
     <string name="clear_search_history">Clear search history?</string>
     <string name="clear_search_history_done">Search history cleared</string>
     <string name="clear_search_history_sum">Are you sure you want to remove all entries from the search history?</string>

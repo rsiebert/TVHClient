@@ -24,7 +24,7 @@
     <string name="clear">Löschen</string>
     <string name="clear_icon_cache">Senderlogos löschen?</string>
     <string name="clear_icon_cache_done">Gespeicherte Senderlogos wurden gelöscht</string>
-    <string name="clear_icon_cache_sum">Sollen alle Senderlogos gelöscht werden? Die Verbindung zum Server muss neu gestarted werden, um aktualisierte Senderlogos vom Server zu laden.</string>
+    <string name="clear_icon_cache_sum">Sollen alle Senderlogos gelöscht werden? Bitte zum Server neu verbinden, um die aktualisierten Senderlogos zu laden.</string>
     <string name="clear_search_history">Lösche Suchhistorie?</string>
     <string name="clear_search_history_done">Suchhistorie wurde gelöscht</string>
     <string name="clear_search_history_sum">Bitte bestätigen, dass alle Einträge aus der Historie gelöscht werden sollen.</string>
