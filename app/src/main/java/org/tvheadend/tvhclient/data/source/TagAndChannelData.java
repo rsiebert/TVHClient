@@ -22,17 +22,17 @@ public class TagAndChannelData implements DataSourceInterface<TagAndChannel> {
 
     @Override
     public void addItem(TagAndChannel item) {
-        new Thread(() -> db.getTagAndChannelDao().insert(item)).start();
+        db.getTagAndChannelDao().insert(item);
     }
 
     @Override
     public void updateItem(TagAndChannel item) {
-        new Thread(() -> db.getTagAndChannelDao().update(item)).start();
+        db.getTagAndChannelDao().update(item);
     }
 
     @Override
     public void removeItem(TagAndChannel item) {
-        new Thread(() -> db.getTagAndChannelDao().delete(item)).start();
+        db.getTagAndChannelDao().delete(item);
     }
 
     @Override
@@ -62,6 +62,6 @@ public class TagAndChannelData implements DataSourceInterface<TagAndChannel> {
     }
 
     public void removeItemByTagId(int id) {
-        new Thread(() -> db.getTagAndChannelDao().deleteByTagId(id)).start();
+        db.getTagAndChannelDao().deleteByTagId(id);
     }
 }

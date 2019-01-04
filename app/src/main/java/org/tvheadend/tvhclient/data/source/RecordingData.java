@@ -27,32 +27,30 @@ public class RecordingData implements DataSourceInterface<Recording> {
 
     @Override
     public void addItem(Recording item) {
-        new Thread(() -> db.getRecordingDao().insert(item)).start();
+        db.getRecordingDao().insert(item);
     }
 
     public void addItems(@NonNull List<Recording> items) {
-        new Thread(() -> db.getRecordingDao().insert(items)).start();
+        db.getRecordingDao().insert(items);
     }
 
     @Override
     public void updateItem(Recording item) {
-        new Thread(() -> db.getRecordingDao().update(item)).start();
+        db.getRecordingDao().update(item);
     }
 
     @Override
     public void removeItem(Recording item) {
-        new Thread(() -> db.getRecordingDao().delete(item)).start();
+        db.getRecordingDao().delete(item);
     }
 
     public void removeItems() {
-        new Thread(() -> db.getRecordingDao().deleteAll()).start();
+        db.getRecordingDao().deleteAll();
     }
 
     public void replaceItems(@NonNull List<Recording> items) {
-        new Thread(() -> {
-            db.getRecordingDao().deleteAll();
-            db.getRecordingDao().insert(items);
-        }).start();
+        db.getRecordingDao().deleteAll();
+        db.getRecordingDao().insert(items);
     }
 
     @Override

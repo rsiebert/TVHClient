@@ -31,21 +31,21 @@ public class ChannelData implements DataSourceInterface<Channel> {
 
     @Override
     public void addItem(Channel item) {
-        new Thread(() -> db.getChannelDao().insert(item)).start();
+        db.getChannelDao().insert(item);
     }
 
     public void addItems(@NonNull List<Channel> items) {
-        new Thread(() -> db.getChannelDao().insert(items)).start();
+        db.getChannelDao().insert(items);
     }
 
     @Override
     public void updateItem(Channel item) {
-        new Thread(() -> db.getChannelDao().update(item)).start();
+        db.getChannelDao().update(item);
     }
 
     @Override
     public void removeItem(Channel item) {
-        new Thread(() -> db.getChannelDao().delete(item)).start();
+        db.getChannelDao().delete(item);
     }
 
     @Override

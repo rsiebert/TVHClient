@@ -28,21 +28,21 @@ public class ProgramData implements DataSourceInterface<Program> {
 
     @Override
     public void addItem(Program item) {
-        new Thread(() -> db.getProgramDao().insert(item)).start();
+        db.getProgramDao().insert(item);
     }
 
     public void addItems(@NonNull List<Program> items) {
-        new Thread(() -> db.getProgramDao().insert(items)).start();
+        db.getProgramDao().insert(items);
     }
 
     @Override
     public void updateItem(Program item) {
-        new Thread(() -> db.getProgramDao().update(item)).start();
+        db.getProgramDao().update(item);
     }
 
     @Override
     public void removeItem(Program item) {
-        new Thread(() -> db.getProgramDao().delete(item)).start();
+        db.getProgramDao().delete(item);
     }
 
     @Override

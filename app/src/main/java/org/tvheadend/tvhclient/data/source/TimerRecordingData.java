@@ -24,17 +24,17 @@ public class TimerRecordingData implements DataSourceInterface<TimerRecording> {
 
     @Override
     public void addItem(TimerRecording item) {
-        new Thread(() -> db.getTimerRecordingDao().insert(item)).start();
+        db.getTimerRecordingDao().insert(item);
     }
 
     @Override
     public void updateItem(TimerRecording item) {
-        new Thread(() -> db.getTimerRecordingDao().update(item)).start();
+        db.getTimerRecordingDao().update(item);
     }
 
     @Override
     public void removeItem(TimerRecording item) {
-        new Thread(() -> db.getTimerRecordingDao().delete(item)).start();
+        db.getTimerRecordingDao().delete(item);
     }
 
     @Override

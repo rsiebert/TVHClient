@@ -30,17 +30,17 @@ public class ServerStatusData implements DataSourceInterface<ServerStatus> {
 
     @Override
     public void addItem(ServerStatus item) {
-        new Thread(() -> db.getServerStatusDao().insert(item)).start();
+        db.getServerStatusDao().insert(item);
     }
 
     @Override
     public void updateItem(ServerStatus item) {
-        new Thread(() -> db.getServerStatusDao().update(item)).start();
+        db.getServerStatusDao().update(item);
     }
 
     @Override
     public void removeItem(ServerStatus item) {
-        new Thread(() -> db.getServerStatusDao().delete(item)).start();
+        db.getServerStatusDao().delete(item);
     }
 
     @Override

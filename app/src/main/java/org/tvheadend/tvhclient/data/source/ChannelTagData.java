@@ -23,17 +23,17 @@ public class ChannelTagData implements DataSourceInterface<ChannelTag> {
 
     @Override
     public void addItem(ChannelTag item) {
-        new Thread(() -> db.getChannelTagDao().insert(item)).start();
+        db.getChannelTagDao().insert(item);
     }
 
     @Override
     public void updateItem(ChannelTag item) {
-        new Thread(() -> db.getChannelTagDao().update(item)).start();
+        db.getChannelTagDao().update(item);
     }
 
     @Override
     public void removeItem(ChannelTag item) {
-        new Thread(() -> db.getChannelTagDao().delete(item)).start();
+        db.getChannelTagDao().delete(item);
     }
 
     @Override

@@ -24,17 +24,17 @@ public class SeriesRecordingData implements DataSourceInterface<SeriesRecording>
 
     @Override
     public void addItem(SeriesRecording item) {
-        new Thread(() -> db.getSeriesRecordingDao().insert(item)).start();
+        db.getSeriesRecordingDao().insert(item);
     }
 
     @Override
     public void updateItem(SeriesRecording item) {
-        new Thread(() -> db.getSeriesRecordingDao().update(item)).start();
+        db.getSeriesRecordingDao().update(item);
     }
 
     @Override
     public void removeItem(SeriesRecording item) {
-        new Thread(() -> db.getSeriesRecordingDao().delete(item)).start();
+        db.getSeriesRecordingDao().delete(item);
     }
 
     @Override
