@@ -130,8 +130,13 @@ public class ProgramViewHolder extends RecyclerView.ViewHolder {
         descriptionTextView.setVisibility(!TextUtils.isEmpty(program.getDescription()) ? View.VISIBLE : View.GONE);
         descriptionTextView.setText(program.getDescription());
 
-        summaryTextView.setVisibility(!TextUtils.isEmpty(program.getSummary()) ? View.VISIBLE : View.GONE);
-        summaryTextView.setText(program.getSummary());
+        if (!TextUtils.isEmpty(program.getSummary())
+                && !TextUtils.equals(program.getSubtitle(), program.getSummary())) {
+            summaryTextView.setVisibility(View.VISIBLE);
+            summaryTextView.setText(program.getSummary());
+        } else {
+            summaryTextView.setVisibility(View.GONE);
+        }
 
         if (showGenreColors) {
             int offset = sharedPreferences.getInt("genre_color_transparency", 0);
