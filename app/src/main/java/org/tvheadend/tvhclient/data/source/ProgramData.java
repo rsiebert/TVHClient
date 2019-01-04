@@ -10,12 +10,14 @@ import org.tvheadend.tvhclient.data.entity.Program;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
 
-public class ProgramData extends BaseData implements DataSourceInterface<Program> {
+public class ProgramData implements DataSourceInterface<Program> {
+
+    private static final int LOAD_LAST_IN_CHANNEL = 1;
+    private static final int LOAD_BY_ID = 2;
 
     private final AppRoomDatabase db;
 
@@ -26,21 +28,21 @@ public class ProgramData extends BaseData implements DataSourceInterface<Program
 
     @Override
     public void addItem(Program item) {
-        new ItemHandlerTask(db, item, INSERT).execute();
+        new Thread(() -> db.getProgramDao().insert(item)).start();
     }
 
     public void addItems(@NonNull List<Program> items) {
-        new ItemsHandlerTask(db, items, INSERT_ALL).execute();
+        new Thread(() -> db.getProgramDao().insert(items)).start();
     }
 
     @Override
     public void updateItem(Program item) {
-        new ItemHandlerTask(db, item, UPDATE).execute();
+        new Thread(() -> db.getProgramDao().update(item)).start();
     }
 
     @Override
     public void removeItem(Program item) {
-        new ItemHandlerTask(db, item, DELETE).execute();
+        new Thread(() -> db.getProgramDao().delete(item)).start();
     }
 
     @Override
@@ -102,11 +104,11 @@ public class ProgramData extends BaseData implements DataSourceInterface<Program
     }
 
     public void removeItemsByTime(long time) {
-        new ItemMiscTask(db, DELETE_BY_TIME, time).execute();
+        new Thread(() -> db.getProgramDao().deleteProgramsByTime(time)).start();
     }
 
     public void removeItemById(int id) {
-        new ItemMiscTask(db, DELETE_BY_ID, id).execute();
+        new Thread(() -> db.getProgramDao().deleteById(id)).start();
     }
 
     private static class ItemLoaderTask extends AsyncTask<Void, Void, Program> {
@@ -148,81 +150,6 @@ public class ProgramData extends BaseData implements DataSourceInterface<Program
         @Override
         protected List<EpgProgram> doInBackground(Void... voids) {
             return db.getProgramDao().loadProgramsFromChannelBetweenTimeSync(channelId, startTime, endTime);
-        }
-    }
-
-    private static class ItemHandlerTask extends AsyncTask<Void, Void, Program> {
-        private final AppRoomDatabase db;
-        private final Program program;
-        private final int type;
-
-        ItemHandlerTask(AppRoomDatabase db, Program program, int type) {
-            this.db = db;
-            this.program = program;
-            this.type = type;
-        }
-
-        @Override
-        protected Program doInBackground(Void... voids) {
-            switch (type) {
-                case INSERT:
-                    db.getProgramDao().insert(program);
-                    break;
-                case UPDATE:
-                    db.getProgramDao().update(program);
-                    break;
-                case DELETE:
-                    db.getProgramDao().delete(program);
-                    break;
-            }
-            return null;
-        }
-    }
-
-    private static class ItemsHandlerTask extends AsyncTask<Void, Void, Void> {
-        private final AppRoomDatabase db;
-        private final List<Program> programs;
-        private final int type;
-
-        ItemsHandlerTask(AppRoomDatabase db, List<Program> programs, int type) {
-            this.db = db;
-            this.programs = new CopyOnWriteArrayList<>(programs);
-            this.type = type;
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            switch (type) {
-                case INSERT_ALL:
-                    db.getProgramDao().insert(programs);
-                    break;
-            }
-            return null;
-        }
-    }
-
-    private static class ItemMiscTask extends AsyncTask<Void, Void, Void> {
-        private final AppRoomDatabase db;
-        private final int type;
-        private final Object arg;
-
-        ItemMiscTask(AppRoomDatabase db, int type, Object arg) {
-            this.db = db;
-            this.type = type;
-            this.arg = arg;
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            switch (type) {
-                case DELETE_BY_TIME:
-                    db.getProgramDao().deleteProgramsByTime((long) arg);
-                    break;
-                case DELETE_BY_ID:
-                    db.getProgramDao().deleteById((int) arg);
-                    break;
-            }
-            return null;
         }
     }
 }

@@ -13,7 +13,7 @@ import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
 
-public class TimerRecordingData extends BaseData implements DataSourceInterface<TimerRecording> {
+public class TimerRecordingData implements DataSourceInterface<TimerRecording> {
 
     private final AppRoomDatabase db;
 
@@ -24,17 +24,17 @@ public class TimerRecordingData extends BaseData implements DataSourceInterface<
 
     @Override
     public void addItem(TimerRecording item) {
-        new ItemHandlerTask(db, item, INSERT).execute();
+        new Thread(() -> db.getTimerRecordingDao().insert(item)).start();
     }
 
     @Override
     public void updateItem(TimerRecording item) {
-        new ItemHandlerTask(db, item, UPDATE).execute();
+        new Thread(() -> db.getTimerRecordingDao().update(item)).start();
     }
 
     @Override
     public void removeItem(TimerRecording item) {
-        new ItemHandlerTask(db, item, DELETE).execute();
+        new Thread(() -> db.getTimerRecordingDao().delete(item)).start();
     }
 
     @Override
@@ -79,34 +79,6 @@ public class TimerRecordingData extends BaseData implements DataSourceInterface<
         @Override
         protected TimerRecording doInBackground(Void... voids) {
             return db.getTimerRecordingDao().loadRecordingByIdSync(id);
-        }
-    }
-
-    private static class ItemHandlerTask extends AsyncTask<Void, Void, Void> {
-        private final AppRoomDatabase db;
-        private final TimerRecording recording;
-        private final int type;
-
-        ItemHandlerTask(AppRoomDatabase db, TimerRecording recording, int type) {
-            this.db = db;
-            this.recording = recording;
-            this.type = type;
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            switch (type) {
-                case INSERT:
-                    db.getTimerRecordingDao().insert(recording);
-                    break;
-                case UPDATE:
-                    db.getTimerRecordingDao().update(recording);
-                    break;
-                case DELETE:
-                    db.getTimerRecordingDao().delete(recording);
-                    break;
-            }
-            return null;
         }
     }
 }

@@ -1,5 +1,6 @@
 package org.tvheadend.tvhclient.data.dao;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
@@ -14,18 +15,28 @@ import java.util.List;
 @Dao
 public interface ChannelTagDao {
 
-    @Query("SELECT * FROM channel_tags " +
-            "WHERE connection_id IN (SELECT id FROM connections WHERE active = 1) " +
+    String CONNECTION_IS_ACTIVE = " connection_id IN (SELECT id FROM connections WHERE active = 1) ";
+
+    @Query("SELECT DISTINCT * FROM channel_tags " +
+            "WHERE " + CONNECTION_IS_ACTIVE +
+            "ORDER BY tag_name")
+    LiveData<List<ChannelTag>> loadAllChannelTags();
+
+    @Query("SELECT DISTINCT * FROM channel_tags " +
+            "WHERE " + CONNECTION_IS_ACTIVE +
             "ORDER BY tag_name")
     List<ChannelTag> loadAllChannelTagsSync();
 
-    @Query("SELECT * FROM channel_tags " +
-            "WHERE id = :id " +
-            "AND connection_id IN (SELECT id FROM connections WHERE active = 1)")
+    @Query("SELECT DISTINCT * FROM channel_tags " +
+            "WHERE " + CONNECTION_IS_ACTIVE +
+            "AND id = :id ")
     ChannelTag loadChannelTagByIdSync(int id);
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insert(ChannelTag channelTag);
+
+    @Update
+    void update(List<ChannelTag> channelTags);
 
     @Update
     void update(ChannelTag channelTags);
@@ -37,6 +48,13 @@ public interface ChannelTagDao {
     void deleteAll();
 
     @Query("DELETE FROM channel_tags " +
-            "WHERE id = :id AND connection_id IN (SELECT id FROM connections WHERE active = 1)")
+            "WHERE " + CONNECTION_IS_ACTIVE +
+            "AND id = :id ")
     void deleteById(int id);
+
+    @Query("SELECT id FROM channel_tags " +
+            "WHERE " + CONNECTION_IS_ACTIVE +
+            "AND is_selected = 1 " +
+            "ORDER BY tag_name")
+    List<Integer> loadAllSelectedChannelTagIds();
 }

@@ -19,7 +19,7 @@ import javax.inject.Inject;
 import io.fabric.sdk.android.Fabric;
 import timber.log.Timber;
 
-public class ServerStatusData extends BaseData implements DataSourceInterface<ServerStatus> {
+public class ServerStatusData implements DataSourceInterface<ServerStatus> {
 
     private final AppRoomDatabase db;
 
@@ -30,17 +30,17 @@ public class ServerStatusData extends BaseData implements DataSourceInterface<Se
 
     @Override
     public void addItem(ServerStatus item) {
-        new ItemHandlerTask(db, item, INSERT).execute();
+        new Thread(() -> db.getServerStatusDao().insert(item)).start();
     }
 
     @Override
     public void updateItem(ServerStatus item) {
-        new ItemHandlerTask(db, item, UPDATE).execute();
+        new Thread(() -> db.getServerStatusDao().update(item)).start();
     }
 
     @Override
     public void removeItem(ServerStatus item) {
-        new ItemHandlerTask(db, item, DELETE).execute();
+        new Thread(() -> db.getServerStatusDao().delete(item)).start();
     }
 
     @Override
@@ -139,34 +139,6 @@ public class ServerStatusData extends BaseData implements DataSourceInterface<Se
             } else {
                 return db.getServerStatusDao().loadServerStatusByIdSync(id);
             }
-        }
-    }
-
-    private static class ItemHandlerTask extends AsyncTask<Void, Void, Void> {
-        private final AppRoomDatabase db;
-        private final ServerStatus serverStatus;
-        private final int type;
-
-        ItemHandlerTask(AppRoomDatabase db, ServerStatus serverStatus, int type) {
-            this.db = db;
-            this.serverStatus = serverStatus;
-            this.type = type;
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            switch (type) {
-                case INSERT:
-                    db.getServerStatusDao().insert(serverStatus);
-                    break;
-                case UPDATE:
-                    db.getServerStatusDao().update(serverStatus);
-                    break;
-                case DELETE:
-                    db.getServerStatusDao().delete(serverStatus);
-                    break;
-            }
-            return null;
         }
     }
 }

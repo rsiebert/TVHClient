@@ -22,8 +22,8 @@ public interface TagAndChannelDao {
     void delete(TagAndChannel tagAndChannel);
 
     @Query("DELETE FROM tags_and_channels " +
-            "WHERE tag_id = :id " +
-            " AND connection_id IN (SELECT id FROM connections WHERE active = 1)")
+            "WHERE connection_id IN (SELECT id FROM connections WHERE active = 1) "+
+            " AND tag_id = :id")
     void deleteByTagId(int id);
 
     @Query("DELETE FROM tags_and_channels")

@@ -16,26 +16,28 @@ import java.util.List;
 @Dao
 public interface SeriesRecordingDao {
 
-    String base = "SELECT DISTINCT rec.*, " +
+    String RECORDING_BASE_QUERY = "SELECT DISTINCT rec.*, " +
             "c.name AS channel_name, " +
             "c.icon AS channel_icon " +
             "FROM series_recordings AS rec " +
             "LEFT JOIN channels AS c ON  c.id = rec.channel_id ";
 
+    String CONNECTION_IS_ACTIVE = " rec.connection_id IN (SELECT id FROM connections WHERE active = 1) ";
+
     @Transaction
-    @Query(base +
-            "WHERE rec.connection_id IN (SELECT id FROM connections WHERE active = 1) ")
+    @Query(RECORDING_BASE_QUERY +
+            "WHERE " + CONNECTION_IS_ACTIVE)
     LiveData<List<SeriesRecording>> loadAllRecordings();
 
     @Transaction
-    @Query(base +
-            "WHERE rec.connection_id IN (SELECT id FROM connections WHERE active = 1) " +
+    @Query(RECORDING_BASE_QUERY +
+            "WHERE " + CONNECTION_IS_ACTIVE +
             " AND rec.id = :id")
     LiveData<SeriesRecording> loadRecordingById(String id);
 
     @Transaction
-    @Query(base +
-            "WHERE rec.connection_id IN (SELECT id FROM connections WHERE active = 1) " +
+    @Query(RECORDING_BASE_QUERY +
+            "WHERE " + CONNECTION_IS_ACTIVE +
             " AND rec.id = :id")
     SeriesRecording loadRecordingByIdSync(String id);
 
@@ -49,14 +51,14 @@ public interface SeriesRecordingDao {
     void delete(SeriesRecording recording);
 
     @Query("DELETE FROM series_recordings " +
-            "WHERE id = :id " +
-            " AND connection_id IN (SELECT id FROM connections WHERE active = 1)")
+            "WHERE connection_id IN (SELECT id FROM connections WHERE active = 1)" +
+            " AND id = :id ")
     void deleteById(String id);
 
     @Query("DELETE FROM series_recordings")
     void deleteAll();
 
-    @Query("SELECT COUNT (*) FROM series_recordings " +
-            "WHERE connection_id IN (SELECT id FROM connections WHERE active = 1)")
+    @Query("SELECT COUNT (*) FROM series_recordings AS rec " +
+            "WHERE " + CONNECTION_IS_ACTIVE)
     LiveData<Integer> getRecordingCount();
 }

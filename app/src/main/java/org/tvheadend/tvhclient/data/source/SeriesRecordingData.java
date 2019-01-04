@@ -13,7 +13,7 @@ import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
 
-public class SeriesRecordingData extends BaseData implements DataSourceInterface<SeriesRecording> {
+public class SeriesRecordingData implements DataSourceInterface<SeriesRecording> {
 
     private final AppRoomDatabase db;
 
@@ -24,17 +24,17 @@ public class SeriesRecordingData extends BaseData implements DataSourceInterface
 
     @Override
     public void addItem(SeriesRecording item) {
-        new ItemHandlerTask(db, item, INSERT).execute();
+        new Thread(() -> db.getSeriesRecordingDao().insert(item)).start();
     }
 
     @Override
     public void updateItem(SeriesRecording item) {
-        new ItemHandlerTask(db, item, UPDATE).execute();
+        new Thread(() -> db.getSeriesRecordingDao().update(item)).start();
     }
 
     @Override
     public void removeItem(SeriesRecording item) {
-        new ItemHandlerTask(db, item, DELETE).execute();
+        new Thread(() -> db.getSeriesRecordingDao().delete(item)).start();
     }
 
     @Override
@@ -79,34 +79,6 @@ public class SeriesRecordingData extends BaseData implements DataSourceInterface
         @Override
         protected SeriesRecording doInBackground(Void... voids) {
             return db.getSeriesRecordingDao().loadRecordingByIdSync(id);
-        }
-    }
-
-    private static class ItemHandlerTask extends AsyncTask<Void, Void, Void> {
-        private final AppRoomDatabase db;
-        private final SeriesRecording recording;
-        private final int type;
-
-        ItemHandlerTask(AppRoomDatabase db, SeriesRecording recording, int type) {
-            this.db = db;
-            this.recording = recording;
-            this.type = type;
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            switch (type) {
-                case INSERT:
-                    db.getSeriesRecordingDao().insert(recording);
-                    break;
-                case UPDATE:
-                    db.getSeriesRecordingDao().update(recording);
-                    break;
-                case DELETE:
-                    db.getSeriesRecordingDao().delete(recording);
-                    break;
-            }
-            return null;
         }
     }
 }

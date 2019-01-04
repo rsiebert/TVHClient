@@ -14,12 +14,11 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
 
-public class ChannelData extends BaseData implements DataSourceInterface<Channel> {
+public class ChannelData implements DataSourceInterface<Channel> {
 
     private final AppRoomDatabase db;
     private final Context context;
@@ -32,21 +31,21 @@ public class ChannelData extends BaseData implements DataSourceInterface<Channel
 
     @Override
     public void addItem(Channel item) {
-        new ItemHandlerTask(db, item, INSERT).execute();
+        new Thread(() -> db.getChannelDao().insert(item)).start();
     }
 
     public void addItems(@NonNull List<Channel> items) {
-        new ItemsHandlerTask(db, items, INSERT_ALL).execute();
+        new Thread(() -> db.getChannelDao().insert(items)).start();
     }
 
     @Override
     public void updateItem(Channel item) {
-        new ItemHandlerTask(db, item, UPDATE).execute();
+        new Thread(() -> db.getChannelDao().update(item)).start();
     }
 
     @Override
     public void removeItem(Channel item) {
-        new ItemHandlerTask(db, item, DELETE).execute();
+        new Thread(() -> db.getChannelDao().delete(item)).start();
     }
 
     @Override
@@ -87,29 +86,6 @@ public class ChannelData extends BaseData implements DataSourceInterface<Channel
         return channels;
     }
 
-    @NonNull
-    public List<Channel> getItemsByTimeAndTags(long currentTime, Set<Integer> channelTagIds) {
-        int channelSortOrder = Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(context).getString("channel_sort_order", "0"));
-        List<Channel> channels = new ArrayList<>();
-        try {
-            channels.addAll(new ItemsLoaderTask(db, currentTime, channelTagIds, channelSortOrder).execute().get());
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-        return channels;
-    }
-
-    public List<EpgChannel> getChannelNamesByTag(Set<Integer> channelTagIds) {
-        int channelSortOrder = Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(context).getString("channel_sort_order", "0"));
-        List<EpgChannel> channels = new ArrayList<>();
-        try {
-            channels.addAll(new ItemSubsetsLoaderTask(db, channelTagIds, channelSortOrder).execute().get());
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-        return channels;
-    }
-
     public Channel getItemByIdWithPrograms(int id, long selectedTime) {
         try {
             return new ItemLoaderTask(db, id, selectedTime).execute().get();
@@ -117,6 +93,35 @@ public class ChannelData extends BaseData implements DataSourceInterface<Channel
             e.printStackTrace();
         }
         return null;
+    }
+
+    /**
+     *
+     * @param channelSortOrder
+     * @param tagIds
+     * @return
+     */
+    public LiveData<List<EpgChannel>> getAllEpgChannels(int channelSortOrder, @NonNull Set<Integer> tagIds) {
+        if (tagIds.size() == 0) {
+            return db.getChannelDao().loadAllEpgChannels(channelSortOrder);
+        } else {
+            return db.getChannelDao().loadAllEpgChannelsByTag(channelSortOrder, tagIds);
+        }
+    }
+
+    /**
+     *
+     * @param selectedTime
+     * @param channelSortOrder
+     * @param tagIds
+     * @return
+     */
+    public LiveData<List<Channel>> getAllChannelsByTime(long selectedTime, int channelSortOrder, @NonNull Set<Integer> tagIds) {
+        if (tagIds.size() == 0) {
+            return db.getChannelDao().loadAllChannelsByTime(selectedTime, channelSortOrder);
+        } else {
+            return db.getChannelDao().loadAllChannelsByTimeAndTag(selectedTime, channelSortOrder, tagIds);
+        }
     }
 
     private static class ItemLoaderTask extends AsyncTask<Void, Void, Channel> {
@@ -159,13 +164,6 @@ public class ChannelData extends BaseData implements DataSourceInterface<Channel
             this.sortOrder = sortOrder;
         }
 
-        ItemsLoaderTask(AppRoomDatabase db, long currentTime, Set<Integer> channelTagIds, int sortOrder) {
-            this.db = db;
-            this.currentTime = currentTime;
-            this.channelTagIds = channelTagIds;
-            this.sortOrder = sortOrder;
-        }
-
         @Override
         protected List<Channel> doInBackground(Void... voids) {
             if (currentTime == 0) {
@@ -175,77 +173,6 @@ public class ChannelData extends BaseData implements DataSourceInterface<Channel
             } else {
                 return db.getChannelDao().loadAllChannelsByTimeAndTagSync(currentTime, channelTagIds, sortOrder);
             }
-        }
-    }
-
-    private static class ItemSubsetsLoaderTask extends AsyncTask<Void, Void, List<EpgChannel>> {
-        private final AppRoomDatabase db;
-        private final int sortOrder;
-        private final Set<Integer> channelTagIds;
-
-        ItemSubsetsLoaderTask(AppRoomDatabase db, Set<Integer> channelTagIds, int sortOrder) {
-            this.db = db;
-            this.channelTagIds = channelTagIds;
-            this.sortOrder = sortOrder;
-        }
-
-        @Override
-        protected List<EpgChannel> doInBackground(Void... voids) {
-            if (channelTagIds.size() == 0) {
-                return db.getChannelDao().loadAllChannelsNamesOnlySync(sortOrder);
-            } else {
-                return db.getChannelDao().loadAllChannelsNamesOnlyByTagSync(channelTagIds, sortOrder);
-            }
-        }
-    }
-
-    private static class ItemHandlerTask extends AsyncTask<Void, Void, Void> {
-        private final AppRoomDatabase db;
-        private final Channel channel;
-        private final int type;
-
-        ItemHandlerTask(AppRoomDatabase db, Channel channel, int type) {
-            this.db = db;
-            this.channel = channel;
-            this.type = type;
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            switch (type) {
-                case INSERT:
-                    db.getChannelDao().insert(channel);
-                    break;
-                case UPDATE:
-                    db.getChannelDao().update(channel);
-                    break;
-                case DELETE:
-                    db.getChannelDao().delete(channel);
-                    break;
-            }
-            return null;
-        }
-    }
-
-    private static class ItemsHandlerTask extends AsyncTask<Void, Void, Void> {
-        private final AppRoomDatabase db;
-        private final List<Channel> channels;
-        private final int type;
-
-        ItemsHandlerTask(AppRoomDatabase db, List<Channel> channels, int type) {
-            this.db = db;
-            this.channels = new CopyOnWriteArrayList<>(channels);
-            this.type = type;
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            switch (type) {
-                case INSERT_ALL:
-                    db.getChannelDao().insert(channels);
-                    break;
-            }
-            return null;
         }
     }
 }

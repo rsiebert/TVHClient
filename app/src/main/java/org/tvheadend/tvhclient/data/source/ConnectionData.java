@@ -14,9 +14,7 @@ import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
 
-import timber.log.Timber;
-
-public class ConnectionData extends BaseData implements DataSourceInterface<Connection> {
+public class ConnectionData implements DataSourceInterface<Connection> {
 
     private final AppRoomDatabase db;
 
@@ -27,17 +25,35 @@ public class ConnectionData extends BaseData implements DataSourceInterface<Conn
 
     @Override
     public void addItem(Connection item) {
-        new ItemHandlerTask(db, item, INSERT).execute();
+        new Thread(() -> {
+            if (item.isActive()) {
+                db.getConnectionDao().disableActiveConnection();
+            }
+            long newId = db.getConnectionDao().insert(item);
+            // Create a new server status row in the database
+            // that is linked to the newly added connection
+            ServerStatus serverStatus = new ServerStatus();
+            serverStatus.setConnectionId((int) newId);
+            db.getServerStatusDao().insert(serverStatus);
+        }).start();
     }
 
     @Override
     public void updateItem(Connection item) {
-        new ItemHandlerTask(db, item, UPDATE).execute();
+        new Thread(() -> {
+            if (item.isActive()) {
+                db.getConnectionDao().disableActiveConnection();
+            }
+            db.getConnectionDao().update(item);
+        }).start();
     }
 
     @Override
     public void removeItem(Connection item) {
-        new ItemHandlerTask(db, item, DELETE).execute();
+        new Thread(() -> {
+            db.getConnectionDao().delete(item);
+            db.getServerStatusDao().deleteByConnectionId(item.getId());
+        }).start();
     }
 
     @Override
@@ -120,51 +136,6 @@ public class ConnectionData extends BaseData implements DataSourceInterface<Conn
         @Override
         protected List<Connection> doInBackground(Void... voids) {
             return db.getConnectionDao().loadAllConnectionsSync();
-        }
-    }
-
-    private static class ItemHandlerTask extends AsyncTask<Void, Void, Void> {
-        private final AppRoomDatabase db;
-        private final Connection connection;
-        private final int type;
-
-        ItemHandlerTask(AppRoomDatabase db, Connection connection, int type) {
-            this.db = db;
-            this.connection = connection;
-            this.type = type;
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            switch (type) {
-                case INSERT:
-                    if (connection.isActive()) {
-                        db.getConnectionDao().disableActiveConnection();
-                    }
-                    long newId = db.getConnectionDao().insert(connection);
-                    Timber.d("Added new connection " + connection.getName() + " with id " + newId);
-                    // Create a new server status row in the database
-                    // that is linked to the newly added connection
-                    ServerStatus serverStatus = new ServerStatus();
-                    serverStatus.setConnectionId((int) newId);
-                    db.getServerStatusDao().insert(serverStatus);
-                    break;
-
-                case UPDATE:
-                    Timber.d("Updating connection " + connection.getName());
-                    if (connection.isActive()) {
-                        db.getConnectionDao().disableActiveConnection();
-                    }
-                    db.getConnectionDao().update(connection);
-                    break;
-
-                case DELETE:
-                    Timber.d("Deleting connection " + connection.getName());
-                    db.getConnectionDao().delete(connection);
-                    db.getServerStatusDao().deleteByConnectionId(connection.getId());
-                    break;
-            }
-            return null;
         }
     }
 }

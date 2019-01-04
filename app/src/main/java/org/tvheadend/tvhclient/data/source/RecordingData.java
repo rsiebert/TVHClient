@@ -9,12 +9,14 @@ import org.tvheadend.tvhclient.data.entity.Recording;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
 
-public class RecordingData extends BaseData implements DataSourceInterface<Recording> {
+public class RecordingData implements DataSourceInterface<Recording> {
+
+    private static final int LOAD_BY_ID = 1;
+    private static final int LOAD_BY_EVENT_ID = 2;
 
     private final AppRoomDatabase db;
 
@@ -25,29 +27,32 @@ public class RecordingData extends BaseData implements DataSourceInterface<Recor
 
     @Override
     public void addItem(Recording item) {
-        new ItemHandlerTask(db, item, INSERT).execute();
+        new Thread(() -> db.getRecordingDao().insert(item)).start();
     }
 
     public void addItems(@NonNull List<Recording> items) {
-        new ItemsHandlerTask(db, items, INSERT_ALL).execute();
+        new Thread(() -> db.getRecordingDao().insert(items)).start();
     }
 
     @Override
     public void updateItem(Recording item) {
-        new ItemHandlerTask(db, item, UPDATE).execute();
+        new Thread(() -> db.getRecordingDao().update(item)).start();
     }
 
     @Override
     public void removeItem(Recording item) {
-        new ItemHandlerTask(db, item, DELETE).execute();
+        new Thread(() -> db.getRecordingDao().delete(item)).start();
     }
 
     public void removeItems() {
-        new ItemsHandlerTask(db, DELETE_ALL).execute();
+        new Thread(() -> db.getRecordingDao().deleteAll()).start();
     }
 
     public void replaceItems(@NonNull List<Recording> items) {
-        new ItemsHandlerTask(db, items, DELETE_ALL_AND_INSERT).execute();
+        new Thread(() -> {
+            db.getRecordingDao().deleteAll();
+            db.getRecordingDao().insert(items);
+        }).start();
     }
 
     @Override
@@ -141,73 +146,6 @@ public class RecordingData extends BaseData implements DataSourceInterface<Recor
                     return db.getRecordingDao().loadRecordingByEventIdSync(id);
                 case LOAD_BY_ID:
                     return db.getRecordingDao().loadRecordingByIdSync(id);
-            }
-            return null;
-        }
-    }
-
-    private static class ItemHandlerTask extends AsyncTask<Void, Void, Void> {
-        private final AppRoomDatabase db;
-        private final Recording recording;
-        private final int type;
-
-        ItemHandlerTask(AppRoomDatabase db, Recording recording, int type) {
-            this.db = db;
-            this.recording = recording;
-            this.type = type;
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            switch (type) {
-                case INSERT:
-                    db.getRecordingDao().insert(recording);
-                    break;
-                case UPDATE:
-                    db.getRecordingDao().update(recording);
-                    break;
-                case DELETE:
-                    db.getRecordingDao().delete(recording);
-                    break;
-            }
-            return null;
-        }
-    }
-
-    private static class ItemsHandlerTask extends AsyncTask<Void, Void, Void> {
-        private final AppRoomDatabase db;
-        private final List<Recording> recordings;
-        private final int type;
-
-        ItemsHandlerTask(AppRoomDatabase db, List<Recording> recordings, int type) {
-            this.db = db;
-            this.recordings = new CopyOnWriteArrayList<>(recordings);
-            this.type = type;
-        }
-
-        ItemsHandlerTask(AppRoomDatabase db, int type) {
-            this.db = db;
-            this.recordings = new ArrayList<>();
-            this.type = type;
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            switch (type) {
-                case DELETE_ALL:
-                    if (recordings.size() == 0) {
-                        db.getRecordingDao().deleteAll();
-                    } else {
-                        db.getRecordingDao().delete(recordings);
-                    }
-                    break;
-                case INSERT_ALL:
-                    db.getRecordingDao().insert(recordings);
-                    break;
-                case DELETE_ALL_AND_INSERT:
-                    db.getRecordingDao().deleteAll();
-                    db.getRecordingDao().insert(recordings);
-                    break;
             }
             return null;
         }

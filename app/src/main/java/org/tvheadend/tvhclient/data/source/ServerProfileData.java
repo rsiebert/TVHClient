@@ -13,7 +13,7 @@ import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
 
-public class ServerProfileData extends BaseData implements DataSourceInterface<ServerProfile> {
+public class ServerProfileData implements DataSourceInterface<ServerProfile> {
 
     private final static int RECORDINGS = 1;
     private final static int HTSP_PLAYBACK = 2;
@@ -27,21 +27,21 @@ public class ServerProfileData extends BaseData implements DataSourceInterface<S
 
     @Override
     public void addItem(ServerProfile item) {
-        new ItemHandlerTask(db, item, INSERT).execute();
+        new Thread(() -> db.getServerProfileDao().insert(item)).start();
     }
 
     @Override
     public void updateItem(ServerProfile item) {
-        new ItemHandlerTask(db, item, UPDATE).execute();
+        new Thread(() -> db.getServerProfileDao().update(item)).start();
     }
 
     @Override
     public void removeItem(ServerProfile item) {
-        new ItemHandlerTask(db, item, DELETE).execute();
+        new Thread(() -> db.getServerProfileDao().delete(item)).start();
     }
 
     public void removeAll() {
-        new ItemHandlerTask(db, DELETE_ALL).execute();
+        new Thread(() -> db.getServerProfileDao().deleteAll()).start();
     }
 
     @Override
@@ -179,43 +179,6 @@ public class ServerProfileData extends BaseData implements DataSourceInterface<S
                 default:
                     return null;
             }
-        }
-    }
-
-    private static class ItemHandlerTask extends AsyncTask<Void, Void, Void> {
-        private final AppRoomDatabase db;
-        private final ServerProfile serverProfile;
-        private final int type;
-
-        ItemHandlerTask(AppRoomDatabase db, ServerProfile serverProfile, int type) {
-            this.db = db;
-            this.serverProfile = serverProfile;
-            this.type = type;
-        }
-
-        ItemHandlerTask(AppRoomDatabase db, int type) {
-            this.db = db;
-            this.serverProfile = null;
-            this.type = type;
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            switch (type) {
-                case INSERT:
-                    db.getServerProfileDao().insert(serverProfile);
-                    break;
-                case UPDATE:
-                    db.getServerProfileDao().update(serverProfile);
-                    break;
-                case DELETE:
-                    db.getServerProfileDao().delete(serverProfile);
-                    break;
-                case DELETE_ALL:
-                    db.getServerProfileDao().deleteAll();
-                    break;
-            }
-            return null;
         }
     }
 }

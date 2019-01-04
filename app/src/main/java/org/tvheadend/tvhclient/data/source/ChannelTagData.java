@@ -1,21 +1,18 @@
 package org.tvheadend.tvhclient.data.source;
 
 import android.arch.lifecycle.LiveData;
-import android.os.AsyncTask;
-import android.support.annotation.NonNull;
+import android.support.annotation.WorkerThread;
 
-import org.tvheadend.tvhclient.data.entity.ChannelTag;
 import org.tvheadend.tvhclient.data.db.AppRoomDatabase;
+import org.tvheadend.tvhclient.data.entity.ChannelTag;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
 
-public class ChannelTagData extends BaseData implements DataSourceInterface<ChannelTag> {
+public class ChannelTagData implements DataSourceInterface<ChannelTag> {
 
     private final AppRoomDatabase db;
 
@@ -26,17 +23,17 @@ public class ChannelTagData extends BaseData implements DataSourceInterface<Chan
 
     @Override
     public void addItem(ChannelTag item) {
-        new ItemHandlerTask(db, item, INSERT).execute();
+        new Thread(() -> db.getChannelTagDao().insert(item)).start();
     }
 
     @Override
     public void updateItem(ChannelTag item) {
-        new ItemHandlerTask(db, item, UPDATE).execute();
+        new Thread(() -> db.getChannelTagDao().update(item)).start();
     }
 
     @Override
     public void removeItem(ChannelTag item) {
-        new ItemHandlerTask(db, item, DELETE).execute();
+        new Thread(() -> db.getChannelTagDao().delete(item)).start();
     }
 
     @Override
@@ -44,9 +41,12 @@ public class ChannelTagData extends BaseData implements DataSourceInterface<Chan
         return null;
     }
 
+    /**
+     * @return
+     */
     @Override
     public LiveData<List<ChannelTag>> getLiveDataItems() {
-        return null;
+        return db.getChannelTagDao().loadAllChannelTags();
     }
 
     @Override
@@ -54,92 +54,48 @@ public class ChannelTagData extends BaseData implements DataSourceInterface<Chan
         return null;
     }
 
+    /**
+     *
+     * @param id
+     * @return
+     */
     @Override
+    @WorkerThread
     public ChannelTag getItemById(Object id) {
-        try {
-            return new ItemLoaderTask(db, (int) id).execute().get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
+        return db.getChannelTagDao().loadChannelTagByIdSync((int) id);
+    }
+
+    @Override
+    @WorkerThread
+    public List<ChannelTag> getItems() {
         return null;
     }
 
-    @Override
-    @NonNull
-    public List<ChannelTag> getItems() {
-        List<ChannelTag> channelTags = new ArrayList<>();
-        try {
-            channelTags.addAll(new ItemsLoaderTask(db).execute().get());
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-        return channelTags;
-    }
-
+    /**
+     * Returns the ids of the channel tags that are marked as selected.
+     * This method must not be called from the UI thread.
+     *
+     * @return
+     */
+    @WorkerThread
     public Set<Integer> getSelectedChannelTagIds() {
-        List<ChannelTag> channelTags = getItems();
-        Set<Integer> selectedTagIds = new HashSet<>();
-        for (ChannelTag channelTag : channelTags) {
-            if (channelTag.getIsSelected() > 0) {
-                selectedTagIds.add(channelTag.getTagId());
+        List<Integer> tags = db.getChannelTagDao().loadAllSelectedChannelTagIds();
+        return new HashSet<>(tags);
+    }
+
+    /**
+     * @param ids
+     */
+    public void updateSelectedChannelTags(Set<Integer> ids) {
+        new Thread(() -> {
+            List<ChannelTag> channelTags = db.getChannelTagDao().loadAllChannelTagsSync();
+            for (ChannelTag channelTag : channelTags) {
+                channelTag.setIsSelected(0);
+                if (ids.contains(channelTag.getTagId())) {
+                    channelTag.setIsSelected(1);
+                }
             }
-        }
-        return selectedTagIds;
-    }
-
-    private static class ItemLoaderTask extends AsyncTask<Void, Void, ChannelTag> {
-        private final AppRoomDatabase db;
-        private final int id;
-
-        ItemLoaderTask(AppRoomDatabase db, int id) {
-            this.db = db;
-            this.id = id;
-        }
-
-        @Override
-        protected ChannelTag doInBackground(Void... voids) {
-            return db.getChannelTagDao().loadChannelTagByIdSync(id);
-        }
-    }
-
-    private static class ItemsLoaderTask extends AsyncTask<Void, Void, List<ChannelTag>> {
-        private final AppRoomDatabase db;
-
-        ItemsLoaderTask(AppRoomDatabase db) {
-            this.db = db;
-        }
-
-        @Override
-        protected List<ChannelTag> doInBackground(Void... voids) {
-            return db.getChannelTagDao().loadAllChannelTagsSync();
-        }
-    }
-
-    private static class ItemHandlerTask extends AsyncTask<Void, Void, Void> {
-        private final AppRoomDatabase db;
-        private final ChannelTag channelTag;
-        private final int type;
-
-        ItemHandlerTask(AppRoomDatabase db, ChannelTag channelTag, int type) {
-            this.db = db;
-            this.channelTag = channelTag;
-            this.type = type;
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            switch (type) {
-                case INSERT:
-                    db.getChannelTagDao().insert(channelTag);
-                    break;
-                case UPDATE:
-                    db.getChannelTagDao().update(channelTag);
-                    break;
-                case DELETE:
-                    db.getChannelTagDao().delete(channelTag);
-                    break;
-            }
-            return null;
-        }
+            db.getChannelTagDao().update(channelTags);
+        }).start();
     }
 }

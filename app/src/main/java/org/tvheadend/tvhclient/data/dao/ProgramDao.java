@@ -18,23 +18,35 @@ import java.util.List;
 @Dao
 public interface ProgramDao {
 
-    String base = "SELECT DISTINCT p.*," +
+    String PROGRAM_BASE_QUERY = "SELECT DISTINCT p.*," +
             "c.name AS channel_name, " +
             "c.icon AS channel_icon " +
             "FROM programs AS p " +
             "LEFT JOIN channels AS c ON c.id = p.channel_id ";
 
+    String EPG_PROGRAM_BASE_QUERY = "SELECT DISTINCT p.id, " +
+            "p.title, p.subtitle, " +
+            "p.channel_id, " +
+            "p.connection_id, " +
+            "p.start, p.stop, " +
+            "p.content_type, " +
+            "c.name AS channel_name, " +
+            "c.icon AS channel_icon " +
+            "FROM programs AS p ";
+
+    String CONNECTION_IS_ACTIVE = " p.connection_id IN (SELECT id FROM connections WHERE active = 1) ";
+
     @Transaction
-    @Query(base +
-            "WHERE p.connection_id IN (SELECT id FROM connections WHERE active = 1) " +
+    @Query(PROGRAM_BASE_QUERY +
+            "WHERE " + CONNECTION_IS_ACTIVE +
             " AND ((p.start >= :time) " +
             "  OR (p.start <= :time AND p.stop >= :time)) " +
             "ORDER BY p.start, p.channel_name ASC")
     LiveData<List<Program>> loadProgramsFromTime(long time);
 
     @Transaction
-    @Query(base +
-            "WHERE p.connection_id IN (SELECT id FROM connections WHERE active = 1) " +
+    @Query(PROGRAM_BASE_QUERY +
+            "WHERE " + CONNECTION_IS_ACTIVE +
             " AND p.channel_id = :channelId " +
             " AND ((p.start >= :time) " +
             "  OR (p.start <= :time AND p.stop >= :time)) " +
@@ -43,12 +55,9 @@ public interface ProgramDao {
 
     @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
     @Transaction
-    @Query("SELECT DISTINCT p.id, p.title, p.subtitle, p.channel_id, p.connection_id, p.start, p.stop, p.content_type, " +
-            "c.name AS channel_name, " +
-            "c.icon AS channel_icon " +
-            "FROM programs AS p " +
+    @Query(EPG_PROGRAM_BASE_QUERY +
             "LEFT JOIN channels AS c ON c.id = channel_id " +
-            "WHERE p.connection_id IN (SELECT id FROM connections WHERE active = 1) " +
+            "WHERE " + CONNECTION_IS_ACTIVE +
             " AND channel_id = :channelId " +
             // Program is within time slot
             " AND ((start >= :startTime AND stop <= :endTime) " +
@@ -60,25 +69,25 @@ public interface ProgramDao {
     List<EpgProgram> loadProgramsFromChannelBetweenTimeSync(int channelId, long startTime, long endTime);
 
     @Transaction
-    @Query(base +
-            "WHERE p.connection_id IN (SELECT id FROM connections WHERE active = 1) "
-            + "ORDER BY p.start, p.channel_name ASC")
+    @Query(PROGRAM_BASE_QUERY +
+            "WHERE " + CONNECTION_IS_ACTIVE +
+            "ORDER BY p.start, p.channel_name ASC")
     LiveData<List<Program>> loadPrograms();
 
     @Transaction
-    @Query(base +
-            "WHERE p.connection_id IN (SELECT id FROM connections WHERE active = 1) " +
+    @Query(PROGRAM_BASE_QUERY +
+            "WHERE " + CONNECTION_IS_ACTIVE +
             " AND p.id = :id")
     LiveData<Program> loadProgramById(int id);
 
     @Transaction
-    @Query(base +
-            "WHERE p.connection_id IN (SELECT id FROM connections WHERE active = 1) " +
+    @Query(PROGRAM_BASE_QUERY +
+            "WHERE " + CONNECTION_IS_ACTIVE +
             " AND p.id = :id")
     Program loadProgramByIdSync(int id);
 
-    @Query(base +
-            "WHERE p.connection_id IN (SELECT id FROM connections WHERE active = 1) " +
+    @Query(PROGRAM_BASE_QUERY +
+            "WHERE " + CONNECTION_IS_ACTIVE +
             " AND p.channel_id = :channelId " +
             "ORDER BY start DESC LIMIT 1")
     Program loadLastProgramFromChannelSync(int channelId);
@@ -113,7 +122,7 @@ public interface ProgramDao {
     @Query("DELETE FROM programs")
     void deleteAll();
 
-    @Query("SELECT COUNT (*) FROM programs " +
-            "WHERE connection_id IN (SELECT id FROM connections WHERE active = 1)")
+    @Query("SELECT COUNT (*) FROM programs AS p " +
+            "WHERE " + CONNECTION_IS_ACTIVE)
     LiveData<Integer> getProgramCount();
 }
