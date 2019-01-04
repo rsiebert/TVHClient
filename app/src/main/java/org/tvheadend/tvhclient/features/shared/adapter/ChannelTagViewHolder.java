@@ -42,7 +42,7 @@ public class ChannelTagViewHolder extends RecyclerView.ViewHolder {
         ButterKnife.bind(this, view);
     }
 
-    public void bindData(@NonNull final ChannelTag channelTag, int channelCount, boolean selected) {
+    public void bindData(@NonNull final ChannelTag channelTag) {
         itemView.setTag(channelTag);
         Context context = itemView.getContext();
 
@@ -50,10 +50,10 @@ public class ChannelTagViewHolder extends RecyclerView.ViewHolder {
         boolean showChannelTagIcons = sharedPreferences.getBoolean("channel_tag_icons_enabled", true);
 
         if (selectedRadioButton != null) {
-            selectedRadioButton.setChecked(selected);
+            selectedRadioButton.setChecked(channelTag.getIsSelected() == 1);
         }
         if (selectedCheckBox != null) {
-            selectedCheckBox.setChecked(selected);
+            selectedCheckBox.setChecked(channelTag.getIsSelected() == 1);
         }
 
         titleTextView.setText(channelTag.getTagName());
@@ -68,10 +68,6 @@ public class ChannelTagViewHolder extends RecyclerView.ViewHolder {
             iconImageView.setVisibility(View.GONE);
         }
 
-        if (channelTag.getTagId() > 0) {
-            countTextView.setText(String.valueOf(channelTag.getChannelCount()));
-        } else {
-            countTextView.setText(String.valueOf(channelCount));
-        }
+        countTextView.setText(String.valueOf(channelTag.getChannelCount()));
     }
 }

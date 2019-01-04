@@ -49,7 +49,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -139,7 +138,7 @@ public class MenuUtils {
         return true;
     }
 
-    public boolean handleMenuChannelTagsSelection(Set<Integer> selectedChannelTagIds, @NonNull ChannelTagSelectionCallback callback) {
+    public boolean handleMenuChannelTagsSelection(List<ChannelTag> channelTags, @NonNull ChannelTagSelectionCallback callback) {
         Activity activity = this.activity.get();
         if (activity == null) {
             return false;
@@ -147,23 +146,24 @@ public class MenuUtils {
 
         boolean isMultipleChoice = sharedPreferences.getBoolean("multiple_channel_tags_enabled", false);
 
-        // Add the default tag to the beginning of the list to indicate
-        // that no tag is selected and all channels shall be shown
-        List<ChannelTag> channelTagList = appRepository.getChannelTagData().getItems();
-
         // Create a default tag (All channels)
         if (!isMultipleChoice) {
             ChannelTag tag = new ChannelTag();
             tag.setTagId(0);
             tag.setTagName(activity.getString(R.string.all_channels));
-            channelTagList.add(0, tag);
+            tag.setChannelCount(appRepository.getChannelData().getItems().size());
+            boolean allChannelsSelected = true;
+            for (ChannelTag channelTag : channelTags) {
+                if (channelTag.getIsSelected() == 1) {
+                    allChannelsSelected = false;
+                    break;
+                }
+            }
+            tag.setIsSelected(allChannelsSelected ? 1 : 0);
+            channelTags.add(0, tag);
         }
 
-        ChannelTagRecyclerViewAdapter adapter = new ChannelTagRecyclerViewAdapter(
-                channelTagList,
-                selectedChannelTagIds,
-                appRepository.getChannelData().getItems().size(),
-                isMultipleChoice);
+        ChannelTagRecyclerViewAdapter adapter = new ChannelTagRecyclerViewAdapter(channelTags, isMultipleChoice);
 
         // Show the dialog that shows all available channel tags. When the
         // user has selected a tag, restart the loader to loadRecordingById the updated channel list

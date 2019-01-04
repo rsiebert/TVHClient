@@ -11,6 +11,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.ChannelTag;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -19,14 +20,12 @@ public class ChannelTagRecyclerViewAdapter extends RecyclerView.Adapter<ChannelT
     private final boolean isMultiChoice;
     private List<ChannelTag> channelTagList;
     private Set<Integer> selectedChannelTagIds;
-    private final int channelCount;
     private MaterialDialog dialog;
 
-    public ChannelTagRecyclerViewAdapter(@NonNull List<ChannelTag> channelTagList, @NonNull Set<Integer> selectedChannelTagIds, int channelCount, boolean isMultiChoice) {
+    public ChannelTagRecyclerViewAdapter(@NonNull List<ChannelTag> channelTagList, boolean isMultiChoice) {
         this.channelTagList = channelTagList;
-        this.selectedChannelTagIds = selectedChannelTagIds;
-        this.channelCount = channelCount;
         this.isMultiChoice = isMultiChoice;
+        this.selectedChannelTagIds = new HashSet<>();
     }
 
     @NonNull
@@ -40,32 +39,14 @@ public class ChannelTagRecyclerViewAdapter extends RecyclerView.Adapter<ChannelT
     public void onBindViewHolder(@NonNull ChannelTagViewHolder holder, int position) {
         if (channelTagList.size() > position) {
             ChannelTag channelTag = channelTagList.get(position);
-
-            boolean isSelected;
-            if (isMultiChoice) {
-                // There is no all channels checkbox in the multiple
-                // selection mode, so the tag is either in the list or not
-                isSelected = selectedChannelTagIds.contains(channelTag.getTagId());
-            } else {
-                // There is a all channels radio button in the single selection mode.
-                // It is considered active if the tag list is empty. If not then one
-                // of the other tags are selected
-                isSelected = (position == 0 ?
-                        selectedChannelTagIds.isEmpty() :
-                        selectedChannelTagIds.contains(channelTag.getTagId()));
-            }
-            holder.bindData(channelTag, channelCount, isSelected);
+            holder.bindData(channelTag);
 
             // Add the click listeners
             int tagId = channelTagList.get(position).getTagId();
             if (isMultiChoice) {
                 if (holder.selectedCheckBox != null) {
                     holder.selectedCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                        if (isChecked) {
-                            selectedChannelTagIds.add(tagId);
-                        } else {
-                            selectedChannelTagIds.remove(tagId);
-                        }
+                        channelTagList.get(position).setIsSelected(isChecked ? 1 : 0);
                     });
                 }
             } else {
