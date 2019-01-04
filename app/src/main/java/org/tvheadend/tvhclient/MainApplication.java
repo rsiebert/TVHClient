@@ -39,6 +39,14 @@ import javax.inject.Inject;
 import io.fabric.sdk.android.Fabric;
 import timber.log.Timber;
 
+// TODO use data binding
+// TODO use more livedata for connection and server status in a centralized viewmodel
+// TODO move diffutils to background thread
+// TODO improve epg loading speed by loading programs as livedata
+// TODO Use paged loading
+// TODO use setting strings from xml file
+// TODO use setting default values from xml file
+
 public class MainApplication extends Application implements BillingProcessor.IBillingHandler, OptionsProvider {
 
     private BillingProcessor billingProcessor;
