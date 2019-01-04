@@ -52,6 +52,7 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
     protected RecyclerView recyclerView;
     @BindView(R.id.progress_bar)
     protected ProgressBar progressBar;
+
     private long selectedTime;
     private int selectedListPosition;
     private int channelId;
