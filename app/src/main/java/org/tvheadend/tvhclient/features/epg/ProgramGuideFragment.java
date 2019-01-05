@@ -29,7 +29,7 @@ import android.widget.ProgressBar;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.ChannelTag;
 import org.tvheadend.tvhclient.data.entity.EpgChannel;
-import org.tvheadend.tvhclient.data.entity.Program;
+import org.tvheadend.tvhclient.data.entity.EpgProgram;
 import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.features.dvr.RecordingAddEditActivity;
 import org.tvheadend.tvhclient.features.search.SearchActivity;
@@ -295,7 +295,7 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
     }
 
 
-    public void showPopupMenu(View view, Program program) {
+    public void showPopupMenu(View view, EpgProgram program) {
         if (activity == null || program == null) {
             return;
         }
@@ -305,6 +305,7 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
         PopupMenu popupMenu = new PopupMenu(activity, view);
         popupMenu.getMenuInflater().inflate(R.menu.program_popup_and_toolbar_menu, popupMenu.getMenu());
         popupMenu.getMenuInflater().inflate(R.menu.external_search_options_menu, popupMenu.getMenu());
+
         menuUtils.onPreparePopupMenu(popupMenu.getMenu(), program, program.getRecording(), isNetworkAvailable);
         menuUtils.onPreparePopupSearchMenu(popupMenu.getMenu(), isNetworkAvailable);
 

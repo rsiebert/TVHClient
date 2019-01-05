@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import org.tvheadend.tvhclient.data.entity.EpgProgram;
 import org.tvheadend.tvhclient.data.entity.Program;
 import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.data.entity.ServerProfile;
@@ -25,6 +26,30 @@ public class NotificationUtils {
 
     private NotificationUtils() {
         throw new IllegalAccessError("Utility class");
+    }
+
+    // TODO duplicate code
+    static void addProgramNotification(@NonNull Context context, @NonNull EpgProgram program, Integer offset, @Nullable ServerProfile profile, @NonNull ServerStatus serverStatus) {
+        Intent intent = new Intent(context, ProgramNotificationReceiver.class);
+        intent.putExtra("eventTitle", program.getTitle());
+        intent.putExtra("eventId", program.getEventId());
+        intent.putExtra("channelId", program.getChannelId());
+        intent.putExtra("start", program.getStart());
+
+        if (MiscUtils.isServerProfileEnabled(profile, serverStatus)) {
+            intent.putExtra("configName", profile.getName());
+        }
+
+        long notificationTime = getNotificationTime(program.getStart(), offset);
+
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, program.getEventId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        AlarmManager am = (AlarmManager) context.getSystemService(ALARM_SERVICE);
+        if (am != null) {
+            Timber.d("Created notification for program " + program.getTitle() + " with id " + program.getEventId());
+            am.set(AlarmManager.RTC_WAKEUP, notificationTime, pendingIntent);
+        } else {
+            Timber.e("Could not get alarm manager to create notification for program " + program.getTitle() + " with id " + program.getEventId());
+        }
     }
 
     static void addProgramNotification(@NonNull Context context, @NonNull Program program, Integer offset, @Nullable ServerProfile profile, @NonNull ServerStatus serverStatus) {

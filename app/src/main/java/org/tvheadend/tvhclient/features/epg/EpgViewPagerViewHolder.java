@@ -17,7 +17,6 @@ import android.widget.TextView;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.EpgChannel;
-import org.tvheadend.tvhclient.data.entity.Program;
 import org.tvheadend.tvhclient.data.entity.EpgProgram;
 import org.tvheadend.tvhclient.features.programs.ProgramDetailsActivity;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback;
@@ -82,7 +81,7 @@ public class EpgViewPagerViewHolder extends RecyclerView.ViewHolder implements R
 
     @Override
     public void onLongClick(View view, int position) {
-        final Program program = (Program) view.getTag();
+        final EpgProgram program = (EpgProgram) view.getTag();
         if (program == null) {
             return;
         }
