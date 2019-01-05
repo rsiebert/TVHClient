@@ -31,21 +31,21 @@ public class ChannelData implements DataSourceInterface<Channel> {
 
     @Override
     public void addItem(Channel item) {
-        db.getChannelDao().insert(item);
+        AsyncTask.execute(() -> db.getChannelDao().insert(item));
     }
 
     public void addItems(@NonNull List<Channel> items) {
-        db.getChannelDao().insert(items);
+        AsyncTask.execute(() -> db.getChannelDao().insert(items));
     }
 
     @Override
     public void updateItem(Channel item) {
-        db.getChannelDao().update(item);
+        AsyncTask.execute(() -> db.getChannelDao().update(item));
     }
 
     @Override
     public void removeItem(Channel item) {
-        db.getChannelDao().delete(item);
+        AsyncTask.execute(() -> db.getChannelDao().delete(item));
     }
 
     @Override
@@ -96,7 +96,6 @@ public class ChannelData implements DataSourceInterface<Channel> {
     }
 
     /**
-     *
      * @param channelSortOrder
      * @param tagIds
      * @return
@@ -110,7 +109,6 @@ public class ChannelData implements DataSourceInterface<Channel> {
     }
 
     /**
-     *
      * @param selectedTime
      * @param channelSortOrder
      * @param tagIds

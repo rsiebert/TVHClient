@@ -27,21 +27,21 @@ public class RecordingData implements DataSourceInterface<Recording> {
 
     @Override
     public void addItem(Recording item) {
-        db.getRecordingDao().insert(item);
+        AsyncTask.execute(() -> db.getRecordingDao().insert(item));
     }
 
     public void addItems(@NonNull List<Recording> items) {
-        db.getRecordingDao().insert(items);
+        AsyncTask.execute(() -> db.getRecordingDao().insert(items));
     }
 
     @Override
     public void updateItem(Recording item) {
-        db.getRecordingDao().update(item);
+        AsyncTask.execute(() -> db.getRecordingDao().update(item));
     }
 
     @Override
     public void removeItem(Recording item) {
-        db.getRecordingDao().delete(item);
+        AsyncTask.execute(() -> db.getRecordingDao().delete(item));
     }
 
     public void removeItems() {

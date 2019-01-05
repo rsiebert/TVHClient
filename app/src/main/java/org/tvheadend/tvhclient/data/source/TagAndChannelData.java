@@ -1,6 +1,7 @@
 package org.tvheadend.tvhclient.data.source;
 
 import android.arch.lifecycle.LiveData;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
 import org.tvheadend.tvhclient.data.db.AppRoomDatabase;
@@ -22,17 +23,17 @@ public class TagAndChannelData implements DataSourceInterface<TagAndChannel> {
 
     @Override
     public void addItem(TagAndChannel item) {
-        db.getTagAndChannelDao().insert(item);
+        AsyncTask.execute(() -> db.getTagAndChannelDao().insert(item));
     }
 
     @Override
     public void updateItem(TagAndChannel item) {
-        db.getTagAndChannelDao().update(item);
+        AsyncTask.execute(() -> db.getTagAndChannelDao().update(item));
     }
 
     @Override
     public void removeItem(TagAndChannel item) {
-        db.getTagAndChannelDao().delete(item);
+        AsyncTask.execute(() -> db.getTagAndChannelDao().delete(item));
     }
 
     @Override

@@ -25,7 +25,7 @@ public class ConnectionData implements DataSourceInterface<Connection> {
 
     @Override
     public void addItem(Connection item) {
-        new Thread(() -> {
+        AsyncTask.execute(() -> {
             if (item.isActive()) {
                 db.getConnectionDao().disableActiveConnection();
             }
@@ -35,25 +35,25 @@ public class ConnectionData implements DataSourceInterface<Connection> {
             ServerStatus serverStatus = new ServerStatus();
             serverStatus.setConnectionId((int) newId);
             db.getServerStatusDao().insert(serverStatus);
-        }).start();
+        });
     }
 
     @Override
     public void updateItem(Connection item) {
-        new Thread(() -> {
+        AsyncTask.execute(() -> {
             if (item.isActive()) {
                 db.getConnectionDao().disableActiveConnection();
             }
             db.getConnectionDao().update(item);
-        }).start();
+        });
     }
 
     @Override
     public void removeItem(Connection item) {
-        new Thread(() -> {
+        AsyncTask.execute(() -> {
             db.getConnectionDao().delete(item);
             db.getServerStatusDao().deleteByConnectionId(item.getId());
-        }).start();
+        });
     }
 
     @Override

@@ -1,6 +1,7 @@
 package org.tvheadend.tvhclient.data.source;
 
 import android.arch.lifecycle.LiveData;
+import android.os.AsyncTask;
 import android.support.annotation.WorkerThread;
 
 import org.tvheadend.tvhclient.data.db.AppRoomDatabase;
@@ -23,17 +24,17 @@ public class ChannelTagData implements DataSourceInterface<ChannelTag> {
 
     @Override
     public void addItem(ChannelTag item) {
-        db.getChannelTagDao().insert(item);
+        AsyncTask.execute(() -> db.getChannelTagDao().insert(item));
     }
 
     @Override
     public void updateItem(ChannelTag item) {
-        db.getChannelTagDao().update(item);
+        AsyncTask.execute(() -> db.getChannelTagDao().update(item));
     }
 
     @Override
     public void removeItem(ChannelTag item) {
-        db.getChannelTagDao().delete(item);
+        AsyncTask.execute(() -> db.getChannelTagDao().delete(item));
     }
 
     @Override
@@ -87,7 +88,7 @@ public class ChannelTagData implements DataSourceInterface<ChannelTag> {
      * @param ids
      */
     public void updateSelectedChannelTags(Set<Integer> ids) {
-        new Thread(() -> {
+        AsyncTask.execute(() -> {
             List<ChannelTag> channelTags = db.getChannelTagDao().loadAllChannelTagsSync();
             for (ChannelTag channelTag : channelTags) {
                 channelTag.setIsSelected(0);
@@ -96,6 +97,6 @@ public class ChannelTagData implements DataSourceInterface<ChannelTag> {
                 }
             }
             db.getChannelTagDao().update(channelTags);
-        }).start();
+        });
     }
 }

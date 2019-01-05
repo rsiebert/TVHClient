@@ -28,21 +28,21 @@ public class ProgramData implements DataSourceInterface<Program> {
 
     @Override
     public void addItem(Program item) {
-        db.getProgramDao().insert(item);
+        AsyncTask.execute(() -> db.getProgramDao().insert(item));
     }
 
     public void addItems(@NonNull List<Program> items) {
-        db.getProgramDao().insert(items);
+        AsyncTask.execute(() -> db.getProgramDao().insert(items));
     }
 
     @Override
     public void updateItem(Program item) {
-        db.getProgramDao().update(item);
+        AsyncTask.execute(() -> db.getProgramDao().update(item));
     }
 
     @Override
     public void removeItem(Program item) {
-        db.getProgramDao().delete(item);
+        AsyncTask.execute(() -> db.getProgramDao().delete(item));
     }
 
     @Override
@@ -104,11 +104,11 @@ public class ProgramData implements DataSourceInterface<Program> {
     }
 
     public void removeItemsByTime(long time) {
-        new Thread(() -> db.getProgramDao().deleteProgramsByTime(time)).start();
+        AsyncTask.execute(() -> db.getProgramDao().deleteProgramsByTime(time));
     }
 
     public void removeItemById(int id) {
-        new Thread(() -> db.getProgramDao().deleteById(id)).start();
+        AsyncTask.execute(() -> db.getProgramDao().deleteById(id));
     }
 
     private static class ItemLoaderTask extends AsyncTask<Void, Void, Program> {

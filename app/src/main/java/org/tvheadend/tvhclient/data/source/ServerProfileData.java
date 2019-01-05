@@ -27,17 +27,17 @@ public class ServerProfileData implements DataSourceInterface<ServerProfile> {
 
     @Override
     public void addItem(ServerProfile item) {
-        db.getServerProfileDao().insert(item);
+        AsyncTask.execute(() -> db.getServerProfileDao().insert(item));
     }
 
     @Override
     public void updateItem(ServerProfile item) {
-        db.getServerProfileDao().update(item);
+        AsyncTask.execute(() -> db.getServerProfileDao().update(item));
     }
 
     @Override
     public void removeItem(ServerProfile item) {
-        // NOP
+        AsyncTask.execute(() -> db.getServerProfileDao().delete(item));
     }
 
     public void removeAll() {

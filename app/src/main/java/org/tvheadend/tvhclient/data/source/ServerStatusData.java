@@ -30,17 +30,17 @@ public class ServerStatusData implements DataSourceInterface<ServerStatus> {
 
     @Override
     public void addItem(ServerStatus item) {
-        db.getServerStatusDao().insert(item);
+        AsyncTask.execute(() -> db.getServerStatusDao().insert(item));
     }
 
     @Override
     public void updateItem(ServerStatus item) {
-        db.getServerStatusDao().update(item);
+        AsyncTask.execute(() -> db.getServerStatusDao().update(item));
     }
 
     @Override
     public void removeItem(ServerStatus item) {
-        // NOP
+        AsyncTask.execute(() -> db.getServerStatusDao().delete(item));
     }
 
     @Override
