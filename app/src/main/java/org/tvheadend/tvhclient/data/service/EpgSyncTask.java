@@ -76,6 +76,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     private final ArrayList<Recording> pendingRecordingOps = new ArrayList<>();
     private final ArrayList<Program> pendingEventOps = new ArrayList<>();
     private final ArrayList<String> pendingChannelLogoFetches = new ArrayList<>();
+    private boolean initialSyncWithServerRunning;
 
     EpgSyncTask(@NonNull HtspMessage.Dispatcher dispatcher, Connection connection) {
         MainApplication.getComponent().inject(this);
@@ -163,6 +164,8 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         // Send the first sync message to any broadcast listeners
         sendEpgSyncStatusMessage(ServiceStatusReceiver.State.SYNC_STARTED,
                 context.getString(R.string.loading_data), "");
+
+        initialSyncWithServerRunning = true;
 
         // Enable epg sync with the defined number of
         // seconds of data starting from the current time
@@ -597,6 +600,8 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
                         context.getString(R.string.saving_data),
                         "Received " + pendingRecordingOps.size() + " recordings");
             }
+        } else if (initialSyncWithServerRunning) {
+            pendingRecordingOps.add(recording);
         } else {
             appRepository.getRecordingData().addItem(recording);
         }
@@ -758,6 +763,8 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
                         context.getString(R.string.saving_data),
                         "Received " + pendingEventOps.size() + " program guide events");
             }
+        } else if (initialSyncWithServerRunning) {
+            pendingEventOps.add(program);
         } else {
             appRepository.getProgramData().addItem(program);
         }
@@ -983,6 +990,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
 
         setDefaultProfileSelection();
 
+        initialSyncWithServerRunning = false;
         fullSyncRequired = false;
 
         Timber.d("Updating connection status with sync not required and last update time");
