@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.crashlytics.android.Crashlytics;
 
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
@@ -53,23 +54,29 @@ import java.util.Locale;
 
 import javax.inject.Inject;
 
+import io.fabric.sdk.android.Fabric;
 import timber.log.Timber;
+
+// TODO use livedata for server status and connection
 
 public class MenuUtils {
 
-    private final boolean isUnlocked;
     @Inject
     protected AppRepository appRepository;
     @Inject
     protected SharedPreferences sharedPreferences;
-    private final ServerStatus serverStatus;
+
+    private final boolean isUnlocked;
     private final WeakReference<Activity> activity;
+    private final ServerStatus serverStatus;
+    private final Connection connection;
 
     public MenuUtils(@NonNull Activity activity) {
         MainApplication.getComponent().inject(this);
 
         this.activity = new WeakReference<>(activity);
         this.isUnlocked = MainApplication.getInstance().isUnlocked();
+        this.connection = appRepository.getConnectionData().getActiveItem();
         this.serverStatus = appRepository.getServerStatusData().getActiveItem();
     }
 
@@ -741,11 +748,15 @@ public class MenuUtils {
 
                     activity.stopService(new Intent(activity, EpgSyncService.class));
                     // Update the connection with the information that a new sync is required.
-                    Connection connection = appRepository.getConnectionData().getActiveItem();
                     if (connection != null) {
                         connection.setSyncRequired(true);
                         connection.setLastUpdate(0);
                         appRepository.getConnectionData().updateItem(connection);
+                    } else {
+                        Timber.e("Connection is null because no active connection is available");
+                        if (Fabric.isInitialized()) {
+                            Crashlytics.logException(new Exception("Connection is null because no active connection is available"));
+                        }
                     }
                     // Finally restart the application to show the startup fragment
                     Intent intent = new Intent(activity, SplashActivity.class);
