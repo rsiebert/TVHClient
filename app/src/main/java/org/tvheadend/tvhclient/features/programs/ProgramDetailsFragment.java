@@ -125,6 +125,7 @@ public class ProgramDetailsFragment extends BaseFragment implements RecordingRem
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        forceSingleScreenLayout();
 
         if (!isDualPane) {
             toolbarInterface.setTitle(getString(R.string.details));
