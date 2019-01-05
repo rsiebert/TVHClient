@@ -81,18 +81,17 @@ public class MigrateUtils {
                     serverStatus.setHttpPlaybackServerProfileId(0);
                     serverStatus.setCastingServerProfileId(0);
                     serverStatus.setRecordingServerProfileId(0);
-                    new Thread(() ->appRepository.getServerStatusData().updateItem(serverStatus)).start();
+                    appRepository.getServerStatusData().updateItem(serverStatus);
                 }
             }
         }
         // Remove all playback profiles so we can save them again separately as htsp or http profiles
-        new Thread(() -> appRepository.getServerProfileData().removeAll()).start();
+        appRepository.getServerProfileData().removeAll();
     }
 
     private void checkServerStatus() {
         Timber.d("Checking if a server status entry exists for each connection");
-        List<Connection> connections = appRepository.getConnectionData().getItems();
-        for (Connection connection : connections) {
+        for (Connection connection : appRepository.getConnectionData().getItems()) {
             Timber.d("Checking connection " + connection.getName() + " with id " + connection.getId());
             ServerStatus serverStatus = appRepository.getServerStatusData().getItemById(connection.getId());
             if (serverStatus != null) {
@@ -101,9 +100,7 @@ public class MigrateUtils {
                 Timber.d("No server status exists for connection " + connection.getId() + ", creating new one");
                 serverStatus = new ServerStatus();
                 serverStatus.setConnectionId(connection.getId());
-
-                ServerStatus finalServerStatus = serverStatus;
-                new Thread(() ->appRepository.getServerStatusData().addItem(finalServerStatus)).start();
+                appRepository.getServerStatusData().addItem(serverStatus);
             }
         }
     }
