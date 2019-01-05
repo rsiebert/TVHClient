@@ -41,7 +41,7 @@ public class ServerProfileData implements DataSourceInterface<ServerProfile> {
     }
 
     public void removeAll() {
-        db.getServerProfileDao().deleteAll();
+        AsyncTask.execute(() -> db.getServerProfileDao().deleteAll());
     }
 
     @Override
