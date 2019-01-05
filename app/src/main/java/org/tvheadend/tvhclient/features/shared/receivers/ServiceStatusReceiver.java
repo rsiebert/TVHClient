@@ -7,6 +7,8 @@ import android.content.Intent;
 import org.tvheadend.tvhclient.data.service.EpgSyncStatusCallback;
 import org.tvheadend.tvhclient.data.service.EpgSyncTaskState;
 
+import java.lang.ref.WeakReference;
+
 public class ServiceStatusReceiver extends BroadcastReceiver {
 
     public final static String ACTION = "service_status";
@@ -14,7 +16,7 @@ public class ServiceStatusReceiver extends BroadcastReceiver {
     public final static String MESSAGE = "message";
     public final static String DETAILS = "details";
 
-    private final EpgSyncStatusCallback callback;
+    private final WeakReference<EpgSyncStatusCallback> callback;
 
     public enum State {
         CLOSED,
@@ -28,7 +30,7 @@ public class ServiceStatusReceiver extends BroadcastReceiver {
     }
 
     public ServiceStatusReceiver(EpgSyncStatusCallback callback) {
-        this.callback = callback;
+        this.callback = new WeakReference<>(callback);
     }
 
     /**
@@ -38,11 +40,13 @@ public class ServiceStatusReceiver extends BroadcastReceiver {
      */
     @Override
     public void onReceive(Context context, Intent intent) {
-        callback.onEpgTaskStateChanged(
-                new EpgSyncTaskState.EpgSyncTaskStateBuilder()
-                        .state((State) intent.getSerializableExtra(STATE))
-                        .message(intent.getStringExtra(MESSAGE))
-                        .details(intent.getStringExtra(DETAILS))
-                        .build());
+        if (callback.get() != null) {
+            callback.get().onEpgTaskStateChanged(
+                    new EpgSyncTaskState.EpgSyncTaskStateBuilder()
+                            .state((State) intent.getSerializableExtra(STATE))
+                            .message(intent.getStringExtra(MESSAGE))
+                            .details(intent.getStringExtra(DETAILS))
+                            .build());
+        }
     }
 }
