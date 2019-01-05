@@ -58,6 +58,7 @@ public interface ChannelDao {
 
     @Query("SELECT c.* FROM channels AS c " +
             "WHERE " + CONNECTION_IS_ACTIVE +
+            "GROUP BY c.id " +
             ORDER_BY)
     List<Channel> loadAllChannelsSync(int sortOrder);
 
@@ -66,6 +67,7 @@ public interface ChannelDao {
             "LEFT JOIN programs AS program ON program.start <= :time AND program.stop > :time AND program.channel_id = c.id " +
             "LEFT JOIN programs AS next_program ON next_program.start = program.stop AND next_program.channel_id = c.id " +
             "WHERE " + CONNECTION_IS_ACTIVE +
+            "GROUP BY c.id " +
             ORDER_BY)
     LiveData<List<Channel>> loadAllChannelsByTime(long time, int sortOrder);
 
@@ -75,6 +77,7 @@ public interface ChannelDao {
             "LEFT JOIN programs AS next_program ON next_program.start = program.stop AND next_program.channel_id = c.id " +
             "WHERE " + CONNECTION_IS_ACTIVE +
             " AND c.id IN (SELECT channel_id FROM tags_and_channels WHERE tag_id IN (:tagIds)) " +
+            "GROUP BY c.id " +
             ORDER_BY)
     LiveData<List<Channel>> loadAllChannelsByTimeAndTag(long time, int sortOrder, Set<Integer> tagIds);
 
@@ -83,6 +86,7 @@ public interface ChannelDao {
             "LEFT JOIN programs AS program ON program.start <= :time AND program.stop > :time AND program.channel_id = c.id " +
             "LEFT JOIN programs AS next_program ON next_program.start = program.stop AND next_program.channel_id = c.id " +
             "WHERE " + CONNECTION_IS_ACTIVE +
+            "GROUP BY c.id " +
             ORDER_BY)
     List<Channel> loadAllChannelsByTimeSync(long time, int sortOrder);
 
@@ -92,6 +96,7 @@ public interface ChannelDao {
             "LEFT JOIN programs AS next_program ON next_program.start = program.stop AND next_program.channel_id = c.id " +
             "WHERE " + CONNECTION_IS_ACTIVE +
             " AND c.id IN (SELECT channel_id FROM tags_and_channels WHERE tag_id IN (:tagIds)) " +
+            "GROUP BY c.id " +
             ORDER_BY)
     List<Channel> loadAllChannelsByTimeAndTagSync(long time, Set<Integer> tagIds, int sortOrder);
 
