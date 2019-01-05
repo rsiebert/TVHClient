@@ -6,6 +6,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Transformations;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
@@ -63,12 +64,12 @@ public class ChannelViewModel extends AndroidViewModel {
         recordings = appRepository.getRecordingData().getLiveDataItems();
         channelCount = appRepository.getChannelData().getLiveDataItemCount();
 
-        new Thread(() -> {
+        AsyncTask.execute(() ->  {
             Timber.d("Loading time, sort order and channel tags ids from database");
             selectedTime.postValue(new Date().getTime());
             channelSortOrder.postValue(Integer.valueOf(sharedPreferences.getString("channel_sort_order", "0")));
             selectedChannelTagIds.postValue(appRepository.getChannelTagData().getSelectedChannelTagIds());
-        }).start();
+        });
 
         ChannelLiveData trigger = new ChannelLiveData(selectedTime, channelSortOrder, selectedChannelTagIds);
         channels = Transformations.switchMap(trigger, value -> {
