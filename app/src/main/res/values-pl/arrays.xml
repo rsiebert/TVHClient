@@ -1,20 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string-array name="pref_language_list_display">
-        <item>Domylny</item>
-        <item>Niemiecki</item>
-        <item>Angielski</item>
-        <item>Francuzki</item>
-        <item>Włoski</item>
-        <item>Holenderski</item>
-        <item>Polski</item>
-        <item>Szwedzki</item>
-        <item>Czeski</item>
-        <item>Slovensky</item>
-        <item>Hiszpański</item>
-	</string-array>
-
     <string-array name="pref_menu_names">
         <item>Kanały</item>
         <item>Przewodnik programów</item>
