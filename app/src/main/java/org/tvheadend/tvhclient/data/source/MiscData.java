@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v4.content.LocalBroadcastManager;
 
+import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.db.AppRoomDatabase;
 import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
@@ -37,6 +38,19 @@ public class MiscData {
         ClearDatabaseTask(Context context, AppRoomDatabase db) {
             this.context = new WeakReference<>(context);
             this.db = db;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            Context context = this.context.get();
+            if (context == null) {
+                return;
+            }
+            Intent intent = new Intent(SnackbarMessageReceiver.ACTION);
+            intent.putExtra(SnackbarMessageReceiver.CONTENT,
+                    context.getString(R.string.deleting_database_contents));
+            LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+
         }
 
         @Override
@@ -75,7 +89,8 @@ public class MiscData {
                 return;
             }
             Intent intent = new Intent(SnackbarMessageReceiver.ACTION);
-            intent.putExtra(SnackbarMessageReceiver.CONTENT, "Database cleared");
+            intent.putExtra(SnackbarMessageReceiver.CONTENT,
+                    context.getString(R.string.database_contents_deleted));
             LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 
             DatabaseClearedCallback databaseClearedCallback = callback.get();

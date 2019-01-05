@@ -407,4 +407,6 @@
     <string name="pref_internal_player_audio_tunneling_enabled">Enable Audio Tunneling</string>
     <string name="pref_internal_player_audio_tunneling_enabled_sum">Enable support for DSP audio tunneling</string>
     <string name="pref_internal_player_timeshift_enabled">Enable timeshift support</string>
+    <string name="database_contents_deleted">Database contents deleted</string>
+    <string name="deleting_database_contents">Deleting database contents…</string>
 </resources>
