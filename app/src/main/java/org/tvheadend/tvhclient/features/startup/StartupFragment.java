@@ -222,7 +222,7 @@ public class StartupFragment extends Fragment implements EpgSyncStatusCallback {
      * Which fragment shall be shown is determined by a preference.
      */
     private void showContentScreen() {
-        int startScreen = Integer.parseInt(sharedPreferences.getString("start_screen", "0"));
+        int startScreen = Integer.parseInt(sharedPreferences.getString("start_screen", getResources().getString(R.string.pref_default_start_screen)));
         Intent intent = new Intent(activity, MainActivity.class);
         intent.putExtra("startScreen", startScreen);
         activity.startActivity(intent);

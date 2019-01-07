@@ -101,13 +101,15 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Wake
         // was rotated just restore the position from the saved instance.
         if (savedInstanceState == null) {
             isSavedInstanceStateNull = true;
-            selectedNavigationMenuId = Integer.parseInt(sharedPreferences.getString("start_screen", "0"));
+            selectedNavigationMenuId = Integer.parseInt(sharedPreferences.getString("start_screen",
+                    getResources().getString(R.string.pref_default_start_screen)));
         } else {
             isSavedInstanceStateNull = false;
             selectedNavigationMenuId = savedInstanceState.getInt("navigationMenuId", NavigationDrawer.MENU_CHANNELS);
         }
 
-        boolean showCastingMiniController = isUnlocked && sharedPreferences.getBoolean("casting_minicontroller_enabled", false);
+        boolean showCastingMiniController = isUnlocked && sharedPreferences.getBoolean("casting_minicontroller_enabled",
+                getResources().getBoolean(R.bool.pref_default_casting_minicontroller_enabled));
         View miniController = findViewById(R.id.cast_mini_controller);
         miniController.setVisibility(showCastingMiniController ? View.VISIBLE : View.GONE);
 
@@ -251,7 +253,8 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Wake
      */
     private void handleDrawerItemSelected(int position) {
         Fragment fragment;
-        boolean addFragmentToBackStack = sharedPreferences.getBoolean("navigation_history_enabled", true);
+        boolean addFragmentToBackStack = sharedPreferences.getBoolean("navigation_history_enabled",
+                getResources().getBoolean(R.bool.pref_default_navigation_history_enabled));
 
         // Get the already created fragment when the device orientation changes. In this
         // case the saved instance is not null. This avoids recreating fragments after

@@ -37,7 +37,8 @@ public class ScheduledRecordingListFragment extends RecordingListFragment implem
     private void handleObservedRecordings(List<Recording> recordings) {
         if (recordings != null) {
             // Remove all recordings from the list that are duplicated
-            if (sharedPreferences.getBoolean("hide_duplicate_scheduled_recordings_enabled", false)) {
+            if (sharedPreferences.getBoolean("hide_duplicate_scheduled_recordings_enabled",
+                    activity.getResources().getBoolean(R.bool.pref_default_hide_duplicate_scheduled_recordings_enabled))) {
                 for (Recording recording : new CopyOnWriteArrayList<>(recordings)) {
                     if (recording.getDuplicate() == 1) {
                         recordings.remove(recording);

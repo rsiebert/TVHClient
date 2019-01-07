@@ -47,7 +47,8 @@ public class ChannelTagViewHolder extends RecyclerView.ViewHolder {
         Context context = itemView.getContext();
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        boolean showChannelTagIcons = sharedPreferences.getBoolean("channel_tag_icons_enabled", true);
+        boolean showChannelTagIcons = sharedPreferences.getBoolean("channel_tag_icons_enabled",
+                itemView.getResources().getBoolean(R.bool.pref_default_channel_tag_icons_enabled));
 
         if (selectedRadioButton != null) {
             selectedRadioButton.setChecked(channelTag.getIsSelected() == 1);

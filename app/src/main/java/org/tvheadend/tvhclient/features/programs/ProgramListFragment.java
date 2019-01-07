@@ -231,7 +231,8 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         // Hide the genre color menu in dual pane mode or if no genre colors shall be shown
-        final boolean showGenreColors = sharedPreferences.getBoolean("genre_colors_for_programs_enabled", false);
+        final boolean showGenreColors = sharedPreferences.getBoolean("genre_colors_for_programs_enabled",
+                activity.getResources().getBoolean(R.bool.pref_default_genre_colors_for_programs_enabled));
         menu.findItem(R.id.menu_genre_color_info_programs).setVisible(!isDualPane && showGenreColors);
 
         if (!isSearchActive && isNetworkAvailable) {

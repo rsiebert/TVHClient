@@ -136,16 +136,19 @@ public class MainApplication extends Application implements BillingProcessor.IBi
             Timber.plant(new DebugTree());
         }
 
-        if (sharedPreferences.getBoolean("debug_mode_enabled", false)) {
+        if (sharedPreferences.getBoolean("debug_mode_enabled",
+                getResources().getBoolean(R.bool.pref_default_debug_mode_enabled))) {
             Timber.plant(new FileLoggingTree(getApplicationContext()));
         }
-        if (sharedPreferences.getBoolean("crash_reports_enabled", true)) {
+        if (sharedPreferences.getBoolean("crash_reports_enabled",
+                getResources().getBoolean(R.bool.pref_default_crash_reports_enabled))) {
             Timber.plant(new CrashlyticsTree());
         }
     }
 
     private void initCrashlytics() {
-        if (sharedPreferences.getBoolean("crash_reports_enabled", true)) {
+        if (sharedPreferences.getBoolean("crash_reports_enabled",
+                getResources().getBoolean(R.bool.pref_default_crash_reports_enabled))) {
             // Set up Crashlytics, disabled for debug builds
             Crashlytics crashlyticsKit = new Crashlytics.Builder()
                     .core(new CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build())

@@ -152,7 +152,8 @@ public class MenuUtils {
             return false;
         }
 
-        boolean isMultipleChoice = sharedPreferences.getBoolean("multiple_channel_tags_enabled", false);
+        boolean isMultipleChoice = sharedPreferences.getBoolean("multiple_channel_tags_enabled",
+                activity.getResources().getBoolean(R.bool.pref_default_multiple_channel_tags_enabled));
 
         // Create a default tag (All channels)
         if (!isMultipleChoice) {
@@ -628,7 +629,8 @@ public class MenuUtils {
         }
         // Show the add reminder menu only for programs and
         // recordings where the start time is in the future.
-        if (isUnlocked && sharedPreferences.getBoolean("notifications_enabled", true)) {
+        if (isUnlocked && sharedPreferences.getBoolean("notifications_enabled",
+                activity.getResources().getBoolean(R.bool.pref_default_notifications_enabled))) {
             long currentTime = new Date().getTime();
             long startTime = currentTime;
             if (start > 0) {
@@ -701,7 +703,8 @@ public class MenuUtils {
             return false;
         }
 
-        Integer offset = Integer.valueOf(sharedPreferences.getString("notification_lead_time", "0"));
+        Integer offset = Integer.valueOf(sharedPreferences.getString("notification_lead_time",
+                activity.getResources().getString(R.string.pref_default_notification_lead_time)));
         ServerProfile profile = appRepository.getServerProfileData().getItemById(serverStatus.getRecordingServerProfileId());
         NotificationUtils.addProgramNotification(activity,
                 program.getTitle(),
@@ -721,7 +724,8 @@ public class MenuUtils {
             return false;
         }
 
-        Integer offset = Integer.valueOf(sharedPreferences.getString("notification_lead_time", "0"));
+        Integer offset = Integer.valueOf(sharedPreferences.getString("notification_lead_time",
+                activity.getResources().getString(R.string.pref_default_notification_lead_time)));
         ServerProfile profile = appRepository.getServerProfileData().getItemById(serverStatus.getRecordingServerProfileId());
         NotificationUtils.addProgramNotification(activity,
                 program.getTitle(),
@@ -739,7 +743,8 @@ public class MenuUtils {
             return false;
         }
 
-        if (isUnlocked && sharedPreferences.getBoolean("internal_player_enabled", false)) {
+        if (isUnlocked && sharedPreferences.getBoolean("internal_player_enabled",
+                activity.getResources().getBoolean(R.bool.pref_default_internal_player_enabled))) {
             Intent intent = new Intent(activity, HtspPlaybackActivity.class);
             intent.putExtra("channelId", channelId);
             activity.startActivity(intent);
@@ -757,7 +762,8 @@ public class MenuUtils {
             Timber.d("Weak reference to activity is null");
             return false;
         }
-        if (isUnlocked && sharedPreferences.getBoolean("internal_player_enabled", false)) {
+        if (isUnlocked && sharedPreferences.getBoolean("internal_player_enabled",
+                activity.getResources().getBoolean(R.bool.pref_default_internal_player_enabled))) {
             Intent intent = new Intent(activity, HtspPlaybackActivity.class);
             intent.putExtra("dvrId", dvrId);
             activity.startActivity(intent);
@@ -835,12 +841,17 @@ public class MenuUtils {
     }
 
     public void handleMenuPlayChannelIcon(int channelId) {
-        int channelIconAction = Integer.valueOf(sharedPreferences.getString("channel_icon_action", "0"));
+        Activity activity = this.activity.get();
+        if (activity == null) {
+            Timber.d("Weak reference to activity is null");
+            return;
+        }
+
+        int channelIconAction = Integer.valueOf(sharedPreferences.getString("channel_icon_action",
+                activity.getResources().getString(R.string.pref_default_channel_icon_action)));
         if (channelIconAction == 1) {
             handleMenuPlayChannel(channelId);
         } else if (channelIconAction == 2) {
-            Activity activity = this.activity.get();
-
             if (MiscUtils.getCastSession(activity) != null) {
                 handleMenuCast("channelId", channelId);
             } else {
@@ -850,12 +861,17 @@ public class MenuUtils {
     }
 
     public void handleMenuPlayRecordingIcon(int recordingId) {
-        int channelIconAction = Integer.valueOf(sharedPreferences.getString("channel_icon_action", "0"));
+        Activity activity = this.activity.get();
+        if (activity == null) {
+            Timber.d("Weak reference to activity is null");
+            return;
+        }
+
+        int channelIconAction = Integer.valueOf(sharedPreferences.getString("channel_icon_action",
+                activity.getResources().getString(R.string.pref_default_channel_icon_action)));
         if (channelIconAction == 1) {
             handleMenuPlayRecording(recordingId);
         } else if (channelIconAction == 2) {
-            Activity activity = this.activity.get();
-
             if (MiscUtils.getCastSession(activity) != null) {
                 handleMenuCast("dvrId", recordingId);
             } else {

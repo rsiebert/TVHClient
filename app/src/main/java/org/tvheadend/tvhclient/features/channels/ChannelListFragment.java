@@ -212,7 +212,8 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
         // When the user returns from the settings only the onResume method is called, not the
         // onActivityCreated, so we need to check if any values that affect the representation
         // of the channel list have changed.
-        viewModel.setChannelSortOrder(Integer.valueOf(sharedPreferences.getString("channel_sort_order", "0")));
+        viewModel.setChannelSortOrder(Integer.valueOf(sharedPreferences.getString("channel_sort_order",
+                activity.getResources().getString(R.string.pref_default_channel_sort_order))));
     }
 
     @Override
@@ -223,8 +224,10 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
-        final boolean showGenreColors = sharedPreferences.getBoolean("genre_colors_for_channels_enabled", false);
-        final boolean showChannelTagMenu = sharedPreferences.getBoolean("channel_tag_menu_enabled", true);
+        final boolean showGenreColors = sharedPreferences.getBoolean("genre_colors_for_channels_enabled",
+                activity.getResources().getBoolean(R.bool.pref_default_genre_colors_for_channels_enabled));
+        final boolean showChannelTagMenu = sharedPreferences.getBoolean("channel_tag_menu_enabled",
+                activity.getResources().getBoolean(R.bool.pref_default_channel_tag_menu_enabled));
 
         if (TextUtils.isEmpty(searchQuery)) {
             menu.findItem(R.id.menu_genre_color_info_channels).setVisible(showGenreColors);

@@ -67,7 +67,8 @@ public class ChannelViewModel extends AndroidViewModel {
         AsyncTask.execute(() ->  {
             Timber.d("Loading time, sort order and channel tags ids from database");
             selectedTime.postValue(new Date().getTime());
-            channelSortOrder.postValue(Integer.valueOf(sharedPreferences.getString("channel_sort_order", "0")));
+            channelSortOrder.postValue(Integer.valueOf(sharedPreferences.getString("channel_sort_order",
+                    application.getResources().getString(R.string.pref_default_channel_sort_order))));
             selectedChannelTagIds.postValue(appRepository.getChannelTagData().getSelectedChannelTagIds());
         });
 

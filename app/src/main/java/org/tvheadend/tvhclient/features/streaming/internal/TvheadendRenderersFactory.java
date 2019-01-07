@@ -36,6 +36,8 @@ import com.google.android.exoplayer2.mediacodec.MediaCodecUtil;
 import com.google.android.exoplayer2.video.MediaCodecVideoRenderer;
 import com.google.android.exoplayer2.video.VideoRendererEventListener;
 
+import org.tvheadend.tvhclient.R;
+
 import java.util.ArrayList;
 
 import timber.log.Timber;
@@ -105,7 +107,7 @@ class TvheadendRenderersFactory extends DefaultRenderersFactory {
 
         final boolean enablePassthroughDecoder = sharedPreferences.getBoolean(
                 "audio_passthrough_decoder_enabled",
-                false);
+                context.getResources().getBoolean(R.bool.pref_default_audio_passthrough_decoder_enabled));
 
         // Native Audio Decoders
         Timber.d("Adding MediaCodecAudioRenderer");
