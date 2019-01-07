@@ -94,7 +94,7 @@ public class TimerRecordingViewHolder extends RecyclerView.ViewHolder {
                     .into(iconImageView, new Callback() {
                         @Override
                         public void onSuccess() {
-                            iconTextView.setVisibility(View.INVISIBLE);
+                            iconTextView.setVisibility(View.GONE);
                             iconImageView.setVisibility(View.VISIBLE);
                         }
 
@@ -105,7 +105,7 @@ public class TimerRecordingViewHolder extends RecyclerView.ViewHolder {
                     });
         } else {
             iconTextView.setVisibility(View.VISIBLE);
-            iconImageView.setVisibility(View.INVISIBLE);
+            iconImageView.setVisibility(View.GONE);
             iconTextView.setText(R.string.all_channels);
             channelTextView.setText(R.string.all_channels);
         }

@@ -22,12 +22,12 @@
         android:id="@+id/icon"
         android:layout_width="56dp"
         android:layout_height="40dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginLeft="12dp"
         android:layout_marginTop="16dp"
         android:contentDescription="@null"
         android:scaleType="fitStart"
-        android:visibility="invisible"
+        android:visibility="gone"
         app:layout_constraintStart_toEndOf="@+id/genre"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -50,13 +50,15 @@
         style="?attr/TitleFont"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="80dp"
+        android:layout_marginLeft="80dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
         android:ellipsize="end"
         android:text="@string/channel"
         app:layout_constraintEnd_toStartOf="@+id/state"
-        app:layout_constraintStart_toEndOf="@+id/icon_text"
+        app:layout_constraintStart_toEndOf="@+id/genre"
         app:layout_constraintTop_toTopOf="parent" />
 
 
@@ -77,13 +79,13 @@
         style="?attr/SubtitleFont"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
         android:ellipsize="end"
         android:singleLine="true"
         android:text="@string/title"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/icon_text"
+        app:layout_constraintStart_toStartOf="@+id/channel"
         app:layout_constraintTop_toBottomOf="@+id/channel" />
 
     <TextView
@@ -91,13 +93,13 @@
         style="?attr/SubtitleFont"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
         android:ellipsize="end"
         android:singleLine="true"
         android:text="@string/subtitle"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/icon_text"
+        app:layout_constraintStart_toStartOf="@+id/channel"
         app:layout_constraintTop_toBottomOf="@+id/title" />
 
     <TextView
@@ -105,11 +107,9 @@
         style="?attr/ContentFont"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
         android:singleLine="true"
         android:text="@string/time"
-        app:layout_constraintStart_toEndOf="@+id/icon_text"
+        app:layout_constraintStart_toStartOf="@+id/channel"
         app:layout_constraintTop_toBottomOf="@+id/subtitle" />
 
     <TextView
@@ -130,11 +130,11 @@
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="0dp"
         android:layout_height="4dip"
-        android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
         android:scaleY="0.5"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/icon_text"
+        app:layout_constraintStart_toStartOf="@+id/channel"
         app:layout_constraintTop_toBottomOf="@+id/duration" />
 
     <TextView
@@ -142,8 +142,8 @@
         style="?attr/ContentFont"
         android:layout_width="0dp"
         android:layout_height="21dp"
-        android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
         android:layout_marginBottom="16dp"
         android:ellipsize="end"
         android:maxLines="2"
@@ -151,7 +151,7 @@
         android:text="@string/title"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/icon_text"
+        app:layout_constraintStart_toStartOf="@+id/channel"
         app:layout_constraintTop_toBottomOf="@+id/progressbar"
         app:layout_constraintVertical_bias="0.0" />
 
@@ -160,8 +160,6 @@
         style="?attr/SubtitleFont"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
         android:layout_marginBottom="16dp"
@@ -170,7 +168,7 @@
         android:text="@string/no_data"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/icon_text"
+        app:layout_constraintStart_toStartOf="@+id/channel"
         app:layout_constraintTop_toBottomOf="@+id/channel"
         app:layout_constraintVertical_bias="0.0" />
 
@@ -178,8 +176,8 @@
         android:id="@+id/dual_pane_list_item_selection"
         android:layout_width="12dp"
         android:layout_height="36dp"
-        android:layout_marginBottom="8dp"
         android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
         android:contentDescription="@null"
         android:scaleType="center"
         app:layout_constraintBottom_toBottomOf="parent"
