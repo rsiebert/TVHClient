@@ -15,6 +15,8 @@ import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
 
+import timber.log.Timber;
+
 public class ProgramData implements DataSourceInterface<Program> {
 
     private static final int LOAD_LAST_IN_CHANNEL = 1;
@@ -33,7 +35,13 @@ public class ProgramData implements DataSourceInterface<Program> {
     }
 
     public void addItems(@NonNull List<Program> items) {
-        AsyncTask.execute(() -> db.getProgramDao().insert(items));
+        AsyncTask.execute(() -> {
+            Timber.d("Saving " + items.size() + " programs");
+            db.getProgramDao().insert(items);
+
+            int count = db.getProgramDao().getProgramCountSync();
+            Timber.d("Database contains " + count + " programs");
+        });
     }
 
     @Override
