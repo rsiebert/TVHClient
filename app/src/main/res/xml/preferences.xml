@@ -10,7 +10,7 @@
     <PreferenceCategory android:title="@string/pref_user_interface">
         <ListPreference
             android:name="@string/pref_language"
-            android:defaultValue="default"
+            android:defaultValue="@string/pref_default_language"
             android:dialogTitle="@string/pref_language"
             android:entries="@array/pref_language_list_display"
             android:entryValues="@array/pref_language_list"
@@ -18,7 +18,7 @@
             android:summary="@string/pref_language_sum"
             android:title="@string/pref_language" />
         <CheckBoxPreference
-            android:defaultValue="true"
+            android:defaultValue="@bool/pref_default_light_theme_enabled"
             android:key="light_theme_enabled"
             android:summary="@string/pref_theme_sum"
             android:title="@string/pref_theme" />

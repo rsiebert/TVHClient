@@ -3,7 +3,7 @@
 
     <PreferenceCategory android:title="@string/pref_general">
         <CheckBoxPreference
-            android:defaultValue="false"
+            android:defaultValue="@bool/pref_default_internal_player_enabled"
             android:key="internal_player_enabled"
             android:summary="@string/pref_internal_player_enabled_sum"
             android:title="@string/pref_internal_player_enabled" />

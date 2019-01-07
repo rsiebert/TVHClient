@@ -12,15 +12,15 @@
             android:summary="@string/pref_host_sum"
             android:title="@string/pref_host" />
         <EditTextPreference
-            android:defaultValue="9982"
-            android:hint="9982"
+            android:defaultValue="@string/pref_default_htsp_port"
+            android:hint="@string/pref_default_htsp_port"
             android:inputType="number"
             android:key="htsp_port"
             android:summary="@string/pref_port_sum"
             android:title="@string/pref_port" />
         <EditTextPreference
-            android:defaultValue="9981"
-            android:hint="9981"
+            android:defaultValue="@string/pref_default_streaming_port"
+            android:hint="@string/pref_default_streaming_port"
             android:inputType="number"
             android:key="streaming_port"
             android:summary="@string/pref_streaming_port_sum"
@@ -44,7 +44,7 @@
     </PreferenceCategory>
     <PreferenceCategory android:title="Wake On Lan">
         <CheckBoxPreference
-            android:defaultValue="false"
+            android:defaultValue="@bool/pref_default_wol_enabled"
             android:key="wol_enabled"
             android:title="Enable Wake On Lan" />
         <EditTextPreference
@@ -54,15 +54,15 @@
             android:summary="@string/pref_wol_address_sum"
             android:title="@string/pref_wol_address" />
         <CheckBoxPreference
-            android:defaultValue="false"
+            android:defaultValue="@bool/pref_default_wol_broadcast_enabled"
             android:dependency="wol_enabled"
             android:key="wol_broadcast_enabled"
             android:summary="@string/pref_wol_broadcast_sum"
             android:title="@string/pref_wol_broadcast" />
         <EditTextPreference
-            android:defaultValue="9"
+            android:defaultValue="@string/pref_default_wol_port"
             android:dependency="wol_enabled"
-            android:hint="9"
+            android:hint="@string/pref_default_wol_port"
             android:inputType="number"
             android:key="wol_port"
             android:summary="@string/pref_wol_port_sum"
