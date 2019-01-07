@@ -86,7 +86,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
 
         this.dispatcher = dispatcher;
         this.handler = new Handler(handlerThread.getLooper());
-        this.connectionTimeout = Integer.valueOf(sharedPreferences.getString("connectionTimeout", "5")) * 1000;
+        this.connectionTimeout = Integer.valueOf(sharedPreferences.getString("connection_timeout", context.getResources().getString(R.string.pref_default_connection_timeout))) * 1000;
         this.htspVersion = 13;
         this.connection = connection;
     }
@@ -609,7 +609,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
             appRepository.getRecordingData().addItem(recording);
         }
 
-        if (sharedPreferences.getBoolean("notifications_enabled", false)) {
+        if (sharedPreferences.getBoolean("notifications_enabled", context.getResources().getBoolean(R.bool.pref_default_notifications_enabled))) {
             if (recording.isScheduled() && recording.getStart() > new Date().getTime()) {
                 Timber.d("Adding notification for recording " + recording.getTitle());
                 Integer offset = Integer.valueOf(sharedPreferences.getString("notification_lead_time", "0"));
@@ -634,7 +634,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         Recording updatedRecording = EpgSyncUtils.convertMessageToRecordingModel(recording, msg);
         appRepository.getRecordingData().updateItem(updatedRecording);
 
-        if (sharedPreferences.getBoolean("notifications_enabled", false)) {
+        if (sharedPreferences.getBoolean("notifications_enabled", context.getResources().getBoolean(R.bool.pref_default_notifications_enabled))) {
             if (!recording.isScheduled()) {
                 Timber.d("Removing notification for recording " + recording.getTitle());
                 NotificationUtils.removeRecordingNotification(context, recording.getId());
@@ -653,7 +653,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
             Recording recording = appRepository.getRecordingData().getItemById(msg.getInteger("id"));
             if (recording != null) {
                 appRepository.getRecordingData().removeItem(recording);
-                if (sharedPreferences.getBoolean("notifications_enabled", false)) {
+                if (sharedPreferences.getBoolean("notifications_enabled", context.getResources().getBoolean(R.bool.pref_default_notifications_enabled))) {
                     Timber.d("Removing notification for recording " + recording.getTitle());
                     NotificationUtils.removeRecordingNotification(context, recording.getId());
                 }
