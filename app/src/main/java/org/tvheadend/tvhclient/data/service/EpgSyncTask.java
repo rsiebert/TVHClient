@@ -613,7 +613,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
             if (recording.isScheduled() && recording.getStart() > new Date().getTime()) {
                 Timber.d("Adding notification for recording " + recording.getTitle());
                 Integer offset = Integer.valueOf(sharedPreferences.getString("notification_lead_time", "0"));
-                NotificationUtils.addRecordingNotification(context, recording, offset);
+                NotificationUtils.addRecordingNotification(context, recording.getTitle(), recording.getId(), recording.getStart(), offset);
             }
         }
     }
@@ -1065,7 +1065,10 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         if (pendingChannelOps.isEmpty()) {
             return;
         }
+        Timber.d("Saving " + pendingChannelOps.size() + " channels");
         appRepository.getChannelData().addItems(pendingChannelOps);
+
+        Timber.d("Saved " + appRepository.getChannelData().getItems().size() + " channels");
     }
 
     private void flushPendingRecordingsOps() {
@@ -1081,14 +1084,17 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
             Timber.d("Replacing all existing recordings with " + pendingRecordingOps.size() + " recordings...");
             appRepository.getRecordingData().replaceItems(pendingRecordingOps);
         }
+        Timber.d("Saved " + appRepository.getRecordingData().getItems().size() + " recordings");
     }
 
     private void flushPendingEventOps() {
         if (pendingEventOps.isEmpty()) {
             return;
         }
-        Timber.d("Saving " + pendingEventOps.size() + " program data...");
+        Timber.d("Saving " + pendingEventOps.size() + " programs");
         appRepository.getProgramData().addItems(pendingEventOps);
+
+        Timber.d("Saved " + appRepository.getProgramData().getItems().size() + " programs");
     }
 
     /**
