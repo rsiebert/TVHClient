@@ -19,14 +19,17 @@ public class ConnectionViewModel extends AndroidViewModel {
     protected AppRepository appRepository;
     @Inject
     protected SharedPreferences sharedPreferences;
+    private final LiveData<List<Connection>> connections;
 
     public ConnectionViewModel(Application application) {
         super(application);
         MainApplication.getComponent().inject(this);
+
+        connections = appRepository.getConnectionData().getLiveDataItems();
     }
 
     public LiveData<List<Connection>> getAllConnections() {
-        return appRepository.getConnectionData().getLiveDataItems();
+        return connections;
     }
 
     void setConnectionHasChanged(boolean change) {
