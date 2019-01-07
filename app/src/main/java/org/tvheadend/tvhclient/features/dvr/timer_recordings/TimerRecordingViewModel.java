@@ -18,18 +18,26 @@ public class TimerRecordingViewModel extends AndroidViewModel {
     @Inject
     protected AppRepository appRepository;
     private TimerRecording recording;
+    private LiveData<List<TimerRecording>> recordings;
+    private LiveData<Integer> recordingCount;
 
     public TimerRecordingViewModel(Application application) {
         super(application);
         MainApplication.getComponent().inject(this);
+        recordings = appRepository.getTimerRecordingData().getLiveDataItems();
+        recordingCount = appRepository.getTimerRecordingData().getLiveDataItemCount();
     }
 
     public LiveData<List<TimerRecording>> getRecordings() {
-        return appRepository.getTimerRecordingData().getLiveDataItems();
+        return recordings;
     }
 
     LiveData<TimerRecording> getRecordingById(String id) {
         return appRepository.getTimerRecordingData().getLiveDataItemById(id);
+    }
+
+    public LiveData<Integer> getNumberOfRecordings() {
+        return recordingCount;
     }
 
     TimerRecording getRecordingByIdSync(String id) {
@@ -41,9 +49,5 @@ public class TimerRecordingViewModel extends AndroidViewModel {
             }
         }
         return recording;
-    }
-
-    public LiveData<Integer> getNumberOfRecordings() {
-        return appRepository.getTimerRecordingData().getLiveDataItemCount();
     }
 }

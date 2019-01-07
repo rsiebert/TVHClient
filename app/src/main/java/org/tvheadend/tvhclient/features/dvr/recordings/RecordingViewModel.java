@@ -14,37 +14,70 @@ import javax.inject.Inject;
 
 public class RecordingViewModel extends AndroidViewModel {
 
-    private Recording recording;
-
     @Inject
     protected AppRepository appRepository;
+    private Recording recording;
+    private LiveData<List<Recording>> completedRecordings;
+    private LiveData<List<Recording>> scheduledRecordings;
+    private LiveData<List<Recording>> failedRecordings;
+    private LiveData<List<Recording>> removedRecordings;
+    private LiveData<Integer> completedRecordingCount;
+    private LiveData<Integer> scheduledRecordingCount;
+    private LiveData<Integer> failedRecordingCount;
+    private LiveData<Integer> removedRecordingCount;
 
     public RecordingViewModel(Application application) {
         super(application);
         MainApplication.getComponent().inject(this);
+
+        completedRecordings = appRepository.getRecordingData().getLiveDataItemsByType("completed");
+        scheduledRecordings = appRepository.getRecordingData().getLiveDataItemsByType("scheduled");
+        failedRecordings = appRepository.getRecordingData().getLiveDataItemsByType("failed");
+        removedRecordings = appRepository.getRecordingData().getLiveDataItemsByType("removed");
+
+        completedRecordingCount = appRepository.getRecordingData().getLiveDataCountByType("completed");
+        scheduledRecordingCount = appRepository.getRecordingData().getLiveDataCountByType("scheduled");
+        failedRecordingCount = appRepository.getRecordingData().getLiveDataCountByType("failed");
+        removedRecordingCount = appRepository.getRecordingData().getLiveDataCountByType("removed");
     }
 
-    public LiveData<List<Recording>> getCompletedRecordings() {
-        return appRepository.getRecordingData().getLiveDataItemsByType("completed");
+    LiveData<List<Recording>> getCompletedRecordings() {
+        return completedRecordings;
     }
 
     public LiveData<List<Recording>> getScheduledRecordings() {
-        return appRepository.getRecordingData().getLiveDataItemsByType("scheduled");
+        return scheduledRecordings;
     }
 
-    public LiveData<List<Recording>> getFailedRecordings() {
-        return appRepository.getRecordingData().getLiveDataItemsByType("failed");
+    LiveData<List<Recording>> getFailedRecordings() {
+        return failedRecordings;
     }
 
-    public LiveData<List<Recording>> getRemovedRecordings() {
-        return appRepository.getRecordingData().getLiveDataItemsByType("removed");
+    LiveData<List<Recording>> getRemovedRecordings() {
+        return removedRecordings;
     }
 
     LiveData<Recording> getRecordingById(int id) {
         return appRepository.getRecordingData().getLiveDataItemById(id);
     }
 
-    public Recording getRecordingByIdSync(int dvrId) {
+    public LiveData<Integer> getNumberOfCompletedRecordings() {
+        return completedRecordingCount;
+    }
+
+    public LiveData<Integer> getNumberOfScheduledRecordings() {
+        return scheduledRecordingCount;
+    }
+
+    public LiveData<Integer> getNumberOfFailedRecordings() {
+        return failedRecordingCount;
+    }
+
+    public LiveData<Integer> getNumberOfRemovedRecordings() {
+        return removedRecordingCount;
+    }
+
+    Recording getRecordingByIdSync(int dvrId) {
         if (recording == null) {
             if (dvrId > 0) {
                 recording = appRepository.getRecordingData().getItemById(dvrId);
@@ -53,21 +86,5 @@ public class RecordingViewModel extends AndroidViewModel {
             }
         }
         return recording;
-    }
-
-    public LiveData<Integer> getNumberOfCompletedRecordings() {
-        return appRepository.getRecordingData().getLiveDataCountByType("completed");
-    }
-
-    public LiveData<Integer> getNumberOfScheduledRecordings() {
-        return appRepository.getRecordingData().getLiveDataCountByType("scheduled");
-    }
-
-    public LiveData<Integer> getNumberOfFailedRecordings() {
-        return appRepository.getRecordingData().getLiveDataCountByType("failed");
-    }
-
-    public LiveData<Integer> getNumberOfRemovedRecordings() {
-        return appRepository.getRecordingData().getLiveDataCountByType("removed");
     }
 }

@@ -18,18 +18,26 @@ public class SeriesRecordingViewModel extends AndroidViewModel {
     @Inject
     protected AppRepository appRepository;
     private SeriesRecording recording;
+    private LiveData<List<SeriesRecording>> recordings;
+    private LiveData<Integer> recordingCount;
 
     public SeriesRecordingViewModel(Application application) {
         super(application);
         MainApplication.getComponent().inject(this);
+        recordings = appRepository.getSeriesRecordingData().getLiveDataItems();
+        recordingCount = appRepository.getSeriesRecordingData().getLiveDataItemCount();
     }
 
     public LiveData<List<SeriesRecording>> getRecordings() {
-        return appRepository.getSeriesRecordingData().getLiveDataItems();
+        return recordings;
     }
 
     LiveData<SeriesRecording> getRecordingById(String id) {
         return appRepository.getSeriesRecordingData().getLiveDataItemById(id);
+    }
+
+    public LiveData<Integer> getNumberOfRecordings() {
+        return recordingCount;
     }
 
     SeriesRecording getRecordingByIdSync(String id) {
@@ -41,9 +49,5 @@ public class SeriesRecordingViewModel extends AndroidViewModel {
             }
         }
         return recording;
-    }
-
-    public LiveData<Integer> getNumberOfRecordings() {
-        return appRepository.getSeriesRecordingData().getLiveDataItemCount();
     }
 }

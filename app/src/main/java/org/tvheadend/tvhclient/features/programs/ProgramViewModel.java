@@ -17,10 +17,14 @@ public class ProgramViewModel extends AndroidViewModel {
 
     @Inject
     protected AppRepository appRepository;
+    private LiveData<Integer> programCount;
+    private LiveData<List<Recording>> recordings;
 
     public ProgramViewModel(Application application) {
         super(application);
         MainApplication.getComponent().inject(this);
+        recordings = appRepository.getRecordingData().getLiveDataItems();
+        programCount = appRepository.getProgramData().getLiveDataItemCount();
     }
 
     LiveData<List<Program>> getProgramsByChannelFromTime(int channelId, long time) {
@@ -40,10 +44,10 @@ public class ProgramViewModel extends AndroidViewModel {
     }
 
     LiveData<List<Recording>> getRecordings() {
-        return appRepository.getRecordingData().getLiveDataItems();
+        return recordings;
     }
 
     public LiveData<Integer> getNumberOfPrograms() {
-        return appRepository.getProgramData().getLiveDataItemCount();
+        return programCount;
     }
 }
