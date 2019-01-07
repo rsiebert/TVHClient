@@ -75,7 +75,7 @@
         android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp"
         android:contentDescription="@null"
-        app:layout_constraintBottom_toTopOf="@+id/exo_position"
+        app:layout_constraintBottom_toTopOf="@+id/elapsed_time"
         app:layout_constraintEnd_toStartOf="@+id/player_play"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/channel_icon"
@@ -139,7 +139,7 @@
         app:layout_constraintTop_toTopOf="@+id/player_menu_subtitle" />
 
     <TextView
-        android:id="@id/exo_position"
+        android:id="@+id/elapsed_time"
         android:layout_width="wrap_content"
         android:layout_height="26dp"
         android:layout_marginStart="8dp"
@@ -166,12 +166,12 @@
         android:layout_marginBottom="8dp"
         android:layout_weight="1"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/duration"
-        app:layout_constraintStart_toEndOf="@+id/exo_position"
-        app:layout_constraintTop_toTopOf="@+id/exo_position" />
+        app:layout_constraintEnd_toStartOf="@+id/remaining_time"
+        app:layout_constraintStart_toEndOf="@+id/elapsed_time"
+        app:layout_constraintTop_toTopOf="@+id/elapsed_time" />
 
     <TextView
-        android:id="@+id/duration"
+        android:id="@+id/remaining_time"
         android:layout_width="wrap_content"
         android:layout_height="26dp"
         android:layout_marginEnd="8dp"

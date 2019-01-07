@@ -107,8 +107,10 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
     protected TextView nextTitleTextView;
     @BindView(R.id.progress)
     protected DefaultTimeBar progressBar;
-    @BindView(R.id.duration)
-    protected TextView durationTextView;
+    @BindView(R.id.elapsed_time)
+    protected TextView elapsedTimeTextView;
+    @BindView(R.id.remaining_time)
+    protected TextView remainingTimeTextView;
     @BindView(R.id.player_menu_subtitle)
     protected ImageButton playerMenuSubtitleImageView;
     @BindView(R.id.player_menu_aspect_ratio)
@@ -142,6 +144,10 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
     private int selectedAspectRatioListIndex;
     private List<Float> aspectRatioValueList;
     private String[] aspectRatioNameList;
+
+    private long currentTime = new Date().getTime();
+    private Runnable currentTimeUpdateTask;
+    private final Handler currentTimeUpdateHandler = new Handler();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -261,7 +267,7 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
         simpleHtspConnection = null;
     }
 
-    private void showPlaybackInformation(String channelName, String channelIcon, String title, String subtitle, String nextTitle, long duration) {
+    private void showPlaybackInformation(String channelName, String channelIcon, String title, String subtitle, String nextTitle, long start, long stop) {
         // Show the channel icons. Otherwise show the channel name only
         if (!TextUtils.isEmpty(channelIcon)) {
             Picasso.get()
@@ -290,15 +296,32 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
         nextTitleTextView.setVisibility(!TextUtils.isEmpty(nextTitle) ? View.VISIBLE : View.GONE);
         nextTitleTextView.setText(getString(R.string.next_program, nextTitle));
 
-        SimpleDateFormat sdf = new SimpleDateFormat("mm:ss", Locale.US);
-        durationTextView.setText(sdf.format(duration));
+        elapsedTimeTextView.setVisibility(View.INVISIBLE);
+        remainingTimeTextView.setVisibility(View.INVISIBLE);
+
+        // Initiate a timer that will update the elapsed and
+        // remaining time every second when the media is playing
+        currentTimeUpdateTask = () -> {
+            elapsedTimeTextView.setVisibility(View.VISIBLE);
+            remainingTimeTextView.setVisibility(View.VISIBLE);
+
+            SimpleDateFormat sdf = new SimpleDateFormat("mm:ss", Locale.US);
+            remainingTimeTextView.setText(sdf.format(stop - currentTime));
+            elapsedTimeTextView.setText(sdf.format(currentTime - start));
+
+            // Add a second to the time where the program or recording has been started
+            currentTime += 1000;
+
+            currentTimeUpdateHandler.postDelayed(currentTimeUpdateTask, 1000);
+        };
     }
 
     private void initializePlayer() {
         Timber.d("Initializing player");
 
         trackSelector = new TvheadendTrackSelector(new AdaptiveTrackSelection.Factory(null));
-        if (sharedPreferences.getBoolean("audio_tunneling_enabled", false)) {
+        if (sharedPreferences.getBoolean("audio_tunneling_enabled",
+                getResources().getBoolean(R.bool.pref_default_audio_tunneling_enabled))) {
             trackSelector.setTunnelingAudioSessionId(C.generateAudioSessionIdV21(this));
         }
 
@@ -306,7 +329,8 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
                 new DefaultAllocator(true, C.DEFAULT_BUFFER_SEGMENT_SIZE),
                 DefaultLoadControl.DEFAULT_MIN_BUFFER_MS,
                 DefaultLoadControl.DEFAULT_MAX_BUFFER_MS,
-                Integer.parseInt(sharedPreferences.getString("buffer_playback_ms", "500")),
+                Integer.parseInt(sharedPreferences.getString("buffer_playback_ms",
+                        getResources().getString(R.string.pref_default_buffer_playback_ms))),
                 DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS,
                 C.DEFAULT_BUFFER_SEGMENT_SIZE,
                 true);
@@ -363,13 +387,14 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
         if (channelId > 0) {
             Channel channel = appRepository.getChannelData().getItemByIdWithPrograms(channelId, new Date().getTime());
             Program program = appRepository.getProgramData().getItemById(channel.getProgramId());
-            long duration = (program != null ? (program.getStop() - new Date().getTime()) : 0);
+
             showPlaybackInformation(channel.getName(),
                     channel.getIcon(),
                     channel.getProgramTitle(),
                     channel.getProgramSubtitle(),
                     channel.getNextProgramTitle(),
-                    duration);
+                    program.getStart(),
+                    program.getStop());
 
             Uri channelUri = Uri.parse("htsp://channel/" + channelId);
             Timber.d("Channel uri " + channelUri);
@@ -384,7 +409,8 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
                     recording.getTitle(),
                     recording.getSubtitle(),
                     null,
-                    (recording.getStop() - recording.getStart()));
+                    recording.getStart(),
+                    recording.getStop());
 
             Uri recordingUri = Uri.parse("htsp://dvrfile/" + dvrId);
             Timber.d("Recording uri " + recordingUri);
@@ -647,6 +673,7 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
         if (playWhenReady && playbackState == Player.STATE_READY) {
             Timber.d("Media is playing");
             playerIsPaused = false;
+            currentTimeUpdateHandler.post(currentTimeUpdateTask);
 
         } else if (playWhenReady) {
             Timber.d("Player might be idle (plays after prepare()), " +
@@ -656,6 +683,7 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
         } else {
             Timber.d("Player is paused in any state");
             playerIsPaused = true;
+            currentTimeUpdateHandler.removeCallbacks(currentTimeUpdateTask);
         }
 
         updatePlayerButtonStates();
