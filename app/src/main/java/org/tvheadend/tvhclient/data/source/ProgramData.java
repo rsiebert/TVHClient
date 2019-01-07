@@ -3,6 +3,7 @@ package org.tvheadend.tvhclient.data.source;
 import android.arch.lifecycle.LiveData;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import org.tvheadend.tvhclient.data.db.AppRoomDatabase;
 import org.tvheadend.tvhclient.data.entity.EpgProgram;
@@ -61,6 +62,7 @@ public class ProgramData implements DataSourceInterface<Program> {
     }
 
     @Override
+    @Nullable
     public Program getItemById(Object id) {
         try {
             return new ItemLoaderTask(db, (int) id, LOAD_BY_ID).execute().get();
@@ -73,7 +75,13 @@ public class ProgramData implements DataSourceInterface<Program> {
     @Override
     @NonNull
     public List<Program> getItems() {
-        return new ArrayList<>();
+        List<Program> programs = new ArrayList<>();
+        try {
+            programs.addAll(new ProgramLoaderTask(db).execute().get());
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        return programs;
     }
 
     public LiveData<List<Program>> getLiveDataItemsFromTime(long time) {
@@ -84,10 +92,11 @@ public class ProgramData implements DataSourceInterface<Program> {
         return db.getProgramDao().loadProgramsFromChannelFromTime(channelId, time);
     }
 
+    @NonNull
     public List<EpgProgram> getItemByChannelIdAndBetweenTime(int channelId, long startTime, long endTime) {
         List<EpgProgram> programs = new ArrayList<>();
         try {
-            programs.addAll(new ItemsLoaderTask(db, channelId, startTime, endTime).execute().get());
+            programs.addAll(new EpgProgramLoaderTask(db, channelId, startTime, endTime).execute().get());
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
@@ -134,13 +143,13 @@ public class ProgramData implements DataSourceInterface<Program> {
         }
     }
 
-    private static class ItemsLoaderTask extends AsyncTask<Void, Void, List<EpgProgram>> {
+    private static class EpgProgramLoaderTask extends AsyncTask<Void, Void, List<EpgProgram>> {
         private final AppRoomDatabase db;
         private final int channelId;
         private final long startTime;
         private final long endTime;
 
-        ItemsLoaderTask(AppRoomDatabase db, int channelId, long startTime, long endTime) {
+        EpgProgramLoaderTask(AppRoomDatabase db, int channelId, long startTime, long endTime) {
             this.db = db;
             this.channelId = channelId;
             this.startTime = startTime;
@@ -150,6 +159,19 @@ public class ProgramData implements DataSourceInterface<Program> {
         @Override
         protected List<EpgProgram> doInBackground(Void... voids) {
             return db.getProgramDao().loadProgramsFromChannelBetweenTimeSync(channelId, startTime, endTime);
+        }
+    }
+
+    private static class ProgramLoaderTask extends AsyncTask<Void, Void, List<Program>> {
+        private final AppRoomDatabase db;
+
+        ProgramLoaderTask(AppRoomDatabase db) {
+            this.db = db;
+        }
+
+        @Override
+        protected List<Program> doInBackground(Void... voids) {
+            return db.getProgramDao().loadProgramsSync();
         }
     }
 }

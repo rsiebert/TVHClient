@@ -81,6 +81,13 @@ public interface ProgramDao {
     @Transaction
     @Query(PROGRAM_BASE_QUERY +
             "WHERE " + CONNECTION_IS_ACTIVE +
+            "GROUP BY p.id " +
+            "ORDER BY p.start, p.channel_name ASC")
+    List<Program> loadProgramsSync();
+
+    @Transaction
+    @Query(PROGRAM_BASE_QUERY +
+            "WHERE " + CONNECTION_IS_ACTIVE +
             " AND p.id = :id")
     LiveData<Program> loadProgramById(int id);
 
