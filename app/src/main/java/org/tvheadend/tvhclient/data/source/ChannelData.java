@@ -18,6 +18,8 @@ import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
 
+import timber.log.Timber;
+
 public class ChannelData implements DataSourceInterface<Channel> {
 
     private final AppRoomDatabase db;
@@ -101,6 +103,7 @@ public class ChannelData implements DataSourceInterface<Channel> {
      * @return
      */
     public LiveData<List<EpgChannel>> getAllEpgChannels(int channelSortOrder, @NonNull Set<Integer> tagIds) {
+        Timber.d("Loading epg channels with sort order " + channelSortOrder + " and " + tagIds + " tags");
         if (tagIds.size() == 0) {
             return db.getChannelDao().loadAllEpgChannels(channelSortOrder);
         } else {
@@ -115,6 +118,7 @@ public class ChannelData implements DataSourceInterface<Channel> {
      * @return
      */
     public LiveData<List<Channel>> getAllChannelsByTime(long selectedTime, int channelSortOrder, @NonNull Set<Integer> tagIds) {
+        Timber.d("Loading channels from time " + selectedTime + " with sort order " + channelSortOrder + " and " + tagIds + " tags");
         if (tagIds.size() == 0) {
             return db.getChannelDao().loadAllChannelsByTime(selectedTime, channelSortOrder);
         } else {
