@@ -154,15 +154,16 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
 
         viewModel = ViewModelProviders.of(activity).get(EpgViewModel.class);
 
+        Timber.d("Loading selected time");
         viewModel.getSelectedTime().observe(getViewLifecycleOwner(), time -> {
-            Timber.d("Loaded selected time");
+            Timber.d("Loaded selected time " + time);
             this.selectedTime = time;
         });
 
         Timber.d("Loading channel tags");
         viewModel.getChannelTags().observe(getViewLifecycleOwner(), channelTags -> {
             if (channelTags != null) {
-                Timber.d("Loaded channel tags");
+                Timber.d("Loaded " + channelTags.size() + " channel tags");
                 this.channelTags = channelTags;
             }
         });

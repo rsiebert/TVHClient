@@ -115,15 +115,16 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
 
         viewModel = ViewModelProviders.of(activity).get(ChannelViewModel.class);
 
+        Timber.d("Loading selected tags");
         viewModel.getSelectedTime().observe(getViewLifecycleOwner(), time -> {
-            Timber.d("Loaded selected time");
+            Timber.d("Loaded selected time " + time);
             this.selectedTime = time;
         });
 
         Timber.d("Loading channel tags");
         viewModel.getChannelTags().observe(getViewLifecycleOwner(), channelTags -> {
             if (channelTags != null) {
-                Timber.d("Loaded channel tags");
+                Timber.d("Loaded " + channelTags.size() + " channel tags");
                 this.channelTags = channelTags;
             }
         });
