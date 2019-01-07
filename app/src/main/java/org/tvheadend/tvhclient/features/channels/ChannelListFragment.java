@@ -347,7 +347,12 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
         PopupMenu popupMenu = new PopupMenu(activity, view);
         popupMenu.getMenuInflater().inflate(R.menu.program_popup_and_toolbar_menu, popupMenu.getMenu());
         popupMenu.getMenuInflater().inflate(R.menu.external_search_options_menu, popupMenu.getMenu());
-        menuUtils.onPreparePopupMenu(popupMenu.getMenu(), program, recording, isNetworkAvailable);
+
+        menuUtils.onPreparePopupMenu(popupMenu.getMenu(),
+                program != null ? program.getStart() : 0,
+                program != null ? program.getStop() : 0,
+                recording, isNetworkAvailable);
+
         menuUtils.onPreparePopupSearchMenu(popupMenu.getMenu(), isNetworkAvailable);
         popupMenu.getMenu().findItem(R.id.menu_play).setVisible(isNetworkAvailable);
 

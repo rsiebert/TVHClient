@@ -284,7 +284,7 @@ public class ProgramDetailsFragment extends BaseFragment implements RecordingRem
         menuUtils.onPreparePopupSearchMenu(menu, isNetworkAvailable);
         // Show or hide menus of the nested toolbar
         menu = nestedToolbar.getMenu();
-        menuUtils.onPreparePopupMenu(menu, program, recording, isNetworkAvailable);
+        menuUtils.onPreparePopupMenu(menu, program.getStart(), program.getStop(), recording, isNetworkAvailable);
     }
 
     @Override

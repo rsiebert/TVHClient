@@ -564,8 +564,7 @@ public class MenuUtils {
         return true;
     }
 
-    // TODO duplicate code
-    public void onPreparePopupMenu(@NonNull Menu menu, @Nullable EpgProgram program, @Nullable Recording recording, boolean isNetworkAvailable) {
+    public void onPreparePopupMenu(@NonNull Menu menu, long start, long stop, @Nullable Recording recording, boolean isNetworkAvailable) {
         Activity activity = this.activity.get();
         if (activity == null) {
             Timber.d("Weak reference to activity is null");
@@ -622,7 +621,7 @@ public class MenuUtils {
             // Show the play menu item and the cast menu item (if available)
             // when the current time is between the program start and end time
             long currentTime = new Date().getTime();
-            if (program != null && currentTime > program.getStart() && currentTime < program.getStop()) {
+            if (start > 0 && stop > 0 && currentTime > start && currentTime < stop) {
                 menu.findItem(R.id.menu_play).setVisible(true);
                 menu.findItem(R.id.menu_cast).setVisible(MiscUtils.getCastSession(activity) != null);
             }
@@ -632,82 +631,8 @@ public class MenuUtils {
         if (isUnlocked && sharedPreferences.getBoolean("notifications_enabled", true)) {
             long currentTime = new Date().getTime();
             long startTime = currentTime;
-            if (program != null) {
-                startTime = program.getStart();
-            }
-            addReminderMenuItem.setVisible(startTime > currentTime);
-        }
-    }
-
-    public void onPreparePopupMenu(@NonNull Menu menu, @Nullable Program program, @Nullable Recording recording, boolean isNetworkAvailable) {
-        Activity activity = this.activity.get();
-        if (activity == null) {
-            Timber.d("Weak reference to activity is null");
-            return;
-        }
-
-        // Hide the menus because the ones in the toolbar are not hidden when set in the xml
-        for (int i = 0; i < menu.size(); i++) {
-            menu.getItem(i).setVisible(false);
-        }
-
-        MenuItem recordOnceMenuItem = menu.findItem(R.id.menu_record_once);
-        MenuItem recordOnceAndEditMenuItem = menu.findItem(R.id.menu_record_once_and_edit);
-        MenuItem recordOnceCustomProfileMenuItem = menu.findItem(R.id.menu_record_once_custom_profile);
-        MenuItem recordSeriesMenuItem = menu.findItem(R.id.menu_record_series);
-        MenuItem recordRemoveMenuItem = menu.findItem(R.id.menu_record_remove);
-        MenuItem recordStopMenuItem = menu.findItem(R.id.menu_record_stop);
-        MenuItem recordCancelMenuItem = menu.findItem(R.id.menu_record_cancel);
-        MenuItem playMenuItem = menu.findItem(R.id.menu_play);
-        MenuItem castMenuItem = menu.findItem(R.id.menu_cast);
-        MenuItem addReminderMenuItem = menu.findItem(R.id.menu_add_notification);
-
-        if (isNetworkAvailable) {
-            if (recording == null || (!recording.isRecording()
-                    && !recording.isScheduled()
-                    && !recording.isCompleted())) {
-                Timber.d("Recording is not recording or scheduled");
-                recordOnceMenuItem.setVisible(true);
-                recordOnceAndEditMenuItem.setVisible(isUnlocked);
-                recordOnceCustomProfileMenuItem.setVisible(isUnlocked);
-                recordSeriesMenuItem.setVisible(serverStatus.getHtspVersion() >= 13);
-
-            } else if (recording.isCompleted()) {
-                Timber.d("Recording is completed ");
-                playMenuItem.setVisible(true);
-                castMenuItem.setVisible(MiscUtils.getCastSession(activity) != null);
-                recordRemoveMenuItem.setVisible(true);
-
-            } else if (recording.isScheduled() && !recording.isRecording()) {
-                Timber.d("Recording is scheduled");
-                recordCancelMenuItem.setVisible(true);
-
-            } else if (recording.isRecording()) {
-                Timber.d("Recording is being recorded");
-                playMenuItem.setVisible(true);
-                castMenuItem.setVisible(MiscUtils.getCastSession(activity) != null);
-                recordStopMenuItem.setVisible(true);
-
-            } else if (recording.isFailed() || recording.isFileMissing() || recording.isMissed() || recording.isAborted()) {
-                Timber.d("Recording is something else");
-                recordRemoveMenuItem.setVisible(true);
-            }
-
-            // Show the play menu item and the cast menu item (if available)
-            // when the current time is between the program start and end time
-            long currentTime = new Date().getTime();
-            if (program != null && currentTime > program.getStart() && currentTime < program.getStop()) {
-                menu.findItem(R.id.menu_play).setVisible(true);
-                menu.findItem(R.id.menu_cast).setVisible(MiscUtils.getCastSession(activity) != null);
-            }
-        }
-        // Show the add reminder menu only for programs and
-        // recordings where the start time is in the future.
-        if (isUnlocked && sharedPreferences.getBoolean("notifications_enabled", true)) {
-            long currentTime = new Date().getTime();
-            long startTime = currentTime;
-            if (program != null) {
-                startTime = program.getStart();
+            if (start > 0) {
+                startTime = start;
             }
             addReminderMenuItem.setVisible(startTime > currentTime);
         }
@@ -778,7 +703,12 @@ public class MenuUtils {
 
         Integer offset = Integer.valueOf(sharedPreferences.getString("notification_lead_time", "0"));
         ServerProfile profile = appRepository.getServerProfileData().getItemById(serverStatus.getRecordingServerProfileId());
-        NotificationUtils.addProgramNotification(activity, program, offset, profile, serverStatus);
+        NotificationUtils.addProgramNotification(activity,
+                program.getTitle(),
+                program.getEventId(),
+                program.getChannelId(),
+                program.getStart(),
+                offset, profile, serverStatus);
         return true;
     }
 
@@ -793,7 +723,12 @@ public class MenuUtils {
 
         Integer offset = Integer.valueOf(sharedPreferences.getString("notification_lead_time", "0"));
         ServerProfile profile = appRepository.getServerProfileData().getItemById(serverStatus.getRecordingServerProfileId());
-        NotificationUtils.addProgramNotification(activity, program, offset, profile, serverStatus);
+        NotificationUtils.addProgramNotification(activity,
+                program.getTitle(),
+                program.getEventId(),
+                program.getChannelId(),
+                program.getStart(),
+                offset, profile, serverStatus);
         return true;
     }
 
