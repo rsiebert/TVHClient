@@ -8,9 +8,6 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import org.tvheadend.tvhclient.data.entity.EpgProgram;
-import org.tvheadend.tvhclient.data.entity.Program;
-import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.data.entity.ServerProfile;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
 import org.tvheadend.tvhclient.features.notifications.ProgramNotificationReceiver;
@@ -28,71 +25,69 @@ public class NotificationUtils {
         throw new IllegalAccessError("Utility class");
     }
 
-    // TODO duplicate code
-    static void addProgramNotification(@NonNull Context context, @NonNull EpgProgram program, Integer offset, @Nullable ServerProfile profile, @NonNull ServerStatus serverStatus) {
+    /**
+     *
+     * @param context
+     * @param title
+     * @param eventId
+     * @param channelId
+     * @param start
+     * @param offset
+     * @param profile
+     * @param serverStatus
+     */
+    static void addProgramNotification(@NonNull Context context, @NonNull String title, int eventId, int channelId, long start, int offset, @Nullable ServerProfile profile, @NonNull ServerStatus serverStatus) {
+
         Intent intent = new Intent(context, ProgramNotificationReceiver.class);
-        intent.putExtra("eventTitle", program.getTitle());
-        intent.putExtra("eventId", program.getEventId());
-        intent.putExtra("channelId", program.getChannelId());
-        intent.putExtra("start", program.getStart());
+        intent.putExtra("eventTitle", title);
+        intent.putExtra("eventId", eventId);
+        intent.putExtra("channelId", channelId);
+        intent.putExtra("start", start);
 
         if (MiscUtils.isServerProfileEnabled(profile, serverStatus)) {
             intent.putExtra("configName", profile.getName());
         }
 
-        long notificationTime = getNotificationTime(program.getStart(), offset);
-
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, program.getEventId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, eventId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager am = (AlarmManager) context.getSystemService(ALARM_SERVICE);
         if (am != null) {
-            Timber.d("Created notification for program " + program.getTitle() + " with id " + program.getEventId());
-            am.set(AlarmManager.RTC_WAKEUP, notificationTime, pendingIntent);
+            Timber.d("Created notification for program " + title + " with id " + eventId);
+            am.set(AlarmManager.RTC_WAKEUP, getNotificationTime(start, offset), pendingIntent);
         } else {
-            Timber.e("Could not get alarm manager to create notification for program " + program.getTitle() + " with id " + program.getEventId());
+            Timber.e("Could not get alarm manager to create notification for program " + title + " with id " + eventId);
         }
     }
 
-    static void addProgramNotification(@NonNull Context context, @NonNull Program program, Integer offset, @Nullable ServerProfile profile, @NonNull ServerStatus serverStatus) {
-        Intent intent = new Intent(context, ProgramNotificationReceiver.class);
-        intent.putExtra("eventTitle", program.getTitle());
-        intent.putExtra("eventId", program.getEventId());
-        intent.putExtra("channelId", program.getChannelId());
-        intent.putExtra("start", program.getStart());
-
-        if (MiscUtils.isServerProfileEnabled(profile, serverStatus)) {
-            intent.putExtra("configName", profile.getName());
-        }
-
-        long notificationTime = getNotificationTime(program.getStart(), offset);
-
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, program.getEventId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        AlarmManager am = (AlarmManager) context.getSystemService(ALARM_SERVICE);
-        if (am != null) {
-            Timber.d("Created notification for program " + program.getTitle() + " with id " + program.getEventId());
-            am.set(AlarmManager.RTC_WAKEUP, notificationTime, pendingIntent);
-        } else {
-            Timber.e("Could not get alarm manager to create notification for program " + program.getTitle() + " with id " + program.getEventId());
-        }
-    }
-
-    public static void addRecordingNotification(@NonNull Context context, @NonNull Recording recording, int offset) {
+    /**
+     *
+     * @param context
+     * @param title
+     * @param dvrId
+     * @param start
+     * @param offset
+     */
+    public static void addRecordingNotification(@NonNull Context context, @NonNull String title, int dvrId, long start, int offset) {
         Intent intent = new Intent(context, RecordingNotificationReceiver.class);
-        intent.putExtra("dvrTitle", recording.getTitle());
-        intent.putExtra("dvrId", recording.getId());
-        intent.putExtra("start", recording.getStart());
+        intent.putExtra("dvrTitle", title);
+        intent.putExtra("dvrId", dvrId);
+        intent.putExtra("start", start);
 
-        long notificationTime = getNotificationTime(recording.getStart(), offset);
-
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, recording.getId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, dvrId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager am = (AlarmManager) context.getSystemService(ALARM_SERVICE);
         if (am != null) {
-            Timber.d("Created notification for recording " + recording.getTitle() + " with id " + recording.getId());
-            am.set(AlarmManager.RTC_WAKEUP, notificationTime, pendingIntent);
+            Timber.d("Created notification for recording " + title + " with id " + dvrId);
+            am.set(AlarmManager.RTC_WAKEUP, getNotificationTime(start, offset), pendingIntent);
         } else {
-            Timber.e("Could not get alarm manager to create notification for recording " + recording.getTitle() + " with id " + recording.getId());
+            Timber.e("Could not get alarm manager to create notification for recording " + title + " with id " + dvrId);
         }
     }
 
+    /**
+     *
+     * @param startTime
+     * @param offset
+     * @return
+     */
     private static long getNotificationTime(long startTime, int offset) {
         long currentTime = new Date().getTime();
         long notificationTime = (startTime - (offset * 1000 * 60));
