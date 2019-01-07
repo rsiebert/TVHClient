@@ -7,9 +7,11 @@ import android.support.annotation.WorkerThread;
 import org.tvheadend.tvhclient.data.db.AppRoomDatabase;
 import org.tvheadend.tvhclient.data.entity.ChannelTag;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
 
@@ -56,7 +58,6 @@ public class ChannelTagData implements DataSourceInterface<ChannelTag> {
     }
 
     /**
-     *
      * @param id
      * @return
      */
@@ -80,7 +81,12 @@ public class ChannelTagData implements DataSourceInterface<ChannelTag> {
      */
     @WorkerThread
     public Set<Integer> getSelectedChannelTagIds() {
-        List<Integer> tags = db.getChannelTagDao().loadAllSelectedChannelTagIds();
+        List<Integer> tags = new ArrayList<>();
+        try {
+            tags = new ItemsLoaderTask(db).execute().get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
         return new HashSet<>(tags);
     }
 
@@ -98,5 +104,18 @@ public class ChannelTagData implements DataSourceInterface<ChannelTag> {
             }
             db.getChannelTagDao().update(channelTags);
         });
+    }
+
+    private static class ItemsLoaderTask extends AsyncTask<Void, Void, List<Integer>> {
+        private final AppRoomDatabase db;
+
+        ItemsLoaderTask(AppRoomDatabase db) {
+            this.db = db;
+        }
+
+        @Override
+        protected List<Integer> doInBackground(Void... voids) {
+            return db.getChannelTagDao().loadAllSelectedChannelTagIds();
+        }
     }
 }
