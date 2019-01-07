@@ -262,22 +262,27 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
     }
 
     private void showPlaybackInformation(String channelName, String channelIcon, String title, String subtitle, String nextTitle, long duration) {
-        Picasso.get()
-                .load(UIUtils.getIconUrl(this, channelIcon))
-                .into(iconImageView, new Callback() {
-                    @Override
-                    public void onSuccess() {
-                        iconTextView.setVisibility(View.INVISIBLE);
-                        iconImageView.setVisibility(View.VISIBLE);
-                    }
+        // Show the channel icons. Otherwise show the channel name only
+        if (!TextUtils.isEmpty(channelIcon)) {
+            Picasso.get()
+                    .load(UIUtils.getIconUrl(this, channelIcon))
+                    .into(iconImageView, new Callback() {
+                        @Override
+                        public void onSuccess() {
+                            iconTextView.setVisibility(View.GONE);
+                            iconImageView.setVisibility(View.VISIBLE);
+                        }
 
-                    @Override
-                    public void onError(Exception e) {
-                        iconTextView.setText(channelName);
-                        iconTextView.setVisibility(!TextUtils.isEmpty(channelName) ? View.VISIBLE : View.GONE);
-                        iconImageView.setVisibility(View.INVISIBLE);
-                    }
-                });
+                        @Override
+                        public void onError(Exception e) {
+
+                        }
+                    });
+        } else {
+            iconTextView.setText(channelName);
+            iconTextView.setVisibility(View.VISIBLE);
+            iconImageView.setVisibility(View.GONE);
+        }
 
         titleTextView.setText(title);
         subtitleTextView.setVisibility(!TextUtils.isEmpty(subtitle) ? View.VISIBLE : View.GONE);
