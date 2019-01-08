@@ -9,18 +9,17 @@ import org.tvheadend.tvhclient.data.service.EpgSyncIntentService;
 import org.tvheadend.tvhclient.data.service.EpgSyncService;
 import org.tvheadend.tvhclient.data.service.EpgSyncTask;
 import org.tvheadend.tvhclient.features.MainActivity;
-import org.tvheadend.tvhclient.features.channels.ChannelViewModel;
 import org.tvheadend.tvhclient.features.download.DownloadRecordingManager;
 import org.tvheadend.tvhclient.features.dvr.recordings.RecordingViewModel;
 import org.tvheadend.tvhclient.features.dvr.series_recordings.SeriesRecordingViewModel;
 import org.tvheadend.tvhclient.features.dvr.timer_recordings.TimerRecordingViewModel;
-import org.tvheadend.tvhclient.features.epg.EpgViewModel;
 import org.tvheadend.tvhclient.features.epg.EpgViewPagerFragment;
 import org.tvheadend.tvhclient.features.programs.ProgramViewModel;
 import org.tvheadend.tvhclient.features.settings.BasePreferenceFragment;
 import org.tvheadend.tvhclient.features.settings.ConnectionViewModel;
 import org.tvheadend.tvhclient.features.settings.SettingsConnectionBaseFragment;
 import org.tvheadend.tvhclient.features.settings.SettingsListConnectionsFragment;
+import org.tvheadend.tvhclient.features.shared.BaseChannelViewModel;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
 import org.tvheadend.tvhclient.features.startup.StartupFragment;
 import org.tvheadend.tvhclient.features.streaming.external.BasePlaybackActivity;
@@ -90,7 +89,5 @@ public interface MainApplicationComponent {
 
     void inject(SettingsConnectionBaseFragment settingsConnectionBaseFragment);
 
-    void inject(ChannelViewModel channelViewModel);
-
-    void inject(EpgViewModel epgViewModel);
+    void inject(BaseChannelViewModel baseChannelViewModel);
 }

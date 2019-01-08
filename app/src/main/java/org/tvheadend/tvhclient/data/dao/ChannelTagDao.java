@@ -56,7 +56,7 @@ public interface ChannelTagDao {
             "WHERE " + CONNECTION_IS_ACTIVE +
             "AND is_selected = 1 " +
             "ORDER BY tag_name")
-    List<Integer> loadAllSelectedChannelTagIds();
+    LiveData<List<Integer>> loadAllSelectedItemIds();
 
     @Query("SELECT COUNT (*) FROM channel_tags " +
             "WHERE " + CONNECTION_IS_ACTIVE)

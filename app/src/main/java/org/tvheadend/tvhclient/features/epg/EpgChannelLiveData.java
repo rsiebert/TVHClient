@@ -4,12 +4,12 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MediatorLiveData;
 import android.support.v4.util.Pair;
 
-import java.util.Set;
+import java.util.List;
 
-class EpgChannelLiveData extends MediatorLiveData<Pair<Integer, Set<Integer>>> {
+class EpgChannelLiveData extends MediatorLiveData<Pair<Integer, List<Integer>>> {
 
     EpgChannelLiveData(LiveData<Integer> selectedChannelSortOrder,
-                              LiveData<Set<Integer>> selectedChannelTagIds) {
+                              LiveData<List<Integer>> selectedChannelTagIds) {
 
         addSource(selectedChannelSortOrder, order ->
                 setValue(Pair.create(order, selectedChannelTagIds.getValue()))

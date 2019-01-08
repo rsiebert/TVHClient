@@ -79,7 +79,7 @@ public interface ChannelDao {
             " AND c.id IN (SELECT channel_id FROM tags_and_channels WHERE tag_id IN (:tagIds)) " +
             "GROUP BY c.id " +
             ORDER_BY)
-    LiveData<List<Channel>> loadAllChannelsByTimeAndTag(long time, int sortOrder, Set<Integer> tagIds);
+    LiveData<List<Channel>> loadAllChannelsByTimeAndTag(long time, int sortOrder, List<Integer> tagIds);
 
     @Transaction
     @Query(CHANNEL_BASE_QUERY +
@@ -134,5 +134,5 @@ public interface ChannelDao {
             "WHERE " + CONNECTION_IS_ACTIVE +
             " AND c.id IN (SELECT channel_id FROM tags_and_channels WHERE tag_id IN (:tagIds)) " +
             ORDER_BY)
-    LiveData<List<EpgChannel>> loadAllEpgChannelsByTag(int sortOrder, Set<Integer> tagIds);
+    LiveData<List<EpgChannel>> loadAllEpgChannelsByTag(int sortOrder, List<Integer> tagIds);
 }

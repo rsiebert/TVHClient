@@ -5,13 +5,13 @@ import android.arch.lifecycle.MediatorLiveData;
 
 import org.tvheadend.tvhclient.utils.Triple;
 
-import java.util.Set;
+import java.util.List;
 
-class ChannelLiveData extends MediatorLiveData<Triple<Long, Integer, Set<Integer>>> {
+class ChannelLiveData extends MediatorLiveData<Triple<Long, Integer, List<Integer>>> {
 
     ChannelLiveData(LiveData<Long> selectedTime,
                     LiveData<Integer> selectedChannelSortOrder,
-                    LiveData<Set<Integer>> selectedChannelTagIds) {
+                    LiveData<List<Integer>> selectedChannelTagIds) {
 
         addSource(selectedTime, time ->
                 setValue(Triple.create(time, selectedChannelSortOrder.getValue(), selectedChannelTagIds.getValue()))

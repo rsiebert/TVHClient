@@ -117,7 +117,7 @@ public class ChannelData implements DataSourceInterface<Channel> {
         return null;
     }
 
-    public LiveData<List<EpgChannel>> getAllEpgChannels(int channelSortOrder, @NonNull Set<Integer> tagIds) {
+    public LiveData<List<EpgChannel>> getAllEpgChannels(int channelSortOrder, @NonNull List<Integer> tagIds) {
         Timber.d("Loading epg channels with sort order " + channelSortOrder + " and " + tagIds.size() + " tags");
         if (tagIds.size() == 0) {
             return db.getChannelDao().loadAllEpgChannels(channelSortOrder);
@@ -126,7 +126,7 @@ public class ChannelData implements DataSourceInterface<Channel> {
         }
     }
 
-    public LiveData<List<Channel>> getAllChannelsByTime(long selectedTime, int channelSortOrder, @NonNull Set<Integer> tagIds) {
+    public LiveData<List<Channel>> getAllChannelsByTime(long selectedTime, int channelSortOrder, @NonNull List<Integer> tagIds) {
         Timber.d("Loading channels from time " + selectedTime + " with sort order " + channelSortOrder + " and " + tagIds.size() + " tags");
         if (tagIds.size() == 0) {
             return db.getChannelDao().loadAllChannelsByTime(selectedTime, channelSortOrder);
