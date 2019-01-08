@@ -154,29 +154,29 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
 
         viewModel = ViewModelProviders.of(activity).get(EpgViewModel.class);
 
-        Timber.d("Loading selected time");
+        Timber.d("Observing selected time");
         viewModel.getSelectedTime().observe(getViewLifecycleOwner(), time -> {
-            Timber.d("Loaded selected time " + time);
-            this.selectedTime = time;
+            Timber.d("View model returned selected time " + time);
+            selectedTime = time;
         });
 
-        Timber.d("Loading channel tags");
-        viewModel.getChannelTags().observe(getViewLifecycleOwner(), channelTags -> {
-            if (channelTags != null) {
-                Timber.d("Loaded " + channelTags.size() + " channel tags");
-                this.channelTags = channelTags;
+        Timber.d("Observing channel tags");
+        viewModel.getChannelTags().observe(getViewLifecycleOwner(), tags -> {
+            if (tags != null) {
+                Timber.d("View model returned " + tags.size() + " channel tags");
+                channelTags = tags;
             }
         });
 
-        Timber.d("Loading epg channels");
-        viewModel.getChannelSubsets().observe(getViewLifecycleOwner(), channels -> {
-            Timber.d("Done loading epg channels");
+        Timber.d("Observing epg channels");
+        viewModel.getEpgChannels().observe(getViewLifecycleOwner(), channels -> {
 
             progressBar.setVisibility(View.GONE);
             channelListRecyclerView.setVisibility(View.VISIBLE);
             programViewPager.setVisibility(View.VISIBLE);
 
             if (channels != null) {
+                Timber.d("View model returned " + channels.size() + " epg channels");
                 channelListRecyclerViewAdapter.addItems(channels);
             }
             // Show either all channels or the name of the selected
