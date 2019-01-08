@@ -420,11 +420,15 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
             return;
         }
 
-        Timber.d("Adding channel tag");
         // During initial sync no channels are yet saved. So use the temporarily
         // stored channels to calculate the channel count for the channel tag
         ChannelTag addedTag = EpgSyncUtils.convertMessageToChannelTagModel(new ChannelTag(), msg, pendingChannelOps);
         addedTag.setConnectionId(connection.getId());
+
+        sendEpgSyncStatusMessage(ServiceStatusReceiver.State.SYNC_IN_PROGRESS,
+                context.getString(R.string.saving_data),
+                "Receiving channel tags");
+
         appRepository.getChannelTagData().addItem(addedTag);
         // Get the tag id and all channel ids of the tag so that
         // new entries where the tagId is present can be added to the database
@@ -448,7 +452,10 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
             return;
         }
 
-        Timber.d("Updating channel tag");
+        sendEpgSyncStatusMessage(ServiceStatusReceiver.State.SYNC_IN_PROGRESS,
+                context.getString(R.string.saving_data),
+                "Updating channel tags");
+
         ChannelTag channelTag = appRepository.getChannelTagData().getItemById(msg.getInteger("tagId"));
         if (channelTag == null) {
             Timber.d("Could not find a channel tag with id " + msg.getInteger("tagId") + " in the database");
@@ -520,7 +527,6 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
             return;
         }
 
-        Timber.d("Adding channel");
         Channel channel = EpgSyncUtils.convertMessageToChannelModel(new Channel(), msg);
         channel.setConnectionId(connection.getId());
         pendingChannelOps.add(channel);
@@ -593,8 +599,6 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
      * @param msg The message with the new recording data
      */
     private void handleDvrEntryAdd(HtspMessage msg) {
-        Timber.d("Adding recording");
-
         Recording recording = EpgSyncUtils.convertMessageToRecordingModel(new Recording(), msg);
         recording.setConnectionId(connection.getId());
         if (fullSyncRequired || initialSyncWithServerRunning) {
@@ -754,8 +758,6 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
      * @param msg The message with the new epg event data
      */
     private void handleEventAdd(HtspMessage msg) {
-        Timber.d("Adding program guide event");
-
         Program program = EpgSyncUtils.convertMessageToProgramModel(new Program(), msg);
         program.setConnectionId(connection.getId());
         if (fullSyncRequired || initialSyncWithServerRunning) {
@@ -798,7 +800,6 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
             appRepository.getProgramData().removeItemById(msg.getInteger("id"));
         }
     }
-
 
     private void handleHtspProfiles(HtspMessage message) {
         Timber.d("Handling htsp playback profiles");
@@ -1062,17 +1063,16 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     }
 
     private void flushPendingChannelOps() {
+        Timber.d("Saving " + pendingChannelOps.size() + " channels");
         if (pendingChannelOps.isEmpty()) {
             return;
         }
-        Timber.d("Saving " + pendingChannelOps.size() + " channels");
         appRepository.getChannelData().addItems(pendingChannelOps);
-
-        Timber.d("Saved " + appRepository.getChannelData().getItems().size() + " channels");
+        Timber.d("Database contains " + appRepository.getChannelData().getItemCount() + " channels");
     }
 
     private void flushPendingRecordingsOps() {
-        Timber.d("Flushing all received recordings");
+        Timber.d("Saving all received recordings");
         // Remove all recordings from the database to prevent being out of sync with the server.
         // This could be the case when the app was offline for a while and it did not receive
         // any recording removal information from the server. During the initial sync the
@@ -1084,17 +1084,17 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
             Timber.d("Replacing all existing recordings with " + pendingRecordingOps.size() + " recordings...");
             appRepository.getRecordingData().replaceItems(pendingRecordingOps);
         }
-        Timber.d("Saved " + appRepository.getRecordingData().getItems().size() + " recordings");
+        Timber.d("Database contains " + appRepository.getRecordingData().getItemCount() + " recordings");
     }
 
     private void flushPendingEventOps() {
+        Timber.d("Saving " + pendingEventOps.size() + " programs");
         if (pendingEventOps.isEmpty()) {
             return;
         }
-        Timber.d("Saving " + pendingEventOps.size() + " programs");
         appRepository.getProgramData().addItems(pendingEventOps);
 
-        Timber.d("Saved " + appRepository.getProgramData().getItems().size() + " programs");
+        Timber.d("Database contains " + appRepository.getProgramData().getItemCount() + " programs");
     }
 
     /**
