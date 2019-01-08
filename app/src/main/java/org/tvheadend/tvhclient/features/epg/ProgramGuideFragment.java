@@ -189,8 +189,10 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
 
         // Observe all recordings here in case a recording shall be edited right after it was added.
         // This needs to be done in this fragment because the popup menu handling is also done here.
+        Timber.d("Observing recordings");
         viewModel.getAllRecordings().observe(getViewLifecycleOwner(), recordings -> {
             if (recordings != null) {
+                Timber.d("View model returned " + recordings.size() + " recordings");
                 for (Recording recording : recordings) {
                     // Show the edit recording screen of the scheduled recording
                     // in case the user has selected the record and edit menu item.

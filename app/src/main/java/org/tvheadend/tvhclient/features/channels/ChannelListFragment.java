@@ -151,8 +151,10 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
         // Get all recordings for the given channel to check if it belongs to a certain program
         // so the recording status of the particular program can be updated. This is required
         // because the programs are not updated automatically when recordings change.
+        Timber.d("Observing recordings");
         viewModel.getAllRecordings().observe(getViewLifecycleOwner(), recordings -> {
             if (recordings != null) {
+                Timber.d("View model returned " + recordings.size() + " recordings");
                 recyclerViewAdapter.addRecordings(recordings);
                 for (Recording recording : recordings) {
                     // Show the edit recording screen of the scheduled recording
