@@ -57,8 +57,6 @@ import javax.inject.Inject;
 import io.fabric.sdk.android.Fabric;
 import timber.log.Timber;
 
-// TODO use livedata for server status and connection
-
 public class MenuUtils {
 
     @Inject
