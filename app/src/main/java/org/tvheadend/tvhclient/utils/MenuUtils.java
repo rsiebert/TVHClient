@@ -671,18 +671,19 @@ public class MenuUtils {
                 .negativeText(R.string.cancel)
                 .positiveText(R.string.reconnect)
                 .onPositive((dialog, which) -> {
-                    Timber.d("Reconnect requested, stopping service and clearing last update information");
-
+                    Timber.d("Reconnect requested, stopping service and updating active connection to require a full sync");
                     activity.stopService(new Intent(activity, EpgSyncService.class));
-                    // Update the connection with the information that a new sync is required.
+
                     if (connection != null) {
+                        Timber.d("Updating active connection to request a full sync");
                         connection.setSyncRequired(true);
                         connection.setLastUpdate(0);
                         appRepository.getConnectionData().updateItem(connection);
                     } else {
-                        Timber.e("Connection is null because no active connection is available");
+                        String msg = "Reconnect requested, trying to get active connection from database returned no entry";
+                        Timber.e(msg);
                         if (Fabric.isInitialized()) {
-                            Crashlytics.logException(new Exception("Connection is null because no active connection is available"));
+                            Crashlytics.logException(new Exception(msg));
                         }
                     }
                     // Finally restart the application to show the startup fragment

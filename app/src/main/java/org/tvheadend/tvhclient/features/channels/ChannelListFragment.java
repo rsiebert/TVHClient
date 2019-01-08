@@ -115,25 +115,24 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
 
         viewModel = ViewModelProviders.of(activity).get(ChannelViewModel.class);
 
-        Timber.d("Loading selected tags");
+        Timber.d("Observing selected time");
         viewModel.getSelectedTime().observe(getViewLifecycleOwner(), time -> {
-            Timber.d("Loaded selected time " + time);
-            this.selectedTime = time;
+            Timber.d("View model returned selected time " + time);
+            selectedTime = time;
         });
 
-        Timber.d("Loading channel tags");
-        viewModel.getChannelTags().observe(getViewLifecycleOwner(), channelTags -> {
-            if (channelTags != null) {
-                Timber.d("Loaded " + channelTags.size() + " channel tags");
-                this.channelTags = channelTags;
+        Timber.d("Observing channel tags");
+        viewModel.getChannelTags().observe(getViewLifecycleOwner(), tags -> {
+            if (tags != null) {
+                Timber.d("View model returned " + tags.size() + " channel tags");
+                channelTags = tags;
             }
         });
 
-        Timber.d("Loading channels");
+        Timber.d("Observing channels");
         viewModel.getChannels().observe(getViewLifecycleOwner(), channels -> {
-
             if (channels != null) {
-                Timber.d("Loaded " + channels.size() + " channels");
+                Timber.d("View model returned " + channels.size() + " channels");
                 recyclerViewAdapter.addItems(channels);
             }
             if (recyclerView != null) {
@@ -406,7 +405,11 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
                     return menuUtils.handleMenuCast("channelId", channel.getId());
 
                 case R.id.menu_add_notification:
-                    return menuUtils.handleMenuAddNotificationSelection(program);
+                    if (program != null) {
+                        return menuUtils.handleMenuAddNotificationSelection(program);
+                    } else {
+                        return false;
+                    }
 
                 default:
                     return false;
