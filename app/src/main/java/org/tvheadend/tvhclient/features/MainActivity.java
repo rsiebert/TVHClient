@@ -141,6 +141,14 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Wake
     }
 
     @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        // add the values which need to be saved from the drawer and header to the bundle
+        outState = navigationDrawer.saveInstanceState(outState);
+        outState.putInt("navigationMenuId", selectedNavigationMenuId);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
     public boolean dispatchKeyEvent(@NonNull KeyEvent event) {
         if (castContext != null) {
             return castContext.onDispatchVolumeKeyEventBeforeJellyBean(event) || super.dispatchKeyEvent(event);
@@ -318,14 +326,6 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Wake
                 break;
         }
         return true;
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        // add the values which need to be saved from the drawer and header to the bundle
-        outState = navigationDrawer.saveInstanceState(outState);
-        outState.putInt("navigationMenuId", selectedNavigationMenuId);
-        super.onSaveInstanceState(outState);
     }
 
     @Override
