@@ -168,6 +168,10 @@
         <item name="material_drawer_selected">@color/material_drawer_selected_dark</item>
         <item name="material_drawer_selected_text">@color/material_drawer_selected_text_dark</item>
         <item name="material_drawer_header_selection_text">@color/material_drawer_header_selection_text_dark</item>
+
+        <!-- Fast scrollbar styles -->
+        <item name="fast_scroll_track">@drawable/fast_scroll_track_dark</item>
+        <item name="fast_scroll_thumb">@drawable/fast_scroll_thumb_dark</item>
     </style>
 
     <!-- Styles that will be used for the light holo theme -->
@@ -243,6 +247,10 @@
         <item name="material_drawer_selected">@color/material_drawer_selected_light</item>
         <item name="material_drawer_selected_text">@color/material_drawer_selected_text_light</item>
         <item name="material_drawer_header_selection_text">@color/material_drawer_header_selection_text_light</item>
+
+        <!-- Fast scrollbar styles -->
+        <item name="fast_scroll_track">@drawable/fast_scroll_track_light</item>
+        <item name="fast_scroll_thumb">@drawable/fast_scroll_thumb_light</item>
     </style>
 
     <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">

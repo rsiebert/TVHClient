@@ -71,4 +71,13 @@
 	<color name="title_text_dark">#ceffffff</color>
 	<color name="subtitle_text_dark">#acffffff</color>
 	<color name="content_text_dark">#7cffffff</color>
+
+	<color name="scrollbar_track_light">#F0F0F0</color>
+	<color name="scrollbar_thumb_light">#C9C9C9</color>
+	<color name="scrollbar_thumb_selected_light">#AAAAAA</color>
+
+	<color name="scrollbar_track_dark">#393939</color>
+	<color name="scrollbar_thumb_dark">#777777</color>
+	<color name="scrollbar_thumb_selected_dark">#BBBBBB</color>
+
 </resources>

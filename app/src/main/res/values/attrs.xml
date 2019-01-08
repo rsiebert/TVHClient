@@ -49,6 +49,9 @@
     <attr name="ic_menu_information" format="reference" />
     <attr name="ic_menu_extras" format="reference" />
 
+    <attr name="fast_scroll_track" format="reference" />
+    <attr name="fast_scroll_thumb" format="reference" />
+
     <attr name="material_drawer_badge" format="reference" />
 
     <attr name="minimumValue" format="integer"/>
