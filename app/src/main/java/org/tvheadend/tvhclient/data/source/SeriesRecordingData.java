@@ -13,6 +13,8 @@ import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
 
+import timber.log.Timber;
+
 public class SeriesRecordingData implements DataSourceInterface<SeriesRecording> {
 
     private final AppRoomDatabase db;
@@ -54,9 +56,11 @@ public class SeriesRecordingData implements DataSourceInterface<SeriesRecording>
     @Override
     public SeriesRecording getItemById(Object id) {
         try {
-            return new ItemLoaderTask(db, (String) id).execute().get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
+            return new SeriesRecordingByIdTask(db, (String) id).execute().get();
+        } catch (InterruptedException e) {
+            Timber.d("Loading series recording by id task got interrupted", e);
+        } catch (ExecutionException e) {
+            Timber.d("Loading series recording by id task aborted", e);
         }
         return null;
     }
@@ -67,11 +71,11 @@ public class SeriesRecordingData implements DataSourceInterface<SeriesRecording>
         return new ArrayList<>();
     }
 
-    private static class ItemLoaderTask extends AsyncTask<Void, Void, SeriesRecording> {
+    private static class SeriesRecordingByIdTask extends AsyncTask<Void, Void, SeriesRecording> {
         private final AppRoomDatabase db;
         private final String id;
 
-        ItemLoaderTask(AppRoomDatabase db, String id) {
+        SeriesRecordingByIdTask(AppRoomDatabase db, String id) {
             this.db = db;
             this.id = id;
         }

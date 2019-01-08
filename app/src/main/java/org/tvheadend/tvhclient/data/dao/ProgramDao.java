@@ -135,9 +135,9 @@ public interface ProgramDao {
 
     @Query("SELECT COUNT (*) FROM programs AS p " +
             "WHERE " + CONNECTION_IS_ACTIVE)
-    LiveData<Integer> getProgramCount();
+    LiveData<Integer> getItemCount();
 
     @Query("SELECT COUNT (*) FROM programs AS p " +
             "WHERE " + CONNECTION_IS_ACTIVE)
-    int getProgramCountSync();
+    int getItemCountSync();
 }

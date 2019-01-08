@@ -63,6 +63,6 @@ public class TagAndChannelData implements DataSourceInterface<TagAndChannel> {
     }
 
     public void removeItemByTagId(int id) {
-        db.getTagAndChannelDao().deleteByTagId(id);
+        AsyncTask.execute(() -> db.getTagAndChannelDao().deleteByTagId(id));
     }
 }

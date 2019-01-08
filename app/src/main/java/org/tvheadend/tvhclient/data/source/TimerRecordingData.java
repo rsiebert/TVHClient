@@ -13,6 +13,8 @@ import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
 
+import timber.log.Timber;
+
 public class TimerRecordingData implements DataSourceInterface<TimerRecording> {
 
     private final AppRoomDatabase db;
@@ -54,9 +56,11 @@ public class TimerRecordingData implements DataSourceInterface<TimerRecording> {
     @Override
     public TimerRecording getItemById(Object id) {
         try {
-            return new ItemLoaderTask(db, (String) id).execute().get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
+            return new TimerRecordingByIdTask(db, (String) id).execute().get();
+        } catch (InterruptedException e) {
+            Timber.d("Loading timer recording by id task got interrupted", e);
+        } catch (ExecutionException e) {
+            Timber.d("Loading timer recording by id task aborted", e);
         }
         return null;
     }
@@ -67,11 +71,11 @@ public class TimerRecordingData implements DataSourceInterface<TimerRecording> {
         return new ArrayList<>();
     }
 
-    private static class ItemLoaderTask extends AsyncTask<Void, Void, TimerRecording> {
+    private static class TimerRecordingByIdTask extends AsyncTask<Void, Void, TimerRecording> {
         private final AppRoomDatabase db;
         private final String id;
 
-        ItemLoaderTask(AppRoomDatabase db, String id) {
+        TimerRecordingByIdTask(AppRoomDatabase db, String id) {
             this.db = db;
             this.id = id;
         }

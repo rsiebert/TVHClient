@@ -3,6 +3,7 @@ package org.tvheadend.tvhclient.data.source;
 import android.arch.lifecycle.LiveData;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import org.tvheadend.tvhclient.data.db.AppRoomDatabase;
 import org.tvheadend.tvhclient.data.entity.Connection;
@@ -13,6 +14,8 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
+
+import timber.log.Timber;
 
 public class ConnectionData implements DataSourceInterface<Connection> {
 
@@ -72,11 +75,14 @@ public class ConnectionData implements DataSourceInterface<Connection> {
     }
 
     @Override
+    @Nullable
     public Connection getItemById(Object id) {
         try {
-            return new ItemLoaderTask(db, (int) id).execute().get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
+            return new ConnectionByIdTask(db, (int) id).execute().get();
+        } catch (InterruptedException e) {
+            Timber.d("Loading connection by id task got interrupted", e);
+        } catch (ExecutionException e) {
+            Timber.d("Loading connection by id task aborted", e);
         }
         return null;
     }
@@ -86,32 +92,37 @@ public class ConnectionData implements DataSourceInterface<Connection> {
     public List<Connection> getItems() {
         List<Connection> connections = new ArrayList<>();
         try {
-            connections.addAll(new ItemsLoaderTask(db).execute().get());
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
+            connections.addAll(new ConnectionListTask(db).execute().get());
+        } catch (InterruptedException e) {
+            Timber.d("Loading all connections task got interrupted", e);
+        } catch (ExecutionException e) {
+            Timber.d("Loading all connections task aborted", e);
         }
         return connections;
     }
 
+    @Nullable
     public Connection getActiveItem() {
         try {
-            return new ItemLoaderTask(db).execute().get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
+            return new ConnectionByIdTask(db).execute().get();
+        } catch (InterruptedException e) {
+            Timber.d("Loading active connection task got interrupted", e);
+        } catch (ExecutionException e) {
+            Timber.d("Loading active connection task aborted", e);
         }
         return null;
     }
 
-    private static class ItemLoaderTask extends AsyncTask<Void, Void, Connection> {
+    static class ConnectionByIdTask extends AsyncTask<Void, Void, Connection> {
         private final AppRoomDatabase db;
         private final int id;
 
-        ItemLoaderTask(AppRoomDatabase db, int id) {
+        ConnectionByIdTask(AppRoomDatabase db, int id) {
             this.db = db;
             this.id = id;
         }
 
-        ItemLoaderTask(AppRoomDatabase db) {
+        ConnectionByIdTask(AppRoomDatabase db) {
             this.db = db;
             this.id = -1;
         }
@@ -126,10 +137,10 @@ public class ConnectionData implements DataSourceInterface<Connection> {
         }
     }
 
-    private static class ItemsLoaderTask extends AsyncTask<Void, Void, List<Connection>> {
+    private static class ConnectionListTask extends AsyncTask<Void, Void, List<Connection>> {
         private final AppRoomDatabase db;
 
-        ItemsLoaderTask(AppRoomDatabase db) {
+        ConnectionListTask(AppRoomDatabase db) {
             this.db = db;
         }
 

@@ -3,6 +3,7 @@ package org.tvheadend.tvhclient.data.source;
 import android.arch.lifecycle.LiveData;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import org.tvheadend.tvhclient.data.db.AppRoomDatabase;
 import org.tvheadend.tvhclient.data.entity.Recording;
@@ -12,6 +13,8 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
+
+import timber.log.Timber;
 
 public class RecordingData implements DataSourceInterface<Recording> {
 
@@ -45,12 +48,14 @@ public class RecordingData implements DataSourceInterface<Recording> {
     }
 
     public void removeItems() {
-        db.getRecordingDao().deleteAll();
+        AsyncTask.execute(() -> db.getRecordingDao().deleteAll());
     }
 
     public void replaceItems(@NonNull List<Recording> items) {
-        db.getRecordingDao().deleteAll();
-        db.getRecordingDao().insert(items);
+        AsyncTask.execute(() -> {
+            db.getRecordingDao().deleteAll();
+            db.getRecordingDao().insert(items);
+        });
     }
 
     @Override
@@ -65,6 +70,10 @@ public class RecordingData implements DataSourceInterface<Recording> {
     @Override
     public LiveData<Recording> getLiveDataItemById(Object id) {
         return db.getRecordingDao().loadRecordingById((int) id);
+    }
+
+    public LiveData<List<Recording>> getLiveDataItemsByChannelId(int channelId) {
+        return db.getRecordingDao().loadAllRecordingsByChannelId(channelId);
     }
 
     public LiveData<List<Recording>> getLiveDataItemsByType(String type) {
@@ -100,9 +109,11 @@ public class RecordingData implements DataSourceInterface<Recording> {
     @Override
     public Recording getItemById(Object id) {
         try {
-            return new ItemLoaderTask(db, (int) id, LOAD_BY_ID).execute().get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
+            return new RecordingByIdTask(db, (int) id, LOAD_BY_ID).execute().get();
+        } catch (InterruptedException e) {
+            Timber.d("Loading recording by id task got interrupted", e);
+        } catch (ExecutionException e) {
+            Timber.d("Loading recording by id task aborted", e);
         }
         return null;
     }
@@ -113,25 +124,35 @@ public class RecordingData implements DataSourceInterface<Recording> {
         return new ArrayList<>();
     }
 
-    public LiveData<List<Recording>> getLiveDataItemsByChannelId(int channelId) {
-        return db.getRecordingDao().loadAllRecordingsByChannelId(channelId);
+    public int getItemCount() {
+        try {
+            return new RecordingCountTask(db).execute().get();
+        } catch (InterruptedException e) {
+            Timber.d("Loading recording count task got interrupted", e);
+        } catch (ExecutionException e) {
+            Timber.d("Loading recording count task aborted", e);
+        }
+        return 0;
     }
 
+    @Nullable
     public Recording getItemByEventId(int id) {
         try {
-            return new ItemLoaderTask(db, id, LOAD_BY_EVENT_ID).execute().get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
+            return new RecordingByIdTask(db, id, LOAD_BY_EVENT_ID).execute().get();
+        } catch (InterruptedException e) {
+            Timber.d("Loading recording by event id task got interrupted", e);
+        } catch (ExecutionException e) {
+            Timber.d("Loading recording by event id task aborted", e);
         }
         return null;
     }
 
-    private static class ItemLoaderTask extends AsyncTask<Void, Void, Recording> {
+    private static class RecordingByIdTask extends AsyncTask<Void, Void, Recording> {
         private final AppRoomDatabase db;
         private final int id;
         private final int type;
 
-        ItemLoaderTask(AppRoomDatabase db, int id, int type) {
+        RecordingByIdTask(AppRoomDatabase db, int id, int type) {
             this.db = db;
             this.id = id;
             this.type = type;
@@ -139,13 +160,26 @@ public class RecordingData implements DataSourceInterface<Recording> {
 
         @Override
         protected Recording doInBackground(Void... voids) {
-            switch (type) {
-                case LOAD_BY_EVENT_ID:
-                    return db.getRecordingDao().loadRecordingByEventIdSync(id);
-                case LOAD_BY_ID:
-                    return db.getRecordingDao().loadRecordingByIdSync(id);
+            if (type == LOAD_BY_ID) {
+                return db.getRecordingDao().loadRecordingByIdSync(id);
+            } else if (type == LOAD_BY_EVENT_ID) {
+                return db.getRecordingDao().loadRecordingByEventIdSync(id);
+            } else {
+                return null;
             }
-            return null;
+        }
+    }
+
+    private static class RecordingCountTask extends AsyncTask<Void, Void, Integer> {
+        private final AppRoomDatabase db;
+
+        RecordingCountTask(AppRoomDatabase db) {
+            this.db = db;
+        }
+
+        @Override
+        protected Integer doInBackground(Void... voids) {
+            return db.getRecordingDao().getItemCountSync();
         }
     }
 }

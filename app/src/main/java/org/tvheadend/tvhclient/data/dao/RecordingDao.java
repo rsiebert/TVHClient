@@ -129,4 +129,8 @@ public interface RecordingDao {
             "WHERE (rec.error = 'File missing' AND rec.state = 'completed') " +
             "AND rec.connection_id IN (SELECT id FROM connections WHERE active = 1)")
     LiveData<Integer> getRemovedRecordingCount();
+
+    @Query("SELECT COUNT (*) FROM recordings AS rec " +
+            "WHERE " + CONNECTION_IS_ACTIVE)
+    int getItemCountSync();
 }

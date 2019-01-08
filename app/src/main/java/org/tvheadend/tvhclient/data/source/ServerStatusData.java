@@ -3,6 +3,7 @@ package org.tvheadend.tvhclient.data.source;
 import android.arch.lifecycle.LiveData;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.crashlytics.android.Crashlytics;
 
@@ -44,16 +45,19 @@ public class ServerStatusData implements DataSourceInterface<ServerStatus> {
     }
 
     @Override
+    @Nullable
     public LiveData<Integer> getLiveDataItemCount() {
         return null;
     }
 
     @Override
+    @Nullable
     public LiveData<List<ServerStatus>> getLiveDataItems() {
         return null;
     }
 
     @Override
+    @Nullable
     public LiveData<ServerStatus> getLiveDataItemById(Object id) {
         return db.getServerStatusDao().loadServerStatusById((int) id);
     }
@@ -61,9 +65,11 @@ public class ServerStatusData implements DataSourceInterface<ServerStatus> {
     @Override
     public ServerStatus getItemById(Object id) {
         try {
-            return new ItemLoaderTask(db, (int) id).execute().get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
+            return new ServerStatusByIdTask(db, (int) id).execute().get();
+        } catch (InterruptedException e) {
+            Timber.d("Loading server status by id task got interrupted", e);
+        } catch (ExecutionException e) {
+            Timber.d("Loading server status by id task aborted", e);
         }
         return null;
     }
@@ -74,71 +80,80 @@ public class ServerStatusData implements DataSourceInterface<ServerStatus> {
         return new ArrayList<>();
     }
 
+    @Nullable
     public LiveData<ServerStatus> getLiveDataActiveItem() {
         return db.getServerStatusDao().loadActiveServerStatus();
     }
 
+    @NonNull
     public ServerStatus getActiveItem() {
         Timber.d("Loading active server status");
+        ServerStatus serverStatus = new ServerStatus();
         try {
-            return new ItemLoaderTask(db).execute().get();
+            return new ActiveServerStatusTask(db).execute().get();
         } catch (InterruptedException e) {
-            Timber.e("Failed loading active server status due to interrupt", e);
-            if (Fabric.isInitialized()) {
-                Crashlytics.logException(e);
-            }
+            Timber.d("Loading active server status task got interrupted", e);
         } catch (ExecutionException e) {
-            Timber.e("Failed loading active server status, execution error. Cause " + e.getCause(), e);
-            if (Fabric.isInitialized()) {
-                Crashlytics.logException(e);
-            }
+            Timber.d("Loading active server status task aborted", e);
         }
-        return null;
+        return serverStatus;
     }
 
-    private static class ItemLoaderTask extends AsyncTask<Void, Void, ServerStatus> {
+    private static class ServerStatusByIdTask extends AsyncTask<Void, Void, ServerStatus> {
         private final AppRoomDatabase db;
         private final int id;
 
-        ItemLoaderTask(AppRoomDatabase db, int id) {
+        ServerStatusByIdTask(AppRoomDatabase db, int id) {
             this.db = db;
             this.id = id;
         }
 
-        ItemLoaderTask(AppRoomDatabase db) {
+        @Override
+        protected ServerStatus doInBackground(Void... voids) {
+            return db.getServerStatusDao().loadServerStatusByIdSync(id);
+        }
+    }
+
+    private static class ActiveServerStatusTask extends AsyncTask<Void, Void, ServerStatus> {
+        private final AppRoomDatabase db;
+
+        ActiveServerStatusTask(AppRoomDatabase db) {
             this.db = db;
-            this.id = -1;
         }
 
         @Override
         protected ServerStatus doInBackground(Void... voids) {
-            if (id < 0) {
-                ServerStatus serverStatus = db.getServerStatusDao().loadActiveServerStatusSync();
-                if (serverStatus == null) {
-                    Timber.e("Failed loading active server status, database returned null");
+
+            ServerStatus serverStatus = db.getServerStatusDao().loadActiveServerStatusSync();
+            if (serverStatus == null) {
+                String msg = "Trying to get active server status from database returned no entry.";
+                Timber.e(msg);
+                if (Fabric.isInitialized()) {
+                    Crashlytics.logException(new Exception(msg));
+                }
+
+                Connection connection = db.getConnectionDao().loadActiveConnectionSync();
+                if (connection != null) {
+                    serverStatus = new ServerStatus();
+                    serverStatus.setConnectionId(connection.getId());
+                    db.getServerStatusDao().insert(serverStatus);
+
+                    msg = "Trying to get active server status from database returned no entry.\n" +
+                            "Inserted new server status for active connection " + connection.getId();
+                    Timber.e(msg);
                     if (Fabric.isInitialized()) {
-                        Crashlytics.logException(new Exception("Failed loading active server status, database returned null"));
+                        Crashlytics.logException(new Exception(msg));
                     }
-                    Connection connection = db.getConnectionDao().loadActiveConnectionSync();
-                    if (connection != null) {
-                        Timber.e("Adding new server status for active connection " + connection.getId());
-                        if (Fabric.isInitialized()) {
-                            Crashlytics.logException(new Exception("Adding new server status for active connection " + connection.getId()));
-                        }
-                        serverStatus = new ServerStatus();
-                        serverStatus.setConnectionId(connection.getId());
-                        db.getServerStatusDao().insert(serverStatus);
-                    } else {
-                        Timber.e("Server status is null because no active connection is available");
-                        if (Fabric.isInitialized()) {
-                            Crashlytics.logException(new Exception("Server status is null because no active connection is available"));
-                        }
+                } else {
+                    msg = "Trying to get active server status from database returned no entry.\n" +
+                            "loading active connection to add a new server status also returned no entry";
+                    Timber.e(msg);
+                    if (Fabric.isInitialized()) {
+                        Crashlytics.logException(new Exception(msg));
                     }
                 }
-                return serverStatus;
-            } else {
-                return db.getServerStatusDao().loadServerStatusByIdSync(id);
             }
+            return serverStatus;
         }
     }
 }

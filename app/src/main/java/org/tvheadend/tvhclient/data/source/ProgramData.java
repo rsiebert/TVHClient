@@ -35,13 +35,7 @@ public class ProgramData implements DataSourceInterface<Program> {
     }
 
     public void addItems(@NonNull List<Program> items) {
-        AsyncTask.execute(() -> {
-            Timber.d("Saving " + items.size() + " programs");
-            db.getProgramDao().insert(items);
-
-            int count = db.getProgramDao().getProgramCountSync();
-            Timber.d("Database contains " + count + " programs");
-        });
+        AsyncTask.execute(() -> db.getProgramDao().insert(items));
     }
 
     @Override
@@ -54,9 +48,17 @@ public class ProgramData implements DataSourceInterface<Program> {
         AsyncTask.execute(() -> db.getProgramDao().delete(item));
     }
 
+    public void removeItemsByTime(long time) {
+        AsyncTask.execute(() -> db.getProgramDao().deleteProgramsByTime(time));
+    }
+
+    public void removeItemById(int id) {
+        AsyncTask.execute(() -> db.getProgramDao().deleteById(id));
+    }
+
     @Override
     public LiveData<Integer> getLiveDataItemCount() {
-        return db.getProgramDao().getProgramCount();
+        return db.getProgramDao().getItemCount();
     }
 
     @Override
@@ -73,9 +75,11 @@ public class ProgramData implements DataSourceInterface<Program> {
     @Nullable
     public Program getItemById(Object id) {
         try {
-            return new ItemLoaderTask(db, (int) id, LOAD_BY_ID).execute().get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
+            return new ProgramByIdTask(db, (int) id, LOAD_BY_ID).execute().get();
+        } catch (InterruptedException e) {
+            Timber.d("Loading program by id task got interrupted", e);
+        } catch (ExecutionException e) {
+            Timber.d("Loading program by id task aborted", e);
         }
         return null;
     }
@@ -85,9 +89,11 @@ public class ProgramData implements DataSourceInterface<Program> {
     public List<Program> getItems() {
         List<Program> programs = new ArrayList<>();
         try {
-            programs.addAll(new ProgramLoaderTask(db).execute().get());
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
+            programs.addAll(new ProgramListTask(db).execute().get());
+        } catch (InterruptedException e) {
+            Timber.d("Loading all programs task got interrupted", e);
+        } catch (ExecutionException e) {
+            Timber.d("Loading all programs task aborted", e);
         }
         return programs;
     }
@@ -104,36 +110,44 @@ public class ProgramData implements DataSourceInterface<Program> {
     public List<EpgProgram> getItemByChannelIdAndBetweenTime(int channelId, long startTime, long endTime) {
         List<EpgProgram> programs = new ArrayList<>();
         try {
-            programs.addAll(new EpgProgramLoaderTask(db, channelId, startTime, endTime).execute().get());
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
+            programs.addAll(new EpgProgramByChannelAndTimeTask(db, channelId, startTime, endTime).execute().get());
+        } catch (InterruptedException e) {
+            Timber.d("Loading programs by channel and time task got interrupted", e);
+        } catch (ExecutionException e) {
+            Timber.d("Loading programs by channel and time task aborted", e);
         }
         return programs;
     }
 
+    @Nullable
     public Program getLastItemByChannelId(int channelId) {
         try {
-            return new ItemLoaderTask(db, channelId, LOAD_LAST_IN_CHANNEL).execute().get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
+            return new ProgramByIdTask(db, channelId, LOAD_LAST_IN_CHANNEL).execute().get();
+        } catch (InterruptedException e) {
+            Timber.d("Loading last programs in channel task got interrupted", e);
+        } catch (ExecutionException e) {
+            Timber.d("Loading last program in channel task aborted", e);
         }
         return null;
     }
 
-    public void removeItemsByTime(long time) {
-        AsyncTask.execute(() -> db.getProgramDao().deleteProgramsByTime(time));
+    public int getItemCount() {
+        try {
+            return new ProgramCountTask(db).execute().get();
+        } catch (InterruptedException e) {
+            Timber.d("Loading program count task got interrupted", e);
+        } catch (ExecutionException e) {
+            Timber.d("Loading program count task aborted", e);
+        }
+        return 0;
     }
 
-    public void removeItemById(int id) {
-        AsyncTask.execute(() -> db.getProgramDao().deleteById(id));
-    }
-
-    private static class ItemLoaderTask extends AsyncTask<Void, Void, Program> {
+    private static class ProgramByIdTask extends AsyncTask<Void, Void, Program> {
         private final AppRoomDatabase db;
         private final int id;
         private final int type;
 
-        ItemLoaderTask(AppRoomDatabase db, int id, int type) {
+        ProgramByIdTask(AppRoomDatabase db, int id, int type) {
             this.db = db;
             this.id = id;
             this.type = type;
@@ -151,13 +165,13 @@ public class ProgramData implements DataSourceInterface<Program> {
         }
     }
 
-    private static class EpgProgramLoaderTask extends AsyncTask<Void, Void, List<EpgProgram>> {
+    private static class EpgProgramByChannelAndTimeTask extends AsyncTask<Void, Void, List<EpgProgram>> {
         private final AppRoomDatabase db;
         private final int channelId;
         private final long startTime;
         private final long endTime;
 
-        EpgProgramLoaderTask(AppRoomDatabase db, int channelId, long startTime, long endTime) {
+        EpgProgramByChannelAndTimeTask(AppRoomDatabase db, int channelId, long startTime, long endTime) {
             this.db = db;
             this.channelId = channelId;
             this.startTime = startTime;
@@ -170,16 +184,29 @@ public class ProgramData implements DataSourceInterface<Program> {
         }
     }
 
-    private static class ProgramLoaderTask extends AsyncTask<Void, Void, List<Program>> {
+    private static class ProgramListTask extends AsyncTask<Void, Void, List<Program>> {
         private final AppRoomDatabase db;
 
-        ProgramLoaderTask(AppRoomDatabase db) {
+        ProgramListTask(AppRoomDatabase db) {
             this.db = db;
         }
 
         @Override
         protected List<Program> doInBackground(Void... voids) {
             return db.getProgramDao().loadProgramsSync();
+        }
+    }
+
+    private static class ProgramCountTask extends AsyncTask<Void, Void, Integer> {
+        private final AppRoomDatabase db;
+
+        ProgramCountTask(AppRoomDatabase db) {
+            this.db = db;
+        }
+
+        @Override
+        protected Integer doInBackground(Void... voids) {
+            return db.getProgramDao().getItemCountSync();
         }
     }
 }

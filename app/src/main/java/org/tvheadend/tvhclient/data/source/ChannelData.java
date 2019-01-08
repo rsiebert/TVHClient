@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import org.tvheadend.tvhclient.data.db.AppRoomDatabase;
 import org.tvheadend.tvhclient.data.entity.Channel;
@@ -52,7 +53,7 @@ public class ChannelData implements DataSourceInterface<Channel> {
 
     @Override
     public LiveData<Integer> getLiveDataItemCount() {
-        return db.getChannelDao().getChannelCount();
+        return db.getChannelDao().getItemCount();
     }
 
     @Override
@@ -66,11 +67,14 @@ public class ChannelData implements DataSourceInterface<Channel> {
     }
 
     @Override
+    @Nullable
     public Channel getItemById(Object id) {
         try {
-            return new ItemLoaderTask(db, (int) id).execute().get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
+            return new ChannelByIdTask(db, (int) id).execute().get();
+        } catch (InterruptedException e) {
+            Timber.d("Loading channel by id task got interrupted", e);
+        } catch (ExecutionException e) {
+            Timber.d("Loading channel by id task aborted", e);
         }
         return null;
     }
@@ -81,27 +85,38 @@ public class ChannelData implements DataSourceInterface<Channel> {
         List<Channel> channels = new ArrayList<>();
         try {
             int channelSortOrder = Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(context).getString("channel_sort_order", "0"));
-            channels.addAll(new ItemsLoaderTask(db, channelSortOrder).execute().get());
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
+            channels.addAll(new ChannelListTask(db, channelSortOrder).execute().get());
+        } catch (InterruptedException e) {
+            Timber.d("Loading all channels task got interrupted", e);
+        } catch (ExecutionException e) {
+            Timber.d("Loading all channels task aborted", e);
         }
         return channels;
     }
 
+    public int getItemCount() {
+        try {
+            return new ChannelCountTask(db).execute().get();
+        } catch (InterruptedException e) {
+            Timber.d("Loading channel count task got interrupted", e);
+        } catch (ExecutionException e) {
+            Timber.d("Loading channel count task aborted", e);
+        }
+        return 0;
+    }
+
+    @Nullable
     public Channel getItemByIdWithPrograms(int id, long selectedTime) {
         try {
-            return new ItemLoaderTask(db, id, selectedTime).execute().get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
+            return new ChannelByIdTask(db, id, selectedTime).execute().get();
+        } catch (InterruptedException e) {
+            Timber.d("Loading channel by id task got interrupted", e);
+        } catch (ExecutionException e) {
+            Timber.d("Loading channel by id task aborted", e);
         }
         return null;
     }
 
-    /**
-     * @param channelSortOrder
-     * @param tagIds
-     * @return
-     */
     public LiveData<List<EpgChannel>> getAllEpgChannels(int channelSortOrder, @NonNull Set<Integer> tagIds) {
         Timber.d("Loading epg channels with sort order " + channelSortOrder + " and " + tagIds.size() + " tags");
         if (tagIds.size() == 0) {
@@ -111,12 +126,6 @@ public class ChannelData implements DataSourceInterface<Channel> {
         }
     }
 
-    /**
-     * @param selectedTime
-     * @param channelSortOrder
-     * @param tagIds
-     * @return
-     */
     public LiveData<List<Channel>> getAllChannelsByTime(long selectedTime, int channelSortOrder, @NonNull Set<Integer> tagIds) {
         Timber.d("Loading channels from time " + selectedTime + " with sort order " + channelSortOrder + " and " + tagIds.size() + " tags");
         if (tagIds.size() == 0) {
@@ -126,18 +135,18 @@ public class ChannelData implements DataSourceInterface<Channel> {
         }
     }
 
-    private static class ItemLoaderTask extends AsyncTask<Void, Void, Channel> {
+    private static class ChannelByIdTask extends AsyncTask<Void, Void, Channel> {
         private final AppRoomDatabase db;
         private final int id;
         private final long selectedTime;
 
-        ItemLoaderTask(AppRoomDatabase db, int id) {
+        ChannelByIdTask(AppRoomDatabase db, int id) {
             this.db = db;
             this.id = id;
             this.selectedTime = 0;
         }
 
-        ItemLoaderTask(AppRoomDatabase db, int id, long selectedTime) {
+        ChannelByIdTask(AppRoomDatabase db, int id, long selectedTime) {
             this.db = db;
             this.id = id;
             this.selectedTime = selectedTime;
@@ -153,13 +162,13 @@ public class ChannelData implements DataSourceInterface<Channel> {
         }
     }
 
-    private static class ItemsLoaderTask extends AsyncTask<Void, Void, List<Channel>> {
+    private static class ChannelListTask extends AsyncTask<Void, Void, List<Channel>> {
         private final AppRoomDatabase db;
         private final int sortOrder;
         private final long currentTime;
         private final Set<Integer> channelTagIds;
 
-        ItemsLoaderTask(AppRoomDatabase db, int sortOrder) {
+        ChannelListTask(AppRoomDatabase db, int sortOrder) {
             this.db = db;
             this.currentTime = 0;
             this.channelTagIds = new HashSet<>();
@@ -175,6 +184,19 @@ public class ChannelData implements DataSourceInterface<Channel> {
             } else {
                 return db.getChannelDao().loadAllChannelsByTimeAndTagSync(currentTime, channelTagIds, sortOrder);
             }
+        }
+    }
+
+    private static class ChannelCountTask extends AsyncTask<Void, Void, Integer> {
+        private final AppRoomDatabase db;
+
+        ChannelCountTask(AppRoomDatabase db) {
+            this.db = db;
+        }
+
+        @Override
+        protected Integer doInBackground(Void... voids) {
+            return db.getChannelDao().getItemCountSync();
         }
     }
 }

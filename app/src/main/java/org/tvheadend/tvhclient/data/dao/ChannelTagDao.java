@@ -57,4 +57,8 @@ public interface ChannelTagDao {
             "AND is_selected = 1 " +
             "ORDER BY tag_name")
     List<Integer> loadAllSelectedChannelTagIds();
+
+    @Query("SELECT COUNT (*) FROM channel_tags " +
+            "WHERE " + CONNECTION_IS_ACTIVE)
+    int getItemCountSync();
 }

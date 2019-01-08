@@ -3,6 +3,7 @@ package org.tvheadend.tvhclient.data.source;
 import android.arch.lifecycle.LiveData;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import org.tvheadend.tvhclient.data.entity.ServerProfile;
 import org.tvheadend.tvhclient.data.db.AppRoomDatabase;
@@ -12,6 +13,8 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
+
+import timber.log.Timber;
 
 public class ServerProfileData implements DataSourceInterface<ServerProfile> {
 
@@ -55,16 +58,20 @@ public class ServerProfileData implements DataSourceInterface<ServerProfile> {
     }
 
     @Override
+    @Nullable
     public LiveData<ServerProfile> getLiveDataItemById(Object id) {
         return null;
     }
 
     @Override
-    public ServerProfile getItemById(Object id) {
+    @Nullable
+    public ServerProfile getItemById(@NonNull Object id) {
         try {
-            return new ItemLoaderTask(db, id).execute().get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
+            return new ServerProfileByIdTask(db, id).execute().get();
+        } catch (InterruptedException e) {
+            Timber.d("Loading server profile by id task got interrupted", e);
+        } catch (ExecutionException e) {
+            Timber.d("Loading server profile by id task aborted", e);
         }
         return null;
     }
@@ -75,74 +82,77 @@ public class ServerProfileData implements DataSourceInterface<ServerProfile> {
         return new ArrayList<>();
     }
 
+    @NonNull
     public String[] getRecordingProfileNames() {
-        List<ServerProfile> serverProfiles = getRecordingProfiles();
-        if (serverProfiles != null) {
-            String[] names = new String[serverProfiles.size()];
-            for (int i = 0; i < serverProfiles.size(); i++) {
-                names[i] = serverProfiles.get(i).getName();
-            }
-            return names;
-        }
-        return null;
+        return getProfileNames(getRecordingProfiles());
     }
 
+    @NonNull
     public String[] getHtspPlaybackProfileNames() {
-        List<ServerProfile> serverProfiles = getHtspPlaybackProfiles();
-        if (serverProfiles != null) {
-            String[] names = new String[serverProfiles.size()];
-            for (int i = 0; i < serverProfiles.size(); i++) {
-                names[i] = serverProfiles.get(i).getName();
-            }
-            return names;
-        }
-        return null;
+        return getProfileNames(getHtspPlaybackProfiles());
     }
 
+    @NonNull
     public String[] getHttpPlaybackProfileNames() {
-        List<ServerProfile> serverProfiles = getHttpPlaybackProfiles();
-        if (serverProfiles != null) {
+        return getProfileNames(getHttpPlaybackProfiles());
+    }
+
+    @NonNull
+    private String[] getProfileNames(@NonNull List<ServerProfile> serverProfiles) {
+        if (serverProfiles.size() > 0) {
             String[] names = new String[serverProfiles.size()];
             for (int i = 0; i < serverProfiles.size(); i++) {
                 names[i] = serverProfiles.get(i).getName();
             }
             return names;
         }
-        return null;
+        return new String[0];
     }
 
+    @NonNull
     public List<ServerProfile> getRecordingProfiles() {
+        List<ServerProfile> serverProfiles = new ArrayList<>();
         try {
-            return new ItemsLoaderTask(db, RECORDINGS).execute().get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
+            serverProfiles.addAll(new ServerProfileTask(db, RECORDINGS).execute().get());
+        } catch (InterruptedException e) {
+            Timber.d("Loading recording server profile task got interrupted", e);
+        } catch (ExecutionException e) {
+            Timber.d("Loading recording server profile task aborted", e);
         }
-        return null;
+        return serverProfiles;
     }
 
+    @NonNull
     public List<ServerProfile> getHtspPlaybackProfiles() {
+        List<ServerProfile> serverProfiles = new ArrayList<>();
         try {
-            return new ItemsLoaderTask(db, HTSP_PLAYBACK).execute().get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
+            serverProfiles.addAll(new ServerProfileTask(db, HTSP_PLAYBACK).execute().get());
+        } catch (InterruptedException e) {
+            Timber.d("Loading htsp playback server profile task got interrupted", e);
+        } catch (ExecutionException e) {
+            Timber.d("Loading htsp playback server profile task aborted", e);
         }
-        return null;
+        return serverProfiles;
     }
 
+    @NonNull
     public List<ServerProfile> getHttpPlaybackProfiles() {
+        List<ServerProfile> serverProfiles = new ArrayList<>();
         try {
-            return new ItemsLoaderTask(db, HTTP_PLAYBACK).execute().get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
+            serverProfiles.addAll(new ServerProfileTask(db, HTTP_PLAYBACK).execute().get());
+        } catch (InterruptedException e) {
+            Timber.d("Loading http playback server profile task got interrupted", e);
+        } catch (ExecutionException e) {
+            Timber.d("Loading http playback server profile task aborted", e);
         }
-        return null;
+        return serverProfiles;
     }
 
-    private static class ItemLoaderTask extends AsyncTask<Void, Void, ServerProfile> {
+    private static class ServerProfileByIdTask extends AsyncTask<Void, Void, ServerProfile> {
         private final AppRoomDatabase db;
         private final Object id;
 
-        ItemLoaderTask(AppRoomDatabase db, Object id) {
+        ServerProfileByIdTask(AppRoomDatabase db, Object id) {
             this.db = db;
             this.id = id;
         }
@@ -158,11 +168,11 @@ public class ServerProfileData implements DataSourceInterface<ServerProfile> {
         }
     }
 
-    private static class ItemsLoaderTask extends AsyncTask<Void, Void, List<ServerProfile>> {
+    private static class ServerProfileTask extends AsyncTask<Void, Void, List<ServerProfile>> {
         private final AppRoomDatabase db;
         private final int type;
 
-        ItemsLoaderTask(AppRoomDatabase db, int type) {
+        ServerProfileTask(AppRoomDatabase db, int type) {
             this.db = db;
             this.type = type;
         }

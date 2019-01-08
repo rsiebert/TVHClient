@@ -117,7 +117,11 @@ public interface ChannelDao {
 
     @Query("SELECT COUNT (*) FROM channels AS c " +
             "WHERE " + CONNECTION_IS_ACTIVE)
-    LiveData<Integer> getChannelCount();
+    LiveData<Integer> getItemCount();
+
+    @Query("SELECT COUNT (*) FROM channels AS c " +
+            "WHERE " + CONNECTION_IS_ACTIVE)
+    int getItemCountSync();
 
     @Transaction
     @Query(EPG_CHANNEL_BASE_QUERY +
