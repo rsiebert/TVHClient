@@ -1,20 +1,20 @@
 package org.tvheadend.tvhclient.data.source;
 
+import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.os.AsyncTask;
-import android.support.v4.content.LocalBroadcastManager;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.db.AppRoomDatabase;
 import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
 import org.tvheadend.tvhclient.features.settings.DatabaseClearedCallback;
-import org.tvheadend.tvhclient.features.shared.receivers.SnackbarMessageReceiver;
 
 import java.lang.ref.WeakReference;
 
 import javax.inject.Inject;
+
+import timber.log.Timber;
 
 public class MiscData {
 
@@ -33,28 +33,26 @@ public class MiscData {
 
     private static class ClearDatabaseTask extends AsyncTask<Void, Void, Void> {
         private final AppRoomDatabase db;
-        private final WeakReference<Context> context;
+        private final ProgressDialog dialog;
+        private final String msg;
 
         ClearDatabaseTask(Context context, AppRoomDatabase db) {
-            this.context = new WeakReference<>(context);
             this.db = db;
+            this.dialog = new ProgressDialog(context);
+            this.msg = context.getString(R.string.deleting_database_contents);
         }
 
         @Override
         protected void onPreExecute() {
-            Context context = this.context.get();
-            if (context == null) {
-                return;
-            }
-            Intent intent = new Intent(SnackbarMessageReceiver.ACTION);
-            intent.putExtra(SnackbarMessageReceiver.CONTENT,
-                    context.getString(R.string.deleting_database_contents));
-            LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
-
+            dialog.setMessage(msg);
+            dialog.setIndeterminate(true);
+            dialog.show();
         }
 
         @Override
         protected Void doInBackground(Void... voids) {
+            Timber.d("Deleting database contents...");
+
             db.getChannelDao().deleteAll();
             db.getChannelTagDao().deleteAll();
             db.getTagAndChannelDao().deleteAll();
@@ -84,15 +82,8 @@ public class MiscData {
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            Context context = this.context.get();
-            if (context == null) {
-                return;
-            }
-            Intent intent = new Intent(SnackbarMessageReceiver.ACTION);
-            intent.putExtra(SnackbarMessageReceiver.CONTENT,
-                    context.getString(R.string.database_contents_deleted));
-            LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
-
+            Timber.d("Deleting database contents finished");
+            dialog.dismiss();
             DatabaseClearedCallback databaseClearedCallback = callback.get();
             if (databaseClearedCallback != null) {
                 databaseClearedCallback.onDatabaseCleared();
