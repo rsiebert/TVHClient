@@ -100,29 +100,39 @@ public class StartupFragment extends Fragment implements EpgSyncStatusCallback {
         }
     }
 
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putSerializable("state", state);
+        outState.putString("stateText", stateTextView.getText().toString());
+        outState.putString("detailsText", detailsTextView.getText().toString());
+        outState.putBoolean("isServiceStarted", isServiceStarted);
+        super.onSaveInstanceState(outState);
+    }
+
     private void handleStartupProcedure() {
 
         if (appRepository.getConnectionData().getItems().size() == 0) {
-            Timber.d("No connection available, showing settings");
+            Timber.d("No connection available, showing settings button");
             stateText = getString(R.string.no_connection_available);
             progressBar.setVisibility(View.INVISIBLE);
             addConnectionButton.setVisibility(View.VISIBLE);
             addConnectionButton.setOnClickListener(v -> showSettingsAddNewConnection());
 
         } else if (appRepository.getConnectionData().getActiveItem() == null) {
-            Timber.d("No active connection available, showing settings");
+            Timber.d("No active connection available, showing settings button");
             stateText = getString(R.string.no_connection_active_advice);
             progressBar.setVisibility(View.INVISIBLE);
             settingsButton.setVisibility(View.VISIBLE);
             settingsButton.setOnClickListener(v -> showConnectionListSettings());
 
         } else if (NetworkUtils.isNetworkAvailable(activity)
+                && !appRepository.getConnectionData().getActiveItem().isSyncRequired()
                 && appRepository.getChannelData().getItems().size() > 0) {
-            Timber.d("Network is available and database contains channels, starting service and showing contents");
+            Timber.d("Network is available, database contains channels and no sync is required, showing contents");
             showContentScreen();
 
         } else if (!NetworkUtils.isNetworkAvailable(activity)) {
-            Timber.d("No network is active to perform initial sync, showing settings");
+            Timber.d("No network is active to perform initial sync, showing settings button");
             stateText = getString(R.string.err_no_network);
             progressBar.setVisibility(View.INVISIBLE);
             settingsButton.setVisibility(View.VISIBLE);
@@ -132,12 +142,13 @@ public class StartupFragment extends Fragment implements EpgSyncStatusCallback {
             });
 
         } else {
-            Timber.d("Database is empty and network is active, starting service to perform initial sync");
+            Timber.d("Network is active and database is either empty or sync is required, showing settings button and starting service");
             progressBar.setVisibility(View.INVISIBLE);
             settingsButton.setVisibility(View.VISIBLE);
             settingsButton.setOnClickListener(v -> showConnectionListSettings());
 
             // Create and register the broadcast receiver to get the sync status
+            Timber.d("Registering service status listener");
             serviceStatusReceiver = new ServiceStatusReceiver(this);
             LocalBroadcastManager.getInstance(activity).registerReceiver(serviceStatusReceiver, new IntentFilter(ServiceStatusReceiver.ACTION));
 
@@ -158,21 +169,12 @@ public class StartupFragment extends Fragment implements EpgSyncStatusCallback {
     }
 
     @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        outState.putSerializable("state", state);
-        outState.putString("stateText", stateTextView.getText().toString());
-        outState.putString("detailsText", detailsTextView.getText().toString());
-        outState.putBoolean("isServiceStarted", isServiceStarted);
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
 
-        Timber.d("Resuming, state is " + this.state);
+        Timber.d("Resuming, current service state is " + state);
         onEpgTaskStateChanged(new EpgSyncTaskState.EpgSyncTaskStateBuilder()
-                .state(this.state)
+                .state(state)
                 .message(stateText)
                 .details(detailsText)
                 .build());
@@ -183,6 +185,7 @@ public class StartupFragment extends Fragment implements EpgSyncStatusCallback {
     @Override
     public void onStop() {
         super.onStop();
+        Timber.d("Stopping, unregistering service status listener");
         LocalBroadcastManager.getInstance(activity).unregisterReceiver(serviceStatusReceiver);
     }
 
@@ -220,26 +223,32 @@ public class StartupFragment extends Fragment implements EpgSyncStatusCallback {
     /**
      * Shows the main fragment like the channel list when the startup is complete.
      * Which fragment shall be shown is determined by a preference.
+     * The connection to the server will be established by the network status
+     * which is monitored in the base activity which the main activity inherits.
      */
     private void showContentScreen() {
-        int startScreen = Integer.parseInt(sharedPreferences.getString("start_screen", getResources().getString(R.string.pref_default_start_screen)));
         Intent intent = new Intent(activity, MainActivity.class);
-        intent.putExtra("startScreen", startScreen);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         activity.startActivity(intent);
         activity.finish();
     }
 
     @Override
     public void onEpgTaskStateChanged(EpgSyncTaskState state) {
-        Timber.d("Epg task state changed to " + state.getState());
         this.state = state.getState();
 
         switch (state.getState()) {
             case CONNECTING:
+                Timber.d("Service is connecting to server");
+                break;
             case CONNECTED:
+                Timber.d("Service is connected to server");
+                break;
             case SYNC_STARTED:
+                Timber.d("Service sync started");
+                break;
+
             case SYNC_IN_PROGRESS:
-                Timber.d("Service sync is starting or loading data");
                 progressBar.setVisibility(View.VISIBLE);
                 stateTextView.setText(state.getMessage());
                 detailsTextView.setText(state.getDetails());
