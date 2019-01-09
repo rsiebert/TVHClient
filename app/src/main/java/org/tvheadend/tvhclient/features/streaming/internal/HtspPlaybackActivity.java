@@ -127,6 +127,8 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
 
     private int channelId;
     private int dvrId;
+    private Channel channel;
+    private Recording recording;
     private SimpleExoPlayer player;
     private TvheadendTrackSelector trackSelector;
     private HtspDataSource.Factory htspSubscriptionDataSourceFactory;
@@ -175,6 +177,14 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
                 channelId = bundle.getInt("channelId", -1);
                 dvrId = bundle.getInt("dvrId", -1);
             }
+        }
+
+        if (channelId > 0) {
+            channel = appRepository.getChannelData().getItemByIdWithPrograms(channelId, new Date().getTime());
+        }
+
+        if (dvrId > 0) {
+            recording = appRepository.getRecordingData().getItemById(dvrId);
         }
 
         aspectRatioNameList = new String[]{
@@ -239,6 +249,10 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
         } else if (serverProfile == null) {
             Timber.d("Server profile is null");
             statusTextView.setText(R.string.error_starting_playback_no_profile);
+        } else if (channelId > 0 && channel == null) {
+            statusTextView.setText(R.string.error_starting_playback_no_channel);
+        } else if (dvrId > 0 && recording == null) {
+            statusTextView.setText(R.string.error_starting_playback_no_recording);
         } else {
             Timber.d("Starting htsp connection service");
             statusTextView.setText(R.string.connecting_to_server);
@@ -385,16 +399,14 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
 
         // Create the media source
         if (channelId > 0) {
-            Channel channel = appRepository.getChannelData().getItemByIdWithPrograms(channelId, new Date().getTime());
             Program program = appRepository.getProgramData().getItemById(channel.getProgramId());
-
             showPlaybackInformation(channel.getName(),
                     channel.getIcon(),
                     channel.getProgramTitle(),
                     channel.getProgramSubtitle(),
                     channel.getNextProgramTitle(),
-                    program.getStart(),
-                    program.getStop());
+                    (program != null ? program.getStart() : 0),
+                    (program != null ? program.getStop() : 0));
 
             Uri channelUri = Uri.parse("htsp://channel/" + channelId);
             Timber.d("Channel uri " + channelUri);
@@ -403,7 +415,6 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
                     .createMediaSource(channelUri);
 
         } else if (dvrId > 0) {
-            Recording recording = appRepository.getRecordingData().getItemById(dvrId);
             showPlaybackInformation(recording.getChannelName(),
                     recording.getChannelIcon(),
                     recording.getTitle(),
@@ -420,7 +431,7 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
         }
 
         // Prepare the media source
-        if (player != null) {
+        if (player != null && mediaSource != null) {
             Timber.d("Preparing player and starting when ready");
             player.prepare(mediaSource);
             player.setPlayWhenReady(true);
