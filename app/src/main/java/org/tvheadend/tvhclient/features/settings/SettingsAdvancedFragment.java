@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
+import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.provider.SearchRecentSuggestions;
 import android.support.design.widget.Snackbar;
@@ -103,9 +104,11 @@ public class SettingsAdvancedFragment extends BasePreferenceFragment implements 
                     activity.stopService(new Intent(activity, EpgSyncService.class));
                     // Update the connection with the information that a new sync is required.
                     Connection connection = appRepository.getConnectionData().getActiveItem();
-                    connection.setSyncRequired(true);
-                    connection.setLastUpdate(0);
-                    appRepository.getConnectionData().updateItem(connection);
+                    if (connection != null) {
+                        connection.setSyncRequired(true);
+                        connection.setLastUpdate(0);
+                        appRepository.getConnectionData().updateItem(connection);
+                    }
                     // Clear the database contents, when done the callback
                     // is triggered which will restart the application
                     appRepository.getMiscData().clearDatabase(activity, SettingsAdvancedFragment.this);
@@ -172,20 +175,24 @@ public class SettingsAdvancedFragment extends BasePreferenceFragment implements 
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+        Timber.d("Preference " + key + " has changed");
         switch (key) {
-            case "connectionTimeout":
+            case "connection_timeout":
                 try {
-                    int value = Integer.parseInt(prefs.getString(key, "5"));
+                    int value = Integer.parseInt(prefs.getString(key, getResources().getString(R.string.pref_default_connection_timeout)));
                     if (value < 1) {
+                        ((EditTextPreference) findPreference(key)).setText("1");
                         prefs.edit().putString(key, "1").apply();
                     }
                     if (value > 60) {
+                        ((EditTextPreference) findPreference(key)).setText("60");
                         prefs.edit().putString(key, "60").apply();
                     }
                 } catch (NumberFormatException ex) {
-                    prefs.edit().putString(key, "5").apply();
+                    prefs.edit().putString(key, getResources().getString(R.string.pref_default_connection_timeout)).apply();
                 }
                 break;
+
             case "epg_max_time":
                 Timber.d("Preference " + key + " has changed, restarting background workers");
                 WorkManager.getInstance().cancelAllWorkByTag(EpgWorkerHandler.WORKER_TAG);

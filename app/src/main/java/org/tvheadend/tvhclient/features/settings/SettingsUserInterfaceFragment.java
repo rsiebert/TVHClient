@@ -18,14 +18,18 @@
  */
 package org.tvheadend.tvhclient.features.settings;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
+import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.support.design.widget.Snackbar;
 
 import org.tvheadend.tvhclient.R;
 
-public class SettingsUserInterfaceFragment extends BasePreferenceFragment implements Preference.OnPreferenceClickListener {
+import timber.log.Timber;
+
+public class SettingsUserInterfaceFragment extends BasePreferenceFragment implements Preference.OnPreferenceClickListener, SharedPreferences.OnSharedPreferenceChangeListener {
 
     private CheckBoxPreference programArtworkEnabledPreference;
     private CheckBoxPreference castMiniControllerPreference;
@@ -45,6 +49,18 @@ public class SettingsUserInterfaceFragment extends BasePreferenceFragment implem
         castMiniControllerPreference.setOnPreferenceClickListener(this);
         multipleChannelTagsPreference = (CheckBoxPreference) findPreference("multiple_channel_tags_enabled");
         multipleChannelTagsPreference.setOnPreferenceClickListener(this);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        sharedPreferences.registerOnSharedPreferenceChangeListener(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        sharedPreferences.unregisterOnSharedPreferenceChangeListener(this);
     }
 
     @Override
@@ -90,6 +106,44 @@ public class SettingsUserInterfaceFragment extends BasePreferenceFragment implem
                 Snackbar.make(getView(), R.string.feature_not_available_in_free_version, Snackbar.LENGTH_SHORT).show();
                 castMiniControllerPreference.setChecked(false);
             }
+        }
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+        Timber.d("Preference " + key + " has changed");
+        switch (key) {
+            case "hours_of_epg_data_per_screen":
+                try {
+                    int value = Integer.parseInt(prefs.getString(key, getResources().getString(R.string.pref_default_hours_of_epg_data_per_screen)));
+                    if (value < 1) {
+                        ((EditTextPreference) findPreference(key)).setText("1");
+                        prefs.edit().putString(key, "1").apply();
+                    }
+                    if (value > 24) {
+                        ((EditTextPreference) findPreference(key)).setText("24");
+                        prefs.edit().putString(key, "24").apply();
+                    }
+                } catch (NumberFormatException ex) {
+                    prefs.edit().putString(key, getResources().getString(R.string.pref_default_hours_of_epg_data_per_screen)).apply();
+                }
+                break;
+
+            case "days_of_epg_data":
+                try {
+                    int value = Integer.parseInt(prefs.getString(key, getResources().getString(R.string.pref_default_days_of_epg_data)));
+                    if (value < 1) {
+                        ((EditTextPreference) findPreference(key)).setText("1");
+                        prefs.edit().putString(key, "1").apply();
+                    }
+                    if (value > 14) {
+                        ((EditTextPreference) findPreference(key)).setText("24");
+                        prefs.edit().putString(key, "24").apply();
+                    }
+                } catch (NumberFormatException ex) {
+                    prefs.edit().putString(key, getResources().getString(R.string.pref_default_days_of_epg_data)).apply();
+                }
+                break;
         }
     }
 }
