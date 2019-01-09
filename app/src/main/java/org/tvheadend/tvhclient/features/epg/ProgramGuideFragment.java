@@ -111,8 +111,13 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
 
         // Calculates the number of fragments in the view pager. This depends on how many days
         // shall be shown of the program guide and how many hours shall be visible per fragment.
-        hoursToShow = Integer.parseInt(sharedPreferences.getString("hours_of_epg_data_per_screen", "4"));
-        daysToShow = Integer.parseInt(sharedPreferences.getString("days_of_epg_data", "7"));
+        hoursToShow = Integer.parseInt(sharedPreferences.getString("hours_of_epg_data_per_screen", getResources().getString(R.string.pref_default_hours_of_epg_data_per_screen)));
+        // The defined value should not be zero due to checking the value
+        // in the settings. Check it anyway to prevent a divide by zero.
+        if (hoursToShow == 0) {
+            hoursToShow++;
+        }
+        daysToShow = Integer.parseInt(sharedPreferences.getString("days_of_epg_data", getResources().getString(R.string.pref_default_days_of_epg_data)));
         fragmentCount = (daysToShow * (24 / hoursToShow));
 
         calculateViewPagerFragmentStartAndEndTimes();
@@ -223,7 +228,8 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
         // When the user returns from the settings only the onResume method is called, not the
         // onActivityCreated, so we need to check if any values that affect the representation
         // of the channel list have changed.
-        viewModel.setChannelSortOrder(Integer.valueOf(sharedPreferences.getString("channel_sort_order", "0")));
+        viewModel.setChannelSortOrder(Integer.valueOf(sharedPreferences.getString("channel_sort_order",
+                getResources().getString(R.string.pref_default_channel_sort_order))));
     }
 
     @Override

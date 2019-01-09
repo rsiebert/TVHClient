@@ -131,7 +131,13 @@ public class EpgViewPagerFragment extends Fragment implements EpgScrollInterface
         DisplayMetrics displaymetrics = new DisplayMetrics();
         activity.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
         int displayWidth = displaymetrics.widthPixels;
-        int hoursToShow = Integer.parseInt(sharedPreferences.getString("hours_of_epg_data_per_screen", "4"));
+        int hoursToShow = Integer.parseInt(sharedPreferences.getString("hours_of_epg_data_per_screen", getResources().getString(R.string.pref_default_hours_of_epg_data_per_screen)));
+
+        // The defined value should not be zero due to checking the value
+        // in the settings. Check it anyway to prevent a divide by zero.
+        if (hoursToShow == 0) {
+            hoursToShow++;
+        }
         pixelsPerMinute = ((float) (displayWidth - 221) / (60.0f * (float) hoursToShow));
 
         recyclerViewAdapter = new EpgViewPagerRecyclerViewAdapter(activity, pixelsPerMinute, startTime, endTime);
