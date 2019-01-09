@@ -45,8 +45,13 @@ public class ChannelTagRecyclerViewAdapter extends RecyclerView.Adapter<ChannelT
             int tagId = channelTagList.get(position).getTagId();
             if (isMultiChoice) {
                 if (holder.selectedCheckBox != null) {
-                    holder.selectedCheckBox.setOnCheckedChangeListener((buttonView, isChecked) ->
-                            channelTagList.get(position).setIsSelected(isChecked ? 1 : 0));
+                    holder.selectedCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                        if (isChecked) {
+                            selectedChannelTagIds.add(tagId);
+                        } else {
+                            selectedChannelTagIds.remove(tagId);
+                        }
+                    });
                 }
             } else {
                 if (holder.selectedRadioButton != null) {
