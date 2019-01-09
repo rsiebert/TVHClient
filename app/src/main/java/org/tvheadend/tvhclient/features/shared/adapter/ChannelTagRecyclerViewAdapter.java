@@ -76,7 +76,7 @@ public class ChannelTagRecyclerViewAdapter extends RecyclerView.Adapter<ChannelT
 
     @Override
     public int getItemCount() {
-        return channelTagList != null ? channelTagList.size() : 0;
+        return channelTagList.size();
     }
 
     @Override
