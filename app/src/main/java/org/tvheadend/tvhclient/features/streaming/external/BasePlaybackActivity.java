@@ -136,10 +136,14 @@ public abstract class BasePlaybackActivity extends AppCompatActivity implements 
 
                 // Copy the created server url to the clip board if the setting is enabled
                 if (sharedPreferences.getBoolean("copy_playback_url_to_clipboard_enabled", getResources().getBoolean(R.bool.pref_default_copy_playback_url_to_clipboard_enabled))) {
+                    Timber.d("Copying playback url " + serverUrl + " to clipboard");
                     ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
                     ClipData clip = ClipData.newPlainText("Server url", serverUrl);
                     clipboard.setPrimaryClip(clip);
+                } else {
+                    Timber.d("Not copying playback url " + serverUrl + " to clipboard");
                 }
+
                 onHttpTicketReceived();
 
             } catch (InterruptedException | ExecutionException e) {
