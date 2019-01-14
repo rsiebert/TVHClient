@@ -409,4 +409,6 @@
     <string name="pref_internal_player_timeshift_enabled">Enable timeshift support</string>
     <string name="database_contents_deleted">Database contents deleted</string>
     <string name="deleting_database_contents">Deleting database contents…</string>
+    <string name="pref_copy_playback_url_to_clipboard_enabled">Copy playback Url to clipboard</string>
+    <string name="pref_copy_playback_url_to_clipboard_enabled_sum">In case of playback issues the copied Url can be used to test playback in a browser.</string>
 </resources>
