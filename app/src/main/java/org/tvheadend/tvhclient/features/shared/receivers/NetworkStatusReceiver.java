@@ -17,6 +17,6 @@ public class NetworkStatusReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        callback.onNetworkStatusChanged(NetworkUtils.isNetworkAvailable(context));
+        callback.onNetworkStatusChanged(NetworkUtils.isConnectionAvailable(context));
     }
 }
