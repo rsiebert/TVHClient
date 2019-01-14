@@ -76,7 +76,6 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
     private LinearLayoutManager channelListRecyclerViewLayoutManager;
     private int programIdToBeEditedWhenBeingRecorded = 0;
     private List<ChannelTag> channelTags;
-    private Long selectedTime;
 
     @Nullable
     @Override
@@ -158,12 +157,6 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
         programViewPager.addOnPageChangeListener(this);
 
         viewModel = ViewModelProviders.of(activity).get(EpgViewModel.class);
-
-        Timber.d("Observing selected time");
-        viewModel.getSelectedTime().observe(getViewLifecycleOwner(), time -> {
-            Timber.d("View model returned selected time " + time);
-            selectedTime = time;
-        });
 
         Timber.d("Observing channel tags");
         viewModel.getChannelTags().observe(getViewLifecycleOwner(), tags -> {
