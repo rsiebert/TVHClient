@@ -19,7 +19,7 @@ public class EpgDataUpdateWorker extends Worker {
     @NonNull
     @Override
     public Result doWork() {
-        Timber.d("Loading more event data from server");
+        Timber.d("Waiting 15s before loading more event data from server");
 
         // The work here will be done when the worker is first enqueued.
         // Delay the execution to avoid having too much load during
@@ -30,7 +30,8 @@ public class EpgDataUpdateWorker extends Worker {
             e.printStackTrace();
         }
 
+        Timber.d("Loading more event data from server");
         EpgSyncIntentService.enqueueWork(getApplicationContext(), new Intent().setAction("getMoreEvents"));
-        return Result.success();
+        return Result.SUCCESS;
     }
 }

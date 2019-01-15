@@ -67,7 +67,7 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
     private final int intervalInHours = 2;
     private int programIdToBeEditedWhenBeingRecorded = 0;
     private List<ChannelTag> channelTags;
-    private Long selectedTime;
+    private long selectedTime;
 
     private Runnable currentTimeUpdateTask;
     private final Handler currentTimeUpdateHandler = new Handler();
@@ -118,7 +118,9 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
         Timber.d("Observing selected time");
         viewModel.getSelectedTime().observe(getViewLifecycleOwner(), time -> {
             Timber.d("View model returned selected time " + time);
-            selectedTime = time;
+            if (time != null) {
+                selectedTime = time;
+            }
         });
 
         Timber.d("Observing channel tags");
@@ -176,10 +178,11 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
         // so that the progress bars will be displayed correctly
         currentTimeUpdateTask = () -> {
             long currentTime = new Date().getTime();
+            Timber.d("Checking if selected time " + selectedTime + " is past current time " + currentTime);
             if (selectedTime < currentTime) {
+                Timber.d("Updated selected time to current time");
                 viewModel.setSelectedTime(currentTime);
             }
-            Timber.d("Updated current time");
             currentTimeUpdateHandler.postDelayed(currentTimeUpdateTask, 60000);
         };
         currentTimeUpdateHandler.post(currentTimeUpdateTask);

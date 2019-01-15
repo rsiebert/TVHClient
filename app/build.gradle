@@ -133,7 +133,7 @@ dependencies {
     implementation 'android.arch.lifecycle:extensions:1.1.1'
     implementation 'android.arch.lifecycle:common-java8:1.1.1'
     implementation 'android.arch.persistence.room:runtime:1.1.1'
-    implementation 'android.arch.work:work-runtime:1.0.0-beta01'
+    implementation 'android.arch.work:work-runtime:1.0.0-alpha11'
     annotationProcessor 'android.arch.persistence.room:compiler:1.1.1'
 
     // Dependency injection

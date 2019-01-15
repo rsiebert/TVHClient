@@ -19,7 +19,7 @@ public class EpgDataRemovalWorker extends Worker {
     @NonNull
     @Override
     public Result doWork() {
-        Timber.d("Removing outdated epg data from the database");
+        Timber.d("Waiting 5s before removing outdated epg data from the database");
 
         // The work here will be done when the worker is first enqueued.
         // Delay the execution to avoid having too much load during
@@ -30,7 +30,8 @@ public class EpgDataRemovalWorker extends Worker {
             e.printStackTrace();
         }
 
+        Timber.d("Removing outdated epg data from the database");
         EpgSyncIntentService.enqueueWork(getApplicationContext(), new Intent().setAction("deleteEvents"));
-        return Result.success();
+        return Result.SUCCESS;
     }
 }
