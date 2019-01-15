@@ -523,12 +523,14 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
      * @param msg The message with the new channel data
      */
     private void handleChannelAdd(HtspMessage msg) {
+        Timber.d("Received new channel message from server");
         if (!fullSyncRequired) {
             return;
         }
 
         Channel channel = EpgSyncUtils.convertMessageToChannelModel(new Channel(), msg);
         channel.setConnectionId(connection.getId());
+        Timber.d("Sync is running, adding channel to list: " + channel.getName());
         pendingChannelOps.add(channel);
 
         if (pendingChannelOps.size() % 10 == 0) {
@@ -599,9 +601,12 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
      * @param msg The message with the new recording data
      */
     private void handleDvrEntryAdd(HtspMessage msg) {
+        Timber.d("Received new recording message from server");
         Recording recording = EpgSyncUtils.convertMessageToRecordingModel(new Recording(), msg);
         recording.setConnectionId(connection.getId());
+
         if (fullSyncRequired || initialSyncWithServerRunning) {
+            Timber.d("Sync is running, adding recording to list: " + recording.getTitle());
             pendingRecordingOps.add(recording);
 
             if (fullSyncRequired && pendingRecordingOps.size() % 10 == 0) {
@@ -758,9 +763,12 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
      * @param msg The message with the new epg event data
      */
     private void handleEventAdd(HtspMessage msg) {
+        Timber.d("Received new event message from server");
         Program program = EpgSyncUtils.convertMessageToProgramModel(new Program(), msg);
         program.setConnectionId(connection.getId());
+
         if (fullSyncRequired || initialSyncWithServerRunning) {
+            Timber.d("Sync is running, adding event to list: " + program.getTitle());
             pendingEventOps.add(program);
 
             if (fullSyncRequired && pendingEventOps.size() % 50 == 0) {
