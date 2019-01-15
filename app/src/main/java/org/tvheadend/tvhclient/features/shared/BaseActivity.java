@@ -150,6 +150,9 @@ public abstract class BaseActivity extends AppCompatActivity implements NetworkS
                 }
                 // Reset the start service retry count
                 serverConnectionRetryCounter = 0;
+                break;
+
+            case SYNC_DONE:
                 EpgWorkerHandler.startBackgroundWorkers(getApplicationContext());
                 break;
         }
