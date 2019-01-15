@@ -1,6 +1,6 @@
 $ 2.0.0
   % VERSION 2.0.0
-  _ 12.12.2018
+  _ 15.01.2018
     * Some UI changes according to the material design guidelines (popup menus, new navigation menu and icons)
     * Channels, recordings and epg data are now stored in a database
     * Epg data will be periodically fetched in the background
@@ -10,10 +10,11 @@ $ 2.0.0
     * New popup menu to directly add and then edit a recording (Only available in the unlocked version)
     * New popup menu to search program details on the fileaffinity website
     * New popup menus to search program details on google and youtube (Only available in the unlocked version)
-    * New option to filter channels by selecting multiple channel tags instead of only one
+    * New option to filter channels by selecting multiple channel tags instead of only one (Only available in the unlocked version)
     * New option to hide duplicate scheduled recordings
     * New options to hide certain popup menu items
     * New option to disable the navigation history. The back button will then close the app.
+    * New option to enable copying the playback url to the clipboard.
     * Updated Spanish translation
     * Updated Dutch translation
     * Updated Polish translation
