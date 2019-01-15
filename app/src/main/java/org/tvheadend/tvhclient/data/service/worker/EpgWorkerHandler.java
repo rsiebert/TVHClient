@@ -30,8 +30,7 @@ public class EpgWorkerHandler {
         // This will be used to determine how often the background service shall be started
         // The default is 90% of the defined time to always have some data available
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        String defaultEpgMaxTime = context.getResources().getString(R.string.pref_default_epg_max_time);
-        long epgMaxTime = Long.parseLong(sharedPreferences.getString("epg_max_time", defaultEpgMaxTime));
+        long epgMaxTime = Long.parseLong(sharedPreferences.getString("epg_max_time", context.getResources().getString(R.string.pref_default_epg_max_time)));
         long time = epgMaxTime - (epgMaxTime / 10);
 
         Timber.d("Epg data update worker interval is " + time + " seconds");
