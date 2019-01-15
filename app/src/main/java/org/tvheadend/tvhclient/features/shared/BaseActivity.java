@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 
+import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.service.EpgSyncService;
 import org.tvheadend.tvhclient.data.service.EpgSyncStatusCallback;
@@ -75,12 +76,16 @@ public abstract class BaseActivity extends AppCompatActivity implements NetworkS
         if (isAvailable) {
             if (!isNetworkAvailable) {
                 Timber.d("Network changed from offline to online, starting service");
-                startService(new Intent(this, EpgSyncService.class));
+                if (MainApplication.isActivityVisible()) {
+                    startService(new Intent(this, EpgSyncService.class));
+                }
             } else {
                 Timber.d("Network still active, pinging server");
                 Intent intent = new Intent(this, EpgSyncService.class);
                 intent.setAction("getStatus");
-                startService(intent);
+                if (MainApplication.isActivityVisible()) {
+                    startService(intent);
+                }
             }
         } else {
             Timber.d("Network is not available anymore, stopping service");
@@ -118,7 +123,9 @@ public abstract class BaseActivity extends AppCompatActivity implements NetworkS
                 if (serverConnectionRetryCounter < 3) {
                     serverConnectionRetryCounter++;
                     Timber.d("Starting connection attempt number " + serverConnectionRetryCounter + " to the server");
-                    startService(new Intent(this, EpgSyncService.class));
+                    if (MainApplication.isActivityVisible()) {
+                        startService(new Intent(this, EpgSyncService.class));
+                    }
                 } else {
                     Timber.d("Already tried to connect " + serverConnectionRetryCounter + " times to the server");
                 }

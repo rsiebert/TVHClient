@@ -1,6 +1,10 @@
 package org.tvheadend.tvhclient;
 
 import android.app.Application;
+import android.arch.lifecycle.Lifecycle;
+import android.arch.lifecycle.LifecycleObserver;
+import android.arch.lifecycle.OnLifecycleEvent;
+import android.arch.lifecycle.ProcessLifecycleOwner;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
@@ -45,11 +49,12 @@ import timber.log.Timber;
 // TODO improve epg loading speed by loading programs as livedata
 // TODO Use paged loading
 
-public class MainApplication extends Application implements BillingProcessor.IBillingHandler, OptionsProvider {
+public class MainApplication extends Application implements BillingProcessor.IBillingHandler, OptionsProvider, LifecycleObserver {
 
     private BillingProcessor billingProcessor;
     private BillingHandler billingHandler;
     private static MainApplication instance;
+    private static boolean activityVisible;
     private RefWatcher refWatcher;
     @Inject
     protected SharedPreferences sharedPreferences;
@@ -72,6 +77,7 @@ public class MainApplication extends Application implements BillingProcessor.IBi
     @Override
     public void onCreate() {
         super.onCreate();
+        ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
 
         instance = this;
         // Create the component upon start of the app. This component
@@ -231,5 +237,21 @@ public class MainApplication extends Application implements BillingProcessor.IBi
 
     public BillingHandler getBillingHandler() {
         return billingHandler;
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+    public void onAppBackgrounded() {
+        Timber.d("App is now in the background");
+        activityVisible = false;
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_START)
+    public void onAppForegrounded() {
+        Timber.d("App is now in the foreground");
+        activityVisible = true;
+    }
+
+    public static boolean isActivityVisible() {
+        return activityVisible;
     }
 }
