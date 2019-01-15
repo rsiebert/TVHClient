@@ -193,20 +193,17 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
             Timber.d("Doing a regular initial connection to the server, loading " + epgMaxTime + " seconds of programs");
             enableAsyncMetadataRequest.put("epg", 1);
             enableAsyncMetadataRequest.put("epgMaxTime", epgMaxTime + (System.currentTimeMillis() / 1000L));
+            enableAsyncMetadataRequest.put("lastUpdate", lastUpdateTime);
 
         } else if (fullSyncRequired) {
             Timber.d("Doing a full initial sync with the server, loading 3 day of program data");
             enableAsyncMetadataRequest.put("epg", 1);
             enableAsyncMetadataRequest.put("epgMaxTime", 259200 + (System.currentTimeMillis() / 1000L));
+            enableAsyncMetadataRequest.put("lastUpdate", lastUpdateTime);
 
         } else {
-            enableAsyncMetadataRequest.put("epg", 0);
             Timber.d("Not requesting epg data during initial sync");
         }
-
-        // Only provide metadata that has changed since now.
-        // The past events are not relevant and dont need to be sent by the server
-        enableAsyncMetadataRequest.put("lastUpdate", currentTimeInSeconds);
 
         try {
             dispatcher.sendMessage(enableAsyncMetadataRequest);
@@ -1681,19 +1678,25 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     }
 
     private void getMoreEvents(int numberOfProgramsToLoad) {
-        Timber.d("getMoreEvents() called");
+        Timber.d("Loading more events for all channels");
         List<Channel> channelList = appRepository.getChannelData().getItems();
         for (Channel channel : channelList) {
+            Timber.d("Loading more events for channel " + channel.getName());
             Program program = appRepository.getProgramData().getLastItemByChannelId(channel.getId());
-            if (program != null && program.getEventId() > 0) {
-                Timber.d("getMoreEvents: loading more events for channel " + channel.getName());
-                Intent intent = new Intent();
+
+            Intent intent = new Intent();
+            if (program != null && program.getNextEventId() > 0) {
+                Timber.d("Last program id of channel is " + program.getNextEventId());
                 intent.putExtra("eventId", program.getNextEventId());
-                intent.putExtra("channelId", channel.getId());
-                //intent.putExtra("maxTime", 4);
-                intent.putExtra("numFollowing", numberOfProgramsToLoad);
-                getEvents(intent);
+            } else if (program != null && program.getEventId() > 0) {
+                Timber.d("Last next program id of channel is " + program.getEventId());
+                intent.putExtra("eventId", program.getEventId());
+            } else {
+                Timber.d("Last program of channel is null");
             }
+            intent.putExtra("channelId", channel.getId());
+            intent.putExtra("numFollowing", numberOfProgramsToLoad);
+            getEvents(intent);
         }
     }
 
