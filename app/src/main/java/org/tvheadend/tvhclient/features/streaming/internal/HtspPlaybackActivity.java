@@ -672,15 +672,26 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
         switch (playbackState) {
             case Player.STATE_IDLE:
                 Timber.d("Player is idle");
+                statusTextView.setVisibility(View.GONE);
+                playerSurfaceView.setVisibility(View.VISIBLE);
                 break;
+
             case Player.STATE_READY:
                 Timber.d("Player is ready");
+                statusTextView.setVisibility(View.GONE);
+                playerSurfaceView.setVisibility(View.VISIBLE);
                 break;
+
             case Player.STATE_BUFFERING:
                 Timber.d("Video is not available because the TV input stopped the playback temporarily to buffer more data.");
+                playerSurfaceView.setVisibility(View.GONE);
+                statusTextView.setVisibility(View.VISIBLE);
+                statusTextView.setText("Player is buffering");
                 break;
+
             case Player.STATE_ENDED:
                 Timber.d("A generic reason. Video is not available due to an unspecified error.");
+                statusTextView.setVisibility(View.GONE);
                 break;
         }
 
