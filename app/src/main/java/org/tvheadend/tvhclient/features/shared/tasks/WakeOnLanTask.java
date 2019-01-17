@@ -57,20 +57,19 @@ public class WakeOnLanTask extends AsyncTask<String, Void, Integer> {
             InetAddress address;
             if (!connection.isWolUseBroadcast()) {
                 address = InetAddress.getByName(connection.getHostname());
-                Timber.d("doInBackground: Sending WOL packet to " + address);
+                Timber.d("Sending WOL packet to " + address);
             } else {
                 // Replace the last number by 255 to send the packet as a broadcast
                 byte[] ipAddress = InetAddress.getByName(connection.getHostname()).getAddress();
                 ipAddress[3] = (byte) 255;
                 address = InetAddress.getByAddress(ipAddress);
-                Timber.d("doInBackground: Sending WOL packet as broadcast to " + address.toString());
+                Timber.d("Sending WOL packet as broadcast to " + address.toString());
             }
             DatagramPacket packet = new DatagramPacket(bytes, bytes.length, address, connection.getWolPort());
             DatagramSocket socket = new DatagramSocket();
             socket.send(packet);
             socket.close();
 
-            Timber.d("doInBackground: Datagram packet was sent");
             if (!connection.isWolUseBroadcast()) {
                 return WOL_SEND;
             } else {
@@ -127,15 +126,19 @@ public class WakeOnLanTask extends AsyncTask<String, Void, Integer> {
         if (ctx != null) {
             switch (result) {
                 case WOL_SEND:
+                    Timber.d("Successfully sent WOL packet to " + connection.getHostname());
                     message = ctx.getString(R.string.wol_send, connection.getHostname());
                     break;
                 case WOL_SEND_BROADCAST:
+                    Timber.d("Successfully sent WOL packet as a broadcast to " + connection.getHostname());
                     message = ctx.getString(R.string.wol_send_broadcast, connection.getHostname());
                     break;
                 case WOL_INVALID_MAC:
+                    Timber.d("Can't send WOL packet, the MAC-address is not valid");
                     message = ctx.getString(R.string.wol_address_invalid);
                     break;
                 default:
+                    Timber.d("Error sending WOL packet to " + connection.getHostname());
                     message = ctx.getString(R.string.wol_error, connection.getHostname(), exception.getLocalizedMessage());
                     break;
             }
