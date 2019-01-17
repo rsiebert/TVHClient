@@ -109,9 +109,7 @@
     <string name="help_and_support">Ayuda y soporte</string>
     <string name="in_2_days">En 2 dias</string>
     <string name="initializing">Inicializando</string>
-    <string name="intro_overlay_text">"Toca para emitir TV en vivo o grabaciones en tu TV
-
-Verifique que cumpla con los requisitos descritos en la configuración de transmisión."</string>
+    <string name="intro_overlay_text">"Toca para emitir TV en vivo o grabaciones en tu TV. Verifique que cumpla con los requisitos descritos en la configuración de transmisión."</string>
     <string name="is_series_recording">Esta grabación es parte de una grabación en serie</string>
     <string name="is_timer_recording">Esta grabación fue creada por un temporizador</string>
     <string name="loading">Cargando…</string>
@@ -125,6 +123,7 @@ Verifique que cumpla con los requisitos descritos en la configuración de transm
     <string name="min_duration">Duración mínima del programa</string>
     <string name="minutes">%d min</string>
     <string name="monday">Lunes</string>
+    <string name="multiple_channel_tags">múltiples etiquetas de canal</string>
     <string name="name">Nombre</string>
     <string name="next_program">Sigue: %s</string>
     <string name="no_cast_session">No hay sesión de emisión disponible</string>
@@ -192,6 +191,7 @@ Verifique que cumpla con los requisitos descritos en la configuración de transm
     <string name="pref_hide_menu_delete_all_recordings_sum">No mostrar este menú para evitar una eliminación accidental de todos los programas grabados.</string>
     <string name="pref_host">Nombre o IP del servidor</string>
     <string name="pref_host_error_invalid">La dirección IP o servidor no es válido.</string>
+    <string name="pref_host_hint">www.server.com order 192.168.0.10</string>
     <string name="pref_host_sum">Ingrese el nombre del servidor</string>
     <string name="pref_htsp_playback_profiles">Perfiles de reproducción (Reproductor interno)</string>
     <string name="pref_htsp_playback_profiles_sum">Seleccione un perfil que utilice el reproductor interno para reproducir un programa grabado utilizando el reproductor interno.</string>
@@ -199,6 +199,16 @@ Verifique que cumpla con los requisitos descritos en la configuración de transm
     <string name="pref_http_playback_profiles_sum">Seleccione un perfil que sea usado por un reproductor externo para reproducir un programa grabado usando un reproductor externo.</string>
     <string name="pref_information">Información</string>
     <string name="pref_information_sum">Mostrar la lista de las bibliotecas usadas y las personas que contribuyeron al desarrollo..</string>
+    <string name="pref_internal_player_audio_passthrough_enabled">Habilitar paso de audio</string>
+    <string name="pref_internal_player_audio_passthrough_enabled_sum">También debe asegurarse de que la configuración de audio del sistema permita la transferencia de audio.</string>
+    <string name="pref_internal_player_audio_tunneling_enabled">Habilitar tunelización de audio</string>
+    <string name="pref_internal_player_audio_tunneling_enabled_sum">Habilitar soporte para tunelización de audio DSP</string>
+    <string name="pref_internal_player_buffer_duration">duración de copia de seguridad</string>
+    <string name="pref_internal_player_buffer_duration_dialog_title">Duración del búfer en segundos</string>
+    <string name="pref_internal_player_buffer_duration_sum">Cuántos segundos se deben almacenar en el búfer antes de que comience la reproducción.</string>
+    <string name="pref_internal_player_enabled">Habilitar reproductor interno</string>
+    <string name="pref_internal_player_enabled_sum">Ver la televisión en vivo o grabaciones a través del reproductor interno. Esto utiliza el protocolo HTSP..</string>
+    <string name="pref_internal_player_timeshift_enabled">Habilitar soporte de cambio de hora</string>
     <string name="pref_language">Idioma</string>
     <string name="pref_language_sum">Elija el idioma que debe usar la aplicación.</string>
     <string name="pref_manage_connections">Gestionar las conexiones</string>
@@ -208,6 +218,8 @@ Verifique que cumpla con los requisitos descritos en la configuración de transm
     <string name="pref_misc">misceláneo</string>
     <string name="pref_name">Nombre de la conexión</string>
     <string name="pref_name_error_invalid">El nombre solo debe contener letras, números, menos y guión bajo.</string>
+    <string name="pref_multiple_channel_tags_enabled">Selección de varios grupos de etiquetas.</string>
+    <string name="pref_multiple_channel_tags_enabled_sum">Filtre la lista de estaciones mostradas en múltiples grupos de etiquetas</string>
     <string name="pref_name_sum">Ingrese un nombre único de la conexión</string>
     <string name="pref_navigation">Navegación</string>
     <string name="pref_navigation_history_enabled">Historial de navegación</string>
@@ -270,8 +282,7 @@ Verifique que cumpla con los requisitos descritos en la configuración de transm
     <string name="pref_visible_menu_icon_tags">"Mostrar siempre el menú 'Etiquetas de canal'"</string>
     <string name="pref_visible_menu_icon_tags_sum">Mantenga el menú de etiqueta de canal visible en la barra de acciones. Impide que el menú se mueva al menú de tres puntos si no hay suficiente espacio.</string>
     <string name="pref_wol_address">Dirección MAC</string>
-    <string name="pref_wol_address_invalid">"La dirección MAC es invalida.
-Debe tener el patrón '01:24:67:9a:cd:ef'."</string>
+    <string name="pref_wol_address_invalid">"La dirección MAC es invalida. Debe tener el patrón '01:24:67:9a:cd:ef'."</string>
     <string name="pref_wol_address_sum">Ingrese la dirección MAC del servidor (e.g. 00:ef:aa:dc:09:45)</string>
     <string name="pref_wol_broadcast">Usar difusión</string>
     <string name="pref_wol_broadcast_sum">Envíe el paquete WOL como una transmisión. Algunos enrutadores no permiten este tipo de WOL.</string>
@@ -321,12 +332,21 @@ Debe tener el patrón '01:24:67:9a:cd:ef'."</string>
     <string name="saving_recordings">Guardando grabaciones recibidas…</string>
     <string name="scheduled_recordings">Grabaciones programadas</string>
     <string name="search">Buscar</string>
-    <string name="search_epg">Buscar en la guía de programas</string>
+    <string name="search_channels">Buscar canales</string>
+    <string name="search_completed_recordings">Buscar grabaciones finalizadas</string>
+    <string name="search_epg">Buscar EPG</string>
+    <string name="search_failed_recordings">Buscar grabaciones fallidas</string>
     <string name="search_fileaffinity">Buscar en FileAffinity</string>
     <string name="search_google">Buscar en Google</string>
     <string name="search_hint">Buscar el EPG</string>
     <string name="search_imdb">Buscar en IMDB</string>
     <string name="search_results">Resultados de la búsqueda</string>
+    <string name="search_program_guide">Buscar guia de programa</string>
+    <string name="search_programs">Buscar programas</string>
+    <string name="search_removed_recordings">Buscar grabaciones eliminadas</string>
+    <string name="search_scheduled_recordings">Buscar grabaciones programadas</string>
+    <string name="search_series_recordings">Buscar series grabadas</string>
+    <string name="search_timer_recordings">Buscar temporizador de grabaciones</string>
     <string name="search_youtube">Buscar en YouTube</string>
     <string name="season">Temporada</string>
     <string name="select">Seleccionar</string>
@@ -378,8 +398,7 @@ Debe tener el patrón '01:24:67:9a:cd:ef'."</string>
     <string name="updating">Actualizando …</string>
     <string name="wednesday">Miercoles</string>
     <string name="wol_address_invalid">La dirección MAC no es válida. Por favor verifica tu configuración.</string>
-    <string name="wol_error">"Error al enviar el paquete de activación en puerto LAN a '%1$s'.
- Mensaje de error: %2$s"</string>
+    <string name="wol_error">"Error al enviar el paquete de activación en puerto LAN a '%1$s'. Mensaje de error: %2$s"</string>
     <string name="wol_send">"Envió exitosamente del paquete de activación de LAN a '%s'"</string>
     <string name="wol_send_broadcast">"Envió exitosamente el paquete de activación de LAN como una transmisión a '%s'"</string>
     <string name="yesterday">Ayer</string>
