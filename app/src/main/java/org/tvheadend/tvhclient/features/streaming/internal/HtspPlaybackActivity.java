@@ -14,6 +14,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.PopupMenu;
 import android.text.TextUtils;
 import android.view.Display;
 import android.view.SurfaceView;
@@ -38,11 +39,14 @@ import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
+import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
+import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.ui.DefaultTimeBar;
 import com.google.android.exoplayer2.ui.PlayerControlView;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultAllocator;
+import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.video.VideoListener;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
@@ -59,6 +63,7 @@ import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.data.service.htsp.SimpleHtspConnection;
 import org.tvheadend.tvhclient.data.service.htsp.tasks.Authenticator;
 import org.tvheadend.tvhclient.features.streaming.internal.utils.ExoPlayerUtils;
+import org.tvheadend.tvhclient.features.streaming.internal.utils.TrackSelectionHelper;
 import org.tvheadend.tvhclient.features.streaming.internal.utils.TvhMappings;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 import org.tvheadend.tvhclient.utils.UIUtils;
@@ -114,8 +119,8 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
     protected TextView elapsedTimeTextView;
     @BindView(R.id.remaining_time)
     protected TextView remainingTimeTextView;
-    @BindView(R.id.player_menu_subtitle)
-    protected ImageButton playerMenuSubtitleImageView;
+    @BindView(R.id.player_menu)
+    protected ImageButton playerMenuImageView;
     @BindView(R.id.player_menu_aspect_ratio)
     protected ImageButton playerMenuAspectRatioImageView;
 
@@ -153,6 +158,7 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
     private long currentTime = new Date().getTime();
     private Runnable currentTimeUpdateTask;
     private final Handler currentTimeUpdateHandler = new Handler();
+    private TrackSelectionHelper trackSelectionHelper;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -337,6 +343,9 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
         Timber.d("Initializing player");
 
         trackSelector = new TvheadendTrackSelector(new AdaptiveTrackSelection.Factory(null));
+        TrackSelection.Factory adaptiveTrackSelectionFactory = new AdaptiveTrackSelection.Factory(new DefaultBandwidthMeter());
+        trackSelectionHelper = new TrackSelectionHelper(trackSelector, adaptiveTrackSelectionFactory);
+
         if (sharedPreferences.getBoolean("audio_tunneling_enabled",
                 getResources().getBoolean(R.bool.pref_default_audio_tunneling_enabled))) {
             trackSelector.setTunnelingAudioSessionId(C.generateAudioSessionIdV21(this));
@@ -346,8 +355,7 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
                 new DefaultAllocator(true, C.DEFAULT_BUFFER_SEGMENT_SIZE),
                 DefaultLoadControl.DEFAULT_MIN_BUFFER_MS,
                 DefaultLoadControl.DEFAULT_MAX_BUFFER_MS,
-                Integer.parseInt(sharedPreferences.getString("buffer_playback_ms",
-                        getResources().getString(R.string.pref_default_buffer_playback_ms))),
+                Integer.parseInt(sharedPreferences.getString("buffer_playback_ms", getResources().getString(R.string.pref_default_buffer_playback_ms))),
                 DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS,
                 C.DEFAULT_BUFFER_SEGMENT_SIZE,
                 true);
@@ -484,18 +492,59 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
                 onChangeAspectRatioSelected();
                 break;
 
-            case R.id.player_menu_subtitle:
-                onSubtitleSelected();
+            case R.id.player_menu:
+                onPlayerMenuSelected(view);
                 break;
         }
     }
 
-    private void onSubtitleSelected() {
+    private void onPlayerMenuSelected(View view) {
+        Timber.d("Player menu selected");
 
+        PopupMenu popupMenu = new PopupMenu(this, view);
+        popupMenu.getMenuInflater().inflate(R.menu.player_popup_menu, popupMenu.getMenu());
+
+        MappingTrackSelector.MappedTrackInfo mappedTrackInfo = trackSelector.getCurrentMappedTrackInfo();
+        if (mappedTrackInfo != null) {
+            for (int i = 0; i < mappedTrackInfo.length; i++) {
+                TrackGroupArray trackGroups = mappedTrackInfo.getTrackGroups(i);
+                if (trackGroups.length != 0) {
+                    switch (player.getRendererType(i)) {
+                        case C.TRACK_TYPE_AUDIO:
+                            Timber.d("Track renderer type for index " + i + " is audio, showing audio menu");
+                            popupMenu.getMenu().findItem(R.id.menu_audio).setVisible(true);
+                            break;
+                        case C.TRACK_TYPE_VIDEO:
+                            Timber.d("Track renderer type for index " + i + " is video");
+                            break;
+                        case C.TRACK_TYPE_TEXT:
+                            Timber.d("Track renderer type for index " + i + " is text, showing subtitle menu");
+                            popupMenu.getMenu().findItem(R.id.menu_subtitle).setVisible(true);
+                            break;
+                    }
+                }
+            }
+
+            // TODO add menu items for playback speed, timeshift and other stuff
+
+            popupMenu.setOnMenuItemClickListener(item -> {
+                switch (item.getItemId()) {
+                    case R.id.menu_audio:
+                        trackSelectionHelper.showSelectionDialog(this, "Audio", mappedTrackInfo, C.TRACK_TYPE_AUDIO);
+                        return true;
+                    case R.id.menu_subtitle:
+                        trackSelectionHelper.showSelectionDialog(this, "Subtitles", mappedTrackInfo, C.TRACK_TYPE_TEXT);
+                        return true;
+                    default:
+                        return false;
+                }
+            });
+            popupMenu.show();
+        }
     }
 
     private void onChangeAspectRatioSelected() {
-        Timber.d("Aspect ration button selected");
+        Timber.d("Change aspect ratio menu selected");
         for (int i = 0; i < aspectRatioValueList.size(); i++) {
             if (aspectRatioValueList.get(i) == videoAspectRatio) {
                 selectedAspectRatioListIndex = i;
@@ -662,7 +711,7 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
             pauseImageView.setOnClickListener(this);
             playImageView.setOnClickListener(this);
             forwardImageView.setOnClickListener(this);
-            playerMenuSubtitleImageView.setOnClickListener(this);
+            playerMenuImageView.setOnClickListener(this);
             playerMenuAspectRatioImageView.setOnClickListener(this);
         }
     }
