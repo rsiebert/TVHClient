@@ -52,17 +52,20 @@ class EpgProgramListRecyclerViewAdapter extends RecyclerView.Adapter<EpgProgramL
         onBindViewHolder(holder, position);
     }
 
-    void addItems(@NonNull List<EpgProgram> list) {
-        updateRecordingState(list, recordingList);
+    void addItems(@NonNull List<EpgProgram> newItems) {
+        updateRecordingState(newItems, recordingList);
 
-        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new EpgProgramListDiffCallback(programList, list));
+        List<EpgProgram> oldItems = new ArrayList<>(programList);
+        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new EpgProgramListDiffCallback(oldItems, newItems));
+
         programList.clear();
-        programList.addAll(list);
+        programList.addAll(newItems);
         diffResult.dispatchUpdatesTo(this);
     }
 
     void addRecordings(@NonNull List<Recording> list) {
-        recordingList = list;
+        recordingList.clear();
+        recordingList.addAll(list);
         updateRecordingState(programList, recordingList);
     }
 

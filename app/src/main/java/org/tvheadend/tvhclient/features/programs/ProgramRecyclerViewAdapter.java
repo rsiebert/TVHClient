@@ -60,14 +60,16 @@ class ProgramRecyclerViewAdapter extends RecyclerView.Adapter<ProgramViewHolder>
         onBindViewHolder(holder, position);
     }
 
-    void addItems(@NonNull List<Program> list) {
-        updateRecordingState(list, recordingList);
+    void addItems(@NonNull List<Program> newItems) {
+        updateRecordingState(newItems, recordingList);
 
-        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new ProgramListDiffCallback(programList, list));
+        List<Program> oldItems = new ArrayList<>(programListFiltered);
+        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new ProgramListDiffCallback(oldItems, newItems));
+
         programList.clear();
         programListFiltered.clear();
-        programList.addAll(list);
-        programListFiltered.addAll(list);
+        programList.addAll(newItems);
+        programListFiltered.addAll(newItems);
         diffResult.dispatchUpdatesTo(this);
     }
 
@@ -134,8 +136,8 @@ class ProgramRecyclerViewAdapter extends RecyclerView.Adapter<ProgramViewHolder>
      * @param list List of recordings
      */
     void addRecordings(@NonNull List<Recording> list) {
-        recordingList = list;
-        updateRecordingState(programList, recordingList);
+        recordingList.clear();
+        recordingList.addAll(list);
         updateRecordingState(programListFiltered, recordingList);
     }
 

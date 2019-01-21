@@ -70,15 +70,17 @@ class RecordingRecyclerViewAdapter extends RecyclerView.Adapter<RecordingViewHol
         }
     }
 
-    void addItems(@NonNull List<Recording> list) {
-        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new RecordingListDiffCallback(recordingListFiltered, list));
+    void addItems(@NonNull List<Recording> newItems) {
+        List<Recording> oldItems = new ArrayList<>(recordingListFiltered);
+        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new RecordingListDiffCallback(oldItems, newItems));
+
         recordingList.clear();
         recordingListFiltered.clear();
-        recordingList.addAll(list);
-        recordingListFiltered.addAll(list);
+        recordingList.addAll(newItems);
+        recordingListFiltered.addAll(newItems);
         diffResult.dispatchUpdatesTo(this);
 
-        if (selectedPosition > list.size()) {
+        if (selectedPosition > recordingListFiltered.size()) {
             selectedPosition = 0;
         }
     }

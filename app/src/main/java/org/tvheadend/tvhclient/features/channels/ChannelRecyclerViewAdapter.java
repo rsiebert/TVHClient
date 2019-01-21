@@ -53,17 +53,19 @@ class ChannelRecyclerViewAdapter extends RecyclerView.Adapter<ChannelViewHolder>
         onBindViewHolder(holder, position);
     }
 
-    void addItems(@NonNull List<Channel> list) {
-        updateRecordingState(list, recordingList);
+    void addItems(@NonNull List<Channel> newItems) {
+        updateRecordingState(newItems, recordingList);
 
-        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new ChannelListDiffCallback(channelList, list));
+        List<Channel> oldItems = new ArrayList<>(channelListFiltered);
+        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new ChannelListDiffCallback(oldItems, newItems));
+
         channelList.clear();
         channelListFiltered.clear();
-        channelList.addAll(list);
-        channelListFiltered.addAll(list);
+        channelList.addAll(newItems);
+        channelListFiltered.addAll(newItems);
         diffResult.dispatchUpdatesTo(this);
 
-        if (selectedPosition > list.size()) {
+        if (selectedPosition > channelListFiltered.size()) {
             selectedPosition = 0;
         }
     }
@@ -146,7 +148,8 @@ class ChannelRecyclerViewAdapter extends RecyclerView.Adapter<ChannelViewHolder>
      * @param list List of recordings
      */
     void addRecordings(@NonNull List<Recording> list) {
-        recordingList = list;
+        recordingList.clear();
+        recordingList.addAll(list);
         updateRecordingState(channelListFiltered, recordingList);
     }
 

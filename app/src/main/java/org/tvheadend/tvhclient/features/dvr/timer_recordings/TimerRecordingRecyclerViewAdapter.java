@@ -53,13 +53,13 @@ class TimerRecordingRecyclerViewAdapter extends RecyclerView.Adapter<TimerRecord
         onBindViewHolder(holder, position);
     }
 
-    void addItems(@NonNull List<TimerRecording> list) {
+    void addItems(@NonNull List<TimerRecording> newItems) {
         recordingList.clear();
         recordingListFiltered.clear();
-        recordingList.addAll(list);
-        recordingListFiltered.addAll(list);
+        recordingList.addAll(newItems);
+        recordingListFiltered.addAll(newItems);
 
-        if (selectedPosition > list.size()) {
+        if (selectedPosition > recordingListFiltered.size()) {
             selectedPosition = 0;
         }
         notifyDataSetChanged();
