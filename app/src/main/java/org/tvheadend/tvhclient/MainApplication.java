@@ -269,6 +269,7 @@ public class MainApplication extends Application implements BillingProcessor.IBi
     }
 
     public static boolean isActivityVisible() {
+        Timber.d("Main application is visible " + activityVisible);
         return activityVisible;
     }
 }
