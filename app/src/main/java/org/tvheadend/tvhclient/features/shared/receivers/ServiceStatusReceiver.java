@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
+import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.data.service.EpgSyncStatusCallback;
 import org.tvheadend.tvhclient.data.service.EpgSyncTaskState;
 
@@ -40,7 +41,7 @@ public class ServiceStatusReceiver extends BroadcastReceiver {
      */
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (callback.get() != null) {
+        if (callback.get() != null && MainApplication.isActivityVisible()) {
             callback.get().onEpgTaskStateChanged(
                     new EpgSyncTaskState.EpgSyncTaskStateBuilder()
                             .state((State) intent.getSerializableExtra(STATE))
