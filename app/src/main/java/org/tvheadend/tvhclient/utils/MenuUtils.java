@@ -742,7 +742,7 @@ public class MenuUtils {
             return false;
         }
 
-        if (isUnlocked && sharedPreferences.getBoolean("internal_player_enabled",
+        if (isUnlocked && sharedPreferences.getBoolean("internal_player_for_channels_enabled",
                 activity.getResources().getBoolean(R.bool.pref_default_internal_player_enabled))) {
             Intent intent = new Intent(activity, HtspPlaybackActivity.class);
             intent.putExtra("channelId", channelId);
@@ -761,7 +761,7 @@ public class MenuUtils {
             Timber.d("Weak reference to activity is null");
             return false;
         }
-        if (isUnlocked && sharedPreferences.getBoolean("internal_player_enabled",
+        if (isUnlocked && sharedPreferences.getBoolean("internal_player_for_recordings_enabled",
                 activity.getResources().getBoolean(R.bool.pref_default_internal_player_enabled))) {
             Intent intent = new Intent(activity, HtspPlaybackActivity.class);
             intent.putExtra("dvrId", dvrId);
@@ -846,8 +846,7 @@ public class MenuUtils {
             return;
         }
 
-        int channelIconAction = Integer.valueOf(sharedPreferences.getString("channel_icon_action",
-                activity.getResources().getString(R.string.pref_default_channel_icon_action)));
+        int channelIconAction = Integer.valueOf(sharedPreferences.getString("channel_icon_action", activity.getResources().getString(R.string.pref_default_channel_icon_action)));
         if (channelIconAction == 1) {
             handleMenuPlayChannel(channelId);
         } else if (channelIconAction == 2) {

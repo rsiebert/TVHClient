@@ -28,6 +28,7 @@ public class MigrateUtils {
     private static final int VERSION_109 = 109;
     private static final int VERSION_116 = 116;
     private static final int VERSION_120 = 120;
+    private static final int VERSION_142 = 142;
 
     @Inject
     protected Context context;
@@ -62,6 +63,15 @@ public class MigrateUtils {
             }
             if (lastInstalledApplicationVersion < VERSION_120) {
                 migratePlaybackProfiles();
+            }
+            if (lastInstalledApplicationVersion < VERSION_142) {
+                // Convert the previous internal player settings to the
+                // new one that differentiates between channels and recordings
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                boolean enabled = sharedPreferences.getBoolean("internal_player_enabled", context.getResources().getBoolean(R.bool.pref_default_internal_player_enabled));
+                editor.putBoolean("internal_player_for_channels_enabled", enabled);
+                editor.putBoolean("internal_player_for_recordings_enabled", enabled);
+                editor.apply();
             }
         }
 
