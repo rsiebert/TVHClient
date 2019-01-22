@@ -33,7 +33,6 @@ import org.tvheadend.tvhclient.injection.MainApplicationComponent;
 import org.tvheadend.tvhclient.injection.modules.MainApplicationModule;
 import org.tvheadend.tvhclient.injection.modules.RepositoryModule;
 import org.tvheadend.tvhclient.injection.modules.SharedPreferencesModule;
-import org.tvheadend.tvhclient.utils.Constants;
 import org.tvheadend.tvhclient.utils.MigrateUtils;
 
 import java.util.List;
@@ -42,6 +41,8 @@ import javax.inject.Inject;
 
 import io.fabric.sdk.android.Fabric;
 import timber.log.Timber;
+
+import static org.tvheadend.tvhclient.utils.Constants.UNLOCKER;
 
 // TODO use data binding
 // TODO use more livedata for connection and server status in a centralized viewmodel
@@ -60,6 +61,7 @@ public class MainApplication extends Application implements BillingProcessor.IBi
     protected SharedPreferences sharedPreferences;
 
     private static MainApplicationComponent component;
+    private boolean isUnlocked;
 
     public static synchronized MainApplication getInstance() {
         return instance;
@@ -126,12 +128,12 @@ public class MainApplication extends Application implements BillingProcessor.IBi
     private void initBilling() {
         billingProcessor = new BillingProcessor(this, BillingUtils.getPublicKey(this), billingHandler);
         billingProcessor.initialize();
-        if (!BillingProcessor.isIabServiceAvailable(this)) {
-            Timber.d("Billing not available");
+        if (BillingProcessor.isIabServiceAvailable(this)) {
+            Timber.d("Billing is available");
+            isUnlocked = BuildConfig.DEBUG || BuildConfig.UNLOCKED || billingProcessor.isPurchased(UNLOCKER);
+            Timber.d("Unlocker has been purchases " + isUnlocked);
         } else {
-            if (!billingProcessor.loadOwnedPurchasesFromGoogle()) {
-                Timber.d("Could not load purchase information");
-            }
+            Timber.d("Billing is not available");
         }
     }
 
@@ -170,9 +172,7 @@ public class MainApplication extends Application implements BillingProcessor.IBi
      * @return True if the application is unlocked otherwise false
      */
     public boolean isUnlocked() {
-        return BuildConfig.DEBUG
-                || BuildConfig.UNLOCKED
-                || billingProcessor.isPurchased(Constants.UNLOCKER);
+        return isUnlocked;
     }
 
     @Override
@@ -202,6 +202,7 @@ public class MainApplication extends Application implements BillingProcessor.IBi
     @Override
     public void onBillingInitialized() {
         Timber.d("Billing has been initialized");
+        checkPurchases();
     }
 
     @Override
@@ -212,6 +213,22 @@ public class MainApplication extends Application implements BillingProcessor.IBi
     @Override
     public void onPurchaseHistoryRestored() {
         Timber.d("Purchase history has been restored");
+        checkPurchases();
+    }
+
+    private void checkPurchases() {
+        Timber.d("Loading list of product purchases from google");
+        if (billingProcessor.loadOwnedPurchasesFromGoogle()) {
+            Timber.d("Loaded list of product purchases from google");
+            final List<String> ownedProducts = billingProcessor.listOwnedProducts();
+            for (String product : ownedProducts) {
+                if (product.equalsIgnoreCase(UNLOCKER)) {
+                    isUnlocked = true;
+                    return;
+                }
+            }
+            isUnlocked = false;
+        }
     }
 
     @Override
