@@ -399,8 +399,15 @@
     <string name="pref_internal_player_buffer_duration_dialog_title">Buffertijd in seconden</string>
     <string name="pref_internal_player_buffer_duration_sum">Hoeveel seconden om te bufferen voordat u begint met afspelen</string>
     <string name="pref_internal_player_buffer_duration">Buffer Duur</string>
-    <string name="pref_internal_player_enabled_sum">Speel live TV of opnames af met de interne speler die gebruik maakt van het HTSP-protocol</string>
-    <string name="pref_internal_player_enabled">Interne speler inschakelen</string>
     <string name="pref_playback_sum">Kies hoe live tv-programma\'s of opnames worden afgespeeld.</string>
     <string name="pref_playback">Afspelen</string>
+    <string name="pref_internal_player_for_channels_enabled">Speel live tv met de interne speler</string>
+    <string name="pref_internal_player_for_recordings_enabled">Speel opnamen met de interne speler</string>
+    <string name="deleting_database_contents">Database-inhoud verwijderen…</string>
+    <string name="database_contents_deleted">Database-inhoud verwijderd</string>
+    <string name="pref_copy_playback_url_to_clipboard_enabled_sum">In het geval van afspeelproblemen kan de gekopieerde URL worden gebruikt om het afspelen in een browser te testen.</string>
+    <string name="pref_copy_playback_url_to_clipboard_enabled">Kopieer weergave-URL naar klembord</string>
+    <string name="selection_disabled">Invalide</string>
+    <string name="selection_default">Ingeschakeld</string>
+    <string name="pref_host_hint">www.server.com of 192.168.0.10</string>
 </resources>

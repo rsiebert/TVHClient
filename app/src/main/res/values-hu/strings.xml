@@ -396,8 +396,6 @@
     <string name="pref_multiple_channel_tags_enabled_sum">A csatornák szűrése többszötös csatorna cimkékkel</string>
     <string name="pref_playback">Visszajátszás</string>
     <string name="pref_playback_sum">Válassza ki az élő TV-műsorok vagy felvételek lejátszásának módját.</string>
-    <string name="pref_internal_player_enabled">Belső lejátszó engedélyezése</string>
-    <string name="pref_internal_player_enabled_sum">Játsszon le élő TV-t vagy felvételeket a HTSP protokollt használó belső lejátszóval</string>
     <string name="pref_internal_player_buffer_duration">Puffer időtartama</string>
     <string name="pref_internal_player_buffer_duration_sum">Megadhatja, hogy a műsor hány másodperc pufferelés után induljon</string>
     <string name="pref_internal_player_buffer_duration_dialog_title">A puffer időtartama másodpercben</string>
@@ -406,4 +404,13 @@
     <string name="pref_internal_player_audio_tunneling_enabled">Audio alagút (tunnel) engedélyezése</string>
     <string name="pref_internal_player_audio_tunneling_enabled_sum">Engedélyezze a DSP audio alagutak támogatását</string>
     <string name="pref_internal_player_timeshift_enabled">Engedélyezze az időeltolás (timeshift) támogatását</string>
+    <string name="pref_internal_player_for_channels_enabled">Játssz élő TV-t a belső lejátszóval</string>
+    <string name="pref_internal_player_for_recordings_enabled">Lejátszások lejátszása a belső lejátszóval</string>
+    <string name="database_contents_deleted">Az adatbázis tartalmának törlése</string>
+    <string name="deleting_database_contents">Adatbázis-tartalom törlése…</string>
+    <string name="selection_disabled">Mozgássérült</string>
+    <string name="pref_copy_playback_url_to_clipboard_enabled">Másolja a lejátszási URL-t a vágólapra</string>
+    <string name="pref_copy_playback_url_to_clipboard_enabled_sum">Lejátszási problémák esetén a másolás használható a lejátszás tesztelésére a böngészőben.</string>
+    <string name="selection_default">Engedélyezve</string>
+    <string name="pref_host_hint">www.server.com vagy 192.168.0.10</string>
 </resources>

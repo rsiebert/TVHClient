@@ -397,8 +397,8 @@
     <string name="search_program_guide">Suche in der Programübersicht</string>
     <string name="pref_playback">Wiedergabe</string>
     <string name="pref_playback_sum">Wählen Sie, wie Live-TV-Programme oder -Aufzeichnungen abgespielt werden.</string>
-    <string name="pref_internal_player_enabled">Internen Player aktivieren</string>
-    <string name="pref_internal_player_enabled_sum">Schaue Live-TV oder Aufnahmen über den internen player. Dieser verwendet das HTSP-Protokoll.</string>
+    <string name="pref_internal_player_for_channels_enabled">Live-TV mit dem interen Player abspielen</string>
+    <string name="pref_internal_player_for_recordings_enabled">Aufnahmen mit dem interen Player abspielen</string>
     <string name="pref_internal_player_buffer_duration">Pufferdauer</string>
     <string name="pref_internal_player_buffer_duration_sum">Wie viele Sekunden sollen zwischengespeichert werden, bevor die Wiedergabe gestartet wird.</string>
     <string name="pref_internal_player_audio_passthrough_enabled">Aktiviere Audio-Passthrough</string>
@@ -409,4 +409,8 @@
     <string name="pref_internal_player_timeshift_enabled">Timeshift-Unterstützung aktivieren</string>
     <string name="database_contents_deleted">Datenbankinhalte wurden gelöscht</string>
     <string name="deleting_database_contents">Lösche Datenbankinhalte…</string>
+    <string name="selection_disabled">Deaktiviert</string>
+    <string name="selection_default">Aktiviert</string>
+    <string name="pref_copy_playback_url_to_clipboard_enabled_sum">Bei Problemen mit der Wiedergabe kann die URL zum Testen der Wiedergabe in einem Browser verwendet werden.</string>
+    <string name="pref_copy_playback_url_to_clipboard_enabled">Kopiere die Wiedergabe-URL in die Zwischenablage</string>
 </resources>

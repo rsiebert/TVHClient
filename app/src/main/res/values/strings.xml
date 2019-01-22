@@ -397,10 +397,8 @@
     <string name="pref_multiple_channel_tags_enabled_sum">Filter channels by selecting more than one channel tag</string>
     <string name="pref_playback">Playback</string>
     <string name="pref_playback_sum">Choose how live TV programs or recordings are played.</string>
-    <string name="pref_internal_player_enabled">Enable Internal Player</string>
-    <string name="pref_internal_player_for_channels_enabled">Play Live-TV using the internal player</string>
-    <string name="pref_internal_player_for_recordings_enabled">Play recordings using the internal player</string>
-    <string name="pref_internal_player_enabled_sum">Play live TV or recordings with the internal player which uses the HTSP protocol</string>
+    <string name="pref_internal_player_for_channels_enabled">Play Live-TV with the internal player</string>
+    <string name="pref_internal_player_for_recordings_enabled">Play recordings with the internal player</string>
     <string name="pref_internal_player_buffer_duration">Buffer Duration</string>
     <string name="pref_internal_player_buffer_duration_sum">How many seconds to buffer before starting playback</string>
     <string name="pref_internal_player_buffer_duration_dialog_title">Buffer duration in seconds</string>
