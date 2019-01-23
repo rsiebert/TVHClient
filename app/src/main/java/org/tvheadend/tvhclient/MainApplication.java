@@ -7,10 +7,8 @@ import android.arch.lifecycle.OnLifecycleEvent;
 import android.arch.lifecycle.ProcessLifecycleOwner;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.support.annotation.NonNull;
 
-import com.anjlab.android.iab.v3.BillingProcessor;
-import com.anjlab.android.iab.v3.TransactionDetails;
+import com.android.billingclient.api.Purchase;
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.core.CrashlyticsCore;
 import com.facebook.stetho.Stetho;
@@ -26,7 +24,8 @@ import org.tvheadend.tvhclient.features.logging.CrashlyticsTree;
 import org.tvheadend.tvhclient.features.logging.DebugTree;
 import org.tvheadend.tvhclient.features.logging.FileLoggingTree;
 import org.tvheadend.tvhclient.features.purchase.BillingHandler;
-import org.tvheadend.tvhclient.features.purchase.BillingUtils;
+import org.tvheadend.tvhclient.features.purchase.BillingManager;
+import org.tvheadend.tvhclient.features.purchase.BillingUpdatesListener;
 import org.tvheadend.tvhclient.features.streaming.external.ExpandedControlsActivity;
 import org.tvheadend.tvhclient.injection.DaggerMainApplicationComponent;
 import org.tvheadend.tvhclient.injection.MainApplicationComponent;
@@ -50,9 +49,8 @@ import static org.tvheadend.tvhclient.utils.Constants.UNLOCKER;
 // TODO improve epg loading speed by loading programs as livedata
 // TODO Use paged loading
 
-public class MainApplication extends Application implements BillingProcessor.IBillingHandler, OptionsProvider, LifecycleObserver {
+public class MainApplication extends Application implements OptionsProvider, LifecycleObserver, BillingUpdatesListener {
 
-    private BillingProcessor billingProcessor;
     private BillingHandler billingHandler;
     private static MainApplication instance;
     private static boolean activityVisible;
@@ -62,6 +60,7 @@ public class MainApplication extends Application implements BillingProcessor.IBi
 
     private static MainApplicationComponent component;
     private boolean isUnlocked;
+    private BillingManager billingManager;
 
     public static synchronized MainApplication getInstance() {
         return instance;
@@ -126,15 +125,8 @@ public class MainApplication extends Application implements BillingProcessor.IBi
     }
 
     private void initBilling() {
-        billingProcessor = new BillingProcessor(this, BillingUtils.getPublicKey(this), billingHandler);
-        billingProcessor.initialize();
-        if (BillingProcessor.isIabServiceAvailable(this)) {
-            Timber.d("Billing is available");
-            isUnlocked = BuildConfig.DEBUG || BuildConfig.UNLOCKED || billingProcessor.isPurchased(UNLOCKER);
-            Timber.d("Unlocker has been purchases " + isUnlocked);
-        } else {
-            Timber.d("Billing is not available");
-        }
+        billingManager = new BillingManager(this.getApplicationContext(), billingHandler);
+        billingManager.queryPurchases();
     }
 
     private void initTimber() {
@@ -178,57 +170,7 @@ public class MainApplication extends Application implements BillingProcessor.IBi
     @Override
     public void onTerminate() {
         billingHandler.removeListener(this);
-        if (billingProcessor != null) {
-            billingProcessor.release();
-        }
         super.onTerminate();
-    }
-
-    /**
-     * Returns the billing processor object that can be used by other classes to
-     * access billing related features
-     *
-     * @return The billing processor object
-     */
-    public BillingProcessor getBillingProcessor() {
-        return billingProcessor;
-    }
-
-    @Override
-    public void onBillingError(int errorCode, Throwable error) {
-        // NOP
-    }
-
-    @Override
-    public void onBillingInitialized() {
-        Timber.d("Billing has been initialized");
-        checkPurchases();
-    }
-
-    @Override
-    public void onProductPurchased(@NonNull String productId, TransactionDetails details) {
-        // NOP
-    }
-
-    @Override
-    public void onPurchaseHistoryRestored() {
-        Timber.d("Purchase history has been restored");
-        checkPurchases();
-    }
-
-    private void checkPurchases() {
-        Timber.d("Loading list of product purchases from google");
-        if (billingProcessor.loadOwnedPurchasesFromGoogle()) {
-            Timber.d("Loaded list of product purchases from google");
-            final List<String> ownedProducts = billingProcessor.listOwnedProducts();
-            for (String product : ownedProducts) {
-                if (product.equalsIgnoreCase(UNLOCKER)) {
-                    isUnlocked = true;
-                    return;
-                }
-            }
-            isUnlocked = false;
-        }
     }
 
     @Override
@@ -252,6 +194,10 @@ public class MainApplication extends Application implements BillingProcessor.IBi
         return null;
     }
 
+    public BillingManager getBillingManager() {
+        return billingManager;
+    }
+
     public BillingHandler getBillingHandler() {
         return billingHandler;
     }
@@ -271,5 +217,37 @@ public class MainApplication extends Application implements BillingProcessor.IBi
     public static boolean isActivityVisible() {
         Timber.d("Main application is visible " + activityVisible);
         return activityVisible;
+    }
+
+    @Override
+    public void onBillingClientSetupFinished() {
+        Timber.d("Billing client setup has finished");
+        billingManager.queryPurchases();
+    }
+
+    @Override
+    public void onConsumeFinished(String token, int result) {
+
+    }
+
+    @Override
+    public void onPurchaseSuccessful(List<Purchase> purchases) {
+        Timber.d("Purchase was successful");
+        for (Purchase purchase : purchases) {
+            if (purchase.getSku().equals(UNLOCKER)) {
+                Timber.d("Received purchase item " + UNLOCKER);
+                isUnlocked = true;
+            }
+        }
+    }
+
+    @Override
+    public void onPurchaseCancelled() {
+        Timber.d("Purchase was successful");
+    }
+
+    @Override
+    public void onPurchaseError(int errorCode) {
+        Timber.d("Purchase was not successful");
     }
 }

@@ -2,15 +2,13 @@ package org.tvheadend.tvhclient.features.purchase;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.anjlab.android.iab.v3.BillingProcessor;
-import com.anjlab.android.iab.v3.TransactionDetails;
+import com.android.billingclient.api.BillingClient;
+import com.android.billingclient.api.Purchase;
 
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
@@ -18,13 +16,15 @@ import org.tvheadend.tvhclient.features.information.WebViewFragment;
 import org.tvheadend.tvhclient.features.shared.tasks.FileLoaderCallback;
 import org.tvheadend.tvhclient.features.startup.SplashActivity;
 
+import java.util.List;
+
 import timber.log.Timber;
 
 import static org.tvheadend.tvhclient.utils.Constants.UNLOCKER;
 
-public class UnlockerFragment extends WebViewFragment implements FileLoaderCallback, BillingProcessor.IBillingHandler {
+public class UnlockerFragment extends WebViewFragment implements FileLoaderCallback, BillingUpdatesListener {
 
-    private BillingProcessor billingProcessor;
+    private BillingManager billingManager;
     private BillingHandler billingHandler;
 
     @Override
@@ -32,7 +32,7 @@ public class UnlockerFragment extends WebViewFragment implements FileLoaderCallb
         super.onActivityCreated(savedInstanceState);
         toolbarInterface.setTitle(getString(R.string.pref_unlocker));
         toolbarInterface.setSubtitle(null);
-        billingProcessor = MainApplication.getInstance().getBillingProcessor();
+        billingManager = MainApplication.getInstance().getBillingManager();
         billingHandler = MainApplication.getInstance().getBillingHandler();
     }
 
@@ -62,9 +62,9 @@ public class UnlockerFragment extends WebViewFragment implements FileLoaderCallb
                 return true;
 
             case R.id.menu_purchase:
-                if (!billingProcessor.isPurchased(UNLOCKER)) {
+                if (!MainApplication.getInstance().isUnlocked()) {
                     Timber.d("Unlocker not purchased");
-                    billingProcessor.purchase(activity, UNLOCKER);
+                    billingManager.initiatePurchaseFlow(activity, UNLOCKER, null, BillingClient.SkuType.INAPP);
                 } else {
                     Timber.d("Unlocker already purchased");
                     showPurchasedAlreadyMadeDialog();
@@ -115,33 +115,29 @@ public class UnlockerFragment extends WebViewFragment implements FileLoaderCallb
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (!billingProcessor.handleActivityResult(requestCode, resultCode, data)) {
-            // The billing activity was not shown or did nothing. Nothing needs to be done
-            super.onActivityResult(requestCode, resultCode, data);
-        }
-        activity.finish();
+    public void onBillingClientSetupFinished() {
+
     }
 
     @Override
-    public void onProductPurchased(@NonNull String productId, @Nullable TransactionDetails details) {
+    public void onConsumeFinished(String token, int result) {
+
+    }
+
+    @Override
+    public void onPurchaseSuccessful(List<Purchase> purchases) {
         Timber.d("Purchase was successful");
         showPurchaseSuccessfulDialog();
     }
 
     @Override
-    public void onPurchaseHistoryRestored() {
-
+    public void onPurchaseCancelled() {
+        Timber.d("Purchase was cancelled");
     }
 
     @Override
-    public void onBillingError(int errorCode, @Nullable Throwable error) {
+    public void onPurchaseError(int errorCode) {
         Timber.d("Purchase was not successful");
         showPurchaseNotSuccessfulDialog();
-    }
-
-    @Override
-    public void onBillingInitialized() {
-
     }
 }
