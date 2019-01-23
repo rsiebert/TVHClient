@@ -125,10 +125,9 @@ public class StartupFragment extends Fragment implements EpgSyncStatusCallback {
             settingsButton.setVisibility(View.VISIBLE);
             settingsButton.setOnClickListener(v -> showConnectionListSettings());
 
-        } else if (NetworkUtils.isConnectionAvailable(activity)
-                && !appRepository.getConnectionData().getActiveItem().isSyncRequired()
-                && appRepository.getChannelData().getItems().size() > 0) {
-            Timber.d("Network is available, database contains channels and no sync is required, showing contents");
+        } else if (appRepository.getChannelData().getItems().size() > 0
+                && !appRepository.getConnectionData().getActiveItem().isSyncRequired()) {
+            Timber.d("Database contains channels and no sync is required, showing contents");
             showContentScreen();
 
         } else if (!NetworkUtils.isConnectionAvailable(activity)) {
