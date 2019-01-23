@@ -32,6 +32,11 @@ public class PlayChannelActivity extends BasePlaybackActivity {
     }
 
     @Override
+    protected boolean requireHostnameToAddressConversion() {
+        return false;
+    }
+
+    @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt("channelId", channelId);

@@ -35,6 +35,11 @@ public class PlayRecordingActivity extends BasePlaybackActivity {
     }
 
     @Override
+    protected boolean requireHostnameToAddressConversion() {
+        return false;
+    }
+
+    @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt("dvrId", dvrId);

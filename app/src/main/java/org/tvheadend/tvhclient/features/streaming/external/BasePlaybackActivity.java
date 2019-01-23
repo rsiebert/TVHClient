@@ -110,6 +110,8 @@ public abstract class BasePlaybackActivity extends AppCompatActivity implements 
         }
     }
 
+    protected abstract boolean requireHostnameToAddressConversion();
+
     protected abstract void onHttpTicketReceived();
 
     protected abstract void getHttpTicket();
@@ -122,35 +124,42 @@ public abstract class BasePlaybackActivity extends AppCompatActivity implements 
             String path = intent.getStringExtra("path");
             String ticket = intent.getStringExtra("ticket");
 
-            try {
-                String hostAddress = new ConvertHostnameToAddressTask(connection).execute().get();
-                if (connection.getStreamingPort() != 80 && connection.getStreamingPort() != 443) {
-                    baseUrl = "http://" + hostAddress + ":" + connection.getStreamingPort();
-                } else {
-                    baseUrl = "http://" + hostAddress;
+            // Convert the hostname to the IP address only when required.
+            // This is usually required when a channel or recording shall
+            // be played on a chromecast
+            String hostAddress = connection.getHostname();
+            if (requireHostnameToAddressConversion()) {
+                Timber.d("Convert hostname " + connection.getHostname() + " to IP address");
+                try {
+                    hostAddress = new ConvertHostnameToAddressTask(connection).execute().get();
+                } catch (InterruptedException | ExecutionException e) {
+                    Timber.d("Could not execute task to get ip address from " + connection.getHostname(), e);
                 }
-                if (!TextUtils.isEmpty(serverStatus.getWebroot())) {
-                    baseUrl += serverStatus.getWebroot();
-                }
-                serverUrl = baseUrl + path + "?ticket=" + ticket + "&profile=" + serverProfile.getName();
-
-                // Copy the created server url to the clip board if the setting is enabled
-                if (sharedPreferences.getBoolean("copy_playback_url_to_clipboard_enabled", getResources().getBoolean(R.bool.pref_default_copy_playback_url_to_clipboard_enabled))) {
-                    Timber.d("Copying playback url " + serverUrl + " to clipboard");
-                    ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
-                    ClipData clip = ClipData.newPlainText("Server url", serverUrl);
-                    clipboard.setPrimaryClip(clip);
-                } else {
-                    Timber.d("Not copying playback url " + serverUrl + " to clipboard");
-                }
-
-                onHttpTicketReceived();
-
-            } catch (InterruptedException | ExecutionException e) {
-                Timber.d("Could not execute task to get ip address from " + connection.getHostname(), e);
-                progressBar.setVisibility(View.GONE);
-                statusTextView.setText(getString(R.string.error_starting_playback_no_profile));
+            } else {
+                Timber.d("Hostname " + connection.getHostname() + " to IP address conversion not required");
             }
+
+            if (connection.getStreamingPort() != 80 && connection.getStreamingPort() != 443) {
+                baseUrl = "http://" + hostAddress + ":" + connection.getStreamingPort();
+            } else {
+                baseUrl = "http://" + hostAddress;
+            }
+            if (!TextUtils.isEmpty(serverStatus.getWebroot())) {
+                baseUrl += serverStatus.getWebroot();
+            }
+            serverUrl = baseUrl + path + "?ticket=" + ticket + "&profile=" + serverProfile.getName();
+
+            // Copy the created server url to the clip board if the setting is enabled
+            if (sharedPreferences.getBoolean("copy_playback_url_to_clipboard_enabled", getResources().getBoolean(R.bool.pref_default_copy_playback_url_to_clipboard_enabled))) {
+                Timber.d("Copying playback url " + serverUrl + " to clipboard");
+                ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("Server url", serverUrl);
+                clipboard.setPrimaryClip(clip);
+            } else {
+                Timber.d("Not copying playback url " + serverUrl + " to clipboard");
+            }
+
+            onHttpTicketReceived();
         }
     };
 
