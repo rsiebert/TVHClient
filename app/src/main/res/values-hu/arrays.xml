@@ -20,9 +20,12 @@
     </string-array>
 
     <string-array name="pref_sort_channels_names">
-        <item>A szerver által definiált</item>
-        <item>Csatorna név</item>
-        <item>Csatorna szám</item>
+        <item>A kiszolgáló által meghatározott csatornaazonosító (emelkedő)</item>
+        <item>A kiszolgáló által meghatározott csatornaazonosító (csökkenő)</item>
+        <item>Csatorna név (emelkedő)</item>
+        <item>Csatorna név (csökkenő)</item>
+        <item>Csatorna szám (emelkedő)</item>
+        <item>Csatorna szám (csökkenő)</item>
     </string-array>
 
     <string-array name="day_short_names">

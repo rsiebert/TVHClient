@@ -20,9 +20,12 @@
     </string-array>
 
     <string-array name="pref_sort_channels_names">
-        <item>Definiert durch Server</item>
-        <item>Sendername</item>
-        <item>Sendernummer</item>
+        <item>Sender ID vergeben vom Server (aufsteigend)</item>
+        <item>Sender ID vergeben vom Server (absteigend)</item>
+        <item>Sendername (aufsteigend)</item>
+        <item>Sendername (absteigend)</item>
+        <item>Sendernummer (aufsteigend)</item>
+        <item>Sendernummer (absteigend)</item>
     </string-array>
 
     <string-array name="day_short_names">

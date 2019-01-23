@@ -14,9 +14,12 @@
     </string-array>
 
     <string-array name="pref_sort_channels_names">
-        <item>Definidos en el servidor</item>
-        <item>Nombre de canal</item>
-        <item>Número de canal</item>
+        <item>ID de canal como lo define el servidor (ascendente)</item>
+        <item>ID de canal como lo define el servidor (descendente)</item>
+        <item>Nombre de canal (ascendente)</item>
+        <item>Nombre de canal (descendente)</item>
+        <item>Número de canal (ascendente)</item>
+        <item>Número de canal (descendente)</item>
     </string-array>
 
     <string-array name="day_short_names">

@@ -36,11 +36,13 @@ public interface ChannelDao {
             "c.number_minor " +
             "FROM channels AS c ";
 
-    String ORDER_BY = " ORDER BY CASE :sortOrder " +
-            "   WHEN 0 THEN (c.display_number + 0) " +
-            "   WHEN 1 THEN c.name " +
-            "   WHEN 2 THEN (c.display_number + 0) " +
-            "END";
+    String ORDER_BY = " ORDER BY " +
+            "CASE :sortOrder WHEN 0 THEN c.id END ASC," +
+            "CASE :sortOrder WHEN 1 THEN c.id END DESC," +
+            "CASE :sortOrder WHEN 2 THEN c.name END ASC," +
+            "CASE :sortOrder WHEN 3 THEN c.name END DESC," +
+            "CASE :sortOrder WHEN 4 THEN (c.display_number + 0) END ASC," +
+            "CASE :sortOrder WHEN 5 THEN (c.display_number + 0) END DESC";
 
     String CONNECTION_IS_ACTIVE = " c.connection_id IN (SELECT id FROM connections WHERE active = 1) ";
 

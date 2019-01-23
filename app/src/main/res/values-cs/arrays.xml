@@ -14,9 +14,12 @@
     </string-array>
 
     <string-array name="pref_sort_channels_names">
-        <item>Určené serverem</item>
-        <item>Jméno kanálu</item>
-        <item>Číslo kanálu</item>
+        <item>Identifikátor kanálu definovaný serverem (stoupající)</item>
+        <item>Identifikátor kanálu definovaný serverem (klesající)</item>
+        <item>Jméno kanálu (stoupající)</item>
+        <item>Jméno kanálu (klesající)</item>
+        <item>Číslo kanálu (stoupající)</item>
+        <item>Číslo kanálu (klesající)</item>
     </string-array>
 
     <string-array name="day_short_names">
