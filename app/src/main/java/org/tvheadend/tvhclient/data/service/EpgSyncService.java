@@ -3,6 +3,7 @@ package org.tvheadend.tvhclient.data.service;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
+import android.support.annotation.NonNull;
 
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
@@ -46,7 +47,7 @@ public class EpgSyncService extends Service {
     }
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
+    public int onStartCommand(@NonNull Intent intent, int flags, int startId) {
         Timber.d("Received command for service");
 
         if (simpleHtspConnection != null
