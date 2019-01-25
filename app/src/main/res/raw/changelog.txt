@@ -1,3 +1,11 @@
+$ 2.0.1
+  % VERSION 2.0.1
+  _ 25.01.2018
+    * Changed the one time initial sync of data to faster show the channel screen. (Only when a reconnect is requested from the menu or a certain time since the last sync has passed, new epg data is fetched in the background.)
+    * Use the hostname for regular playback and the IP address only for casting
+    * Added separate option to use the internal player only for either channels or recordings
+    * Replaced billing library to prevent the app from sometimes not unlocking
+    * Added more choices how to sort the channels
 $ 2.0.0
   % VERSION 2.0.0
   _ 15.01.2018
