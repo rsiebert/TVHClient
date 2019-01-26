@@ -19,19 +19,29 @@ public class EpgDataUpdateWorker extends Worker {
     @NonNull
     @Override
     public Result doWork() {
-        Timber.d("Waiting 15s before loading more event data from server");
+        Timber.d("Loading more event data from server");
 
-        // The work here will be done when the worker is first enqueued.
-        // Delay the execution to avoid having too much load during
-        // startup or any issues during the initial sync.
-        try {
-            Thread.sleep(15000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        boolean fullSyncRequired = getInputData().getBoolean("fullSyncRequired", false);
+        boolean minimalSyncRequired = getInputData().getBoolean("minimalSyncRequired", false);
+
+        Intent intent = new Intent();
+        intent.setAction("getMoreEvents");
+
+        if (fullSyncRequired) {
+            Timber.d("Full sync is required, trying to load 250 events per channel");
+            intent.putExtra("numFollowing", 250);
+            intent.putExtra("fullSyncRequired", true);
+
+        } else if (minimalSyncRequired) {
+            Timber.d("Minimal sync is required, trying to load only 50 events per channel");
+            intent.putExtra("numFollowing", 50);
+
+        } else {
+            Timber.d("No sync is required, not loading any events");
+            return Result.success();
         }
 
-        Timber.d("Loading more event data from server");
-        EpgSyncIntentService.enqueueWork(getApplicationContext(), new Intent().setAction("getMoreEvents"));
-        return Result.SUCCESS;
+        EpgSyncIntentService.enqueueWork(getApplicationContext(), intent);
+        return Result.success();
     }
 }
