@@ -17,7 +17,6 @@ import org.tvheadend.tvhclient.BuildConfig;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.service.EpgSyncService;
-import org.tvheadend.tvhclient.data.service.worker.EpgWorkerHandler;
 import org.tvheadend.tvhclient.features.search.SuggestionProvider;
 import org.tvheadend.tvhclient.features.startup.SplashActivity;
 
@@ -26,7 +25,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import androidx.work.WorkManager;
 import timber.log.Timber;
 
 public class SettingsAdvancedFragment extends BasePreferenceFragment implements Preference.OnPreferenceClickListener, SharedPreferences.OnSharedPreferenceChangeListener, DatabaseClearedCallback {
@@ -191,12 +189,6 @@ public class SettingsAdvancedFragment extends BasePreferenceFragment implements 
                 } catch (NumberFormatException ex) {
                     prefs.edit().putString(key, getResources().getString(R.string.pref_default_connection_timeout)).apply();
                 }
-                break;
-
-            case "epg_max_time":
-                Timber.d("Preference " + key + " has changed, restarting background workers");
-                WorkManager.getInstance().cancelAllWorkByTag(EpgWorkerHandler.WORKER_TAG);
-                EpgWorkerHandler.startBackgroundWorkers(activity.getApplicationContext());
                 break;
         }
     }
