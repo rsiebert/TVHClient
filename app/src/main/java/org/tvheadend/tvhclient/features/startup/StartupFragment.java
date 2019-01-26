@@ -258,6 +258,9 @@ public class StartupFragment extends Fragment implements EpgSyncStatusCallback {
                 progressBar.setVisibility(View.INVISIBLE);
                 stateTextView.setText(state.getMessage());
                 detailsTextView.setText(state.getDetails());
+
+                Timber.d("Stopping, unregistering service status listener");
+                LocalBroadcastManager.getInstance(activity).unregisterReceiver(serviceStatusReceiver);
                 showContentScreen();
                 break;
 
