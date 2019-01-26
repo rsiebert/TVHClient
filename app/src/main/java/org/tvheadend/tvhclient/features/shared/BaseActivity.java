@@ -15,7 +15,6 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.service.EpgSyncService;
 import org.tvheadend.tvhclient.data.service.EpgSyncStatusCallback;
 import org.tvheadend.tvhclient.data.service.EpgSyncTaskState;
-import org.tvheadend.tvhclient.data.service.worker.EpgWorkerHandler;
 import org.tvheadend.tvhclient.features.dvr.recordings.RecordingDetailsFragment;
 import org.tvheadend.tvhclient.features.dvr.series_recordings.SeriesRecordingDetailsFragment;
 import org.tvheadend.tvhclient.features.dvr.timer_recordings.TimerRecordingDetailsFragment;
@@ -150,10 +149,6 @@ public abstract class BaseActivity extends AppCompatActivity implements NetworkS
                 }
                 // Reset the start service retry count
                 serverConnectionRetryCounter = 0;
-                break;
-
-            case SYNC_DONE:
-                EpgWorkerHandler.startBackgroundWorkers(getApplicationContext());
                 break;
         }
     }
