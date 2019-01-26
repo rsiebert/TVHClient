@@ -35,6 +35,9 @@ import org.tvheadend.tvhclient.data.service.htsp.HtspFileInputStream;
 import org.tvheadend.tvhclient.data.service.htsp.HtspMessage;
 import org.tvheadend.tvhclient.data.service.htsp.HtspNotConnectedException;
 import org.tvheadend.tvhclient.data.service.htsp.tasks.Authenticator;
+import org.tvheadend.tvhclient.data.service.worker.EpgDataRemovalWorker;
+import org.tvheadend.tvhclient.data.service.worker.EpgDataUpdateWorker;
+import org.tvheadend.tvhclient.data.service.worker.LoadChannelIconWorker;
 import org.tvheadend.tvhclient.features.shared.receivers.ServiceStatusReceiver;
 import org.tvheadend.tvhclient.features.shared.receivers.SnackbarMessageReceiver;
 import org.tvheadend.tvhclient.utils.MiscUtils;
@@ -50,9 +53,14 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
+import androidx.work.Data;
+import androidx.work.ExistingWorkPolicy;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
 import timber.log.Timber;
 
 public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener, HtspConnection.Listener {
@@ -64,8 +72,16 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     @Inject
     protected Context context;
 
-    private final int connectionTimeout;
     private final Connection connection;
+    /**
+     * The server must reply to a HTSP message send from the client within this
+     * time in milliseconds, otherwise a timeout occurs and no reply is assumed.
+     */
+    private final int connectionTimeout;
+    /**
+     * The initial HTSP API version that the server must support
+     * if it did not send the actual API version during initial sync
+     */
     private int htspVersion;
 
     private boolean fullSyncRequired;
@@ -73,10 +89,10 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     private final HtspMessage.Dispatcher dispatcher;
     private final Handler handler;
 
+    private final ArrayList<Program> loadedEventsForAllChannels = new ArrayList<>();
     private final ArrayList<Channel> pendingChannelOps = new ArrayList<>();
+    private final ArrayList<ChannelTag> pendingChannelTagOps = new ArrayList<>();
     private final ArrayList<Recording> pendingRecordingOps = new ArrayList<>();
-    private final ArrayList<Program> pendingEventOps = new ArrayList<>();
-    private final ArrayList<String> pendingChannelLogoFetches = new ArrayList<>();
     private boolean initialSyncWithServerRunning;
 
     EpgSyncTask(@NonNull HtspMessage.Dispatcher dispatcher, Connection connection) {
@@ -160,9 +176,8 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         Timber.d("Starting async communication with server");
 
         pendingChannelOps.clear();
-        pendingChannelLogoFetches.clear();
+        pendingChannelTagOps.clear();
         pendingRecordingOps.clear();
-        pendingEventOps.clear();
 
         fullSyncRequired = connection.isSyncRequired();
         Timber.d("Full sync with the server required: " + fullSyncRequired);
@@ -177,33 +192,6 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         // seconds of data starting from the current time
         HtspMessage enableAsyncMetadataRequest = new HtspMessage();
         enableAsyncMetadataRequest.put("method", "enableAsyncMetadata");
-
-        long epgMaxTime = Long.parseLong(sharedPreferences.getString("epg_max_time", context.getResources().getString(R.string.pref_default_epg_max_time)));
-        long currentTimeInSeconds = (System.currentTimeMillis() / 1000L);
-        long lastUpdateTime = connection.getLastUpdate();
-
-        Timber.d("Last update with the server: " + lastUpdateTime);
-        Timber.d("Epg time to sync: " + epgMaxTime);
-        Timber.d("Current time is: " + currentTimeInSeconds);
-        Timber.d("Last fetching time is past the maximum allowed time: " + ((lastUpdateTime + epgMaxTime) < currentTimeInSeconds));
-
-        // Only fetch new epg data if the last update time plus the epg fetch
-        // time is older than the current time or if a sync is required.
-        if (!fullSyncRequired && (lastUpdateTime + epgMaxTime) < currentTimeInSeconds) {
-            Timber.d("Doing a regular initial connection to the server, loading " + epgMaxTime + " seconds of programs");
-            enableAsyncMetadataRequest.put("epg", 1);
-            enableAsyncMetadataRequest.put("epgMaxTime", epgMaxTime + (System.currentTimeMillis() / 1000L));
-            enableAsyncMetadataRequest.put("lastUpdate", lastUpdateTime);
-
-        } else if (fullSyncRequired) {
-            Timber.d("Doing a full initial sync with the server, loading 3 day of program data");
-            enableAsyncMetadataRequest.put("epg", 1);
-            enableAsyncMetadataRequest.put("epgMaxTime", 259200 + (System.currentTimeMillis() / 1000L));
-            enableAsyncMetadataRequest.put("lastUpdate", lastUpdateTime);
-
-        } else {
-            Timber.d("Not requesting epg data during initial sync");
-        }
 
         try {
             dispatcher.sendMessage(enableAsyncMetadataRequest);
@@ -223,6 +211,11 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
 
     }
 
+    /**
+     * Handles all supported actions that the server can sent to the client
+     *
+     * @param message The message with the payload from the server
+     */
     @Override
     public void onMessage(@NonNull HtspMessage message) {
         final String method = message.getString("method");
@@ -308,24 +301,17 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         }
     }
 
-    private void handleGetEvents(HtspMessage message) {
-        if (message.containsKey("events")) {
-            List<Program> programs = new ArrayList<>();
-            for (HtspMessage msg : message.getHtspMessageArray("events")) {
-                Program program = EpgSyncUtils.convertMessageToProgramModel(new Program(), msg);
-                program.setConnectionId(connection.getId());
-                programs.add(program);
-            }
-            appRepository.getProgramData().addItems(programs);
-        }
-    }
-
-    void handleIntent(Intent intent) {
-        if (intent == null || TextUtils.isEmpty(intent.getAction())) {
+    /**
+     * Handles all supported actions from the client to the server and certain internal calls.
+     *
+     * @param intent The intent with the action
+     */
+    void handleIntent(@NonNull Intent intent) {
+        String action = intent.getAction();
+        if (action == null) {
             return;
         }
-
-        switch (intent.getAction()) {
+        switch (action) {
             case "getStatus":
                 getStatus();
                 break;
@@ -338,17 +324,11 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
             case "getChannel":
                 getChannel(intent);
                 break;
-            case "getMoreEvents":
-                getMoreEvents(intent.getIntExtra("numFollowing", 25));
-                break;
             case "getEvent":
                 getEvent(intent);
                 break;
             case "getEvents":
                 getEvents(intent);
-                break;
-            case "deleteEvents":
-                deleteEvents();
                 break;
             case "epgQuery":
                 getEpgQuery(intent);
@@ -391,6 +371,19 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
             case "getDvrConfigs":
                 getDvrConfigs();
                 break;
+            // Internal calls that are called from the intent service
+            case "getMoreEvents":
+                getMoreEvents(intent);
+                break;
+            case "deleteEvents":
+                deleteEvents();
+                break;
+            case "getAdditionalData":
+                getAdditionalServerData();
+                break;
+            case "loadChannelIcons":
+                loadAllChannelIcons();
+                break;
         }
     }
 
@@ -422,20 +415,8 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         ChannelTag addedTag = EpgSyncUtils.convertMessageToChannelTagModel(new ChannelTag(), msg, pendingChannelOps);
         addedTag.setConnectionId(connection.getId());
 
-        sendEpgSyncStatusMessage(ServiceStatusReceiver.State.SYNC_IN_PROGRESS,
-                context.getString(R.string.saving_data),
-                "Receiving channel tags");
-
-        appRepository.getChannelTagData().addItem(addedTag);
-        // Get the tag id and all channel ids of the tag so that
-        // new entries where the tagId is present can be added to the database
-        handleTagAndChannelRelation(addedTag);
-
-        // Update the icon if required
-        final String icon = msg.getString("tagIcon", null);
-        if (icon != null) {
-            pendingChannelLogoFetches.add(icon);
-        }
+        Timber.d("Sync is running, adding channel tag");
+        pendingChannelTagOps.add(addedTag);
     }
 
     /**
@@ -449,41 +430,39 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
             return;
         }
 
-        sendEpgSyncStatusMessage(ServiceStatusReceiver.State.SYNC_IN_PROGRESS,
-                context.getString(R.string.saving_data),
-                "Updating channel tags");
-
         ChannelTag channelTag = appRepository.getChannelTagData().getItemById(msg.getInteger("tagId"));
         if (channelTag == null) {
             Timber.d("Could not find a channel tag with id " + msg.getInteger("tagId") + " in the database");
-            return;
+            channelTag = new ChannelTag();
         }
 
         // During initial sync no channels are yet saved. So use the temporarily
         // stored channels to calculate the channel count for the channel tag
         ChannelTag updatedTag = EpgSyncUtils.convertMessageToChannelTagModel(channelTag, msg, pendingChannelOps);
-        appRepository.getChannelTagData().updateItem(updatedTag);
-        // Remove all entries of this tag from the database before
-        // adding new ones which are defined in the members variable
-        handleTagAndChannelRelation(updatedTag);
+        updatedTag.setConnectionId(connection.getId());
+        updatedTag.setIsSelected(channelTag.getIsSelected());
 
-        // Update the icon if required
-        final String icon = msg.getString("tagIcon");
-        if (icon != null) {
-            pendingChannelLogoFetches.add(icon);
+        Timber.d("Sync is running, updating channel tag");
+        pendingChannelTagOps.add(updatedTag);
+
+        if (pendingChannelTagOps.size() % 10 == 0) {
+            sendEpgSyncStatusMessage(ServiceStatusReceiver.State.SYNC_IN_PROGRESS,
+                    context.getString(R.string.receiving_data),
+                    "Received " + pendingChannelTagOps.size() + " channel tags");
         }
     }
 
     /**
      * Saves the channel to channel tag relations to allow filtering channels by their tags.
      * Prior to that any previous channel to tag relation are removed from the table to
-     * prevent having outdated date
+     * prevent having outdated data
      *
      * @param tag The channel tag
      */
     private void handleTagAndChannelRelation(ChannelTag tag) {
-        appRepository.getTagAndChannelData().removeItemByTagId(tag.getTagId());
+        Timber.d("Updating channel to tag relation for tag " + tag.getTagName());
 
+        appRepository.getTagAndChannelData().removeItemByTagId(tag.getTagId());
         List<Integer> channelIds = tag.getMembers();
         if (channelIds != null) {
             for (Integer channelId : channelIds) {
@@ -520,26 +499,20 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
      * @param msg The message with the new channel data
      */
     private void handleChannelAdd(HtspMessage msg) {
-        Timber.d("Received new channel message from server");
         if (!fullSyncRequired) {
             return;
         }
 
         Channel channel = EpgSyncUtils.convertMessageToChannelModel(new Channel(), msg);
         channel.setConnectionId(connection.getId());
-        Timber.d("Sync is running, adding channel to list: " + channel.getName());
+        Timber.d("Sync is running, adding channel '" + channel.getName());
+
         pendingChannelOps.add(channel);
 
-        if (pendingChannelOps.size() % 10 == 0) {
+        if (pendingChannelOps.size() % 25 == 0) {
             sendEpgSyncStatusMessage(ServiceStatusReceiver.State.SYNC_IN_PROGRESS,
-                    context.getString(R.string.saving_data),
+                    context.getString(R.string.receiving_data),
                     "Received " + pendingChannelOps.size() + " channels");
-        }
-
-        // Update the icon only if a full sync was required
-        final String icon = msg.getString("channelIcon");
-        if (icon != null) {
-            pendingChannelLogoFetches.add(icon);
         }
     }
 
@@ -561,12 +534,6 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         }
         Channel updatedChannel = EpgSyncUtils.convertMessageToChannelModel(channel, msg);
         appRepository.getChannelData().updateItem(updatedChannel);
-
-        // Update the icon only if a full sync was required
-        final String icon = msg.getString("channelIcon");
-        if (icon != null) {
-            pendingChannelLogoFetches.add(icon);
-        }
     }
 
     /**
@@ -598,7 +565,6 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
      * @param msg The message with the new recording data
      */
     private void handleDvrEntryAdd(HtspMessage msg) {
-        Timber.d("Received new recording message from server");
         Recording recording = EpgSyncUtils.convertMessageToRecordingModel(new Recording(), msg);
         recording.setConnectionId(connection.getId());
 
@@ -608,7 +574,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
 
             if (fullSyncRequired && pendingRecordingOps.size() % 10 == 0) {
                 sendEpgSyncStatusMessage(ServiceStatusReceiver.State.SYNC_IN_PROGRESS,
-                        context.getString(R.string.saving_data),
+                        context.getString(R.string.receiving_data),
                         "Received " + pendingRecordingOps.size() + " recordings");
             }
         } else {
@@ -760,22 +726,9 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
      * @param msg The message with the new epg event data
      */
     private void handleEventAdd(HtspMessage msg) {
-        Timber.d("Received new event message from server");
         Program program = EpgSyncUtils.convertMessageToProgramModel(new Program(), msg);
         program.setConnectionId(connection.getId());
-
-        if (fullSyncRequired || initialSyncWithServerRunning) {
-            Timber.d("Sync is running, adding event to list: " + program.getTitle());
-            pendingEventOps.add(program);
-
-            if (fullSyncRequired && pendingEventOps.size() % 50 == 0) {
-                sendEpgSyncStatusMessage(ServiceStatusReceiver.State.SYNC_IN_PROGRESS,
-                        context.getString(R.string.saving_data),
-                        "Received " + pendingEventOps.size() + " program guide events");
-            }
-        } else {
-            appRepository.getProgramData().addItem(program);
-        }
+        appRepository.getProgramData().addItem(program);
     }
 
     /**
@@ -803,6 +756,24 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     private void handleEventDelete(HtspMessage msg) {
         if (msg.containsKey("id")) {
             appRepository.getProgramData().removeItemById(msg.getInteger("id"));
+        }
+    }
+
+    /**
+     * Handles the given server message that contains a list of events.
+     *
+     * @param message The message with the events
+     */
+    private void handleGetEvents(HtspMessage message) {
+        if (message.containsKey("events")) {
+            List<Program> programs = new ArrayList<>();
+            for (HtspMessage msg : message.getHtspMessageArray("events")) {
+                Program program = EpgSyncUtils.convertMessageToProgramModel(new Program(), msg);
+                program.setConnectionId(connection.getId());
+                programs.add(program);
+            }
+            Timber.d("Adding " + programs.size() + " events to the list");
+            loadedEventsForAllChannels.addAll(programs);
         }
     }
 
@@ -974,23 +945,51 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     }
 
     private void handleInitialSyncCompleted() {
-        Timber.d("Received initial data from server");
+        Timber.d("Received initial sync data from server");
+
         if (fullSyncRequired) {
             sendEpgSyncStatusMessage(ServiceStatusReceiver.State.SYNC_IN_PROGRESS,
                     context.getString(R.string.saving_data), "");
         }
 
-        // Flush all received data to the database
-        flushPendingChannelOps();
-        flushPendingRecordingsOps();
-        flushPendingEventOps();
+        saveAllReceivedChannels();
+        saveAllReceivedChannelTags();
+        saveAllReceivedRecordings();
 
+        Timber.d("Updating connection status with full sync completed");
+        connection.setSyncRequired(false);
+        appRepository.getConnectionData().updateItem(connection);
+
+        // The initial sync is considered to be done at this point.
+        // Send the message to the listeners that the sync is done
         if (fullSyncRequired) {
-            sendEpgSyncStatusMessage(ServiceStatusReceiver.State.SYNC_IN_PROGRESS,
-                    context.getString(R.string.loading_data_done), "");
+            sendEpgSyncStatusMessage(ServiceStatusReceiver.State.SYNC_DONE,
+                    context.getString(R.string.startup), "");
         }
 
-        // Get additional information
+        getAdditionalServerData();
+
+        startBackgroundWorkers();
+
+        Timber.d("Updating connection status with last update time");
+        long currentTime = System.currentTimeMillis() / 1000L;
+        connection.setLastUpdate(currentTime);
+        appRepository.getConnectionData().updateItem(connection);
+
+        initialSyncWithServerRunning = false;
+        fullSyncRequired = false;
+
+        Timber.d("Done receiving initial data from server");
+    }
+
+    /**
+     * Loads additional data from the server that is required after the initial sync is done.
+     * This includes the disc space, the server system time and the playback and recording profiles.
+     * If the server did not provide all required default profiles, then add them here.
+     */
+    private void getAdditionalServerData() {
+        Timber.d("Loading additional data from server");
+
         getDiscSpace();
         getSystemTime();
         getProfiles();
@@ -1003,22 +1002,45 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         addMissingHttpPlaybackProfileIfNotExists("pass");
 
         setDefaultProfileSelection();
+    }
 
-        initialSyncWithServerRunning = false;
-        fullSyncRequired = false;
+    /**
+     * Starts multiple workers after the initial sync is done with a certain delay to do additional work.
+     * A new worker is created to
+     */
+    private void startBackgroundWorkers() {
 
-        long currentTime = System.currentTimeMillis() / 1000L;
-        Timber.d("Updating connection status with sync not required and last update time " + currentTime);
-        connection.setSyncRequired(false);
-        connection.setLastUpdate(currentTime);
-        appRepository.getConnectionData().updateItem(connection);
+        long epgMaxTime = Long.parseLong(sharedPreferences.getString("epg_max_time", context.getResources().getString(R.string.pref_default_epg_max_time)));
+        long currentTimeInSeconds = (System.currentTimeMillis() / 1000L);
+        long lastUpdateTime = connection.getLastUpdate();
+        boolean minimalSyncRequired = ((lastUpdateTime + epgMaxTime) < currentTimeInSeconds);
 
-        sendEpgSyncStatusMessage(ServiceStatusReceiver.State.SYNC_DONE,
-                context.getString(R.string.startup), "");
+        Timber.d("Passing information to worker, full sync required " + fullSyncRequired + ", minimal sync required " + minimalSyncRequired);
+        Data data = new Data.Builder()
+                .putBoolean("fullSyncRequired", fullSyncRequired)
+                .putBoolean("minimalSyncRequired", minimalSyncRequired)
+                .build();
 
-        flushPendingChannelLogoFetches();
+        Timber.d("Starting background worker to load and remove program guide events");
+        OneTimeWorkRequest epgUpdateWorkRequest =
+                new OneTimeWorkRequest.Builder(EpgDataUpdateWorker.class)
+                        .setInputData(data)
+                        .build();
+        WorkManager.getInstance().enqueueUniqueWork("EpgWorker", ExistingWorkPolicy.REPLACE, epgUpdateWorkRequest);
 
-        Timber.d("Done receiving initial data from server");
+        Timber.d("Starting background worker to remove unused program guide events");
+        OneTimeWorkRequest epgRemovalWorkRequest =
+                new OneTimeWorkRequest.Builder(EpgDataRemovalWorker.class)
+                        .setInitialDelay(2, TimeUnit.MINUTES)
+                        .build();
+        WorkManager.getInstance().enqueueUniqueWork("LoadChannelIconWorker", ExistingWorkPolicy.REPLACE, epgRemovalWorkRequest);
+
+        Timber.d("Starting background worker to load channel icons");
+        OneTimeWorkRequest loadChannelIcons =
+                new OneTimeWorkRequest.Builder(LoadChannelIconWorker.class)
+                        .setInitialDelay(10, TimeUnit.SECONDS)
+                        .build();
+        WorkManager.getInstance().enqueueUniqueWork("LoadChannelIconWorker", ExistingWorkPolicy.REPLACE, loadChannelIcons);
     }
 
     private void setDefaultProfileSelection() {
@@ -1056,50 +1078,72 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         }
     }
 
-    private void flushPendingChannelLogoFetches() {
-        Timber.d("Downloading and saving channel logos...");
-        for (String icon : pendingChannelLogoFetches) {
+    /**
+     * Tries to download and save all received channel and channel
+     * tag logos from the initial sync in the database.
+     */
+    private void loadAllChannelIcons() {
+        Timber.d("Downloading and saving all channel and channel tag icons...");
+
+        for (Channel channel : appRepository.getChannelData().getItems()) {
             try {
-                downloadIconFromFileUrl(icon);
+                Timber.d("Downloading channel icon for channel " + channel.getName());
+                downloadIconFromFileUrl(channel.getIcon());
             } catch (Exception e) {
-                Timber.d("Could not load icon '" + icon + "'");
+                Timber.d("Could not load channel icon '" + channel.getIcon() + "'", e);
+            }
+        }
+        for (ChannelTag channelTag : appRepository.getChannelTagData().getItems()) {
+            try {
+                Timber.d("Downloading channel icon for channel tag " + channelTag.getTagName());
+                downloadIconFromFileUrl(channelTag.getTagIcon());
+            } catch (Exception e) {
+                Timber.d("Could not load channel tag icon '" + channelTag.getTagIcon() + "'", e);
             }
         }
     }
 
-    private void flushPendingChannelOps() {
+    /**
+     * Saves all received channels from the initial sync in the database.
+     */
+    private void saveAllReceivedChannels() {
         Timber.d("Saving " + pendingChannelOps.size() + " channels");
-        if (pendingChannelOps.isEmpty()) {
-            return;
+
+        if (!pendingChannelOps.isEmpty()) {
+            appRepository.getChannelData().addItems(pendingChannelOps);
         }
-        appRepository.getChannelData().addItems(pendingChannelOps);
-        Timber.d("Database contains " + appRepository.getChannelData().getItemCount() + " channels");
     }
 
-    private void flushPendingRecordingsOps() {
-        Timber.d("Saving all received recordings");
-        // Remove all recordings from the database to prevent being out of sync with the server.
-        // This could be the case when the app was offline for a while and it did not receive
-        // any recording removal information from the server. During the initial sync the
-        // server only provides the list of available recordings.
-        if (pendingRecordingOps.isEmpty()) {
-            Timber.d("Removing previously existing recordings");
-            appRepository.getRecordingData().removeItems();
-        } else {
-            Timber.d("Replacing all existing recordings with " + pendingRecordingOps.size() + " recordings...");
-            appRepository.getRecordingData().replaceItems(pendingRecordingOps);
+    /**
+     * Saves all received channel tags from the initial sync in the database.
+     * Also the relations table between channels and tags are
+     * updated so that the filtering by channel tags works properly
+     */
+    private void saveAllReceivedChannelTags() {
+        Timber.d("Saving " + pendingChannelTagOps.size() + " channel tags");
+
+        if (!pendingChannelTagOps.isEmpty()) {
+            appRepository.getChannelTagData().addItems(pendingChannelTagOps);
+            for (ChannelTag channelTag : pendingChannelTagOps) {
+                handleTagAndChannelRelation(channelTag);
+            }
         }
-        Timber.d("Database contains " + appRepository.getRecordingData().getItemCount() + " recordings");
     }
 
-    private void flushPendingEventOps() {
-        Timber.d("Saving " + pendingEventOps.size() + " programs");
-        if (pendingEventOps.isEmpty()) {
-            return;
-        }
-        appRepository.getProgramData().addItems(pendingEventOps);
+    /**
+     * Removes all recordings and saves all received recordings from the initial sync
+     * in the database. The removal is done to prevent being out of sync with the server.
+     * This could be the case when the app was offline for a while and it did not receive
+     * any recording removal information from the server. During the initial sync the
+     * server only provides the list of available recordings.
+     */
+    private void saveAllReceivedRecordings() {
+        Timber.d("Removing previously existing recordings and saving " + pendingRecordingOps.size() + " new recordings");
 
-        Timber.d("Database contains " + appRepository.getProgramData().getItemCount() + " programs");
+        appRepository.getRecordingData().removeItems();
+        if (!pendingRecordingOps.isEmpty()) {
+            appRepository.getRecordingData().addItems(pendingRecordingOps);
+        }
     }
 
     /**
@@ -1260,12 +1304,19 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         }
     }
 
+    /**
+     * Request information about a set of events from the server.
+     * If no options are specified the entire EPG database will be returned.
+     *
+     * @param intent Intent with the request message fields
+     */
     private void getEvents(Intent intent) {
+        Timber.d("Get events called");
 
         final long eventId = intent.getIntExtra("eventId", 0);
-        final long channelId = intent.getIntExtra("channelId", 0);
+        final int channelId = intent.getIntExtra("channelId", 0);
         final long numFollowing = intent.getIntExtra("numFollowing", 0);
-        final long maxTime = intent.getIntExtra("maxTime", 0);
+        final long maxTime = intent.getLongExtra("maxTime", 0);
         final boolean showMessage = intent.getBooleanExtra("showMessage", false);
 
         final HtspMessage request = new HtspMessage();
@@ -1286,6 +1337,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         HtspMessage response = null;
         try {
             if (showMessage) {
+                Timber.d("Showing message");
                 sendSnackbarMessage(context.getString(R.string.loading_more_programs));
             }
             response = dispatcher.sendMessage(request, connectionTimeout);
@@ -1296,8 +1348,11 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         if (response != null) {
             handleGetEvents(response);
             if (showMessage) {
+                Timber.d("Showing message");
                 sendSnackbarMessage(context.getString(R.string.loading_more_programs_finished));
             }
+        } else {
+            Timber.d("Received no response for getEvents");
         }
     }
 
@@ -1677,34 +1732,68 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         }
     }
 
-    private void getMoreEvents(int numberOfProgramsToLoad) {
-        Timber.d("Loading more events for all channels");
+    /**
+     * Loads more events for all channels with the given parameters.
+     * This method is called by a worker after the initial sync is done.
+     *
+     * @param intent The intent with the parameters e.g. to define how many events shall be loaded
+     */
+    private void getMoreEvents(Intent intent) {
+
+        int numberOfProgramsToLoad = intent.getIntExtra("numFollowing", 0);
+        boolean fullSyncRequired = intent.getBooleanExtra("fullSyncRequired", false);
+
+        Timber.d("Loading "+ numberOfProgramsToLoad + " more events for each channel");
+        loadedEventsForAllChannels.clear();
+
         List<Channel> channelList = appRepository.getChannelData().getItems();
+
+        sendSnackbarMessage("Loading events for " + channelList.size() + " channels");
+
+        int counter = 0;
         for (Channel channel : channelList) {
             Timber.d("Loading more events for channel " + channel.getName());
             Program program = appRepository.getProgramData().getLastItemByChannelId(channel.getId());
 
-            Intent intent = new Intent();
-            if (program != null && program.getNextEventId() > 0) {
-                Timber.d("Last program id of channel is " + program.getNextEventId());
-                intent.putExtra("eventId", program.getNextEventId());
+            // Either use the next event id of the last program. If the last
+            // event id is not set then use the event id of the last program.
+            Intent msgIntent = new Intent();
+            if (fullSyncRequired) {
+                // In case of an initial full sync load the events from the event id defined
+                // by the channel. Otherwise use the id of last program of the channel.
+                // This will not always be the event id that the channel is holding.
+                msgIntent.putExtra("eventId", channel.getEventId());
+            } else if (program != null && program.getNextEventId() > 0) {
+                msgIntent.putExtra("eventId", program.getNextEventId());
             } else if (program != null && program.getEventId() > 0) {
-                Timber.d("Last next program id of channel is " + program.getEventId());
-                intent.putExtra("eventId", program.getEventId());
-            } else {
-                Timber.d("Last program of channel is null");
+                msgIntent.putExtra("eventId", program.getEventId());
             }
-            intent.putExtra("channelId", channel.getId());
-            intent.putExtra("numFollowing", numberOfProgramsToLoad);
-            getEvents(intent);
+            msgIntent.putExtra("channelId", channel.getId());
+            msgIntent.putExtra("numFollowing", numberOfProgramsToLoad);
+            msgIntent.putExtra("channelCount", channelList.size());
+
+            getEvents(msgIntent);
+
+            counter++;
+            Timber.d("Loaded events for " + counter + " of " + channelList.size() + " channels");
+            if (counter % 50 == 0) {
+                sendSnackbarMessage("Loaded events for " + counter + " of " + channelList.size() + " channels");
+            }
         }
+
+        if (loadedEventsForAllChannels.size() > 0) {
+            Timber.d("Received program data for all channels, saving " + loadedEventsForAllChannels.size() + " events");
+            appRepository.getProgramData().addItems(loadedEventsForAllChannels);
+        }
+
+        sendSnackbarMessage("Done loading events for " + channelList.size() + " channels");
     }
 
     private void deleteEvents() {
         Timber.d("deleteEvents() called");
 
-        // Get the time that was one week (7 days in millis) before now
-        long oneWeekBeforeNow = new Date().getTime() - (7 * 24 * 60 * 60 * 1000);
+        // Get the time that was one week (1 day in millis) before now
+        long oneWeekBeforeNow = new Date().getTime() - (24 * 60 * 60 * 1000);
         appRepository.getProgramData().removeItemsByTime(oneWeekBeforeNow);
     }
 
@@ -1731,17 +1820,17 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     }
 
     void sendEpgSyncStatusMessage(ServiceStatusReceiver.State state, String msg, String details) {
-        AsyncTask.execute(() -> {
-            Intent intent = new Intent(ServiceStatusReceiver.ACTION);
-            intent.putExtra(ServiceStatusReceiver.STATE, state);
-            if (!TextUtils.isEmpty(msg)) {
-                intent.putExtra(ServiceStatusReceiver.MESSAGE, msg);
-            }
-            if (!TextUtils.isEmpty(details)) {
-                intent.putExtra(ServiceStatusReceiver.DETAILS, details);
-            }
-            LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
-        });
+        //AsyncTask.execute(() -> {
+        Intent intent = new Intent(ServiceStatusReceiver.ACTION);
+        intent.putExtra(ServiceStatusReceiver.STATE, state);
+        if (!TextUtils.isEmpty(msg)) {
+            intent.putExtra(ServiceStatusReceiver.MESSAGE, msg);
+        }
+        if (!TextUtils.isEmpty(details)) {
+            intent.putExtra(ServiceStatusReceiver.DETAILS, details);
+        }
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+        //});
     }
 
     private void sendSnackbarMessage(String msg) {
