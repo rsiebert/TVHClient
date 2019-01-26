@@ -51,13 +51,6 @@ public class RecordingData implements DataSourceInterface<Recording> {
         AsyncTask.execute(() -> db.getRecordingDao().deleteAll());
     }
 
-    public void replaceItems(@NonNull List<Recording> items) {
-        AsyncTask.execute(() -> {
-            db.getRecordingDao().deleteAll();
-            db.getRecordingDao().insert(items);
-        });
-    }
-
     @Override
     public LiveData<Integer> getLiveDataItemCount() {
         return null;
