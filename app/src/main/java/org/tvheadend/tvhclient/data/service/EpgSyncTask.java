@@ -1313,9 +1313,9 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     private void getEvents(Intent intent) {
         Timber.d("Get events called");
 
-        final long eventId = intent.getIntExtra("eventId", 0);
+        final int eventId = intent.getIntExtra("eventId", 0);
         final int channelId = intent.getIntExtra("channelId", 0);
-        final long numFollowing = intent.getIntExtra("numFollowing", 0);
+        final int numFollowing = intent.getIntExtra("numFollowing", 0);
         final long maxTime = intent.getLongExtra("maxTime", 0);
         final boolean showMessage = intent.getBooleanExtra("showMessage", false);
 
