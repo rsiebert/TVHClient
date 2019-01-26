@@ -32,8 +32,11 @@ public interface ChannelTagDao {
             "AND id = :id ")
     ChannelTag loadChannelTagByIdSync(int id);
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(ChannelTag channelTag);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insert(List<ChannelTag> items);
 
     @Update
     void update(List<ChannelTag> channelTags);
