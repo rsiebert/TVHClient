@@ -78,8 +78,8 @@
     </string-array>
 
     <string-array name="pref_sort_channels_names">
-        <item>Channel ID as defined by the server (ascending)</item>
-        <item>Defined ID as defined by the server (descending)</item>
+        <item>Defined by the server (ascending)</item>
+        <item>Defined by the server (descending)</item>
         <item>Channel name (ascending)</item>
         <item>Channel name (descending)</item>
         <item>Channel number (ascending)</item>

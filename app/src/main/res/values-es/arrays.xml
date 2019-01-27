@@ -14,8 +14,8 @@
     </string-array>
 
     <string-array name="pref_sort_channels_names">
-        <item>ID de canal como lo define el servidor (ascendente)</item>
-        <item>ID de canal como lo define el servidor (descendente)</item>
+        <item>Definidos en el servidor (ascendente)</item>
+        <item>Definidos en el servidor (descendente)</item>
         <item>Nombre de canal (ascendente)</item>
         <item>Nombre de canal (descendente)</item>
         <item>Número de canal (ascendente)</item>

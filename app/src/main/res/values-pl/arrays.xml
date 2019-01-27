@@ -14,8 +14,8 @@
     </string-array>
 
     <string-array name="pref_sort_channels_names">
-        <item>Identyfikator kanału zdefiniowany przez serwer (rosnąco)</item>
-        <item>Identyfikator kanału zdefiniowany przez serwer (malejąco)</item>
+        <item>Zdefiniowane przez serwer (rosnąco)</item>
+        <item>Zdefiniowane przez serwer (malejąco)</item>
         <item>Nazwa kanału (rosnąco)</item>
         <item>Nazwa kanału (malejąco)</item>
         <item>Numer kanału (rosnąco)</item>

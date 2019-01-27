@@ -14,8 +14,8 @@
     </string-array>
 
     <string-array name="pref_sort_channels_names">
-        <item>Kanal-ID som definierat av servern (Stigande)</item>
-        <item>Kanal-ID som definierat av servern (Fallande)</item>
+        <item>Definieras av servern (Stigande)</item>
+        <item>Definieras av servern (Fallande)</item>
         <item>Kanalnamn (Stigande)</item>
         <item>Kanalnamn (Fallande)</item>
         <item>Kanalnummer (Stigande)</item>

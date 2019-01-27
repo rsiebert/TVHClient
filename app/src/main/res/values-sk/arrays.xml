@@ -14,8 +14,8 @@
     </string-array>
 
     <string-array name="pref_sort_channels_names">
-        <item>Identifikátor kanálu definovaný serverom (stúpajúca)</item>
-        <item>Identifikátor kanálu definovaný serverom (klesajúci)</item>
+        <item>Určené serverom (stúpajúca)</item>
+        <item>Určené serverom (klesajúci)</item>
         <item>Meno kanálu (stúpajúca)</item>
         <item>Meno kanálu (klesajúci)</item>
         <item>Číslo kanálu (stúpajúca)</item>
