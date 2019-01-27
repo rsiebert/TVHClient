@@ -36,6 +36,10 @@ public class TagAndChannelData implements DataSourceInterface<TagAndChannel> {
         AsyncTask.execute(() -> db.getTagAndChannelDao().delete(item));
     }
 
+    public void addAndRemoveItems(List<TagAndChannel> newItems, List<TagAndChannel> oldItems) {
+        AsyncTask.execute(() -> db.getTagAndChannelDao().insertAndDelete(newItems, oldItems));
+    }
+
     @Override
     public LiveData<Integer> getLiveDataItemCount() {
         return null;
