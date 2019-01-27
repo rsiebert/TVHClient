@@ -34,6 +34,7 @@ import org.tvheadend.tvhclient.data.service.htsp.HtspFileInputStream;
 import org.tvheadend.tvhclient.data.service.htsp.HtspMessage;
 import org.tvheadend.tvhclient.data.service.htsp.HtspNotConnectedException;
 import org.tvheadend.tvhclient.data.service.htsp.tasks.Authenticator;
+import org.tvheadend.tvhclient.data.service.worker.EpgDataUpdateWorker;
 import org.tvheadend.tvhclient.data.service.worker.LoadChannelIconWorker;
 import org.tvheadend.tvhclient.features.shared.receivers.ServiceStatusReceiver;
 import org.tvheadend.tvhclient.features.shared.receivers.SnackbarMessageReceiver;
@@ -50,6 +51,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -313,7 +315,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
                 handleDvrConfigs(message);
                 break;
             case "getEvents":
-                handleGetEvents(message);
+                handleGetEvents(message, new Intent());
                 break;
         }
     }
@@ -744,7 +746,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
      */
     private void handleEventAdd(HtspMessage msg) {
 
-        if (!firstEventReceived) {
+        if (!firstEventReceived && syncRequired) {
             Timber.d("Sync is required and received first event, saving " + pendingChannelOps.size() + " channels");
             appRepository.getChannelData().addItems(pendingChannelOps);
         }
@@ -800,7 +802,11 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
      *
      * @param message The message with the events
      */
-    private void handleGetEvents(HtspMessage message) {
+    private void handleGetEvents(HtspMessage message, Intent intent) {
+
+        final boolean useEventList = intent.getBooleanExtra("useEventList", false);
+        final boolean saveEventList = intent.getBooleanExtra("saveEventList", false);
+
         if (message.containsKey("events")) {
             List<Program> programs = new ArrayList<>();
             for (HtspMessage msg : message.getHtspMessageArray("events")) {
@@ -808,8 +814,20 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
                 program.setConnectionId(connection.getId());
                 programs.add(program);
             }
-            Timber.d("Adding " + programs.size() + " events to the list");
-            appRepository.getProgramData().addItems(programs);
+
+            if (useEventList) {
+                Timber.d("Adding " + programs.size() + " events to the list");
+                pendingEventOps.addAll(programs);
+            } else {
+                Timber.d("Saving " + programs.size() + " events");
+                appRepository.getProgramData().addItems(programs);
+            }
+
+            if (saveEventList) {
+                Timber.d("Saving " + pendingEventOps.size() + " events");
+                appRepository.getProgramData().addItems(pendingEventOps);
+                pendingEventOps.clear();
+            }
         }
     }
 
@@ -1025,6 +1043,12 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         Timber.d("Starting background worker to load channel icons");
         OneTimeWorkRequest loadChannelIcons = new OneTimeWorkRequest.Builder(LoadChannelIconWorker.class).build();
         WorkManager.getInstance().enqueueUniqueWork("LoadChannelIcons", ExistingWorkPolicy.REPLACE, loadChannelIcons);
+
+        Timber.d("Starting background worker to load more epg data");
+        OneTimeWorkRequest updateEpgWorker = new OneTimeWorkRequest.Builder(EpgDataUpdateWorker.class)
+                .setInitialDelay(30, TimeUnit.SECONDS)
+                .build();
+        WorkManager.getInstance().enqueueUniqueWork("UpdateEpg", ExistingWorkPolicy.REPLACE, updateEpgWorker);
 
         deleteOldEventsFromDatabase();
 
@@ -1364,7 +1388,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         }
 
         if (response != null) {
-            handleGetEvents(response);
+            handleGetEvents(response, intent);
             if (showMessage) {
                 Timber.d("Showing message");
                 sendSnackbarMessage(context.getString(R.string.loading_more_programs_finished));
@@ -1761,8 +1785,10 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         int numberOfProgramsToLoad = intent.getIntExtra("numFollowing", 0);
         Timber.d("Loading " + numberOfProgramsToLoad + " more events for each channel");
 
+        int counter = 0;
         List<Channel> channelList = appRepository.getChannelData().getItems();
         for (Channel channel : channelList) {
+            counter++;
             Program program = appRepository.getProgramData().getLastItemByChannelId(channel.getId());
             if (program != null) {
 
@@ -1774,6 +1800,8 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
                 }
                 msgIntent.putExtra("channelId", channel.getId());
                 msgIntent.putExtra("numFollowing", numberOfProgramsToLoad);
+                msgIntent.putExtra("useEventList", true);
+                msgIntent.putExtra("saveEventList", (counter == channelList.size()));
                 getEvents(msgIntent);
             }
         }
