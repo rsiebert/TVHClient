@@ -37,8 +37,8 @@ public interface ChannelDao {
             "FROM channels AS c ";
 
     String ORDER_BY = " ORDER BY " +
-            "CASE :sortOrder WHEN 0 THEN c.id END ASC," +
-            "CASE :sortOrder WHEN 1 THEN c.id END DESC," +
+            "CASE :sortOrder WHEN 0 THEN c.server_order END ASC," +
+            "CASE :sortOrder WHEN 1 THEN c.server_order END DESC," +
             "CASE :sortOrder WHEN 2 THEN c.name END ASC," +
             "CASE :sortOrder WHEN 3 THEN c.name END DESC," +
             "CASE :sortOrder WHEN 4 THEN (c.display_number + 0) END ASC," +
@@ -102,9 +102,11 @@ public interface ChannelDao {
             ORDER_BY)
     List<Channel> loadAllChannelsByTimeAndTagSync(long time, Set<Integer> tagIds, int sortOrder);
 
+    @Transaction
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Channel channel);
 
+    @Transaction
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(List<Channel> channels);
 

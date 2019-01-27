@@ -46,6 +46,9 @@ public class Channel {
 
     @ColumnInfo(name = "display_number")
     private String displayNumber;
+    @ColumnInfo(name = "server_order")
+    private int serverOrder;
+
     @Ignore
     private List<Integer> tags;
 
@@ -202,5 +205,13 @@ public class Channel {
 
     public void setDisplayNumber(String displayNumber) {
         this.displayNumber = displayNumber;
+    }
+
+    public int getServerOrder() {
+        return serverOrder;
+    }
+
+    public void setServerOrder(int serverOrder) {
+        this.serverOrder = serverOrder;
     }
 }

@@ -43,7 +43,7 @@ import org.tvheadend.tvhclient.data.entity.TimerRecording;
                 ServerStatus.class
         },
         exportSchema = false,
-        version = 9)
+        version = 10)
 public abstract class AppRoomDatabase extends RoomDatabase {
 
     private static AppRoomDatabase instance;
@@ -60,6 +60,7 @@ public abstract class AppRoomDatabase extends RoomDatabase {
                         .addMigrations(MIGRATION_6_7)
                         .addMigrations(MIGRATION_7_8)
                         .addMigrations(MIGRATION_8_9)
+                        .addMigrations(MIGRATION_9_10)
                         .build();
             }
         }
@@ -135,6 +136,13 @@ public abstract class AppRoomDatabase extends RoomDatabase {
         public void migrate(@NonNull SupportSQLiteDatabase database) {
             database.execSQL("CREATE INDEX index_programs_start ON programs(start)");
             database.execSQL("CREATE INDEX index_programs_channel_id ON programs(channel_id)");
+        }
+    };
+
+    private static final Migration MIGRATION_9_10 = new Migration(9, 10) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            database.execSQL("ALTER TABLE channels ADD COLUMN server_order INTEGER NOT NULL DEFAULT 0;");
         }
     };
 
