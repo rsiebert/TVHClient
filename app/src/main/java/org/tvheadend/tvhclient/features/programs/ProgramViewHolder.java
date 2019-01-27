@@ -124,7 +124,9 @@ public class ProgramViewHolder extends RecyclerView.ViewHolder {
         seriesInfoTextView.setVisibility(!TextUtils.isEmpty(seriesInfo) ? View.VISIBLE : View.GONE);
         seriesInfoTextView.setText(seriesInfo);
 
-        subtitleTextView.setVisibility(showProgramSubtitle && !TextUtils.isEmpty(program.getSubtitle()) ? View.VISIBLE : View.GONE);
+        subtitleTextView.setVisibility(showProgramSubtitle
+                && !TextUtils.isEmpty(program.getSubtitle())
+                && !program.getSubtitle().equals(program.getTitle()) ? View.VISIBLE : View.GONE);
         subtitleTextView.setText(program.getSubtitle());
 
         descriptionTextView.setVisibility(!TextUtils.isEmpty(program.getDescription()) ? View.VISIBLE : View.GONE);
