@@ -29,6 +29,7 @@ public class MigrateUtils {
     private static final int VERSION_116 = 116;
     private static final int VERSION_120 = 120;
     private static final int VERSION_143 = 143;
+    private static final int VERSION_144 = 144;
 
     @Inject
     protected Context context;
@@ -66,6 +67,19 @@ public class MigrateUtils {
             }
             if (lastInstalledApplicationVersion < VERSION_143) {
                 migrateInterPlayerSettings();
+            }
+            if (lastInstalledApplicationVersion < VERSION_144) {
+                // Set the sync required flag for every connection because in this version
+                // the server defined channel order was introduced. This information needs
+                // to be saved during the initial connection with the server where
+                // channel and tags would not be saved.
+                for (Connection connection : appRepository.getConnectionData().getItems()) {
+                    if (connection != null) {
+                        Timber.d("Setting sync required for connection " + connection.getName() + " to save server defined channel order");
+                        connection.setSyncRequired(true);
+                        appRepository.getConnectionData().updateItem(connection);
+                    }
+                }
             }
         }
 
