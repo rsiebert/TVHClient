@@ -16,6 +16,8 @@
     <string-array name="pref_sort_channels_names">
         <item>Určené serverem (stoupající)</item>
         <item>Určené serverem (klesající)</item>
+        <item>ID kanálu (stoupající)</item>
+        <item>ID kanálu (klesající)</item>
         <item>Jméno kanálu (stoupající)</item>
         <item>Jméno kanálu (klesající)</item>
         <item>Číslo kanálu (stoupající)</item>
