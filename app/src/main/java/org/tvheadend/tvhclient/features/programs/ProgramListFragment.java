@@ -25,6 +25,7 @@ import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.ProgressBar;
 
+import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Program;
 import org.tvheadend.tvhclient.data.entity.Recording;
@@ -388,13 +389,18 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
         loadingProgramAllowedHandler.postDelayed(loadingProgramsAllowedTask, 2000);
 
         Program lastProgram = recyclerViewAdapter.getItem(position);
+        Timber.d("Loading more programs after " + lastProgram.getTitle());
+
         Intent intent = new Intent(activity, EpgSyncService.class);
         intent.setAction("getEvents");
         intent.putExtra("eventId", lastProgram.getNextEventId());
         intent.putExtra("channelId", lastProgram.getChannelId());
         intent.putExtra("numFollowing", 25);
         intent.putExtra("showMessage", true);
-        activity.startService(intent);
+
+        if (MainApplication.isActivityVisible()) {
+            activity.startService(intent);
+        }
     }
 
     @Override
