@@ -41,6 +41,10 @@ public class ChannelTagRecyclerViewAdapter extends RecyclerView.Adapter<ChannelT
             ChannelTag channelTag = channelTagList.get(position);
             holder.bindData(channelTag);
 
+            if (channelTag.getIsSelected() == 1) {
+                selectedChannelTagIds.add(channelTag.getTagId());
+            }
+
             // Add the click listeners
             int tagId = channelTagList.get(position).getTagId();
             if (isMultiChoice) {
