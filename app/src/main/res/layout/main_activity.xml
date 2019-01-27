@@ -27,6 +27,14 @@
                     android:layout_height="?android:attr/actionBarSize" />
             </android.support.design.widget.AppBarLayout>
 
+            <ProgressBar
+                android:id="@+id/sync_progress"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:indeterminateOnly="true"
+                android:visibility="gone" />
+
             <FrameLayout
                 android:id="@+id/main"
                 android:layout_width="match_parent"
