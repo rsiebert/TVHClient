@@ -57,7 +57,7 @@ public class EpgSyncService extends Service {
             epgSyncTask.handleIntent(intent);
 
         } else if (simpleHtspConnection != null
-                && !simpleHtspConnection.isIdle()) {
+                && simpleHtspConnection.isClosed()) {
             Timber.d("Server connection has been closed");
             epgSyncTask.sendEpgSyncStatusMessage(ServiceStatusReceiver.State.CLOSED,
                     getString(R.string.connection_closed), "");
