@@ -66,7 +66,7 @@ public class MigrateUtils {
                 migratePlaybackProfiles();
             }
             if (lastInstalledApplicationVersion < VERSION_143) {
-                migrateInterPlayerSettings();
+                migrateInterPlayerAndChannelOrderSettings();
             }
             if (lastInstalledApplicationVersion < VERSION_144) {
                 // Set the sync required flag for every connection because in this version
@@ -80,6 +80,14 @@ public class MigrateUtils {
                         appRepository.getConnectionData().updateItem(connection);
                     }
                 }
+
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                int channelSortOrder = Integer.valueOf(sharedPreferences.getString("channel_sort_order", context.getResources().getString(R.string.pref_default_channel_sort_order)));
+                if (channelSortOrder >= 2) {
+                    channelSortOrder += 2;
+                }
+                editor.putString("channel_sort_order", String.valueOf(channelSortOrder));
+                editor.apply();
             }
         }
 
@@ -89,7 +97,7 @@ public class MigrateUtils {
         editor.apply();
     }
 
-    private void migrateInterPlayerSettings() {
+    private void migrateInterPlayerAndChannelOrderSettings() {
         // Convert the previous internal player settings to the
         // new one that differentiates between channels and recordings
         SharedPreferences.Editor editor = sharedPreferences.edit();
