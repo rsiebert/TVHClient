@@ -107,9 +107,11 @@ public interface ProgramDao {
             "WHERE stop < :time")
     void deleteProgramsByTime(long time);
 
+    @Transaction
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(List<Program> programs);
 
+    @Transaction
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Program program);
 

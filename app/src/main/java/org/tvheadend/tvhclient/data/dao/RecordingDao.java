@@ -85,9 +85,11 @@ public interface RecordingDao {
             " AND rec.event_id = :id")
     Recording loadRecordingByEventIdSync(int id);
 
+    @Transaction
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Recording recording);
 
+    @Transaction
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(List<Recording> recordings);
 
