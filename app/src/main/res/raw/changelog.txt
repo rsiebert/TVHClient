@@ -1,9 +1,9 @@
 $ 2.0.2
   % VERSION 2.0.2
-  _ 27.01.2018
+  _ 28.01.2018
+    * Added sorting option "Defined by server". It is now the order in which order the server has send the channels to the client. The option "Sort by channel ID" sorts by the internal channel number defined by the server. Please check or adjust the settings!
     * The initial sync is now done completely in the background, the ongoing sync is shown as a progressbar below the toolbar
     * Changed option to show the "Delete all recordings" menu instead of hiding it
-    * Changed the sorting option entry "Sort by channel ID". It is now the order in which order the server has send the channels to the client
     * The setting to delete the channel icons will now automatically start loading the icons from the server
     * Fixed selection of multiple channel tags
 $ 2.0.1
