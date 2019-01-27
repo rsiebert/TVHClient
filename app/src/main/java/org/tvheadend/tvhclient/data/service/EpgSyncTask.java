@@ -466,29 +466,6 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     }
 
     /**
-     * Saves the channel to channel tag relations to allow filtering channels by their tags.
-     * Prior to that any previous channel to tag relation are removed from the table to
-     * prevent having outdated data
-     *
-     * @param tag The channel tag
-     */
-    private void handleTagAndChannelRelation(ChannelTag tag) {
-        Timber.d("Updating channel to tag relation for tag " + tag.getTagName());
-
-        appRepository.getTagAndChannelData().removeItemByTagId(tag.getTagId());
-        List<Integer> channelIds = tag.getMembers();
-        if (channelIds != null) {
-            for (Integer channelId : channelIds) {
-                TagAndChannel tagAndChannel = new TagAndChannel();
-                tagAndChannel.setTagId(tag.getTagId());
-                tagAndChannel.setChannelId(channelId);
-                tagAndChannel.setConnectionId(connection.getId());
-                appRepository.getTagAndChannelData().addItem(tagAndChannel);
-            }
-        }
-    }
-
-    /**
      * Server to client method.
      * A tag has been deleted on the server.
      *
@@ -1156,11 +1133,35 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     private void saveAllReceivedChannelTags() {
         Timber.d("Saving " + pendingChannelTagOps.size() + " channel tags");
 
+        List<TagAndChannel> pendingRemovedTagAndChannelOps = new ArrayList<>();
+        List<TagAndChannel> pendingAddedTagAndChannelOps = new ArrayList<>();
+
         if (!pendingChannelTagOps.isEmpty()) {
             appRepository.getChannelTagData().addItems(pendingChannelTagOps);
-            for (ChannelTag channelTag : pendingChannelTagOps) {
-                handleTagAndChannelRelation(channelTag);
+            for (ChannelTag tag : pendingChannelTagOps) {
+
+                if (tag != null) {
+                    TagAndChannel tac = appRepository.getTagAndChannelData().getItemById(tag.getTagId());
+                    if (tac != null) {
+                        pendingRemovedTagAndChannelOps.add(tac);
+                    }
+
+                    List<Integer> channelIds = tag.getMembers();
+                    if (channelIds != null) {
+                        for (Integer channelId : channelIds) {
+                            TagAndChannel tagAndChannel = new TagAndChannel();
+                            tagAndChannel.setTagId(tag.getTagId());
+                            tagAndChannel.setChannelId(channelId);
+                            tagAndChannel.setConnectionId(connection.getId());
+                            pendingAddedTagAndChannelOps.add(tagAndChannel);
+                        }
+                    }
+                }
             }
+
+            Timber.d("Removing " + pendingRemovedTagAndChannelOps.size() +
+                    " and adding " + pendingAddedTagAndChannelOps.size() + " tag and channel relations");
+            appRepository.getTagAndChannelData().addAndRemoveItems(pendingAddedTagAndChannelOps, pendingRemovedTagAndChannelOps);
         }
     }
 
