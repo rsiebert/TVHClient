@@ -65,26 +65,30 @@ public class MigrateUtils {
                 migratePlaybackProfiles();
             }
             if (lastInstalledApplicationVersion < VERSION_143) {
-                // Convert the previous internal player settings to the
-                // new one that differentiates between channels and recordings
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                boolean enabled = sharedPreferences.getBoolean("internal_player_enabled", context.getResources().getBoolean(R.bool.pref_default_internal_player_enabled));
-                editor.putBoolean("internal_player_for_channels_enabled", enabled);
-                editor.putBoolean("internal_player_for_recordings_enabled", enabled);
-
-                // The previous three channel sort options defined only an ascending order of
-                // the channel id, name and number. Now convert the value because a descending
-                // order has been added after the ascending one.
-                int channelSortOrder = Integer.valueOf(sharedPreferences.getString("channel_sort_order", context.getResources().getString(R.string.pref_default_channel_sort_order)));
-                channelSortOrder = (channelSortOrder * 2 + 1);
-                editor.putString("channel_sort_order", String.valueOf(channelSortOrder));
-                editor.apply();
+                migrateInterPlayerSettings();
             }
         }
 
         // Store the current version as the last installed version
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putInt("build_version_for_migration", currentApplicationVersion);
+        editor.apply();
+    }
+
+    private void migrateInterPlayerSettings() {
+        // Convert the previous internal player settings to the
+        // new one that differentiates between channels and recordings
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        boolean enabled = sharedPreferences.getBoolean("internal_player_enabled", context.getResources().getBoolean(R.bool.pref_default_internal_player_enabled));
+        editor.putBoolean("internal_player_for_channels_enabled", enabled);
+        editor.putBoolean("internal_player_for_recordings_enabled", enabled);
+
+        // The previous three channel sort options defined only an ascending order of
+        // the channel id, name and number. Now convert the value because a descending
+        // order has been added after the ascending one.
+        int channelSortOrder = Integer.valueOf(sharedPreferences.getString("channel_sort_order", context.getResources().getString(R.string.pref_default_channel_sort_order)));
+        channelSortOrder = (channelSortOrder * 2 + 1);
+        editor.putString("channel_sort_order", String.valueOf(channelSortOrder));
         editor.apply();
     }
 
