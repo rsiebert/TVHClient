@@ -159,8 +159,7 @@
     <string name="pref_genre_colors_visibility_message">Stel de zichtbaarheid in van de kleuren. Hogere waarden betekend sterkere kleuren.</string>
     <string name="pref_genre_colors_visibility_value">%1$d%% zichtbaar</string>
     <string name="pref_hide_duplicate_scheduled_recordings">Verberg dubbele geplande opnames</string>
-    <string name="pref_hide_menu_delete_all_recordings">Verberg het \'Verwijder alle opnames\' menu</string>
-    <string name="pref_hide_menu_delete_all_recordings_sum">Verberg dit menu om te voorkomen dat per ongeluk alle opnames worden verwijderd.</string>
+    <string name="pref_show_menu_delete_all_recordings">Toon het \'Verwijder alle opnames\' menu</string>
     <string name="pref_host">Hostnaam</string>
     <string name="pref_host_error_invalid">Het ip adres is niet juist.</string>
     <string name="pref_host_sum">Type de server hostnaam</string>

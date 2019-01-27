@@ -184,8 +184,7 @@
     <string name="pref_genre_colors_visibility_message">Ustaw widoczność kolorów. Wyższe wartości oznaczją mocniejsze kolory.</string>
     <string name="pref_genre_colors_visibility_value">%1$d%% widoczności</string>
     <string name="pref_hide_duplicate_scheduled_recordings">Ukryj zduplikowane zaplanowane nagrania</string>
-    <string name="pref_hide_menu_delete_all_recordings">Ukryj w menu \'Usuń wszystkie nagrania\'</string>
-    <string name="pref_hide_menu_delete_all_recordings_sum">Nie pokazuj tego menu, aby zapobiec przypadkowemu usunięciu wszystkich nagranych programów.</string>
+    <string name="pref_show_menu_delete_all_recordings">Pokaż menu \"Usuń wszystkie nagrania\"</string>
     <string name="pref_host">Nazwa hosta</string>
     <string name="pref_host_error_invalid">IP adres jest nie poprawny.</string>
     <string name="pref_host_sum">Wpisz adres serwera hosta</string>

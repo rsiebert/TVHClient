@@ -187,8 +187,7 @@
     <string name="pref_genre_colors_visibility_message">Állítsa be a színek láthatóságát. A magasabb értékek erősebb színeket jelentenek.</string>
     <string name="pref_genre_colors_visibility_value">%1$d%% látható</string>
     <string name="pref_hide_duplicate_scheduled_recordings">Az ismételt ütemezett felvételek elrejtése.</string>
-    <string name="pref_hide_menu_delete_all_recordings">A \'Minden felvétel törlése\' menü elrejtése</string>
-    <string name="pref_hide_menu_delete_all_recordings_sum">Ne jelenítse meg ezt a menüt, hogy megakadályozza az összes rögzített program véletlen törlését.</string>
+    <string name="pref_show_menu_delete_all_recordings">Mutassa meg az \"Összes felvétel törlése\" menüt</string>
     <string name="pref_host">Gépnév</string>
     <string name="pref_host_error_invalid">Az IP cím nem megfelelő.</string>
     <string name="pref_host_sum">A gyerver gépnevének beírása</string>

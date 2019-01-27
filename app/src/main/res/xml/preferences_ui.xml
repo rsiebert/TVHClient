@@ -161,8 +161,7 @@
         <CheckBoxPreference
             android:defaultValue="@bool/pref_default_delete_all_recordings_menu_enabled"
             android:key="delete_all_recordings_menu_enabled"
-            android:summary="@string/pref_hide_menu_delete_all_recordings_sum"
-            android:title="@string/pref_hide_menu_delete_all_recordings" />
+            android:title="@string/pref_show_menu_delete_all_recordings" />
         <CheckBoxPreference
             android:defaultValue="@bool/pref_default_channel_tag_menu_enabled"
             android:key="channel_tag_menu_enabled"

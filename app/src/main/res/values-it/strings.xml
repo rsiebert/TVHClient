@@ -136,8 +136,7 @@ Verifica che siano soddsifatti i requisiti descritti nelle impostazioni trasmiss
     <string name="pref_genre_colors_visibility">Visibilità colore del genere</string>
     <string name="pref_genre_colors_visibility_message">Imposta la visibilità dei colori. Valori più alti indicano colori più forti.</string>
     <string name="pref_genre_colors_visibility_value">%1$d%% visibile</string>
-    <string name="pref_hide_menu_delete_all_recordings">"Nascondi voce 'Elimina tutte le registrazioni'"</string>
-    <string name="pref_hide_menu_delete_all_recordings_sum">"Non visualizza questa voce per prevenire l'accidentale eliminazione di tutte le registrazioni."</string>
+    <string name="pref_show_menu_delete_all_recordings">Mostra il menu \'Elimina tutte le registrazioni\'</string>
     <string name="pref_host">Nome host</string>
     <string name="pref_host_error_invalid">"L'indirizzo IP non è valido."</string>
     <string name="pref_host_sum">Inserisci il nome host del server</string>

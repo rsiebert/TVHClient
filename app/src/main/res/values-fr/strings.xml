@@ -182,8 +182,7 @@
     <string name="pref_genre_colors_visibility_message">Paramètre la visibilité des couleurs. Plus la valeur est grande, plus la couleur sera foncée.</string>
     <string name="pref_genre_colors_visibility_value">%1$d%% visible</string>
     <string name="pref_hide_duplicate_scheduled_recordings">Cacher les enregistrements dupliqués</string>
-    <string name="pref_hide_menu_delete_all_recordings">Cacher \'Effacer tous les enregistrements\'</string>
-    <string name="pref_hide_menu_delete_all_recordings_sum">Ne pas montrer cette option pour prévenir l\'effacement accidentel de tous les enregistrements.</string>
+    <string name="pref_show_menu_delete_all_recordings">Afficher le menu \'Supprimer tous les enregistrements\'</string>
     <string name="pref_host">Nom d\'hôte</string>
     <string name="pref_host_error_invalid">L\'adresse IP n\'est pas valide.</string>
     <string name="pref_host_sum">Entrer le nom du serveur</string>

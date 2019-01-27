@@ -89,8 +89,7 @@
     <string name="pref_genre_colors_visibility">Genrefärgstyrka</string>
     <string name="pref_genre_colors_visibility_message">Konfigurera färgernas synlighet. Högre värden ger starkare färg.</string>
     <string name="pref_genre_colors_visibility_value">%1$d%% styrka</string>
-    <string name="pref_hide_menu_delete_all_recordings">Göm \'Ta bort alla inspelningar\' menyn</string>
-    <string name="pref_hide_menu_delete_all_recordings_sum">Visa inte denna meny för att undvika att alla inspelade program tas bort av misstag.</string>
+    <string name="pref_show_menu_delete_all_recordings">Visa menyn \"Ta bort alla inspelningar\"</string>
     <string name="pref_host">Värdnamn</string>
     <string name="pref_host_error_invalid">IP-adressen är inte giltig.</string>
     <string name="pref_host_sum">Fyll i serverns värdnamn</string>

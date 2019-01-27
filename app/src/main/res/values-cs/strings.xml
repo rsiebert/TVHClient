@@ -89,8 +89,7 @@
     <string name="pref_genre_colors_visibility">Intenzita barvy žánrů</string>
     <string name="pref_genre_colors_visibility_message">Nastavit viditelnost barev. Vyšší hodnoty znamenají sytější barvy.</string>
     <string name="pref_genre_colors_visibility_value">%1$d%% intenzity</string>
-    <string name="pref_hide_menu_delete_all_recordings">Skrýt menu \'Smazat všechny nahrávky\'</string>
-    <string name="pref_hide_menu_delete_all_recordings_sum">Skrýt tuto položku v menu, aby se zabránilo nechtěnému smazání všech nahraných programů.</string>
+    <string name="pref_show_menu_delete_all_recordings">Zobrazte nabídku \"Smazat všechny záznamy\"</string>
     <string name="pref_host">Název hostitele</string>
     <string name="pref_host_error_invalid">Neplatná adresa serveru.</string>
     <string name="pref_host_sum">Zadejte adresu serveru (hostname nebo IP)</string>

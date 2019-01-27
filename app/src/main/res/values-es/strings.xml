@@ -187,8 +187,7 @@
     <string name="pref_genre_colors_visibility_message">Establecer la visibilidad de los colores. Los valores más altos significan colores más fuertes.</string>
     <string name="pref_genre_colors_visibility_value">%1$d%% visible</string>
     <string name="pref_hide_duplicate_scheduled_recordings">Ocultar grabaciones programadas duplicadas</string>
-    <string name="pref_hide_menu_delete_all_recordings">"Ocultar el menú 'Eliminar todas las grabaciones'"</string>
-    <string name="pref_hide_menu_delete_all_recordings_sum">No mostrar este menú para evitar una eliminación accidental de todos los programas grabados.</string>
+    <string name="pref_show_menu_delete_all_recordings">Mostrar el menú \'Borrar todas las grabaciones\'</string>
     <string name="pref_host">Nombre o IP del servidor</string>
     <string name="pref_host_error_invalid">La dirección IP o servidor no es válido.</string>
     <string name="pref_host_hint">www.server.com order 192.168.0.10</string>

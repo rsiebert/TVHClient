@@ -187,8 +187,7 @@
     <string name="pref_genre_colors_visibility_message">Set the visibility of the colors. Higher values mean stronger colors.</string>
     <string name="pref_genre_colors_visibility_value">%1$d%% visible</string>
     <string name="pref_hide_duplicate_scheduled_recordings">Hide duplicate scheduled recordings</string>
-    <string name="pref_hide_menu_delete_all_recordings">Hide the \'Delete all recordings\' menu</string>
-    <string name="pref_hide_menu_delete_all_recordings_sum">Do not show this menu to prevent an accidental deletion of all recorded programs.</string>
+    <string name="pref_show_menu_delete_all_recordings">Show the \'Delete all recordings\' menu</string>
     <string name="pref_host">Hostname or IP address</string>
     <string name="pref_host_hint">www.server.com or 192.168.0.10</string>
     <string name="pref_host_error_invalid">The IP-address is not valid.</string>
