@@ -12,19 +12,26 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.content.FileProvider;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.squareup.picasso.Picasso;
 
 import org.tvheadend.tvhclient.BuildConfig;
 import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.service.EpgSyncService;
+import org.tvheadend.tvhclient.data.service.worker.LoadChannelIconWorker;
 import org.tvheadend.tvhclient.features.search.SuggestionProvider;
 import org.tvheadend.tvhclient.features.startup.SplashActivity;
+import org.tvheadend.tvhclient.utils.MiscUtils;
+import org.tvheadend.tvhclient.utils.UIUtils;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
 import timber.log.Timber;
 
 public class SettingsAdvancedFragment extends BasePreferenceFragment implements Preference.OnPreferenceClickListener, SharedPreferences.OnSharedPreferenceChangeListener, DatabaseClearedCallback {
@@ -225,17 +232,27 @@ public class SettingsAdvancedFragment extends BasePreferenceFragment implements 
                 .positiveText(getString(R.string.delete))
                 .negativeText(getString(R.string.cancel))
                 .onPositive((dialog, which) -> {
-                    File[] files = getActivity().getCacheDir().listFiles();
-                    for (File file : files) {
-                        if (file.toString().endsWith(".png")) {
+
+                    // Delete all channel icon files that were downloaded for the active
+                    // connection. Additionally remove the icons from the Picasso cache
+                    Timber.d("Deleting channel icons and invalidating cache");
+                    for (Channel channel : appRepository.getChannelData().getItems()) {
+                        File file = new File(getActivity().getCacheDir(), MiscUtils.convertUrlToHashString(channel.getIcon()) + ".png");
+                        if (file.exists()) {
                             if (!file.delete()) {
                                 Timber.d("Could not delete channel icon " + file.getName());
                             }
                         }
+                        Picasso.get().invalidate(UIUtils.getIconUrl(getActivity(), channel.getIcon()));
                     }
                     if (getView() != null) {
                         Snackbar.make(getView(), getString(R.string.clear_icon_cache_done), Snackbar.LENGTH_SHORT).show();
                     }
+
+                    Timber.d("Starting background worker to reload channel icons");
+                    OneTimeWorkRequest loadChannelIcons = new OneTimeWorkRequest.Builder(LoadChannelIconWorker.class).build();
+                    WorkManager.getInstance().enqueue(loadChannelIcons);
+
                 }).show();
     }
 }
