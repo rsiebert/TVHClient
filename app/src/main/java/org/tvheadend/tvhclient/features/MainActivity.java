@@ -456,6 +456,11 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Wake
                 }
                 break;
 
+            case SYNC_IN_PROGRESS:
+                Timber.d("Sync in progress, updating progress bar");
+                syncProgress.setVisibility(View.VISIBLE);
+                break;
+
             case SYNC_DONE:
                 Timber.d("Sync done, hiding progress bar");
                 syncProgress.setVisibility(View.GONE);
