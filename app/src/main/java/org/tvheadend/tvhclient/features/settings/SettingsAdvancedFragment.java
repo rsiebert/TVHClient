@@ -30,6 +30,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import androidx.work.ExistingWorkPolicy;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 import timber.log.Timber;
@@ -104,9 +105,8 @@ public class SettingsAdvancedFragment extends BasePreferenceFragment implements 
                 .positiveText(R.string.clear)
                 .negativeText(R.string.cancel)
                 .onPositive((dialog, which) -> {
-                    Timber.d("Clear database requested, stopping service and clearing database");
+                    Timber.d("Clear database requested");
 
-                    activity.stopService(new Intent(activity, EpgSyncService.class));
                     // Update the connection with the information that a new sync is required.
                     Connection connection = appRepository.getConnectionData().getActiveItem();
                     if (connection != null) {
@@ -202,7 +202,8 @@ public class SettingsAdvancedFragment extends BasePreferenceFragment implements 
 
     @Override
     public void onDatabaseCleared() {
-        Timber.d("Database has been cleared, restarting application");
+        Timber.d("Database has been cleared, stopping service and restarting application");
+        activity.stopService(new Intent(activity, EpgSyncService.class));
         Intent intent = new Intent(activity, SplashActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         activity.startActivity(intent);
@@ -251,7 +252,7 @@ public class SettingsAdvancedFragment extends BasePreferenceFragment implements 
 
                     Timber.d("Starting background worker to reload channel icons");
                     OneTimeWorkRequest loadChannelIcons = new OneTimeWorkRequest.Builder(LoadChannelIconWorker.class).build();
-                    WorkManager.getInstance().enqueue(loadChannelIcons);
+                    WorkManager.getInstance().enqueueUniqueWork("LoadChannelIcons", ExistingWorkPolicy.REPLACE, loadChannelIcons);
 
                 }).show();
     }
