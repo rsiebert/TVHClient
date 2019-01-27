@@ -2,6 +2,7 @@ package org.tvheadend.tvhclient.features;
 
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -11,6 +12,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
@@ -18,6 +20,7 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
 
 import com.google.android.gms.cast.framework.CastButtonFactory;
 import com.google.android.gms.cast.framework.CastContext;
@@ -30,6 +33,8 @@ import com.google.android.gms.cast.framework.SessionManagerListener;
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
+import org.tvheadend.tvhclient.data.service.EpgSyncStatusCallback;
+import org.tvheadend.tvhclient.data.service.EpgSyncTaskState;
 import org.tvheadend.tvhclient.features.download.DownloadPermissionGrantedInterface;
 import org.tvheadend.tvhclient.features.epg.ProgramGuideFragment;
 import org.tvheadend.tvhclient.features.navigation.NavigationDrawer;
@@ -37,18 +42,23 @@ import org.tvheadend.tvhclient.features.navigation.NavigationDrawerCallback;
 import org.tvheadend.tvhclient.features.search.SearchRequestInterface;
 import org.tvheadend.tvhclient.features.shared.BaseActivity;
 import org.tvheadend.tvhclient.features.shared.callbacks.ToolbarInterface;
+import org.tvheadend.tvhclient.features.shared.receivers.ServiceStatusReceiver;
 import org.tvheadend.tvhclient.features.shared.tasks.WakeOnLanTaskCallback;
 import org.tvheadend.tvhclient.features.streaming.external.CastSessionManagerListener;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
 import javax.inject.Inject;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
 
 // TODO what happens when no connection to the server is active and the user presses an action in a notification?
 
-public class MainActivity extends BaseActivity implements ToolbarInterface, WakeOnLanTaskCallback, NavigationDrawerCallback, SearchView.OnQueryTextListener, SearchView.OnSuggestionListener {
+public class MainActivity extends BaseActivity implements ToolbarInterface, WakeOnLanTaskCallback, NavigationDrawerCallback, SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, EpgSyncStatusCallback {
+
+    @BindView(R.id.sync_progress)
+    ProgressBar syncProgress;
 
     private MenuItem searchMenuItem;
     private SearchView searchView;
@@ -58,6 +68,7 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Wake
     private CastContext castContext;
     private CastStateListener castStateListener;
     private SessionManagerListener<CastSession> castSessionManagerListener;
+    private ServiceStatusReceiver serviceStatusReceiver;
 
     private NavigationDrawer navigationDrawer;
     private int selectedNavigationMenuId;
@@ -81,6 +92,7 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Wake
 
         MainApplication.getComponent().inject(this);
 
+        serviceStatusReceiver = new ServiceStatusReceiver(this);
         isUnlocked = MainApplication.getInstance().isUnlocked();
         isDualPane = findViewById(R.id.details) != null;
 
@@ -146,6 +158,19 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Wake
         outState = navigationDrawer.saveInstanceState(outState);
         outState.putInt("navigationMenuId", selectedNavigationMenuId);
         super.onSaveInstanceState(outState);
+    }
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        LocalBroadcastManager.getInstance(this).registerReceiver(serviceStatusReceiver, new IntentFilter(ServiceStatusReceiver.ACTION));
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(serviceStatusReceiver);
     }
 
     @Override
@@ -396,6 +421,48 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Wake
             }
         } else {
             super.onBackPressed();
+        }
+    }
+
+    @Override
+    public void onEpgTaskStateChanged(EpgSyncTaskState state) {
+        Timber.d("Epg task state changed to " + state.getState() + ", message is " + state.getMessage());
+        switch (state.getState()) {
+            case CLOSED:
+            case FAILED:
+                if (getCurrentFocus() != null) {
+                    Snackbar.make(getCurrentFocus(), state.getMessage(), Snackbar.LENGTH_SHORT).show();
+                }
+                onNetworkAvailabilityChanged(false);
+                break;
+
+            case CONNECTING:
+                if (getCurrentFocus() != null) {
+                    Snackbar.make(getCurrentFocus(), state.getMessage(), Snackbar.LENGTH_SHORT).show();
+                }
+                break;
+
+            case CONNECTED:
+                if (getCurrentFocus() != null) {
+                    Snackbar.make(getCurrentFocus(), state.getMessage(), Snackbar.LENGTH_SHORT).show();
+                }
+                break;
+
+            case SYNC_STARTED:
+                Timber.d("Sync started, showing progress bar");
+                syncProgress.setVisibility(View.VISIBLE);
+                if (getCurrentFocus() != null) {
+                    Snackbar.make(getCurrentFocus(), state.getMessage(), Snackbar.LENGTH_SHORT).show();
+                }
+                break;
+
+            case SYNC_DONE:
+                Timber.d("Sync done, hiding progress bar");
+                syncProgress.setVisibility(View.GONE);
+                if (getCurrentFocus() != null) {
+                    Snackbar.make(getCurrentFocus(), state.getMessage(), Snackbar.LENGTH_SHORT).show();
+                }
+                break;
         }
     }
 }

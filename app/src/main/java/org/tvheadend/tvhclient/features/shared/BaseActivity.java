@@ -13,8 +13,6 @@ import android.support.v7.app.AppCompatActivity;
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.service.EpgSyncService;
-import org.tvheadend.tvhclient.data.service.EpgSyncStatusCallback;
-import org.tvheadend.tvhclient.data.service.EpgSyncTaskState;
 import org.tvheadend.tvhclient.features.dvr.recordings.RecordingDetailsFragment;
 import org.tvheadend.tvhclient.features.dvr.series_recordings.SeriesRecordingDetailsFragment;
 import org.tvheadend.tvhclient.features.dvr.timer_recordings.TimerRecordingDetailsFragment;
@@ -24,34 +22,39 @@ import org.tvheadend.tvhclient.features.shared.callbacks.NetworkAvailabilityChan
 import org.tvheadend.tvhclient.features.shared.callbacks.NetworkStatusInterface;
 import org.tvheadend.tvhclient.features.shared.callbacks.NetworkStatusReceiverCallback;
 import org.tvheadend.tvhclient.features.shared.receivers.NetworkStatusReceiver;
-import org.tvheadend.tvhclient.features.shared.receivers.ServiceStatusReceiver;
 import org.tvheadend.tvhclient.features.shared.receivers.SnackbarMessageReceiver;
 
 import timber.log.Timber;
 
-public abstract class BaseActivity extends AppCompatActivity implements NetworkStatusReceiverCallback, NetworkStatusInterface, EpgSyncStatusCallback {
+public abstract class BaseActivity extends AppCompatActivity implements NetworkStatusReceiverCallback, NetworkStatusInterface {
 
     private NetworkStatusReceiver networkStatusReceiver;
     private boolean isNetworkAvailable;
-    private ServiceStatusReceiver serviceStatusReceiver;
     private SnackbarMessageReceiver snackbarMessageReceiver;
-    private int serverConnectionRetryCounter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        isNetworkAvailable = false;
         networkStatusReceiver = new NetworkStatusReceiver(this);
-        serviceStatusReceiver = new ServiceStatusReceiver(this);
         snackbarMessageReceiver = new SnackbarMessageReceiver(this);
-        serverConnectionRetryCounter = 0;
+
+        if (savedInstanceState == null) {
+            isNetworkAvailable = false;
+        } else {
+            isNetworkAvailable = savedInstanceState.getBoolean("isNetworkAvailable", false);
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putBoolean("isNetworkAvailable", isNetworkAvailable);
+        super.onSaveInstanceState(outState);
     }
 
     @Override
     public void onStart() {
         super.onStart();
         LocalBroadcastManager.getInstance(this).registerReceiver(snackbarMessageReceiver, new IntentFilter(SnackbarMessageReceiver.ACTION));
-        LocalBroadcastManager.getInstance(this).registerReceiver(serviceStatusReceiver, new IntentFilter(ServiceStatusReceiver.ACTION));
         registerReceiver(networkStatusReceiver, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
     }
 
@@ -59,7 +62,6 @@ public abstract class BaseActivity extends AppCompatActivity implements NetworkS
     public void onStop() {
         super.onStop();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(snackbarMessageReceiver);
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(serviceStatusReceiver);
         unregisterReceiver(networkStatusReceiver);
     }
 
@@ -71,7 +73,7 @@ public abstract class BaseActivity extends AppCompatActivity implements NetworkS
         }
     }
 
-    private void onNetworkAvailabilityChanged(boolean isAvailable) {
+    protected void onNetworkAvailabilityChanged(boolean isAvailable) {
         if (isAvailable) {
             if (!isNetworkAvailable) {
                 Timber.d("Network changed from offline to online, starting service");
@@ -108,49 +110,6 @@ public abstract class BaseActivity extends AppCompatActivity implements NetworkS
     @Override
     public boolean isNetworkAvailable() {
         return isNetworkAvailable;
-    }
-
-    @Override
-    public void onEpgTaskStateChanged(EpgSyncTaskState state) {
-        Timber.d("Epg task state changed to " + state.getState() + ", message is " + state.getMessage());
-        switch (state.getState()) {
-            case CLOSED:
-                if (getCurrentFocus() != null) {
-                    Snackbar.make(getCurrentFocus(), state.getMessage(), Snackbar.LENGTH_SHORT).show();
-                }
-                stopService(new Intent(this, EpgSyncService.class));
-                if (serverConnectionRetryCounter < 3) {
-                    serverConnectionRetryCounter++;
-                    Timber.d("Starting connection attempt number " + serverConnectionRetryCounter + " to the server");
-                    if (MainApplication.isActivityVisible()) {
-                        startService(new Intent(this, EpgSyncService.class));
-                    }
-                } else {
-                    Timber.d("Already tried to connect " + serverConnectionRetryCounter + " times to the server");
-                }
-                break;
-
-            case FAILED:
-                if (getCurrentFocus() != null) {
-                    Snackbar.make(getCurrentFocus(), state.getMessage(), Snackbar.LENGTH_SHORT).show();
-                }
-                onNetworkAvailabilityChanged(false);
-                break;
-
-            case CONNECTING:
-                if (getCurrentFocus() != null) {
-                    Snackbar.make(getCurrentFocus(), state.getMessage(), Snackbar.LENGTH_SHORT).show();
-                }
-                break;
-
-            case CONNECTED:
-                if (getCurrentFocus() != null) {
-                    Snackbar.make(getCurrentFocus(), state.getMessage(), Snackbar.LENGTH_SHORT).show();
-                }
-                // Reset the start service retry count
-                serverConnectionRetryCounter = 0;
-                break;
-        }
     }
 
     @Override

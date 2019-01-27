@@ -1,13 +1,10 @@
 package org.tvheadend.tvhclient.features.startup;
 
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -22,14 +19,10 @@ import android.widget.TextView;
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
-import org.tvheadend.tvhclient.data.service.EpgSyncService;
-import org.tvheadend.tvhclient.data.service.EpgSyncStatusCallback;
-import org.tvheadend.tvhclient.data.service.EpgSyncTaskState;
 import org.tvheadend.tvhclient.features.MainActivity;
 import org.tvheadend.tvhclient.features.settings.SettingsActivity;
 import org.tvheadend.tvhclient.features.shared.receivers.ServiceStatusReceiver;
 import org.tvheadend.tvhclient.utils.MenuUtils;
-import org.tvheadend.tvhclient.utils.NetworkUtils;
 
 import javax.inject.Inject;
 
@@ -40,7 +33,7 @@ import timber.log.Timber;
 
 // TODO add nice background image
 
-public class StartupFragment extends Fragment implements EpgSyncStatusCallback {
+public class StartupFragment extends Fragment {
 
     @BindView(R.id.progress_bar)
     ProgressBar progressBar;
@@ -61,8 +54,6 @@ public class StartupFragment extends Fragment implements EpgSyncStatusCallback {
     protected AppRepository appRepository;
     @Inject
     protected SharedPreferences sharedPreferences;
-    private ServiceStatusReceiver serviceStatusReceiver;
-    private boolean isServiceStarted;
     private String stateText;
     private String detailsText;
     private ServiceStatusReceiver.State state;
@@ -91,12 +82,10 @@ public class StartupFragment extends Fragment implements EpgSyncStatusCallback {
             state = ((ServiceStatusReceiver.State) savedInstanceState.getSerializable("state"));
             stateText = savedInstanceState.getString("stateText");
             detailsText = savedInstanceState.getString("detailsText");
-            isServiceStarted = savedInstanceState.getBoolean("isServiceStarted");
         } else {
             state = ServiceStatusReceiver.State.IDLE;
             stateText = getString(R.string.initializing);
             detailsText = "";
-            isServiceStarted = false;
         }
     }
 
@@ -105,7 +94,6 @@ public class StartupFragment extends Fragment implements EpgSyncStatusCallback {
         outState.putSerializable("state", state);
         outState.putString("stateText", stateTextView.getText().toString());
         outState.putString("detailsText", detailsTextView.getText().toString());
-        outState.putBoolean("isServiceStarted", isServiceStarted);
         super.onSaveInstanceState(outState);
     }
 
@@ -125,42 +113,9 @@ public class StartupFragment extends Fragment implements EpgSyncStatusCallback {
             settingsButton.setVisibility(View.VISIBLE);
             settingsButton.setOnClickListener(v -> showConnectionListSettings());
 
-        } else if (appRepository.getChannelData().getItems().size() > 0
-                && !appRepository.getConnectionData().getActiveItem().isSyncRequired()) {
-            Timber.d("Database contains channels and no sync is required, showing contents");
-            showContentScreen();
-
-        } else if (!NetworkUtils.isConnectionAvailable(activity)) {
-            Timber.d("No network is active to perform initial sync, showing settings button");
-            stateText = getString(R.string.err_no_network);
-            progressBar.setVisibility(View.INVISIBLE);
-            settingsButton.setVisibility(View.VISIBLE);
-            settingsButton.setOnClickListener(v -> {
-                Intent intent = new Intent(Settings.ACTION_WIRELESS_SETTINGS);
-                startActivity(intent);
-            });
-
         } else {
-            Timber.d("Network is active and database is either empty or sync is required, showing settings button and starting service");
-            progressBar.setVisibility(View.INVISIBLE);
-            settingsButton.setVisibility(View.VISIBLE);
-            settingsButton.setOnClickListener(v -> showConnectionListSettings());
-
-            // Create and register the broadcast receiver to get the sync status
-            Timber.d("Registering service status listener");
-            serviceStatusReceiver = new ServiceStatusReceiver(this);
-            LocalBroadcastManager.getInstance(activity).registerReceiver(serviceStatusReceiver, new IntentFilter(ServiceStatusReceiver.ACTION));
-
-            // The database is empty and a full initial sync is required.
-            // Start the service so it can connect to the server.
-            // The sync status will be received via the broadcast receiver.
-            if (!isServiceStarted) {
-                Timber.d("Starting service for the first time");
-                activity.startService(new Intent(activity, EpgSyncService.class));
-                isServiceStarted = true;
-            } else {
-                Timber.d("Service was already started");
-            }
+            Timber.d("Connection is available and active, showing contents");
+            showContentScreen();
         }
 
         stateTextView.setText(stateText);
@@ -170,22 +125,7 @@ public class StartupFragment extends Fragment implements EpgSyncStatusCallback {
     @Override
     public void onResume() {
         super.onResume();
-
-        Timber.d("Resuming, current service state is " + state);
-        onEpgTaskStateChanged(new EpgSyncTaskState.EpgSyncTaskStateBuilder()
-                .state(state)
-                .message(stateText)
-                .details(detailsText)
-                .build());
-
         handleStartupProcedure();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        Timber.d("Stopping, unregistering service status listener");
-        LocalBroadcastManager.getInstance(activity).unregisterReceiver(serviceStatusReceiver);
     }
 
     @Override
@@ -230,54 +170,5 @@ public class StartupFragment extends Fragment implements EpgSyncStatusCallback {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         activity.startActivity(intent);
         activity.finish();
-    }
-
-    @Override
-    public void onEpgTaskStateChanged(EpgSyncTaskState state) {
-        this.state = state.getState();
-
-        switch (state.getState()) {
-            case CONNECTING:
-                Timber.d("Service is connecting to server");
-                break;
-            case CONNECTED:
-                Timber.d("Service is connected to server");
-                break;
-            case SYNC_STARTED:
-                Timber.d("Service sync started");
-                break;
-
-            case SYNC_IN_PROGRESS:
-                progressBar.setVisibility(View.VISIBLE);
-                stateTextView.setText(state.getMessage());
-                detailsTextView.setText(state.getDetails());
-                break;
-
-            case SYNC_DONE:
-                Timber.d("Service sync is done, starting main screen");
-                progressBar.setVisibility(View.INVISIBLE);
-                stateTextView.setText(state.getMessage());
-                detailsTextView.setText(state.getDetails());
-
-                Timber.d("Stopping, unregistering service status listener");
-                LocalBroadcastManager.getInstance(activity).unregisterReceiver(serviceStatusReceiver);
-                showContentScreen();
-                break;
-
-            case FAILED:
-                Timber.d("Connection to server or server sync failed, showing buttons to list connections and refresh");
-                activity.stopService(new Intent(activity, EpgSyncService.class));
-
-                stateTextView.setText(state.getMessage());
-                detailsTextView.setText(state.getDetails());
-                progressBar.setVisibility(View.INVISIBLE);
-
-                settingsButton.setVisibility(View.VISIBLE);
-                settingsButton.setOnClickListener(v -> showConnectionListSettings());
-
-                retryButton.setVisibility(View.VISIBLE);
-                retryButton.setOnClickListener(v -> activity.startService(new Intent(activity, EpgSyncService.class)));
-                break;
-        }
     }
 }
