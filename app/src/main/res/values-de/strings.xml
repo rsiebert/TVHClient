@@ -169,7 +169,7 @@
     <string name="pref_epg_hours_visible">Sichtbare Stunden</string>
     <string name="pref_epg_max_days">Anzahl der Tage</string>
     <string name="pref_epg_max_days_sum">Begrenzt die Programmübersicht auf eine maximale Anzahl an Tagen.</string>
-    <string name="pref_epg_sync_duration">Zeitraum der zu ladenen Programdaten</string>
+    <string name="pref_epg_sync_duration">Zeitraum der zu ladenen Programmdaten</string>
     <string name="pref_epg_sync_duration_sum">Der gewählte Zeitraum gibt an, wieviele Programme vom Server geladen werden sollen.</string>
     <string name="pref_general">Allgmeines</string>
     <string name="pref_genre_colors">Genrefarben</string>
