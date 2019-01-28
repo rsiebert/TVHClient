@@ -72,7 +72,7 @@ public class ChangeLogLoaderTask extends AsyncTask<Boolean, Void, String> {
                     String version = line.substring(1).trim();
                     // stop output?
                     if (!full) {
-                        if (!lastAppVersion.equals(version)) {
+                        if (lastAppVersion.equals(version)) {
                             advanceToEOVS = true;
                         } else if (version.equals("END_OF_CHANGE_LOG")) {
                             advanceToEOVS = false;
