@@ -1101,7 +1101,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
                 Timber.d("Downloading channel icon for channel " + channel.getName());
                 downloadIconFromFileUrl(channel.getIcon());
             } catch (Exception e) {
-                Timber.d("Could not load channel icon '" + channel.getIcon() + "'", e);
+                Timber.d("Could not load channel icon for channel '" + channel.getIcon() + "'");
             }
         }
         for (ChannelTag channelTag : appRepository.getChannelTagData().getItems()) {
@@ -1109,7 +1109,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
                 Timber.d("Downloading channel icon for channel tag " + channelTag.getTagName());
                 downloadIconFromFileUrl(channelTag.getTagIcon());
             } catch (Exception e) {
-                Timber.d("Could not load channel tag icon '" + channelTag.getTagIcon() + "'", e);
+                Timber.d("Could not load channel tag icon '" + channelTag.getTagIcon() + "'");
             }
         }
     }
