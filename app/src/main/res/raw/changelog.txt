@@ -1,6 +1,12 @@
+$ 2.0.3
+  % VERSION 2.0.3
+  _ 28.01.2019
+    * Fixed crash when selecting the option to sort by channel number
+    * Fixed crash when deleting channel icons
+    * Fixed showing changelog contents for new versions
 $ 2.0.2
   % VERSION 2.0.2
-  _ 28.01.2018
+  _ 28.01.2019
     * Added sorting option "Defined by server". It is now the order in which order the server has send the channels to the client. The option "Sort by channel ID" sorts by the internal channel number defined by the server. Please check or adjust the settings!
     * The initial sync is now done completely in the background, the ongoing sync is shown as a progressbar below the toolbar
     * Changed option to show the "Delete all recordings" menu instead of hiding it
@@ -8,7 +14,7 @@ $ 2.0.2
     * Fixed selection of multiple channel tags
 $ 2.0.1
   % VERSION 2.0.1
-  _ 25.01.2018
+  _ 25.01.2019
     * Changed the one time initial sync of data to faster show the channel screen. (Only when a reconnect is requested from the menu or a certain time since the last sync has passed, new epg data is fetched in the background.)
     * Use the hostname for regular playback and the IP address only for casting
     * Added separate option to use the internal player only for either channels or recordings
@@ -16,7 +22,7 @@ $ 2.0.1
     * Added more choices how to sort the channels
 $ 2.0.0
   % VERSION 2.0.0
-  _ 15.01.2018
+  _ 15.01.2019
     * Some UI changes according to the material design guidelines (popup menus, new navigation menu and icons)
     * Channels, recordings and epg data are now stored in a database
     * Epg data will be periodically fetched in the background
