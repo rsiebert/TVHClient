@@ -84,9 +84,8 @@ import timber.log.Timber;
 import static org.tvheadend.tvhclient.features.streaming.internal.HtspDataSource.INVALID_TIMESHIFT_TIME;
 
 // TODO Disable buttons until data source has been loaded and video is playing
-// TODO show buffering status
-// TODO allow selecting different tracks
-// TODO enable/disable captions
+// TODO Timeshift support
+// TODO select speed
 
 public class HtspPlaybackActivity extends AppCompatActivity implements View.OnClickListener, PlaybackPreparer, Player.EventListener, Authenticator.Listener, PlayerControlView.VisibilityListener, VideoListener {
 
@@ -524,8 +523,6 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
                     }
                 }
             }
-
-            // TODO add menu items for playback speed, timeshift and other stuff
 
             popupMenu.setOnMenuItemClickListener(item -> {
                 switch (item.getItemId()) {
