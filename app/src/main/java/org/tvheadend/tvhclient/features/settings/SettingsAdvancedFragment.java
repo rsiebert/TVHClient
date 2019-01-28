@@ -10,6 +10,7 @@ import android.preference.Preference;
 import android.provider.SearchRecentSuggestions;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.FileProvider;
+import android.text.TextUtils;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.squareup.picasso.Picasso;
@@ -238,6 +239,9 @@ public class SettingsAdvancedFragment extends BasePreferenceFragment implements 
                     // connection. Additionally remove the icons from the Picasso cache
                     Timber.d("Deleting channel icons and invalidating cache");
                     for (Channel channel : appRepository.getChannelData().getItems()) {
+                        if (TextUtils.isEmpty(channel.getIcon())) {
+                            continue;
+                        }
                         File file = new File(getActivity().getCacheDir(), MiscUtils.convertUrlToHashString(channel.getIcon()) + ".png");
                         if (file.exists()) {
                             if (!file.delete()) {
