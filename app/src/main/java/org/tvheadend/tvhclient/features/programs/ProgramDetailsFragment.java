@@ -129,6 +129,7 @@ public class ProgramDetailsFragment extends BaseFragment implements RecordingRem
 
         if (!isDualPane) {
             toolbarInterface.setTitle(getString(R.string.details));
+            toolbarInterface.setSubtitle("");
         }
         if (savedInstanceState != null) {
             eventId = savedInstanceState.getInt("eventId", 0);

@@ -89,6 +89,7 @@ public class TimerRecordingDetailsFragment extends BaseFragment implements Recor
 
         if (!isDualPane) {
             toolbarInterface.setTitle(getString(R.string.details));
+            toolbarInterface.setSubtitle("");
         }
 
         // Get the recording id after an orientation change has occurred

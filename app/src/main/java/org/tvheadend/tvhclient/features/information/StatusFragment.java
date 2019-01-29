@@ -81,7 +81,7 @@ public class StatusFragment extends BaseFragment implements WakeOnLanTaskCallbac
         forceSingleScreenLayout();
 
         toolbarInterface.setTitle(getString(R.string.status));
-        toolbarInterface.setSubtitle(null);
+        toolbarInterface.setSubtitle("");
 
         showConnection();
         showRecordings();

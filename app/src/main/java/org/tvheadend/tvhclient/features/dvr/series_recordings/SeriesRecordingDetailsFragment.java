@@ -95,6 +95,7 @@ public class SeriesRecordingDetailsFragment extends BaseFragment implements Reco
 
         if (!isDualPane) {
             toolbarInterface.setTitle(getString(R.string.details));
+            toolbarInterface.setSubtitle("");
         }
 
         // Get the recording id after an orientation change has occurred

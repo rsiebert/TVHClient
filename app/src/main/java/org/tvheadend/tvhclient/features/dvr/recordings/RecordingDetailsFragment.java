@@ -133,6 +133,7 @@ public class RecordingDetailsFragment extends BaseFragment implements RecordingR
 
         if (!isDualPane) {
             toolbarInterface.setTitle(getString(R.string.details));
+            toolbarInterface.setSubtitle("");
         }
 
         // Get the recording id after an orientation change has occurred

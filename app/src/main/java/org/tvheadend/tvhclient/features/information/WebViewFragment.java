@@ -73,7 +73,7 @@ public class WebViewFragment extends BaseFragment implements FileLoaderCallback 
                 break;
         }
 
-        toolbarInterface.setSubtitle(null);
+        toolbarInterface.setSubtitle("");
     }
 
     @Override

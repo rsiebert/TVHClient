@@ -31,7 +31,7 @@ public class UnlockerFragment extends WebViewFragment implements FileLoaderCallb
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         toolbarInterface.setTitle(getString(R.string.pref_unlocker));
-        toolbarInterface.setSubtitle(null);
+        toolbarInterface.setSubtitle("");
         billingManager = MainApplication.getInstance().getBillingManager();
         billingHandler = MainApplication.getInstance().getBillingHandler();
     }
