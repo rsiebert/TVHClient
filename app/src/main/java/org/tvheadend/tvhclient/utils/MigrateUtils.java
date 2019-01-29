@@ -81,6 +81,8 @@ public class MigrateUtils {
                     }
                 }
 
+                // Two new channel sorting options were introduced in this version.
+                // They are now the first to options so all other values need to be moved up by two.
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 int channelSortOrder = Integer.valueOf(sharedPreferences.getString("channel_sort_order", context.getResources().getString(R.string.pref_default_channel_sort_order)));
                 if (channelSortOrder >= 2) {
