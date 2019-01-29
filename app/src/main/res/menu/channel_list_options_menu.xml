@@ -15,5 +15,9 @@
         android:id="@+id/menu_genre_color_info_channels"
         android:orderInCategory="7"
         android:title="@string/genre_color_info" />
+    <item
+        android:id="@+id/menu_sort_order"
+        android:orderInCategory="8"
+        android:title="@string/pref_sort_channels" />
 
 </menu>

@@ -35,6 +35,7 @@ import org.tvheadend.tvhclient.features.dvr.RecordingAddEditActivity;
 import org.tvheadend.tvhclient.features.search.SearchActivity;
 import org.tvheadend.tvhclient.features.search.SearchRequestInterface;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
+import org.tvheadend.tvhclient.features.shared.callbacks.ChannelSortOrderSelectionCallback;
 import org.tvheadend.tvhclient.features.shared.callbacks.ChannelTagSelectionCallback;
 import org.tvheadend.tvhclient.features.shared.callbacks.ChannelTimeSelectionCallback;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback;
@@ -51,7 +52,7 @@ import timber.log.Timber;
 
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 
-public class ProgramGuideFragment extends BaseFragment implements EpgScrollInterface, RecyclerViewClickCallback, ChannelTimeSelectionCallback, ChannelTagSelectionCallback, Filter.FilterListener, ViewPager.OnPageChangeListener, SearchRequestInterface {
+public class ProgramGuideFragment extends BaseFragment implements EpgScrollInterface, RecyclerViewClickCallback, ChannelTimeSelectionCallback, ChannelTagSelectionCallback, ChannelSortOrderSelectionCallback, Filter.FilterListener, ViewPager.OnPageChangeListener, SearchRequestInterface {
 
     @BindView(R.id.channel_list_recycler_view)
     RecyclerView channelListRecyclerView;
@@ -257,6 +258,9 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
             case R.id.menu_genre_color_info_channels:
                 return menuUtils.handleMenuGenreColorSelection();
 
+            case R.id.menu_sort_order:
+                return menuUtils.handleMenuChannelSortOrderSelection(this);
+
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -281,6 +285,11 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
         programViewPager.setVisibility(View.GONE);
         progressBar.setVisibility(View.VISIBLE);
         viewModel.setSelectedChannelTagIds(ids);
+    }
+
+    @Override
+    public void onChannelSortOrderSelected(int id) {
+        viewModel.setChannelSortOrder(id);
     }
 
     @Override

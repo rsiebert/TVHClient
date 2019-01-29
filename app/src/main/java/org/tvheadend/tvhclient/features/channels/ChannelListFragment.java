@@ -35,6 +35,7 @@ import org.tvheadend.tvhclient.features.dvr.RecordingAddEditActivity;
 import org.tvheadend.tvhclient.features.programs.ProgramListFragment;
 import org.tvheadend.tvhclient.features.search.SearchRequestInterface;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
+import org.tvheadend.tvhclient.features.shared.callbacks.ChannelSortOrderSelectionCallback;
 import org.tvheadend.tvhclient.features.shared.callbacks.ChannelTagSelectionCallback;
 import org.tvheadend.tvhclient.features.shared.callbacks.ChannelTimeSelectionCallback;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback;
@@ -49,7 +50,7 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import timber.log.Timber;
 
-public class ChannelListFragment extends BaseFragment implements RecyclerViewClickCallback, ChannelTimeSelectionCallback, ChannelTagSelectionCallback, SearchRequestInterface, Filter.FilterListener {
+public class ChannelListFragment extends BaseFragment implements RecyclerViewClickCallback, ChannelTimeSelectionCallback, ChannelTagSelectionCallback, ChannelSortOrderSelectionCallback, SearchRequestInterface, Filter.FilterListener {
 
     @BindView(R.id.recycler_view)
     protected RecyclerView recyclerView;
@@ -263,6 +264,9 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
             case R.id.menu_genre_color_info_channels:
                 return menuUtils.handleMenuGenreColorSelection();
 
+            case R.id.menu_sort_order:
+                return menuUtils.handleMenuChannelSortOrderSelection(this);
+
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -293,6 +297,11 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
             progressBar.setVisibility(View.VISIBLE);
         }
         viewModel.setSelectedChannelTagIds(ids);
+    }
+
+    @Override
+    public void onChannelSortOrderSelected(int id) {
+        viewModel.setChannelSortOrder(id);
     }
 
     /**

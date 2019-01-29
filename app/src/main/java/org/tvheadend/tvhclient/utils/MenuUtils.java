@@ -32,6 +32,7 @@ import org.tvheadend.tvhclient.features.download.DownloadRecordingManager;
 import org.tvheadend.tvhclient.features.search.SearchActivity;
 import org.tvheadend.tvhclient.features.shared.adapter.ChannelTagRecyclerViewAdapter;
 import org.tvheadend.tvhclient.features.shared.adapter.GenreColorDialogAdapter;
+import org.tvheadend.tvhclient.features.shared.callbacks.ChannelSortOrderSelectionCallback;
 import org.tvheadend.tvhclient.features.shared.callbacks.ChannelTagSelectionCallback;
 import org.tvheadend.tvhclient.features.shared.callbacks.ChannelTimeSelectionCallback;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecordingRemovedCallback;
@@ -190,6 +191,31 @@ public class MenuUtils {
         adapter.setCallback(dialog);
         dialog.show();
         return true;
+    }
+
+    public boolean handleMenuChannelSortOrderSelection(@NonNull ChannelSortOrderSelectionCallback callback) {
+        Activity activity = this.activity.get();
+        if (activity == null) {
+            Timber.d("Weak reference to activity is null");
+            return false;
+        }
+        int channelSortOrder = Integer.valueOf(sharedPreferences.getString("channel_sort_order", activity.getResources().getString(R.string.pref_default_channel_sort_order)));
+        new MaterialDialog.Builder(activity)
+                .title(R.string.select_dvr_config)
+                .items(activity.getResources().getStringArray(R.array.pref_sort_channels_names))
+                .itemsIds(activity.getResources().getIntArray(R.array.pref_sort_channels_ids))
+                .itemsCallbackSingleChoice(channelSortOrder, (dialog, view, which, text) -> {
+
+                    Timber.d("New selected channel sort order changed from " + channelSortOrder + " to " + which);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString("channel_sort_order", String.valueOf(which));
+                    editor.apply();
+
+                    callback.onChannelSortOrderSelected(which);
+                    return true;
+                })
+                .show();
+        return false;
     }
 
     public boolean handleMenuDownloadSelection(int dvrId) {
