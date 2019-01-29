@@ -34,7 +34,7 @@ public class RecordingData implements DataSourceInterface<Recording> {
     }
 
     public void addItems(@NonNull List<Recording> items) {
-        AsyncTask.execute(() -> db.getRecordingDao().insert(items));
+        AsyncTask.execute(() -> db.getRecordingDao().insert(new ArrayList<>(items)));
     }
 
     @Override
@@ -52,7 +52,9 @@ public class RecordingData implements DataSourceInterface<Recording> {
     }
 
     public void addAndRemoveItems(List<Recording> newItems, List<Recording> oldItems) {
-        AsyncTask.execute(() -> db.getRecordingDao().insertAndDelete(newItems, oldItems));
+        AsyncTask.execute(() -> db.getRecordingDao().insertAndDelete(
+                new ArrayList<>(newItems),
+                new ArrayList<>(oldItems)));
     }
 
     @Override

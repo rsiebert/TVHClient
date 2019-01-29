@@ -35,7 +35,7 @@ public class ProgramData implements DataSourceInterface<Program> {
     }
 
     public void addItems(@NonNull List<Program> items) {
-        AsyncTask.execute(() -> db.getProgramDao().insert(items));
+        AsyncTask.execute(() -> db.getProgramDao().insert(new ArrayList<>(items)));
     }
 
     @Override

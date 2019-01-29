@@ -38,7 +38,7 @@ public class ChannelData implements DataSourceInterface<Channel> {
     }
 
     public void addItems(@NonNull List<Channel> items) {
-        AsyncTask.execute(() -> db.getChannelDao().insert(items));
+        AsyncTask.execute(() -> db.getChannelDao().insert(new ArrayList<>(items)));
     }
 
     @Override

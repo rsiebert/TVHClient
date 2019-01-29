@@ -32,7 +32,7 @@ public class ChannelTagData implements DataSourceInterface<ChannelTag> {
     }
 
     public void addItems(List<ChannelTag> items) {
-        AsyncTask.execute(() -> db.getChannelTagDao().insert(items));
+        AsyncTask.execute(() -> db.getChannelTagDao().insert(new ArrayList<>(items)));
     }
 
     @Override
