@@ -208,10 +208,6 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
             enableAsyncMetadataRequest.put("lastUpdate", currentTimeInSeconds);
         }
 
-        Timber.d("Updating connection status with full sync completed");
-        connection.setSyncRequired(false);
-        appRepository.getConnectionData().updateItem(connection);
-
         try {
             dispatcher.sendMessage(enableAsyncMetadataRequest);
         } catch (HtspNotConnectedException e) {
@@ -726,6 +722,10 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         if (!firstEventReceived && syncRequired) {
             Timber.d("Sync is required and received first event, saving " + pendingChannelOps.size() + " channels");
             appRepository.getChannelData().addItems(pendingChannelOps);
+
+            Timber.d("Updating connection status with full sync completed");
+            connection.setSyncRequired(false);
+            appRepository.getConnectionData().updateItem(connection);
         }
 
         firstEventReceived = true;
@@ -782,7 +782,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     private void handleGetEvents(HtspMessage message, Intent intent) {
 
         final boolean useEventList = intent.getBooleanExtra("useEventList", false);
-        final boolean saveEventList = intent.getBooleanExtra("saveEventList", false);
+        final String channelName = intent.getStringExtra("channelName");
 
         if (message.containsKey("events")) {
             List<Program> programs = new ArrayList<>();
@@ -793,17 +793,11 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
             }
 
             if (useEventList) {
-                Timber.d("Adding " + programs.size() + " events to the list");
+                Timber.d("Adding " + programs.size() + " events to the list for channel " + channelName);
                 pendingEventOps.addAll(programs);
             } else {
-                Timber.d("Saving " + programs.size() + " events");
+                Timber.d("Saving " + programs.size() + " events for channel " + channelName);
                 appRepository.getProgramData().addItems(programs);
-            }
-
-            if (saveEventList) {
-                Timber.d("Saving " + pendingEventOps.size() + " events");
-                appRepository.getProgramData().addItems(pendingEventOps);
-                pendingEventOps.clear();
             }
         }
     }
@@ -992,7 +986,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         }
         // Only save any received events when they shall be loaded
         if (syncEventsRequired) {
-            Timber.d("Sync of all evens is required, saving");
+            Timber.d("Sync of all evens is required, saving events");
             saveAllReceivedEvents();
         }
         // Recordings are always saved to keep up to
@@ -1001,6 +995,8 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
 
         getAdditionalServerData();
 
+        Timber.d("Updating connection status with full sync completed");
+        connection.setSyncRequired(false);
         Timber.d("Updating connection status with last update time");
         long currentTime = System.currentTimeMillis() / 1000L;
         connection.setLastUpdate(currentTime);
@@ -1027,7 +1023,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
                 .build();
         WorkManager.getInstance().enqueueUniqueWork("UpdateEpg", ExistingWorkPolicy.REPLACE, updateEpgWorker);
 
-        deleteOldEventsFromDatabase();
+        //deleteOldEventsFromDatabase();
 
         Timber.d("Done receiving initial data from server");
     }
@@ -1354,13 +1350,15 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
      * @param intent Intent with the request message fields
      */
     private void getEvents(Intent intent) {
-        Timber.d("Get events called");
 
         final int eventId = intent.getIntExtra("eventId", 0);
         final int channelId = intent.getIntExtra("channelId", 0);
+        final String channelName = intent.getStringExtra("channelName");
         final int numFollowing = intent.getIntExtra("numFollowing", 0);
         final long maxTime = intent.getLongExtra("maxTime", 0);
         final boolean showMessage = intent.getBooleanExtra("showMessage", false);
+
+        Timber.d("Loading " + numFollowing + " more events for channel " + channelName);
 
         final HtspMessage request = new HtspMessage();
         request.put("method", "getEvents");
@@ -1776,36 +1774,39 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     }
 
     /**
-     * Loads more events for all channels with the given parameters.
+     * Loads a defined number of events for all channels.
      * This method is called by a worker after the initial sync is done.
+     * All loaded events are saved in a temporary list and saved in one
+     * batch into the database when all events were loaded for all channels.
      *
      * @param intent The intent with the parameters e.g. to define how many events shall be loaded
      */
     private void getMoreEvents(Intent intent) {
 
         int numberOfProgramsToLoad = intent.getIntExtra("numFollowing", 0);
-        Timber.d("Loading " + numberOfProgramsToLoad + " more events for each channel");
 
-        int counter = 0;
+        Timber.d("Database contains " + appRepository.getProgramData().getItemCount() + " events. " +
+                "Loading " + numberOfProgramsToLoad + " more events for each channel ");
+
         List<Channel> channelList = appRepository.getChannelData().getItems();
         for (Channel channel : channelList) {
-            counter++;
-            Program program = appRepository.getProgramData().getLastItemByChannelId(channel.getId());
-            if (program != null) {
-
+            Program lastProgram = appRepository.getProgramData().getLastItemByChannelId(channel.getId());
+            if (lastProgram != null) {
+                Timber.d("Loading more programs. Last program is " + lastProgram.getTitle() + " for channel " + channel.getName());
                 Intent msgIntent = new Intent();
-                if (program.getNextEventId() > 0) {
-                    msgIntent.putExtra("eventId", program.getNextEventId());
-                } else if (program.getEventId() > 0) {
-                    msgIntent.putExtra("eventId", program.getEventId());
-                }
-                msgIntent.putExtra("channelId", channel.getId());
+                msgIntent.putExtra("eventId", lastProgram.getNextEventId());
+                msgIntent.putExtra("channelId", lastProgram.getChannelId());
+                msgIntent.putExtra("channelName", lastProgram.getChannelName());
                 msgIntent.putExtra("numFollowing", numberOfProgramsToLoad);
                 msgIntent.putExtra("useEventList", true);
-                msgIntent.putExtra("saveEventList", (counter == channelList.size()));
                 getEvents(msgIntent);
             }
         }
+
+        appRepository.getProgramData().addItems(pendingEventOps);
+        Timber.d("Saved " + pendingEventOps.size() + " events for all channels. " +
+                "Database contains " + appRepository.getProgramData().getItemCount() + " events");
+        pendingEventOps.clear();
     }
 
     private void deleteOldEventsFromDatabase() {
