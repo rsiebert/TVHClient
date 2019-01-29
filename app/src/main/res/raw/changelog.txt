@@ -1,3 +1,8 @@
+$ 2.0.5
+  % VERSION 2.0.5
+  _ 29.01.2019
+    * Fixed selection of series and timer recording priorities
+    * Small bug fixes
 $ 2.0.4
   % VERSION 2.0.4
   _ 29.01.2019
