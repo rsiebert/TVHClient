@@ -167,8 +167,8 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
         isEnabledCheckbox.setChecked(recording.getEnabled() == 1);
 
         priorityTextView.setVisibility(!recording.isRecording() ? View.VISIBLE : View.GONE);
-        priorityTextView.setText(priorityList[recording.getPriority()]);
-        priorityTextView.setOnClickListener(view -> handlePrioritySelection(priorityList, recording.getPriority(), RecordingAddEditFragment.this));
+        priorityTextView.setText(getPriorityName(recording.getPriority()));
+        priorityTextView.setOnClickListener(view -> handlePrioritySelection(priorityNames, recording.getPriority(), RecordingAddEditFragment.this));
 
         if (recordingProfilesList.length == 0 || recording.isRecording()) {
             recordingProfileNameTextView.setVisibility(View.GONE);
@@ -349,7 +349,7 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
 
     @Override
     public void onPrioritySelected(int which) {
-        priorityTextView.setText(priorityList[which]);
+        priorityTextView.setText(getPriorityName(which));
         recording.setPriority(which);
     }
 

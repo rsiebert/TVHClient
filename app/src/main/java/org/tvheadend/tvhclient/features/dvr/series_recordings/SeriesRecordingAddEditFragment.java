@@ -146,8 +146,8 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
             handleChannelListSelection(SeriesRecordingAddEditFragment.this, allowRecordingOnAllChannels);
         });
 
-        priorityTextView.setText(priorityList[recording.getPriority()]);
-        priorityTextView.setOnClickListener(view -> handlePrioritySelection(priorityList, recording.getPriority(), SeriesRecordingAddEditFragment.this));
+        priorityTextView.setText(getPriorityName(recording.getPriority()));
+        priorityTextView.setOnClickListener(view -> handlePrioritySelection(priorityNames, recording.getPriority(), SeriesRecordingAddEditFragment.this));
 
         if (recordingProfilesList.length == 0) {
             recordingProfileNameTextView.setVisibility(View.GONE);
@@ -335,8 +335,8 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
 
     @Override
     public void onPrioritySelected(int which) {
-        priorityTextView.setText(priorityList[which]);
         recording.setPriority(which);
+        priorityTextView.setText(getPriorityName(recording.getPriority()));
     }
 
     @Override

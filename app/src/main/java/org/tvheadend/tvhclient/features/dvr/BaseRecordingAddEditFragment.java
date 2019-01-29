@@ -28,7 +28,7 @@ import timber.log.Timber;
 public abstract class BaseRecordingAddEditFragment extends BaseFragment {
 
     private String[] daysOfWeekList;
-    protected String[] priorityList;
+    protected String[] priorityNames;
     protected String[] recordingProfilesList;
     private List<Channel> channelList;
     protected ServerProfile profile;
@@ -42,8 +42,8 @@ public abstract class BaseRecordingAddEditFragment extends BaseFragment {
         recordingProfilesList = appRepository.getServerProfileData().getRecordingProfileNames();
         Timber.d("Recording profile list size is " + recordingProfilesList.length);
 
-        priorityList = activity.getResources().getStringArray(R.array.dvr_priorities);
-        Timber.d("Priority list size is " + priorityList.length);
+        priorityNames = activity.getResources().getStringArray(R.array.dvr_priority_names);
+        Timber.d("Priority list size is " + priorityNames.length);
 
         channelList = appRepository.getChannelData().getItems();
 
@@ -157,12 +157,14 @@ public abstract class BaseRecordingAddEditFragment extends BaseFragment {
     }
 
     protected void handlePrioritySelection(String[] priorityList, int selectedPriority, RecordingPriorityListCallback callback) {
+        Timber.d("Selected prio is " + (selectedPriority == 6 ? 5 : selectedPriority));
         new MaterialDialog.Builder(activity)
                 .title(R.string.select_priority)
                 .items(priorityList)
-                .itemsCallbackSingleChoice(selectedPriority, (dialog, view, which, text) -> {
+                .itemsCallbackSingleChoice(selectedPriority == 6 ? 5 : selectedPriority, (dialog, view, which, text) -> {
                     if (callback != null) {
-                        callback.onPrioritySelected(which);
+                        Timber.d("New selected prio is " + (which == 5 ? 6 : which));
+                        callback.onPrioritySelected(which == 5 ? 6 : which);
                     }
                     return true;
                 })
@@ -198,5 +200,15 @@ public abstract class BaseRecordingAddEditFragment extends BaseFragment {
         newFragment.setArguments(bundle);
         newFragment.setTargetFragment(callback, 1);
         newFragment.show(activity.getSupportFragmentManager(), tag);
+    }
+
+    protected String getPriorityName(int priority) {
+        if (priority >= 0 && priority <= 4) {
+            return priorityNames[priority];
+        } else if (priority == 6) {
+            return priorityNames[5];
+        } else {
+            return "";
+        }
     }
 }

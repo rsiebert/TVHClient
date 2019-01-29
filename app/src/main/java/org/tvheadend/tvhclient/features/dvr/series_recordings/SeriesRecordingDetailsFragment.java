@@ -150,10 +150,8 @@ public class SeriesRecordingDetailsFragment extends BaseFragment implements Reco
 
         daysOfWeekTextView.setText(UIUtils.getDaysOfWeekText(activity, recording.getDaysOfWeek()));
 
-        String[] priorityList = getResources().getStringArray(R.array.dvr_priorities);
-        if (recording.getPriority() >= 0 && recording.getPriority() < priorityList.length) {
-            priorityTextView.setText(priorityList[recording.getPriority()]);
-        }
+        priorityTextView.setText(getPriorityName(recording.getPriority()));
+
         if (recording.getMinDuration() > 0) {
             // The minimum timeTextView is given in seconds, but we want to show it in minutes
             minDurationTextView.setText(getString(R.string.minutes, (int) (recording.getMinDuration() / 60)));
@@ -166,6 +164,17 @@ public class SeriesRecordingDetailsFragment extends BaseFragment implements Reco
         int gmtOffset = serverStatus.getGmtoffset();
         startTimeTextView.setText(UIUtils.getTimeText(getContext(), recording.getStart() - gmtOffset));
         startWindowTimeTextView.setText(UIUtils.getTimeText(getContext(), recording.getStartWindow() - gmtOffset));
+    }
+
+    protected String getPriorityName(int priority) {
+        String[] priorityNames = getResources().getStringArray(R.array.dvr_priority_names);
+        if (priority >= 0 && priority <= 4) {
+            return priorityNames[priority];
+        } else if (priority == 6) {
+            return priorityNames[5];
+        } else {
+            return "";
+        }
     }
 
     @Override

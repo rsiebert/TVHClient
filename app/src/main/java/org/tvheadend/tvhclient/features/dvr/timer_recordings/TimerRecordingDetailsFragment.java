@@ -133,16 +133,24 @@ public class TimerRecordingDetailsFragment extends BaseFragment implements Recor
 
         daysOfWeekTextView.setText(UIUtils.getDaysOfWeekText(activity, recording.getDaysOfWeek()));
 
-        String[] priorityItems = getResources().getStringArray(R.array.dvr_priorities);
-        if (recording.getPriority() >= 0 && recording.getPriority() < priorityItems.length) {
-            priorityTextView.setText(priorityItems[recording.getPriority()]);
-        }
+        priorityTextView.setText(getPriorityName(recording.getPriority()));
 
         int gmtOffset = serverStatus.getGmtoffset();
         startTimeTextView.setText(UIUtils.getTimeText(activity, recording.getStart() - gmtOffset));
         stopTimeTextView.setText(UIUtils.getTimeText(activity, recording.getStop() - gmtOffset));
 
         durationTextView.setText(getString(R.string.minutes, recording.getDuration()));
+    }
+
+    protected String getPriorityName(int priority) {
+        String[] priorityNames = getResources().getStringArray(R.array.dvr_priority_names);
+        if (priority >= 0 && priority <= 4) {
+            return priorityNames[priority];
+        } else if (priority == 6) {
+            return priorityNames[5];
+        } else {
+            return "";
+        }
     }
 
     @Override

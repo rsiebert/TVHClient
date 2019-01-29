@@ -126,8 +126,8 @@ public class TimerRecordingAddEditFragment extends BaseRecordingAddEditFragment 
             handleChannelListSelection(TimerRecordingAddEditFragment.this, allowRecordingOnAllChannels);
         });
 
-        priorityTextView.setText(priorityList[recording.getPriority()]);
-        priorityTextView.setOnClickListener(view -> handlePrioritySelection(priorityList, recording.getPriority(), TimerRecordingAddEditFragment.this));
+        priorityTextView.setText(getPriorityName(recording.getPriority()));
+        priorityTextView.setOnClickListener(view -> handlePrioritySelection(priorityNames, recording.getPriority(), TimerRecordingAddEditFragment.this));
 
         if (recordingProfilesList.length == 0) {
             recordingProfileNameTextView.setVisibility(View.GONE);
@@ -267,8 +267,8 @@ public class TimerRecordingAddEditFragment extends BaseRecordingAddEditFragment 
 
     @Override
     public void onPrioritySelected(int which) {
-        priorityTextView.setText(priorityList[which]);
         recording.setPriority(which);
+        priorityTextView.setText(getPriorityName(recording.getPriority()));
     }
 
     @Override
