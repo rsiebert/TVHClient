@@ -21,7 +21,7 @@
         <item>Domenica</item>
     </string-array>
 
-    <string-array name="dvr_priorities">
+    <string-array name="dvr_priority_names">
         <item>Molto alta</item>
         <item>Alta</item>
         <item>Normale</item>

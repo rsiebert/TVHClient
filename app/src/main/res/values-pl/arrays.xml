@@ -44,7 +44,7 @@
         <item>Niedziela</item>
     </string-array>
 
-    <string-array name="dvr_priorities">
+    <string-array name="dvr_priority_names">
         <item>Ważny</item>
         <item>Wysoki</item>
         <item>Normalny</item>

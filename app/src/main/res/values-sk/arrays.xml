@@ -44,7 +44,7 @@
         <item>Nedeľa</item>
     </string-array>
 
-    <string-array name="dvr_priorities">
+    <string-array name="dvr_priority_names">
         <item>Dôležité</item>
         <item>Vysoká</item>
         <item>Normálna</item>

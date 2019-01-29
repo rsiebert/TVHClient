@@ -44,7 +44,7 @@
         <item>Dimanche</item>
     </string-array>
 
-    <string-array name="dvr_priorities">
+    <string-array name="dvr_priority_names">
         <item>Important</item>
         <item>Haute</item>
         <item>Normal</item>

@@ -50,7 +50,7 @@
         <item>Vasárnap</item>
     </string-array>
 
-    <string-array name="dvr_priorities">
+    <string-array name="dvr_priority_names">
         <item>Fontos</item>
         <item>Magas</item>
         <item>Normál</item>

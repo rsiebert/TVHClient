@@ -50,7 +50,7 @@
         <item>Sonntag</item>
     </string-array>
 
-    <string-array name="dvr_priorities">
+    <string-array name="dvr_priority_names">
         <item>Wichtig</item>
         <item>Hoch</item>
         <item>Normal</item>
