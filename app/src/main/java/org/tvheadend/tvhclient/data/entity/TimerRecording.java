@@ -120,9 +120,6 @@ public class TimerRecording {
     }
 
     public void setPriority(int priority) {
-        if (priority > 5) {
-            priority = 5;
-        }
         this.priority = priority;
     }
 
