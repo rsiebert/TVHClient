@@ -20,8 +20,8 @@
     </string-array>
 
     <string-array name="pref_sort_channels_names">
-        <item>Definiert vom Server (aufsteigend)</item>
-        <item>Definiert vom Server (absteigend)</item>
+        <item>Wie vom Server gesendet (aufsteigend)</item>
+        <item>Wie vom Server gesendet (absteigend)</item>
         <item>Sender-ID (aufsteigend)</item>
         <item>Sender-ID (absteigend)</item>
         <item>Sendername (aufsteigend)</item>

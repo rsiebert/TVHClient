@@ -20,8 +20,8 @@
     </string-array>
 
     <string-array name="pref_sort_channels_names">
-        <item>A szerver által definiált (emelkedő)</item>
-        <item>A szerver által definiált (csökkenő)</item>
+        <item>Szerverről küldött (emelkedő)</item>
+        <item>Szerverről küldött (csökkenő)</item>
         <item>Csatorna azonosító (emelkedő)</item>
         <item>Csatorna azonosító (csökkenő)</item>
         <item>Csatorna név (emelkedő)</item>
