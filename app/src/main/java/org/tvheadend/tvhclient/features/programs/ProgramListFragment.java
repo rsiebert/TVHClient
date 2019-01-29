@@ -395,6 +395,7 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
         intent.setAction("getEvents");
         intent.putExtra("eventId", lastProgram.getNextEventId());
         intent.putExtra("channelId", lastProgram.getChannelId());
+        intent.putExtra("channelName", channelName);
         intent.putExtra("numFollowing", 25);
         intent.putExtra("showMessage", true);
 
