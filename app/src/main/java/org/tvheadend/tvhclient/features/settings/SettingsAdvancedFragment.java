@@ -21,6 +21,7 @@ import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.service.EpgSyncService;
 import org.tvheadend.tvhclient.data.service.worker.LoadChannelIconWorker;
+import org.tvheadend.tvhclient.features.logging.FileLoggingTree;
 import org.tvheadend.tvhclient.features.search.SuggestionProvider;
 import org.tvheadend.tvhclient.features.startup.SplashActivity;
 import org.tvheadend.tvhclient.utils.MiscUtils;
@@ -46,6 +47,7 @@ public class SettingsAdvancedFragment extends BasePreferenceFragment implements 
         addPreferencesFromResource(R.xml.preferences_advanced);
         toolbarInterface.setTitle(getString(R.string.pref_advanced_settings));
 
+        findPreference("debug_mode_enabled").setOnPreferenceClickListener(this);
         findPreference("send_debug_logfile_enabled").setOnPreferenceClickListener(this);
         findPreference("clear_database").setOnPreferenceClickListener(this);
         findPreference("clear_search_history").setOnPreferenceClickListener(this);
@@ -71,6 +73,9 @@ public class SettingsAdvancedFragment extends BasePreferenceFragment implements 
     @Override
     public boolean onPreferenceClick(Preference preference) {
         switch (preference.getKey()) {
+            case "debug_mode_enabled":
+                handlePreferenceDebugModeSelected();
+                break;
             case "send_debug_logfile_enabled":
                 handlePreferenceSendLogFileSelected();
                 break;
@@ -122,6 +127,22 @@ public class SettingsAdvancedFragment extends BasePreferenceFragment implements 
                 })
                 .onNegative((dialog, which) -> dialog.dismiss())
                 .show();
+    }
+
+    private void handlePreferenceDebugModeSelected() {
+        if (sharedPreferences.getBoolean("debug_mode_enabled", getResources().getBoolean(R.bool.pref_default_debug_mode_enabled))) {
+            Timber.d("Debug mode is enabled");
+            for (Timber.Tree tree : Timber.forest()) {
+                if (tree.getClass().getName().equals(FileLoggingTree.class.getName())) {
+                    Timber.d("FileLoggingTree already planted");
+                    return;
+                }
+            }
+            Timber.d("Replanting FileLoggingTree");
+            Timber.plant(new FileLoggingTree(activity.getApplicationContext()));
+        } else {
+            Timber.d("Debug mode is disabled");
+        }
     }
 
     private void handlePreferenceSendLogFileSelected() {
