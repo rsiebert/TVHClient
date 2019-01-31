@@ -20,7 +20,7 @@ package org.tvheadend.tvhclient.features.settings;
 
 import android.os.Bundle;
 import android.preference.ListPreference;
-import android.support.design.widget.Snackbar;
+import com.google.android.material.snackbar.Snackbar;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Connection;

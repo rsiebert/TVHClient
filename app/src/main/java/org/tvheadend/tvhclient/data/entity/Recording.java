@@ -1,8 +1,8 @@
 package org.tvheadend.tvhclient.data.entity;
 
-import android.arch.persistence.room.ColumnInfo;
-import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.Ignore;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.Ignore;
 import android.text.TextUtils;
 
 import java.util.Calendar;

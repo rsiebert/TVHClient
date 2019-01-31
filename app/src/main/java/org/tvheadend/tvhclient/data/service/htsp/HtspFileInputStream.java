@@ -16,7 +16,7 @@
 
 package org.tvheadend.tvhclient.data.service.htsp;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;

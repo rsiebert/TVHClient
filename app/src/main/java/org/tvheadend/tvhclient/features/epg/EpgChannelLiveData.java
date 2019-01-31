@@ -1,8 +1,8 @@
 package org.tvheadend.tvhclient.features.epg;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MediatorLiveData;
-import android.support.v4.util.Pair;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
+import androidx.core.util.Pair;
 
 import java.util.List;
 
