@@ -1,5 +1,11 @@
 package org.tvheadend.tvhclient.data.dao;
 
+import org.tvheadend.tvhclient.data.entity.Channel;
+import org.tvheadend.tvhclient.data.entity.EpgChannel;
+
+import java.util.List;
+import java.util.Set;
+
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
@@ -8,12 +14,6 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Transaction;
 import androidx.room.Update;
-
-import org.tvheadend.tvhclient.data.entity.Channel;
-import org.tvheadend.tvhclient.data.entity.EpgChannel;
-
-import java.util.List;
-import java.util.Set;
 
 @Dao
 public interface ChannelDao {
