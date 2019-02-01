@@ -16,7 +16,7 @@
 package org.tvheadend.tvhclient.data.service.htsp.tasks;
 
 import android.os.Handler;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.text.TextUtils;
 
 import org.tvheadend.tvhclient.BuildConfig;

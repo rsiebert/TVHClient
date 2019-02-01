@@ -1,7 +1,7 @@
 package org.tvheadend.tvhclient.features.streaming.external;
 
 import android.os.AsyncTask;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import org.tvheadend.tvhclient.data.entity.Connection;
 

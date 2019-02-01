@@ -15,7 +15,7 @@
  */
 package org.tvheadend.tvhclient.data.service.htsp;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.service.htsp.tasks.Authenticator;

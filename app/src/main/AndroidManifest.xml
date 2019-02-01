@@ -32,7 +32,7 @@
             android:value="8ea21b9d2155f0843c3c57f71a18568c71ef17f9" />
 
         <provider
-            android:name="android.support.v4.content.FileProvider"
+            android:name="androidx.core.content.FileProvider"
             android:authorities="org.tvheadend.tvhclient.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">

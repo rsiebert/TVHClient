@@ -1,6 +1,6 @@
 package org.tvheadend.tvhclient.data.entity;
 
-import android.arch.persistence.room.ColumnInfo;
+import androidx.room.ColumnInfo;
 
 public class EpgChannel {
 
