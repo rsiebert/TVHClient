@@ -9,10 +9,13 @@ buildscript {
 }
 
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-android'
 
 repositories {
     maven { url 'https://maven.fabric.io/public' }
     maven { url "http://dl.bintray.com/kiall/exoplayer" }
+    mavenCentral()
 }
 
 apply plugin: 'io.fabric'
@@ -25,8 +28,8 @@ android {
         minSdkVersion 16
         targetSdkVersion 28
 
-        versionCode 147
-        versionName "2.0.5"
+        versionCode 148
+        versionName "2.1.0"
 
         // Define the apk naming convention
         applicationId "org.tvheadend.tvhclient"
@@ -102,22 +105,22 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 
     // Support library basics
-    implementation 'androidx.appcompat:appcompat:1.0.0-beta01'
-    implementation 'androidx.recyclerview:recyclerview:1.0.0-beta01'
+    implementation 'androidx.appcompat:appcompat:1.0.2'
+    implementation 'androidx.recyclerview:recyclerview:1.0.0'
     implementation 'androidx.annotation:annotation:1.0.1'
-    implementation 'com.google.android.material:material:1.0.0-beta01'
+    implementation 'com.google.android.material:material:1.0.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
 
     // Casting
     implementation 'com.google.android.gms:play-services-cast-framework:16.1.2'
-    implementation 'androidx.mediarouter:mediarouter:1.0.0-beta01'
+    implementation 'androidx.mediarouter:mediarouter:1.0.0'
 
     // Billing
     implementation 'com.android.billingclient:billing:1.2'
 
     // Material navigation drawer and dialogs
     implementation 'com.afollestad.material-dialogs:commons:0.9.6.0'
-    implementation 'com.mikepenz:materialdrawer:6.0.9'
+    implementation 'com.mikepenz:materialdrawer:6.1.2'
 
     // View binding
     implementation 'com.jakewharton:butterknife:10.0.0'
@@ -130,11 +133,11 @@ dependencies {
     implementation 'com.crashlytics.sdk.android:crashlytics:2.9.8'
 
     // Architecture components
-    implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0-beta01'
-    implementation 'androidx.lifecycle:lifecycle-common-java8:2.0.0-beta01'
-    implementation 'androidx.room:room-runtime:2.0.0-beta01'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
+    implementation 'androidx.lifecycle:lifecycle-common-java8:2.0.0'
+    implementation 'androidx.room:room-runtime:2.0.0'
     implementation 'android.arch.work:work-runtime:1.0.0-beta03'
-    annotationProcessor 'androidx.room:room-compiler:2.0.0-beta01'
+    annotationProcessor 'androidx.room:room-compiler:2.0.0'
 
     // Dependency injection
     implementation 'com.google.dagger:dagger:2.21'
@@ -156,4 +159,5 @@ dependencies {
 
     // Use multidex because the method count is over 64k
     debugImplementation 'androidx.multidex:multidex:2.0.1'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
