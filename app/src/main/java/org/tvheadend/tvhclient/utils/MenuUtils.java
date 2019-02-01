@@ -7,8 +7,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -55,6 +53,8 @@ import java.util.Locale;
 
 import javax.inject.Inject;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import io.fabric.sdk.android.Fabric;
 import timber.log.Timber;
 
@@ -162,12 +162,12 @@ public class MenuUtils {
             tag.setChannelCount(appRepository.getChannelData().getItems().size());
             boolean allChannelsSelected = true;
             for (ChannelTag channelTag : channelTags) {
-                if (channelTag.getIsSelected() == 1) {
+                if (channelTag.isSelected()) {
                     allChannelsSelected = false;
                     break;
                 }
             }
-            tag.setIsSelected(allChannelsSelected ? 1 : 0);
+            tag.setSelected(allChannelsSelected);
             channelTags.add(0, tag);
         }
 

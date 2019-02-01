@@ -7,9 +7,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.os.HandlerThread;
-import androidx.annotation.NonNull;
-import androidx.core.app.NotificationManagerCompat;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import android.text.TextUtils;
 
 import org.json.JSONArray;
@@ -55,6 +52,9 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
+import androidx.annotation.NonNull;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.work.ExistingWorkPolicy;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
@@ -449,7 +449,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         // stored channels to calculate the channel count for the channel tag
         ChannelTag updatedTag = EpgSyncUtils.convertMessageToChannelTagModel(channelTag, msg, pendingChannelOps);
         updatedTag.setConnectionId(connection.getId());
-        updatedTag.setIsSelected(channelTag.getIsSelected());
+        updatedTag.setSelected(channelTag.isSelected());
 
         Timber.d("Sync is running, updating channel tag");
         pendingChannelTagOps.add(updatedTag);

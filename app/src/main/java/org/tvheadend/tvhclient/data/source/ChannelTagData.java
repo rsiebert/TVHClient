@@ -1,9 +1,6 @@
 package org.tvheadend.tvhclient.data.source;
 
-import androidx.lifecycle.LiveData;
 import android.os.AsyncTask;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import org.tvheadend.tvhclient.data.db.AppRoomDatabase;
 import org.tvheadend.tvhclient.data.entity.ChannelTag;
@@ -15,6 +12,9 @@ import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.lifecycle.LiveData;
 import timber.log.Timber;
 
 public class ChannelTagData implements DataSourceInterface<ChannelTag> {
@@ -49,9 +49,9 @@ public class ChannelTagData implements DataSourceInterface<ChannelTag> {
         AsyncTask.execute(() -> {
             List<ChannelTag> channelTags = db.getChannelTagDao().loadAllChannelTagsSync();
             for (ChannelTag channelTag : channelTags) {
-                channelTag.setIsSelected(0);
+                channelTag.setSelected(false);
                 if (ids.contains(channelTag.getTagId())) {
-                    channelTag.setIsSelected(1);
+                    channelTag.setSelected(true);
                 }
             }
             db.getChannelTagDao().update(channelTags);

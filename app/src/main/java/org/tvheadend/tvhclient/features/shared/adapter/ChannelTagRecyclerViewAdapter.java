@@ -1,7 +1,5 @@
 package org.tvheadend.tvhclient.features.shared.adapter;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +12,9 @@ import org.tvheadend.tvhclient.data.entity.ChannelTag;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class ChannelTagRecyclerViewAdapter extends RecyclerView.Adapter<ChannelTagViewHolder> {
 
@@ -41,7 +42,7 @@ public class ChannelTagRecyclerViewAdapter extends RecyclerView.Adapter<ChannelT
             ChannelTag channelTag = channelTagList.get(position);
             holder.bindData(channelTag);
 
-            if (channelTag.getIsSelected() == 1) {
+            if (channelTag.isSelected()) {
                 selectedChannelTagIds.add(channelTag.getTagId());
             }
 

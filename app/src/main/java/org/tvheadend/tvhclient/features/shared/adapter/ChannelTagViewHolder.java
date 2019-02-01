@@ -3,9 +3,6 @@ package org.tvheadend.tvhclient.features.shared.adapter;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.CheckBox;
@@ -19,6 +16,9 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.ChannelTag;
 import org.tvheadend.tvhclient.utils.UIUtils;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -51,10 +51,10 @@ public class ChannelTagViewHolder extends RecyclerView.ViewHolder {
                 itemView.getResources().getBoolean(R.bool.pref_default_channel_tag_icons_enabled));
 
         if (selectedRadioButton != null) {
-            selectedRadioButton.setChecked(channelTag.getIsSelected() == 1);
+            selectedRadioButton.setChecked(channelTag.isSelected());
         }
         if (selectedCheckBox != null) {
-            selectedCheckBox.setChecked(channelTag.getIsSelected() == 1);
+            selectedCheckBox.setChecked(channelTag.isSelected());
         }
 
         titleTextView.setText(channelTag.getTagName());
