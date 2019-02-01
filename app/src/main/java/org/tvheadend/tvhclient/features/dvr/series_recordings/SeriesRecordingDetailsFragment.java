@@ -216,7 +216,6 @@ public class SeriesRecordingDetailsFragment extends BaseFragment implements Reco
                 intent.putExtra("type", "series_recording");
                 intent.putExtra("id", recording.getId());
                 activity.startActivity(intent);
-                activity.finish();
                 return true;
 
             case R.id.menu_record_remove:
