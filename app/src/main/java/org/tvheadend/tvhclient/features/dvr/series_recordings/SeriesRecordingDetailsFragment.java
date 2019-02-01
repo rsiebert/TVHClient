@@ -1,11 +1,7 @@
 package org.tvheadend.tvhclient.features.dvr.series_recordings;
 
-import androidx.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.appcompat.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -24,6 +20,10 @@ import org.tvheadend.tvhclient.features.shared.BaseFragment;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecordingRemovedCallback;
 import org.tvheadend.tvhclient.utils.UIUtils;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -129,8 +129,8 @@ public class SeriesRecordingDetailsFragment extends BaseFragment implements Reco
         // has been loaded yet. The toolbar is shown here because a recording was loaded
         nestedToolbar.setVisibility(View.VISIBLE);
 
-        isDisabledTextView.setVisibility(htspVersion >= 19 && recording.getEnabled() == 0 ? View.VISIBLE : View.GONE);
-        isDisabledTextView.setText(recording.getEnabled() > 0 ? R.string.recording_enabled : R.string.recording_disabled);
+        isDisabledTextView.setVisibility(htspVersion >= 19 && recording.isEnabled() ? View.VISIBLE : View.GONE);
+        isDisabledTextView.setText(recording.isEnabled() ? R.string.recording_enabled : R.string.recording_disabled);
 
         directoryLabelTextView.setVisibility(!TextUtils.isEmpty(recording.getDirectory()) && htspVersion >= 19 ? View.VISIBLE : View.GONE);
         directoryTextView.setVisibility(!TextUtils.isEmpty(recording.getDirectory()) && htspVersion >= 19 ? View.VISIBLE : View.GONE);

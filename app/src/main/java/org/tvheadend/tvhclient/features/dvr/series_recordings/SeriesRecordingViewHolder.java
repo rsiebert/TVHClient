@@ -3,9 +3,6 @@ package org.tvheadend.tvhclient.features.dvr.series_recordings;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import androidx.annotation.NonNull;
-import androidx.core.widget.TextViewCompat;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
@@ -19,6 +16,9 @@ import org.tvheadend.tvhclient.data.entity.SeriesRecording;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback;
 import org.tvheadend.tvhclient.utils.UIUtils;
 
+import androidx.annotation.NonNull;
+import androidx.core.widget.TextViewCompat;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -126,7 +126,7 @@ public class SeriesRecordingViewHolder extends RecyclerView.ViewHolder {
 
         durationTextView.setText(context.getString(R.string.minutes, recording.getDuration()));
 
-        isDisabledTextView.setVisibility(htspVersion >= 19 && recording.getEnabled() == 0 ? View.VISIBLE : View.GONE);
-        isDisabledTextView.setText(recording.getEnabled() > 0 ? R.string.recording_enabled : R.string.recording_disabled);
+        isDisabledTextView.setVisibility(htspVersion >= 19 && !recording.isEnabled() ? View.VISIBLE : View.GONE);
+        isDisabledTextView.setText(recording.isEnabled() ? R.string.recording_enabled : R.string.recording_disabled);
     }
 }

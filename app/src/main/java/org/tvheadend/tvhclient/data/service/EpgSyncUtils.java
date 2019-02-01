@@ -1,7 +1,6 @@
 package org.tvheadend.tvhclient.data.service;
 
 import android.content.Intent;
-import androidx.annotation.NonNull;
 import android.text.TextUtils;
 
 import org.tvheadend.tvhclient.data.entity.Channel;
@@ -15,6 +14,7 @@ import org.tvheadend.tvhclient.data.service.htsp.HtspMessage;
 
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import timber.log.Timber;
 
 class EpgSyncUtils {
@@ -425,7 +425,7 @@ class EpgSyncUtils {
             seriesRecording.setId(msg.getString("id"));
         }
         if (msg.containsKey("enabled")) {
-            seriesRecording.setEnabled(msg.getInteger("enabled"));
+            seriesRecording.setEnabled(msg.getInteger("enabled") == 1);
         }
         if (msg.containsKey("name")) {
             seriesRecording.setName(msg.getString("name"));
@@ -523,7 +523,7 @@ class EpgSyncUtils {
             }
         }
         if (msg.containsKey("enabled")) {
-            timerRecording.setEnabled(msg.getInteger("enabled"));
+            timerRecording.setEnabled(msg.getInteger("enabled") == 1);
         }
         if (msg.containsKey("name")) {
             timerRecording.setName(msg.getString("name"));

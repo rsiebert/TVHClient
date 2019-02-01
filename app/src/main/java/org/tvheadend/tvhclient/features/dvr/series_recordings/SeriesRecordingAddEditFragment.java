@@ -1,10 +1,7 @@
 package org.tvheadend.tvhclient.features.dvr.series_recordings;
 
-import androidx.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import com.google.android.material.snackbar.Snackbar;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -18,6 +15,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.google.android.material.snackbar.Snackbar;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Channel;
@@ -32,6 +30,8 @@ import org.tvheadend.tvhclient.features.shared.callbacks.RecordingPriorityListCa
 import org.tvheadend.tvhclient.features.shared.callbacks.RecordingProfileListCallback;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
+import androidx.annotation.NonNull;
+import androidx.lifecycle.ViewModelProviders;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnCheckedChanged;
@@ -132,7 +132,7 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
         int gmtOffset = serverStatus.getGmtoffset();
 
         isEnabledCheckbox.setVisibility(htspVersion >= 19 ? View.VISIBLE : View.GONE);
-        isEnabledCheckbox.setChecked(recording.getEnabled() == 1);
+        isEnabledCheckbox.setChecked(recording.isEnabled());
         titleEditText.setText(recording.getTitle());
         nameEditText.setText(recording.getName());
         directoryLabelTextView.setVisibility(htspVersion >= 19 ? View.VISIBLE : View.GONE);
@@ -311,7 +311,7 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
         intent.putExtra("dupDetect", recording.getDupDetect());
         intent.putExtra("daysOfWeek", recording.getDaysOfWeek());
         intent.putExtra("priority", recording.getPriority());
-        intent.putExtra("enabled", recording.getEnabled());
+        intent.putExtra("enabled", recording.isEnabled() ? 1 : 0);
 
         if (recording.getChannelId() > 0) {
             intent.putExtra("channelId", recording.getChannelId());
@@ -420,7 +420,7 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
 
     @OnCheckedChanged(R.id.is_enabled)
     void onEnabledCheckboxChanged(CompoundButton buttonView, boolean isChecked) {
-        recording.setEnabled(isChecked ? 1 : 0);
+        recording.setEnabled(isChecked);
     }
 
     @OnTextChanged(R.id.minimum_duration)
