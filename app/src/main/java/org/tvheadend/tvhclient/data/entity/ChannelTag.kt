@@ -10,7 +10,7 @@ data class ChannelTag(
         @ColumnInfo(name = "id")
         var tagId: Int = 0,                     // u32   required   ID of tag.
         @ColumnInfo(name = "tag_name")
-        var tagName: String = "",               // str   required   Name of tag.
+        var tagName: String? = "",               // str   required   Name of tag.
         @ColumnInfo(name = "tag_index")
         var tagIndex: Int = 0,                  // u32   optional   Index value for sorting (default by from min to max) (Added in version 18).
         @ColumnInfo(name = "tag_icon")
@@ -19,7 +19,6 @@ data class ChannelTag(
         var tagTitledIcon: Int = 0,             // u32   optional   Icon includes a title
         @ColumnInfo(name = "channel_count")
         var channelCount: Int = 0,
-
         @ColumnInfo(name = "connection_id")
         var connectionId: Int = 0,
         @ColumnInfo(name = "is_selected")
