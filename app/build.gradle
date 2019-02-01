@@ -73,6 +73,7 @@ android {
             buildConfigField "Boolean", "DEBUG_LOG", "true"
         }
         release {
+            multiDexEnabled true
             // Show all features when true
             buildConfigField "Boolean", "UNLOCKED", "false"
             // Enable all logging, otherwise it is suppressed
