@@ -1,7 +1,7 @@
 package org.tvheadend.tvhclient.injection.modules;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import org.tvheadend.tvhclient.data.db.AppRoomDatabase;
 import org.tvheadend.tvhclient.data.repository.AppRepository;

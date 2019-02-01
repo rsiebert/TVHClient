@@ -1,6 +1,6 @@
 package org.tvheadend.tvhclient.features.logging;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;

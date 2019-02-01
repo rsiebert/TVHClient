@@ -16,9 +16,13 @@
 #   public *;
 #}
 
--keep        class android.support.v13.** { *; }
--keep        class android.support.v7.** { *; }
--keep        class android.support.v4.** { *; }
+-dontwarn androidx.**
+-keep interface androidx.** { *; }
+-keep class androidx.** { *; }
+
+-dontwarn com.google.android.material.**
+-keep class com.google.android.material.** { *; }
+
 
 # These warnings are safe to ignore
 -dontwarn okhttp3.internal.platform.*
@@ -32,3 +36,4 @@
 # Speeds up build time
 -keep class com.crashlytics.** { *; }
 -dontwarn com.crashlytics.**
+

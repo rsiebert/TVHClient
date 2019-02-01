@@ -1,7 +1,7 @@
 package org.tvheadend.tvhclient.data.entity;
 
-import android.arch.persistence.room.ColumnInfo;
-import android.arch.persistence.room.Entity;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
 
 @Entity(tableName = "tags_and_channels", primaryKeys = {"tag_id", "channel_id", "connection_id"})
 public class TagAndChannel {

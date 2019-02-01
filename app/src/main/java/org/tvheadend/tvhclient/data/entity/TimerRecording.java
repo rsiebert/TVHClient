@@ -1,8 +1,8 @@
 package org.tvheadend.tvhclient.data.entity;
 
-import android.arch.persistence.room.ColumnInfo;
-import android.arch.persistence.room.Entity;
-import android.support.annotation.NonNull;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.annotation.NonNull;
 
 @Entity(tableName = "timer_recordings", primaryKeys = {"id", "connection_id"})
 public class TimerRecording {

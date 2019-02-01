@@ -17,7 +17,7 @@
 package org.tvheadend.tvhclient.data.service.htsp.tasks;
 
 import android.os.Handler;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import org.tvheadend.tvhclient.data.service.htsp.HtspMessage;
 import org.tvheadend.tvhclient.data.service.htsp.HtspNotConnectedException;

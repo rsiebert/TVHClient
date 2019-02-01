@@ -1,8 +1,8 @@
 package org.tvheadend.tvhclient.features.channels;
 
 import android.app.Application;
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.Transformations;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Transformations;
 
 import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.features.shared.BaseChannelViewModel;

@@ -1,7 +1,7 @@
 package org.tvheadend.tvhclient.data.entity;
 
-import android.arch.persistence.room.ColumnInfo;
-import android.arch.persistence.room.Ignore;
+import androidx.room.ColumnInfo;
+import androidx.room.Ignore;
 
 public class EpgProgram {
 

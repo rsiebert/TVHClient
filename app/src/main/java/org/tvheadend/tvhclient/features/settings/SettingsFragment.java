@@ -10,10 +10,10 @@ import android.os.Environment;
 import android.os.Handler;
 import android.preference.Preference;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.TaskStackBuilder;
+import androidx.annotation.NonNull;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.TaskStackBuilder;
 
 import com.afollestad.materialdialogs.folderselector.FolderChooserDialog;
 

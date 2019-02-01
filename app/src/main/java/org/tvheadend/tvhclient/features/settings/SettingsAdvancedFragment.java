@@ -8,8 +8,8 @@ import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.provider.SearchRecentSuggestions;
-import android.support.design.widget.Snackbar;
-import android.support.v4.content.FileProvider;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.core.content.FileProvider;
 import android.text.TextUtils;
 
 import com.afollestad.materialdialogs.MaterialDialog;

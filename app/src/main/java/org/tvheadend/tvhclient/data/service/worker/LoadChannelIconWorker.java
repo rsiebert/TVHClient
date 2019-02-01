@@ -2,7 +2,7 @@ package org.tvheadend.tvhclient.data.service.worker;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import org.tvheadend.tvhclient.data.service.EpgSyncIntentService;
 

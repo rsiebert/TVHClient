@@ -1,7 +1,7 @@
 package org.tvheadend.tvhclient.features.programs;
 
-import android.support.annotation.Nullable;
-import android.support.v7.util.DiffUtil;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.DiffUtil;
 
 import org.tvheadend.tvhclient.data.entity.Program;
 

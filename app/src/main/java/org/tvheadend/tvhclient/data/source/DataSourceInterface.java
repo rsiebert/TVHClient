@@ -1,6 +1,6 @@
 package org.tvheadend.tvhclient.data.source;
 
-import android.arch.lifecycle.LiveData;
+import androidx.lifecycle.LiveData;
 
 import java.util.List;
 
