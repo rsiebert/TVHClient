@@ -414,4 +414,6 @@
     <string name="selection_default">Enabled</string>
     <string name="enable_random_adaptation">Enable random adaptation</string>
     <string name="receiving_data">Receiving data</string>
+    <string name="connect">Connect</string>
+    <string name="disconnect">Disconnect</string>
 </resources>
