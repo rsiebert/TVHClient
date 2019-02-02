@@ -21,9 +21,7 @@ import org.tvheadend.tvhclient.data.service.EpgSyncService;
 import org.tvheadend.tvhclient.features.shared.callbacks.BackPressedInterface;
 import org.tvheadend.tvhclient.features.shared.callbacks.ToolbarInterface;
 import org.tvheadend.tvhclient.features.shared.tasks.WakeOnLanTask;
-import org.tvheadend.tvhclient.features.shared.tasks.WakeOnLanTaskCallback;
 import org.tvheadend.tvhclient.features.startup.SplashActivity;
-import org.tvheadend.tvhclient.utils.SnackbarUtils;
 
 import javax.inject.Inject;
 
@@ -31,7 +29,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
 import timber.log.Timber;
 
-public class SettingsListConnectionsFragment extends ListFragment implements BackPressedInterface, ActionMode.Callback, WakeOnLanTaskCallback {
+public class SettingsListConnectionsFragment extends ListFragment implements BackPressedInterface, ActionMode.Callback {
 
     private ToolbarInterface toolbarInterface;
     private ConnectionListAdapter connectionListAdapter;
@@ -138,7 +136,7 @@ public class SettingsListConnectionsFragment extends ListFragment implements Bac
                 return true;
 
             case R.id.menu_send_wol:
-                new WakeOnLanTask(activity, this, connection).execute();
+                new WakeOnLanTask(activity, connection).execute();
                 mode.finish();
                 return true;
 
@@ -186,11 +184,6 @@ public class SettingsListConnectionsFragment extends ListFragment implements Bac
             mode.setTitle(connection.getName());
         }
         return true;
-    }
-
-    @Override
-    public void notify(String message) {
-        SnackbarUtils.sendSnackbarMessage(activity, message);
     }
 
     @Override

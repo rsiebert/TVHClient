@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Connection;
+import org.tvheadend.tvhclient.utils.SnackbarUtils;
 
 import java.lang.ref.WeakReference;
 import java.net.DatagramPacket;
@@ -24,13 +25,11 @@ public class WakeOnLanTask extends AsyncTask<String, Void, Integer> {
 
     private final WeakReference<Context> context;
     private final Connection connection;
-    private final WakeOnLanTaskCallback callback;
     private Exception exception;
 
-    public WakeOnLanTask(Context context, WakeOnLanTaskCallback callback, Connection connection) {
+    public WakeOnLanTask(Context context, Connection connection) {
         this.context = new WeakReference<>(context);
         this.connection = connection;
-        this.callback = callback;
     }
 
     @Override
@@ -143,6 +142,6 @@ public class WakeOnLanTask extends AsyncTask<String, Void, Integer> {
                     break;
             }
         }
-        callback.notify(message);
+        SnackbarUtils.sendSnackbarMessage(ctx, message);
     }
 }

@@ -21,8 +21,6 @@ import org.tvheadend.tvhclient.features.dvr.timer_recordings.TimerRecordingViewM
 import org.tvheadend.tvhclient.features.programs.ProgramViewModel;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
 import org.tvheadend.tvhclient.features.shared.tasks.WakeOnLanTask;
-import org.tvheadend.tvhclient.features.shared.tasks.WakeOnLanTaskCallback;
-import org.tvheadend.tvhclient.utils.SnackbarUtils;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModelProviders;
@@ -30,7 +28,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-public class StatusFragment extends BaseFragment implements WakeOnLanTaskCallback {
+public class StatusFragment extends BaseFragment {
 
     @BindView(R.id.connection)
     TextView connectionTextView;
@@ -112,7 +110,7 @@ public class StatusFragment extends BaseFragment implements WakeOnLanTaskCallbac
                 return true;
             case R.id.menu_wol:
                 if (connection != null) {
-                    WakeOnLanTask task = new WakeOnLanTask(activity, this, connection);
+                    WakeOnLanTask task = new WakeOnLanTask(activity, connection);
                     task.execute();
                 }
                 return true;
@@ -234,10 +232,5 @@ public class StatusFragment extends BaseFragment implements WakeOnLanTaskCallbac
             freeDiscSpaceTextView.setText(R.string.unknown);
             totalDiscSpaceTextView.setText(R.string.unknown);
         }
-    }
-
-    @Override
-    public void notify(String message) {
-        SnackbarUtils.sendSnackbarMessage(activity, message);
     }
 }

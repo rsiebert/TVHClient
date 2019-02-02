@@ -36,10 +36,9 @@ import org.tvheadend.tvhclient.features.shared.BaseActivity;
 import org.tvheadend.tvhclient.features.shared.callbacks.ToolbarInterface;
 import org.tvheadend.tvhclient.features.shared.receivers.ServiceStatusReceiver;
 import org.tvheadend.tvhclient.features.shared.receivers.SnackbarMessageReceiver;
-import org.tvheadend.tvhclient.features.shared.tasks.WakeOnLanTaskCallback;
 import org.tvheadend.tvhclient.features.streaming.external.CastSessionManagerListener;
-import org.tvheadend.tvhclient.utils.SnackbarUtils;
 import org.tvheadend.tvhclient.utils.MiscUtils;
+import org.tvheadend.tvhclient.utils.SnackbarUtils;
 
 import javax.inject.Inject;
 
@@ -56,7 +55,7 @@ import timber.log.Timber;
 
 // TODO what happens when no connection to the server is active and the user presses an action in a notification?
 
-public class MainActivity extends BaseActivity implements ToolbarInterface, WakeOnLanTaskCallback, NavigationDrawerCallback, SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, EpgSyncStatusCallback {
+public class MainActivity extends BaseActivity implements ToolbarInterface, NavigationDrawerCallback, SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, EpgSyncStatusCallback {
 
     @BindView(R.id.sync_progress)
     ProgressBar syncProgress;
@@ -356,11 +355,6 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Wake
                 break;
         }
         return true;
-    }
-
-    @Override
-    public void notify(String message) {
-        SnackbarUtils.sendSnackbarMessage(this, message);
     }
 
     @Override
