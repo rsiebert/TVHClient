@@ -16,6 +16,7 @@ import android.widget.TextView;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.TimerRecording;
 import org.tvheadend.tvhclient.features.dvr.RecordingAddEditActivity;
+import org.tvheadend.tvhclient.features.dvr.RecordingUtils;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecordingRemovedCallback;
 import org.tvheadend.tvhclient.utils.UIUtils;
@@ -133,24 +134,13 @@ public class TimerRecordingDetailsFragment extends BaseFragment implements Recor
 
         daysOfWeekTextView.setText(UIUtils.getDaysOfWeekText(activity, recording.getDaysOfWeek()));
 
-        priorityTextView.setText(getPriorityName(recording.getPriority()));
+        priorityTextView.setText(RecordingUtils.getPriorityName(activity, recording.getPriority()));
 
         int gmtOffset = serverStatus.getGmtoffset();
         startTimeTextView.setText(UIUtils.getTimeText(activity, recording.getStart() - gmtOffset));
         stopTimeTextView.setText(UIUtils.getTimeText(activity, recording.getStop() - gmtOffset));
 
         durationTextView.setText(getString(R.string.minutes, recording.getDuration()));
-    }
-
-    protected String getPriorityName(int priority) {
-        String[] priorityNames = getResources().getStringArray(R.array.dvr_priority_names);
-        if (priority >= 0 && priority <= 4) {
-            return priorityNames[priority];
-        } else if (priority == 6) {
-            return priorityNames[5];
-        } else {
-            return "";
-        }
     }
 
     @Override
@@ -217,7 +207,7 @@ public class TimerRecordingDetailsFragment extends BaseFragment implements Recor
         }
     }
 
-    public String getShownId() {
+    String getShownId() {
         return id;
     }
 

@@ -22,6 +22,7 @@ import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.data.entity.SeriesRecording;
 import org.tvheadend.tvhclient.data.service.EpgSyncService;
 import org.tvheadend.tvhclient.features.dvr.BaseRecordingAddEditFragment;
+import org.tvheadend.tvhclient.features.dvr.RecordingUtils;
 import org.tvheadend.tvhclient.features.shared.callbacks.BackPressedInterface;
 import org.tvheadend.tvhclient.features.shared.callbacks.ChannelListSelectionCallback;
 import org.tvheadend.tvhclient.features.shared.callbacks.DateTimePickerCallback;
@@ -146,7 +147,7 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
             handleChannelListSelection(SeriesRecordingAddEditFragment.this, allowRecordingOnAllChannels);
         });
 
-        priorityTextView.setText(getPriorityName(recording.getPriority()));
+        priorityTextView.setText(RecordingUtils.getPriorityName(activity, recording.getPriority()));
         priorityTextView.setOnClickListener(view -> handlePrioritySelection(priorityNames, recording.getPriority(), SeriesRecordingAddEditFragment.this));
 
         if (recordingProfilesList.length == 0) {
@@ -336,7 +337,7 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
     @Override
     public void onPrioritySelected(int which) {
         recording.setPriority(which);
-        priorityTextView.setText(getPriorityName(recording.getPriority()));
+        priorityTextView.setText(RecordingUtils.getPriorityName(activity, recording.getPriority()));
     }
 
     @Override

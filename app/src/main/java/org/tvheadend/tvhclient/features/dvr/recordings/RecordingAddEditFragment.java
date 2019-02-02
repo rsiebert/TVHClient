@@ -1,10 +1,7 @@
 package org.tvheadend.tvhclient.features.dvr.recordings;
 
-import androidx.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import com.google.android.material.snackbar.Snackbar;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -18,12 +15,14 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.google.android.material.snackbar.Snackbar;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.data.service.EpgSyncService;
 import org.tvheadend.tvhclient.features.dvr.BaseRecordingAddEditFragment;
+import org.tvheadend.tvhclient.features.dvr.RecordingUtils;
 import org.tvheadend.tvhclient.features.shared.callbacks.BackPressedInterface;
 import org.tvheadend.tvhclient.features.shared.callbacks.ChannelListSelectionCallback;
 import org.tvheadend.tvhclient.features.shared.callbacks.DateTimePickerCallback;
@@ -31,6 +30,8 @@ import org.tvheadend.tvhclient.features.shared.callbacks.RecordingPriorityListCa
 import org.tvheadend.tvhclient.features.shared.callbacks.RecordingProfileListCallback;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
+import androidx.annotation.NonNull;
+import androidx.lifecycle.ViewModelProviders;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnCheckedChanged;
@@ -167,7 +168,7 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
         isEnabledCheckbox.setChecked(recording.getEnabled() == 1);
 
         priorityTextView.setVisibility(!recording.isRecording() ? View.VISIBLE : View.GONE);
-        priorityTextView.setText(getPriorityName(recording.getPriority()));
+        priorityTextView.setText(RecordingUtils.getPriorityName(activity, recording.getPriority()));
         priorityTextView.setOnClickListener(view -> handlePrioritySelection(priorityNames, recording.getPriority(), RecordingAddEditFragment.this));
 
         if (recordingProfilesList.length == 0 || recording.isRecording()) {
@@ -349,7 +350,7 @@ public class RecordingAddEditFragment extends BaseRecordingAddEditFragment imple
 
     @Override
     public void onPrioritySelected(int which) {
-        priorityTextView.setText(getPriorityName(which));
+        priorityTextView.setText(RecordingUtils.getPriorityName(activity, which));
         recording.setPriority(which);
     }
 
