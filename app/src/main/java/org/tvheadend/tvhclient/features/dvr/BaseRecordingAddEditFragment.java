@@ -1,8 +1,6 @@
 package org.tvheadend.tvhclient.features.dvr;
 
 import android.os.Bundle;
-import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 
@@ -23,6 +21,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
 import timber.log.Timber;
 
 public abstract class BaseRecordingAddEditFragment extends BaseFragment {
@@ -200,15 +200,5 @@ public abstract class BaseRecordingAddEditFragment extends BaseFragment {
         newFragment.setArguments(bundle);
         newFragment.setTargetFragment(callback, 1);
         newFragment.show(activity.getSupportFragmentManager(), tag);
-    }
-
-    protected String getPriorityName(int priority) {
-        if (priority >= 0 && priority <= 4) {
-            return priorityNames[priority];
-        } else if (priority == 6) {
-            return priorityNames[5];
-        } else {
-            return "";
-        }
     }
 }
