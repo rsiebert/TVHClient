@@ -1,11 +1,12 @@
 package org.tvheadend.tvhclient.features.settings;
 
 import android.os.Bundle;
-import androidx.annotation.Nullable;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Connection;
+import org.tvheadend.tvhclient.utils.SnackbarUtils;
 
+import androidx.annotation.Nullable;
 import timber.log.Timber;
 
 public class SettingsAddConnectionFragment extends SettingsConnectionBaseFragment {
@@ -21,13 +22,13 @@ public class SettingsAddConnectionFragment extends SettingsConnectionBaseFragmen
     protected void save() {
         Timber.d("Validating input before saving");
         if (!connection.isNameValid(connection.getName())) {
-            showMessage(getString(R.string.pref_name_error_invalid));
+            SnackbarUtils.sendSnackbarMessage(activity, R.string.pref_name_error_invalid);
         } else if (!connection.isIpAddressValid(connection.getHostname())) {
-            showMessage(getString(R.string.pref_host_error_invalid));
+            SnackbarUtils.sendSnackbarMessage(activity, R.string.pref_host_error_invalid);
         } else if (!connection.isPortValid(connection.getPort())) {
-            showMessage(getString(R.string.pref_port_error_invalid));
+            SnackbarUtils.sendSnackbarMessage(activity, R.string.pref_port_error_invalid);
         } else if (!connection.isPortValid(connection.getStreamingPort())) {
-            showMessage(getString(R.string.pref_port_error_invalid));
+            SnackbarUtils.sendSnackbarMessage(activity, R.string.pref_port_error_invalid);
         } else {
             appRepository.getConnectionData().addItem(connection);
             // Save the information in the view model that a new connection is active.

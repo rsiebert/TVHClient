@@ -23,9 +23,9 @@ import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
-import com.google.android.material.snackbar.Snackbar;
 
 import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.utils.SnackbarUtils;
 
 import timber.log.Timber;
 
@@ -82,7 +82,7 @@ public class SettingsUserInterfaceFragment extends BasePreferenceFragment implem
     private void handlePreferenceMultipleChannelTagsSelected() {
         if (!isUnlocked) {
             if (getView() != null) {
-                Snackbar.make(getView(), R.string.feature_not_available_in_free_version, Snackbar.LENGTH_SHORT).show();
+                SnackbarUtils.sendSnackbarMessage(activity, R.string.feature_not_available_in_free_version);
             }
             multipleChannelTagsPreference.setChecked(false);
         }
@@ -91,7 +91,7 @@ public class SettingsUserInterfaceFragment extends BasePreferenceFragment implem
     private void handlePreferenceShowArtworkSelected() {
         if (!isUnlocked) {
             if (getView() != null) {
-                Snackbar.make(getView(), R.string.feature_not_available_in_free_version, Snackbar.LENGTH_SHORT).show();
+                SnackbarUtils.sendSnackbarMessage(activity, R.string.feature_not_available_in_free_version);
             }
             programArtworkEnabledPreference.setChecked(false);
         }
@@ -100,10 +100,10 @@ public class SettingsUserInterfaceFragment extends BasePreferenceFragment implem
     private void handlePreferenceCastingSelected() {
         if (getView() != null) {
             if (htspVersion < 16) {
-                Snackbar.make(getView(), R.string.feature_not_supported_by_server, Snackbar.LENGTH_SHORT).show();
+                SnackbarUtils.sendSnackbarMessage(activity, R.string.feature_not_supported_by_server);
                 castMiniControllerPreference.setChecked(false);
             } else if (!isUnlocked) {
-                Snackbar.make(getView(), R.string.feature_not_available_in_free_version, Snackbar.LENGTH_SHORT).show();
+                SnackbarUtils.sendSnackbarMessage(activity, R.string.feature_not_available_in_free_version);
                 castMiniControllerPreference.setChecked(false);
             }
         }

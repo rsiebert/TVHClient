@@ -10,10 +10,6 @@ import android.os.Environment;
 import android.os.Handler;
 import android.preference.Preference;
 import android.preference.PreferenceManager;
-import androidx.annotation.NonNull;
-import com.google.android.material.snackbar.Snackbar;
-import androidx.core.app.ActivityCompat;
-import androidx.core.app.TaskStackBuilder;
 
 import com.afollestad.materialdialogs.folderselector.FolderChooserDialog;
 
@@ -22,8 +18,13 @@ import org.tvheadend.tvhclient.features.MainActivity;
 import org.tvheadend.tvhclient.features.changelog.ChangeLogActivity;
 import org.tvheadend.tvhclient.features.information.WebViewActivity;
 import org.tvheadend.tvhclient.features.purchase.UnlockerActivity;
+import org.tvheadend.tvhclient.utils.SnackbarUtils;
 
 import java.io.File;
+
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.TaskStackBuilder;
 
 public class SettingsFragment extends BasePreferenceFragment implements Preference.OnPreferenceClickListener, SharedPreferences.OnSharedPreferenceChangeListener, ActivityCompat.OnRequestPermissionsResultCallback, FolderChooserDialogCallback {
 
@@ -161,7 +162,7 @@ public class SettingsFragment extends BasePreferenceFragment implements Preferen
     private void handlePreferenceProfilesSelected() {
         if (getView() != null) {
             if (htspVersion < 16) {
-                Snackbar.make(getView(), R.string.feature_not_supported_by_server, Snackbar.LENGTH_SHORT).show();
+                SnackbarUtils.sendSnackbarMessage(activity, R.string.feature_not_supported_by_server);
             } else {
                 showSelectedSettingsFragment("profiles");
             }
@@ -171,7 +172,7 @@ public class SettingsFragment extends BasePreferenceFragment implements Preferen
     private void handlePreferencePlaybackSelected() {
         if (!isUnlocked) {
             if (getView() != null) {
-                Snackbar.make(getView(), R.string.feature_not_available_in_free_version, Snackbar.LENGTH_SHORT).show();
+                SnackbarUtils.sendSnackbarMessage(activity, R.string.feature_not_available_in_free_version);
             }
         } else {
             showSelectedSettingsFragment("playback");
@@ -210,7 +211,7 @@ public class SettingsFragment extends BasePreferenceFragment implements Preferen
     private void handlePreferenceDownloadDirectorySelected() {
         if (!isUnlocked) {
             if (getView() != null) {
-                Snackbar.make(getView(), R.string.feature_not_available_in_free_version, Snackbar.LENGTH_SHORT).show();
+                SnackbarUtils.sendSnackbarMessage(activity, R.string.feature_not_available_in_free_version);
             }
         } else {
             if (isReadPermissionGranted()) {

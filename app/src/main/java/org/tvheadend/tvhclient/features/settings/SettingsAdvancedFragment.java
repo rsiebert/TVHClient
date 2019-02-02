@@ -8,8 +8,6 @@ import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.provider.SearchRecentSuggestions;
-import com.google.android.material.snackbar.Snackbar;
-import androidx.core.content.FileProvider;
 import android.text.TextUtils;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -24,6 +22,7 @@ import org.tvheadend.tvhclient.data.service.worker.LoadChannelIconWorker;
 import org.tvheadend.tvhclient.features.logging.FileLoggingTree;
 import org.tvheadend.tvhclient.features.search.SuggestionProvider;
 import org.tvheadend.tvhclient.features.startup.SplashActivity;
+import org.tvheadend.tvhclient.utils.SnackbarUtils;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 import org.tvheadend.tvhclient.utils.UIUtils;
 
@@ -32,6 +31,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import androidx.core.content.FileProvider;
 import androidx.work.ExistingWorkPolicy;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
@@ -97,10 +97,8 @@ public class SettingsAdvancedFragment extends BasePreferenceFragment implements 
 
     private void handlePreferenceNotificationsSelected() {
         if (!isUnlocked) {
-            if (getView() != null) {
-                Snackbar.make(getView(), R.string.feature_not_available_in_free_version, Snackbar.LENGTH_SHORT).show();
-                notificationsEnabledPreference.setChecked(false);
-            }
+            SnackbarUtils.sendSnackbarMessage(activity, R.string.feature_not_available_in_free_version);
+            notificationsEnabledPreference.setChecked(false);
         }
     }
 
@@ -242,9 +240,7 @@ public class SettingsAdvancedFragment extends BasePreferenceFragment implements 
                 .onPositive((dialog, which) -> {
                     SearchRecentSuggestions suggestions = new SearchRecentSuggestions(getActivity(), SuggestionProvider.AUTHORITY, SuggestionProvider.MODE);
                     suggestions.clearHistory();
-                    if (getView() != null) {
-                        Snackbar.make(getView(), getString(R.string.clear_search_history_done), Snackbar.LENGTH_SHORT).show();
-                    }
+                    SnackbarUtils.sendSnackbarMessage(activity, R.string.clear_search_history_done);
                 }).show();
     }
 
@@ -271,9 +267,7 @@ public class SettingsAdvancedFragment extends BasePreferenceFragment implements 
                         }
                         Picasso.get().invalidate(UIUtils.getIconUrl(getActivity(), channel.getIcon()));
                     }
-                    if (getView() != null) {
-                        Snackbar.make(getView(), getString(R.string.clear_icon_cache_done), Snackbar.LENGTH_SHORT).show();
-                    }
+                    SnackbarUtils.sendSnackbarMessage(activity, R.string.clear_icon_cache_done);
 
                     Timber.d("Starting background worker to reload channel icons");
                     OneTimeWorkRequest loadChannelIcons = new OneTimeWorkRequest.Builder(LoadChannelIconWorker.class).build();

@@ -9,12 +9,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
-import com.google.android.material.snackbar.Snackbar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.PopupMenu;
 import android.text.TextUtils;
 import android.view.Display;
 import android.view.SurfaceView;
@@ -65,6 +59,7 @@ import org.tvheadend.tvhclient.data.service.htsp.tasks.Authenticator;
 import org.tvheadend.tvhclient.features.streaming.internal.utils.ExoPlayerUtils;
 import org.tvheadend.tvhclient.features.streaming.internal.utils.TrackSelectionHelper;
 import org.tvheadend.tvhclient.features.streaming.internal.utils.TvhMappings;
+import org.tvheadend.tvhclient.utils.SnackbarUtils;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 import org.tvheadend.tvhclient.utils.UIUtils;
 
@@ -77,6 +72,11 @@ import java.util.Locale;
 
 import javax.inject.Inject;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.PopupMenu;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
@@ -883,7 +883,7 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
 
             } else {
                 // Reverse Playback
-                Snackbar.make(getCurrentFocus(), "Rewind unsupported", Snackbar.LENGTH_SHORT).show();
+                SnackbarUtils.sendSnackbarMessage(this, "Rewind not supported");
             }
         }
     }

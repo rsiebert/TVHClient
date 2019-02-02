@@ -4,11 +4,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import androidx.annotation.Nullable;
-import com.google.android.material.snackbar.Snackbar;
-import androidx.fragment.app.Fragment;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.appcompat.app.AppCompatActivity;
 
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
@@ -23,7 +18,12 @@ import org.tvheadend.tvhclient.features.shared.callbacks.NetworkStatusInterface;
 import org.tvheadend.tvhclient.features.shared.callbacks.NetworkStatusReceiverCallback;
 import org.tvheadend.tvhclient.features.shared.receivers.NetworkStatusReceiver;
 import org.tvheadend.tvhclient.features.shared.receivers.SnackbarMessageReceiver;
+import org.tvheadend.tvhclient.utils.SnackbarUtils;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import timber.log.Timber;
 
 public abstract class BaseActivity extends AppCompatActivity implements NetworkStatusReceiverCallback, NetworkStatusInterface {
@@ -68,8 +68,8 @@ public abstract class BaseActivity extends AppCompatActivity implements NetworkS
     @Override
     public void onNetworkStatusChanged(boolean isNetworkAvailable) {
         onNetworkAvailabilityChanged(isNetworkAvailable);
-        if (!isNetworkAvailable && getCurrentFocus() != null) {
-            Snackbar.make(getCurrentFocus(), "No network available.", Snackbar.LENGTH_SHORT).show();
+        if (!isNetworkAvailable) {
+            SnackbarUtils.sendSnackbarMessage(this, "No network available");
         }
     }
 

@@ -8,14 +8,6 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
-import androidx.annotation.NonNull;
-import com.google.android.material.snackbar.Snackbar;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.widget.SearchView;
-import androidx.appcompat.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -43,12 +35,21 @@ import org.tvheadend.tvhclient.features.search.SearchRequestInterface;
 import org.tvheadend.tvhclient.features.shared.BaseActivity;
 import org.tvheadend.tvhclient.features.shared.callbacks.ToolbarInterface;
 import org.tvheadend.tvhclient.features.shared.receivers.ServiceStatusReceiver;
+import org.tvheadend.tvhclient.features.shared.receivers.SnackbarMessageReceiver;
 import org.tvheadend.tvhclient.features.shared.tasks.WakeOnLanTaskCallback;
 import org.tvheadend.tvhclient.features.streaming.external.CastSessionManagerListener;
+import org.tvheadend.tvhclient.utils.SnackbarUtils;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
 import javax.inject.Inject;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
@@ -69,6 +70,7 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Wake
     private CastStateListener castStateListener;
     private SessionManagerListener<CastSession> castSessionManagerListener;
     private ServiceStatusReceiver serviceStatusReceiver;
+    private SnackbarMessageReceiver snackbarMessageReceiver;
 
     private NavigationDrawer navigationDrawer;
     private int selectedNavigationMenuId;
@@ -93,6 +95,7 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Wake
         MainApplication.getComponent().inject(this);
 
         serviceStatusReceiver = new ServiceStatusReceiver(this);
+        snackbarMessageReceiver = new SnackbarMessageReceiver(this);
         isUnlocked = MainApplication.getInstance().isUnlocked();
         isDualPane = findViewById(R.id.details) != null;
 
@@ -165,12 +168,14 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Wake
     public void onStart() {
         super.onStart();
         LocalBroadcastManager.getInstance(this).registerReceiver(serviceStatusReceiver, new IntentFilter(ServiceStatusReceiver.ACTION));
+        LocalBroadcastManager.getInstance(this).registerReceiver(snackbarMessageReceiver, new IntentFilter(SnackbarMessageReceiver.ACTION));
     }
 
     @Override
     public void onStop() {
         super.onStop();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(serviceStatusReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(snackbarMessageReceiver);
     }
 
     @Override
@@ -355,9 +360,7 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Wake
 
     @Override
     public void notify(String message) {
-        if (getCurrentFocus() != null) {
-            Snackbar.make(getCurrentFocus(), message, Snackbar.LENGTH_LONG).show();
-        }
+        SnackbarUtils.sendSnackbarMessage(this, message);
     }
 
     @Override
@@ -430,30 +433,22 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Wake
         switch (state.getState()) {
             case CLOSED:
             case FAILED:
-                if (getCurrentFocus() != null) {
-                    Snackbar.make(getCurrentFocus(), state.getMessage(), Snackbar.LENGTH_SHORT).show();
-                }
+                SnackbarUtils.sendSnackbarMessage(this, state.getMessage());
                 onNetworkAvailabilityChanged(false);
                 break;
 
             case CONNECTING:
-                if (getCurrentFocus() != null) {
-                    Snackbar.make(getCurrentFocus(), state.getMessage(), Snackbar.LENGTH_SHORT).show();
-                }
+                SnackbarUtils.sendSnackbarMessage(this, state.getMessage());
                 break;
 
             case CONNECTED:
-                if (getCurrentFocus() != null) {
-                    Snackbar.make(getCurrentFocus(), state.getMessage(), Snackbar.LENGTH_SHORT).show();
-                }
+                SnackbarUtils.sendSnackbarMessage(this, state.getMessage());
                 break;
 
             case SYNC_STARTED:
                 Timber.d("Sync started, showing progress bar");
                 syncProgress.setVisibility(View.VISIBLE);
-                if (getCurrentFocus() != null) {
-                    Snackbar.make(getCurrentFocus(), state.getMessage(), Snackbar.LENGTH_SHORT).show();
-                }
+                SnackbarUtils.sendSnackbarMessage(this, state.getMessage());
                 break;
 
             case SYNC_IN_PROGRESS:
@@ -464,9 +459,7 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Wake
             case SYNC_DONE:
                 Timber.d("Sync done, hiding progress bar");
                 syncProgress.setVisibility(View.GONE);
-                if (getCurrentFocus() != null) {
-                    Snackbar.make(getCurrentFocus(), state.getMessage(), Snackbar.LENGTH_SHORT).show();
-                }
+                SnackbarUtils.sendSnackbarMessage(this, state.getMessage());
                 break;
         }
     }

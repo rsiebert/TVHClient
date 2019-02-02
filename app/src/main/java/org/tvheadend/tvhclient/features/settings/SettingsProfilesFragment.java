@@ -20,12 +20,12 @@ package org.tvheadend.tvhclient.features.settings;
 
 import android.os.Bundle;
 import android.preference.ListPreference;
-import com.google.android.material.snackbar.Snackbar;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.entity.ServerProfile;
 import org.tvheadend.tvhclient.features.shared.callbacks.BackPressedInterface;
+import org.tvheadend.tvhclient.utils.SnackbarUtils;
 
 import java.util.List;
 
@@ -108,9 +108,7 @@ public class SettingsProfilesFragment extends BasePreferenceFragment implements 
             });
         } else {
             castingProfilesPreference.setOnPreferenceClickListener(preference -> {
-                if (getView() != null) {
-                    Snackbar.make(getView(), R.string.feature_not_supported_by_server, Snackbar.LENGTH_SHORT).show();
-                }
+                SnackbarUtils.sendSnackbarMessage(activity, R.string.feature_not_supported_by_server);
                 return true;
             });
         }

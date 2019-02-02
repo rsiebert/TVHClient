@@ -4,7 +4,10 @@ import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+
 import com.google.android.material.snackbar.Snackbar;
+
+import org.tvheadend.tvhclient.utils.SnackbarUtils;
 
 import java.lang.ref.WeakReference;
 
@@ -30,7 +33,7 @@ public class SnackbarMessageReceiver extends BroadcastReceiver {
             if (activity != null && activity.getCurrentFocus() != null) {
                 String msg = intent.getStringExtra(CONTENT);
                 int duration = intent.getIntExtra(DURATION, Snackbar.LENGTH_SHORT);
-                Snackbar.make(activity.getCurrentFocus(), msg, duration).show();
+                SnackbarUtils.sendSnackbarMessage(activity, msg);
             }
         }
     }

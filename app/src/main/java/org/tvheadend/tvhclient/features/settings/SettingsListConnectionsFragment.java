@@ -1,11 +1,8 @@
 package org.tvheadend.tvhclient.features.settings;
 
 import android.app.ListFragment;
-import androidx.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
-import com.google.android.material.snackbar.Snackbar;
-import androidx.appcompat.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.ActionMode;
 import android.view.Menu;
@@ -26,9 +23,12 @@ import org.tvheadend.tvhclient.features.shared.callbacks.ToolbarInterface;
 import org.tvheadend.tvhclient.features.shared.tasks.WakeOnLanTask;
 import org.tvheadend.tvhclient.features.shared.tasks.WakeOnLanTaskCallback;
 import org.tvheadend.tvhclient.features.startup.SplashActivity;
+import org.tvheadend.tvhclient.utils.SnackbarUtils;
 
 import javax.inject.Inject;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProviders;
 import timber.log.Timber;
 
 public class SettingsListConnectionsFragment extends ListFragment implements BackPressedInterface, ActionMode.Callback, WakeOnLanTaskCallback {
@@ -58,6 +58,7 @@ public class SettingsListConnectionsFragment extends ListFragment implements Bac
         setHasOptionsMenu(true);
 
         viewModel = ViewModelProviders.of(activity).get(ConnectionViewModel.class);
+        viewModel.setConnectionHasChanged(false);
         viewModel.getAllConnections().observe(activity, connections -> {
             if (connections != null) {
                 connectionListAdapter.clear();
@@ -137,8 +138,7 @@ public class SettingsListConnectionsFragment extends ListFragment implements Bac
                 return true;
 
             case R.id.menu_send_wol:
-                WakeOnLanTask task = new WakeOnLanTask(activity, this, connection);
-                task.execute();
+                new WakeOnLanTask(activity, this, connection).execute();
                 mode.finish();
                 return true;
 
@@ -190,9 +190,7 @@ public class SettingsListConnectionsFragment extends ListFragment implements Bac
 
     @Override
     public void notify(String message) {
-        if (getView() != null) {
-            Snackbar.make(getView(), message, Snackbar.LENGTH_LONG).show();
-        }
+        SnackbarUtils.sendSnackbarMessage(activity, message);
     }
 
     @Override
@@ -201,14 +199,14 @@ public class SettingsListConnectionsFragment extends ListFragment implements Bac
             new MaterialDialog.Builder(activity)
                     .title(R.string.dialog_title_disconnect_from_server)
                     .content(R.string.dialog_content_disconnect_from_server)
-                    .positiveText(android.R.string.ok)
+                    .positiveText(R.string.disconnect)
                     .onPositive((dialog, which) -> reconnect())
                     .show();
         } else if (viewModel.getConnectionHasChanged()) {
             new MaterialDialog.Builder(activity)
                     .title(R.string.dialog_title_connection_changed)
                     .content(R.string.dialog_content_connection_changed)
-                    .positiveText(android.R.string.ok)
+                    .positiveText(R.string.connect)
                     .onPositive((dialog, which) -> reconnect())
                     .show();
         } else {
@@ -228,9 +226,11 @@ public class SettingsListConnectionsFragment extends ListFragment implements Bac
 
         if (viewModel.getActiveConnectionId() >= 0) {
             Connection connection = appRepository.getConnectionData().getItemById(viewModel.getActiveConnectionId());
-            connection.setSyncRequired(true);
-            connection.setLastUpdate(0);
-            appRepository.getConnectionData().updateItem(connection);
+            if (connection != null) {
+                connection.setSyncRequired(true);
+                connection.setLastUpdate(0);
+                appRepository.getConnectionData().updateItem(connection);
+            }
         }
 
         Intent intent = new Intent(activity, SplashActivity.class);

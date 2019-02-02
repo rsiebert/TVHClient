@@ -1,9 +1,6 @@
 package org.tvheadend.tvhclient.features.information;
 
-import androidx.lifecycle.ViewModelProviders;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import com.google.android.material.snackbar.Snackbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -25,7 +22,10 @@ import org.tvheadend.tvhclient.features.programs.ProgramViewModel;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
 import org.tvheadend.tvhclient.features.shared.tasks.WakeOnLanTask;
 import org.tvheadend.tvhclient.features.shared.tasks.WakeOnLanTaskCallback;
+import org.tvheadend.tvhclient.utils.SnackbarUtils;
 
+import androidx.annotation.NonNull;
+import androidx.lifecycle.ViewModelProviders;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -238,8 +238,6 @@ public class StatusFragment extends BaseFragment implements WakeOnLanTaskCallbac
 
     @Override
     public void notify(String message) {
-        if (getView() != null) {
-            Snackbar.make(getView(), message, Snackbar.LENGTH_LONG).show();
-        }
+        SnackbarUtils.sendSnackbarMessage(activity, message);
     }
 }

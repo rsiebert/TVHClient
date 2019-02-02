@@ -11,7 +11,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.google.android.material.snackbar.Snackbar;
 
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
@@ -19,6 +18,7 @@ import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.features.shared.callbacks.BackPressedInterface;
 import org.tvheadend.tvhclient.features.shared.callbacks.ToolbarInterface;
+import org.tvheadend.tvhclient.utils.SnackbarUtils;
 
 import javax.inject.Inject;
 
@@ -188,9 +188,7 @@ public abstract class SettingsConnectionBaseFragment extends PreferenceFragment 
                     namePreference.setSummary(value.isEmpty() ? getString(R.string.pref_name_sum) : value);
                 } else {
                     namePreference.setText(connection.getName());
-                    if (getView() != null) {
-                        showMessage(getString(R.string.pref_name_error_invalid));
-                    }
+                    SnackbarUtils.sendSnackbarMessage(activity, R.string.pref_name_error_invalid);
                 }
                 break;
             case "hostname":
@@ -201,9 +199,7 @@ public abstract class SettingsConnectionBaseFragment extends PreferenceFragment 
                     hostnamePreference.setSummary(value.isEmpty() ? getString(R.string.pref_host_sum) : value);
                 } else {
                     hostnamePreference.setText(connection.getHostname());
-                    if (getView() != null) {
-                        showMessage(getString(R.string.pref_host_error_invalid));
-                    }
+                    SnackbarUtils.sendSnackbarMessage(activity, R.string.pref_host_error_invalid);
                 }
                 break;
             case "htsp_port":
@@ -216,9 +212,7 @@ public abstract class SettingsConnectionBaseFragment extends PreferenceFragment 
                         htspPortPreference.setSummary(String.valueOf(port));
                     } else {
                         htspPortPreference.setText(String.valueOf(connection.getPort()));
-                        if (getView() != null) {
-                            showMessage(getString(R.string.pref_port_error_invalid));
-                        }
+                        SnackbarUtils.sendSnackbarMessage(activity, R.string.pref_port_error_invalid);
                     }
                 } catch (NumberFormatException nex) {
                     // NOP
@@ -234,9 +228,7 @@ public abstract class SettingsConnectionBaseFragment extends PreferenceFragment 
                         streamingPortPreference.setSummary(getString(R.string.pref_streaming_port_sum, port));
                     } else {
                         streamingPortPreference.setText(String.valueOf(connection.getStreamingPort()));
-                        if (getView() != null) {
-                            showMessage(getString(R.string.pref_port_error_invalid));
-                        }
+                        SnackbarUtils.sendSnackbarMessage(activity, R.string.pref_port_error_invalid);
                     }
                 } catch (NumberFormatException e) {
                     // NOP
@@ -275,9 +267,7 @@ public abstract class SettingsConnectionBaseFragment extends PreferenceFragment 
                     wolMacAddressPreference.setSummary(value.isEmpty() ? getString(R.string.pref_wol_address_sum) : value);
                 } else {
                     wolMacAddressPreference.setText(connection.getWolMacAddress());
-                    if (getView() != null) {
-                        showMessage(getString(R.string.pref_wol_address_invalid));
-                    }
+                    SnackbarUtils.sendSnackbarMessage(activity, R.string.pref_wol_address_invalid);
                 }
                 break;
             case "wol_port":
@@ -289,7 +279,7 @@ public abstract class SettingsConnectionBaseFragment extends PreferenceFragment 
                         wolPortPreference.setSummary(getString(R.string.pref_wol_port_sum, port));
                     } else {
                         wolPortPreference.setText(String.valueOf(connection.getWolPort()));
-                        showMessage(getString(R.string.pref_port_error_invalid));
+                        SnackbarUtils.sendSnackbarMessage(activity, R.string.pref_port_error_invalid);
                     }
                 } catch (NumberFormatException e) {
                     // NOP
@@ -300,11 +290,5 @@ public abstract class SettingsConnectionBaseFragment extends PreferenceFragment 
                 break;
         }
         return true;
-    }
-
-    void showMessage(String msgid) {
-        if (getView() != null) {
-            Snackbar.make(getView(), msgid, Snackbar.LENGTH_SHORT).show();
-        }
     }
 }

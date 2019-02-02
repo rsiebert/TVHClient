@@ -15,7 +15,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.google.android.material.snackbar.Snackbar;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Channel;
@@ -29,6 +28,7 @@ import org.tvheadend.tvhclient.features.shared.callbacks.DateTimePickerCallback;
 import org.tvheadend.tvhclient.features.shared.callbacks.DaysOfWeekSelectionCallback;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecordingPriorityListCallback;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecordingProfileListCallback;
+import org.tvheadend.tvhclient.utils.SnackbarUtils;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
 import androidx.annotation.NonNull;
@@ -232,9 +232,7 @@ public class SeriesRecordingAddEditFragment extends BaseRecordingAddEditFragment
      */
     private void save() {
         if (TextUtils.isEmpty(recording.getTitle())) {
-            if (activity.getCurrentFocus() != null) {
-                Snackbar.make(activity.getCurrentFocus(), getString(R.string.error_empty_title), Snackbar.LENGTH_SHORT).show();
-            }
+            SnackbarUtils.sendSnackbarMessage(activity, R.string.error_empty_title);
             return;
         }
 
