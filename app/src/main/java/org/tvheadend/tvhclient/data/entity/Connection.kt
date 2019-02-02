@@ -43,7 +43,7 @@ data class Connection(
         return matcher.matches()
     }
 
-    fun isNameValid(name: String): Boolean {
+    fun isNameValid(name: String?): Boolean {
         if (TextUtils.isEmpty(name)) {
             return false
         }
@@ -53,7 +53,7 @@ data class Connection(
         return matcher.matches()
     }
 
-    fun isIpAddressValid(address: String): Boolean {
+    fun isIpAddressValid(address: String?): Boolean {
         // Do not allow an empty address
         if (TextUtils.isEmpty(address)) {
             return false
