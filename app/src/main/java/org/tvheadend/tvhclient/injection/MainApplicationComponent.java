@@ -19,7 +19,7 @@ import org.tvheadend.tvhclient.features.settings.BasePreferenceFragment;
 import org.tvheadend.tvhclient.features.settings.ConnectionViewModel;
 import org.tvheadend.tvhclient.features.settings.SettingsConnectionBaseFragment;
 import org.tvheadend.tvhclient.features.settings.SettingsListConnectionsFragment;
-import org.tvheadend.tvhclient.features.shared.BaseChannelViewModel;
+import org.tvheadend.tvhclient.features.channels.BaseChannelViewModel;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
 import org.tvheadend.tvhclient.features.startup.StartupFragment;
 import org.tvheadend.tvhclient.features.streaming.external.BasePlaybackActivity;

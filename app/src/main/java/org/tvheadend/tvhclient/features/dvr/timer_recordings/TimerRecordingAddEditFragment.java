@@ -18,18 +18,18 @@ import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Channel;
+import org.tvheadend.tvhclient.data.entity.ServerProfile;
 import org.tvheadend.tvhclient.data.entity.TimerRecording;
 import org.tvheadend.tvhclient.data.service.EpgSyncService;
-import org.tvheadend.tvhclient.features.dvr.BaseRecordingAddEditFragment;
+import org.tvheadend.tvhclient.features.dvr.DateTimeSelectedListener;
+import org.tvheadend.tvhclient.features.dvr.RecordingConfigSelectedListener;
 import org.tvheadend.tvhclient.features.dvr.RecordingUtils;
+import org.tvheadend.tvhclient.features.shared.BaseFragment;
 import org.tvheadend.tvhclient.features.shared.callbacks.BackPressedInterface;
-import org.tvheadend.tvhclient.features.shared.callbacks.ChannelListSelectionCallback;
-import org.tvheadend.tvhclient.features.shared.callbacks.DateTimePickerCallback;
-import org.tvheadend.tvhclient.features.shared.callbacks.DaysOfWeekSelectionCallback;
-import org.tvheadend.tvhclient.features.shared.callbacks.RecordingPriorityListCallback;
-import org.tvheadend.tvhclient.features.shared.callbacks.RecordingProfileListCallback;
-import org.tvheadend.tvhclient.utils.SnackbarUtils;
 import org.tvheadend.tvhclient.utils.MiscUtils;
+import org.tvheadend.tvhclient.utils.SnackbarUtils;
+
+import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModelProviders;
@@ -39,7 +39,7 @@ import butterknife.OnCheckedChanged;
 import butterknife.OnTextChanged;
 import butterknife.Unbinder;
 
-public class TimerRecordingAddEditFragment extends BaseRecordingAddEditFragment implements BackPressedInterface, ChannelListSelectionCallback, RecordingPriorityListCallback, RecordingProfileListCallback, DateTimePickerCallback, DaysOfWeekSelectionCallback {
+public class TimerRecordingAddEditFragment extends BaseFragment implements BackPressedInterface, RecordingConfigSelectedListener, DateTimeSelectedListener {
 
     @BindView(R.id.is_enabled)
     CheckBox isEnabledCheckbox;
@@ -66,6 +66,11 @@ public class TimerRecordingAddEditFragment extends BaseRecordingAddEditFragment 
     @BindView(R.id.dvr_config_label)
     TextView recordingProfileLabelTextView;
 
+    private String[] recordingProfilesList;
+    private List<Channel> channelList;
+    protected ServerProfile profile;
+    private int recordingProfileNameId;
+
     private Unbinder unbinder;
     private String id;
     private TimerRecording recording;
@@ -87,6 +92,11 @@ public class TimerRecordingAddEditFragment extends BaseRecordingAddEditFragment 
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        recordingProfilesList = appRepository.getServerProfileData().getRecordingProfileNames();
+        profile = appRepository.getServerProfileData().getItemById(serverStatus.getRecordingServerProfileId());
+        recordingProfileNameId = RecordingUtils.getSelectedProfileId(profile, recordingProfilesList);
+        channelList = appRepository.getChannelData().getItems();
+
         if (savedInstanceState != null) {
             id = savedInstanceState.getString("id");
             recordingProfileNameId = savedInstanceState.getInt("configName");
@@ -96,6 +106,8 @@ public class TimerRecordingAddEditFragment extends BaseRecordingAddEditFragment 
                 id = bundle.getString("id");
             }
         }
+
+        setHasOptionsMenu(true);
 
         // Get the recoding from the view model without observing it.
         // This allows storing any changes and preserving them during orientation changes.
@@ -124,11 +136,11 @@ public class TimerRecordingAddEditFragment extends BaseRecordingAddEditFragment 
         channelNameTextView.setOnClickListener(view -> {
             // Determine if the server supports recording on all channels
             boolean allowRecordingOnAllChannels = htspVersion >= 21;
-            handleChannelListSelection(TimerRecordingAddEditFragment.this, allowRecordingOnAllChannels);
+            RecordingUtils.handleChannelListSelection(activity, channelList, allowRecordingOnAllChannels, TimerRecordingAddEditFragment.this);
         });
 
         priorityTextView.setText(RecordingUtils.getPriorityName(activity, recording.getPriority()));
-        priorityTextView.setOnClickListener(view -> handlePrioritySelection(priorityNames, recording.getPriority(), TimerRecordingAddEditFragment.this));
+        priorityTextView.setOnClickListener(view -> RecordingUtils.handlePrioritySelection(activity, recording.getPriority(), TimerRecordingAddEditFragment.this));
 
         if (recordingProfilesList.length == 0) {
             recordingProfileNameTextView.setVisibility(View.GONE);
@@ -138,17 +150,17 @@ public class TimerRecordingAddEditFragment extends BaseRecordingAddEditFragment 
             recordingProfileLabelTextView.setVisibility(View.VISIBLE);
 
             recordingProfileNameTextView.setText(recordingProfilesList[recordingProfileNameId]);
-            recordingProfileNameTextView.setOnClickListener(view -> handleRecordingProfileSelection(recordingProfilesList, recordingProfileNameId, TimerRecordingAddEditFragment.this));
+            recordingProfileNameTextView.setOnClickListener(view -> RecordingUtils.handleRecordingProfileSelection(activity, recordingProfilesList, recordingProfileNameId, TimerRecordingAddEditFragment.this));
         }
 
-        startTimeTextView.setText(getTimeStringFromTimeInMillis(recording.getStart() - gmtOffset));
-        startTimeTextView.setOnClickListener(view -> handleTimeSelection(recording.getStart() - gmtOffset, TimerRecordingAddEditFragment.this, "startTime"));
+        startTimeTextView.setText(RecordingUtils.getTimeStringFromTimeInMillis(recording.getStart() - gmtOffset));
+        startTimeTextView.setOnClickListener(view -> RecordingUtils.handleTimeSelection(activity, recording.getStart() - gmtOffset, TimerRecordingAddEditFragment.this, "startTime"));
 
-        stopTimeTextView.setText(getTimeStringFromTimeInMillis(recording.getStop() - gmtOffset));
-        stopTimeTextView.setOnClickListener(view -> handleTimeSelection(recording.getStop() - gmtOffset, TimerRecordingAddEditFragment.this, "stopTime"));
+        stopTimeTextView.setText(RecordingUtils.getTimeStringFromTimeInMillis(recording.getStop() - gmtOffset));
+        stopTimeTextView.setOnClickListener(view -> RecordingUtils.handleTimeSelection(activity, recording.getStop() - gmtOffset, TimerRecordingAddEditFragment.this, "stopTime"));
 
-        daysOfWeekTextView.setText(getSelectedDaysOfWeekText(recording.getDaysOfWeek()));
-        daysOfWeekTextView.setOnClickListener(view -> handleDayOfWeekSelection(recording.getDaysOfWeek(), TimerRecordingAddEditFragment.this));
+        daysOfWeekTextView.setText(RecordingUtils.getSelectedDaysOfWeekText(activity, recording.getDaysOfWeek()));
+        daysOfWeekTextView.setOnClickListener(view -> RecordingUtils.handleDayOfWeekSelection(activity, recording.getDaysOfWeek(), TimerRecordingAddEditFragment.this));
     }
 
     @Override
@@ -238,8 +250,8 @@ public class TimerRecordingAddEditFragment extends BaseRecordingAddEditFragment 
         intent.putExtra("directory", recording.getDirectory());
         intent.putExtra("title", recording.getTitle());
         intent.putExtra("name", recording.getName());
-        intent.putExtra("start", getMinutesFromTimeInMillis(recording.getStart()));
-        intent.putExtra("stop", getMinutesFromTimeInMillis(recording.getStop()));
+        intent.putExtra("start", RecordingUtils.getMinutesFromTimeInMillis(recording.getStart()));
+        intent.putExtra("stop", RecordingUtils.getMinutesFromTimeInMillis(recording.getStop()));
         intent.putExtra("daysOfWeek", recording.getDaysOfWeek());
         intent.putExtra("priority", recording.getPriority());
         intent.putExtra("enabled", recording.isEnabled() ? 1 : 0);
@@ -259,7 +271,7 @@ public class TimerRecordingAddEditFragment extends BaseRecordingAddEditFragment 
     }
 
     @Override
-    public void onChannelIdSelected(Channel channel) {
+    public void onChannelSelected(Channel channel) {
         recording.setChannelId(channel.getId());
         channelNameTextView.setText(channel.getName());
     }
@@ -280,24 +292,24 @@ public class TimerRecordingAddEditFragment extends BaseRecordingAddEditFragment 
     public void onTimeSelected(long milliSeconds, String tag) {
         if (tag.equals("startTime")) {
             recording.setStart(milliSeconds);
-            startTimeTextView.setText(getTimeStringFromTimeInMillis(milliSeconds));
+            startTimeTextView.setText(RecordingUtils.getTimeStringFromTimeInMillis(milliSeconds));
 
             // If the start time is after the stop time,
             // update the stop time with the start value
             if (milliSeconds > recording.getStop()) {
                 recording.setStop(milliSeconds);
-                stopTimeTextView.setText(getTimeStringFromTimeInMillis(milliSeconds));
+                stopTimeTextView.setText(RecordingUtils.getTimeStringFromTimeInMillis(milliSeconds));
             }
 
         } else if (tag.equals("stopTime")) {
             recording.setStop(milliSeconds);
-            stopTimeTextView.setText(getTimeStringFromTimeInMillis(milliSeconds));
+            stopTimeTextView.setText(RecordingUtils.getTimeStringFromTimeInMillis(milliSeconds));
 
             // If the stop time is before the start time,
             // update the start time with the stop value
             if (milliSeconds < recording.getStart()) {
                 recording.setStart(milliSeconds);
-                startTimeTextView.setText(getTimeStringFromTimeInMillis(milliSeconds));
+                startTimeTextView.setText(RecordingUtils.getTimeStringFromTimeInMillis(milliSeconds));
             }
         }
     }
@@ -308,9 +320,9 @@ public class TimerRecordingAddEditFragment extends BaseRecordingAddEditFragment 
     }
 
     @Override
-    public void onDaysOfWeekSelected(int selectedDays) {
+    public void onDaysSelected(int selectedDays) {
         recording.setDaysOfWeek(selectedDays);
-        daysOfWeekTextView.setText(getSelectedDaysOfWeekText(selectedDays));
+        daysOfWeekTextView.setText(RecordingUtils.getSelectedDaysOfWeekText(activity, selectedDays));
     }
 
     @Override

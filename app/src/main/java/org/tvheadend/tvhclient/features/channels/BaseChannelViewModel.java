@@ -1,11 +1,7 @@
-package org.tvheadend.tvhclient.features.shared;
+package org.tvheadend.tvhclient.features.channels;
 
 import android.app.Application;
-import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 import android.content.SharedPreferences;
-import androidx.annotation.NonNull;
 
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
@@ -21,6 +17,10 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import timber.log.Timber;
 
 public class BaseChannelViewModel extends AndroidViewModel {

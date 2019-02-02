@@ -1,9 +1,5 @@
 package org.tvheadend.tvhclient.features.programs;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.DiffUtil;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,25 +10,28 @@ import android.widget.Filterable;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Program;
 import org.tvheadend.tvhclient.data.entity.Recording;
-import org.tvheadend.tvhclient.features.shared.callbacks.BottomReachedCallback;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.RecyclerView;
+
 class ProgramRecyclerViewAdapter extends RecyclerView.Adapter<ProgramViewHolder> implements Filterable {
 
-    private final BottomReachedCallback onBottomReachedCallback;
+    private final LastProgramVisibleListener onLastProgramVisibleListener;
     private final RecyclerViewClickCallback clickCallback;
     private final List<Program> programList = new ArrayList<>();
     private final boolean showProgramChannelIcon;
     private List<Program> programListFiltered = new ArrayList<>();
     private List<Recording> recordingList = new ArrayList<>();
 
-    ProgramRecyclerViewAdapter(@NonNull RecyclerViewClickCallback clickCallback, @Nullable BottomReachedCallback onBottomReachedCallback, boolean showProgramChannelIcon) {
+    ProgramRecyclerViewAdapter(boolean showProgramChannelIcon, @NonNull RecyclerViewClickCallback clickCallback, @NonNull LastProgramVisibleListener onLastProgramVisibleListener) {
         this.clickCallback = clickCallback;
-        this.onBottomReachedCallback = onBottomReachedCallback;
+        this.onLastProgramVisibleListener = onLastProgramVisibleListener;
         this.showProgramChannelIcon = showProgramChannelIcon;
     }
 
@@ -48,9 +47,8 @@ class ProgramRecyclerViewAdapter extends RecyclerView.Adapter<ProgramViewHolder>
         if (programListFiltered.size() > position) {
             Program program = programListFiltered.get(position);
             holder.bindData(program, clickCallback);
-            if (position == programList.size() - 1
-                    && onBottomReachedCallback != null) {
-                onBottomReachedCallback.onBottomReached(position);
+            if (position == programList.size() - 1) {
+                onLastProgramVisibleListener.onLastProgramVisible(position);
             }
         }
     }

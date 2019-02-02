@@ -5,16 +5,16 @@ import android.content.Context;
 import android.content.Intent;
 
 import org.tvheadend.tvhclient.MainApplication;
-import org.tvheadend.tvhclient.features.shared.callbacks.NetworkStatusReceiverCallback;
+import org.tvheadend.tvhclient.features.shared.callbacks.NetworkStatusListener;
 import org.tvheadend.tvhclient.utils.NetworkUtils;
 
 import java.lang.ref.WeakReference;
 
 public class NetworkStatusReceiver extends BroadcastReceiver {
 
-    private final WeakReference<NetworkStatusReceiverCallback> callback;
+    private final WeakReference<NetworkStatusListener> callback;
 
-    public NetworkStatusReceiver(NetworkStatusReceiverCallback callback) {
+    public NetworkStatusReceiver(NetworkStatusListener callback) {
         this.callback = new WeakReference<>(callback);
     }
 

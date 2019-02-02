@@ -1,6 +1,6 @@
-package org.tvheadend.tvhclient.features.shared.callbacks;
+package org.tvheadend.tvhclient.features.dvr;
 
-public interface DateTimePickerCallback {
+public interface DateTimeSelectedListener {
 
     void onTimeSelected(long milliSeconds, String tag);
 

@@ -18,7 +18,7 @@ import org.tvheadend.tvhclient.data.entity.TimerRecording;
 import org.tvheadend.tvhclient.features.dvr.RecordingAddEditActivity;
 import org.tvheadend.tvhclient.features.dvr.RecordingUtils;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
-import org.tvheadend.tvhclient.features.shared.callbacks.RecordingRemovedCallback;
+import org.tvheadend.tvhclient.features.dvr.RecordingRemovedCallback;
 import org.tvheadend.tvhclient.utils.UIUtils;
 
 import androidx.annotation.NonNull;

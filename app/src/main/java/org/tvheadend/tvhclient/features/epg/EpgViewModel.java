@@ -7,7 +7,7 @@ import androidx.lifecycle.Transformations;
 import org.tvheadend.tvhclient.data.entity.EpgChannel;
 import org.tvheadend.tvhclient.data.entity.EpgProgram;
 import org.tvheadend.tvhclient.data.entity.Recording;
-import org.tvheadend.tvhclient.features.shared.BaseChannelViewModel;
+import org.tvheadend.tvhclient.features.channels.BaseChannelViewModel;
 
 import java.util.List;
 

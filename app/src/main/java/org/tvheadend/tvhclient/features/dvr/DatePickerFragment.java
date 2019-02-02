@@ -3,14 +3,13 @@ package org.tvheadend.tvhclient.features.dvr;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.os.Bundle;
+import android.widget.DatePicker;
+
+import java.util.Calendar;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
-import android.widget.DatePicker;
-
-import org.tvheadend.tvhclient.features.shared.callbacks.DateTimePickerCallback;
-
-import java.util.Calendar;
 
 public class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
 
@@ -45,8 +44,8 @@ public class DatePickerFragment extends DialogFragment implements DatePickerDial
         calendar.set(Calendar.MINUTE, minute);
 
         Fragment fragment = getTargetFragment();
-        if (fragment instanceof DateTimePickerCallback) {
-            ((DateTimePickerCallback) fragment).onDateSelected(calendar.getTimeInMillis(), getTag());
+        if (fragment instanceof DateTimeSelectedListener) {
+            ((DateTimeSelectedListener) fragment).onDateSelected(calendar.getTimeInMillis(), getTag());
         }
     }
 }

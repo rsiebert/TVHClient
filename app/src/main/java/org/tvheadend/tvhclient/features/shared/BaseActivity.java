@@ -13,10 +13,8 @@ import org.tvheadend.tvhclient.features.dvr.series_recordings.SeriesRecordingDet
 import org.tvheadend.tvhclient.features.dvr.timer_recordings.TimerRecordingDetailsFragment;
 import org.tvheadend.tvhclient.features.programs.ProgramDetailsFragment;
 import org.tvheadend.tvhclient.features.programs.ProgramListFragment;
-import org.tvheadend.tvhclient.features.shared.callbacks.NetworkAvailabilityChangedInterface;
-import org.tvheadend.tvhclient.features.shared.callbacks.NetworkStatusInterface;
-import org.tvheadend.tvhclient.features.shared.callbacks.NetworkStatusReceiverCallback;
 import org.tvheadend.tvhclient.features.shared.receivers.NetworkStatusReceiver;
+import org.tvheadend.tvhclient.features.shared.callbacks.NetworkStatusListener;
 import org.tvheadend.tvhclient.features.shared.receivers.SnackbarMessageReceiver;
 import org.tvheadend.tvhclient.utils.SnackbarUtils;
 
@@ -26,7 +24,7 @@ import androidx.fragment.app.Fragment;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import timber.log.Timber;
 
-public abstract class BaseActivity extends AppCompatActivity implements NetworkStatusReceiverCallback, NetworkStatusInterface {
+public abstract class BaseActivity extends AppCompatActivity implements NetworkStatusListener {
 
     private NetworkStatusReceiver networkStatusReceiver;
     private boolean isNetworkAvailable;
@@ -95,13 +93,13 @@ public abstract class BaseActivity extends AppCompatActivity implements NetworkS
         isNetworkAvailable = isAvailable;
 
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main);
-        if (fragment instanceof NetworkAvailabilityChangedInterface) {
-            ((NetworkAvailabilityChangedInterface) fragment).onNetworkAvailabilityChanged(isAvailable);
+        if (fragment instanceof NetworkStatusListener) {
+            ((NetworkStatusListener) fragment).onNetworkStatusChanged(isAvailable);
         }
 
         fragment = getSupportFragmentManager().findFragmentById(R.id.details);
-        if (fragment instanceof NetworkAvailabilityChangedInterface) {
-            ((NetworkAvailabilityChangedInterface) fragment).onNetworkAvailabilityChanged(isAvailable);
+        if (fragment instanceof NetworkStatusListener) {
+            ((NetworkStatusListener) fragment).onNetworkStatusChanged(isAvailable);
         }
         Timber.d("Network availability changed, invalidating menu");
         invalidateOptionsMenu();

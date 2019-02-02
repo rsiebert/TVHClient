@@ -1,13 +1,10 @@
 package org.tvheadend.tvhclient.features.programs;
 
-import androidx.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import androidx.annotation.NonNull;
-import androidx.appcompat.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -29,15 +26,17 @@ import org.tvheadend.tvhclient.data.entity.Program;
 import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.features.dvr.RecordingAddEditActivity;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
-import org.tvheadend.tvhclient.features.shared.callbacks.RecordingRemovedCallback;
 import org.tvheadend.tvhclient.utils.UIUtils;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.ViewModelProviders;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import timber.log.Timber;
 
-public class ProgramDetailsFragment extends BaseFragment implements RecordingRemovedCallback {
+public class ProgramDetailsFragment extends BaseFragment {
 
     @BindView(R.id.state)
     ImageView stateImageView;
@@ -368,11 +367,6 @@ public class ProgramDetailsFragment extends BaseFragment implements RecordingRem
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-    @Override
-    public void onRecordingRemoved() {
-        activity.finish();
     }
 }
 

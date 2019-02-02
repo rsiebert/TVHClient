@@ -30,10 +30,8 @@ import org.tvheadend.tvhclient.features.download.DownloadRecordingManager;
 import org.tvheadend.tvhclient.features.search.SearchActivity;
 import org.tvheadend.tvhclient.features.shared.adapter.ChannelTagRecyclerViewAdapter;
 import org.tvheadend.tvhclient.features.shared.adapter.GenreColorDialogAdapter;
-import org.tvheadend.tvhclient.features.shared.callbacks.ChannelSortOrderSelectionCallback;
-import org.tvheadend.tvhclient.features.shared.callbacks.ChannelTagSelectionCallback;
-import org.tvheadend.tvhclient.features.shared.callbacks.ChannelTimeSelectionCallback;
-import org.tvheadend.tvhclient.features.shared.callbacks.RecordingRemovedCallback;
+import org.tvheadend.tvhclient.features.channels.ChannelDisplayOptionListener;
+import org.tvheadend.tvhclient.features.dvr.RecordingRemovedCallback;
 import org.tvheadend.tvhclient.features.startup.SplashActivity;
 import org.tvheadend.tvhclient.features.streaming.external.CastChannelActivity;
 import org.tvheadend.tvhclient.features.streaming.external.CastRecordingActivity;
@@ -106,7 +104,7 @@ public class MenuUtils {
         return true;
     }
 
-    public boolean handleMenuTimeSelection(int currentSelection, int intervalInHours, int maxIntervalsToShow, @Nullable ChannelTimeSelectionCallback callback) {
+    public boolean handleMenuTimeSelection(int currentSelection, int intervalInHours, int maxIntervalsToShow, @Nullable ChannelDisplayOptionListener callback) {
         Activity activity = this.activity.get();
         if (activity == null) {
             return false;
@@ -145,7 +143,7 @@ public class MenuUtils {
         return true;
     }
 
-    public boolean handleMenuChannelTagsSelection(List<ChannelTag> channelTags, @NonNull ChannelTagSelectionCallback callback) {
+    public boolean handleMenuChannelTagsSelection(List<ChannelTag> channelTags, @NonNull ChannelDisplayOptionListener callback) {
         Activity activity = this.activity.get();
         if (activity == null) {
             return false;
@@ -193,7 +191,7 @@ public class MenuUtils {
         return true;
     }
 
-    public boolean handleMenuChannelSortOrderSelection(@NonNull ChannelSortOrderSelectionCallback callback) {
+    public boolean handleMenuChannelSortOrderSelection(@NonNull ChannelDisplayOptionListener callback) {
         Activity activity = this.activity.get();
         if (activity == null) {
             Timber.d("Weak reference to activity is null");

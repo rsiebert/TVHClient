@@ -2,8 +2,6 @@ package org.tvheadend.tvhclient.features.shared;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import androidx.fragment.app.Fragment;
-import androidx.appcompat.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -13,14 +11,16 @@ import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
-import org.tvheadend.tvhclient.features.shared.callbacks.NetworkAvailabilityChangedInterface;
-import org.tvheadend.tvhclient.features.shared.callbacks.NetworkStatusInterface;
+import org.tvheadend.tvhclient.features.shared.callbacks.NetworkStatusListener;
 import org.tvheadend.tvhclient.features.shared.callbacks.ToolbarInterface;
 import org.tvheadend.tvhclient.utils.MenuUtils;
 
 import javax.inject.Inject;
 
-public abstract class BaseFragment extends Fragment implements NetworkAvailabilityChangedInterface {
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+
+public abstract class BaseFragment extends Fragment implements NetworkStatusListener {
 
     protected AppCompatActivity activity;
     protected ToolbarInterface toolbarInterface;
@@ -50,8 +50,8 @@ public abstract class BaseFragment extends Fragment implements NetworkAvailabili
         }
 
         MainApplication.getComponent().inject(this);
-        if (activity instanceof NetworkStatusInterface) {
-            isNetworkAvailable = ((NetworkStatusInterface) activity).isNetworkAvailable();
+        if (activity instanceof NetworkStatusListener) {
+            isNetworkAvailable = ((NetworkStatusListener) activity).isNetworkAvailable();
         }
 
         mainFrameLayout = activity.findViewById(R.id.main);
@@ -93,8 +93,13 @@ public abstract class BaseFragment extends Fragment implements NetworkAvailabili
     }
 
     @Override
-    public void onNetworkAvailabilityChanged(boolean isNetworkAvailable) {
+    public void onNetworkStatusChanged(boolean isNetworkAvailable) {
         this.isNetworkAvailable = isNetworkAvailable;
+    }
+
+    @Override
+    public boolean isNetworkAvailable() {
+        return this.isNetworkAvailable;
     }
 
     protected void forceSingleScreenLayout() {

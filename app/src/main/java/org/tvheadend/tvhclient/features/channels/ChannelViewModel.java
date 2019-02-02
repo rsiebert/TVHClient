@@ -5,7 +5,6 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Transformations;
 
 import org.tvheadend.tvhclient.data.entity.Channel;
-import org.tvheadend.tvhclient.features.shared.BaseChannelViewModel;
 
 import java.util.List;
 

@@ -1,20 +1,9 @@
 package org.tvheadend.tvhclient.features.programs;
 
 import android.app.SearchManager;
-import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.appcompat.widget.PopupMenu;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -34,19 +23,29 @@ import org.tvheadend.tvhclient.features.dvr.RecordingAddEditActivity;
 import org.tvheadend.tvhclient.features.search.SearchRequestInterface;
 import org.tvheadend.tvhclient.features.search.StartSearchInterface;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
-import org.tvheadend.tvhclient.features.shared.callbacks.BottomReachedCallback;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
 import java.util.Date;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.PopupMenu;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import timber.log.Timber;
 
-public class ProgramListFragment extends BaseFragment implements RecyclerViewClickCallback, BottomReachedCallback, SearchRequestInterface, Filter.FilterListener {
+public class ProgramListFragment extends BaseFragment implements RecyclerViewClickCallback, LastProgramVisibleListener, SearchRequestInterface, Filter.FilterListener {
 
     private ProgramRecyclerViewAdapter recyclerViewAdapter;
     @BindView(R.id.recycler_view)
@@ -123,7 +122,7 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
         // Show the channel icons when a search is active and all channels shall be searched
         boolean showProgramChannelIcon = isSearchActive && channelId == 0;
 
-        recyclerViewAdapter = new ProgramRecyclerViewAdapter(this, this, showProgramChannelIcon);
+        recyclerViewAdapter = new ProgramRecyclerViewAdapter(showProgramChannelIcon, this, this);
         recyclerView.setLayoutManager(new LinearLayoutManager(activity.getApplicationContext()));
         recyclerView.addItemDecoration(new DividerItemDecoration(activity.getApplicationContext(), LinearLayoutManager.VERTICAL));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -379,7 +378,7 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
     }
 
     @Override
-    public void onBottomReached(int position) {
+    public void onLastProgramVisible(int position) {
         // Do not load more programs when a search query was given or all programs were loaded.
         if (isSearchActive || !loadingMoreProgramAllowed || !isNetworkAvailable) {
             return;
