@@ -4,9 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.preference.PreferenceManager;
-import androidx.annotation.NonNull;
-import androidx.core.widget.TextViewCompat;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
@@ -17,9 +14,12 @@ import com.squareup.picasso.Picasso;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Program;
-import org.tvheadend.tvhclient.utils.UIUtils;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback;
+import org.tvheadend.tvhclient.utils.UIUtils;
 
+import androidx.annotation.NonNull;
+import androidx.core.widget.TextViewCompat;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -126,7 +126,7 @@ public class ProgramViewHolder extends RecyclerView.ViewHolder {
 
         subtitleTextView.setVisibility(showProgramSubtitle
                 && !TextUtils.isEmpty(program.getSubtitle())
-                && !program.getSubtitle().equals(program.getTitle()) ? View.VISIBLE : View.GONE);
+                && !TextUtils.equals(program.getSubtitle(), program.getTitle()) ? View.VISIBLE : View.GONE);
         subtitleTextView.setText(program.getSubtitle());
 
         descriptionTextView.setVisibility(!TextUtils.isEmpty(program.getDescription()) ? View.VISIBLE : View.GONE);
