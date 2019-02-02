@@ -456,7 +456,8 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
     @Override
     public void onClick(View view, int position) {
         if (view.getId() == R.id.icon || view.getId() == R.id.icon_text) {
-            if (recyclerViewAdapter.getItemCount() > 0) {
+            if (recyclerViewAdapter.getItemCount() > 0
+                    && isNetworkAvailable) {
                 Channel channel = recyclerViewAdapter.getItem(position);
                 menuUtils.handleMenuPlayChannelIcon(channel.getId());
             }

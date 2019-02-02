@@ -293,8 +293,10 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
     @Override
     public void onClick(View view, int position) {
         if (view.getId() == R.id.icon || view.getId() == R.id.icon_text) {
-            EpgChannel channel = channelListRecyclerViewAdapter.getItem(position);
-            menuUtils.handleMenuPlayChannelIcon(channel.getId());
+            if (isNetworkAvailable) {
+                EpgChannel channel = channelListRecyclerViewAdapter.getItem(position);
+                menuUtils.handleMenuPlayChannelIcon(channel.getId());
+            }
         }
     }
 
