@@ -1,13 +1,8 @@
 package org.tvheadend.tvhclient.features.dvr.recordings;
 
-import androidx.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.appcompat.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -29,6 +24,11 @@ import org.tvheadend.tvhclient.features.shared.callbacks.RecordingRemovedCallbac
 import org.tvheadend.tvhclient.utils.MiscUtils;
 import org.tvheadend.tvhclient.utils.UIUtils;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -352,7 +352,7 @@ public class RecordingDetailsFragment extends BaseFragment implements RecordingR
         }
     }
 
-    public int getShownDvrId() {
+    int getShownDvrId() {
         return id;
     }
 
