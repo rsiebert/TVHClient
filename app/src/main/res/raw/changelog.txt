@@ -3,6 +3,7 @@ $ 2.1.0
   _ 01.02.2019
     * Upgraded to AndroidX
     * Switched some source files to Kotlin
+    * Small bug fixes
 $ 2.0.5
   % VERSION 2.0.5
   _ 29.01.2019
