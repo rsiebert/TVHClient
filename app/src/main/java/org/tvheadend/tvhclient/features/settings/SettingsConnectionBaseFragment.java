@@ -1,18 +1,17 @@
 package org.tvheadend.tvhclient.features.settings;
 
-import androidx.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
-import com.google.android.material.snackbar.Snackbar;
-import androidx.appcompat.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.google.android.material.snackbar.Snackbar;
 
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
@@ -22,6 +21,9 @@ import org.tvheadend.tvhclient.features.shared.callbacks.BackPressedInterface;
 import org.tvheadend.tvhclient.features.shared.callbacks.ToolbarInterface;
 
 import javax.inject.Inject;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProviders;
 
 public abstract class SettingsConnectionBaseFragment extends PreferenceFragment implements BackPressedInterface, Preference.OnPreferenceChangeListener {
 
@@ -94,11 +96,11 @@ public abstract class SettingsConnectionBaseFragment extends PreferenceFragment 
     private void setPreferenceDefaultValues() {
         String name = connection.getName();
         namePreference.setText(name);
-        namePreference.setSummary(name.isEmpty() ? getString(R.string.pref_name_sum) : name);
+        namePreference.setSummary(TextUtils.isEmpty(name) ? getString(R.string.pref_name_sum) : name);
 
         String address = connection.getHostname();
         hostnamePreference.setText(address);
-        hostnamePreference.setSummary(address.isEmpty() ? getString(R.string.pref_host_sum) : address);
+        hostnamePreference.setSummary(TextUtils.isEmpty(address) ? getString(R.string.pref_host_sum) : address);
 
         String port = String.valueOf(connection.getPort());
         htspPortPreference.setText(port);
@@ -109,11 +111,11 @@ public abstract class SettingsConnectionBaseFragment extends PreferenceFragment 
 
         String username = connection.getUsername();
         usernamePreference.setText(username);
-        usernamePreference.setSummary(username.isEmpty() ? getString(R.string.pref_user_sum) : username);
+        usernamePreference.setSummary(TextUtils.isEmpty(username) ? getString(R.string.pref_user_sum) : username);
 
         String password = connection.getPassword();
         passwordPreference.setText(password);
-        passwordPreference.setSummary(password.isEmpty() ? getString(R.string.pref_pass_sum) : getString(R.string.pref_pass_set_sum));
+        passwordPreference.setSummary(TextUtils.isEmpty(password) ? getString(R.string.pref_pass_sum) : getString(R.string.pref_pass_set_sum));
 
         activeEnabledPreference.setChecked(connection.isActive());
         wolEnabledPreference.setChecked(connection.isWolEnabled());
@@ -121,7 +123,7 @@ public abstract class SettingsConnectionBaseFragment extends PreferenceFragment 
         if (!connection.isWolEnabled()) {
             String macAddress = connection.getWolMacAddress();
             wolMacAddressPreference.setText(macAddress);
-            wolMacAddressPreference.setSummary(macAddress.isEmpty() ? getString(R.string.pref_wol_address_sum) : macAddress);
+            wolMacAddressPreference.setSummary(TextUtils.isEmpty(macAddress) ? getString(R.string.pref_wol_address_sum) : macAddress);
             wolPortPreference.setText(String.valueOf(connection.getWolPort()));
             wolPortPreference.setSummary(getString(R.string.pref_wol_port_sum, connection.getWolPort()));
             wolUseBroadcastEnabled.setChecked(connection.isWolUseBroadcast());
