@@ -97,7 +97,7 @@ public abstract class BaseRecordingAddEditFragment extends BaseFragment {
         // material dialog requires this
         List<Integer> list = new ArrayList<>();
         for (int i = 0; i < 7; i++) {
-            Integer value = (daysOfWeek >> i) & 1;
+            int value = (daysOfWeek >> i) & 1;
             if (value == 1) {
                 list.add(i);
             }
