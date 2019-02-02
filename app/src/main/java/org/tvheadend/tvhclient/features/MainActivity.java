@@ -35,7 +35,6 @@ import org.tvheadend.tvhclient.features.search.SearchRequestInterface;
 import org.tvheadend.tvhclient.features.shared.BaseActivity;
 import org.tvheadend.tvhclient.features.shared.callbacks.ToolbarInterface;
 import org.tvheadend.tvhclient.features.shared.receivers.ServiceStatusReceiver;
-import org.tvheadend.tvhclient.features.shared.receivers.SnackbarMessageReceiver;
 import org.tvheadend.tvhclient.features.streaming.external.CastSessionManagerListener;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 import org.tvheadend.tvhclient.utils.SnackbarUtils;
@@ -69,7 +68,6 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Navi
     private CastStateListener castStateListener;
     private SessionManagerListener<CastSession> castSessionManagerListener;
     private ServiceStatusReceiver serviceStatusReceiver;
-    private SnackbarMessageReceiver snackbarMessageReceiver;
 
     private NavigationDrawer navigationDrawer;
     private int selectedNavigationMenuId;
@@ -94,7 +92,6 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Navi
         MainApplication.getComponent().inject(this);
 
         serviceStatusReceiver = new ServiceStatusReceiver(this);
-        snackbarMessageReceiver = new SnackbarMessageReceiver(this);
         isUnlocked = MainApplication.getInstance().isUnlocked();
         isDualPane = findViewById(R.id.details) != null;
 
@@ -167,14 +164,12 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Navi
     public void onStart() {
         super.onStart();
         LocalBroadcastManager.getInstance(this).registerReceiver(serviceStatusReceiver, new IntentFilter(ServiceStatusReceiver.ACTION));
-        LocalBroadcastManager.getInstance(this).registerReceiver(snackbarMessageReceiver, new IntentFilter(SnackbarMessageReceiver.ACTION));
     }
 
     @Override
     public void onStop() {
         super.onStop();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(serviceStatusReceiver);
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(snackbarMessageReceiver);
     }
 
     @Override
