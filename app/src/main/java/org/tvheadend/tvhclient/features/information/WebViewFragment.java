@@ -110,7 +110,7 @@ public class WebViewFragment extends BaseFragment implements FileLoaderCallback 
     }
 
     @Override
-    public void notify(String content) {
+    public void onFileContentsLoaded(String content) {
         if (!TextUtils.isEmpty(content)) {
 
             if (content.contains("styles_light.css")) {

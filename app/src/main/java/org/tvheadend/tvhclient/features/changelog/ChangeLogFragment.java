@@ -4,9 +4,6 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.appcompat.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -23,6 +20,9 @@ import org.tvheadend.tvhclient.features.shared.callbacks.ToolbarInterface;
 import org.tvheadend.tvhclient.features.shared.tasks.ChangeLogLoaderTask;
 import org.tvheadend.tvhclient.features.shared.tasks.FileLoaderCallback;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -134,7 +134,7 @@ public class ChangeLogFragment extends Fragment implements BackPressedInterface,
     }
 
     @Override
-    public void notify(String content) {
+    public void onFileContentsLoaded(String content) {
         if (content != null) {
             webView.loadDataWithBaseURL("file:///android_asset/", content, "text/html", "utf-8", null);
             progressBar.setVisibility(View.GONE);

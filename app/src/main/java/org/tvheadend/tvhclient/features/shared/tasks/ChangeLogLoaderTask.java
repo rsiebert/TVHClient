@@ -42,7 +42,7 @@ public class ChangeLogLoaderTask extends AsyncTask<Boolean, Void, String> {
 
     @Override
     protected void onPostExecute(String content) {
-        callback.notify(content);
+        callback.onFileContentsLoaded(content);
     }
 
     private String getChangeLogFromFile(Context context, boolean full) {

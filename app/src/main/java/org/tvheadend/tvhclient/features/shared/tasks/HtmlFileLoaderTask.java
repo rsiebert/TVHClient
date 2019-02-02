@@ -41,7 +41,7 @@ public class HtmlFileLoaderTask extends AsyncTask<Void, Void, String> {
 
     @Override
     protected void onPostExecute(String content) {
-        callback.notify(content);
+        callback.onFileContentsLoaded(content);
     }
 
     private String loadHtmlFromFile(Context context, String filename, String defaultLocale) {
