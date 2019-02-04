@@ -9,6 +9,7 @@ buildscript {
 }
 
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-android'
 
@@ -125,7 +126,7 @@ dependencies {
 
     // View binding
     implementation 'com.jakewharton:butterknife:10.0.0'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:10.0.0'
+    kapt 'com.jakewharton:butterknife-compiler:10.0.0'
 
     // Memory leaks and crash analytics
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.3'
@@ -138,11 +139,11 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-common-java8:2.0.0'
     implementation 'androidx.room:room-runtime:2.0.0'
     implementation 'android.arch.work:work-runtime:1.0.0-beta03'
-    annotationProcessor 'androidx.room:room-compiler:2.0.0'
+    kapt 'androidx.room:room-compiler:2.0.0'
 
     // Dependency injection
     implementation 'com.google.dagger:dagger:2.21'
-    annotationProcessor 'com.google.dagger:dagger-compiler:2.21'
+    kapt 'com.google.dagger:dagger-compiler:2.21'
 
     // Logging library
     implementation 'com.jakewharton.timber:timber:4.5.1'
@@ -159,6 +160,8 @@ dependencies {
     implementation 'com.google.android.exoplayer:extension-ffmpeg:2.7.1k1'
 
     // Use multidex because the method count is over 64k
-    debugImplementation 'androidx.multidex:multidex:2.0.1'
+    implementation 'androidx.multidex:multidex:2.0.1'
+
+    // Kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
