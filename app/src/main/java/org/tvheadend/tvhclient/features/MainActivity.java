@@ -418,19 +418,21 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Navi
 
     @Override
     public void onEpgTaskStateChanged(EpgSyncTaskState state) {
-        Timber.d("Epg task state changed to " + state.getState() + ", message is " + state.getMessage());
         switch (state.getState()) {
             case CLOSED:
             case FAILED:
+                Timber.d("Connection failed or closed");
                 SnackbarUtils.sendSnackbarMessage(this, state.getMessage());
                 onNetworkAvailabilityChanged(false);
                 break;
 
             case CONNECTING:
+                Timber.d("Connecting");
                 SnackbarUtils.sendSnackbarMessage(this, state.getMessage());
                 break;
 
             case CONNECTED:
+                Timber.d("Connected");
                 SnackbarUtils.sendSnackbarMessage(this, state.getMessage());
                 break;
 
