@@ -203,9 +203,9 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         if (syncEventsRequired) {
             enableAsyncMetadataRequest.put("epg", 1);
             enableAsyncMetadataRequest.put("epgMaxTime", epgMaxTime + currentTimeInSeconds);
-            // Only provide metadata that has changed since now.
-            // The past events are not relevant and don't need to be sent by the server
-            enableAsyncMetadataRequest.put("lastUpdate", currentTimeInSeconds);
+            // Only provide metadata that has changed since 12 hours ago.
+            // The events past those 12 hours are not relevant and don't need to be sent by the server
+            enableAsyncMetadataRequest.put("lastUpdate", (currentTimeInSeconds - 12 * 60 * 60));
         }
 
         try {
@@ -735,13 +735,14 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         if (initialSyncWithServerRunning) {
             pendingEventOps.add(program);
 
-            if (syncRequired && pendingEventOps.size() % 100 == 0) {
+            if (syncRequired && pendingEventOps.size() % 50 == 0) {
                 Timber.d("Sync is running, received " + pendingEventOps.size() + " program guide events");
                 sendEpgSyncStatusMessage(ServiceStatusReceiver.State.SYNC_IN_PROGRESS,
                         context.getString(R.string.receiving_data),
                         "Received " + pendingEventOps.size() + " program guide events");
             }
         } else {
+            Timber.d("Adding event " + program.getTitle());
             appRepository.getProgramData().addItem(program);
         }
     }
@@ -759,6 +760,7 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
             return;
         }
         Program updatedProgram = EpgSyncUtils.convertMessageToProgramModel(program, msg);
+        Timber.d("Updating event " + updatedProgram.getTitle());
         appRepository.getProgramData().updateItem(updatedProgram);
     }
 
@@ -1784,23 +1786,34 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     private void getMoreEvents(Intent intent) {
 
         int numberOfProgramsToLoad = intent.getIntExtra("numFollowing", 0);
-
-        Timber.d("Database contains " + appRepository.getProgramData().getItemCount() + " events. " +
-                "Loading " + numberOfProgramsToLoad + " more events for each channel ");
-
         List<Channel> channelList = appRepository.getChannelData().getItems();
+
+        Timber.d("Database currently contains " + appRepository.getProgramData().getItemCount() + " events. ");
+        Timber.d("Loading " + numberOfProgramsToLoad + " events for each of the " + channelList.size() + " channels");
+
         for (Channel channel : channelList) {
             Program lastProgram = appRepository.getProgramData().getLastItemByChannelId(channel.getId());
+
+            Intent msgIntent = new Intent();
+            msgIntent.putExtra("numFollowing", numberOfProgramsToLoad);
+            msgIntent.putExtra("useEventList", true);
+            msgIntent.putExtra("channelId", channel.getId());
+            msgIntent.putExtra("channelName", channel.getName());
+
             if (lastProgram != null) {
-                Timber.d("Loading more programs. Last program is " + lastProgram.getTitle() + " for channel " + channel.getName());
-                Intent msgIntent = new Intent();
+                Timber.d("Loading more programs for channel " + channel.getName() +
+                        " from last program id " + lastProgram.getEventId());
                 msgIntent.putExtra("eventId", lastProgram.getNextEventId());
-                msgIntent.putExtra("channelId", lastProgram.getChannelId());
-                msgIntent.putExtra("channelName", lastProgram.getChannelName());
-                msgIntent.putExtra("numFollowing", numberOfProgramsToLoad);
-                msgIntent.putExtra("useEventList", true);
-                getEvents(msgIntent);
+            } else if (channel.getNextEventId() > 0) {
+                Timber.d("Loading more programs for channel " + channel.getName() +
+                        " starting from channel next event id " + channel.getNextEventId());
+                msgIntent.putExtra("eventId", channel.getNextEventId());
+            } else {
+                Timber.d("Loading more programs for channel " + channel.getName() +
+                        " starting from channel event id " + channel.getEventId());
+                msgIntent.putExtra("eventId", channel.getEventId());
             }
+            getEvents(msgIntent);
         }
 
         appRepository.getProgramData().addItems(pendingEventOps);
