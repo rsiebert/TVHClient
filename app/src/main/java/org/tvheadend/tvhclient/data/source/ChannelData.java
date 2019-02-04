@@ -1,24 +1,21 @@
 package org.tvheadend.tvhclient.data.source;
 
-import androidx.lifecycle.LiveData;
 import android.content.Context;
 import android.os.AsyncTask;
-import android.preference.PreferenceManager;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import org.tvheadend.tvhclient.data.db.AppRoomDatabase;
 import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.data.entity.EpgChannel;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.lifecycle.LiveData;
 import timber.log.Timber;
 
 public class ChannelData implements DataSourceInterface<Channel> {
@@ -84,8 +81,7 @@ public class ChannelData implements DataSourceInterface<Channel> {
     public List<Channel> getItems() {
         List<Channel> channels = new ArrayList<>();
         try {
-            int channelSortOrder = Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(context).getString("channel_sort_order", "0"));
-            channels.addAll(new ChannelListTask(db, channelSortOrder).execute().get());
+            channels.addAll(new ChannelListTask(db).execute().get());
         } catch (InterruptedException e) {
             Timber.d("Loading all channels task got interrupted", e);
         } catch (ExecutionException e) {
@@ -164,26 +160,14 @@ public class ChannelData implements DataSourceInterface<Channel> {
 
     private static class ChannelListTask extends AsyncTask<Void, Void, List<Channel>> {
         private final AppRoomDatabase db;
-        private final int sortOrder;
-        private final long currentTime;
-        private final Set<Integer> channelTagIds;
 
-        ChannelListTask(AppRoomDatabase db, int sortOrder) {
+        ChannelListTask(AppRoomDatabase db) {
             this.db = db;
-            this.currentTime = 0;
-            this.channelTagIds = new HashSet<>();
-            this.sortOrder = sortOrder;
         }
 
         @Override
         protected List<Channel> doInBackground(Void... voids) {
-            if (currentTime == 0) {
-                return db.getChannelDao().loadAllChannelsSync(sortOrder);
-            } else if (currentTime > 0 && channelTagIds.size() == 0) {
-                return db.getChannelDao().loadAllChannelsByTimeSync(currentTime, sortOrder);
-            } else {
-                return db.getChannelDao().loadAllChannelsByTimeAndTagSync(currentTime, channelTagIds, sortOrder);
-            }
+            return db.getChannelDao().loadAllChannelsSync(0);
         }
     }
 
