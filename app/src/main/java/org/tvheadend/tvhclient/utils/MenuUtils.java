@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -229,8 +230,7 @@ public class MenuUtils {
 
     public boolean handleMenuSearchImdbWebsite(String title) {
         Activity activity = this.activity.get();
-        if (activity == null) {
-            Timber.d("Weak reference to activity is null");
+        if (activity == null || TextUtils.isEmpty(title)) {
             return false;
         }
         try {
@@ -250,8 +250,7 @@ public class MenuUtils {
 
     public boolean handleMenuSearchFileAffinityWebsite(String title) {
         Activity activity = this.activity.get();
-        if (activity == null) {
-            Timber.d("Weak reference to activity is null");
+        if (activity == null || TextUtils.isEmpty(title)) {
             return false;
         }
         try {
@@ -662,21 +661,22 @@ public class MenuUtils {
         }
     }
 
-    public void onPreparePopupSearchMenu(@NonNull Menu menu, boolean isNetworkAvailable) {
+    public void onPreparePopupSearchMenu(@NonNull Menu menu, String title, boolean isNetworkAvailable) {
         Activity activity = this.activity.get();
         if (activity == null) {
             Timber.d("Weak reference to activity is null");
             return;
         }
 
+        boolean visible = isNetworkAvailable && !TextUtils.isEmpty(title);
         MenuItem searchMenuItem = menu.findItem(R.id.menu_search);
         if (searchMenuItem != null) {
-            searchMenuItem.setVisible(isNetworkAvailable);
-            menu.findItem(R.id.menu_search_imdb).setVisible(isNetworkAvailable);
-            menu.findItem(R.id.menu_search_fileaffinity).setVisible(isNetworkAvailable);
-            menu.findItem(R.id.menu_search_youtube).setVisible(isNetworkAvailable);
-            menu.findItem(R.id.menu_search_google).setVisible(isNetworkAvailable);
-            menu.findItem(R.id.menu_search_epg).setVisible(isNetworkAvailable);
+            searchMenuItem.setVisible(visible);
+            menu.findItem(R.id.menu_search_imdb).setVisible(visible);
+            menu.findItem(R.id.menu_search_fileaffinity).setVisible(visible);
+            menu.findItem(R.id.menu_search_youtube).setVisible(visible);
+            menu.findItem(R.id.menu_search_google).setVisible(visible);
+            menu.findItem(R.id.menu_search_epg).setVisible(visible);
         }
     }
 
@@ -800,8 +800,7 @@ public class MenuUtils {
 
     public boolean handleMenuSearchYoutube(String title) {
         Activity activity = this.activity.get();
-        if (activity == null) {
-            Timber.d("Weak reference to activity is null");
+        if (activity == null || TextUtils.isEmpty(title)) {
             return false;
         }
         try {
@@ -826,8 +825,7 @@ public class MenuUtils {
 
     public boolean handleMenuSearchGoogle(String title) {
         Activity activity = this.activity.get();
-        if (activity == null) {
-            Timber.d("Weak reference to activity is null");
+        if (activity == null || TextUtils.isEmpty(title)) {
             return false;
         }
         try {
