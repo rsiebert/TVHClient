@@ -215,7 +215,6 @@ public class MainApplication extends Application implements OptionsProvider, Lif
     }
 
     public static boolean isActivityVisible() {
-        Timber.d("Main application is visible " + activityVisible);
         return activityVisible;
     }
 
