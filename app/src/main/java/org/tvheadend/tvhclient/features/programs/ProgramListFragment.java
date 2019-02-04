@@ -295,7 +295,7 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
         popupMenu.getMenuInflater().inflate(R.menu.program_popup_and_toolbar_menu, popupMenu.getMenu());
         popupMenu.getMenuInflater().inflate(R.menu.external_search_options_menu, popupMenu.getMenu());
         menuUtils.onPreparePopupMenu(popupMenu.getMenu(), program.getStart(), program.getStop(), program.getRecording(), isNetworkAvailable);
-        menuUtils.onPreparePopupSearchMenu(popupMenu.getMenu(), isNetworkAvailable);
+        menuUtils.onPreparePopupSearchMenu(popupMenu.getMenu(), program.getTitle(), isNetworkAvailable);
 
         popupMenu.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {
@@ -420,8 +420,9 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
     }
 
     @Override
-    public void onLongClick(View view, int position) {
+    public boolean onLongClick(View view, int position) {
         showPopupMenu(view);
+        return true;
     }
 
     public void updatePrograms(long selectedTime) {

@@ -281,7 +281,7 @@ public class ProgramDetailsFragment extends BaseFragment {
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         // Show or hide menus of the main toolbar
-        menuUtils.onPreparePopupSearchMenu(menu, isNetworkAvailable);
+        menuUtils.onPreparePopupSearchMenu(menu, program.getTitle(), isNetworkAvailable);
         // Show or hide menus of the nested toolbar
         menu = nestedToolbar.getMenu();
         menuUtils.onPreparePopupMenu(menu,

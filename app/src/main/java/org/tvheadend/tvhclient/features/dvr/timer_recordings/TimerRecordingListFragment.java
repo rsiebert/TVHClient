@@ -1,19 +1,8 @@
 package org.tvheadend.tvhclient.features.dvr.timer_recordings;
 
 import android.app.SearchManager;
-import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.appcompat.widget.PopupMenu;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -33,6 +22,17 @@ import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallba
 
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.PopupMenu;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -192,15 +192,15 @@ public class TimerRecordingListFragment extends BaseFragment implements Recycler
         }
     }
 
-    private void showPopupMenu(View view) {
-        final TimerRecording timerRecording = (TimerRecording) view.getTag();
+    private void showPopupMenu(View view, int position) {
+        final TimerRecording timerRecording = recyclerViewAdapter.getItem(position);
         if (activity == null || timerRecording == null) {
             return;
         }
         PopupMenu popupMenu = new PopupMenu(activity, view);
         popupMenu.getMenuInflater().inflate(R.menu.timer_recordings_popup_menu, popupMenu.getMenu());
         popupMenu.getMenuInflater().inflate(R.menu.external_search_options_menu, popupMenu.getMenu());
-        menuUtils.onPreparePopupSearchMenu(popupMenu.getMenu(), isNetworkAvailable);
+        menuUtils.onPreparePopupSearchMenu(popupMenu.getMenu(), timerRecording.getTitle(), isNetworkAvailable);
 
         popupMenu.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {
@@ -242,8 +242,9 @@ public class TimerRecordingListFragment extends BaseFragment implements Recycler
     }
 
     @Override
-    public void onLongClick(View view, int position) {
-        showPopupMenu(view);
+    public boolean onLongClick(View view, int position) {
+        showPopupMenu(view, position);
+        return true;
     }
 
     @Override

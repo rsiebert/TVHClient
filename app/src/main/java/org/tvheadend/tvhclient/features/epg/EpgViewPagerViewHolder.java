@@ -1,16 +1,9 @@
 package org.tvheadend.tvhclient.features.epg;
 
-import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.HandlerThread;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -23,6 +16,13 @@ import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallba
 
 import java.util.List;
 
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
@@ -80,10 +80,10 @@ public class EpgViewPagerViewHolder extends RecyclerView.ViewHolder implements R
     }
 
     @Override
-    public void onLongClick(View view, int position) {
+    public boolean onLongClick(View view, int position) {
         final EpgProgram program = (EpgProgram) view.getTag();
         if (program == null) {
-            return;
+            return false;
         }
         Fragment fragment = activity.getSupportFragmentManager().findFragmentById(R.id.main);
         if (fragment instanceof ProgramGuideFragment
@@ -91,6 +91,7 @@ public class EpgViewPagerViewHolder extends RecyclerView.ViewHolder implements R
                 && fragment.isResumed()) {
             ((ProgramGuideFragment) fragment).showPopupMenu(view, program);
         }
+        return true;
     }
 
     public void bindData(final EpgChannel epgChannel) {

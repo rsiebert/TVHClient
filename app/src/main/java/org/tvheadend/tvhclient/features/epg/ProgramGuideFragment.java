@@ -301,8 +301,9 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
     }
 
     @Override
-    public void onLongClick(View view, int position) {
+    public boolean onLongClick(View view, int position) {
         // NOP
+        return true;
     }
 
 
@@ -318,7 +319,7 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
         popupMenu.getMenuInflater().inflate(R.menu.external_search_options_menu, popupMenu.getMenu());
 
         menuUtils.onPreparePopupMenu(popupMenu.getMenu(), program.getStart(), program.getStop(), program.getRecording(), isNetworkAvailable);
-        menuUtils.onPreparePopupSearchMenu(popupMenu.getMenu(), isNetworkAvailable);
+        menuUtils.onPreparePopupSearchMenu(popupMenu.getMenu(), program.getTitle(), isNetworkAvailable);
 
         popupMenu.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {

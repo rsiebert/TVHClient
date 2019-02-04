@@ -169,7 +169,11 @@ public class SeriesRecordingDetailsFragment extends BaseFragment implements Reco
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
-        menuUtils.onPreparePopupSearchMenu(menu, isNetworkAvailable);
+        if (recording == null) {
+            return;
+        }
+        menuUtils.onPreparePopupSearchMenu(menu, recording.getTitle(), isNetworkAvailable);
+
         if (nestedToolbar.getMenu() == null) {
             return;
         }

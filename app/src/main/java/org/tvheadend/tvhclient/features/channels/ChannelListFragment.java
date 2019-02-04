@@ -367,7 +367,7 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
                 program != null ? program.getStop() : 0,
                 recording, isNetworkAvailable);
 
-        menuUtils.onPreparePopupSearchMenu(popupMenu.getMenu(), isNetworkAvailable);
+        menuUtils.onPreparePopupSearchMenu(popupMenu.getMenu(), channel.getProgramTitle(), isNetworkAvailable);
         popupMenu.getMenu().findItem(R.id.menu_play).setVisible(isNetworkAvailable);
 
         popupMenu.setOnMenuItemClickListener(item -> {
@@ -467,8 +467,9 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
     }
 
     @Override
-    public void onLongClick(View view, int position) {
+    public boolean onLongClick(View view, int position) {
         showPopupMenu(view);
+        return true;
     }
 
     @Override

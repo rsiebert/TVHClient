@@ -1,19 +1,8 @@
 package org.tvheadend.tvhclient.features.dvr.recordings;
 
 import android.app.SearchManager;
-import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.appcompat.widget.PopupMenu;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -32,6 +21,17 @@ import org.tvheadend.tvhclient.utils.MiscUtils;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.PopupMenu;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -178,7 +178,7 @@ public class RecordingListFragment extends BaseFragment implements RecyclerViewC
         PopupMenu popupMenu = new PopupMenu(activity, view);
         popupMenu.getMenuInflater().inflate(R.menu.recordings_popup_menu, popupMenu.getMenu());
         popupMenu.getMenuInflater().inflate(R.menu.external_search_options_menu, popupMenu.getMenu());
-        menuUtils.onPreparePopupSearchMenu(popupMenu.getMenu(), isNetworkAvailable);
+        menuUtils.onPreparePopupSearchMenu(popupMenu.getMenu(), recording.getTitle(), isNetworkAvailable);
 
         if (isNetworkAvailable) {
             if (recording.isCompleted()) {
@@ -265,8 +265,9 @@ public class RecordingListFragment extends BaseFragment implements RecyclerViewC
     }
 
     @Override
-    public void onLongClick(View view, int position) {
+    public boolean onLongClick(View view, int position) {
         showPopupMenu(view);
+        return true;
     }
 
     @Override

@@ -145,7 +145,11 @@ public class TimerRecordingDetailsFragment extends BaseFragment implements Recor
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
-        menuUtils.onPreparePopupSearchMenu(menu, isNetworkAvailable);
+        if (recording == null) {
+            return;
+        }
+        menuUtils.onPreparePopupSearchMenu(menu, recording.getTitle(), isNetworkAvailable);
+
         if (nestedToolbar.getMenu() == null) {
             return;
         }

@@ -253,7 +253,7 @@ public class RecordingDetailsFragment extends BaseFragment implements RecordingR
             return;
         }
 
-        menuUtils.onPreparePopupSearchMenu(menu, isNetworkAvailable);
+        menuUtils.onPreparePopupSearchMenu(menu, recording.getTitle(), isNetworkAvailable);
 
         menu = nestedToolbar.getMenu();
         if (isNetworkAvailable) {
