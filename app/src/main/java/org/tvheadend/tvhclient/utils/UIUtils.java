@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.preference.PreferenceManager;
-import androidx.annotation.NonNull;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.SparseArray;
@@ -19,6 +18,8 @@ import java.util.Date;
 import java.util.Locale;
 
 import javax.annotation.Nullable;
+
+import androidx.annotation.NonNull;
 
 import static org.tvheadend.tvhclient.utils.MiscUtils.convertUrlToHashString;
 

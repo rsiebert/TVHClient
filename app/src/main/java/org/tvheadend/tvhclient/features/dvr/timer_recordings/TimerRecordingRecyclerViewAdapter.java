@@ -1,22 +1,23 @@
 package org.tvheadend.tvhclient.features.dvr.timer_recordings;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.TimerRecording;
+import org.tvheadend.tvhclient.databinding.TimerRecordingListAdapterBinding;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-class TimerRecordingRecyclerViewAdapter extends RecyclerView.Adapter<TimerRecordingViewHolder> implements Filterable {
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
+class TimerRecordingRecyclerViewAdapter extends RecyclerView.Adapter<TimerRecordingRecyclerViewAdapter.TimerRecordingViewHolder> implements Filterable {
 
     private final RecyclerViewClickCallback clickCallback;
     private final boolean isDualPane;
@@ -36,15 +37,16 @@ class TimerRecordingRecyclerViewAdapter extends RecyclerView.Adapter<TimerRecord
     @NonNull
     @Override
     public TimerRecordingViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        final View view = LayoutInflater.from(parent.getContext()).inflate(viewType, parent, false);
-        return new TimerRecordingViewHolder(view, isDualPane);
+        LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
+        TimerRecordingListAdapterBinding itemBinding = TimerRecordingListAdapterBinding.inflate(layoutInflater, parent, false);
+        return new TimerRecordingViewHolder(itemBinding, isDualPane);
     }
 
     @Override
     public void onBindViewHolder(@NonNull TimerRecordingViewHolder holder, int position) {
         if (recordingListFiltered.size() > position) {
             TimerRecording recording = recordingListFiltered.get(position);
-            holder.bindData(recording, (selectedPosition == position), htspVersion, gmtOffset, clickCallback);
+            holder.bind(recording, position, (selectedPosition == position), htspVersion, gmtOffset, clickCallback);
         }
     }
 
@@ -130,5 +132,28 @@ class TimerRecordingRecyclerViewAdapter extends RecyclerView.Adapter<TimerRecord
                 notifyDataSetChanged();
             }
         };
+    }
+
+    public static class TimerRecordingViewHolder extends RecyclerView.ViewHolder {
+
+        private final TimerRecordingListAdapterBinding binding;
+        private final boolean isDualPane;
+
+        TimerRecordingViewHolder(TimerRecordingListAdapterBinding binding, boolean isDualPane) {
+            super(binding.getRoot());
+            this.binding = binding;
+            this.isDualPane = isDualPane;
+        }
+
+        public void bind(TimerRecording recording, int position, boolean isSelected, int htspVersion, int gmtOffset, RecyclerViewClickCallback clickCallback) {
+            binding.setRecording(recording);
+            binding.setPosition(position);
+            binding.setGmtOffset(gmtOffset);
+            binding.setHtspVersion(htspVersion);
+            binding.setIsSelected(isSelected);
+            binding.setIsDualPane(isDualPane);
+            binding.setCallback(clickCallback);
+            binding.executePendingBindings();
+        }
     }
 }
