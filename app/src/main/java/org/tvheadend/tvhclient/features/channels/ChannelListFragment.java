@@ -17,6 +17,7 @@ import android.widget.ProgressBar;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.data.entity.ChannelTag;
+import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.entity.Program;
 import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.features.dvr.RecordingAddEditActivity;
@@ -24,6 +25,7 @@ import org.tvheadend.tvhclient.features.programs.ProgramListFragment;
 import org.tvheadend.tvhclient.features.search.SearchRequestInterface;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback;
+import org.tvheadend.tvhclient.features.shared.tasks.WakeOnLanTask;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -247,6 +249,8 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
             menu.findItem(R.id.menu_search).setVisible(false);
             menu.findItem(R.id.menu_tags).setVisible(false);
         }
+
+        menu.findItem(R.id.menu_wol).setVisible(true);
     }
 
     @Override
@@ -263,6 +267,13 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
 
             case R.id.menu_sort_order:
                 return menuUtils.handleMenuChannelSortOrderSelection(this);
+
+            case R.id.menu_wol:
+                Connection connection = appRepository.getConnectionData().getActiveItem();
+                if (connection != null) {
+                    new WakeOnLanTask(activity, connection).execute();
+                }
+                return true;
 
             default:
                 return super.onOptionsItemSelected(item);
