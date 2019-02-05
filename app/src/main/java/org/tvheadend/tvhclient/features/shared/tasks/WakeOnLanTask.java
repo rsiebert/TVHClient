@@ -14,6 +14,7 @@ import java.net.InetAddress;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import androidx.annotation.NonNull;
 import timber.log.Timber;
 
 public class WakeOnLanTask extends AsyncTask<String, Void, Integer> {
@@ -27,7 +28,7 @@ public class WakeOnLanTask extends AsyncTask<String, Void, Integer> {
     private final Connection connection;
     private Exception exception;
 
-    public WakeOnLanTask(Context context, Connection connection) {
+    public WakeOnLanTask(@NonNull Context context, @NonNull Connection connection) {
         this.context = new WeakReference<>(context);
         this.connection = connection;
     }
