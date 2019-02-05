@@ -197,10 +197,15 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
 
         // Send the first sync message to any broadcast listeners
         if (syncRequired) {
+            Timber.d("Sending status that sync has started");
             sendEpgSyncStatusMessage(ServiceStatusReceiver.State.SYNC_STARTED,
                     context.getString(R.string.loading_data), "");
         }
         if (syncEventsRequired) {
+            Timber.d("Adding field to the enableAsyncMetadata request" +
+                    ", epgMaxTime is " + (epgMaxTime + currentTimeInSeconds) +
+                    ", lastUpdate time is " + (currentTimeInSeconds - 12 * 60 * 60));
+
             enableAsyncMetadataRequest.put("epg", 1);
             enableAsyncMetadataRequest.put("epgMaxTime", epgMaxTime + currentTimeInSeconds);
             // Only provide metadata that has changed since 12 hours ago.
