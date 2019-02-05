@@ -91,7 +91,7 @@
             android:layout_width="0dip"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="@{recording.channelName != null ? @string/all_channels : recording.channelName}"
+            android:text="@{recording.channelName != null ? recording.channelName : @string/all_channels}"
             app:layout_constraintStart_toStartOf="@+id/title"
             app:layout_constraintTop_toBottomOf="@+id/title" />
 
@@ -113,7 +113,7 @@
             style="?attr/ContentFont"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:daysText="@{recording.getDaysOfWeek}"
+            app:daysText="@{recording.daysOfWeek}"
             app:layout_constraintStart_toStartOf="@+id/title"
             app:layout_constraintTop_toBottomOf="@+id/channel" />
 
@@ -149,8 +149,8 @@
             android:layout_marginTop="4dp"
             android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"
-            android:text="@{recording.enabled ? @string/recording_enabled : @string/recording_disabled}"
-            android:visibility="@{htspVersion &gt;= 19 &amp;&amp; !recording.enabled ? View.VISIBLE : View.GONE}"
+            app:disabledText="@{recording.enabled}"
+            app:htspVersion="@{htspVersion}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/title"
             app:layout_constraintTop_toBottomOf="@+id/days_of_week" />
