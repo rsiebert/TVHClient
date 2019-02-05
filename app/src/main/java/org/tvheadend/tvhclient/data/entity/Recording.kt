@@ -50,7 +50,8 @@ data class Recording(
         var path: String? = null,                   // str   optional   Recording path for playback.
         @ColumnInfo(name = "data_size")
         var dataSize: Long = 0,                     // s64   optional   Actual file size of the last recordings (Added in version 21).
-        var enabled: Int = 1,                       // u32   optional   Enabled flag (Added in version 23).
+        @ColumnInfo(name = "enabled")
+        var isEnabled: Boolean = true,              // u32   optional   Enabled flag (Added in version 23).
         var duplicate: Int = 0,                     // u32   optional   Duplicate flag (Added in version 33).
         var episode: String? = null,                // str   optional   Episode (Added in version 18).
         var comment: String? = null,                // str   optional   Comment (Added in version 18).

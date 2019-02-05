@@ -1,13 +1,13 @@
 package org.tvheadend.tvhclient.features.dvr.recordings;
 
-import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.DiffUtil;
 import android.text.TextUtils;
 
 import org.tvheadend.tvhclient.data.entity.Recording;
 
 import java.util.List;
 
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.DiffUtil;
 import timber.log.Timber;
 
 class RecordingListDiffCallback extends DiffUtil.Callback {
@@ -55,7 +55,7 @@ class RecordingListDiffCallback extends DiffUtil.Callback {
 
                 && (newRecording.getStart() == oldRecording.getStart())
                 && (newRecording.getStop() == oldRecording.getStop())
-                && (newRecording.getEnabled() == oldRecording.getEnabled())
+                && (newRecording.isEnabled() == oldRecording.isEnabled())
                 && (newRecording.getDuplicate() == oldRecording.getDuplicate())
                 && (newRecording.getDataSize() == oldRecording.getDataSize())
 

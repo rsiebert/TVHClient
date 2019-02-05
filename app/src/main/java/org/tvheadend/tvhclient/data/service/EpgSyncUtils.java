@@ -216,7 +216,7 @@ class EpgSyncUtils {
             }
         }
         if (msg.containsKey("enabled")) {
-            recording.setEnabled(msg.getInteger("enabled"));
+            recording.setEnabled(msg.getInteger("enabled") == 1);
         }
         if (msg.containsKey("duplicate")) {
             recording.setDuplicate(msg.getInteger("duplicate"));
