@@ -1,32 +1,31 @@
 package org.tvheadend.tvhclient.features.dvr.recordings;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.DiffUtil;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Recording;
+import org.tvheadend.tvhclient.databinding.RecordingListAdapterBinding;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.RecyclerView;
 import timber.log.Timber;
 
 import static org.tvheadend.tvhclient.features.dvr.recordings.RecordingListDiffCallback.PAYLOAD_DATA_SIZE;
 
-class RecordingRecyclerViewAdapter extends RecyclerView.Adapter<RecordingViewHolder> implements Filterable {
+class RecordingRecyclerViewAdapter extends RecyclerView.Adapter<RecordingRecyclerViewAdapter.RecordingViewHolder> implements Filterable {
 
     private final RecyclerViewClickCallback clickCallback;
     private final boolean isDualPane;
     private final List<Recording> recordingList = new ArrayList<>();
-    private int recordingType;
     private List<Recording> recordingListFiltered = new ArrayList<>();
     private final int htspVersion;
     private int selectedPosition = 0;
@@ -40,8 +39,9 @@ class RecordingRecyclerViewAdapter extends RecyclerView.Adapter<RecordingViewHol
     @NonNull
     @Override
     public RecordingViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        final View view = LayoutInflater.from(parent.getContext()).inflate(viewType, parent, false);
-        return new RecordingViewHolder(view, recordingType, isDualPane);
+        LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
+        RecordingListAdapterBinding itemBinding = RecordingListAdapterBinding.inflate(layoutInflater, parent, false);
+        return new RecordingViewHolder(itemBinding, isDualPane);
     }
 
     @Override
@@ -54,17 +54,14 @@ class RecordingRecyclerViewAdapter extends RecyclerView.Adapter<RecordingViewHol
         Recording recording = recordingListFiltered.get(position);
 
         if (payloads.isEmpty()) {
-            Timber.d("Recording '" + recording.getTitle() + "' has changed a lot");
-            holder.bindData(recording, (selectedPosition == position), htspVersion, clickCallback);
-            holder.bindDataInfo(recording);
-
+            Timber.d("Recording '" + recording.getTitle() + "' has changed, doing a full update");
+            holder.bind(recording, position, (selectedPosition == position), htspVersion, clickCallback);
         } else {
-            Timber.d("Recording '" + recording.getTitle() + "' has changed partially " + payloads.size());
             for (final Object payload : payloads) {
                 if (payload.equals(PAYLOAD_DATA_SIZE)) {
-                    Timber.d("Received PAYLOAD_DATA_SIZE");
-                    // in this case only name will be updated
-                    holder.bindDataInfo(recording);
+                    // Update only the data size and errors
+                    Timber.d("Recording '" + recording.getTitle() + "' has changed, doing a partial update");
+                    holder.bind(recording, position, (selectedPosition == position), htspVersion, clickCallback);
                 }
             }
         }
@@ -152,7 +149,25 @@ class RecordingRecyclerViewAdapter extends RecyclerView.Adapter<RecordingViewHol
         };
     }
 
-    public void setRecordingType(int recordingType) {
-        this.recordingType = recordingType;
+    public static class RecordingViewHolder extends RecyclerView.ViewHolder {
+
+        private final RecordingListAdapterBinding binding;
+        private final boolean isDualPane;
+
+        RecordingViewHolder(RecordingListAdapterBinding binding, boolean isDualPane) {
+            super(binding.getRoot());
+            this.binding = binding;
+            this.isDualPane = isDualPane;
+        }
+
+        public void bind(Recording recording, int position, boolean isSelected, int htspVersion, RecyclerViewClickCallback clickCallback) {
+            binding.setRecording(recording);
+            binding.setPosition(position);
+            binding.setHtspVersion(htspVersion);
+            binding.setIsSelected(isSelected);
+            binding.setIsDualPane(isDualPane);
+            binding.setCallback(clickCallback);
+            binding.executePendingBindings();
+        }
     }
 }
