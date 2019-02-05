@@ -1,9 +1,9 @@
 $ 2.1.0
   % VERSION 2.1.0
-  _ 01.02.2019
-    * Upgraded to AndroidX
-    * Switched some source files to Kotlin
-    * Small bug fixes
+  _ 04.02.2019
+    * Improved the loading of more programs if there are none available. Please select reconnect from the top menu if you have no epg data!
+    * Some internal changes to the code base like upgrading to AndroidX, switching some source files to kotlin and adding data binding in the manual recordings screen
+    * Some bug fixes
 $ 2.0.5
   % VERSION 2.0.5
   _ 29.01.2019
