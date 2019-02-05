@@ -110,8 +110,7 @@ public class StatusFragment extends BaseFragment {
                 return true;
             case R.id.menu_wol:
                 if (connection != null) {
-                    WakeOnLanTask task = new WakeOnLanTask(activity, connection);
-                    task.execute();
+                    new WakeOnLanTask(activity, connection).execute();
                 }
                 return true;
             case R.id.menu_refresh:
