@@ -62,6 +62,7 @@ public class FileLoggingTree extends BaseDebugTree {
                 FileOutputStream stream = new FileOutputStream(file, true);
                 stream.write(("Logging started\n").getBytes());
                 stream.write(("Application version: " + BuildConfig.VERSION_NAME + "(" + BuildConfig.BUILD_VERSION + ")\n").getBytes());
+                stream.write(("Application build time is " + BuildConfig.BUILD_TIME + ", git commit hash is " + BuildConfig.GIT_SHA + ")\n").getBytes());
                 stream.write(("Android version: " + Build.VERSION.RELEASE + "(" + Build.VERSION.SDK_INT + ")\n").getBytes());
                 stream.close();
             }
