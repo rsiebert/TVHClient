@@ -191,8 +191,8 @@ public class SeriesRecordingListFragment extends BaseFragment implements Recycle
         }
     }
 
-    private void showPopupMenu(View view) {
-        final SeriesRecording seriesRecording = (SeriesRecording) view.getTag();
+    private void showPopupMenu(View view, int position) {
+        final SeriesRecording seriesRecording = recyclerViewAdapter.getItem(position);
         if (getActivity() == null || seriesRecording == null) {
             return;
         }
@@ -244,7 +244,7 @@ public class SeriesRecordingListFragment extends BaseFragment implements Recycle
 
     @Override
     public boolean onLongClick(View view, int position) {
-        showPopupMenu(view);
+        showPopupMenu(view, position);
         return true;
     }
 
