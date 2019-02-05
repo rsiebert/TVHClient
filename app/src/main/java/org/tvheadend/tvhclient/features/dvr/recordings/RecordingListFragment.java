@@ -165,8 +165,8 @@ public class RecordingListFragment extends BaseFragment implements RecyclerViewC
         }
     }
 
-    private void showPopupMenu(View view) {
-        final Recording recording = (Recording) view.getTag();
+    private void showPopupMenu(View view, int position) {
+        final Recording recording = recyclerViewAdapter.getItem(position);
         if (activity == null || recording == null) {
             return;
         }
@@ -261,7 +261,7 @@ public class RecordingListFragment extends BaseFragment implements RecyclerViewC
 
     @Override
     public boolean onLongClick(View view, int position) {
-        showPopupMenu(view);
+        showPopupMenu(view, position);
         return true;
     }
 
