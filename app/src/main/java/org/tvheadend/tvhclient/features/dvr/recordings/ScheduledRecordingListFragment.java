@@ -21,13 +21,12 @@ public class ScheduledRecordingListFragment extends RecordingListFragment implem
 
         toolbarInterface.setTitle(TextUtils.isEmpty(searchQuery)
                 ? getString(R.string.scheduled_recordings) : getString(R.string.search_results));
-
-        recyclerViewAdapter.setRecordingType(REC_TYPE_SCHEDULED);
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        // TODO consider duplicate setting for all recording types
         // Start observing the recordings here because the onActivityCreated method is not
         // called when the user has returned from the settings activity. In this case
         // the changes to the recording UI like hiding duplicates would not become active.

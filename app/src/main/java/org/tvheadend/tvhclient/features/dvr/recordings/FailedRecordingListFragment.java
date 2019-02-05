@@ -17,8 +17,6 @@ public class FailedRecordingListFragment extends RecordingListFragment implement
         toolbarInterface.setTitle(TextUtils.isEmpty(searchQuery)
                 ? getString(R.string.failed_recordings) : getString(R.string.search_results));
 
-        recyclerViewAdapter.setRecordingType(REC_TYPE_FAILED);
-
         viewModel.getFailedRecordings().observe(getViewLifecycleOwner(), recordings -> {
             if (recordings != null) {
                 recyclerViewAdapter.addItems(recordings);

@@ -18,8 +18,6 @@ public class CompletedRecordingListFragment extends RecordingListFragment implem
         toolbarInterface.setTitle(TextUtils.isEmpty(searchQuery)
                 ? getString(R.string.completed_recordings) : getString(R.string.search_results));
 
-        recyclerViewAdapter.setRecordingType(REC_TYPE_COMPLETED);
-
         viewModel.getCompletedRecordings().observe(getViewLifecycleOwner(), recordings -> {
             if (recordings != null) {
                 recyclerViewAdapter.addItems(recordings);

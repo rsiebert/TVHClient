@@ -17,8 +17,6 @@ public class RemovedRecordingListFragment extends RecordingListFragment implemen
         toolbarInterface.setTitle(TextUtils.isEmpty(searchQuery)
                 ? getString(R.string.removed_recordings) : getString(R.string.search_results));
 
-        recyclerViewAdapter.setRecordingType(REC_TYPE_REMOVED);
-
         viewModel.getRemovedRecordings().observe(getViewLifecycleOwner(), recordings -> {
             if (recordings != null) {
                 recyclerViewAdapter.addItems(recordings);
