@@ -299,7 +299,7 @@
     <string name="recording_started">Aufnahme gestartet</string>
     <string name="recording_starts_in">Aufnahme startet in %d Min.</string>
     <string name="recording_time">Aufnahmezeit</string>
-    <string name="recording_time_missed">Geplante Aufnahme wurde verpaßt</string>
+    <string name="recording_time_missed">Geplante Aufnahme wurde verpasst</string>
     <string name="recordings">Aufnahmen</string>
     <string name="refresh">Aktualisieren</string>
     <string name="remove">Entfernen</string>
