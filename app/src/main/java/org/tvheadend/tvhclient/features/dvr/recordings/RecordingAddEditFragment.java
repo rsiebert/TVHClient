@@ -178,7 +178,7 @@ public class RecordingAddEditFragment extends BaseFragment implements BackPresse
         }
 
         isEnabledCheckbox.setVisibility(serverStatus.getHtspVersion() >= 23 && !recording.isRecording() ? View.VISIBLE : View.GONE);
-        isEnabledCheckbox.setChecked(recording.getEnabled() == 1);
+        isEnabledCheckbox.setChecked(recording.isEnabled());
 
         priorityTextView.setVisibility(!recording.isRecording() ? View.VISIBLE : View.GONE);
         priorityTextView.setText(RecordingUtils.getPriorityName(activity, recording.getPriority()));
@@ -298,7 +298,7 @@ public class RecordingAddEditFragment extends BaseFragment implements BackPresse
             intent.putExtra("start", recording.getStart() / 1000);
             intent.putExtra("startExtra", recording.getStartExtra());
             intent.putExtra("priority", recording.getPriority());
-            intent.putExtra("enabled", recording.getEnabled());
+            intent.putExtra("enabled", recording.isEnabled() ? 1 : 0);
         }
 
         // Add the recording profile if available and enabled
@@ -394,7 +394,7 @@ public class RecordingAddEditFragment extends BaseFragment implements BackPresse
 
     @OnCheckedChanged(R.id.is_enabled)
     void onEnabledCheckboxChanged(CompoundButton buttonView, boolean isChecked) {
-        recording.setEnabled(isChecked ? 1 : 0);
+        recording.setEnabled(isChecked);
     }
 
     @OnTextChanged(R.id.start_extra)
