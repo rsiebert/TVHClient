@@ -1,8 +1,10 @@
 package org.tvheadend.tvhclient.utils;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
+import android.text.format.DateUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -11,14 +13,104 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.data.entity.Recording;
 
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
+import androidx.annotation.NonNull;
 import androidx.databinding.BindingAdapter;
 import timber.log.Timber;
 
 public class BindingAdapterUtils {
+
+    // Constants required for the date calculation
+    private static final int TWO_DAYS = 1000 * 3600 * 24 * 2;
+    private static final int SIX_DAYS = 1000 * 3600 * 24 * 6;
+
+    @BindingAdapter("dataSizeText")
+    public static void setDataSizeText(TextView view, @NonNull Recording recording) {
+        Context context = view.getContext();
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        boolean showRecordingFileStatus = sharedPreferences.getBoolean("show_recording_file_status_enabled", false);
+
+        if (showRecordingFileStatus && (!recording.isScheduled() || recording.isScheduled() && recording.isRecording())) {
+            view.setVisibility(View.VISIBLE);
+            if (recording.getDataSize() > 1048576) {
+                view.setText(context.getResources().getString(R.string.data_size, recording.getDataSize() / 1048576, "MB"));
+            } else {
+                view.setText(context.getResources().getString(R.string.data_size, recording.getDataSize() / 1024, "KB"));
+            }
+        } else {
+            view.setVisibility(View.GONE);
+        }
+    }
+
+    @BindingAdapter("dataErrorText")
+    public static void setDataErrorText(TextView view, @NonNull Recording recording) {
+        Context context = view.getContext();
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        boolean showRecordingFileStatus = sharedPreferences.getBoolean("show_recording_file_status_enabled", false);
+
+        if (showRecordingFileStatus && (!recording.isScheduled() || recording.isScheduled() && recording.isRecording())) {
+            view.setVisibility(View.VISIBLE);
+            view.setText(context.getResources().getString(R.string.data_errors, recording.getDataErrors() == null ? "0" : recording.getDataErrors()));
+        } else {
+            view.setVisibility(View.GONE);
+        }
+    }
+
+    @BindingAdapter({"disabledText", "htspVersion"})
+    public static void setDisabledText(TextView view, @NonNull Recording recording, int htspVersion) {
+        if (!recording.isScheduled()) {
+            view.setVisibility(View.GONE);
+        } else {
+            setDisabledText(view, recording.isEnabled(), htspVersion);
+        }
+    }
+
+    @BindingAdapter({"disabledText", "htspVersion"})
+    public static void setDisabledText(TextView view, boolean isEnabled, int htspVersion) {
+        view.setVisibility(htspVersion >= 19 && !isEnabled ? View.VISIBLE : View.GONE);
+        view.setText(isEnabled ? R.string.recording_enabled : R.string.recording_disabled);
+    }
+
+    @BindingAdapter({"duplicateText", "htspVersion"})
+    public static void setDuplicateText(TextView view, @NonNull Recording recording, int htspVersion) {
+        if (!recording.isScheduled()) {
+            view.setVisibility(View.GONE);
+        } else {
+            view.setVisibility(htspVersion < 33 || recording.getDuplicate() == 0 ? View.GONE : View.VISIBLE);
+            view.setText(R.string.duplicate_recording);
+        }
+    }
+
+    @BindingAdapter("failedReasonText")
+    public static void setFailedReasonText(TextView view, @NonNull Recording recording) {
+        Context context = view.getContext();
+        String failedReasonText;
+
+        if (recording.isAborted()) {
+            failedReasonText = context.getResources().getString(R.string.recording_canceled);
+        } else if (recording.isMissed()) {
+            failedReasonText = context.getResources().getString(R.string.recording_time_missed);
+        } else if (recording.isFailed()) {
+            failedReasonText = context.getResources().getString(R.string.recording_file_invalid);
+        } else if (recording.isFileMissing()) {
+            failedReasonText = context.getResources().getString(R.string.recording_file_missing);
+        } else {
+            failedReasonText = "";
+        }
+
+        view.setVisibility((!TextUtils.isEmpty(failedReasonText) && !recording.isCompleted()) ? View.VISIBLE : View.GONE);
+        view.setText(failedReasonText);
+    }
+
+    @BindingAdapter("optionalText")
+    public static void setOptionalText(TextView view, String text) {
+        view.setVisibility(!TextUtils.isEmpty(text) ? View.VISIBLE : View.GONE);
+        view.setText(text);
+    }
 
     /**
      * Loads the given channel icon via Picasso into the image view
@@ -134,5 +226,92 @@ public class BindingAdapterUtils {
             localizedTime = sdf.format(time);
         }
         view.setText(localizedTime);
+    }
+
+    @BindingAdapter("dateText")
+    public static void setLocalizedDate(TextView view, long date) {
+        String localizedDate = "";
+        Context context = view.getContext();
+
+        if (DateUtils.isToday(date)) {
+            // Show the string today
+            localizedDate = context.getString(R.string.today);
+
+        } else if (date < System.currentTimeMillis() + TWO_DAYS
+                && date > System.currentTimeMillis() - TWO_DAYS) {
+            // Show a string like "42 minutes ago"
+            localizedDate = DateUtils.getRelativeTimeSpanString(
+                    date, System.currentTimeMillis(),
+                    DateUtils.DAY_IN_MILLIS).toString();
+
+        } else if (date < System.currentTimeMillis() + SIX_DAYS
+                && date > System.currentTimeMillis() - TWO_DAYS) {
+            // Show the day of the week, like Monday or Tuesday
+            SimpleDateFormat sdf = new SimpleDateFormat("EEEE", Locale.US);
+            localizedDate = sdf.format(date);
+        }
+
+        // Translate the day strings, if the string is empty
+        // use the day month year date representation
+        switch (localizedDate) {
+            case "today":
+                localizedDate = context.getString(R.string.today);
+                break;
+            case "tomorrow":
+                localizedDate = context.getString(R.string.tomorrow);
+                break;
+            case "in 2 days":
+                localizedDate = context.getString(R.string.in_2_days);
+                break;
+            case "Monday":
+                localizedDate = context.getString(R.string.monday);
+                break;
+            case "Tuesday":
+                localizedDate = context.getString(R.string.tuesday);
+                break;
+            case "Wednesday":
+                localizedDate = context.getString(R.string.wednesday);
+                break;
+            case "Thursday":
+                localizedDate = context.getString(R.string.thursday);
+                break;
+            case "Friday":
+                localizedDate = context.getString(R.string.friday);
+                break;
+            case "Saturday":
+                localizedDate = context.getString(R.string.saturday);
+                break;
+            case "Sunday":
+                localizedDate = context.getString(R.string.sunday);
+                break;
+            case "yesterday":
+                localizedDate = context.getString(R.string.yesterday);
+                break;
+            case "2 days ago":
+                localizedDate = context.getString(R.string.two_days_ago);
+                break;
+            default:
+                final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+                if (prefs.getBoolean("localized_date_time_format_enabled", false)) {
+                    // Show the date as defined with the currently active locale.
+                    // For the date display the short version will be used
+                    Locale locale;
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                        locale = context.getResources().getConfiguration().getLocales().get(0);
+                    } else {
+                        locale = context.getResources().getConfiguration().locale;
+                    }
+                    if (locale != null) {
+                        final java.text.DateFormat df = java.text.DateFormat.getDateInstance(java.text.DateFormat.SHORT, locale);
+                        localizedDate = df.format(date);
+                    }
+                } else {
+                    // Show the date using the default format like 31.07.2013
+                    SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy", Locale.US);
+                    localizedDate = sdf.format(date);
+                }
+                break;
+        }
+        view.setText(localizedDate);
     }
 }
