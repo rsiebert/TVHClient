@@ -163,6 +163,7 @@
             android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"
             app:disabledText="@{recording.enabled}"
+            app:htspVersion="@{htspVersion}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/title"
             app:layout_constraintTop_toBottomOf="@+id/days_of_week" />
