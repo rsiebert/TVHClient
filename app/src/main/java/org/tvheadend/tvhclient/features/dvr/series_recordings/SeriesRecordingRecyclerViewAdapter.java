@@ -1,22 +1,23 @@
 package org.tvheadend.tvhclient.features.dvr.series_recordings;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.SeriesRecording;
+import org.tvheadend.tvhclient.databinding.SeriesRecordingListAdapterBinding;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-class SeriesRecordingRecyclerViewAdapter extends RecyclerView.Adapter<SeriesRecordingViewHolder> implements Filterable {
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
+class SeriesRecordingRecyclerViewAdapter extends RecyclerView.Adapter<SeriesRecordingRecyclerViewAdapter.SeriesRecordingViewHolder> implements Filterable {
 
     private final RecyclerViewClickCallback clickCallback;
     private final boolean isDualPane;
@@ -36,15 +37,16 @@ class SeriesRecordingRecyclerViewAdapter extends RecyclerView.Adapter<SeriesReco
     @NonNull
     @Override
     public SeriesRecordingViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        final View view = LayoutInflater.from(parent.getContext()).inflate(viewType, parent, false);
-        return new SeriesRecordingViewHolder(view, isDualPane);
+        LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
+        SeriesRecordingListAdapterBinding itemBinding = SeriesRecordingListAdapterBinding.inflate(layoutInflater, parent, false);
+        return new SeriesRecordingViewHolder(itemBinding, isDualPane);
     }
 
     @Override
     public void onBindViewHolder(@NonNull SeriesRecordingViewHolder holder, int position) {
         if (recordingListFiltered.size() > position) {
             SeriesRecording recording = recordingListFiltered.get(position);
-            holder.bindData(recording, (selectedPosition == position), htspVersion, gmtOffset, clickCallback);
+            holder.bind(recording, position, (selectedPosition == position), htspVersion, gmtOffset, clickCallback);
         }
     }
 
@@ -130,5 +132,28 @@ class SeriesRecordingRecyclerViewAdapter extends RecyclerView.Adapter<SeriesReco
                 notifyDataSetChanged();
             }
         };
+    }
+
+    public static class SeriesRecordingViewHolder extends RecyclerView.ViewHolder {
+
+        private final SeriesRecordingListAdapterBinding binding;
+        private final boolean isDualPane;
+
+        SeriesRecordingViewHolder(SeriesRecordingListAdapterBinding binding, boolean isDualPane) {
+            super(binding.getRoot());
+            this.binding = binding;
+            this.isDualPane = isDualPane;
+        }
+
+        public void bind(SeriesRecording recording, int position, boolean isSelected, int htspVersion, int gmtOffset, RecyclerViewClickCallback clickCallback) {
+            binding.setRecording(recording);
+            binding.setPosition(position);
+            binding.setGmtOffset(gmtOffset);
+            binding.setHtspVersion(htspVersion);
+            binding.setIsSelected(isSelected);
+            binding.setIsDualPane(isDualPane);
+            binding.setCallback(clickCallback);
+            binding.executePendingBindings();
+        }
     }
 }
