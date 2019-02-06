@@ -79,6 +79,7 @@
             android:name=".data.service.EpgSyncIntentService"
             android:exported="false"
             android:permission="android.permission.BIND_JOB_SERVICE" />
+        <service android:name=".data.service_old.HTSService" />
 
         <provider
             android:name="org.tvheadend.tvhclient.features.search.SuggestionProvider"
