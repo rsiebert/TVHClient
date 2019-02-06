@@ -581,8 +581,10 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
         if (sharedPreferences.getBoolean("notifications_enabled", context.getResources().getBoolean(R.bool.pref_default_notifications_enabled))) {
             if (recording.isScheduled() && recording.getStart() > new Date().getTime()) {
                 Timber.d("Adding notification for recording " + recording.getTitle());
-                Integer offset = Integer.valueOf(sharedPreferences.getString("notification_lead_time", "0"));
-                NotificationUtils.addRecordingNotification(context, recording.getTitle(), recording.getId(), recording.getStart(), offset);
+                int offset = Integer.valueOf(sharedPreferences.getString("notification_lead_time", "0"));
+                if (recording.getTitle() != null) {
+                    NotificationUtils.addRecordingNotification(context, recording.getTitle(), recording.getId(), recording.getStart(), offset);
+                }
             }
         }
     }
@@ -965,15 +967,13 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
 
     private void handleDiskSpace(HtspMessage message) {
         ServerStatus serverStatus = appRepository.getServerStatusData().getActiveItem();
-        if (serverStatus != null) {
-            serverStatus.setFreeDiskSpace(message.getLong("freediskspace", 0));
-            serverStatus.setTotalDiskSpace(message.getLong("totaldiskspace", 0));
-            appRepository.getServerStatusData().updateItem(serverStatus);
+        serverStatus.setFreeDiskSpace(message.getLong("freediskspace", 0));
+        serverStatus.setTotalDiskSpace(message.getLong("totaldiskspace", 0));
+        appRepository.getServerStatusData().updateItem(serverStatus);
 
-            Timber.d("Received disk space information from server " + serverStatus.getServerName()
-                    + ", free disk space: " + serverStatus.getFreeDiskSpace()
-                    + ", total disk space: " + serverStatus.getTotalDiskSpace());
-        }
+        Timber.d("Received disk space information from server " + serverStatus.getServerName()
+                + ", free disk space: " + serverStatus.getFreeDiskSpace()
+                + ", total disk space: " + serverStatus.getTotalDiskSpace());
     }
 
     private void handleInitialSyncCompleted() {
@@ -1060,36 +1060,34 @@ public class EpgSyncTask implements HtspMessage.Listener, Authenticator.Listener
     private void setDefaultProfileSelection() {
         Timber.d("Setting default profiles in case none are selected yet");
         ServerStatus serverStatus = appRepository.getServerStatusData().getActiveItem();
-        if (serverStatus != null) {
-            if (serverStatus.getHtspPlaybackServerProfileId() == 0) {
-                for (ServerProfile serverProfile : appRepository.getServerProfileData().getHtspPlaybackProfiles()) {
-                    if (serverProfile.getName().equals("htsp")) {
-                        Timber.d("Setting htsp profile to htsp");
-                        serverStatus.setHtspPlaybackServerProfileId(serverProfile.getId());
-                        break;
-                    }
+        if (serverStatus.getHtspPlaybackServerProfileId() == 0) {
+            for (ServerProfile serverProfile : appRepository.getServerProfileData().getHtspPlaybackProfiles()) {
+                if (TextUtils.equals(serverProfile.getName(), ("htsp"))) {
+                    Timber.d("Setting htsp profile to htsp");
+                    serverStatus.setHtspPlaybackServerProfileId(serverProfile.getId());
+                    break;
                 }
             }
-            if (serverStatus.getHttpPlaybackServerProfileId() == 0) {
-                for (ServerProfile serverProfile : appRepository.getServerProfileData().getHttpPlaybackProfiles()) {
-                    if (serverProfile.getName().equals("pass")) {
-                        Timber.d("Setting http profile to pass");
-                        serverStatus.setHttpPlaybackServerProfileId(serverProfile.getId());
-                        break;
-                    }
-                }
-            }
-            if (serverStatus.getRecordingServerProfileId() == 0) {
-                for (ServerProfile serverProfile : appRepository.getServerProfileData().getRecordingProfiles()) {
-                    if (serverProfile.getName().equals("Default Profile")) {
-                        Timber.d("Setting recording profile to default");
-                        serverStatus.setRecordingServerProfileId(serverProfile.getId());
-                        break;
-                    }
-                }
-            }
-            appRepository.getServerStatusData().updateItem(serverStatus);
         }
+        if (serverStatus.getHttpPlaybackServerProfileId() == 0) {
+            for (ServerProfile serverProfile : appRepository.getServerProfileData().getHttpPlaybackProfiles()) {
+                if (TextUtils.equals(serverProfile.getName(), ("pass"))) {
+                    Timber.d("Setting http profile to pass");
+                    serverStatus.setHttpPlaybackServerProfileId(serverProfile.getId());
+                    break;
+                }
+            }
+        }
+        if (serverStatus.getRecordingServerProfileId() == 0) {
+            for (ServerProfile serverProfile : appRepository.getServerProfileData().getRecordingProfiles()) {
+                if (TextUtils.equals(serverProfile.getName(), ("Default Profile"))) {
+                    Timber.d("Setting recording profile to default");
+                    serverStatus.setRecordingServerProfileId(serverProfile.getId());
+                    break;
+                }
+            }
+        }
+        appRepository.getServerStatusData().updateItem(serverStatus);
     }
 
     /**
