@@ -1,0 +1,1777 @@
+package org.tvheadend.tvhclient.data.service_old;
+
+import android.app.Service;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.IBinder;
+import android.text.TextUtils;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.tvheadend.tvhclient.MainApplication;
+import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.data.entity.Channel;
+import org.tvheadend.tvhclient.data.entity.ChannelTag;
+import org.tvheadend.tvhclient.data.entity.Connection;
+import org.tvheadend.tvhclient.data.entity.Program;
+import org.tvheadend.tvhclient.data.entity.Recording;
+import org.tvheadend.tvhclient.data.entity.SeriesRecording;
+import org.tvheadend.tvhclient.data.entity.ServerProfile;
+import org.tvheadend.tvhclient.data.entity.ServerStatus;
+import org.tvheadend.tvhclient.data.entity.TagAndChannel;
+import org.tvheadend.tvhclient.data.entity.TimerRecording;
+import org.tvheadend.tvhclient.data.repository.AppRepository;
+import org.tvheadend.tvhclient.data.service.htsp.HtspConnection;
+import org.tvheadend.tvhclient.data.service.htsp.tasks.Authenticator;
+import org.tvheadend.tvhclient.features.shared.receivers.ServiceStatusReceiver;
+import org.tvheadend.tvhclient.utils.MiscUtils;
+import org.tvheadend.tvhclient.utils.NotificationUtils;
+import org.tvheadend.tvhclient.utils.SnackbarUtils;
+
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+
+import javax.inject.Inject;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import timber.log.Timber;
+
+public class HTSService extends Service implements HTSConnectionListener {
+
+    private ScheduledExecutorService execService;
+    private HTSConnection htsConnection;
+    private Connection connection;
+
+    @Inject
+    protected AppRepository appRepository;
+    @Inject
+    protected SharedPreferences sharedPreferences;
+
+    private final ArrayList<Program> pendingEventOps = new ArrayList<>();
+    private final ArrayList<Channel> pendingChannelOps = new ArrayList<>();
+    private final ArrayList<ChannelTag> pendingChannelTagOps = new ArrayList<>();
+    private final ArrayList<Recording> pendingRecordingOps = new ArrayList<>();
+    private boolean initialSyncWithServerRunning;
+    private boolean syncEventsRequired;
+    private boolean syncRequired;
+    private boolean firstEventReceived = false;
+    private int htspVersion = 13;
+
+    @Override
+    public void onCreate() {
+        Timber.d("Starting service");
+        MainApplication.getComponent().inject(this);
+        execService = Executors.newScheduledThreadPool(10);
+        connection = appRepository.getConnectionData().getActiveItem();
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        Timber.d("Received command for service");
+
+        final String action = intent.getAction();
+        if (action == null || action.isEmpty()) {
+            return START_NOT_STICKY;
+        }
+
+        switch (action) {
+            case "connect":
+                Timber.d("Connection to server requested");
+                boolean force = intent.getBooleanExtra("force", false);
+                if (htsConnection != null && force) {
+                    Timber.d("Closing existing connection");
+                    htsConnection.closeConnection();
+                }
+                if (htsConnection == null || !htsConnection.isConnected()) {
+                    Timber.d("Connecting to server");
+                    htsConnection = new HTSConnection(this.getApplicationContext(), appRepository, connection, this);
+
+                    // Since this is blocking, spawn to a new thread
+                    execService.execute(() -> {
+                        htsConnection.openConnection(connection.getHostname(), connection.getPort());
+                        htsConnection.authenticate(connection.getUsername(), connection.getPassword());
+                    });
+                }
+                break;
+
+            case "disconnect":
+                htsConnection.closeConnection();
+                break;
+
+            case "getDiskSpace":
+                getDiscSpace();
+                break;
+            case "getSysTime":
+                getSystemTime();
+                break;
+            case "getChannel":
+                getChannel(intent);
+                break;
+            case "getEvent":
+                getEvent(intent);
+                break;
+            case "getEvents":
+                getEvents(intent);
+                break;
+            case "epgQuery":
+                getEpgQuery(intent);
+                break;
+            case "addDvrEntry":
+                addDvrEntry(intent);
+                break;
+            case "updateDvrEntry":
+                updateDvrEntry(intent);
+                break;
+            case "cancelDvrEntry":
+            case "deleteDvrEntry":
+            case "stopDvrEntry":
+                removeDvrEntry(intent);
+                break;
+            case "addAutorecEntry":
+                addAutorecEntry(intent);
+                break;
+            case "updateAutorecEntry":
+                updateAutorecEntry(intent);
+                break;
+            case "deleteAutorecEntry":
+                deleteAutorecEntry(intent);
+                break;
+            case "addTimerecEntry":
+                addTimerrecEntry(intent);
+                break;
+            case "updateTimerecEntry":
+                updateTimerrecEntry(intent);
+                break;
+            case "deleteTimerecEntry":
+                deleteTimerrecEntry(intent);
+                break;
+            case "getTicket":
+                getTicket(intent);
+                break;
+            case "getProfiles":
+                getProfiles();
+                break;
+            case "getDvrConfigs":
+                getDvrConfigs();
+                break;
+            // Internal calls that are called from the intent service
+            case "getMoreEvents":
+                getMoreEvents(intent);
+                break;
+            case "loadChannelIcons":
+                loadAllChannelIcons();
+                break;
+        }
+
+        Timber.d("onStartCommand() returned: " + START_NOT_STICKY);
+        return START_NOT_STICKY;
+    }
+
+    @Override
+    public void onDestroy() {
+        Timber.d("Stopping service");
+        execService.shutdown();
+        if (htsConnection != null) {
+            htsConnection.closeConnection();
+        }
+    }
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        throw new UnsupportedOperationException("Binding to service not allowed");
+    }
+
+    @Override
+    public void onAuthenticationStateChange(@NonNull Authenticator.State state) {
+        Timber.d("Authentication state changed to " + state);
+
+        switch (state) {
+            case FAILED:
+                sendEpgSyncStatusMessage(ServiceStatusReceiver.State.FAILED,
+                        getString(R.string.authentication_failed), "");
+                break;
+            case FAILED_BAD_CREDENTIALS:
+                sendEpgSyncStatusMessage(ServiceStatusReceiver.State.FAILED,
+                        getString(R.string.authentication_failed),
+                        getString(R.string.bad_username_or_password));
+                break;
+            case AUTHENTICATING:
+
+                break;
+            case AUTHENTICATED:
+                sendEpgSyncStatusMessage(ServiceStatusReceiver.State.CONNECTED,
+                        getString(R.string.connected_to_server), "");
+                startAsyncCommunicationWithServer();
+                break;
+        }
+    }
+
+    @Override
+    public void onConnectionStateChange(@NonNull HtspConnection.State state) {
+        Timber.d("Simple HTSP connection state changed, state is " + state);
+
+        switch (state) {
+            case FAILED:
+                sendEpgSyncStatusMessage(ServiceStatusReceiver.State.FAILED,
+                        getString(R.string.connection_failed),
+                        null);
+                break;
+            case FAILED_CONNECTING_TO_SERVER:
+                sendEpgSyncStatusMessage(ServiceStatusReceiver.State.FAILED,
+                        getString(R.string.connection_failed),
+                        getString(R.string.failed_connecting_to_server));
+                break;
+            case FAILED_EXCEPTION_OPENING_SOCKET:
+                sendEpgSyncStatusMessage(ServiceStatusReceiver.State.FAILED,
+                        getString(R.string.connection_failed),
+                        getString(R.string.failed_opening_socket));
+                break;
+            case FAILED_INTERRUPTED:
+                sendEpgSyncStatusMessage(ServiceStatusReceiver.State.FAILED,
+                        getString(R.string.connection_failed),
+                        getString(R.string.failed_during_connection_attempt));
+                break;
+            case FAILED_UNRESOLVED_ADDRESS:
+                sendEpgSyncStatusMessage(ServiceStatusReceiver.State.FAILED,
+                        getString(R.string.connection_failed),
+                        getString(R.string.failed_to_resolve_address));
+                break;
+            case CONNECTING:
+                sendEpgSyncStatusMessage(ServiceStatusReceiver.State.CONNECTING,
+                        getString(R.string.connecting_to_server), "");
+                break;
+            case CLOSED:
+                sendEpgSyncStatusMessage(ServiceStatusReceiver.State.CLOSED,
+                        getString(R.string.connection_closed), "");
+                break;
+        }
+    }
+
+    private void startAsyncCommunicationWithServer() {
+        Timber.d("Starting async communication with server");
+
+        htspVersion = appRepository.getServerStatusData().getActiveItem().getHtspVersion();
+
+        pendingChannelOps.clear();
+        pendingChannelTagOps.clear();
+        pendingRecordingOps.clear();
+        pendingEventOps.clear();
+
+        initialSyncWithServerRunning = true;
+
+        HTSMessage enableAsyncMetadataRequest = new HTSMessage();
+        enableAsyncMetadataRequest.setMethod("enableAsyncMetadata");
+
+        long epgMaxTime = Long.parseLong(sharedPreferences.getString("epg_max_time", getResources().getString(R.string.pref_default_epg_max_time)));
+        long currentTimeInSeconds = (System.currentTimeMillis() / 1000L);
+        long lastUpdateTime = connection.getLastUpdate();
+
+        syncRequired = connection.isSyncRequired();
+        Timber.d("Sync from server required: " + syncRequired);
+        syncEventsRequired = syncRequired || ((lastUpdateTime + epgMaxTime) < currentTimeInSeconds);
+        Timber.d("Sync events from server required: " + syncEventsRequired);
+
+        // Send the first sync message to any broadcast listeners
+        if (syncRequired) {
+            Timber.d("Sending status that sync has started");
+            sendEpgSyncStatusMessage(ServiceStatusReceiver.State.SYNC_STARTED,
+                    getString(R.string.loading_data), "");
+        }
+        if (syncEventsRequired) {
+            Timber.d("Enabling requesting of epg data");
+            Timber.d("Adding field to the enableAsyncMetadata request" +
+                    ", epgMaxTime is " + (epgMaxTime + currentTimeInSeconds) +
+                    ", lastUpdate time is " + (currentTimeInSeconds - 12 * 60 * 60));
+
+            enableAsyncMetadataRequest.put("epg", 1);
+            //enableAsyncMetadataRequest.put("epgMaxTime", epgMaxTime + currentTimeInSeconds);
+            // Only provide metadata that has changed since 12 hours ago.
+            // The events past those 12 hours are not relevant and don't need to be sent by the server
+            enableAsyncMetadataRequest.put("lastUpdate", (currentTimeInSeconds - 12 * 60 * 60));
+        }
+
+        htsConnection.sendMessage(enableAsyncMetadataRequest, response -> {
+            // NOP
+        });
+    }
+
+    void sendEpgSyncStatusMessage(ServiceStatusReceiver.State state, String msg, String details) {
+        Intent intent = new Intent(ServiceStatusReceiver.ACTION);
+        intent.putExtra(ServiceStatusReceiver.STATE, state);
+        if (!TextUtils.isEmpty(msg)) {
+            intent.putExtra(ServiceStatusReceiver.MESSAGE, msg);
+        }
+        if (!TextUtils.isEmpty(details)) {
+            intent.putExtra(ServiceStatusReceiver.DETAILS, details);
+        }
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+    }
+
+    private void handleInitialSyncCompleted() {
+        Timber.d("Received initial sync data from server");
+
+        if (syncRequired) {
+            sendEpgSyncStatusMessage(ServiceStatusReceiver.State.SYNC_IN_PROGRESS,
+                    getString(R.string.saving_data), "");
+        }
+
+        // Save the channels and tags only during a forced sync.
+        // This avoids the channel list being updated by the recyclerview
+        if (syncRequired) {
+            Timber.d("Sync of channels and tags is required, saving");
+            saveAllReceivedChannels();
+            saveAllReceivedChannelTags();
+        }
+        // Only save any received events when they shall be loaded
+        if (syncEventsRequired) {
+            Timber.d("Sync of all evens is required, saving events");
+            saveAllReceivedEvents();
+        }
+        // Recordings are always saved to keep up to
+        // date with the recording states from the server
+        saveAllReceivedRecordings();
+
+        getAdditionalServerData();
+
+        Timber.d("Updating connection status with full sync completed");
+        connection.setSyncRequired(false);
+        Timber.d("Updating connection status with last update time");
+        long currentTime = System.currentTimeMillis() / 1000L;
+        connection.setLastUpdate(currentTime);
+        appRepository.getConnectionData().updateItem(connection);
+
+        loadAllChannelIcons();
+
+        // The initial sync is considered to be done at this point.
+        // Send the message to the listeners that the sync is done
+        if (syncRequired) {
+            sendEpgSyncStatusMessage(ServiceStatusReceiver.State.SYNC_DONE,
+                    getString(R.string.loading_data_done), "");
+        }
+
+        syncRequired = false;
+        syncEventsRequired = false;
+        initialSyncWithServerRunning = false;
+
+        Timber.d("Done receiving initial data from server");
+    }
+
+    /**
+     * Loads additional data from the server that is required after the initial sync is done.
+     * This includes the disc space, the server system time and the playback and recording profiles.
+     * If the server did not provide all required default profiles, then add them here.
+     */
+    private void getAdditionalServerData() {
+        Timber.d("Loading additional data from server");
+
+        getDiscSpace();
+        getSystemTime();
+        getProfiles();
+        getHttpProfiles();
+        getDvrConfigs();
+
+        addMissingHtspPlaybackProfileIfNotExists("htsp");
+        addMissingHttpPlaybackProfileIfNotExists("matroska");
+        addMissingHttpPlaybackProfileIfNotExists("audio");
+        addMissingHttpPlaybackProfileIfNotExists("pass");
+
+        setDefaultProfileSelection();
+    }
+
+    public void onMessage(HTSMessage message) {
+        String method = message.getMethod();
+        switch (method) {
+            case "tagAdd":
+                handleTagAdd(message);
+                break;
+            case "tagUpdate":
+                handleTagUpdate(message);
+                break;
+            case "tagDelete":
+                handleTagDelete(message);
+                break;
+            case "channelAdd":
+                handleChannelAdd(message);
+                break;
+            case "channelUpdate":
+                handleChannelUpdate(message);
+                break;
+            case "channelDelete":
+                handleChannelDelete(message);
+                break;
+            case "dvrEntryAdd":
+                handleDvrEntryAdd(message);
+                break;
+            case "dvrEntryUpdate":
+                handleDvrEntryUpdate(message);
+                break;
+            case "dvrEntryDelete":
+                handleDvrEntryDelete(message);
+                break;
+            case "timerecEntryAdd":
+                handleTimerRecEntryAdd(message);
+                break;
+            case "timerecEntryUpdate":
+                handleTimerRecEntryUpdate(message);
+                break;
+            case "timerecEntryDelete":
+                handleTimerRecEntryDelete(message);
+                break;
+            case "autorecEntryAdd":
+                handleAutorecEntryAdd(message);
+                break;
+            case "autorecEntryUpdate":
+                handleAutorecEntryUpdate(message);
+                break;
+            case "autorecEntryDelete":
+                handleAutorecEntryDelete(message);
+                break;
+            case "eventAdd":
+                handleEventAdd(message);
+                break;
+            case "eventUpdate":
+                handleEventUpdate(message);
+                break;
+            case "eventDelete":
+                handleEventDelete(message);
+                break;
+            case "initialSyncCompleted":
+                handleInitialSyncCompleted();
+                break;
+            case "getSysTime":
+                handleSystemTime(message);
+                break;
+            case "getDiskSpace":
+                handleDiskSpace(message);
+                break;
+            case "getProfiles":
+                handleHtspProfiles(message);
+                break;
+            case "getDvrConfigs":
+                handleDvrConfigs(message);
+                break;
+            case "getEvents":
+                handleGetEvents(message, new Intent());
+                break;
+
+            case "subscriptionStart":
+
+                break;
+            case "subscriptionStatus":
+
+                break;
+            case "subscriptionStop":
+
+                break;
+            case "subscriptionGrace":
+
+                break;
+            case "muxpkt":
+
+                break;
+            case "queueStatus":
+
+                break;
+            case "signalStatus":
+
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void getDiscSpace() {
+        HTSMessage request = new HTSMessage();
+        request.setMethod("getDiskSpace");
+        htsConnection.sendMessage(request, message -> {
+            ServerStatus serverStatus = appRepository.getServerStatusData().getActiveItem();
+            serverStatus.setFreeDiskSpace(message.getLong("freediskspace", 0));
+            serverStatus.setTotalDiskSpace(message.getLong("totaldiskspace", 0));
+            appRepository.getServerStatusData().updateItem(serverStatus);
+
+            Timber.d("Received disk space information from server " + serverStatus.getServerName()
+                    + ", free disk space: " + serverStatus.getFreeDiskSpace()
+                    + ", total disk space: " + serverStatus.getTotalDiskSpace());
+        });
+    }
+
+    private void getSystemTime() {
+        HTSMessage request = new HTSMessage();
+        request.setMethod("getSysTime");
+        htsConnection.sendMessage(request, response -> {
+            if (response != null) {
+                handleSystemTime(response);
+            } else {
+                Timber.d("Response is null");
+            }
+        });
+    }
+
+    private void getDvrConfigs() {
+        HTSMessage request = new HTSMessage();
+        request.setMethod("getDvrConfigs");
+        htsConnection.sendMessage(request, response -> {
+            if (response != null) {
+                handleDvrConfigs(response);
+            } else {
+                Timber.d("Response is null");
+            }
+        });
+    }
+
+    private void getProfiles() {
+        HTSMessage request = new HTSMessage();
+        request.setMethod("getProfiles");
+        htsConnection.sendMessage(request, response -> {
+            if (response != null) {
+                handleHtspProfiles(response);
+            } else {
+                Timber.d("Response is null");
+            }
+        });
+    }
+
+    private void getHttpProfiles() {
+        HTSMessage request = new HTSMessage();
+        request.setMethod("api");
+        request.put("path", "profile/list");
+
+        htsConnection.sendMessage(request, response -> {
+            if (response != null) {
+                handleHttpProfiles(response);
+            } else {
+                Timber.d("Response is null");
+            }
+        });
+    }
+
+    @SuppressWarnings("SameParameterValue")
+    private void addMissingHtspPlaybackProfileIfNotExists(String name) {
+        boolean profileExists = false;
+
+        String[] profileNames = appRepository.getServerProfileData().getHtspPlaybackProfileNames();
+        for (String profileName : profileNames) {
+            if (profileName.equals(name)) {
+                Timber.d("Default htsp playback profile " + name + " exists already");
+                profileExists = true;
+            }
+        }
+        if (!profileExists) {
+            Timber.d("Default htsp playback profile " + name + " does not exist, adding manually");
+            ServerProfile serverProfile = new ServerProfile();
+            serverProfile.setConnectionId(connection.getId());
+            serverProfile.setName(name);
+            serverProfile.setType("htsp_playback");
+            appRepository.getServerProfileData().addItem(serverProfile);
+        }
+    }
+
+    private void addMissingHttpPlaybackProfileIfNotExists(String name) {
+        boolean profileExists = false;
+
+        String[] profileNames = appRepository.getServerProfileData().getHttpPlaybackProfileNames();
+        for (String profileName : profileNames) {
+            if (profileName.equals(name)) {
+                Timber.d("Default http playback profile " + name + " exists already");
+                profileExists = true;
+            }
+        }
+        if (!profileExists) {
+            Timber.d("Default http playback profile " + name + " does not exist, adding manually");
+            ServerProfile serverProfile = new ServerProfile();
+            serverProfile.setConnectionId(connection.getId());
+            serverProfile.setName(name);
+            serverProfile.setType("http_playback");
+            appRepository.getServerProfileData().addItem(serverProfile);
+        }
+    }
+
+    private void setDefaultProfileSelection() {
+        Timber.d("Setting default profiles in case none are selected yet");
+        ServerStatus serverStatus = appRepository.getServerStatusData().getActiveItem();
+        if (serverStatus.getHtspPlaybackServerProfileId() == 0) {
+            for (ServerProfile serverProfile : appRepository.getServerProfileData().getHtspPlaybackProfiles()) {
+                if (TextUtils.equals(serverProfile.getName(), ("htsp"))) {
+                    Timber.d("Setting htsp profile to htsp");
+                    serverStatus.setHtspPlaybackServerProfileId(serverProfile.getId());
+                    break;
+                }
+            }
+        }
+        if (serverStatus.getHttpPlaybackServerProfileId() == 0) {
+            for (ServerProfile serverProfile : appRepository.getServerProfileData().getHttpPlaybackProfiles()) {
+                if (TextUtils.equals(serverProfile.getName(), ("pass"))) {
+                    Timber.d("Setting http profile to pass");
+                    serverStatus.setHttpPlaybackServerProfileId(serverProfile.getId());
+                    break;
+                }
+            }
+        }
+        if (serverStatus.getRecordingServerProfileId() == 0) {
+            for (ServerProfile serverProfile : appRepository.getServerProfileData().getRecordingProfiles()) {
+                if (TextUtils.equals(serverProfile.getName(), ("Default Profile"))) {
+                    Timber.d("Setting recording profile to default");
+                    serverStatus.setRecordingServerProfileId(serverProfile.getId());
+                    break;
+                }
+            }
+        }
+        appRepository.getServerStatusData().updateItem(serverStatus);
+    }
+
+    /**
+     * Server to client method.
+     * A channel tag has been added on the server. Additionally to saving the new tag the
+     * number of associated channels will be
+     *
+     * @param msg The message with the new tag data
+     */
+    private void handleTagAdd(HTSMessage msg) {
+        if (!initialSyncWithServerRunning) {
+            return;
+        }
+
+        // During initial sync no channels are yet saved. So use the temporarily
+        // stored channels to calculate the channel count for the channel tag
+        ChannelTag addedTag = HTSUtils.convertMessageToChannelTagModel(new ChannelTag(), msg, pendingChannelOps);
+        addedTag.setConnectionId(connection.getId());
+
+        Timber.d("Sync is running, adding channel tag");
+        pendingChannelTagOps.add(addedTag);
+    }
+
+    /**
+     * Server to client method.
+     * A tag has been updated on the server.
+     *
+     * @param msg The message with the updated tag data
+     */
+    private void handleTagUpdate(HTSMessage msg) {
+        if (!initialSyncWithServerRunning) {
+            return;
+        }
+
+        ChannelTag channelTag = appRepository.getChannelTagData().getItemById(msg.getInteger("tagId"));
+        if (channelTag == null) {
+            Timber.d("Could not find a channel tag with id " + msg.getInteger("tagId") + " in the database");
+            channelTag = new ChannelTag();
+        }
+
+        // During initial sync no channels are yet saved. So use the temporarily
+        // stored channels to calculate the channel count for the channel tag
+        ChannelTag updatedTag = HTSUtils.convertMessageToChannelTagModel(channelTag, msg, pendingChannelOps);
+        updatedTag.setConnectionId(connection.getId());
+        updatedTag.setSelected(channelTag.isSelected());
+
+        Timber.d("Sync is running, updating channel tag");
+        pendingChannelTagOps.add(updatedTag);
+
+        if (syncRequired && pendingChannelTagOps.size() % 10 == 0) {
+            sendEpgSyncStatusMessage(ServiceStatusReceiver.State.SYNC_IN_PROGRESS,
+                    getString(R.string.receiving_data),
+                    "Received " + pendingChannelTagOps.size() + " channel tags");
+        }
+    }
+
+    /**
+     * Server to client method.
+     * A tag has been deleted on the server.
+     *
+     * @param msg The message with the tag id that was deleted
+     */
+    private void handleTagDelete(HTSMessage msg) {
+        if (msg.containsKey("tagId")) {
+            ChannelTag tag = appRepository.getChannelTagData().getItemById(msg.getInteger("tagId"));
+            if (tag != null) {
+                deleteIconFileFromCache(tag.getTagIcon());
+                appRepository.getChannelTagData().removeItem(tag);
+                appRepository.getTagAndChannelData().removeItemByTagId(tag.getTagId());
+            }
+        }
+    }
+
+    /**
+     * Server to client method.
+     * A channel has been added on the server.
+     *
+     * @param msg The message with the new channel data
+     */
+    private void handleChannelAdd(HTSMessage msg) {
+        if (!initialSyncWithServerRunning) {
+            return;
+        }
+
+        Channel channel = HTSUtils.convertMessageToChannelModel(new Channel(), msg);
+        channel.setConnectionId(connection.getId());
+        channel.setServerOrder(pendingChannelOps.size() + 1);
+
+        Timber.d("Sync is running, adding channel " +
+                "name '" + channel.getName() + "', " +
+                "id " + channel.getId() + ", " +
+                "number " + channel.getDisplayNumber() + ", " +
+                "server order " + channel.getServerOrder());
+
+        pendingChannelOps.add(channel);
+
+        if (syncRequired && pendingChannelOps.size() % 25 == 0) {
+            sendEpgSyncStatusMessage(ServiceStatusReceiver.State.SYNC_IN_PROGRESS,
+                    getString(R.string.receiving_data),
+                    "Received " + pendingChannelOps.size() + " channels");
+        }
+    }
+
+    /**
+     * Server to client method.
+     * A channel has been updated on the server.
+     *
+     * @param msg The message with the updated channel data
+     */
+    private void handleChannelUpdate(HTSMessage msg) {
+        if (!initialSyncWithServerRunning) {
+            return;
+        }
+
+        Channel channel = appRepository.getChannelData().getItemById(msg.getInteger("channelId"));
+        if (channel == null) {
+            Timber.d("Could not find a channel with id " + msg.getInteger("channelId") + " in the database");
+            return;
+        }
+        Channel updatedChannel = HTSUtils.convertMessageToChannelModel(channel, msg);
+        appRepository.getChannelData().updateItem(updatedChannel);
+    }
+
+    /**
+     * Server to client method.
+     * A channel has been deleted on the server.
+     *
+     * @param msg The message with the channel id that was deleted
+     */
+    private void handleChannelDelete(HTSMessage msg) {
+        if (msg.containsKey("channelId")) {
+            int channelId = msg.getInteger("channelId");
+
+            Channel channel = appRepository.getChannelData().getItemById(channelId);
+            if (channel != null && !TextUtils.isEmpty(channel.getIcon())) {
+                deleteIconFileFromCache(channel.getIcon());
+            } else {
+                Timber.e("Could not delete channel icon from database");
+            }
+            if (channel != null) {
+                appRepository.getChannelData().removeItem(channel);
+            }
+        }
+    }
+
+    /**
+     * Server to client method.
+     * A recording has been added on the server.
+     *
+     * @param msg The message with the new recording data
+     */
+    private void handleDvrEntryAdd(HTSMessage msg) {
+        Recording recording = HTSUtils.convertMessageToRecordingModel(new Recording(), msg);
+        recording.setConnectionId(connection.getId());
+
+        if (initialSyncWithServerRunning) {
+            pendingRecordingOps.add(recording);
+
+            if (syncRequired && pendingRecordingOps.size() % 25 == 0) {
+                Timber.d("Sync is running, received " + pendingRecordingOps.size() + " recordings");
+                sendEpgSyncStatusMessage(ServiceStatusReceiver.State.SYNC_IN_PROGRESS,
+                        getString(R.string.receiving_data),
+                        "Received " + pendingRecordingOps.size() + " recordings");
+            }
+        } else {
+            appRepository.getRecordingData().addItem(recording);
+        }
+
+        if (sharedPreferences.getBoolean("notifications_enabled", getResources().getBoolean(R.bool.pref_default_notifications_enabled))) {
+            if (recording.isScheduled() && recording.getStart() > new Date().getTime()) {
+                Timber.d("Adding notification for recording " + recording.getTitle());
+                int offset = Integer.valueOf(sharedPreferences.getString("notification_lead_time", "0"));
+                if (recording.getTitle() != null) {
+                    NotificationUtils.addRecordingNotification(this, recording.getTitle(), recording.getId(), recording.getStart(), offset);
+                }
+            }
+        }
+    }
+
+    /**
+     * Server to client method.
+     * A recording has been updated on the server.
+     *
+     * @param msg The message with the updated recording data
+     */
+    private void handleDvrEntryUpdate(HTSMessage msg) {
+        // Get the existing recording
+        Recording recording = appRepository.getRecordingData().getItemById(msg.getInteger("id"));
+        if (recording == null) {
+            Timber.d("Could not find a recording with id " + msg.getInteger("id") + " in the database");
+            return;
+        }
+        Recording updatedRecording = HTSUtils.convertMessageToRecordingModel(recording, msg);
+        appRepository.getRecordingData().updateItem(updatedRecording);
+
+        if (sharedPreferences.getBoolean("notifications_enabled", getResources().getBoolean(R.bool.pref_default_notifications_enabled))) {
+            if (!recording.isScheduled() && !recording.isRecording()) {
+                Timber.d("Removing notification for recording " + recording.getTitle());
+                NotificationUtils.removeRecordingNotification(this, recording.getId());
+            }
+        }
+    }
+
+    /**
+     * Server to client method.
+     * A recording has been deleted on the server.
+     *
+     * @param msg The message with the recording id that was deleted
+     */
+    private void handleDvrEntryDelete(HTSMessage msg) {
+        if (msg.containsKey("id")) {
+            Recording recording = appRepository.getRecordingData().getItemById(msg.getInteger("id"));
+            if (recording != null) {
+                appRepository.getRecordingData().removeItem(recording);
+                if (sharedPreferences.getBoolean("notifications_enabled", getResources().getBoolean(R.bool.pref_default_notifications_enabled))) {
+                    Timber.d("Removing notification for recording " + recording.getTitle());
+                    NotificationUtils.removeRecordingNotification(this, recording.getId());
+                }
+            }
+        }
+    }
+
+    /**
+     * Server to client method.
+     * A series recording has been added on the server.
+     *
+     * @param msg The message with the new series recording data
+     */
+    private void handleAutorecEntryAdd(HTSMessage msg) {
+        SeriesRecording seriesRecording = HTSUtils.convertMessageToSeriesRecordingModel(new SeriesRecording(), msg);
+        seriesRecording.setConnectionId(connection.getId());
+        appRepository.getSeriesRecordingData().addItem(seriesRecording);
+    }
+
+    /**
+     * Server to client method.
+     * A series recording has been updated on the server.
+     *
+     * @param msg The message with the updated series recording data
+     */
+    private void handleAutorecEntryUpdate(HTSMessage msg) {
+        SeriesRecording recording = appRepository.getSeriesRecordingData().getItemById(msg.getString("id"));
+        if (recording == null) {
+            Timber.d("Could not find a series recording with id " + msg.getString("id") + " in the database");
+            return;
+        }
+        SeriesRecording updatedRecording = HTSUtils.convertMessageToSeriesRecordingModel(recording, msg);
+        appRepository.getSeriesRecordingData().updateItem(updatedRecording);
+    }
+
+    /**
+     * Server to client method.
+     * A series recording has been deleted on the server.
+     *
+     * @param msg The message with the series recording id that was deleted
+     */
+    private void handleAutorecEntryDelete(HTSMessage msg) {
+        if (msg.containsKey("id")) {
+            SeriesRecording seriesRecording = appRepository.getSeriesRecordingData().getItemById(msg.getString("id"));
+            if (seriesRecording != null) {
+                appRepository.getSeriesRecordingData().removeItem(seriesRecording);
+            }
+        }
+    }
+
+    /**
+     * Server to client method.
+     * A timer recording has been added on the server.
+     *
+     * @param msg The message with the new timer recording data
+     */
+    private void handleTimerRecEntryAdd(HTSMessage msg) {
+        TimerRecording recording = HTSUtils.convertMessageToTimerRecordingModel(new TimerRecording(), msg);
+        recording.setConnectionId(connection.getId());
+        appRepository.getTimerRecordingData().addItem(recording);
+    }
+
+    /**
+     * Server to client method.
+     * A timer recording has been updated on the server.
+     *
+     * @param msg The message with the updated timer recording data
+     */
+    private void handleTimerRecEntryUpdate(HTSMessage msg) {
+        TimerRecording recording = appRepository.getTimerRecordingData().getItemById(msg.getString("id"));
+        if (recording == null) {
+            Timber.d("Could not find a timer recording with id " + msg.getString("id") + " in the database");
+            return;
+        }
+        TimerRecording updatedRecording = HTSUtils.convertMessageToTimerRecordingModel(recording, msg);
+        appRepository.getTimerRecordingData().updateItem(updatedRecording);
+    }
+
+    /**
+     * Server to client method.
+     * A timer recording has been deleted on the server.
+     *
+     * @param msg The message with the recording id that was deleted
+     */
+    private void handleTimerRecEntryDelete(HTSMessage msg) {
+        if (msg.containsKey("id")) {
+            TimerRecording timerRecording = appRepository.getTimerRecordingData().getItemById(msg.getString("id"));
+            if (timerRecording != null) {
+                appRepository.getTimerRecordingData().removeItem(timerRecording);
+            }
+        }
+    }
+
+    /**
+     * Server to client method.
+     * An epg event has been added on the server.
+     *
+     * @param msg The message with the new epg event data
+     */
+    private void handleEventAdd(HTSMessage msg) {
+        if (!firstEventReceived && syncRequired) {
+            Timber.d("Sync is required and received first event, saving " + pendingChannelOps.size() + " channels");
+            appRepository.getChannelData().addItems(pendingChannelOps);
+
+            Timber.d("Updating connection status with full sync completed");
+            connection.setSyncRequired(false);
+            appRepository.getConnectionData().updateItem(connection);
+        }
+
+        firstEventReceived = true;
+        Program program = HTSUtils.convertMessageToProgramModel(new Program(), msg);
+        program.setConnectionId(connection.getId());
+
+        if (initialSyncWithServerRunning) {
+            pendingEventOps.add(program);
+
+            if (syncRequired && pendingEventOps.size() % 50 == 0) {
+                Timber.d("Sync is running, received " + pendingEventOps.size() + " program guide events");
+                sendEpgSyncStatusMessage(ServiceStatusReceiver.State.SYNC_IN_PROGRESS,
+                        getString(R.string.receiving_data),
+                        "Received " + pendingEventOps.size() + " program guide events");
+            }
+        } else {
+            Timber.d("Adding event " + program.getTitle());
+            appRepository.getProgramData().addItem(program);
+        }
+    }
+
+    /**
+     * Server to client method.
+     * An epg event has been updated on the server.
+     *
+     * @param msg The message with the updated epg event data
+     */
+    private void handleEventUpdate(HTSMessage msg) {
+        Program program = appRepository.getProgramData().getItemById(msg.getInteger("eventId"));
+        if (program == null) {
+            Timber.d("Could not find a program with id " + msg.getInteger("eventId") + " in the database");
+            return;
+        }
+        Program updatedProgram = HTSUtils.convertMessageToProgramModel(program, msg);
+        Timber.d("Updating event " + updatedProgram.getTitle());
+        appRepository.getProgramData().updateItem(updatedProgram);
+    }
+
+    /**
+     * Server to client method.
+     * An epg event has been deleted on the server.
+     *
+     * @param msg The message with the epg event id that was deleted
+     */
+    private void handleEventDelete(HTSMessage msg) {
+        if (msg.containsKey("id")) {
+            appRepository.getProgramData().removeItemById(msg.getInteger("id"));
+        }
+    }
+
+    /**
+     * Handles the given server message that contains a list of events.
+     *
+     * @param message The message with the events
+     */
+    private void handleGetEvents(HTSMessage message, Intent intent) {
+
+        final boolean useEventList = intent.getBooleanExtra("useEventList", false);
+        final String channelName = intent.getStringExtra("channelName");
+
+        if (message.containsKey("events")) {
+            List<Program> programs = new ArrayList<>();
+            for (Object obj : message.getList("events")) {
+                HTSMessage msg = (HTSMessage) obj;
+                Program program = HTSUtils.convertMessageToProgramModel(new Program(), msg);
+                program.setConnectionId(connection.getId());
+                programs.add(program);
+            }
+
+            if (useEventList) {
+                Timber.d("Adding " + programs.size() + " events to the list for channel " + channelName);
+                pendingEventOps.addAll(programs);
+            } else {
+                Timber.d("Saving " + programs.size() + " events for channel " + channelName);
+                appRepository.getProgramData().addItems(programs);
+            }
+        }
+    }
+
+    private void handleHtspProfiles(HTSMessage message) {
+        Timber.d("Handling htsp playback profiles");
+        if (message.containsKey("profiles")) {
+            for (Object obj : message.getList("profiles")) {
+                HTSMessage msg = (HTSMessage) obj;
+                String name = msg.getString("name");
+
+                String[] profileNames = appRepository.getServerProfileData().getHtspPlaybackProfileNames();
+                boolean profileExists = false;
+                for (String profileName : profileNames) {
+                    if (profileName.equals(name)) {
+                        profileExists = true;
+                        break;
+                    }
+                }
+                if (!profileExists) {
+                    ServerProfile serverProfile = new ServerProfile();
+                    serverProfile.setConnectionId(connection.getId());
+                    serverProfile.setName(name);
+                    serverProfile.setUuid(msg.getString("uuid"));
+                    serverProfile.setComment(msg.getString("comment"));
+                    serverProfile.setType("htsp_playback");
+
+                    Timber.d("Adding htsp playback profile " + serverProfile.getName());
+                    appRepository.getServerProfileData().addItem(serverProfile);
+                }
+            }
+        }
+    }
+
+    private void handleHttpProfiles(HTSMessage message) {
+        Timber.d("Handling http playback profiles");
+        if (message.containsKey("response")) {
+            try {
+                JSONObject response = new JSONObject(message.getString("response"));
+                if (response.has("entries")) {
+                    JSONArray entries = response.getJSONArray("entries");
+                    if (entries.length() > 0) {
+                        for (int i = 0, totalObject = entries.length(); i < totalObject; i++) {
+                            JSONObject profile = entries.getJSONObject(i);
+                            if (profile.has("key") && profile.has("val")) {
+                                String name = profile.getString("val");
+
+                                String[] profileNames = appRepository.getServerProfileData().getHttpPlaybackProfileNames();
+                                boolean profileExists = false;
+                                for (String profileName : profileNames) {
+                                    if (profileName.equals(name)) {
+                                        profileExists = true;
+                                        break;
+                                    }
+                                }
+                                if (!profileExists) {
+                                    ServerProfile serverProfile = new ServerProfile();
+                                    serverProfile.setConnectionId(connection.getId());
+                                    serverProfile.setName(name);
+                                    serverProfile.setUuid(profile.getString("key"));
+                                    serverProfile.setType("http_playback");
+
+                                    Timber.d("Adding http playback profile " + serverProfile.getName());
+                                    appRepository.getServerProfileData().addItem(serverProfile);
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch (JSONException e) {
+                Timber.d("Error parsing JSON data", e);
+            }
+        }
+    }
+
+    private void handleDvrConfigs(HTSMessage message) {
+        Timber.d("Handling recording profiles");
+        if (message.containsKey("dvrconfigs")) {
+            for (Object obj : message.getList("dvrconfigs")) {
+                HTSMessage msg = (HTSMessage) obj;
+                ServerProfile serverProfile = appRepository.getServerProfileData().getItemById(msg.getString("uuid"));
+                if (serverProfile == null) {
+                    serverProfile = new ServerProfile();
+                }
+
+                serverProfile.setConnectionId(connection.getId());
+                serverProfile.setUuid(msg.getString("uuid"));
+                String name = msg.getString("name");
+                serverProfile.setName(TextUtils.isEmpty(name) ? "Default Profile" : name);
+                serverProfile.setComment(msg.getString("comment"));
+                serverProfile.setType("recording");
+
+                if (serverProfile.getId() == 0) {
+                    Timber.d("Added new recording profile " + serverProfile.getName());
+                    appRepository.getServerProfileData().addItem(serverProfile);
+                } else {
+                    Timber.d("Updated existing recording profile " + serverProfile.getName());
+                    appRepository.getServerProfileData().updateItem(serverProfile);
+                }
+            }
+        }
+    }
+
+    private void handleSystemTime(HTSMessage message) {
+        int gmtOffsetFromServer = message.getInteger("gmtoffset", 0) * 60 * 1000;
+        int gmtOffset = gmtOffsetFromServer - MiscUtils.getDaylightSavingOffset();
+        Timber.d("GMT offset from server is " + gmtOffsetFromServer +
+                ", GMT offset considering daylight saving offset is " + gmtOffset);
+
+        ServerStatus serverStatus = appRepository.getServerStatusData().getActiveItem();
+        serverStatus.setGmtoffset(gmtOffset);
+        serverStatus.setTime(message.getLong("time", 0));
+        appRepository.getServerStatusData().updateItem(serverStatus);
+
+        Timber.d("Received system time from server " + serverStatus.getServerName()
+                + ", server time: " + serverStatus.getTime()
+                + ", server gmt offset: " + serverStatus.getGmtoffset());
+    }
+
+    private void handleDiskSpace(HTSMessage message) {
+        ServerStatus serverStatus = appRepository.getServerStatusData().getActiveItem();
+        serverStatus.setFreeDiskSpace(message.getLong("freediskspace", 0));
+        serverStatus.setTotalDiskSpace(message.getLong("totaldiskspace", 0));
+        appRepository.getServerStatusData().updateItem(serverStatus);
+
+        Timber.d("Received disk space information from server " + serverStatus.getServerName()
+                + ", free disk space: " + serverStatus.getFreeDiskSpace()
+                + ", total disk space: " + serverStatus.getTotalDiskSpace());
+    }
+
+    /**
+     * Saves all received channels from the initial sync in the database.
+     */
+    private void saveAllReceivedChannels() {
+        Timber.d("Saving " + pendingChannelOps.size() + " channels");
+
+        if (!pendingChannelOps.isEmpty()) {
+            appRepository.getChannelData().addItems(pendingChannelOps);
+        }
+    }
+
+    /**
+     * Saves all received channel tags from the initial sync in the database.
+     * Also the relations table between channels and tags are
+     * updated so that the filtering by channel tags works properly
+     */
+    private void saveAllReceivedChannelTags() {
+        Timber.d("Saving " + pendingChannelTagOps.size() + " channel tags");
+
+        List<TagAndChannel> pendingRemovedTagAndChannelOps = new ArrayList<>();
+        List<TagAndChannel> pendingAddedTagAndChannelOps = new ArrayList<>();
+
+        if (!pendingChannelTagOps.isEmpty()) {
+            appRepository.getChannelTagData().addItems(pendingChannelTagOps);
+            for (ChannelTag tag : pendingChannelTagOps) {
+
+                if (tag != null) {
+                    TagAndChannel tac = appRepository.getTagAndChannelData().getItemById(tag.getTagId());
+                    if (tac != null) {
+                        pendingRemovedTagAndChannelOps.add(tac);
+                    }
+
+                    List<Integer> channelIds = tag.getMembers();
+                    if (channelIds != null) {
+                        for (Integer channelId : channelIds) {
+                            TagAndChannel tagAndChannel = new TagAndChannel();
+                            tagAndChannel.setTagId(tag.getTagId());
+                            tagAndChannel.setChannelId(channelId);
+                            tagAndChannel.setConnectionId(connection.getId());
+                            pendingAddedTagAndChannelOps.add(tagAndChannel);
+                        }
+                    }
+                }
+            }
+
+            Timber.d("Removing " + pendingRemovedTagAndChannelOps.size() +
+                    " and adding " + pendingAddedTagAndChannelOps.size() + " tag and channel relations");
+            appRepository.getTagAndChannelData().addAndRemoveItems(pendingAddedTagAndChannelOps, pendingRemovedTagAndChannelOps);
+        }
+    }
+
+    /**
+     * Removes all recordings and saves all received recordings from the initial sync
+     * in the database. The removal is done to prevent being out of sync with the server.
+     * This could be the case when the app was offline for a while and it did not receive
+     * any recording removal information from the server. During the initial sync the
+     * server only provides the list of available recordings.
+     */
+    private void saveAllReceivedRecordings() {
+        Timber.d("Removing previously existing recordings and saving " + pendingRecordingOps.size() + " new recordings");
+
+        appRepository.getRecordingData().removeItems();
+        if (!pendingRecordingOps.isEmpty()) {
+            appRepository.getRecordingData().addItems(pendingRecordingOps);
+        }
+    }
+
+    private void saveAllReceivedEvents() {
+        Timber.d("Saving " + pendingEventOps.size() + " new events");
+
+        if (!pendingEventOps.isEmpty()) {
+            appRepository.getProgramData().addItems(pendingEventOps);
+        }
+    }
+
+    /**
+     * Tries to download and save all received channel and channel
+     * tag logos from the initial sync in the database.
+     */
+    private void loadAllChannelIcons() {
+        Timber.d("Downloading and saving all channel and channel tag icons...");
+
+        for (Channel channel : appRepository.getChannelData().getItems()) {
+            execService.execute(() -> {
+                try {
+                    Timber.d("Downloading channel icon for channel " + channel.getName());
+                    downloadIconFromFileUrl(channel.getIcon());
+                } catch (Exception e) {
+                    Timber.d("Could not load channel icon for channel '" + channel.getIcon() + "'");
+                }
+            });
+        }
+        for (ChannelTag channelTag : appRepository.getChannelTagData().getItems()) {
+            execService.execute(() -> {
+                try {
+                    Timber.d("Downloading channel icon for channel tag " + channelTag.getTagName());
+                    downloadIconFromFileUrl(channelTag.getTagIcon());
+                } catch (Exception e) {
+                    Timber.d("Could not load channel tag icon '" + channelTag.getTagIcon() + "'");
+                }
+            });
+        }
+    }
+
+    /**
+     * Downloads the file from the given url. If the url starts with http then a
+     * buffered input stream is used, otherwise the htsp api is used. The file
+     * will be saved in the cache directory using a unique hash value as the file name.
+     *
+     * @param url The url of the file that shall be downloaded
+     * @throws IOException Error message if something went wrong
+     */
+    // Use the icon loading from the original library?
+    private void downloadIconFromFileUrl(final String url) throws IOException {
+        if (TextUtils.isEmpty(url)) {
+            return;
+        }
+
+        File file = new File(getCacheDir(), MiscUtils.convertUrlToHashString(url) + ".png");
+        if (file.exists()) {
+            Timber.d("Icon file " + file.getAbsolutePath() + " exists already");
+            return;
+        }
+
+        InputStream is;
+        if (url.startsWith("http")) {
+            is = new BufferedInputStream(new URL(url).openStream());
+        } else if (htspVersion > 9) {
+            is = new HTSFileInputStream(htsConnection, url);
+        } else {
+            return;
+        }
+
+        OutputStream os = new FileOutputStream(file);
+
+        // Set the options for a bitmap and decode an input stream into a bitmap
+        BitmapFactory.Options o = new BitmapFactory.Options();
+        o.inJustDecodeBounds = true;
+        BitmapFactory.decodeStream(is, null, o);
+        is.close();
+
+        if (url.startsWith("http")) {
+            is = new BufferedInputStream(new URL(url).openStream());
+        } else if (htspVersion > 9) {
+            is = new HTSFileInputStream(htsConnection, url);
+        }
+
+        float scale = getResources().getDisplayMetrics().density;
+        int width = (int) (64 * scale);
+        int height = (int) (64 * scale);
+
+        // Set the sample size of the image. This is the number of pixels in
+        // either dimension that correspond to a single pixel in the decoded
+        // bitmap. For example, inSampleSize == 4 returns an image that is 1/4
+        // the width/height of the original, and 1/16 the number of pixels.
+        int ratio = Math.max(o.outWidth / width, o.outHeight / height);
+        int sampleSize = Integer.highestOneBit((int) Math.floor(ratio));
+        o = new BitmapFactory.Options();
+        o.inSampleSize = sampleSize;
+
+        // Now decode an input stream into a bitmap and compress it.
+        Bitmap bitmap = BitmapFactory.decodeStream(is, null, o);
+        if (bitmap != null) {
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, os);
+        }
+
+        os.close();
+        is.close();
+    }
+
+    /**
+     * Removes the cached image file from the file system
+     *
+     * @param url The url of the file
+     */
+    private void deleteIconFileFromCache(String url) {
+        if (TextUtils.isEmpty(url)) {
+            return;
+        }
+        File file = new File(getCacheDir(), MiscUtils.convertUrlToHashString(url) + ".png");
+        if (!file.exists() || !file.delete()) {
+            Timber.d("Could not delete icon " + file.getName());
+        }
+    }
+
+    private void getChannel(final Intent intent) {
+        final HTSMessage request = new HTSMessage();
+        request.put("method", "getChannel");
+        request.put("channelId", intent.getIntExtra("channelId", 0));
+
+        htsConnection.sendMessage(request, response -> {
+            if (response != null) {
+                // Update the icon if required
+                final String icon = response.getString("channelIcon", null);
+                if (icon != null) {
+                    try {
+                        downloadIconFromFileUrl(icon);
+                    } catch (Exception e) {
+                        Timber.d("Could not load icon '" + icon + "'");
+                    }
+                }
+            } else {
+                Timber.d("Response is null");
+            }
+        });
+    }
+
+    private void getEvent(Intent intent) {
+        final HTSMessage request = new HTSMessage();
+        request.put("method", "getEvent");
+        request.put("eventId", intent.getIntExtra("eventId", 0));
+
+        htsConnection.sendMessage(request, response -> {
+            if (response != null) {
+                Program program = HTSUtils.convertMessageToProgramModel(new Program(), response);
+                appRepository.getProgramData().addItem(program);
+            } else {
+                Timber.d("Response is null");
+            }
+        });
+    }
+
+    /**
+     * Request information about a set of events from the server.
+     * If no options are specified the entire EPG database will be returned.
+     *
+     * @param intent Intent with the request message fields
+     */
+    private void getEvents(Intent intent) {
+
+        final int eventId = intent.getIntExtra("eventId", 0);
+        final int channelId = intent.getIntExtra("channelId", 0);
+        final String channelName = intent.getStringExtra("channelName");
+        final int numFollowing = intent.getIntExtra("numFollowing", 0);
+        final long maxTime = intent.getLongExtra("maxTime", 0);
+        final boolean showMessage = intent.getBooleanExtra("showMessage", false);
+
+        Timber.d("Loading " + numFollowing + " more events for channel " + channelName);
+
+        final HTSMessage request = new HTSMessage();
+        request.put("method", "getEvents");
+        if (eventId > 0) {
+            request.put("eventId", eventId);
+        }
+        if (channelId > 0) {
+            request.put("channelId", channelId);
+        }
+        if (numFollowing > 0) {
+            request.put("numFollowing", numFollowing);
+        }
+        if (maxTime > 0) {
+            request.put("maxTime", maxTime);
+        }
+
+        htsConnection.sendMessage(request, response -> {
+            if (response != null) {
+                handleGetEvents(response, intent);
+                if (showMessage) {
+                    Timber.d("Showing message");
+                    SnackbarUtils.sendSnackbarMessage(this, getString(R.string.loading_more_programs_finished));
+                }
+            } else {
+                Timber.d("Response is null");
+            }
+        });
+    }
+
+    /**
+     * Loads a defined number of events for all channels.
+     * This method is called by a worker after the initial sync is done.
+     * All loaded events are saved in a temporary list and saved in one
+     * batch into the database when all events were loaded for all channels.
+     *
+     * @param intent The intent with the parameters e.g. to define how many events shall be loaded
+     */
+    private void getMoreEvents(Intent intent) {
+
+        int numberOfProgramsToLoad = intent.getIntExtra("numFollowing", 0);
+        List<Channel> channelList = appRepository.getChannelData().getItems();
+
+        Timber.d("Database currently contains " + appRepository.getProgramData().getItemCount() + " events. ");
+        Timber.d("Loading " + numberOfProgramsToLoad + " events for each of the " + channelList.size() + " channels");
+
+        for (Channel channel : channelList) {
+            Program lastProgram = appRepository.getProgramData().getLastItemByChannelId(channel.getId());
+
+            Intent msgIntent = new Intent();
+            msgIntent.putExtra("numFollowing", numberOfProgramsToLoad);
+            msgIntent.putExtra("useEventList", true);
+            msgIntent.putExtra("channelId", channel.getId());
+            msgIntent.putExtra("channelName", channel.getName());
+
+            if (lastProgram != null) {
+                Timber.d("Loading more programs for channel " + channel.getName() +
+                        " from last program id " + lastProgram.getEventId());
+                msgIntent.putExtra("eventId", lastProgram.getNextEventId());
+            } else if (channel.getNextEventId() > 0) {
+                Timber.d("Loading more programs for channel " + channel.getName() +
+                        " starting from channel next event id " + channel.getNextEventId());
+                msgIntent.putExtra("eventId", channel.getNextEventId());
+            } else {
+                Timber.d("Loading more programs for channel " + channel.getName() +
+                        " starting from channel event id " + channel.getEventId());
+                msgIntent.putExtra("eventId", channel.getEventId());
+            }
+            getEvents(msgIntent);
+        }
+
+        appRepository.getProgramData().addItems(pendingEventOps);
+        Timber.d("Saved " + pendingEventOps.size() + " events for all channels. " +
+                "Database contains " + appRepository.getProgramData().getItemCount() + " events");
+        pendingEventOps.clear();
+    }
+
+    private void deleteOldEventsFromDatabase() {
+        Timber.d("Deleting events older than one day from the database");
+
+        // Get the time that was one week (1 day in millis) before now
+        long oneWeekBeforeNow = new Date().getTime() - (24 * 60 * 60 * 1000);
+        appRepository.getProgramData().removeItemsByTime(oneWeekBeforeNow);
+    }
+
+    private void getEpgQuery(final Intent intent) {
+        final String query = intent.getStringExtra("query");
+        final long channelId = intent.getIntExtra("channelId", 0);
+        final long tagId = intent.getIntExtra("tagId", 0);
+        final int contentType = intent.getIntExtra("contentType", 0);
+        final int minDuration = intent.getIntExtra("minduration", 0);
+        final int maxDuration = intent.getIntExtra("maxduration", 0);
+        final String language = intent.getStringExtra("language");
+        final boolean full = intent.getBooleanExtra("full", false);
+
+        final HTSMessage request = new HTSMessage();
+        request.put("method", "epgQuery");
+        request.put("query", query);
+
+        if (channelId > 0) {
+            request.put("channelId", channelId);
+        }
+        if (tagId > 0) {
+            request.put("tagId", tagId);
+        }
+        if (contentType > 0) {
+            request.put("contentType", contentType);
+        }
+        if (minDuration > 0) {
+            request.put("minDuration", minDuration);
+        }
+        if (maxDuration > 0) {
+            request.put("maxDuration", maxDuration);
+        }
+        if (language != null) {
+            request.put("language", language);
+        }
+        request.put("full", full);
+
+        htsConnection.sendMessage(request, response -> {
+            if (response != null) {
+                // Contains the ids of those events that were returned by the query
+                //noinspection MismatchedQueryAndUpdateOfCollection
+                List<Integer> eventIdList = new ArrayList<>();
+                if (response.containsKey("events")) {
+                    // List of events that match the query. Add the eventIds
+                    for (Object obj : response.getList("events")) {
+                        HTSMessage msg = (HTSMessage) obj;
+                        eventIdList.add(msg.getInteger("eventId"));
+                    }
+                } else if (response.containsKey("eventIds")) {
+                    // List of eventIds that match the query
+                    for (Object obj : response.getArrayList("eventIds")) {
+                        eventIdList.add((int) obj);
+                    }
+                }
+            } else {
+                Timber.d("Response is null");
+            }
+        });
+    }
+
+    private void addDvrEntry(final Intent intent) {
+        HTSMessage request = HTSUtils.convertIntentToDvrMessage(intent, htspVersion);
+        request.put("method", "addDvrEntry");
+
+        htsConnection.sendMessage(request, response -> {
+            if (response != null) {
+                // Reply message fields:
+                // success            u32   required   1 if entry was added, 0 otherwise
+                // id                 u32   optional   ID of created DVR entry
+                // error              str   optional   English clear text of error message
+                if (response.getInteger("success", 0) == 1) {
+                    SnackbarUtils.sendSnackbarMessage(this, getString(R.string.success_adding_recording));
+                } else {
+                    SnackbarUtils.sendSnackbarMessage(this, getString(R.string.error_adding_recording, response.getString("error", "")));
+                }
+            } else {
+                Timber.d("Response is null");
+            }
+        });
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        notificationManager.cancel(intent.getIntExtra("eventId", 0));
+    }
+
+    private void updateDvrEntry(final Intent intent) {
+        HTSMessage request = HTSUtils.convertIntentToDvrMessage(intent, htspVersion);
+        request.put("method", "updateDvrEntry");
+        request.put("id", intent.getIntExtra("id", 0));
+
+        htsConnection.sendMessage(request, response -> {
+            if (response != null) {
+                // Reply message fields:
+                // success            u32   required   1 if update as successful, otherwise 0
+                // error              str   optional   Error message if update failed
+                if (response.getInteger("success", 0) == 1) {
+                    SnackbarUtils.sendSnackbarMessage(this, getString(R.string.success_updating_recording));
+                } else {
+                    SnackbarUtils.sendSnackbarMessage(this, getString(R.string.error_updating_recording, response.getString("error", "")));
+                }
+            } else {
+                Timber.d("Response is null");
+            }
+        });
+    }
+
+    private void removeDvrEntry(Intent intent) {
+        HTSMessage request = new HTSMessage();
+        request.put("method", intent.getAction());
+        request.put("id", intent.getIntExtra("id", 0));
+
+        htsConnection.sendMessage(request, response -> {
+            if (response != null) {
+                Timber.d("Response is not null");
+                if (response.getInteger("success", 0) == 1) {
+                    SnackbarUtils.sendSnackbarMessage(this, getString(R.string.success_removing_recording));
+                } else {
+                    SnackbarUtils.sendSnackbarMessage(this, getString(R.string.error_removing_recording, response.getString("error", "")));
+                }
+            } else {
+                Timber.d("Response is null");
+            }
+        });
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        notificationManager.cancel(intent.getIntExtra("id", 0));
+    }
+
+    private void addAutorecEntry(final Intent intent) {
+        HTSMessage request = HTSUtils.convertIntentToAutorecMessage(intent, htspVersion);
+        request.put("method", "addAutorecEntry");
+
+        htsConnection.sendMessage(request, response -> {
+            if (response != null) {
+                // Reply message fields:
+                // success            u32   required   1 if entry was added, 0 otherwise
+                // id                 str   optional   ID (string!) of created autorec DVR entry
+                // error              str   optional   English clear text of error message
+                if (response.getInteger("success", 0) == 1) {
+                    SnackbarUtils.sendSnackbarMessage(this, getString(R.string.success_adding_recording));
+                } else {
+                    SnackbarUtils.sendSnackbarMessage(this, getString(R.string.error_adding_recording, response.getString("error", "")));
+                }
+            } else {
+                Timber.d("Response is null");
+            }
+        });
+    }
+
+    private void updateAutorecEntry(final Intent intent) {
+        HTSMessage request = new HTSMessage();
+        if (htspVersion >= 25) {
+            request = HTSUtils.convertIntentToAutorecMessage(intent, htspVersion);
+            request.put("method", "updateAutorecEntry");
+        } else {
+            request.put("method", "deleteAutorecEntry");
+        }
+        request.put("id", intent.getStringExtra("id"));
+
+        htsConnection.sendMessage(request, response -> {
+            if (response != null) {
+                // Handle the response here because the "updateAutorecEntry" call does
+                // not exist on the server. First delete the entry and if this was
+                // successful add a new entry with the new values.
+                final boolean success = (response.getInteger("success", 0) == 1);
+                if (htspVersion < 25 && success) {
+                    addAutorecEntry(intent);
+                } else {
+                    if (success) {
+                        SnackbarUtils.sendSnackbarMessage(this, getString(R.string.success_updating_recording));
+                    } else {
+                        SnackbarUtils.sendSnackbarMessage(this, getString(R.string.error_updating_recording, response.getString("error", "")));
+                    }
+                }
+            } else {
+                Timber.d("Response is null");
+            }
+        });
+    }
+
+    private void deleteAutorecEntry(final Intent intent) {
+        final HTSMessage request = new HTSMessage();
+        request.put("method", "deleteAutorecEntry");
+        request.put("id", intent.getStringExtra("id"));
+
+        htsConnection.sendMessage(request, response -> {
+            if (response != null) {
+                if (response.getInteger("success", 0) == 1) {
+                    SnackbarUtils.sendSnackbarMessage(this, getString(R.string.success_removing_recording));
+                } else {
+                    SnackbarUtils.sendSnackbarMessage(this, getString(R.string.error_removing_recording, response.getString("error", "")));
+                }
+            } else {
+                Timber.d("Response is null");
+            }
+        });
+    }
+
+    private void addTimerrecEntry(final Intent intent) {
+        HTSMessage request = HTSUtils.convertIntentToTimerecMessage(intent, htspVersion);
+        request.put("method", "addTimerecEntry");
+
+        // Reply message fields:
+        // success            u32   required   1 if entry was added, 0 otherwise
+        // id                 str   optional   ID (string!) of created timerec DVR entry
+        // error              str   optional   English clear text of error message
+        htsConnection.sendMessage(request, response -> {
+            if (response != null) {
+                if (response.getInteger("success", 0) == 1) {
+                    SnackbarUtils.sendSnackbarMessage(this, getString(R.string.success_adding_recording));
+                } else {
+                    SnackbarUtils.sendSnackbarMessage(this, getString(R.string.error_adding_recording, response.getString("error", "")));
+                }
+            } else {
+                Timber.d("Response is null");
+            }
+        });
+    }
+
+    private void updateTimerrecEntry(final Intent intent) {
+        HTSMessage request = new HTSMessage();
+        if (htspVersion >= 25) {
+            request = HTSUtils.convertIntentToTimerecMessage(intent, htspVersion);
+            request.put("method", "updateTimerecEntry");
+        } else {
+            request.put("method", "deleteTimerecEntry");
+        }
+        request.put("id", intent.getStringExtra("id"));
+
+        htsConnection.sendMessage(request, response -> {
+            if (response != null) {
+                // Handle the response here because the "updateTimerecEntry" call does
+                // not exist on the server. First delete the entry and if this was
+                // successful add a new entry with the new values.
+                final boolean success = response.getInteger("success", 0) == 1;
+                if (htspVersion < 25 && success) {
+                    addTimerrecEntry(intent);
+                } else {
+                    if (success) {
+                        SnackbarUtils.sendSnackbarMessage(this, getString(R.string.success_updating_recording));
+                    } else {
+                        SnackbarUtils.sendSnackbarMessage(this, getString(R.string.error_updating_recording, response.getString("error", "")));
+                    }
+                }
+            } else {
+                Timber.d("Response is null");
+            }
+        });
+    }
+
+    private void deleteTimerrecEntry(Intent intent) {
+        HTSMessage request = new HTSMessage();
+        request.put("method", "deleteTimerecEntry");
+        request.put("id", intent.getStringExtra("id"));
+
+        htsConnection.sendMessage(request, response -> {
+            if (response != null) {
+                if (response.getInteger("success", 0) == 1) {
+                    SnackbarUtils.sendSnackbarMessage(this, getString(R.string.success_removing_recording));
+                } else {
+                    SnackbarUtils.sendSnackbarMessage(this, getString(R.string.error_removing_recording, response.getString("error", "")));
+                }
+            } else {
+                Timber.d("Response is null");
+            }
+        });
+    }
+
+    private void getTicket(Intent intent) {
+        final long channelId = intent.getIntExtra("channelId", 0);
+        final long dvrId = intent.getIntExtra("dvrId", 0);
+
+        final HTSMessage request = new HTSMessage();
+        request.put("method", "getTicket");
+        if (channelId > 0) {
+            request.put("channelId", channelId);
+        }
+        if (dvrId > 0) {
+            request.put("dvrId", dvrId);
+        }
+        // Reply message fields:
+        // path               str  required   The full path for access URL (no scheme, host or port)
+        // ticket             str  required   The ticket to pass in the URL query string
+        htsConnection.sendMessage(request, response -> {
+            if (response != null) {
+                Timber.d("Response is not null");
+                Intent ticketIntent = new Intent("ticket");
+                ticketIntent.putExtra("path", response.getString("path"));
+                ticketIntent.putExtra("ticket", response.getString("ticket"));
+                LocalBroadcastManager.getInstance(this).sendBroadcast(ticketIntent);
+            } else {
+                Timber.d("Response is null");
+            }
+        });
+    }
+}
