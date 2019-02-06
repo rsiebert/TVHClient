@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.preference.PreferenceManager;
-import androidx.annotation.NonNull;
 
 import com.google.android.gms.cast.framework.CastContext;
 import com.google.android.gms.cast.framework.CastSession;
@@ -14,6 +13,8 @@ import com.google.android.gms.common.GoogleApiAvailability;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.ServerProfile;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
+import org.tvheadend.tvhclient.data.service.EpgSyncService;
+import org.tvheadend.tvhclient.data.service_old.HTSService;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -21,6 +22,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import androidx.annotation.NonNull;
 import timber.log.Timber;
 
 public class MiscUtils {
@@ -125,5 +127,15 @@ public class MiscUtils {
             }
         }
         return null;
+    }
+
+    public static Class getSelectedService(Context context) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        boolean newServiceEnabled = sharedPreferences.getBoolean("new_service_enabled", true);
+        if (newServiceEnabled) {
+            return EpgSyncService.class;
+        } else {
+            return HTSService.class;
+        }
     }
 }
