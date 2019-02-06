@@ -21,7 +21,6 @@ public class MiscData {
     private final AppRoomDatabase db;
     private static WeakReference<DatabaseClearedCallback> callback;
 
-    @Inject
     public MiscData(AppRoomDatabase database) {
         this.db = database;
     }

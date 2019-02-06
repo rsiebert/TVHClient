@@ -24,7 +24,6 @@ public class ProgramData implements DataSourceInterface<Program> {
 
     private final AppRoomDatabase db;
 
-    @Inject
     public ProgramData(AppRoomDatabase database) {
         this.db = database;
     }

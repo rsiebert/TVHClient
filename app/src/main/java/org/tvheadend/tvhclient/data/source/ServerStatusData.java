@@ -24,7 +24,6 @@ public class ServerStatusData implements DataSourceInterface<ServerStatus> {
 
     private final AppRoomDatabase db;
 
-    @Inject
     public ServerStatusData(AppRoomDatabase database) {
         this.db = database;
     }

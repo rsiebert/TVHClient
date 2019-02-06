@@ -23,7 +23,6 @@ public class ServerProfileData implements DataSourceInterface<ServerProfile> {
     private final static int HTTP_PLAYBACK = 3;
     private final AppRoomDatabase db;
 
-    @Inject
     public ServerProfileData(AppRoomDatabase database) {
         this.db = database;
     }

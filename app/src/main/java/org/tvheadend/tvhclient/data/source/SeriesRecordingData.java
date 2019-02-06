@@ -19,7 +19,6 @@ public class SeriesRecordingData implements DataSourceInterface<SeriesRecording>
 
     private final AppRoomDatabase db;
 
-    @Inject
     public SeriesRecordingData(AppRoomDatabase database) {
         this.db = database;
     }

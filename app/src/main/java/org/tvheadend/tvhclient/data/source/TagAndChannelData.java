@@ -16,7 +16,6 @@ public class TagAndChannelData implements DataSourceInterface<TagAndChannel> {
 
     private final AppRoomDatabase db;
 
-    @Inject
     public TagAndChannelData(AppRoomDatabase database) {
         this.db = database;
     }

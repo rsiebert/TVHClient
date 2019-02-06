@@ -21,7 +21,6 @@ public class ConnectionData implements DataSourceInterface<Connection> {
 
     private final AppRoomDatabase db;
 
-    @Inject
     public ConnectionData(AppRoomDatabase database) {
         this.db = database;
     }

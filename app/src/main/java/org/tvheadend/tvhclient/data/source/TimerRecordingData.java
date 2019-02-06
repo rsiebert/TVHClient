@@ -1,25 +1,22 @@
 package org.tvheadend.tvhclient.data.source;
 
-import androidx.lifecycle.LiveData;
 import android.os.AsyncTask;
-import androidx.annotation.NonNull;
 
-import org.tvheadend.tvhclient.data.entity.TimerRecording;
 import org.tvheadend.tvhclient.data.db.AppRoomDatabase;
+import org.tvheadend.tvhclient.data.entity.TimerRecording;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import javax.inject.Inject;
-
+import androidx.annotation.NonNull;
+import androidx.lifecycle.LiveData;
 import timber.log.Timber;
 
 public class TimerRecordingData implements DataSourceInterface<TimerRecording> {
 
     private final AppRoomDatabase db;
 
-    @Inject
     public TimerRecordingData(AppRoomDatabase database) {
         this.db = database;
     }

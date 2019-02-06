@@ -1,9 +1,6 @@
 package org.tvheadend.tvhclient.data.source;
 
-import androidx.lifecycle.LiveData;
 import android.os.AsyncTask;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import org.tvheadend.tvhclient.data.db.AppRoomDatabase;
 import org.tvheadend.tvhclient.data.entity.Recording;
@@ -12,8 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import javax.inject.Inject;
-
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.lifecycle.LiveData;
 import timber.log.Timber;
 
 public class RecordingData implements DataSourceInterface<Recording> {
@@ -23,7 +21,6 @@ public class RecordingData implements DataSourceInterface<Recording> {
 
     private final AppRoomDatabase db;
 
-    @Inject
     public RecordingData(AppRoomDatabase database) {
         this.db = database;
     }

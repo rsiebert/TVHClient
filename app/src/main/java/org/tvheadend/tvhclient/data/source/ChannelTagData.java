@@ -21,7 +21,6 @@ public class ChannelTagData implements DataSourceInterface<ChannelTag> {
 
     private final AppRoomDatabase db;
 
-    @Inject
     public ChannelTagData(AppRoomDatabase database) {
         this.db = database;
     }

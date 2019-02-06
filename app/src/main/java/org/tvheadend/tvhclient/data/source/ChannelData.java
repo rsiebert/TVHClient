@@ -1,6 +1,5 @@
 package org.tvheadend.tvhclient.data.source;
 
-import android.content.Context;
 import android.os.AsyncTask;
 
 import org.tvheadend.tvhclient.data.db.AppRoomDatabase;
@@ -11,8 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import javax.inject.Inject;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
@@ -21,12 +18,9 @@ import timber.log.Timber;
 public class ChannelData implements DataSourceInterface<Channel> {
 
     private final AppRoomDatabase db;
-    private final Context context;
 
-    @Inject
-    public ChannelData(AppRoomDatabase database, Context context) {
+    public ChannelData(AppRoomDatabase database) {
         this.db = database;
-        this.context = context;
     }
 
     @Override
