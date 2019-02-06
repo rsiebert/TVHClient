@@ -7,15 +7,16 @@ import android.preference.PreferenceManager;
 
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.data.service.EpgSyncService;
+import org.tvheadend.tvhclient.data.service_old.HTSService;
 import org.tvheadend.tvhclient.features.dvr.recordings.RecordingDetailsFragment;
 import org.tvheadend.tvhclient.features.dvr.series_recordings.SeriesRecordingDetailsFragment;
 import org.tvheadend.tvhclient.features.dvr.timer_recordings.TimerRecordingDetailsFragment;
 import org.tvheadend.tvhclient.features.programs.ProgramDetailsFragment;
 import org.tvheadend.tvhclient.features.programs.ProgramListFragment;
-import org.tvheadend.tvhclient.features.shared.receivers.NetworkStatusReceiver;
 import org.tvheadend.tvhclient.features.shared.callbacks.NetworkStatusListener;
+import org.tvheadend.tvhclient.features.shared.receivers.NetworkStatusReceiver;
 import org.tvheadend.tvhclient.features.shared.receivers.SnackbarMessageReceiver;
+import org.tvheadend.tvhclient.utils.MiscUtils;
 import org.tvheadend.tvhclient.utils.SnackbarUtils;
 
 import androidx.annotation.Nullable;
@@ -76,19 +77,27 @@ public abstract class BaseActivity extends AppCompatActivity implements NetworkS
             if (!isNetworkAvailable) {
                 Timber.d("Network changed from offline to online, starting service");
                 if (MainApplication.isActivityVisible()) {
-                    startService(new Intent(this, EpgSyncService.class));
+
+                    Class selectedServiceClass = MiscUtils.getSelectedService(this);
+                    Intent intent = new Intent(this, selectedServiceClass);
+
+                    if (selectedServiceClass.getName().equals(HTSService.class.getName())) {
+                        intent.setAction("connect");
+                        intent.putExtra("force", true);
+                    }
+                    startService(intent);
                 }
             } else {
                 Timber.d("Network still active, pinging server");
-                Intent intent = new Intent(this, EpgSyncService.class);
-                intent.setAction("getStatus");
-                if (MainApplication.isActivityVisible()) {
+                /*if (MainApplication.isActivityVisible()) {
+                    Intent intent = new Intent(this, EpgSyncService.class);
+                    intent.setAction("getStatus");
                     startService(intent);
-                }
+                }*/
             }
         } else {
             Timber.d("Network is not available anymore, stopping service");
-            stopService(new Intent(this, EpgSyncService.class));
+            stopService(new Intent(this, MiscUtils.getSelectedService(this)));
         }
         isNetworkAvailable = isAvailable;
 

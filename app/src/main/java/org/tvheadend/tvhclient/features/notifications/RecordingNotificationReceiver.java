@@ -5,13 +5,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.data.service.EpgSyncService;
+import org.tvheadend.tvhclient.utils.MiscUtils;
 
 import java.util.Date;
+
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
 public class RecordingNotificationReceiver extends NotificationBroadcastReceiver {
 
@@ -28,7 +29,7 @@ public class RecordingNotificationReceiver extends NotificationBroadcastReceiver
         long startTime = intent.getLongExtra("start", 0);
 
         // Create the intent that handles the cancelling of the scheduled recording
-        Intent recordIntent = new Intent(context, EpgSyncService.class);
+        Intent recordIntent = new Intent(context, MiscUtils.getSelectedService(context));
         recordIntent.setAction("cancelDvrEntry");
         recordIntent.putExtra("id", dvrId);
         PendingIntent cancelRecordingPendingIntent = PendingIntent.getService(context, 0, recordIntent, PendingIntent.FLAG_UPDATE_CURRENT);

@@ -9,9 +9,6 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.appcompat.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -25,7 +22,6 @@ import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.entity.ServerProfile;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
-import org.tvheadend.tvhclient.data.service.EpgSyncService;
 import org.tvheadend.tvhclient.data.service.EpgSyncStatusCallback;
 import org.tvheadend.tvhclient.data.service.EpgSyncTaskState;
 import org.tvheadend.tvhclient.features.shared.receivers.ServiceStatusReceiver;
@@ -35,6 +31,9 @@ import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
@@ -209,8 +208,8 @@ public abstract class BasePlaybackActivity extends AppCompatActivity implements 
             case FAILED:
                 progressBar.setVisibility(View.GONE);
                 statusTextView.setText(state.getMessage());
-                stopService(new Intent(this, EpgSyncService.class));
-                startService(new Intent(this, EpgSyncService.class));
+                stopService(new Intent(this, MiscUtils.getSelectedService(this)));
+                startService(new Intent(this, MiscUtils.getSelectedService(this)));
                 break;
 
             case CONNECTING:

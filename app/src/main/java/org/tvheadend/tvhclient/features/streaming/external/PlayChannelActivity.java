@@ -3,14 +3,14 @@ package org.tvheadend.tvhclient.features.streaming.external;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.View;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Channel;
-import org.tvheadend.tvhclient.data.service.EpgSyncService;
+import org.tvheadend.tvhclient.utils.MiscUtils;
 
+import androidx.annotation.Nullable;
 import timber.log.Timber;
 
 public class PlayChannelActivity extends BasePlaybackActivity {
@@ -45,7 +45,7 @@ public class PlayChannelActivity extends BasePlaybackActivity {
     @Override
     protected void getHttpTicket() {
         if (channelId > 0) {
-            Intent intent = new Intent(this, EpgSyncService.class);
+            Intent intent = new Intent(this, MiscUtils.getSelectedService(this));
             intent.setAction("getTicket");
             intent.putExtra("channelId", channelId);
             startService(intent);

@@ -8,6 +8,7 @@ import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.data.service.EpgSyncIntentService;
 import org.tvheadend.tvhclient.data.service.EpgSyncService;
 import org.tvheadend.tvhclient.data.service.EpgSyncTask;
+import org.tvheadend.tvhclient.data.service_old.HTSService;
 import org.tvheadend.tvhclient.features.MainActivity;
 import org.tvheadend.tvhclient.features.download.DownloadRecordingManager;
 import org.tvheadend.tvhclient.features.dvr.recordings.RecordingViewModel;
@@ -90,4 +91,6 @@ public interface MainApplicationComponent {
     void inject(SettingsConnectionBaseFragment settingsConnectionBaseFragment);
 
     void inject(BaseChannelViewModel baseChannelViewModel);
+
+    void inject(HTSService htsService);
 }

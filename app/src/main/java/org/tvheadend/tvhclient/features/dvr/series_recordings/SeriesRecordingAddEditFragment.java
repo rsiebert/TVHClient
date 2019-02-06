@@ -20,7 +20,6 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.data.entity.SeriesRecording;
 import org.tvheadend.tvhclient.data.entity.ServerProfile;
-import org.tvheadend.tvhclient.data.service.EpgSyncService;
 import org.tvheadend.tvhclient.features.dvr.DateTimeSelectedListener;
 import org.tvheadend.tvhclient.features.dvr.RecordingConfigSelectedListener;
 import org.tvheadend.tvhclient.features.dvr.RecordingUtils;
@@ -303,7 +302,7 @@ public class SeriesRecordingAddEditFragment extends BaseFragment implements Back
      * Returns an intent with the recording data
      */
     private Intent getIntentData() {
-        Intent intent = new Intent(activity, EpgSyncService.class);
+        Intent intent = new Intent(activity, MiscUtils.getSelectedService(activity));
         intent.putExtra("title", recording.getTitle());
         intent.putExtra("name", recording.getName());
         intent.putExtra("directory", recording.getDirectory());

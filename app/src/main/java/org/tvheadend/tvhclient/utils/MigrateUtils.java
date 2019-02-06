@@ -153,7 +153,7 @@ public class MigrateUtils {
 
     private void migrateConnectionsFromDatabase() {
         Timber.d("Migrating existing connections to the new room database");
-        SQLiteDatabase db = DatabaseHelperForMigration.getInstance(context).getReadableDatabase();
+        SQLiteDatabase db = DatabaseHelperForMigration.Companion.getInstance(context).getReadableDatabase();
 
         List<Connection> connectionList = new ArrayList<>();
 

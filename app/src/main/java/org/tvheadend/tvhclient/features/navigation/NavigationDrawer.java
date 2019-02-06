@@ -1,12 +1,7 @@
 package org.tvheadend.tvhclient.features.navigation;
 
-import androidx.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.AttrRes;
-import androidx.fragment.app.Fragment;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import android.util.TypedValue;
 import android.view.View;
 
@@ -27,7 +22,6 @@ import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
-import org.tvheadend.tvhclient.data.service.EpgSyncService;
 import org.tvheadend.tvhclient.features.channels.ChannelListFragment;
 import org.tvheadend.tvhclient.features.channels.ChannelViewModel;
 import org.tvheadend.tvhclient.features.dvr.recordings.CompletedRecordingListFragment;
@@ -50,6 +44,12 @@ import org.tvheadend.tvhclient.utils.MiscUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.annotation.AttrRes;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
 
 public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, Drawer.OnDrawerItemClickListener {
 
@@ -249,7 +249,7 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
      * @param id The connection id of the newly selected server
      */
     private void handleNewServerSelected(int id) {
-        activity.stopService(new Intent(activity, EpgSyncService.class));
+        activity.stopService(new Intent(activity, MiscUtils.getSelectedService(activity)));
 
         Connection connection = appRepository.getConnectionData().getItemById(id);
         connection.setActive(true);

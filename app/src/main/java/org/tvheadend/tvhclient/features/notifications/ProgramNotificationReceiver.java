@@ -5,15 +5,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 import android.text.TextUtils;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.data.service.EpgSyncService;
 import org.tvheadend.tvhclient.features.programs.ProgramDetailsActivity;
+import org.tvheadend.tvhclient.utils.MiscUtils;
 
 import java.util.Date;
+
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
 public class ProgramNotificationReceiver extends NotificationBroadcastReceiver {
 
@@ -39,7 +40,7 @@ public class ProgramNotificationReceiver extends NotificationBroadcastReceiver {
         PendingIntent detailsPendingIntent = PendingIntent.getActivity(context, 0, detailsIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         // Create the intent that handles the scheduling of the program
-        Intent recordIntent = new Intent(context, EpgSyncService.class);
+        Intent recordIntent = new Intent(context, MiscUtils.getSelectedService(context));
         recordIntent.setAction("addDvrEntry");
         recordIntent.putExtra("eventId", eventId);
         if (!TextUtils.isEmpty(configName)) {

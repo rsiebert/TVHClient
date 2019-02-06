@@ -4,16 +4,16 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import androidx.annotation.Nullable;
 import android.view.View;
 
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Recording;
-import org.tvheadend.tvhclient.data.service.EpgSyncService;
+import org.tvheadend.tvhclient.utils.MiscUtils;
 
 import java.io.File;
 
+import androidx.annotation.Nullable;
 import timber.log.Timber;
 
 public class PlayRecordingActivity extends BasePlaybackActivity {
@@ -48,7 +48,7 @@ public class PlayRecordingActivity extends BasePlaybackActivity {
     @Override
     protected void getHttpTicket() {
         if (dvrId > 0) {
-            Intent intent = new Intent(this, EpgSyncService.class);
+            Intent intent = new Intent(this, MiscUtils.getSelectedService(this));
             intent.setAction("getTicket");
             intent.putExtra("dvrId", dvrId);
             startService(intent);
