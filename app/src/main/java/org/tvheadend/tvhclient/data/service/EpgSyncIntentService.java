@@ -3,8 +3,6 @@ package org.tvheadend.tvhclient.data.service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
-import androidx.annotation.NonNull;
-import androidx.core.app.JobIntentService;
 
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.data.entity.Connection;
@@ -14,6 +12,8 @@ import org.tvheadend.tvhclient.data.service.htsp.tasks.Authenticator;
 
 import javax.inject.Inject;
 
+import androidx.annotation.NonNull;
+import androidx.core.app.JobIntentService;
 import timber.log.Timber;
 
 public class EpgSyncIntentService extends JobIntentService implements Authenticator.Listener {
@@ -39,12 +39,6 @@ public class EpgSyncIntentService extends JobIntentService implements Authentica
     @Override
     protected void onHandleWork(@NonNull Intent intent) {
         Timber.d("Handling work for service");
-
-        try {
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
 
         if (simpleHtspConnection != null
                 && simpleHtspConnection.isConnected()
