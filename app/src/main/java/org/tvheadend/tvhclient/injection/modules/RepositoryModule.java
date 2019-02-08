@@ -1,7 +1,6 @@
 package org.tvheadend.tvhclient.injection.modules;
 
 import android.content.Context;
-import androidx.annotation.NonNull;
 
 import org.tvheadend.tvhclient.data.db.AppRoomDatabase;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
@@ -19,6 +18,7 @@ import org.tvheadend.tvhclient.data.source.TimerRecordingData;
 
 import javax.inject.Singleton;
 
+import androidx.annotation.NonNull;
 import dagger.Module;
 import dagger.Provides;
 
@@ -28,7 +28,7 @@ public class RepositoryModule {
     private final AppRoomDatabase appRoomDatabase;
 
     public RepositoryModule(Context context) {
-        appRoomDatabase = AppRoomDatabase.getInstance(context);
+        appRoomDatabase = AppRoomDatabase.Companion.getInstance(context);
     }
 
     @Singleton
@@ -43,7 +43,7 @@ public class RepositoryModule {
     @Provides
     AppRepository providesAppRepository(AppRoomDatabase db, Context context) {
         return new AppRepository(
-                new ChannelData(db, context),
+                new ChannelData(db),
                 new ProgramData(db),
                 new RecordingData(db),
                 new SeriesRecordingData(db),
