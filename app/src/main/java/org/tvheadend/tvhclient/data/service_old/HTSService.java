@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Binder;
 import android.os.IBinder;
 import android.text.TextUtils;
 
@@ -26,6 +27,7 @@ import org.tvheadend.tvhclient.data.entity.TimerRecording;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.data.service.htsp.HtspConnection;
 import org.tvheadend.tvhclient.data.service.htsp.tasks.Authenticator;
+import org.tvheadend.tvhclient.data.services.HtspUtils;
 import org.tvheadend.tvhclient.features.shared.receivers.ServiceStatusReceiver;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 import org.tvheadend.tvhclient.utils.NotificationUtils;
@@ -72,13 +74,20 @@ public class HTSService extends Service implements HTSConnectionListener {
     private boolean syncRequired;
     private boolean firstEventReceived = false;
     private int htspVersion = 13;
+    private final IBinder binder = new HTSServiceBinder();
+    private List<HTSSubscriptionListener> listeners = new ArrayList<>();
+
+    public class HTSServiceBinder extends Binder {
+        public HTSService getService() {
+            return HTSService.this;
+        }
+    }
 
     @Override
     public void onCreate() {
         Timber.d("Starting service");
         MainApplication.getComponent().inject(this);
         execService = Executors.newScheduledThreadPool(10);
-        connection = appRepository.getConnectionData().getActiveItem();
     }
 
     @Override
@@ -92,28 +101,16 @@ public class HTSService extends Service implements HTSConnectionListener {
 
         switch (action) {
             case "connect":
-                Timber.d("Connection to server requested");
-                boolean force = intent.getBooleanExtra("force", false);
-                if (htsConnection != null && force) {
-                    Timber.d("Closing existing connection");
-                    htsConnection.closeConnection();
-                }
+                Timber.d("Connection to server requested, stopping previous connection");
+                startHtspConnection();
+                break;
+            case "reconnect":
+                Timber.d("Reconnection to server requested");
                 if (htsConnection == null || !htsConnection.isConnected()) {
-                    Timber.d("Connecting to server");
-                    htsConnection = new HTSConnection(this.getApplicationContext(), appRepository, connection, this);
-
-                    // Since this is blocking, spawn to a new thread
-                    execService.execute(() -> {
-                        htsConnection.openConnection(connection.getHostname(), connection.getPort());
-                        htsConnection.authenticate(connection.getUsername(), connection.getPassword());
-                    });
+                    Timber.d("Reconnecting to server because no previous connection existed or not connected anymore");
+                    startHtspConnection();
                 }
                 break;
-
-            case "disconnect":
-                htsConnection.closeConnection();
-                break;
-
             case "getDiskSpace":
                 getDiscSpace();
                 break;
@@ -170,6 +167,12 @@ public class HTSService extends Service implements HTSConnectionListener {
             case "getDvrConfigs":
                 getDvrConfigs();
                 break;
+            case "subscribe":
+                subscribe(intent);
+                break;
+            case "unsubscribe":
+                unsubscribe(intent);
+                break;
             // Internal calls that are called from the intent service
             case "getMoreEvents":
                 getMoreEvents(intent);
@@ -187,15 +190,148 @@ public class HTSService extends Service implements HTSConnectionListener {
     public void onDestroy() {
         Timber.d("Stopping service");
         execService.shutdown();
+        stopHtspConnection();
+    }
+
+    private void startHtspConnection() {
+        stopHtspConnection();
+        connection = appRepository.getConnectionData().getActiveItem();
+        htsConnection = new HTSConnection(this.getApplicationContext(), appRepository, connection, this);
+        // Since this is blocking, spawn to a new thread
+        execService.execute(() -> {
+            htsConnection.openConnection(connection.getHostname(), connection.getPort());
+            htsConnection.authenticate(connection.getUsername(), connection.getPassword());
+        });
+    }
+
+    private void stopHtspConnection() {
         if (htsConnection != null) {
             htsConnection.closeConnection();
+            htsConnection = null;
+        }
+        connection = null;
+    }
+
+    @Override
+    public void onMessage(HTSMessage message) {
+        String method = message.getMethod();
+        switch (method) {
+            case "tagAdd":
+                onTagAdd(message);
+                break;
+            case "tagUpdate":
+                onTagUpdate(message);
+                break;
+            case "tagDelete":
+                onTagDelete(message);
+                break;
+            case "channelAdd":
+                onChannelAdd(message);
+                break;
+            case "channelUpdate":
+                onChannelUpdate(message);
+                break;
+            case "channelDelete":
+                onChannelDelete(message);
+                break;
+            case "dvrEntryAdd":
+                onDvrEntryAdd(message);
+                break;
+            case "dvrEntryUpdate":
+                onDvrEntryUpdate(message);
+                break;
+            case "dvrEntryDelete":
+                onDvrEntryDelete(message);
+                break;
+            case "timerecEntryAdd":
+                onTimerRecEntryAdd(message);
+                break;
+            case "timerecEntryUpdate":
+                onTimerRecEntryUpdate(message);
+                break;
+            case "timerecEntryDelete":
+                onTimerRecEntryDelete(message);
+                break;
+            case "autorecEntryAdd":
+                onAutorecEntryAdd(message);
+                break;
+            case "autorecEntryUpdate":
+                onAutorecEntryUpdate(message);
+                break;
+            case "autorecEntryDelete":
+                onAutorecEntryDelete(message);
+                break;
+            case "eventAdd":
+                onEventAdd(message);
+                break;
+            case "eventUpdate":
+                onEventUpdate(message);
+                break;
+            case "eventDelete":
+                onEventDelete(message);
+                break;
+            case "initialSyncCompleted":
+                onInitialSyncCompleted();
+                break;
+            case "getSysTime":
+                onSystemTime(message);
+                break;
+            case "getDiskSpace":
+                onDiskSpace(message);
+                break;
+            case "getProfiles":
+                onHtspProfiles(message);
+                break;
+            case "getDvrConfigs":
+                onDvrConfigs(message);
+                break;
+            case "getEvents":
+                onGetEvents(message, new Intent());
+                break;
+            case "subscriptionStart":
+                onSubscriptionStart(message);
+                break;
+            case "subscriptionStatus":
+                onSubscriptionStatus(message);
+                break;
+            case "subscriptionStop":
+                onSubscriptionStop(message);
+                break;
+            case "subscriptionSkip":
+                onSubscriptionSkip(message);
+                break;
+            case "subscriptionSpeed":
+                onSubscriptionSpeed(message);
+                break;
+            case "queueStatus":
+                onQueueStatus(message);
+                break;
+            case "signalStatus":
+                onSignalStatus(message);
+                break;
+            case "timeshiftStatus":
+                onTimeshiftStatus(message);
+                break;
+            case "muxpkt":
+                onMuxPacket(message);
+                break;
+            default:
+                break;
         }
     }
 
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        throw new UnsupportedOperationException("Binding to service not allowed");
+        return binder;
+    }
+
+    public void addListener(HTSSubscriptionListener listener) {
+        listeners.add(listener);
+    }
+
+    public void removeListener(HTSSubscriptionListener listener) {
+        listeners.remove(listener);
     }
 
     @Override
@@ -312,19 +448,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         });
     }
 
-    void sendEpgSyncStatusMessage(ServiceStatusReceiver.State state, String msg, String details) {
-        Intent intent = new Intent(ServiceStatusReceiver.ACTION);
-        intent.putExtra(ServiceStatusReceiver.STATE, state);
-        if (!TextUtils.isEmpty(msg)) {
-            intent.putExtra(ServiceStatusReceiver.MESSAGE, msg);
-        }
-        if (!TextUtils.isEmpty(details)) {
-            intent.putExtra(ServiceStatusReceiver.DETAILS, details);
-        }
-        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
-    }
-
-    private void handleInitialSyncCompleted() {
+    private void onInitialSyncCompleted() {
         Timber.d("Received initial sync data from server");
 
         if (syncRequired) {
@@ -395,108 +519,6 @@ public class HTSService extends Service implements HTSConnectionListener {
         setDefaultProfileSelection();
     }
 
-    public void onMessage(HTSMessage message) {
-        String method = message.getMethod();
-        switch (method) {
-            case "tagAdd":
-                handleTagAdd(message);
-                break;
-            case "tagUpdate":
-                handleTagUpdate(message);
-                break;
-            case "tagDelete":
-                handleTagDelete(message);
-                break;
-            case "channelAdd":
-                handleChannelAdd(message);
-                break;
-            case "channelUpdate":
-                handleChannelUpdate(message);
-                break;
-            case "channelDelete":
-                handleChannelDelete(message);
-                break;
-            case "dvrEntryAdd":
-                handleDvrEntryAdd(message);
-                break;
-            case "dvrEntryUpdate":
-                handleDvrEntryUpdate(message);
-                break;
-            case "dvrEntryDelete":
-                handleDvrEntryDelete(message);
-                break;
-            case "timerecEntryAdd":
-                handleTimerRecEntryAdd(message);
-                break;
-            case "timerecEntryUpdate":
-                handleTimerRecEntryUpdate(message);
-                break;
-            case "timerecEntryDelete":
-                handleTimerRecEntryDelete(message);
-                break;
-            case "autorecEntryAdd":
-                handleAutorecEntryAdd(message);
-                break;
-            case "autorecEntryUpdate":
-                handleAutorecEntryUpdate(message);
-                break;
-            case "autorecEntryDelete":
-                handleAutorecEntryDelete(message);
-                break;
-            case "eventAdd":
-                handleEventAdd(message);
-                break;
-            case "eventUpdate":
-                handleEventUpdate(message);
-                break;
-            case "eventDelete":
-                handleEventDelete(message);
-                break;
-            case "initialSyncCompleted":
-                handleInitialSyncCompleted();
-                break;
-            case "getSysTime":
-                handleSystemTime(message);
-                break;
-            case "getDiskSpace":
-                handleDiskSpace(message);
-                break;
-            case "getProfiles":
-                handleHtspProfiles(message);
-                break;
-            case "getDvrConfigs":
-                handleDvrConfigs(message);
-                break;
-            case "getEvents":
-                handleGetEvents(message, new Intent());
-                break;
-
-            case "subscriptionStart":
-
-                break;
-            case "subscriptionStatus":
-
-                break;
-            case "subscriptionStop":
-
-                break;
-            case "subscriptionGrace":
-
-                break;
-            case "muxpkt":
-
-                break;
-            case "queueStatus":
-
-                break;
-            case "signalStatus":
-
-                break;
-            default:
-                break;
-        }
-    }
-
     private void getDiscSpace() {
         HTSMessage request = new HTSMessage();
         request.setMethod("getDiskSpace");
@@ -517,7 +539,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         request.setMethod("getSysTime");
         htsConnection.sendMessage(request, response -> {
             if (response != null) {
-                handleSystemTime(response);
+                onSystemTime(response);
             } else {
                 Timber.d("Response is null");
             }
@@ -529,7 +551,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         request.setMethod("getDvrConfigs");
         htsConnection.sendMessage(request, response -> {
             if (response != null) {
-                handleDvrConfigs(response);
+                onDvrConfigs(response);
             } else {
                 Timber.d("Response is null");
             }
@@ -541,7 +563,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         request.setMethod("getProfiles");
         htsConnection.sendMessage(request, response -> {
             if (response != null) {
-                handleHtspProfiles(response);
+                onHtspProfiles(response);
             } else {
                 Timber.d("Response is null");
             }
@@ -555,7 +577,7 @@ public class HTSService extends Service implements HTSConnectionListener {
 
         htsConnection.sendMessage(request, response -> {
             if (response != null) {
-                handleHttpProfiles(response);
+                onHttpProfiles(response);
             } else {
                 Timber.d("Response is null");
             }
@@ -643,14 +665,14 @@ public class HTSService extends Service implements HTSConnectionListener {
      *
      * @param msg The message with the new tag data
      */
-    private void handleTagAdd(HTSMessage msg) {
+    private void onTagAdd(HTSMessage msg) {
         if (!initialSyncWithServerRunning) {
             return;
         }
 
         // During initial sync no channels are yet saved. So use the temporarily
         // stored channels to calculate the channel count for the channel tag
-        ChannelTag addedTag = HTSUtils.convertMessageToChannelTagModel(new ChannelTag(), msg, pendingChannelOps);
+        ChannelTag addedTag = HtspUtils.convertMessageToChannelTagModel(new ChannelTag(), msg, pendingChannelOps);
         addedTag.setConnectionId(connection.getId());
 
         Timber.d("Sync is running, adding channel tag");
@@ -663,7 +685,7 @@ public class HTSService extends Service implements HTSConnectionListener {
      *
      * @param msg The message with the updated tag data
      */
-    private void handleTagUpdate(HTSMessage msg) {
+    private void onTagUpdate(HTSMessage msg) {
         if (!initialSyncWithServerRunning) {
             return;
         }
@@ -676,7 +698,7 @@ public class HTSService extends Service implements HTSConnectionListener {
 
         // During initial sync no channels are yet saved. So use the temporarily
         // stored channels to calculate the channel count for the channel tag
-        ChannelTag updatedTag = HTSUtils.convertMessageToChannelTagModel(channelTag, msg, pendingChannelOps);
+        ChannelTag updatedTag = HtspUtils.convertMessageToChannelTagModel(channelTag, msg, pendingChannelOps);
         updatedTag.setConnectionId(connection.getId());
         updatedTag.setSelected(channelTag.isSelected());
 
@@ -696,7 +718,7 @@ public class HTSService extends Service implements HTSConnectionListener {
      *
      * @param msg The message with the tag id that was deleted
      */
-    private void handleTagDelete(HTSMessage msg) {
+    private void onTagDelete(HTSMessage msg) {
         if (msg.containsKey("tagId")) {
             ChannelTag tag = appRepository.getChannelTagData().getItemById(msg.getInteger("tagId"));
             if (tag != null) {
@@ -713,12 +735,12 @@ public class HTSService extends Service implements HTSConnectionListener {
      *
      * @param msg The message with the new channel data
      */
-    private void handleChannelAdd(HTSMessage msg) {
+    private void onChannelAdd(HTSMessage msg) {
         if (!initialSyncWithServerRunning) {
             return;
         }
 
-        Channel channel = HTSUtils.convertMessageToChannelModel(new Channel(), msg);
+        Channel channel = HtspUtils.convertMessageToChannelModel(new Channel(), msg);
         channel.setConnectionId(connection.getId());
         channel.setServerOrder(pendingChannelOps.size() + 1);
 
@@ -743,7 +765,7 @@ public class HTSService extends Service implements HTSConnectionListener {
      *
      * @param msg The message with the updated channel data
      */
-    private void handleChannelUpdate(HTSMessage msg) {
+    private void onChannelUpdate(HTSMessage msg) {
         if (!initialSyncWithServerRunning) {
             return;
         }
@@ -753,7 +775,7 @@ public class HTSService extends Service implements HTSConnectionListener {
             Timber.d("Could not find a channel with id " + msg.getInteger("channelId") + " in the database");
             return;
         }
-        Channel updatedChannel = HTSUtils.convertMessageToChannelModel(channel, msg);
+        Channel updatedChannel = HtspUtils.convertMessageToChannelModel(channel, msg);
         appRepository.getChannelData().updateItem(updatedChannel);
     }
 
@@ -763,7 +785,7 @@ public class HTSService extends Service implements HTSConnectionListener {
      *
      * @param msg The message with the channel id that was deleted
      */
-    private void handleChannelDelete(HTSMessage msg) {
+    private void onChannelDelete(HTSMessage msg) {
         if (msg.containsKey("channelId")) {
             int channelId = msg.getInteger("channelId");
 
@@ -785,8 +807,8 @@ public class HTSService extends Service implements HTSConnectionListener {
      *
      * @param msg The message with the new recording data
      */
-    private void handleDvrEntryAdd(HTSMessage msg) {
-        Recording recording = HTSUtils.convertMessageToRecordingModel(new Recording(), msg);
+    private void onDvrEntryAdd(HTSMessage msg) {
+        Recording recording = HtspUtils.convertMessageToRecordingModel(new Recording(), msg);
         recording.setConnectionId(connection.getId());
 
         if (initialSyncWithServerRunning) {
@@ -819,14 +841,14 @@ public class HTSService extends Service implements HTSConnectionListener {
      *
      * @param msg The message with the updated recording data
      */
-    private void handleDvrEntryUpdate(HTSMessage msg) {
+    private void onDvrEntryUpdate(HTSMessage msg) {
         // Get the existing recording
         Recording recording = appRepository.getRecordingData().getItemById(msg.getInteger("id"));
         if (recording == null) {
             Timber.d("Could not find a recording with id " + msg.getInteger("id") + " in the database");
             return;
         }
-        Recording updatedRecording = HTSUtils.convertMessageToRecordingModel(recording, msg);
+        Recording updatedRecording = HtspUtils.convertMessageToRecordingModel(recording, msg);
         appRepository.getRecordingData().updateItem(updatedRecording);
 
         if (sharedPreferences.getBoolean("notifications_enabled", getResources().getBoolean(R.bool.pref_default_notifications_enabled))) {
@@ -843,7 +865,7 @@ public class HTSService extends Service implements HTSConnectionListener {
      *
      * @param msg The message with the recording id that was deleted
      */
-    private void handleDvrEntryDelete(HTSMessage msg) {
+    private void onDvrEntryDelete(HTSMessage msg) {
         if (msg.containsKey("id")) {
             Recording recording = appRepository.getRecordingData().getItemById(msg.getInteger("id"));
             if (recording != null) {
@@ -862,8 +884,8 @@ public class HTSService extends Service implements HTSConnectionListener {
      *
      * @param msg The message with the new series recording data
      */
-    private void handleAutorecEntryAdd(HTSMessage msg) {
-        SeriesRecording seriesRecording = HTSUtils.convertMessageToSeriesRecordingModel(new SeriesRecording(), msg);
+    private void onAutorecEntryAdd(HTSMessage msg) {
+        SeriesRecording seriesRecording = HtspUtils.convertMessageToSeriesRecordingModel(new SeriesRecording(), msg);
         seriesRecording.setConnectionId(connection.getId());
         appRepository.getSeriesRecordingData().addItem(seriesRecording);
     }
@@ -874,13 +896,13 @@ public class HTSService extends Service implements HTSConnectionListener {
      *
      * @param msg The message with the updated series recording data
      */
-    private void handleAutorecEntryUpdate(HTSMessage msg) {
+    private void onAutorecEntryUpdate(HTSMessage msg) {
         SeriesRecording recording = appRepository.getSeriesRecordingData().getItemById(msg.getString("id"));
         if (recording == null) {
             Timber.d("Could not find a series recording with id " + msg.getString("id") + " in the database");
             return;
         }
-        SeriesRecording updatedRecording = HTSUtils.convertMessageToSeriesRecordingModel(recording, msg);
+        SeriesRecording updatedRecording = HtspUtils.convertMessageToSeriesRecordingModel(recording, msg);
         appRepository.getSeriesRecordingData().updateItem(updatedRecording);
     }
 
@@ -890,7 +912,7 @@ public class HTSService extends Service implements HTSConnectionListener {
      *
      * @param msg The message with the series recording id that was deleted
      */
-    private void handleAutorecEntryDelete(HTSMessage msg) {
+    private void onAutorecEntryDelete(HTSMessage msg) {
         if (msg.containsKey("id")) {
             SeriesRecording seriesRecording = appRepository.getSeriesRecordingData().getItemById(msg.getString("id"));
             if (seriesRecording != null) {
@@ -905,8 +927,8 @@ public class HTSService extends Service implements HTSConnectionListener {
      *
      * @param msg The message with the new timer recording data
      */
-    private void handleTimerRecEntryAdd(HTSMessage msg) {
-        TimerRecording recording = HTSUtils.convertMessageToTimerRecordingModel(new TimerRecording(), msg);
+    private void onTimerRecEntryAdd(HTSMessage msg) {
+        TimerRecording recording = HtspUtils.convertMessageToTimerRecordingModel(new TimerRecording(), msg);
         recording.setConnectionId(connection.getId());
         appRepository.getTimerRecordingData().addItem(recording);
     }
@@ -917,13 +939,13 @@ public class HTSService extends Service implements HTSConnectionListener {
      *
      * @param msg The message with the updated timer recording data
      */
-    private void handleTimerRecEntryUpdate(HTSMessage msg) {
+    private void onTimerRecEntryUpdate(HTSMessage msg) {
         TimerRecording recording = appRepository.getTimerRecordingData().getItemById(msg.getString("id"));
         if (recording == null) {
             Timber.d("Could not find a timer recording with id " + msg.getString("id") + " in the database");
             return;
         }
-        TimerRecording updatedRecording = HTSUtils.convertMessageToTimerRecordingModel(recording, msg);
+        TimerRecording updatedRecording = HtspUtils.convertMessageToTimerRecordingModel(recording, msg);
         appRepository.getTimerRecordingData().updateItem(updatedRecording);
     }
 
@@ -933,7 +955,7 @@ public class HTSService extends Service implements HTSConnectionListener {
      *
      * @param msg The message with the recording id that was deleted
      */
-    private void handleTimerRecEntryDelete(HTSMessage msg) {
+    private void onTimerRecEntryDelete(HTSMessage msg) {
         if (msg.containsKey("id")) {
             TimerRecording timerRecording = appRepository.getTimerRecordingData().getItemById(msg.getString("id"));
             if (timerRecording != null) {
@@ -948,7 +970,7 @@ public class HTSService extends Service implements HTSConnectionListener {
      *
      * @param msg The message with the new epg event data
      */
-    private void handleEventAdd(HTSMessage msg) {
+    private void onEventAdd(HTSMessage msg) {
         if (!firstEventReceived && syncRequired) {
             Timber.d("Sync is required and received first event, saving " + pendingChannelOps.size() + " channels");
             appRepository.getChannelData().addItems(pendingChannelOps);
@@ -959,7 +981,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         }
 
         firstEventReceived = true;
-        Program program = HTSUtils.convertMessageToProgramModel(new Program(), msg);
+        Program program = HtspUtils.convertMessageToProgramModel(new Program(), msg);
         program.setConnectionId(connection.getId());
 
         if (initialSyncWithServerRunning) {
@@ -983,13 +1005,13 @@ public class HTSService extends Service implements HTSConnectionListener {
      *
      * @param msg The message with the updated epg event data
      */
-    private void handleEventUpdate(HTSMessage msg) {
+    private void onEventUpdate(HTSMessage msg) {
         Program program = appRepository.getProgramData().getItemById(msg.getInteger("eventId"));
         if (program == null) {
             Timber.d("Could not find a program with id " + msg.getInteger("eventId") + " in the database");
             return;
         }
-        Program updatedProgram = HTSUtils.convertMessageToProgramModel(program, msg);
+        Program updatedProgram = HtspUtils.convertMessageToProgramModel(program, msg);
         Timber.d("Updating event " + updatedProgram.getTitle());
         appRepository.getProgramData().updateItem(updatedProgram);
     }
@@ -1000,7 +1022,7 @@ public class HTSService extends Service implements HTSConnectionListener {
      *
      * @param msg The message with the epg event id that was deleted
      */
-    private void handleEventDelete(HTSMessage msg) {
+    private void onEventDelete(HTSMessage msg) {
         if (msg.containsKey("id")) {
             appRepository.getProgramData().removeItemById(msg.getInteger("id"));
         }
@@ -1011,7 +1033,7 @@ public class HTSService extends Service implements HTSConnectionListener {
      *
      * @param message The message with the events
      */
-    private void handleGetEvents(HTSMessage message, Intent intent) {
+    private void onGetEvents(HTSMessage message, Intent intent) {
 
         final boolean useEventList = intent.getBooleanExtra("useEventList", false);
         final String channelName = intent.getStringExtra("channelName");
@@ -1020,7 +1042,7 @@ public class HTSService extends Service implements HTSConnectionListener {
             List<Program> programs = new ArrayList<>();
             for (Object obj : message.getList("events")) {
                 HTSMessage msg = (HTSMessage) obj;
-                Program program = HTSUtils.convertMessageToProgramModel(new Program(), msg);
+                Program program = HtspUtils.convertMessageToProgramModel(new Program(), msg);
                 program.setConnectionId(connection.getId());
                 programs.add(program);
             }
@@ -1035,7 +1057,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         }
     }
 
-    private void handleHtspProfiles(HTSMessage message) {
+    private void onHtspProfiles(HTSMessage message) {
         Timber.d("Handling htsp playback profiles");
         if (message.containsKey("profiles")) {
             for (Object obj : message.getList("profiles")) {
@@ -1065,7 +1087,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         }
     }
 
-    private void handleHttpProfiles(HTSMessage message) {
+    private void onHttpProfiles(HTSMessage message) {
         Timber.d("Handling http playback profiles");
         if (message.containsKey("response")) {
             try {
@@ -1106,7 +1128,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         }
     }
 
-    private void handleDvrConfigs(HTSMessage message) {
+    private void onDvrConfigs(HTSMessage message) {
         Timber.d("Handling recording profiles");
         if (message.containsKey("dvrconfigs")) {
             for (Object obj : message.getList("dvrconfigs")) {
@@ -1134,7 +1156,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         }
     }
 
-    private void handleSystemTime(HTSMessage message) {
+    private void onSystemTime(HTSMessage message) {
         int gmtOffsetFromServer = message.getInteger("gmtoffset", 0) * 60 * 1000;
         int gmtOffset = gmtOffsetFromServer - MiscUtils.getDaylightSavingOffset();
         Timber.d("GMT offset from server is " + gmtOffsetFromServer +
@@ -1150,7 +1172,7 @@ public class HTSService extends Service implements HTSConnectionListener {
                 + ", server gmt offset: " + serverStatus.getGmtoffset());
     }
 
-    private void handleDiskSpace(HTSMessage message) {
+    private void onDiskSpace(HTSMessage message) {
         ServerStatus serverStatus = appRepository.getServerStatusData().getActiveItem();
         serverStatus.setFreeDiskSpace(message.getLong("freediskspace", 0));
         serverStatus.setTotalDiskSpace(message.getLong("totaldiskspace", 0));
@@ -1159,6 +1181,83 @@ public class HTSService extends Service implements HTSConnectionListener {
         Timber.d("Received disk space information from server " + serverStatus.getServerName()
                 + ", free disk space: " + serverStatus.getFreeDiskSpace()
                 + ", total disk space: " + serverStatus.getTotalDiskSpace());
+    }
+
+    private void onSubscriptionStart(@NonNull HTSMessage message) {
+        //startTime = (System.currentTimeMillis() * 1000) - 1000;
+        for (HTSSubscriptionListener listener : listeners) {
+            listener.onSubscriptionStart(message);
+        }
+    }
+
+    private void onSubscriptionStatus(@NonNull HTSMessage message) {
+        final int subscriptionId = message.getInteger("subscriptionId");
+        final String status = message.getString("status", null);
+        final String subscriptionError = message.getString("subscriptionError", null);
+
+        if (status != null || subscriptionError != null) {
+            StringBuilder sb = new StringBuilder()
+                    .append("Subscription Status:")
+                    .append(" S: ").append(subscriptionId);
+
+            if (status != null) {
+                sb.append(" Status: ").append(status);
+            }
+            if (subscriptionError != null) {
+                sb.append(" Error: ").append(subscriptionError);
+            }
+
+            Timber.w("Subscription status: " + sb.toString());
+        }
+        for (HTSSubscriptionListener listener : listeners) {
+            listener.onSubscriptionStatus(message);
+        }
+    }
+
+    private void onSubscriptionStop(@NonNull HTSMessage message) {
+        //cancelTimer();
+        for (HTSSubscriptionListener listener : listeners) {
+            listener.onSubscriptionStop(message);
+        }
+    }
+
+    private void onSubscriptionSkip(@NonNull HTSMessage message) {
+        for (HTSSubscriptionListener listener : listeners) {
+            listener.onSubscriptionSkip(message);
+        }
+    }
+
+    private void onSubscriptionSpeed(@NonNull HTSMessage message) {
+        for (HTSSubscriptionListener listener : listeners) {
+            listener.onSubscriptionSpeed(message);
+        }
+    }
+
+    private void onQueueStatus(@NonNull HTSMessage message) {
+        //queueStatus = message;
+        for (HTSSubscriptionListener listener : listeners) {
+            listener.onQueueStatus(message);
+        }
+    }
+
+    private void onSignalStatus(@NonNull HTSMessage message) {
+        //signalStatus = message;
+        for (HTSSubscriptionListener listener : listeners) {
+            listener.onSignalStatus(message);
+        }
+    }
+
+    private void onTimeshiftStatus(@NonNull HTSMessage message) {
+        //timeshiftStatus = message;
+        for (HTSSubscriptionListener listener : listeners) {
+            listener.onTimeshiftStatus(message);
+        }
+    }
+
+    private void onMuxPacket(@NonNull HTSMessage message) {
+        for (HTSSubscriptionListener listener : listeners) {
+            listener.onMuxPacket(message);
+        }
     }
 
     /**
@@ -1375,7 +1474,7 @@ public class HTSService extends Service implements HTSConnectionListener {
 
         htsConnection.sendMessage(request, response -> {
             if (response != null) {
-                Program program = HTSUtils.convertMessageToProgramModel(new Program(), response);
+                Program program = HtspUtils.convertMessageToProgramModel(new Program(), response);
                 appRepository.getProgramData().addItem(program);
             } else {
                 Timber.d("Response is null");
@@ -1390,34 +1489,11 @@ public class HTSService extends Service implements HTSConnectionListener {
      * @param intent Intent with the request message fields
      */
     private void getEvents(Intent intent) {
-
-        final int eventId = intent.getIntExtra("eventId", 0);
-        final int channelId = intent.getIntExtra("channelId", 0);
-        final String channelName = intent.getStringExtra("channelName");
-        final int numFollowing = intent.getIntExtra("numFollowing", 0);
-        final long maxTime = intent.getLongExtra("maxTime", 0);
         final boolean showMessage = intent.getBooleanExtra("showMessage", false);
-
-        Timber.d("Loading " + numFollowing + " more events for channel " + channelName);
-
-        final HTSMessage request = new HTSMessage();
-        request.put("method", "getEvents");
-        if (eventId > 0) {
-            request.put("eventId", eventId);
-        }
-        if (channelId > 0) {
-            request.put("channelId", channelId);
-        }
-        if (numFollowing > 0) {
-            request.put("numFollowing", numFollowing);
-        }
-        if (maxTime > 0) {
-            request.put("maxTime", maxTime);
-        }
-
+        HTSMessage request = (HTSMessage) HtspUtils.convertIntentToEventMessage(intent);
         htsConnection.sendMessage(request, response -> {
             if (response != null) {
-                handleGetEvents(response, intent);
+                onGetEvents(response, intent);
                 if (showMessage) {
                     Timber.d("Showing message");
                     SnackbarUtils.sendSnackbarMessage(this, getString(R.string.loading_more_programs_finished));
@@ -1484,39 +1560,7 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     private void getEpgQuery(final Intent intent) {
-        final String query = intent.getStringExtra("query");
-        final long channelId = intent.getIntExtra("channelId", 0);
-        final long tagId = intent.getIntExtra("tagId", 0);
-        final int contentType = intent.getIntExtra("contentType", 0);
-        final int minDuration = intent.getIntExtra("minduration", 0);
-        final int maxDuration = intent.getIntExtra("maxduration", 0);
-        final String language = intent.getStringExtra("language");
-        final boolean full = intent.getBooleanExtra("full", false);
-
-        final HTSMessage request = new HTSMessage();
-        request.put("method", "epgQuery");
-        request.put("query", query);
-
-        if (channelId > 0) {
-            request.put("channelId", channelId);
-        }
-        if (tagId > 0) {
-            request.put("tagId", tagId);
-        }
-        if (contentType > 0) {
-            request.put("contentType", contentType);
-        }
-        if (minDuration > 0) {
-            request.put("minDuration", minDuration);
-        }
-        if (maxDuration > 0) {
-            request.put("maxDuration", maxDuration);
-        }
-        if (language != null) {
-            request.put("language", language);
-        }
-        request.put("full", full);
-
+        HTSMessage request = (HTSMessage) HtspUtils.convertIntentToEpgQueryMessage(intent);
         htsConnection.sendMessage(request, response -> {
             if (response != null) {
                 // Contains the ids of those events that were returned by the query
@@ -1541,7 +1585,7 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     private void addDvrEntry(final Intent intent) {
-        HTSMessage request = HTSUtils.convertIntentToDvrMessage(intent, htspVersion);
+        HTSMessage request = (HTSMessage) HtspUtils.convertIntentToDvrMessage(intent, htspVersion);
         request.put("method", "addDvrEntry");
 
         htsConnection.sendMessage(request, response -> {
@@ -1565,7 +1609,7 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     private void updateDvrEntry(final Intent intent) {
-        HTSMessage request = HTSUtils.convertIntentToDvrMessage(intent, htspVersion);
+        HTSMessage request = (HTSMessage) HtspUtils.convertIntentToDvrMessage(intent, htspVersion);
         request.put("method", "updateDvrEntry");
         request.put("id", intent.getIntExtra("id", 0));
 
@@ -1608,7 +1652,7 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     private void addAutorecEntry(final Intent intent) {
-        HTSMessage request = HTSUtils.convertIntentToAutorecMessage(intent, htspVersion);
+        HTSMessage request = (HTSMessage) HtspUtils.convertIntentToAutorecMessage(intent, htspVersion);
         request.put("method", "addAutorecEntry");
 
         htsConnection.sendMessage(request, response -> {
@@ -1631,7 +1675,7 @@ public class HTSService extends Service implements HTSConnectionListener {
     private void updateAutorecEntry(final Intent intent) {
         HTSMessage request = new HTSMessage();
         if (htspVersion >= 25) {
-            request = HTSUtils.convertIntentToAutorecMessage(intent, htspVersion);
+            request = (HTSMessage) HtspUtils.convertIntentToAutorecMessage(intent, htspVersion);
             request.put("method", "updateAutorecEntry");
         } else {
             request.put("method", "deleteAutorecEntry");
@@ -1678,7 +1722,7 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     private void addTimerrecEntry(final Intent intent) {
-        HTSMessage request = HTSUtils.convertIntentToTimerecMessage(intent, htspVersion);
+        HTSMessage request = (HTSMessage) HtspUtils.convertIntentToTimerecMessage(intent, htspVersion);
         request.put("method", "addTimerecEntry");
 
         // Reply message fields:
@@ -1701,7 +1745,7 @@ public class HTSService extends Service implements HTSConnectionListener {
     private void updateTimerrecEntry(final Intent intent) {
         HTSMessage request = new HTSMessage();
         if (htspVersion >= 25) {
-            request = HTSUtils.convertIntentToTimerecMessage(intent, htspVersion);
+            request = (HTSMessage) HtspUtils.convertIntentToTimerecMessage(intent, htspVersion);
             request.put("method", "updateTimerecEntry");
         } else {
             request.put("method", "deleteTimerecEntry");
@@ -1773,5 +1817,51 @@ public class HTSService extends Service implements HTSConnectionListener {
                 Timber.d("Response is null");
             }
         });
+    }
+
+    private void subscribe(Intent intent) {
+        final int subscriptionId = intent.getIntExtra("subscriptionId", 0);
+        final int channelId = intent.getIntExtra("channelId", 0);
+        final int timeshiftPeriod = intent.getIntExtra("timeshiftPeriod", 0);
+        final String profile = intent.getStringExtra("profile");
+
+        HTSMessage request = new HTSMessage();
+        request.setMethod("subscribe");
+        request.put("subscriptionId", subscriptionId);
+        request.put("channelId", channelId);
+        request.put("timeshiftPeriod", timeshiftPeriod);
+
+        if (!TextUtils.isEmpty(profile)) {
+            request.put("profile", profile);
+        }
+
+        htsConnection.sendMessage(request, response -> {
+            int availableTimeshiftPeriod = response.getInteger("timeshiftPeriod", 0);
+            Timber.d("Available timeshift period in seconds: " + availableTimeshiftPeriod);
+
+        });
+    }
+
+    private void unsubscribe(Intent intent) {
+        final int subscriptionId = intent.getIntExtra("subscriptionId", 0);
+        HTSMessage request = new HTSMessage();
+        request.setMethod("unsubscribe");
+        request.put("subscriptionId", subscriptionId);
+
+        htsConnection.sendMessage(request, response -> {
+            //NOP
+        });
+    }
+
+    void sendEpgSyncStatusMessage(ServiceStatusReceiver.State state, String msg, String details) {
+        Intent intent = new Intent(ServiceStatusReceiver.ACTION);
+        intent.putExtra(ServiceStatusReceiver.STATE, state);
+        if (!TextUtils.isEmpty(msg)) {
+            intent.putExtra(ServiceStatusReceiver.MESSAGE, msg);
+        }
+        if (!TextUtils.isEmpty(details)) {
+            intent.putExtra(ServiceStatusReceiver.DETAILS, details);
+        }
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 }
