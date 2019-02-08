@@ -3,17 +3,15 @@ package org.tvheadend.tvhclient.data.service;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
-import androidx.annotation.NonNull;
 
 import org.tvheadend.tvhclient.MainApplication;
-import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.data.service.htsp.SimpleHtspConnection;
-import org.tvheadend.tvhclient.features.shared.receivers.ServiceStatusReceiver;
 
 import javax.inject.Inject;
 
+import androidx.annotation.NonNull;
 import timber.log.Timber;
 
 public class EpgSyncService extends Service {
@@ -33,11 +31,39 @@ public class EpgSyncService extends Service {
     public void onCreate() {
         super.onCreate();
         Timber.d("Starting service");
-
         MainApplication.getComponent().inject(this);
+    }
+
+    @Override
+    public int onStartCommand(@NonNull Intent intent, int flags, int startId) {
+        Timber.d("Received command for service");
+
+        final String action = intent.getAction();
+        if (action == null || action.isEmpty()) {
+            return START_NOT_STICKY;
+        }
+
+        switch (action) {
+            case "connect":
+                Timber.d("Connection to server requested, stopping previous connection");
+                startHtspConnection();
+                break;
+            case "reconnect":
+                if (simpleHtspConnection == null || !simpleHtspConnection.isConnected()) {
+                    startHtspConnection();
+                }
+                break;
+            default:
+                epgSyncTask.handleIntent(intent);
+        }
+        return START_STICKY;
+    }
+
+    private void startHtspConnection() {
+        stopHtspConnection();
+
         connection = appRepository.getConnectionData().getActiveItem();
         simpleHtspConnection = new SimpleHtspConnection(connection);
-
         epgSyncTask = new EpgSyncTask(simpleHtspConnection, connection);
 
         simpleHtspConnection.addMessageListener(epgSyncTask);
@@ -46,36 +72,22 @@ public class EpgSyncService extends Service {
         simpleHtspConnection.start();
     }
 
-    @Override
-    public int onStartCommand(@NonNull Intent intent, int flags, int startId) {
-        Timber.d("Received command for service");
-
-        if (simpleHtspConnection != null
-                && simpleHtspConnection.isConnected()
-                && simpleHtspConnection.isAuthenticated()) {
-            Timber.d("Connected to server, passing command to epg sync task");
-            epgSyncTask.handleIntent(intent);
-
-        } else if (simpleHtspConnection != null
-                && simpleHtspConnection.isClosed()) {
-            Timber.d("Server connection has been closed");
-            epgSyncTask.sendEpgSyncStatusMessage(ServiceStatusReceiver.State.CLOSED,
-                    getString(R.string.connection_closed), "");
+    private void stopHtspConnection() {
+        if (simpleHtspConnection != null) {
+            simpleHtspConnection.removeMessageListener(epgSyncTask);
+            simpleHtspConnection.removeConnectionListener(epgSyncTask);
+            simpleHtspConnection.removeAuthenticationListener(epgSyncTask);
+            simpleHtspConnection.stop();
+            simpleHtspConnection = null;
         }
-        return START_STICKY;
+        epgSyncTask = null;
+        connection = null;
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         Timber.d("Stopping service");
-        if (simpleHtspConnection != null) {
-            simpleHtspConnection.removeMessageListener(epgSyncTask);
-            simpleHtspConnection.removeConnectionListener(epgSyncTask);
-            simpleHtspConnection.removeAuthenticationListener(epgSyncTask);
-            simpleHtspConnection.stop();
-        }
-        simpleHtspConnection = null;
-        connection = null;
+        stopHtspConnection();
     }
 }

@@ -7,7 +7,6 @@ import android.preference.PreferenceManager;
 
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.data.service_old.HTSService;
 import org.tvheadend.tvhclient.features.dvr.recordings.RecordingDetailsFragment;
 import org.tvheadend.tvhclient.features.dvr.series_recordings.SeriesRecordingDetailsFragment;
 import org.tvheadend.tvhclient.features.dvr.timer_recordings.TimerRecordingDetailsFragment;
@@ -77,23 +76,17 @@ public abstract class BaseActivity extends AppCompatActivity implements NetworkS
             if (!isNetworkAvailable) {
                 Timber.d("Network changed from offline to online, starting service");
                 if (MainApplication.isActivityVisible()) {
-
-                    Class selectedServiceClass = MiscUtils.getSelectedService(this);
-                    Intent intent = new Intent(this, selectedServiceClass);
-
-                    if (selectedServiceClass.getName().equals(HTSService.class.getName())) {
-                        intent.setAction("connect");
-                        intent.putExtra("force", true);
-                    }
+                    Intent intent = new Intent(this, MiscUtils.getSelectedService(this));
+                    intent.setAction("connect");
                     startService(intent);
                 }
             } else {
                 Timber.d("Network still active, pinging server");
-                /*if (MainApplication.isActivityVisible()) {
-                    Intent intent = new Intent(this, EpgSyncService.class);
-                    intent.setAction("getStatus");
+                if (MainApplication.isActivityVisible()) {
+                    Intent intent = new Intent(this, MiscUtils.getSelectedService(this));
+                    intent.setAction("reconnect");
                     startService(intent);
-                }*/
+                }
             }
         } else {
             Timber.d("Network is not available anymore, stopping service");
