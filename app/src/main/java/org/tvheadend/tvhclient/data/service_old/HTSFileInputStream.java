@@ -82,7 +82,7 @@ public class HTSFileInputStream extends InputStream {
         FileOpenResponse response = new FileOpenResponse();
 
         request.setMethod("fileOpen");
-        request.putField("file", path);
+        request.put("file", path);
 
         synchronized (response) {
             try {
@@ -107,7 +107,7 @@ public class HTSFileInputStream extends InputStream {
         FileCloseResponse response = new FileCloseResponse();
 
         request.setMethod("fileClose");
-        request.putField("id", fileId);
+        request.put("id", fileId);
 
         synchronized (response) {
             try {
@@ -154,9 +154,9 @@ public class HTSFileInputStream extends InputStream {
         FileReadResponse response = new FileReadResponse();
 
         request.setMethod("fileRead");
-        request.putField("id", fileId);
-        request.putField("size", Math.min(fileSize, 1024 * 1024 * 8));
-        request.putField("offset", offset);
+        request.put("id", fileId);
+        request.put("size", Math.min(fileSize, 1024 * 1024 * 8));
+        request.put("offset", offset);
 
         synchronized (response) {
             try {

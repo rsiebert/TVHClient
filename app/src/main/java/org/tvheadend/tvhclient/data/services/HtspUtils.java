@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.data.service;
+package org.tvheadend.tvhclient.data.services;
 
 import android.content.Intent;
 import android.text.TextUtils;
@@ -10,19 +10,15 @@ import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.data.entity.SeriesRecording;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
 import org.tvheadend.tvhclient.data.entity.TimerRecording;
-import org.tvheadend.tvhclient.data.service.htsp.HtspMessage;
 
 import java.util.List;
 
 import androidx.annotation.NonNull;
 import timber.log.Timber;
 
-class EpgSyncUtils {
-    private EpgSyncUtils() {
-        throw new IllegalAccessError("Utility class");
-    }
+public class HtspUtils {
 
-    static ChannelTag convertMessageToChannelTagModel(@NonNull ChannelTag tag, @NonNull HtspMessage msg, @NonNull List<Channel> channels) {
+    public static ChannelTag convertMessageToChannelTagModel(@NonNull ChannelTag tag, @NonNull BaseHtspMessage msg, @NonNull List<Channel> channels) {
         if (msg.containsKey("tagId")) {
             tag.setTagId(msg.getInteger("tagId"));
         }
@@ -62,7 +58,7 @@ class EpgSyncUtils {
         return tag;
     }
 
-    static Channel convertMessageToChannelModel(@NonNull Channel channel, @NonNull HtspMessage msg) {
+    public static Channel convertMessageToChannelModel(@NonNull Channel channel, @NonNull BaseHtspMessage msg) {
         if (msg.containsKey("channelId")) {
             channel.setId(msg.getInteger("channelId"));
         }
@@ -103,7 +99,7 @@ class EpgSyncUtils {
         return channel;
     }
 
-    static Recording convertMessageToRecordingModel(@NonNull Recording recording, @NonNull HtspMessage msg) {
+    public static Recording convertMessageToRecordingModel(@NonNull Recording recording, @NonNull BaseHtspMessage msg) {
         if (msg.containsKey("id")) {
             recording.setId(msg.getInteger("id"));
         }
@@ -245,7 +241,7 @@ class EpgSyncUtils {
         return recording;
     }
 
-    static Program convertMessageToProgramModel(@NonNull Program program, @NonNull HtspMessage msg) {
+    public static Program convertMessageToProgramModel(@NonNull Program program, @NonNull BaseHtspMessage msg) {
         if (msg.containsKey("eventId")) {
             program.setEventId(msg.getInteger("eventId"));
         }
@@ -420,7 +416,7 @@ class EpgSyncUtils {
         return program;
     }
 
-    static SeriesRecording convertMessageToSeriesRecordingModel(@NonNull SeriesRecording seriesRecording, @NonNull HtspMessage msg) {
+    public static SeriesRecording convertMessageToSeriesRecordingModel(@NonNull SeriesRecording seriesRecording, @NonNull BaseHtspMessage msg) {
         if (msg.containsKey("id")) {
             seriesRecording.setId(msg.getString("id"));
         }
@@ -510,7 +506,7 @@ class EpgSyncUtils {
         return seriesRecording;
     }
 
-    static TimerRecording convertMessageToTimerRecordingModel(@NonNull TimerRecording timerRecording, @NonNull HtspMessage msg) {
+    public static TimerRecording convertMessageToTimerRecordingModel(@NonNull TimerRecording timerRecording, @NonNull BaseHtspMessage msg) {
         if (msg.containsKey("id")) {
             timerRecording.setId(msg.getString("id"));
         }
@@ -575,7 +571,29 @@ class EpgSyncUtils {
         return timerRecording;
     }
 
-    static HtspMessage convertIntentToAutorecMessage(@NonNull Intent intent, int htspVersion) {
+    public static ServerStatus convertMessageToServerStatusModel(@NonNull ServerStatus serverStatus, @NonNull BaseHtspMessage msg) {
+        if (msg.containsKey("htspversion")) {
+            serverStatus.setHtspVersion(msg.getInteger("htspversion", 13));
+        }
+        if (msg.containsKey("servername")) {
+            serverStatus.setServerName(msg.getString("servername"));
+        }
+        if (msg.containsKey("serverversion")) {
+            serverStatus.setServerVersion(msg.getString("serverversion"));
+        }
+        if (msg.containsKey("webroot")) {
+            String webroot = msg.getString("webroot");
+            serverStatus.setWebroot(webroot == null ? "" : webroot);
+        }
+        if (msg.containsKey("servercapability")) {
+            for (String capabilitiy : msg.getStringArray("servercapability")) {
+                Timber.d("Server supports " + capabilitiy);
+            }
+        }
+        return serverStatus;
+    }
+
+    public static BaseHtspMessage convertIntentToAutorecMessage(@NonNull Intent intent, int htspVersion) {
         final long enabled = intent.getIntExtra("enabled", 1);
         final String title = intent.getStringExtra("title");
         final String fulltext = intent.getStringExtra("fulltext");
@@ -594,7 +612,7 @@ class EpgSyncUtils {
         final long dupDetect = intent.getIntExtra("dupDetect", 0);
         final String comment = intent.getStringExtra("comment");
 
-        final HtspMessage request = new HtspMessage();
+        final BaseHtspMessage request = new BaseHtspMessage();
         if (htspVersion >= 19) {
             request.put("enabled", enabled);
         }
@@ -650,7 +668,7 @@ class EpgSyncUtils {
         return request;
     }
 
-    static HtspMessage convertIntentToDvrMessage(@NonNull Intent intent, int htspVersion) {
+    public static BaseHtspMessage convertIntentToDvrMessage(@NonNull Intent intent, int htspVersion) {
         final long eventId = intent.getIntExtra("eventId", 0);
         final long channelId = intent.getIntExtra("channelId", 0);
         final long start = intent.getLongExtra("start", 0);
@@ -668,7 +686,7 @@ class EpgSyncUtils {
         // is only scheduled and not being recorded
         final boolean isRecording = intent.getBooleanExtra("isRecording", false);
 
-        final HtspMessage request = new HtspMessage();
+        final BaseHtspMessage request = new BaseHtspMessage();
         // If the eventId is set then an existing program from the program guide
         // shall be recorded. The server will then ignore the other fields
         // automatically.
@@ -717,7 +735,7 @@ class EpgSyncUtils {
         return request;
     }
 
-    static HtspMessage convertIntentToTimerecMessage(@NonNull Intent intent, int htspVersion) {
+    public static BaseHtspMessage convertIntentToTimerecMessage(@NonNull Intent intent, int htspVersion) {
         final long enabled = intent.getIntExtra("enabled", 1);
         final String title = intent.getStringExtra("title");
         final String directory = intent.getStringExtra("directory");
@@ -731,7 +749,7 @@ class EpgSyncUtils {
         final long retention = intent.getIntExtra("retention", -1);
         final String comment = intent.getStringExtra("comment");
 
-        final HtspMessage request = new HtspMessage();
+        final BaseHtspMessage request = new BaseHtspMessage();
         if (htspVersion >= 19) {
             request.put("enabled", enabled);
         }
@@ -766,25 +784,62 @@ class EpgSyncUtils {
         return request;
     }
 
-    static ServerStatus convertMessageToServerStatusModel(@NonNull ServerStatus serverStatus, @NonNull HtspMessage msg) {
-        if (msg.containsKey("htspversion")) {
-            serverStatus.setHtspVersion(msg.getInteger("htspversion", 13));
+    public static BaseHtspMessage convertIntentToEventMessage(@NonNull Intent intent) {
+        final int eventId = intent.getIntExtra("eventId", 0);
+        final int channelId = intent.getIntExtra("channelId", 0);
+        final int numFollowing = intent.getIntExtra("numFollowing", 0);
+        final long maxTime = intent.getLongExtra("maxTime", 0);
+
+        final BaseHtspMessage request = new BaseHtspMessage();
+        request.put("method", "getEvents");
+        if (eventId > 0) {
+            request.put("eventId", eventId);
         }
-        if (msg.containsKey("servername")) {
-            serverStatus.setServerName(msg.getString("servername"));
+        if (channelId > 0) {
+            request.put("channelId", channelId);
         }
-        if (msg.containsKey("serverversion")) {
-            serverStatus.setServerVersion(msg.getString("serverversion"));
+        if (numFollowing > 0) {
+            request.put("numFollowing", numFollowing);
         }
-        if (msg.containsKey("webroot")) {
-            String webroot = msg.getString("webroot");
-            serverStatus.setWebroot(webroot == null ? "" : webroot);
+        if (maxTime > 0) {
+            request.put("maxTime", maxTime);
         }
-        if (msg.containsKey("servercapability")) {
-            for (String capabilitiy : msg.getStringArray("servercapability")) {
-                Timber.d("Server supports " + capabilitiy);
-            }
+        return request;
+    }
+
+    public static BaseHtspMessage convertIntentToEpgQueryMessage(@NonNull Intent intent) {
+        final String query = intent.getStringExtra("query");
+        final long channelId = intent.getIntExtra("channelId", 0);
+        final long tagId = intent.getIntExtra("tagId", 0);
+        final int contentType = intent.getIntExtra("contentType", 0);
+        final int minDuration = intent.getIntExtra("minduration", 0);
+        final int maxDuration = intent.getIntExtra("maxduration", 0);
+        final String language = intent.getStringExtra("language");
+        final boolean full = intent.getBooleanExtra("full", false);
+
+        final BaseHtspMessage request = new BaseHtspMessage();
+        request.put("method", "epgQuery");
+        request.put("query", query);
+
+        if (channelId > 0) {
+            request.put("channelId", channelId);
         }
-        return serverStatus;
+        if (tagId > 0) {
+            request.put("tagId", tagId);
+        }
+        if (contentType > 0) {
+            request.put("contentType", contentType);
+        }
+        if (minDuration > 0) {
+            request.put("minDuration", minDuration);
+        }
+        if (maxDuration > 0) {
+            request.put("maxDuration", maxDuration);
+        }
+        if (language != null) {
+            request.put("language", language);
+        }
+        request.put("full", full);
+        return request;
     }
 }

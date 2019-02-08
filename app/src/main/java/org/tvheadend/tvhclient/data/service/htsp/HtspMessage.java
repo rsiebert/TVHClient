@@ -16,16 +16,12 @@
 package org.tvheadend.tvhclient.data.service.htsp;
 
 import android.os.Handler;
-import androidx.annotation.NonNull;
 
-import java.math.BigInteger;
+import org.tvheadend.tvhclient.data.services.BaseHtspMessage;
+
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-import timber.log.Timber;
+import androidx.annotation.NonNull;
 
 /*
  * See: https://tvheadend.org/projects/tvheadend/wiki/Htsp
@@ -41,7 +37,7 @@ import timber.log.Timber;
  * | List | 5  | Sub message of type list
  */
 
-public class HtspMessage extends HashMap<String, Object> {
+public class HtspMessage extends BaseHtspMessage {
 
     // Message Handler, will receive incoming messages
 
@@ -148,161 +144,5 @@ public class HtspMessage extends HashMap<String, Object> {
          * @param message The message to serialize
          */
         void write(@NonNull ByteBuffer buffer, @NonNull HtspMessage message);
-    }
-
-    public HtspMessage(Map<? extends String, ?> m) {
-        super(m);
-    }
-
-    public HtspMessage() {
-    }
-
-    @Override
-    public Object put(@NonNull String key, Object value) {
-        if (value == null) {
-            // HTSP Messages can't have null values. Remove was probably more appropriate.
-            Timber.e("HTSP Messages can't have a null value (field: " + key + ")");
-        }
-
-        return super.put(key, value);
-    }
-
-    public String getString(String key, String fallback) {
-        if (!containsKey(key)) {
-            return fallback;
-        }
-
-        return getString(key);
-    }
-
-    public String getString(String key) {
-        Object obj = get(key);
-        if (obj == null) {
-            return null;
-        }
-        return obj.toString();
-    }
-
-    public int getInteger(String key, int fallback) {
-        if (!containsKey(key)) {
-            return fallback;
-        }
-
-        return getInteger(key);
-    }
-
-    public int getInteger(String key) {
-        Object obj = get(key);
-        if (obj == null) {
-            throw new RuntimeException("Attempted to getInteger(" + key + ") on non-existent key");
-        }
-        if (obj instanceof BigInteger) {
-            return ((BigInteger) obj).intValue();
-        }
-
-        return (int) obj;
-    }
-
-    public long getLong(String key, long fallback) {
-        if (!containsKey(key)) {
-            return fallback;
-        }
-
-        return getLong(key);
-    }
-
-    public long getLong(String key) {
-        Object obj = get(key);
-        if (obj == null) {
-            throw new RuntimeException("Attempted to getLong(" + key + ") on non-existent key");
-        }
-
-        if (obj instanceof BigInteger) {
-            return ((BigInteger) obj).longValue();
-        }
-
-        return (long) obj;
-    }
-
-    public boolean getBoolean(String key, boolean fallback) {
-        if (!containsKey(key)) {
-            return fallback;
-        }
-
-        return getBoolean(key);
-    }
-
-    private boolean getBoolean(String key) {
-        return getInteger(key) == 1;
-    }
-
-    public ArrayList getArrayList(String key, ArrayList fallback) {
-        if (!containsKey(key)) {
-            return fallback;
-        }
-
-        return getArrayList(key);
-    }
-
-    public ArrayList getArrayList(String key) {
-        Object obj = get(key);
-
-        //noinspection unchecked
-        return (ArrayList<String>) obj;
-    }
-
-    public HtspMessage[] getHtspMessageArray(String key, HtspMessage[] fallback) {
-        if (!containsKey(key)) {
-            return fallback;
-        }
-
-        return getHtspMessageArray(key);
-    }
-
-    public HtspMessage[] getHtspMessageArray(String key) {
-        ArrayList value = getArrayList(key);
-
-        return (HtspMessage[]) value.toArray(new HtspMessage[value.size()]);
-    }
-
-    public String[] getStringArray(String key, String[] fallback) {
-        if (!containsKey(key)) {
-            return fallback;
-        }
-
-        return getStringArray(key);
-    }
-
-    public String[] getStringArray(String key) {
-        ArrayList value = getArrayList(key);
-
-        return (String[]) value.toArray(new String[value.size()]);
-    }
-
-    public byte[] getByteArray(String key, byte[] fallback) {
-        if (!containsKey(key)) {
-            return fallback;
-        }
-
-        return getByteArray(key);
-    }
-
-    public byte[] getByteArray(String key) {
-        Object value = get(key);
-
-        return (byte[]) value;
-    }
-
-    public List<Integer> getIntegerList(String key) {
-        ArrayList<Integer> list = new ArrayList<>();
-        if (!containsKey(key)) {
-            return list;
-        }
-        for (Object obj : (List<?>) get(key)) {
-            if (obj instanceof BigInteger) {
-                list.add(((BigInteger) obj).intValue());
-            }
-        }
-        return list;
     }
 }

@@ -12,6 +12,7 @@ import org.tvheadend.tvhclient.data.entity.ServerStatus;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.data.service.htsp.HtspConnection;
 import org.tvheadend.tvhclient.data.service.htsp.tasks.Authenticator;
+import org.tvheadend.tvhclient.data.services.HtspUtils;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -90,6 +91,8 @@ public class HTSConnection extends Thread {
 
             Timber.d("Connecting via socket to " + connection.getHostname() + ":" + connection.getPort());
             socketChannel.connect(new InetSocketAddress(hostname, port));
+
+            Timber.d("HTSP Connection thread can be started");
             isRunning = true;
             start();
 
@@ -145,7 +148,7 @@ public class HTSConnection extends Thread {
 
         final HTSMessage authMessage = new HTSMessage();
         authMessage.setMethod("authenticate");
-        authMessage.putField("username", username);
+        authMessage.put("username", username);
 
         final HTSResponseHandler authHandler = response -> {
             isAuthenticated = response.getInteger("noaccess", 0) != 1;
@@ -163,15 +166,15 @@ public class HTSConnection extends Thread {
         Timber.d("Sending initial message to server");
         HTSMessage helloMessage = new HTSMessage();
         helloMessage.setMethod("hello");
-        helloMessage.putField("clientname", "TVHClient");
-        helloMessage.putField("clientversion", (BuildConfig.VERSION_NAME + "-" + BuildConfig.VERSION_CODE));
-        helloMessage.putField("htspversion", HTSMessage.HTSP_VERSION);
-        helloMessage.putField("username", username);
+        helloMessage.put("clientname", "TVHClient");
+        helloMessage.put("clientversion", (BuildConfig.VERSION_NAME + "-" + BuildConfig.VERSION_CODE));
+        helloMessage.put("htspversion", HTSMessage.HTSP_VERSION);
+        helloMessage.put("username", username);
 
         sendMessage(helloMessage, response -> {
 
             ServerStatus serverStatus = appRepository.getServerStatusData().getActiveItem();
-            ServerStatus updatedServerStatus = HTSUtils.convertMessageToServerStatusModel(serverStatus, response);
+            ServerStatus updatedServerStatus = HtspUtils.convertMessageToServerStatusModel(serverStatus, response);
             updatedServerStatus.setConnectionId(connection.getId());
             updatedServerStatus.setConnectionName(connection.getName());
             Timber.d("Received initial response from server " + updatedServerStatus.getServerName() + ", api version: " + updatedServerStatus.getHtspVersion());
@@ -185,7 +188,7 @@ public class HTSConnection extends Thread {
                 md.update(response.getByteArray("challenge"));
 
                 Timber.d("Sending authentication message");
-                authMessage.putField("digest", md.digest());
+                authMessage.put("digest", md.digest());
                 sendMessage(authMessage, authHandler);
             } catch (NoSuchAlgorithmException e) {
                 Timber.d("Could not sent authentication message. ", e);
@@ -212,7 +215,7 @@ public class HTSConnection extends Thread {
         lock.lock();
         try {
             seq++;
-            message.putField("seq", seq);
+            message.put("seq", seq);
             responseHandlers.put(seq, listener);
             socketChannel.register(selector, SelectionKey.OP_WRITE | SelectionKey.OP_READ | SelectionKey.OP_CONNECT);
             messageQueue.add(message);
@@ -280,6 +283,7 @@ public class HTSConnection extends Thread {
                 lock.unlock();
             }
         }
+
         closeConnection();
         Timber.d("HTSP connection thread stopped");
     }
@@ -320,7 +324,7 @@ public class HTSConnection extends Thread {
     }
 
     private void handleMessage(HTSMessage msg) {
-        if (msg.containsField("seq")) {
+        if (msg.containsKey("seq")) {
             int respSeq = msg.getInteger("seq");
             HTSResponseHandler handler = responseHandlers.get(respSeq);
             responseHandlers.remove(respSeq);

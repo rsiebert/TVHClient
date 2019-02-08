@@ -1,17 +1,16 @@
 package org.tvheadend.tvhclient.data.service_old;
 
+import org.tvheadend.tvhclient.data.services.BaseHtspMessage;
+
 import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-public class HTSMessage extends HashMap<String, Object> {
+public class HTSMessage extends BaseHtspMessage {
 
     private static final long serialVersionUID = 1L;
 
@@ -22,138 +21,6 @@ public class HTSMessage extends HashMap<String, Object> {
     private static final byte HMF_BIN = 4;
     private static final byte HMF_LIST = 5;
     private ByteBuffer buf;
-
-    public void putField(String name, Object value) {
-        if (value != null) {
-            put(name, value);
-        }
-    }
-
-    public void setMethod(String name) {
-        put("method", name);
-    }
-
-    public String getMethod() {
-        return getString("method", "");
-    }
-
-    public boolean containsField(String name) {
-        return containsKey(name);
-    }
-
-    public BigInteger getBigInteger(String name) {
-        return (BigInteger) get(name);
-    }
-
-    public long getLong(String name) {
-        return getBigInteger(name).longValue();
-    }
-
-    public long getLong(String name, long std) {
-        if (!containsField(name)) {
-            return std;
-        }
-        return getLong(name);
-    }
-
-    public int getInteger(String name) {
-        return getBigInteger(name).intValue();
-    }
-
-    public int getInteger(String name, int std) {
-        if (!containsField(name)) {
-            return std;
-        }
-        return getInteger(name);
-    }
-
-    public String getString(String name, String std) {
-        if (!containsField(name)) {
-            return std;
-        }
-        return getString(name);
-    }
-
-    public String getString(String name) {
-        Object obj = get(name);
-        if (obj == null) {
-            return null;
-        }
-        return obj.toString();
-    }
-
-    public List<Long> getLongList(String name) {
-        ArrayList<Long> list = new ArrayList<>();
-
-        if (!containsField(name)) {
-            return list;
-        }
-
-        for (Object obj : (List<?>) get(name)) {
-            if (obj instanceof BigInteger) {
-                list.add(((BigInteger) obj).longValue());
-            }
-        }
-
-        return list;
-    }
-
-    List<Long> getLongList(String name, List<Long> std) {
-        if (!containsField(name)) {
-            return std;
-        }
-
-        return getLongList(name);
-    }
-
-    public List<Integer> getIntegerList(String name) {
-        ArrayList<Integer> list = new ArrayList<>();
-
-        if (!containsField(name)) {
-            return list;
-        }
-
-        for (Object obj : (List<?>) get(name)) {
-            if (obj instanceof BigInteger) {
-                list.add(((BigInteger) obj).intValue());
-            }
-        }
-
-        return list;
-    }
-
-    List<Integer> getIntegerList(String name, List<Integer> std) {
-        if (!containsField(name)) {
-            return std;
-        }
-
-        return getIntegerList(name);
-    }
-
-    public String[] getStringArray(String key) {
-        ArrayList value = getArrayList(key);
-
-        return (String[]) value.toArray(new String[value.size()]);
-    }
-
-    public ArrayList getArrayList(String key) {
-        Object obj = get(key);
-
-        //noinspection unchecked
-        return (ArrayList<String>) obj;
-    }
-
-    public List<?> getList(String name) {
-        return (List<?>) get(name);
-    }
-
-    public byte[] getByteArray(String name) {
-        return (byte[]) get(name);
-    }
-
-    public Date getDate(String name) {
-        return new Date(getLong(name) * 1000);
-    }
 
     public boolean transmit(SocketChannel ch) throws IOException {
         if (buf == null) {
@@ -398,7 +265,7 @@ public class HTSMessage extends HashMap<String, Object> {
                 default:
                     throw new IOException("Unknown data type " + type);
             }
-            msg.putField(name, obj);
+            msg.put(name, obj);
         }
         return msg;
     }
