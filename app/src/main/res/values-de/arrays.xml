@@ -85,6 +85,16 @@
         <item>Lokal: Aufnahme einmal pro Tag</item>
     </string-array>
 
+    <string-array name="epg_max_time_names">
+        <item>1 Stunde</item>
+        <item>6 Stunden</item>
+        <item>12 Stunden</item>
+        <item>1 Tag</item>
+        <item>3 Tage</item>
+        <item>7 Tage</item>
+        <item>8 Tage</item>
+    </string-array>
+
     <string-array name="pr_content_type0">
         <item>Film / Drama</item>
         <item>Nachrichten / Aktuelles</item>
