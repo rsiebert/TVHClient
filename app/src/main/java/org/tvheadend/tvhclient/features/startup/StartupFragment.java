@@ -3,9 +3,6 @@ package org.tvheadend.tvhclient.features.startup;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.appcompat.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,11 +18,14 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.features.MainActivity;
 import org.tvheadend.tvhclient.features.settings.SettingsActivity;
-import org.tvheadend.tvhclient.features.shared.receivers.ServiceStatusReceiver;
+import org.tvheadend.tvhclient.features.shared.receivers.SyncStateReceiver;
 import org.tvheadend.tvhclient.utils.MenuUtils;
 
 import javax.inject.Inject;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -56,7 +56,7 @@ public class StartupFragment extends Fragment {
     protected SharedPreferences sharedPreferences;
     private String stateText;
     private String detailsText;
-    private ServiceStatusReceiver.State state;
+    private SyncStateReceiver.State state;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -79,11 +79,11 @@ public class StartupFragment extends Fragment {
         setHasOptionsMenu(true);
 
         if (savedInstanceState != null) {
-            state = ((ServiceStatusReceiver.State) savedInstanceState.getSerializable("state"));
+            state = ((SyncStateReceiver.State) savedInstanceState.getSerializable("state"));
             stateText = savedInstanceState.getString("stateText");
             detailsText = savedInstanceState.getString("detailsText");
         } else {
-            state = ServiceStatusReceiver.State.IDLE;
+            state = SyncStateReceiver.State.IDLE;
             stateText = getString(R.string.initializing);
             detailsText = "";
         }

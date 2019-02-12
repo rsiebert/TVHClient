@@ -49,6 +49,10 @@ import static org.tvheadend.tvhclient.utils.Constants.UNLOCKER;
 // TODO improve epg loading speed by loading programs as livedata
 // TODO Use paged loading
 
+// TODO add discord link
+// TODO add timeframe menu to additional features page
+// TODO hide features menu when unlocker gets available later
+
 public class MainApplication extends Application implements OptionsProvider, LifecycleObserver, BillingUpdatesListener {
 
     private BillingHandler billingHandler;

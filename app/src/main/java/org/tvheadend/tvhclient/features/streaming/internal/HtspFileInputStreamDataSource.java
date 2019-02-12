@@ -1,128 +1,100 @@
-/*
- * Copyright (c) 2017 Kiall Mac Innes <kiall@macinnes.ie>
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package org.tvheadend.tvhclient.features.streaming.internal;
 
 import android.content.Context;
+import android.net.Uri;
 
+import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DataSpec;
 
 import org.tvheadend.tvhclient.MainApplication;
-import org.tvheadend.tvhclient.data.service.htsp.HtspFileInputStream;
-import org.tvheadend.tvhclient.data.service.htsp.SimpleHtspConnection;
+import org.tvheadend.tvhclient.data.service.HtspConnection;
+import org.tvheadend.tvhclient.data.service.HtspMessage;
+import org.tvheadend.tvhclient.data.service.HtspMessageListener;
+import org.tvheadend.tvhclient.data.service.HtspResponseListener;
 
-import java.io.IOException;
+import java.io.Closeable;
+import java.nio.ByteBuffer;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import timber.log.Timber;
 
-public class HtspFileInputStreamDataSource extends HtspDataSource {
+import static org.tvheadend.tvhclient.features.streaming.internal.HtspPlaybackActivity.INVALID_TIMESHIFT_TIME;
 
-    private static final AtomicInteger sDataSourceCount = new AtomicInteger();
+public class HtspFileInputStreamDataSource implements DataSource, Closeable, HtspMessageListener, HtspDataSourceInterface {
 
-    public static class Factory extends HtspDataSource.Factory {
+    private static final AtomicInteger dataSourceCount = new AtomicInteger();
+    private static final AtomicInteger subscriptionCount = new AtomicInteger();
 
-        private final Context mContext;
-        private final SimpleHtspConnection mConnection;
+    private final Context context;
+    private HtspConnection htspConnection;
+    private DataSpec dataSpec;
+    private final int dataSourceNumber;
 
-        public Factory(Context context, SimpleHtspConnection connection) {
-            mContext = context;
-            mConnection = connection;
+    private ByteBuffer byteBuffer;
+
+    private String fileName;
+    private int fileId = -1;
+    private long fileSize = -1;
+    private long filePosition = 0;
+
+    public static class Factory implements DataSource.Factory {
+
+        private final Context context;
+        private HtspConnection htspConnection;
+        private HtspFileInputStreamDataSource dataSource;
+
+        public Factory(Context context, HtspConnection htspConnection) {
+            Timber.d("Initializing subscription data source factory");
+            this.context = context;
+            this.htspConnection = htspConnection;
         }
 
         @Override
-        public HtspDataSource createDataSourceInternal() {
-            return new HtspFileInputStreamDataSource(mContext, mConnection);
+        public DataSource createDataSource() {
+            Timber.d("Created new data source from factory");
+            dataSource = new HtspFileInputStreamDataSource(context, htspConnection);
+            return dataSource;
         }
 
-    }
-
-    private final int mDataSourceNumber;
-    private HtspFileInputStream mHtspFileInputStream;
-
-    private HtspFileInputStreamDataSource(Context context, SimpleHtspConnection connection) {
-        super(context, connection);
-
-        mDataSourceNumber = sDataSourceCount.incrementAndGet();
-
-        Timber.d("New HtspSubscriptionDataSource instantiated (" + mDataSourceNumber + ")");
-    }
-
-    @Override
-    protected void finalize() throws Throwable {
-        // This is a total hack, but there's not much else we can do?
-        // https://github.com/google/ExoPlayer/issues/2662 - Luckily, i've not found it's actually
-        // been used anywhere at this moment.
-        if (mConnection != null) {
-            Timber.e("Datasource finalize relied upon to release the subscription");
-            release();
+        HtspFileInputStreamDataSource getCurrentDataSource() {
+            Timber.d("Returning data source");
+            return dataSource;
         }
 
-        super.finalize();
-    }
-
-    // DataSource Methods
-    @Override
-    public long open(DataSpec dataSpec) throws IOException {
-        Timber.i("Opening HTSP DataSource (" + mDataSourceNumber + ")");
-
-        mDataSpec = dataSpec;
-
-        String fileName = "dvrfile" + dataSpec.uri.getPath();
-
-        mHtspFileInputStream = new HtspFileInputStream(mConnection, fileName);
-
-        return mHtspFileInputStream.getFileSize();
-    }
-
-    @Override
-    public int read(byte[] buffer, int offset, int readLength) throws IOException {
-        return mHtspFileInputStream.read(buffer, offset, readLength);
-    }
-
-    @Override
-    public void close() throws IOException {
-        Timber.i("Closing HTSP DataSource (" + mDataSourceNumber + ")");
-        if (mHtspFileInputStream != null) {
-            mHtspFileInputStream.close();
-        }
-    }
-
-    // HtspDataSource Methods
-    protected void release() {
-        if (mConnection != null) {
-            mConnection = null;
-        }
-
-        if (mHtspFileInputStream != null) {
-            try {
-                mHtspFileInputStream.close();
-            } catch (IOException e) {
-                // Ignore.
+        void releaseCurrentDataSource() {
+            Timber.d("Releasing data source");
+            if (dataSource != null) {
+                dataSource.release();
             }
-            mHtspFileInputStream = null;
         }
+    }
 
-        // Watch for memory leaks
-        MainApplication.getRefWatcher(mContext).watch(this);
+    private HtspFileInputStreamDataSource(Context mContext, HtspConnection htspConnection) {
+        Timber.d("Initializing file input data source");
+        this.context = mContext;
+        this.htspConnection = htspConnection;
+        this.htspConnection.addMessageListener(this);
+        this.dataSourceNumber = dataSourceCount.incrementAndGet();
     }
 
     @Override
-    public void pause() {
-        // No action needed
+    public long getTimeshiftOffsetPts() {
+        return INVALID_TIMESHIFT_TIME;
+    }
+
+    @Override
+    public void setSpeed(int tvhSpeed) {
+
+    }
+
+    @Override
+    public long getTimeshiftStartTime() {
+        return INVALID_TIMESHIFT_TIME;
+    }
+
+    @Override
+    public long getTimeshiftStartPts() {
+        return INVALID_TIMESHIFT_TIME;
     }
 
     @Override
@@ -131,25 +103,185 @@ public class HtspFileInputStreamDataSource extends HtspDataSource {
     }
 
     @Override
-    public long getTimeshiftStartTime() {
-        // No action needed?
-        return INVALID_TIMESHIFT_TIME;
-    }
-
-    @Override
-    public long getTimeshiftStartPts() {
-        // No action needed?
-        return INVALID_TIMESHIFT_TIME;
-    }
-
-    @Override
-    public long getTimeshiftOffsetPts() {
-        // No action needed?
-        return INVALID_TIMESHIFT_TIME;
-    }
-
-    @Override
-    public void setSpeed(int speed) {
+    public void pause() {
         // No action needed
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        Timber.d("Finalizing file input data source");
+        release();
+        super.finalize();
+    }
+
+    @Override
+    public long open(DataSpec dataSpec) {
+        Timber.d("Opening file input data source " + dataSourceNumber + ")");
+        this.dataSpec = dataSpec;
+
+        fileName = "dvrfile" + dataSpec.uri.getPath();
+
+        HtspMessage fileReadRequest = new HtspMessage();
+        fileReadRequest.put("method", "fileRead");
+        fileReadRequest.put("size", 1024000);
+
+        final HtspResponseListener fileReadHandler = response -> {
+            if (response.containsKey("error")) {
+                String error = response.getString("error");
+                Timber.d("Error reading file at offset 0: " + error);
+
+            } else {
+                final byte[] data = response.getByteArray("data");
+                Timber.d("Fetched " + data.length + " bytes of file at offset 0");
+                filePosition += data.length;
+                byteBuffer = ByteBuffer.wrap(data);
+            }
+            synchronized (fileReadRequest) {
+                Timber.d("Notifying fileReadRequest");
+                fileReadRequest.notify();
+            }
+        };
+
+        HtspMessage fileOpenRequest = new HtspMessage();
+        fileOpenRequest.put("method", "fileOpen");
+        fileOpenRequest.put("file", fileName);
+        htspConnection.sendMessage(fileOpenRequest, response -> {
+            if (response.containsKey("error")) {
+                String error = response.getString("error");
+                Timber.d("Error opening file: " + error);
+
+            } else {
+                Timber.d("Opening file: " + fileName);
+                fileId = response.getInteger("id");
+                if (response.containsKey("size")) {
+                    fileSize = response.getLong("size");
+                    Timber.v("Opened file " + fileName + " of size " + fileSize + " successfully");
+                } else {
+                    Timber.v("Opened file " + fileName + " successfully");
+                }
+                Timber.d("Sending file read request for file id " + fileId);
+                fileReadRequest.put("id", fileId);
+                htspConnection.sendMessage(fileReadRequest, fileReadHandler);
+            }
+        });
+
+        Timber.d("Waiting for fileReadRequest");
+        synchronized (fileReadRequest) {
+            try {
+                fileReadRequest.wait(5000);
+            } catch (InterruptedException e) {
+                Timber.d("Waiting for fileReadRequest message was interrupted. ", e);
+            }
+        }
+
+        Timber.d("Opened file " + fileName + ", id " + fileId + " with size " + fileSize);
+        return fileSize;
+    }
+
+    @Override
+    public int read(byte[] bytes, int offset, int readLength) {
+
+        // If we've reached the end of the file, we're done :)
+        if (fileSize == filePosition && !byteBuffer.hasRemaining()) {
+            return -1;
+        }
+
+        sendFileRead(filePosition);
+
+        if (!byteBuffer.hasRemaining() && fileSize == -1) {
+            // If we still don't have any data, and we
+            // don't have a known size, then we're done.
+            return -1;
+
+        } else if (!byteBuffer.hasRemaining()) {
+            // If we don't have data here, something went wrong
+            Timber.d("Failed to read data for " + fileName);
+        }
+
+        int startPos = byteBuffer.position();
+
+        byteBuffer.get(bytes, offset, Math.min(readLength, byteBuffer.remaining()));
+        return byteBuffer.position() - startPos;
+    }
+
+    @Override
+    public Uri getUri() {
+        Timber.d("Returning data spec uri");
+        if (dataSpec != null) {
+            return dataSpec.uri;
+        }
+        return null;
+    }
+
+    @Override
+    public void close() {
+        Timber.d("Closing file input data source " + dataSourceNumber + ")");
+    }
+
+    @Override
+    public void onMessage(HtspMessage response) {
+
+    }
+
+    // HtspDataSource Methods
+    protected void release() {
+        Timber.d("Releasing file input data source " + dataSourceNumber + ")");
+
+        HtspMessage request = new HtspMessage();
+        request.put("method", "fileClose");
+        request.put("id", fileId);
+        htspConnection.sendMessage(request, null);
+        htspConnection.removeMessageListener(this);
+
+        // Watch for memory leaks
+        MainApplication.getRefWatcher(context).watch(this);
+    }
+
+    private void sendFileRead(long offset) {
+        Timber.d("Sending message to read file from offset " + offset);
+        if (byteBuffer != null && byteBuffer.hasRemaining()) {
+            Timber.d("Buffer is not null and has elements remaining");
+            return;
+        }
+
+        long size = 1024000;
+        if (fileSize != -1) {
+            // Make sure we don't overrun the file
+            if (offset + size > fileSize) {
+                size = fileSize - offset;
+            }
+        }
+
+        HtspMessage request = new HtspMessage();
+        request.put("method", "fileRead");
+        request.put("id", fileId);
+        request.put("size", size);
+        request.put("offset", offset);
+
+        Timber.d("Fetching " + size + " bytes of file at offset " + offset);
+        htspConnection.sendMessage(request, response -> {
+            if (response.containsKey("error")) {
+                String error = response.getString("error");
+                Timber.d("Error reading file at " + offset + ": " + error);
+
+            } else {
+                final byte[] data = response.getByteArray("data");
+                Timber.d("Fetched " + data.length + " bytes of file at offset " + offset);
+                filePosition += data.length;
+                byteBuffer = ByteBuffer.wrap(data);
+            }
+            synchronized (request) {
+                request.notify();
+            }
+        });
+
+        Timber.d("Waiting for file read request");
+        synchronized (request) {
+            try {
+                request.wait(5000);
+            } catch (InterruptedException e) {
+                Timber.d("Waiting for fileReadRequest message was interrupted. ", e);
+            }
+        }
     }
 }

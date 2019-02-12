@@ -22,6 +22,7 @@ import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
+import org.tvheadend.tvhclient.data.service.HtspService;
 import org.tvheadend.tvhclient.features.channels.ChannelListFragment;
 import org.tvheadend.tvhclient.features.channels.ChannelViewModel;
 import org.tvheadend.tvhclient.features.dvr.recordings.CompletedRecordingListFragment;
@@ -249,7 +250,7 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
      * @param id The connection id of the newly selected server
      */
     private void handleNewServerSelected(int id) {
-        activity.stopService(new Intent(activity, MiscUtils.getSelectedService(activity)));
+        activity.stopService(new Intent(activity, HtspService.class));
 
         Connection connection = appRepository.getConnectionData().getItemById(id);
         connection.setActive(true);

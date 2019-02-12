@@ -27,7 +27,7 @@ import com.google.android.exoplayer2.extractor.PositionHolder;
 import com.google.android.exoplayer2.extractor.SeekMap;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 
-import org.tvheadend.tvhclient.data.service.htsp.HtspMessage;
+import org.tvheadend.tvhclient.data.service.HtspMessage;
 import org.tvheadend.tvhclient.features.streaming.internal.reader.StreamReader;
 import org.tvheadend.tvhclient.features.streaming.internal.reader.StreamReadersFactory;
 
@@ -67,7 +67,7 @@ class HtspSubscriptionExtractor implements Extractor {
 
     public HtspSubscriptionExtractor(Context context) {
         mContext = context;
-        Timber.d( "New HtspExtractor instantiated");
+        Timber.d("New HtspExtractor instantiated");
     }
 
     // Extractor Methods

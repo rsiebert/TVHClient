@@ -1,11 +1,11 @@
-package org.tvheadend.tvhclient.data.service_old;
+package org.tvheadend.tvhclient.data.service;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Binder;
 import android.os.IBinder;
 import android.text.TextUtils;
 
@@ -25,10 +25,8 @@ import org.tvheadend.tvhclient.data.entity.ServerStatus;
 import org.tvheadend.tvhclient.data.entity.TagAndChannel;
 import org.tvheadend.tvhclient.data.entity.TimerRecording;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
-import org.tvheadend.tvhclient.data.service.htsp.HtspConnection;
-import org.tvheadend.tvhclient.data.service.htsp.tasks.Authenticator;
-import org.tvheadend.tvhclient.data.services.HtspUtils;
-import org.tvheadend.tvhclient.features.shared.receivers.ServiceStatusReceiver;
+import org.tvheadend.tvhclient.data.service.worker.EpgDataUpdateWorker;
+import org.tvheadend.tvhclient.features.shared.receivers.SyncStateReceiver;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 import org.tvheadend.tvhclient.utils.NotificationUtils;
 import org.tvheadend.tvhclient.utils.SnackbarUtils;
@@ -45,6 +43,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -52,14 +51,19 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.work.ExistingWorkPolicy;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
 import timber.log.Timber;
 
-public class HTSService extends Service implements HTSConnectionListener {
+public class HtspService extends Service implements HtspConnectionStateListener, HtspMessageListener {
 
     private ScheduledExecutorService execService;
-    private HTSConnection htsConnection;
+    private HtspConnection htspConnection;
     private Connection connection;
 
+    @Inject
+    protected Context appContext;
     @Inject
     protected AppRepository appRepository;
     @Inject
@@ -74,14 +78,6 @@ public class HTSService extends Service implements HTSConnectionListener {
     private boolean syncRequired;
     private boolean firstEventReceived = false;
     private int htspVersion = 13;
-    private final IBinder binder = new HTSServiceBinder();
-    private List<HTSSubscriptionListener> listeners = new ArrayList<>();
-
-    public class HTSServiceBinder extends Binder {
-        public HTSService getService() {
-            return HTSService.this;
-        }
-    }
 
     @Override
     public void onCreate() {
@@ -92,23 +88,24 @@ public class HTSService extends Service implements HTSConnectionListener {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Timber.d("Received command for service");
-
         final String action = intent.getAction();
         if (action == null || action.isEmpty()) {
             return START_NOT_STICKY;
         }
+        Timber.d("Received command " + action + " for service");
 
         switch (action) {
             case "connect":
-                Timber.d("Connection to server requested, stopping previous connection");
+                Timber.d("Connection to server requested");
                 startHtspConnection();
                 break;
             case "reconnect":
                 Timber.d("Reconnection to server requested");
-                if (htsConnection == null || !htsConnection.isConnected()) {
+                if (htspConnection == null || !htspConnection.isConnected()) {
                     Timber.d("Reconnecting to server because no previous connection existed or not connected anymore");
                     startHtspConnection();
+                } else {
+                    Timber.d("Not reconnecting to server because we are still connected");
                 }
                 break;
             case "getDiskSpace":
@@ -167,12 +164,6 @@ public class HTSService extends Service implements HTSConnectionListener {
             case "getDvrConfigs":
                 getDvrConfigs();
                 break;
-            case "subscribe":
-                subscribe(intent);
-                break;
-            case "unsubscribe":
-                unsubscribe(intent);
-                break;
             // Internal calls that are called from the intent service
             case "getMoreEvents":
                 getMoreEvents(intent);
@@ -181,8 +172,6 @@ public class HTSService extends Service implements HTSConnectionListener {
                 loadAllChannelIcons();
                 break;
         }
-
-        Timber.d("onStartCommand() returned: " + START_NOT_STICKY);
         return START_NOT_STICKY;
     }
 
@@ -196,25 +185,26 @@ public class HTSService extends Service implements HTSConnectionListener {
     private void startHtspConnection() {
         stopHtspConnection();
         connection = appRepository.getConnectionData().getActiveItem();
-        htsConnection = new HTSConnection(this.getApplicationContext(), appRepository, connection, this);
+        htspConnection = new HtspConnection(this, this);
         // Since this is blocking, spawn to a new thread
         execService.execute(() -> {
-            htsConnection.openConnection(connection.getHostname(), connection.getPort());
-            htsConnection.authenticate(connection.getUsername(), connection.getPassword());
+            htspConnection.openConnection();
+            htspConnection.authenticate();
         });
     }
 
     private void stopHtspConnection() {
-        if (htsConnection != null) {
-            htsConnection.closeConnection();
-            htsConnection = null;
+        if (htspConnection != null) {
+            htspConnection.closeConnection();
+            htspConnection = null;
         }
         connection = null;
     }
 
     @Override
-    public void onMessage(HTSMessage message) {
+    public void onMessage(HtspMessage message) {
         String method = message.getMethod();
+        Timber.d("Received message " + method + " from server");
         switch (method) {
             case "tagAdd":
                 onTagAdd(message);
@@ -288,33 +278,6 @@ public class HTSService extends Service implements HTSConnectionListener {
             case "getEvents":
                 onGetEvents(message, new Intent());
                 break;
-            case "subscriptionStart":
-                onSubscriptionStart(message);
-                break;
-            case "subscriptionStatus":
-                onSubscriptionStatus(message);
-                break;
-            case "subscriptionStop":
-                onSubscriptionStop(message);
-                break;
-            case "subscriptionSkip":
-                onSubscriptionSkip(message);
-                break;
-            case "subscriptionSpeed":
-                onSubscriptionSpeed(message);
-                break;
-            case "queueStatus":
-                onQueueStatus(message);
-                break;
-            case "signalStatus":
-                onSignalStatus(message);
-                break;
-            case "timeshiftStatus":
-                onTimeshiftStatus(message);
-                break;
-            case "muxpkt":
-                onMuxPacket(message);
-                break;
             default:
                 break;
         }
@@ -323,28 +286,20 @@ public class HTSService extends Service implements HTSConnectionListener {
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        return binder;
-    }
-
-    public void addListener(HTSSubscriptionListener listener) {
-        listeners.add(listener);
-    }
-
-    public void removeListener(HTSSubscriptionListener listener) {
-        listeners.remove(listener);
+        return null;
     }
 
     @Override
-    public void onAuthenticationStateChange(@NonNull Authenticator.State state) {
+    public void onAuthenticationStateChange(@NonNull HtspConnection.AuthenticationState state) {
         Timber.d("Authentication state changed to " + state);
 
         switch (state) {
             case FAILED:
-                sendEpgSyncStatusMessage(ServiceStatusReceiver.State.FAILED,
+                sendSyncStateMessage(SyncStateReceiver.State.FAILED,
                         getString(R.string.authentication_failed), "");
                 break;
             case FAILED_BAD_CREDENTIALS:
-                sendEpgSyncStatusMessage(ServiceStatusReceiver.State.FAILED,
+                sendSyncStateMessage(SyncStateReceiver.State.FAILED,
                         getString(R.string.authentication_failed),
                         getString(R.string.bad_username_or_password));
                 break;
@@ -352,7 +307,7 @@ public class HTSService extends Service implements HTSConnectionListener {
 
                 break;
             case AUTHENTICATED:
-                sendEpgSyncStatusMessage(ServiceStatusReceiver.State.CONNECTED,
+                sendSyncStateMessage(SyncStateReceiver.State.CONNECTED,
                         getString(R.string.connected_to_server), "");
                 startAsyncCommunicationWithServer();
                 break;
@@ -360,41 +315,41 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     @Override
-    public void onConnectionStateChange(@NonNull HtspConnection.State state) {
+    public void onConnectionStateChange(@NonNull HtspConnection.ConnectionState state) {
         Timber.d("Simple HTSP connection state changed, state is " + state);
 
         switch (state) {
             case FAILED:
-                sendEpgSyncStatusMessage(ServiceStatusReceiver.State.FAILED,
+                sendSyncStateMessage(SyncStateReceiver.State.FAILED,
                         getString(R.string.connection_failed),
                         null);
                 break;
             case FAILED_CONNECTING_TO_SERVER:
-                sendEpgSyncStatusMessage(ServiceStatusReceiver.State.FAILED,
+                sendSyncStateMessage(SyncStateReceiver.State.FAILED,
                         getString(R.string.connection_failed),
                         getString(R.string.failed_connecting_to_server));
                 break;
             case FAILED_EXCEPTION_OPENING_SOCKET:
-                sendEpgSyncStatusMessage(ServiceStatusReceiver.State.FAILED,
+                sendSyncStateMessage(SyncStateReceiver.State.FAILED,
                         getString(R.string.connection_failed),
                         getString(R.string.failed_opening_socket));
                 break;
             case FAILED_INTERRUPTED:
-                sendEpgSyncStatusMessage(ServiceStatusReceiver.State.FAILED,
+                sendSyncStateMessage(SyncStateReceiver.State.FAILED,
                         getString(R.string.connection_failed),
                         getString(R.string.failed_during_connection_attempt));
                 break;
             case FAILED_UNRESOLVED_ADDRESS:
-                sendEpgSyncStatusMessage(ServiceStatusReceiver.State.FAILED,
+                sendSyncStateMessage(SyncStateReceiver.State.FAILED,
                         getString(R.string.connection_failed),
                         getString(R.string.failed_to_resolve_address));
                 break;
             case CONNECTING:
-                sendEpgSyncStatusMessage(ServiceStatusReceiver.State.CONNECTING,
+                sendSyncStateMessage(SyncStateReceiver.State.CONNECTING,
                         getString(R.string.connecting_to_server), "");
                 break;
             case CLOSED:
-                sendEpgSyncStatusMessage(ServiceStatusReceiver.State.CLOSED,
+                sendSyncStateMessage(SyncStateReceiver.State.CLOSED,
                         getString(R.string.connection_closed), "");
                 break;
         }
@@ -412,7 +367,7 @@ public class HTSService extends Service implements HTSConnectionListener {
 
         initialSyncWithServerRunning = true;
 
-        HTSMessage enableAsyncMetadataRequest = new HTSMessage();
+        HtspMessage enableAsyncMetadataRequest = new HtspMessage();
         enableAsyncMetadataRequest.setMethod("enableAsyncMetadata");
 
         long epgMaxTime = Long.parseLong(sharedPreferences.getString("epg_max_time", getResources().getString(R.string.pref_default_epg_max_time)));
@@ -427,7 +382,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         // Send the first sync message to any broadcast listeners
         if (syncRequired) {
             Timber.d("Sending status that sync has started");
-            sendEpgSyncStatusMessage(ServiceStatusReceiver.State.SYNC_STARTED,
+            sendSyncStateMessage(SyncStateReceiver.State.SYNC_STARTED,
                     getString(R.string.loading_data), "");
         }
         if (syncEventsRequired) {
@@ -437,14 +392,14 @@ public class HTSService extends Service implements HTSConnectionListener {
                     ", lastUpdate time is " + (currentTimeInSeconds - 12 * 60 * 60));
 
             enableAsyncMetadataRequest.put("epg", 1);
-            //enableAsyncMetadataRequest.put("epgMaxTime", epgMaxTime + currentTimeInSeconds);
+            enableAsyncMetadataRequest.put("epgMaxTime", epgMaxTime + currentTimeInSeconds);
             // Only provide metadata that has changed since 12 hours ago.
             // The events past those 12 hours are not relevant and don't need to be sent by the server
             enableAsyncMetadataRequest.put("lastUpdate", (currentTimeInSeconds - 12 * 60 * 60));
         }
 
-        htsConnection.sendMessage(enableAsyncMetadataRequest, response -> {
-            // NOP
+        htspConnection.sendMessage(enableAsyncMetadataRequest, response -> {
+            Timber.d("Received response for enableAsyncMetadata");
         });
     }
 
@@ -452,7 +407,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         Timber.d("Received initial sync data from server");
 
         if (syncRequired) {
-            sendEpgSyncStatusMessage(ServiceStatusReceiver.State.SYNC_IN_PROGRESS,
+            sendSyncStateMessage(SyncStateReceiver.State.SYNC_IN_PROGRESS,
                     getString(R.string.saving_data), "");
         }
 
@@ -486,13 +441,19 @@ public class HTSService extends Service implements HTSConnectionListener {
         // The initial sync is considered to be done at this point.
         // Send the message to the listeners that the sync is done
         if (syncRequired) {
-            sendEpgSyncStatusMessage(ServiceStatusReceiver.State.SYNC_DONE,
+            sendSyncStateMessage(SyncStateReceiver.State.SYNC_DONE,
                     getString(R.string.loading_data_done), "");
         }
 
         syncRequired = false;
         syncEventsRequired = false;
         initialSyncWithServerRunning = false;
+
+        Timber.d("Starting background worker to load more epg data");
+        OneTimeWorkRequest updateEpgWorker = new OneTimeWorkRequest.Builder(EpgDataUpdateWorker.class)
+                .setInitialDelay(5, TimeUnit.SECONDS)
+                .build();
+        WorkManager.getInstance().enqueueUniqueWork("UpdateEpg", ExistingWorkPolicy.REPLACE, updateEpgWorker);
 
         Timber.d("Done receiving initial data from server");
     }
@@ -520,9 +481,9 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     private void getDiscSpace() {
-        HTSMessage request = new HTSMessage();
+        HtspMessage request = new HtspMessage();
         request.setMethod("getDiskSpace");
-        htsConnection.sendMessage(request, message -> {
+        htspConnection.sendMessage(request, message -> {
             ServerStatus serverStatus = appRepository.getServerStatusData().getActiveItem();
             serverStatus.setFreeDiskSpace(message.getLong("freediskspace", 0));
             serverStatus.setTotalDiskSpace(message.getLong("totaldiskspace", 0));
@@ -535,9 +496,9 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     private void getSystemTime() {
-        HTSMessage request = new HTSMessage();
+        HtspMessage request = new HtspMessage();
         request.setMethod("getSysTime");
-        htsConnection.sendMessage(request, response -> {
+        htspConnection.sendMessage(request, response -> {
             if (response != null) {
                 onSystemTime(response);
             } else {
@@ -547,9 +508,9 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     private void getDvrConfigs() {
-        HTSMessage request = new HTSMessage();
+        HtspMessage request = new HtspMessage();
         request.setMethod("getDvrConfigs");
-        htsConnection.sendMessage(request, response -> {
+        htspConnection.sendMessage(request, response -> {
             if (response != null) {
                 onDvrConfigs(response);
             } else {
@@ -559,9 +520,9 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     private void getProfiles() {
-        HTSMessage request = new HTSMessage();
+        HtspMessage request = new HtspMessage();
         request.setMethod("getProfiles");
-        htsConnection.sendMessage(request, response -> {
+        htspConnection.sendMessage(request, response -> {
             if (response != null) {
                 onHtspProfiles(response);
             } else {
@@ -571,11 +532,11 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     private void getHttpProfiles() {
-        HTSMessage request = new HTSMessage();
+        HtspMessage request = new HtspMessage();
         request.setMethod("api");
         request.put("path", "profile/list");
 
-        htsConnection.sendMessage(request, response -> {
+        htspConnection.sendMessage(request, response -> {
             if (response != null) {
                 onHttpProfiles(response);
             } else {
@@ -665,7 +626,7 @@ public class HTSService extends Service implements HTSConnectionListener {
      *
      * @param msg The message with the new tag data
      */
-    private void onTagAdd(HTSMessage msg) {
+    private void onTagAdd(HtspMessage msg) {
         if (!initialSyncWithServerRunning) {
             return;
         }
@@ -685,7 +646,7 @@ public class HTSService extends Service implements HTSConnectionListener {
      *
      * @param msg The message with the updated tag data
      */
-    private void onTagUpdate(HTSMessage msg) {
+    private void onTagUpdate(HtspMessage msg) {
         if (!initialSyncWithServerRunning) {
             return;
         }
@@ -706,7 +667,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         pendingChannelTagOps.add(updatedTag);
 
         if (syncRequired && pendingChannelTagOps.size() % 10 == 0) {
-            sendEpgSyncStatusMessage(ServiceStatusReceiver.State.SYNC_IN_PROGRESS,
+            sendSyncStateMessage(SyncStateReceiver.State.SYNC_IN_PROGRESS,
                     getString(R.string.receiving_data),
                     "Received " + pendingChannelTagOps.size() + " channel tags");
         }
@@ -718,7 +679,7 @@ public class HTSService extends Service implements HTSConnectionListener {
      *
      * @param msg The message with the tag id that was deleted
      */
-    private void onTagDelete(HTSMessage msg) {
+    private void onTagDelete(HtspMessage msg) {
         if (msg.containsKey("tagId")) {
             ChannelTag tag = appRepository.getChannelTagData().getItemById(msg.getInteger("tagId"));
             if (tag != null) {
@@ -735,7 +696,7 @@ public class HTSService extends Service implements HTSConnectionListener {
      *
      * @param msg The message with the new channel data
      */
-    private void onChannelAdd(HTSMessage msg) {
+    private void onChannelAdd(HtspMessage msg) {
         if (!initialSyncWithServerRunning) {
             return;
         }
@@ -753,7 +714,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         pendingChannelOps.add(channel);
 
         if (syncRequired && pendingChannelOps.size() % 25 == 0) {
-            sendEpgSyncStatusMessage(ServiceStatusReceiver.State.SYNC_IN_PROGRESS,
+            sendSyncStateMessage(SyncStateReceiver.State.SYNC_IN_PROGRESS,
                     getString(R.string.receiving_data),
                     "Received " + pendingChannelOps.size() + " channels");
         }
@@ -765,7 +726,7 @@ public class HTSService extends Service implements HTSConnectionListener {
      *
      * @param msg The message with the updated channel data
      */
-    private void onChannelUpdate(HTSMessage msg) {
+    private void onChannelUpdate(HtspMessage msg) {
         if (!initialSyncWithServerRunning) {
             return;
         }
@@ -785,7 +746,7 @@ public class HTSService extends Service implements HTSConnectionListener {
      *
      * @param msg The message with the channel id that was deleted
      */
-    private void onChannelDelete(HTSMessage msg) {
+    private void onChannelDelete(HtspMessage msg) {
         if (msg.containsKey("channelId")) {
             int channelId = msg.getInteger("channelId");
 
@@ -807,7 +768,7 @@ public class HTSService extends Service implements HTSConnectionListener {
      *
      * @param msg The message with the new recording data
      */
-    private void onDvrEntryAdd(HTSMessage msg) {
+    private void onDvrEntryAdd(HtspMessage msg) {
         Recording recording = HtspUtils.convertMessageToRecordingModel(new Recording(), msg);
         recording.setConnectionId(connection.getId());
 
@@ -816,7 +777,7 @@ public class HTSService extends Service implements HTSConnectionListener {
 
             if (syncRequired && pendingRecordingOps.size() % 25 == 0) {
                 Timber.d("Sync is running, received " + pendingRecordingOps.size() + " recordings");
-                sendEpgSyncStatusMessage(ServiceStatusReceiver.State.SYNC_IN_PROGRESS,
+                sendSyncStateMessage(SyncStateReceiver.State.SYNC_IN_PROGRESS,
                         getString(R.string.receiving_data),
                         "Received " + pendingRecordingOps.size() + " recordings");
             }
@@ -841,7 +802,7 @@ public class HTSService extends Service implements HTSConnectionListener {
      *
      * @param msg The message with the updated recording data
      */
-    private void onDvrEntryUpdate(HTSMessage msg) {
+    private void onDvrEntryUpdate(HtspMessage msg) {
         // Get the existing recording
         Recording recording = appRepository.getRecordingData().getItemById(msg.getInteger("id"));
         if (recording == null) {
@@ -865,7 +826,7 @@ public class HTSService extends Service implements HTSConnectionListener {
      *
      * @param msg The message with the recording id that was deleted
      */
-    private void onDvrEntryDelete(HTSMessage msg) {
+    private void onDvrEntryDelete(HtspMessage msg) {
         if (msg.containsKey("id")) {
             Recording recording = appRepository.getRecordingData().getItemById(msg.getInteger("id"));
             if (recording != null) {
@@ -884,7 +845,7 @@ public class HTSService extends Service implements HTSConnectionListener {
      *
      * @param msg The message with the new series recording data
      */
-    private void onAutorecEntryAdd(HTSMessage msg) {
+    private void onAutorecEntryAdd(HtspMessage msg) {
         SeriesRecording seriesRecording = HtspUtils.convertMessageToSeriesRecordingModel(new SeriesRecording(), msg);
         seriesRecording.setConnectionId(connection.getId());
         appRepository.getSeriesRecordingData().addItem(seriesRecording);
@@ -896,7 +857,7 @@ public class HTSService extends Service implements HTSConnectionListener {
      *
      * @param msg The message with the updated series recording data
      */
-    private void onAutorecEntryUpdate(HTSMessage msg) {
+    private void onAutorecEntryUpdate(HtspMessage msg) {
         SeriesRecording recording = appRepository.getSeriesRecordingData().getItemById(msg.getString("id"));
         if (recording == null) {
             Timber.d("Could not find a series recording with id " + msg.getString("id") + " in the database");
@@ -912,7 +873,7 @@ public class HTSService extends Service implements HTSConnectionListener {
      *
      * @param msg The message with the series recording id that was deleted
      */
-    private void onAutorecEntryDelete(HTSMessage msg) {
+    private void onAutorecEntryDelete(HtspMessage msg) {
         if (msg.containsKey("id")) {
             SeriesRecording seriesRecording = appRepository.getSeriesRecordingData().getItemById(msg.getString("id"));
             if (seriesRecording != null) {
@@ -927,7 +888,7 @@ public class HTSService extends Service implements HTSConnectionListener {
      *
      * @param msg The message with the new timer recording data
      */
-    private void onTimerRecEntryAdd(HTSMessage msg) {
+    private void onTimerRecEntryAdd(HtspMessage msg) {
         TimerRecording recording = HtspUtils.convertMessageToTimerRecordingModel(new TimerRecording(), msg);
         recording.setConnectionId(connection.getId());
         appRepository.getTimerRecordingData().addItem(recording);
@@ -939,7 +900,7 @@ public class HTSService extends Service implements HTSConnectionListener {
      *
      * @param msg The message with the updated timer recording data
      */
-    private void onTimerRecEntryUpdate(HTSMessage msg) {
+    private void onTimerRecEntryUpdate(HtspMessage msg) {
         TimerRecording recording = appRepository.getTimerRecordingData().getItemById(msg.getString("id"));
         if (recording == null) {
             Timber.d("Could not find a timer recording with id " + msg.getString("id") + " in the database");
@@ -955,7 +916,7 @@ public class HTSService extends Service implements HTSConnectionListener {
      *
      * @param msg The message with the recording id that was deleted
      */
-    private void onTimerRecEntryDelete(HTSMessage msg) {
+    private void onTimerRecEntryDelete(HtspMessage msg) {
         if (msg.containsKey("id")) {
             TimerRecording timerRecording = appRepository.getTimerRecordingData().getItemById(msg.getString("id"));
             if (timerRecording != null) {
@@ -970,7 +931,7 @@ public class HTSService extends Service implements HTSConnectionListener {
      *
      * @param msg The message with the new epg event data
      */
-    private void onEventAdd(HTSMessage msg) {
+    private void onEventAdd(HtspMessage msg) {
         if (!firstEventReceived && syncRequired) {
             Timber.d("Sync is required and received first event, saving " + pendingChannelOps.size() + " channels");
             appRepository.getChannelData().addItems(pendingChannelOps);
@@ -989,7 +950,7 @@ public class HTSService extends Service implements HTSConnectionListener {
 
             if (syncRequired && pendingEventOps.size() % 50 == 0) {
                 Timber.d("Sync is running, received " + pendingEventOps.size() + " program guide events");
-                sendEpgSyncStatusMessage(ServiceStatusReceiver.State.SYNC_IN_PROGRESS,
+                sendSyncStateMessage(SyncStateReceiver.State.SYNC_IN_PROGRESS,
                         getString(R.string.receiving_data),
                         "Received " + pendingEventOps.size() + " program guide events");
             }
@@ -1005,7 +966,7 @@ public class HTSService extends Service implements HTSConnectionListener {
      *
      * @param msg The message with the updated epg event data
      */
-    private void onEventUpdate(HTSMessage msg) {
+    private void onEventUpdate(HtspMessage msg) {
         Program program = appRepository.getProgramData().getItemById(msg.getInteger("eventId"));
         if (program == null) {
             Timber.d("Could not find a program with id " + msg.getInteger("eventId") + " in the database");
@@ -1022,7 +983,7 @@ public class HTSService extends Service implements HTSConnectionListener {
      *
      * @param msg The message with the epg event id that was deleted
      */
-    private void onEventDelete(HTSMessage msg) {
+    private void onEventDelete(HtspMessage msg) {
         if (msg.containsKey("id")) {
             appRepository.getProgramData().removeItemById(msg.getInteger("id"));
         }
@@ -1033,7 +994,7 @@ public class HTSService extends Service implements HTSConnectionListener {
      *
      * @param message The message with the events
      */
-    private void onGetEvents(HTSMessage message, Intent intent) {
+    private void onGetEvents(HtspMessage message, Intent intent) {
 
         final boolean useEventList = intent.getBooleanExtra("useEventList", false);
         final String channelName = intent.getStringExtra("channelName");
@@ -1041,7 +1002,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         if (message.containsKey("events")) {
             List<Program> programs = new ArrayList<>();
             for (Object obj : message.getList("events")) {
-                HTSMessage msg = (HTSMessage) obj;
+                HtspMessage msg = (HtspMessage) obj;
                 Program program = HtspUtils.convertMessageToProgramModel(new Program(), msg);
                 program.setConnectionId(connection.getId());
                 programs.add(program);
@@ -1057,11 +1018,11 @@ public class HTSService extends Service implements HTSConnectionListener {
         }
     }
 
-    private void onHtspProfiles(HTSMessage message) {
+    private void onHtspProfiles(HtspMessage message) {
         Timber.d("Handling htsp playback profiles");
         if (message.containsKey("profiles")) {
             for (Object obj : message.getList("profiles")) {
-                HTSMessage msg = (HTSMessage) obj;
+                HtspMessage msg = (HtspMessage) obj;
                 String name = msg.getString("name");
 
                 String[] profileNames = appRepository.getServerProfileData().getHtspPlaybackProfileNames();
@@ -1087,7 +1048,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         }
     }
 
-    private void onHttpProfiles(HTSMessage message) {
+    private void onHttpProfiles(HtspMessage message) {
         Timber.d("Handling http playback profiles");
         if (message.containsKey("response")) {
             try {
@@ -1128,11 +1089,11 @@ public class HTSService extends Service implements HTSConnectionListener {
         }
     }
 
-    private void onDvrConfigs(HTSMessage message) {
+    private void onDvrConfigs(HtspMessage message) {
         Timber.d("Handling recording profiles");
         if (message.containsKey("dvrconfigs")) {
             for (Object obj : message.getList("dvrconfigs")) {
-                HTSMessage msg = (HTSMessage) obj;
+                HtspMessage msg = (HtspMessage) obj;
                 ServerProfile serverProfile = appRepository.getServerProfileData().getItemById(msg.getString("uuid"));
                 if (serverProfile == null) {
                     serverProfile = new ServerProfile();
@@ -1156,7 +1117,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         }
     }
 
-    private void onSystemTime(HTSMessage message) {
+    private void onSystemTime(HtspMessage message) {
         int gmtOffsetFromServer = message.getInteger("gmtoffset", 0) * 60 * 1000;
         int gmtOffset = gmtOffsetFromServer - MiscUtils.getDaylightSavingOffset();
         Timber.d("GMT offset from server is " + gmtOffsetFromServer +
@@ -1172,7 +1133,7 @@ public class HTSService extends Service implements HTSConnectionListener {
                 + ", server gmt offset: " + serverStatus.getGmtoffset());
     }
 
-    private void onDiskSpace(HTSMessage message) {
+    private void onDiskSpace(HtspMessage message) {
         ServerStatus serverStatus = appRepository.getServerStatusData().getActiveItem();
         serverStatus.setFreeDiskSpace(message.getLong("freediskspace", 0));
         serverStatus.setTotalDiskSpace(message.getLong("totaldiskspace", 0));
@@ -1181,83 +1142,6 @@ public class HTSService extends Service implements HTSConnectionListener {
         Timber.d("Received disk space information from server " + serverStatus.getServerName()
                 + ", free disk space: " + serverStatus.getFreeDiskSpace()
                 + ", total disk space: " + serverStatus.getTotalDiskSpace());
-    }
-
-    private void onSubscriptionStart(@NonNull HTSMessage message) {
-        //startTime = (System.currentTimeMillis() * 1000) - 1000;
-        for (HTSSubscriptionListener listener : listeners) {
-            listener.onSubscriptionStart(message);
-        }
-    }
-
-    private void onSubscriptionStatus(@NonNull HTSMessage message) {
-        final int subscriptionId = message.getInteger("subscriptionId");
-        final String status = message.getString("status", null);
-        final String subscriptionError = message.getString("subscriptionError", null);
-
-        if (status != null || subscriptionError != null) {
-            StringBuilder sb = new StringBuilder()
-                    .append("Subscription Status:")
-                    .append(" S: ").append(subscriptionId);
-
-            if (status != null) {
-                sb.append(" Status: ").append(status);
-            }
-            if (subscriptionError != null) {
-                sb.append(" Error: ").append(subscriptionError);
-            }
-
-            Timber.w("Subscription status: " + sb.toString());
-        }
-        for (HTSSubscriptionListener listener : listeners) {
-            listener.onSubscriptionStatus(message);
-        }
-    }
-
-    private void onSubscriptionStop(@NonNull HTSMessage message) {
-        //cancelTimer();
-        for (HTSSubscriptionListener listener : listeners) {
-            listener.onSubscriptionStop(message);
-        }
-    }
-
-    private void onSubscriptionSkip(@NonNull HTSMessage message) {
-        for (HTSSubscriptionListener listener : listeners) {
-            listener.onSubscriptionSkip(message);
-        }
-    }
-
-    private void onSubscriptionSpeed(@NonNull HTSMessage message) {
-        for (HTSSubscriptionListener listener : listeners) {
-            listener.onSubscriptionSpeed(message);
-        }
-    }
-
-    private void onQueueStatus(@NonNull HTSMessage message) {
-        //queueStatus = message;
-        for (HTSSubscriptionListener listener : listeners) {
-            listener.onQueueStatus(message);
-        }
-    }
-
-    private void onSignalStatus(@NonNull HTSMessage message) {
-        //signalStatus = message;
-        for (HTSSubscriptionListener listener : listeners) {
-            listener.onSignalStatus(message);
-        }
-    }
-
-    private void onTimeshiftStatus(@NonNull HTSMessage message) {
-        //timeshiftStatus = message;
-        for (HTSSubscriptionListener listener : listeners) {
-            listener.onTimeshiftStatus(message);
-        }
-    }
-
-    private void onMuxPacket(@NonNull HTSMessage message) {
-        for (HTSSubscriptionListener listener : listeners) {
-            listener.onMuxPacket(message);
-        }
     }
 
     /**
@@ -1388,7 +1272,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         if (url.startsWith("http")) {
             is = new BufferedInputStream(new URL(url).openStream());
         } else if (htspVersion > 9) {
-            is = new HTSFileInputStream(htsConnection, url);
+            is = new HtspFileInputStream(htspConnection, url);
         } else {
             return;
         }
@@ -1404,7 +1288,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         if (url.startsWith("http")) {
             is = new BufferedInputStream(new URL(url).openStream());
         } else if (htspVersion > 9) {
-            is = new HTSFileInputStream(htsConnection, url);
+            is = new HtspFileInputStream(htspConnection, url);
         }
 
         float scale = getResources().getDisplayMetrics().density;
@@ -1446,11 +1330,11 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     private void getChannel(final Intent intent) {
-        final HTSMessage request = new HTSMessage();
+        final HtspMessage request = new HtspMessage();
         request.put("method", "getChannel");
         request.put("channelId", intent.getIntExtra("channelId", 0));
 
-        htsConnection.sendMessage(request, response -> {
+        htspConnection.sendMessage(request, response -> {
             if (response != null) {
                 // Update the icon if required
                 final String icon = response.getString("channelIcon", null);
@@ -1468,11 +1352,11 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     private void getEvent(Intent intent) {
-        final HTSMessage request = new HTSMessage();
+        final HtspMessage request = new HtspMessage();
         request.put("method", "getEvent");
         request.put("eventId", intent.getIntExtra("eventId", 0));
 
-        htsConnection.sendMessage(request, response -> {
+        htspConnection.sendMessage(request, response -> {
             if (response != null) {
                 Program program = HtspUtils.convertMessageToProgramModel(new Program(), response);
                 appRepository.getProgramData().addItem(program);
@@ -1490,8 +1374,8 @@ public class HTSService extends Service implements HTSConnectionListener {
      */
     private void getEvents(Intent intent) {
         final boolean showMessage = intent.getBooleanExtra("showMessage", false);
-        HTSMessage request = (HTSMessage) HtspUtils.convertIntentToEventMessage(intent);
-        htsConnection.sendMessage(request, response -> {
+        HtspMessage request = HtspUtils.convertIntentToEventMessage(intent);
+        htspConnection.sendMessage(request, response -> {
             if (response != null) {
                 onGetEvents(response, intent);
                 if (showMessage) {
@@ -1560,8 +1444,8 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     private void getEpgQuery(final Intent intent) {
-        HTSMessage request = (HTSMessage) HtspUtils.convertIntentToEpgQueryMessage(intent);
-        htsConnection.sendMessage(request, response -> {
+        HtspMessage request = HtspUtils.convertIntentToEpgQueryMessage(intent);
+        htspConnection.sendMessage(request, response -> {
             if (response != null) {
                 // Contains the ids of those events that were returned by the query
                 //noinspection MismatchedQueryAndUpdateOfCollection
@@ -1569,7 +1453,7 @@ public class HTSService extends Service implements HTSConnectionListener {
                 if (response.containsKey("events")) {
                     // List of events that match the query. Add the eventIds
                     for (Object obj : response.getList("events")) {
-                        HTSMessage msg = (HTSMessage) obj;
+                        HtspMessage msg = (HtspMessage) obj;
                         eventIdList.add(msg.getInteger("eventId"));
                     }
                 } else if (response.containsKey("eventIds")) {
@@ -1585,10 +1469,10 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     private void addDvrEntry(final Intent intent) {
-        HTSMessage request = (HTSMessage) HtspUtils.convertIntentToDvrMessage(intent, htspVersion);
+        HtspMessage request = HtspUtils.convertIntentToDvrMessage(intent, htspVersion);
         request.put("method", "addDvrEntry");
 
-        htsConnection.sendMessage(request, response -> {
+        htspConnection.sendMessage(request, response -> {
             if (response != null) {
                 // Reply message fields:
                 // success            u32   required   1 if entry was added, 0 otherwise
@@ -1609,11 +1493,11 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     private void updateDvrEntry(final Intent intent) {
-        HTSMessage request = (HTSMessage) HtspUtils.convertIntentToDvrMessage(intent, htspVersion);
+        HtspMessage request = HtspUtils.convertIntentToDvrMessage(intent, htspVersion);
         request.put("method", "updateDvrEntry");
         request.put("id", intent.getIntExtra("id", 0));
 
-        htsConnection.sendMessage(request, response -> {
+        htspConnection.sendMessage(request, response -> {
             if (response != null) {
                 // Reply message fields:
                 // success            u32   required   1 if update as successful, otherwise 0
@@ -1630,11 +1514,11 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     private void removeDvrEntry(Intent intent) {
-        HTSMessage request = new HTSMessage();
+        HtspMessage request = new HtspMessage();
         request.put("method", intent.getAction());
         request.put("id", intent.getIntExtra("id", 0));
 
-        htsConnection.sendMessage(request, response -> {
+        htspConnection.sendMessage(request, response -> {
             if (response != null) {
                 Timber.d("Response is not null");
                 if (response.getInteger("success", 0) == 1) {
@@ -1652,10 +1536,10 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     private void addAutorecEntry(final Intent intent) {
-        HTSMessage request = (HTSMessage) HtspUtils.convertIntentToAutorecMessage(intent, htspVersion);
+        HtspMessage request = HtspUtils.convertIntentToAutorecMessage(intent, htspVersion);
         request.put("method", "addAutorecEntry");
 
-        htsConnection.sendMessage(request, response -> {
+        htspConnection.sendMessage(request, response -> {
             if (response != null) {
                 // Reply message fields:
                 // success            u32   required   1 if entry was added, 0 otherwise
@@ -1673,16 +1557,16 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     private void updateAutorecEntry(final Intent intent) {
-        HTSMessage request = new HTSMessage();
+        HtspMessage request = new HtspMessage();
         if (htspVersion >= 25) {
-            request = (HTSMessage) HtspUtils.convertIntentToAutorecMessage(intent, htspVersion);
+            request = HtspUtils.convertIntentToAutorecMessage(intent, htspVersion);
             request.put("method", "updateAutorecEntry");
         } else {
             request.put("method", "deleteAutorecEntry");
         }
         request.put("id", intent.getStringExtra("id"));
 
-        htsConnection.sendMessage(request, response -> {
+        htspConnection.sendMessage(request, response -> {
             if (response != null) {
                 // Handle the response here because the "updateAutorecEntry" call does
                 // not exist on the server. First delete the entry and if this was
@@ -1704,11 +1588,11 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     private void deleteAutorecEntry(final Intent intent) {
-        final HTSMessage request = new HTSMessage();
+        final HtspMessage request = new HtspMessage();
         request.put("method", "deleteAutorecEntry");
         request.put("id", intent.getStringExtra("id"));
 
-        htsConnection.sendMessage(request, response -> {
+        htspConnection.sendMessage(request, response -> {
             if (response != null) {
                 if (response.getInteger("success", 0) == 1) {
                     SnackbarUtils.sendSnackbarMessage(this, getString(R.string.success_removing_recording));
@@ -1722,14 +1606,14 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     private void addTimerrecEntry(final Intent intent) {
-        HTSMessage request = (HTSMessage) HtspUtils.convertIntentToTimerecMessage(intent, htspVersion);
+        HtspMessage request = HtspUtils.convertIntentToTimerecMessage(intent, htspVersion);
         request.put("method", "addTimerecEntry");
 
         // Reply message fields:
         // success            u32   required   1 if entry was added, 0 otherwise
         // id                 str   optional   ID (string!) of created timerec DVR entry
         // error              str   optional   English clear text of error message
-        htsConnection.sendMessage(request, response -> {
+        htspConnection.sendMessage(request, response -> {
             if (response != null) {
                 if (response.getInteger("success", 0) == 1) {
                     SnackbarUtils.sendSnackbarMessage(this, getString(R.string.success_adding_recording));
@@ -1743,16 +1627,16 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     private void updateTimerrecEntry(final Intent intent) {
-        HTSMessage request = new HTSMessage();
+        HtspMessage request = new HtspMessage();
         if (htspVersion >= 25) {
-            request = (HTSMessage) HtspUtils.convertIntentToTimerecMessage(intent, htspVersion);
+            request = HtspUtils.convertIntentToTimerecMessage(intent, htspVersion);
             request.put("method", "updateTimerecEntry");
         } else {
             request.put("method", "deleteTimerecEntry");
         }
         request.put("id", intent.getStringExtra("id"));
 
-        htsConnection.sendMessage(request, response -> {
+        htspConnection.sendMessage(request, response -> {
             if (response != null) {
                 // Handle the response here because the "updateTimerecEntry" call does
                 // not exist on the server. First delete the entry and if this was
@@ -1774,11 +1658,11 @@ public class HTSService extends Service implements HTSConnectionListener {
     }
 
     private void deleteTimerrecEntry(Intent intent) {
-        HTSMessage request = new HTSMessage();
+        HtspMessage request = new HtspMessage();
         request.put("method", "deleteTimerecEntry");
         request.put("id", intent.getStringExtra("id"));
 
-        htsConnection.sendMessage(request, response -> {
+        htspConnection.sendMessage(request, response -> {
             if (response != null) {
                 if (response.getInteger("success", 0) == 1) {
                     SnackbarUtils.sendSnackbarMessage(this, getString(R.string.success_removing_recording));
@@ -1795,7 +1679,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         final long channelId = intent.getIntExtra("channelId", 0);
         final long dvrId = intent.getIntExtra("dvrId", 0);
 
-        final HTSMessage request = new HTSMessage();
+        final HtspMessage request = new HtspMessage();
         request.put("method", "getTicket");
         if (channelId > 0) {
             request.put("channelId", channelId);
@@ -1806,7 +1690,7 @@ public class HTSService extends Service implements HTSConnectionListener {
         // Reply message fields:
         // path               str  required   The full path for access URL (no scheme, host or port)
         // ticket             str  required   The ticket to pass in the URL query string
-        htsConnection.sendMessage(request, response -> {
+        htspConnection.sendMessage(request, response -> {
             if (response != null) {
                 Timber.d("Response is not null");
                 Intent ticketIntent = new Intent("ticket");
@@ -1819,48 +1703,14 @@ public class HTSService extends Service implements HTSConnectionListener {
         });
     }
 
-    private void subscribe(Intent intent) {
-        final int subscriptionId = intent.getIntExtra("subscriptionId", 0);
-        final int channelId = intent.getIntExtra("channelId", 0);
-        final int timeshiftPeriod = intent.getIntExtra("timeshiftPeriod", 0);
-        final String profile = intent.getStringExtra("profile");
-
-        HTSMessage request = new HTSMessage();
-        request.setMethod("subscribe");
-        request.put("subscriptionId", subscriptionId);
-        request.put("channelId", channelId);
-        request.put("timeshiftPeriod", timeshiftPeriod);
-
-        if (!TextUtils.isEmpty(profile)) {
-            request.put("profile", profile);
-        }
-
-        htsConnection.sendMessage(request, response -> {
-            int availableTimeshiftPeriod = response.getInteger("timeshiftPeriod", 0);
-            Timber.d("Available timeshift period in seconds: " + availableTimeshiftPeriod);
-
-        });
-    }
-
-    private void unsubscribe(Intent intent) {
-        final int subscriptionId = intent.getIntExtra("subscriptionId", 0);
-        HTSMessage request = new HTSMessage();
-        request.setMethod("unsubscribe");
-        request.put("subscriptionId", subscriptionId);
-
-        htsConnection.sendMessage(request, response -> {
-            //NOP
-        });
-    }
-
-    void sendEpgSyncStatusMessage(ServiceStatusReceiver.State state, String msg, String details) {
-        Intent intent = new Intent(ServiceStatusReceiver.ACTION);
-        intent.putExtra(ServiceStatusReceiver.STATE, state);
-        if (!TextUtils.isEmpty(msg)) {
-            intent.putExtra(ServiceStatusReceiver.MESSAGE, msg);
+    void sendSyncStateMessage(SyncStateReceiver.State state, String message, String details) {
+        Intent intent = new Intent(SyncStateReceiver.ACTION);
+        intent.putExtra(SyncStateReceiver.STATE, state);
+        if (!TextUtils.isEmpty(message)) {
+            intent.putExtra(SyncStateReceiver.MESSAGE, message);
         }
         if (!TextUtils.isEmpty(details)) {
-            intent.putExtra(ServiceStatusReceiver.DETAILS, details);
+            intent.putExtra(SyncStateReceiver.DETAILS, details);
         }
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }

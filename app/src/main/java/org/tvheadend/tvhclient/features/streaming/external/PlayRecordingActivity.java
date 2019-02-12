@@ -9,7 +9,7 @@ import android.view.View;
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Recording;
-import org.tvheadend.tvhclient.utils.MiscUtils;
+import org.tvheadend.tvhclient.data.service.HtspService;
 
 import java.io.File;
 
@@ -48,7 +48,7 @@ public class PlayRecordingActivity extends BasePlaybackActivity {
     @Override
     protected void getHttpTicket() {
         if (dvrId > 0) {
-            Intent intent = new Intent(this, MiscUtils.getSelectedService(this));
+            Intent intent = new Intent(this, HtspService.class);
             intent.setAction("getTicket");
             intent.putExtra("dvrId", dvrId);
             startService(intent);

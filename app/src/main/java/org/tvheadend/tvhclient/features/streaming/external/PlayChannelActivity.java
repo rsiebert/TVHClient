@@ -8,7 +8,7 @@ import android.view.View;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Channel;
-import org.tvheadend.tvhclient.utils.MiscUtils;
+import org.tvheadend.tvhclient.data.service.HtspService;
 
 import androidx.annotation.Nullable;
 import timber.log.Timber;
@@ -45,7 +45,7 @@ public class PlayChannelActivity extends BasePlaybackActivity {
     @Override
     protected void getHttpTicket() {
         if (channelId > 0) {
-            Intent intent = new Intent(this, MiscUtils.getSelectedService(this));
+            Intent intent = new Intent(this, HtspService.class);
             intent.setAction("getTicket");
             intent.putExtra("channelId", channelId);
             startService(intent);

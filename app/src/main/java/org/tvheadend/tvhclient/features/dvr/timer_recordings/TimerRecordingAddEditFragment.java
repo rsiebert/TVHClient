@@ -20,6 +20,7 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.data.entity.ServerProfile;
 import org.tvheadend.tvhclient.data.entity.TimerRecording;
+import org.tvheadend.tvhclient.data.service.HtspService;
 import org.tvheadend.tvhclient.features.dvr.DateTimeSelectedListener;
 import org.tvheadend.tvhclient.features.dvr.RecordingConfigSelectedListener;
 import org.tvheadend.tvhclient.features.dvr.RecordingUtils;
@@ -245,7 +246,7 @@ public class TimerRecordingAddEditFragment extends BaseFragment implements BackP
      * Returns an intent with the recording data
      */
     private Intent getIntentData() {
-        Intent intent = new Intent(activity, MiscUtils.getSelectedService(activity));
+        Intent intent = new Intent(activity, HtspService.class);
         intent.putExtra("directory", recording.getDirectory());
         intent.putExtra("title", recording.getTitle());
         intent.putExtra("name", recording.getName());

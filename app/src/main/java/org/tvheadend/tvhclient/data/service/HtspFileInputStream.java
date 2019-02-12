@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.data.service_old;
+package org.tvheadend.tvhclient.data.service;
 
 import android.util.Log;
 
@@ -7,8 +7,8 @@ import java.io.InputStream;
 
 import androidx.annotation.NonNull;
 
-public class HTSFileInputStream extends InputStream {
-    private final HTSConnection connection;
+public class HtspFileInputStream extends InputStream {
+    private final HtspConnection connection;
     private final String path;
 
     private long fileId;
@@ -18,7 +18,7 @@ public class HTSFileInputStream extends InputStream {
     private int bufPos;
     private long offset;
 
-    public HTSFileInputStream(HTSConnection conn, String path)
+    public HtspFileInputStream(HtspConnection conn, String path)
             throws IOException {
         this.connection = conn;
         this.path = path;
@@ -44,13 +44,13 @@ public class HTSFileInputStream extends InputStream {
         offset = 0;
     }
 
-    class FileOpenResponse implements HTSResponseHandler {
+    class FileOpenResponse implements HtspResponseListener {
         int id;
         long size;
         long mtime;
 
         @Override
-        public void handleResponse(HTSMessage response) {
+        public void handleResponse(HtspMessage response) {
             id = response.getInteger("id", 0);
             size = response.getLong("size", 0);
             mtime = response.getLong("mtime", 0);
@@ -58,27 +58,27 @@ public class HTSFileInputStream extends InputStream {
         }
     }
 
-    class FileReadResponse implements HTSResponseHandler {
+    class FileReadResponse implements HtspResponseListener {
         byte[] data;
 
         @Override
-        public void handleResponse(HTSMessage response) {
+        public void handleResponse(HtspMessage response) {
             data = response.getByteArray("data");
             notifyAll();
         }
     }
 
-    class FileCloseResponse implements HTSResponseHandler {
+    class FileCloseResponse implements HtspResponseListener {
         int id;
 
         @Override
-        public void handleResponse(HTSMessage response) {
+        public void handleResponse(HtspMessage response) {
             notifyAll();
         }
     }
 
     private void open() throws IOException {
-        HTSMessage request = new HTSMessage();
+        HtspMessage request = new HtspMessage();
         FileOpenResponse response = new FileOpenResponse();
 
         request.setMethod("fileOpen");
@@ -103,7 +103,7 @@ public class HTSFileInputStream extends InputStream {
     }
 
     public void close() {
-        HTSMessage request = new HTSMessage();
+        HtspMessage request = new HtspMessage();
         FileCloseResponse response = new FileCloseResponse();
 
         request.setMethod("fileClose");
@@ -150,7 +150,7 @@ public class HTSFileInputStream extends InputStream {
             return;
         }
 
-        HTSMessage request = new HTSMessage();
+        HtspMessage request = new HtspMessage();
         FileReadResponse response = new FileReadResponse();
 
         request.setMethod("fileRead");

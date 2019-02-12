@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.data.services;
+package org.tvheadend.tvhclient.data.service;
 
 import android.content.Intent;
 import android.text.TextUtils;
@@ -18,7 +18,7 @@ import timber.log.Timber;
 
 public class HtspUtils {
 
-    public static ChannelTag convertMessageToChannelTagModel(@NonNull ChannelTag tag, @NonNull BaseHtspMessage msg, @NonNull List<Channel> channels) {
+    public static ChannelTag convertMessageToChannelTagModel(@NonNull ChannelTag tag, @NonNull HtspMessage msg, @NonNull List<Channel> channels) {
         if (msg.containsKey("tagId")) {
             tag.setTagId(msg.getInteger("tagId"));
         }
@@ -58,7 +58,7 @@ public class HtspUtils {
         return tag;
     }
 
-    public static Channel convertMessageToChannelModel(@NonNull Channel channel, @NonNull BaseHtspMessage msg) {
+    public static Channel convertMessageToChannelModel(@NonNull Channel channel, @NonNull HtspMessage msg) {
         if (msg.containsKey("channelId")) {
             channel.setId(msg.getInteger("channelId"));
         }
@@ -99,7 +99,7 @@ public class HtspUtils {
         return channel;
     }
 
-    public static Recording convertMessageToRecordingModel(@NonNull Recording recording, @NonNull BaseHtspMessage msg) {
+    public static Recording convertMessageToRecordingModel(@NonNull Recording recording, @NonNull HtspMessage msg) {
         if (msg.containsKey("id")) {
             recording.setId(msg.getInteger("id"));
         }
@@ -241,7 +241,7 @@ public class HtspUtils {
         return recording;
     }
 
-    public static Program convertMessageToProgramModel(@NonNull Program program, @NonNull BaseHtspMessage msg) {
+    public static Program convertMessageToProgramModel(@NonNull Program program, @NonNull HtspMessage msg) {
         if (msg.containsKey("eventId")) {
             program.setEventId(msg.getInteger("eventId"));
         }
@@ -416,7 +416,7 @@ public class HtspUtils {
         return program;
     }
 
-    public static SeriesRecording convertMessageToSeriesRecordingModel(@NonNull SeriesRecording seriesRecording, @NonNull BaseHtspMessage msg) {
+    public static SeriesRecording convertMessageToSeriesRecordingModel(@NonNull SeriesRecording seriesRecording, @NonNull HtspMessage msg) {
         if (msg.containsKey("id")) {
             seriesRecording.setId(msg.getString("id"));
         }
@@ -506,7 +506,7 @@ public class HtspUtils {
         return seriesRecording;
     }
 
-    public static TimerRecording convertMessageToTimerRecordingModel(@NonNull TimerRecording timerRecording, @NonNull BaseHtspMessage msg) {
+    public static TimerRecording convertMessageToTimerRecordingModel(@NonNull TimerRecording timerRecording, @NonNull HtspMessage msg) {
         if (msg.containsKey("id")) {
             timerRecording.setId(msg.getString("id"));
         }
@@ -571,7 +571,7 @@ public class HtspUtils {
         return timerRecording;
     }
 
-    public static ServerStatus convertMessageToServerStatusModel(@NonNull ServerStatus serverStatus, @NonNull BaseHtspMessage msg) {
+    public static ServerStatus convertMessageToServerStatusModel(@NonNull ServerStatus serverStatus, @NonNull HtspMessage msg) {
         if (msg.containsKey("htspversion")) {
             serverStatus.setHtspVersion(msg.getInteger("htspversion", 13));
         }
@@ -593,7 +593,7 @@ public class HtspUtils {
         return serverStatus;
     }
 
-    public static BaseHtspMessage convertIntentToAutorecMessage(@NonNull Intent intent, int htspVersion) {
+    public static HtspMessage convertIntentToAutorecMessage(@NonNull Intent intent, int htspVersion) {
         final long enabled = intent.getIntExtra("enabled", 1);
         final String title = intent.getStringExtra("title");
         final String fulltext = intent.getStringExtra("fulltext");
@@ -612,7 +612,7 @@ public class HtspUtils {
         final long dupDetect = intent.getIntExtra("dupDetect", 0);
         final String comment = intent.getStringExtra("comment");
 
-        final BaseHtspMessage request = new BaseHtspMessage();
+        final HtspMessage request = new HtspMessage();
         if (htspVersion >= 19) {
             request.put("enabled", enabled);
         }
@@ -668,7 +668,7 @@ public class HtspUtils {
         return request;
     }
 
-    public static BaseHtspMessage convertIntentToDvrMessage(@NonNull Intent intent, int htspVersion) {
+    public static HtspMessage convertIntentToDvrMessage(@NonNull Intent intent, int htspVersion) {
         final long eventId = intent.getIntExtra("eventId", 0);
         final long channelId = intent.getIntExtra("channelId", 0);
         final long start = intent.getLongExtra("start", 0);
@@ -686,7 +686,7 @@ public class HtspUtils {
         // is only scheduled and not being recorded
         final boolean isRecording = intent.getBooleanExtra("isRecording", false);
 
-        final BaseHtspMessage request = new BaseHtspMessage();
+        final HtspMessage request = new HtspMessage();
         // If the eventId is set then an existing program from the program guide
         // shall be recorded. The server will then ignore the other fields
         // automatically.
@@ -735,7 +735,7 @@ public class HtspUtils {
         return request;
     }
 
-    public static BaseHtspMessage convertIntentToTimerecMessage(@NonNull Intent intent, int htspVersion) {
+    public static HtspMessage convertIntentToTimerecMessage(@NonNull Intent intent, int htspVersion) {
         final long enabled = intent.getIntExtra("enabled", 1);
         final String title = intent.getStringExtra("title");
         final String directory = intent.getStringExtra("directory");
@@ -749,7 +749,7 @@ public class HtspUtils {
         final long retention = intent.getIntExtra("retention", -1);
         final String comment = intent.getStringExtra("comment");
 
-        final BaseHtspMessage request = new BaseHtspMessage();
+        final HtspMessage request = new HtspMessage();
         if (htspVersion >= 19) {
             request.put("enabled", enabled);
         }
@@ -784,13 +784,13 @@ public class HtspUtils {
         return request;
     }
 
-    public static BaseHtspMessage convertIntentToEventMessage(@NonNull Intent intent) {
+    public static HtspMessage convertIntentToEventMessage(@NonNull Intent intent) {
         final int eventId = intent.getIntExtra("eventId", 0);
         final int channelId = intent.getIntExtra("channelId", 0);
         final int numFollowing = intent.getIntExtra("numFollowing", 0);
         final long maxTime = intent.getLongExtra("maxTime", 0);
 
-        final BaseHtspMessage request = new BaseHtspMessage();
+        final HtspMessage request = new HtspMessage();
         request.put("method", "getEvents");
         if (eventId > 0) {
             request.put("eventId", eventId);
@@ -807,7 +807,7 @@ public class HtspUtils {
         return request;
     }
 
-    public static BaseHtspMessage convertIntentToEpgQueryMessage(@NonNull Intent intent) {
+    public static HtspMessage convertIntentToEpgQueryMessage(@NonNull Intent intent) {
         final String query = intent.getStringExtra("query");
         final long channelId = intent.getIntExtra("channelId", 0);
         final long tagId = intent.getIntExtra("tagId", 0);
@@ -817,7 +817,7 @@ public class HtspUtils {
         final String language = intent.getStringExtra("language");
         final boolean full = intent.getBooleanExtra("full", false);
 
-        final BaseHtspMessage request = new BaseHtspMessage();
+        final HtspMessage request = new HtspMessage();
         request.put("method", "epgQuery");
         request.put("query", query);
 

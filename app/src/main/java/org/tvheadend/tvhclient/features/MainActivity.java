@@ -25,8 +25,6 @@ import com.google.android.gms.cast.framework.SessionManagerListener;
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
-import org.tvheadend.tvhclient.data.service.EpgSyncStatusCallback;
-import org.tvheadend.tvhclient.data.service.EpgSyncTaskState;
 import org.tvheadend.tvhclient.features.download.DownloadPermissionGrantedInterface;
 import org.tvheadend.tvhclient.features.epg.ProgramGuideFragment;
 import org.tvheadend.tvhclient.features.navigation.NavigationDrawer;
@@ -34,7 +32,7 @@ import org.tvheadend.tvhclient.features.navigation.NavigationDrawerCallback;
 import org.tvheadend.tvhclient.features.search.SearchRequestInterface;
 import org.tvheadend.tvhclient.features.shared.BaseActivity;
 import org.tvheadend.tvhclient.features.shared.callbacks.ToolbarInterface;
-import org.tvheadend.tvhclient.features.shared.receivers.ServiceStatusReceiver;
+import org.tvheadend.tvhclient.features.shared.receivers.SyncStateReceiver;
 import org.tvheadend.tvhclient.features.streaming.external.CastSessionManagerListener;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 import org.tvheadend.tvhclient.utils.SnackbarUtils;
@@ -54,7 +52,7 @@ import timber.log.Timber;
 
 // TODO what happens when no connection to the server is active and the user presses an action in a notification?
 
-public class MainActivity extends BaseActivity implements ToolbarInterface, NavigationDrawerCallback, SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, EpgSyncStatusCallback {
+public class MainActivity extends BaseActivity implements ToolbarInterface, NavigationDrawerCallback, SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, SyncStateReceiver.Listener {
 
     @BindView(R.id.sync_progress)
     ProgressBar syncProgress;
@@ -67,7 +65,7 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Navi
     private CastContext castContext;
     private CastStateListener castStateListener;
     private SessionManagerListener<CastSession> castSessionManagerListener;
-    private ServiceStatusReceiver serviceStatusReceiver;
+    private SyncStateReceiver syncStateReceiver;
 
     private NavigationDrawer navigationDrawer;
     private int selectedNavigationMenuId;
@@ -91,7 +89,7 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Navi
 
         MainApplication.getComponent().inject(this);
 
-        serviceStatusReceiver = new ServiceStatusReceiver(this);
+        syncStateReceiver = new SyncStateReceiver(this);
         isUnlocked = MainApplication.getInstance().isUnlocked();
         isDualPane = findViewById(R.id.details) != null;
 
@@ -163,13 +161,13 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Navi
     @Override
     public void onStart() {
         super.onStart();
-        LocalBroadcastManager.getInstance(this).registerReceiver(serviceStatusReceiver, new IntentFilter(ServiceStatusReceiver.ACTION));
+        LocalBroadcastManager.getInstance(this).registerReceiver(syncStateReceiver, new IntentFilter(SyncStateReceiver.ACTION));
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(serviceStatusReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(syncStateReceiver);
     }
 
     @Override
@@ -417,29 +415,29 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Navi
     }
 
     @Override
-    public void onEpgTaskStateChanged(EpgSyncTaskState state) {
-        switch (state.getState()) {
+    public void onSyncStateChanged(SyncStateReceiver.State state, String message, String details) {
+        switch (state) {
             case CLOSED:
             case FAILED:
                 Timber.d("Connection failed or closed");
-                SnackbarUtils.sendSnackbarMessage(this, state.getMessage());
+                SnackbarUtils.sendSnackbarMessage(this, message);
                 onNetworkAvailabilityChanged(false);
                 break;
 
             case CONNECTING:
                 Timber.d("Connecting");
-                SnackbarUtils.sendSnackbarMessage(this, state.getMessage());
+                SnackbarUtils.sendSnackbarMessage(this, message);
                 break;
 
             case CONNECTED:
                 Timber.d("Connected");
-                SnackbarUtils.sendSnackbarMessage(this, state.getMessage());
+                SnackbarUtils.sendSnackbarMessage(this, message);
                 break;
 
             case SYNC_STARTED:
                 Timber.d("Sync started, showing progress bar");
                 syncProgress.setVisibility(View.VISIBLE);
-                SnackbarUtils.sendSnackbarMessage(this, state.getMessage());
+                SnackbarUtils.sendSnackbarMessage(this, message);
                 break;
 
             case SYNC_IN_PROGRESS:
@@ -450,7 +448,7 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Navi
             case SYNC_DONE:
                 Timber.d("Sync done, hiding progress bar");
                 syncProgress.setVisibility(View.GONE);
-                SnackbarUtils.sendSnackbarMessage(this, state.getMessage());
+                SnackbarUtils.sendSnackbarMessage(this, message);
                 break;
         }
     }

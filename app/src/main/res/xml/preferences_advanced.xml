@@ -85,10 +85,5 @@
             android:key="copy_playback_url_to_clipboard_enabled"
             android:summary="@string/pref_copy_playback_url_to_clipboard_enabled_sum"
             android:title="@string/pref_copy_playback_url_to_clipboard_enabled" />
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:key="new_service_enabled"
-            android:summary="Use the connection service version 2 that was introduced in version 2.0.0 or later. If you like or encounter problems you can use the connection service version 1 that was used up to version 1.9.12."
-            android:title="Use connection service version 2" />
     </PreferenceCategory>
 </PreferenceScreen>

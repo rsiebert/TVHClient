@@ -7,6 +7,7 @@ import android.preference.PreferenceManager;
 
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.data.service.HtspService;
 import org.tvheadend.tvhclient.features.dvr.recordings.RecordingDetailsFragment;
 import org.tvheadend.tvhclient.features.dvr.series_recordings.SeriesRecordingDetailsFragment;
 import org.tvheadend.tvhclient.features.dvr.timer_recordings.TimerRecordingDetailsFragment;
@@ -15,7 +16,6 @@ import org.tvheadend.tvhclient.features.programs.ProgramListFragment;
 import org.tvheadend.tvhclient.features.shared.callbacks.NetworkStatusListener;
 import org.tvheadend.tvhclient.features.shared.receivers.NetworkStatusReceiver;
 import org.tvheadend.tvhclient.features.shared.receivers.SnackbarMessageReceiver;
-import org.tvheadend.tvhclient.utils.MiscUtils;
 import org.tvheadend.tvhclient.utils.SnackbarUtils;
 
 import androidx.annotation.Nullable;
@@ -76,21 +76,21 @@ public abstract class BaseActivity extends AppCompatActivity implements NetworkS
             if (!isNetworkAvailable) {
                 Timber.d("Network changed from offline to online, starting service");
                 if (MainApplication.isActivityVisible()) {
-                    Intent intent = new Intent(this, MiscUtils.getSelectedService(this));
+                    Intent intent = new Intent(this, HtspService.class);
                     intent.setAction("connect");
                     startService(intent);
                 }
             } else {
                 Timber.d("Network still active, pinging server");
                 if (MainApplication.isActivityVisible()) {
-                    Intent intent = new Intent(this, MiscUtils.getSelectedService(this));
+                    Intent intent = new Intent(this, HtspService.class);
                     intent.setAction("reconnect");
                     startService(intent);
                 }
             }
         } else {
             Timber.d("Network is not available anymore, stopping service");
-            stopService(new Intent(this, MiscUtils.getSelectedService(this)));
+            stopService(new Intent(this, HtspService.class));
         }
         isNetworkAvailable = isAvailable;
 

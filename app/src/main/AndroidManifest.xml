@@ -71,15 +71,11 @@
             </intent-filter>
         </activity>
 
-        <service
-            android:name=".data.service.EpgSyncService"
-            android:enabled="true"
+        <service android:name=".data.service.HtspService"
             android:exported="false" />
-        <service
-            android:name=".data.service.EpgSyncIntentService"
+        <service android:name=".data.service.HtspIntentService"
             android:exported="false"
             android:permission="android.permission.BIND_JOB_SERVICE" />
-        <service android:name=".data.service_old.HTSService" />
 
         <provider
             android:name="org.tvheadend.tvhclient.features.search.SuggestionProvider"

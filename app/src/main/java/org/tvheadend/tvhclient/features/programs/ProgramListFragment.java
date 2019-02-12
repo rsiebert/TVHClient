@@ -18,6 +18,7 @@ import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Program;
 import org.tvheadend.tvhclient.data.entity.Recording;
+import org.tvheadend.tvhclient.data.service.HtspService;
 import org.tvheadend.tvhclient.features.dvr.RecordingAddEditActivity;
 import org.tvheadend.tvhclient.features.search.SearchRequestInterface;
 import org.tvheadend.tvhclient.features.search.StartSearchInterface;
@@ -389,7 +390,7 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
         Program lastProgram = recyclerViewAdapter.getItem(position);
         Timber.d("Loading more programs after " + lastProgram.getTitle());
 
-        Intent intent = new Intent(activity, MiscUtils.getSelectedService(activity));
+        Intent intent = new Intent(activity, HtspService.class);
         intent.setAction("getEvents");
         intent.putExtra("eventId", lastProgram.getNextEventId());
         intent.putExtra("channelId", lastProgram.getChannelId());

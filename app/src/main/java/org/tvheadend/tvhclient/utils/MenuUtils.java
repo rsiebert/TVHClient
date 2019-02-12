@@ -26,7 +26,7 @@ import org.tvheadend.tvhclient.data.entity.ServerProfile;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
 import org.tvheadend.tvhclient.data.entity.TimerRecording;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
-import org.tvheadend.tvhclient.data.service_old.HTSService;
+import org.tvheadend.tvhclient.data.service.HtspService;
 import org.tvheadend.tvhclient.features.channels.ChannelDisplayOptionListener;
 import org.tvheadend.tvhclient.features.download.DownloadRecordingManager;
 import org.tvheadend.tvhclient.features.dvr.RecordingRemovedCallback;
@@ -290,7 +290,7 @@ public class MenuUtils {
             return false;
         }
         Timber.d("handleMenuRecordSelection() called with: eventId = [" + eventId + "]");
-        final Intent intent = new Intent(activity, MiscUtils.getSelectedService(activity));
+        final Intent intent = new Intent(activity, HtspService.class);
         intent.setAction("addDvrEntry");
         intent.putExtra("eventId", eventId);
 
@@ -308,7 +308,7 @@ public class MenuUtils {
             Timber.d("Weak reference to activity is null");
             return false;
         }
-        final Intent intent = new Intent(activity, MiscUtils.getSelectedService(activity));
+        final Intent intent = new Intent(activity, HtspService.class);
         intent.setAction("addAutorecEntry");
         intent.putExtra("title", title);
 
@@ -334,7 +334,7 @@ public class MenuUtils {
                 .negativeText(R.string.cancel)
                 .positiveText(R.string.stop)
                 .onPositive((dialog, which) -> {
-                    final Intent intent = new Intent(activity, MiscUtils.getSelectedService(activity));
+                    final Intent intent = new Intent(activity, HtspService.class);
                     intent.setAction("stopDvrEntry");
                     intent.putExtra("id", recording.getId());
                     activity.startService(intent);
@@ -360,7 +360,7 @@ public class MenuUtils {
                 .negativeText(R.string.cancel)
                 .positiveText(R.string.remove)
                 .onPositive((dialog, which) -> {
-                    final Intent intent = new Intent(activity, MiscUtils.getSelectedService(activity));
+                    final Intent intent = new Intent(activity, HtspService.class);
                     intent.setAction("deleteDvrEntry");
                     intent.putExtra("id", recording.getId());
                     activity.startService(intent);
@@ -386,7 +386,7 @@ public class MenuUtils {
                 .negativeText(R.string.cancel)
                 .positiveText(R.string.remove)
                 .onPositive((dialog, which) -> {
-                    final Intent intent = new Intent(activity, MiscUtils.getSelectedService(activity));
+                    final Intent intent = new Intent(activity, HtspService.class);
                     intent.setAction("cancelDvrEntry");
                     intent.putExtra("id", recording.getId());
                     activity.startService(intent);
@@ -412,7 +412,7 @@ public class MenuUtils {
                 .negativeText(R.string.cancel)
                 .positiveText(R.string.remove)
                 .onPositive((dialog, which) -> {
-                    final Intent intent = new Intent(activity, MiscUtils.getSelectedService(activity));
+                    final Intent intent = new Intent(activity, HtspService.class);
                     intent.setAction("deleteAutorecEntry");
                     intent.putExtra("id", recording.getId());
                     activity.startService(intent);
@@ -443,7 +443,7 @@ public class MenuUtils {
                 .negativeText(R.string.cancel)
                 .positiveText(R.string.remove)
                 .onPositive((dialog, which) -> {
-                    final Intent intent = new Intent(activity, MiscUtils.getSelectedService(activity));
+                    final Intent intent = new Intent(activity, HtspService.class);
                     intent.setAction("deleteTimerecEntry");
                     intent.putExtra("id", recording.getId());
                     activity.startService(intent);
@@ -469,7 +469,7 @@ public class MenuUtils {
                 .onPositive((dialog, which) -> new Thread() {
                     public void run() {
                         for (Recording item : items) {
-                            final Intent intent = new Intent(activity, MiscUtils.getSelectedService(activity));
+                            final Intent intent = new Intent(activity, HtspService.class);
                             intent.putExtra("id", item.getId());
                             if (item.isRecording() || item.isScheduled()) {
                                 intent.setAction("cancelDvrEntry");
@@ -502,7 +502,7 @@ public class MenuUtils {
                 .onPositive((dialog, which) -> new Thread() {
                     public void run() {
                         for (SeriesRecording item : items) {
-                            final Intent intent = new Intent(activity, MiscUtils.getSelectedService(activity));
+                            final Intent intent = new Intent(activity, HtspService.class);
                             intent.setAction("deleteAutorecEntry");
                             intent.putExtra("id", item.getId());
                             activity.startService(intent);
@@ -531,7 +531,7 @@ public class MenuUtils {
                 .onPositive((dialog, which) -> new Thread() {
                     public void run() {
                         for (TimerRecording item : items) {
-                            final Intent intent = new Intent(activity, MiscUtils.getSelectedService(activity));
+                            final Intent intent = new Intent(activity, HtspService.class);
                             intent.setAction("deleteTimerecEntry");
                             intent.putExtra("id", item.getId());
                             activity.startService(intent);
@@ -574,7 +574,7 @@ public class MenuUtils {
                 .items(dvrConfigList)
                 .itemsCallbackSingleChoice(dvrConfigNameValue, (dialog, view, which, text) -> {
                     // Pass over the
-                    Intent intent = new Intent(activity, MiscUtils.getSelectedService(activity));
+                    Intent intent = new Intent(activity, HtspService.class);
                     intent.setAction("addDvrEntry");
                     intent.putExtra("eventId", eventId);
                     intent.putExtra("channelId", channelId);
@@ -694,7 +694,7 @@ public class MenuUtils {
                 .positiveText(R.string.reconnect)
                 .onPositive((dialog, which) -> {
                     Timber.d("Reconnect requested, stopping service and updating active connection to require a full sync");
-                    activity.stopService(new Intent(activity, MiscUtils.getSelectedService(activity)));
+                    activity.stopService(new Intent(activity, HtspService.class));
 
                     if (connection != null) {
                         Timber.d("Updating active connection to request a full sync");

@@ -15,6 +15,7 @@ import com.google.android.gms.common.images.WebImage;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Channel;
+import org.tvheadend.tvhclient.data.service.HtspService;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
 import androidx.annotation.Nullable;
@@ -53,7 +54,7 @@ public class CastChannelActivity extends BasePlaybackActivity {
 
     @Override
     protected void getHttpTicket() {
-        Intent intent = new Intent(this, MiscUtils.getSelectedService(this));
+        Intent intent = new Intent(this, HtspService.class);
         intent.setAction("getTicket");
         intent.putExtra("channelId", channelId);
         startService(intent);

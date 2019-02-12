@@ -13,8 +13,6 @@ import com.google.android.gms.common.GoogleApiAvailability;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.ServerProfile;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
-import org.tvheadend.tvhclient.data.service.EpgSyncService;
-import org.tvheadend.tvhclient.data.service_old.HTSService;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -127,15 +125,5 @@ public class MiscUtils {
             }
         }
         return null;
-    }
-
-    public static Class getSelectedService(Context context) {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        boolean newServiceEnabled = sharedPreferences.getBoolean("new_service_enabled", true);
-        if (newServiceEnabled) {
-            return EpgSyncService.class;
-        } else {
-            return HTSService.class;
-        }
     }
 }

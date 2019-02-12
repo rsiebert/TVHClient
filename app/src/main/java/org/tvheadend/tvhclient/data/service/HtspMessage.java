@@ -1,6 +1,4 @@
-package org.tvheadend.tvhclient.data.service_old;
-
-import org.tvheadend.tvhclient.data.services.BaseHtspMessage;
+package org.tvheadend.tvhclient.data.service;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -8,9 +6,11 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-public class HTSMessage extends BaseHtspMessage {
+public class HtspMessage extends HashMap<String, Object> {
 
     private static final long serialVersionUID = 1L;
 
@@ -21,6 +21,138 @@ public class HTSMessage extends BaseHtspMessage {
     private static final byte HMF_BIN = 4;
     private static final byte HMF_LIST = 5;
     private ByteBuffer buf;
+
+    public void setMethod(String name) {
+        put("method", name);
+    }
+
+    public String getMethod() {
+        return getString("method", "");
+    }
+
+    public String getString(String key, String fallback) {
+        if (!containsKey(key)) {
+            return fallback;
+        }
+
+        return getString(key);
+    }
+
+    public String getString(String key) {
+        Object obj = get(key);
+        if (obj == null) {
+            return null;
+        }
+        return obj.toString();
+    }
+
+    public int getInteger(String key, int fallback) {
+        if (!containsKey(key)) {
+            return fallback;
+        }
+
+        return getInteger(key);
+    }
+
+    public int getInteger(String key) {
+        Object obj = get(key);
+        if (obj == null) {
+            throw new RuntimeException("Attempted to getInteger(" + key + ") on non-existent key");
+        }
+        if (obj instanceof BigInteger) {
+            return ((BigInteger) obj).intValue();
+        }
+
+        return (int) obj;
+    }
+
+    public long getLong(String key, long fallback) {
+        if (!containsKey(key)) {
+            return fallback;
+        }
+
+        return getLong(key);
+    }
+
+    public long getLong(String key) {
+        Object obj = get(key);
+        if (obj == null) {
+            throw new RuntimeException("Attempted to getLong(" + key + ") on non-existent key");
+        }
+
+        if (obj instanceof BigInteger) {
+            return ((BigInteger) obj).longValue();
+        }
+
+        return (long) obj;
+    }
+
+    public boolean getBoolean(String key, boolean fallback) {
+        if (!containsKey(key)) {
+            return fallback;
+        }
+
+        return getBoolean(key);
+    }
+
+    private boolean getBoolean(String key) {
+        return getInteger(key) == 1;
+    }
+
+    public List<?> getList(String name) {
+        return (List<?>) get(name);
+    }
+
+    public List<Integer> getIntegerList(String name) {
+        ArrayList<Integer> list = new ArrayList<>();
+        if (!containsKey(name)) {
+            return list;
+        }
+        for (Object obj : getList(name)) {
+            if (obj instanceof BigInteger) {
+                list.add(((BigInteger) obj).intValue());
+            }
+        }
+        return list;
+    }
+
+    List<Integer> getIntegerList(String name, List<Integer> std) {
+        if (!containsKey(name)) {
+            return std;
+        }
+        return getIntegerList(name);
+    }
+
+    public String[] getStringArray(String key) {
+        ArrayList value = getArrayList(key);
+        return (String[]) value.toArray(new String[value.size()]);
+    }
+
+    public ArrayList getArrayList(String key) {
+        Object obj = get(key);
+        //noinspection unchecked
+        return (ArrayList<String>) obj;
+    }
+
+    public HtspMessage[] getHtspMessageArray(String key) {
+        ArrayList value = getArrayList(key);
+
+        return (HtspMessage[]) value.toArray(new HtspMessage[value.size()]);
+    }
+
+    public byte[] getByteArray(String key, byte[] fallback) {
+        if (!containsKey(key)) {
+            return fallback;
+        }
+
+        return getByteArray(key);
+    }
+
+    public byte[] getByteArray(String key) {
+        Object value = get(key);
+
+        return (byte[]) value;
+    }
 
     public boolean transmit(SocketChannel ch) throws IOException {
         if (buf == null) {
@@ -90,7 +222,7 @@ public class HTSMessage extends BaseHtspMessage {
         return i;
     }
 
-    public static HTSMessage parse(ByteBuffer buf) throws IOException {
+    public static HtspMessage parse(ByteBuffer buf) throws IOException {
         long len;
 
         if (buf.position() < 4) {
@@ -114,7 +246,7 @@ public class HTSMessage extends BaseHtspMessage {
 
         buf.flip();
         buf.getInt(); // drops 4 bytes
-        HTSMessage msg = deserializeBinary(buf);
+        HtspMessage msg = deserializeBinary(buf);
 
         buf.limit(4);
         buf.position(0);
@@ -128,26 +260,26 @@ public class HTSMessage extends BaseHtspMessage {
         byte type;
 
         if (value instanceof String) {
-            type = HTSMessage.HMF_STR;
+            type = HtspMessage.HMF_STR;
             bData = ((String) value).getBytes();
         } else if (value instanceof BigInteger) {
-            type = HTSMessage.HMF_S64;
+            type = HtspMessage.HMF_S64;
             bData = toByteArray((BigInteger) value);
         } else if (value instanceof Integer) {
-            type = HTSMessage.HMF_S64;
+            type = HtspMessage.HMF_S64;
             bData = toByteArray(BigInteger.valueOf((Integer) value));
         } else if (value instanceof Long) {
-            type = HTSMessage.HMF_S64;
+            type = HtspMessage.HMF_S64;
             bData = toByteArray(BigInteger.valueOf((Long) value));
         } else if (value instanceof byte[]) {
-            type = HTSMessage.HMF_BIN;
+            type = HtspMessage.HMF_BIN;
             bData = (byte[]) value;
         } else if (value instanceof Map) {
-            type = HTSMessage.HMF_MAP;
+            type = HtspMessage.HMF_MAP;
 
             bData = serializeBinary((Map<String, Object>) value);
         } else if (value instanceof Collection) {
-            type = HTSMessage.HMF_LIST;
+            type = HtspMessage.HMF_LIST;
             bData = serializeBinary((Collection<?>) value);
         } else if (value == null) {
             throw new IOException("HTSP doesn't support null values");
@@ -201,11 +333,11 @@ public class HTSMessage extends BaseHtspMessage {
         return bBuf;
     }
 
-    private static HTSMessage deserializeBinary(ByteBuffer buf) throws IOException {
+    private static HtspMessage deserializeBinary(ByteBuffer buf) throws IOException {
         byte type, namelen;
         long datalen;
 
-        HTSMessage msg = new HTSMessage();
+        HtspMessage msg = new HtspMessage();
         int cnt = 0;
 
         while (buf.hasRemaining()) {
@@ -236,7 +368,7 @@ public class HTSMessage extends BaseHtspMessage {
             buf.get(bData);
 
             switch (type) {
-                case HTSMessage.HMF_STR: {
+                case HtspMessage.HMF_STR: {
                     obj = new String(bData);
                     break;
                 }

@@ -17,11 +17,11 @@ import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
+import org.tvheadend.tvhclient.data.service.HtspService;
 import org.tvheadend.tvhclient.features.shared.callbacks.BackPressedInterface;
 import org.tvheadend.tvhclient.features.shared.callbacks.ToolbarInterface;
 import org.tvheadend.tvhclient.features.shared.tasks.WakeOnLanTask;
 import org.tvheadend.tvhclient.features.startup.SplashActivity;
-import org.tvheadend.tvhclient.utils.MiscUtils;
 
 import javax.inject.Inject;
 
@@ -215,7 +215,7 @@ public class SettingsListConnectionsFragment extends ListFragment implements Bac
      */
     private void reconnect() {
         Timber.d("Reconnecting to server, new initial sync will be done");
-        activity.stopService(new Intent(activity, MiscUtils.getSelectedService(activity)));
+        activity.stopService(new Intent(activity, HtspService.class));
 
         if (viewModel.getActiveConnectionId() >= 0) {
             Connection connection = appRepository.getConnectionData().getItemById(viewModel.getActiveConnectionId());

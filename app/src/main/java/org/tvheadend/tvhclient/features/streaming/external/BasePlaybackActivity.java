@@ -22,9 +22,8 @@ import org.tvheadend.tvhclient.data.entity.Connection;
 import org.tvheadend.tvhclient.data.entity.ServerProfile;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
-import org.tvheadend.tvhclient.data.service.EpgSyncStatusCallback;
-import org.tvheadend.tvhclient.data.service.EpgSyncTaskState;
-import org.tvheadend.tvhclient.features.shared.receivers.ServiceStatusReceiver;
+import org.tvheadend.tvhclient.data.service.HtspService;
+import org.tvheadend.tvhclient.features.shared.receivers.SyncStateReceiver;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
 import java.util.concurrent.ExecutionException;
@@ -38,7 +37,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
 
-public abstract class BasePlaybackActivity extends AppCompatActivity implements EpgSyncStatusCallback {
+public abstract class BasePlaybackActivity extends AppCompatActivity implements SyncStateReceiver.Listener {
 
     @BindView(R.id.progress_bar)
     ProgressBar progressBar;
@@ -54,7 +53,7 @@ public abstract class BasePlaybackActivity extends AppCompatActivity implements 
     String baseUrl;
     String serverUrl;
     ServerProfile serverProfile;
-    private ServiceStatusReceiver serviceStatusReceiver;
+    private SyncStateReceiver syncStateReceiver;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -66,7 +65,7 @@ public abstract class BasePlaybackActivity extends AppCompatActivity implements 
 
         ButterKnife.bind(this);
 
-        serviceStatusReceiver = new ServiceStatusReceiver(this);
+        syncStateReceiver = new SyncStateReceiver(this);
         connection = appRepository.getConnectionData().getActiveItem();
         serverStatus = appRepository.getServerStatusData().getActiveItem();
 
@@ -79,14 +78,14 @@ public abstract class BasePlaybackActivity extends AppCompatActivity implements 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("ticket");
         LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, intentFilter);
-        LocalBroadcastManager.getInstance(this).registerReceiver(serviceStatusReceiver, new IntentFilter(ServiceStatusReceiver.ACTION));
+        LocalBroadcastManager.getInstance(this).registerReceiver(syncStateReceiver, new IntentFilter(SyncStateReceiver.ACTION));
     }
 
     @Override
     public void onStop() {
         super.onStop();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(messageReceiver);
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(serviceStatusReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(syncStateReceiver);
     }
 
     @Override
@@ -202,19 +201,19 @@ public abstract class BasePlaybackActivity extends AppCompatActivity implements 
     }
 
     @Override
-    public void onEpgTaskStateChanged(EpgSyncTaskState state) {
-        Timber.d("Epg task state changed, message is " + state.getMessage());
-        switch (state.getState()) {
+    public void onSyncStateChanged(SyncStateReceiver.State state, String message, String details) {
+        Timber.d("Epg task state changed, message is " + message);
+        switch (state) {
             case FAILED:
                 progressBar.setVisibility(View.GONE);
-                statusTextView.setText(state.getMessage());
-                stopService(new Intent(this, MiscUtils.getSelectedService(this)));
-                startService(new Intent(this, MiscUtils.getSelectedService(this)));
+                statusTextView.setText(message);
+                stopService(new Intent(this, HtspService.class));
+                startService(new Intent(this, HtspService.class));
                 break;
 
             case CONNECTING:
                 progressBar.setVisibility(View.GONE);
-                statusTextView.setText(state.getMessage());
+                statusTextView.setText(message);
                 break;
 
             case CONNECTED:

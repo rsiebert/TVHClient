@@ -8,8 +8,8 @@ import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
 import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.data.service.HtspService;
 import org.tvheadend.tvhclient.features.programs.ProgramDetailsActivity;
-import org.tvheadend.tvhclient.utils.MiscUtils;
 
 import java.util.Date;
 
@@ -40,7 +40,7 @@ public class ProgramNotificationReceiver extends NotificationBroadcastReceiver {
         PendingIntent detailsPendingIntent = PendingIntent.getActivity(context, 0, detailsIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         // Create the intent that handles the scheduling of the program
-        Intent recordIntent = new Intent(context, MiscUtils.getSelectedService(context));
+        Intent recordIntent = new Intent(context, HtspService.class);
         recordIntent.setAction("addDvrEntry");
         recordIntent.putExtra("eventId", eventId);
         if (!TextUtils.isEmpty(configName)) {

@@ -17,9 +17,8 @@ import org.tvheadend.tvhclient.BuildConfig;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.data.entity.Connection;
-import org.tvheadend.tvhclient.data.service.EpgSyncService;
+import org.tvheadend.tvhclient.data.service.HtspService;
 import org.tvheadend.tvhclient.data.service.worker.LoadChannelIconWorker;
-import org.tvheadend.tvhclient.data.service_old.HTSService;
 import org.tvheadend.tvhclient.features.logging.FileLoggingTree;
 import org.tvheadend.tvhclient.features.search.SuggestionProvider;
 import org.tvheadend.tvhclient.features.startup.SplashActivity;
@@ -53,7 +52,6 @@ public class SettingsAdvancedFragment extends BasePreferenceFragment implements 
         findPreference("clear_database").setOnPreferenceClickListener(this);
         findPreference("clear_search_history").setOnPreferenceClickListener(this);
         findPreference("clear_icon_cache").setOnPreferenceClickListener(this);
-        findPreference("new_service_enabled").setOnPreferenceClickListener(this);
 
         notificationsEnabledPreference = (CheckBoxPreference) findPreference("notifications_enabled");
         notificationsEnabledPreference.setOnPreferenceClickListener(this);
@@ -93,19 +91,8 @@ public class SettingsAdvancedFragment extends BasePreferenceFragment implements 
             case "notifications":
                 handlePreferenceNotificationsSelected();
                 break;
-            case "new_service_enabled":
-                handlePreferenceSwitchService();
         }
         return true;
-    }
-
-    private void handlePreferenceSwitchService() {
-        String enabledServiceName = MiscUtils.getSelectedService(activity).getName();
-        if (enabledServiceName.equals(EpgSyncService.class.getName())) {
-            activity.stopService(new Intent(activity, HTSService.class));
-        } else {
-            activity.stopService(new Intent(activity, EpgSyncService.class));
-        }
     }
 
     private void handlePreferenceNotificationsSelected() {
@@ -236,7 +223,7 @@ public class SettingsAdvancedFragment extends BasePreferenceFragment implements 
     @Override
     public void onDatabaseCleared() {
         Timber.d("Database has been cleared, stopping service and restarting application");
-        activity.stopService(new Intent(activity, MiscUtils.getSelectedService(activity)));
+        activity.stopService(new Intent(activity, HtspService.class));
         Intent intent = new Intent(activity, SplashActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         activity.startActivity(intent);

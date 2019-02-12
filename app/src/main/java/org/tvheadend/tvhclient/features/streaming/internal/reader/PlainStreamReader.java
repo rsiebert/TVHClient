@@ -17,7 +17,6 @@
 package org.tvheadend.tvhclient.features.streaming.internal.reader;
 
 import android.content.Context;
-import androidx.annotation.NonNull;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Format;
@@ -26,7 +25,9 @@ import com.google.android.exoplayer2.extractor.TrackOutput;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 
 import org.tvheadend.tvhclient.MainApplication;
-import org.tvheadend.tvhclient.data.service.htsp.HtspMessage;
+import org.tvheadend.tvhclient.data.service.HtspMessage;
+
+import androidx.annotation.NonNull;
 
 /**
  * A PlainStreamReader simply copies the raw bytes from muxpkt's over onto the track output
