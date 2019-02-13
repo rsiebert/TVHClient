@@ -726,7 +726,7 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
                 Timber.d("Video is not available because the TV input stopped the playback temporarily to buffer more data.");
                 playerSurfaceView.setVisibility(View.GONE);
                 statusTextView.setVisibility(View.VISIBLE);
-                statusTextView.setText("Player is buffering");
+                statusTextView.setText(R.string.player_is_loading_mode_data);
                 break;
 
             case Player.STATE_ENDED:

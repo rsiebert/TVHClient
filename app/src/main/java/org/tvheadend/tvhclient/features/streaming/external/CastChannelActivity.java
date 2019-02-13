@@ -99,7 +99,7 @@ public class CastChannelActivity extends BasePlaybackActivity {
         RemoteMediaClient remoteMediaClient = castSession.getRemoteMediaClient();
         if (remoteMediaClient == null) {
             progressBar.setVisibility(View.GONE);
-            statusTextView.setText("Could not get the remote media client from the cast session.");
+            statusTextView.setText(R.string.cast_error_no_media_client_available);
             return;
         }
 

@@ -2,10 +2,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/menu_audio"
-        android:title="Audio"
+        android:title="@string/audio_settings"
         android:visible="false" />
     <item
         android:id="@+id/menu_subtitle"
-        android:title="Subtitles"
+        android:title="@string/subtitle_settings"
         android:visible="false" />
 </menu>
