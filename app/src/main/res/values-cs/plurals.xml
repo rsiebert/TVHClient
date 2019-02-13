@@ -11,11 +11,6 @@
         <item quantity="few">%d položky</item>
         <item quantity="other">%d položek</item>
     </plurals>
-    <plurals name="recordings">
-        <item quantity="one">%d nahrávka</item>
-        <item quantity="few">%d nahrávky</item>
-        <item quantity="other">%d nahrávek</item>
-    </plurals>
     <plurals name="completed_recordings">
         <item quantity="one">%d Dokončená nahrávka</item>
         <item quantity="few">%d Dokončené nahrávky</item>
@@ -40,16 +35,6 @@
         <item quantity="one">%d Ruční nahrávka</item>
         <item quantity="few">%d Ruční nahrávky</item>
         <item quantity="other">%d Ručných nahrávek</item>
-    </plurals>
-    <plurals name="searching_programs">
-        <item quantity="one">Vyhledávání %d programu</item>
-        <item quantity="few">Vyhledávání %d programy</item>
-        <item quantity="other">Vyhledávání %d programů</item>
-    </plurals>
-    <plurals name="searching_recordings">
-        <item quantity="one">Vyhledávání %d nahrávka</item>
-        <item quantity="few">Vyhledávání %d nahrávky</item>
-        <item quantity="other">Vyhledávání %d nahrávek</item>
     </plurals>
     <plurals name="number_of_connections">
         <item quantity="one">%d spojení dostupných</item>

@@ -20,18 +20,6 @@
         <item quantity="other">%d programmi</item>
         <item quantity="one">%d programma</item>
     </plurals>
-    <plurals name="recordings">
-        <item quantity="other">%d registrazioni</item>
-        <item quantity="one">%d registrazione</item>
-    </plurals>
-    <plurals name="searching_programs">
-        <item quantity="other">Ricerca %d programmi</item>
-        <item quantity="one">Ricerca %d programma</item>
-    </plurals>
-    <plurals name="searching_recordings">
-        <item quantity="other">Ricerca %d registrazioni</item>
-        <item quantity="one">Ricerca %d registrazione</item>
-    </plurals>
     <plurals name="upcoming_recordings">
         <item quantity="other">%d registrazioni programmate</item>
         <item quantity="one">%d registrazione programmata</item>

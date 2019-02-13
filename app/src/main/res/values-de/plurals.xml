@@ -13,10 +13,6 @@
         <item quantity="one">%d Eintrag</item>
         <item quantity="other">%d Einträge</item>
     </plurals>
-    <plurals name="recordings">
-        <item quantity="one">%d Aufnahme</item>
-        <item quantity="other">%d Aufnahmen</item>
-    </plurals>
     <plurals name="completed_recordings">
         <item quantity="one">%d Abgeschlossene Aufnahme</item>
         <item quantity="other">%d Abgeschlossene Aufnahmen</item>
@@ -44,14 +40,6 @@
     <plurals name="results">
         <item quantity="one">%d Ergebnis</item>
         <item quantity="other">%d Ergebnisse</item>
-    </plurals>
-    <plurals name="searching_programs">
-        <item quantity="one">Durchsuche %d Programm</item>
-        <item quantity="other">Durchsuche %d Programme</item>
-    </plurals>
-    <plurals name="searching_recordings">
-        <item quantity="one">Durchsuche %d Aufnahme</item>
-        <item quantity="other">Durchsuche %d Aufnahmen</item>
     </plurals>
     <plurals name="number_of_connections">
         <item quantity="one">%d Verbindung verfügbar</item>

@@ -9,10 +9,6 @@
         <item quantity="one">%d Elementet</item>
         <item quantity="other">%d Element</item>
     </plurals>
-    <plurals name="recordings">
-        <item quantity="one">%d Inspelning</item>
-        <item quantity="other">%d Inspelningar</item>
-    </plurals>
     <plurals name="completed_recordings">
         <item quantity="one">%d Färdiga</item>
         <item quantity="other">%d Färdiga</item>
@@ -24,14 +20,6 @@
     <plurals name="failed_recordings">
         <item quantity="one">%d Misslyckade</item>
         <item quantity="other">%d Misslyckade</item>
-    </plurals>
-    <plurals name="searching_programs">
-        <item quantity="one">Söka %d Program</item>
-        <item quantity="other">Söka %d Program</item>
-    </plurals>
-    <plurals name="searching_recordings">
-        <item quantity="one">Söka %d Inspelning</item>
-        <item quantity="other">Söka %d Inspelningar</item>
     </plurals>
     <plurals name="number_of_connections">
         <item quantity="one">%d anslutning tillgängliga</item>

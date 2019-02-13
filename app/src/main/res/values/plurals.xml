@@ -13,10 +13,6 @@
         <item quantity="one">%d item</item>
         <item quantity="other">%d items</item>
     </plurals>
-    <plurals name="recordings">
-        <item quantity="one">%d recording</item>
-        <item quantity="other">%d recordings</item>
-    </plurals>
     <plurals name="completed_recordings">
         <item quantity="one">%d Completed recording</item>
         <item quantity="other">%d Completed recordings</item>
@@ -44,14 +40,6 @@
     <plurals name="results">
         <item quantity="one">%d result</item>
         <item quantity="other">%d results</item>
-    </plurals>
-    <plurals name="searching_programs">
-        <item quantity="one">Searching %d program</item>
-        <item quantity="other">Searching %d programs</item>
-    </plurals>
-    <plurals name="searching_recordings">
-        <item quantity="one">Searching %d recording</item>
-        <item quantity="other">Searching %d recordings</item>
     </plurals>
     <plurals name="number_of_connections">
         <item quantity="one">%d connection available</item>

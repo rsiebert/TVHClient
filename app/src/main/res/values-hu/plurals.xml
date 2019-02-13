@@ -13,10 +13,6 @@
         <item quantity="one">%d elem</item>
         <item quantity="other">%d elem</item>
     </plurals>
-    <plurals name="recordings">
-        <item quantity="one">%d felvétel</item>
-        <item quantity="other">%d felvétel</item>
-    </plurals>
     <plurals name="completed_recordings">
         <item quantity="one">%d Befejezett felvétel</item>
         <item quantity="other">%d Befejezett felvétel</item>
@@ -44,14 +40,6 @@
     <plurals name="results">
         <item quantity="one">%d találat</item>
         <item quantity="other">%d találat</item>
-    </plurals>
-    <plurals name="searching_programs">
-        <item quantity="one">Program %d keresés</item>
-        <item quantity="other">Program %d keresés</item>
-    </plurals>
-    <plurals name="searching_recordings">
-        <item quantity="one">Felvétel keresés %d</item>
-        <item quantity="other">Felvételek keresése %d</item>
     </plurals>
     <plurals name="number_of_connections">
         <item quantity="one">%d kapcsolat elérhető</item>
