@@ -1,15 +1,14 @@
 package org.tvheadend.tvhclient.features.programs;
 
 import android.os.Bundle;
-import androidx.fragment.app.Fragment;
-import androidx.appcompat.widget.Toolbar;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.features.shared.BaseActivity;
 import org.tvheadend.tvhclient.features.shared.callbacks.ToolbarInterface;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
-import timber.log.Timber;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
 
 public class ProgramDetailsActivity extends BaseActivity implements ToolbarInterface {
 
@@ -26,7 +25,6 @@ public class ProgramDetailsActivity extends BaseActivity implements ToolbarInter
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        Timber.d("onCreate: savedInstanceState is null " + (savedInstanceState == null));
         if (savedInstanceState == null) {
             Fragment fragment = new ProgramDetailsFragment();
             fragment.setArguments(getIntent().getExtras());
