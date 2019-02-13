@@ -9,9 +9,9 @@ buildscript {
 }
 
 apply plugin: 'com.android.application'
-apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
 
 repositories {
     maven { url 'https://maven.fabric.io/public' }
@@ -132,13 +132,13 @@ dependencies {
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.3'
     releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.6.3'
     debugImplementation 'com.squareup.leakcanary:leakcanary-support-fragment:1.6.3'
-    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.8'
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.9'
 
     // Architecture components
     implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
     implementation 'androidx.lifecycle:lifecycle-common-java8:2.0.0'
     implementation 'androidx.room:room-runtime:2.0.0'
-    implementation 'android.arch.work:work-runtime:1.0.0-beta03'
+    implementation 'android.arch.work:work-runtime:1.0.0-beta05'
     kapt 'androidx.room:room-compiler:2.0.0'
 
     // Dependency injection
