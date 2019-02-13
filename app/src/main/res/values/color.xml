@@ -30,7 +30,6 @@
 
     <!-- Theme colors -->
     <color name="window_background_color_light">#fff5f5f5</color>
-    <color name="window_background_color_dark">#ff141414</color>
 
 	<!-- MaterialDrawer DEFAULT DARK colors -->
 	<color name="material_drawer_background_dark">#303030</color>
