@@ -22,7 +22,6 @@
 
     <PreferenceCategory android:title="@string/pref_connections">
         <EditTextPreference
-            android:id="@+id/connection_timeout"
             android:name="@string/pref_connection_timeout"
             android:defaultValue="@string/pref_default_connection_timeout"
             android:key="connection_timeout"

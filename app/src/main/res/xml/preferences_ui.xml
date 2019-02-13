@@ -94,7 +94,6 @@
         android:title="@string/pref_program_guide">
 
         <EditTextPreference
-            android:id="@+id/pref_epg_hours_visible"
             android:name="@string/pref_epg_hours_visible"
             android:defaultValue="@string/pref_default_hours_of_epg_data_per_screen"
             android:key="hours_of_epg_data_per_screen"
@@ -102,7 +101,6 @@
             android:summary="@string/pref_epg_hours_visible_sum"
             android:title="@string/pref_epg_hours_visible" />
         <EditTextPreference
-            android:id="@+id/pref_epg_max_days"
             android:name="@string/pref_epg_max_days"
             android:defaultValue="@string/pref_default_days_of_epg_data"
             android:key="days_of_epg_data"

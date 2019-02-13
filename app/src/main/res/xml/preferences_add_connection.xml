@@ -37,7 +37,7 @@
             android:summary="@string/pref_pass_sum"
             android:title="@string/pref_pass" />
         <CheckBoxPreference
-            android:defaultValue="true"
+            android:defaultValue="@bool/pref_default_active_enabled"
             android:key="active_enabled"
             android:summary="@string/pref_selected_sum"
             android:title="@string/pref_selected" />
