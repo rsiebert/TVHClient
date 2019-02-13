@@ -51,8 +51,6 @@
     <string name="in_2_days">Om 2 dagar</string>
     <string name="is_series_recording">Denna inspelning är del av en serieinspelning</string>
     <string name="is_timer_recording">Den här inspelningen skapades av en timer</string>
-    <string name="loading">Laddar…</string>
-    <string name="loading_profiles">Laddar profiler</string>
     <string name="max_duration">Maximal varaktighet</string>
     <string name="min_duration">Minsta varaktighet</string>
     <string name="minutes">%d min</string>
@@ -107,8 +105,6 @@
     <string name="pref_pass">Lösenord</string>
     <string name="pref_pass_set_sum">Lösenordet är aktiverat men visas ej.</string>
     <string name="pref_pass_sum">Fyll i lösenord</string>
-    <string name="pref_playback_profiles">Uppspelningsprofiler</string>
-    <string name="pref_playback_profiles_sum">Välj en profil som ska använads för att spela upp ett inspelat program.</string>
     <string name="pref_port">HTSP Port</string>
     <string name="pref_port_error_invalid">Portnummret är inte giltigt. Specificera ett värde mellan 1 och 65535.</string>
     <string name="pref_port_sum">Fyll i serverport</string>
@@ -149,7 +145,6 @@
     <string name="progress">%1$d%% av serien redan visad</string>
     <string name="purchase">Köp</string>
     <string name="rating">Betyg</string>
-    <string name="ready">Redo</string>
     <string name="record_cancel">Avbryta inspelning</string>
     <string name="record_once">Spela in</string>
     <string name="record_remove">Ta bort inspelning</string>
@@ -157,12 +152,10 @@
     <string name="record_series">Spela in (Autorec)</string>
     <string name="record_stop">Sluta inspelning</string>
     <string name="recording_canceled">Inspelningen har avbrutits</string>
-    <string name="recording_completed">Inspelningen färdig</string>
     <string name="recording_disabled">Denna inspelning är avaktiverad</string>
     <string name="recording_enabled">Denna inspelning är aktiverad</string>
     <string name="recording_file_invalid">Inspelningen är ogiltig</string>
     <string name="recording_file_missing">Inspelad fil saknas</string>
-    <string name="recording_started">Inspelningen startat</string>
     <string name="recording_time">Inspelningstid</string>
     <string name="recording_time_missed">Schemalagd inspelning missades</string>
     <string name="recordings">Inspelningar</string>
@@ -180,7 +173,6 @@
     <string name="search_epg">Sök i EPG</string>
     <string name="search_fileaffinity">Sök på FileAffinity</string>
     <string name="search_google">Sök på Google</string>
-    <string name="search_hint">Sök i programguide</string>
     <string name="search_imdb">Sök på IMDB</string>
     <string name="search_youtube">Sök på YouTube</string>
     <string name="season">Säsong</string>
@@ -210,7 +202,6 @@
     <string name="tuesday">Tisdag</string>
     <string name="two_days_ago">Två dagar sedan</string>
     <string name="unknown">Okänd</string>
-    <string name="updating">Uppdaterar…</string>
     <string name="wednesday">Onsdag</string>
     <string name="wol_address_invalid">MAC-adressen är ogiltig. Vänligen kolla dina inställningar.</string>
     <string name="wol_error">Misslyckades skicka wake on LAN paket till \'%1$s\'.\n Felmeddelande: %2$s</string>

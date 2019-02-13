@@ -80,7 +80,6 @@
     <string name="edit_recording">Aufnahme bearbeiten</string>
     <string name="enable_time_window">Zeiten für Aufnahme aktivieren</string>
     <string name="episode">Folge</string>
-    <string name="err_no_network">Keine Netzwerkverbindung aktiv</string>
     <string name="error_adding_recording">Aufnahme konnte nicht erstellt werden! %s</string>
     <string name="error_empty_title">Bitte einen Aufnahmetitel angeben!</string>
     <string name="error_loading_program_details">Programdetails konnten nicht gefunden werden</string>
@@ -110,12 +109,9 @@
     <string name="intro_overlay_text">Zeige Live-TV oder Aufnahmen auf dem Casting Gerät deiner Wahl.\n\nBitte überprüfe, dass die Anforderungen zum Casting erfüllt werden. Diese sind in the Casting Einstellungen beschrieben.</string>
     <string name="is_series_recording">Diese Aufnahme ist Teil einer Serienaufnahme</string>
     <string name="is_timer_recording">Diese Aufnahme wurde per Timer manuell erstellt</string>
-    <string name="loading">Lade…</string>
     <string name="loading_data">Lade Daten vom Server</string>
     <string name="loading_data_done">Laden der Daten vom Server beendet</string>
-    <string name="loading_more_programs">Lade mehr Programme</string>
     <string name="loading_more_programs_finished">Laden der Programme abgeschlossen</string>
-    <string name="loading_profiles">Lade Profile</string>
     <string name="max_duration">Maximale Dauer der Sendung</string>
     <string name="media_route_menu_title">Spiele auf…</string>
     <string name="min_duration">Minimale Dauer der Sendung</string>
@@ -137,8 +133,6 @@
     <string name="play">Abspielen</string>
     <string name="playback">Wiedergabe</string>
     <string name="pref_advanced_settings">Erweiterte Einstellungen</string>
-    <string name="pref_buffer_size">Größe des Datenpuffers</string>
-    <string name="pref_buffer_size_sum">Größe des Puffers in Megabyte der die Daten vom Server speichert. Standard ist 4 MB. Können Daten nicht vollständig vom Server geladen werden, kann ein größerer Datenpuffer Abhilfe schaffen. Bei älteren Geräten kann ein zu großer Puffer evtl. zu Speicherproblemen führen.</string>
     <string name="pref_cast_profiles">Cast Wiedergabeprofile</string>
     <string name="pref_cast_profiles_sum">Bestimmt das Profil, dass der Server für Abspielen von Live-TV oder Aufnahmen auf einem Cast Gerät verwenden soll.</string>
     <string name="pref_casting">Casting</string>
@@ -215,8 +209,6 @@
     <string name="pref_play_when_channel_icon_selected">Senderlogo-Aktion</string>
     <string name="pref_play_when_channel_icon_selected_sum">Startet das aktuelle Programm bzw. Aufnahme, wenn das Senderlogo in der Senderliste, Programmanzeige oder in der Aufnahmelist angeklickt wurde.</string>
     <string name="pref_playback_and_recording">Wiedergabe und Aufnahme</string>
-    <string name="pref_playback_profiles">Wiedergabeprofile</string>
-    <string name="pref_playback_profiles_sum">Bestimmt das Profil, dass der Server für das Abspielen der Aufnahmen verwenden soll.</string>
     <string name="pref_port">HTSP-Port</string>
     <string name="pref_port_error_invalid">Die Port-Nummer ist ungültig. Der Wert muss zwischen 1 und 65535 liegen.</string>
     <string name="pref_port_sum">Server-Port eingeben</string>
@@ -279,7 +271,6 @@
     <!-- Unlcoker related -->
     <string name="purchase">Kaufen</string>
     <string name="rating">Bewertung</string>
-    <string name="ready">Bereit</string>
     <string name="received_playback_information">Wiedergabeinformationen vom Server empfangen</string>
     <string name="reconnect">Neu verbinden</string>
     <string name="record_cancel">Aufnahme abbrechen</string>
@@ -291,13 +282,10 @@
     <string name="record_series">Automatisch Aufnehmen</string>
     <string name="record_stop">Aufnahme stoppen</string>
     <string name="recording_canceled">Aufnahmen wurde abgebrochen</string>
-    <string name="recording_completed">Aufnahme beendet</string>
     <string name="recording_disabled">Diese Aufnahme ist deaktiviert</string>
     <string name="recording_enabled">Diese Aufnahme ist aktiviert</string>
     <string name="recording_file_invalid">Aufnahme ist ungültig bzw. fehlerhaft</string>
     <string name="recording_file_missing">Datei der Aufnahme nicht vorhanden</string>
-    <string name="recording_started">Aufnahme gestartet</string>
-    <string name="recording_starts_in">Aufnahme startet in %d Min.</string>
     <string name="recording_time">Aufnahmezeit</string>
     <string name="recording_time_missed">Geplante Aufnahme wurde verpasst</string>
     <string name="recordings">Aufnahmen</string>
@@ -311,17 +299,12 @@
     <string name="requesting_playback_information">Anfordern von Wiedergabeinformationen vom Server</string>
     <string name="saturday">Samstag</string>
     <string name="save">Speichern</string>
-    <string name="saving_channel_logos">Speichere empfangene Senderlogos…</string>
-    <string name="saving_channels">Speichere empfangene Sender…</string>
     <string name="saving_data">Speichere empfangene Daten…</string>
-    <string name="saving_program_guide_data">Speichere empfangene Daten für die Programmübersicht…</string>
-    <string name="saving_recordings">Speichere empfangene Aufnahmen…</string>
     <string name="scheduled_recordings">Geplante Aufnahmen</string>
     <string name="search">Suchen</string>
     <string name="search_epg">Suche im TV-Programm</string>
     <string name="search_fileaffinity">Suche auf der FileAffinity Webseite</string>
     <string name="search_google">Suche auf Google</string>
-    <string name="search_hint">Suche im TV-Programm</string>
     <string name="search_imdb">Suche auf der IMDB Webseite</string>
     <string name="search_results">Suchergebnisse</string>
     <string name="search_youtube">Suche auf YouTube</string>
@@ -346,7 +329,6 @@
     <string name="start_before_time">Ende</string>
     <string name="start_time">Startzeit</string>
     <string name="starting_playback">Starte Wiedergabe</string>
-    <string name="startup">Starte</string>
     <string name="status">Status</string>
     <string name="stop">Stoppen</string>
     <string name="stop_recording">Laufende Aufnahme \'%s\' entfernen?</string>
@@ -372,7 +354,6 @@
     <string name="tuesday">Dienstag</string>
     <string name="two_days_ago">Vor 2 Tagen</string>
     <string name="unknown">Unbekannt</string>
-    <string name="updating">Aktualisiere…</string>
     <string name="wednesday">Mittwoch</string>
     <string name="wol_address_invalid">Die MAC-Adresse ist nicht gültig. Bitte in den Einstellungen überprüfen.</string>
     <string name="wol_error">Fehler beim Senden des Wake on LAN Pakets an \'%1$s\'.\n Fehlermeldung: %2$s</string>
@@ -406,7 +387,6 @@
     <string name="pref_internal_player_audio_tunneling_enabled">Audio-Tunneling aktivieren</string>
     <string name="pref_internal_player_audio_tunneling_enabled_sum">Unterstützung für DSP-Audio-Tunneling aktivieren</string>
     <string name="pref_internal_player_timeshift_enabled">Timeshift-Unterstützung aktivieren</string>
-    <string name="database_contents_deleted">Datenbankinhalte wurden gelöscht</string>
     <string name="deleting_database_contents">Lösche Datenbankinhalte…</string>
     <string name="selection_disabled">Deaktiviert</string>
     <string name="selection_default">Aktiviert</string>
@@ -414,4 +394,6 @@
     <string name="pref_copy_playback_url_to_clipboard_enabled">Wiedergabe-URL kopieren</string>
     <string name="connect">Verbinden</string>
     <string name="disconnect">Verbindung trennen</string>
+    <string name="audio_settings">Audio-Einstellungen</string>
+    <string name="subtitle_settings">Subtitle-Einstellungen</string>
 </resources>

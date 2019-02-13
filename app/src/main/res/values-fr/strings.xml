@@ -80,7 +80,6 @@
     <string name="edit_recording">Editer un enregistrement</string>
     <string name="enable_time_window">Activer les horaires pour l\'enregistrement</string>
     <string name="episode">Episode</string>
-    <string name="err_no_network">Pas de connexion réseau active</string>
     <string name="error_adding_recording">L\'enregistrement n\'a pas été ajouté! %s</string>
     <string name="error_empty_title">Le titre ne peut pas être vide!</string>
     <string name="error_loading_program_details">Impossible de charger les détails du programme</string>
@@ -107,12 +106,9 @@
     <string name="intro_overlay_text">Appuyer pour lancer la TV en direct ou les enregistrements sur votre TV\n\nVeuillez vérifier les paramétrages requis dans la partie paramètres.</string>
     <string name="is_series_recording">Cet enregistrement fait partie d\'enregistrements auto</string>
     <string name="is_timer_recording">Cet enregistrement a été programmé</string>
-    <string name="loading">Chargement…</string>
     <string name="loading_data">Chargement des données depuis le serveur</string>
     <string name="loading_data_done">Chargement des données depuis le serveur terminé</string>
-    <string name="loading_more_programs">Chargement de programmes supplémentaire</string>
     <string name="loading_more_programs_finished">Fin du chargement de programmes supplémentaire</string>
-    <string name="loading_profiles">Chargement des profils</string>
     <string name="max_duration">Durée maximum</string>
     <string name="media_route_menu_title">Jouer sur…</string>
     <string name="min_duration">Durée minimum</string>
@@ -134,8 +130,6 @@
     <string name="play">Lancer</string>
     <string name="playback">Jouer</string>
     <string name="pref_advanced_settings">Paramétrages avancés</string>
-    <string name="pref_buffer_size">Taille du buffer des messages</string>
-    <string name="pref_buffer_size_sum">Taille en MB du buffer qui stocke les données reçues du serveur. La valeur par défaut est 4 MB. Si parfois aucunes données ne peuvent être chargée augmenter la valeur peut résoudre le problème. Un trop gros buffer peut pénaliser les vieux équipements.</string>
     <string name="pref_cast_profiles">Profiles de diffusion</string>
     <string name="pref_cast_profiles_sum">Sélectionner un serverProfile à utiliser pour diffuser une chaine ou un enregistrement vers un équipement de type chromecast.</string>
     <string name="pref_casting">Diffusion</string>
@@ -204,8 +198,6 @@
     <string name="pref_play_when_channel_icon_selected">Action de l\'icone de de canal</string>
     <string name="pref_play_when_channel_icon_selected_sum">Lancer la diffusion du programme en cours ou de l\'enregistrement quand l\icone de de la chaine est sélectionnée dans la liste des chaine, le guide des programmes ou la liste des enregistrements.</string>
     <string name="pref_playback_and_recording">Lecture et enregistrements</string>
-    <string name="pref_playback_profiles">Profils de lecture</string>
-    <string name="pref_playback_profiles_sum">Choisir un profil qui doit utiliser pour lire un enregistrement.</string>
     <string name="pref_port">HTSP Port</string>
     <string name="pref_port_error_invalid">Le port n\'est pas valide. Spécifier un nombre entre 1 et 65535.</string>
     <string name="pref_port_sum">Entrer le port du serveur</string>
@@ -267,7 +259,6 @@
     <!-- Unlocker related -->
     <string name="purchase">Achat</string>
     <string name="rating">Notation</string>
-    <string name="ready">Prêt</string>
     <string name="received_playback_information">Informations pour le lancement du programme reçu du serveur</string>
     <string name="reconnect">Reconnecter</string>
     <string name="record_cancel">Annuler l\'enregistrement</string>
@@ -279,13 +270,10 @@
     <string name="record_series">Enregistrement auto(Autorec)</string>
     <string name="record_stop">Arreter l\'enregistrement</string>
     <string name="recording_canceled">L\'enregistrement a été effacé</string>
-    <string name="recording_completed">L\'enregistrement est terminé</string>
     <string name="recording_disabled">Cet enregistrement est désactivé</string>
     <string name="recording_enabled">Cet enregistrement est activé</string>
     <string name="recording_file_invalid">Le fichier est défectueux</string>
     <string name="recording_file_missing">L\'enregistrement est manquant</string>
-    <string name="recording_started">L\'enregistrement a commencé</string>
-    <string name="recording_starts_in">L\'enregistrement commencera dans %d min.</string>
     <string name="recording_time">Temps d\'enregistrement</string>
     <string name="recording_time_missed">L\'heure programmée est dépassée</string>
     <string name="recordings">Enregistrements</string>
@@ -299,17 +287,12 @@
     <string name="requesting_playback_information">Demande d\'informations au serveur pour le lancement du programme</string>
     <string name="saturday">Samedi</string>
     <string name="save">Sauvegarder</string>
-    <string name="saving_channel_logos">Sauvegarde des logos des chaines reçus…</string>
-    <string name="saving_channels">Sauvegarde des chaines reçues…</string>
     <string name="saving_data">Sauvegarde des données reçues…</string>
-    <string name="saving_program_guide_data">Sauvegarde du guide des programmes reçu…</string>
-    <string name="saving_recordings">Sauvegarde des enregistrements reçus…</string>
     <string name="scheduled_recordings">A venir</string>
     <string name="search">Recherche</string>
     <string name="search_epg">Recherche dans le guide des programmes</string>
     <string name="search_fileaffinity">Rechercher sur FileAffinity</string>
     <string name="search_google">Rechercher sur Google</string>
-    <string name="search_hint">Recherche de l\'EPG</string>
     <string name="search_imdb">Rechercher sur IMDB</string>
     <string name="search_results">Résultat de la recherche</string>
     <string name="search_youtube">Rechercher sur YouTube</string>
@@ -334,7 +317,6 @@
     <string name="start_before_time">Fin</string>
     <string name="start_time">Heure de début</string>
     <string name="starting_playback">Début du programme</string>
-    <string name="startup">Démarrage</string>
     <string name="status">Etat</string>
     <string name="stop">Stop</string>
     <string name="stop_recording">Voulez-vous vraiment arrêter l\'enregistrement \'%s\' en cours ?</string>
@@ -360,7 +342,6 @@
     <string name="tuesday">Mardi</string>
     <string name="two_days_ago">Il y a deux jours</string>
     <string name="unknown">Inconnu</string>
-    <string name="updating">Mise à jour…</string>
     <string name="wednesday">Mercredi</string>
     <string name="wol_address_invalid">L\'adresse MAC n\'est pas valide. Veuillez vérifier vos paramètres.</string>
     <string name="wol_error">Erreur pour envoyer un packet WoL à \'%1$s\'.\n Message d\'erreur: %2$s</string>
@@ -406,7 +387,6 @@
     <string name="pref_internal_player_for_recordings_enabled">Jouer des enregistrements avec le lecteur interne</string>
     <string name="pref_internal_player_for_channels_enabled">Écoutez la télévision en direct avec le lecteur interne</string>
     <string name="deleting_database_contents">Suppression du contenu de la base de données…</string>
-    <string name="database_contents_deleted">Contenu de la base de données supprimé</string>
     <string name="pref_copy_playback_url_to_clipboard_enabled_sum">En cas de problèmes de lecture, l’URL copiée peut être utilisée pour tester la lecture dans un navigateur.</string>
     <string name="pref_copy_playback_url_to_clipboard_enabled">Copier l\'URL de lecture dans le presse-papier</string>
     <string name="selection_disabled">Handicapés</string>

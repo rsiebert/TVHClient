@@ -60,7 +60,6 @@
     <string name="edit_recording">Upraviť nahrávanie</string>
     <string name="enable_time_window">Nadefinovanie času</string>
     <string name="episode">Epizóda</string>
-    <string name="err_no_network">Žiadne sieťové pripojenie nieje aktívne</string>
     <string name="error_adding_recording">Nahrávanie nebolo pridané! %s</string>
     <string name="error_empty_title">Názov nesmie byť prázdny!</string>
     <string name="error_removing_recording">Nahrávanie nebolo vymazané! %s</string>
@@ -77,8 +76,6 @@
     <string name="intro_overlay_text">Ťuknite pre prenášanie kanálov alebo nahrávok do vášho televízora\n\nSkontrolujte, či spĺňate všetky podmienky pre casting v nastaveniach.</string>
     <string name="is_series_recording">Táto nahrávka je súčasťou sériového nahrávania</string>
     <string name="is_timer_recording">Táto nahrávka bola vytvorená časovačom</string>
-    <string name="loading">Načítavanie…</string>
-    <string name="loading_profiles">Nahrávanie profilov</string>
     <string name="max_duration">Maximálne trvanie</string>
     <string name="media_route_menu_title">Prehrať na…</string>
     <string name="min_duration">Minimálne trvanie</string>
@@ -98,8 +95,6 @@
     <string name="part">Časť</string>
     <string name="play">Prehrať</string>
     <string name="pref_advanced_settings">Pokročilé nastavenia</string>
-    <string name="pref_buffer_size">Veľkosť Message buffer-u</string>
-    <string name="pref_buffer_size_sum">Veľkosť bufferu v MB, do ktorého sa ukladajú prijaté dáta zo servera. Predvolená hodnota je 4 MB. Ak žiadne dáta neboli prijaté, problém môže vyriešiť zvýšenie bufferu. Príliš veľký buffer môže viesť k spomaleniu na starších zariadeniach.</string>
     <string name="pref_cast_profiles">Profily pre casting</string>
     <string name="pref_cast_profiles_sum">Zobraziť profil, ktorý bude použitý pre prenášanie kanálu či nahrávky do Chromecastu alebo podobného zariadenia.</string>
     <string name="pref_casting">Casting</string>
@@ -161,8 +156,6 @@
     <string name="pref_play_when_channel_icon_selected">Začať prehrávanie po kliknutí na logo kanálu</string>
     <string name="pref_play_when_channel_icon_selected_sum">Po kliknutí na logo kanálu v zozname kanálov, v programovom sprievodcovi alebo v zozname nahrávaní, začne prehrávanie aktuálneho programu alebo nahrávania.</string>
     <string name="pref_playback_and_recording">Prehrávanie a nahrávanie</string>
-    <string name="pref_playback_profiles">Profily pre prehrávanie</string>
-    <string name="pref_playback_profiles_sum">Nadefinovanie profilu pre prehrávanie nahraného programu.</string>
     <string name="pref_port">HTSP Port</string>
     <string name="pref_port_error_invalid">Číslo portu je neplatné. Zadajte číslo v rozsahu 1 a 65535.</string>
     <string name="pref_port_sum">Zadajte port servera</string>
@@ -219,7 +212,6 @@
     <!-- Unlocker related -->
     <string name="purchase">Objednávka</string>
     <string name="rating">Hodnotenie</string>
-    <string name="ready">Pripravený</string>
     <string name="record_cancel">Zrušiť nahrávanie</string>
     <string name="record_once">Nahrať</string>
     <string name="record_once_custom_profile">Nahrať s iným profilom</string>
@@ -228,13 +220,10 @@
     <string name="record_series">Nahrať (sériovo)</string>
     <string name="record_stop">Zastaviť nahrávanie</string>
     <string name="recording_canceled">Nahrávanie bolo odstránené</string>
-    <string name="recording_completed">Nahrávanie bolo dokončené</string>
     <string name="recording_disabled">Toto nahrávanie je zakázané</string>
     <string name="recording_enabled">Toto nahrávanie je povolené</string>
     <string name="recording_file_invalid">Nahrávanie je neplatné</string>
     <string name="recording_file_missing">Nahraný súbor neexistuje</string>
-    <string name="recording_started">Nahrávanie sa začalo</string>
-    <string name="recording_starts_in">Nahrávanie začne za %d min.</string>
     <string name="recording_time">Čas nahrávania</string>
     <string name="recording_time_missed">Naplánované nahrávanie bolo zmeškané.</string>
     <string name="recordings">Nahrávania</string>
@@ -252,7 +241,6 @@
     <string name="search_epg">Hľadať v programovom sprievodcovi</string>
     <string name="search_fileaffinity">Hľadať v FileAffinity</string>
     <string name="search_google">Hľadať v Google</string>
-    <string name="search_hint">Vyhľadať v EPG</string>
     <string name="search_imdb">Hľadať v IMDB</string>
     <string name="search_youtube">Hľadať v YouTube</string>
     <string name="season">Sezóna</string>
@@ -300,7 +288,6 @@
     <string name="tuesday">Utorok</string>
     <string name="two_days_ago">Pred dvoma dňami</string>
     <string name="unknown">Neznámy</string>
-    <string name="updating">Aktualizovanie…</string>
     <string name="wednesday">Streda</string>
     <string name="wol_address_invalid">MAC adresa nieje platná. Skontrolujte nastavenia.</string>
     <string name="wol_error">Chyba pri odosielaní Wake on LAN paketu na \'%1$s\'.\n Chybová správa: %2$s</string>

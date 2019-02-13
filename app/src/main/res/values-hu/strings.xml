@@ -80,7 +80,6 @@
     <string name="edit_recording">Felvétel szerkesztése</string>
     <string name="enable_time_window">Aktiválja a felvételi időket</string>
     <string name="episode">Epizód</string>
-    <string name="err_no_network">Nincs aktív hálózati kapcsolat</string>
     <string name="error_adding_recording">Nem sikerült a felvétel hozzáadása! %s</string>
     <string name="error_empty_title">A cím nem lehet üres!</string>
     <string name="error_loading_program_details">A program részletei nem tölthetőek be</string>
@@ -112,12 +111,9 @@
     <string name="intro_overlay_text">Touch to cast Live TV or recordings to your TV.  Please check that you meet the requirements described in the casting settings.</string>
     <string name="is_series_recording">Ez a felvétel egy sorozatfelvétel részét képezi</string>
     <string name="is_timer_recording">Ezt a felvételt egy időzítő hozta létre</string>
-    <string name="loading">Betöltés…</string>
     <string name="loading_data">Adatok betöltése a szerverről</string>
     <string name="loading_data_done">Betöltés sikeres a szerverről</string>
-    <string name="loading_more_programs">További programok betöltése</string>
     <string name="loading_more_programs_finished">További programok betöltése sikeres</string>
-    <string name="loading_profiles">Profilok betöltések</string>
     <string name="max_duration">A program maximális időtartama</string>
     <string name="media_route_menu_title">Lejátszás…</string>
     <string name="min_duration">A program minimális időtartama</string>
@@ -139,8 +135,6 @@
     <string name="play">Lejátszás</string>
     <string name="playback">Visszajátszás</string>
     <string name="pref_advanced_settings">Haladó beállítások</string>
-    <string name="pref_buffer_size">Üzenet puffer mérete</string>
-    <string name="pref_buffer_size_sum">A kiszolgálótól érkező adatok pufferének mérete MB-ban. Az alapértelmezett érték 4 MB. Ha nem sikerül az adatok betöltése, a nagyobb puffer méret megadása megoldhatja a problémát. Ne feledje, hogy a régebbi eszközök esetében a nagyobb pufferméret a memória telítődéséhez vezethet.</string>
     <string name="pref_cast_profiles">Cast visszajátszás profil</string>
     <string name="pref_cast_profiles_sum">Válasszon ki egy profilt ami a Chromecast vagy hasonló eszköz számára való továbbításra szolgál majd.</string>
     <string name="pref_casting">Casting</string>
@@ -217,8 +211,6 @@
     <string name="pref_play_when_channel_icon_selected">Csatorna ikon művelet</string>
     <string name="pref_play_when_channel_icon_selected_sum">Indítsa el az aktuális programot vagy a vegye fel, ha a csatorna ikonra kattint.</string>
     <string name="pref_playback_and_recording">Lejátszás és felvétel</string>
-    <string name="pref_playback_profiles">Lejátszási profilok</string>
-    <string name="pref_playback_profiles_sum">Válasszon ki egy profilt, amelyet rögzített programok lejátszásához használ majd.</string>
     <string name="pref_port">HTSP Port</string>
     <string name="pref_port_error_invalid">A port száma nem érvényes. Adjon meg egy számot 1 és 65535 között.</string>
     <string name="pref_port_sum">Szerver port beírása</string>
@@ -281,7 +273,6 @@
     <!-- Unlcoker related -->
     <string name="purchase">Fizetés</string>
     <string name="rating">Értékelés</string>
-    <string name="ready">Kész</string>
     <string name="received_playback_information">A szerverről érkezett lejátszási információk</string>
     <string name="reconnect">Újracsatlakozás</string>
     <string name="record_cancel">A felvétel törlése</string>
@@ -293,13 +284,10 @@
     <string name="record_series">Felvétel és az egész sorozat felvétele</string>
     <string name="record_stop">Felvétel leállítása</string>
     <string name="recording_canceled">A felvétel törlése megtörtént</string>
-    <string name="recording_completed">Felvétel kész</string>
     <string name="recording_disabled">Ez a felvétel le van tiltva</string>
     <string name="recording_enabled">Ez a felvétel engedélyezve van</string>
     <string name="recording_file_invalid">A felvétel érvénytelen</string>
     <string name="recording_file_missing">A felvétel fájlja nem elérhető</string>
-    <string name="recording_started">Felvétel elkezdve</string>
-    <string name="recording_starts_in">A felvétel a(z) %d percben indul.</string>
     <string name="recording_time">Felvétel időtartama</string>
     <string name="recording_time_missed">Az ütemezett felvétel hiányzik</string>
     <string name="recordings">Felvételek</string>
@@ -313,17 +301,12 @@
     <string name="requesting_playback_information">Lejátszási információk kérése a szerverrőlr</string>
     <string name="saturday">Szombat</string>
     <string name="save">Mentés</string>
-    <string name="saving_channel_logos">A fogadott csatorna ikonok mentése…</string>
-    <string name="saving_channels">A fogadott csatornák mentése ...</string>
     <string name="saving_data">A fogadott adatok mentése…</string>
-    <string name="saving_program_guide_data">A fogadott műsorújság adatok mentése…</string>
-    <string name="saving_recordings">Fogadott felvételek mentése…</string>
     <string name="scheduled_recordings">Ütemezett felvételek</string>
     <string name="search">Keresés</string>
     <string name="search_epg">Keresés a műsorújságban</string>
     <string name="search_fileaffinity">Keresés a FileAffinity-n</string>
     <string name="search_google">Keresés Google-al</string>
-    <string name="search_hint">Keresés a műsorújságban</string>
     <string name="search_imdb">Keresés IMDB-n</string>
     <string name="search_results">Találatok</string>
     <string name="search_youtube">Keresés YouTube-on</string>
@@ -348,7 +331,6 @@
     <string name="start_before_time">Vége</string>
     <string name="start_time">Kezdési idő</string>
     <string name="starting_playback">Lejátszás indítása</string>
-    <string name="startup">Kezdés</string>
     <string name="status">Státusz</string>
     <string name="stop">Megállítás</string>
     <string name="stop_recording">Tényleg le akarja állítani a(z) \'%s\' futó felvételét?</string>
@@ -374,7 +356,6 @@
     <string name="tuesday">Kedd</string>
     <string name="two_days_ago">Két napja</string>
     <string name="unknown">Ismeretlen</string>
-    <string name="updating">Frissítés…</string>
     <string name="wednesday">Szerda</string>
     <string name="wol_address_invalid">A MAC-cím nem érvényes. Kérjük, ellenőrizze a beállításokat.</string>
     <string name="wol_error">Nem sikerült a WOL csomag küldése a\'%1$s\'.\n Hibakód: %2$s</string>
@@ -405,7 +386,6 @@
     <string name="pref_internal_player_timeshift_enabled">Engedélyezze az időeltolás (timeshift) támogatását</string>
     <string name="pref_internal_player_for_channels_enabled">Játssz élő TV-t a belső lejátszóval</string>
     <string name="pref_internal_player_for_recordings_enabled">Lejátszások lejátszása a belső lejátszóval</string>
-    <string name="database_contents_deleted">Az adatbázis tartalmának törlése</string>
     <string name="deleting_database_contents">Adatbázis-tartalom törlése…</string>
     <string name="selection_disabled">Mozgássérült</string>
     <string name="pref_copy_playback_url_to_clipboard_enabled">Másolja a lejátszási URL-t a vágólapra</string>

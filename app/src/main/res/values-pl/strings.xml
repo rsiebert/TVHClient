@@ -80,7 +80,6 @@
     <string name="edit_recording">Edytuj nagranie</string>
     <string name="enable_time_window">Aktywuj czas dla nagrywania</string>
     <string name="episode">Odcinek</string>
-    <string name="err_no_network">Brak aktywnego połączenia sieciowego</string>
     <string name="error_adding_recording">Nagranie nie zostało dodane! %s</string>
     <string name="error_empty_title">Tytuł nie może być pusty!</string>
     <string name="error_loading_program_details">Nie można załadować szczegółów programu</string>
@@ -109,12 +108,9 @@
     <string name="intro_overlay_text">Dotknij, aby rzucić telewizję na żywo lub nagrania na TV\n\nProszę włączyć rzucanie w ustawieniach i sprawdzić, czy serwer jest wystarczająco silny i wspiera transkodowanie.</string>
     <string name="is_series_recording">To nagranie jest częścią serii nagrań</string>
     <string name="is_timer_recording">To nagrywanie zostało stworzone przez Timer</string>
-    <string name="loading">Wczytywanie…</string>
     <string name="loading_data">Ładowanie danych z serwera</string>
     <string name="loading_data_done">Ładowanie danych z serwera zakończone</string>
-    <string name="loading_more_programs">Ładowanie większej liczby programów</string>
     <string name="loading_more_programs_finished">Zakończono ładowanie kolejnych programów</string>
-    <string name="loading_profiles">Ładowanie profili</string>
     <string name="max_duration">Maksymalny czas programu</string>
     <string name="media_route_menu_title">Odtwarzaj na…</string>
     <string name="min_duration">Minimalny czas programu</string>
@@ -136,8 +132,6 @@
     <string name="play">Odtwórz</string>
     <string name="playback">Odtwarzanie</string>
     <string name="pref_advanced_settings">Zaawansowane ustawienia</string>
-    <string name="pref_buffer_size">Rozmiar bufora wiadomości</string>
-    <string name="pref_buffer_size_sum">Rozmiar bufora w MB, który przechowuje odebrane dane z serwera. Domyślnie jest to 4 MB. Jeśli czasami nie można załadować danych, większy rozmiar bufora może rozwiązać problem. Należy pamiętać, że zwiększenie rozmiar bufora może prowadzić do braku pamięci na starszych urządzeniach.</string>
     <string name="pref_cast_profiles">Profile odtwarzania Cast</string>
     <string name="pref_cast_profiles_sum">Wybierz profil, który zostanie użyty do rzucania kanału lub nagranego programu do Chromecast lub podobnego urządzenia.</string>
     <string name="pref_casting">Casting</string>
@@ -210,8 +204,6 @@
     <string name="pref_play_when_channel_icon_selected">Akcja ikony kanału</string>
     <string name="pref_play_when_channel_icon_selected_sum">Zacznij odtwarzać bieżący program lub nagranie, gdy ikona kanał jest zaznaczony na ekranie listy kanałów, przewodnika po programach lub listy nagrywania.</string>
     <string name="pref_playback_and_recording">Odtwarzanie i nagrywanie</string>
-    <string name="pref_playback_profiles">Profile odtwarzania</string>
-    <string name="pref_playback_profiles_sum">Wybierz profil, który będzie używany do odtwarzania nagranego programu.</string>
     <string name="pref_port">HTSP Port</string>
     <string name="pref_port_error_invalid">Numer portu jest nie poprawny. Powinien zawierać się pomiędzy 1 a 65535.</string>
     <string name="pref_port_sum">Wpisz port serwera</string>
@@ -274,7 +266,6 @@
     <!-- Unlocker related -->
     <string name="purchase">Zakup</string>
     <string name="rating">Ocena</string>
-    <string name="ready">Gotowy</string>
     <string name="received_playback_information">Otrzymano informację o odtwarzaniu z serwera</string>
     <string name="reconnect">POnowne łaczenie</string>
     <string name="record_cancel">Anuluj nagranie</string>
@@ -286,13 +277,10 @@
     <string name="record_series">Nagrywanie serii(Autorec)</string>
     <string name="record_stop">Zatrzymaj nagranie</string>
     <string name="recording_canceled">Nagrywanie zostało anulowane</string>
-    <string name="recording_completed">Nagrywanie zakończone</string>
     <string name="recording_disabled">To nagrywanie jest wyłączone</string>
     <string name="recording_enabled">To nagrywanie jest włączone</string>
     <string name="recording_file_invalid">Nagranie jest nieważne</string>
     <string name="recording_file_missing">Nagrywany plik jest utracony</string>
-    <string name="recording_started">Nagrywanie rozpoczęte</string>
-    <string name="recording_starts_in">Nagrywanie rozpocznie się za %d min.</string>
     <string name="recording_time">Czas nagrywania</string>
     <string name="recording_time_missed">Zaplanowane nagranie zostało utracone</string>
     <string name="recordings">Nagrania</string>
@@ -306,17 +294,12 @@
     <string name="requesting_playback_information">Żądanie informacji o odtwarzaniu z serwera</string>
     <string name="saturday">Sobota</string>
     <string name="save">Zapisz</string>
-    <string name="saving_channel_logos">Zapisywanie odebranych ikon kanałów…</string>
-    <string name="saving_channels">Zapisywanie odebranych kanałów…</string>
     <string name="saving_data">Zapisywanie odebranych danych…</string>
-    <string name="saving_program_guide_data">Zapisywanie odebranych danych przewodnika programowego…</string>
-    <string name="saving_recordings">Zapisywanie otrzymanych nagrań…</string>
     <string name="scheduled_recordings">Zaplanowane</string>
     <string name="search">Szukaj</string>
     <string name="search_epg">Szukaj w przewodniku programów</string>
     <string name="search_fileaffinity">Szukaj na FileAffinity</string>
     <string name="search_google">Szukaj na Google</string>
-    <string name="search_hint">Szukaj w EPG</string>
     <string name="search_imdb">Szukaj na IMDB</string>
     <string name="search_results">Wyniki wyszukiwania</string>
     <string name="search_youtube">Szukaj na YouTube</string>
@@ -341,7 +324,6 @@
     <string name="start_before_time">Koniec</string>
     <string name="start_time">Czas rozpoczęcia</string>
     <string name="starting_playback">Rozpoczynanie odtwarzania</string>
-    <string name="startup">Rozpoczynanie</string>
     <string name="status">Status</string>
     <string name="stop">Zatrzymaj</string>
     <string name="stop_recording">Jesteś pewny że chcesz zatrzymać uruchomione nagrywanie \'%s\'?</string>
@@ -367,7 +349,6 @@
     <string name="tuesday">Wtorek</string>
     <string name="two_days_ago">Dwa dni temu</string>
     <string name="unknown">Nieznane</string>
-    <string name="updating">Uaktualnianie…</string>
     <string name="wednesday">Środa</string>
     <string name="wol_address_invalid">MAC adres jest nieprawidłowy. Proszę sprawdzić ustawienia.</string>
     <string name="wol_error">Błąd wysyłania pakietu Wake On LAN do \'%1$s\'.\n Komunikat o błędzie: %2$s</string>

@@ -51,8 +51,6 @@
     <string name="in_2_days">Za dva dny</string>
     <string name="is_series_recording">Tato nahrávka je součástí opakovaného nahrávání</string>
     <string name="is_timer_recording">Tato nahrávka byla vytvořena časovačem</string>
-    <string name="loading">Načítám…</string>
-    <string name="loading_profiles">Natahují se profily</string>
     <string name="max_duration">Maximální trvání</string>
     <string name="min_duration">Minimální trvání</string>
     <string name="minutes">%d min</string>
@@ -107,8 +105,6 @@
     <string name="pref_pass">Heslo</string>
     <string name="pref_pass_set_sum">Heslo je nastavené, ale je skryté.</string>
     <string name="pref_pass_sum">Zadejte heslo</string>
-    <string name="pref_playback_profiles">Profily pro přehrávání</string>
-    <string name="pref_playback_profiles_sum">Vyberte profil pro přehrávání nahraného programu.</string>
     <string name="pref_port">HTSP Port</string>
     <string name="pref_port_error_invalid">Číslo portu je neplatné. Zadejte číslo v rozsahu 1 a 65535.</string>
     <string name="pref_port_sum">Zadejte port serveru</string>
@@ -149,7 +145,6 @@
     <string name="progress">%1$d%% z pořadu již zhlédnuto.</string>
     <string name="purchase">Nákup</string>
     <string name="rating">Hodnocení</string>
-    <string name="ready">Připraven</string>
     <string name="record_cancel">Zrušte nahrávku</string>
     <string name="record_once">Nahrát</string>
     <string name="record_remove">Smazat nahrávku</string>
@@ -157,12 +152,10 @@
     <string name="record_series">Nahrát (Autorec)</string>
     <string name="record_stop">Zastavte nahrávku</string>
     <string name="recording_canceled">Nahrávání bylo zrušeno</string>
-    <string name="recording_completed">Nahrávání dokončeno</string>
     <string name="recording_disabled">Toto nahrávání je zakázáno</string>
     <string name="recording_enabled">Toto nahrávání je povoleno</string>
     <string name="recording_file_invalid">Nahrávání je neplatné</string>
     <string name="recording_file_missing">Nahraný soubor chybí</string>
-    <string name="recording_started">Nahrávání začalo</string>
     <string name="recording_time">Čas nahrávání</string>
     <string name="recording_time_missed">Naplánované nahrávání bylo minuto.</string>
     <string name="recordings">Nahrávky</string>
@@ -180,7 +173,6 @@
     <string name="search_epg">Hledat v programovém průvodci</string>
     <string name="search_fileaffinity">Hledat v FileAffinity</string>
     <string name="search_google">Hledat v Google</string>
-    <string name="search_hint">Vyhledat v EPG</string>
     <string name="search_imdb">Hledat v IMDB</string>
     <string name="search_youtube">Hledat v YouTube</string>
     <string name="season">Sezóna</string>
@@ -210,7 +202,6 @@
     <string name="tuesday">Úterý</string>
     <string name="two_days_ago">Před dvěma dny</string>
     <string name="unknown">Neznámý</string>
-    <string name="updating">Aktualizování…</string>
     <string name="wednesday">Středa</string>
     <string name="wol_address_invalid">MAC adresa není platná. Zkontrolujte nastavení.</string>
     <string name="wol_error">Chyba při odesílání Wake on LAN paketu na \'%1$s\'.\n Chybová hláška: %2$s</string>

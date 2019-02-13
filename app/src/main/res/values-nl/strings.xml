@@ -78,7 +78,6 @@
     <string name="edit_recording">Opname bewerken</string>
     <string name="enable_time_window">Activeer tijden voor opname</string>
     <string name="episode">Aflevering</string>
-    <string name="err_no_network">Geen netwerkverbinding actief</string>
     <string name="error_adding_recording">Opname is niet toegevoegd! %s</string>
     <string name="error_empty_title">De titel mag niet leeg zijn!</string>
     <string name="error_removing_recording">Opname is niet verwijderd! %s</string>
@@ -101,12 +100,9 @@
     <string name="initializing">Initialiseren</string>
     <string name="is_series_recording">Deze opname maakt deel uit van een serie-opname</string>
     <string name="is_timer_recording">Deze opname is gemaakt door een timer</string>
-    <string name="loading">Laden…</string>
     <string name="loading_data">Gegevens van de server laden</string>
     <string name="loading_data_done">Laden van gegevens van de server klaar</string>
-    <string name="loading_more_programs">Meer programma\'s laden</string>
     <string name="loading_more_programs_finished">Voltooid laden van meer programma\'s</string>
-    <string name="loading_profiles">Profielen laden</string>
     <string name="max_duration">Maximale duur van het programma</string>
     <string name="media_route_menu_title">Speel op…</string>
     <string name="min_duration">Minimale duur van het programma</string>
@@ -126,8 +122,6 @@
     <string name="play">Afspelen</string>
     <string name="playback">Afspelen</string>
     <string name="pref_advanced_settings">Geavanceerde instellingen</string>
-    <string name="pref_buffer_size">Grootte van de berichtbuffer</string>
-    <string name="pref_buffer_size_sum">Grootte in MB van de buffer die de ontvangen gegevens van de server opslaat. De standaardwaarde is 4 MB. Als er soms geen gegevens geladen kunnen worden, kan een grotere buffergrootte het probleem oplossen. Gelieve niet te vergeten dat een grotere buffergrootte kan leiden tot een laag geheugen op oudere apparaten.</string>
     <string name="pref_cast_profiles">Cast afspeelprofielen</string>
     <string name="pref_cast_profiles_sum">Selecteer een profiel dat moet worden gebruikt om een kanaal of opgenomen programma te gieten naar een chromecast of een soortgelijk apparaat.</string>
     <string name="pref_casting">Casting</string>
@@ -216,7 +210,6 @@
     <string name="progress">%1$d%% van de uitzending al voorbij</string>
     <string name="purchase">Aankoop</string>
     <string name="rating">Waardering</string>
-    <string name="ready">Klaar</string>
     <string name="received_playback_information">Ontvangen afspeelinformatie van de server</string>
     <string name="reconnect">Opnieuw verbinden</string>
     <string name="record_cancel">Opname annuleren</string>
@@ -228,13 +221,10 @@
     <string name="record_series">Opnemen als serie-opname</string>
     <string name="record_stop">Opname stoppen</string>
     <string name="recording_canceled">Opname is geannuleerd</string>
-    <string name="recording_completed">Opname voltooid</string>
     <string name="recording_disabled">Deze opname is uitgeschakeld</string>
     <string name="recording_enabled">Deze opname is ingeschakeld</string>
     <string name="recording_file_invalid">Opname is niet geldig</string>
     <string name="recording_file_missing">Opname ontbreekt</string>
-    <string name="recording_started">Opname gestart</string>
-    <string name="recording_starts_in">Opname start in %d min.</string>
     <string name="recording_time">Opnametijd</string>
     <string name="recording_time_missed">Geplande opname gemist</string>
     <string name="recordings">Opnames</string>
@@ -248,17 +238,12 @@
     <string name="requesting_playback_information">Informatie over afspelen opvragen bij de server</string>
     <string name="saturday">Zaterdag</string>
     <string name="save">Opslaan</string>
-    <string name="saving_channel_logos">Opslaan van ontvangen kanaallogo\'s…</string>
-    <string name="saving_channels">Besparing van ontvangen kanalen…</string>
     <string name="saving_data">Opslaan van ontvangen gegevens…</string>
-    <string name="saving_program_guide_data">Ontvangen programmagidsgegevens opslaan…</string>
-    <string name="saving_recordings">Opslaan van ontvangen opnames…</string>
     <string name="scheduled_recordings">Toekomstig</string>
     <string name="search">Zoek</string>
     <string name="search_epg">Zoek in programma gids</string>
     <string name="search_fileaffinity">Zoek op FileAffinity</string>
     <string name="search_google">Zoek op Google</string>
-    <string name="search_hint">Doorzoek EPG</string>
     <string name="search_imdb">Zoek op IMDB</string>
     <string name="search_results">Zoekresultaten</string>
     <string name="search_youtube">Zoek op YouTube</string>
@@ -283,7 +268,6 @@
     <string name="start_before_time">Einde</string>
     <string name="start_time">starttijd</string>
     <string name="starting_playback">Afspelen starten</string>
-    <string name="startup">Startend</string>
     <string name="status">Status</string>
     <string name="stop">Halte</string>
     <string name="stop_recording">Wilt u de lopende opname \'%s\' echt stoppen?</string>
@@ -309,7 +293,6 @@
     <string name="tuesday">Dinsdag</string>
     <string name="two_days_ago">Twee dagen geleden</string>
     <string name="unknown">Onbekend</string>
-    <string name="updating">Bijwerken…</string>
     <string name="wednesday">Woensdag</string>
     <string name="wol_address_invalid">Het MAC-adres is niet juist. Controleer je instellingen a.u.b.</string>
     <string name="wol_error">Fout tijdens het versturen van het Wake On LAN pakket naar \'%1$s\'.\n Fout melding: %2$s</string>
@@ -346,8 +329,6 @@
     <string name="pref_general">Algemeen</string>
     <string name="pref_show_program_subtitle">Programmaondertiteling tonen</string>
     <string name="pref_show_program_subtitle_sum">Geeft de ondertiteling van het huidige programma weer</string>
-    <string name="pref_playback_profiles">Afspeelprofielen</string>
-    <string name="pref_playback_profiles_sum">Selecteer een profiel dat zal worden gebruikt om een opgenomen programma af te spelen.</string>
     <string name="pref_profiles_sum">Definieer de profielen hoe inhoud moet worden opgenomen of afgespeeld.</string>
     <string name="pref_recording_profiles">Opnameprofielen</string>
     <string name="pref_recording_profiles_sum">Selecteer een profiel dat de server moet gebruiken om een gepland programma te registreren.</string>
@@ -403,7 +384,6 @@
     <string name="pref_internal_player_for_channels_enabled">Speel live tv met de interne speler</string>
     <string name="pref_internal_player_for_recordings_enabled">Speel opnamen met de interne speler</string>
     <string name="deleting_database_contents">Database-inhoud verwijderen…</string>
-    <string name="database_contents_deleted">Database-inhoud verwijderd</string>
     <string name="pref_copy_playback_url_to_clipboard_enabled_sum">In het geval van afspeelproblemen kan de gekopieerde URL worden gebruikt om het afspelen in een browser te testen.</string>
     <string name="pref_copy_playback_url_to_clipboard_enabled">Kopieer weergave-URL naar klembord</string>
     <string name="selection_disabled">Invalide</string>

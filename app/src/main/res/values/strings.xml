@@ -80,7 +80,6 @@
     <string name="edit_recording">Edit recording</string>
     <string name="enable_time_window">Activate times for recording</string>
     <string name="episode">Episode</string>
-    <string name="err_no_network">No network connection active</string>
     <string name="error_adding_recording">Recording was not added! %s</string>
     <string name="error_empty_title">The title must no be empty!</string>
     <string name="error_loading_program_details">Could not load program details</string>
@@ -112,12 +111,9 @@
     <string name="intro_overlay_text">Touch to cast Live TV or recordings to your TV.  Please check that you meet the requirements described in the casting settings.</string>
     <string name="is_series_recording">This recording is part of a series recording</string>
     <string name="is_timer_recording">This recording was created by a timer</string>
-    <string name="loading">Loading…</string>
     <string name="loading_data">Loading data from server</string>
     <string name="loading_data_done">Loading data from server finished</string>
-    <string name="loading_more_programs">Loading more programs</string>
     <string name="loading_more_programs_finished">Finished loading more programs</string>
-    <string name="loading_profiles">Loading profiles</string>
     <string name="max_duration">Maximum duration of the program</string>
     <string name="media_route_menu_title">Play on…</string>
     <string name="min_duration">Minimum duration of the program</string>
@@ -139,8 +135,6 @@
     <string name="play">Play</string>
     <string name="playback">Playback</string>
     <string name="pref_advanced_settings">Advanced settings</string>
-    <string name="pref_buffer_size">Message buffer size</string>
-    <string name="pref_buffer_size_sum">Size in MB of the buffer that stores the received data from the server. Default is 4 MB. If sometimes no data could be loaded a larger buffer size might solve the problem. Please not that a larger buffer size might lead to low memory on older devices.</string>
     <string name="pref_cast_profiles">Cast playback profiles</string>
     <string name="pref_cast_profiles_sum">Select a profile that shall be used to cast a channel or recorded program to a chromecast or similar device.</string>
     <string name="pref_casting">Casting</string>
@@ -218,8 +212,6 @@
     <string name="pref_play_when_channel_icon_selected">Channel icon action</string>
     <string name="pref_play_when_channel_icon_selected_sum">Start playing the current program or recording when the channel icon is selected in the channel list, program guide or recording list screen.</string>
     <string name="pref_playback_and_recording">Playback and recording</string>
-    <string name="pref_playback_profiles">Playback profiles</string>
-    <string name="pref_playback_profiles_sum">Select a profile that shall be used to play a recorded program.</string>
     <string name="pref_port">HTSP Port</string>
     <string name="pref_port_error_invalid">The port number is not valid. Specify a number between 1 and 65535.</string>
     <string name="pref_port_sum">Enter the server port</string>
@@ -282,7 +274,6 @@
     <!-- Unlcoker related -->
     <string name="purchase">Purchase</string>
     <string name="rating">Rating</string>
-    <string name="ready">Ready</string>
     <string name="received_playback_information">Received playback information from server</string>
     <string name="reconnect">Reconnect</string>
     <string name="record_cancel">Cancel recording</string>
@@ -294,13 +285,10 @@
     <string name="record_series">Record as series recording</string>
     <string name="record_stop">Stop recording</string>
     <string name="recording_canceled">Recording has been canceled</string>
-    <string name="recording_completed">Recording completed</string>
     <string name="recording_disabled">This recording is disabled</string>
     <string name="recording_enabled">This recording is enabled</string>
     <string name="recording_file_invalid">Recording is invalid</string>
     <string name="recording_file_missing">Recorded file is missing</string>
-    <string name="recording_started">Recording started</string>
-    <string name="recording_starts_in">Recording starts in %d min.</string>
     <string name="recording_time">Recording Time</string>
     <string name="recording_time_missed">Scheduled recording was missed</string>
     <string name="recordings">Recordings</string>
@@ -314,17 +302,12 @@
     <string name="requesting_playback_information">Requesting playback information from server</string>
     <string name="saturday">Saturday</string>
     <string name="save">Save</string>
-    <string name="saving_channel_logos">Saving received channel icons…</string>
-    <string name="saving_channels">Saving received channels…</string>
     <string name="saving_data">Saving received data…</string>
-    <string name="saving_program_guide_data">Saving received program guide data…</string>
-    <string name="saving_recordings">Saving received recordings…</string>
     <string name="scheduled_recordings">Scheduled recordings</string>
     <string name="search">Search</string>
     <string name="search_epg">Search the program guide</string>
     <string name="search_fileaffinity">Search on FileAffinity</string>
     <string name="search_google">Search on Google</string>
-    <string name="search_hint">Search the EPG</string>
     <string name="search_imdb">Search on IMDB</string>
     <string name="search_results">Search results</string>
     <string name="search_youtube">Search on YouTube</string>
@@ -349,7 +332,6 @@
     <string name="start_before_time">End</string>
     <string name="start_time">Start time</string>
     <string name="starting_playback">Starting playback</string>
-    <string name="startup">Starting</string>
     <string name="status">Status</string>
     <string name="stop">Stop</string>
     <string name="stop_recording">Do you really want to stop the running recording \'%s\'?</string>
@@ -375,7 +357,6 @@
     <string name="tuesday">Tuesday</string>
     <string name="two_days_ago">Two days ago</string>
     <string name="unknown">Unknown</string>
-    <string name="updating">Updating…</string>
     <string name="wednesday">Wednesday</string>
     <string name="wol_address_invalid">The MAC-address is not valid. Please check your settings.</string>
     <string name="wol_error">Error sending wake on LAN packet to \'%1$s\'.\n Error message: %2$s</string>
@@ -406,7 +387,6 @@
     <string name="pref_internal_player_audio_tunneling_enabled">Enable Audio Tunneling</string>
     <string name="pref_internal_player_audio_tunneling_enabled_sum">Enable support for DSP audio tunneling</string>
     <string name="pref_internal_player_timeshift_enabled">Enable timeshift support</string>
-    <string name="database_contents_deleted">Database contents deleted</string>
     <string name="deleting_database_contents">Deleting database contents…</string>
     <string name="pref_copy_playback_url_to_clipboard_enabled">Copy playback Url to clipboard</string>
     <string name="pref_copy_playback_url_to_clipboard_enabled_sum">In case of playback issues the copied Url can be used to test playback in a browser.</string>
@@ -416,4 +396,8 @@
     <string name="receiving_data">Receiving data</string>
     <string name="connect">Connect</string>
     <string name="disconnect">Disconnect</string>
+    <string name="audio_settings">Audio settings</string>
+    <string name="subtitle_settings">Subtitle settings</string>
+    <string name="cast_error_no_media_client_available">Could not get the remote media client from the cast session.</string>
+    <string name="player_is_loading_mode_data">Please wait, player is loading more data…</string>
 </resources>

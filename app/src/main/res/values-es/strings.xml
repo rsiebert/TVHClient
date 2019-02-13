@@ -80,7 +80,6 @@
     <string name="edit_recording">Editar grabación</string>
     <string name="enable_time_window">Activar los tiempos para grabar</string>
     <string name="episode">Episodio</string>
-    <string name="err_no_network">No hay conexión de red activa</string>
     <string name="error_adding_recording">La grabación no fue agregada! %s</string>
     <string name="error_empty_title">El título no debe estar vacío!</string>
     <string name="error_loading_program_details">No se pudieron cargar los detalles del programa</string>
@@ -112,12 +111,9 @@
     <string name="intro_overlay_text">"Toca para emitir TV en vivo o grabaciones en tu TV. Verifique que cumpla con los requisitos descritos en la configuración de transmisión."</string>
     <string name="is_series_recording">Esta grabación es parte de una grabación en serie</string>
     <string name="is_timer_recording">Esta grabación fue creada por un temporizador</string>
-    <string name="loading">Cargando…</string>
     <string name="loading_data">Cargando datos del servidor</string>
     <string name="loading_data_done">Carga de datos del servidor finalizado.</string>
-    <string name="loading_more_programs">Cargando más programas</string>
     <string name="loading_more_programs_finished">Cargando más programas finalizado</string>
-    <string name="loading_profiles">Cargando perfiles</string>
     <string name="max_duration">Duración máxima del programa</string>
     <string name="media_route_menu_title">Reproducir en…</string>
     <string name="min_duration">Duración mínima del programa</string>
@@ -139,8 +135,6 @@
     <string name="play">Reproducir</string>
     <string name="playback">Reproducción</string>
     <string name="pref_advanced_settings">Ajustes avanzados</string>
-    <string name="pref_buffer_size">Tamaño del búfer de mensaje</string>
-    <string name="pref_buffer_size_sum">Tamaño en MB del búfer que almacena los datos recibidos del servidor. El valor predeterminado es 4 MB. Si a veces no se pueden cargar datos, un tamaño de búfer mayor podría resolver el problema. Tenga en cuenta que un tamaño de búfer mayor podría generar poca memoria en dispositivos más antiguos..</string>
     <string name="pref_cast_profiles">Perfiles de reproducción de emisión</string>
     <string name="pref_cast_profiles_sum">Seleccione un perfil que se utilizará para transmitir un canal o programa grabado a un Chromecast o dispositivo similar.</string>
     <string name="pref_casting">Emitiendo</string>
@@ -228,8 +222,6 @@
     <string name="pref_play_when_channel_icon_selected">Acción del icono del canal</string>
     <string name="pref_play_when_channel_icon_selected_sum">Comience a reproducir el programa actual o la grabación cuando se selecciona el icono de canal en la lista de canales, guía de programas o pantalla de lista de grabación.</string>
     <string name="pref_playback_and_recording">Reproducción y grabación</string>
-    <string name="pref_playback_profiles">Perfiles de reproducción</string>
-    <string name="pref_playback_profiles_sum">Seleccione un perfil que se usará para reproducir un programa grabado.</string>
     <string name="pref_port">Puerto</string>
     <string name="pref_port_error_invalid">El número de puerto no es válido. Especifique un número entre 1 y 65535.</string>
     <string name="pref_port_sum">Ingrese el puerto del servidor</string>
@@ -290,7 +282,6 @@
     <string name="progress">%1$d%% del evento ya mostrado</string>
     <string name="purchase">Comprar</string>
     <string name="rating">Clasificación</string>
-    <string name="ready">Preparado</string>
     <string name="received_playback_information">Información de reproducción recibida del servidor</string>
     <string name="reconnect">Reconectar</string>
     <string name="record_cancel">Cancelar la grabación</string>
@@ -302,13 +293,10 @@
     <string name="record_series">Grabar series</string>
     <string name="record_stop">Parar grabación</string>
     <string name="recording_canceled">La grabación ha sido cancelada</string>
-    <string name="recording_completed">Grabación completada</string>
     <string name="recording_disabled">Esta grabación está deshabilitada</string>
     <string name="recording_enabled">Esta grabación está habilitada</string>
     <string name="recording_file_invalid">La grabación no es válida</string>
     <string name="recording_file_missing">El archivo grabado no está</string>
-    <string name="recording_started">Grabación iniciada</string>
-    <string name="recording_starts_in">La grabación comienza en %d min.</string>
     <string name="recording_time">Tiempo de grabación</string>
     <string name="recording_time_missed">Se perdió la grabación programada</string>
     <string name="recordings">Grabaciones</string>
@@ -322,11 +310,7 @@
     <string name="requesting_playback_information">Solicitando información de reproducción desde el servidor</string>
     <string name="saturday">Sabado</string>
     <string name="save">Guardar</string>
-    <string name="saving_channel_logos">Guardando iconos de canales recibidos…</string>
-    <string name="saving_channels">Guardando canales recibidos…</string>
     <string name="saving_data">Guardando los datos recibidos…</string>
-    <string name="saving_program_guide_data">Guardando los datos recibidos de la guía de programas…</string>
-    <string name="saving_recordings">Guardando grabaciones recibidas…</string>
     <string name="scheduled_recordings">Grabaciones programadas</string>
     <string name="search">Buscar</string>
     <string name="search_channels">Buscar canales</string>
@@ -335,7 +319,6 @@
     <string name="search_failed_recordings">Buscar grabaciones fallidas</string>
     <string name="search_fileaffinity">Buscar en FileAffinity</string>
     <string name="search_google">Buscar en Google</string>
-    <string name="search_hint">Buscar el EPG</string>
     <string name="search_imdb">Buscar en IMDB</string>
     <string name="search_results">Resultados de la búsqueda</string>
     <string name="search_program_guide">Buscar guia de programa</string>
@@ -366,7 +349,6 @@
     <string name="start_before_time">Fin</string>
     <string name="start_time">Hora de inicio</string>
     <string name="starting_playback">Comenzando la reproducción</string>
-    <string name="startup">Comenzando</string>
     <string name="status">Estado</string>
     <string name="stop">Detener</string>
     <string name="stop_recording">"¿De verdad quieres detener la grabación en funcionamiento '%s'?"</string>
@@ -392,7 +374,6 @@
     <string name="tuesday">Martes</string>
     <string name="two_days_ago">Hace dos dias</string>
     <string name="unknown">Desconocido</string>
-    <string name="updating">Actualizando …</string>
     <string name="wednesday">Miercoles</string>
     <string name="wol_address_invalid">La dirección MAC no es válida. Por favor verifica tu configuración.</string>
     <string name="wol_error">"Error al enviar el paquete de activación en puerto LAN a '%1$s'. Mensaje de error: %2$s"</string>
@@ -400,7 +381,6 @@
     <string name="wol_send_broadcast">"Envió exitosamente el paquete de activación de LAN como una transmisión a '%s'"</string>
     <string name="yesterday">Ayer</string>
     <string name="deleting_database_contents">Eliminando los contenidos de la base de datos…</string>
-    <string name="database_contents_deleted">Contenidos de la base de datos eliminados</string>
     <string name="pref_playback">Reproducción</string>
     <string name="pref_playback_sum">Elija cómo se reproducen los programas de TV en vivo o las grabaciones.</string>
     <string name="pref_internal_player_for_channels_enabled">Juega tv en vivo con el reproductor interno.</string>
