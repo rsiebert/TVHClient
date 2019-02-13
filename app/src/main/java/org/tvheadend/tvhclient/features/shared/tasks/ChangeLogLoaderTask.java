@@ -16,7 +16,7 @@ public class ChangeLogLoaderTask extends AsyncTask<Boolean, Void, String> {
 
     private final String lastAppVersion;
     private final WeakReference<Context> context;
-    private final FileLoaderCallback callback;
+    private final HtmlFileLoaderTask.Listener callback;
     private ListMode listMode = ListMode.NONE;
     private StringBuffer stringBuffer = null;
 
@@ -25,7 +25,7 @@ public class ChangeLogLoaderTask extends AsyncTask<Boolean, Void, String> {
         NONE, ORDERED, UNORDERED,
     }
 
-    public ChangeLogLoaderTask(Context context, String lastAppVersion, FileLoaderCallback callback) {
+    public ChangeLogLoaderTask(Context context, String lastAppVersion, HtmlFileLoaderTask.Listener callback) {
         this.context = new WeakReference<>(context);
         this.lastAppVersion = lastAppVersion;
         this.callback = callback;

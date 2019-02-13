@@ -1,7 +1,6 @@
 package org.tvheadend.tvhclient.features.information;
 
 import android.os.Bundle;
-import androidx.annotation.NonNull;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -13,17 +12,17 @@ import android.widget.ProgressBar;
 import org.tvheadend.tvhclient.BuildConfig;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
-import org.tvheadend.tvhclient.features.shared.tasks.FileLoaderCallback;
 import org.tvheadend.tvhclient.features.shared.tasks.HtmlFileLoaderTask;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
 import java.util.regex.Pattern;
 
+import androidx.annotation.NonNull;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-public class WebViewFragment extends BaseFragment implements FileLoaderCallback {
+public class WebViewFragment extends BaseFragment implements HtmlFileLoaderTask.Listener {
 
     @BindView(R.id.webview)
     protected WebView webView;
@@ -52,12 +51,12 @@ public class WebViewFragment extends BaseFragment implements FileLoaderCallback 
         forceSingleScreenLayout();
 
         if (savedInstanceState != null) {
-            website = savedInstanceState.getString("website");
+            website = savedInstanceState.getString("website", "");
         } else {
             website = "";
             Bundle bundle = getArguments();
             if (bundle != null) {
-                website = bundle.getString("website");
+                website = bundle.getString("website", "");
             }
         }
 

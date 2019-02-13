@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
-import androidx.annotation.NonNull;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,8 +11,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
+import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 
+import androidx.annotation.NonNull;
 import timber.log.Timber;
 
 public class HtmlFileLoaderTask extends AsyncTask<Void, Void, String> {
@@ -21,9 +22,9 @@ public class HtmlFileLoaderTask extends AsyncTask<Void, Void, String> {
     private final String file;
     private final String defaultLocale;
     private final WeakReference<Context> context;
-    private final FileLoaderCallback callback;
+    private final Listener callback;
 
-    public HtmlFileLoaderTask(Context context, String file, String defaultLocale, @NonNull FileLoaderCallback callback) {
+    public HtmlFileLoaderTask(Context context, String file, String defaultLocale, @NonNull Listener callback) {
         this.context = new WeakReference<>(context);
         this.file = file;
         this.defaultLocale = defaultLocale;
@@ -74,7 +75,12 @@ public class HtmlFileLoaderTask extends AsyncTask<Void, Void, String> {
         if (is != null) {
             try {
                 String htmlData;
-                BufferedReader in = new BufferedReader(new InputStreamReader(is, "utf-8"));
+                BufferedReader in;
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+                    in = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+                } else {
+                    in = new BufferedReader(new InputStreamReader(is));
+                }
                 while ((htmlData = in.readLine()) != null) {
                     sb.append(htmlData);
                 }
@@ -95,5 +101,9 @@ public class HtmlFileLoaderTask extends AsyncTask<Void, Void, String> {
         // Add the closing HTML tags and load show the page
         Timber.d("Done loading file");
         return sb.toString();
+    }
+
+    public interface Listener {
+        void onFileContentsLoaded(String content);
     }
 }

@@ -18,7 +18,7 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.features.shared.callbacks.BackPressedInterface;
 import org.tvheadend.tvhclient.features.shared.callbacks.ToolbarInterface;
 import org.tvheadend.tvhclient.features.shared.tasks.ChangeLogLoaderTask;
-import org.tvheadend.tvhclient.features.shared.tasks.FileLoaderCallback;
+import org.tvheadend.tvhclient.features.shared.tasks.HtmlFileLoaderTask;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,7 +27,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-public class ChangeLogFragment extends Fragment implements BackPressedInterface, FileLoaderCallback {
+public class ChangeLogFragment extends Fragment implements BackPressedInterface, HtmlFileLoaderTask.Listener {
 
     @BindView(R.id.webview)
     protected WebView webView;

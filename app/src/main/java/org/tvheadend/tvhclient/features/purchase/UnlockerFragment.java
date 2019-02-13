@@ -13,7 +13,7 @@ import com.android.billingclient.api.Purchase;
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.features.information.WebViewFragment;
-import org.tvheadend.tvhclient.features.shared.tasks.FileLoaderCallback;
+import org.tvheadend.tvhclient.features.shared.tasks.HtmlFileLoaderTask;
 import org.tvheadend.tvhclient.features.startup.SplashActivity;
 
 import java.util.List;
@@ -22,7 +22,7 @@ import timber.log.Timber;
 
 import static org.tvheadend.tvhclient.utils.Constants.UNLOCKER;
 
-public class UnlockerFragment extends WebViewFragment implements FileLoaderCallback, BillingUpdatesListener {
+public class UnlockerFragment extends WebViewFragment implements HtmlFileLoaderTask.Listener, BillingUpdatesListener {
 
     private BillingManager billingManager;
     private BillingHandler billingHandler;
