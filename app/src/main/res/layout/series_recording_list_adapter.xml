@@ -63,8 +63,8 @@
             android:layout_marginStart="16dp"
             android:layout_marginLeft="16dp"
             android:layout_marginTop="16dp"
-            app:channelIcon="@{recording.channelIcon}"
-            app:channelName="@{recording.channelName}"
+            app:iconUrl="@{recording.channelIcon}"
+            app:iconName="@{recording.channelName}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 

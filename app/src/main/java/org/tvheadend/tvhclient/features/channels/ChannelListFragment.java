@@ -217,8 +217,8 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
         // When the user returns from the settings only the onResume method is called, not the
         // onActivityCreated, so we need to check if any values that affect the representation
         // of the channel list have changed.
-        viewModel.setChannelSortOrder(Integer.valueOf(sharedPreferences.getString("channel_sort_order",
-                activity.getResources().getString(R.string.pref_default_channel_sort_order))));
+        //noinspection ConstantConditions
+        viewModel.setChannelSortOrder(Integer.valueOf(sharedPreferences.getString("channel_sort_order", activity.getResources().getString(R.string.pref_default_channel_sort_order))));
     }
 
     @Override
@@ -359,9 +359,8 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
         }
     }
 
-    private void showPopupMenu(View view) {
-
-        Channel channel = (Channel) view.getTag();
+    private void showPopupMenu(View view, int position) {
+        Channel channel = recyclerViewAdapter.getItem(position);
         Program program = appRepository.getProgramData().getItemById(channel.getProgramId());
         Recording recording = appRepository.getRecordingData().getItemByEventId(channel.getProgramId());
 
@@ -466,12 +465,14 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
 
     @Override
     public void onClick(View view, int position) {
-        if (view.getId() == R.id.icon || view.getId() == R.id.icon_text) {
-            if (recyclerViewAdapter.getItemCount() > 0
-                    && isNetworkAvailable) {
-                Channel channel = recyclerViewAdapter.getItem(position);
-                menuUtils.handleMenuPlayChannelIcon(channel.getId());
-            }
+        //noinspection ConstantConditions
+        if ((view.getId() == R.id.icon || view.getId() == R.id.icon_text)
+                && Integer.valueOf(sharedPreferences.getString("channel_icon_action", activity.getResources().getString(R.string.pref_default_channel_icon_action))) > 0
+                && recyclerViewAdapter.getItemCount() > 0
+                && isNetworkAvailable) {
+            Channel channel = recyclerViewAdapter.getItem(position);
+            menuUtils.handleMenuPlayChannelIcon(channel.getId());
+
         } else {
             showChannelDetails(position);
         }
@@ -479,7 +480,7 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
 
     @Override
     public boolean onLongClick(View view, int position) {
-        showPopupMenu(view);
+        showPopupMenu(view, position);
         return true;
     }
 

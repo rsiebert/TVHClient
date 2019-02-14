@@ -4,6 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.Index
+import java.util.*
 
 @Entity(tableName = "programs", primaryKeys = ["id", "connection_id"], indices = [Index(value = ["start"]), Index(value = ["channel_id"])])
 data class Program(
@@ -72,4 +73,26 @@ data class Program(
 
         @Ignore
         var recording: Recording? = null
-)
+) {
+    val duration: Int
+        get() = ((stop - start) / 1000 / 60).toInt()
+
+    val progress: Int
+        get() {
+            var percentage = 0.0
+            // Get the start and end times to calculate the progress.
+            val durationTime = (stop - start).toDouble()
+            val elapsedTime = (Date().time - start).toDouble()
+            // Show the progress as a percentage
+            if (durationTime > 0 && elapsedTime > 0) {
+                percentage = elapsedTime / durationTime
+            }
+            return Math.floor(percentage * 100).toInt()
+        }
+
+    val isSeriesInfoAvailable: Boolean
+        get() = (!episodeOnscreen.isNullOrEmpty()
+                && episodeNumber > 0
+                && seasonNumber > 0
+                && partNumber > 0)
+}

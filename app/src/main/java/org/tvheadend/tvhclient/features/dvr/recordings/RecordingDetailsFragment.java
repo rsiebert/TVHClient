@@ -1,107 +1,40 @@
 package org.tvheadend.tvhclient.features.dvr.recordings;
 
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewStub;
-import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Recording;
+import org.tvheadend.tvhclient.databinding.RecordingDetailsFragmentBinding;
 import org.tvheadend.tvhclient.features.download.DownloadPermissionGrantedInterface;
 import org.tvheadend.tvhclient.features.dvr.RecordingAddEditActivity;
-import org.tvheadend.tvhclient.features.shared.BaseFragment;
 import org.tvheadend.tvhclient.features.dvr.RecordingRemovedCallback;
+import org.tvheadend.tvhclient.features.shared.BaseFragment;
 import org.tvheadend.tvhclient.utils.MiscUtils;
-import org.tvheadend.tvhclient.utils.UIUtils;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
 
 public class RecordingDetailsFragment extends BaseFragment implements RecordingRemovedCallback, DownloadPermissionGrantedInterface {
 
-    @BindView(R.id.state)
-    ImageView stateImageView;
-    @BindView(R.id.summary_label)
-    TextView summaryLabelTextView;
-    @BindView(R.id.summary)
-    TextView summaryTextView;
-    @BindView(R.id.description_label)
-    TextView descLabelTextView;
-    @BindView(R.id.description)
-    TextView descTextView;
-    @BindView(R.id.title_label)
-    TextView titleLabelTextView;
-    @BindView(R.id.title)
-    TextView titleTextView;
-    @BindView(R.id.subtitle_label)
-    TextView subtitleLabelTextView;
-    @BindView(R.id.subtitle)
-    TextView subtitleTextView;
-    @BindView(R.id.channel)
-    TextView channelNameTextView;
-    @BindView(R.id.date)
-    TextView dateTextView;
-    @BindView(R.id.start_time)
-    TextView startTimeTextView;
-    @BindView(R.id.stop_time)
-    TextView stopTimeTextView;
-    @BindView(R.id.duration)
-    TextView durationTextView;
-
-    @Nullable
-    @BindView(R.id.failed_reason)
-    TextView failedReasonTextView;
-    @BindView(R.id.is_series_recording)
-    TextView isSeriesRecordingTextView;
-    @BindView(R.id.is_timer_recording)
-    TextView isTimerRecordingTextView;
-    @BindView(R.id.disabled)
-    TextView isDisabledTextView;
-
-    @BindView(R.id.episode)
-    TextView episodeTextView;
-    @BindView(R.id.episode_label)
-    TextView episodeLabelTextView;
-    @BindView(R.id.comment)
-    TextView commentTextView;
-    @BindView(R.id.comment_label)
-    TextView commentLabelTextView;
-    @BindView(R.id.subscription_error)
-    TextView subscriptionErrorTextView;
-    @BindView(R.id.stream_errors)
-    TextView streamErrorsTextView;
-    @BindView(R.id.data_errors)
-    TextView dataErrorsTextView;
-    @BindView(R.id.data_size)
-    TextView dataSizeTextView;
-    @BindView(R.id.status_label)
-    TextView statusLabelTextView;
-    @BindView(R.id.nested_toolbar)
-    Toolbar nestedToolbar;
-    @BindView(R.id.scrollview)
-    ScrollView scrollView;
-    @BindView(R.id.status)
-    TextView statusTextView;
+    private Toolbar nestedToolbar;
+    private ScrollView scrollView;
+    private TextView statusTextView;
 
     private Recording recording = null;
     private int id;
-    private Unbinder unbinder;
+    private RecordingDetailsFragmentBinding itemBinding;
 
     public static RecordingDetailsFragment newInstance(int dvrId) {
         RecordingDetailsFragment f = new RecordingDetailsFragment();
@@ -113,18 +46,13 @@ public class RecordingDetailsFragment extends BaseFragment implements RecordingR
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.details_fragment, container, false);
-        ViewStub stub = view.findViewById(R.id.stub);
-        stub.setLayoutResource(R.layout.recording_details_fragment_contents);
-        stub.inflate();
-        unbinder = ButterKnife.bind(this, view);
-        return view;
-    }
+        itemBinding = DataBindingUtil.inflate(inflater, R.layout.recording_details_fragment, container, false);
+        View view = itemBinding.getRoot();
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        unbinder.unbind();
+        nestedToolbar = view.findViewById(R.id.nested_toolbar);
+        scrollView = view.findViewById(R.id.scrollview);
+        statusTextView = view.findViewById(R.id.status);
+        return view;
     }
 
     @Override
@@ -151,7 +79,11 @@ public class RecordingDetailsFragment extends BaseFragment implements RecordingR
         viewModel.getRecordingById(id).observe(getViewLifecycleOwner(), rec -> {
             if (rec != null) {
                 recording = rec;
-                updateUI();
+                itemBinding.setRecording(recording);
+                itemBinding.setHtspVersion(htspVersion);
+                // The toolbar is hidden as a default to prevent pressing any icons if no recording
+                // has been loaded yet. The toolbar is shown here because a recording was loaded
+                nestedToolbar.setVisibility(View.VISIBLE);
                 activity.invalidateOptionsMenu();
             } else {
                 scrollView.setVisibility(View.GONE);
@@ -159,92 +91,6 @@ public class RecordingDetailsFragment extends BaseFragment implements RecordingR
                 statusTextView.setVisibility(View.VISIBLE);
             }
         });
-    }
-
-    private void updateUI() {
-        // The toolbar is hidden as a default to prevent pressing any icons if no recording
-        // has been loaded yet. The toolbar is shown here because a recording was loaded
-        nestedToolbar.setVisibility(View.VISIBLE);
-
-        Drawable drawable = UIUtils.getRecordingState(activity, recording);
-        stateImageView.setVisibility(drawable != null ? View.VISIBLE : View.GONE);
-        stateImageView.setImageDrawable(drawable);
-
-        dateTextView.setText(UIUtils.getDate(getContext(), recording.getStart()));
-        startTimeTextView.setText(UIUtils.getTimeText(getContext(), recording.getStart()));
-        stopTimeTextView.setText(UIUtils.getTimeText(getContext(), recording.getStop()));
-
-        String durationTime = getString(R.string.minutes, (int) ((recording.getStop() - recording.getStart()) / 1000 / 60));
-        durationTextView.setText(durationTime);
-
-        channelNameTextView.setText(!TextUtils.isEmpty(recording.getChannelName()) ? recording.getChannelName() : getString(R.string.no_channel));
-
-        summaryLabelTextView.setVisibility(!TextUtils.isEmpty(recording.getSummary()) ? View.VISIBLE : View.GONE);
-        summaryTextView.setVisibility(!TextUtils.isEmpty(recording.getSummary()) ? View.VISIBLE : View.GONE);
-        summaryTextView.setText(recording.getSummary());
-
-        descLabelTextView.setVisibility(!TextUtils.isEmpty(recording.getDescription()) ? View.VISIBLE : View.GONE);
-        descTextView.setVisibility(!TextUtils.isEmpty(recording.getDescription()) ? View.VISIBLE : View.GONE);
-        descTextView.setText(recording.getDescription());
-
-        titleLabelTextView.setVisibility(!TextUtils.isEmpty(recording.getTitle()) ? View.VISIBLE : View.GONE);
-        titleTextView.setVisibility(!TextUtils.isEmpty(recording.getTitle()) ? View.VISIBLE : View.GONE);
-        titleTextView.setText(recording.getTitle());
-
-        subtitleLabelTextView.setVisibility(!TextUtils.isEmpty(recording.getSubtitle()) ? View.VISIBLE : View.GONE);
-        subtitleTextView.setVisibility(!TextUtils.isEmpty(recording.getSubtitle()) ? View.VISIBLE : View.GONE);
-        subtitleTextView.setText(recording.getSubtitle());
-
-        episodeLabelTextView.setVisibility(!TextUtils.isEmpty(recording.getEpisode()) ? View.VISIBLE : View.GONE);
-        episodeTextView.setVisibility(!TextUtils.isEmpty(recording.getEpisode()) ? View.VISIBLE : View.GONE);
-        episodeTextView.setText(recording.getEpisode());
-
-        commentLabelTextView.setVisibility(!TextUtils.isEmpty(recording.getComment()) ? View.VISIBLE : View.GONE);
-        commentTextView.setVisibility(!TextUtils.isEmpty(recording.getComment()) ? View.VISIBLE : View.GONE);
-        commentTextView.setText(recording.getComment());
-
-        if (failedReasonTextView != null) {
-            String failedReasonText = UIUtils.getRecordingFailedReasonText(activity, recording);
-            failedReasonTextView.setVisibility(!TextUtils.isEmpty(failedReasonText) ? View.VISIBLE : View.GONE);
-            failedReasonTextView.setText(failedReasonText);
-        }
-
-        // Show the information if the recording belongs to a series recording
-        // only when no dual pane is active (the controls shall be shown)
-        isSeriesRecordingTextView.setVisibility(!TextUtils.isEmpty(recording.getAutorecId()) ? ImageView.VISIBLE : ImageView.GONE);
-        isTimerRecordingTextView.setVisibility(!TextUtils.isEmpty(recording.getTimerecId()) ? ImageView.VISIBLE : ImageView.GONE);
-
-        isDisabledTextView.setVisibility(htspVersion >= 23 && !recording.isEnabled() ? View.VISIBLE : View.GONE);
-        isDisabledTextView.setText(recording.isEnabled() ? R.string.recording_enabled : R.string.recording_disabled);
-
-        // Only show the status details in the 
-        // completed and failed details screens
-        if (!recording.isScheduled()) {
-
-            if (recording.getSubscriptionError() != null && recording.getSubscriptionError().length() > 0) {
-                subscriptionErrorTextView.setVisibility(View.VISIBLE);
-                subscriptionErrorTextView.setText(getResources().getString(
-                        R.string.subscription_error, recording.getSubscriptionError()));
-            } else {
-                subscriptionErrorTextView.setVisibility(View.GONE);
-            }
-
-            streamErrorsTextView.setText(getResources().getString(R.string.stream_errors, recording.getStreamErrors() == null ? "0" : recording.getStreamErrors()));
-            dataErrorsTextView.setText(getResources().getString(R.string.data_errors, recording.getDataErrors() == null ? "0" : recording.getDataErrors()));
-
-            if (recording.getDataSize() > 1048576) {
-                dataSizeTextView.setText(getResources().getString(R.string.data_size, recording.getDataSize() / 1048576, "MB"));
-            } else {
-                dataSizeTextView.setText(getResources().getString(R.string.data_size, recording.getDataSize() / 1024, "KB"));
-            }
-
-        } else {
-            statusLabelTextView.setVisibility(View.GONE);
-            subscriptionErrorTextView.setVisibility(View.GONE);
-            streamErrorsTextView.setVisibility(View.GONE);
-            dataErrorsTextView.setVisibility(View.GONE);
-            dataSizeTextView.setVisibility(View.GONE);
-        }
     }
 
     @Override

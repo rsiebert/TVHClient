@@ -1,100 +1,41 @@
 package org.tvheadend.tvhclient.features.programs;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewStub;
-import android.widget.ImageView;
-import android.widget.RatingBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
-
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.Picasso;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Program;
 import org.tvheadend.tvhclient.data.entity.Recording;
+import org.tvheadend.tvhclient.databinding.ProgramDetailsFragmentBinding;
 import org.tvheadend.tvhclient.features.dvr.RecordingAddEditActivity;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
-import org.tvheadend.tvhclient.utils.UIUtils;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
+import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
 import timber.log.Timber;
 
 public class ProgramDetailsFragment extends BaseFragment {
 
-    @BindView(R.id.state)
-    ImageView stateImageView;
-    @BindView(R.id.title)
-    TextView titleTextView;
-    @BindView(R.id.title_label)
-    TextView titleLabelTextView;
-    @BindView(R.id.summary_label)
-    TextView summaryLabelTextView;
-    @BindView(R.id.summary)
-    TextView summaryTextView;
-    @BindView(R.id.description_label)
-    TextView descriptionLabelTextView;
-    @BindView(R.id.description)
-    TextView descriptionTextView;
-    @BindView(R.id.channel_label)
-    TextView channelLabelTextView;
-    @BindView(R.id.channel)
-    TextView channelNameTextView;
-    @BindView(R.id.date)
-    TextView dateTextView;
-    @BindView(R.id.start_time)
-    TextView startTimeTextView;
-    @BindView(R.id.stop_time)
-    TextView stopTimeTextView;
-    @BindView(R.id.duration)
-    TextView durationTextView;
-    @BindView(R.id.progress)
-    TextView progressTextView;
-    @BindView(R.id.content_type_label)
-    TextView contentTypeLabelTextView;
-    @BindView(R.id.content_type)
-    TextView contentTypeTextView;
-    @BindView(R.id.series_info_label)
-    TextView seriesInfoLabelTextView;
-    @BindView(R.id.series_info)
-    TextView seriesInfoTextView;
-    @BindView(R.id.star_rating_label)
-    TextView ratingBarLabelTextView;
-    @BindView(R.id.star_rating_text)
-    TextView ratingBarTextView;
-    @BindView(R.id.star_rating)
-    RatingBar ratingBar;
-    @BindView(R.id.nested_toolbar)
-    Toolbar nestedToolbar;
-    @BindView(R.id.image)
-    ImageView imageView;
-    @BindView(R.id.scrollview)
-    ScrollView scrollView;
-    @BindView(R.id.status)
-    TextView statusTextView;
+    private Toolbar nestedToolbar;
+    private ScrollView scrollView;
+    private TextView statusTextView;
 
     private int eventId;
     private int channelId;
-    private Unbinder unbinder;
     private Program program;
     private Recording recording;
     private int programIdToBeEditedWhenBeingRecorded = 0;
+    private ProgramDetailsFragmentBinding itemBinding;
 
     public static ProgramDetailsFragment newInstance(int eventId, int channelId) {
         ProgramDetailsFragment f = new ProgramDetailsFragment();
@@ -107,18 +48,13 @@ public class ProgramDetailsFragment extends BaseFragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.details_fragment, container, false);
-        ViewStub stub = view.findViewById(R.id.stub);
-        stub.setLayoutResource(R.layout.program_details_fragment_contents);
-        stub.inflate();
-        unbinder = ButterKnife.bind(this, view);
-        return view;
-    }
+        itemBinding = DataBindingUtil.inflate(inflater, R.layout.program_details_fragment, container, false);
+        View view = itemBinding.getRoot();
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        unbinder.unbind();
+        nestedToolbar = view.findViewById(R.id.nested_toolbar);
+        scrollView = view.findViewById(R.id.scrollview);
+        statusTextView = view.findViewById(R.id.status);
+        return view;
     }
 
     @Override
@@ -145,7 +81,12 @@ public class ProgramDetailsFragment extends BaseFragment {
         program = viewModel.getProgramByIdSync(eventId);
         if (program != null) {
             Timber.d("Loaded details for program " + program.getTitle());
-            updateUI();
+            itemBinding.setProgram(program);
+            itemBinding.setHtspVersion(htspVersion);
+            itemBinding.setIsProgramArtworkEnabled(isUnlocked && sharedPreferences.getBoolean("program_artwork_enabled", false));
+            // The toolbar is hidden as a default to prevent pressing any icons if no recording
+            // has been loaded yet. The toolbar is shown here because a recording was loaded
+            nestedToolbar.setVisibility(View.VISIBLE);
             activity.invalidateOptionsMenu();
         } else {
             scrollView.setVisibility(View.GONE);
@@ -185,97 +126,11 @@ public class ProgramDetailsFragment extends BaseFragment {
                 }
                 // Update the state of the recording (if there is one)
                 // and also the menu items in the nested toolbar
-                updateRecordingState();
+                program.setRecording(recording);
+                itemBinding.setProgram(program);
                 activity.invalidateOptionsMenu();
             }
         });
-    }
-
-    private void updateRecordingState() {
-        Drawable drawable = UIUtils.getRecordingState(activity, recording);
-        stateImageView.setVisibility(drawable != null ? View.VISIBLE : View.GONE);
-        stateImageView.setImageDrawable(drawable);
-    }
-
-    private void updateUI() {
-        // The toolbar is hidden as a default to prevent pressing any icons if no recording
-        // has been loaded yet. The toolbar is shown here because a recording was loaded
-        nestedToolbar.setVisibility(View.VISIBLE);
-
-        updateRecordingState();
-
-        startTimeTextView.setText(UIUtils.getTimeText(getContext(), program.getStart()));
-        stopTimeTextView.setText(UIUtils.getTimeText(getContext(), program.getStop()));
-        dateTextView.setText(UIUtils.getDate(getContext(), program.getStart()));
-
-        String durationTime = getString(R.string.minutes, (int) ((program.getStop() - program.getStart()) / 1000 / 60));
-        durationTextView.setText(durationTime);
-
-        String progressText = UIUtils.getProgressText(getContext(), program.getStart(), program.getStop());
-        progressTextView.setVisibility(!TextUtils.isEmpty(progressText) ? View.VISIBLE : View.GONE);
-        progressTextView.setText(progressText);
-
-        titleLabelTextView.setVisibility(!TextUtils.isEmpty(program.getTitle()) ? View.VISIBLE : View.GONE);
-        titleTextView.setVisibility(!TextUtils.isEmpty(program.getTitle()) ? View.VISIBLE : View.GONE);
-        titleTextView.setText(program.getTitle());
-
-        summaryLabelTextView.setVisibility(!TextUtils.isEmpty(program.getSummary()) ? View.VISIBLE : View.GONE);
-        summaryTextView.setVisibility(!TextUtils.isEmpty(program.getSummary()) ? View.VISIBLE : View.GONE);
-        summaryTextView.setText(program.getSummary());
-
-        descriptionLabelTextView.setVisibility(!TextUtils.isEmpty(program.getDescription()) ? View.VISIBLE : View.GONE);
-        descriptionTextView.setVisibility(!TextUtils.isEmpty(program.getDescription()) ? View.VISIBLE : View.GONE);
-        descriptionTextView.setText(program.getDescription());
-
-        channelLabelTextView.setVisibility(!TextUtils.isEmpty(program.getChannelName()) ? View.VISIBLE : View.GONE);
-        channelNameTextView.setVisibility(!TextUtils.isEmpty(program.getChannelName()) ? View.VISIBLE : View.GONE);
-        channelNameTextView.setText(program.getChannelName());
-
-        String seriesInfoText = UIUtils.getSeriesInfo(activity, program);
-        if (TextUtils.isEmpty(seriesInfoText)) {
-            seriesInfoLabelTextView.setVisibility(View.GONE);
-            seriesInfoTextView.setVisibility(View.GONE);
-        } else {
-            seriesInfoTextView.setText(seriesInfoText);
-        }
-
-        String ct = UIUtils.getContentTypeText(activity, program.getContentType());
-        if (TextUtils.isEmpty(ct)) {
-            contentTypeLabelTextView.setVisibility(View.GONE);
-            contentTypeTextView.setVisibility(View.GONE);
-        } else {
-            contentTypeTextView.setText(ct);
-        }
-
-        // Show the rating information as starts
-        if (program.getStarRating() < 0) {
-            ratingBarLabelTextView.setVisibility(View.GONE);
-            ratingBarTextView.setVisibility(View.GONE);
-            ratingBar.setVisibility(View.GONE);
-        } else {
-            ratingBar.setRating((float) program.getStarRating() / 10.0f);
-            String value = " (" + program.getStarRating() + "/" + 10 + ")";
-            ratingBarTextView.setText(value);
-        }
-
-        // Show the program image if one exists
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-        Timber.d("Showing program image " + program.getImage());
-        if (isUnlocked && prefs.getBoolean("program_artwork_enabled", false)) {
-            Picasso.get()
-                    .load(UIUtils.getIconUrl(activity, program.getImage()))
-                    .into(imageView, new Callback() {
-                        @Override
-                        public void onSuccess() {
-                            imageView.setVisibility(View.VISIBLE);
-                        }
-
-                        @Override
-                        public void onError(Exception e) {
-
-                        }
-                    });
-        }
     }
 
     @Override

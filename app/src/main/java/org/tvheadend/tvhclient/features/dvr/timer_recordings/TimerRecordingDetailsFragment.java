@@ -2,63 +2,37 @@ package org.tvheadend.tvhclient.features.dvr.timer_recordings;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewStub;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.TimerRecording;
+import org.tvheadend.tvhclient.databinding.TimerRecordingDetailsFragmentBinding;
 import org.tvheadend.tvhclient.features.dvr.RecordingAddEditActivity;
-import org.tvheadend.tvhclient.features.dvr.RecordingUtils;
-import org.tvheadend.tvhclient.features.shared.BaseFragment;
 import org.tvheadend.tvhclient.features.dvr.RecordingRemovedCallback;
-import org.tvheadend.tvhclient.utils.UIUtils;
+import org.tvheadend.tvhclient.features.shared.BaseFragment;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
 
 public class TimerRecordingDetailsFragment extends BaseFragment implements RecordingRemovedCallback {
 
-    @BindView(R.id.disabled)
-    TextView isDisabledTextView;
-    @BindView(R.id.directory_label)
-    TextView directoryLabelTextView;
-    @BindView(R.id.directory)
-    TextView directoryTextView;
-    @BindView(R.id.start_time)
-    TextView startTimeTextView;
-    @BindView(R.id.stop_time)
-    TextView stopTimeTextView;
-    @BindView(R.id.duration)
-    TextView durationTextView;
-    @BindView(R.id.days_of_week)
-    TextView daysOfWeekTextView;
-    @BindView(R.id.channel)
-    TextView channelNameTextView;
-    @BindView(R.id.priority)
-    TextView priorityTextView;
-    @BindView(R.id.nested_toolbar)
-    Toolbar nestedToolbar;
-    @BindView(R.id.scrollview)
-    ScrollView scrollView;
-    @BindView(R.id.status)
-    TextView statusTextView;
+    private Toolbar nestedToolbar;
+    private ScrollView scrollView;
+    private TextView statusTextView;
 
     private TimerRecording recording;
     private String id;
-    private Unbinder unbinder;
+    private TimerRecordingDetailsFragmentBinding itemBinding;
 
     public static TimerRecordingDetailsFragment newInstance(String id) {
         TimerRecordingDetailsFragment f = new TimerRecordingDetailsFragment();
@@ -70,18 +44,13 @@ public class TimerRecordingDetailsFragment extends BaseFragment implements Recor
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.details_fragment, container, false);
-        ViewStub stub = view.findViewById(R.id.stub);
-        stub.setLayoutResource(R.layout.timer_recording_details_fragment_contents);
-        stub.inflate();
-        unbinder = ButterKnife.bind(this, view);
-        return view;
-    }
+        itemBinding = DataBindingUtil.inflate(inflater, R.layout.timer_recording_details_fragment, container, false);
+        View view = itemBinding.getRoot();
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        unbinder.unbind();
+        nestedToolbar = view.findViewById(R.id.nested_toolbar);
+        scrollView = view.findViewById(R.id.scrollview);
+        statusTextView = view.findViewById(R.id.status);
+        return view;
     }
 
     @Override
@@ -108,7 +77,12 @@ public class TimerRecordingDetailsFragment extends BaseFragment implements Recor
         viewModel.getRecordingById(id).observe(getViewLifecycleOwner(), rec -> {
             if (rec != null) {
                 recording = rec;
-                updateUI();
+                itemBinding.setRecording(recording);
+                itemBinding.setHtspVersion(htspVersion);
+                itemBinding.setGmtOffset(serverStatus.getGmtoffset());
+                // The toolbar is hidden as a default to prevent pressing any icons if no recording
+                // has been loaded yet. The toolbar is shown here because a recording was loaded
+                nestedToolbar.setVisibility(View.VISIBLE);
                 activity.invalidateOptionsMenu();
             } else {
                 scrollView.setVisibility(View.GONE);
@@ -116,31 +90,6 @@ public class TimerRecordingDetailsFragment extends BaseFragment implements Recor
                 statusTextView.setVisibility(View.VISIBLE);
             }
         });
-    }
-
-    private void updateUI() {
-        // The toolbar is hidden as a default to prevent pressing any icons if no recording
-        // has been loaded yet. The toolbar is shown here because a recording was loaded
-        nestedToolbar.setVisibility(View.VISIBLE);
-
-        isDisabledTextView.setVisibility(htspVersion >= 19 && recording.isEnabled() ? View.VISIBLE : View.GONE);
-        isDisabledTextView.setText(recording.isEnabled() ? R.string.recording_enabled : R.string.recording_disabled);
-
-        directoryLabelTextView.setVisibility(htspVersion >= 19 ? View.VISIBLE : View.GONE);
-        directoryTextView.setVisibility(htspVersion >= 19 ? View.VISIBLE : View.GONE);
-        directoryTextView.setText(recording.getDirectory());
-
-        channelNameTextView.setText(!TextUtils.isEmpty(recording.getChannelName()) ? recording.getChannelName() : getString(R.string.all_channels));
-
-        daysOfWeekTextView.setText(UIUtils.getDaysOfWeekText(activity, recording.getDaysOfWeek()));
-
-        priorityTextView.setText(RecordingUtils.getPriorityName(activity, recording.getPriority()));
-
-        int gmtOffset = serverStatus.getGmtoffset();
-        startTimeTextView.setText(UIUtils.getTimeText(activity, recording.getStart() - gmtOffset));
-        stopTimeTextView.setText(UIUtils.getTimeText(activity, recording.getStop() - gmtOffset));
-
-        durationTextView.setText(getString(R.string.minutes, recording.getDuration()));
     }
 
     @Override

@@ -3,6 +3,7 @@ package org.tvheadend.tvhclient.data.entity
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Ignore
+import java.util.*
 
 @Entity(tableName = "channels", primaryKeys = ["id", "connection_id"])
 data class Channel(
@@ -52,4 +53,20 @@ data class Channel(
 
         @Ignore
         var recording: Recording? = null
-)
+) {
+    val duration: Int
+        get() = ((programStop - programStart) / 1000 / 60).toInt()
+
+    val progress: Int
+        get() {
+            var percentage = 0.0
+            // Get the start and end times to calculate the progress.
+            val durationTime = (programStop - programStart).toDouble()
+            val elapsedTime = (Date().time - programStart).toDouble()
+            // Show the progress as a percentage
+            if (durationTime > 0) {
+                percentage = elapsedTime / durationTime
+            }
+            return Math.floor(percentage * 100).toInt()
+        }
+}

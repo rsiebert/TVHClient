@@ -2,9 +2,12 @@ package org.tvheadend.tvhclient.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
+import android.util.SparseArray;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -13,28 +16,139 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.data.entity.Program;
 import org.tvheadend.tvhclient.data.entity.Recording;
 
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
-import androidx.annotation.NonNull;
 import androidx.databinding.BindingAdapter;
 import timber.log.Timber;
 
+@SuppressWarnings("unused")
 public class BindingAdapterUtils {
 
     // Constants required for the date calculation
     private static final int TWO_DAYS = 1000 * 3600 * 24 * 2;
     private static final int SIX_DAYS = 1000 * 3600 * 24 * 6;
 
+    @BindingAdapter("seriesInfoText")
+    public static void setSeriesInfoText(TextView view, final Program program) {
+        Context context = view.getContext();
+        final String season = context.getResources().getString(R.string.season);
+        final String episode = context.getResources().getString(R.string.episode);
+        final String part = context.getResources().getString(R.string.part);
+
+        String seriesInfo = "";
+        if (program != null) {
+            if (!TextUtils.isEmpty(program.getEpisodeOnscreen())) {
+                seriesInfo = program.getEpisodeOnscreen();
+            } else {
+                if (program.getSeasonNumber() > 0) {
+                    seriesInfo += String.format(Locale.getDefault(), "%s %02d",
+                            season.toLowerCase(Locale.getDefault()), program.getSeasonNumber());
+                }
+                if (program.getEpisodeNumber() > 0) {
+                    if (seriesInfo.length() > 0)
+                        seriesInfo += ", ";
+                    seriesInfo += String.format(Locale.getDefault(), "%s %02d",
+                            episode.toLowerCase(Locale.getDefault()), program.getEpisodeNumber());
+                }
+                if (program.getPartNumber() > 0) {
+                    if (seriesInfo.length() > 0)
+                        seriesInfo += ", ";
+                    seriesInfo += String.format(Locale.getDefault(), "%s %d",
+                            part.toLowerCase(Locale.getDefault()), program.getPartNumber());
+                }
+                if (seriesInfo.length() > 0) {
+                    seriesInfo = seriesInfo.substring(0, 1).toUpperCase(
+                            Locale.getDefault()) + seriesInfo.substring(1);
+                }
+            }
+        }
+        view.setVisibility(TextUtils.isEmpty(seriesInfo) ? View.GONE : View.VISIBLE);
+        view.setText(seriesInfo);
+    }
+
+    @BindingAdapter("contentTypeText")
+    public static void setContentTypeText(TextView view, int contentType) {
+        SparseArray<String> ret = new SparseArray<>();
+        Context context = view.getContext();
+
+        String[] s = context.getResources().getStringArray(R.array.pr_content_type0);
+        for (int i = 0; i < s.length; i++) {
+            ret.append(i, s[i]);
+        }
+        s = context.getResources().getStringArray(R.array.pr_content_type1);
+        for (int i = 0; i < s.length; i++) {
+            ret.append(0x10 + i, s[i]);
+        }
+        s = context.getResources().getStringArray(R.array.pr_content_type2);
+        for (int i = 0; i < s.length; i++) {
+            ret.append(0x20 + i, s[i]);
+        }
+        s = context.getResources().getStringArray(R.array.pr_content_type3);
+        for (int i = 0; i < s.length; i++) {
+            ret.append(0x30 + i, s[i]);
+        }
+        s = context.getResources().getStringArray(R.array.pr_content_type4);
+        for (int i = 0; i < s.length; i++) {
+            ret.append(0x40 + i, s[i]);
+        }
+        s = context.getResources().getStringArray(R.array.pr_content_type5);
+        for (int i = 0; i < s.length; i++) {
+            ret.append(0x50 + i, s[i]);
+        }
+        s = context.getResources().getStringArray(R.array.pr_content_type6);
+        for (int i = 0; i < s.length; i++) {
+            ret.append(0x60 + i, s[i]);
+        }
+        s = context.getResources().getStringArray(R.array.pr_content_type7);
+        for (int i = 0; i < s.length; i++) {
+            ret.append(0x70 + i, s[i]);
+        }
+        s = context.getResources().getStringArray(R.array.pr_content_type8);
+        for (int i = 0; i < s.length; i++) {
+            ret.append(0x80 + i, s[i]);
+        }
+        s = context.getResources().getStringArray(R.array.pr_content_type9);
+        for (int i = 0; i < s.length; i++) {
+            ret.append(0x90 + i, s[i]);
+        }
+        s = context.getResources().getStringArray(R.array.pr_content_type10);
+        for (int i = 0; i < s.length; i++) {
+            ret.append(0xa0 + i, s[i]);
+        }
+        s = context.getResources().getStringArray(R.array.pr_content_type11);
+        for (int i = 0; i < s.length; i++) {
+            ret.append(0xb0 + i, s[i]);
+        }
+        String contentTypeText = ret.get(contentType, context.getString(R.string.no_data));
+        view.setVisibility(contentTypeText.isEmpty() ? View.GONE : View.VISIBLE);
+        view.setText(contentTypeText);
+    }
+
+    @BindingAdapter("priorityText")
+    public static void setPriorityText(TextView view, int priority) {
+        String[] priorityNames = view.getContext().getResources().getStringArray(R.array.dvr_priority_names);
+        if (priority >= 0 && priority <= 4) {
+            view.setText(priorityNames[priority]);
+        } else if (priority == 6) {
+            view.setText(priorityNames[5]);
+        } else {
+            view.setText("");
+        }
+    }
+
     @BindingAdapter("dataSizeText")
-    public static void setDataSizeText(TextView view, @NonNull Recording recording) {
+    public static void setDataSizeText(TextView view, Recording recording) {
         Context context = view.getContext();
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         boolean showRecordingFileStatus = sharedPreferences.getBoolean("show_recording_file_status_enabled", false);
 
-        if (showRecordingFileStatus && (!recording.isScheduled() || recording.isScheduled() && recording.isRecording())) {
+        if (showRecordingFileStatus
+                && recording != null
+                && (!recording.isScheduled() || recording.isScheduled() && recording.isRecording())) {
             view.setVisibility(View.VISIBLE);
             if (recording.getDataSize() > 1048576) {
                 view.setText(context.getResources().getString(R.string.data_size, recording.getDataSize() / 1048576, "MB"));
@@ -47,12 +161,15 @@ public class BindingAdapterUtils {
     }
 
     @BindingAdapter("dataErrorText")
-    public static void setDataErrorText(TextView view, @NonNull Recording recording) {
+    public static void setDataErrorText(TextView view, Recording recording) {
         Context context = view.getContext();
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         boolean showRecordingFileStatus = sharedPreferences.getBoolean("show_recording_file_status_enabled", false);
 
-        if (showRecordingFileStatus && (!recording.isScheduled() || recording.isScheduled() && recording.isRecording())) {
+        if (showRecordingFileStatus
+                && recording != null
+                && !TextUtils.isEmpty(recording.getDataErrors())
+                && (!recording.isScheduled() || recording.isScheduled() && recording.isRecording())) {
             view.setVisibility(View.VISIBLE);
             view.setText(context.getResources().getString(R.string.data_errors, recording.getDataErrors() == null ? "0" : recording.getDataErrors()));
         } else {
@@ -60,9 +177,58 @@ public class BindingAdapterUtils {
         }
     }
 
+    @BindingAdapter("subscriptionErrorText")
+    public static void setSubscriptionErrorText(TextView view, Recording recording) {
+        Context context = view.getContext();
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        boolean showRecordingFileStatus = sharedPreferences.getBoolean("show_recording_file_status_enabled", false);
+
+        if (showRecordingFileStatus
+                && recording != null
+                && !recording.isScheduled()
+                && !TextUtils.isEmpty(recording.getSubscriptionError())) {
+            view.setVisibility(View.VISIBLE);
+            view.setText(context.getResources().getString(R.string.subscription_error, recording.getSubscriptionError()));
+        } else {
+            view.setVisibility(View.GONE);
+        }
+    }
+
+    @BindingAdapter("streamErrorText")
+    public static void setStreamErrorText(TextView view, Recording recording) {
+        Context context = view.getContext();
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        boolean showRecordingFileStatus = sharedPreferences.getBoolean("show_recording_file_status_enabled", false);
+
+        if (showRecordingFileStatus
+                && recording != null
+                && !recording.isScheduled()
+                && !TextUtils.isEmpty(recording.getStreamErrors())) {
+            view.setVisibility(View.VISIBLE);
+            view.setText(context.getResources().getString(R.string.stream_errors, recording.getStreamErrors()));
+        } else {
+            view.setVisibility(View.GONE);
+        }
+    }
+
+    @BindingAdapter("statusLabelVisiblity")
+    public static void setStatusLabelVisibility(TextView view, Recording recording) {
+        Context context = view.getContext();
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        boolean showRecordingFileStatus = sharedPreferences.getBoolean("show_recording_file_status_enabled", context.getResources().getBoolean(R.bool.pref_default_show_recording_file_status_enabled));
+
+        if (showRecordingFileStatus
+                && recording != null
+                && !recording.isScheduled()) {
+            view.setVisibility(View.VISIBLE);
+        } else {
+            view.setVisibility(View.GONE);
+        }
+    }
+
     @BindingAdapter({"disabledText", "htspVersion"})
-    public static void setDisabledText(TextView view, @NonNull Recording recording, int htspVersion) {
-        if (!recording.isScheduled()) {
+    public static void setDisabledText(TextView view, Recording recording, int htspVersion) {
+        if (recording == null || !recording.isScheduled()) {
             view.setVisibility(View.GONE);
         } else {
             setDisabledText(view, recording.isEnabled(), htspVersion);
@@ -76,8 +242,8 @@ public class BindingAdapterUtils {
     }
 
     @BindingAdapter({"duplicateText", "htspVersion"})
-    public static void setDuplicateText(TextView view, @NonNull Recording recording, int htspVersion) {
-        if (!recording.isScheduled()) {
+    public static void setDuplicateText(TextView view, Recording recording, int htspVersion) {
+        if (recording == null || !recording.isScheduled()) {
             view.setVisibility(View.GONE);
         } else {
             view.setVisibility(htspVersion < 33 || recording.getDuplicate() == 0 ? View.GONE : View.VISIBLE);
@@ -86,23 +252,26 @@ public class BindingAdapterUtils {
     }
 
     @BindingAdapter("failedReasonText")
-    public static void setFailedReasonText(TextView view, @NonNull Recording recording) {
+    public static void setFailedReasonText(TextView view, Recording recording) {
         Context context = view.getContext();
-        String failedReasonText;
+        String failedReasonText = "";
 
-        if (recording.isAborted()) {
-            failedReasonText = context.getResources().getString(R.string.recording_canceled);
-        } else if (recording.isMissed()) {
-            failedReasonText = context.getResources().getString(R.string.recording_time_missed);
-        } else if (recording.isFailed()) {
-            failedReasonText = context.getResources().getString(R.string.recording_file_invalid);
-        } else if (recording.isFileMissing()) {
-            failedReasonText = context.getResources().getString(R.string.recording_file_missing);
-        } else {
-            failedReasonText = "";
+        if (recording != null) {
+            if (recording.isAborted()) {
+                failedReasonText = context.getResources().getString(R.string.recording_canceled);
+            } else if (recording.isMissed()) {
+                failedReasonText = context.getResources().getString(R.string.recording_time_missed);
+            } else if (recording.isFailed()) {
+                failedReasonText = context.getResources().getString(R.string.recording_file_invalid);
+            } else if (recording.isFileMissing()) {
+                failedReasonText = context.getResources().getString(R.string.recording_file_missing);
+            }
         }
 
-        view.setVisibility((!TextUtils.isEmpty(failedReasonText) && !recording.isCompleted()) ? View.VISIBLE : View.GONE);
+        view.setVisibility(
+                (!TextUtils.isEmpty(failedReasonText)
+                        && recording != null
+                        && !recording.isCompleted()) ? View.VISIBLE : View.GONE);
         view.setText(failedReasonText);
     }
 
@@ -110,6 +279,36 @@ public class BindingAdapterUtils {
     public static void setOptionalText(TextView view, String text) {
         view.setVisibility(!TextUtils.isEmpty(text) ? View.VISIBLE : View.GONE);
         view.setText(text);
+    }
+
+    @BindingAdapter("stateIcon")
+    public static void setOptionalText(ImageView view, Recording recording) {
+        Drawable drawable = null;
+        if (recording != null) {
+            if (recording.isFailed()) {
+                drawable = view.getContext().getResources().getDrawable(R.drawable.ic_error_small);
+            } else if (recording.isCompleted()) {
+                drawable = view.getContext().getResources().getDrawable(R.drawable.ic_success_small);
+            } else if (recording.isMissed()) {
+                drawable = view.getContext().getResources().getDrawable(R.drawable.ic_error_small);
+            } else if (recording.isRecording()) {
+                drawable = view.getContext().getResources().getDrawable(R.drawable.ic_rec_small);
+            } else if (recording.isScheduled()) {
+                drawable = view.getContext().getResources().getDrawable(R.drawable.ic_schedule_small);
+            }
+        }
+
+        view.setVisibility(drawable != null ? View.VISIBLE : View.GONE);
+        view.setImageDrawable(drawable);
+    }
+
+    @BindingAdapter({"iconUrl", "iconVisibility"})
+    public static void setChannelIcon(ImageView view, String iconUrl, boolean visible) {
+        if (visible) {
+            setChannelIcon(view, iconUrl);
+        } else {
+            view.setVisibility(View.GONE);
+        }
     }
 
     /**
@@ -141,6 +340,15 @@ public class BindingAdapterUtils {
         }
     }
 
+    @BindingAdapter({"iconName", "iconUrl", "iconVisibility"})
+    public static void setChannelName(TextView view, String name, String iconUrl, boolean visible) {
+        if (visible) {
+            setChannelName(view, name, iconUrl);
+        } else {
+            view.setVisibility(View.GONE);
+        }
+    }
+
     /**
      * Shows the channel name in the view if no channel icon exists.
      *
@@ -148,7 +356,7 @@ public class BindingAdapterUtils {
      * @param name    The name of the channel
      * @param iconUrl The url to the channel icon
      */
-    @BindingAdapter({"channelName", "channelIcon"})
+    @BindingAdapter({"iconName", "iconUrl"})
     public static void setChannelName(TextView view, String name, String iconUrl) {
         view.setVisibility(TextUtils.isEmpty(iconUrl) ? View.VISIBLE : View.GONE);
         view.setText((!TextUtils.isEmpty(name) ? name : view.getContext().getString(R.string.all_channels)));
@@ -165,7 +373,7 @@ public class BindingAdapterUtils {
     public static void setDualPaneBackground(ImageView view, boolean isSelected) {
         if (isSelected) {
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(view.getContext());
-            boolean lightTheme = sharedPreferences.getBoolean("light_theme_enabled", true);
+            boolean lightTheme = sharedPreferences.getBoolean("light_theme_enabled", view.getContext().getResources().getBoolean(R.bool.pref_default_light_theme_enabled));
             final int icon = (lightTheme) ? R.drawable.dual_pane_selector_active_light : R.drawable.dual_pane_selector_active_dark;
             view.setBackgroundResource(icon);
         } else {
@@ -206,8 +414,8 @@ public class BindingAdapterUtils {
     public static void setLocalizedTime(TextView view, long time) {
         String localizedTime = "";
 
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(view.getContext());
-        if (prefs.getBoolean("localized_date_time_format_enabled", false)) {
+        final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(view.getContext());
+        if (sharedPreferences.getBoolean("localized_date_time_format_enabled", view.getContext().getResources().getBoolean(R.bool.pref_default_localized_date_time_format_enabled))) {
             // Show the date as defined with the currently active locale.
             // For the date display the short version will be used
             Locale locale;
@@ -313,5 +521,78 @@ public class BindingAdapterUtils {
                 break;
         }
         view.setText(localizedDate);
+    }
+
+    /**
+     * Calculates the genre color from the given content type and sets it as the
+     * background color of the given view
+     *
+     * @param view            The view that displays the genre color as a background
+     * @param contentType     The content type to calculate the color from
+     * @param showGenreColors True to show the color, false otherwise
+     * @param offset          Positive offset from 0 to 100 to increase the transparency of the color
+     */
+    @BindingAdapter({"genreColor", "showGenreColor", "genreColorAlphaOffset"})
+    public static void setGenreColor(TextView view, int contentType, boolean showGenreColors, int offset) {
+        Context context = view.getContext();
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+
+        if (showGenreColors) {
+            int color = context.getResources().getColor(android.R.color.transparent);
+            if (contentType >= 0) {
+                // Get the genre color from the content type
+                color = R.color.EPG_OTHER;
+                int type = (contentType / 16);
+                switch (type) {
+                    case 0:
+                        color = R.color.EPG_MOVIES;
+                        break;
+                    case 1:
+                        color = R.color.EPG_NEWS;
+                        break;
+                    case 2:
+                        color = R.color.EPG_SHOWS;
+                        break;
+                    case 3:
+                        color = R.color.EPG_SPORTS;
+                        break;
+                    case 4:
+                        color = R.color.EPG_CHILD;
+                        break;
+                    case 5:
+                        color = R.color.EPG_MUSIC;
+                        break;
+                    case 6:
+                        color = R.color.EPG_ARTS;
+                        break;
+                    case 7:
+                        color = R.color.EPG_SOCIAL;
+                        break;
+                    case 8:
+                        color = R.color.EPG_SCIENCE;
+                        break;
+                    case 9:
+                        color = R.color.EPG_HOBBY;
+                        break;
+                    case 10:
+                        color = R.color.EPG_SPECIAL;
+                        break;
+                }
+
+                // Get the color with the desired alpha value
+                int c = context.getResources().getColor(color);
+                int alpha = (int) (((float) sharedPreferences.getInt("genre_color_transparency", Integer.valueOf(view.getContext().getResources().getString(R.string.pref_default_genre_color_transparency))) / 100.0f * 255.0f));
+                int reducedOffset = ((offset - 25 > 0) ? offset - 25 : offset);
+                if (alpha >= reducedOffset) {
+                    alpha -= reducedOffset;
+                }
+                color = Color.argb(alpha, Color.red(c), Color.green(c), Color.blue(c));
+            }
+
+            view.setBackgroundColor(color);
+            view.setVisibility(View.VISIBLE);
+        } else {
+            view.setVisibility(View.GONE);
+        }
     }
 }

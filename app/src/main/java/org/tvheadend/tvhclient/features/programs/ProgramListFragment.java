@@ -283,8 +283,8 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
         ft.commit();
     }
 
-    private void showPopupMenu(View view) {
-        final Program program = (Program) view.getTag();
+    private void showPopupMenu(View view, int position) {
+        final Program program = recyclerViewAdapter.getItem(position);
         if (activity == null || program == null) {
             return;
         }
@@ -421,7 +421,7 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
 
     @Override
     public boolean onLongClick(View view, int position) {
-        showPopupMenu(view);
+        showPopupMenu(view, position);
         return true;
     }
 

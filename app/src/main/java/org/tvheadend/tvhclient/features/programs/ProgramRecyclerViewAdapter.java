@@ -1,8 +1,9 @@
 package org.tvheadend.tvhclient.features.programs;
 
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
@@ -10,6 +11,7 @@ import android.widget.Filterable;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Program;
 import org.tvheadend.tvhclient.data.entity.Recording;
+import org.tvheadend.tvhclient.databinding.ProgramListAdapterBinding;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback;
 
 import java.util.ArrayList;
@@ -20,7 +22,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
-class ProgramRecyclerViewAdapter extends RecyclerView.Adapter<ProgramViewHolder> implements Filterable {
+class ProgramRecyclerViewAdapter extends RecyclerView.Adapter<ProgramRecyclerViewAdapter.ProgramViewHolder> implements Filterable {
 
     private final LastProgramVisibleListener onLastProgramVisibleListener;
     private final RecyclerViewClickCallback clickCallback;
@@ -38,15 +40,20 @@ class ProgramRecyclerViewAdapter extends RecyclerView.Adapter<ProgramViewHolder>
     @NonNull
     @Override
     public ProgramViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        final View view = LayoutInflater.from(parent.getContext()).inflate(viewType, parent, false);
-        return new ProgramViewHolder(view, showProgramChannelIcon);
+        LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
+        ProgramListAdapterBinding itemBinding = ProgramListAdapterBinding.inflate(layoutInflater, parent, false);
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(parent.getContext());
+        boolean showGenreColors = sharedPreferences.getBoolean("genre_colors_for_programs_enabled", parent.getContext().getResources().getBoolean(R.bool.pref_default_genre_colors_for_programs_enabled));
+
+        return new ProgramViewHolder(itemBinding, showProgramChannelIcon, showGenreColors);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ProgramViewHolder holder, int position) {
         if (programListFiltered.size() > position) {
             Program program = programListFiltered.get(position);
-            holder.bindData(program, clickCallback);
+            holder.bind(program, position, clickCallback);
             if (position == programList.size() - 1) {
                 onLastProgramVisibleListener.onLastProgramVisible(position);
             }
@@ -104,7 +111,7 @@ class ProgramRecyclerViewAdapter extends RecyclerView.Adapter<ProgramViewHolder>
                     for (Program program : new CopyOnWriteArrayList<>(programList)) {
                         // name match condition. this might differ depending on your requirement
                         // here we are looking for a channel name match
-                        if (!TextUtils.isEmpty(program.getTitle())
+                        if (program.getTitle() != null
                                 && program.getTitle().toLowerCase().contains(charString.toLowerCase())) {
                             filteredList.add(program);
                         }
@@ -166,6 +173,29 @@ class ProgramRecyclerViewAdapter extends RecyclerView.Adapter<ProgramViewHolder>
                 notifyItemChanged(i);
             }
             programs.set(i, program);
+        }
+    }
+
+    public static class ProgramViewHolder extends RecyclerView.ViewHolder {
+
+        private final ProgramListAdapterBinding binding;
+        private final boolean showProgramChannelIcon;
+        private final boolean showGenreColors;
+
+        ProgramViewHolder(ProgramListAdapterBinding binding, boolean showProgramChannelIcon, boolean showGenreColors) {
+            super(binding.getRoot());
+            this.binding = binding;
+            this.showProgramChannelIcon = showProgramChannelIcon;
+            this.showGenreColors = showGenreColors;
+        }
+
+        public void bind(Program program, int position, RecyclerViewClickCallback clickCallback) {
+            binding.setProgram(program);
+            binding.setPosition(position);
+            binding.setShowProgramChannelIcon(showProgramChannelIcon);
+            binding.setShowGenreColor(showGenreColors);
+            binding.setCallback(clickCallback);
+            binding.executePendingBindings();
         }
     }
 }

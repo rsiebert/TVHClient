@@ -5,21 +5,15 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.preference.PreferenceManager;
-import android.text.TextUtils;
 import android.text.format.DateUtils;
-import android.util.SparseArray;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.data.entity.Program;
 import org.tvheadend.tvhclient.data.entity.Recording;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Locale;
 
 import javax.annotation.Nullable;
-
-import androidx.annotation.NonNull;
 
 import static org.tvheadend.tvhclient.utils.MiscUtils.convertUrlToHashString;
 
@@ -101,22 +95,6 @@ public class UIUtils {
             return context.getResources().getDrawable(R.drawable.ic_rec_small);
         } else if (recording.isScheduled()) {
             return context.getResources().getDrawable(R.drawable.ic_schedule_small);
-        } else {
-            return null;
-        }
-    }
-
-    public static String getRecordingFailedReasonText(Context context, @Nullable final Recording recording) {
-        if (recording == null) {
-            return null;
-        } else if (recording.isAborted()) {
-            return context.getResources().getString(R.string.recording_canceled);
-        } else if (recording.isMissed()) {
-            return context.getResources().getString(R.string.recording_time_missed);
-        } else if (recording.isFailed()) {
-            return context.getResources().getString(R.string.recording_file_invalid);
-        } else if (recording.isFileMissing()) {
-            return context.getResources().getString(R.string.recording_file_missing);
         } else {
             return null;
         }
@@ -232,116 +210,6 @@ public class UIUtils {
         return localizedTime;
     }
 
-    public static String getProgressText(Context context, long start, long stop) {
-        // Get the start and end times to calculate the progress.
-        final double durationTime = (stop - start);
-        final double elapsedTime = new Date().getTime() - start;
-
-        // Show the progress as a percentage
-        double percent = 0;
-        if (durationTime > 0) {
-            percent = elapsedTime / durationTime;
-        }
-        int progress = (int) Math.floor(percent * 100);
-        if (progress > 100) {
-            progress = 100;
-        }
-
-        if (progress > 0) {
-            return context.getResources().getString(R.string.progress, progress);
-        } else {
-            return "";
-        }
-    }
-
-    public static String getSeriesInfo(Context context, @NonNull final Program program) {
-
-        final String season = context.getResources().getString(R.string.season);
-        final String episode = context.getResources().getString(R.string.episode);
-        final String part = context.getResources().getString(R.string.part);
-
-        String seriesInfo = "";
-        if (!TextUtils.isEmpty(program.getEpisodeOnscreen())) {
-            seriesInfo = program.getEpisodeOnscreen();
-        } else {
-            if (program.getSeasonNumber() > 0) {
-                seriesInfo += String.format(Locale.getDefault(), "%s %02d",
-                        season.toLowerCase(Locale.getDefault()), program.getSeasonNumber());
-            }
-            if (program.getEpisodeNumber() > 0) {
-                if (seriesInfo.length() > 0)
-                    seriesInfo += ", ";
-                seriesInfo += String.format(Locale.getDefault(), "%s %02d",
-                        episode.toLowerCase(Locale.getDefault()), program.getEpisodeNumber());
-            }
-            if (program.getPartNumber() > 0) {
-                if (seriesInfo.length() > 0)
-                    seriesInfo += ", ";
-                seriesInfo += String.format(Locale.getDefault(), "%s %d",
-                        part.toLowerCase(Locale.getDefault()), program.getPartNumber());
-            }
-            if (seriesInfo.length() > 0) {
-                seriesInfo = seriesInfo.substring(0, 1).toUpperCase(
-                        Locale.getDefault()) + seriesInfo.substring(1);
-            }
-        }
-        return seriesInfo;
-    }
-
-    public static String getContentTypeText(Context context, int contentType) {
-        SparseArray<String> ret = new SparseArray<>();
-
-        String[] s = context.getResources().getStringArray(R.array.pr_content_type0);
-        for (int i = 0; i < s.length; i++) {
-            ret.append(i, s[i]);
-        }
-        s = context.getResources().getStringArray(R.array.pr_content_type1);
-        for (int i = 0; i < s.length; i++) {
-            ret.append(0x10 + i, s[i]);
-        }
-        s = context.getResources().getStringArray(R.array.pr_content_type2);
-        for (int i = 0; i < s.length; i++) {
-            ret.append(0x20 + i, s[i]);
-        }
-        s = context.getResources().getStringArray(R.array.pr_content_type3);
-        for (int i = 0; i < s.length; i++) {
-            ret.append(0x30 + i, s[i]);
-        }
-        s = context.getResources().getStringArray(R.array.pr_content_type4);
-        for (int i = 0; i < s.length; i++) {
-            ret.append(0x40 + i, s[i]);
-        }
-        s = context.getResources().getStringArray(R.array.pr_content_type5);
-        for (int i = 0; i < s.length; i++) {
-            ret.append(0x50 + i, s[i]);
-        }
-        s = context.getResources().getStringArray(R.array.pr_content_type6);
-        for (int i = 0; i < s.length; i++) {
-            ret.append(0x60 + i, s[i]);
-        }
-        s = context.getResources().getStringArray(R.array.pr_content_type7);
-        for (int i = 0; i < s.length; i++) {
-            ret.append(0x70 + i, s[i]);
-        }
-        s = context.getResources().getStringArray(R.array.pr_content_type8);
-        for (int i = 0; i < s.length; i++) {
-            ret.append(0x80 + i, s[i]);
-        }
-        s = context.getResources().getStringArray(R.array.pr_content_type9);
-        for (int i = 0; i < s.length; i++) {
-            ret.append(0x90 + i, s[i]);
-        }
-        s = context.getResources().getStringArray(R.array.pr_content_type10);
-        for (int i = 0; i < s.length; i++) {
-            ret.append(0xa0 + i, s[i]);
-        }
-        s = context.getResources().getStringArray(R.array.pr_content_type11);
-        for (int i = 0; i < s.length; i++) {
-            ret.append(0xb0 + i, s[i]);
-        }
-        return ret.get(contentType, context.getString(R.string.no_data));
-    }
-
     public static String getIconUrl(Context context, @Nullable final String url) {
         if (url == null) {
             return null;
@@ -349,16 +217,4 @@ public class UIUtils {
         return "file://" + context.getCacheDir() + "/" + convertUrlToHashString(url) + ".png";
     }
 
-    public static String getDaysOfWeekText(Context context, long daysOfWeek) {
-        String[] daysOfWeekList = context.getResources().getStringArray(R.array.day_short_names);
-        StringBuilder text = new StringBuilder();
-        for (int i = 0; i < 7; i++) {
-            String s = (((daysOfWeek >> i) & 1) == 1) ? daysOfWeekList[i] : "";
-            if (text.length() > 0 && s.length() > 0) {
-                text.append(", ");
-            }
-            text.append(s);
-        }
-        return text.toString();
-    }
 }

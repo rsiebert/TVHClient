@@ -59,8 +59,8 @@
             android:layout_marginStart="16dp"
             android:layout_marginLeft="16dp"
             android:layout_marginTop="16dp"
-            app:channelIcon="@{recording.channelIcon}"
-            app:channelName="@{recording.channelName}"
+            app:iconName="@{recording.channelName}"
+            app:iconUrl="@{recording.channelIcon}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -77,22 +77,8 @@
             android:layout_weight="0.9"
             android:ellipsize="end"
             android:text="@{recording.title}"
-            app:layout_constraintEnd_toStartOf="@+id/state"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <ImageView
-            android:id="@+id/state"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
-            android:contentDescription="@null"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_rec_small"
-            android:visibility="@{recording.isRecording ? View.VISIBLE : View.GONE}"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
@@ -104,11 +90,10 @@
             android:layout_marginRight="16dp"
             android:ellipsize="end"
             android:singleLine="true"
-            android:text="@{recording.subtitle}"
-            android:visibility="@{recording.subtitle != null ? View.VISIBLE : View.GONE}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/title"
-            app:layout_constraintTop_toBottomOf="@+id/title" />
+            app:layout_constraintTop_toBottomOf="@+id/title"
+            app:optionalText="@{recording.subtitle}" />
 
         <TextView
             android:id="@+id/summary"
