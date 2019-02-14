@@ -91,6 +91,32 @@
                     app:layout_constraintTop_toBottomOf="@+id/title_label" />
 
                 <TextView
+                    android:id="@+id/subtitle"
+                    style="?attr/ContentFont"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="16dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/title"
+                    app:optionalText="@{program.subtitle}" />
+
+                <TextView
+                    android:id="@+id/series_info"
+                    style="?attr/ContentFont"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="16dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/subtitle"
+                    app:seriesInfoText="@{program}" />
+
+                <TextView
                     android:id="@+id/summary_label"
                     style="?attr/TitleFont"
                     android:layout_width="0dp"
@@ -102,7 +128,7 @@
                     android:visibility="@{program.summary != null ? View.VISIBLE : View.GONE}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/title" />
+                    app:layout_constraintTop_toBottomOf="@+id/series_info" />
 
                 <TextView
                     android:id="@+id/summary"
@@ -118,33 +144,6 @@
                     app:optionalText="@{program.summary}" />
 
                 <TextView
-                    android:id="@+id/series_info_label"
-                    style="?attr/TitleFont"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:text="@string/series_information"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/summary" />
-
-                <TextView
-                    android:id="@+id/series_info"
-                    style="?attr/ContentFont"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="16dp"
-                    android:visibility="@{program.isSeriesInfoAvailable ? View.VISIBLE : View.GONE}"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/series_info_label"
-                    app:seriesInfoText="@{program}" />
-
-                <TextView
                     android:id="@+id/description_label"
                     style="?attr/TitleFont"
                     android:layout_width="0dp"
@@ -156,7 +155,7 @@
                     android:visibility="@{program.description != null ? View.VISIBLE : View.GONE}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/series_info" />
+                    app:layout_constraintTop_toBottomOf="@+id/summary" />
 
                 <TextView
                     android:id="@+id/description"

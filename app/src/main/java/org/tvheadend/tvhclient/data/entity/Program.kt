@@ -89,10 +89,4 @@ data class Program(
             }
             return Math.floor(percentage * 100).toInt()
         }
-
-    val isSeriesInfoAvailable: Boolean
-        get() = (!episodeOnscreen.isNullOrEmpty()
-                && episodeNumber > 0
-                && seasonNumber > 0
-                && partNumber > 0)
 }
