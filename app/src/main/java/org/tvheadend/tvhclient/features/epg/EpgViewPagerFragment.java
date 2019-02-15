@@ -9,11 +9,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.utils.UIUtils;
+import org.tvheadend.tvhclient.databinding.EpgViewpagerFragmentBinding;
 
 import java.util.Calendar;
 
@@ -22,6 +21,7 @@ import javax.inject.Inject;
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProviders;
@@ -29,29 +29,18 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
 
 import static androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE;
 
 public class EpgViewPagerFragment extends Fragment implements EpgScrollInterface {
 
-    @BindView(R.id.constraint_layout)
-    ConstraintLayout constraintLayout;
-    @BindView(R.id.viewpager_title_date)
-    TextView titleDate;
-    @BindView(R.id.viewpager_title_hours)
-    TextView titleHours;
-    @BindView(R.id.viewpager_recycler_view)
-    RecyclerView recyclerView;
-    @BindView(R.id.current_time)
-    ImageView currentTimeIndication;
+    private ConstraintLayout constraintLayout;
+    private RecyclerView recyclerView;
+    private ImageView currentTimeIndication;
 
     @Inject
-    SharedPreferences sharedPreferences;
+    protected SharedPreferences sharedPreferences;
 
-    private Unbinder unbinder;
     private EpgViewPagerRecyclerViewAdapter recyclerViewAdapter;
 
     private boolean showTimeIndication;
@@ -68,6 +57,7 @@ public class EpgViewPagerFragment extends Fragment implements EpgScrollInterface
     private LinearLayoutManager recyclerViewLinearLayoutManager;
     private String searchQuery;
     private FragmentActivity activity;
+    private EpgViewpagerFragmentBinding itemBinding;
 
     public static EpgViewPagerFragment newInstance(Long startTime, Long endTime, boolean timeIndicationEnabled, String searchQuery) {
         EpgViewPagerFragment fragment = new EpgViewPagerFragment();
@@ -83,16 +73,13 @@ public class EpgViewPagerFragment extends Fragment implements EpgScrollInterface
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.epg_viewpager_fragment, container, false);
-        unbinder = ButterKnife.bind(this, view);
-        return view;
-    }
+        itemBinding = DataBindingUtil.inflate(inflater, R.layout.epg_viewpager_fragment, container, false);
+        View view = itemBinding.getRoot();
 
-    @Override
-    public void onDestroyView() {
-        recyclerView.setAdapter(null);
-        super.onDestroyView();
-        unbinder.unbind();
+        constraintLayout = view.findViewById(R.id.constraint_layout);
+        recyclerView = view.findViewById(R.id.viewpager_recycler_view);
+        currentTimeIndication = view.findViewById(R.id.current_time);
+        return view;
     }
 
     @Override
@@ -121,20 +108,18 @@ public class EpgViewPagerFragment extends Fragment implements EpgScrollInterface
             searchQuery = bundle.getString(SearchManager.QUERY);
         }
 
-        String date = UIUtils.getDate(activity, startTime);
-        String time = UIUtils.getTimeText(activity, startTime) + " - " + UIUtils.getTimeText(activity, endTime);
-        titleDate.setText(date);
-        titleHours.setText(time);
-
+        itemBinding.setStartTime(startTime);
+        itemBinding.setEndTime(endTime);
         // Calculates the available display width of one minute in pixels. This depends
         // how wide the screen is and how many hours shall be shown in one screen.
         DisplayMetrics displaymetrics = new DisplayMetrics();
         activity.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
         int displayWidth = displaymetrics.widthPixels;
-        int hoursToShow = Integer.parseInt(sharedPreferences.getString("hours_of_epg_data_per_screen", getResources().getString(R.string.pref_default_hours_of_epg_data_per_screen)));
 
         // The defined value should not be zero due to checking the value
         // in the settings. Check it anyway to prevent a divide by zero.
+        //noinspection ConstantConditions
+        int hoursToShow = Integer.parseInt(sharedPreferences.getString("hours_of_epg_data_per_screen", getResources().getString(R.string.pref_default_hours_of_epg_data_per_screen)));
         if (hoursToShow == 0) {
             hoursToShow++;
         }
