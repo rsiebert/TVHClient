@@ -191,7 +191,7 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
     private void showChannelTagOrChannelCount() {
         // Show either all channels or the name of the selected
         // channel tag and the channel count in the toolbar
-        String toolbarTitle = viewModel.getSelectedChannelTagName();
+        String toolbarTitle = viewModel.getSelectedChannelTagName(getContext());
         if (TextUtils.isEmpty(searchQuery)) {
             toolbarInterface.setTitle(toolbarTitle);
             toolbarInterface.setSubtitle(activity.getResources().getQuantityString(R.plurals.items,

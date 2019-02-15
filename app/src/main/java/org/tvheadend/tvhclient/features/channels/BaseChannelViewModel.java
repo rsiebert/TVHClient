@@ -1,6 +1,7 @@
 package org.tvheadend.tvhclient.features.channels;
 
 import android.app.Application;
+import android.content.Context;
 import android.content.SharedPreferences;
 
 import org.tvheadend.tvhclient.MainApplication;
@@ -30,10 +31,6 @@ public class BaseChannelViewModel extends AndroidViewModel {
     @Inject
     protected SharedPreferences sharedPreferences;
 
-    private final String allChannelsSelectedText;
-    private final String multipleChannelTagsSelectedText;
-    private final String unknownChannelTagText;
-
     private final LiveData<List<ChannelTag>> channelTags;
     protected final LiveData<List<Recording>> recordings;
     protected final LiveData<ServerStatus> serverStatus;
@@ -45,10 +42,6 @@ public class BaseChannelViewModel extends AndroidViewModel {
     public BaseChannelViewModel(@NonNull Application application) {
         super(application);
         MainApplication.getComponent().inject(this);
-
-        allChannelsSelectedText = application.getString(R.string.all_channels);
-        multipleChannelTagsSelectedText = application.getString(R.string.multiple_channel_tags);
-        unknownChannelTagText = application.getString(R.string.unknown);
 
         serverStatus = appRepository.getServerStatusData().getLiveDataActiveItem();
         channelTags = appRepository.getChannelTagData().getLiveDataItems();
@@ -100,10 +93,10 @@ public class BaseChannelViewModel extends AndroidViewModel {
         }
     }
 
-    public String getSelectedChannelTagName() {
+    public String getSelectedChannelTagName(Context context) {
         if (selectedChannelTagIds.getValue() == null || channelTags.getValue() == null) {
             Timber.d("No channel tags or selected tag id values exist");
-            return unknownChannelTagText;
+            return context.getString(R.string.unknown);
         }
 
         Timber.d("Returning name of the selected channel tag");
@@ -114,11 +107,11 @@ public class BaseChannelViewModel extends AndroidViewModel {
                     return tag.getTagName();
                 }
             }
-            return unknownChannelTagText;
+            return context.getString(R.string.unknown);
         } else if (selectedTagIds.size() == 0) {
-            return allChannelsSelectedText;
+            return context.getString(R.string.all_channels);
         } else {
-            return multipleChannelTagsSelectedText;
+            return context.getString(R.string.multiple_channel_tags);
         }
     }
 }

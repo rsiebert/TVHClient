@@ -180,7 +180,7 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
             }
             // Show either all channels or the name of the selected
             // channel tag and the channel count in the toolbar
-            String toolbarTitle = viewModel.getSelectedChannelTagName();
+            String toolbarTitle = viewModel.getSelectedChannelTagName(getContext());
             toolbarInterface.setTitle(toolbarTitle);
             toolbarInterface.setSubtitle(activity.getResources().getQuantityString(R.plurals.items,
                     channelListRecyclerViewAdapter.getItemCount(), channelListRecyclerViewAdapter.getItemCount()));
@@ -381,7 +381,7 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
     public void onFilterComplete(int i) {
         // Show either all channels or the name of the selected
         // channel tag and the channel count in the toolbar
-        String toolbarTitle = viewModel.getSelectedChannelTagName();
+        String toolbarTitle = viewModel.getSelectedChannelTagName(getContext());
         toolbarInterface.setTitle(toolbarTitle);
         toolbarInterface.setSubtitle(activity.getResources().getQuantityString(R.plurals.results,
                 channelListRecyclerViewAdapter.getItemCount(), channelListRecyclerViewAdapter.getItemCount()));
