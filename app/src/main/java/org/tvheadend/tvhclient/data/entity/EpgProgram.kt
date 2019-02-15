@@ -25,4 +25,7 @@ data class EpgProgram(
 
         @Ignore
         var recording: Recording? = null
-)
+) {
+    val duration: Int
+        get() = ((stop - start) / 1000 / 60).toInt()
+}
