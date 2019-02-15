@@ -69,13 +69,13 @@ public class ConnectionData implements DataSourceInterface<Connection> {
     }
 
     @Override
-    public LiveData<Connection> getLiveDataItemById(Object id) {
+    public LiveData<Connection> getLiveDataItemById(@NonNull Object id) {
         return db.getConnectionDao().loadConnectionById((int) id);
     }
 
     @Override
     @Nullable
-    public Connection getItemById(Object id) {
+    public Connection getItemById(@NonNull Object id) {
         try {
             return new ConnectionByIdTask(db, (int) id).execute().get();
         } catch (InterruptedException e) {

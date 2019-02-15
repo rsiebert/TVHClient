@@ -58,7 +58,7 @@ public class ServerProfileData implements DataSourceInterface<ServerProfile> {
 
     @Override
     @Nullable
-    public LiveData<ServerProfile> getLiveDataItemById(Object id) {
+    public LiveData<ServerProfile> getLiveDataItemById(@NonNull Object id) {
         return null;
     }
 

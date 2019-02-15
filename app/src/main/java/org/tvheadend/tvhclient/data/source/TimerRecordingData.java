@@ -46,12 +46,12 @@ public class TimerRecordingData implements DataSourceInterface<TimerRecording> {
     }
 
     @Override
-    public LiveData<TimerRecording> getLiveDataItemById(Object id) {
+    public LiveData<TimerRecording> getLiveDataItemById(@NonNull Object id) {
         return db.getTimerRecordingDao().loadRecordingById((String) id);
     }
 
     @Override
-    public TimerRecording getItemById(Object id) {
+    public TimerRecording getItemById(@NonNull Object id) {
         try {
             return new TimerRecordingByIdTask(db, (String) id).execute().get();
         } catch (InterruptedException e) {

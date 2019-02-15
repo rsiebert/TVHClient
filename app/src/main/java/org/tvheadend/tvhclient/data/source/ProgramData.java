@@ -66,13 +66,13 @@ public class ProgramData implements DataSourceInterface<Program> {
     }
 
     @Override
-    public LiveData<Program> getLiveDataItemById(Object id) {
+    public LiveData<Program> getLiveDataItemById(@NonNull Object id) {
         return db.getProgramDao().loadProgramById((int) id);
     }
 
     @Override
     @Nullable
-    public Program getItemById(Object id) {
+    public Program getItemById(@NonNull Object id) {
         try {
             return new ProgramByIdTask(db, (int) id, LOAD_BY_ID).execute().get();
         } catch (InterruptedException e) {

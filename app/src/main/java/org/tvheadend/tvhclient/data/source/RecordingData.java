@@ -48,12 +48,6 @@ public class RecordingData implements DataSourceInterface<Recording> {
         AsyncTask.execute(() -> db.getRecordingDao().deleteAll());
     }
 
-    public void addAndRemoveItems(List<Recording> newItems, List<Recording> oldItems) {
-        AsyncTask.execute(() -> db.getRecordingDao().insertAndDelete(
-                new ArrayList<>(newItems),
-                new ArrayList<>(oldItems)));
-    }
-
     @Override
     public LiveData<Integer> getLiveDataItemCount() {
         return null;
@@ -64,7 +58,7 @@ public class RecordingData implements DataSourceInterface<Recording> {
     }
 
     @Override
-    public LiveData<Recording> getLiveDataItemById(Object id) {
+    public LiveData<Recording> getLiveDataItemById(@NonNull Object id) {
         return db.getRecordingDao().loadRecordingById((int) id);
     }
 
@@ -103,7 +97,7 @@ public class RecordingData implements DataSourceInterface<Recording> {
     }
 
     @Override
-    public Recording getItemById(Object id) {
+    public Recording getItemById(@NonNull Object id) {
         try {
             return new RecordingByIdTask(db, (int) id, LOAD_BY_ID).execute().get();
         } catch (InterruptedException e) {

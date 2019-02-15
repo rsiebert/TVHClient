@@ -52,12 +52,12 @@ public class TagAndChannelData implements DataSourceInterface<TagAndChannel> {
     }
 
     @Override
-    public LiveData<TagAndChannel> getLiveDataItemById(Object id) {
+    public LiveData<TagAndChannel> getLiveDataItemById(@NonNull Object id) {
         return null;
     }
 
     @Override
-    public TagAndChannel getItemById(Object id) {
+    public TagAndChannel getItemById(@NonNull Object id) {
         return null;
     }
 

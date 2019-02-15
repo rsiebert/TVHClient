@@ -53,13 +53,13 @@ public class ChannelData implements DataSourceInterface<Channel> {
     }
 
     @Override
-    public LiveData<Channel> getLiveDataItemById(Object id) {
+    public LiveData<Channel> getLiveDataItemById(@NonNull Object id) {
         return null;
     }
 
     @Override
     @Nullable
-    public Channel getItemById(Object id) {
+    public Channel getItemById(@NonNull Object id) {
         try {
             return new ChannelByIdTask(db, (int) id).execute().get();
         } catch (InterruptedException e) {

@@ -57,12 +57,12 @@ public class ServerStatusData implements DataSourceInterface<ServerStatus> {
 
     @Override
     @Nullable
-    public LiveData<ServerStatus> getLiveDataItemById(Object id) {
+    public LiveData<ServerStatus> getLiveDataItemById(@NonNull Object id) {
         return db.getServerStatusDao().loadServerStatusById((int) id);
     }
 
     @Override
-    public ServerStatus getItemById(Object id) {
+    public ServerStatus getItemById(@NonNull Object id) {
         try {
             return new ServerStatusByIdTask(db, (int) id).execute().get();
         } catch (InterruptedException e) {

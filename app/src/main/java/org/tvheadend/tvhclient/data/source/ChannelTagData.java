@@ -70,13 +70,13 @@ public class ChannelTagData implements DataSourceInterface<ChannelTag> {
 
     @Override
     @Nullable
-    public LiveData<ChannelTag> getLiveDataItemById(Object id) {
+    public LiveData<ChannelTag> getLiveDataItemById(@NonNull Object id) {
         return null;
     }
 
     @Override
     @Nullable
-    public ChannelTag getItemById(Object id) {
+    public ChannelTag getItemById(@NonNull Object id) {
         try {
             return new ChannelTagByIdTask(db, (int) id).execute().get();
         } catch (InterruptedException e) {

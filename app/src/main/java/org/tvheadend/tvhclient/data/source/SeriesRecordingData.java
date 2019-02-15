@@ -48,12 +48,12 @@ public class SeriesRecordingData implements DataSourceInterface<SeriesRecording>
     }
 
     @Override
-    public LiveData<SeriesRecording> getLiveDataItemById(Object id) {
+    public LiveData<SeriesRecording> getLiveDataItemById(@NonNull Object id) {
         return db.getSeriesRecordingDao().loadRecordingById((String) id);
     }
 
     @Override
-    public SeriesRecording getItemById(Object id) {
+    public SeriesRecording getItemById(@NonNull Object id) {
         try {
             return new SeriesRecordingByIdTask(db, (String) id).execute().get();
         } catch (InterruptedException e) {
