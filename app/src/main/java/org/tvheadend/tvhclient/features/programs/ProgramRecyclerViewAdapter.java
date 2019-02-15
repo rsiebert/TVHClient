@@ -152,7 +152,7 @@ class ProgramRecyclerViewAdapter extends RecyclerView.Adapter<ProgramRecyclerVie
             boolean recordingExists = false;
 
             for (Recording recording : recordings) {
-                if (program.getEventId() == recording.getEventId()) {
+                if (program.getEventId() > 0 && program.getEventId() == recording.getEventId()) {
                     Recording oldRecording = program.getRecording();
                     program.setRecording(recording);
 
