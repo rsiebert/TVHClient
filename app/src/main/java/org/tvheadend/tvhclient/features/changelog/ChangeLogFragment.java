@@ -33,6 +33,7 @@ public class ChangeLogFragment extends Fragment implements BackPressedInterface,
     protected WebView webView;
     @BindView(R.id.loading)
     protected ProgressBar progressBar;
+
     private Unbinder unbinder;
     private boolean showFullChangeLog = false;
     private ChangeLogLoaderTask changeLogLoaderTask;

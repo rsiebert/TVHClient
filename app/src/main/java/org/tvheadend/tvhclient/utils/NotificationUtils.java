@@ -5,8 +5,6 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import org.tvheadend.tvhclient.data.entity.ServerProfile;
 import org.tvheadend.tvhclient.data.entity.ServerStatus;
@@ -15,6 +13,8 @@ import org.tvheadend.tvhclient.features.notifications.RecordingNotificationRecei
 
 import java.util.Date;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import timber.log.Timber;
 
 import static android.content.Context.ALARM_SERVICE;
@@ -36,10 +36,14 @@ public class NotificationUtils {
      * @param profile
      * @param serverStatus
      */
-    static void addProgramNotification(@NonNull Context context, @NonNull String title, int eventId, int channelId, long start, int offset, @Nullable ServerProfile profile, @NonNull ServerStatus serverStatus) {
+    static void addProgramNotification(@NonNull Context context,
+                                       @Nullable String title,
+                                       int eventId, int channelId, long start, int offset,
+                                       @Nullable ServerProfile profile,
+                                       @NonNull ServerStatus serverStatus) {
 
         Intent intent = new Intent(context, ProgramNotificationReceiver.class);
-        intent.putExtra("eventTitle", title);
+        intent.putExtra("eventTitle", title != null ? title : "");
         intent.putExtra("eventId", eventId);
         intent.putExtra("channelId", channelId);
         intent.putExtra("start", start);
@@ -66,7 +70,8 @@ public class NotificationUtils {
      * @param start
      * @param offset
      */
-    public static void addRecordingNotification(@NonNull Context context, @NonNull String title, int dvrId, long start, int offset) {
+    public static void addRecordingNotification(@NonNull Context context, @NonNull String title,
+                                                int dvrId, long start, int offset) {
         Intent intent = new Intent(context, RecordingNotificationReceiver.class);
         intent.putExtra("dvrTitle", title);
         intent.putExtra("dvrId", dvrId);

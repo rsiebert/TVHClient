@@ -198,6 +198,7 @@ public class MenuUtils {
             Timber.d("Weak reference to activity is null");
             return false;
         }
+        //noinspection ConstantConditions
         int channelSortOrder = Integer.valueOf(sharedPreferences.getString("channel_sort_order", activity.getResources().getString(R.string.pref_default_channel_sort_order)));
         new MaterialDialog.Builder(activity)
                 .title(R.string.select_dvr_config)
@@ -726,8 +727,8 @@ public class MenuUtils {
             return false;
         }
 
-        Integer offset = Integer.valueOf(sharedPreferences.getString("notification_lead_time",
-                activity.getResources().getString(R.string.pref_default_notification_lead_time)));
+        //noinspection ConstantConditions
+        int offset = Integer.parseInt(sharedPreferences.getString("notification_lead_time", activity.getResources().getString(R.string.pref_default_notification_lead_time)));
         ServerProfile profile = appRepository.getServerProfileData().getItemById(serverStatus.getRecordingServerProfileId());
         NotificationUtils.addProgramNotification(activity,
                 program.getTitle(),
@@ -747,8 +748,8 @@ public class MenuUtils {
             return false;
         }
 
-        Integer offset = Integer.valueOf(sharedPreferences.getString("notification_lead_time",
-                activity.getResources().getString(R.string.pref_default_notification_lead_time)));
+        //noinspection ConstantConditions
+        int offset = Integer.parseInt(sharedPreferences.getString("notification_lead_time", activity.getResources().getString(R.string.pref_default_notification_lead_time)));
         ServerProfile profile = appRepository.getServerProfileData().getItemById(serverStatus.getRecordingServerProfileId());
         NotificationUtils.addProgramNotification(activity,
                 program.getTitle(),
@@ -868,6 +869,7 @@ public class MenuUtils {
             return;
         }
 
+        //noinspection ConstantConditions
         int channelIconAction = Integer.valueOf(sharedPreferences.getString("channel_icon_action", activity.getResources().getString(R.string.pref_default_channel_icon_action)));
         if (channelIconAction == 1) {
             handleMenuPlayChannel(channelId);
@@ -887,8 +889,8 @@ public class MenuUtils {
             return;
         }
 
-        int channelIconAction = Integer.valueOf(sharedPreferences.getString("channel_icon_action",
-                activity.getResources().getString(R.string.pref_default_channel_icon_action)));
+        //noinspection ConstantConditions
+        int channelIconAction = Integer.valueOf(sharedPreferences.getString("channel_icon_action", activity.getResources().getString(R.string.pref_default_channel_icon_action)));
         if (channelIconAction == 1) {
             handleMenuPlayRecording(recordingId);
         } else if (channelIconAction == 2) {

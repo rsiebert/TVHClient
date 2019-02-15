@@ -16,9 +16,9 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import timber.log.Timber;
 
-public class HtspUtils {
+class HtspUtils {
 
-    public static ChannelTag convertMessageToChannelTagModel(@NonNull ChannelTag tag, @NonNull HtspMessage msg, @NonNull List<Channel> channels) {
+    static ChannelTag convertMessageToChannelTagModel(@NonNull ChannelTag tag, @NonNull HtspMessage msg, @NonNull List<Channel> channels) {
         if (msg.containsKey("tagId")) {
             tag.setTagId(msg.getInteger("tagId"));
         }
@@ -58,7 +58,7 @@ public class HtspUtils {
         return tag;
     }
 
-    public static Channel convertMessageToChannelModel(@NonNull Channel channel, @NonNull HtspMessage msg) {
+    static Channel convertMessageToChannelModel(@NonNull Channel channel, @NonNull HtspMessage msg) {
         if (msg.containsKey("channelId")) {
             channel.setId(msg.getInteger("channelId"));
         }
@@ -99,7 +99,7 @@ public class HtspUtils {
         return channel;
     }
 
-    public static Recording convertMessageToRecordingModel(@NonNull Recording recording, @NonNull HtspMessage msg) {
+    static Recording convertMessageToRecordingModel(@NonNull Recording recording, @NonNull HtspMessage msg) {
         if (msg.containsKey("id")) {
             recording.setId(msg.getInteger("id"));
         }
@@ -241,7 +241,7 @@ public class HtspUtils {
         return recording;
     }
 
-    public static Program convertMessageToProgramModel(@NonNull Program program, @NonNull HtspMessage msg) {
+    static Program convertMessageToProgramModel(@NonNull Program program, @NonNull HtspMessage msg) {
         if (msg.containsKey("eventId")) {
             program.setEventId(msg.getInteger("eventId"));
         }
@@ -416,7 +416,7 @@ public class HtspUtils {
         return program;
     }
 
-    public static SeriesRecording convertMessageToSeriesRecordingModel(@NonNull SeriesRecording seriesRecording, @NonNull HtspMessage msg) {
+    static SeriesRecording convertMessageToSeriesRecordingModel(@NonNull SeriesRecording seriesRecording, @NonNull HtspMessage msg) {
         if (msg.containsKey("id")) {
             seriesRecording.setId(msg.getString("id"));
         }
@@ -506,7 +506,7 @@ public class HtspUtils {
         return seriesRecording;
     }
 
-    public static TimerRecording convertMessageToTimerRecordingModel(@NonNull TimerRecording timerRecording, @NonNull HtspMessage msg) {
+    static TimerRecording convertMessageToTimerRecordingModel(@NonNull TimerRecording timerRecording, @NonNull HtspMessage msg) {
         if (msg.containsKey("id")) {
             timerRecording.setId(msg.getString("id"));
         }
@@ -571,7 +571,7 @@ public class HtspUtils {
         return timerRecording;
     }
 
-    public static ServerStatus convertMessageToServerStatusModel(@NonNull ServerStatus serverStatus, @NonNull HtspMessage msg) {
+    static ServerStatus convertMessageToServerStatusModel(@NonNull ServerStatus serverStatus, @NonNull HtspMessage msg) {
         if (msg.containsKey("htspversion")) {
             serverStatus.setHtspVersion(msg.getInteger("htspversion", 13));
         }
@@ -586,14 +586,14 @@ public class HtspUtils {
             serverStatus.setWebroot(webroot == null ? "" : webroot);
         }
         if (msg.containsKey("servercapability")) {
-            for (String capabilitiy : msg.getStringArray("servercapability")) {
+            for (Object capabilitiy : msg.getArrayList("servercapability")) {
                 Timber.d("Server supports " + capabilitiy);
             }
         }
         return serverStatus;
     }
 
-    public static HtspMessage convertIntentToAutorecMessage(@NonNull Intent intent, int htspVersion) {
+    static HtspMessage convertIntentToAutorecMessage(@NonNull Intent intent, int htspVersion) {
         final long enabled = intent.getIntExtra("enabled", 1);
         final String title = intent.getStringExtra("title");
         final String fulltext = intent.getStringExtra("fulltext");
@@ -668,7 +668,7 @@ public class HtspUtils {
         return request;
     }
 
-    public static HtspMessage convertIntentToDvrMessage(@NonNull Intent intent, int htspVersion) {
+    static HtspMessage convertIntentToDvrMessage(@NonNull Intent intent, int htspVersion) {
         final long eventId = intent.getIntExtra("eventId", 0);
         final long channelId = intent.getIntExtra("channelId", 0);
         final long start = intent.getLongExtra("start", 0);
@@ -735,7 +735,7 @@ public class HtspUtils {
         return request;
     }
 
-    public static HtspMessage convertIntentToTimerecMessage(@NonNull Intent intent, int htspVersion) {
+    static HtspMessage convertIntentToTimerecMessage(@NonNull Intent intent, int htspVersion) {
         final long enabled = intent.getIntExtra("enabled", 1);
         final String title = intent.getStringExtra("title");
         final String directory = intent.getStringExtra("directory");
@@ -784,7 +784,7 @@ public class HtspUtils {
         return request;
     }
 
-    public static HtspMessage convertIntentToEventMessage(@NonNull Intent intent) {
+    static HtspMessage convertIntentToEventMessage(@NonNull Intent intent) {
         final int eventId = intent.getIntExtra("eventId", 0);
         final int channelId = intent.getIntExtra("channelId", 0);
         final int numFollowing = intent.getIntExtra("numFollowing", 0);
@@ -807,7 +807,7 @@ public class HtspUtils {
         return request;
     }
 
-    public static HtspMessage convertIntentToEpgQueryMessage(@NonNull Intent intent) {
+    static HtspMessage convertIntentToEpgQueryMessage(@NonNull Intent intent) {
         final String query = intent.getStringExtra("query");
         final long channelId = intent.getIntExtra("channelId", 0);
         final long tagId = intent.getIntExtra("tagId", 0);

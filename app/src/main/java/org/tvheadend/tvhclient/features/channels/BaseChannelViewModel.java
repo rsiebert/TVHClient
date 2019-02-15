@@ -39,7 +39,7 @@ public class BaseChannelViewModel extends AndroidViewModel {
     protected final LiveData<ServerStatus> serverStatus;
     protected final LiveData<List<Integer>> selectedChannelTagIds;
 
-    protected final MutableLiveData<Long> selectedTime = new MutableLiveData<>();
+    final MutableLiveData<Long> selectedTime = new MutableLiveData<>();
     protected final MutableLiveData<Integer> channelSortOrder = new MutableLiveData<>();
 
     public BaseChannelViewModel(@NonNull Application application) {
@@ -57,6 +57,7 @@ public class BaseChannelViewModel extends AndroidViewModel {
 
         Timber.d("Loading time, sort order and channel tags ids from database");
         selectedTime.postValue(new Date().getTime());
+        //noinspection ConstantConditions
         channelSortOrder.postValue(Integer.valueOf(sharedPreferences.getString("channel_sort_order", "0")));
     }
 
@@ -72,7 +73,7 @@ public class BaseChannelViewModel extends AndroidViewModel {
         return recordings;
     }
 
-    public LiveData<Long> getSelectedTime() {
+    LiveData<Long> getSelectedTime() {
         return selectedTime;
     }
 

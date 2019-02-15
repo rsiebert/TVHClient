@@ -69,7 +69,6 @@ public class HtspFileInputStream extends InputStream {
     }
 
     class FileCloseResponse implements HtspResponseListener {
-        int id;
 
         @Override
         public void handleResponse(HtspMessage response) {
@@ -135,7 +134,7 @@ public class HtspFileInputStream extends InputStream {
     }
 
     @Override
-    public int read() throws IOException {
+    public int read() {
         fillBuffer();
 
         if (bufPos < buf.length) {

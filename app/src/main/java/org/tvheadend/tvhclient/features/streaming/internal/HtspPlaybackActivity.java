@@ -349,11 +349,14 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
             trackSelector.setTunnelingAudioSessionId(C.generateAudioSessionIdV21(this));
         }
 
+        //noinspection ConstantConditions
+        int bufferTime = Integer.parseInt(sharedPreferences.getString("buffer_playback_ms", getResources().getString(R.string.pref_default_buffer_playback_ms)));
+
         DefaultLoadControl loadControl = new DefaultLoadControl(
                 new DefaultAllocator(true, C.DEFAULT_BUFFER_SEGMENT_SIZE),
                 DefaultLoadControl.DEFAULT_MIN_BUFFER_MS,
                 DefaultLoadControl.DEFAULT_MAX_BUFFER_MS,
-                Integer.parseInt(sharedPreferences.getString("buffer_playback_ms", getResources().getString(R.string.pref_default_buffer_playback_ms))),
+                bufferTime,
                 DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS,
                 C.DEFAULT_BUFFER_SEGMENT_SIZE,
                 true);

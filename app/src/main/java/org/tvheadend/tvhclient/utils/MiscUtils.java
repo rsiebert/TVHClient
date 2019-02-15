@@ -59,7 +59,7 @@ public class MiscUtils {
      */
     public static int getThemeId(@NonNull final Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        Boolean theme = prefs.getBoolean("light_theme_enabled", true);
+        boolean theme = prefs.getBoolean("light_theme_enabled", true);
         return (theme ? R.style.CustomTheme_Light : R.style.CustomTheme);
     }
 
@@ -73,7 +73,7 @@ public class MiscUtils {
     public static void setLanguage(@NonNull final Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String locale = prefs.getString("language", "default");
-        if (!locale.equals("default")) {
+        if (locale != null && !locale.equals("default")) {
             Configuration config = new Configuration(context.getResources().getConfiguration());
             config.locale = new Locale(locale);
             context.getResources().updateConfiguration(config, context.getResources().getDisplayMetrics());

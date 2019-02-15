@@ -94,6 +94,7 @@ public class HtspConnection extends Thread {
         Timber.d("Initializing HTSP connection thread");
         MainApplication.getComponent().inject(this);
 
+        //noinspection ConstantConditions
         this.connectionTimeout = Integer.valueOf(sharedPreferences.getString("connection_timeout", context.getResources().getString(R.string.pref_default_connection_timeout))) * 1000;
         this.connection = appRepository.getConnectionData().getActiveItem();
         this.isRunning = false;
@@ -229,7 +230,7 @@ public class HtspConnection extends Thread {
             MessageDigest md;
             try {
                 md = MessageDigest.getInstance("SHA1");
-                md.update(connection.getPassword().getBytes());
+                md.update(connection.getPassword() != null ? connection.getPassword().getBytes() : "".getBytes());
                 md.update(response.getByteArray("challenge"));
 
                 Timber.d("Sending authentication message");
