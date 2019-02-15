@@ -14,7 +14,7 @@ public class HtspMessage extends HashMap<String, Object> {
 
     private static final long serialVersionUID = 1L;
 
-    public static final long HTSP_VERSION = 32;
+    static final long HTSP_VERSION = 32;
     private static final byte HMF_MAP = 1;
     private static final byte HMF_S64 = 2;
     private static final byte HMF_STR = 3;
@@ -103,7 +103,7 @@ public class HtspMessage extends HashMap<String, Object> {
         return (List<?>) get(name);
     }
 
-    public List<Integer> getIntegerList(String name) {
+    List<Integer> getIntegerList(String name) {
         ArrayList<Integer> list = new ArrayList<>();
         if (!containsKey(name)) {
             return list;
@@ -116,36 +116,10 @@ public class HtspMessage extends HashMap<String, Object> {
         return list;
     }
 
-    List<Integer> getIntegerList(String name, List<Integer> std) {
-        if (!containsKey(name)) {
-            return std;
-        }
-        return getIntegerList(name);
-    }
-
-    public String[] getStringArray(String key) {
-        ArrayList value = getArrayList(key);
-        return (String[]) value.toArray(new String[value.size()]);
-    }
-
-    public ArrayList getArrayList(String key) {
+    ArrayList getArrayList(String key) {
         Object obj = get(key);
         //noinspection unchecked
         return (ArrayList<String>) obj;
-    }
-
-    public HtspMessage[] getHtspMessageArray(String key) {
-        ArrayList value = getArrayList(key);
-
-        return (HtspMessage[]) value.toArray(new HtspMessage[value.size()]);
-    }
-
-    public byte[] getByteArray(String key, byte[] fallback) {
-        if (!containsKey(key)) {
-            return fallback;
-        }
-
-        return getByteArray(key);
     }
 
     public byte[] getByteArray(String key) {
@@ -154,7 +128,7 @@ public class HtspMessage extends HashMap<String, Object> {
         return (byte[]) value;
     }
 
-    public boolean transmit(SocketChannel ch) throws IOException {
+    void transmit(SocketChannel ch) throws IOException {
         if (buf == null) {
             byte[] data = serializeBinary(this);
             int len = data.length;
@@ -172,20 +146,9 @@ public class HtspMessage extends HashMap<String, Object> {
             throw new IOException("Server went down");
         }
 
-        if (buf.hasRemaining()) {
-            return false;
-        } else {
+        if (!buf.hasRemaining()) {
             buf.flip();
-            return true;
         }
-    }
-
-    public static String getHexString(byte[] bytes) throws Exception {
-        String result = "";
-        for (byte b : bytes) {
-            result += Integer.toString((b & 0xff) + 0x100, 16).substring(1);
-        }
-        return result;
     }
 
     private static byte[] toByteArray(BigInteger big) {
@@ -256,7 +219,7 @@ public class HtspMessage extends HashMap<String, Object> {
     @SuppressWarnings("unchecked")
     private static byte[] serializeBinary(String name, Object value) throws IOException {
         byte[] bName = name.getBytes();
-        byte[] bData = new byte[0];
+        byte[] bData;
         byte type;
 
         if (value instanceof String) {
