@@ -1,9 +1,5 @@
 package org.tvheadend.tvhclient.features.epg;
 
-import android.content.Context;
-import android.content.Intent;
-import android.os.Handler;
-import android.os.HandlerThread;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -11,12 +7,11 @@ import android.widget.TextView;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.EpgChannel;
 import org.tvheadend.tvhclient.data.entity.EpgProgram;
-import org.tvheadend.tvhclient.features.programs.ProgramDetailsActivity;
-import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback;
 
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DefaultItemAnimator;
@@ -27,14 +22,14 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
 
-public class EpgViewPagerViewHolder extends RecyclerView.ViewHolder implements RecyclerViewClickCallback {
+public class EpgViewPagerViewHolder extends RecyclerView.ViewHolder {
 
     private final EpgProgramListRecyclerViewAdapter recyclerViewAdapter;
     private final FragmentActivity activity;
     private final long startTime;
     private final long endTime;
     private final EpgViewModel viewModel;
-    private final Handler handler;
+    private final ScheduledExecutorService execService = Executors.newScheduledThreadPool(10);
 
     @BindView(R.id.program_list_recycler_view)
     protected RecyclerView recyclerView;
@@ -51,56 +46,23 @@ public class EpgViewPagerViewHolder extends RecyclerView.ViewHolder implements R
         this.startTime = startTime;
         this.endTime = endTime;
 
-        Context context = itemView.getContext();
-
-        recyclerView.setLayoutManager(new CustomHorizontalLayoutManager(context));
-        recyclerView.addItemDecoration(new DividerItemDecoration(context, LinearLayoutManager.HORIZONTAL));
+        recyclerView.setLayoutManager(new CustomHorizontalLayoutManager(view.getContext()));
+        recyclerView.addItemDecoration(new DividerItemDecoration(view.getContext(), LinearLayoutManager.HORIZONTAL));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setRecycledViewPool(viewPool);
-        recyclerViewAdapter = new EpgProgramListRecyclerViewAdapter(pixelsPerMinute, startTime, endTime, this);
+        recyclerViewAdapter = new EpgProgramListRecyclerViewAdapter(pixelsPerMinute, startTime, endTime);
         recyclerView.setAdapter(recyclerViewAdapter);
 
         viewModel = ViewModelProviders.of(activity).get(EpgViewModel.class);
-
-        HandlerThread handlerThread = new HandlerThread("EpgSyncService Handler Thread");
-        handlerThread.start();
-        handler = new Handler(handlerThread.getLooper());
     }
 
-    @Override
-    public void onClick(View view, int position) {
-        EpgProgram program = recyclerViewAdapter.getItem(position);
-        if (program == null) {
-            return;
-        }
-        Intent intent = new Intent(activity, ProgramDetailsActivity.class);
-        intent.putExtra("eventId", program.getEventId());
-        intent.putExtra("channelId", program.getChannelId());
-        activity.startActivity(intent);
-    }
-
-    @Override
-    public boolean onLongClick(View view, int position) {
-        final EpgProgram program = (EpgProgram) view.getTag();
-        if (program == null) {
-            return false;
-        }
-        Fragment fragment = activity.getSupportFragmentManager().findFragmentById(R.id.main);
-        if (fragment instanceof ProgramGuideFragment
-                && fragment.isAdded()
-                && fragment.isResumed()) {
-            ((ProgramGuideFragment) fragment).showPopupMenu(view, program);
-        }
-        return true;
-    }
-
-    public void bindData(final EpgChannel epgChannel) {
+    void bindData(final EpgChannel epgChannel) {
 
         recyclerView.setVisibility(View.GONE);
         progressBar.setVisibility(View.VISIBLE);
         noProgramsTextView.setVisibility(View.GONE);
 
-        handler.post(() -> {
+        execService.execute(() -> {
             List<EpgProgram> programs = viewModel.getProgramsByChannelAndBetweenTimeSync(epgChannel.getId(), startTime, endTime);
             if (programs != null && programs.size() > 0) {
                 Timber.d("Loaded " + programs.size() + " programs for channel " + epgChannel.getName());
