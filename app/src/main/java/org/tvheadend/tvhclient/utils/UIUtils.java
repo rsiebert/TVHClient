@@ -3,15 +3,9 @@ package org.tvheadend.tvhclient.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.preference.PreferenceManager;
-import android.text.format.DateUtils;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.data.entity.Recording;
-
-import java.text.SimpleDateFormat;
-import java.util.Locale;
 
 import javax.annotation.Nullable;
 
@@ -27,7 +21,7 @@ public class UIUtils {
         throw new IllegalAccessError("Utility class");
     }
 
-    public static int getGenreColor(final Context context, final int contentType, final int offset) {
+    static int getGenreColor(final Context context, final int contentType, final int offset) {
         if (contentType < 0) {
             // Return a fully transparent color in case no genre is available
             return context.getResources().getColor(android.R.color.transparent);
@@ -80,134 +74,6 @@ public class UIUtils {
             }
             return Color.argb(alpha, Color.red(c), Color.green(c), Color.blue(c));
         }
-    }
-
-    public static Drawable getRecordingState(Context context, @Nullable final Recording recording) {
-        if (recording == null) {
-            return null;
-        } else if (recording.isFailed()) {
-            return context.getResources().getDrawable(R.drawable.ic_error_small);
-        } else if (recording.isCompleted()) {
-            return context.getResources().getDrawable(R.drawable.ic_success_small);
-        } else if (recording.isMissed()) {
-            return context.getResources().getDrawable(R.drawable.ic_error_small);
-        } else if (recording.isRecording()) {
-            return context.getResources().getDrawable(R.drawable.ic_rec_small);
-        } else if (recording.isScheduled()) {
-            return context.getResources().getDrawable(R.drawable.ic_schedule_small);
-        } else {
-            return null;
-        }
-    }
-
-    public static String getDate(Context context, long date) {
-        String localizedDate = "";
-
-        if (DateUtils.isToday(date)) {
-            // Show the string today
-            localizedDate = context.getString(R.string.today);
-
-        } else if (date < System.currentTimeMillis() + TWO_DAYS
-                && date > System.currentTimeMillis() - TWO_DAYS) {
-            // Show a string like "42 minutes ago"
-            localizedDate = DateUtils.getRelativeTimeSpanString(
-                    date, System.currentTimeMillis(),
-                    DateUtils.DAY_IN_MILLIS).toString();
-
-        } else if (date < System.currentTimeMillis() + SIX_DAYS
-                && date > System.currentTimeMillis() - TWO_DAYS) {
-            // Show the day of the week, like Monday or Tuesday
-            SimpleDateFormat sdf = new SimpleDateFormat("EEEE", Locale.US);
-            localizedDate = sdf.format(date);
-        }
-
-        // Translate the day strings, if the string is empty
-        // use the day month year date representation
-        switch (localizedDate) {
-            case "today":
-                localizedDate = context.getString(R.string.today);
-                break;
-            case "tomorrow":
-                localizedDate = context.getString(R.string.tomorrow);
-                break;
-            case "in 2 days":
-                localizedDate = context.getString(R.string.in_2_days);
-                break;
-            case "Monday":
-                localizedDate = context.getString(R.string.monday);
-                break;
-            case "Tuesday":
-                localizedDate = context.getString(R.string.tuesday);
-                break;
-            case "Wednesday":
-                localizedDate = context.getString(R.string.wednesday);
-                break;
-            case "Thursday":
-                localizedDate = context.getString(R.string.thursday);
-                break;
-            case "Friday":
-                localizedDate = context.getString(R.string.friday);
-                break;
-            case "Saturday":
-                localizedDate = context.getString(R.string.saturday);
-                break;
-            case "Sunday":
-                localizedDate = context.getString(R.string.sunday);
-                break;
-            case "yesterday":
-                localizedDate = context.getString(R.string.yesterday);
-                break;
-            case "2 days ago":
-                localizedDate = context.getString(R.string.two_days_ago);
-                break;
-            default:
-                final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-                if (prefs.getBoolean("localized_date_time_format_enabled", false)) {
-                    // Show the date as defined with the currently active locale.
-                    // For the date display the short version will be used
-                    Locale locale;
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                        locale = context.getResources().getConfiguration().getLocales().get(0);
-                    } else {
-                        locale = context.getResources().getConfiguration().locale;
-                    }
-                    if (locale != null) {
-                        final java.text.DateFormat df = java.text.DateFormat.getDateInstance(java.text.DateFormat.SHORT, locale);
-                        localizedDate = df.format(date);
-                    }
-                } else {
-                    // Show the date using the default format like 31.07.2013
-                    SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy", Locale.US);
-                    localizedDate = sdf.format(date);
-                }
-                break;
-        }
-        return localizedDate;
-    }
-
-    public static String getTimeText(Context context, long time) {
-        String localizedTime = "";
-
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        if (prefs.getBoolean("localized_date_time_format_enabled", false)) {
-            // Show the date as defined with the currently active locale.
-            // For the date display the short version will be used
-            Locale locale;
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                locale = context.getResources().getConfiguration().getLocales().get(0);
-            } else {
-                locale = context.getResources().getConfiguration().locale;
-            }
-            if (locale != null) {
-                final java.text.DateFormat df = java.text.DateFormat.getTimeInstance(java.text.DateFormat.SHORT, locale);
-                localizedTime = df.format(time);
-            }
-        } else {
-            // Show the date using the default format like 31.07.2013
-            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.US);
-            localizedTime = sdf.format(time);
-        }
-        return localizedTime;
     }
 
     public static String getIconUrl(Context context, @Nullable final String url) {
