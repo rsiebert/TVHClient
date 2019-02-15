@@ -172,7 +172,7 @@ class ChannelRecyclerViewAdapter extends RecyclerView.Adapter<ChannelRecyclerVie
             boolean recordingExists = false;
 
             for (Recording recording : recordings) {
-                if (channel.getProgramId() == recording.getEventId()) {
+                if (channel.getProgramId() > 0 && channel.getProgramId() == recording.getEventId()) {
                     Recording oldRecording = channel.getRecording();
                     channel.setRecording(recording);
 
