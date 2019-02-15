@@ -84,6 +84,7 @@ public class MigrateUtils {
                 // Two new channel sorting options were introduced in this version.
                 // They are now the first to options so all other values need to be moved up by two.
                 SharedPreferences.Editor editor = sharedPreferences.edit();
+                //noinspection ConstantConditions
                 int channelSortOrder = Integer.valueOf(sharedPreferences.getString("channel_sort_order", context.getResources().getString(R.string.pref_default_channel_sort_order)));
                 if (channelSortOrder >= 2) {
                     channelSortOrder += 2;
@@ -110,6 +111,7 @@ public class MigrateUtils {
         // The previous three channel sort options defined only an ascending order of
         // the channel id, name and number. Now convert the value because a descending
         // order has been added after the ascending one.
+        //noinspection ConstantConditions
         int channelSortOrder = Integer.valueOf(sharedPreferences.getString("channel_sort_order", context.getResources().getString(R.string.pref_default_channel_sort_order)));
         channelSortOrder = (channelSortOrder * 2 + 1);
         editor.putString("channel_sort_order", String.valueOf(channelSortOrder));
@@ -155,9 +157,8 @@ public class MigrateUtils {
         Timber.d("Migrating existing connections to the new room database");
         SQLiteDatabase db = DatabaseHelperForMigration.Companion.getInstance(context).getReadableDatabase();
 
+        // Save the previous connection details in a list, then delete the old database and insert the connection details into the new one
         List<Connection> connectionList = new ArrayList<>();
-
-        // Save the connection credentials in a file and drop the database
         try {
             Timber.d("Database is readable " + db.isOpen());
             Cursor c = db.rawQuery("SELECT * FROM connections", null);
@@ -203,6 +204,7 @@ public class MigrateUtils {
         // migrate preferences from old names to new
         // names to have a consistent naming scheme afterwards
         try {
+            //noinspection ConstantConditions
             int value = Integer.valueOf(sharedPreferences.getString("defaultMenuPositionPref", "0"));
             if (value > 8) {
                 // If the value is anything above the status screen
