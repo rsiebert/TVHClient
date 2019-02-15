@@ -12,11 +12,10 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
-import com.google.android.material.snackbar.Snackbar;
-import androidx.core.app.ActivityCompat;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.util.Base64;
+
+import com.google.android.material.snackbar.Snackbar;
 
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
@@ -28,19 +27,22 @@ import org.tvheadend.tvhclient.features.shared.receivers.SnackbarMessageReceiver
 
 import javax.inject.Inject;
 
+import androidx.core.app.ActivityCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import timber.log.Timber;
 
 public class DownloadRecordingManager {
+
+    @Inject
+    protected AppRepository appRepository;
+    @Inject
+    protected SharedPreferences sharedPreferences;
 
     private final Recording recording;
     private final Connection connection;
     private final ServerStatus serverStatus;
     private final DownloadManager downloadManager;
     private final Activity activity;
-    @Inject
-    protected AppRepository appRepository;
-    @Inject
-    protected SharedPreferences sharedPreferences;
     private long lastDownloadId;
 
     public DownloadRecordingManager(Activity activity, int dvrId) {
@@ -96,14 +98,16 @@ public class DownloadRecordingManager {
 
         // The user and password are required for authentication. They need to be encoded.
         String credentials = "Basic " + Base64.encodeToString((connection.getUsername() + ":" + connection.getPassword()).getBytes(), Base64.NO_WRAP);
+        // Use the recording title if present, otherwise use the recording id only
+        String recordingTitle = (recording.getTitle() != null ? recording.getTitle().replace(" ", "_") : String.valueOf(recording.getId())) + ".mkv";
 
-        Timber.d("Download recording from url " + downloadUrl + " to " + downloadDirectory);
+        Timber.d("Download recording from url " + downloadUrl + " to " + downloadDirectory + "/" + recordingTitle);
         return new DownloadManager.Request(Uri.parse(downloadUrl))
                 .addRequestHeader("Authorization", credentials)
                 .setTitle(recording.getTitle())
                 .setDescription(recording.getDescription())
                 .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-                .setDestinationInExternalPublicDir(downloadDirectory, recording.getTitle().replace(" ", "_") + ".mkv");
+                .setDestinationInExternalPublicDir(downloadDirectory, recordingTitle);
     }
 
     private void showDownloadStatusMessage() {
