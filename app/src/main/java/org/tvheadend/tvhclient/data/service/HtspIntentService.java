@@ -38,6 +38,7 @@ public class HtspIntentService extends JobIntentService implements HtspConnectio
     private ScheduledExecutorService execService;
     private HtspConnection htspConnection;
     private Connection connection;
+    private final int htspVersion;
 
     @Inject
     protected AppRepository appRepository;
@@ -53,6 +54,7 @@ public class HtspIntentService extends JobIntentService implements HtspConnectio
         MainApplication.getComponent().inject(this);
         execService = Executors.newScheduledThreadPool(10);
         connection = appRepository.getConnectionData().getActiveItem();
+        htspVersion = appRepository.getServerStatusData().getActiveItem().getHtspVersion();
         htspConnection = new HtspConnection(this, null);
         // Since this is blocking, spawn to a new thread
         execService.execute(() -> {
@@ -220,7 +222,6 @@ public class HtspIntentService extends JobIntentService implements HtspConnectio
         }
 
         InputStream is;
-        int htspVersion = 13;
         if (url.startsWith("http")) {
             is = new BufferedInputStream(new URL(url).openStream());
         } else if (htspVersion > 9) {
