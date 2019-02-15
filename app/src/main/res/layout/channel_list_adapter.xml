@@ -105,7 +105,7 @@
             app:layout_constraintVertical_bias="0.0" />
 
         <TextView
-            android:id="@+id/channel"
+            android:id="@+id/channel_name"
             style="?attr/TitleFont"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -146,8 +146,8 @@
             android:text="@{channel.programTitle}"
             android:visibility="@{channel.programId > 0 ? View.VISIBLE : View.GONE}"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/channel"
-            app:layout_constraintTop_toBottomOf="@+id/channel" />
+            app:layout_constraintStart_toStartOf="@+id/channel_name"
+            app:layout_constraintTop_toBottomOf="@+id/channel_name" />
 
         <TextView
             android:id="@+id/subtitle"
@@ -161,7 +161,7 @@
             android:text="@{channel.programSubtitle}"
             android:visibility="@{channel.programId > 0  &amp;&amp; showProgramSubtitle &amp;&amp; channel.programSubtitle != null ? View.VISIBLE : View.GONE}"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/channel"
+            app:layout_constraintStart_toStartOf="@+id/channel_name"
             app:layout_constraintTop_toBottomOf="@+id/title" />
 
         <TextView
@@ -173,7 +173,7 @@
             android:singleLine="true"
             android:visibility="@{channel.programId > 0 ? View.VISIBLE : View.GONE}"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/channel"
+            app:layout_constraintStart_toStartOf="@+id/channel_name"
             app:layout_constraintTop_toBottomOf="@+id/subtitle"
             app:layout_constraintVertical_bias="0.0"
             app:timeText="@{channel.programStart}" />
@@ -216,7 +216,7 @@
             android:scaleY="0.5"
             android:visibility="@{channel.progress > 0 &amp;&amp; showProgressBar ? View.VISIBLE : View.GONE}"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/channel"
+            app:layout_constraintStart_toStartOf="@+id/channel_name"
             app:layout_constraintTop_toBottomOf="@+id/duration" />
 
         <TextView
@@ -234,7 +234,7 @@
             android:visibility="@{channel.nextProgramId > 0 &amp;&amp; showNextProgramTitle &amp;&amp; channel.nextProgramTitle != null ? View.VISIBLE : View.GONE}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/channel"
+            app:layout_constraintStart_toStartOf="@+id/channel_name"
             app:layout_constraintTop_toBottomOf="@+id/progressbar"
             app:layout_constraintVertical_bias="0.0" />
 
@@ -252,8 +252,8 @@
             android:visibility="@{channel.programId > 0 ? View.GONE : View.VISIBLE}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/channel"
-            app:layout_constraintTop_toBottomOf="@+id/channel"
+            app:layout_constraintStart_toStartOf="@+id/channel_name"
+            app:layout_constraintTop_toBottomOf="@+id/channel_name"
             app:layout_constraintVertical_bias="0.0" />
 
         <ImageView
