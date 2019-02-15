@@ -23,6 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 import androidx.databinding.BindingAdapter;
+import androidx.recyclerview.widget.RecyclerView;
 import timber.log.Timber;
 
 @SuppressWarnings("unused")
@@ -31,6 +32,13 @@ public class BindingAdapterUtils {
     // Constants required for the date calculation
     private static final int TWO_DAYS = 1000 * 3600 * 24 * 2;
     private static final int SIX_DAYS = 1000 * 3600 * 24 * 6;
+
+    @BindingAdapter("layoutWidth")
+    public static void setLayoutWidth(View view, int width) {
+        RecyclerView.LayoutParams layoutParams = (RecyclerView.LayoutParams) view.getLayoutParams();
+        layoutParams.width = width;
+        view.setLayoutParams(layoutParams);
+    }
 
     @BindingAdapter("seriesInfoText")
     public static void setSeriesInfoText(TextView view, final Program program) {
@@ -144,7 +152,7 @@ public class BindingAdapterUtils {
     public static void setDataSizeText(TextView view, Recording recording) {
         Context context = view.getContext();
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        boolean showRecordingFileStatus = sharedPreferences.getBoolean("show_recording_file_status_enabled", false);
+        boolean showRecordingFileStatus = sharedPreferences.getBoolean("show_recording_file_status_enabled", view.getContext().getResources().getBoolean(R.bool.pref_default_show_recording_file_status_enabled));
 
         if (showRecordingFileStatus
                 && recording != null
@@ -164,7 +172,7 @@ public class BindingAdapterUtils {
     public static void setDataErrorText(TextView view, Recording recording) {
         Context context = view.getContext();
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        boolean showRecordingFileStatus = sharedPreferences.getBoolean("show_recording_file_status_enabled", false);
+        boolean showRecordingFileStatus = sharedPreferences.getBoolean("show_recording_file_status_enabled", view.getContext().getResources().getBoolean(R.bool.pref_default_show_recording_file_status_enabled));
 
         if (showRecordingFileStatus
                 && recording != null
@@ -181,7 +189,7 @@ public class BindingAdapterUtils {
     public static void setSubscriptionErrorText(TextView view, Recording recording) {
         Context context = view.getContext();
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        boolean showRecordingFileStatus = sharedPreferences.getBoolean("show_recording_file_status_enabled", false);
+        boolean showRecordingFileStatus = sharedPreferences.getBoolean("show_recording_file_status_enabled", view.getContext().getResources().getBoolean(R.bool.pref_default_show_recording_file_status_enabled));
 
         if (showRecordingFileStatus
                 && recording != null
@@ -198,7 +206,7 @@ public class BindingAdapterUtils {
     public static void setStreamErrorText(TextView view, Recording recording) {
         Context context = view.getContext();
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        boolean showRecordingFileStatus = sharedPreferences.getBoolean("show_recording_file_status_enabled", false);
+        boolean showRecordingFileStatus = sharedPreferences.getBoolean("show_recording_file_status_enabled", view.getContext().getResources().getBoolean(R.bool.pref_default_show_recording_file_status_enabled));
 
         if (showRecordingFileStatus
                 && recording != null
@@ -211,7 +219,7 @@ public class BindingAdapterUtils {
         }
     }
 
-    @BindingAdapter("statusLabelVisiblity")
+    @BindingAdapter("statusLabelVisibility")
     public static void setStatusLabelVisibility(TextView view, Recording recording) {
         Context context = view.getContext();
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -282,7 +290,7 @@ public class BindingAdapterUtils {
     }
 
     @BindingAdapter("stateIcon")
-    public static void setOptionalText(ImageView view, Recording recording) {
+    public static void setStateIcon(ImageView view, Recording recording) {
         Drawable drawable = null;
         if (recording != null) {
             if (recording.isFailed()) {
