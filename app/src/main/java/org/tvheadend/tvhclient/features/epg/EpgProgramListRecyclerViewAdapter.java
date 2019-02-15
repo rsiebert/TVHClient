@@ -1,8 +1,10 @@
 package org.tvheadend.tvhclient.features.epg;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.DiffUtil;
-import androidx.recyclerview.widget.RecyclerView;
+import android.content.Context;
+import android.content.ContextWrapper;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,22 +13,28 @@ import android.view.ViewGroup;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.EpgProgram;
 import org.tvheadend.tvhclient.data.entity.Recording;
+import org.tvheadend.tvhclient.databinding.EpgProgramItemAdapterBinding;
+import org.tvheadend.tvhclient.features.programs.ProgramDetailsActivity;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback;
 
 import java.util.ArrayList;
 import java.util.List;
 
-class EpgProgramListRecyclerViewAdapter extends RecyclerView.Adapter<EpgProgramListViewHolder> {
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.RecyclerView;
 
-    private final RecyclerViewClickCallback clickCallback;
+class EpgProgramListRecyclerViewAdapter extends RecyclerView.Adapter<EpgProgramListRecyclerViewAdapter.EpgProgramListViewHolder> implements RecyclerViewClickCallback {
+
     private final float pixelsPerMinute;
     private final long fragmentStartTime;
     private final long fragmentStopTime;
     private final List<EpgProgram> programList = new ArrayList<>();
     private List<Recording> recordingList = new ArrayList<>();
 
-    EpgProgramListRecyclerViewAdapter(float pixelsPerMinute, long fragmentStartTime, long fragmentStopTime, @NonNull RecyclerViewClickCallback clickCallback) {
-        this.clickCallback = clickCallback;
+    EpgProgramListRecyclerViewAdapter(float pixelsPerMinute, long fragmentStartTime, long fragmentStopTime) {
         this.pixelsPerMinute = pixelsPerMinute;
         this.fragmentStartTime = fragmentStartTime;
         this.fragmentStopTime = fragmentStopTime;
@@ -35,15 +43,32 @@ class EpgProgramListRecyclerViewAdapter extends RecyclerView.Adapter<EpgProgramL
     @NonNull
     @Override
     public EpgProgramListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        final View view = LayoutInflater.from(parent.getContext()).inflate(viewType, parent, false);
-        return new EpgProgramListViewHolder(view, pixelsPerMinute, fragmentStartTime, fragmentStopTime);
+        LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
+        EpgProgramItemAdapterBinding itemBinding = EpgProgramItemAdapterBinding.inflate(layoutInflater, parent, false);
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(parent.getContext());
+        boolean showProgramSubtitle = sharedPreferences.getBoolean("program_subtitle_enabled", parent.getContext().getResources().getBoolean(R.bool.pref_default_program_subtitle_enabled));
+        boolean showGenreColors = sharedPreferences.getBoolean("genre_colors_for_program_guide_enabled", parent.getContext().getResources().getBoolean(R.bool.pref_default_genre_colors_for_program_guide_enabled));
+
+        return new EpgProgramListViewHolder(itemBinding, showProgramSubtitle, showGenreColors, this);
     }
 
     @Override
     public void onBindViewHolder(@NonNull EpgProgramListViewHolder holder, int position) {
         if (programList.size() > position) {
             EpgProgram program = programList.get(position);
-            holder.bindData(program, recordingList, clickCallback);
+            for (Recording rec : recordingList) {
+                if (rec.getEventId() == program.getEventId()) {
+                    program.setRecording(rec);
+                    break;
+                }
+            }
+
+            long startTime = (program.getStart() < fragmentStartTime) ? fragmentStartTime : program.getStart();
+            long stopTime = (program.getStop() > fragmentStopTime) ? fragmentStopTime : program.getStop();
+            int layoutWidth = (int) (((stopTime - startTime) / 1000 / 60) * pixelsPerMinute);
+
+            holder.bind(program, position, layoutWidth);
         }
     }
 
@@ -75,7 +100,7 @@ class EpgProgramListRecyclerViewAdapter extends RecyclerView.Adapter<EpgProgramL
             boolean recordingExists = false;
 
             for (Recording recording : recordings) {
-                if (program.getEventId() == recording.getEventId()) {
+                if (program.getEventId() > 0 && program.getEventId() == recording.getEventId()) {
                     Recording oldRecording = program.getRecording();
                     program.setRecording(recording);
 
@@ -114,6 +139,72 @@ class EpgProgramListRecyclerViewAdapter extends RecyclerView.Adapter<EpgProgramL
             return programList.get(position);
         } else {
             return null;
+        }
+    }
+
+    @Override
+    public void onClick(View view, int position) {
+        EpgProgram program = getItem(position);
+        if (program == null) {
+            return;
+        }
+        Intent intent = new Intent(view.getContext(), ProgramDetailsActivity.class);
+        intent.putExtra("eventId", program.getEventId());
+        intent.putExtra("channelId", program.getChannelId());
+        view.getContext().startActivity(intent);
+    }
+
+    @Override
+    public boolean onLongClick(View view, int position) {
+        EpgProgram program = getItem(position);
+        if (program == null) {
+            return false;
+        }
+
+        // Get the activity from the view context so the fragment manager can be accessed
+        AppCompatActivity activity = null;
+        Context context = view.getContext();
+        while (context instanceof ContextWrapper) {
+            if (context instanceof AppCompatActivity) {
+                activity = (AppCompatActivity) context;
+            }
+            context = ((ContextWrapper) context).getBaseContext();
+        }
+
+        if (activity != null) {
+            Fragment fragment = activity.getSupportFragmentManager().findFragmentById(R.id.main);
+            if (fragment instanceof ProgramGuideFragment
+                    && fragment.isAdded()
+                    && fragment.isResumed()) {
+                ((ProgramGuideFragment) fragment).showPopupMenu(view, program);
+            }
+        }
+        return true;
+    }
+
+    public static class EpgProgramListViewHolder extends RecyclerView.ViewHolder {
+
+        private final EpgProgramItemAdapterBinding binding;
+        private final boolean showProgramSubtitle;
+        private final boolean showGenreColors;
+        private final RecyclerViewClickCallback clickCallback;
+
+        EpgProgramListViewHolder(EpgProgramItemAdapterBinding binding, boolean showProgramSubtitle, boolean showGenreColors, RecyclerViewClickCallback clickCallback) {
+            super(binding.getRoot());
+            this.binding = binding;
+            this.showProgramSubtitle = showProgramSubtitle;
+            this.showGenreColors = showGenreColors;
+            this.clickCallback = clickCallback;
+        }
+
+        public void bind(EpgProgram program, int position, int layoutWidth) {
+            binding.setProgram(program);
+            binding.setPosition(position);
+            binding.setLayoutWidth(layoutWidth);
+            binding.setShowGenreColor(showGenreColors);
+            binding.setShowProgramSubtitle(showProgramSubtitle);
+            binding.setCallback(clickCallback);
+            binding.executePendingBindings();
         }
     }
 }

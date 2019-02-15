@@ -1,22 +1,23 @@
 package org.tvheadend.tvhclient.features.epg;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.EpgChannel;
+import org.tvheadend.tvhclient.databinding.EpgChannelListAdapterBinding;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-class EpgChannelListRecyclerViewAdapter extends RecyclerView.Adapter<EpgChannelViewHolder> implements Filterable {
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
+class EpgChannelListRecyclerViewAdapter extends RecyclerView.Adapter<EpgChannelListRecyclerViewAdapter.EpgChannelViewHolder> implements Filterable {
 
     private final RecyclerViewClickCallback clickCallback;
     private final List<EpgChannel> channelList = new ArrayList<>();
@@ -29,14 +30,15 @@ class EpgChannelListRecyclerViewAdapter extends RecyclerView.Adapter<EpgChannelV
     @NonNull
     @Override
     public EpgChannelViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        final View view = LayoutInflater.from(parent.getContext()).inflate(viewType, parent, false);
-        return new EpgChannelViewHolder(view);
+        LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
+        EpgChannelListAdapterBinding itemBinding = EpgChannelListAdapterBinding.inflate(layoutInflater, parent, false);
+        return new EpgChannelViewHolder(itemBinding);
     }
 
     @Override
     public void onBindViewHolder(@NonNull EpgChannelViewHolder holder, int position) {
         EpgChannel channel = channelListFiltered.get(position);
-        holder.bindData(channel, clickCallback);
+        holder.bind(channel, position, clickCallback);
     }
 
     void addItems(@NonNull List<EpgChannel> list) {
@@ -81,7 +83,8 @@ class EpgChannelListRecyclerViewAdapter extends RecyclerView.Adapter<EpgChannelV
                     for (EpgChannel channel : new CopyOnWriteArrayList<>(channelList)) {
                         // name match condition. this might differ depending on your requirement
                         // here we are looking for a channel name match
-                        if (channel.getName().toLowerCase().contains(charString.toLowerCase())) {
+                        if (channel.getName() != null
+                                && channel.getName().toLowerCase().contains(charString.toLowerCase())) {
                             filteredList.add(channel);
                         }
                     }
@@ -100,5 +103,22 @@ class EpgChannelListRecyclerViewAdapter extends RecyclerView.Adapter<EpgChannelV
                 notifyDataSetChanged();
             }
         };
+    }
+
+    public static class EpgChannelViewHolder extends RecyclerView.ViewHolder {
+
+        private final EpgChannelListAdapterBinding binding;
+
+        EpgChannelViewHolder(EpgChannelListAdapterBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
+        }
+
+        public void bind(EpgChannel channel, int position, RecyclerViewClickCallback clickCallback) {
+            binding.setChannel(channel);
+            binding.setPosition(position);
+            binding.setCallback(clickCallback);
+            binding.executePendingBindings();
+        }
     }
 }
