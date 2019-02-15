@@ -1,10 +1,6 @@
 package org.tvheadend.tvhclient;
 
 import android.app.Application;
-import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LifecycleObserver;
-import androidx.lifecycle.OnLifecycleEvent;
-import androidx.lifecycle.ProcessLifecycleOwner;
 import android.content.Context;
 import android.content.SharedPreferences;
 
@@ -38,6 +34,10 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleObserver;
+import androidx.lifecycle.OnLifecycleEvent;
+import androidx.lifecycle.ProcessLifecycleOwner;
 import io.fabric.sdk.android.Fabric;
 import timber.log.Timber;
 
@@ -52,6 +52,10 @@ import static org.tvheadend.tvhclient.utils.Constants.UNLOCKER;
 // TODO add discord link
 // TODO add timeframe menu to additional features page
 // TODO hide features menu when unlocker gets available later
+// TODO show channel text if no icon is available
+// TODO check where injected app context can be used
+// TODO restructure package into base, core, ui, utils
+// TODO reduce flicker when loading webview in dark mode
 
 public class MainApplication extends Application implements OptionsProvider, LifecycleObserver, BillingUpdatesListener {
 
