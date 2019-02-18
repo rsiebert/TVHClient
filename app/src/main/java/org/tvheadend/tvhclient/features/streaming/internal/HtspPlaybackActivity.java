@@ -61,7 +61,6 @@ import org.tvheadend.tvhclient.features.streaming.internal.utils.TrackSelectionH
 import org.tvheadend.tvhclient.features.streaming.internal.utils.TvhMappings;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 import org.tvheadend.tvhclient.utils.SnackbarUtils;
-import org.tvheadend.tvhclient.utils.UIUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -292,7 +291,7 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
         // Show the channel icons. Otherwise show the channel name only
         if (!TextUtils.isEmpty(channelIcon)) {
             Picasso.get()
-                    .load(UIUtils.getIconUrl(this, channelIcon))
+                    .load(MiscUtils.getIconUrl(this, channelIcon))
                     .into(iconImageView, new Callback() {
                         @Override
                         public void onSuccess() {

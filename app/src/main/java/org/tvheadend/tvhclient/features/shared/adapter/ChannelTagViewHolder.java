@@ -14,7 +14,7 @@ import com.squareup.picasso.Picasso;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.ChannelTag;
-import org.tvheadend.tvhclient.utils.UIUtils;
+import org.tvheadend.tvhclient.utils.MiscUtils;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -63,7 +63,7 @@ public class ChannelTagViewHolder extends RecyclerView.ViewHolder {
         if (!TextUtils.isEmpty(channelTag.getTagIcon()) && showChannelTagIcons) {
             iconImageView.setVisibility(View.VISIBLE);
             Picasso.get()
-                    .load(UIUtils.getIconUrl(context, channelTag.getTagIcon()))
+                    .load(MiscUtils.getIconUrl(context, channelTag.getTagIcon()))
                     .into(iconImageView);
         } else {
             iconImageView.setVisibility(View.GONE);

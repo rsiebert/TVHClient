@@ -330,7 +330,7 @@ public class BindingAdapterUtils {
         if (TextUtils.isEmpty(iconUrl)) {
             view.setVisibility(View.GONE);
         } else {
-            String url = UIUtils.getIconUrl(view.getContext(), iconUrl);
+            String url = MiscUtils.getIconUrl(view.getContext(), iconUrl);
             Picasso.get()
                     .load(url)
                     .into(view, new Callback() {

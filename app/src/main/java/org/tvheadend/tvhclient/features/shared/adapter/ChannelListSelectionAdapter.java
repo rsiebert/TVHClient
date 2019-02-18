@@ -1,8 +1,6 @@
 package org.tvheadend.tvhclient.features.shared.adapter;
 
 import android.content.Context;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,10 +12,13 @@ import com.squareup.picasso.Picasso;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.Channel;
-import org.tvheadend.tvhclient.utils.UIUtils;
+import org.tvheadend.tvhclient.utils.MiscUtils;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class ChannelListSelectionAdapter extends RecyclerView.Adapter<ChannelListSelectionAdapter.ViewHolder> {
 
@@ -53,7 +54,7 @@ public class ChannelListSelectionAdapter extends RecyclerView.Adapter<ChannelLis
             Context context = this.context.get();
             if (context != null && holder.iconImageView != null && !TextUtils.isEmpty(channel.getIcon())) {
                 Picasso.get()
-                        .load(UIUtils.getIconUrl(context, channel.getIcon()))
+                        .load(MiscUtils.getIconUrl(context, channel.getIcon()))
                         .into(holder.iconImageView);
             }
             if (holder.titleTextView != null) {

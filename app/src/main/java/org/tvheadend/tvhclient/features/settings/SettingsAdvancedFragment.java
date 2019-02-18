@@ -24,7 +24,6 @@ import org.tvheadend.tvhclient.features.search.SuggestionProvider;
 import org.tvheadend.tvhclient.features.startup.SplashActivity;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 import org.tvheadend.tvhclient.utils.SnackbarUtils;
-import org.tvheadend.tvhclient.utils.UIUtils;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -265,7 +264,7 @@ public class SettingsAdvancedFragment extends BasePreferenceFragment implements 
                                 Timber.d("Could not delete channel icon " + file.getName());
                             }
                         }
-                        Picasso.get().invalidate(UIUtils.getIconUrl(getActivity(), channel.getIcon()));
+                        Picasso.get().invalidate(MiscUtils.getIconUrl(getActivity(), channel.getIcon()));
                     }
                     SnackbarUtils.sendSnackbarMessage(activity, R.string.clear_icon_cache_done);
 
