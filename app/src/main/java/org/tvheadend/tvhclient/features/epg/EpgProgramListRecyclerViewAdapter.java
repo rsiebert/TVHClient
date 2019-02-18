@@ -2,7 +2,6 @@ package org.tvheadend.tvhclient.features.epg;
 
 import android.content.Context;
 import android.content.ContextWrapper;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
@@ -14,7 +13,7 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.entity.EpgProgram;
 import org.tvheadend.tvhclient.data.entity.Recording;
 import org.tvheadend.tvhclient.databinding.EpgProgramItemAdapterBinding;
-import org.tvheadend.tvhclient.features.programs.ProgramDetailsActivity;
+import org.tvheadend.tvhclient.features.programs.ProgramDetailsFragment;
 import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback;
 
 import java.util.ArrayList;
@@ -23,6 +22,7 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -136,42 +136,53 @@ class EpgProgramListRecyclerViewAdapter extends RecyclerView.Adapter<EpgProgramL
         }
     }
 
+    /**
+     * Returns the activity from the view context so that
+     * stuff like the fragment manager can be accessed
+     *
+     * @param view The view to retrieve the activity from
+     * @return Activity or null if none was found
+     */
+    private AppCompatActivity getActivity(View view) {
+        Context context = view.getContext();
+        while (context instanceof ContextWrapper) {
+            if (context instanceof AppCompatActivity) {
+                return (AppCompatActivity) context;
+            }
+            context = ((ContextWrapper) context).getBaseContext();
+        }
+        return null;
+    }
+
     @Override
     public void onClick(View view, int position) {
+        AppCompatActivity activity = getActivity(view);
         EpgProgram program = getItem(position);
-        if (program == null) {
+        if (program == null || activity == null) {
             return;
         }
-        Intent intent = new Intent(view.getContext(), ProgramDetailsActivity.class);
-        intent.putExtra("eventId", program.getEventId());
-        intent.putExtra("channelId", program.getChannelId());
-        view.getContext().startActivity(intent);
+
+        Fragment fragment = ProgramDetailsFragment.newInstance(program.getEventId(), program.getChannelId());
+        FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.main, fragment);
+        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+        ft.addToBackStack(null);
+        ft.commit();
     }
 
     @Override
     public boolean onLongClick(View view, int position) {
+        AppCompatActivity activity = getActivity(view);
         EpgProgram program = getItem(position);
-        if (program == null) {
+        if (program == null || activity == null) {
             return false;
         }
 
-        // Get the activity from the view context so the fragment manager can be accessed
-        AppCompatActivity activity = null;
-        Context context = view.getContext();
-        while (context instanceof ContextWrapper) {
-            if (context instanceof AppCompatActivity) {
-                activity = (AppCompatActivity) context;
-            }
-            context = ((ContextWrapper) context).getBaseContext();
-        }
-
-        if (activity != null) {
-            Fragment fragment = activity.getSupportFragmentManager().findFragmentById(R.id.main);
-            if (fragment instanceof ProgramGuideFragment
-                    && fragment.isAdded()
-                    && fragment.isResumed()) {
-                ((ProgramGuideFragment) fragment).showPopupMenu(view, program);
-            }
+        Fragment fragment = activity.getSupportFragmentManager().findFragmentById(R.id.main);
+        if (fragment instanceof ProgramGuideFragment
+                && fragment.isAdded()
+                && fragment.isResumed()) {
+            ((ProgramGuideFragment) fragment).showPopupMenu(view, program);
         }
         return true;
     }
