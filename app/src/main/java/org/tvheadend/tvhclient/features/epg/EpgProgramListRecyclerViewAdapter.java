@@ -57,12 +57,6 @@ class EpgProgramListRecyclerViewAdapter extends RecyclerView.Adapter<EpgProgramL
     public void onBindViewHolder(@NonNull EpgProgramListViewHolder holder, int position) {
         if (programList.size() > position) {
             EpgProgram program = programList.get(position);
-            for (Recording rec : recordingList) {
-                if (rec.getEventId() == program.getEventId()) {
-                    program.setRecording(rec);
-                    break;
-                }
-            }
 
             long startTime = (program.getStart() < fragmentStartTime) ? fragmentStartTime : program.getStart();
             long stopTime = (program.getStop() > fragmentStopTime) ? fragmentStopTime : program.getStop();
