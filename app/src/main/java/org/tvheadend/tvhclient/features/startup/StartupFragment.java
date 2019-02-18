@@ -45,8 +45,6 @@ public class StartupFragment extends Fragment {
     ImageButton addConnectionButton;
     @BindView(R.id.settings_button)
     ImageButton settingsButton;
-    @BindView(R.id.retry_button)
-    ImageButton retryButton;
 
     private Unbinder unbinder;
     private AppCompatActivity activity;

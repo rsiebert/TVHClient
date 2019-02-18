@@ -87,27 +87,14 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
         android:background="?attr/rounded_corners"
         android:contentDescription="@null"
         android:src="?attr/ic_menu_settings"
         android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/retry_button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/add_connection_button" />
-
-    <ImageButton
-        android:id="@+id/retry_button"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginTop="16dp"
-        android:background="?attr/rounded_corners"
-        android:contentDescription="@null"
-        android:src="?attr/ic_menu_refresh"
-        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/settings_button" />
+        app:layout_constraintTop_toBottomOf="@+id/add_connection_button" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
