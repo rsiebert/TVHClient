@@ -21,9 +21,10 @@ import org.tvheadend.tvhclient.data.entity.Channel;
 import org.tvheadend.tvhclient.data.entity.SeriesRecording;
 import org.tvheadend.tvhclient.data.entity.ServerProfile;
 import org.tvheadend.tvhclient.data.service.HtspService;
-import org.tvheadend.tvhclient.features.dvr.DateTimeSelectedListener;
+import org.tvheadend.tvhclient.features.dvr.DatePickerFragment;
 import org.tvheadend.tvhclient.features.dvr.RecordingConfigSelectedListener;
 import org.tvheadend.tvhclient.features.dvr.RecordingUtils;
+import org.tvheadend.tvhclient.features.dvr.TimePickerFragment;
 import org.tvheadend.tvhclient.features.shared.BaseFragment;
 import org.tvheadend.tvhclient.features.shared.callbacks.BackPressedInterface;
 import org.tvheadend.tvhclient.utils.MiscUtils;
@@ -39,7 +40,7 @@ import butterknife.OnCheckedChanged;
 import butterknife.OnTextChanged;
 import butterknife.Unbinder;
 
-public class SeriesRecordingAddEditFragment extends BaseFragment implements BackPressedInterface, RecordingConfigSelectedListener, DateTimeSelectedListener {
+public class SeriesRecordingAddEditFragment extends BaseFragment implements BackPressedInterface, RecordingConfigSelectedListener, DatePickerFragment.Listener, TimePickerFragment.Listener {
 
     @BindView(R.id.is_enabled)
     CheckBox isEnabledCheckbox;

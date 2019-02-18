@@ -44,8 +44,14 @@ public class DatePickerFragment extends DialogFragment implements DatePickerDial
         calendar.set(Calendar.MINUTE, minute);
 
         Fragment fragment = getTargetFragment();
-        if (fragment instanceof DateTimeSelectedListener) {
-            ((DateTimeSelectedListener) fragment).onDateSelected(calendar.getTimeInMillis(), getTag());
+        if (fragment instanceof Listener) {
+            ((Listener) fragment).onDateSelected(calendar.getTimeInMillis(), getTag());
         }
+    }
+
+
+    public interface Listener {
+
+        void onDateSelected(long milliSeconds, String tag);
     }
 }
