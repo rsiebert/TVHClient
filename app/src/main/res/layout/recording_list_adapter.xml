@@ -77,8 +77,22 @@
             android:layout_weight="0.9"
             android:ellipsize="end"
             android:text="@{recording.title}"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/state"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/state"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:contentDescription="@null"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_rec_small"
+            android:visibility="@{recording.isRecording ? View.VISIBLE : View.GONE}"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
