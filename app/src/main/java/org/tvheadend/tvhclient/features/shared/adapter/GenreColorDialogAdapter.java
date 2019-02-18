@@ -1,40 +1,33 @@
 package org.tvheadend.tvhclient.features.shared.adapter;
 
 
+import android.view.LayoutInflater;
+import android.view.ViewGroup;
+
+import org.tvheadend.tvhclient.databinding.GenreColorDialogAdapterBinding;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
-
-import org.tvheadend.tvhclient.R;
-
-import java.util.List;
 
 public class GenreColorDialogAdapter extends RecyclerView.Adapter<GenreColorDialogAdapter.ViewHolder> {
 
-    private final List<GenreColorDialogItem> list;
+    private final String[] contentInfo;
 
-    public GenreColorDialogAdapter(List<GenreColorDialogItem> list) {
-        this.list = list;
-    }
-
-    public static class GenreColorDialogItem {
-        public int color;
-        public String genre;
+    public GenreColorDialogAdapter(String[] contentInfo) {
+        this.contentInfo = contentInfo;
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        final View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.genre_color_dialog_adapter, parent, false);
-        return new ViewHolder(view);
+        LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
+        GenreColorDialogAdapterBinding itemBinding = GenreColorDialogAdapterBinding.inflate(layoutInflater, parent, false);
+        return new GenreColorDialogAdapter.ViewHolder(itemBinding);
     }
 
     @Override
     public int getItemCount() {
-        return list.size();
+        return contentInfo.length;
     }
 
     /**
@@ -42,29 +35,23 @@ public class GenreColorDialogAdapter extends RecyclerView.Adapter<GenreColorDial
      */
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        final GenreColorDialogItem item = list.get(position);
-        if (item != null) {
-            if (holder.color != null) {
-                holder.color.setBackgroundColor(item.color);
-            }
-            if (holder.genre != null) {
-                holder.genre.setText(item.genre);
-                holder.genre.setTag(position);
-            }
-        }
+        holder.bind(((position + 1) * 16), contentInfo[position]);
     }
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
     static class ViewHolder extends RecyclerView.ViewHolder {
-        final TextView color;
-        final TextView genre;
+        private final GenreColorDialogAdapterBinding binding;
 
-        ViewHolder(View view) {
-            super(view);
-            this.color = view.findViewById(R.id.color);
-            this.genre = view.findViewById(R.id.genre);
+        ViewHolder(GenreColorDialogAdapterBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
+        }
+
+        public void bind(int contentType, String contentName) {
+            binding.setContentType(contentType);
+            binding.setContentName(contentName);
         }
     }
 }

@@ -44,7 +44,6 @@ import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -88,19 +87,10 @@ public class MenuUtils {
         if (activity == null) {
             return false;
         }
-        final String[] s = activity.getResources().getStringArray(R.array.pr_content_type0);
-
         // Fill the list for the adapter
-        final List<GenreColorDialogAdapter.GenreColorDialogItem> items = new ArrayList<>();
-        for (int i = 0; i < s.length; ++i) {
-            GenreColorDialogAdapter.GenreColorDialogItem genreColor = new GenreColorDialogAdapter.GenreColorDialogItem();
-            genreColor.color = UIUtils.getGenreColor(activity, ((i + 1) * 16), 0);
-            genreColor.genre = s[i];
-            items.add(genreColor);
-        }
         new MaterialDialog.Builder(activity)
                 .title(R.string.genre_color_list)
-                .adapter(new GenreColorDialogAdapter(items), null)
+                .adapter(new GenreColorDialogAdapter(activity.getResources().getStringArray(R.array.pr_content_type0)), null)
                 .show();
         return true;
     }
