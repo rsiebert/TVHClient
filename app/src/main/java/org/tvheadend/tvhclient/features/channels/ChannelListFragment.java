@@ -28,7 +28,6 @@ import org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallba
 import org.tvheadend.tvhclient.features.shared.tasks.WakeOnLanTask;
 
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -177,7 +176,7 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
         // Initiate a timer that will update the view model data every minute
         // so that the progress bars will be displayed correctly
         currentTimeUpdateTask = () -> {
-            long currentTime = new Date().getTime();
+            long currentTime = Calendar.getInstance().getTimeInMillis();
             Timber.d("Checking if selected time " + selectedTime + " is past current time " + currentTime);
             if (selectedTime < currentTime) {
                 Timber.d("Updated selected time to current time");
