@@ -2,7 +2,6 @@ package org.tvheadend.tvhclient.features.purchase;
 
 import android.app.Activity;
 import android.content.Context;
-import androidx.annotation.Nullable;
 
 import com.android.billingclient.api.BillingClient;
 import com.android.billingclient.api.BillingClientStateListener;
@@ -13,6 +12,7 @@ import com.android.billingclient.api.PurchasesUpdatedListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.Nullable;
 import timber.log.Timber;
 
 public class BillingManager implements PurchasesUpdatedListener {
@@ -20,14 +20,10 @@ public class BillingManager implements PurchasesUpdatedListener {
     private BillingClient billingClient;
     private BillingUpdatesListener billingUpdatesListener;
     private boolean isServiceConnected = false;
-    private int billingClientResponseCode;
 
     public BillingManager(Context context, final BillingUpdatesListener billingUpdatesListener) {
-
-
         this.billingUpdatesListener = billingUpdatesListener;
-
-        billingClient = BillingClient.newBuilder(context).setListener(this).build();
+        this.billingClient = BillingClient.newBuilder(context).setListener(this).build();
         startServiceConnection(billingUpdatesListener::onBillingClientSetupFinished);
     }
 
@@ -44,7 +40,6 @@ public class BillingManager implements PurchasesUpdatedListener {
                 } else {
                     Timber.d("Billing setup did not finish successfully");
                 }
-                billingClientResponseCode = responseCode;
             }
 
             @Override
@@ -83,7 +78,6 @@ public class BillingManager implements PurchasesUpdatedListener {
     public void queryPurchases() {
         Timber.d("Querying purchases");
         Runnable queryToExecute = () -> {
-            long time = System.currentTimeMillis();
             Timber.d("Adding available in-app items");
             Purchase.PurchasesResult purchasesResult = billingClient.queryPurchases(BillingClient.SkuType.INAPP);
             if (areSubscriptionsSupported()) {
@@ -136,6 +130,5 @@ public class BillingManager implements PurchasesUpdatedListener {
             billingClient.launchBillingFlow(activity, mParams);
         };
         executeServiceRequest(purchaseFlowRequest);
-
     }
 }
