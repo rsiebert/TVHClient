@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.ui.features.purchase;
+package org.tvheadend.tvhclient.ui.base.billing;
 
 import com.android.billingclient.api.Purchase;
 

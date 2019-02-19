@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.ui.features.purchase;
+package org.tvheadend.tvhclient.ui.base.billing;
 
 import android.app.Activity;
 import android.content.Context;
@@ -123,7 +123,7 @@ public class BillingManager implements PurchasesUpdatedListener {
         return responseCode == BillingClient.BillingResponse.OK;
     }
 
-    void initiatePurchaseFlow(Activity activity, final String skuId, final ArrayList<String> oldSkus, final @BillingClient.SkuType String billingType) {
+    public void initiatePurchaseFlow(Activity activity, final String skuId, final ArrayList<String> oldSkus, final @BillingClient.SkuType String billingType) {
         Timber.d("Initiating purchase flow for " + skuId);
         Runnable purchaseFlowRequest = () -> {
             BillingFlowParams mParams = BillingFlowParams.newBuilder().setSku(skuId).setType(billingType).setOldSkus(oldSkus).build();

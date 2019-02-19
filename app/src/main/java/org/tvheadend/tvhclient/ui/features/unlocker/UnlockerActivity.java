@@ -1,12 +1,13 @@
 package org.tvheadend.tvhclient.ui.features.purchase;
 
 import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.ui.base.callbacks.ToolbarInterface;
 import org.tvheadend.tvhclient.utils.MiscUtils;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 public class UnlockerActivity extends AppCompatActivity implements ToolbarInterface {
 
