@@ -10,8 +10,8 @@ import androidx.room.RoomWarnings;
 import androidx.room.Transaction;
 import androidx.room.Update;
 
-import org.tvheadend.tvhclient.data.entity.Program;
-import org.tvheadend.tvhclient.data.entity.EpgProgram;
+import org.tvheadend.tvhclient.domain.entity.Program;
+import org.tvheadend.tvhclient.domain.entity.EpgProgram;
 
 import java.util.List;
 

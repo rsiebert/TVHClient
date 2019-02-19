@@ -3,13 +3,13 @@ package org.tvheadend.tvhclient.data.service;
 import android.content.Intent;
 import android.text.TextUtils;
 
-import org.tvheadend.tvhclient.data.entity.Channel;
-import org.tvheadend.tvhclient.data.entity.ChannelTag;
-import org.tvheadend.tvhclient.data.entity.Program;
-import org.tvheadend.tvhclient.data.entity.Recording;
-import org.tvheadend.tvhclient.data.entity.SeriesRecording;
-import org.tvheadend.tvhclient.data.entity.ServerStatus;
-import org.tvheadend.tvhclient.data.entity.TimerRecording;
+import org.tvheadend.tvhclient.domain.entity.Channel;
+import org.tvheadend.tvhclient.domain.entity.ChannelTag;
+import org.tvheadend.tvhclient.domain.entity.Program;
+import org.tvheadend.tvhclient.domain.entity.Recording;
+import org.tvheadend.tvhclient.domain.entity.SeriesRecording;
+import org.tvheadend.tvhclient.domain.entity.ServerStatus;
+import org.tvheadend.tvhclient.domain.entity.TimerRecording;
 
 import java.util.List;
 

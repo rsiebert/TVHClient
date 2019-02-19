@@ -8,7 +8,7 @@
 
         <variable
             name="channel"
-            type="org.tvheadend.tvhclient.data.entity.Channel" />
+            type="org.tvheadend.tvhclient.domain.entity.Channel" />
 
         <variable
             name="htspVersion"
@@ -48,7 +48,7 @@
 
         <variable
             name="callback"
-            type="org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback" />
+            type="org.tvheadend.tvhclient.ui.base.callbacks.RecyclerViewClickCallback" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

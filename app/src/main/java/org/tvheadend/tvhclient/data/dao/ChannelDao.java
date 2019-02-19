@@ -1,7 +1,7 @@
 package org.tvheadend.tvhclient.data.dao;
 
-import org.tvheadend.tvhclient.data.entity.Channel;
-import org.tvheadend.tvhclient.data.entity.EpgChannel;
+import org.tvheadend.tvhclient.domain.entity.Channel;
+import org.tvheadend.tvhclient.domain.entity.EpgChannel;
 
 import java.util.List;
 import java.util.Set;

@@ -6,7 +6,7 @@ import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
 
-import org.tvheadend.tvhclient.data.entity.ServerProfile;
+import org.tvheadend.tvhclient.domain.entity.ServerProfile;
 
 import java.util.List;
 

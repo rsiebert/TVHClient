@@ -7,7 +7,7 @@
 
         <variable
             name="recording"
-            type="org.tvheadend.tvhclient.data.entity.Recording" />
+            type="org.tvheadend.tvhclient.domain.entity.Recording" />
 
         <variable
             name="htspVersion"
@@ -27,7 +27,7 @@
 
         <variable
             name="callback"
-            type="org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback" />
+            type="org.tvheadend.tvhclient.ui.base.callbacks.RecyclerViewClickCallback" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"

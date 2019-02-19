@@ -11,8 +11,8 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.data.entity.ServerProfile;
-import org.tvheadend.tvhclient.data.entity.ServerStatus;
+import org.tvheadend.tvhclient.domain.entity.ServerProfile;
+import org.tvheadend.tvhclient.domain.entity.ServerStatus;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;

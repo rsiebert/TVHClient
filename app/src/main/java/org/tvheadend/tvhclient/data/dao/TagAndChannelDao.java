@@ -8,7 +8,7 @@ import androidx.room.Query;
 import androidx.room.Transaction;
 import androidx.room.Update;
 
-import org.tvheadend.tvhclient.data.entity.TagAndChannel;
+import org.tvheadend.tvhclient.domain.entity.TagAndChannel;
 
 import java.util.List;
 

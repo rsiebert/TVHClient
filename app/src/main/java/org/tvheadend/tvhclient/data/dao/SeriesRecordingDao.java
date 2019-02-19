@@ -9,7 +9,7 @@ import androidx.room.Query;
 import androidx.room.Transaction;
 import androidx.room.Update;
 
-import org.tvheadend.tvhclient.data.entity.SeriesRecording;
+import org.tvheadend.tvhclient.domain.entity.SeriesRecording;
 
 import java.util.List;
 

@@ -7,7 +7,7 @@
 
         <variable
             name="recording"
-            type="org.tvheadend.tvhclient.data.entity.SeriesRecording" />
+            type="org.tvheadend.tvhclient.domain.entity.SeriesRecording" />
 
         <variable
             name="gmtOffset"
@@ -31,7 +31,7 @@
 
         <variable
             name="callback"
-            type="org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback" />
+            type="org.tvheadend.tvhclient.ui.base.callbacks.RecyclerViewClickCallback" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"

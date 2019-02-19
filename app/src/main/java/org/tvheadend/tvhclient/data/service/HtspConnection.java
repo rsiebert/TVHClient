@@ -7,8 +7,8 @@ import android.util.SparseArray;
 import org.tvheadend.tvhclient.BuildConfig;
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.data.entity.Connection;
-import org.tvheadend.tvhclient.data.entity.ServerStatus;
+import org.tvheadend.tvhclient.domain.entity.Connection;
+import org.tvheadend.tvhclient.domain.entity.ServerStatus;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
 
 import java.io.IOException;

@@ -6,7 +6,7 @@
 
         <variable
             name="channel"
-            type="org.tvheadend.tvhclient.data.entity.EpgChannel" />
+            type="org.tvheadend.tvhclient.domain.entity.EpgChannel" />
 
         <variable
             name="position"
@@ -14,7 +14,7 @@
 
         <variable
             name="callback"
-            type="org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback" />
+            type="org.tvheadend.tvhclient.ui.base.callbacks.RecyclerViewClickCallback" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

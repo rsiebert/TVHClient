@@ -4,17 +4,17 @@ import android.content.Context;
 
 import org.tvheadend.tvhclient.data.db.AppRoomDatabase;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
-import org.tvheadend.tvhclient.data.source.ChannelData;
-import org.tvheadend.tvhclient.data.source.ChannelTagData;
-import org.tvheadend.tvhclient.data.source.ConnectionData;
-import org.tvheadend.tvhclient.data.source.MiscData;
-import org.tvheadend.tvhclient.data.source.ProgramData;
-import org.tvheadend.tvhclient.data.source.RecordingData;
-import org.tvheadend.tvhclient.data.source.SeriesRecordingData;
-import org.tvheadend.tvhclient.data.source.ServerProfileData;
-import org.tvheadend.tvhclient.data.source.ServerStatusData;
-import org.tvheadend.tvhclient.data.source.TagAndChannelData;
-import org.tvheadend.tvhclient.data.source.TimerRecordingData;
+import org.tvheadend.tvhclient.domain.data_sources.ChannelData;
+import org.tvheadend.tvhclient.domain.data_sources.ChannelTagData;
+import org.tvheadend.tvhclient.domain.data_sources.ConnectionData;
+import org.tvheadend.tvhclient.domain.data_sources.MiscData;
+import org.tvheadend.tvhclient.domain.data_sources.ProgramData;
+import org.tvheadend.tvhclient.domain.data_sources.RecordingData;
+import org.tvheadend.tvhclient.domain.data_sources.SeriesRecordingData;
+import org.tvheadend.tvhclient.domain.data_sources.ServerProfileData;
+import org.tvheadend.tvhclient.domain.data_sources.ServerStatusData;
+import org.tvheadend.tvhclient.domain.data_sources.TagAndChannelData;
+import org.tvheadend.tvhclient.domain.data_sources.TimerRecordingData;
 
 import javax.inject.Singleton;
 

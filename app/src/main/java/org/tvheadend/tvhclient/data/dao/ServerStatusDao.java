@@ -8,7 +8,7 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
 
-import org.tvheadend.tvhclient.data.entity.ServerStatus;
+import org.tvheadend.tvhclient.domain.entity.ServerStatus;
 
 @Dao
 public interface ServerStatusDao {

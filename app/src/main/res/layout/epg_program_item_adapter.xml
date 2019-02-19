@@ -8,7 +8,7 @@
 
         <variable
             name="program"
-            type="org.tvheadend.tvhclient.data.entity.EpgProgram" />
+            type="org.tvheadend.tvhclient.domain.entity.EpgProgram" />
 
         <variable
             name="position"
@@ -28,7 +28,7 @@
 
         <variable
             name="callback"
-            type="org.tvheadend.tvhclient.features.shared.callbacks.RecyclerViewClickCallback" />
+            type="org.tvheadend.tvhclient.ui.base.callbacks.RecyclerViewClickCallback" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

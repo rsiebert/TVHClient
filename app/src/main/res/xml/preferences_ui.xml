@@ -143,7 +143,7 @@
             android:summary="@string/pref_genre_colors_epg_sum"
             android:title="@string/pref_genre_colors_epg" />
 
-        <org.tvheadend.tvhclient.features.settings.SliderPreference
+        <org.tvheadend.tvhclient.ui.features.settings.SliderPreference
             android:defaultValue="@string/pref_default_genre_color_transparency"
             android:dialogMessage="@string/pref_genre_colors_visibility_message"
             android:key="genre_color_transparency"

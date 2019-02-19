@@ -8,7 +8,7 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
 
-import org.tvheadend.tvhclient.data.entity.Connection;
+import org.tvheadend.tvhclient.domain.entity.Connection;
 
 import java.util.List;
 
