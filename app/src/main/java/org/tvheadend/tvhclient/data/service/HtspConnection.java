@@ -255,7 +255,6 @@ public class HtspConnection extends Thread {
     }
 
     public void sendMessage(HtspMessage message, HtspResponseListener listener) {
-        Timber.d("Sending message " + message.getMethod());
         if (!isConnected()) {
             Timber.d("Not sending message, not connected to server");
             return;
