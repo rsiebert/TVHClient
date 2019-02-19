@@ -16,17 +16,18 @@ import com.google.android.gms.cast.framework.media.NotificationOptions;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
 
-import org.tvheadend.tvhclient.ui.base.logging.CrashlyticsTree;
-import org.tvheadend.tvhclient.ui.base.logging.DebugTree;
-import org.tvheadend.tvhclient.ui.base.logging.FileLoggingTree;
-import org.tvheadend.tvhclient.ui.base.billing.BillingHandler;
-import org.tvheadend.tvhclient.ui.base.billing.BillingManager;
-import org.tvheadend.tvhclient.ui.base.billing.BillingUpdatesListener;
-import org.tvheadend.tvhclient.ui.features.playback.external.ExpandedControlsActivity;
+import org.tvheadend.tvhclient.injection.DaggerMainApplicationComponent;
 import org.tvheadend.tvhclient.injection.MainApplicationComponent;
 import org.tvheadend.tvhclient.injection.modules.MainApplicationModule;
 import org.tvheadend.tvhclient.injection.modules.RepositoryModule;
 import org.tvheadend.tvhclient.injection.modules.SharedPreferencesModule;
+import org.tvheadend.tvhclient.ui.base.billing.BillingHandler;
+import org.tvheadend.tvhclient.ui.base.billing.BillingManager;
+import org.tvheadend.tvhclient.ui.base.billing.BillingUpdatesListener;
+import org.tvheadend.tvhclient.ui.base.logging.CrashlyticsTree;
+import org.tvheadend.tvhclient.ui.base.logging.DebugTree;
+import org.tvheadend.tvhclient.ui.base.logging.FileLoggingTree;
+import org.tvheadend.tvhclient.ui.features.playback.external.ExpandedControlsActivity;
 import org.tvheadend.tvhclient.utils.MigrateUtils;
 
 import java.util.List;
@@ -42,18 +43,12 @@ import timber.log.Timber;
 
 import static org.tvheadend.tvhclient.utils.Constants.UNLOCKER;
 
-// TODO use data binding
 // TODO use more livedata for connection and server status in a centralized viewmodel
 // TODO move diffutils to background thread
-// TODO improve epg loading speed by loading programs as livedata
 // TODO Use paged loading
-
-// TODO add discord link
-// TODO add timeframe menu to additional features page
 // TODO hide features menu when unlocker gets available later
 // TODO show channel text if no icon is available
 // TODO check where injected app context can be used
-// TODO restructure package into base, core, ui, utils
 // TODO reduce flicker when loading webview in dark mode
 
 public class MainApplication extends Application implements OptionsProvider, LifecycleObserver, BillingUpdatesListener {
