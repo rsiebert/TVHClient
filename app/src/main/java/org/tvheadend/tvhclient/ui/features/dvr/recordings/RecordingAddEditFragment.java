@@ -27,7 +27,7 @@ import org.tvheadend.tvhclient.ui.features.dvr.RecordingUtils;
 import org.tvheadend.tvhclient.ui.features.dvr.TimePickerFragment;
 import org.tvheadend.tvhclient.ui.base.BaseFragment;
 import org.tvheadend.tvhclient.ui.base.callbacks.BackPressedInterface;
-import org.tvheadend.tvhclient.utils.MiscUtils;
+import org.tvheadend.tvhclient.util.MiscUtils;
 import org.tvheadend.tvhclient.ui.base.utils.SnackbarUtils;
 
 import java.util.List;

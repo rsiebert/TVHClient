@@ -4,7 +4,7 @@ import android.os.Bundle;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.ui.base.callbacks.ToolbarInterface;
-import org.tvheadend.tvhclient.utils.MiscUtils;
+import org.tvheadend.tvhclient.util.MiscUtils;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;

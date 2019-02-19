@@ -23,8 +23,8 @@ import org.tvheadend.tvhclient.domain.entity.ServerProfile;
 import org.tvheadend.tvhclient.domain.entity.ServerStatus;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.data.service.HtspService;
-import org.tvheadend.tvhclient.ui.base.receivers.SyncStateReceiver;
-import org.tvheadend.tvhclient.utils.MiscUtils;
+import org.tvheadend.tvhclient.util.receivers.SyncStateReceiver;
+import org.tvheadend.tvhclient.util.MiscUtils;
 
 import java.util.concurrent.ExecutionException;
 

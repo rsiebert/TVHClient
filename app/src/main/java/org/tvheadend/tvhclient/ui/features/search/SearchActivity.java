@@ -11,7 +11,7 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.ui.features.programs.ProgramListFragment;
 import org.tvheadend.tvhclient.ui.base.BaseActivity;
 import org.tvheadend.tvhclient.ui.base.callbacks.ToolbarInterface;
-import org.tvheadend.tvhclient.utils.MiscUtils;
+import org.tvheadend.tvhclient.util.MiscUtils;
 
 import timber.log.Timber;
 

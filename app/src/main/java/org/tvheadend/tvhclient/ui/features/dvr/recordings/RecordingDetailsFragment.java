@@ -18,7 +18,7 @@ import org.tvheadend.tvhclient.ui.features.download.DownloadPermissionGrantedInt
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity;
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingRemovedCallback;
 import org.tvheadend.tvhclient.ui.base.BaseFragment;
-import org.tvheadend.tvhclient.utils.MiscUtils;
+import org.tvheadend.tvhclient.util.MiscUtils;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;

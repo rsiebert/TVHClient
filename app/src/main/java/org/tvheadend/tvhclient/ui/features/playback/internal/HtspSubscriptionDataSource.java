@@ -29,9 +29,9 @@ import com.google.android.exoplayer2.upstream.DataSpec;
 
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.data.service.HtspConnection;
-import org.tvheadend.tvhclient.data.service.HtspMessage;
-import org.tvheadend.tvhclient.data.service.HtspMessageListener;
+import org.tvheadend.tvhclient.data.service.htsp.HtspConnection;
+import org.tvheadend.tvhclient.data.service.htsp.HtspMessage;
+import org.tvheadend.tvhclient.data.service.htsp.HtspMessageListener;
 import org.tvheadend.tvhclient.data.service.HtspService;
 
 import java.io.ByteArrayOutputStream;

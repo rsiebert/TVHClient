@@ -54,12 +54,12 @@ import org.tvheadend.tvhclient.domain.entity.Recording;
 import org.tvheadend.tvhclient.domain.entity.ServerProfile;
 import org.tvheadend.tvhclient.domain.entity.ServerStatus;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
-import org.tvheadend.tvhclient.data.service.HtspConnection;
-import org.tvheadend.tvhclient.data.service.HtspConnectionStateListener;
+import org.tvheadend.tvhclient.data.service.htsp.HtspConnection;
+import org.tvheadend.tvhclient.data.service.htsp.HtspConnectionStateListener;
 import org.tvheadend.tvhclient.ui.features.playback.internal.utils.ExoPlayerUtils;
 import org.tvheadend.tvhclient.ui.features.playback.internal.utils.TrackSelectionHelper;
 import org.tvheadend.tvhclient.ui.features.playback.internal.utils.TvhMappings;
-import org.tvheadend.tvhclient.utils.MiscUtils;
+import org.tvheadend.tvhclient.util.MiscUtils;
 import org.tvheadend.tvhclient.ui.base.utils.SnackbarUtils;
 
 import java.text.SimpleDateFormat;

@@ -6,7 +6,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.ui.base.callbacks.ToolbarInterface;
-import org.tvheadend.tvhclient.utils.MiscUtils;
+import org.tvheadend.tvhclient.util.MiscUtils;
 
 public class WebViewActivity extends AppCompatActivity implements ToolbarInterface {
 

@@ -41,7 +41,7 @@ import org.tvheadend.tvhclient.ui.features.unlocker.UnlockerFragment;
 import org.tvheadend.tvhclient.ui.features.settings.ConnectionViewModel;
 import org.tvheadend.tvhclient.ui.features.settings.SettingsActivity;
 import org.tvheadend.tvhclient.ui.features.startup.SplashActivity;
-import org.tvheadend.tvhclient.utils.MiscUtils;
+import org.tvheadend.tvhclient.util.MiscUtils;
 
 import java.util.ArrayList;
 import java.util.List;

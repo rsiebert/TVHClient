@@ -18,7 +18,7 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.ui.features.MainActivity;
 import org.tvheadend.tvhclient.ui.features.settings.SettingsActivity;
-import org.tvheadend.tvhclient.ui.base.receivers.SyncStateReceiver;
+import org.tvheadend.tvhclient.util.receivers.SyncStateReceiver;
 import org.tvheadend.tvhclient.ui.base.utils.MenuUtils;
 
 import javax.inject.Inject;

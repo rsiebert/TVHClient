@@ -25,7 +25,7 @@ import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 import com.google.android.exoplayer2.video.HevcConfig;
 
-import org.tvheadend.tvhclient.data.service.HtspMessage;
+import org.tvheadend.tvhclient.data.service.htsp.HtspMessage;
 
 import java.util.List;
 

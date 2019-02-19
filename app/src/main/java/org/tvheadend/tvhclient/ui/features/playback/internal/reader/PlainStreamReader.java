@@ -25,7 +25,7 @@ import com.google.android.exoplayer2.extractor.TrackOutput;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 
 import org.tvheadend.tvhclient.MainApplication;
-import org.tvheadend.tvhclient.data.service.HtspMessage;
+import org.tvheadend.tvhclient.data.service.htsp.HtspMessage;
 
 import androidx.annotation.NonNull;
 

@@ -14,8 +14,8 @@ import org.tvheadend.tvhclient.ui.features.dvr.timer_recordings.TimerRecordingDe
 import org.tvheadend.tvhclient.ui.features.programs.ProgramDetailsFragment;
 import org.tvheadend.tvhclient.ui.features.programs.ProgramListFragment;
 import org.tvheadend.tvhclient.ui.base.callbacks.NetworkStatusListener;
-import org.tvheadend.tvhclient.ui.base.receivers.NetworkStatusReceiver;
-import org.tvheadend.tvhclient.ui.base.receivers.SnackbarMessageReceiver;
+import org.tvheadend.tvhclient.util.receivers.NetworkStatusReceiver;
+import org.tvheadend.tvhclient.util.receivers.SnackbarMessageReceiver;
 import org.tvheadend.tvhclient.ui.base.utils.SnackbarUtils;
 
 import androidx.annotation.Nullable;

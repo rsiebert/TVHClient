@@ -14,7 +14,7 @@ import com.squareup.picasso.Picasso;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.domain.entity.ChannelTag;
-import org.tvheadend.tvhclient.utils.MiscUtils;
+import org.tvheadend.tvhclient.util.MiscUtils;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;

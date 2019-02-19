@@ -12,18 +12,18 @@ import com.android.billingclient.api.Purchase;
 
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.ui.base.billing.BillingHandler;
-import org.tvheadend.tvhclient.ui.base.billing.BillingManager;
-import org.tvheadend.tvhclient.ui.base.billing.BillingUpdatesListener;
+import org.tvheadend.tvhclient.util.billing.BillingHandler;
+import org.tvheadend.tvhclient.util.billing.BillingManager;
+import org.tvheadend.tvhclient.util.billing.BillingUpdatesListener;
 import org.tvheadend.tvhclient.ui.features.information.WebViewFragment;
-import org.tvheadend.tvhclient.ui.base.tasks.HtmlFileLoaderTask;
+import org.tvheadend.tvhclient.util.tasks.HtmlFileLoaderTask;
 import org.tvheadend.tvhclient.ui.features.startup.SplashActivity;
 
 import java.util.List;
 
 import timber.log.Timber;
 
-import static org.tvheadend.tvhclient.utils.Constants.UNLOCKER;
+import static org.tvheadend.tvhclient.util.Constants.UNLOCKER;
 
 public class UnlockerFragment extends WebViewFragment implements HtmlFileLoaderTask.Listener, BillingUpdatesListener {
 

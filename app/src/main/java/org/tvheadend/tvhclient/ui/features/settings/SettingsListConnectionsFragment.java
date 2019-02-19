@@ -20,7 +20,7 @@ import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.data.service.HtspService;
 import org.tvheadend.tvhclient.ui.base.callbacks.BackPressedInterface;
 import org.tvheadend.tvhclient.ui.base.callbacks.ToolbarInterface;
-import org.tvheadend.tvhclient.ui.base.tasks.WakeOnLanTask;
+import org.tvheadend.tvhclient.util.tasks.WakeOnLanTask;
 import org.tvheadend.tvhclient.ui.features.startup.SplashActivity;
 
 import javax.inject.Inject;

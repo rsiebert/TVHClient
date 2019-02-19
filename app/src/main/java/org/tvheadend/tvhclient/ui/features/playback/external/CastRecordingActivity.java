@@ -16,7 +16,7 @@ import com.google.android.gms.common.images.WebImage;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.domain.entity.Recording;
 import org.tvheadend.tvhclient.data.service.HtspService;
-import org.tvheadend.tvhclient.utils.MiscUtils;
+import org.tvheadend.tvhclient.util.MiscUtils;
 
 import androidx.annotation.Nullable;
 import timber.log.Timber;

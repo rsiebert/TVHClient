@@ -82,8 +82,8 @@
             android:authorities="org.tvheadend.tvhclient.ui.features.search.SuggestionProvider"
             android:exported="false" />
 
-        <receiver android:name=".ui.features.notifications.ProgramNotificationReceiver" />
-        <receiver android:name=".ui.features.notifications.RecordingNotificationReceiver" />
+        <receiver android:name=".util.receivers.ProgramNotificationReceiver" />
+        <receiver android:name=".util.receivers.RecordingNotificationReceiver" />
 
         <activity android:name=".ui.features.dvr.RecordingAddEditActivity" />
         <activity android:name=".ui.features.changelog.ChangeLogActivity" />

@@ -18,7 +18,7 @@ import com.squareup.picasso.Picasso;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.domain.entity.Program;
 import org.tvheadend.tvhclient.domain.entity.Recording;
-import org.tvheadend.tvhclient.utils.MiscUtils;
+import org.tvheadend.tvhclient.util.MiscUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.Locale;

@@ -7,7 +7,7 @@ import com.google.android.gms.cast.framework.CastButtonFactory;
 import com.google.android.gms.cast.framework.media.widget.ExpandedControllerActivity;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.utils.MiscUtils;
+import org.tvheadend.tvhclient.util.MiscUtils;
 
 public class ExpandedControlsActivity extends ExpandedControllerActivity {
 

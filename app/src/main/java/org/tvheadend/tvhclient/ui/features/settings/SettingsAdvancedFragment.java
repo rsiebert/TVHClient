@@ -8,22 +8,21 @@ import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.provider.SearchRecentSuggestions;
-import android.text.TextUtils;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.squareup.picasso.Picasso;
 
 import org.tvheadend.tvhclient.BuildConfig;
 import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.data.service.HtspService;
+import org.tvheadend.tvhclient.data.worker.LoadChannelIconWorker;
 import org.tvheadend.tvhclient.domain.entity.Channel;
 import org.tvheadend.tvhclient.domain.entity.Connection;
-import org.tvheadend.tvhclient.data.service.HtspService;
-import org.tvheadend.tvhclient.data.service.worker.LoadChannelIconWorker;
-import org.tvheadend.tvhclient.ui.base.logging.FileLoggingTree;
+import org.tvheadend.tvhclient.util.logging.FileLoggingTree;
+import org.tvheadend.tvhclient.ui.base.utils.SnackbarUtils;
 import org.tvheadend.tvhclient.ui.features.search.SuggestionProvider;
 import org.tvheadend.tvhclient.ui.features.startup.SplashActivity;
-import org.tvheadend.tvhclient.utils.MiscUtils;
-import org.tvheadend.tvhclient.ui.base.utils.SnackbarUtils;
+import org.tvheadend.tvhclient.util.MiscUtils;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -250,21 +249,18 @@ public class SettingsAdvancedFragment extends BasePreferenceFragment implements 
                 .positiveText(getString(R.string.delete))
                 .negativeText(getString(R.string.cancel))
                 .onPositive((dialog, which) -> {
-
                     // Delete all channel icon files that were downloaded for the active
                     // connection. Additionally remove the icons from the Picasso cache
                     Timber.d("Deleting channel icons and invalidating cache");
                     for (Channel channel : appRepository.getChannelData().getItems()) {
-                        if (TextUtils.isEmpty(channel.getIcon())) {
-                            continue;
-                        }
-                        File file = new File(getActivity().getCacheDir(), MiscUtils.convertUrlToHashString(channel.getIcon()) + ".png");
+                        String url = MiscUtils.getIconUrl(getActivity(), channel.getIcon());
+                        File file = new File(url);
                         if (file.exists()) {
                             if (!file.delete()) {
                                 Timber.d("Could not delete channel icon " + file.getName());
                             }
                         }
-                        Picasso.get().invalidate(MiscUtils.getIconUrl(getActivity(), channel.getIcon()));
+                        Picasso.get().invalidate(file);
                     }
                     SnackbarUtils.sendSnackbarMessage(activity, R.string.clear_icon_cache_done);
 

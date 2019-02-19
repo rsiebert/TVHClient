@@ -5,7 +5,7 @@ import android.os.Bundle;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.ui.base.BaseActivity;
 import org.tvheadend.tvhclient.ui.base.callbacks.ToolbarInterface;
-import org.tvheadend.tvhclient.utils.MiscUtils;
+import org.tvheadend.tvhclient.util.MiscUtils;
 
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;

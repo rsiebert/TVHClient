@@ -16,8 +16,8 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.ui.features.changelog.ChangeLogActivity;
 import org.tvheadend.tvhclient.ui.base.callbacks.BackPressedInterface;
 import org.tvheadend.tvhclient.ui.base.callbacks.ToolbarInterface;
-import org.tvheadend.tvhclient.ui.base.receivers.SnackbarMessageReceiver;
-import org.tvheadend.tvhclient.utils.MiscUtils;
+import org.tvheadend.tvhclient.util.receivers.SnackbarMessageReceiver;
+import org.tvheadend.tvhclient.util.MiscUtils;
 
 import java.io.File;
 

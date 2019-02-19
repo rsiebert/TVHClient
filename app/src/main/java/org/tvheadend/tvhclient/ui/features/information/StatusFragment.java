@@ -20,7 +20,7 @@ import org.tvheadend.tvhclient.ui.features.dvr.series_recordings.SeriesRecording
 import org.tvheadend.tvhclient.ui.features.dvr.timer_recordings.TimerRecordingViewModel;
 import org.tvheadend.tvhclient.ui.features.programs.ProgramViewModel;
 import org.tvheadend.tvhclient.ui.base.BaseFragment;
-import org.tvheadend.tvhclient.ui.base.tasks.WakeOnLanTask;
+import org.tvheadend.tvhclient.util.tasks.WakeOnLanTask;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModelProviders;

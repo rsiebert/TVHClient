@@ -17,8 +17,8 @@ import org.tvheadend.tvhclient.BuildConfig;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.ui.base.callbacks.BackPressedInterface;
 import org.tvheadend.tvhclient.ui.base.callbacks.ToolbarInterface;
-import org.tvheadend.tvhclient.ui.base.tasks.ChangeLogLoaderTask;
-import org.tvheadend.tvhclient.ui.base.tasks.HtmlFileLoaderTask;
+import org.tvheadend.tvhclient.util.tasks.ChangeLogLoaderTask;
+import org.tvheadend.tvhclient.util.tasks.HtmlFileLoaderTask;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;

@@ -3,6 +3,7 @@ package org.tvheadend.tvhclient.data.service;
 import android.content.Intent;
 import android.text.TextUtils;
 
+import org.tvheadend.tvhclient.data.service.htsp.HtspMessage;
 import org.tvheadend.tvhclient.domain.entity.Channel;
 import org.tvheadend.tvhclient.domain.entity.ChannelTag;
 import org.tvheadend.tvhclient.domain.entity.Program;
@@ -16,7 +17,7 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import timber.log.Timber;
 
-class HtspUtils {
+public class HtspUtils {
 
     static ChannelTag convertMessageToChannelTagModel(@NonNull ChannelTag tag, @NonNull HtspMessage msg, @NonNull List<Channel> channels) {
         if (msg.containsKey("tagId")) {
@@ -571,7 +572,7 @@ class HtspUtils {
         return timerRecording;
     }
 
-    static ServerStatus convertMessageToServerStatusModel(@NonNull ServerStatus serverStatus, @NonNull HtspMessage msg) {
+    public static ServerStatus convertMessageToServerStatusModel(@NonNull ServerStatus serverStatus, @NonNull HtspMessage msg) {
         if (msg.containsKey("htspversion")) {
             serverStatus.setHtspVersion(msg.getInteger("htspversion", 13));
         }

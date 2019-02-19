@@ -10,7 +10,7 @@ import android.view.MenuItem;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.ui.base.callbacks.BackPressedInterface;
 import org.tvheadend.tvhclient.ui.base.callbacks.ToolbarInterface;
-import org.tvheadend.tvhclient.utils.MiscUtils;
+import org.tvheadend.tvhclient.util.MiscUtils;
 
 public class ChangeLogActivity extends AppCompatActivity implements ToolbarInterface {
 

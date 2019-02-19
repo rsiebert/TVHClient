@@ -8,12 +8,16 @@ import android.graphics.BitmapFactory;
 import android.text.TextUtils;
 
 import org.tvheadend.tvhclient.MainApplication;
+import org.tvheadend.tvhclient.data.service.htsp.HtspConnection;
+import org.tvheadend.tvhclient.data.service.htsp.HtspConnectionStateListener;
+import org.tvheadend.tvhclient.data.service.htsp.HtspFileInputStream;
+import org.tvheadend.tvhclient.data.service.htsp.HtspMessage;
 import org.tvheadend.tvhclient.domain.entity.Channel;
 import org.tvheadend.tvhclient.domain.entity.ChannelTag;
 import org.tvheadend.tvhclient.domain.entity.Connection;
 import org.tvheadend.tvhclient.domain.entity.Program;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
-import org.tvheadend.tvhclient.utils.MiscUtils;
+import org.tvheadend.tvhclient.util.MiscUtils;
 
 import java.io.BufferedInputStream;
 import java.io.File;

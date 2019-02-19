@@ -1,5 +1,6 @@
 package org.tvheadend.tvhclient.ui.features.information;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -12,8 +13,8 @@ import android.widget.ProgressBar;
 import org.tvheadend.tvhclient.BuildConfig;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.ui.base.BaseFragment;
-import org.tvheadend.tvhclient.ui.base.tasks.HtmlFileLoaderTask;
-import org.tvheadend.tvhclient.utils.MiscUtils;
+import org.tvheadend.tvhclient.util.MiscUtils;
+import org.tvheadend.tvhclient.util.tasks.HtmlFileLoaderTask;
 
 import java.util.regex.Pattern;
 
@@ -49,6 +50,9 @@ public class WebViewFragment extends BaseFragment implements HtmlFileLoaderTask.
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         forceSingleScreenLayout();
+
+        webView.setVisibility(View.INVISIBLE);
+        webView.setBackgroundColor(Color.argb(1, 0, 0, 0));
 
         if (savedInstanceState != null) {
             website = savedInstanceState.getString("website", "");

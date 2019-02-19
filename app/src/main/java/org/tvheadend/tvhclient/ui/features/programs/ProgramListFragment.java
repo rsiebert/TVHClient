@@ -24,7 +24,7 @@ import org.tvheadend.tvhclient.ui.features.search.SearchRequestInterface;
 import org.tvheadend.tvhclient.ui.features.search.StartSearchInterface;
 import org.tvheadend.tvhclient.ui.base.BaseFragment;
 import org.tvheadend.tvhclient.ui.base.callbacks.RecyclerViewClickCallback;
-import org.tvheadend.tvhclient.utils.MiscUtils;
+import org.tvheadend.tvhclient.util.MiscUtils;
 
 import java.util.Date;
 import java.util.List;

@@ -27,7 +27,7 @@ import com.google.android.exoplayer2.extractor.PositionHolder;
 import com.google.android.exoplayer2.extractor.SeekMap;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 
-import org.tvheadend.tvhclient.data.service.HtspMessage;
+import org.tvheadend.tvhclient.data.service.htsp.HtspMessage;
 import org.tvheadend.tvhclient.ui.features.playback.internal.reader.StreamReader;
 import org.tvheadend.tvhclient.ui.features.playback.internal.reader.StreamReadersFactory;
 

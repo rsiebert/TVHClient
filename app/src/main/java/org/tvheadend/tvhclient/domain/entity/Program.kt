@@ -10,12 +10,12 @@ import java.util.*
 data class Program(
 
         @ColumnInfo(name = "id")
-        var eventId: Int = 0,                    // u32   required   Event ID
+        override var eventId: Int = 0,                    // u32   required   Event ID
         @ColumnInfo(name = "channel_id")
-        var channelId: Int = 0,                  // u32   required   The channel this event is related to.
-        var start: Long = 0,                     // u64   required   Start time of event, UNIX time.
-        var stop: Long = 0,                      // u64   required   Ending time of event, UNIX time.
-        var title: String? = null,               // str   optional   Title of event.
+        override var channelId: Int = 0,                  // u32   required   The channel this event is related to.
+        override var start: Long = 0,                     // u64   required   Start time of event, UNIX time.
+        override var stop: Long = 0,                      // u64   required   Ending time of event, UNIX time.
+        override var title: String? = null,               // str   optional   Title of event.
         var subtitle: String? = null,            // str   optional   Subtitle of event.
         var summary: String? = null,             // str   optional   Short description of the event (Added in version 6).
         var description: String? = null,         // str   optional   Long description of the event.
@@ -73,7 +73,7 @@ data class Program(
 
         @Ignore
         var recording: Recording? = null
-) {
+) : ProgramInterface {
     val duration: Int
         get() = ((stop - start) / 1000 / 60).toInt()
 

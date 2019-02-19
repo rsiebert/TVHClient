@@ -25,7 +25,7 @@ import org.tvheadend.tvhclient.ui.features.programs.ProgramListFragment;
 import org.tvheadend.tvhclient.ui.features.search.SearchRequestInterface;
 import org.tvheadend.tvhclient.ui.base.BaseFragment;
 import org.tvheadend.tvhclient.ui.base.callbacks.RecyclerViewClickCallback;
-import org.tvheadend.tvhclient.ui.base.tasks.WakeOnLanTask;
+import org.tvheadend.tvhclient.util.tasks.WakeOnLanTask;
 
 import java.util.Calendar;
 import java.util.List;

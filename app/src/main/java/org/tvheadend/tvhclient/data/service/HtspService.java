@@ -1,8 +1,6 @@
 package org.tvheadend.tvhclient.data.service;
 
-import android.app.AlarmManager;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -17,6 +15,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.data.repository.AppRepository;
+import org.tvheadend.tvhclient.data.service.htsp.HtspConnection;
+import org.tvheadend.tvhclient.data.service.htsp.HtspConnectionStateListener;
+import org.tvheadend.tvhclient.data.service.htsp.HtspFileInputStream;
+import org.tvheadend.tvhclient.data.service.htsp.HtspMessage;
+import org.tvheadend.tvhclient.data.service.htsp.HtspMessageListener;
+import org.tvheadend.tvhclient.data.worker.EpgDataUpdateWorker;
+import org.tvheadend.tvhclient.util.NotificationUtils;
 import org.tvheadend.tvhclient.domain.entity.Channel;
 import org.tvheadend.tvhclient.domain.entity.ChannelTag;
 import org.tvheadend.tvhclient.domain.entity.Connection;
@@ -27,12 +33,9 @@ import org.tvheadend.tvhclient.domain.entity.ServerProfile;
 import org.tvheadend.tvhclient.domain.entity.ServerStatus;
 import org.tvheadend.tvhclient.domain.entity.TagAndChannel;
 import org.tvheadend.tvhclient.domain.entity.TimerRecording;
-import org.tvheadend.tvhclient.data.repository.AppRepository;
-import org.tvheadend.tvhclient.data.service.worker.EpgDataUpdateWorker;
-import org.tvheadend.tvhclient.ui.features.notifications.RecordingNotificationReceiver;
-import org.tvheadend.tvhclient.ui.base.receivers.SyncStateReceiver;
-import org.tvheadend.tvhclient.utils.MiscUtils;
+import org.tvheadend.tvhclient.util.receivers.SyncStateReceiver;
 import org.tvheadend.tvhclient.ui.base.utils.SnackbarUtils;
+import org.tvheadend.tvhclient.util.MiscUtils;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -43,7 +46,6 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -208,7 +210,6 @@ public class HtspService extends Service implements HtspConnectionStateListener,
     @Override
     public void onMessage(HtspMessage message) {
         String method = message.getMethod();
-        Timber.d("Received message " + method + " from server");
         switch (method) {
             case "tagAdd":
                 onTagAdd(message);
@@ -374,6 +375,7 @@ public class HtspService extends Service implements HtspConnectionStateListener,
         HtspMessage enableAsyncMetadataRequest = new HtspMessage();
         enableAsyncMetadataRequest.setMethod("enableAsyncMetadata");
 
+        //noinspection ConstantConditions
         long epgMaxTime = Long.parseLong(sharedPreferences.getString("epg_max_time", getResources().getString(R.string.pref_default_epg_max_time)));
         long currentTimeInSeconds = (System.currentTimeMillis() / 1000L);
         long lastUpdateTime = connection.getLastUpdate();
@@ -402,9 +404,7 @@ public class HtspService extends Service implements HtspConnectionStateListener,
             enableAsyncMetadataRequest.put("lastUpdate", (currentTimeInSeconds - 12 * 60 * 60));
         }
 
-        htspConnection.sendMessage(enableAsyncMetadataRequest, response -> {
-            Timber.d("Received response for enableAsyncMetadata");
-        });
+        htspConnection.sendMessage(enableAsyncMetadataRequest, response -> Timber.d("Received response for enableAsyncMetadata"));
     }
 
     private void onInitialSyncCompleted() {
@@ -418,29 +418,32 @@ public class HtspService extends Service implements HtspConnectionStateListener,
         // Save the channels and tags only during a forced sync.
         // This avoids the channel list being updated by the recyclerview
         if (syncRequired) {
-            Timber.d("Sync of channels and tags is required, saving");
+            Timber.d("Sync of initial data is required, saving received channels, tags and downloading icons");
             saveAllReceivedChannels();
             saveAllReceivedChannelTags();
+            loadAllChannelIcons();
+        } else {
+            Timber.d("Sync of initial data is not required");
         }
+
         // Only save any received events when they shall be loaded
         if (syncEventsRequired) {
             Timber.d("Sync of all evens is required, saving events");
             saveAllReceivedEvents();
+        } else {
+            Timber.d("Sync of all evens is not required");
         }
+
         // Recordings are always saved to keep up to
         // date with the recording states from the server
         saveAllReceivedRecordings();
 
         getAdditionalServerData();
 
-        Timber.d("Updating connection status with full sync completed");
+        Timber.d("Updating connection status with full sync completed and last update time");
         connection.setSyncRequired(false);
-        Timber.d("Updating connection status with last update time");
-        long currentTime = System.currentTimeMillis() / 1000L;
-        connection.setLastUpdate(currentTime);
+        connection.setLastUpdate(System.currentTimeMillis() / 1000L);
         appRepository.getConnectionData().updateItem(connection);
-
-        loadAllChannelIcons();
 
         // The initial sync is considered to be done at this point.
         // Send the message to the listeners that the sync is done
@@ -452,6 +455,10 @@ public class HtspService extends Service implements HtspConnectionStateListener,
         syncRequired = false;
         syncEventsRequired = false;
         initialSyncWithServerRunning = false;
+
+        Timber.d("Deleting events in the database that are older than one day from now");
+        long pastTime = Calendar.getInstance().getTimeInMillis() - (24 * 60 * 60 * 1000);
+        appRepository.getProgramData().removeItemsByTime(pastTime);
 
         Timber.d("Starting background worker to load more epg data");
         OneTimeWorkRequest updateEpgWorker = new OneTimeWorkRequest.Builder(EpgDataUpdateWorker.class)
@@ -755,12 +762,8 @@ public class HtspService extends Service implements HtspConnectionStateListener,
             int channelId = msg.getInteger("channelId");
 
             Channel channel = appRepository.getChannelData().getItemById(channelId);
-            if (channel != null && !TextUtils.isEmpty(channel.getIcon())) {
-                deleteIconFileFromCache(channel.getIcon());
-            } else {
-                Timber.e("Could not delete channel icon from database");
-            }
             if (channel != null) {
+                deleteIconFileFromCache(channel.getIcon());
                 appRepository.getChannelData().removeItem(channel);
             }
         }
@@ -789,24 +792,7 @@ public class HtspService extends Service implements HtspConnectionStateListener,
             appRepository.getRecordingData().addItem(recording);
         }
 
-        if (sharedPreferences.getBoolean("notifications_enabled", getResources().getBoolean(R.bool.pref_default_notifications_enabled))
-                && recording.isScheduled()
-                && recording.getStart() > Calendar.getInstance().getTimeInMillis()
-                && !TextUtils.isEmpty(recording.getTitle())) {
-
-            Timber.d("Adding notification for recording " + recording.getTitle());
-            Intent intent = new Intent(appContext, RecordingNotificationReceiver.class);
-            intent.putExtra("dvrTitle", recording.getTitle());
-            intent.putExtra("dvrId", recording.getId());
-            intent.putExtra("start", recording.getStart());
-
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(
-                    appContext, recording.getId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-            Timber.d("Created notification for recording " + recording.getTitle() + " with id " + recording.getId());
-            ((AlarmManager) getSystemService(ALARM_SERVICE))
-                    .set(AlarmManager.RTC_WAKEUP, MiscUtils.getNotificationTime(appContext, recording.getStart()), pendingIntent);
-        }
+        NotificationUtils.addNotification(appContext, recording);
     }
 
     /**
@@ -825,6 +811,7 @@ public class HtspService extends Service implements HtspConnectionStateListener,
         Recording updatedRecording = HtspUtils.convertMessageToRecordingModel(recording, msg);
         appRepository.getRecordingData().updateItem(updatedRecording);
 
+        NotificationUtils.removeNotificationById(appContext, recording.getId());
         if (sharedPreferences.getBoolean("notifications_enabled", getResources().getBoolean(R.bool.pref_default_notifications_enabled))) {
             if (!recording.isScheduled() && !recording.isRecording()) {
                 Timber.d("Removing notification for recording " + recording.getTitle());
@@ -844,10 +831,7 @@ public class HtspService extends Service implements HtspConnectionStateListener,
             Recording recording = appRepository.getRecordingData().getItemById(msg.getInteger("id"));
             if (recording != null) {
                 appRepository.getRecordingData().removeItem(recording);
-                if (sharedPreferences.getBoolean("notifications_enabled", getResources().getBoolean(R.bool.pref_default_notifications_enabled))) {
-                    Timber.d("Removing notification for recording " + recording.getTitle());
-                    ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).cancel(recording.getId());
-                }
+
             }
         }
     }
@@ -1330,13 +1314,14 @@ public class HtspService extends Service implements HtspConnectionStateListener,
     /**
      * Removes the cached image file from the file system
      *
-     * @param url The url of the file
+     * @param iconUrl The icon url
      */
-    private void deleteIconFileFromCache(String url) {
-        if (TextUtils.isEmpty(url)) {
+    private void deleteIconFileFromCache(@Nullable String iconUrl) {
+        if (TextUtils.isEmpty(iconUrl)) {
             return;
         }
-        File file = new File(getCacheDir(), MiscUtils.convertUrlToHashString(url) + ".png");
+        String url = MiscUtils.getIconUrl(appContext, iconUrl);
+        File file = new File(url);
         if (!file.exists() || !file.delete()) {
             Timber.d("Could not delete icon " + file.getName());
         }
@@ -1446,14 +1431,6 @@ public class HtspService extends Service implements HtspConnectionStateListener,
         Timber.d("Saved " + pendingEventOps.size() + " events for all channels. " +
                 "Database contains " + appRepository.getProgramData().getItemCount() + " events");
         pendingEventOps.clear();
-    }
-
-    private void deleteOldEventsFromDatabase() {
-        Timber.d("Deleting events older than one day from the database");
-
-        // Get the time that was one week (1 day in millis) before now
-        long oneWeekBeforeNow = new Date().getTime() - (24 * 60 * 60 * 1000);
-        appRepository.getProgramData().removeItemsByTime(oneWeekBeforeNow);
     }
 
     private void getEpgQuery(final Intent intent) {

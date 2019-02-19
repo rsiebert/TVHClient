@@ -1,6 +1,6 @@
 package org.tvheadend.tvhclient.data.repository
 
-import org.tvheadend.tvhclient.domain.data_sources.*
+import org.tvheadend.tvhclient.domain.repository.data_source.*
 import org.tvheadend.tvhclient.domain.repository.RepositoryInterface
 import javax.inject.Inject
 

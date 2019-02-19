@@ -2,8 +2,6 @@ package org.tvheadend.tvhclient.ui.base.utils;
 
 
 import android.app.Activity;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -18,6 +16,9 @@ import com.crashlytics.android.Crashlytics;
 
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.data.repository.AppRepository;
+import org.tvheadend.tvhclient.data.service.HtspService;
+import org.tvheadend.tvhclient.util.NotificationUtils;
 import org.tvheadend.tvhclient.domain.entity.ChannelTag;
 import org.tvheadend.tvhclient.domain.entity.Connection;
 import org.tvheadend.tvhclient.domain.entity.EpgProgram;
@@ -27,21 +28,19 @@ import org.tvheadend.tvhclient.domain.entity.SeriesRecording;
 import org.tvheadend.tvhclient.domain.entity.ServerProfile;
 import org.tvheadend.tvhclient.domain.entity.ServerStatus;
 import org.tvheadend.tvhclient.domain.entity.TimerRecording;
-import org.tvheadend.tvhclient.data.repository.AppRepository;
-import org.tvheadend.tvhclient.data.service.HtspService;
+import org.tvheadend.tvhclient.ui.base.adapter.ChannelTagRecyclerViewAdapter;
+import org.tvheadend.tvhclient.ui.base.adapter.GenreColorDialogAdapter;
 import org.tvheadend.tvhclient.ui.features.channels.ChannelDisplayOptionListener;
 import org.tvheadend.tvhclient.ui.features.download.DownloadRecordingManager;
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingRemovedCallback;
-import org.tvheadend.tvhclient.ui.features.search.SearchActivity;
-import org.tvheadend.tvhclient.ui.base.adapter.ChannelTagRecyclerViewAdapter;
-import org.tvheadend.tvhclient.ui.base.adapter.GenreColorDialogAdapter;
-import org.tvheadend.tvhclient.ui.features.startup.SplashActivity;
 import org.tvheadend.tvhclient.ui.features.playback.external.CastChannelActivity;
 import org.tvheadend.tvhclient.ui.features.playback.external.CastRecordingActivity;
 import org.tvheadend.tvhclient.ui.features.playback.external.PlayChannelActivity;
 import org.tvheadend.tvhclient.ui.features.playback.external.PlayRecordingActivity;
 import org.tvheadend.tvhclient.ui.features.playback.internal.HtspPlaybackActivity;
-import org.tvheadend.tvhclient.utils.MiscUtils;
+import org.tvheadend.tvhclient.ui.features.search.SearchActivity;
+import org.tvheadend.tvhclient.ui.features.startup.SplashActivity;
+import org.tvheadend.tvhclient.util.MiscUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
@@ -58,8 +57,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import io.fabric.sdk.android.Fabric;
 import timber.log.Timber;
-
-import static android.content.Context.ALARM_SERVICE;
 
 public class MenuUtils {
 
@@ -724,24 +721,7 @@ public class MenuUtils {
 
         //noinspection ConstantConditions
         ServerProfile profile = appRepository.getServerProfileData().getItemById(serverStatus.getRecordingServerProfileId());
-
-        Intent intent = new Intent(activity, HtspService.class);
-        intent.setAction("addProgramNotification");
-        intent.putExtra("eventTitle", program.getTitle());
-        intent.putExtra("eventId", program.getEventId());
-        intent.putExtra("channelId", program.getChannelId());
-        intent.putExtra("start", program.getStart());
-
-        if (MiscUtils.isServerProfileEnabled(profile, serverStatus)) {
-            intent.putExtra("configName", profile.getName());
-        }
-
-        Timber.d("Created notification for epg program " + program.getTitle() + " with id " + program.getEventId());
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(activity, program.getEventId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        ((AlarmManager) activity.getSystemService(ALARM_SERVICE))
-                .set(AlarmManager.RTC_WAKEUP,
-                        MiscUtils.getNotificationTime(activity, program.getStart()),
-                        pendingIntent);
+        NotificationUtils.addNotification(activity, program, profile);
         return true;
     }
 
@@ -756,24 +736,7 @@ public class MenuUtils {
 
         //noinspection ConstantConditions
         ServerProfile profile = appRepository.getServerProfileData().getItemById(serverStatus.getRecordingServerProfileId());
-
-        Intent intent = new Intent(activity, HtspService.class);
-        intent.setAction("addProgramNotification");
-        intent.putExtra("eventTitle", program.getTitle());
-        intent.putExtra("eventId", program.getEventId());
-        intent.putExtra("channelId", program.getChannelId());
-        intent.putExtra("start", program.getStart());
-
-        if (MiscUtils.isServerProfileEnabled(profile, serverStatus)) {
-            intent.putExtra("configName", profile.getName());
-        }
-
-        Timber.d("Created notification for program " + program.getTitle() + " with id " + program.getEventId());
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(activity, program.getEventId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        ((AlarmManager) activity.getSystemService(ALARM_SERVICE))
-                .set(AlarmManager.RTC_WAKEUP,
-                        MiscUtils.getNotificationTime(activity, program.getStart()),
-                        pendingIntent);
+        NotificationUtils.addNotification(activity, program, profile);
         return true;
     }
 

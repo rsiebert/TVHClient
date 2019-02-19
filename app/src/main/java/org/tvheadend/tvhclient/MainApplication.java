@@ -16,19 +16,19 @@ import com.google.android.gms.cast.framework.media.NotificationOptions;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
 
-import org.tvheadend.tvhclient.injection.DaggerMainApplicationComponent;
-import org.tvheadend.tvhclient.injection.MainApplicationComponent;
-import org.tvheadend.tvhclient.injection.modules.MainApplicationModule;
-import org.tvheadend.tvhclient.injection.modules.RepositoryModule;
-import org.tvheadend.tvhclient.injection.modules.SharedPreferencesModule;
-import org.tvheadend.tvhclient.ui.base.billing.BillingHandler;
-import org.tvheadend.tvhclient.ui.base.billing.BillingManager;
-import org.tvheadend.tvhclient.ui.base.billing.BillingUpdatesListener;
-import org.tvheadend.tvhclient.ui.base.logging.CrashlyticsTree;
-import org.tvheadend.tvhclient.ui.base.logging.DebugTree;
-import org.tvheadend.tvhclient.ui.base.logging.FileLoggingTree;
+import org.tvheadend.tvhclient.di.DaggerMainApplicationComponent;
+import org.tvheadend.tvhclient.di.MainApplicationComponent;
+import org.tvheadend.tvhclient.di.modules.MainApplicationModule;
+import org.tvheadend.tvhclient.di.modules.RepositoryModule;
+import org.tvheadend.tvhclient.di.modules.SharedPreferencesModule;
+import org.tvheadend.tvhclient.util.billing.BillingHandler;
+import org.tvheadend.tvhclient.util.billing.BillingManager;
+import org.tvheadend.tvhclient.util.billing.BillingUpdatesListener;
+import org.tvheadend.tvhclient.util.logging.CrashlyticsTree;
+import org.tvheadend.tvhclient.util.logging.DebugTree;
+import org.tvheadend.tvhclient.util.logging.FileLoggingTree;
 import org.tvheadend.tvhclient.ui.features.playback.external.ExpandedControlsActivity;
-import org.tvheadend.tvhclient.utils.MigrateUtils;
+import org.tvheadend.tvhclient.util.MigrateUtils;
 
 import java.util.List;
 
@@ -41,7 +41,7 @@ import androidx.lifecycle.ProcessLifecycleOwner;
 import io.fabric.sdk.android.Fabric;
 import timber.log.Timber;
 
-import static org.tvheadend.tvhclient.utils.Constants.UNLOCKER;
+import static org.tvheadend.tvhclient.util.Constants.UNLOCKER;
 
 // TODO use more livedata for connection and server status in a centralized viewmodel
 // TODO move diffutils to background thread
