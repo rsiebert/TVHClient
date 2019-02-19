@@ -37,7 +37,7 @@ import org.tvheadend.tvhclient.ui.features.dvr.timer_recordings.TimerRecordingVi
 import org.tvheadend.tvhclient.ui.features.epg.ProgramGuideFragment;
 import org.tvheadend.tvhclient.ui.features.information.StatusFragment;
 import org.tvheadend.tvhclient.ui.features.information.WebViewFragment;
-import org.tvheadend.tvhclient.ui.features.purchase.UnlockerFragment;
+import org.tvheadend.tvhclient.ui.features.unlocker.UnlockerFragment;
 import org.tvheadend.tvhclient.ui.features.settings.ConnectionViewModel;
 import org.tvheadend.tvhclient.ui.features.settings.SettingsActivity;
 import org.tvheadend.tvhclient.ui.features.startup.SplashActivity;

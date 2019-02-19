@@ -36,11 +36,11 @@ import org.tvheadend.tvhclient.ui.features.search.SearchActivity;
 import org.tvheadend.tvhclient.ui.base.adapter.ChannelTagRecyclerViewAdapter;
 import org.tvheadend.tvhclient.ui.base.adapter.GenreColorDialogAdapter;
 import org.tvheadend.tvhclient.ui.features.startup.SplashActivity;
-import org.tvheadend.tvhclient.ui.features.streaming.external.CastChannelActivity;
-import org.tvheadend.tvhclient.ui.features.streaming.external.CastRecordingActivity;
-import org.tvheadend.tvhclient.ui.features.streaming.external.PlayChannelActivity;
-import org.tvheadend.tvhclient.ui.features.streaming.external.PlayRecordingActivity;
-import org.tvheadend.tvhclient.ui.features.streaming.internal.HtspPlaybackActivity;
+import org.tvheadend.tvhclient.ui.features.playback.external.CastChannelActivity;
+import org.tvheadend.tvhclient.ui.features.playback.external.CastRecordingActivity;
+import org.tvheadend.tvhclient.ui.features.playback.external.PlayChannelActivity;
+import org.tvheadend.tvhclient.ui.features.playback.external.PlayRecordingActivity;
+import org.tvheadend.tvhclient.ui.features.playback.internal.HtspPlaybackActivity;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 
 import java.io.UnsupportedEncodingException;

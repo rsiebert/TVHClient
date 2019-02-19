@@ -33,7 +33,7 @@ import org.tvheadend.tvhclient.ui.features.search.SearchRequestInterface;
 import org.tvheadend.tvhclient.ui.base.BaseActivity;
 import org.tvheadend.tvhclient.ui.base.callbacks.ToolbarInterface;
 import org.tvheadend.tvhclient.ui.base.receivers.SyncStateReceiver;
-import org.tvheadend.tvhclient.ui.features.streaming.external.CastSessionManagerListener;
+import org.tvheadend.tvhclient.ui.features.playback.external.CastSessionManagerListener;
 import org.tvheadend.tvhclient.utils.MiscUtils;
 import org.tvheadend.tvhclient.ui.base.utils.SnackbarUtils;
 

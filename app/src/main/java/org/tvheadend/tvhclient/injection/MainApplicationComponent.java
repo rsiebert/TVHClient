@@ -22,8 +22,8 @@ import org.tvheadend.tvhclient.ui.features.settings.SettingsConnectionBaseFragme
 import org.tvheadend.tvhclient.ui.features.settings.SettingsListConnectionsFragment;
 import org.tvheadend.tvhclient.ui.base.BaseFragment;
 import org.tvheadend.tvhclient.ui.features.startup.StartupFragment;
-import org.tvheadend.tvhclient.ui.features.streaming.external.BasePlaybackActivity;
-import org.tvheadend.tvhclient.ui.features.streaming.internal.HtspPlaybackActivity;
+import org.tvheadend.tvhclient.ui.features.playback.external.BasePlaybackActivity;
+import org.tvheadend.tvhclient.ui.features.playback.internal.HtspPlaybackActivity;
 import org.tvheadend.tvhclient.injection.modules.MainApplicationModule;
 import org.tvheadend.tvhclient.injection.modules.RepositoryModule;
 import org.tvheadend.tvhclient.injection.modules.SharedPreferencesModule;

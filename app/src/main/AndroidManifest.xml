@@ -62,7 +62,7 @@
         </activity>
         <activity android:name=".ui.features.settings.SettingsActivity" />
         <activity
-            android:name=".ui.features.streaming.external.ExpandedControlsActivity"
+            android:name=".ui.features.playback.external.ExpandedControlsActivity"
             android:label="@string/app_name"
             android:launchMode="singleTask"
             android:screenOrientation="portrait">
@@ -97,11 +97,11 @@
             android:excludeFromRecents="true"
             android:launchMode="singleTask"
             android:taskAffinity="" />
-        <activity android:name=".ui.features.purchase.UnlockerActivity" />
-        <activity android:name=".ui.features.streaming.external.PlayRecordingActivity" />
-        <activity android:name=".ui.features.streaming.external.PlayChannelActivity" />
-        <activity android:name=".ui.features.streaming.external.CastChannelActivity" />
-        <activity android:name=".ui.features.streaming.external.CastRecordingActivity" />
+        <activity android:name=".ui.features.unlocker.UnlockerActivity" />
+        <activity android:name=".ui.features.playback.external.PlayRecordingActivity" />
+        <activity android:name=".ui.features.playback.external.PlayChannelActivity" />
+        <activity android:name=".ui.features.playback.external.CastChannelActivity" />
+        <activity android:name=".ui.features.playback.external.CastRecordingActivity" />
         <activity
             android:name=".ui.features.startup.SplashActivity"
             android:theme="@style/SplashTheme">
@@ -110,7 +110,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.features.streaming.internal.HtspPlaybackActivity" />
+        <activity android:name=".ui.features.playback.internal.HtspPlaybackActivity" />
         <activity android:name=".ui.features.information.WebViewActivity" />
 
     </application>

@@ -17,7 +17,7 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.ui.features.MainActivity;
 import org.tvheadend.tvhclient.ui.features.changelog.ChangeLogActivity;
 import org.tvheadend.tvhclient.ui.features.information.WebViewActivity;
-import org.tvheadend.tvhclient.ui.features.purchase.UnlockerActivity;
+import org.tvheadend.tvhclient.ui.features.unlocker.UnlockerActivity;
 import org.tvheadend.tvhclient.ui.base.utils.SnackbarUtils;
 
 import java.io.File;
