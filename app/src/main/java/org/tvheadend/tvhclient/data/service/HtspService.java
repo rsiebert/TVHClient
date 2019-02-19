@@ -1,5 +1,8 @@
 package org.tvheadend.tvhclient.data.service;
 
+import android.app.AlarmManager;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -26,9 +29,9 @@ import org.tvheadend.tvhclient.data.entity.TagAndChannel;
 import org.tvheadend.tvhclient.data.entity.TimerRecording;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.data.service.worker.EpgDataUpdateWorker;
+import org.tvheadend.tvhclient.features.notifications.RecordingNotificationReceiver;
 import org.tvheadend.tvhclient.features.shared.receivers.SyncStateReceiver;
 import org.tvheadend.tvhclient.utils.MiscUtils;
-import org.tvheadend.tvhclient.utils.NotificationUtils;
 import org.tvheadend.tvhclient.utils.SnackbarUtils;
 
 import java.io.BufferedInputStream;
@@ -39,6 +42,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -785,14 +789,23 @@ public class HtspService extends Service implements HtspConnectionStateListener,
             appRepository.getRecordingData().addItem(recording);
         }
 
-        if (sharedPreferences.getBoolean("notifications_enabled", getResources().getBoolean(R.bool.pref_default_notifications_enabled))) {
-            if (recording.isScheduled() && recording.getStart() > new Date().getTime()) {
-                Timber.d("Adding notification for recording " + recording.getTitle());
-                int offset = Integer.valueOf(sharedPreferences.getString("notification_lead_time", "0"));
-                if (recording.getTitle() != null) {
-                    NotificationUtils.addRecordingNotification(this, recording.getTitle(), recording.getId(), recording.getStart(), offset);
-                }
-            }
+        if (sharedPreferences.getBoolean("notifications_enabled", getResources().getBoolean(R.bool.pref_default_notifications_enabled))
+                && recording.isScheduled()
+                && recording.getStart() > Calendar.getInstance().getTimeInMillis()
+                && !TextUtils.isEmpty(recording.getTitle())) {
+
+            Timber.d("Adding notification for recording " + recording.getTitle());
+            Intent intent = new Intent(appContext, RecordingNotificationReceiver.class);
+            intent.putExtra("dvrTitle", recording.getTitle());
+            intent.putExtra("dvrId", recording.getId());
+            intent.putExtra("start", recording.getStart());
+
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                    appContext, recording.getId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+            Timber.d("Created notification for recording " + recording.getTitle() + " with id " + recording.getId());
+            ((AlarmManager) getSystemService(ALARM_SERVICE))
+                    .set(AlarmManager.RTC_WAKEUP, MiscUtils.getNotificationTime(appContext, recording.getStart()), pendingIntent);
         }
     }
 
@@ -815,7 +828,7 @@ public class HtspService extends Service implements HtspConnectionStateListener,
         if (sharedPreferences.getBoolean("notifications_enabled", getResources().getBoolean(R.bool.pref_default_notifications_enabled))) {
             if (!recording.isScheduled() && !recording.isRecording()) {
                 Timber.d("Removing notification for recording " + recording.getTitle());
-                NotificationUtils.removeRecordingNotification(this, recording.getId());
+                ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).cancel(recording.getId());
             }
         }
     }
@@ -833,7 +846,7 @@ public class HtspService extends Service implements HtspConnectionStateListener,
                 appRepository.getRecordingData().removeItem(recording);
                 if (sharedPreferences.getBoolean("notifications_enabled", getResources().getBoolean(R.bool.pref_default_notifications_enabled))) {
                     Timber.d("Removing notification for recording " + recording.getTitle());
-                    NotificationUtils.removeRecordingNotification(this, recording.getId());
+                    ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).cancel(recording.getId());
                 }
             }
         }

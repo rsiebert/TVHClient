@@ -16,9 +16,12 @@ import org.tvheadend.tvhclient.data.entity.ServerStatus;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
+
+import javax.annotation.Nullable;
 
 import androidx.annotation.NonNull;
 import timber.log.Timber;
@@ -49,6 +52,13 @@ public class MiscUtils {
             // NOP
         }
         return null;
+    }
+
+    public static String getIconUrl(Context context, @Nullable final String url) {
+        if (url == null) {
+            return null;
+        }
+        return "file://" + context.getCacheDir() + "/" + convertUrlToHashString(url) + ".png";
     }
 
     /**
@@ -125,5 +135,18 @@ public class MiscUtils {
             }
         }
         return null;
+    }
+
+    public static long getNotificationTime(Context context, long startTime) {
+        //noinspection ConstantConditions
+        int offset = Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(context)
+                .getString("notification_lead_time", context.getResources().getString(R.string.pref_default_notification_lead_time)));
+        long currentTime = Calendar.getInstance().getTimeInMillis();
+        long notificationTime = (startTime - (offset * 1000 * 60));
+        if (notificationTime < currentTime) {
+            notificationTime = currentTime;
+        }
+        Timber.d("Notification time is " + notificationTime + " ms, startTime is " + startTime + " ms, offset is " + offset + " minutes");
+        return notificationTime;
     }
 }

@@ -2,6 +2,8 @@ package org.tvheadend.tvhclient.utils;
 
 
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -55,6 +57,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import io.fabric.sdk.android.Fabric;
 import timber.log.Timber;
+
+import static android.content.Context.ALARM_SERVICE;
 
 public class MenuUtils {
 
@@ -718,14 +722,25 @@ public class MenuUtils {
         }
 
         //noinspection ConstantConditions
-        int offset = Integer.parseInt(sharedPreferences.getString("notification_lead_time", activity.getResources().getString(R.string.pref_default_notification_lead_time)));
         ServerProfile profile = appRepository.getServerProfileData().getItemById(serverStatus.getRecordingServerProfileId());
-        NotificationUtils.addProgramNotification(activity,
-                program.getTitle(),
-                program.getEventId(),
-                program.getChannelId(),
-                program.getStart(),
-                offset, profile, serverStatus);
+
+        Intent intent = new Intent(activity, HtspService.class);
+        intent.setAction("addProgramNotification");
+        intent.putExtra("eventTitle", program.getTitle());
+        intent.putExtra("eventId", program.getEventId());
+        intent.putExtra("channelId", program.getChannelId());
+        intent.putExtra("start", program.getStart());
+
+        if (MiscUtils.isServerProfileEnabled(profile, serverStatus)) {
+            intent.putExtra("configName", profile.getName());
+        }
+
+        Timber.d("Created notification for epg program " + program.getTitle() + " with id " + program.getEventId());
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(activity, program.getEventId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        ((AlarmManager) activity.getSystemService(ALARM_SERVICE))
+                .set(AlarmManager.RTC_WAKEUP,
+                        MiscUtils.getNotificationTime(activity, program.getStart()),
+                        pendingIntent);
         return true;
     }
 
@@ -739,14 +754,25 @@ public class MenuUtils {
         }
 
         //noinspection ConstantConditions
-        int offset = Integer.parseInt(sharedPreferences.getString("notification_lead_time", activity.getResources().getString(R.string.pref_default_notification_lead_time)));
         ServerProfile profile = appRepository.getServerProfileData().getItemById(serverStatus.getRecordingServerProfileId());
-        NotificationUtils.addProgramNotification(activity,
-                program.getTitle(),
-                program.getEventId(),
-                program.getChannelId(),
-                program.getStart(),
-                offset, profile, serverStatus);
+
+        Intent intent = new Intent(activity, HtspService.class);
+        intent.setAction("addProgramNotification");
+        intent.putExtra("eventTitle", program.getTitle());
+        intent.putExtra("eventId", program.getEventId());
+        intent.putExtra("channelId", program.getChannelId());
+        intent.putExtra("start", program.getStart());
+
+        if (MiscUtils.isServerProfileEnabled(profile, serverStatus)) {
+            intent.putExtra("configName", profile.getName());
+        }
+
+        Timber.d("Created notification for program " + program.getTitle() + " with id " + program.getEventId());
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(activity, program.getEventId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        ((AlarmManager) activity.getSystemService(ALARM_SERVICE))
+                .set(AlarmManager.RTC_WAKEUP,
+                        MiscUtils.getNotificationTime(activity, program.getStart()),
+                        pendingIntent);
         return true;
     }
 
