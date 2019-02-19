@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.ui.features.purchase;
+package org.tvheadend.tvhclient.ui.features.unlocker;
 
 import android.os.Bundle;
 

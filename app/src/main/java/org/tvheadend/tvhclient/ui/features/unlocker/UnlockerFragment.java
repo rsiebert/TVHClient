@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.ui.features.purchase;
+package org.tvheadend.tvhclient.ui.features.unlocker;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,6 +12,9 @@ import com.android.billingclient.api.Purchase;
 
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.ui.base.billing.BillingHandler;
+import org.tvheadend.tvhclient.ui.base.billing.BillingManager;
+import org.tvheadend.tvhclient.ui.base.billing.BillingUpdatesListener;
 import org.tvheadend.tvhclient.ui.features.information.WebViewFragment;
 import org.tvheadend.tvhclient.ui.base.tasks.HtmlFileLoaderTask;
 import org.tvheadend.tvhclient.ui.features.startup.SplashActivity;
