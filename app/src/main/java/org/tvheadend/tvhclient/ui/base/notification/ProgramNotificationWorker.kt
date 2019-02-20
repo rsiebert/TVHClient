@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.data.worker
+package org.tvheadend.tvhclient.ui.base.notification
 
 import android.app.PendingIntent
 import android.content.Context
@@ -10,7 +10,6 @@ import androidx.work.Worker
 import androidx.work.WorkerParameters
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.data.service.HtspService
-import org.tvheadend.tvhclient.util.NotificationUtils
 import org.tvheadend.tvhclient.ui.features.programs.ProgramDetailsActivity
 import timber.log.Timber
 import java.util.*

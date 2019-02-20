@@ -1,8 +1,9 @@
-package org.tvheadend.tvhclient.util;
+package org.tvheadend.tvhclient.ui.base.notification;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
@@ -11,8 +12,6 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.domain.entity.ProgramInterface;
 import org.tvheadend.tvhclient.domain.entity.Recording;
 import org.tvheadend.tvhclient.domain.entity.ServerProfile;
-import org.tvheadend.tvhclient.data.worker.ProgramNotificationWorker;
-import org.tvheadend.tvhclient.data.worker.RecordingNotificationWorker;
 
 import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
@@ -22,6 +21,7 @@ import javax.annotation.Nullable;
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import androidx.work.Data;
+import androidx.work.ExistingWorkPolicy;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 import timber.log.Timber;
@@ -72,15 +72,19 @@ public class NotificationUtils {
     }
 
     /**
-     * Creates the pending intent with the recording details at the given notification time
+     * Creates a worker that will create a notification with the recording details at
+     * the given notification time. The recording must be scheduled and its start time
+     * must be in the future and its title must not be empty so that it can be shown
+     * in the notification.
      *
      * @param context   Context to access android specific resources
      * @param recording The recording for which the notification shall be created
      */
     public static void addNotification(@NonNull Context context,
                                        @NonNull Recording recording) {
-        if (PreferenceManager.getDefaultSharedPreferences(context)
-                .getBoolean("notifications_enabled", context.getResources().getBoolean(R.bool.pref_default_notifications_enabled))
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        if (preferences.getBoolean("notifications_enabled", context.getResources().getBoolean(R.bool.pref_default_notifications_enabled))
                 && recording.isScheduled()
                 && recording.getStart() > Calendar.getInstance().getTimeInMillis()
                 && !TextUtils.isEmpty(recording.getTitle())) {
@@ -95,7 +99,8 @@ public class NotificationUtils {
                     .setInitialDelay(getNotificationTime(context, recording.getStart()), TimeUnit.MILLISECONDS)
                     .setInputData(data)
                     .build();
-            WorkManager.getInstance().enqueue(workRequest);
+            String uniqueWorkName = "RecordingNotification_" + String.valueOf(recording.getId());
+            WorkManager.getInstance().enqueueUniqueWork(uniqueWorkName, ExistingWorkPolicy.REPLACE, workRequest);
         }
     }
 
@@ -109,13 +114,17 @@ public class NotificationUtils {
         if (PreferenceManager.getDefaultSharedPreferences(context)
                 .getBoolean("notifications_enabled", context.getResources().getBoolean(R.bool.pref_default_notifications_enabled))) {
             Timber.d("Removing notification for id " + id);
+
+            String uniqueWorkName = "RecordingNotification_" + String.valueOf(id);
+            WorkManager.getInstance().cancelUniqueWork(uniqueWorkName);
             ((NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE)).cancel(id);
         }
     }
 
     /**
-     * Creates the pending intent with the program details at the given notification time
-     * In case the a profile is selected it is also added so that the user can record the program with the given profile
+     * Creates a worker that will create a notification with the program details at
+     * the given notification time. In case the a profile is selected it is also
+     * added so that the user can record the program with the given profile
      *
      * @param context Context to access android specific resources
      * @param program The program for which the notification shall be created
@@ -125,18 +134,22 @@ public class NotificationUtils {
                                        @NonNull ProgramInterface program,
                                        @Nullable ServerProfile profile) {
 
-        Data data = new Data.Builder()
-                .putString("eventTitle", program.getTitle())
-                .putInt("eventId", program.getEventId())
-                .putInt("channelId", program.getChannelId())
-                .putLong("start", program.getStart())
-                .putString("configName", profile != null ? profile.getName() : "")
-                .build();
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        if (preferences.getBoolean("notifications_enabled", context.getResources().getBoolean(R.bool.pref_default_notifications_enabled))) {
+            Data data = new Data.Builder()
+                    .putString("eventTitle", program.getTitle())
+                    .putInt("eventId", program.getEventId())
+                    .putInt("channelId", program.getChannelId())
+                    .putLong("start", program.getStart())
+                    .putString("configName", profile != null ? profile.getName() : "")
+                    .build();
 
-        OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(ProgramNotificationWorker.class)
-                .setInitialDelay(getNotificationTime(context, program.getStart()), TimeUnit.MILLISECONDS)
-                .setInputData(data)
-                .build();
-        WorkManager.getInstance().enqueue(workRequest);
+            OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(ProgramNotificationWorker.class)
+                    .setInitialDelay(getNotificationTime(context, program.getStart()), TimeUnit.MILLISECONDS)
+                    .setInputData(data)
+                    .build();
+            String uniqueWorkName = "ProgramNotification_" + String.valueOf(program.getEventId());
+            WorkManager.getInstance().enqueueUniqueWork(uniqueWorkName, ExistingWorkPolicy.REPLACE, workRequest);
+        }
     }
 }
