@@ -1,17 +1,20 @@
 package org.tvheadend.tvhclient.ui.features.dvr;
 
 import android.os.Bundle;
-import androidx.fragment.app.Fragment;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.ui.base.callbacks.ToolbarInterface;
 import org.tvheadend.tvhclient.ui.base.callbacks.BackPressedInterface;
+import org.tvheadend.tvhclient.ui.base.callbacks.ToolbarInterface;
 import org.tvheadend.tvhclient.ui.features.dvr.recordings.RecordingAddEditFragment;
 import org.tvheadend.tvhclient.ui.features.dvr.series_recordings.SeriesRecordingAddEditFragment;
 import org.tvheadend.tvhclient.ui.features.dvr.timer_recordings.TimerRecordingAddEditFragment;
 import org.tvheadend.tvhclient.util.MiscUtils;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+
+// TODO split into 3 activities
 
 public class RecordingAddEditActivity extends AppCompatActivity implements ToolbarInterface {
 
