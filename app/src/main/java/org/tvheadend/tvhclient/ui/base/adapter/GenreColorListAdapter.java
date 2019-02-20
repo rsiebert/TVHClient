@@ -4,16 +4,16 @@ package org.tvheadend.tvhclient.ui.base.adapter;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
-import org.tvheadend.tvhclient.databinding.GenreColorDialogAdapterBinding;
+import org.tvheadend.tvhclient.databinding.GenreColorListAdapterBinding;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class GenreColorDialogAdapter extends RecyclerView.Adapter<GenreColorDialogAdapter.ViewHolder> {
+public class GenreColorListAdapter extends RecyclerView.Adapter<GenreColorListAdapter.ViewHolder> {
 
     private final String[] contentInfo;
 
-    public GenreColorDialogAdapter(String[] contentInfo) {
+    public GenreColorListAdapter(String[] contentInfo) {
         this.contentInfo = contentInfo;
     }
 
@@ -21,8 +21,8 @@ public class GenreColorDialogAdapter extends RecyclerView.Adapter<GenreColorDial
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        GenreColorDialogAdapterBinding itemBinding = GenreColorDialogAdapterBinding.inflate(layoutInflater, parent, false);
-        return new GenreColorDialogAdapter.ViewHolder(itemBinding);
+        GenreColorListAdapterBinding itemBinding = GenreColorListAdapterBinding.inflate(layoutInflater, parent, false);
+        return new GenreColorListAdapter.ViewHolder(itemBinding);
     }
 
     @Override
@@ -42,9 +42,9 @@ public class GenreColorDialogAdapter extends RecyclerView.Adapter<GenreColorDial
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
     static class ViewHolder extends RecyclerView.ViewHolder {
-        private final GenreColorDialogAdapterBinding binding;
+        private final GenreColorListAdapterBinding binding;
 
-        ViewHolder(GenreColorDialogAdapterBinding binding) {
+        ViewHolder(GenreColorListAdapterBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
         }
