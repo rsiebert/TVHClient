@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.ui.base.adapter;
+package org.tvheadend.tvhclient.ui.features.dvr;
 
 import android.content.Context;
 import android.text.TextUtils;
@@ -20,6 +20,8 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+// TODO convert to data binding
+
 public class ChannelListSelectionAdapter extends RecyclerView.Adapter<ChannelListSelectionAdapter.ViewHolder> {
 
     private final WeakReference<Context> context;
@@ -30,7 +32,7 @@ public class ChannelListSelectionAdapter extends RecyclerView.Adapter<ChannelLis
         void onItemClicked(Channel channel);
     }
 
-    public ChannelListSelectionAdapter(Context context, List<Channel> channelList) {
+    ChannelListSelectionAdapter(Context context, List<Channel> channelList) {
         this.context = new WeakReference<>(context);
         this.channelList = channelList;
     }
