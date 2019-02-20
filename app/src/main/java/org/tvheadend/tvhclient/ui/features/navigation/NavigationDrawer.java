@@ -233,7 +233,9 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
                 })
                 .onNegative(((dialog, which) -> {
                     Connection connection = appRepository.getConnectionData().getActiveItem();
-                    headerResult.setActiveProfile(connection.getId());
+                    if (connection != null) {
+                        headerResult.setActiveProfile(connection.getId());
+                    }
                 }))
                 .cancelable(false)
                 .canceledOnTouchOutside(false)
@@ -253,13 +255,14 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
         activity.stopService(new Intent(activity, HtspService.class));
 
         Connection connection = appRepository.getConnectionData().getItemById(id);
-        connection.setActive(true);
-        appRepository.getConnectionData().updateItem(connection);
-
-        Intent intent = new Intent(activity, SplashActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        activity.startActivity(intent);
-        activity.finish();
+        if (connection != null) {
+            connection.setActive(true);
+            appRepository.getConnectionData().updateItem(connection);
+            Intent intent = new Intent(activity, SplashActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            activity.startActivity(intent);
+            activity.finish();
+        }
     }
 
     @Override
