@@ -84,6 +84,7 @@ import timber.log.Timber;
 // TODO Disable buttons until data source has been loaded and video is playing
 // TODO Timeshift support
 // TODO select speed
+// TODO use viewmodel to store connection, player, settings and status
 
 public class HtspPlaybackActivity extends AppCompatActivity implements View.OnClickListener, PlaybackPreparer, Player.EventListener, PlayerControlView.VisibilityListener, VideoListener, HtspConnectionStateListener {
 
