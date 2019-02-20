@@ -1,8 +1,5 @@
 package org.tvheadend.tvhclient.ui.features.epg;
 
-import androidx.annotation.NonNull;
-import androidx.fragment.app.FragmentActivity;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +12,10 @@ import org.tvheadend.tvhclient.domain.entity.EpgChannel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentActivity;
+import androidx.recyclerview.widget.RecyclerView;
 
 class EpgViewPagerRecyclerViewAdapter extends RecyclerView.Adapter<EpgViewPagerViewHolder> implements Filterable {
 
@@ -69,8 +70,9 @@ class EpgViewPagerRecyclerViewAdapter extends RecyclerView.Adapter<EpgViewPagerV
                     List<EpgChannel> filteredList = new ArrayList<>();
                     // Iterate over the available channels. Use a copy on write
                     // array in case the channel list changes during filtering.
-                    for (EpgChannel channel : new CopyOnWriteArrayList<>(channelList)) {
-                        if (channel.getName().toLowerCase().contains(charString.toLowerCase())) {
+                    for (@NonNull EpgChannel channel : new CopyOnWriteArrayList<>(channelList)) {
+                        if (channel.getName() != null
+                                && channel.getName().toLowerCase().contains(charString.toLowerCase())) {
                             filteredList.add(channel);
                         }
                     }

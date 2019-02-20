@@ -105,7 +105,7 @@ class EpgChannelListRecyclerViewAdapter extends RecyclerView.Adapter<EpgChannelL
         };
     }
 
-    public static class EpgChannelViewHolder extends RecyclerView.ViewHolder {
+    static class EpgChannelViewHolder extends RecyclerView.ViewHolder {
 
         private final EpgChannelListAdapterBinding binding;
 
@@ -114,7 +114,7 @@ class EpgChannelListRecyclerViewAdapter extends RecyclerView.Adapter<EpgChannelL
             this.binding = binding;
         }
 
-        public void bind(EpgChannel channel, int position, RecyclerViewClickCallback clickCallback) {
+        void bind(EpgChannel channel, int position, RecyclerViewClickCallback clickCallback) {
             binding.setChannel(channel);
             binding.setPosition(position);
             binding.setCallback(clickCallback);

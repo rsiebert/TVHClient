@@ -128,7 +128,7 @@ class EpgProgramListRecyclerViewAdapter extends RecyclerView.Adapter<EpgProgramL
         return R.layout.epg_program_item_adapter;
     }
 
-    public EpgProgram getItem(int position) {
+    private EpgProgram getItem(int position) {
         if (programList.size() > position && position >= 0) {
             return programList.get(position);
         } else {
@@ -187,7 +187,7 @@ class EpgProgramListRecyclerViewAdapter extends RecyclerView.Adapter<EpgProgramL
         return true;
     }
 
-    public static class EpgProgramListViewHolder extends RecyclerView.ViewHolder {
+    static class EpgProgramListViewHolder extends RecyclerView.ViewHolder {
 
         private final EpgProgramItemAdapterBinding binding;
         private final boolean showProgramSubtitle;
@@ -202,7 +202,7 @@ class EpgProgramListRecyclerViewAdapter extends RecyclerView.Adapter<EpgProgramL
             this.clickCallback = clickCallback;
         }
 
-        public void bind(EpgProgram program, int position, int layoutWidth) {
+        void bind(EpgProgram program, int position, int layoutWidth) {
             binding.setProgram(program);
             binding.setPosition(position);
             binding.setLayoutWidth(layoutWidth);

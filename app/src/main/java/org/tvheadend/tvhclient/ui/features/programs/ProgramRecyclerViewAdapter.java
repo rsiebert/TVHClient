@@ -176,7 +176,7 @@ class ProgramRecyclerViewAdapter extends RecyclerView.Adapter<ProgramRecyclerVie
         }
     }
 
-    public static class ProgramViewHolder extends RecyclerView.ViewHolder {
+    static class ProgramViewHolder extends RecyclerView.ViewHolder {
 
         private final ProgramListAdapterBinding binding;
         private final boolean showProgramChannelIcon;
@@ -189,7 +189,7 @@ class ProgramRecyclerViewAdapter extends RecyclerView.Adapter<ProgramRecyclerVie
             this.showGenreColors = showGenreColors;
         }
 
-        public void bind(Program program, int position, RecyclerViewClickCallback clickCallback) {
+        void bind(Program program, int position, RecyclerViewClickCallback clickCallback) {
             binding.setProgram(program);
             binding.setPosition(position);
             binding.setShowProgramChannelIcon(showProgramChannelIcon);

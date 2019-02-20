@@ -122,10 +122,11 @@ class RecordingRecyclerViewAdapter extends RecyclerView.Adapter<RecordingRecycle
                     List<Recording> filteredList = new ArrayList<>();
                     // Iterate over the available channels. Use a copy on write
                     // array in case the channel list changes during filtering.
-                    for (Recording recording : new CopyOnWriteArrayList<>(recordingList)) {
+                    for (@NonNull Recording recording : new CopyOnWriteArrayList<>(recordingList)) {
                         // name match condition. this might differ depending on your requirement
                         // here we are looking for a channel name match
-                        if (recording.getTitle().toLowerCase().contains(charString.toLowerCase())) {
+                        if (recording.getTitle() != null
+                                && recording.getTitle().toLowerCase().contains(charString.toLowerCase())) {
                             filteredList.add(recording);
                         } else if (recording.getSubtitle() != null
                                 && recording.getSubtitle().toLowerCase().contains(charString.toLowerCase())) {
@@ -149,7 +150,7 @@ class RecordingRecyclerViewAdapter extends RecyclerView.Adapter<RecordingRecycle
         };
     }
 
-    public static class RecordingViewHolder extends RecyclerView.ViewHolder {
+    static class RecordingViewHolder extends RecyclerView.ViewHolder {
 
         private final RecordingListAdapterBinding binding;
         private final boolean isDualPane;
@@ -160,7 +161,7 @@ class RecordingRecyclerViewAdapter extends RecyclerView.Adapter<RecordingRecycle
             this.isDualPane = isDualPane;
         }
 
-        public void bind(Recording recording, int position, boolean isSelected, int htspVersion, RecyclerViewClickCallback clickCallback) {
+        void bind(Recording recording, int position, boolean isSelected, int htspVersion, RecyclerViewClickCallback clickCallback) {
             binding.setRecording(recording);
             binding.setPosition(position);
             binding.setHtspVersion(htspVersion);

@@ -107,10 +107,11 @@ class SeriesRecordingRecyclerViewAdapter extends RecyclerView.Adapter<SeriesReco
                     List<SeriesRecording> filteredList = new ArrayList<>();
                     // Iterate over the available channels. Use a copy on write
                     // array in case the channel list changes during filtering.
-                    for (SeriesRecording recording : new CopyOnWriteArrayList<>(recordingList)) {
+                    for (@NonNull SeriesRecording recording : new CopyOnWriteArrayList<>(recordingList)) {
                         // name match condition. this might differ depending on your requirement
                         // here we are looking for a channel name match
-                        if (recording.getTitle().toLowerCase().contains(charString.toLowerCase())) {
+                        if (recording.getTitle() != null
+                                && recording.getTitle().toLowerCase().contains(charString.toLowerCase())) {
                             filteredList.add(recording);
                         } else if (recording.getName() != null
                                 && recording.getName().toLowerCase().contains(charString.toLowerCase())) {
@@ -134,7 +135,7 @@ class SeriesRecordingRecyclerViewAdapter extends RecyclerView.Adapter<SeriesReco
         };
     }
 
-    public static class SeriesRecordingViewHolder extends RecyclerView.ViewHolder {
+    static class SeriesRecordingViewHolder extends RecyclerView.ViewHolder {
 
         private final SeriesRecordingListAdapterBinding binding;
         private final boolean isDualPane;
@@ -145,7 +146,7 @@ class SeriesRecordingRecyclerViewAdapter extends RecyclerView.Adapter<SeriesReco
             this.isDualPane = isDualPane;
         }
 
-        public void bind(SeriesRecording recording, int position, boolean isSelected, int htspVersion, int gmtOffset, RecyclerViewClickCallback clickCallback) {
+        void bind(SeriesRecording recording, int position, boolean isSelected, int htspVersion, int gmtOffset, RecyclerViewClickCallback clickCallback) {
             binding.setRecording(recording);
             binding.setPosition(position);
             binding.setGmtOffset(gmtOffset);

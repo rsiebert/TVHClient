@@ -118,7 +118,7 @@ class ChannelRecyclerViewAdapter extends RecyclerView.Adapter<ChannelRecyclerVie
                     List<Channel> filteredList = new ArrayList<>();
                     // Iterate over the available channels. Use a copy on write
                     // array in case the channel list changes during filtering.
-                    for (Channel channel : new CopyOnWriteArrayList<>(channelList)) {
+                    for (@NonNull Channel channel : new CopyOnWriteArrayList<>(channelList)) {
                         // name match condition. this might differ depending on your requirement
                         // here we are looking for a channel name match
                         if (channel.getName() != null
@@ -196,7 +196,7 @@ class ChannelRecyclerViewAdapter extends RecyclerView.Adapter<ChannelRecyclerVie
         }
     }
 
-    public static class ChannelViewHolder extends RecyclerView.ViewHolder {
+    static class ChannelViewHolder extends RecyclerView.ViewHolder {
 
         private final ChannelListAdapterBinding binding;
         private boolean showChannelName;
@@ -223,7 +223,7 @@ class ChannelRecyclerViewAdapter extends RecyclerView.Adapter<ChannelRecyclerVie
             this.isDualPane = isDualPane;
         }
 
-        public void bind(Channel channel, int position, boolean isSelected, RecyclerViewClickCallback clickCallback) {
+        void bind(Channel channel, int position, boolean isSelected, RecyclerViewClickCallback clickCallback) {
             binding.setChannel(channel);
             binding.setPosition(position);
             binding.setIsSelected(isSelected);

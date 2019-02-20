@@ -20,7 +20,8 @@ import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ViewDataBinding;
 import androidx.recyclerview.widget.RecyclerView;
-import timber.log.Timber;
+
+// TODO use a viewmodel or change how the callback is handled in the menu utils class
 
 public class ChannelTagRecyclerViewAdapter extends RecyclerView.Adapter<ChannelTagRecyclerViewAdapter.ViewHolder> {
 
@@ -78,8 +79,7 @@ public class ChannelTagRecyclerViewAdapter extends RecyclerView.Adapter<ChannelT
         this.dialog = dialog;
     }
 
-    public void onChecked(View view, int position, boolean isChecked) {
-        Timber.d("Checkbox at position " + position + " is checked " + isChecked);
+    public void onChecked(@SuppressWarnings("unused") View view, int position, boolean isChecked) {
         int tagId = channelTagList.get(position).getTagId();
         if (isChecked) {
             selectedChannelTagIds.add(tagId);
@@ -89,7 +89,6 @@ public class ChannelTagRecyclerViewAdapter extends RecyclerView.Adapter<ChannelT
     }
 
     public void onSelected(int position) {
-        Timber.d("RadioButton at position " + position + " was selected");
         int tagId = channelTagList.get(position).getTagId();
         selectedChannelTagIds.clear();
         if (position != 0) {
@@ -110,7 +109,7 @@ public class ChannelTagRecyclerViewAdapter extends RecyclerView.Adapter<ChannelT
             this.callback = callback;
         }
 
-        public void bind(ChannelTag channelTag, int position) {
+        void bind(ChannelTag channelTag, int position) {
             binding.setVariable(BR.channelTag, channelTag);
             binding.setVariable(BR.position, position);
             binding.setVariable(BR.callback, callback);
