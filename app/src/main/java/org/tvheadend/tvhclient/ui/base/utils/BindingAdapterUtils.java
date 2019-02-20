@@ -321,6 +321,34 @@ public class BindingAdapterUtils {
     }
 
     /**
+     * Loads the given program image via Picasso into the image view
+     *
+     * @param view The view where the icon and visibility shall be applied to
+     * @param url  The url of the channel icon
+     */
+    @BindingAdapter("programImage")
+    public static void setProgramImage(ImageView view, String url) {
+        if (TextUtils.isEmpty(url)) {
+            view.setVisibility(View.GONE);
+        } else {
+            Picasso.get()
+                    .load(url)
+                    .into(view, new Callback() {
+                        @Override
+                        public void onSuccess() {
+                            view.setVisibility(View.VISIBLE);
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
+                            Timber.d("Could not load image " + url);
+                            view.setVisibility(View.GONE);
+                        }
+                    });
+        }
+    }
+
+    /**
      * Loads the given channel icon via Picasso into the image view
      *
      * @param view    The view where the icon and visibility shall be applied to
