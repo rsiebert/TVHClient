@@ -23,14 +23,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 // TODO use a viewmodel or change how the callback is handled in the menu utils class
 
-public class ChannelTagRecyclerViewAdapter extends RecyclerView.Adapter<ChannelTagRecyclerViewAdapter.ViewHolder> {
+public class ChannelTagSelectionAdapter extends RecyclerView.Adapter<ChannelTagSelectionAdapter.ViewHolder> {
 
     private final boolean isMultiChoice;
     private final List<ChannelTag> channelTagList;
     private final Set<Integer> selectedChannelTagIds;
     private MaterialDialog dialog;
 
-    public ChannelTagRecyclerViewAdapter(@NonNull List<ChannelTag> channelTagList, boolean isMultiChoice) {
+    public ChannelTagSelectionAdapter(@NonNull List<ChannelTag> channelTagList, boolean isMultiChoice) {
         this.channelTagList = channelTagList;
         this.isMultiChoice = isMultiChoice;
         this.selectedChannelTagIds = new HashSet<>();
@@ -46,7 +46,7 @@ public class ChannelTagRecyclerViewAdapter extends RecyclerView.Adapter<ChannelT
         boolean showChannelTagIcons = sharedPreferences.getBoolean("channel_tag_icons_enabled",
                 parent.getContext().getResources().getBoolean(R.bool.pref_default_channel_tag_icons_enabled));
 
-        return new ChannelTagRecyclerViewAdapter.ViewHolder(binding, showChannelTagIcons, this);
+        return new ChannelTagSelectionAdapter.ViewHolder(binding, showChannelTagIcons, this);
     }
 
     @Override
@@ -100,9 +100,9 @@ public class ChannelTagRecyclerViewAdapter extends RecyclerView.Adapter<ChannelT
     static class ViewHolder extends RecyclerView.ViewHolder {
         private final ViewDataBinding binding;
         private final boolean showChannelTagIcons;
-        private final ChannelTagRecyclerViewAdapter callback;
+        private final ChannelTagSelectionAdapter callback;
 
-        ViewHolder(ViewDataBinding binding, boolean showChannelTagIcons, ChannelTagRecyclerViewAdapter callback) {
+        ViewHolder(ViewDataBinding binding, boolean showChannelTagIcons, ChannelTagSelectionAdapter callback) {
             super(binding.getRoot());
             this.binding = binding;
             this.showChannelTagIcons = showChannelTagIcons;

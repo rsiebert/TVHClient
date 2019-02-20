@@ -18,7 +18,7 @@
 
         <variable
             name="callback"
-            type="org.tvheadend.tvhclient.ui.base.adapter.ChannelTagRecyclerViewAdapter" />
+            type="org.tvheadend.tvhclient.ui.base.adapter.ChannelTagSelectionAdapter" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
