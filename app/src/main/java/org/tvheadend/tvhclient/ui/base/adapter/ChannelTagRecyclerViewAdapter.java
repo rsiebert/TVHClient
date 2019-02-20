@@ -1,11 +1,14 @@
 package org.tvheadend.tvhclient.ui.base.adapter;
 
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 
+import org.tvheadend.tvhclient.BR;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.domain.entity.ChannelTag;
 
@@ -14,9 +17,12 @@ import java.util.List;
 import java.util.Set;
 
 import androidx.annotation.NonNull;
+import androidx.databinding.DataBindingUtil;
+import androidx.databinding.ViewDataBinding;
 import androidx.recyclerview.widget.RecyclerView;
+import timber.log.Timber;
 
-public class ChannelTagRecyclerViewAdapter extends RecyclerView.Adapter<ChannelTagViewHolder> {
+public class ChannelTagRecyclerViewAdapter extends RecyclerView.Adapter<ChannelTagRecyclerViewAdapter.ViewHolder> {
 
     private final boolean isMultiChoice;
     private final List<ChannelTag> channelTagList;
@@ -31,50 +37,25 @@ public class ChannelTagRecyclerViewAdapter extends RecyclerView.Adapter<ChannelT
 
     @NonNull
     @Override
-    public ChannelTagViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        final View view = LayoutInflater.from(parent.getContext()).inflate(viewType, parent, false);
-        return new ChannelTagViewHolder(view);
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
+        ViewDataBinding binding = DataBindingUtil.inflate(layoutInflater, viewType, parent, false);
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(parent.getContext());
+        boolean showChannelTagIcons = sharedPreferences.getBoolean("channel_tag_icons_enabled",
+                parent.getContext().getResources().getBoolean(R.bool.pref_default_channel_tag_icons_enabled));
+
+        return new ChannelTagRecyclerViewAdapter.ViewHolder(binding, showChannelTagIcons, this);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ChannelTagViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         if (channelTagList.size() > position) {
             ChannelTag channelTag = channelTagList.get(position);
-            holder.bindData(channelTag);
+            holder.bind(channelTag, position);
 
             if (channelTag.isSelected()) {
                 selectedChannelTagIds.add(channelTag.getTagId());
-            }
-
-            // Add the click listeners
-            int tagId = channelTagList.get(position).getTagId();
-            if (isMultiChoice) {
-                if (holder.selectedCheckBox != null) {
-                    holder.selectedCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                        if (isChecked) {
-                            selectedChannelTagIds.add(tagId);
-                        } else {
-                            selectedChannelTagIds.remove(tagId);
-                        }
-                    });
-                }
-            } else {
-                if (holder.selectedRadioButton != null) {
-                    holder.selectedRadioButton.setOnClickListener(v -> {
-                        selectedChannelTagIds.clear();
-                        if (position != 0) {
-                            selectedChannelTagIds.add(tagId);
-                        }
-                        dialog.dismiss();
-                    });
-                }
-                holder.itemView.setOnClickListener(v -> {
-                    selectedChannelTagIds.clear();
-                    if (position != 0) {
-                        selectedChannelTagIds.add(tagId);
-                    }
-                    dialog.dismiss();
-                });
             }
         }
     }
@@ -96,4 +77,45 @@ public class ChannelTagRecyclerViewAdapter extends RecyclerView.Adapter<ChannelT
     public void setCallback(MaterialDialog dialog) {
         this.dialog = dialog;
     }
+
+    public void onChecked(View view, int position, boolean isChecked) {
+        Timber.d("Checkbox at position " + position + " is checked " + isChecked);
+        int tagId = channelTagList.get(position).getTagId();
+        if (isChecked) {
+            selectedChannelTagIds.add(tagId);
+        } else {
+            selectedChannelTagIds.remove(tagId);
+        }
+    }
+
+    public void onSelected(int position) {
+        Timber.d("RadioButton at position " + position + " was selected");
+        int tagId = channelTagList.get(position).getTagId();
+        selectedChannelTagIds.clear();
+        if (position != 0) {
+            selectedChannelTagIds.add(tagId);
+        }
+        dialog.dismiss();
+    }
+
+    static class ViewHolder extends RecyclerView.ViewHolder {
+        private final ViewDataBinding binding;
+        private final boolean showChannelTagIcons;
+        private final ChannelTagRecyclerViewAdapter callback;
+
+        ViewHolder(ViewDataBinding binding, boolean showChannelTagIcons, ChannelTagRecyclerViewAdapter callback) {
+            super(binding.getRoot());
+            this.binding = binding;
+            this.showChannelTagIcons = showChannelTagIcons;
+            this.callback = callback;
+        }
+
+        public void bind(ChannelTag channelTag, int position) {
+            binding.setVariable(BR.channelTag, channelTag);
+            binding.setVariable(BR.position, position);
+            binding.setVariable(BR.callback, callback);
+            binding.setVariable(BR.showChannelTagIcons, showChannelTagIcons);
+        }
+    }
 }
+
