@@ -24,6 +24,7 @@ import timber.log.Timber;
 public class CastChannelActivity extends BasePlaybackActivity {
 
     private int channelId;
+    private Channel channel;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -54,10 +55,16 @@ public class CastChannelActivity extends BasePlaybackActivity {
 
     @Override
     protected void getHttpTicket() {
-        Intent intent = new Intent(this, HtspService.class);
-        intent.setAction("getTicket");
-        intent.putExtra("channelId", channelId);
-        startService(intent);
+        channel = appRepository.getChannelData().getItemById(channelId);
+        if (channel != null) {
+            Intent intent = new Intent(this, HtspService.class);
+            intent.setAction("getTicket");
+            intent.putExtra("channelId", channel.getId());
+            startService(intent);
+        } else {
+            progressBar.setVisibility(View.GONE);
+            statusTextView.setText(getString(R.string.error_starting_playback_no_channel));
+        }
     }
 
     @Override
@@ -70,15 +77,13 @@ public class CastChannelActivity extends BasePlaybackActivity {
             return;
         }
 
-        Channel channel = appRepository.getChannelData().getItemById(channelId);
-
         MediaMetadata movieMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE);
         movieMetadata.putString(MediaMetadata.KEY_TITLE, channel.getProgramTitle());
         movieMetadata.putString(MediaMetadata.KEY_SUBTITLE, channel.getProgramSubtitle());
 
         if (!TextUtils.isEmpty(channel.getIcon())) {
             String iconUrl;
-            if (channel.getIcon().startsWith("http")) {
+            if (channel.getIcon() != null && channel.getIcon().startsWith("http")) {
                 iconUrl = channel.getIcon();
             } else {
                 iconUrl = baseUrl + "/" + channel.getIcon();

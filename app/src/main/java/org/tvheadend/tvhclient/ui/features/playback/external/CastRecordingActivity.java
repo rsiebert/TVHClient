@@ -24,6 +24,7 @@ import timber.log.Timber;
 public class CastRecordingActivity extends BasePlaybackActivity {
 
     private int dvrId;
+    private Recording recording;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -54,10 +55,16 @@ public class CastRecordingActivity extends BasePlaybackActivity {
 
     @Override
     protected void getHttpTicket() {
-        Intent intent = new Intent(this, HtspService.class);
-        intent.setAction("getTicket");
-        intent.putExtra("dvrId", dvrId);
-        startService(intent);
+        recording = appRepository.getRecordingData().getItemById(dvrId);
+        if (recording != null) {
+            Intent intent = new Intent(this, HtspService.class);
+            intent.setAction("getTicket");
+            intent.putExtra("dvrId", dvrId);
+            startService(intent);
+        } else {
+            progressBar.setVisibility(View.GONE);
+            statusTextView.setText(getString(R.string.error_starting_playback_no_recording));
+        }
     }
 
     @Override
@@ -70,15 +77,13 @@ public class CastRecordingActivity extends BasePlaybackActivity {
             return;
         }
 
-        Recording recording = appRepository.getRecordingData().getItemById(dvrId);
-
         MediaMetadata movieMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE);
         movieMetadata.putString(MediaMetadata.KEY_TITLE, recording.getTitle());
         movieMetadata.putString(MediaMetadata.KEY_SUBTITLE, recording.getSubtitle());
 
         if (!TextUtils.isEmpty(recording.getChannelIcon())) {
             String iconUrl;
-            if (recording.getChannelIcon().startsWith("http")) {
+            if (recording.getChannelIcon() != null && recording.getChannelIcon().startsWith("http")) {
                 iconUrl = recording.getChannelIcon();
             } else {
                 iconUrl = baseUrl + "/" + recording.getChannelIcon();

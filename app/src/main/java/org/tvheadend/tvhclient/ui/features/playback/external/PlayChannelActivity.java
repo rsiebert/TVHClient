@@ -16,6 +16,7 @@ import timber.log.Timber;
 public class PlayChannelActivity extends BasePlaybackActivity {
 
     private int channelId;
+    private Channel channel;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -44,10 +45,11 @@ public class PlayChannelActivity extends BasePlaybackActivity {
 
     @Override
     protected void getHttpTicket() {
-        if (channelId > 0) {
+        channel = appRepository.getChannelData().getItemById(channelId);
+        if (channel != null) {
             Intent intent = new Intent(this, HtspService.class);
             intent.setAction("getTicket");
-            intent.putExtra("channelId", channelId);
+            intent.putExtra("channelId", channel.getId());
             startService(intent);
         } else {
             progressBar.setVisibility(View.GONE);
@@ -57,12 +59,10 @@ public class PlayChannelActivity extends BasePlaybackActivity {
 
     @Override
     protected void onHttpTicketReceived() {
-        Channel channel = appRepository.getChannelData().getItemById(channelId);
-
         Timber.d("Playing channel from server with url " + serverUrl);
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setDataAndType(Uri.parse(serverUrl), "video/*");
-        if (!TextUtils.isEmpty(channel.getName())) {
+        if (channel != null && !TextUtils.isEmpty(channel.getName())) {
             intent.putExtra("itemTitle", channel.getName());
             intent.putExtra("title", channel.getName());
         }

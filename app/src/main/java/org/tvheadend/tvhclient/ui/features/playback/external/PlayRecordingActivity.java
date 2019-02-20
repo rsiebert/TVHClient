@@ -19,6 +19,7 @@ import timber.log.Timber;
 public class PlayRecordingActivity extends BasePlaybackActivity {
 
     private int dvrId;
+    private Recording recording;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -47,10 +48,11 @@ public class PlayRecordingActivity extends BasePlaybackActivity {
 
     @Override
     protected void getHttpTicket() {
-        if (dvrId > 0) {
+        recording = appRepository.getRecordingData().getItemById(dvrId);
+        if (recording != null) {
             Intent intent = new Intent(this, HtspService.class);
             intent.setAction("getTicket");
-            intent.putExtra("dvrId", dvrId);
+            intent.putExtra("dvrId", recording.getId());
             startService(intent);
         } else {
             progressBar.setVisibility(View.GONE);
@@ -60,8 +62,6 @@ public class PlayRecordingActivity extends BasePlaybackActivity {
 
     @Override
     protected void onHttpTicketReceived() {
-        Recording recording = appRepository.getRecordingData().getItemById(dvrId);
-
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.putExtra("itemTitle", recording.getTitle());
         intent.putExtra("title", recording.getTitle());
