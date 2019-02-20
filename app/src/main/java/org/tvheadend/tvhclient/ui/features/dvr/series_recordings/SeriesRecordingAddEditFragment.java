@@ -87,7 +87,7 @@ public class SeriesRecordingAddEditFragment extends BaseFragment implements Back
 
     private String[] recordingProfilesList;
     private List<Channel> channelList;
-    protected ServerProfile profile;
+    private ServerProfile profile;
     private int recordingProfileNameId;
 
     private String[] duplicateDetectionList;

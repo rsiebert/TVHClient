@@ -69,7 +69,7 @@ public class TimerRecordingAddEditFragment extends BaseFragment implements BackP
 
     private String[] recordingProfilesList;
     private List<Channel> channelList;
-    protected ServerProfile profile;
+    private ServerProfile profile;
     private int recordingProfileNameId;
 
     private Unbinder unbinder;

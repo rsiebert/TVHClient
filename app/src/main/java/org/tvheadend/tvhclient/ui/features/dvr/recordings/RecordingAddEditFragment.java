@@ -89,7 +89,7 @@ public class RecordingAddEditFragment extends BaseFragment implements BackPresse
 
     private String[] recordingProfilesList;
     private List<Channel> channelList;
-    protected ServerProfile profile;
+    private ServerProfile profile;
     private int recordingProfileNameId;
 
     private Unbinder unbinder;
