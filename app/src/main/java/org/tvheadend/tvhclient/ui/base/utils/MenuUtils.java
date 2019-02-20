@@ -18,6 +18,7 @@ import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.data.service.HtspService;
+import org.tvheadend.tvhclient.ui.base.adapter.ChannelTagSelectionAdapter;
 import org.tvheadend.tvhclient.ui.base.notification.NotificationUtils;
 import org.tvheadend.tvhclient.domain.entity.ChannelTag;
 import org.tvheadend.tvhclient.domain.entity.Connection;
@@ -28,7 +29,6 @@ import org.tvheadend.tvhclient.domain.entity.SeriesRecording;
 import org.tvheadend.tvhclient.domain.entity.ServerProfile;
 import org.tvheadend.tvhclient.domain.entity.ServerStatus;
 import org.tvheadend.tvhclient.domain.entity.TimerRecording;
-import org.tvheadend.tvhclient.ui.base.adapter.ChannelTagRecyclerViewAdapter;
 import org.tvheadend.tvhclient.ui.base.adapter.GenreColorListAdapter;
 import org.tvheadend.tvhclient.ui.features.channels.ChannelDisplayOptionListener;
 import org.tvheadend.tvhclient.ui.features.download.DownloadRecordingManager;
@@ -162,7 +162,7 @@ public class MenuUtils {
             channelTags.add(0, tag);
         }
 
-        ChannelTagRecyclerViewAdapter adapter = new ChannelTagRecyclerViewAdapter(channelTags, isMultipleChoice);
+        ChannelTagSelectionAdapter adapter = new ChannelTagSelectionAdapter(channelTags, isMultipleChoice);
 
         // Show the dialog that shows all available channel tags. When the
         // user has selected a tag, restart the loader to loadRecordingById the updated channel list
