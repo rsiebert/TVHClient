@@ -8,7 +8,6 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.domain.entity.Channel;
 import org.tvheadend.tvhclient.domain.entity.ServerProfile;
-import org.tvheadend.tvhclient.ui.base.adapter.ChannelListSelectionAdapter;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -132,14 +131,14 @@ public class RecordingUtils {
     }
 
     public static void handlePrioritySelection(Context context, int selectedPriority, RecordingConfigSelectedListener callback) {
-        Timber.d("Selected prio is " + (selectedPriority == 6 ? 5 : selectedPriority));
+        Timber.d("Selected priority is " + (selectedPriority == 6 ? 5 : selectedPriority));
         String[] priorityNames = context.getResources().getStringArray(R.array.dvr_priority_names);
         new MaterialDialog.Builder(context)
                 .title(R.string.select_priority)
                 .items(priorityNames)
                 .itemsCallbackSingleChoice(selectedPriority == 6 ? 5 : selectedPriority, (dialog, view, which, text) -> {
                     if (callback != null) {
-                        Timber.d("New selected prio is " + (which == 5 ? 6 : which));
+                        Timber.d("New selected priority is " + (which == 5 ? 6 : which));
                         callback.onPrioritySelected(which == 5 ? 6 : which);
                     }
                     return true;
