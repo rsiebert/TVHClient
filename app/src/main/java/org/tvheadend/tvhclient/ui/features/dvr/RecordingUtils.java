@@ -160,14 +160,6 @@ public class RecordingUtils {
                 .show();
     }
 
-    /**
-     * Get the selected profile from the connection
-     * and select it from the recording config list
-     *
-     * @param profile
-     * @param recordingProfilesList
-     * @return
-     */
     public static int getSelectedProfileId(ServerProfile profile, String[] recordingProfilesList) {
         if (profile != null) {
             for (int i = 0; i < recordingProfilesList.length; i++) {

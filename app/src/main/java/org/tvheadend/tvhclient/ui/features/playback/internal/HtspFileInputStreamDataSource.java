@@ -43,7 +43,7 @@ public class HtspFileInputStreamDataSource implements DataSource, Closeable, Hts
         private HtspConnection htspConnection;
         private HtspFileInputStreamDataSource dataSource;
 
-        public Factory(Context context, HtspConnection htspConnection) {
+        Factory(Context context, HtspConnection htspConnection) {
             Timber.d("Initializing subscription data source factory");
             this.context = context;
             this.htspConnection = htspConnection;
@@ -224,7 +224,7 @@ public class HtspFileInputStreamDataSource implements DataSource, Closeable, Hts
     }
 
     // HtspDataSource Methods
-    protected void release() {
+    private void release() {
         Timber.d("Releasing file input data source " + dataSourceNumber + ")");
 
         HtspMessage request = new HtspMessage();

@@ -11,9 +11,9 @@ import java.lang.reflect.Method;
 import androidx.annotation.NonNull;
 import timber.log.Timber;
 
-public class NetworkUtils {
+class NetworkUtils {
 
-    public static boolean isConnectionAvailable(@NonNull Context context) {
+    static boolean isConnectionAvailable(@NonNull Context context) {
         return isNetworkAvailable(context) || NetworkUtils.isWifiApEnabled(context);
     }
 

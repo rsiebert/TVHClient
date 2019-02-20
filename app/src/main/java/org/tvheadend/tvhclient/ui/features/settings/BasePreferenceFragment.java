@@ -3,23 +3,24 @@ package org.tvheadend.tvhclient.ui.features.settings;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
-import androidx.appcompat.app.AppCompatActivity;
 
 import org.tvheadend.tvhclient.MainApplication;
-import org.tvheadend.tvhclient.domain.entity.ServerStatus;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
+import org.tvheadend.tvhclient.domain.entity.ServerStatus;
 import org.tvheadend.tvhclient.ui.base.callbacks.ToolbarInterface;
 
 import javax.inject.Inject;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 public class BasePreferenceFragment extends PreferenceFragment {
 
     AppCompatActivity activity;
     ToolbarInterface toolbarInterface;
     @Inject
-    protected SharedPreferences sharedPreferences;
+    SharedPreferences sharedPreferences;
     @Inject
-    protected AppRepository appRepository;
+    AppRepository appRepository;
     boolean isUnlocked;
     int htspVersion;
     ServerStatus serverStatus;

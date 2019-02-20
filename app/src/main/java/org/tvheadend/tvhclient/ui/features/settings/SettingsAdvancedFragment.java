@@ -202,6 +202,7 @@ public class SettingsAdvancedFragment extends BasePreferenceFragment implements 
         switch (key) {
             case "connection_timeout":
                 try {
+                    //noinspection ConstantConditions
                     int value = Integer.parseInt(prefs.getString(key, getResources().getString(R.string.pref_default_connection_timeout)));
                     if (value < 1) {
                         ((EditTextPreference) findPreference(key)).setText("1");

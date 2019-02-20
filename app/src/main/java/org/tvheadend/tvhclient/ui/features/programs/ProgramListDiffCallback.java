@@ -1,13 +1,13 @@
 package org.tvheadend.tvhclient.ui.features.programs;
 
-import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.DiffUtil;
-
 import org.tvheadend.tvhclient.domain.entity.Program;
 
 import java.util.List;
 
-public class ProgramListDiffCallback extends DiffUtil.Callback {
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.DiffUtil;
+
+class ProgramListDiffCallback extends DiffUtil.Callback {
     private final List<Program> oldList;
     private final List<Program> newList;
 

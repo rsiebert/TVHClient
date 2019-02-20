@@ -49,7 +49,7 @@ public class GenreColorListAdapter extends RecyclerView.Adapter<GenreColorListAd
             this.binding = binding;
         }
 
-        public void bind(int contentType, String contentName) {
+        void bind(int contentType, String contentName) {
             binding.setContentType(contentType);
             binding.setContentName(contentName);
         }

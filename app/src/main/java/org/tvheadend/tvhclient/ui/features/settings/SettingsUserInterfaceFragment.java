@@ -115,6 +115,7 @@ public class SettingsUserInterfaceFragment extends BasePreferenceFragment implem
         switch (key) {
             case "hours_of_epg_data_per_screen":
                 try {
+                    //noinspection ConstantConditions
                     int value = Integer.parseInt(prefs.getString(key, getResources().getString(R.string.pref_default_hours_of_epg_data_per_screen)));
                     if (value < 1) {
                         ((EditTextPreference) findPreference(key)).setText("1");
@@ -131,6 +132,7 @@ public class SettingsUserInterfaceFragment extends BasePreferenceFragment implem
 
             case "days_of_epg_data":
                 try {
+                    //noinspection ConstantConditions
                     int value = Integer.parseInt(prefs.getString(key, getResources().getString(R.string.pref_default_days_of_epg_data)));
                     if (value < 1) {
                         ((EditTextPreference) findPreference(key)).setText("1");

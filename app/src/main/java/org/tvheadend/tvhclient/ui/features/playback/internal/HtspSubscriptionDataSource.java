@@ -73,7 +73,7 @@ public class HtspSubscriptionDataSource implements DataSource, Closeable, HtspMe
         private final String streamProfile;
         private HtspSubscriptionDataSource dataSource;
 
-        public Factory(Context context, HtspConnection htspConnection, String streamProfile) {
+        Factory(Context context, HtspConnection htspConnection, String streamProfile) {
             Timber.d("Initializing subscription data source factory");
             this.context = context;
             this.htspConnection = htspConnection;
@@ -150,7 +150,7 @@ public class HtspSubscriptionDataSource implements DataSource, Closeable, HtspMe
         if (!isSubscribed) {
             String path = dataSpec.uri.getPath();
             Timber.d("We are not yet subscribed to path " + path);
-            if (!TextUtils.isEmpty(path)) {
+            if (path != null && path.length() > 0 ) {
 
                 int channelId = Integer.parseInt(path.substring(1));
                 Timber.d("Sending subscription start to service with id " + subscriptionId + " for channel id " + channelId);
@@ -278,7 +278,7 @@ public class HtspSubscriptionDataSource implements DataSource, Closeable, HtspMe
         }
     }
 
-    protected void release() {
+    private void release() {
         Timber.d("Releasing subscription data source " + dataSourceNumber + ")");
 
         HtspMessage request = new HtspMessage();

@@ -136,7 +136,7 @@ public class ChannelViewModel extends BaseChannelViewModel {
          * @param b the second object in the pair
          * @return a Triple that is templatized with the types of a and b
          */
-        public static <A, B, C> Triple <A, B, C> create(A a, B b, C c) {
+        static <A, B, C> Triple <A, B, C> create(A a, B b, C c) {
             return new Triple<>(a, b, c);
         }
     }

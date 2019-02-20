@@ -28,7 +28,7 @@ import androidx.lifecycle.ViewModelProviders;
 public abstract class SettingsConnectionBaseFragment extends PreferenceFragment implements BackPressedInterface, Preference.OnPreferenceChangeListener {
 
     @Inject
-    protected AppRepository appRepository;
+    AppRepository appRepository;
 
     AppCompatActivity activity;
     ToolbarInterface toolbarInterface;

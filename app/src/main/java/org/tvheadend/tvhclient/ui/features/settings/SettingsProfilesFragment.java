@@ -47,7 +47,7 @@ public class SettingsProfilesFragment extends BasePreferenceFragment implements 
 
         Connection connection = appRepository.getConnectionData().getActiveItem();
         toolbarInterface.setTitle(getString(R.string.pref_profiles));
-        toolbarInterface.setSubtitle(connection.getName());
+        toolbarInterface.setSubtitle(connection != null ? connection.getName() : null);
 
         htspPlaybackProfilesPreference = (ListPreference) findPreference("htsp_playback_profiles");
         httpPlaybackProfilesPreference = (ListPreference) findPreference("http_playback_profiles");

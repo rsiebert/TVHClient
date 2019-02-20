@@ -47,9 +47,9 @@ public abstract class BasePlaybackActivity extends AppCompatActivity implements 
     private Connection connection;
     ServerStatus serverStatus;
     @Inject
-    protected AppRepository appRepository;
+    AppRepository appRepository;
     @Inject
-    protected SharedPreferences sharedPreferences;
+    SharedPreferences sharedPreferences;
     String baseUrl;
     String serverUrl;
     ServerProfile serverProfile;

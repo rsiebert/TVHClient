@@ -110,8 +110,8 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Navi
         // was rotated just restore the position from the saved instance.
         if (savedInstanceState == null) {
             isSavedInstanceStateNull = true;
-            selectedNavigationMenuId = Integer.parseInt(sharedPreferences.getString("start_screen",
-                    getResources().getString(R.string.pref_default_start_screen)));
+            //noinspection ConstantConditions
+            selectedNavigationMenuId = Integer.parseInt(sharedPreferences.getString("start_screen", getResources().getString(R.string.pref_default_start_screen)));
         } else {
             isSavedInstanceStateNull = false;
             selectedNavigationMenuId = savedInstanceState.getInt("navigationMenuId", NavigationDrawer.MENU_CHANNELS);

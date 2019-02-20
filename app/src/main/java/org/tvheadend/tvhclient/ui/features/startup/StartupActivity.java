@@ -4,15 +4,16 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import androidx.fragment.app.Fragment;
-import androidx.appcompat.app.AppCompatActivity;
+import android.text.TextUtils;
 
 import org.tvheadend.tvhclient.BuildConfig;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.ui.features.changelog.ChangeLogActivity;
 import org.tvheadend.tvhclient.ui.base.callbacks.BackPressedInterface;
+import org.tvheadend.tvhclient.ui.features.changelog.ChangeLogActivity;
 import org.tvheadend.tvhclient.util.MiscUtils;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import timber.log.Timber;
 
 public class StartupActivity extends AppCompatActivity {
@@ -36,7 +37,7 @@ public class StartupActivity extends AppCompatActivity {
             if (showChangeLogRequired) {
                 Timber.d("Showing changelog, version name from prefs: " + versionName + ", build version from gradle: " + BuildConfig.VERSION_NAME);
                 Intent intent = new Intent(this, ChangeLogActivity.class);
-                intent.putExtra("showFullChangelog", versionName.isEmpty());
+                intent.putExtra("showFullChangelog", TextUtils.isEmpty(versionName));
                 intent.putExtra("versionNameForChangelog", versionName);
                 startActivityForResult(intent, 0);
             } else {

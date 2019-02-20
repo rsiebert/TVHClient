@@ -1,13 +1,13 @@
 package org.tvheadend.tvhclient.ui.features.epg;
 
-import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.DiffUtil;
-
 import org.tvheadend.tvhclient.domain.entity.EpgProgram;
 
 import java.util.List;
 
-public class EpgProgramListDiffCallback extends DiffUtil.Callback {
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.DiffUtil;
+
+class EpgProgramListDiffCallback extends DiffUtil.Callback {
     private final List<EpgProgram> oldList;
     private final List<EpgProgram> newList;
 
