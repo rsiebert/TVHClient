@@ -18,7 +18,7 @@ import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.data.service.HtspService;
-import org.tvheadend.tvhclient.util.NotificationUtils;
+import org.tvheadend.tvhclient.ui.base.notification.NotificationUtils;
 import org.tvheadend.tvhclient.domain.entity.ChannelTag;
 import org.tvheadend.tvhclient.domain.entity.Connection;
 import org.tvheadend.tvhclient.domain.entity.EpgProgram;
@@ -29,7 +29,7 @@ import org.tvheadend.tvhclient.domain.entity.ServerProfile;
 import org.tvheadend.tvhclient.domain.entity.ServerStatus;
 import org.tvheadend.tvhclient.domain.entity.TimerRecording;
 import org.tvheadend.tvhclient.ui.base.adapter.ChannelTagRecyclerViewAdapter;
-import org.tvheadend.tvhclient.ui.base.adapter.GenreColorDialogAdapter;
+import org.tvheadend.tvhclient.ui.base.adapter.GenreColorListAdapter;
 import org.tvheadend.tvhclient.ui.features.channels.ChannelDisplayOptionListener;
 import org.tvheadend.tvhclient.ui.features.download.DownloadRecordingManager;
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingRemovedCallback;
@@ -92,7 +92,7 @@ public class MenuUtils {
         // Fill the list for the adapter
         new MaterialDialog.Builder(activity)
                 .title(R.string.genre_color_list)
-                .adapter(new GenreColorDialogAdapter(activity.getResources().getStringArray(R.array.pr_content_type0)), null)
+                .adapter(new GenreColorListAdapter(activity.getResources().getStringArray(R.array.pr_content_type0)), null)
                 .show();
         return true;
     }

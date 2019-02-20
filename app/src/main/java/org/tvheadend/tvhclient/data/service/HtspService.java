@@ -22,7 +22,7 @@ import org.tvheadend.tvhclient.data.service.htsp.HtspFileInputStream;
 import org.tvheadend.tvhclient.data.service.htsp.HtspMessage;
 import org.tvheadend.tvhclient.data.service.htsp.HtspMessageListener;
 import org.tvheadend.tvhclient.data.worker.EpgDataUpdateWorker;
-import org.tvheadend.tvhclient.util.NotificationUtils;
+import org.tvheadend.tvhclient.ui.base.notification.NotificationUtils;
 import org.tvheadend.tvhclient.domain.entity.Channel;
 import org.tvheadend.tvhclient.domain.entity.ChannelTag;
 import org.tvheadend.tvhclient.domain.entity.Connection;
@@ -33,7 +33,6 @@ import org.tvheadend.tvhclient.domain.entity.ServerProfile;
 import org.tvheadend.tvhclient.domain.entity.ServerStatus;
 import org.tvheadend.tvhclient.domain.entity.TagAndChannel;
 import org.tvheadend.tvhclient.domain.entity.TimerRecording;
-import org.tvheadend.tvhclient.util.receivers.SyncStateReceiver;
 import org.tvheadend.tvhclient.ui.base.utils.SnackbarUtils;
 import org.tvheadend.tvhclient.util.MiscUtils;
 

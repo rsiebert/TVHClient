@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.util.receivers;
+package org.tvheadend.tvhclient.data.service;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

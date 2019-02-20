@@ -3,8 +3,6 @@ package org.tvheadend.tvhclient.ui.base.utils;
 import android.content.Context;
 import android.content.Intent;
 
-import org.tvheadend.tvhclient.util.receivers.SnackbarMessageReceiver;
-
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import timber.log.Timber;
 

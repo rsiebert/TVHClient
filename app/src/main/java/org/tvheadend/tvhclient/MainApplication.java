@@ -49,7 +49,6 @@ import static org.tvheadend.tvhclient.util.Constants.UNLOCKER;
 // TODO hide features menu when unlocker gets available later
 // TODO show channel text if no icon is available
 // TODO check where injected app context can be used
-// TODO reduce flicker when loading webview in dark mode
 
 public class MainApplication extends Application implements OptionsProvider, LifecycleObserver, BillingUpdatesListener {
 
