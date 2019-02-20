@@ -87,7 +87,7 @@ public class HtspIntentService extends JobIntentService implements HtspConnectio
             }
         }
 
-        if (!htspConnection.isConnected() || !htspConnection.isAuthenticated()) {
+        if (htspConnection.isNotConnected() || !htspConnection.isAuthenticated()) {
             Timber.d("Connection to server failed or authentication failed");
             return;
         }

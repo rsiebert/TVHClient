@@ -106,7 +106,7 @@ public class HtspService extends Service implements HtspConnectionStateListener,
                 break;
             case "reconnect":
                 Timber.d("Reconnection to server requested");
-                if (htspConnection == null || !htspConnection.isConnected()) {
+                if (htspConnection == null || htspConnection.isNotConnected()) {
                     Timber.d("Reconnecting to server because no previous connection existed or not connected anymore");
                     startHtspConnection();
                 } else {
@@ -1692,7 +1692,7 @@ public class HtspService extends Service implements HtspConnectionStateListener,
         });
     }
 
-    void sendSyncStateMessage(SyncStateReceiver.State state, String message, String details) {
+    private void sendSyncStateMessage(SyncStateReceiver.State state, String message, String details) {
         Intent intent = new Intent(SyncStateReceiver.ACTION);
         intent.putExtra(SyncStateReceiver.STATE, state);
         if (!TextUtils.isEmpty(message)) {

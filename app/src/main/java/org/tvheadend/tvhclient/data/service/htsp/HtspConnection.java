@@ -174,11 +174,11 @@ public class HtspConnection extends Thread {
         Timber.d("Opened HTSP Connection");
     }
 
-    public boolean isConnected() {
-        return socketChannel != null
-                && socketChannel.isOpen()
-                && socketChannel.isConnected()
-                && isRunning;
+    public boolean isNotConnected() {
+        return socketChannel == null
+                || !socketChannel.isOpen()
+                || !socketChannel.isConnected()
+                || !isRunning;
     }
 
     public boolean isAuthenticated() {
@@ -259,7 +259,7 @@ public class HtspConnection extends Thread {
     }
 
     public void sendMessage(HtspMessage message, HtspResponseListener listener) {
-        if (!isConnected()) {
+        if (isNotConnected()) {
             Timber.d("Not sending message, not connected to server");
             return;
         }
