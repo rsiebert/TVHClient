@@ -23,7 +23,6 @@
     <string name="connection">Anslutning</string>
     <string name="content_type">Genre</string>
     <string name="currently_recording">Pågående inspelning</string>
-    <string name="date">Datum</string>
     <string name="days_of_week">Veckodagar</string>
     <string name="delete">Ta bort</string>
     <string name="delete_connection">Vill du verkligen ta bort anslutningen \'%s\'?</string>
@@ -178,7 +177,6 @@
     <string name="season">Säsong</string>
     <string name="select_connection">Välj anslutning</string>
     <string name="send_wol">Vakna upp</string>
-    <string name="series_information">Serieinformation</string>
     <string name="series_recordings">Serieinspelningar</string>
     <string name="server">Server</string>
     <string name="set_active">Aktivera</string>

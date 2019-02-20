@@ -35,7 +35,6 @@
     <string name="currently_recording">Attualmente in registrazione</string>
     <string name="data_errors">Errori dati: %1$s</string>
     <string name="data_size">Dim. file: %1$d %2$s</string>
-    <string name="date">Data</string>
     <string name="days_of_week">Giorni della settimana</string>
     <string name="delete">Elimina</string>
     <string name="delete_connection">"Vuoi veramente eliminare la connessione \'%s\'?"</string>
@@ -87,7 +86,6 @@ Verifica che siano soddsifatti i requisiti descritti nelle impostazioni trasmiss
     <string name="monday">Lunedì</string>
     <string name="name">Nome</string>
     <string name="next_program">Successivo: %s</string>
-    <string name="no_channel">Nessun canale</string>
     <string name="no_connection_active_advice">Almeno una connessione definita, ma non attivata.</string>
     <string name="no_connection_available">Nessuna connessione disponibile.</string>
     <string name="no_connection_available_advice">Nessuna connessione disponibile. Devi aggiungere almeno una connessione dal menu delle impostazioni.</string>
@@ -248,7 +246,6 @@ L'indirizzo deve essere nella forma '01:24:67:9a:cd:ef' e può contenere solo ci
     <string name="select_priority">Seleziona priorità</string>
     <string name="select_time">Visualizza programmi che sono in esecuzione ad un certo orario.</string>
     <string name="send_wol">Risveglia</string>
-    <string name="series_information">Informazione serie</string>
     <string name="series_recordings">Registrazioni serie</string>
     <string name="server">Server</string>
     <string name="server_api_version">Versione API server</string>

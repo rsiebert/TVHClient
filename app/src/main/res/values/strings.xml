@@ -42,7 +42,6 @@
     <string name="currently_recording">Currently recording</string>
     <string name="data_errors">Data errors: %1$s</string>
     <string name="data_size">File size: %1$d %2$s</string>
-    <string name="date">Date</string>
     <string name="days_of_week">Days of week</string>
     <string name="delete">Delete</string>
     <string name="delete_connection">Do you really want to remove the connection \'%s\'?</string>
@@ -122,7 +121,6 @@
     <string name="name">Name</string>
     <string name="next_program">Next: %s</string>
     <string name="no_cast_session">No cast session available</string>
-    <string name="no_channel">No channel</string>
     <string name="no_connection_active_advice">At least one connection is defined, but not activated.</string>
     <!-- Connection related -->
     <string name="no_connection_available">No connection available</string>
@@ -320,7 +318,6 @@
     <string name="select_priority">Select priority</string>
     <string name="select_time">Show programs that are running at the selected time.</string>
     <string name="send_wol">Wake up</string>
-    <string name="series_information">Series information</string>
     <string name="series_recordings">Series recordings</string>
     <string name="server">Server</string>
     <string name="server_api_version">Server API version</string>

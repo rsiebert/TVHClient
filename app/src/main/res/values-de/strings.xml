@@ -42,7 +42,6 @@
     <string name="currently_recording">Laufende Aufnahmen</string>
     <string name="data_errors">Datenfehler: %1$s</string>
     <string name="data_size">Dateigröße: %1$d %2$s</string>
-    <string name="date">Datum</string>
     <string name="days_of_week">Wochentage</string>
     <string name="delete">Löschen</string>
     <string name="delete_connection">Verbindung \'%s\' entfernen?</string>
@@ -120,7 +119,6 @@
     <string name="name">Name</string>
     <string name="next_program">Danach: %s</string>
     <string name="no_cast_session">Keine Cast-Session verfügbar</string>
-    <string name="no_channel">Kein Sender</string>
     <string name="no_connection_active_advice">Mindestens eine Verbindung existiert, ist aber nicht aktiviert.</string>
     <!-- Connection related -->
     <string name="no_connection_available">Keine Verbindung verfügbar</string>
@@ -317,7 +315,6 @@
     <string name="select_priority">Priorität auswählen</string>
     <string name="select_time">Zeige Programme die zur gewählten Zeit laufen.</string>
     <string name="send_wol">Aufwecken</string>
-    <string name="series_information">Serien Information</string>
     <string name="series_recordings">Serienaufnahmen</string>
     <string name="server">Server</string>
     <string name="server_api_version">Server API Version</string>

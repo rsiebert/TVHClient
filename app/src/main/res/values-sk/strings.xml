@@ -33,7 +33,6 @@
     <string name="currently_recording">Prebiehajúce nahrávanie</string>
     <string name="data_errors">Chyby dát: %1$s</string>
     <string name="data_size">Veľkosť súboru: %1$d %2$s</string>
-    <string name="date">Dátum</string>
     <string name="days_of_week">Dni v týždni</string>
     <string name="delete">Vymazať</string>
     <string name="delete_connection">Naozaj chcete vymazať pripojenie \'%s\'?</string>
@@ -83,7 +82,6 @@
     <string name="monday">Pondelok</string>
     <string name="name">Meno</string>
     <string name="next_program">Ďalší: %s</string>
-    <string name="no_channel">Žiaden kanál</string>
     <string name="no_connection_active_advice">Ani jedno dostupné pripojenie nie je aktivované.</string>
     <string name="no_connection_available">K dispozícii nie je žiadne pripojenie.</string>
     <!-- Connection related -->
@@ -252,7 +250,6 @@
     <string name="select_priority">Nastavte prioritu</string>
     <string name="select_time">Zobraziť programy, ktoré vyhovujú zvolenému času.</string>
     <string name="send_wol">Prebudiť</string>
-    <string name="series_information">Informácie o sériovom nahrávaní</string>
     <string name="series_recordings">Sériové nahrávky</string>
     <string name="server">Server</string>
     <string name="server_api_version">Verzia Server API</string>

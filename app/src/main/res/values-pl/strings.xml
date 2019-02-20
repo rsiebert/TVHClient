@@ -42,7 +42,6 @@
     <string name="currently_recording">Aktualnie nagrywane</string>
     <string name="data_errors">Błędy danych: %1$s</string>
     <string name="data_size">Rozmiar pliku: %1$d %2$s</string>
-    <string name="date">Data</string>
     <string name="days_of_week">Dni tygodnia</string>
     <string name="delete">Usuń</string>
     <string name="delete_connection">Jesteś pewny że chcesz usunąć połaczenie \'%s\'?</string>
@@ -119,7 +118,6 @@
     <string name="name">Nazwa</string>
     <string name="next_program">Następny program: %s</string>
     <string name="no_cast_session">No cast session available</string>
-    <string name="no_channel">Brak kanału</string>
     <string name="no_connection_active_advice">Co najmniej jedno połączenie jest zdefioniowane, ale nie jest aktywowane.</string>
     <!-- Connection related -->
     <string name="no_connection_available">Nadal nie ma zdefiniowanego połączenia. Musisz dodać co najmniej jedno połączenie z menu ustawień.</string>
@@ -312,7 +310,6 @@
     <string name="select_priority">Wybierz priorytet</string>
     <string name="select_time">Pokaż programy uruchomione w wybranym czasie.</string>
     <string name="send_wol">Wybudzenie</string>
-    <string name="series_information">Część</string>
     <string name="series_recordings">Nagrywanie serii</string>
     <string name="server">Serwer</string>
     <string name="server_api_version">Wersja API serwera</string>

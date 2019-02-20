@@ -42,7 +42,6 @@
     <string name="currently_recording">Actualmente grabando</string>
     <string name="data_errors">Errores de datos: %1$s</string>
     <string name="data_size">Tamaño de archivo: %1$d %2$s</string>
-    <string name="date">Fecha</string>
     <string name="days_of_week">Dias de la semana</string>
     <string name="delete">Eliminar</string>
     <string name="delete_connection">"¿De verdad quieres eliminar la conexión? '%s'?"</string>
@@ -123,7 +122,6 @@
     <string name="name">Nombre</string>
     <string name="next_program">Sigue: %s</string>
     <string name="no_cast_session">No hay sesión de emisión disponible</string>
-    <string name="no_channel">Sin canal</string>
     <string name="no_connection_active_advice">Al menos una conexión está definida, pero no está activada.</string>
     <string name="no_connection_available">No hay conexión disponible</string>
     <string name="no_connection_available_advice">No hay conexión disponible. Al menos uno es requerido.</string>
@@ -337,7 +335,6 @@
     <string name="select_priority">Seleccionar prioridad</string>
     <string name="select_time">Mostrar programas que se ejecutan en el momento seleccionado.</string>
     <string name="send_wol">Activar</string>
-    <string name="series_information">Información de la serie</string>
     <string name="series_recordings">Grabaciones en serie</string>
     <string name="server">Servidor</string>
     <string name="server_api_version">Versión del servidor API</string>

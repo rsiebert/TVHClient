@@ -23,7 +23,6 @@
     <string name="connection">Připojení</string>
     <string name="content_type">Typ obsahu</string>
     <string name="currently_recording">Probíhající nahrávání</string>
-    <string name="date">Datum</string>
     <string name="days_of_week">Dny v týdnu</string>
     <string name="delete">Smazat</string>
     <string name="delete_connection">Opravdu chcete odstranit připojení \'%s\'?</string>
@@ -178,7 +177,6 @@
     <string name="season">Sezóna</string>
     <string name="select_connection">Vybrat připojení</string>
     <string name="send_wol">Probudit</string>
-    <string name="series_information">Informace o opakování</string>
     <string name="series_recordings">Opakované nahrávky</string>
     <string name="server">Server</string>
     <string name="set_active">Aktivovat</string>

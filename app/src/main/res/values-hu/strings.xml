@@ -42,7 +42,6 @@
     <string name="currently_recording">Jelenlegi felvétel</string>
     <string name="data_errors">Adat hiba: %1$s</string>
     <string name="data_size">Fájl méret: %1$d %2$s</string>
-    <string name="date">Dátum</string>
     <string name="days_of_week">A hét napja</string>
     <string name="delete">Törlés</string>
     <string name="delete_connection">Valóban el akarja távolítani a(z) \'%s\' kapcsolatot?</string>
@@ -122,7 +121,6 @@
     <string name="name">Név</string>
     <string name="next_program">Következő: %s</string>
     <string name="no_cast_session">Nincs elérhető cast szekció</string>
-    <string name="no_channel">Nincs csatorna</string>
     <string name="no_connection_active_advice">Legalább egy kapcsolat van definiálva, de nincs aktiválva.</string>
     <!-- Connection related -->
     <string name="no_connection_available">Nincs elérhető kapcsolat</string>
@@ -319,7 +317,6 @@
     <string name="select_priority">Válassza ki a prioritást</string>
     <string name="select_time">A kiválasztott időpontban futó programok megjelenítése.</string>
     <string name="send_wol">Felébresztés (WOL)</string>
-    <string name="series_information">Évad információ</string>
     <string name="series_recordings">Sorozat információ</string>
     <string name="server">Szerver</string>
     <string name="server_api_version">Szerver API verzió</string>
