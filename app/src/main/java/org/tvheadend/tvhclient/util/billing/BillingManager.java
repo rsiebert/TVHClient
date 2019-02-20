@@ -9,7 +9,6 @@ import com.android.billingclient.api.BillingFlowParams;
 import com.android.billingclient.api.Purchase;
 import com.android.billingclient.api.PurchasesUpdatedListener;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.Nullable;
@@ -123,10 +122,14 @@ public class BillingManager implements PurchasesUpdatedListener {
         return responseCode == BillingClient.BillingResponse.OK;
     }
 
-    public void initiatePurchaseFlow(Activity activity, final String skuId, final ArrayList<String> oldSkus, final @BillingClient.SkuType String billingType) {
+    public void initiatePurchaseFlow(Activity activity, final String skuId, final String oldSku, final @BillingClient.SkuType String billingType) {
         Timber.d("Initiating purchase flow for " + skuId);
         Runnable purchaseFlowRequest = () -> {
-            BillingFlowParams mParams = BillingFlowParams.newBuilder().setSku(skuId).setType(billingType).setOldSkus(oldSkus).build();
+            BillingFlowParams mParams = BillingFlowParams.newBuilder()
+                    .setSku(skuId)
+                    .setType(billingType)
+                    .setOldSku(oldSku)
+                    .build();
             billingClient.launchBillingFlow(activity, mParams);
         };
         executeServiceRequest(purchaseFlowRequest);
