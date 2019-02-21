@@ -109,6 +109,7 @@
         </activity>
         <activity android:name=".ui.features.playback.internal.HtspPlaybackActivity" />
         <activity android:name=".ui.features.information.WebViewActivity" />
+        <activity android:name=".ui.base.BaseAppCompatActivity" />
 
     </application>
 </manifest>
