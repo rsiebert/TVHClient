@@ -45,7 +45,7 @@ public class HtmlFileLoaderTask extends AsyncTask<Void, Void, String> {
         callback.onFileContentsLoaded(content);
     }
 
-    private String loadHtmlFromFile(Context context, String filename, String defaultLocale) {
+    private String loadHtmlFromFile(@NonNull Context context, @NonNull String filename, @NonNull String defaultLocale) {
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         final Locale current = context.getResources().getConfiguration().locale;
