@@ -25,17 +25,16 @@ import com.google.android.gms.cast.framework.SessionManagerListener;
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
+import org.tvheadend.tvhclient.data.service.SyncStateReceiver;
+import org.tvheadend.tvhclient.ui.base.BaseActivity;
+import org.tvheadend.tvhclient.ui.base.utils.SnackbarUtils;
 import org.tvheadend.tvhclient.ui.features.download.DownloadPermissionGrantedInterface;
 import org.tvheadend.tvhclient.ui.features.epg.ProgramGuideFragment;
 import org.tvheadend.tvhclient.ui.features.navigation.NavigationDrawer;
 import org.tvheadend.tvhclient.ui.features.navigation.NavigationDrawerCallback;
-import org.tvheadend.tvhclient.ui.features.search.SearchRequestInterface;
-import org.tvheadend.tvhclient.ui.base.BaseActivity;
-import org.tvheadend.tvhclient.ui.base.callbacks.ToolbarInterface;
-import org.tvheadend.tvhclient.data.service.SyncStateReceiver;
 import org.tvheadend.tvhclient.ui.features.playback.external.CastSessionManagerListener;
+import org.tvheadend.tvhclient.ui.features.search.SearchRequestInterface;
 import org.tvheadend.tvhclient.util.MiscUtils;
-import org.tvheadend.tvhclient.ui.base.utils.SnackbarUtils;
 
 import javax.inject.Inject;
 
@@ -52,7 +51,7 @@ import timber.log.Timber;
 
 // TODO what happens when no connection to the server is active and the user presses an action in a notification?
 
-public class MainActivity extends BaseActivity implements ToolbarInterface, NavigationDrawerCallback, SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, SyncStateReceiver.Listener {
+public class MainActivity extends BaseActivity implements NavigationDrawerCallback, SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, SyncStateReceiver.Listener {
 
     @BindView(R.id.sync_progress)
     ProgressBar syncProgress;
@@ -195,20 +194,6 @@ public class MainActivity extends BaseActivity implements ToolbarInterface, Navi
             }
         }
         super.onPause();
-    }
-
-    @Override
-    public void setTitle(String title) {
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle(title);
-        }
-    }
-
-    @Override
-    public void setSubtitle(String subtitle) {
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setSubtitle(subtitle);
-        }
     }
 
     @Override
