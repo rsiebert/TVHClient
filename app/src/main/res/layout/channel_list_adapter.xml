@@ -159,7 +159,7 @@
             android:ellipsize="end"
             android:singleLine="true"
             android:text="@{channel.programSubtitle}"
-            android:visibility="@{channel.programId > 0  &amp;&amp; showProgramSubtitle &amp;&amp; channel.programSubtitle != null ? View.VISIBLE : View.GONE}"
+            android:visibility="@{channel.programId > 0  &amp;&amp; showProgramSubtitle &amp;&amp; channel.programSubtitle != null &amp;&amp; !channel.programSubtitle.equals(channel.programTitle) ? View.VISIBLE : View.GONE}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/channel_name"
             app:layout_constraintTop_toBottomOf="@+id/title" />

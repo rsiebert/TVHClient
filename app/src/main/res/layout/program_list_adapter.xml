@@ -117,10 +117,11 @@
             android:layout_marginEnd="16dp"
             android:ellipsize="end"
             android:singleLine="true"
+            android:text="@{program.subtitle}"
+            android:visibility="@{program.subtitle != null &amp;&amp; !program.subtitle.equals(program.title) ? View.VISIBLE : View.GONE}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/icon_text"
-            app:layout_constraintTop_toBottomOf="@+id/title"
-            app:optionalText="@{program.subtitle}" />
+            app:layout_constraintTop_toBottomOf="@+id/title" />
 
         <TextView
             android:id="@+id/summary"
@@ -131,10 +132,11 @@
             android:layout_marginEnd="16dp"
             android:ellipsize="end"
             android:singleLine="true"
+            android:text="@{program.summary}"
+            android:visibility="@{program.summary != null &amp;&amp; !program.summary.equals(program.subtitle) ? View.VISIBLE : View.GONE}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/icon_text"
-            app:layout_constraintTop_toBottomOf="@+id/subtitle"
-            app:optionalText="@{program.summary}" />
+            app:layout_constraintTop_toBottomOf="@+id/subtitle" />
 
         <TextView
             android:id="@+id/content_type"
