@@ -531,7 +531,7 @@ public class MainActivity extends BaseActivity implements NavigationDrawerCallba
         if (fragment instanceof SearchRequestInterface
                 && fragment.isVisible()) {
             Timber.d("Found fragment");
-            if (!((SearchRequestInterfacei) fragment).onSearchResultsCleared()) {
+            if (!((SearchRequestInterface) fragment).onSearchResultsCleared()) {
                 Timber.d("Search results were not cleared");
                 super.onBackPressed();
             }
