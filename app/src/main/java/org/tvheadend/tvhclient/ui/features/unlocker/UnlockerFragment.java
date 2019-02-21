@@ -60,10 +60,6 @@ public class UnlockerFragment extends WebViewFragment implements HtmlFileLoaderT
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case android.R.id.home:
-                activity.finish();
-                return true;
-
             case R.id.menu_purchase:
                 if (!MainApplication.getInstance().isUnlocked()) {
                     Timber.d("Unlocker not purchased");
@@ -73,7 +69,6 @@ public class UnlockerFragment extends WebViewFragment implements HtmlFileLoaderT
                     showPurchasedAlreadyMadeDialog();
                 }
                 return true;
-
             default:
                 return super.onOptionsItemSelected(item);
         }
