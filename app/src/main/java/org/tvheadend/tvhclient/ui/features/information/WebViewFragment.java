@@ -12,18 +12,20 @@ import android.widget.ProgressBar;
 
 import org.tvheadend.tvhclient.BuildConfig;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.ui.base.BaseFragment;
+import org.tvheadend.tvhclient.ui.base.callbacks.ToolbarInterface;
 import org.tvheadend.tvhclient.util.MiscUtils;
 import org.tvheadend.tvhclient.util.tasks.HtmlFileLoaderTask;
 
 import java.util.regex.Pattern;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-public class WebViewFragment extends BaseFragment implements HtmlFileLoaderTask.Listener {
+public class WebViewFragment extends Fragment implements HtmlFileLoaderTask.Listener {
 
     @BindView(R.id.webview)
     protected WebView webView;
@@ -32,6 +34,8 @@ public class WebViewFragment extends BaseFragment implements HtmlFileLoaderTask.
     private HtmlFileLoaderTask htmlFileLoaderTask;
     private Unbinder unbinder;
     private String website;
+    protected AppCompatActivity activity;
+    protected ToolbarInterface toolbarInterface;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -49,9 +53,12 @@ public class WebViewFragment extends BaseFragment implements HtmlFileLoaderTask.
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        forceSingleScreenLayout();
+        activity = (AppCompatActivity) getActivity();
+        if (activity instanceof ToolbarInterface) {
+            toolbarInterface = (ToolbarInterface) activity;
+        }
 
-        webView.setVisibility(View.INVISIBLE);
+        webView.setVisibility(View.GONE);
         webView.setBackgroundColor(Color.argb(1, 0, 0, 0));
 
         if (savedInstanceState != null) {
@@ -115,7 +122,6 @@ public class WebViewFragment extends BaseFragment implements HtmlFileLoaderTask.
     @Override
     public void onFileContentsLoaded(String content) {
         if (!TextUtils.isEmpty(content)) {
-
             if (content.contains("styles_light.css")) {
                 if (MiscUtils.getThemeId(activity) == R.style.CustomTheme_Light) {
                     content = content.replace("styles_light.css", "html/styles_light.css");
