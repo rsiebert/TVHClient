@@ -3,7 +3,7 @@ package org.tvheadend.tvhclient.ui.features.dvr;
 import android.os.Bundle;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.ui.base.BaseAppCompatActivity;
+import org.tvheadend.tvhclient.ui.base.BaseActivity;
 import org.tvheadend.tvhclient.ui.base.callbacks.BackPressedInterface;
 import org.tvheadend.tvhclient.ui.features.dvr.recordings.RecordingAddEditFragment;
 import org.tvheadend.tvhclient.ui.features.dvr.series_recordings.SeriesRecordingAddEditFragment;
@@ -15,7 +15,7 @@ import androidx.fragment.app.Fragment;
 
 // TODO split into 3 activities
 
-public class RecordingAddEditActivity extends BaseAppCompatActivity {
+public class RecordingAddEditActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

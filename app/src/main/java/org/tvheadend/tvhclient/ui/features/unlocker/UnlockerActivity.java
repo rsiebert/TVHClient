@@ -3,12 +3,12 @@ package org.tvheadend.tvhclient.ui.features.unlocker;
 import android.os.Bundle;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.ui.base.BaseAppCompatActivity;
+import org.tvheadend.tvhclient.ui.base.BaseActivity;
 import org.tvheadend.tvhclient.util.MiscUtils;
 
 import androidx.appcompat.widget.Toolbar;
 
-public class UnlockerActivity extends BaseAppCompatActivity {
+public class UnlockerActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

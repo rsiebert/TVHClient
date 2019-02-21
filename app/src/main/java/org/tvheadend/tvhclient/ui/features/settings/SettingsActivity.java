@@ -8,7 +8,7 @@ import android.os.Bundle;
 import com.afollestad.materialdialogs.folderselector.FolderChooserDialog;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.ui.base.BaseAppCompatActivity;
+import org.tvheadend.tvhclient.ui.base.BaseActivity;
 import org.tvheadend.tvhclient.ui.base.callbacks.BackPressedInterface;
 import org.tvheadend.tvhclient.ui.base.utils.SnackbarMessageReceiver;
 import org.tvheadend.tvhclient.ui.features.changelog.ChangeLogActivity;
@@ -21,7 +21,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import timber.log.Timber;
 
-public class SettingsActivity extends BaseAppCompatActivity implements FolderChooserDialog.FolderCallback {
+public class SettingsActivity extends BaseActivity implements FolderChooserDialog.FolderCallback {
 
     private SnackbarMessageReceiver snackbarMessageReceiver;
 

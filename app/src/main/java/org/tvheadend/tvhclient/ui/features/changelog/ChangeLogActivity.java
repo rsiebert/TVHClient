@@ -4,14 +4,14 @@ package org.tvheadend.tvhclient.ui.features.changelog;
 import android.os.Bundle;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.ui.base.BaseAppCompatActivity;
+import org.tvheadend.tvhclient.ui.base.BaseActivity;
 import org.tvheadend.tvhclient.ui.base.callbacks.BackPressedInterface;
 import org.tvheadend.tvhclient.util.MiscUtils;
 
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
-public class ChangeLogActivity extends BaseAppCompatActivity {
+public class ChangeLogActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
