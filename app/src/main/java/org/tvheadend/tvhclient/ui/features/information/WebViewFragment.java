@@ -12,20 +12,18 @@ import android.widget.ProgressBar;
 
 import org.tvheadend.tvhclient.BuildConfig;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.ui.base.callbacks.ToolbarInterface;
+import org.tvheadend.tvhclient.ui.base.BaseFragment;
 import org.tvheadend.tvhclient.util.MiscUtils;
 import org.tvheadend.tvhclient.util.tasks.HtmlFileLoaderTask;
 
 import java.util.regex.Pattern;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-public class WebViewFragment extends Fragment implements HtmlFileLoaderTask.Listener {
+public class WebViewFragment extends BaseFragment implements HtmlFileLoaderTask.Listener {
 
     @BindView(R.id.webview)
     protected WebView webView;
@@ -34,8 +32,6 @@ public class WebViewFragment extends Fragment implements HtmlFileLoaderTask.List
     private HtmlFileLoaderTask htmlFileLoaderTask;
     private Unbinder unbinder;
     private String website;
-    protected AppCompatActivity activity;
-    protected ToolbarInterface toolbarInterface;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -53,10 +49,7 @@ public class WebViewFragment extends Fragment implements HtmlFileLoaderTask.List
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        activity = (AppCompatActivity) getActivity();
-        if (activity instanceof ToolbarInterface) {
-            toolbarInterface = (ToolbarInterface) activity;
-        }
+        forceSingleScreenLayout();
 
         webView.setVisibility(View.GONE);
         webView.setBackgroundColor(Color.argb(1, 0, 0, 0));
@@ -113,7 +106,6 @@ public class WebViewFragment extends Fragment implements HtmlFileLoaderTask.List
             case android.R.id.home:
                 activity.finish();
                 return true;
-
             default:
                 return super.onOptionsItemSelected(item);
         }
