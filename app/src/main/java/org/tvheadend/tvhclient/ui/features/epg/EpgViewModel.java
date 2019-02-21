@@ -15,7 +15,7 @@ import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.Transformations;
 import timber.log.Timber;
 
-class EpgViewModel extends BaseChannelViewModel {
+public class EpgViewModel extends BaseChannelViewModel {
 
     private final LiveData<List<EpgChannel>> epgChannels;
 
