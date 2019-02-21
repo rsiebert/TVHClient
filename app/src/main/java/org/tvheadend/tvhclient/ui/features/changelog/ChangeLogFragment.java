@@ -2,8 +2,10 @@ package org.tvheadend.tvhclient.ui.features.changelog;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -95,6 +97,7 @@ public class ChangeLogFragment extends Fragment implements BackPressedInterface,
 
     private void showChangelog(boolean showFullChangeLog) {
         webView.setVisibility(View.GONE);
+        webView.setBackgroundColor(Color.argb(1, 0, 0, 0));
         progressBar.setVisibility(View.VISIBLE);
         changeLogLoaderTask = new ChangeLogLoaderTask(activity, versionName, this);
         changeLogLoaderTask.execute(showFullChangeLog);
@@ -136,7 +139,7 @@ public class ChangeLogFragment extends Fragment implements BackPressedInterface,
 
     @Override
     public void onFileContentsLoaded(String content) {
-        if (content != null) {
+        if (!TextUtils.isEmpty(content)) {
             webView.loadDataWithBaseURL("file:///android_asset/", content, "text/html", "utf-8", null);
             progressBar.setVisibility(View.GONE);
             webView.setVisibility(View.VISIBLE);
