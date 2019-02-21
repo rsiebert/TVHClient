@@ -23,7 +23,7 @@ public class StartupActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(MiscUtils.getThemeId(this));
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.startup_activity);
+        setContentView(R.layout.misc_content_activity);
         MiscUtils.setLanguage(this);
 
         if (savedInstanceState == null) {

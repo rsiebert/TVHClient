@@ -4,18 +4,17 @@ import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
-import androidx.fragment.app.Fragment;
-import androidx.appcompat.widget.Toolbar;
 
 import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.ui.base.BaseAppCompatActivity;
 import org.tvheadend.tvhclient.ui.features.programs.ProgramListFragment;
-import org.tvheadend.tvhclient.ui.base.BaseActivity;
-import org.tvheadend.tvhclient.ui.base.callbacks.ToolbarInterface;
 import org.tvheadend.tvhclient.util.MiscUtils;
 
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
 import timber.log.Timber;
 
-public class SearchActivity extends BaseActivity implements ToolbarInterface, StartSearchInterface {
+public class SearchActivity extends BaseAppCompatActivity implements StartSearchInterface {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -78,20 +77,6 @@ public class SearchActivity extends BaseActivity implements ToolbarInterface, St
                             SuggestionProvider.AUTHORITY, SuggestionProvider.MODE);
             Timber.d("Saving suggestion " + query);
             suggestions.saveRecentQuery(query, null);
-        }
-    }
-
-    @Override
-    public void setTitle(String title) {
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle(title);
-        }
-    }
-
-    @Override
-    public void setSubtitle(String subtitle) {
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setSubtitle(subtitle);
         }
     }
 }

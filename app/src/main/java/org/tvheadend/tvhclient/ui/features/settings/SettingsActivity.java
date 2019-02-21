@@ -4,26 +4,24 @@ import android.app.Fragment;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import android.view.MenuItem;
 
 import com.afollestad.materialdialogs.folderselector.FolderChooserDialog;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.ui.features.changelog.ChangeLogActivity;
+import org.tvheadend.tvhclient.ui.base.BaseAppCompatActivity;
 import org.tvheadend.tvhclient.ui.base.callbacks.BackPressedInterface;
-import org.tvheadend.tvhclient.ui.base.callbacks.ToolbarInterface;
 import org.tvheadend.tvhclient.ui.base.utils.SnackbarMessageReceiver;
+import org.tvheadend.tvhclient.ui.features.changelog.ChangeLogActivity;
 import org.tvheadend.tvhclient.util.MiscUtils;
 
 import java.io.File;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import timber.log.Timber;
 
-public class SettingsActivity extends AppCompatActivity implements ToolbarInterface, FolderChooserDialog.FolderCallback {
+public class SettingsActivity extends BaseAppCompatActivity implements FolderChooserDialog.FolderCallback {
 
     private SnackbarMessageReceiver snackbarMessageReceiver;
 
@@ -31,7 +29,7 @@ public class SettingsActivity extends AppCompatActivity implements ToolbarInterf
     public void onCreate(Bundle savedInstanceState) {
         setTheme(MiscUtils.getThemeId(this));
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.settings_activity);
+        setContentView(R.layout.misc_content_activity);
         MiscUtils.setLanguage(this);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -123,31 +121,6 @@ public class SettingsActivity extends AppCompatActivity implements ToolbarInterf
         } else {
             Timber.d("Calling back press of super");
             super.onBackPressed();
-        }
-    }
-
-    @Override
-    public void setTitle(String title) {
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle(title);
-        }
-    }
-
-    @Override
-    public void setSubtitle(String subtitle) {
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setSubtitle(subtitle);
-        }
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
         }
     }
 

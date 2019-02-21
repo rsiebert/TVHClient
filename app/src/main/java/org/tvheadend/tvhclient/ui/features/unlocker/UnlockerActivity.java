@@ -3,19 +3,18 @@ package org.tvheadend.tvhclient.ui.features.unlocker;
 import android.os.Bundle;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.ui.base.callbacks.ToolbarInterface;
+import org.tvheadend.tvhclient.ui.base.BaseAppCompatActivity;
 import org.tvheadend.tvhclient.util.MiscUtils;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-public class UnlockerActivity extends AppCompatActivity implements ToolbarInterface {
+public class UnlockerActivity extends BaseAppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(MiscUtils.getThemeId(this));
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main_activity);
+        setContentView(R.layout.misc_content_activity);
         MiscUtils.setLanguage(this);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -30,20 +29,6 @@ public class UnlockerActivity extends AppCompatActivity implements ToolbarInterf
             bundle.putString("website", "features");
             fragment.setArguments(bundle);
             getSupportFragmentManager().beginTransaction().add(R.id.main, fragment).commit();
-        }
-    }
-
-    @Override
-    public void setTitle(String title) {
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle(title);
-        }
-    }
-
-    @Override
-    public void setSubtitle(String subtitle) {
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setSubtitle(subtitle);
         }
     }
 }
