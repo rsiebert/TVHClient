@@ -8,23 +8,23 @@ import android.preference.PreferenceManager;
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.service.HtspService;
+import org.tvheadend.tvhclient.ui.base.callbacks.NetworkStatusListener;
+import org.tvheadend.tvhclient.ui.base.callbacks.ToolbarInterface;
+import org.tvheadend.tvhclient.ui.base.utils.SnackbarMessageReceiver;
+import org.tvheadend.tvhclient.ui.base.utils.SnackbarUtils;
 import org.tvheadend.tvhclient.ui.features.dvr.recordings.RecordingDetailsFragment;
 import org.tvheadend.tvhclient.ui.features.dvr.series_recordings.SeriesRecordingDetailsFragment;
 import org.tvheadend.tvhclient.ui.features.dvr.timer_recordings.TimerRecordingDetailsFragment;
 import org.tvheadend.tvhclient.ui.features.programs.ProgramDetailsFragment;
 import org.tvheadend.tvhclient.ui.features.programs.ProgramListFragment;
-import org.tvheadend.tvhclient.ui.base.callbacks.NetworkStatusListener;
 import org.tvheadend.tvhclient.util.network.NetworkStatusReceiver;
-import org.tvheadend.tvhclient.ui.base.utils.SnackbarMessageReceiver;
-import org.tvheadend.tvhclient.ui.base.utils.SnackbarUtils;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import timber.log.Timber;
 
-public abstract class BaseActivity extends AppCompatActivity implements NetworkStatusListener {
+public abstract class BaseActivity extends BaseAppCompatActivity implements ToolbarInterface, NetworkStatusListener {
 
     private NetworkStatusReceiver networkStatusReceiver;
     private boolean isNetworkAvailable;
