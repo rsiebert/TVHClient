@@ -52,7 +52,9 @@ public class WebViewFragment extends BaseFragment implements HtmlFileLoaderTask.
         forceSingleScreenLayout();
 
         webView.setVisibility(View.GONE);
-        webView.setBackgroundColor(Color.argb(1, 0, 0, 0));
+        // Make the background transparent to remove flickering. This avoids
+        // seeing the default theme background color before the stylesheets are loaded.
+        webView.setBackgroundColor(Color.argb(0, 0, 0, 0));
 
         if (savedInstanceState != null) {
             website = savedInstanceState.getString("website", "");

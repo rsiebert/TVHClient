@@ -97,7 +97,9 @@ public class ChangeLogFragment extends Fragment implements BackPressedInterface,
 
     private void showChangelog(boolean showFullChangeLog) {
         webView.setVisibility(View.GONE);
-        webView.setBackgroundColor(Color.argb(1, 0, 0, 0));
+        // Make the background transparent to remove flickering. This avoids
+        // seeing the default theme background color before the stylesheets are loaded.
+        webView.setBackgroundColor(Color.argb(0, 0, 0, 0));
         progressBar.setVisibility(View.VISIBLE);
         changeLogLoaderTask = new ChangeLogLoaderTask(activity, versionName, this);
         changeLogLoaderTask.execute(showFullChangeLog);
