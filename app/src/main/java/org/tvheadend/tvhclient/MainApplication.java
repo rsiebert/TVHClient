@@ -50,6 +50,9 @@ import static org.tvheadend.tvhclient.util.Constants.UNLOCKER;
 // TODO show channel text if no icon is available
 // TODO check where injected app context can be used
 
+// TODO Move the variable programIdToBeEditedWhenBeingRecorded into the viewmodels
+// TODO use a base viewmodel with generics
+
 public class MainApplication extends Application implements OptionsProvider, LifecycleObserver, BillingUpdatesListener {
 
     private BillingHandler billingHandler;
