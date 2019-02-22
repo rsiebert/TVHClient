@@ -1,15 +1,9 @@
-package org.tvheadend.tvhclient.ui.base.utils;
+package org.tvheadend.tvhclient.util.menu;
 
 
 import android.app.Activity;
-import android.app.SearchManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.net.Uri;
-import android.text.TextUtils;
-import android.view.Menu;
-import android.view.MenuItem;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.crashlytics.android.Crashlytics;
@@ -18,9 +12,6 @@ import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.data.service.HtspService;
-import org.tvheadend.tvhclient.ui.base.adapter.ChannelTagSelectionAdapter;
-import org.tvheadend.tvhclient.ui.base.notification.NotificationUtils;
-import org.tvheadend.tvhclient.domain.entity.ChannelTag;
 import org.tvheadend.tvhclient.domain.entity.Connection;
 import org.tvheadend.tvhclient.domain.entity.EpgProgram;
 import org.tvheadend.tvhclient.domain.entity.Program;
@@ -29,25 +20,21 @@ import org.tvheadend.tvhclient.domain.entity.SeriesRecording;
 import org.tvheadend.tvhclient.domain.entity.ServerProfile;
 import org.tvheadend.tvhclient.domain.entity.ServerStatus;
 import org.tvheadend.tvhclient.domain.entity.TimerRecording;
-import org.tvheadend.tvhclient.ui.base.adapter.GenreColorListAdapter;
 import org.tvheadend.tvhclient.ui.features.channels.ChannelDisplayOptionListener;
 import org.tvheadend.tvhclient.ui.features.download.DownloadRecordingManager;
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingRemovedCallback;
+import org.tvheadend.tvhclient.ui.features.notification.NotificationUtils;
 import org.tvheadend.tvhclient.ui.features.playback.external.CastChannelActivity;
 import org.tvheadend.tvhclient.ui.features.playback.external.CastRecordingActivity;
 import org.tvheadend.tvhclient.ui.features.playback.external.PlayChannelActivity;
 import org.tvheadend.tvhclient.ui.features.playback.external.PlayRecordingActivity;
 import org.tvheadend.tvhclient.ui.features.playback.internal.HtspPlaybackActivity;
-import org.tvheadend.tvhclient.ui.features.search.SearchActivity;
 import org.tvheadend.tvhclient.ui.features.startup.SplashActivity;
 import org.tvheadend.tvhclient.util.MiscUtils;
 
-import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
-import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -77,24 +64,6 @@ public class MenuUtils {
         this.isUnlocked = MainApplication.getInstance().isUnlocked();
         this.connection = appRepository.getConnectionData().getActiveItem();
         this.serverStatus = appRepository.getServerStatusData().getActiveItem();
-    }
-
-    /**
-     * Prepares a dialog that shows the available genre colors and the names. In
-     * here the data for the adapter is created and the dialog prepared which
-     * can be shown later.
-     */
-    public boolean handleMenuGenreColorSelection() {
-        Activity activity = this.activity.get();
-        if (activity == null) {
-            return false;
-        }
-        // Fill the list for the adapter
-        new MaterialDialog.Builder(activity)
-                .title(R.string.genre_color_list)
-                .adapter(new GenreColorListAdapter(activity.getResources().getStringArray(R.array.pr_content_type0)), null)
-                .show();
-        return true;
     }
 
     public boolean handleMenuTimeSelection(int currentSelection, int intervalInHours, int maxIntervalsToShow, @Nullable ChannelDisplayOptionListener callback) {
@@ -136,54 +105,6 @@ public class MenuUtils {
         return true;
     }
 
-    public boolean handleMenuChannelTagsSelection(List<ChannelTag> channelTags, @NonNull ChannelDisplayOptionListener callback) {
-        Activity activity = this.activity.get();
-        if (activity == null) {
-            return false;
-        }
-
-        boolean isMultipleChoice = sharedPreferences.getBoolean("multiple_channel_tags_enabled",
-                activity.getResources().getBoolean(R.bool.pref_default_multiple_channel_tags_enabled));
-
-        // Create a default tag (All channels)
-        if (!isMultipleChoice) {
-            ChannelTag tag = new ChannelTag();
-            tag.setTagId(0);
-            tag.setTagName(activity.getString(R.string.all_channels));
-            tag.setChannelCount(appRepository.getChannelData().getItems().size());
-            boolean allChannelsSelected = true;
-            for (ChannelTag channelTag : channelTags) {
-                if (channelTag.isSelected()) {
-                    allChannelsSelected = false;
-                    break;
-                }
-            }
-            tag.setSelected(allChannelsSelected);
-            channelTags.add(0, tag);
-        }
-
-        ChannelTagSelectionAdapter adapter = new ChannelTagSelectionAdapter(channelTags, isMultipleChoice);
-
-        // Show the dialog that shows all available channel tags. When the
-        // user has selected a tag, restart the loader to loadRecordingById the updated channel list
-        MaterialDialog.Builder builder = new MaterialDialog.Builder(activity)
-                .title(R.string.tags)
-                .adapter(adapter, null);
-
-        if (isMultipleChoice) {
-            builder.content("Select one or more channel tags for a subset of channels. Otherwise all channels will be displayed.")
-                    .positiveText(R.string.save)
-                    .onPositive((dialog, which) -> callback.onChannelTagIdsSelected(adapter.getSelectedTagIds()));
-        } else {
-            builder.dismissListener(dialog -> callback.onChannelTagIdsSelected(adapter.getSelectedTagIds()));
-        }
-
-        MaterialDialog dialog = builder.build();
-        adapter.setCallback(dialog);
-        dialog.show();
-        return true;
-    }
-
     public boolean handleMenuChannelSortOrderSelection(@NonNull ChannelDisplayOptionListener callback) {
         Activity activity = this.activity.get();
         if (activity == null) {
@@ -218,61 +139,6 @@ public class MenuUtils {
             return false;
         }
         new DownloadRecordingManager(activity, dvrId);
-        return true;
-    }
-
-    public boolean handleMenuSearchImdbWebsite(String title) {
-        Activity activity = this.activity.get();
-        if (activity == null || TextUtils.isEmpty(title)) {
-            return false;
-        }
-        try {
-            String url = URLEncoder.encode(title, "utf-8");
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("imdb:///find?s=tt&q=" + url));
-            if (intent.resolveActivity(activity.getPackageManager()) != null) {
-                activity.startActivity(intent);
-            } else {
-                intent.setData(Uri.parse("http://www.imdb.com/find?s=tt&q=" + url));
-                activity.startActivity(intent);
-            }
-        } catch (UnsupportedEncodingException e) {
-            // NOP
-        }
-        return true;
-    }
-
-    public boolean handleMenuSearchFileAffinityWebsite(String title) {
-        Activity activity = this.activity.get();
-        if (activity == null || TextUtils.isEmpty(title)) {
-            return false;
-        }
-        try {
-            String url = URLEncoder.encode(title, "utf-8");
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse("https://www.filmaffinity.com/es/search.php?stext=" + url));
-            activity.startActivity(intent);
-        } catch (UnsupportedEncodingException e) {
-            // NOP
-        }
-        return true;
-    }
-
-    public boolean handleMenuSearchEpgSelection(String title) {
-        return handleMenuSearchEpgSelection(title, 0);
-    }
-
-    public boolean handleMenuSearchEpgSelection(String title, int channelId) {
-        Activity activity = this.activity.get();
-        if (activity == null) {
-            Timber.d("Weak reference to activity is null");
-            return false;
-        }
-        Intent intent = new Intent(activity, SearchActivity.class);
-        intent.setAction(Intent.ACTION_SEARCH);
-        intent.putExtra(SearchManager.QUERY, title);
-        intent.putExtra("type", "program_guide");
-        intent.putExtra("channelId", channelId);
-        activity.startActivity(intent);
         return true;
     }
 
@@ -579,100 +445,6 @@ public class MenuUtils {
         return true;
     }
 
-    public void onPreparePopupMenu(@NonNull Menu menu, long start, long stop, @Nullable Recording recording, boolean isNetworkAvailable) {
-        Activity activity = this.activity.get();
-        if (activity == null) {
-            Timber.d("Weak reference to activity is null");
-            return;
-        }
-
-        // Hide the menus because the ones in the toolbar are not hidden when set in the xml
-        for (int i = 0; i < menu.size(); i++) {
-            menu.getItem(i).setVisible(false);
-        }
-
-        MenuItem recordOnceMenuItem = menu.findItem(R.id.menu_record_once);
-        MenuItem recordOnceAndEditMenuItem = menu.findItem(R.id.menu_record_once_and_edit);
-        MenuItem recordOnceCustomProfileMenuItem = menu.findItem(R.id.menu_record_once_custom_profile);
-        MenuItem recordSeriesMenuItem = menu.findItem(R.id.menu_record_series);
-        MenuItem recordRemoveMenuItem = menu.findItem(R.id.menu_record_remove);
-        MenuItem recordStopMenuItem = menu.findItem(R.id.menu_record_stop);
-        MenuItem recordCancelMenuItem = menu.findItem(R.id.menu_record_cancel);
-        MenuItem playMenuItem = menu.findItem(R.id.menu_play);
-        MenuItem castMenuItem = menu.findItem(R.id.menu_cast);
-        MenuItem addReminderMenuItem = menu.findItem(R.id.menu_add_notification);
-
-        if (isNetworkAvailable) {
-            if (recording == null || (!recording.isRecording()
-                    && !recording.isScheduled()
-                    && !recording.isCompleted())) {
-                Timber.d("Recording is not recording or scheduled");
-                recordOnceMenuItem.setVisible(true);
-                recordOnceAndEditMenuItem.setVisible(isUnlocked);
-                recordOnceCustomProfileMenuItem.setVisible(isUnlocked);
-                recordSeriesMenuItem.setVisible(serverStatus.getHtspVersion() >= 13);
-
-            } else if (recording.isCompleted()) {
-                Timber.d("Recording is completed ");
-                playMenuItem.setVisible(true);
-                castMenuItem.setVisible(MiscUtils.getCastSession(activity) != null);
-                recordRemoveMenuItem.setVisible(true);
-
-            } else if (recording.isScheduled() && !recording.isRecording()) {
-                Timber.d("Recording is scheduled");
-                recordCancelMenuItem.setVisible(true);
-
-            } else if (recording.isRecording()) {
-                Timber.d("Recording is being recorded");
-                playMenuItem.setVisible(true);
-                castMenuItem.setVisible(MiscUtils.getCastSession(activity) != null);
-                recordStopMenuItem.setVisible(true);
-
-            } else if (recording.isFailed() || recording.isFileMissing() || recording.isMissed() || recording.isAborted()) {
-                Timber.d("Recording is something else");
-                recordRemoveMenuItem.setVisible(true);
-            }
-
-            // Show the play menu item and the cast menu item (if available)
-            // when the current time is between the program start and end time
-            long currentTime = new Date().getTime();
-            if (start > 0 && stop > 0 && currentTime > start && currentTime < stop) {
-                menu.findItem(R.id.menu_play).setVisible(true);
-                menu.findItem(R.id.menu_cast).setVisible(MiscUtils.getCastSession(activity) != null);
-            }
-        }
-        // Show the add reminder menu only for programs and
-        // recordings where the start time is in the future.
-        if (isUnlocked && sharedPreferences.getBoolean("notifications_enabled",
-                activity.getResources().getBoolean(R.bool.pref_default_notifications_enabled))) {
-            long currentTime = new Date().getTime();
-            long startTime = currentTime;
-            if (start > 0) {
-                startTime = start;
-            }
-            addReminderMenuItem.setVisible(startTime > currentTime);
-        }
-    }
-
-    public void onPreparePopupSearchMenu(@NonNull Menu menu, String title, boolean isNetworkAvailable) {
-        Activity activity = this.activity.get();
-        if (activity == null) {
-            Timber.d("Weak reference to activity is null");
-            return;
-        }
-
-        boolean visible = isNetworkAvailable && !TextUtils.isEmpty(title);
-        MenuItem searchMenuItem = menu.findItem(R.id.menu_search);
-        if (searchMenuItem != null) {
-            searchMenuItem.setVisible(visible);
-            menu.findItem(R.id.menu_search_imdb).setVisible(visible);
-            menu.findItem(R.id.menu_search_fileaffinity).setVisible(visible);
-            menu.findItem(R.id.menu_search_youtube).setVisible(visible);
-            menu.findItem(R.id.menu_search_google).setVisible(visible);
-            menu.findItem(R.id.menu_search_epg).setVisible(visible);
-        }
-    }
-
     public boolean handleMenuReconnectSelection() {
         Activity activity = this.activity.get();
         if (activity == null) {
@@ -775,47 +547,6 @@ public class MenuUtils {
             Intent intent = new Intent(activity, PlayRecordingActivity.class);
             intent.putExtra("dvrId", dvrId);
             activity.startActivity(intent);
-        }
-        return true;
-    }
-
-    public boolean handleMenuSearchYoutube(String title) {
-        Activity activity = this.activity.get();
-        if (activity == null || TextUtils.isEmpty(title)) {
-            return false;
-        }
-        try {
-            String url = URLEncoder.encode(title, "utf-8");
-            // Search for the given title using the installed youtube application
-            Intent intent = new Intent(Intent.ACTION_SEARCH, Uri.parse("vnd.youtube:"));
-            intent.putExtra("query", url);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-            PackageManager packageManager = activity.getPackageManager();
-            if (packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY).isEmpty()) {
-                // No app is installed, fall back to the website version
-                intent = new Intent(Intent.ACTION_VIEW);
-                intent.setData(Uri.parse("https://www.youtube.com/results?search_query=" + url));
-            }
-            activity.startActivity(intent);
-        } catch (UnsupportedEncodingException e) {
-            // NOP
-        }
-        return true;
-    }
-
-    public boolean handleMenuSearchGoogle(String title) {
-        Activity activity = this.activity.get();
-        if (activity == null || TextUtils.isEmpty(title)) {
-            return false;
-        }
-        try {
-            String url = URLEncoder.encode(title, "utf-8");
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse("https://www.google.com/search?q=" + url));
-            activity.startActivity(intent);
-        } catch (UnsupportedEncodingException e) {
-            // NOP
         }
         return true;
     }
