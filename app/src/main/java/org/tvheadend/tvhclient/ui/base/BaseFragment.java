@@ -13,7 +13,7 @@ import org.tvheadend.tvhclient.domain.entity.ServerStatus;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.ui.base.callbacks.NetworkStatusListener;
 import org.tvheadend.tvhclient.ui.base.callbacks.ToolbarInterface;
-import org.tvheadend.tvhclient.ui.base.utils.MenuUtils;
+import org.tvheadend.tvhclient.util.menu.MenuUtils;
 
 import javax.inject.Inject;
 
