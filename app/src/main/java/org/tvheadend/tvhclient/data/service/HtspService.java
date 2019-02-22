@@ -22,7 +22,7 @@ import org.tvheadend.tvhclient.data.service.htsp.HtspFileInputStream;
 import org.tvheadend.tvhclient.data.service.htsp.HtspMessage;
 import org.tvheadend.tvhclient.data.service.htsp.HtspMessageListener;
 import org.tvheadend.tvhclient.data.worker.EpgDataUpdateWorker;
-import org.tvheadend.tvhclient.ui.base.notification.NotificationUtils;
+import org.tvheadend.tvhclient.ui.features.notification.NotificationUtils;
 import org.tvheadend.tvhclient.domain.entity.Channel;
 import org.tvheadend.tvhclient.domain.entity.ChannelTag;
 import org.tvheadend.tvhclient.domain.entity.Connection;

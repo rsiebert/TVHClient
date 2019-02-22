@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.ui.base.notification
+package org.tvheadend.tvhclient.ui.features.notification
 
 import android.app.PendingIntent
 import android.content.Context
