@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.ui.base.adapter;
+package org.tvheadend.tvhclient.ui.features.dialogs;
 
 
 import android.view.LayoutInflater;
@@ -13,7 +13,7 @@ public class GenreColorListAdapter extends RecyclerView.Adapter<GenreColorListAd
 
     private final String[] contentInfo;
 
-    public GenreColorListAdapter(String[] contentInfo) {
+    GenreColorListAdapter(String[] contentInfo) {
         this.contentInfo = contentInfo;
     }
 

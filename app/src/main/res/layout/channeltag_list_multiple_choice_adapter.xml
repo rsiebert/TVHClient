@@ -18,7 +18,7 @@
 
         <variable
             name="callback"
-            type="org.tvheadend.tvhclient.ui.base.adapter.ChannelTagSelectionAdapter" />
+            type="org.tvheadend.tvhclient.ui.features.dialogs.ChannelTagSelectionAdapter" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

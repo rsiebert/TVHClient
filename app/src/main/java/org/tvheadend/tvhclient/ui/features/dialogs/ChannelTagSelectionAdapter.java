@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.ui.base.adapter;
+package org.tvheadend.tvhclient.ui.features.dialogs;
 
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
