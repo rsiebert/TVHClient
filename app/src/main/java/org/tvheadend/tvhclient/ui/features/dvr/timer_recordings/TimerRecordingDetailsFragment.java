@@ -12,11 +12,13 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.domain.entity.TimerRecording;
 import org.tvheadend.tvhclient.databinding.TimerRecordingDetailsFragmentBinding;
+import org.tvheadend.tvhclient.domain.entity.TimerRecording;
+import org.tvheadend.tvhclient.ui.base.BaseFragment;
+import org.tvheadend.tvhclient.util.menu.PopupMenuUtil;
+import org.tvheadend.tvhclient.util.menu.SearchMenuUtils;
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity;
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingRemovedCallback;
-import org.tvheadend.tvhclient.ui.base.BaseFragment;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
@@ -97,7 +99,7 @@ public class TimerRecordingDetailsFragment extends BaseFragment implements Recor
         if (recording == null) {
             return;
         }
-        menuUtils.onPreparePopupSearchMenu(menu, recording.getTitle(), isNetworkAvailable);
+        PopupMenuUtil.prepareSearchMenu(menu, recording.getTitle(), isNetworkAvailable);
 
         if (nestedToolbar.getMenu() == null) {
             return;
@@ -128,7 +130,9 @@ public class TimerRecordingDetailsFragment extends BaseFragment implements Recor
         if (recording == null) {
             return super.onOptionsItemSelected(item);
         }
-
+        if (!SearchMenuUtils.onMenuSelected(activity, item.getItemId(), recording.getTitle())) {
+            return super.onOptionsItemSelected(item);
+        }
         switch (item.getItemId()) {
             case R.id.menu_edit:
                 Intent intent = new Intent(activity, RecordingAddEditActivity.class);
@@ -139,21 +143,6 @@ public class TimerRecordingDetailsFragment extends BaseFragment implements Recor
 
             case R.id.menu_record_remove:
                 return menuUtils.handleMenuRemoveTimerRecordingSelection(recording, this);
-
-            case R.id.menu_search_imdb:
-                return menuUtils.handleMenuSearchImdbWebsite(recording.getTitle());
-
-            case R.id.menu_search_fileaffinity:
-                return menuUtils.handleMenuSearchFileAffinityWebsite(recording.getTitle());
-
-            case R.id.menu_search_youtube:
-                return menuUtils.handleMenuSearchYoutube(recording.getTitle());
-
-            case R.id.menu_search_google:
-                return menuUtils.handleMenuSearchGoogle(recording.getTitle());
-
-            case R.id.menu_search_epg:
-                return menuUtils.handleMenuSearchEpgSelection(recording.getTitle());
 
             default:
                 return super.onOptionsItemSelected(item);

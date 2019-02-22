@@ -13,10 +13,12 @@ import android.widget.ProgressBar;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.domain.entity.Recording;
-import org.tvheadend.tvhclient.ui.features.download.DownloadPermissionGrantedInterface;
-import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity;
 import org.tvheadend.tvhclient.ui.base.BaseFragment;
 import org.tvheadend.tvhclient.ui.base.callbacks.RecyclerViewClickCallback;
+import org.tvheadend.tvhclient.util.menu.PopupMenuUtil;
+import org.tvheadend.tvhclient.util.menu.SearchMenuUtils;
+import org.tvheadend.tvhclient.ui.features.download.DownloadPermissionGrantedInterface;
+import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity;
 import org.tvheadend.tvhclient.util.MiscUtils;
 
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -173,7 +175,7 @@ public class RecordingListFragment extends BaseFragment implements RecyclerViewC
         PopupMenu popupMenu = new PopupMenu(activity, view);
         popupMenu.getMenuInflater().inflate(R.menu.recordings_popup_menu, popupMenu.getMenu());
         popupMenu.getMenuInflater().inflate(R.menu.external_search_options_menu, popupMenu.getMenu());
-        menuUtils.onPreparePopupSearchMenu(popupMenu.getMenu(), recording.getTitle(), isNetworkAvailable);
+        PopupMenuUtil.prepareSearchMenu(popupMenu.getMenu(), recording.getTitle(), isNetworkAvailable);
 
         if (isNetworkAvailable) {
             if (recording.isCompleted()) {
@@ -198,22 +200,10 @@ public class RecordingListFragment extends BaseFragment implements RecyclerViewC
         }
 
         popupMenu.setOnMenuItemClickListener(item -> {
+            if (!SearchMenuUtils.onMenuSelected(activity, item.getItemId(), recording.getTitle())) {
+                return true;
+            }
             switch (item.getItemId()) {
-                case R.id.menu_search_imdb:
-                    return menuUtils.handleMenuSearchImdbWebsite(recording.getTitle());
-
-                case R.id.menu_search_fileaffinity:
-                    return menuUtils.handleMenuSearchFileAffinityWebsite(recording.getTitle());
-
-                case R.id.menu_search_youtube:
-                    return menuUtils.handleMenuSearchYoutube(recording.getTitle());
-
-                case R.id.menu_search_google:
-                    return menuUtils.handleMenuSearchGoogle(recording.getTitle());
-
-                case R.id.menu_search_epg:
-                    return menuUtils.handleMenuSearchEpgSelection(recording.getTitle());
-
                 case R.id.menu_record_stop:
                     return menuUtils.handleMenuStopRecordingSelection(recording, null);
 

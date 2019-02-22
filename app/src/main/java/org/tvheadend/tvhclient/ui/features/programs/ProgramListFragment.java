@@ -16,14 +16,17 @@ import android.widget.ProgressBar;
 
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.data.service.HtspService;
 import org.tvheadend.tvhclient.domain.entity.Program;
 import org.tvheadend.tvhclient.domain.entity.Recording;
-import org.tvheadend.tvhclient.data.service.HtspService;
+import org.tvheadend.tvhclient.ui.base.BaseFragment;
+import org.tvheadend.tvhclient.ui.base.callbacks.RecyclerViewClickCallback;
+import org.tvheadend.tvhclient.util.menu.PopupMenuUtil;
+import org.tvheadend.tvhclient.util.menu.SearchMenuUtils;
+import org.tvheadend.tvhclient.ui.features.dialogs.GenreColorDialog;
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity;
 import org.tvheadend.tvhclient.ui.features.search.SearchRequestInterface;
 import org.tvheadend.tvhclient.ui.features.search.StartSearchInterface;
-import org.tvheadend.tvhclient.ui.base.BaseFragment;
-import org.tvheadend.tvhclient.ui.base.callbacks.RecyclerViewClickCallback;
 import org.tvheadend.tvhclient.util.MiscUtils;
 
 import java.util.Date;
@@ -259,8 +262,7 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
                 return menuUtils.handleMenuCast("channelId", channelId);
 
             case R.id.menu_genre_color_info_programs:
-                menuUtils.handleMenuGenreColorSelection();
-                return true;
+                return GenreColorDialog.showDialog(activity);
 
             default:
                 return super.onOptionsItemSelected(item);
@@ -294,26 +296,14 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
         PopupMenu popupMenu = new PopupMenu(activity, view);
         popupMenu.getMenuInflater().inflate(R.menu.program_popup_and_toolbar_menu, popupMenu.getMenu());
         popupMenu.getMenuInflater().inflate(R.menu.external_search_options_menu, popupMenu.getMenu());
-        menuUtils.onPreparePopupMenu(popupMenu.getMenu(), program.getStart(), program.getStop(), program.getRecording(), isNetworkAvailable);
-        menuUtils.onPreparePopupSearchMenu(popupMenu.getMenu(), program.getTitle(), isNetworkAvailable);
+        PopupMenuUtil.prepareMenu(activity, popupMenu.getMenu(), program, program.getRecording(), isNetworkAvailable, htspVersion, isUnlocked);
+        PopupMenuUtil.prepareSearchMenu(popupMenu.getMenu(), program.getTitle(), isNetworkAvailable);
 
         popupMenu.setOnMenuItemClickListener(item -> {
+            if (!SearchMenuUtils.onMenuSelected(activity, item.getItemId(), program.getTitle(), program.getChannelId())) {
+                return true;
+            }
             switch (item.getItemId()) {
-                case R.id.menu_search_imdb:
-                    return menuUtils.handleMenuSearchImdbWebsite(program.getTitle());
-
-                case R.id.menu_search_fileaffinity:
-                    return menuUtils.handleMenuSearchFileAffinityWebsite(program.getTitle());
-
-                case R.id.menu_search_youtube:
-                    return menuUtils.handleMenuSearchYoutube(program.getTitle());
-
-                case R.id.menu_search_google:
-                    return menuUtils.handleMenuSearchGoogle(program.getTitle());
-
-                case R.id.menu_search_epg:
-                    return menuUtils.handleMenuSearchEpgSelection(program.getTitle(), channelId);
-
                 case R.id.menu_record_stop:
                     return menuUtils.handleMenuStopRecordingSelection(recording, null);
 

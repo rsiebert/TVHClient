@@ -19,12 +19,16 @@ import org.tvheadend.tvhclient.domain.entity.ChannelTag;
 import org.tvheadend.tvhclient.domain.entity.EpgChannel;
 import org.tvheadend.tvhclient.domain.entity.EpgProgram;
 import org.tvheadend.tvhclient.domain.entity.Recording;
+import org.tvheadend.tvhclient.ui.base.BaseFragment;
+import org.tvheadend.tvhclient.ui.base.callbacks.RecyclerViewClickCallback;
+import org.tvheadend.tvhclient.util.menu.PopupMenuUtil;
+import org.tvheadend.tvhclient.util.menu.SearchMenuUtils;
+import org.tvheadend.tvhclient.ui.features.channels.ChannelDisplayOptionListener;
+import org.tvheadend.tvhclient.ui.features.dialogs.ChannelTagSelectionDialog;
+import org.tvheadend.tvhclient.ui.features.dialogs.GenreColorDialog;
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity;
 import org.tvheadend.tvhclient.ui.features.search.SearchActivity;
 import org.tvheadend.tvhclient.ui.features.search.SearchRequestInterface;
-import org.tvheadend.tvhclient.ui.base.BaseFragment;
-import org.tvheadend.tvhclient.ui.features.channels.ChannelDisplayOptionListener;
-import org.tvheadend.tvhclient.ui.base.callbacks.RecyclerViewClickCallback;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -250,13 +254,13 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_tags:
-                return menuUtils.handleMenuChannelTagsSelection(channelTags, this);
+                return ChannelTagSelectionDialog.showDialog(activity, channelTags, appRepository.getChannelData().getItems().size(), this);
 
             case R.id.menu_timeframe:
                 return menuUtils.handleMenuTimeSelection(selectedTimeOffset, hoursToShow, (hoursToShow * daysToShow), this);
 
             case R.id.menu_genre_color_info_channels:
-                return menuUtils.handleMenuGenreColorSelection();
+                return GenreColorDialog.showDialog(activity);
 
             case R.id.menu_sort_order:
                 return menuUtils.handleMenuChannelSortOrderSelection(this);
@@ -319,26 +323,14 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
         popupMenu.getMenuInflater().inflate(R.menu.program_popup_and_toolbar_menu, popupMenu.getMenu());
         popupMenu.getMenuInflater().inflate(R.menu.external_search_options_menu, popupMenu.getMenu());
 
-        menuUtils.onPreparePopupMenu(popupMenu.getMenu(), program.getStart(), program.getStop(), program.getRecording(), isNetworkAvailable);
-        menuUtils.onPreparePopupSearchMenu(popupMenu.getMenu(), program.getTitle(), isNetworkAvailable);
+        PopupMenuUtil.prepareMenu(activity, popupMenu.getMenu(), program, program.getRecording(), isNetworkAvailable, htspVersion, isUnlocked);
+        PopupMenuUtil.prepareSearchMenu(popupMenu.getMenu(), program.getTitle(), isNetworkAvailable);
 
         popupMenu.setOnMenuItemClickListener(item -> {
+            if (!SearchMenuUtils.onMenuSelected(activity, item.getItemId(), program.getTitle())) {
+                return true;
+            }
             switch (item.getItemId()) {
-                case R.id.menu_search_imdb:
-                    return menuUtils.handleMenuSearchImdbWebsite(program.getTitle());
-
-                case R.id.menu_search_fileaffinity:
-                    return menuUtils.handleMenuSearchFileAffinityWebsite(program.getTitle());
-
-                case R.id.menu_search_youtube:
-                    return menuUtils.handleMenuSearchYoutube(program.getTitle());
-
-                case R.id.menu_search_google:
-                    return menuUtils.handleMenuSearchGoogle(program.getTitle());
-
-                case R.id.menu_search_epg:
-                    return menuUtils.handleMenuSearchEpgSelection(program.getTitle(), program.getChannelId());
-
                 case R.id.menu_record_stop:
                     return menuUtils.handleMenuStopRecordingSelection(recording, null);
 

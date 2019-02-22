@@ -20,11 +20,15 @@ import org.tvheadend.tvhclient.domain.entity.ChannelTag;
 import org.tvheadend.tvhclient.domain.entity.Connection;
 import org.tvheadend.tvhclient.domain.entity.Program;
 import org.tvheadend.tvhclient.domain.entity.Recording;
+import org.tvheadend.tvhclient.ui.base.BaseFragment;
+import org.tvheadend.tvhclient.ui.base.callbacks.RecyclerViewClickCallback;
+import org.tvheadend.tvhclient.util.menu.PopupMenuUtil;
+import org.tvheadend.tvhclient.util.menu.SearchMenuUtils;
+import org.tvheadend.tvhclient.ui.features.dialogs.ChannelTagSelectionDialog;
+import org.tvheadend.tvhclient.ui.features.dialogs.GenreColorDialog;
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity;
 import org.tvheadend.tvhclient.ui.features.programs.ProgramListFragment;
 import org.tvheadend.tvhclient.ui.features.search.SearchRequestInterface;
-import org.tvheadend.tvhclient.ui.base.BaseFragment;
-import org.tvheadend.tvhclient.ui.base.callbacks.RecyclerViewClickCallback;
 import org.tvheadend.tvhclient.util.tasks.WakeOnLanTask;
 
 import java.util.Calendar;
@@ -256,13 +260,13 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_tags:
-                return menuUtils.handleMenuChannelTagsSelection(channelTags, this);
+                return ChannelTagSelectionDialog.showDialog(activity, channelTags, appRepository.getChannelData().getItems().size(), this);
 
             case R.id.menu_timeframe:
                 return menuUtils.handleMenuTimeSelection(selectedTimeOffset, intervalInHours, 12, this);
 
             case R.id.menu_genre_color_info_channels:
-                return menuUtils.handleMenuGenreColorSelection();
+                return GenreColorDialog.showDialog(activity);
 
             case R.id.menu_sort_order:
                 return menuUtils.handleMenuChannelSortOrderSelection(this);
@@ -371,31 +375,15 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
         popupMenu.getMenuInflater().inflate(R.menu.program_popup_and_toolbar_menu, popupMenu.getMenu());
         popupMenu.getMenuInflater().inflate(R.menu.external_search_options_menu, popupMenu.getMenu());
 
-        menuUtils.onPreparePopupMenu(popupMenu.getMenu(),
-                program != null ? program.getStart() : 0,
-                program != null ? program.getStop() : 0,
-                recording, isNetworkAvailable);
-
-        menuUtils.onPreparePopupSearchMenu(popupMenu.getMenu(), channel.getProgramTitle(), isNetworkAvailable);
+        PopupMenuUtil.prepareMenu(activity, popupMenu.getMenu(), program, recording, isNetworkAvailable, htspVersion, isUnlocked);
+        PopupMenuUtil.prepareSearchMenu(popupMenu.getMenu(), channel.getProgramTitle(), isNetworkAvailable);
         popupMenu.getMenu().findItem(R.id.menu_play).setVisible(isNetworkAvailable);
 
         popupMenu.setOnMenuItemClickListener(item -> {
+            if (!SearchMenuUtils.onMenuSelected(activity, item.getItemId(), channel.getProgramTitle())) {
+                return true;
+            }
             switch (item.getItemId()) {
-                case R.id.menu_search_imdb:
-                    return menuUtils.handleMenuSearchImdbWebsite(channel.getProgramTitle());
-
-                case R.id.menu_search_fileaffinity:
-                    return menuUtils.handleMenuSearchFileAffinityWebsite(channel.getProgramTitle());
-
-                case R.id.menu_search_youtube:
-                    return menuUtils.handleMenuSearchYoutube(channel.getProgramTitle());
-
-                case R.id.menu_search_google:
-                    return menuUtils.handleMenuSearchGoogle(channel.getProgramTitle());
-
-                case R.id.menu_search_epg:
-                    return menuUtils.handleMenuSearchEpgSelection(channel.getProgramTitle(), channel.getId());
-
                 case R.id.menu_record_stop:
                     return menuUtils.handleMenuStopRecordingSelection(recording, null);
 

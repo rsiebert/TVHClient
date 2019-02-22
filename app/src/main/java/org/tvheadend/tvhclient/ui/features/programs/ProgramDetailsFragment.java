@@ -12,11 +12,13 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.databinding.ProgramDetailsFragmentBinding;
 import org.tvheadend.tvhclient.domain.entity.Program;
 import org.tvheadend.tvhclient.domain.entity.Recording;
-import org.tvheadend.tvhclient.databinding.ProgramDetailsFragmentBinding;
-import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity;
 import org.tvheadend.tvhclient.ui.base.BaseFragment;
+import org.tvheadend.tvhclient.util.menu.PopupMenuUtil;
+import org.tvheadend.tvhclient.util.menu.SearchMenuUtils;
+import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
@@ -135,14 +137,10 @@ public class ProgramDetailsFragment extends BaseFragment {
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
-        // Show or hide menus of the main toolbar
-        menuUtils.onPreparePopupSearchMenu(menu, program.getTitle(), isNetworkAvailable);
+        // Show or hide search menu items in the main toolbar
+        PopupMenuUtil.prepareSearchMenu(menu, program.getTitle(), isNetworkAvailable);
         // Show or hide menus of the nested toolbar
-        menu = nestedToolbar.getMenu();
-        menuUtils.onPreparePopupMenu(menu,
-                (program != null ? program.getStart() : 0),
-                (program != null ? program.getStop() : 0),
-                recording, isNetworkAvailable);
+        PopupMenuUtil.prepareMenu(activity, nestedToolbar.getMenu(), program, program.getRecording(), isNetworkAvailable, htspVersion, isUnlocked);
     }
 
     @Override
@@ -167,12 +165,10 @@ public class ProgramDetailsFragment extends BaseFragment {
         if (program == null) {
             return super.onOptionsItemSelected(item);
         }
-
+        if (!SearchMenuUtils.onMenuSelected(activity, item.getItemId(), program.getTitle(), program.getChannelId())) {
+            return true;
+        }
         switch (item.getItemId()) {
-            case android.R.id.home:
-                activity.finish();
-                return true;
-
             case R.id.menu_record_stop:
                 return menuUtils.handleMenuStopRecordingSelection(recording, null);
 
@@ -203,21 +199,6 @@ public class ProgramDetailsFragment extends BaseFragment {
 
             case R.id.menu_add_notification:
                 return menuUtils.handleMenuAddNotificationSelection(program);
-
-            case R.id.menu_search_imdb:
-                return menuUtils.handleMenuSearchImdbWebsite(program.getTitle());
-
-            case R.id.menu_search_fileaffinity:
-                return menuUtils.handleMenuSearchFileAffinityWebsite(program.getTitle());
-
-            case R.id.menu_search_youtube:
-                return menuUtils.handleMenuSearchYoutube(program.getTitle());
-
-            case R.id.menu_search_google:
-                return menuUtils.handleMenuSearchGoogle(program.getTitle());
-
-            case R.id.menu_search_epg:
-                return menuUtils.handleMenuSearchEpgSelection(program.getTitle(), program.getChannelId());
 
             default:
                 return super.onOptionsItemSelected(item);
