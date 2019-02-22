@@ -1,10 +1,9 @@
 $ 2.2.0
   % VERSION 2.2.0
-  _ 20.02.2019
+  _ 22.02.2019
     * Replaced current connection service with the one from application version 1.9.12.
     * Added toolbar menu in the channel list screen to wake up the server
     * Added Discord link as a contact option in the Help & Support page
-    * Fixed loading program poster image
     * Internal enhancements and bug fixes
     * Small layout changes
 $ 2.1.0
