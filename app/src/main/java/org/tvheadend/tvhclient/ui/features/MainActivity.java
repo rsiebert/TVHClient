@@ -342,11 +342,11 @@ public class MainActivity extends BaseActivity implements NavigationDrawerCallba
     public boolean onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
 
+        // Show certain menus not on all screens
         switch (selectedNavigationMenuId) {
             case NavigationDrawer.MENU_STATUS:
             case NavigationDrawer.MENU_UNLOCKER:
             case NavigationDrawer.MENU_HELP:
-                // Do not show these menus in one of those fragments
                 mediaRouteMenuItem.setVisible(false);
                 menu.findItem(R.id.menu_search).setVisible(false);
                 menu.findItem(R.id.menu_refresh).setVisible(false);
@@ -360,7 +360,6 @@ public class MainActivity extends BaseActivity implements NavigationDrawerCallba
 
     @Override
     public void onNavigationMenuSelected(int id) {
-        Timber.d("Newly selected menu id is " + id + ", current selection id is " + selectedNavigationMenuId);
         if (selectedNavigationMenuId != id) {
             handleDrawerItemSelected(id);
         }
@@ -383,6 +382,8 @@ public class MainActivity extends BaseActivity implements NavigationDrawerCallba
             Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main);
             if (fragment instanceof SearchRequestInterface
                     && fragment.isVisible()
+                    // Disable search as you type in the epg because when doing a search in the
+                    // program guide, the search results will be shown in a separate fragment program list.
                     && !(fragment instanceof ProgramGuideFragment)) {
                 ((SearchRequestInterface) fragment).onSearchRequested(newText);
             }
@@ -453,26 +454,35 @@ public class MainActivity extends BaseActivity implements NavigationDrawerCallba
         }
     }
 
+    /**
+     * Executes certain actions when the connectivity has changed.
+     * A new connection to the server is created if the connectivity changed from
+     * unavailable to available. Otherwise the server will be pinged to check if the connection
+     * is still active. Additionally the connectivity status is propagated to all fragments that
+     * that are currently shown so they can update certain UI elements that depend on the
+     * connectivity status like menus.
+     *
+     * @param isAvailable True if networking is available, otherwise false
+     */
     protected void onNetworkAvailabilityChanged(boolean isAvailable) {
+        Intent intent = new Intent(this, HtspService.class);
         if (isAvailable) {
             if (!isNetworkAvailable) {
                 Timber.d("Network changed from offline to online, starting service");
                 if (MainApplication.isActivityVisible()) {
-                    Intent intent = new Intent(this, HtspService.class);
                     intent.setAction("connect");
                     startService(intent);
                 }
             } else {
                 Timber.d("Network still active, pinging server");
                 if (MainApplication.isActivityVisible()) {
-                    Intent intent = new Intent(this, HtspService.class);
                     intent.setAction("reconnect");
                     startService(intent);
                 }
             }
         } else {
             Timber.d("Network is not available anymore, stopping service");
-            stopService(new Intent(this, HtspService.class));
+            stopService(intent);
         }
         isNetworkAvailable = isAvailable;
 
@@ -496,7 +506,7 @@ public class MainActivity extends BaseActivity implements NavigationDrawerCallba
 
     @Override
     public void onBackPressed() {
-        boolean navigationHistoryEnabled = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("navigation_history_enabled", true);
+        boolean navigationHistoryEnabled = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("navigation_history_enabled", getResources().getBoolean(R.bool.pref_default_navigation_history_enabled));
         if (!navigationHistoryEnabled) {
             Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main);
             if (fragment instanceof ProgramListFragment
@@ -526,13 +536,9 @@ public class MainActivity extends BaseActivity implements NavigationDrawerCallba
      * After that a new back press can finish the activity.
      */
     private void clearSearchResultsOrPopBackStack() {
-        Timber.d("Back pressed");
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main);
-        if (fragment instanceof SearchRequestInterface
-                && fragment.isVisible()) {
-            Timber.d("Found fragment");
+        if (fragment instanceof SearchRequestInterface && fragment.isVisible()) {
             if (!((SearchRequestInterface) fragment).onSearchResultsCleared()) {
-                Timber.d("Search results were not cleared");
                 super.onBackPressed();
             }
         } else {
