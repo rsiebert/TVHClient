@@ -27,7 +27,7 @@ import org.tvheadend.tvhclient.ui.features.playback.internal.HtspPlaybackActivit
 import org.tvheadend.tvhclient.di.modules.MainApplicationModule;
 import org.tvheadend.tvhclient.di.modules.RepositoryModule;
 import org.tvheadend.tvhclient.di.modules.SharedPreferencesModule;
-import org.tvheadend.tvhclient.ui.base.utils.MenuUtils;
+import org.tvheadend.tvhclient.util.menu.MenuUtils;
 import org.tvheadend.tvhclient.util.MigrateUtils;
 
 import javax.inject.Singleton;
