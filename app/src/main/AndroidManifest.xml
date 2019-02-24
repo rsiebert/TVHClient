@@ -78,7 +78,7 @@
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
         <provider
-            android:name=".ui.features.search.SuggestionProvider"
+            android:name="org.tvheadend.tvhclient.ui.features.search.SuggestionProvider"
             android:authorities="org.tvheadend.tvhclient.ui.features.search.SuggestionProvider"
             android:exported="false" />
 
@@ -87,7 +87,7 @@
         <activity android:name=".ui.features.MainActivity">
             <meta-data
                 android:name="android.app.default_searchable"
-                android:value=".features.search.SearchActivity" />
+                android:value=".ui.features.search.SearchActivity" />
         </activity>
         <activity
             android:name=".ui.features.programs.ProgramDetailsActivity"
