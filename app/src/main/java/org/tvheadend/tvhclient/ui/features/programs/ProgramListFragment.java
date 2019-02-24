@@ -300,7 +300,7 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
         PopupMenuUtil.prepareSearchMenu(popupMenu.getMenu(), program.getTitle(), isNetworkAvailable);
 
         popupMenu.setOnMenuItemClickListener(item -> {
-            if (!SearchMenuUtils.onMenuSelected(activity, item.getItemId(), program.getTitle(), program.getChannelId())) {
+            if (SearchMenuUtils.onMenuSelected(activity, item.getItemId(), program.getTitle(), program.getChannelId())) {
                 return true;
             }
             switch (item.getItemId()) {

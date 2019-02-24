@@ -206,7 +206,7 @@ public class SeriesRecordingListFragment extends BaseFragment implements Recycle
         popupMenu.getMenu().findItem(R.id.menu_edit).setVisible(isUnlocked);
 
         popupMenu.setOnMenuItemClickListener(item -> {
-            if (!SearchMenuUtils.onMenuSelected(activity, item.getItemId(), seriesRecording.getTitle())) {
+            if (SearchMenuUtils.onMenuSelected(activity, item.getItemId(), seriesRecording.getTitle())) {
                 return true;
             }
             switch (item.getItemId()) {

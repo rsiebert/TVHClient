@@ -380,7 +380,7 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
         popupMenu.getMenu().findItem(R.id.menu_play).setVisible(isNetworkAvailable);
 
         popupMenu.setOnMenuItemClickListener(item -> {
-            if (!SearchMenuUtils.onMenuSelected(activity, item.getItemId(), channel.getProgramTitle())) {
+            if (SearchMenuUtils.onMenuSelected(activity, item.getItemId(), channel.getProgramTitle())) {
                 return true;
             }
             switch (item.getItemId()) {

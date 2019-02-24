@@ -205,7 +205,7 @@ public class TimerRecordingListFragment extends BaseFragment implements Recycler
         PopupMenuUtil.prepareSearchMenu(popupMenu.getMenu(), timerRecording.getTitle(), isNetworkAvailable);
 
         popupMenu.setOnMenuItemClickListener(item -> {
-            if (!SearchMenuUtils.onMenuSelected(activity, item.getItemId(), timerRecording.getTitle())) {
+            if (SearchMenuUtils.onMenuSelected(activity, item.getItemId(), timerRecording.getTitle())) {
                 return true;
             }
             switch (item.getItemId()) {

@@ -327,7 +327,7 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
         PopupMenuUtil.prepareSearchMenu(popupMenu.getMenu(), program.getTitle(), isNetworkAvailable);
 
         popupMenu.setOnMenuItemClickListener(item -> {
-            if (!SearchMenuUtils.onMenuSelected(activity, item.getItemId(), program.getTitle())) {
+            if (SearchMenuUtils.onMenuSelected(activity, item.getItemId(), program.getTitle())) {
                 return true;
             }
             switch (item.getItemId()) {

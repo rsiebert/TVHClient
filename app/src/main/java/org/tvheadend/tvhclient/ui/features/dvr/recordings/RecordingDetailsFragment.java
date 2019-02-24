@@ -153,8 +153,8 @@ public class RecordingDetailsFragment extends BaseFragment implements RecordingR
         if (recording == null) {
             return super.onOptionsItemSelected(item);
         }
-        if (!SearchMenuUtils.onMenuSelected(activity, item.getItemId(), recording.getTitle())) {
-            return super.onOptionsItemSelected(item);
+        if (SearchMenuUtils.onMenuSelected(activity, item.getItemId(), recording.getTitle())) {
+            return true;
         }
         switch (item.getItemId()) {
             case R.id.menu_play:

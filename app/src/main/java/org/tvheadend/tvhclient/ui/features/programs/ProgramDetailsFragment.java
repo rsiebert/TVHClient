@@ -165,7 +165,7 @@ public class ProgramDetailsFragment extends BaseFragment {
         if (program == null) {
             return super.onOptionsItemSelected(item);
         }
-        if (!SearchMenuUtils.onMenuSelected(activity, item.getItemId(), program.getTitle(), program.getChannelId())) {
+        if (SearchMenuUtils.onMenuSelected(activity, item.getItemId(), program.getTitle(), program.getChannelId())) {
             return true;
         }
         switch (item.getItemId()) {

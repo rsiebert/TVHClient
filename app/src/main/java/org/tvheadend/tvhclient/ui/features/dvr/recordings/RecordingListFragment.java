@@ -200,7 +200,7 @@ public class RecordingListFragment extends BaseFragment implements RecyclerViewC
         }
 
         popupMenu.setOnMenuItemClickListener(item -> {
-            if (!SearchMenuUtils.onMenuSelected(activity, item.getItemId(), recording.getTitle())) {
+            if (SearchMenuUtils.onMenuSelected(activity, item.getItemId(), recording.getTitle())) {
                 return true;
             }
             switch (item.getItemId()) {

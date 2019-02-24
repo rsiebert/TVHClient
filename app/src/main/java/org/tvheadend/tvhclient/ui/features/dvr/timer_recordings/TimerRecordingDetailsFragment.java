@@ -130,8 +130,8 @@ public class TimerRecordingDetailsFragment extends BaseFragment implements Recor
         if (recording == null) {
             return super.onOptionsItemSelected(item);
         }
-        if (!SearchMenuUtils.onMenuSelected(activity, item.getItemId(), recording.getTitle())) {
-            return super.onOptionsItemSelected(item);
+        if (SearchMenuUtils.onMenuSelected(activity, item.getItemId(), recording.getTitle())) {
+            return true;
         }
         switch (item.getItemId()) {
             case R.id.menu_edit:
