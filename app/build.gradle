@@ -29,7 +29,7 @@ android {
         minSdkVersion 16
         targetSdkVersion 28
 
-        versionCode 150
+        versionCode 151
         versionName "2.2.0"
 
         // Define the apk naming convention
@@ -54,6 +54,8 @@ android {
         // running platform versions lower than Android 5.0 (API level 21)
         vectorDrawables.useSupportLibrary = true
 
+        multiDexEnabled true
+
         lintOptions {
             // Do not check for lint errors to reduce the  build time.
             // Lint checks will be done manually before a release
@@ -67,14 +69,12 @@ android {
 
     buildTypes {
         debug {
-            multiDexEnabled true
             // Show all features when true
             buildConfigField "Boolean", "UNLOCKED", "false"
             // Enable all logging, otherwise it is suppressed
             buildConfigField "Boolean", "DEBUG_LOG", "true"
         }
         release {
-            multiDexEnabled true
             // Show all features when true
             buildConfigField "Boolean", "UNLOCKED", "false"
             // Enable all logging, otherwise it is suppressed
@@ -138,7 +138,7 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
     implementation 'androidx.lifecycle:lifecycle-common-java8:2.0.0'
     implementation 'androidx.room:room-runtime:2.0.0'
-    implementation 'android.arch.work:work-runtime:1.0.0-beta05'
+    implementation 'android.arch.work:work-runtime:1.0.0-rc02'
     kapt 'androidx.room:room-compiler:2.0.0'
 
     // Dependency injection
