@@ -48,7 +48,7 @@
     <string name="dialog_title_purchase_successful">Acquisto riuscito!</string>
     <string name="directory">Directory</string>
     <string name="disc_space">Spazio su disco</string>
-    <string name="discard">Annulla</string>
+    <string name="discard">Scarta</string>
     <string name="download">Download</string>
     <string name="download_error_authentication_required">"Errore download registrazione \'%s\'. Autentificazione non corretta o mancante."</string>
     <string name="download_error_insufficient_space">"Errore download registrazione \'%s\'. Spazio insufficiente nel dispositivo."</string>
