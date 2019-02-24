@@ -49,7 +49,7 @@ public class HtmlFileLoaderTask extends AsyncTask<Void, Void, String> {
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         final Locale current = context.getResources().getConfiguration().locale;
-        final String locale = prefs.getString("languagePref", current.getLanguage()).substring(0, 2);
+        final String locale = prefs.getString("language", current.getLanguage()).substring(0, 2);
         final String htmlFile = "html/" + filename + "_" + locale.substring(0, 2) + ".html";
         final String defaultHtmlFile = "html/" + filename + "_" + defaultLocale + ".html";
 
