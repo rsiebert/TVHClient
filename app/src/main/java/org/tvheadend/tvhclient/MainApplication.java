@@ -1,6 +1,5 @@
 package org.tvheadend.tvhclient;
 
-import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 
@@ -21,14 +20,14 @@ import org.tvheadend.tvhclient.di.MainApplicationComponent;
 import org.tvheadend.tvhclient.di.modules.MainApplicationModule;
 import org.tvheadend.tvhclient.di.modules.RepositoryModule;
 import org.tvheadend.tvhclient.di.modules.SharedPreferencesModule;
+import org.tvheadend.tvhclient.ui.features.playback.external.ExpandedControlsActivity;
+import org.tvheadend.tvhclient.util.MigrateUtils;
 import org.tvheadend.tvhclient.util.billing.BillingHandler;
 import org.tvheadend.tvhclient.util.billing.BillingManager;
 import org.tvheadend.tvhclient.util.billing.BillingUpdatesListener;
 import org.tvheadend.tvhclient.util.logging.CrashlyticsTree;
 import org.tvheadend.tvhclient.util.logging.DebugTree;
 import org.tvheadend.tvhclient.util.logging.FileLoggingTree;
-import org.tvheadend.tvhclient.ui.features.playback.external.ExpandedControlsActivity;
-import org.tvheadend.tvhclient.util.MigrateUtils;
 
 import java.util.List;
 
@@ -38,6 +37,7 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
 import androidx.lifecycle.ProcessLifecycleOwner;
+import androidx.multidex.MultiDexApplication;
 import io.fabric.sdk.android.Fabric;
 import timber.log.Timber;
 
@@ -53,7 +53,7 @@ import static org.tvheadend.tvhclient.util.Constants.UNLOCKER;
 // TODO Move the variable programIdToBeEditedWhenBeingRecorded into the viewmodels
 // TODO use a base viewmodel with generics
 
-public class MainApplication extends Application implements OptionsProvider, LifecycleObserver, BillingUpdatesListener {
+public class MainApplication extends MultiDexApplication implements OptionsProvider, LifecycleObserver, BillingUpdatesListener {
 
     private BillingHandler billingHandler;
     private static MainApplication instance;
