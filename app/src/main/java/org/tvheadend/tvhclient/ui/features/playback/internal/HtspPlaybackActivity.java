@@ -1,5 +1,6 @@
 package org.tvheadend.tvhclient.ui.features.playback.internal;
 
+import android.app.PictureInPictureParams;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -10,6 +11,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.util.Rational;
 import android.view.Display;
 import android.view.SurfaceView;
 import android.view.View;
@@ -48,19 +50,19 @@ import com.squareup.picasso.Picasso;
 
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.data.repository.AppRepository;
+import org.tvheadend.tvhclient.data.service.htsp.HtspConnection;
+import org.tvheadend.tvhclient.data.service.htsp.HtspConnectionStateListener;
 import org.tvheadend.tvhclient.domain.entity.Channel;
 import org.tvheadend.tvhclient.domain.entity.Program;
 import org.tvheadend.tvhclient.domain.entity.Recording;
 import org.tvheadend.tvhclient.domain.entity.ServerProfile;
 import org.tvheadend.tvhclient.domain.entity.ServerStatus;
-import org.tvheadend.tvhclient.data.repository.AppRepository;
-import org.tvheadend.tvhclient.data.service.htsp.HtspConnection;
-import org.tvheadend.tvhclient.data.service.htsp.HtspConnectionStateListener;
+import org.tvheadend.tvhclient.ui.base.utils.SnackbarUtils;
 import org.tvheadend.tvhclient.ui.features.playback.internal.utils.ExoPlayerUtils;
 import org.tvheadend.tvhclient.ui.features.playback.internal.utils.TrackSelectionHelper;
 import org.tvheadend.tvhclient.ui.features.playback.internal.utils.TvhMappings;
 import org.tvheadend.tvhclient.util.MiscUtils;
-import org.tvheadend.tvhclient.ui.base.utils.SnackbarUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -152,8 +154,8 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
     private int videoHeight;
     private float videoAspectRatio;
     private int selectedAspectRatioListIndex;
-    private List<Float> aspectRatioValueList;
-    private String[] aspectRatioNameList;
+    private List<Float> aspectRatioValueList = Arrays.asList(1.25f, 1.333f, 1.778f, 1.6f);
+    private String[] aspectRatioNameList = new String[]{"5:4 (1.25:1)", "4:3 (1.3:1)", "16:9 (1.7:1)", "16:10 (1.6:1)"};
 
     private long currentTime = new Date().getTime();
     private Runnable currentTimeUpdateTask;
@@ -201,14 +203,6 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
             recording = appRepository.getRecordingData().getItemById(dvrId);
         }
 
-        aspectRatioNameList = new String[]{
-                "5:4 (1.25:1)",
-                "4:3 (1.3:1)",
-                "16:9 (1.7:1)",
-                "16:10 (1.6:1)"
-        };
-        aspectRatioValueList = Arrays.asList(1.25f, 1.333f, 1.778f, 1.6f);
-
         serverStatus = appRepository.getServerStatusData().getActiveItem();
         serverProfile = appRepository.getServerProfileData().getItemById(serverStatus.getHtspPlaybackServerProfileId());
 
@@ -241,13 +235,41 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
         Timber.d("New intent");
         releasePlayer();
         setIntent(intent);
+
+        Timber.d("Getting new channel or recording");
+        playerIsPaused = true;
+        videoAspectRatio = 1.0f;
+        selectedAspectRatioListIndex = 2;
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+            channelId = bundle.getInt("channelId", -1);
+            dvrId = bundle.getInt("dvrId", -1);
+        }
+
+        if (channelId > 0) {
+            channel = appRepository.getChannelData().getItemByIdWithPrograms(channelId, new Date().getTime());
+        }
+        if (dvrId > 0) {
+            recording = appRepository.getRecordingData().getItemById(dvrId);
+        }
+
+        startPlayback();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Timber.d("Starting");
+        checkPreconditions();
     }
 
     @Override
     public void onResume() {
         super.onResume();
         Timber.d("Resuming");
+    }
 
+    private void checkPreconditions() {
         if (serverStatus == null) {
             Timber.d("Server status is null");
             statusTextView.setText(R.string.error_starting_playback_no_connection);
@@ -274,13 +296,13 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
     public void onPause() {
         super.onPause();
         Timber.d("Pausing");
-        releasePlayer();
     }
 
     @Override
     public void onStop() {
         super.onStop();
         Timber.d("Stopping");
+        releasePlayer();
         execService.shutdown();
         if (htspConnection != null) {
             htspConnection.closeConnection();
@@ -498,6 +520,13 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
             case R.id.player_menu:
                 onPlayerMenuSelected(view);
                 break;
+/*
+            case.R.id.player_minimize:
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    enterPictureInPictureMode();
+                }
+                break;
+*/
         }
     }
 
@@ -965,6 +994,7 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
             case AUTHENTICATED:
                 Timber.d("Initializing and starting player");
                 runOnUiThread(() -> {
+                    statusTextView.setText(R.string.initializing);
                     initializePlayer();
                     startPlayback();
                 });
@@ -974,7 +1004,7 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
 
     @Override
     public void onConnectionStateChange(@NonNull HtspConnection.ConnectionState state) {
-        switch(state) {
+        switch (state) {
             case FAILED:
             case FAILED_CONNECTING_TO_SERVER:
             case FAILED_EXCEPTION_OPENING_SOCKET:
@@ -986,5 +1016,22 @@ public class HtspPlaybackActivity extends AppCompatActivity implements View.OnCl
                 statusTextView.setText(R.string.connecting_to_server);
                 break;
         }
+    }
+
+    @Override
+    public void onUserLeaveHint() {
+        Timber.d("Entering PIP mode");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            enterPictureInPictureMode(
+                    new PictureInPictureParams.Builder()
+                            .setAspectRatio(new Rational(videoWidth, videoHeight))
+                            .build());
+        }
+    }
+
+    @Override
+    public void onPictureInPictureModeChanged(boolean isInPictureInPictureMode, Configuration newConfig) {
+        Timber.d("PIP mode entered " + isInPictureInPictureMode);
+        playerView.setUseController(!isInPictureInPictureMode);
     }
 }

@@ -12,11 +12,11 @@
 
     <application
         android:name="org.tvheadend.tvhclient.MainApplication"
-        android:extractNativeLibs="false"
         android:allowBackup="true"
+        android:extractNativeLibs="false"
         android:icon="@mipmap/ic_launcher"
-        android:roundIcon="@mipmap/ic_launcher_round"
         android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="false">
         <meta-data
             android:name="com.google.android.gms.version"
@@ -71,9 +71,11 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".data.service.HtspService"
+        <service
+            android:name=".data.service.HtspService"
             android:exported="false" />
-        <service android:name=".data.service.HtspIntentService"
+        <service
+            android:name=".data.service.HtspIntentService"
             android:exported="false"
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
@@ -107,7 +109,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.features.playback.internal.HtspPlaybackActivity" />
+        <activity
+            android:name=".ui.features.playback.internal.HtspPlaybackActivity"
+            android:launchMode="singleTask"
+            android:resizeableActivity="true"
+            android:supportsPictureInPicture="true" />
         <activity android:name=".ui.features.information.WebViewActivity" />
         <activity android:name=".ui.base.BaseActivity" />
 
