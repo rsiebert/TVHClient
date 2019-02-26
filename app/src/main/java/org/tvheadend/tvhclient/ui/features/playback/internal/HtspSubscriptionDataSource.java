@@ -198,7 +198,6 @@ public class HtspSubscriptionDataSource implements DataSource, Closeable, HtspMe
 
     @Override
     public int read(byte[] buffer, int offset, int readLength) {
-        Timber.d("Reading data from buffer");
         if (readLength == 0) {
             return 0;
         }
