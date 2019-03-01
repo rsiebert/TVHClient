@@ -49,7 +49,7 @@ class ProgramNotificationWorker(val context: Context, workerParams: WorkerParame
         val title = if (startTime < currentTime)
             "Program has already started."
         else {
-            val sdf = SimpleDateFormat("mm:ss", Locale.US)
+            val sdf = SimpleDateFormat("HH:mm", Locale.US)
             "Program starts at ${sdf.format(startTime)} in ${(startTime - currentTime) / 1000 / 60} minutes."
         }
 

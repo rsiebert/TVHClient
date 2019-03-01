@@ -31,7 +31,7 @@ class RecordingNotificationWorker(val context: Context, workerParams: WorkerPara
 
         // Create the title of the notification.
         // The text below the title will be the recording name
-        val sdf = SimpleDateFormat("mm:ss", Locale.US)
+        val sdf = SimpleDateFormat("HH:mm", Locale.US)
         val title = "Recording starts at ${sdf.format(startTime)} in ${(startTime - Date().time) / 1000 / 60} minutes."
 
         val builder = NotificationUtils.getNotificationBuilder(context)
