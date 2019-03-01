@@ -109,13 +109,18 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".ui.features.playback.internal.HtspPlaybackActivity"
-            android:launchMode="singleTask"
-            android:resizeableActivity="true"
-            android:supportsPictureInPicture="true" />
         <activity android:name=".ui.features.information.WebViewActivity" />
         <activity android:name=".ui.base.BaseActivity" />
+        <activity
+            android:name=".ui.features.playback.internal.PlaybackActivity"
+            android:autoRemoveFromRecents="true"
+            android:configChanges="smallestScreenSize|screenLayout|screenSize|orientation"
+            android:excludeFromRecents="true"
+            android:launchMode="singleTask"
+            android:noHistory="true"
+            android:resizeableActivity="true"
+            android:supportsPictureInPicture="true"
+            android:taskAffinity=".ui.features.playback.internal.PlaybackActivityTask" />
 
     </application>
 </manifest>

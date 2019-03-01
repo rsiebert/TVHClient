@@ -1,6 +1,6 @@
 package org.tvheadend.tvhclient.ui.features.playback.internal;
 
-interface HtspDataSourceInterface {
+public interface HtspDataSourceInterface {
 
     long getTimeshiftOffsetPts();
 

@@ -5,9 +5,13 @@ import android.content.SharedPreferences;
 
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
-import org.tvheadend.tvhclient.data.service.htsp.HtspConnection;
 import org.tvheadend.tvhclient.data.service.HtspIntentService;
 import org.tvheadend.tvhclient.data.service.HtspService;
+import org.tvheadend.tvhclient.data.service.htsp.HtspConnection;
+import org.tvheadend.tvhclient.di.modules.MainApplicationModule;
+import org.tvheadend.tvhclient.di.modules.RepositoryModule;
+import org.tvheadend.tvhclient.di.modules.SharedPreferencesModule;
+import org.tvheadend.tvhclient.ui.base.BaseFragment;
 import org.tvheadend.tvhclient.ui.features.MainActivity;
 import org.tvheadend.tvhclient.ui.features.channels.BaseChannelViewModel;
 import org.tvheadend.tvhclient.ui.features.download.DownloadRecordingManager;
@@ -15,20 +19,17 @@ import org.tvheadend.tvhclient.ui.features.dvr.recordings.RecordingViewModel;
 import org.tvheadend.tvhclient.ui.features.dvr.series_recordings.SeriesRecordingViewModel;
 import org.tvheadend.tvhclient.ui.features.dvr.timer_recordings.TimerRecordingViewModel;
 import org.tvheadend.tvhclient.ui.features.epg.EpgViewPagerFragment;
+import org.tvheadend.tvhclient.ui.features.playback.external.BasePlaybackActivity;
+import org.tvheadend.tvhclient.ui.features.playback.internal.PlaybackActivity;
+import org.tvheadend.tvhclient.ui.features.playback.internal.PlayerViewModel;
 import org.tvheadend.tvhclient.ui.features.programs.ProgramViewModel;
 import org.tvheadend.tvhclient.ui.features.settings.BasePreferenceFragment;
 import org.tvheadend.tvhclient.ui.features.settings.ConnectionViewModel;
 import org.tvheadend.tvhclient.ui.features.settings.SettingsConnectionBaseFragment;
 import org.tvheadend.tvhclient.ui.features.settings.SettingsListConnectionsFragment;
-import org.tvheadend.tvhclient.ui.base.BaseFragment;
 import org.tvheadend.tvhclient.ui.features.startup.StartupFragment;
-import org.tvheadend.tvhclient.ui.features.playback.external.BasePlaybackActivity;
-import org.tvheadend.tvhclient.ui.features.playback.internal.HtspPlaybackActivity;
-import org.tvheadend.tvhclient.di.modules.MainApplicationModule;
-import org.tvheadend.tvhclient.di.modules.RepositoryModule;
-import org.tvheadend.tvhclient.di.modules.SharedPreferencesModule;
-import org.tvheadend.tvhclient.util.menu.MenuUtils;
 import org.tvheadend.tvhclient.util.MigrateUtils;
+import org.tvheadend.tvhclient.util.menu.MenuUtils;
 
 import javax.inject.Singleton;
 
@@ -79,8 +80,6 @@ public interface MainApplicationComponent {
 
     void inject(EpgViewPagerFragment epgViewPagerFragment);
 
-    void inject(HtspPlaybackActivity htspPlaybackActivity);
-
     void inject(SettingsConnectionBaseFragment settingsConnectionBaseFragment);
 
     void inject(BaseChannelViewModel baseChannelViewModel);
@@ -90,4 +89,8 @@ public interface MainApplicationComponent {
     void inject(HtspConnection htspConnection);
 
     void inject(HtspIntentService htspIntentService);
+
+    void inject(PlaybackActivity playbackActivity);
+
+    void inject(PlayerViewModel playerViewModel);
 }

@@ -18,8 +18,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import timber.log.Timber;
 
-import static org.tvheadend.tvhclient.ui.features.playback.internal.HtspPlaybackActivity.INVALID_TIMESHIFT_TIME;
-
 public class HtspFileInputStreamDataSource implements DataSource, Closeable, HtspMessageListener, HtspDataSourceInterface {
 
     private static final AtomicInteger dataSourceCount = new AtomicInteger();
@@ -79,7 +77,7 @@ public class HtspFileInputStreamDataSource implements DataSource, Closeable, Hts
 
     @Override
     public long getTimeshiftOffsetPts() {
-        return INVALID_TIMESHIFT_TIME;
+        return Long.MIN_VALUE;
     }
 
     @Override
@@ -89,12 +87,12 @@ public class HtspFileInputStreamDataSource implements DataSource, Closeable, Hts
 
     @Override
     public long getTimeshiftStartTime() {
-        return INVALID_TIMESHIFT_TIME;
+        return Long.MIN_VALUE;
     }
 
     @Override
     public long getTimeshiftStartPts() {
-        return INVALID_TIMESHIFT_TIME;
+        return Long.MIN_VALUE;
     }
 
     @Override

@@ -28,7 +28,7 @@ import org.tvheadend.tvhclient.ui.features.playback.external.CastChannelActivity
 import org.tvheadend.tvhclient.ui.features.playback.external.CastRecordingActivity;
 import org.tvheadend.tvhclient.ui.features.playback.external.PlayChannelActivity;
 import org.tvheadend.tvhclient.ui.features.playback.external.PlayRecordingActivity;
-import org.tvheadend.tvhclient.ui.features.playback.internal.HtspPlaybackActivity;
+import org.tvheadend.tvhclient.ui.features.playback.internal.PlaybackActivity;
 import org.tvheadend.tvhclient.ui.features.startup.SplashActivity;
 import org.tvheadend.tvhclient.util.MiscUtils;
 
@@ -521,7 +521,7 @@ public class MenuUtils {
 
         if (isUnlocked && sharedPreferences.getBoolean("internal_player_for_channels_enabled",
                 activity.getResources().getBoolean(R.bool.pref_default_internal_player_enabled))) {
-            Intent intent = new Intent(activity, HtspPlaybackActivity.class);
+            Intent intent = new Intent(activity, PlaybackActivity.class);
             intent.putExtra("channelId", channelId);
             activity.startActivity(intent);
         } else {
@@ -540,7 +540,7 @@ public class MenuUtils {
         }
         if (isUnlocked && sharedPreferences.getBoolean("internal_player_for_recordings_enabled",
                 activity.getResources().getBoolean(R.bool.pref_default_internal_player_enabled))) {
-            Intent intent = new Intent(activity, HtspPlaybackActivity.class);
+            Intent intent = new Intent(activity, PlaybackActivity.class);
             intent.putExtra("dvrId", dvrId);
             activity.startActivity(intent);
         } else {
