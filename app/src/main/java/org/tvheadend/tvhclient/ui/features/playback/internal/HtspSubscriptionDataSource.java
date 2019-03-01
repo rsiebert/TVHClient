@@ -292,12 +292,6 @@ public class HtspSubscriptionDataSource implements DataSource, Closeable, HtspMe
 
     public void pause() {
         Timber.d("Pausing subscription data source " + dataSourceNumber + ")");
-        /*Intent intent = new Intent(mContext, HtspService.class);
-        intent.putExtra("method", "subscriptionSpeed");
-        intent.putExtra("subscriptionId", subscriptionId);
-        intent.putExtra("speed", 0);
-        mContext.startService(intent);
-        */
 
         HtspMessage request = new HtspMessage();
         request.put("method", "subscriptionSpeed");
@@ -337,13 +331,6 @@ public class HtspSubscriptionDataSource implements DataSource, Closeable, HtspMe
         intent.putExtra("subscriptionId", subscriptionId);
         intent.putExtra("speed", 100);
         context.startService(intent);
-/*
-        HtspMessage request = new HtspMessage();
-        request.put("method", "subscriptionSpeed");
-        request.put("subscriptionId", subscriptionId);
-        request.put("speed", 100);
-        mHtsConnection.sendMessage(request, null);
-*/
     }
 
     // Misc Internal Methods
