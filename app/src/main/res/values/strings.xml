@@ -396,6 +396,6 @@
     <string name="audio_settings">Audio settings</string>
     <string name="subtitle_settings">Subtitle settings</string>
     <string name="cast_error_no_media_client_available">Could not get the remote media client from the cast session.</string>
-    <string name="player_is_loading_mode_data">Please wait, player is loading more data…</string>
+    <string name="player_is_loading_more_data">Please wait, player is loading more data…</string>
     <string name="minus" translatable="false">-</string>
 </resources>
