@@ -41,9 +41,9 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
     // Connection related
     private val execService: ScheduledExecutorService = Executors.newScheduledThreadPool(10)
     private val htspConnection: HtspConnection = HtspConnection(this, null)
-    private lateinit var htspSubscriptionDataSourceFactory: HtspSubscriptionDataSource.Factory
-    private lateinit var htspFileInputStreamDataSourceFactory: HtspFileInputStreamDataSource.Factory
-    private lateinit var dataSource: HtspDataSourceInterface
+    private var htspSubscriptionDataSourceFactory: HtspSubscriptionDataSource.Factory? = null
+    private var htspFileInputStreamDataSourceFactory: HtspFileInputStreamDataSource.Factory? = null
+    private var dataSource: HtspDataSourceInterface? = null
 
     // Player and helpers
     val player: SimpleExoPlayer
@@ -142,7 +142,7 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
             val serverStatus = appRepository.serverStatusData.activeItem
             val serverProfile = appRepository.serverProfileData.getItemById(serverStatus.htspPlaybackServerProfileId)
             htspSubscriptionDataSourceFactory = HtspSubscriptionDataSource.Factory(context, htspConnection, serverProfile?.name)
-            dataSource = htspSubscriptionDataSourceFactory.currentDataSource
+            dataSource = htspSubscriptionDataSourceFactory?.currentDataSource
 
             Timber.d("Preparing player with media source")
             player.prepare(ExtractorMediaSource.Factory(htspSubscriptionDataSourceFactory)
@@ -160,7 +160,7 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
 
             Timber.d("Creating data source")
             htspFileInputStreamDataSourceFactory = HtspFileInputStreamDataSource.Factory(context, htspConnection)
-            dataSource = htspFileInputStreamDataSourceFactory.currentDataSource
+            dataSource = htspFileInputStreamDataSourceFactory?.currentDataSource
 
             Timber.d("Preparing player with media source")
             player.prepare(ExtractorMediaSource.Factory(htspFileInputStreamDataSourceFactory)
@@ -174,8 +174,8 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
         Timber.d("Releasing previous media source")
         player.stop()
         trackSelector.clearSelectionOverrides()
-        htspSubscriptionDataSourceFactory.releaseCurrentDataSource()
-        htspFileInputStreamDataSourceFactory.releaseCurrentDataSource()
+        htspSubscriptionDataSourceFactory?.releaseCurrentDataSource()
+        htspFileInputStreamDataSourceFactory?.releaseCurrentDataSource()
     }
 
     fun setVideoAspectRatio(rational: Rational) {
@@ -296,12 +296,12 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
 
     fun pause() {
         player.playWhenReady = false
-        dataSource.pause()
+        dataSource?.pause()
     }
 
     fun play() {
         player.playWhenReady = true
-        dataSource.resume()
+        dataSource?.resume()
     }
 
     fun seekBackward() {
@@ -317,16 +317,20 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
     }
 
     private fun getSeekPosition(offset: Int): Long {
-        val startTime = if (dataSource.timeshiftStartTime != Long.MIN_VALUE)
-            (dataSource.timeshiftStartTime / 1000) else 0
+        val timeshiftStartTime = dataSource?.timeshiftStartTime ?: 0
+        val timeshiftStartPts = dataSource?.timeshiftStartPts ?: 0
+        val timeshiftOffsetPts = dataSource?.timeshiftOffsetPts ?: 0
+
+        val startTime = if (timeshiftStartTime != Long.MIN_VALUE)
+            (timeshiftStartTime / 1000) else 0
         Timber.d("Timeshift start time is $startTime")
 
-        val currentTime = if (dataSource.timeshiftOffsetPts != Long.MIN_VALUE)
-            Calendar.getInstance().timeInMillis + dataSource.timeshiftOffsetPts / 1000 else player.currentPosition
+        val currentTime = if (timeshiftOffsetPts != Long.MIN_VALUE)
+            Calendar.getInstance().timeInMillis + timeshiftOffsetPts / 1000 else player.currentPosition
         Timber.d("Timeshift current time is $currentTime")
 
         val time = Math.max(currentTime + offset, startTime)
-        val seekPts = time * 1000 - dataSource.timeshiftStartTime
-        return Math.max(seekPts, dataSource.timeshiftStartPts) / 1000
+        val seekPts = time * 1000 - timeshiftStartTime
+        return Math.max(seekPts, timeshiftStartPts) / 1000
     }
 }
