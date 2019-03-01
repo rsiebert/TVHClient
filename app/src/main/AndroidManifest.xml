@@ -86,7 +86,9 @@
 
         <activity android:name=".ui.features.dvr.RecordingAddEditActivity" />
         <activity android:name=".ui.features.changelog.ChangeLogActivity" />
-        <activity android:name=".ui.features.MainActivity">
+        <activity
+            android:name=".ui.features.MainActivity"
+            android:launchMode="singleTask">
             <meta-data
                 android:name="android.app.default_searchable"
                 android:value=".ui.features.search.SearchActivity" />
@@ -117,10 +119,8 @@
             android:configChanges="smallestScreenSize|screenLayout|screenSize|orientation"
             android:excludeFromRecents="true"
             android:launchMode="singleTask"
-            android:noHistory="true"
             android:resizeableActivity="true"
-            android:supportsPictureInPicture="true"
-            android:taskAffinity=".ui.features.playback.internal.PlaybackActivityTask" />
+            android:supportsPictureInPicture="true" />
 
     </application>
 </manifest>
