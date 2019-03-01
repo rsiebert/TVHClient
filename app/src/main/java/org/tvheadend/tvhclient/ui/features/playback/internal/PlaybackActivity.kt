@@ -31,6 +31,7 @@ import com.squareup.picasso.Picasso
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.data.repository.AppRepository
+import org.tvheadend.tvhclient.ui.features.MainActivity
 import org.tvheadend.tvhclient.ui.features.playback.internal.utils.TrackSelectionHelper
 import org.tvheadend.tvhclient.util.MiscUtils
 import org.tvheadend.tvhclient.util.Rational
@@ -96,7 +97,6 @@ class PlaybackActivity : AppCompatActivity(), PlayerControlView.VisibilityListen
         MainApplication.getComponent().inject(this)
         ButterKnife.bind(this)
 
-        // TODO add server capability
         timeshiftSupported = sharedPreferences.getBoolean("timeshift_enabled", resources.getBoolean(R.bool.pref_default_timeshift_enabled))
 
         statusTextView.setText(R.string.connecting_to_server)
@@ -119,7 +119,6 @@ class PlaybackActivity : AppCompatActivity(), PlayerControlView.VisibilityListen
             } else {
                 Timber.d("Not connected to server")
                 statusTextView.setText(R.string.connection_failed)
-                viewModel.releaseMediaSource()
             }
         })
 
@@ -188,10 +187,12 @@ class PlaybackActivity : AppCompatActivity(), PlayerControlView.VisibilityListen
         viewModel.subtitle.observe(this, Observer { subtitle ->
             Timber.d("Received subtitle $subtitle")
             subtitleTextView.text = subtitle
+            subtitleTextView.visibility = if (subtitle.isEmpty()) View.GONE else View.VISIBLE
         })
         viewModel.nextTitle.observe(this, Observer { nextTitle ->
             Timber.d("Received next title $nextTitle")
             nextTitleTextView.text = nextTitle
+            nextTitleTextView.visibility = if (nextTitle.isEmpty()) View.GONE else View.VISIBLE
         })
         viewModel.elapsedTime.observe(this, Observer { elapsedTime ->
             Timber.d("Received elapsed time $elapsedTime")
@@ -392,5 +393,12 @@ class PlaybackActivity : AppCompatActivity(), PlayerControlView.VisibilityListen
         Timber.d("PIP mode entered $isInPictureInPictureMode")
         playerView.useController = !isInPictureInPictureMode
         super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig)
+    }
+
+    override fun finish() {
+        super.finish()
+        Timber.d("Finishing")
+        startActivity(Intent(this, MainActivity::class.java)
+                .addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT))
     }
 }
