@@ -1,7 +1,8 @@
 $ 2.2.0
   % VERSION 2.2.0
-  _ 22.02.2019
-    * Replaced current connection service with the one from application version 1.9.12.
+  _ 01.03.2019
+    * Replaced current connection service with the one from application version 1.9.12
+    * Added picture in picture mode for the internal player
     * Added toolbar menu in the channel list screen to wake up the server
     * Added Discord link as a contact option in the Help & Support page
     * Internal enhancements and bug fixes
