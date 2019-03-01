@@ -12,6 +12,7 @@ import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.data.service.HtspService
 import org.tvheadend.tvhclient.ui.features.programs.ProgramDetailsActivity
 import timber.log.Timber
+import java.text.SimpleDateFormat
 import java.util.*
 
 class ProgramNotificationWorker(val context: Context, workerParams: WorkerParameters) : Worker(context, workerParams) {
@@ -47,8 +48,10 @@ class ProgramNotificationWorker(val context: Context, workerParams: WorkerParame
         val currentTime = Date().time
         val title = if (startTime < currentTime)
             "Program has already started."
-        else
-            "Program starts in " + (startTime - currentTime) / 1000 / 60 + " minutes."
+        else {
+            val sdf = SimpleDateFormat("mm:ss", Locale.US)
+            "Program starts at ${sdf.format(startTime)} in ${(startTime - currentTime) / 1000 / 60} minutes."
+        }
 
         val builder = NotificationUtils.getNotificationBuilder(context)
         builder.setContentTitle(title)

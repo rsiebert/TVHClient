@@ -10,6 +10,7 @@ import androidx.work.WorkerParameters
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.data.service.HtspService
 import timber.log.Timber
+import java.text.SimpleDateFormat
 import java.util.*
 
 class RecordingNotificationWorker(val context: Context, workerParams: WorkerParameters) : Worker(context, workerParams) {
@@ -30,8 +31,8 @@ class RecordingNotificationWorker(val context: Context, workerParams: WorkerPara
 
         // Create the title of the notification.
         // The text below the title will be the recording name
-        val currentTime = Date().time
-        val title = "Recording starts in " + (startTime - currentTime) / 1000 / 60 + " minutes."
+        val sdf = SimpleDateFormat("mm:ss", Locale.US)
+        val title = "Recording starts at ${sdf.format(startTime)} in ${(startTime - Date().time) / 1000 / 60} minutes."
 
         val builder = NotificationUtils.getNotificationBuilder(context)
         builder.setContentTitle(title)
