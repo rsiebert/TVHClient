@@ -55,6 +55,8 @@ public abstract class BasePlaybackActivity extends AppCompatActivity implements 
     ServerProfile serverProfile;
     private SyncStateReceiver syncStateReceiver;
 
+    // TODO use separate intent service to get the ticket url
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         setTheme(MiscUtils.getThemeId(this));
@@ -208,7 +210,7 @@ public abstract class BasePlaybackActivity extends AppCompatActivity implements 
                 progressBar.setVisibility(View.GONE);
                 statusTextView.setText(message);
                 stopService(new Intent(this, HtspService.class));
-                startService(new Intent(this, HtspService.class));
+                startService(new Intent(this, HtspService.class).setAction("connect"));
                 break;
 
             case CONNECTING:
