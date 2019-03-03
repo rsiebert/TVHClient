@@ -3,6 +3,9 @@ package org.tvheadend.tvhclient.util;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.content.res.Resources;
+import android.os.Build;
+import android.os.LocaleList;
 import android.preference.PreferenceManager;
 
 import com.google.android.gms.cast.framework.CastContext;
@@ -80,11 +83,31 @@ public class MiscUtils {
      */
     public static void setLanguage(@NonNull final Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        String locale = prefs.getString("language", "default");
-        if (locale != null && !locale.equals("default")) {
-            Configuration config = new Configuration(context.getResources().getConfiguration());
-            config.locale = new Locale(locale);
-            context.getResources().updateConfiguration(config, context.getResources().getDisplayMetrics());
+        String language = prefs.getString("language", "default");
+
+        Resources resources = context.getResources();
+        Configuration configuration = resources.getConfiguration();
+        Locale newLocale = new Locale(language);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            configuration.setLocale(newLocale);
+            LocaleList localeList = new LocaleList(newLocale);
+            LocaleList.setDefault(localeList);
+            configuration.setLocales(localeList);
+            resources.updateConfiguration(configuration, resources.getDisplayMetrics());
+
+            Resources appResources = context.getApplicationContext().getResources();
+            Configuration appConfig = appResources.getConfiguration();
+            appConfig.setLocale(newLocale);
+            appResources.updateConfiguration(appConfig, appResources.getDisplayMetrics());
+
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            configuration.setLocale(newLocale);
+            context.createConfigurationContext(configuration);
+
+        } else {
+            configuration.locale = newLocale;
+            resources.updateConfiguration(configuration, resources.getDisplayMetrics());
         }
     }
 

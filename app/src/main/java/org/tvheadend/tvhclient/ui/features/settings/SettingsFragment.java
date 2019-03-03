@@ -107,6 +107,7 @@ public class SettingsFragment extends BasePreferenceFragment implements Preferen
         switch (key) {
             case "language":
                 Intent intent = new Intent(activity, MainActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 activity.startActivity(intent);
                 break;
         }
