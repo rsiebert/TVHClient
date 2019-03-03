@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.text.TextUtils;
 
 import org.tvheadend.tvhclient.MainApplication;
+import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.data.service.htsp.HtspConnection;
 import org.tvheadend.tvhclient.data.service.htsp.HtspConnectionStateListener;
 import org.tvheadend.tvhclient.data.service.htsp.HtspFileInputStream;
@@ -16,7 +17,6 @@ import org.tvheadend.tvhclient.domain.entity.Channel;
 import org.tvheadend.tvhclient.domain.entity.ChannelTag;
 import org.tvheadend.tvhclient.domain.entity.Connection;
 import org.tvheadend.tvhclient.domain.entity.Program;
-import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.util.MiscUtils;
 
 import java.io.BufferedInputStream;
@@ -35,6 +35,7 @@ import javax.inject.Inject;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.JobIntentService;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import timber.log.Timber;
 
 public class HtspIntentService extends JobIntentService implements HtspConnectionStateListener {
@@ -51,8 +52,8 @@ public class HtspIntentService extends JobIntentService implements HtspConnectio
 
     private final ArrayList<Program> pendingEventOps = new ArrayList<>();
 
-    private Object authenticationLock = new Object();
-    private Object responseLock = new Object();
+    private final Object authenticationLock = new Object();
+    private final Object responseLock = new Object();
 
     public HtspIntentService() {
         MainApplication.getComponent().inject(this);
@@ -99,6 +100,9 @@ public class HtspIntentService extends JobIntentService implements HtspConnectio
                 break;
             case "loadChannelIcons":
                 loadAllChannelIcons();
+                break;
+            case "getTicket":
+                getTicket(intent);
                 break;
         }
     }
@@ -149,6 +153,33 @@ public class HtspIntentService extends JobIntentService implements HtspConnectio
         }
     }
 
+    private void getTicket(Intent intent) {
+        final long channelId = intent.getIntExtra("channelId", 0);
+        final long dvrId = intent.getIntExtra("dvrId", 0);
+
+        final HtspMessage request = new HtspMessage();
+        request.put("method", "getTicket");
+        if (channelId > 0) {
+            request.put("channelId", channelId);
+        }
+        if (dvrId > 0) {
+            request.put("dvrId", dvrId);
+        }
+        // Reply message fields:
+        // path               str  required   The full path for access URL (no scheme, host or port)
+        // ticket             str  required   The ticket to pass in the URL query string
+        htspConnection.sendMessage(request, response -> {
+            if (response != null) {
+                Timber.d("Response is not null");
+                Intent ticketIntent = new Intent("ticket");
+                ticketIntent.putExtra("path", response.getString("path"));
+                ticketIntent.putExtra("ticket", response.getString("ticket"));
+                LocalBroadcastManager.getInstance(this).sendBroadcast(ticketIntent);
+            } else {
+                Timber.d("Response is null");
+            }
+        });
+    }
 
     /**
      * Tries to download and save all received channel and channel
