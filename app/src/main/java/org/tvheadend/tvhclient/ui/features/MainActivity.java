@@ -235,15 +235,18 @@ public class MainActivity extends BaseActivity implements NavigationDrawerCallba
         if (searchManager != null) {
             searchMenuItem = menu.findItem(R.id.menu_search);
             searchView = (SearchView) searchMenuItem.getActionView();
-            searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-            searchView.setIconifiedByDefault(true);
-            searchView.setOnQueryTextListener(this);
-            searchView.setOnSuggestionListener(this);
 
-            Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main);
-            if (fragment instanceof SearchRequestInterface
-                    && fragment.isVisible()) {
-                searchView.setQueryHint(((SearchRequestInterface) fragment).getQueryHint());
+            if (searchView != null) {
+                searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+                searchView.setIconifiedByDefault(true);
+                searchView.setOnQueryTextListener(this);
+                searchView.setOnSuggestionListener(this);
+
+                Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main);
+                if (fragment instanceof SearchRequestInterface
+                        && fragment.isVisible()) {
+                    searchView.setQueryHint(((SearchRequestInterface) fragment).getQueryHint());
+                }
             }
         }
         return true;
@@ -466,6 +469,7 @@ public class MainActivity extends BaseActivity implements NavigationDrawerCallba
      */
     protected void onNetworkAvailabilityChanged(boolean isAvailable) {
         Intent intent = new Intent(this, HtspService.class);
+        Timber.d("Network availability changed, network is available " + isAvailable);
         if (isAvailable) {
             if (!isNetworkAvailable) {
                 Timber.d("Network changed from offline to online, starting service");
@@ -480,9 +484,6 @@ public class MainActivity extends BaseActivity implements NavigationDrawerCallba
                     startService(intent);
                 }
             }
-        } else {
-            Timber.d("Network is not available anymore, stopping service");
-            stopService(intent);
         }
         isNetworkAvailable = isAvailable;
 
