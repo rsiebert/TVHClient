@@ -194,7 +194,7 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
     private void showChannelTagOrChannelCount() {
         // Show either all channels or the name of the selected
         // channel tag and the channel count in the toolbar
-        String toolbarTitle = viewModel.getSelectedChannelTagName(getContext());
+        String toolbarTitle = viewModel.getSelectedChannelTagName(activity);
         if (TextUtils.isEmpty(searchQuery)) {
             toolbarInterface.setTitle(toolbarTitle);
             toolbarInterface.setSubtitle(activity.getResources().getQuantityString(R.plurals.items,
@@ -364,12 +364,12 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
 
     private void showPopupMenu(View view, int position) {
         Channel channel = recyclerViewAdapter.getItem(position);
-        Program program = appRepository.getProgramData().getItemById(channel.getProgramId());
-        Recording recording = appRepository.getRecordingData().getItemByEventId(channel.getProgramId());
-
-        if (activity == null) {
+        if (activity == null || channel == null) {
             return;
         }
+
+        Program program = appRepository.getProgramData().getItemById(channel.getProgramId());
+        Recording recording = appRepository.getRecordingData().getItemByEventId(channel.getProgramId());
 
         PopupMenu popupMenu = new PopupMenu(activity, view);
         popupMenu.getMenuInflater().inflate(R.menu.program_popup_and_toolbar_menu, popupMenu.getMenu());
