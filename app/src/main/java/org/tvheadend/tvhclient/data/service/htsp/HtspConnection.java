@@ -7,10 +7,10 @@ import android.util.SparseArray;
 import org.tvheadend.tvhclient.BuildConfig;
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.data.service.HtspUtils;
 import org.tvheadend.tvhclient.domain.entity.Connection;
 import org.tvheadend.tvhclient.domain.entity.ServerStatus;
-import org.tvheadend.tvhclient.data.repository.AppRepository;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -19,6 +19,7 @@ import java.nio.channels.CancelledKeyException;
 import java.nio.channels.ClosedByInterruptException;
 import java.nio.channels.ClosedChannelException;
 import java.nio.channels.ClosedSelectorException;
+import java.nio.channels.IllegalSelectorException;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
@@ -288,8 +289,17 @@ public class HtspConnection extends Thread {
             isRunning = false;
             socketChannel.register(selector, 0);
             socketChannel.close();
+
+        } catch (ClosedChannelException e) {
+            Timber.d("Failed to register selector with socket channel, closed channel exception", e);
+        } catch (NullPointerException e) {
+            Timber.d("Failed to register selector with socket channel or closing socket channel, socket channel is null", e);
+        } catch (IllegalSelectorException e) {
+            Timber.d("Failed to register selector with socket channel, illegal selector", e);
+        } catch (CancelledKeyException e) {
+            Timber.d("Failed to register selector with socket channel, cancelled key", e);
         } catch (IOException e) {
-            Timber.w("Failed to close socket channel: ", e);
+            Timber.d("Failed to close socket channel", e);
         } finally {
             lock.unlock();
         }
@@ -328,8 +338,17 @@ public class HtspConnection extends Thread {
                 }
                 socketChannel.register(selector, ops);
 
+            } catch (NullPointerException npe) {
+                Timber.d("Failed to register selector with socket channel, socket channel is null", npe);
+                isRunning = false;
+            } catch (IllegalSelectorException ise) {
+                Timber.d("Failed to register selector with socket channel, illegal selector", ise);
+                isRunning = false;
             } catch (ClosedChannelException e) {
-                Timber.e("Failed to register selector on socket channel, channel is already closed", e);
+                Timber.e("Failed to register selector with socket channel, channel is already closed", e);
+                isRunning = false;
+            } catch (ClosedSelectorException e) {
+                Timber.e("Failed to register selector with socket channel, selector is already closed", e);
                 isRunning = false;
             } catch (CancelledKeyException e) {
                 Timber.e("Invalid selection key was used while processing tcp selection key");
@@ -346,7 +365,8 @@ public class HtspConnection extends Thread {
         Timber.d("HTSP connection thread stopped");
     }
 
-    private void processTcpSelectionKey(SelectionKey selKey) throws IOException, CancelledKeyException {
+    private void processTcpSelectionKey(SelectionKey selKey)
+            throws IOException, NullPointerException, IllegalSelectorException, CancelledKeyException {
 
         if (selKey.isConnectable() && selKey.isValid()) {
             SocketChannel sChannel = (SocketChannel) selKey.channel();
