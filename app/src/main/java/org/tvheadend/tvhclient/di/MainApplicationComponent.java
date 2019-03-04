@@ -20,6 +20,7 @@ import org.tvheadend.tvhclient.ui.features.dvr.series_recordings.SeriesRecording
 import org.tvheadend.tvhclient.ui.features.dvr.timer_recordings.TimerRecordingViewModel;
 import org.tvheadend.tvhclient.ui.features.epg.EpgViewPagerFragment;
 import org.tvheadend.tvhclient.ui.features.playback.external.BasePlaybackActivity;
+import org.tvheadend.tvhclient.ui.features.playback.external.ExternalPlayerViewModel;
 import org.tvheadend.tvhclient.ui.features.playback.internal.PlaybackActivity;
 import org.tvheadend.tvhclient.ui.features.playback.internal.PlayerViewModel;
 import org.tvheadend.tvhclient.ui.features.programs.ProgramViewModel;
@@ -93,4 +94,6 @@ public interface MainApplicationComponent {
     void inject(PlaybackActivity playbackActivity);
 
     void inject(PlayerViewModel playerViewModel);
+
+    void inject(ExternalPlayerViewModel externalPlayerViewModel);
 }
