@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:custom="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory android:title="@string/pref_general">
         <ListPreference
@@ -143,14 +142,13 @@
             android:summary="@string/pref_genre_colors_epg_sum"
             android:title="@string/pref_genre_colors_epg" />
 
-        <org.tvheadend.tvhclient.ui.features.settings.SliderPreference
+        <SeekBarPreference
             android:defaultValue="@string/pref_default_genre_color_transparency"
-            android:dialogMessage="@string/pref_genre_colors_visibility_message"
             android:key="genre_color_transparency"
-            android:summary="@string/pref_genre_colors_visibility_value"
-            android:title="@string/pref_genre_colors_visibility"
-            custom:maximumValue="100"
-            custom:minimumValue="30" />
+            android:max="100"
+            android:min="30"
+            android:summary="@string/pref_genre_colors_visibility_message"
+            android:title="@string/pref_genre_colors_visibility" />
     </PreferenceCategory>
 
     <PreferenceCategory
