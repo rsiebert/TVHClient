@@ -1,40 +1,20 @@
-package org.tvheadend.tvhclient.data.dao;
+package org.tvheadend.tvhclient.data.dao
 
-import androidx.lifecycle.LiveData;
-import androidx.room.Dao;
-import androidx.room.Delete;
-import androidx.room.Insert;
-import androidx.room.OnConflictStrategy;
-import androidx.room.Query;
-import androidx.room.RoomWarnings;
-import androidx.room.Transaction;
-import androidx.room.Update;
-
-import org.tvheadend.tvhclient.domain.entity.Program;
-import org.tvheadend.tvhclient.domain.entity.EpgProgram;
-
-import java.util.List;
+import androidx.lifecycle.LiveData
+import androidx.room.*
+import org.tvheadend.tvhclient.domain.entity.EpgProgram
+import org.tvheadend.tvhclient.domain.entity.Program
 
 @Dao
-public interface ProgramDao {
+interface ProgramDao {
 
-    String PROGRAM_BASE_QUERY = "SELECT DISTINCT p.*," +
-            "c.name AS channel_name, " +
-            "c.icon AS channel_icon " +
-            "FROM programs AS p " +
-            "LEFT JOIN channels AS c ON c.id = p.channel_id ";
+    @get:Query("SELECT COUNT (*) FROM programs AS p " +
+            "WHERE " + CONNECTION_IS_ACTIVE)
+    val itemCount: LiveData<Int>
 
-    String EPG_PROGRAM_BASE_QUERY = "SELECT DISTINCT p.id, " +
-            "p.title, p.subtitle, " +
-            "p.channel_id, " +
-            "p.connection_id, " +
-            "p.start, p.stop, " +
-            "p.content_type, " +
-            "c.name AS channel_name, " +
-            "c.icon AS channel_icon " +
-            "FROM programs AS p ";
-
-    String CONNECTION_IS_ACTIVE = " p.connection_id IN (SELECT id FROM connections WHERE active = 1) ";
+    @get:Query("SELECT COUNT (*) FROM programs AS p " +
+            "WHERE " + CONNECTION_IS_ACTIVE)
+    val itemCountSync: Int
 
     @Transaction
     @Query(PROGRAM_BASE_QUERY +
@@ -43,7 +23,7 @@ public interface ProgramDao {
             "  OR (p.start <= :time AND p.stop >= :time)) " +
             "GROUP BY p.id " +
             "ORDER BY p.start, p.channel_name ASC")
-    LiveData<List<Program>> loadProgramsFromTime(long time);
+    fun loadProgramsFromTime(time: Long): LiveData<List<Program>>
 
     @Transaction
     @Query(PROGRAM_BASE_QUERY +
@@ -53,9 +33,8 @@ public interface ProgramDao {
             "  OR (p.start <= :time AND p.stop >= :time)) " +
             "GROUP BY p.id " +
             "ORDER BY p.start ASC")
-    LiveData<List<Program>> loadProgramsFromChannelFromTime(int channelId, long time);
+    fun loadProgramsFromChannelFromTime(channelId: Int, time: Long): LiveData<List<Program>>
 
-    @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
     @Transaction
     @Query(EPG_PROGRAM_BASE_QUERY +
             "LEFT JOIN channels AS c ON c.id = channel_id " +
@@ -69,77 +48,89 @@ public interface ProgramDao {
             "  OR (start < :endTime AND stop >= :endTime)) " +
             "GROUP BY p.id " +
             "ORDER BY start ASC")
-    List<EpgProgram> loadProgramsFromChannelBetweenTimeSync(int channelId, long startTime, long endTime);
+    fun loadProgramsFromChannelBetweenTimeSync(channelId: Int, startTime: Long, endTime: Long): List<EpgProgram>
 
     @Transaction
     @Query(PROGRAM_BASE_QUERY +
             "WHERE " + CONNECTION_IS_ACTIVE +
             "GROUP BY p.id " +
             "ORDER BY p.start, p.channel_name ASC")
-    LiveData<List<Program>> loadPrograms();
+    fun loadPrograms(): LiveData<List<Program>>
 
     @Transaction
     @Query(PROGRAM_BASE_QUERY +
             "WHERE " + CONNECTION_IS_ACTIVE +
             "GROUP BY p.id " +
             "ORDER BY p.start, p.channel_name ASC")
-    List<Program> loadProgramsSync();
+    fun loadProgramsSync(): List<Program>
 
     @Transaction
     @Query(PROGRAM_BASE_QUERY +
             "WHERE " + CONNECTION_IS_ACTIVE +
             " AND p.id = :id")
-    LiveData<Program> loadProgramById(int id);
+    fun loadProgramById(id: Int): LiveData<Program>
 
     @Transaction
     @Query(PROGRAM_BASE_QUERY +
             "WHERE " + CONNECTION_IS_ACTIVE +
             " AND p.id = :id")
-    Program loadProgramByIdSync(int id);
+    fun loadProgramByIdSync(id: Int): Program
 
     @Query(PROGRAM_BASE_QUERY +
             "WHERE " + CONNECTION_IS_ACTIVE +
             " AND p.channel_id = :channelId " +
             "ORDER BY start DESC LIMIT 1")
-    Program loadLastProgramFromChannelSync(int channelId);
+    fun loadLastProgramFromChannelSync(channelId: Int): Program
 
-    @Query("DELETE FROM programs " +
-            "WHERE stop < :time")
-    void deleteProgramsByTime(long time);
-
-    @Transaction
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insert(List<Program> programs);
+    @Query("DELETE FROM programs " + "WHERE stop < :time")
+    fun deleteProgramsByTime(time: Long)
 
     @Transaction
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insert(Program program);
+    fun insert(programs: List<Program>)
+
+    @Transaction
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insert(program: Program)
 
     @Update
-    void update(List<Program> programs);
+    fun update(programs: List<Program>)
 
     @Update
-    void update(Program... program);
+    fun update(vararg program: Program)
 
     @Delete
-    void delete(List<Program> programs);
+    fun delete(programs: List<Program>)
 
     @Delete
-    void delete(Program program);
+    fun delete(program: Program)
 
     @Query("DELETE FROM programs " +
             "WHERE connection_id IN (SELECT id FROM connections WHERE active = 1) " +
             " AND id = :id")
-    void deleteById(int id);
+    fun deleteById(id: Int)
 
     @Query("DELETE FROM programs")
-    void deleteAll();
+    fun deleteAll()
 
-    @Query("SELECT COUNT (*) FROM programs AS p " +
-            "WHERE " + CONNECTION_IS_ACTIVE)
-    LiveData<Integer> getItemCount();
+    companion object {
 
-    @Query("SELECT COUNT (*) FROM programs AS p " +
-            "WHERE " + CONNECTION_IS_ACTIVE)
-    int getItemCountSync();
+        const val PROGRAM_BASE_QUERY = "SELECT DISTINCT p.*," +
+                "c.name AS channel_name, " +
+                "c.icon AS channel_icon " +
+                "FROM programs AS p " +
+                "LEFT JOIN channels AS c ON c.id = p.channel_id "
+
+        const val EPG_PROGRAM_BASE_QUERY = "SELECT DISTINCT p.id, " +
+                "p.title, p.subtitle, " +
+                "p.channel_id, " +
+                "p.connection_id, " +
+                "p.start, p.stop, " +
+                "p.content_type, " +
+                "c.name AS channel_name, " +
+                "c.icon AS channel_icon " +
+                "FROM programs AS p "
+
+        const val CONNECTION_IS_ACTIVE = " p.connection_id IN (SELECT id FROM connections WHERE active = 1) "
+    }
 }

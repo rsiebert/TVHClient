@@ -1,56 +1,50 @@
-package org.tvheadend.tvhclient.data.dao;
+package org.tvheadend.tvhclient.data.dao
 
-import androidx.lifecycle.LiveData;
-import androidx.room.Dao;
-import androidx.room.Delete;
-import androidx.room.Insert;
-import androidx.room.OnConflictStrategy;
-import androidx.room.Query;
-import androidx.room.Update;
-
-import org.tvheadend.tvhclient.domain.entity.ServerStatus;
+import androidx.lifecycle.LiveData
+import androidx.room.*
+import org.tvheadend.tvhclient.domain.entity.ServerStatus
 
 @Dao
-public interface ServerStatusDao {
+interface ServerStatusDao {
 
     @Query("DELETE FROM server_status WHERE connection_id = :id")
-    void deleteByConnectionId(int id);
+    fun deleteByConnectionId(id: Int)
 
     @Query("SELECT s.*, " +
             "c.name AS connection_name " +
             "FROM server_status AS s " +
             "JOIN connections AS c ON c.id = s.connection_id AND c.active = 1")
-    ServerStatus loadActiveServerStatusSync();
+    fun loadActiveServerStatusSync(): ServerStatus
 
     @Query("SELECT s.*, " +
             "c.name AS connection_name " +
             "FROM server_status AS s " +
             "JOIN connections AS c ON c.id = s.connection_id AND c.active = 1")
-    LiveData<ServerStatus> loadActiveServerStatus();
+    fun loadActiveServerStatus(): LiveData<ServerStatus>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insert(ServerStatus serverStatus);
+    fun insert(serverStatus: ServerStatus)
 
     @Update
-    void update(ServerStatus serverStatus);
+    fun update(serverStatus: ServerStatus)
 
     @Delete
-    void delete(ServerStatus serverStatus);
+    fun delete(serverStatus: ServerStatus)
 
     @Query("DELETE FROM server_status")
-    void deleteAll();
+    fun deleteAll()
 
     @Query("SELECT s.*, " +
             "c.name AS connection_name " +
             "FROM server_status AS s " +
             "LEFT JOIN connections AS c ON c.id = s.connection_id " +
             "WHERE s.connection_id = :id")
-    ServerStatus loadServerStatusByIdSync(int id);
+    fun loadServerStatusByIdSync(id: Int): ServerStatus
 
     @Query("SELECT s.*, " +
             "c.name AS connection_name " +
             "FROM server_status AS s " +
             "LEFT JOIN connections AS c ON c.id = s.connection_id " +
             "WHERE s.connection_id = :id")
-    LiveData<ServerStatus> loadServerStatusById(int id);
+    fun loadServerStatusById(id: Int): LiveData<ServerStatus>
 }
