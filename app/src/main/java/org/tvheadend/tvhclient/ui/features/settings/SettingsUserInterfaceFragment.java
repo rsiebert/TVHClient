@@ -20,13 +20,13 @@ package org.tvheadend.tvhclient.ui.features.settings;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.CheckBoxPreference;
-import android.preference.EditTextPreference;
-import android.preference.Preference;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.ui.base.utils.SnackbarUtils;
 
+import androidx.preference.CheckBoxPreference;
+import androidx.preference.EditTextPreference;
+import androidx.preference.Preference;
 import timber.log.Timber;
 
 public class SettingsUserInterfaceFragment extends BasePreferenceFragment implements Preference.OnPreferenceClickListener, SharedPreferences.OnSharedPreferenceChangeListener {
@@ -40,8 +40,8 @@ public class SettingsUserInterfaceFragment extends BasePreferenceFragment implem
         super.onActivityCreated(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences_ui);
 
-        toolbarInterface.setTitle(getString(R.string.pref_user_interface));
-        toolbarInterface.setSubtitle("");
+        getToolbarInterface().setTitle(getString(R.string.pref_user_interface));
+        getToolbarInterface().setSubtitle("");
 
         programArtworkEnabledPreference = (CheckBoxPreference) findPreference("program_artwork_enabled");
         programArtworkEnabledPreference.setOnPreferenceClickListener(this);
@@ -52,15 +52,20 @@ public class SettingsUserInterfaceFragment extends BasePreferenceFragment implem
     }
 
     @Override
+    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+        addPreferencesFromResource(R.xml.preferences_ui);
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
-        sharedPreferences.registerOnSharedPreferenceChangeListener(this);
+        getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        sharedPreferences.unregisterOnSharedPreferenceChangeListener(this);
+        getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
     }
 
     @Override
@@ -80,18 +85,18 @@ public class SettingsUserInterfaceFragment extends BasePreferenceFragment implem
     }
 
     private void handlePreferenceMultipleChannelTagsSelected() {
-        if (!isUnlocked) {
+        if (!isUnlocked()) {
             if (getView() != null) {
-                SnackbarUtils.sendSnackbarMessage(activity, R.string.feature_not_available_in_free_version);
+                SnackbarUtils.sendSnackbarMessage(getActivity(), R.string.feature_not_available_in_free_version);
             }
             multipleChannelTagsPreference.setChecked(false);
         }
     }
 
     private void handlePreferenceShowArtworkSelected() {
-        if (!isUnlocked) {
+        if (!isUnlocked()) {
             if (getView() != null) {
-                SnackbarUtils.sendSnackbarMessage(activity, R.string.feature_not_available_in_free_version);
+                SnackbarUtils.sendSnackbarMessage(getActivity(), R.string.feature_not_available_in_free_version);
             }
             programArtworkEnabledPreference.setChecked(false);
         }
@@ -99,11 +104,11 @@ public class SettingsUserInterfaceFragment extends BasePreferenceFragment implem
 
     private void handlePreferenceCastingSelected() {
         if (getView() != null) {
-            if (htspVersion < 16) {
-                SnackbarUtils.sendSnackbarMessage(activity, R.string.feature_not_supported_by_server);
+            if (getHtspVersion() < 16) {
+                SnackbarUtils.sendSnackbarMessage(getActivity(), R.string.feature_not_supported_by_server);
                 castMiniControllerPreference.setChecked(false);
-            } else if (!isUnlocked) {
-                SnackbarUtils.sendSnackbarMessage(activity, R.string.feature_not_available_in_free_version);
+            } else if (!isUnlocked()) {
+                SnackbarUtils.sendSnackbarMessage(getActivity(), R.string.feature_not_available_in_free_version);
                 castMiniControllerPreference.setChecked(false);
             }
         }

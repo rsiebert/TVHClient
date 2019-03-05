@@ -8,23 +8,23 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import android.preference.Preference;
-import android.preference.PreferenceManager;
 
 import com.afollestad.materialdialogs.folderselector.FolderChooserDialog;
 
 import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.ui.base.utils.SnackbarUtils;
 import org.tvheadend.tvhclient.ui.features.MainActivity;
 import org.tvheadend.tvhclient.ui.features.changelog.ChangeLogActivity;
 import org.tvheadend.tvhclient.ui.features.information.WebViewActivity;
 import org.tvheadend.tvhclient.ui.features.unlocker.UnlockerActivity;
-import org.tvheadend.tvhclient.ui.base.utils.SnackbarUtils;
 
 import java.io.File;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.TaskStackBuilder;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceManager;
 
 public class SettingsFragment extends BasePreferenceFragment implements Preference.OnPreferenceClickListener, SharedPreferences.OnSharedPreferenceChangeListener, ActivityCompat.OnRequestPermissionsResultCallback, FolderChooserDialogCallback {
 
@@ -33,12 +33,10 @@ public class SettingsFragment extends BasePreferenceFragment implements Preferen
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        PreferenceManager.setDefaultValues(getActivity(), R.xml.preferences, false);
 
-        PreferenceManager.setDefaultValues(activity, R.xml.preferences, false);
-        addPreferencesFromResource(R.xml.preferences);
-
-        toolbarInterface.setTitle(getString(R.string.settings));
-        toolbarInterface.setSubtitle("");
+        getToolbarInterface().setTitle(getString(R.string.settings));
+        getToolbarInterface().setSubtitle("");
 
         findPreference("list_connections").setOnPreferenceClickListener(this);
         findPreference("user_interface").setOnPreferenceClickListener(this);
@@ -59,19 +57,24 @@ public class SettingsFragment extends BasePreferenceFragment implements Preferen
     }
 
     @Override
+    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+        setPreferencesFromResource(R.xml.preferences, rootKey);
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
-        sharedPreferences.registerOnSharedPreferenceChangeListener(this);
+        getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        sharedPreferences.unregisterOnSharedPreferenceChangeListener(this);
+        getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
     }
 
     private void updateDownloadDirSummary() {
-        final String path = sharedPreferences.getString("download_directory", Environment.DIRECTORY_DOWNLOADS);
+        final String path = getSharedPreferences().getString("download_directory", Environment.DIRECTORY_DOWNLOADS);
         downloadDirectoryPreference.setSummary(getString(R.string.pref_download_directory_sum, path));
     }
 
@@ -95,7 +98,7 @@ public class SettingsFragment extends BasePreferenceFragment implements Preferen
             // a known bug in android. Until it is fixed this workaround is required.
             new Handler().postDelayed(() -> {
                 // Get the parent activity that implements the callback
-                SettingsActivity settingsActivity = (SettingsActivity) activity;
+                SettingsActivity settingsActivity = (SettingsActivity) getActivity();
                 // Show the folder chooser dialog which defaults to the external storage dir
                 new FolderChooserDialog.Builder(settingsActivity).show(settingsActivity);
             }, 200);
@@ -106,9 +109,9 @@ public class SettingsFragment extends BasePreferenceFragment implements Preferen
     public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
         switch (key) {
             case "language":
-                Intent intent = new Intent(activity, MainActivity.class);
+                Intent intent = new Intent(getActivity(), MainActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                activity.startActivity(intent);
+                getActivity().startActivity(intent);
                 break;
         }
     }
@@ -154,16 +157,16 @@ public class SettingsFragment extends BasePreferenceFragment implements Preferen
     }
 
     private void handlePreferenceThemeSelected() {
-        TaskStackBuilder.create(activity)
-                .addNextIntent(new Intent(activity, MainActivity.class))
-                .addNextIntent(activity.getIntent())
+        TaskStackBuilder.create(getActivity())
+                .addNextIntent(new Intent(getActivity(), MainActivity.class))
+                .addNextIntent(getActivity().getIntent())
                 .startActivities();
     }
 
     private void handlePreferenceProfilesSelected() {
         if (getView() != null) {
-            if (htspVersion < 16) {
-                SnackbarUtils.sendSnackbarMessage(activity, R.string.feature_not_supported_by_server);
+            if (getHtspVersion() < 16) {
+                SnackbarUtils.sendSnackbarMessage(getActivity(), R.string.feature_not_supported_by_server);
             } else {
                 showSelectedSettingsFragment("profiles");
             }
@@ -171,9 +174,9 @@ public class SettingsFragment extends BasePreferenceFragment implements Preferen
     }
 
     private void handlePreferencePlaybackSelected() {
-        if (!isUnlocked) {
+        if (!isUnlocked()) {
             if (getView() != null) {
-                SnackbarUtils.sendSnackbarMessage(activity, R.string.feature_not_available_in_free_version);
+                SnackbarUtils.sendSnackbarMessage(getActivity(), R.string.feature_not_available_in_free_version);
             }
         } else {
             showSelectedSettingsFragment("playback");
@@ -181,43 +184,43 @@ public class SettingsFragment extends BasePreferenceFragment implements Preferen
     }
 
     private void handlePreferenceUnlockerSelected() {
-        Intent intent = new Intent(activity, UnlockerActivity.class);
+        Intent intent = new Intent(getActivity(), UnlockerActivity.class);
         startActivity(intent);
     }
 
     private void handlePreferenceChangelogSelected() {
-        Intent intent = new Intent(activity, ChangeLogActivity.class);
+        Intent intent = new Intent(getActivity(), ChangeLogActivity.class);
         intent.putExtra("showFullChangelog", true);
         startActivity(intent);
     }
 
     private void handlePreferenceInformationSelected() {
-        Intent intent = new Intent(activity, WebViewActivity.class);
+        Intent intent = new Intent(getActivity(), WebViewActivity.class);
         intent.putExtra("website", "information");
         startActivity(intent);
     }
 
     private void handlePreferencePrivacySelected() {
-        Intent intent = new Intent(activity, WebViewActivity.class);
+        Intent intent = new Intent(getActivity(), WebViewActivity.class);
         intent.putExtra("website", "privacy_policy");
         startActivity(intent);
     }
 
     private void showSelectedSettingsFragment(String settingType) {
-        Intent intent = new Intent(activity, SettingsActivity.class);
+        Intent intent = new Intent(getActivity(), SettingsActivity.class);
         intent.putExtra("setting_type", settingType);
         startActivity(intent);
     }
 
     private void handlePreferenceDownloadDirectorySelected() {
-        if (!isUnlocked) {
+        if (!isUnlocked()) {
             if (getView() != null) {
-                SnackbarUtils.sendSnackbarMessage(activity, R.string.feature_not_available_in_free_version);
+                SnackbarUtils.sendSnackbarMessage(getActivity(), R.string.feature_not_available_in_free_version);
             }
         } else {
             if (isReadPermissionGranted()) {
                 // Get the parent activity that implements the callback
-                SettingsActivity settingsActivity = (SettingsActivity) activity;
+                SettingsActivity settingsActivity = (SettingsActivity) getActivity();
                 new FolderChooserDialog.Builder(settingsActivity).show(settingsActivity);
             }
         }
@@ -226,7 +229,7 @@ public class SettingsFragment extends BasePreferenceFragment implements Preferen
     @Override
     public void onFolderSelected(File folder) {
         String strippedPath = folder.getAbsolutePath().replace(Environment.getExternalStorageDirectory().getAbsolutePath(), "");
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         prefs.edit().putString("download_directory", strippedPath).apply();
 
         updateDownloadDirSummary();

@@ -27,9 +27,13 @@ public class SettingsPlaybackFragment extends BasePreferenceFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        addPreferencesFromResource(R.xml.preferences_playback);
 
-        toolbarInterface.setTitle(getString(R.string.playback));
-        toolbarInterface.setSubtitle("");
+        getToolbarInterface().setTitle(getString(R.string.playback));
+        getToolbarInterface().setSubtitle("");
+    }
+
+    @Override
+    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+        setPreferencesFromResource(R.xml.preferences_playback, rootKey);
     }
 }

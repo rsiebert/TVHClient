@@ -1,10 +1,6 @@
 package org.tvheadend.tvhclient.ui.features.settings;
 
 import android.os.Bundle;
-import android.preference.CheckBoxPreference;
-import android.preference.EditTextPreference;
-import android.preference.Preference;
-import android.preference.PreferenceFragment;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -14,8 +10,8 @@ import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.domain.entity.Connection;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
+import org.tvheadend.tvhclient.domain.entity.Connection;
 import org.tvheadend.tvhclient.ui.base.callbacks.BackPressedInterface;
 import org.tvheadend.tvhclient.ui.base.callbacks.ToolbarInterface;
 import org.tvheadend.tvhclient.ui.base.utils.SnackbarUtils;
@@ -24,8 +20,12 @@ import javax.inject.Inject;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.preference.CheckBoxPreference;
+import androidx.preference.EditTextPreference;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceFragmentCompat;
 
-public abstract class SettingsConnectionBaseFragment extends PreferenceFragment implements BackPressedInterface, Preference.OnPreferenceChangeListener {
+public abstract class SettingsConnectionBaseFragment extends PreferenceFragmentCompat implements BackPressedInterface, Preference.OnPreferenceChangeListener {
 
     @Inject
     AppRepository appRepository;
@@ -51,7 +51,6 @@ public abstract class SettingsConnectionBaseFragment extends PreferenceFragment 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        addPreferencesFromResource(R.xml.preferences_add_connection);
         activity = (AppCompatActivity) getActivity();
         if (activity instanceof ToolbarInterface) {
             toolbarInterface = (ToolbarInterface) activity;
@@ -85,6 +84,11 @@ public abstract class SettingsConnectionBaseFragment extends PreferenceFragment 
         wolMacAddressPreference.setOnPreferenceChangeListener(this);
         wolPortPreference.setOnPreferenceChangeListener(this);
         wolUseBroadcastEnabled.setOnPreferenceChangeListener(this);
+    }
+
+    @Override
+    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+        setPreferencesFromResource(R.xml.preferences_add_connection, rootKey);
     }
 
     @Override

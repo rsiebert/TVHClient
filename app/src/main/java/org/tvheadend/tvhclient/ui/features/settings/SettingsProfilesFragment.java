@@ -19,7 +19,6 @@
 package org.tvheadend.tvhclient.ui.features.settings;
 
 import android.os.Bundle;
-import android.preference.ListPreference;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.domain.entity.Connection;
@@ -28,6 +27,8 @@ import org.tvheadend.tvhclient.ui.base.callbacks.BackPressedInterface;
 import org.tvheadend.tvhclient.ui.base.utils.SnackbarUtils;
 
 import java.util.List;
+
+import androidx.preference.ListPreference;
 
 public class SettingsProfilesFragment extends BasePreferenceFragment implements BackPressedInterface {
 
@@ -43,11 +44,10 @@ public class SettingsProfilesFragment extends BasePreferenceFragment implements 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        addPreferencesFromResource(R.xml.preferences_profiles);
 
-        Connection connection = appRepository.getConnectionData().getActiveItem();
-        toolbarInterface.setTitle(getString(R.string.pref_profiles));
-        toolbarInterface.setSubtitle(connection != null ? connection.getName() : null);
+        Connection connection = getAppRepository().getConnectionData().getActiveItem();
+        getToolbarInterface().setTitle(getString(R.string.pref_profiles));
+        getToolbarInterface().setSubtitle(connection != null ? connection.getName() : null);
 
         htspPlaybackProfilesPreference = (ListPreference) findPreference("htsp_playback_profiles");
         httpPlaybackProfilesPreference = (ListPreference) findPreference("http_playback_profiles");
@@ -60,23 +60,23 @@ public class SettingsProfilesFragment extends BasePreferenceFragment implements 
             recordingServerProfileId = savedInstanceState.getInt("recording_profile_id");
             castingServerProfileId = savedInstanceState.getInt("casting_profile_id");
         } else {
-            htspPlaybackServerProfileId = serverStatus.getHtspPlaybackServerProfileId();
-            httpPlaybackServerProfileId = serverStatus.getHttpPlaybackServerProfileId();
-            recordingServerProfileId = serverStatus.getRecordingServerProfileId();
-            castingServerProfileId = serverStatus.getCastingServerProfileId();
+            htspPlaybackServerProfileId = getServerStatus().getHtspPlaybackServerProfileId();
+            httpPlaybackServerProfileId = getServerStatus().getHttpPlaybackServerProfileId();
+            recordingServerProfileId = getServerStatus().getRecordingServerProfileId();
+            castingServerProfileId = getServerStatus().getCastingServerProfileId();
         }
 
         addProfiles(htspPlaybackProfilesPreference,
-                appRepository.getServerProfileData().getHtspPlaybackProfiles(),
+                getAppRepository().getServerProfileData().getHtspPlaybackProfiles(),
                 htspPlaybackServerProfileId);
         addProfiles(httpPlaybackProfilesPreference,
-                appRepository.getServerProfileData().getHttpPlaybackProfiles(),
+                getAppRepository().getServerProfileData().getHttpPlaybackProfiles(),
                 httpPlaybackServerProfileId);
         addProfiles(recordingProfilesPreference,
-                appRepository.getServerProfileData().getRecordingProfiles(),
+                getAppRepository().getServerProfileData().getRecordingProfiles(),
                 recordingServerProfileId);
         addProfiles(castingProfilesPreference,
-                appRepository.getServerProfileData().getHttpPlaybackProfiles(),
+                getAppRepository().getServerProfileData().getHttpPlaybackProfiles(),
                 castingServerProfileId);
 
         setHttpPlaybackProfileListSummary();
@@ -100,7 +100,7 @@ public class SettingsProfilesFragment extends BasePreferenceFragment implements 
             return true;
         });
 
-        if (isUnlocked) {
+        if (isUnlocked()) {
             castingProfilesPreference.setOnPreferenceChangeListener((preference, o) -> {
                 castingServerProfileId = Integer.valueOf((String) o);
                 setCastingProfileListSummary();
@@ -108,17 +108,22 @@ public class SettingsProfilesFragment extends BasePreferenceFragment implements 
             });
         } else {
             castingProfilesPreference.setOnPreferenceClickListener(preference -> {
-                SnackbarUtils.sendSnackbarMessage(activity, R.string.feature_not_supported_by_server);
+                SnackbarUtils.sendSnackbarMessage(getActivity(), R.string.feature_not_supported_by_server);
                 return true;
             });
         }
+    }
+
+    @Override
+    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+        setPreferencesFromResource(R.xml.preferences_profiles, rootKey);
     }
 
     private void setHtspPlaybackProfileListSummary() {
         if (htspPlaybackServerProfileId == 0) {
             htspPlaybackProfilesPreference.setSummary("None");
         } else {
-            ServerProfile playbackProfile = appRepository.getServerProfileData().getItemById(htspPlaybackServerProfileId);
+            ServerProfile playbackProfile = getAppRepository().getServerProfileData().getItemById(htspPlaybackServerProfileId);
             htspPlaybackProfilesPreference.setSummary(playbackProfile != null ? playbackProfile.getName() : null);
         }
     }
@@ -127,7 +132,7 @@ public class SettingsProfilesFragment extends BasePreferenceFragment implements 
         if (httpPlaybackServerProfileId == 0) {
             httpPlaybackProfilesPreference.setSummary("None");
         } else {
-            ServerProfile playbackProfile = appRepository.getServerProfileData().getItemById(httpPlaybackServerProfileId);
+            ServerProfile playbackProfile = getAppRepository().getServerProfileData().getItemById(httpPlaybackServerProfileId);
             httpPlaybackProfilesPreference.setSummary(playbackProfile != null ? playbackProfile.getName() : null);
         }
     }
@@ -136,7 +141,7 @@ public class SettingsProfilesFragment extends BasePreferenceFragment implements 
         if (recordingServerProfileId == 0) {
             recordingProfilesPreference.setSummary("None");
         } else {
-            ServerProfile recordingProfile = appRepository.getServerProfileData().getItemById(recordingServerProfileId);
+            ServerProfile recordingProfile = getAppRepository().getServerProfileData().getItemById(recordingServerProfileId);
             recordingProfilesPreference.setSummary(recordingProfile != null ? recordingProfile.getName() : null);
         }
     }
@@ -145,7 +150,7 @@ public class SettingsProfilesFragment extends BasePreferenceFragment implements 
         if (castingServerProfileId == 0) {
             castingProfilesPreference.setSummary("None");
         } else {
-            ServerProfile castingProfile = appRepository.getServerProfileData().getItemById(castingServerProfileId);
+            ServerProfile castingProfile = getAppRepository().getServerProfileData().getItemById(castingServerProfileId);
             castingProfilesPreference.setSummary(castingProfile != null ? castingProfile.getName() : null);
         }
     }
@@ -161,14 +166,14 @@ public class SettingsProfilesFragment extends BasePreferenceFragment implements 
 
     @Override
     public void onBackPressed() {
-        serverStatus.setHtspPlaybackServerProfileId(htspPlaybackServerProfileId);
-        serverStatus.setHttpPlaybackServerProfileId(httpPlaybackServerProfileId);
-        serverStatus.setRecordingServerProfileId(recordingServerProfileId);
-        if (isUnlocked) {
-            serverStatus.setCastingServerProfileId(castingServerProfileId);
+        getServerStatus().setHtspPlaybackServerProfileId(htspPlaybackServerProfileId);
+        getServerStatus().setHttpPlaybackServerProfileId(httpPlaybackServerProfileId);
+        getServerStatus().setRecordingServerProfileId(recordingServerProfileId);
+        if (isUnlocked()) {
+            getServerStatus().setCastingServerProfileId(castingServerProfileId);
         }
-        appRepository.getServerStatusData().updateItem(serverStatus);
-        activity.finish();
+        getAppRepository().getServerStatusData().updateItem(getServerStatus());
+        getActivity().finish();
     }
 
     private void addProfiles(final ListPreference listPreference, final List<ServerProfile> serverProfileList, int selectedIndex) {

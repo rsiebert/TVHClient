@@ -1,6 +1,6 @@
 package org.tvheadend.tvhclient.ui.features.settings;
 
-import android.app.ListFragment;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -15,17 +15,18 @@ import com.afollestad.materialdialogs.MaterialDialog;
 
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.domain.entity.Connection;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.data.service.HtspService;
+import org.tvheadend.tvhclient.domain.entity.Connection;
 import org.tvheadend.tvhclient.ui.base.callbacks.BackPressedInterface;
 import org.tvheadend.tvhclient.ui.base.callbacks.ToolbarInterface;
-import org.tvheadend.tvhclient.util.tasks.WakeOnLanTask;
 import org.tvheadend.tvhclient.ui.features.startup.SplashActivity;
+import org.tvheadend.tvhclient.util.tasks.WakeOnLanTask;
 
 import javax.inject.Inject;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.ListFragment;
 import androidx.lifecycle.ViewModelProviders;
 import timber.log.Timber;
 

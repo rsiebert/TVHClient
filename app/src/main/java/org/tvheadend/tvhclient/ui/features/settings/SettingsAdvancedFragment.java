@@ -4,9 +4,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.CheckBoxPreference;
-import android.preference.EditTextPreference;
-import android.preference.Preference;
 import android.provider.SearchRecentSuggestions;
 import android.text.TextUtils;
 
@@ -19,11 +16,11 @@ import org.tvheadend.tvhclient.data.service.HtspService;
 import org.tvheadend.tvhclient.data.worker.LoadChannelIconWorker;
 import org.tvheadend.tvhclient.domain.entity.Channel;
 import org.tvheadend.tvhclient.domain.entity.Connection;
-import org.tvheadend.tvhclient.util.logging.FileLoggingTree;
 import org.tvheadend.tvhclient.ui.base.utils.SnackbarUtils;
 import org.tvheadend.tvhclient.ui.features.search.SuggestionProvider;
 import org.tvheadend.tvhclient.ui.features.startup.SplashActivity;
 import org.tvheadend.tvhclient.util.MiscUtils;
+import org.tvheadend.tvhclient.util.logging.FileLoggingTree;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -31,6 +28,9 @@ import java.util.Date;
 import java.util.Locale;
 
 import androidx.core.content.FileProvider;
+import androidx.preference.CheckBoxPreference;
+import androidx.preference.EditTextPreference;
+import androidx.preference.Preference;
 import androidx.work.ExistingWorkPolicy;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
@@ -43,8 +43,8 @@ public class SettingsAdvancedFragment extends BasePreferenceFragment implements 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        addPreferencesFromResource(R.xml.preferences_advanced);
-        toolbarInterface.setTitle(getString(R.string.pref_advanced_settings));
+
+        getToolbarInterface().setTitle(getString(R.string.pref_advanced_settings));
 
         findPreference("debug_mode_enabled").setOnPreferenceClickListener(this);
         findPreference("send_debug_logfile_enabled").setOnPreferenceClickListener(this);
@@ -54,19 +54,24 @@ public class SettingsAdvancedFragment extends BasePreferenceFragment implements 
 
         notificationsEnabledPreference = (CheckBoxPreference) findPreference("notifications_enabled");
         notificationsEnabledPreference.setOnPreferenceClickListener(this);
-        notificationsEnabledPreference.setEnabled(isUnlocked);
+        notificationsEnabledPreference.setEnabled(isUnlocked());
+    }
+
+    @Override
+    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+        setPreferencesFromResource(R.xml.preferences_advanced, rootKey);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        sharedPreferences.registerOnSharedPreferenceChangeListener(this);
+        getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        sharedPreferences.unregisterOnSharedPreferenceChangeListener(this);
+        getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
     }
 
     @Override
@@ -95,14 +100,14 @@ public class SettingsAdvancedFragment extends BasePreferenceFragment implements 
     }
 
     private void handlePreferenceNotificationsSelected() {
-        if (!isUnlocked) {
-            SnackbarUtils.sendSnackbarMessage(activity, R.string.feature_not_available_in_free_version);
+        if (!isUnlocked()) {
+            SnackbarUtils.sendSnackbarMessage(getActivity(), R.string.feature_not_available_in_free_version);
             notificationsEnabledPreference.setChecked(false);
         }
     }
 
     private void handlePreferenceClearDatabaseSelected() {
-        new MaterialDialog.Builder(activity)
+        new MaterialDialog.Builder(getActivity())
                 .title(R.string.dialog_title_clear_database)
                 .content(R.string.dialog_content_reconnect_to_server)
                 .positiveText(R.string.clear)
@@ -111,15 +116,15 @@ public class SettingsAdvancedFragment extends BasePreferenceFragment implements 
                     Timber.d("Clear database requested");
 
                     // Update the connection with the information that a new sync is required.
-                    Connection connection = appRepository.getConnectionData().getActiveItem();
+                    Connection connection = getAppRepository().getConnectionData().getActiveItem();
                     if (connection != null) {
                         connection.setSyncRequired(true);
                         connection.setLastUpdate(0);
-                        appRepository.getConnectionData().updateItem(connection);
+                        getAppRepository().getConnectionData().updateItem(connection);
                     }
                     // Clear the database contents, when done the callback
                     // is triggered which will restart the application
-                    appRepository.getMiscData().clearDatabase(activity, SettingsAdvancedFragment.this);
+                    getAppRepository().getMiscData().clearDatabase(getActivity(), SettingsAdvancedFragment.this);
                     dialog.dismiss();
                 })
                 .onNegative((dialog, which) -> dialog.dismiss())
@@ -127,7 +132,7 @@ public class SettingsAdvancedFragment extends BasePreferenceFragment implements 
     }
 
     private void handlePreferenceDebugModeSelected() {
-        if (sharedPreferences.getBoolean("debug_mode_enabled", getResources().getBoolean(R.bool.pref_default_debug_mode_enabled))) {
+        if (getSharedPreferences().getBoolean("debug_mode_enabled", getResources().getBoolean(R.bool.pref_default_debug_mode_enabled))) {
             Timber.d("Debug mode is enabled");
             for (Timber.Tree tree : Timber.forest()) {
                 if (tree.getClass().getName().equals(FileLoggingTree.class.getName())) {
@@ -136,7 +141,7 @@ public class SettingsAdvancedFragment extends BasePreferenceFragment implements 
                 }
             }
             Timber.d("Replanting FileLoggingTree");
-            Timber.plant(new FileLoggingTree(activity.getApplicationContext()));
+            Timber.plant(new FileLoggingTree(getActivity().getApplicationContext()));
         } else {
             Timber.d("Debug mode is disabled");
         }
@@ -144,10 +149,10 @@ public class SettingsAdvancedFragment extends BasePreferenceFragment implements 
 
     private void handlePreferenceSendLogFileSelected() {
         // Get the list of available files in the log path
-        File logPath = new File(activity.getCacheDir(), "logs");
+        File logPath = new File(getActivity().getCacheDir(), "logs");
         File[] files = logPath.listFiles();
         if (files == null) {
-            new MaterialDialog.Builder(activity)
+            new MaterialDialog.Builder(getActivity())
                     .title(R.string.select_log_file)
                     .onPositive((dialog, which) -> dialog.dismiss())
                     .show();
@@ -158,7 +163,7 @@ public class SettingsAdvancedFragment extends BasePreferenceFragment implements 
                 logfileList[i] = files[i].getName();
             }
             // Show the dialog with the list of log files
-            new MaterialDialog.Builder(activity)
+            new MaterialDialog.Builder(getActivity())
                     .title(R.string.select_log_file)
                     .items(logfileList)
                     .itemsCallbackSingleChoice(-1, (dialog, view, which, text) -> {
@@ -176,8 +181,8 @@ public class SettingsAdvancedFragment extends BasePreferenceFragment implements 
 
         Uri fileUri = null;
         try {
-            File logFile = new File(activity.getCacheDir(), "logs/" + filename);
-            fileUri = FileProvider.getUriForFile(activity, "org.tvheadend.tvhclient.fileprovider", logFile);
+            File logFile = new File(getActivity().getCacheDir(), "logs/" + filename);
+            fileUri = FileProvider.getUriForFile(getActivity(), "org.tvheadend.tvhclient.fileprovider", logFile);
         } catch (IllegalArgumentException e) {
             // NOP
         }
@@ -223,11 +228,11 @@ public class SettingsAdvancedFragment extends BasePreferenceFragment implements 
     @Override
     public void onDatabaseCleared() {
         Timber.d("Database has been cleared, stopping service and restarting application");
-        activity.stopService(new Intent(activity, HtspService.class));
-        Intent intent = new Intent(activity, SplashActivity.class);
+        getActivity().stopService(new Intent(getActivity(), HtspService.class));
+        Intent intent = new Intent(getActivity(), SplashActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        activity.startActivity(intent);
-        activity.finish();
+        getActivity().startActivity(intent);
+        getActivity().finish();
     }
 
 
@@ -240,7 +245,7 @@ public class SettingsAdvancedFragment extends BasePreferenceFragment implements 
                 .onPositive((dialog, which) -> {
                     SearchRecentSuggestions suggestions = new SearchRecentSuggestions(getActivity(), SuggestionProvider.AUTHORITY, SuggestionProvider.MODE);
                     suggestions.clearHistory();
-                    SnackbarUtils.sendSnackbarMessage(activity, R.string.clear_search_history_done);
+                    SnackbarUtils.sendSnackbarMessage(getActivity(), R.string.clear_search_history_done);
                 }).show();
     }
 
@@ -254,7 +259,7 @@ public class SettingsAdvancedFragment extends BasePreferenceFragment implements 
                     // Delete all channel icon files that were downloaded for the active
                     // connection. Additionally remove the icons from the Picasso cache
                     Timber.d("Deleting channel icons and invalidating cache");
-                    for (Channel channel : appRepository.getChannelData().getItems()) {
+                    for (Channel channel : getAppRepository().getChannelData().getItems()) {
                         if (TextUtils.isEmpty(channel.getIcon())) {
                             continue;
                         }
@@ -267,7 +272,7 @@ public class SettingsAdvancedFragment extends BasePreferenceFragment implements 
                         }
                         Picasso.get().invalidate(file);
                     }
-                    SnackbarUtils.sendSnackbarMessage(activity, R.string.clear_icon_cache_done);
+                    SnackbarUtils.sendSnackbarMessage(getActivity(), R.string.clear_icon_cache_done);
 
                     Timber.d("Starting background worker to reload channel icons");
                     OneTimeWorkRequest loadChannelIcons = new OneTimeWorkRequest.Builder(LoadChannelIconWorker.class).build();
