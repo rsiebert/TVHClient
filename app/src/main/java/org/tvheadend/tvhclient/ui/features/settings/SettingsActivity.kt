@@ -86,9 +86,9 @@ class SettingsActivity : BaseActivity(), FolderChooserDialog.FolderCallback {
     }
 
     override fun onFolderSelection(dialog: FolderChooserDialog, folder: File) {
-        val f = supportFragmentManager.findFragmentById(R.id.main)
-        if (f != null && f.isAdded && f is FolderChooserDialogCallback) {
-            (f as FolderChooserDialogCallback).onFolderSelected(folder)
+        val fragment = supportFragmentManager.findFragmentById(R.id.main)
+        if (fragment is FolderChooserDialogCallback && fragment.isAdded) {
+            fragment.onFolderSelected(folder)
         }
     }
 
