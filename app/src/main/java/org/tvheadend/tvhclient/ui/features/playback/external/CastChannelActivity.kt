@@ -39,7 +39,7 @@ class CastChannelActivity : BasePlaybackActivity() {
             movieMetadata.addImage(WebImage(Uri.parse(iconUrl)))   // large background icon
         }
 
-        val castingProfileId = viewModel.serverStatus.castingServerProfileId
+        val castingProfileId = viewModel.serverStatus?.castingServerProfileId ?: 0
         if (castingProfileId == 0) {
             progressBar.visibility = View.GONE
             statusTextView.text = getString(R.string.error_starting_playback_no_profile)

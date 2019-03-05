@@ -36,7 +36,7 @@ class ExternalPlayerViewModel(application: Application) : AndroidViewModel(appli
     private val htspConnection: HtspConnection = HtspConnection(this, null)
 
     var connection: Connection? = null
-    var serverStatus: ServerStatus
+    var serverStatus: ServerStatus? = null
     var channel: Channel? = null
     var recording: Recording? = null
     private var path = ""
@@ -145,14 +145,20 @@ class ExternalPlayerViewModel(application: Application) : AndroidViewModel(appli
             baseUrl = "http://$hostname:${connection?.streamingPort}"
         }
 
-        if (!TextUtils.isEmpty(serverStatus.webroot)) {
-            baseUrl += serverStatus.webroot
+        if (!TextUtils.isEmpty(serverStatus?.webroot)) {
+            baseUrl += serverStatus?.webroot
         }
         return baseUrl
     }
 
     fun getPlaybackUrl(convertHostname: Boolean = false, profileId: Int = 0): String {
-        val serverProfile = if (profileId > 0) appRepository.serverProfileData.getItemById(profileId) else appRepository.serverProfileData.getItemById(serverStatus.httpPlaybackServerProfileId)
-        return "${getServerUrl(convertHostname)}$path?ticket=$ticket&profile=${serverProfile?.name}"
+        // If the server status is null, then use the default id of zero which will
+        // return a null server profile. In this case use the default profile 'pass'
+        val defaultProfile = appRepository.serverProfileData.getItemById(serverStatus?.httpPlaybackServerProfileId ?: 0)
+        val defaultProfileName = defaultProfile?.name ?: "pass"
+
+        // Get the playback profile for the given id. In case no profile is returned, use the default name
+        val serverProfile = appRepository.serverProfileData.getItemById(profileId)
+        return "${getServerUrl(convertHostname)}$path?ticket=$ticket&profile=${serverProfile?.name ?: defaultProfileName}"
     }
 }
