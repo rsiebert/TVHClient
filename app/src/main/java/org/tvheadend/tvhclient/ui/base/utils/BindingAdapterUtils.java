@@ -4,11 +4,13 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.SparseArray;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -33,6 +35,26 @@ public class BindingAdapterUtils {
     // Constants required for the date calculation
     private static final int TWO_DAYS = 1000 * 3600 * 24 * 2;
     private static final int SIX_DAYS = 1000 * 3600 * 24 * 6;
+
+    @BindingAdapter("marginStart")
+    public static void setLayoutWidth(View view, boolean increaseMargin) {
+        ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
+        if (layoutParams instanceof ViewGroup.MarginLayoutParams) {
+            int marginStart = (int) (increaseMargin ?
+                    view.getContext().getResources().getDimension(R.dimen.dp_80) :
+                    view.getContext().getResources().getDimension(R.dimen.dp_16));
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                ((ViewGroup.MarginLayoutParams) layoutParams).setMarginStart(marginStart);
+                view.setLayoutParams(layoutParams);
+            } else {
+                ((ViewGroup.MarginLayoutParams) layoutParams).setMargins(marginStart,
+                        ((ViewGroup.MarginLayoutParams) layoutParams).topMargin,
+                        ((ViewGroup.MarginLayoutParams) layoutParams).rightMargin,
+                        ((ViewGroup.MarginLayoutParams) layoutParams).bottomMargin);
+            }
+        }
+    }
 
     @BindingAdapter("layoutWidth")
     public static void setLayoutWidth(View view, int width) {

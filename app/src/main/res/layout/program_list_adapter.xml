@@ -84,16 +84,15 @@
             style="?attr/TitleFont"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
             android:ellipsize="end"
             android:text="@{program.title}"
             app:layout_constraintEnd_toStartOf="@+id/state"
-            app:layout_constraintStart_toEndOf="@+id/icon_text"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintStart_toEndOf="@+id/genre"
+            app:layout_constraintTop_toTopOf="parent"
+            app:marginStart="@{showProgramChannelIcon}" />
 
         <ImageView
             android:id="@+id/state"
@@ -113,59 +112,61 @@
             style="?attr/SubtitleFont"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
             android:ellipsize="end"
             android:singleLine="true"
             android:text="@{program.subtitle}"
             android:visibility="@{program.subtitle != null &amp;&amp; !program.subtitle.equals(program.title) ? View.VISIBLE : View.GONE}"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/icon_text"
-            app:layout_constraintTop_toBottomOf="@+id/title" />
+            app:layout_constraintStart_toEndOf="@+id/genre"
+            app:layout_constraintTop_toBottomOf="@+id/title"
+            app:marginStart="@{showProgramChannelIcon}" />
 
         <TextView
             android:id="@+id/summary"
             style="?attr/SubtitleFont"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
             android:ellipsize="end"
             android:singleLine="true"
             android:text="@{program.summary}"
             android:visibility="@{program.summary != null &amp;&amp; !program.summary.equals(program.subtitle) ? View.VISIBLE : View.GONE}"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/icon_text"
-            app:layout_constraintTop_toBottomOf="@+id/subtitle" />
+            app:layout_constraintStart_toEndOf="@+id/genre"
+            app:layout_constraintTop_toBottomOf="@+id/subtitle"
+            app:marginStart="@{showProgramChannelIcon}" />
 
         <TextView
             android:id="@+id/content_type"
             style="?attr/ContentFont"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
             android:singleLine="true"
             app:contentTypeText="@{program.contentType}"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/icon_text"
-            app:layout_constraintTop_toBottomOf="@+id/summary" />
+            app:layout_constraintStart_toEndOf="@+id/genre"
+            app:layout_constraintTop_toBottomOf="@+id/summary"
+            app:marginStart="@{showProgramChannelIcon}" />
 
         <TextView
             android:id="@+id/date"
             style="?attr/ContentFont"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:gravity="start"
             android:textAlignment="viewStart"
             app:dateText="@{program.start}"
             app:layout_constraintBottom_toTopOf="@+id/progress"
-            app:layout_constraintStart_toEndOf="@+id/icon_text"
-            app:layout_constraintTop_toBottomOf="@+id/content_type" />
+            app:layout_constraintStart_toEndOf="@+id/genre"
+            app:layout_constraintTop_toBottomOf="@+id/content_type"
+            app:marginStart="@{showProgramChannelIcon}" />
 
         <TextView
             android:id="@+id/start_time"
@@ -222,28 +223,30 @@
             style="?attr/ContentFont"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
             android:layout_marginBottom="8dp"
             android:singleLine="true"
             android:text="@{@string/progress(program.progress)}"
             android:visibility="@{program.progress > 0 ? View.VISIBLE : View.GONE}"
             app:layout_constraintBottom_toTopOf="@+id/series_info"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/icon_text" />
+            app:layout_constraintStart_toEndOf="@+id/genre"
+            app:marginStart="@{showProgramChannelIcon}" />
 
         <TextView
             android:id="@+id/series_info"
             style="?attr/ContentFont"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
             android:layout_marginBottom="8dp"
             android:ellipsize="end"
             app:layout_constraintBottom_toTopOf="@+id/description"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/icon_text"
+            app:layout_constraintStart_toEndOf="@+id/genre"
+            app:marginStart="@{showProgramChannelIcon}"
             app:seriesInfoText="@{program}" />
 
         <TextView
@@ -251,15 +254,15 @@
             style="?attr/ContentFont"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
             android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
             android:layout_marginBottom="16dp"
             android:ellipsize="end"
             android:maxLines="6"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/icon_text"
+            app:layout_constraintStart_toEndOf="@+id/genre"
+            app:marginStart="@{showProgramChannelIcon}"
             app:optionalText="@{program.description}" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
