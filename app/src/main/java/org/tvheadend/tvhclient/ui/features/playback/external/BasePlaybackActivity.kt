@@ -1,5 +1,6 @@
 package org.tvheadend.tvhclient.ui.features.playback.external
 
+import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
@@ -16,6 +17,7 @@ import com.afollestad.materialdialogs.MaterialDialog
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.data.repository.AppRepository
+import org.tvheadend.tvhclient.util.LocaleUtils
 import org.tvheadend.tvhclient.util.MiscUtils
 import timber.log.Timber
 import javax.inject.Inject
@@ -38,7 +40,6 @@ abstract class BasePlaybackActivity : AppCompatActivity() {
         setTheme(MiscUtils.getThemeId(this))
         super.onCreate(savedInstanceState)
         setContentView(R.layout.play_activity)
-        MiscUtils.setLanguage(this)
         MainApplication.getComponent().inject(this)
         ButterKnife.bind(this)
 
@@ -66,6 +67,10 @@ abstract class BasePlaybackActivity : AppCompatActivity() {
                 onTicketReceived()
             }
         })
+    }
+
+    override fun attachBaseContext(context: Context) {
+        super.attachBaseContext(LocaleUtils.onAttach(context))
     }
 
     protected abstract fun onTicketReceived()

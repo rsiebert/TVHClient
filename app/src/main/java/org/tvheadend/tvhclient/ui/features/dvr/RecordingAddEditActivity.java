@@ -22,7 +22,6 @@ public class RecordingAddEditActivity extends BaseActivity {
         setTheme(MiscUtils.getThemeId(this));
         super.onCreate(savedInstanceState);
         setContentView(R.layout.misc_content_activity);
-        MiscUtils.setLanguage(this);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

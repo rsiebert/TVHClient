@@ -1,6 +1,7 @@
 package org.tvheadend.tvhclient.ui.features.playback.internal
 
 import android.app.PictureInPictureParams
+import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.res.Configuration
@@ -33,6 +34,7 @@ import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.data.repository.AppRepository
 import org.tvheadend.tvhclient.ui.features.MainActivity
 import org.tvheadend.tvhclient.ui.features.playback.internal.utils.TrackSelectionHelper
+import org.tvheadend.tvhclient.util.LocaleUtils
 import org.tvheadend.tvhclient.util.MiscUtils
 import org.tvheadend.tvhclient.util.Rational
 import timber.log.Timber
@@ -91,7 +93,6 @@ class PlaybackActivity : AppCompatActivity(), PlayerControlView.VisibilityListen
         setTheme(MiscUtils.getThemeId(this))
         super.onCreate(savedInstanceState)
         setContentView(R.layout.player_overlay_view)
-        MiscUtils.setLanguage(this)
         Timber.d("Creating")
 
         MainApplication.getComponent().inject(this)
@@ -202,6 +203,10 @@ class PlaybackActivity : AppCompatActivity(), PlayerControlView.VisibilityListen
             Timber.d("Received remaining time $remainingTime")
             remainingTimeTextView.text = remainingTime
         })
+    }
+
+    override fun attachBaseContext(context: Context) {
+        super.attachBaseContext(LocaleUtils.onAttach(context))
     }
 
     override fun onNewIntent(intent: Intent) {

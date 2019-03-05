@@ -1,5 +1,6 @@
 package org.tvheadend.tvhclient.ui.features.startup;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import org.tvheadend.tvhclient.BuildConfig;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.ui.base.callbacks.BackPressedInterface;
 import org.tvheadend.tvhclient.ui.features.changelog.ChangeLogActivity;
+import org.tvheadend.tvhclient.util.LocaleUtils;
 import org.tvheadend.tvhclient.util.MiscUtils;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,7 +26,6 @@ public class StartupActivity extends AppCompatActivity {
         setTheme(MiscUtils.getThemeId(this));
         super.onCreate(savedInstanceState);
         setContentView(R.layout.misc_content_activity);
-        MiscUtils.setLanguage(this);
 
         if (savedInstanceState == null) {
             // Show the full changelog if the changelog was never shown before (app version
@@ -44,6 +45,11 @@ public class StartupActivity extends AppCompatActivity {
                 showStatusFragment = true;
             }
         }
+    }
+
+    @Override
+    protected void attachBaseContext(Context context) {
+        super.attachBaseContext(LocaleUtils.onAttach(context));
     }
 
     @Override

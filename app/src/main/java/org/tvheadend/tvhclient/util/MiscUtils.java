@@ -2,10 +2,6 @@ package org.tvheadend.tvhclient.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
-import android.content.res.Resources;
-import android.os.Build;
-import android.os.LocaleList;
 import android.preference.PreferenceManager;
 
 import com.google.android.gms.cast.framework.CastContext;
@@ -20,7 +16,6 @@ import org.tvheadend.tvhclient.domain.entity.ServerStatus;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
-import java.util.Locale;
 import java.util.TimeZone;
 
 import javax.annotation.Nullable;
@@ -73,42 +68,6 @@ public class MiscUtils {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         boolean theme = prefs.getBoolean("light_theme_enabled", true);
         return (theme ? R.style.CustomTheme_Light : R.style.CustomTheme);
-    }
-
-    /**
-     * Change the language to the defined setting. If the default is set then
-     * let the application decide which language shall be used.
-     *
-     * @param context Context context
-     */
-    public static void setLanguage(@NonNull final Context context) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        String language = prefs.getString("language", "default");
-
-        Resources resources = context.getResources();
-        Configuration configuration = resources.getConfiguration();
-        Locale newLocale = new Locale(language);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            configuration.setLocale(newLocale);
-            LocaleList localeList = new LocaleList(newLocale);
-            LocaleList.setDefault(localeList);
-            configuration.setLocales(localeList);
-            resources.updateConfiguration(configuration, resources.getDisplayMetrics());
-
-            Resources appResources = context.getApplicationContext().getResources();
-            Configuration appConfig = appResources.getConfiguration();
-            appConfig.setLocale(newLocale);
-            appResources.updateConfiguration(appConfig, appResources.getDisplayMetrics());
-
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            configuration.setLocale(newLocale);
-            context.createConfigurationContext(configuration);
-
-        } else {
-            configuration.locale = newLocale;
-            resources.updateConfiguration(configuration, resources.getDisplayMetrics());
-        }
     }
 
     public static boolean isServerProfileEnabled(ServerProfile serverProfile, @NonNull ServerStatus serverStatus) {

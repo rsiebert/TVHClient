@@ -95,9 +95,7 @@ public class MainActivity extends BaseActivity implements NavigationDrawerCallba
     public void onCreate(Bundle savedInstanceState) {
         setTheme(MiscUtils.getThemeId(this));
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.main_activity);
-        MiscUtils.setLanguage(this);
         ButterKnife.bind(this);
 
         MainApplication.getComponent().inject(this);

@@ -21,6 +21,7 @@ import org.tvheadend.tvhclient.di.modules.MainApplicationModule;
 import org.tvheadend.tvhclient.di.modules.RepositoryModule;
 import org.tvheadend.tvhclient.di.modules.SharedPreferencesModule;
 import org.tvheadend.tvhclient.ui.features.playback.external.ExpandedControlsActivity;
+import org.tvheadend.tvhclient.util.LocaleUtils;
 import org.tvheadend.tvhclient.util.MigrateUtils;
 import org.tvheadend.tvhclient.util.billing.BillingHandler;
 import org.tvheadend.tvhclient.util.billing.BillingManager;
@@ -118,6 +119,11 @@ public class MainApplication extends MultiDexApplication implements OptionsProvi
         // Migrates existing connections from the old database to the new room database.
         // Migrates existing preferences or remove old ones before starting the actual application
         new MigrateUtils().doMigrate();
+    }
+
+    @Override
+    protected void attachBaseContext(Context context) {
+        super.attachBaseContext(LocaleUtils.onAttach(context));
     }
 
     private MainApplicationComponent buildComponent() {

@@ -30,7 +30,6 @@ public class SettingsActivity extends BaseActivity implements FolderChooserDialo
         setTheme(MiscUtils.getThemeId(this));
         super.onCreate(savedInstanceState);
         setContentView(R.layout.misc_content_activity);
-        MiscUtils.setLanguage(this);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

@@ -18,7 +18,6 @@ public class ChangeLogActivity extends BaseActivity {
         setTheme(MiscUtils.getThemeId(this));
         super.onCreate(savedInstanceState);
         setContentView(R.layout.misc_content_activity);
-        MiscUtils.setLanguage(this);
 
         // Get the toolbar so that the fragments can set the title
         Toolbar toolbar = findViewById(R.id.toolbar);
