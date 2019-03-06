@@ -83,12 +83,18 @@ public class HtspService extends Service implements HtspConnectionStateListener,
     private boolean syncRequired;
     private boolean firstEventReceived = false;
     private int htspVersion = 13;
+    private ServerStatus serverStatus;
 
     @Override
     public void onCreate() {
         Timber.d("Starting service");
         MainApplication.getComponent().inject(this);
+
         execService = Executors.newScheduledThreadPool(10);
+        serverStatus = appRepository.getServerStatusData().getActiveItem();
+        if (serverStatus != null) {
+            htspVersion = serverStatus.getHtspVersion();
+        }
     }
 
     @Override
@@ -362,8 +368,6 @@ public class HtspService extends Service implements HtspConnectionStateListener,
     private void startAsyncCommunicationWithServer() {
         Timber.d("Starting async communication with server");
 
-        htspVersion = appRepository.getServerStatusData().getActiveItem().getHtspVersion();
-
         pendingChannelOps.clear();
         pendingChannelTagOps.clear();
         pendingRecordingOps.clear();
@@ -479,8 +483,8 @@ public class HtspService extends Service implements HtspConnectionStateListener,
         getDiscSpace();
         getSystemTime();
         getProfiles();
-        getHttpProfiles();
         getDvrConfigs();
+        getHttpProfiles();
 
         addMissingHtspPlaybackProfileIfNotExists("htsp");
         addMissingHttpPlaybackProfileIfNotExists("matroska");
@@ -493,66 +497,36 @@ public class HtspService extends Service implements HtspConnectionStateListener,
     private void getDiscSpace() {
         HtspMessage request = new HtspMessage();
         request.setMethod("getDiskSpace");
-        htspConnection.sendMessage(request, message -> {
-            ServerStatus serverStatus = appRepository.getServerStatusData().getActiveItem();
-            serverStatus.setFreeDiskSpace(message.getLong("freediskspace", 0));
-            serverStatus.setTotalDiskSpace(message.getLong("totaldiskspace", 0));
-            appRepository.getServerStatusData().updateItem(serverStatus);
-
-            Timber.d("Received disk space information from server " + serverStatus.getServerName()
-                    + ", free disk space: " + serverStatus.getFreeDiskSpace()
-                    + ", total disk space: " + serverStatus.getTotalDiskSpace());
-        });
+        htspConnection.sendMessage(request, this::onDiskSpace);
     }
 
     private void getSystemTime() {
         HtspMessage request = new HtspMessage();
         request.setMethod("getSysTime");
-        htspConnection.sendMessage(request, response -> {
-            if (response != null) {
-                onSystemTime(response);
-            } else {
-                Timber.d("Response is null");
-            }
-        });
+        htspConnection.sendMessage(request, this::onSystemTime);
     }
 
     private void getDvrConfigs() {
         HtspMessage request = new HtspMessage();
         request.setMethod("getDvrConfigs");
-        htspConnection.sendMessage(request, response -> {
-            if (response != null) {
-                onDvrConfigs(response);
-            } else {
-                Timber.d("Response is null");
-            }
-        });
+        htspConnection.sendMessage(request, this::onDvrConfigs);
     }
 
     private void getProfiles() {
         HtspMessage request = new HtspMessage();
         request.setMethod("getProfiles");
-        htspConnection.sendMessage(request, response -> {
-            if (response != null) {
-                onHtspProfiles(response);
-            } else {
-                Timber.d("Response is null");
-            }
-        });
+        htspConnection.sendMessage(request, this::onHtspProfiles);
     }
 
     private void getHttpProfiles() {
-        HtspMessage request = new HtspMessage();
-        request.setMethod("api");
-        request.put("path", "profile/list");
-
-        htspConnection.sendMessage(request, response -> {
-            if (response != null) {
-                onHttpProfiles(response);
-            } else {
-                Timber.d("Response is null");
-            }
-        });
+        if (htspVersion >= 26) {
+            HtspMessage request = new HtspMessage();
+            request.setMethod("api");
+            request.put("path", "profile/list");
+            htspConnection.sendMessage(request, this::onHttpProfiles);
+        } else {
+            Timber.d("Not requesting http profiles because the API version is too low");
+        }
     }
 
     @SuppressWarnings("SameParameterValue")
@@ -598,7 +572,11 @@ public class HtspService extends Service implements HtspConnectionStateListener,
 
     private void setDefaultProfileSelection() {
         Timber.d("Setting default profiles in case none are selected yet");
-        ServerStatus serverStatus = appRepository.getServerStatusData().getActiveItem();
+        if (serverStatus == null) {
+            Timber.d("Server status is null, can't set default profile selections");
+            return;
+        }
+
         if (serverStatus.getHtspPlaybackServerProfileId() == 0) {
             for (ServerProfile serverProfile : appRepository.getServerProfileData().getHtspPlaybackProfiles()) {
                 if (TextUtils.equals(serverProfile.getName(), ("htsp"))) {
@@ -1114,23 +1092,31 @@ public class HtspService extends Service implements HtspConnectionStateListener,
     }
 
     private void onSystemTime(HtspMessage message) {
+        if (serverStatus == null) {
+            Timber.d("Server status is null, can't update system time");
+            return;
+        }
+
         int gmtOffsetFromServer = message.getInteger("gmtoffset", 0) * 60 * 1000;
         int gmtOffset = gmtOffsetFromServer - MiscUtils.getDaylightSavingOffset();
         Timber.d("GMT offset from server is " + gmtOffsetFromServer +
                 ", GMT offset considering daylight saving offset is " + gmtOffset);
 
-        ServerStatus serverStatus = appRepository.getServerStatusData().getActiveItem();
-        serverStatus.setGmtoffset(gmtOffset);
-        serverStatus.setTime(message.getLong("time", 0));
-        appRepository.getServerStatusData().updateItem(serverStatus);
+            serverStatus.setGmtoffset(gmtOffset);
+            serverStatus.setTime(message.getLong("time", 0));
+            appRepository.getServerStatusData().updateItem(serverStatus);
 
-        Timber.d("Received system time from server " + serverStatus.getServerName()
-                + ", server time: " + serverStatus.getTime()
-                + ", server gmt offset: " + serverStatus.getGmtoffset());
+            Timber.d("Received system time from server " + serverStatus.getServerName()
+                    + ", server time: " + serverStatus.getTime()
+                    + ", server gmt offset: " + serverStatus.getGmtoffset());
     }
 
     private void onDiskSpace(HtspMessage message) {
-        ServerStatus serverStatus = appRepository.getServerStatusData().getActiveItem();
+        if (serverStatus == null) {
+            Timber.d("Server status is null, can't update disc space");
+            return;
+        }
+
         serverStatus.setFreeDiskSpace(message.getLong("freediskspace", 0));
         serverStatus.setTotalDiskSpace(message.getLong("totaldiskspace", 0));
         appRepository.getServerStatusData().updateItem(serverStatus);
