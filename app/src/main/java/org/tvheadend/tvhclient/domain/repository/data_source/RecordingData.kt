@@ -2,6 +2,7 @@ package org.tvheadend.tvhclient.domain.repository.data_source
 
 import android.os.AsyncTask
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import org.tvheadend.tvhclient.data.db.AppRoomDatabase
 import org.tvheadend.tvhclient.domain.entity.Recording
 import timber.log.Timber
@@ -47,7 +48,7 @@ class RecordingData(private val db: AppRoomDatabase) : DataSourceInterface<Recor
         return null
     }
 
-    override fun getLiveDataItems(): LiveData<List<Recording>>? {
+    override fun getLiveDataItems(): LiveData<List<Recording>> {
         return db.recordingDao.loadAllRecordings()
     }
 
@@ -59,23 +60,23 @@ class RecordingData(private val db: AppRoomDatabase) : DataSourceInterface<Recor
         return db.recordingDao.loadAllRecordingsByChannelId(channelId)
     }
 
-    fun getLiveDataItemsByType(type: String): LiveData<List<Recording>>? {
+    fun getLiveDataItemsByType(type: String): LiveData<List<Recording>> {
         return when (type) {
             "completed" -> db.recordingDao.loadAllCompletedRecordings()
             "scheduled" -> db.recordingDao.loadAllScheduledRecordings()
             "failed" -> db.recordingDao.loadAllFailedRecordings()
             "removed" -> db.recordingDao.loadAllRemovedRecordings()
-            else -> null
+            else -> MutableLiveData()
         }
     }
 
-    fun getLiveDataCountByType(type: String): LiveData<Int>? {
+    fun getLiveDataCountByType(type: String): LiveData<Int> {
         return when (type) {
             "completed" -> db.recordingDao.completedRecordingCount
             "scheduled" -> db.recordingDao.scheduledRecordingCount
             "failed" -> db.recordingDao.failedRecordingCount
             "removed" -> db.recordingDao.removedRecordingCount
-            else -> null
+            else -> MutableLiveData()
         }
     }
 

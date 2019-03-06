@@ -48,7 +48,7 @@ class ProgramData(private val db: AppRoomDatabase) : DataSourceInterface<Program
         AsyncTask.execute { db.programDao.deleteById(id) }
     }
 
-    override fun getLiveDataItemCount(): LiveData<Int>? {
+    override fun getLiveDataItemCount(): LiveData<Int> {
         return db.programDao.itemCount
     }
 

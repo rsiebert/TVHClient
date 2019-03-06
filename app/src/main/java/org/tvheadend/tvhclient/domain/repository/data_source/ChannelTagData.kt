@@ -10,7 +10,7 @@ import java.util.concurrent.ExecutionException
 
 class ChannelTagData(private val db: AppRoomDatabase) : DataSourceInterface<ChannelTag> {
 
-    val liveDataSelectedItemIds: LiveData<List<Int>>
+    val liveDataSelectedItemIds: LiveData<List<Int>?>
         get() = db.channelTagDao.loadAllSelectedItemIds()
 
     val itemCount: Int
@@ -60,7 +60,7 @@ class ChannelTagData(private val db: AppRoomDatabase) : DataSourceInterface<Chan
         return null
     }
 
-    override fun getLiveDataItems(): LiveData<List<ChannelTag>>? {
+    override fun getLiveDataItems(): LiveData<List<ChannelTag>> {
         return db.channelTagDao.loadAllChannelTags()
     }
 

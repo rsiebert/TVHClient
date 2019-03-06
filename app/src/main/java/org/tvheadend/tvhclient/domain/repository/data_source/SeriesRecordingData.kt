@@ -22,7 +22,7 @@ class SeriesRecordingData(private val db: AppRoomDatabase) : DataSourceInterface
         AsyncTask.execute { db.seriesRecordingDao.delete(item) }
     }
 
-    override fun getLiveDataItemCount(): LiveData<Int>? {
+    override fun getLiveDataItemCount(): LiveData<Int> {
         return db.seriesRecordingDao.recordingCount
     }
 

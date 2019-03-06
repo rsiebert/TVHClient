@@ -12,7 +12,7 @@ import java.util.concurrent.ExecutionException
 
 class ServerStatusData(private val db: AppRoomDatabase) : DataSourceInterface<ServerStatus> {
 
-    val liveDataActiveItem: LiveData<ServerStatus>?
+    val liveDataActiveItem: LiveData<ServerStatus>
         get() = db.serverStatusDao.loadActiveServerStatus()
 
     val activeItem: ServerStatus?

@@ -1,14 +1,12 @@
 package org.tvheadend.tvhclient.domain.repository.data_source
 
 import android.os.AsyncTask
-
+import androidx.lifecycle.LiveData
 import org.tvheadend.tvhclient.data.db.AppRoomDatabase
 import org.tvheadend.tvhclient.domain.entity.TimerRecording
-
-import java.util.ArrayList
-import java.util.concurrent.ExecutionException
-import androidx.lifecycle.LiveData
 import timber.log.Timber
+import java.util.*
+import java.util.concurrent.ExecutionException
 
 class TimerRecordingData(private val db: AppRoomDatabase) : DataSourceInterface<TimerRecording> {
 
@@ -24,7 +22,7 @@ class TimerRecordingData(private val db: AppRoomDatabase) : DataSourceInterface<
         AsyncTask.execute { db.timerRecordingDao.delete(item) }
     }
 
-    override fun getLiveDataItemCount(): LiveData<Int>? {
+    override fun getLiveDataItemCount(): LiveData<Int> {
         return db.timerRecordingDao.recordingCount
     }
 
