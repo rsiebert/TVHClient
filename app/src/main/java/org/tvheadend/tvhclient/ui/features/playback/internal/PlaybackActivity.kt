@@ -229,7 +229,7 @@ class PlaybackActivity : AppCompatActivity(), PlayerControlView.VisibilityListen
         viewModel.play()
     }
 
-    override fun onConfigurationChanged(newConfig: Configuration?) {
+    override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         Timber.d("Configuration changed")
         val ratio = selectedVideoAspectRatio
