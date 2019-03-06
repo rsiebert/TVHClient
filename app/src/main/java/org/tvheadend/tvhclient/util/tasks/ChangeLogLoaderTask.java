@@ -10,13 +10,13 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.ref.WeakReference;
 
 public class ChangeLogLoaderTask extends AsyncTask<Boolean, Void, String> {
 
     private final String lastAppVersion;
-    private final WeakReference<Context> context;
     private final HtmlFileLoaderTask.Listener callback;
+    private final InputStream inputStream;
+    private final boolean isLightTheme;
     private ListMode listMode = ListMode.NONE;
     private StringBuffer stringBuffer = null;
 
@@ -26,18 +26,15 @@ public class ChangeLogLoaderTask extends AsyncTask<Boolean, Void, String> {
     }
 
     public ChangeLogLoaderTask(Context context, String lastAppVersion, HtmlFileLoaderTask.Listener callback) {
-        this.context = new WeakReference<>(context);
+        this.isLightTheme = MiscUtils.getThemeId(context) == R.style.CustomTheme_Light;
+        this.inputStream = context.getResources().openRawResource(R.raw.changelog);
         this.lastAppVersion = lastAppVersion;
         this.callback = callback;
     }
 
     @Override
     protected String doInBackground(Boolean... showFullChangeLog) {
-        Context ctx = context.get();
-        if (ctx != null) {
-            return getChangeLogFromFile(ctx, showFullChangeLog[0]);
-        }
-        return null;
+        return getChangeLogFromFile(showFullChangeLog[0]);
     }
 
     @Override
@@ -45,11 +42,11 @@ public class ChangeLogLoaderTask extends AsyncTask<Boolean, Void, String> {
         callback.onFileContentsLoaded(content);
     }
 
-    private String getChangeLogFromFile(Context context, boolean full) {
+    private String getChangeLogFromFile(boolean full) {
         // Add the style sheet depending on the used theme
         stringBuffer = new StringBuffer();
         stringBuffer.append("<html><head>");
-        if (MiscUtils.getThemeId(context) == R.style.CustomTheme_Light) {
+        if (isLightTheme) {
             stringBuffer.append("<link href=\"html/styles_light.css\" type=\"text/css\" rel=\"stylesheet\"/>");
         } else {
             stringBuffer.append("<link href=\"html/styles_dark.css\" type=\"text/css\" rel=\"stylesheet\"/>");
@@ -58,7 +55,6 @@ public class ChangeLogLoaderTask extends AsyncTask<Boolean, Void, String> {
 
         // read changelog.txt file
         try {
-            InputStream inputStream = context.getResources().openRawResource(R.raw.changelog);
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
             String line;
             // if true: ignore further version sections
