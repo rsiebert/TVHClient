@@ -1,27 +1,30 @@
 package org.tvheadend.tvhclient.ui.features.startup
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.text.TextUtils
-import androidx.appcompat.app.AppCompatActivity
 import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.R
+import org.tvheadend.tvhclient.ui.base.BaseActivity
 import org.tvheadend.tvhclient.ui.base.callbacks.BackPressedInterface
 import org.tvheadend.tvhclient.ui.features.changelog.ChangeLogActivity
-import org.tvheadend.tvhclient.util.LocaleUtils
 import org.tvheadend.tvhclient.util.MiscUtils
 import timber.log.Timber
 
-class StartupActivity : AppCompatActivity() {
+class StartupActivity : BaseActivity() {
+
     private var showStatusFragment = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(MiscUtils.getThemeId(this))
         super.onCreate(savedInstanceState)
         setContentView(R.layout.misc_content_activity)
+
+        // Get the toolbar so that the fragments can set the title
+        setSupportActionBar(findViewById(R.id.toolbar))
+        supportActionBar?.setDisplayHomeAsUpEnabled(false)
 
         if (savedInstanceState == null) {
             // Show the full changelog if the changelog was never shown before (app version
@@ -41,10 +44,6 @@ class StartupActivity : AppCompatActivity() {
                 showStatusFragment = true
             }
         }
-    }
-
-    override fun attachBaseContext(context: Context) {
-        super.attachBaseContext(LocaleUtils.onAttach(context))
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
