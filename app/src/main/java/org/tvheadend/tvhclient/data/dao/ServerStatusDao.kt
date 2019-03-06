@@ -10,16 +10,10 @@ interface ServerStatusDao {
     @Query("DELETE FROM server_status WHERE connection_id = :id")
     fun deleteByConnectionId(id: Int)
 
-    @Query("SELECT s.*, " +
-            "c.name AS connection_name " +
-            "FROM server_status AS s " +
-            "JOIN connections AS c ON c.id = s.connection_id AND c.active = 1")
-    fun loadActiveServerStatusSync(): ServerStatus?
+    @Query("$SERVER_STATUS_BASE_QUERY WHERE $CONNECTION_IS_ACTIVE")
+    fun loadActiveServerStatusSync(): ServerStatus
 
-    @Query("SELECT s.*, " +
-            "c.name AS connection_name " +
-            "FROM server_status AS s " +
-            "JOIN connections AS c ON c.id = s.connection_id AND c.active = 1")
+    @Query("$SERVER_STATUS_BASE_QUERY WHERE $CONNECTION_IS_ACTIVE")
     fun loadActiveServerStatus(): LiveData<ServerStatus>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -34,17 +28,19 @@ interface ServerStatusDao {
     @Query("DELETE FROM server_status")
     fun deleteAll()
 
-    @Query("SELECT s.*, " +
-            "c.name AS connection_name " +
-            "FROM server_status AS s " +
-            "LEFT JOIN connections AS c ON c.id = s.connection_id " +
-            "WHERE s.connection_id = :id")
+    @Query("$SERVER_STATUS_BASE_QUERY WHERE s.connection_id = :id")
     fun loadServerStatusByIdSync(id: Int): ServerStatus
 
-    @Query("SELECT s.*, " +
-            "c.name AS connection_name " +
-            "FROM server_status AS s " +
-            "LEFT JOIN connections AS c ON c.id = s.connection_id " +
-            "WHERE s.connection_id = :id")
+    @Query("$SERVER_STATUS_BASE_QUERY WHERE s.connection_id = :id")
     fun loadServerStatusById(id: Int): LiveData<ServerStatus>
+
+    companion object {
+
+        const val SERVER_STATUS_BASE_QUERY = "SELECT DISTINCT s.*, " +
+                "c.name AS connection_name " +
+                "FROM server_status AS s " +
+                "LEFT JOIN connections AS c ON c.id = s.connection_id "
+
+        const val CONNECTION_IS_ACTIVE = " s.connection_id IN (SELECT id FROM connections WHERE active = 1) "
+    }
 }
