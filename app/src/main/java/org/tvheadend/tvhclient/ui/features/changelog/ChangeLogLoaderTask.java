@@ -1,10 +1,11 @@
-package org.tvheadend.tvhclient.util.tasks;
+package org.tvheadend.tvhclient.ui.features.changelog;
 
 import android.content.Context;
 import android.os.AsyncTask;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.util.MiscUtils;
+import org.tvheadend.tvhclient.util.tasks.HtmlFileLoaderTask;
 
 import java.io.BufferedReader;
 import java.io.IOException;
