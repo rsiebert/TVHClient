@@ -226,13 +226,13 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.program_list_options_menu, menu);
     }
 
     @Override
-    public void onPrepareOptionsMenu(Menu menu) {
+    public void onPrepareOptionsMenu(@NonNull Menu menu) {
         // Hide the genre color menu in dual pane mode or if no genre colors shall be shown
         final boolean showGenreColors = sharedPreferences.getBoolean("genre_colors_for_programs_enabled",
                 activity.getResources().getBoolean(R.bool.pref_default_genre_colors_for_programs_enabled));
