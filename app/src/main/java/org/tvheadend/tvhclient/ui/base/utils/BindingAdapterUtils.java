@@ -640,10 +640,10 @@ public class BindingAdapterUtils {
 
                 // Get the color with the desired alpha value
                 int c = context.getResources().getColor(color);
-                int alpha = (int) (((float) sharedPreferences.getInt("genre_color_transparency", Integer.valueOf(view.getContext().getResources().getString(R.string.pref_default_genre_color_transparency))) / 100.0f * 255.0f));
-                int reducedOffset = ((offset - 25 > 0) ? offset - 25 : offset);
-                if (alpha >= reducedOffset) {
-                    alpha -= reducedOffset;
+                int transparencyValue = sharedPreferences.getInt("genre_color_transparency", Integer.valueOf(view.getContext().getResources().getString(R.string.pref_default_genre_color_transparency)));
+                int alpha = (int) (((float) (transparencyValue - offset)) / 100.0f * 255.0f);
+                if (alpha < 0) {
+                    alpha = 0;
                 }
                 color = Color.argb(alpha, Color.red(c), Color.green(c), Color.blue(c));
             }
