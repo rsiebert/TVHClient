@@ -21,8 +21,7 @@ class ConnectionViewModel(application: Application) : AndroidViewModel(applicati
 
     val activeConnectionId: Int
         get() {
-            val connection = appRepository.connectionData.activeItem
-            return connection?.id ?: -1
+            return appRepository.connectionData.activeItem.id
         }
 
     var connectionHasChanged: Boolean
