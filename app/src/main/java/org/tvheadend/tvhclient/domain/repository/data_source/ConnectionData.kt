@@ -11,17 +11,22 @@ import java.util.concurrent.ExecutionException
 
 class ConnectionData(private val db: AppRoomDatabase) : DataSourceInterface<Connection> {
 
-    val activeItem: Connection?
+    val activeItem: Connection
         get() {
             try {
-                return ConnectionByIdTask(db).execute().get()
+                return ConnectionByIdTask(db).execute().get() ?: Connection().also { it.id = -1 }
             } catch (e: InterruptedException) {
                 Timber.d("Loading active connection task got interrupted", e)
             } catch (e: ExecutionException) {
                 Timber.d("Loading active connection task aborted", e)
             }
+            return Connection().also { it.id = -1 }
+        }
 
-            return null
+    val activeItemId: Int
+        get() {
+            val connection = activeItem
+            return connection.id
         }
 
     override fun addItem(item: Connection) {
@@ -91,7 +96,7 @@ class ConnectionData(private val db: AppRoomDatabase) : DataSourceInterface<Conn
         return connections
     }
 
-    internal class ConnectionByIdTask : AsyncTask<Void, Void, Connection> {
+    internal class ConnectionByIdTask : AsyncTask<Void, Void, Connection?> {
         private val db: AppRoomDatabase
         private val id: Int
 
