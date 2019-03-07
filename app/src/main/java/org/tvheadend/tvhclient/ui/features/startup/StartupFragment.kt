@@ -94,7 +94,7 @@ class StartupFragment : Fragment() {
                 addConnectionButton.visibility = View.VISIBLE
                 addConnectionButton.setOnClickListener { showSettingsAddNewConnection() }
             }
-            appRepository.connectionData.activeItem == null -> {
+            appRepository.connectionData.activeItemId == -1 -> {
                 Timber.d("No active connection available, showing settings button")
                 stateText = getString(R.string.no_connection_active_advice)
                 progressBar.visibility = View.INVISIBLE
@@ -116,6 +116,12 @@ class StartupFragment : Fragment() {
         handleStartupProcedure()
     }
 
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        super.onPrepareOptionsMenu(menu)
+        // Do not show the reconnect menu in case no connections are available or none is active
+        menu.findItem(R.id.menu_refresh).isVisible = (appRepository.connectionData.activeItemId >= 0)
+    }
+
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.startup_options_menu, menu)
@@ -128,7 +134,10 @@ class StartupFragment : Fragment() {
                 true
             }
             R.id.menu_refresh -> {
-                MenuUtils(activity!!).handleMenuReconnectSelection()
+                val currentActivity = activity
+                if (currentActivity != null) {
+                    MenuUtils(currentActivity).handleMenuReconnectSelection()
+                }
                 true
             }
             else -> super.onOptionsItemSelected(item)
