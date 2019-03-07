@@ -9,6 +9,7 @@ import android.text.TextUtils
 import androidx.core.app.JobIntentService
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import org.tvheadend.tvhclient.MainApplication
+import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.data.repository.AppRepository
 import org.tvheadend.tvhclient.data.service.htsp.HtspConnection
 import org.tvheadend.tvhclient.data.service.htsp.HtspConnectionStateListener
@@ -29,7 +30,7 @@ class HtspIntentService : JobIntentService(), HtspConnectionStateListener {
 
     private val execService: ScheduledExecutorService
     private var htspConnection: HtspConnection
-    private var connection: Connection? = null
+    private var connection: Connection
     private val htspVersion: Int
 
     @Inject
@@ -45,8 +46,15 @@ class HtspIntentService : JobIntentService(), HtspConnectionStateListener {
         MainApplication.getComponent().inject(this)
         execService = Executors.newScheduledThreadPool(10)
         connection = appRepository.connectionData.activeItem
+
         htspVersion = appRepository.serverStatusData.activeItem?.htspVersion ?: 13
-        htspConnection = HtspConnection(this, null)
+        val connectionTimeout = Integer.valueOf(sharedPreferences.getString("connection_timeout", resources.getString(R.string.pref_default_connection_timeout))!!) * 1000
+        htspConnection = HtspConnection(
+                connection.username, connection.password,
+                connection.hostname, connection.port,
+                connectionTimeout,
+                this, null)
+
         // Since this is blocking, spawn to a new thread
         execService.execute {
             htspConnection.openConnection()
@@ -87,7 +95,6 @@ class HtspIntentService : JobIntentService(), HtspConnectionStateListener {
         Timber.d("Stopping service")
         execService.shutdown()
         htspConnection.closeConnection()
-        connection = null
     }
 
     override fun onAuthenticationStateChange(state: HtspConnection.AuthenticationState) {
@@ -114,7 +121,7 @@ class HtspIntentService : JobIntentService(), HtspConnectionStateListener {
             for (obj in message.getList("events")) {
                 val msg = obj as HtspMessage
                 val program = HtspUtils.convertMessageToProgramModel(Program(), msg)
-                program.connectionId = connection!!.id
+                program.connectionId = connection.id
 
                 programs.add(program)
             }

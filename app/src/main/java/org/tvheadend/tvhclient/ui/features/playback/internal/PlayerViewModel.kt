@@ -40,7 +40,7 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
 
     // Connection related
     private val execService: ScheduledExecutorService = Executors.newScheduledThreadPool(10)
-    private val htspConnection: HtspConnection = HtspConnection(this, null)
+    private val htspConnection: HtspConnection
     private var htspSubscriptionDataSourceFactory: HtspSubscriptionDataSource.Factory? = null
     private var htspFileInputStreamDataSourceFactory: HtspFileInputStreamDataSource.Factory? = null
     private var dataSource: HtspDataSourceInterface? = null
@@ -82,6 +82,16 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
         playerState.postValue(Player.STATE_IDLE)
 
         Timber.d("Starting connection")
+        val connection = appRepository.connectionData.activeItem
+        val connectionTimeout = Integer.valueOf(sharedPreferences.getString("connection_timeout", application.resources.getString(R.string.pref_default_connection_timeout))!!) * 1000
+        htspConnection = HtspConnection(
+                connection.username ?: "",
+                connection.password ?: "",
+                connection.hostname ?: "",
+                connection.port,
+                connectionTimeout,
+                this, null)
+
         execService.execute {
             htspConnection.openConnection()
             htspConnection.authenticate()

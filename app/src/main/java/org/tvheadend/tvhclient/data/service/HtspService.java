@@ -84,6 +84,7 @@ public class HtspService extends Service implements HtspConnectionStateListener,
     private boolean firstEventReceived = false;
     private int htspVersion = 13;
     private ServerStatus serverStatus;
+    private int connectionTimeout;
 
     @Override
     public void onCreate() {
@@ -95,6 +96,9 @@ public class HtspService extends Service implements HtspConnectionStateListener,
         if (serverStatus != null) {
             htspVersion = serverStatus.getHtspVersion();
         }
+        //noinspection ConstantConditions
+        connectionTimeout = Integer.valueOf(sharedPreferences.getString("connection_timeout", getResources().getString(R.string.pref_default_connection_timeout))) * 1000;
+        connection = appRepository.getConnectionData().getActiveItem();
     }
 
     @Override
@@ -195,13 +199,18 @@ public class HtspService extends Service implements HtspConnectionStateListener,
 
     private void startHtspConnection() {
         stopHtspConnection();
-        connection = appRepository.getConnectionData().getActiveItem();
-        htspConnection = new HtspConnection(this, this);
-        // Since this is blocking, spawn to a new thread
-        execService.execute(() -> {
-            htspConnection.openConnection();
-            htspConnection.authenticate();
-        });
+        if (connection != null) {
+            htspConnection = new HtspConnection(
+                    connection.getUsername(), connection.getPassword(),
+                    connection.getHostname(), connection.getPort(),
+                    connectionTimeout,
+                    this, this);
+            // Since this is blocking, spawn to a new thread
+            execService.execute(() -> {
+                htspConnection.openConnection();
+                htspConnection.authenticate();
+            });
+        }
     }
 
     private void stopHtspConnection() {
@@ -287,6 +296,9 @@ public class HtspService extends Service implements HtspConnectionStateListener,
                 break;
             case "getEvents":
                 onGetEvents(message, new Intent());
+                break;
+            case "serverStatus":
+                onServerStatus(message);
                 break;
             default:
                 break;
@@ -1091,6 +1103,19 @@ public class HtspService extends Service implements HtspConnectionStateListener,
         }
     }
 
+    private void onServerStatus(HtspMessage message) {
+        if (serverStatus == null) {
+            Timber.d("Server status is null, can't update server status");
+            return;
+        }
+        ServerStatus updatedServerStatus = HtspUtils.convertMessageToServerStatusModel(serverStatus, message);
+        updatedServerStatus.setConnectionId(connection.getId());
+        updatedServerStatus.setConnectionName(connection.getName());
+        Timber.d("Received initial response from server " + updatedServerStatus.getServerName() + ", api version: " + updatedServerStatus.getHtspVersion());
+
+        appRepository.getServerStatusData().updateItem(updatedServerStatus);
+    }
+
     private void onSystemTime(HtspMessage message) {
         if (serverStatus == null) {
             Timber.d("Server status is null, can't update system time");
@@ -1102,13 +1127,13 @@ public class HtspService extends Service implements HtspConnectionStateListener,
         Timber.d("GMT offset from server is " + gmtOffsetFromServer +
                 ", GMT offset considering daylight saving offset is " + gmtOffset);
 
-            serverStatus.setGmtoffset(gmtOffset);
-            serverStatus.setTime(message.getLong("time", 0));
-            appRepository.getServerStatusData().updateItem(serverStatus);
+        serverStatus.setGmtoffset(gmtOffset);
+        serverStatus.setTime(message.getLong("time", 0));
+        appRepository.getServerStatusData().updateItem(serverStatus);
 
-            Timber.d("Received system time from server " + serverStatus.getServerName()
-                    + ", server time: " + serverStatus.getTime()
-                    + ", server gmt offset: " + serverStatus.getGmtoffset());
+        Timber.d("Received system time from server " + serverStatus.getServerName()
+                + ", server time: " + serverStatus.getTime()
+                + ", server gmt offset: " + serverStatus.getGmtoffset());
     }
 
     private void onDiskSpace(HtspMessage message) {
