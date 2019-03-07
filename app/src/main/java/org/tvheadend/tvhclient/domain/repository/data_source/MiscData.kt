@@ -45,13 +45,11 @@ class MiscData(private val db: AppRoomDatabase) {
                 db.connectionDao.update(connection)
 
                 val serverStatus = db.serverStatusDao.loadServerStatusByIdSync(connection.id)
-                if (serverStatus != null) {
-                    serverStatus.htspPlaybackServerProfileId = 0
-                    serverStatus.httpPlaybackServerProfileId = 0
-                    serverStatus.castingServerProfileId = 0
-                    serverStatus.recordingServerProfileId = 0
-                    db.serverStatusDao.update(serverStatus)
-                }
+                serverStatus.htspPlaybackServerProfileId = 0
+                serverStatus.httpPlaybackServerProfileId = 0
+                serverStatus.castingServerProfileId = 0
+                serverStatus.recordingServerProfileId = 0
+                db.serverStatusDao.update(serverStatus)
             }
             return null
         }
