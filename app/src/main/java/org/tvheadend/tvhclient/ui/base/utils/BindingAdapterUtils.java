@@ -2,6 +2,7 @@ package org.tvheadend.tvhclient.ui.base.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Transformation;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.domain.entity.Program;
@@ -353,8 +355,31 @@ public class BindingAdapterUtils {
         if (TextUtils.isEmpty(url)) {
             view.setVisibility(View.GONE);
         } else {
+
+            Transformation transformation = new Transformation() {
+
+                @Override
+                public Bitmap transform(Bitmap source) {
+                    int targetWidth = view.getWidth();
+                    double aspectRatio = (double) source.getHeight() / (double) source.getWidth();
+                    int targetHeight = (int) (targetWidth * aspectRatio);
+                    Bitmap result = Bitmap.createScaledBitmap(source, targetWidth, targetHeight, false);
+                    if (result != source) {
+                        // Same bitmap is returned if sizes are the same
+                        source.recycle();
+                    }
+                    return result;
+                }
+
+                @Override
+                public String key() {
+                    return "transformation" + " desiredWidth";
+                }
+            };
+
             Picasso.get()
                     .load(url)
+                    .transform(transformation)
                     .into(view, new Callback() {
                         @Override
                         public void onSuccess() {
