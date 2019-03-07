@@ -1,16 +1,8 @@
 package org.tvheadend.tvhclient.data.service.htsp;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.util.SparseArray;
 
 import org.tvheadend.tvhclient.BuildConfig;
-import org.tvheadend.tvhclient.MainApplication;
-import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.data.repository.AppRepository;
-import org.tvheadend.tvhclient.data.service.HtspUtils;
-import org.tvheadend.tvhclient.domain.entity.Connection;
-import org.tvheadend.tvhclient.domain.entity.ServerStatus;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -34,7 +26,6 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
 
 import androidx.annotation.NonNull;
 import timber.log.Timber;
@@ -43,14 +34,11 @@ import timber.log.Timber;
 
 public class HtspConnection extends Thread {
 
-    @Inject
-    protected Context context;
-    @Inject
-    protected AppRepository appRepository;
-    @Inject
-    protected SharedPreferences sharedPreferences;
+    private final String username;
+    private final String password;
+    private final String hostname;
+    private final int port;
 
-    private final Connection connection;
     private volatile boolean isRunning;
     private final Lock lock;
     private SocketChannel socketChannel;
@@ -94,13 +82,19 @@ public class HtspConnection extends Thread {
         FAILED_EXCEPTION_OPENING_SOCKET
     }
 
-    public HtspConnection(@NonNull HtspConnectionStateListener connectionListener, @Nullable HtspMessageListener messageListener) {
+    public HtspConnection(@Nullable String username, @Nullable String password,
+                          @Nullable String hostname, int port,
+                          int connectionTimeout,
+                          @NonNull HtspConnectionStateListener connectionListener,
+                          @Nullable HtspMessageListener messageListener) {
         Timber.d("Initializing HTSP connection thread");
-        MainApplication.getComponent().inject(this);
 
-        //noinspection ConstantConditions
-        this.connectionTimeout = Integer.valueOf(sharedPreferences.getString("connection_timeout", context.getResources().getString(R.string.pref_default_connection_timeout))) * 1000;
-        this.connection = appRepository.getConnectionData().getActiveItem();
+        this.username = username != null ? username : "";
+        this.password = password != null ? password : "";
+        this.hostname = hostname != null ? hostname : "";
+        this.port = port;
+        this.connectionTimeout = connectionTimeout;
+
         this.isRunning = false;
         this.lock = new ReentrantLock();
         this.inputByteBuffer = ByteBuffer.allocateDirect(2048 * 2048);
@@ -135,8 +129,8 @@ public class HtspConnection extends Thread {
             socketChannel.socket().setSoTimeout(connectionTimeout);
             socketChannel.register(selector, SelectionKey.OP_CONNECT, signal);
 
-            Timber.d("Connecting via socket to " + connection.getHostname() + ":" + connection.getPort());
-            socketChannel.connect(new InetSocketAddress(connection.getHostname(), connection.getPort()));
+            Timber.d("Connecting via socket to " + hostname + ":" + port);
+            socketChannel.connect(new InetSocketAddress(hostname, port));
 
             Timber.d("HTSP Connection thread can be started");
             isRunning = true;
@@ -198,7 +192,7 @@ public class HtspConnection extends Thread {
 
         final HtspMessage authMessage = new HtspMessage();
         authMessage.setMethod("authenticate");
-        authMessage.put("username", connection.getUsername());
+        authMessage.put("username", username);
 
         final HtspResponseListener authHandler = response -> {
             isAuthenticated = response.getInteger("noaccess", 0) != 1;
@@ -219,23 +213,19 @@ public class HtspConnection extends Thread {
         helloMessage.put("clientname", "TVHClient");
         helloMessage.put("clientversion", (BuildConfig.VERSION_NAME + "-" + BuildConfig.VERSION_CODE));
         helloMessage.put("htspversion", HtspMessage.HTSP_VERSION);
-        helloMessage.put("username", connection.getUsername());
+        helloMessage.put("username", username);
 
         sendMessage(helloMessage, response -> {
 
-            // TODO move this conversion out of here
-            ServerStatus serverStatus = appRepository.getServerStatusData().getActiveItem();
-            ServerStatus updatedServerStatus = HtspUtils.convertMessageToServerStatusModel(serverStatus, response);
-            updatedServerStatus.setConnectionId(connection.getId());
-            updatedServerStatus.setConnectionName(connection.getName());
-            Timber.d("Received initial response from server " + updatedServerStatus.getServerName() + ", api version: " + updatedServerStatus.getHtspVersion());
-
-            appRepository.getServerStatusData().updateItem(updatedServerStatus);
+            response.setMethod("");
+            for (HtspMessageListener listener : messageListeners) {
+                listener.onMessage(response);
+            }
 
             MessageDigest md;
             try {
                 md = MessageDigest.getInstance("SHA1");
-                md.update(connection.getPassword() != null ? connection.getPassword().getBytes() : "".getBytes());
+                md.update(password.getBytes());
                 md.update(response.getByteArray("challenge"));
 
                 Timber.d("Sending authentication message");
@@ -259,7 +249,11 @@ public class HtspConnection extends Thread {
         }
     }
 
-    public void sendMessage(HtspMessage message, HtspResponseListener listener) {
+    public void sendMessage(@NonNull HtspMessage message) {
+        sendMessage(message, null);
+    }
+
+    public void sendMessage(@NonNull HtspMessage message, @Nullable HtspResponseListener listener) {
         if (isNotConnected()) {
             Timber.d("Not sending message, not connected to server");
             return;

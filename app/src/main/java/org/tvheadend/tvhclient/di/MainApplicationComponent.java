@@ -7,7 +7,6 @@ import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.data.service.HtspIntentService;
 import org.tvheadend.tvhclient.data.service.HtspService;
-import org.tvheadend.tvhclient.data.service.htsp.HtspConnection;
 import org.tvheadend.tvhclient.di.modules.MainApplicationModule;
 import org.tvheadend.tvhclient.di.modules.RepositoryModule;
 import org.tvheadend.tvhclient.di.modules.SharedPreferencesModule;
@@ -86,8 +85,6 @@ public interface MainApplicationComponent {
     void inject(BaseChannelViewModel baseChannelViewModel);
 
     void inject(HtspService htspService);
-
-    void inject(HtspConnection htspConnection);
 
     void inject(HtspIntentService htspIntentService);
 
