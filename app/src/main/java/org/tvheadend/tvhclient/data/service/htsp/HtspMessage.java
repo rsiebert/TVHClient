@@ -10,8 +10,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-// TODO provide an interface to access the message from outside this package
-
 public class HtspMessage extends HashMap<String, Object> {
 
     private static final long serialVersionUID = 1L;
@@ -286,6 +284,7 @@ public class HtspMessage extends HashMap<String, Object> {
         ByteBuffer buf = ByteBuffer.allocate(Short.MAX_VALUE);
 
         for (Object key : map.keySet()) {
+            //noinspection SuspiciousMethodCalls
             Object value = map.get(key);
             byte[] sub = serializeBinary(key.toString(), value);
             buf.put(sub);
