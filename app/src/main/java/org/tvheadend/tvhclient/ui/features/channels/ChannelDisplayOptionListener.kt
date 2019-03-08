@@ -1,22 +1,20 @@
-package org.tvheadend.tvhclient.ui.features.channels;
+package org.tvheadend.tvhclient.ui.features.channels
 
-import java.util.Set;
-
-public interface ChannelDisplayOptionListener {
+interface ChannelDisplayOptionListener {
 
     /**
      * Called when the user has chosen a new channel sort order from the list.
      *
      * @param id The id of the new sort order
      */
-    void onChannelSortOrderSelected(int id);
+    fun onChannelSortOrderSelected(id: Int)
 
     /**
      * Called when the user has chosen one or more channel tags from the list.
      *
      * @param ids The ids of the selected channel tags
      */
-    void onChannelTagIdsSelected(Set<Integer> ids);
+    fun onChannelTagIdsSelected(ids: Set<Int>)
 
     /**
      * Called when a new time was selected from the time selection dialog.
@@ -25,5 +23,5 @@ public interface ChannelDisplayOptionListener {
      *
      * @param which The position in the list
      */
-    void onTimeSelected(int which);
+    fun onTimeSelected(which: Int)
 }

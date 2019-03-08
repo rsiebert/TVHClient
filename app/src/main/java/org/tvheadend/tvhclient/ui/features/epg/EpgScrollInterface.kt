@@ -1,6 +1,6 @@
-package org.tvheadend.tvhclient.ui.features.epg;
+package org.tvheadend.tvhclient.ui.features.epg
 
-interface EpgScrollInterface {
+internal interface EpgScrollInterface {
 
     /**
      * To keep two list views synchronized both lists need to be scrolled.
@@ -11,7 +11,7 @@ interface EpgScrollInterface {
      * @param position The first visible position of the list
      * @param offset The position in pixels from the top of the first item
      */
-    void onScroll(final int position, final int offset);
+    fun onScroll(position: Int, offset: Int)
 
     /**
      * When the user has scrolled the visible program guide fragment, the other
@@ -20,5 +20,5 @@ interface EpgScrollInterface {
      * view pager. To do this go through all program guide fragments that the
      * view pager contains and set the scrolling position.
      */
-    void onScrollStateChanged();
+    fun onScrollStateChanged()
 }
