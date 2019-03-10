@@ -97,8 +97,7 @@ public class HtspService extends Service implements HtspConnectionStateListener,
             htspVersion = serverStatus.getHtspVersion();
         }
         //noinspection ConstantConditions
-        connectionTimeout = Integer.valueOf(sharedPreferences.getString("connection_timeout", getResources().getString(R.string.pref_default_connection_timeout))) * 1000;
-        connection = appRepository.getConnectionData().getActiveItem();
+        connectionTimeout = Integer.valueOf(sharedPreferences.getString("connection_timeout", appContext.getResources().getString(R.string.pref_default_connection_timeout))) * 1000;
     }
 
     @Override
@@ -198,27 +197,29 @@ public class HtspService extends Service implements HtspConnectionStateListener,
     }
 
     private void startHtspConnection() {
+        Timber.d("Starting connection");
         stopHtspConnection();
-        if (connection != null) {
-            htspConnection = new HtspConnection(
-                    connection.getUsername(), connection.getPassword(),
-                    connection.getHostname(), connection.getPort(),
-                    connectionTimeout,
-                    this, this);
-            // Since this is blocking, spawn to a new thread
-            execService.execute(() -> {
-                htspConnection.openConnection();
-                htspConnection.authenticate();
-            });
-        }
+
+        connection = appRepository.getConnectionData().getActiveItem();
+
+        htspConnection = new HtspConnection(
+                connection.getUsername(), connection.getPassword(),
+                connection.getHostname(), connection.getPort(),
+                connectionTimeout,
+                this, this);
+        // Since this is blocking, spawn to a new thread
+        execService.execute(() -> {
+            htspConnection.openConnection();
+            htspConnection.authenticate();
+        });
     }
 
     private void stopHtspConnection() {
+        Timber.d("Stopping connection");
         if (htspConnection != null) {
             htspConnection.closeConnection();
             htspConnection = null;
         }
-        connection = null;
     }
 
     @Override
@@ -391,7 +392,7 @@ public class HtspService extends Service implements HtspConnectionStateListener,
         enableAsyncMetadataRequest.setMethod("enableAsyncMetadata");
 
         //noinspection ConstantConditions
-        long epgMaxTime = Long.parseLong(sharedPreferences.getString("epg_max_time", getResources().getString(R.string.pref_default_epg_max_time)));
+        long epgMaxTime = Long.parseLong(sharedPreferences.getString("epg_max_time", appContext.getResources().getString(R.string.pref_default_epg_max_time)));
         long currentTimeInSeconds = (System.currentTimeMillis() / 1000L);
         long lastUpdateTime = connection.getLastUpdate();
 
@@ -801,7 +802,7 @@ public class HtspService extends Service implements HtspConnectionStateListener,
         appRepository.getRecordingData().updateItem(updatedRecording);
 
         NotificationUtils.removeNotificationById(appContext, recording.getId());
-        if (sharedPreferences.getBoolean("notifications_enabled", getResources().getBoolean(R.bool.pref_default_notifications_enabled))) {
+        if (sharedPreferences.getBoolean("notifications_enabled", appContext.getResources().getBoolean(R.bool.pref_default_notifications_enabled))) {
             if (!recording.isScheduled() && !recording.isRecording()) {
                 Timber.d("Removing notification for recording " + recording.getTitle());
                 ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).cancel(recording.getId());
@@ -1298,7 +1299,7 @@ public class HtspService extends Service implements HtspConnectionStateListener,
             is = new HtspFileInputStream(htspConnection, url);
         }
 
-        float scale = getResources().getDisplayMetrics().density;
+        float scale = appContext.getResources().getDisplayMetrics().density;
         int width = (int) (64 * scale);
         int height = (int) (64 * scale);
 
