@@ -34,6 +34,8 @@ class HtspIntentService : JobIntentService(), HtspConnectionStateListener {
     private val htspVersion: Int
 
     @Inject
+    lateinit var appContext: Context
+    @Inject
     lateinit var appRepository: AppRepository
     @Inject
     lateinit var sharedPreferences: SharedPreferences
@@ -48,7 +50,7 @@ class HtspIntentService : JobIntentService(), HtspConnectionStateListener {
         connection = appRepository.connectionData.activeItem
 
         htspVersion = appRepository.serverStatusData.activeItem?.htspVersion ?: 13
-        val connectionTimeout = Integer.valueOf(sharedPreferences.getString("connection_timeout", resources.getString(R.string.pref_default_connection_timeout))!!) * 1000
+        val connectionTimeout = Integer.valueOf(sharedPreferences.getString("connection_timeout", appContext.resources.getString(R.string.pref_default_connection_timeout))!!) * 1000
         htspConnection = HtspConnection(
                 connection.username, connection.password,
                 connection.hostname, connection.port,
