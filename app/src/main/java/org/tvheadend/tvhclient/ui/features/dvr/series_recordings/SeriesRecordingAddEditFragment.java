@@ -119,12 +119,12 @@ public class SeriesRecordingAddEditFragment extends BaseFragment implements Back
         channelList = appRepository.getChannelData().getItems();
 
         if (savedInstanceState != null) {
-            id = savedInstanceState.getString("id");
+            id = savedInstanceState.getString("id", "");
             recordingProfileNameId = savedInstanceState.getInt("configName");
         } else {
             Bundle bundle = getArguments();
             if (bundle != null) {
-                id = bundle.getString("id");
+                id = bundle.getString("id", "");
             }
         }
 
