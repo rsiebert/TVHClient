@@ -25,6 +25,7 @@ import org.tvheadend.tvhclient.util.tasks.WakeOnLanTask;
 
 import javax.inject.Inject;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.ListFragment;
 import androidx.lifecycle.ViewModelProviders;
@@ -72,7 +73,7 @@ public class SettingsListConnectionsFragment extends ListFragment implements Bac
     }
 
     @Override
-    public void onListItemClick(ListView l, View v, int position, long id) {
+    public void onListItemClick(@NonNull ListView l, @NonNull View v, int position, long id) {
         if (actionMode == null) {
             getListView().setItemChecked(position, true);
             getListView().setSelected(true);
@@ -88,13 +89,13 @@ public class SettingsListConnectionsFragment extends ListFragment implements Bac
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.connection_add_options_menu, menu);
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_add:
                 Intent intent = new Intent(activity, SettingsActivity.class);

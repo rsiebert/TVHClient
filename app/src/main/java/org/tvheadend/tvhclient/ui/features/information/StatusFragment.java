@@ -81,19 +81,22 @@ public class StatusFragment extends BaseFragment {
         toolbarInterface.setTitle(getString(R.string.status));
         toolbarInterface.setSubtitle("");
 
-        showConnection();
+        connection = appRepository.getConnectionData().getActiveItem();
+        String text = connection.getName() + " (" + connection.getHostname() + ")";
+        connectionTextView.setText(text);
+
         showRecordings();
         showAdditionalInformation();
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.status_options_menu, menu);
     }
 
     @Override
-    public void onPrepareOptionsMenu(Menu menu) {
+    public void onPrepareOptionsMenu(@NonNull Menu menu) {
         super.onPrepareOptionsMenu(menu);
         if (isUnlocked && connection != null && connection.isWolEnabled()) {
             menu.findItem(R.id.menu_wol).setVisible(true);
@@ -118,24 +121,6 @@ public class StatusFragment extends BaseFragment {
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
-        }
-    }
-
-    /**
-     * Shows the name and address of a connection, otherwise shows an
-     * information that no connection is selected or available.
-     */
-    private void showConnection() {
-        connection = appRepository.getConnectionData().getActiveItem();
-        if (connection == null) {
-            if (appRepository.getConnectionData().getItems().isEmpty()) {
-                connectionTextView.setText(R.string.no_connection_available_advice);
-            } else {
-                connectionTextView.setText(R.string.no_connection_active_advice);
-            }
-        } else {
-            String text = connection.getName() + " (" + connection.getHostname() + ")";
-            connectionTextView.setText(text);
         }
     }
 

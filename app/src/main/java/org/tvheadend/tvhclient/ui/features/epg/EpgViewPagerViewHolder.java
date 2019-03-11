@@ -64,7 +64,7 @@ public class EpgViewPagerViewHolder extends RecyclerView.ViewHolder {
 
         execService.execute(() -> {
             List<EpgProgram> programs = viewModel.getProgramsByChannelAndBetweenTimeSync(epgChannel.getId(), startTime, endTime);
-            if (programs != null && programs.size() > 0) {
+            if (programs.size() > 0) {
                 Timber.d("Loaded " + programs.size() + " programs for channel " + epgChannel.getName());
                 activity.runOnUiThread(() -> {
                     recyclerViewAdapter.addItems(programs);

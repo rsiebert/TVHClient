@@ -17,10 +17,10 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.domain.entity.SeriesRecording;
 import org.tvheadend.tvhclient.ui.base.BaseFragment;
 import org.tvheadend.tvhclient.ui.base.callbacks.RecyclerViewClickCallback;
-import org.tvheadend.tvhclient.util.menu.PopupMenuUtil;
-import org.tvheadend.tvhclient.util.menu.SearchMenuUtils;
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity;
 import org.tvheadend.tvhclient.ui.features.search.SearchRequestInterface;
+import org.tvheadend.tvhclient.util.menu.PopupMenuUtil;
+import org.tvheadend.tvhclient.util.menu.SearchMenuUtils;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -144,13 +144,13 @@ public class SeriesRecordingListFragment extends BaseFragment implements Recycle
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.recording_list_options_menu, menu);
     }
 
     @Override
-    public void onPrepareOptionsMenu(Menu menu) {
+    public void onPrepareOptionsMenu(@NonNull Menu menu) {
         super.onPrepareOptionsMenu(menu);
         if (sharedPreferences.getBoolean("delete_all_recordings_menu_enabled",
                 activity.getResources().getBoolean(R.bool.pref_default_delete_all_recordings_menu_enabled))
@@ -228,12 +228,12 @@ public class SeriesRecordingListFragment extends BaseFragment implements Recycle
     }
 
     @Override
-    public void onClick(View view, int position) {
+    public void onClick(@NonNull View view, int position) {
         showRecordingDetails(position);
     }
 
     @Override
-    public boolean onLongClick(View view, int position) {
+    public boolean onLongClick(@NonNull View view, int position) {
         showPopupMenu(view, position);
         return true;
     }
@@ -252,7 +252,7 @@ public class SeriesRecordingListFragment extends BaseFragment implements Recycle
     }
 
     @Override
-    public void onSearchRequested(String query) {
+    public void onSearchRequested(@NonNull String query) {
         searchQuery = query;
         recyclerViewAdapter.getFilter().filter(query, this);
     }
@@ -268,6 +268,7 @@ public class SeriesRecordingListFragment extends BaseFragment implements Recycle
         }
     }
 
+    @NonNull
     @Override
     public String getQueryHint() {
         return getString(R.string.search_series_recordings);

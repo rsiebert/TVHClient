@@ -28,6 +28,7 @@ import org.tvheadend.tvhclient.ui.base.utils.SnackbarUtils;
 
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import androidx.preference.ListPreference;
 
 public class SettingsProfilesFragment extends BasePreferenceFragment implements BackPressedInterface {
@@ -49,10 +50,10 @@ public class SettingsProfilesFragment extends BasePreferenceFragment implements 
         getToolbarInterface().setTitle(getString(R.string.pref_profiles));
         getToolbarInterface().setSubtitle(connection.getName());
 
-        htspPlaybackProfilesPreference = (ListPreference) findPreference("htsp_playback_profiles");
-        httpPlaybackProfilesPreference = (ListPreference) findPreference("http_playback_profiles");
-        recordingProfilesPreference = (ListPreference) findPreference("recording_profiles");
-        castingProfilesPreference = (ListPreference) findPreference("casting_profiles");
+        htspPlaybackProfilesPreference = findPreference("htsp_playback_profiles");
+        httpPlaybackProfilesPreference = findPreference("http_playback_profiles");
+        recordingProfilesPreference = findPreference("recording_profiles");
+        castingProfilesPreference = findPreference("casting_profiles");
 
         if (savedInstanceState != null) {
             htspPlaybackServerProfileId = savedInstanceState.getInt("htsp_playback_profile_id");
@@ -156,7 +157,7 @@ public class SettingsProfilesFragment extends BasePreferenceFragment implements 
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         outState.putInt("htsp_playback_profile_id", htspPlaybackServerProfileId);
         outState.putInt("http_playback_profile_id", httpPlaybackServerProfileId);
         outState.putInt("recording_profile_id", recordingServerProfileId);

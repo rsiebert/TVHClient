@@ -155,7 +155,7 @@ class EpgProgramListRecyclerViewAdapter extends RecyclerView.Adapter<EpgProgramL
     }
 
     @Override
-    public void onClick(View view, int position) {
+    public void onClick(@NonNull View view, int position) {
         AppCompatActivity activity = getActivity(view);
         EpgProgram program = getItem(position);
         if (program == null || activity == null) {
@@ -171,7 +171,7 @@ class EpgProgramListRecyclerViewAdapter extends RecyclerView.Adapter<EpgProgramL
     }
 
     @Override
-    public boolean onLongClick(View view, int position) {
+    public boolean onLongClick(@NonNull View view, int position) {
         AppCompatActivity activity = getActivity(view);
         EpgProgram program = getItem(position);
         if (program == null || activity == null) {

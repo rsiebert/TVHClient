@@ -71,7 +71,7 @@ public class ChannelTagSelectionAdapter extends RecyclerView.Adapter<ChannelTagS
         return isMultiChoice ? R.layout.channeltag_list_multiple_choice_adapter : R.layout.channeltag_list_single_choice_adapter;
     }
 
-    public Set<Integer> getSelectedTagIds() {
+    Set<Integer> getSelectedTagIds() {
         return selectedChannelTagIds;
     }
 

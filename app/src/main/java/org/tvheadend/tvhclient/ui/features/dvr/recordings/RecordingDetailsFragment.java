@@ -96,7 +96,7 @@ public class RecordingDetailsFragment extends BaseFragment implements RecordingR
     }
 
     @Override
-    public void onPrepareOptionsMenu(Menu menu) {
+    public void onPrepareOptionsMenu(@NonNull Menu menu) {
         if (recording == null) {
             return;
         }
@@ -139,7 +139,7 @@ public class RecordingDetailsFragment extends BaseFragment implements RecordingR
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.external_search_options_menu, menu);
         nestedToolbar.inflateMenu(R.menu.recording_details_toolbar_menu);

@@ -145,13 +145,13 @@ public class TimerRecordingListFragment extends BaseFragment implements Recycler
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.recording_list_options_menu, menu);
     }
 
     @Override
-    public void onPrepareOptionsMenu(Menu menu) {
+    public void onPrepareOptionsMenu(@NonNull Menu menu) {
         super.onPrepareOptionsMenu(menu);
         if (sharedPreferences.getBoolean("delete_all_recordings_menu_enabled",
                 activity.getResources().getBoolean(R.bool.pref_default_delete_all_recordings_menu_enabled))
@@ -227,12 +227,12 @@ public class TimerRecordingListFragment extends BaseFragment implements Recycler
     }
 
     @Override
-    public void onClick(View view, int position) {
+    public void onClick(@NonNull View view, int position) {
         showRecordingDetails(position);
     }
 
     @Override
-    public boolean onLongClick(View view, int position) {
+    public boolean onLongClick(@NonNull View view, int position) {
         showPopupMenu(view, position);
         return true;
     }
@@ -251,7 +251,7 @@ public class TimerRecordingListFragment extends BaseFragment implements Recycler
     }
 
     @Override
-    public void onSearchRequested(String query) {
+    public void onSearchRequested(@NonNull String query) {
         searchQuery = query;
         recyclerViewAdapter.getFilter().filter(query, this);
     }
@@ -267,6 +267,7 @@ public class TimerRecordingListFragment extends BaseFragment implements Recycler
         }
     }
 
+    @NonNull
     @Override
     public String getQueryHint() {
         return getString(R.string.search_timer_recordings);

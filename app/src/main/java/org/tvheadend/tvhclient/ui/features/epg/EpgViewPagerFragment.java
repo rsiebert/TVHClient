@@ -14,8 +14,6 @@ import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.databinding.EpgViewpagerFragmentBinding;
 
-import java.util.Calendar;
-
 import javax.inject.Inject;
 
 import androidx.annotation.NonNull;

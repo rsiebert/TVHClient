@@ -231,13 +231,13 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.channel_list_options_menu, menu);
     }
 
     @Override
-    public void onPrepareOptionsMenu(Menu menu) {
+    public void onPrepareOptionsMenu(@NonNull Menu menu) {
         final boolean showGenreColors = sharedPreferences.getBoolean("genre_colors_for_channels_enabled", getResources().getBoolean(R.bool.pref_default_genre_colors_for_channels_enabled));
         final boolean showChannelTagMenu = sharedPreferences.getBoolean("channel_tag_menu_enabled", getResources().getBoolean(R.bool.pref_default_channel_tag_menu_enabled));
 
@@ -284,7 +284,7 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
     }
 
     @Override
-    public void onChannelTagIdsSelected(Set<Integer> ids) {
+    public void onChannelTagIdsSelected(@NonNull Set<Integer> ids) {
         channelListRecyclerView.setVisibility(View.GONE);
         programViewPager.setVisibility(View.GONE);
         progressBar.setVisibility(View.VISIBLE);
@@ -297,7 +297,7 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
     }
 
     @Override
-    public void onClick(View view, int position) {
+    public void onClick(@NonNull View view, int position) {
         if (view.getId() == R.id.icon || view.getId() == R.id.icon_text) {
             if (isNetworkAvailable) {
                 EpgChannel channel = channelListRecyclerViewAdapter.getItem(position);
@@ -307,7 +307,7 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
     }
 
     @Override
-    public boolean onLongClick(View view, int position) {
+    public boolean onLongClick(@NonNull View view, int position) {
         // NOP
         return true;
     }
@@ -471,7 +471,7 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
     }
 
     @Override
-    public void onSearchRequested(String query) {
+    public void onSearchRequested(@NonNull String query) {
         // Start searching for programs on all channels
         Intent searchIntent = new Intent(activity, SearchActivity.class);
         searchIntent.putExtra(SearchManager.QUERY, query);
@@ -485,6 +485,7 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
         return false;
     }
 
+    @NonNull
     @Override
     public String getQueryHint() {
         return getString(R.string.search_program_guide);
@@ -506,6 +507,7 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
             this.searchQuery = searchQuery;
         }
 
+        @NonNull
         @Override
         public Fragment getItem(int position) {
             boolean showTimeIndication = (position == 0);

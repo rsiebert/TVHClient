@@ -9,14 +9,15 @@ import android.widget.LinearLayout;
 
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.domain.entity.ServerStatus;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
+import org.tvheadend.tvhclient.domain.entity.ServerStatus;
 import org.tvheadend.tvhclient.ui.base.callbacks.NetworkStatusListener;
 import org.tvheadend.tvhclient.ui.base.callbacks.ToolbarInterface;
 import org.tvheadend.tvhclient.util.menu.MenuUtils;
 
 import javax.inject.Inject;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
@@ -80,7 +81,7 @@ public abstract class BaseFragment extends Fragment implements NetworkStatusList
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 activity.finish();

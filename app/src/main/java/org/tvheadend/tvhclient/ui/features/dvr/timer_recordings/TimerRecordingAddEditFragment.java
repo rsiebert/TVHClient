@@ -172,7 +172,7 @@ public class TimerRecordingAddEditFragment extends BaseFragment implements BackP
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.save_cancel_options_menu, menu);
     }
@@ -272,7 +272,7 @@ public class TimerRecordingAddEditFragment extends BaseFragment implements BackP
     }
 
     @Override
-    public void onChannelSelected(Channel channel) {
+    public void onChannelSelected(@NonNull Channel channel) {
         recording.setChannelId(channel.getId());
         channelNameTextView.setText(channel.getName());
     }

@@ -116,13 +116,13 @@ public class RecordingListFragment extends BaseFragment implements RecyclerViewC
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.recording_list_options_menu, menu);
     }
 
     @Override
-    public void onPrepareOptionsMenu(Menu menu) {
+    public void onPrepareOptionsMenu(@NonNull Menu menu) {
         super.onPrepareOptionsMenu(menu);
         if (sharedPreferences.getBoolean("delete_all_recordings_menu_enabled",
                 activity.getResources().getBoolean(R.bool.pref_default_delete_all_recordings_menu_enabled))
@@ -237,7 +237,7 @@ public class RecordingListFragment extends BaseFragment implements RecyclerViewC
     }
 
     @Override
-    public void onClick(View view, int position) {
+    public void onClick(@NonNull View view, int position) {
         selectedListPosition = position;
         if (view.getId() == R.id.icon || view.getId() == R.id.icon_text) {
             if (recyclerViewAdapter.getItemCount() > 0) {
@@ -250,7 +250,7 @@ public class RecordingListFragment extends BaseFragment implements RecyclerViewC
     }
 
     @Override
-    public boolean onLongClick(View view, int position) {
+    public boolean onLongClick(@NonNull View view, int position) {
         showPopupMenu(view, position);
         return true;
     }

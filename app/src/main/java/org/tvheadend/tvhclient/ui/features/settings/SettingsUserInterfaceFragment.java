@@ -43,11 +43,11 @@ public class SettingsUserInterfaceFragment extends BasePreferenceFragment implem
         getToolbarInterface().setTitle(getString(R.string.pref_user_interface));
         getToolbarInterface().setSubtitle("");
 
-        programArtworkEnabledPreference = (CheckBoxPreference) findPreference("program_artwork_enabled");
+        programArtworkEnabledPreference = findPreference("program_artwork_enabled");
         programArtworkEnabledPreference.setOnPreferenceClickListener(this);
-        castMiniControllerPreference = (CheckBoxPreference) findPreference("casting_minicontroller_enabled");
+        castMiniControllerPreference = findPreference("casting_minicontroller_enabled");
         castMiniControllerPreference.setOnPreferenceClickListener(this);
-        multipleChannelTagsPreference = (CheckBoxPreference) findPreference("multiple_channel_tags_enabled");
+        multipleChannelTagsPreference = findPreference("multiple_channel_tags_enabled");
         multipleChannelTagsPreference.setOnPreferenceClickListener(this);
     }
 

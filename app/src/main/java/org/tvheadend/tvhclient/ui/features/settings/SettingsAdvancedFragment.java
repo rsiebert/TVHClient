@@ -117,11 +117,10 @@ public class SettingsAdvancedFragment extends BasePreferenceFragment implements 
 
                     // Update the connection with the information that a new sync is required.
                     Connection connection = getAppRepository().getConnectionData().getActiveItem();
-                    if (connection != null) {
-                        connection.setSyncRequired(true);
-                        connection.setLastUpdate(0);
-                        getAppRepository().getConnectionData().updateItem(connection);
-                    }
+                    connection.setSyncRequired(true);
+                    connection.setLastUpdate(0);
+                    getAppRepository().getConnectionData().updateItem(connection);
+
                     // Clear the database contents, when done the callback
                     // is triggered which will restart the application
                     getAppRepository().getMiscData().clearDatabase(getActivity(), SettingsAdvancedFragment.this);

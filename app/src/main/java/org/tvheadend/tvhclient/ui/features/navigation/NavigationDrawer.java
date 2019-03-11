@@ -199,8 +199,6 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
             for (Connection c : connectionList) {
                 headerResult.addProfiles(
                         new CustomProfileDrawerItem()
-                                .withEmailShown(true)
-                                .withNameShown(true)
                                 .withIdentifier(c.getId())
                                 .withName(c.getName())
                                 .withEmail(c.getHostname()));

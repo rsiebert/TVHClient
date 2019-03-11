@@ -136,7 +136,7 @@ public class ProgramDetailsFragment extends BaseFragment {
     }
 
     @Override
-    public void onPrepareOptionsMenu(Menu menu) {
+    public void onPrepareOptionsMenu(@NonNull Menu menu) {
         // Show or hide search menu items in the main toolbar
         PopupMenuUtil.prepareSearchMenu(menu, program.getTitle(), isNetworkAvailable);
         // Show or hide menus of the nested toolbar
@@ -151,7 +151,7 @@ public class ProgramDetailsFragment extends BaseFragment {
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.external_search_options_menu, menu);
         nestedToolbar.inflateMenu(R.menu.program_popup_and_toolbar_menu);

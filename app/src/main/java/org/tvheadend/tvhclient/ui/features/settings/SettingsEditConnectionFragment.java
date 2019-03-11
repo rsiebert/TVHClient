@@ -1,6 +1,8 @@
 package org.tvheadend.tvhclient.ui.features.settings;
 
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import org.tvheadend.tvhclient.R;
@@ -36,7 +38,7 @@ public class SettingsEditConnectionFragment extends SettingsConnectionBaseFragme
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         outState.putInt("connection_id", connectionId);
         outState.putBoolean("connection_values_changed", connectionValuesChanged);
         super.onSaveInstanceState(outState);

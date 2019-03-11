@@ -346,7 +346,7 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
     }
 
     @Override
-    public void onSearchRequested(String query) {
+    public void onSearchRequested(@NonNull String query) {
         recyclerViewAdapter.getFilter().filter(query, this);
     }
 
@@ -361,6 +361,7 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
         }
     }
 
+    @NonNull
     @Override
     public String getQueryHint() {
         return getString(R.string.search_programs);
@@ -404,12 +405,12 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
     }
 
     @Override
-    public void onClick(View view, int position) {
+    public void onClick(@NonNull View view, int position) {
         showProgramDetails(position);
     }
 
     @Override
-    public boolean onLongClick(View view, int position) {
+    public boolean onLongClick(@NonNull View view, int position) {
         showPopupMenu(view, position);
         return true;
     }

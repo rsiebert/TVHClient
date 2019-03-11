@@ -22,16 +22,15 @@ import org.tvheadend.tvhclient.domain.entity.Program;
 import org.tvheadend.tvhclient.domain.entity.Recording;
 import org.tvheadend.tvhclient.ui.base.BaseFragment;
 import org.tvheadend.tvhclient.ui.base.callbacks.RecyclerViewClickCallback;
-import org.tvheadend.tvhclient.util.menu.PopupMenuUtil;
-import org.tvheadend.tvhclient.util.menu.SearchMenuUtils;
 import org.tvheadend.tvhclient.ui.features.dialogs.ChannelTagSelectionDialog;
 import org.tvheadend.tvhclient.ui.features.dialogs.GenreColorDialog;
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity;
 import org.tvheadend.tvhclient.ui.features.programs.ProgramListFragment;
 import org.tvheadend.tvhclient.ui.features.search.SearchRequestInterface;
+import org.tvheadend.tvhclient.util.menu.PopupMenuUtil;
+import org.tvheadend.tvhclient.util.menu.SearchMenuUtils;
 import org.tvheadend.tvhclient.util.tasks.WakeOnLanTask;
 
-import java.util.Calendar;
 import java.util.List;
 import java.util.Set;
 
@@ -225,13 +224,13 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.channel_list_options_menu, menu);
     }
 
     @Override
-    public void onPrepareOptionsMenu(Menu menu) {
+    public void onPrepareOptionsMenu(@NonNull Menu menu) {
         final boolean showGenreColors = sharedPreferences.getBoolean("genre_colors_for_channels_enabled",
                 activity.getResources().getBoolean(R.bool.pref_default_genre_colors_for_channels_enabled));
         final boolean showChannelTagMenu = sharedPreferences.getBoolean("channel_tag_menu_enabled",
@@ -273,9 +272,7 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
 
             case R.id.menu_wol:
                 Connection connection = appRepository.getConnectionData().getActiveItem();
-                if (connection != null) {
-                    new WakeOnLanTask(activity, connection).execute();
-                }
+                new WakeOnLanTask(activity, connection).execute();
                 return true;
 
             default:
@@ -300,7 +297,7 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
     }
 
     @Override
-    public void onChannelTagIdsSelected(Set<Integer> ids) {
+    public void onChannelTagIdsSelected(@NonNull Set<Integer> ids) {
         if (recyclerView != null) {
             recyclerView.setVisibility(View.GONE);
         }
@@ -427,7 +424,7 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
     }
 
     @Override
-    public void onSearchRequested(String query) {
+    public void onSearchRequested(@NonNull String query) {
         searchQuery = query;
         recyclerViewAdapter.getFilter().filter(query, this);
     }
@@ -445,13 +442,14 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
         }
     }
 
+    @NonNull
     @Override
     public String getQueryHint() {
         return getString(R.string.search_channels);
     }
 
     @Override
-    public void onClick(View view, int position) {
+    public void onClick(@NonNull View view, int position) {
         //noinspection ConstantConditions
         if ((view.getId() == R.id.icon || view.getId() == R.id.icon_text)
                 && Integer.valueOf(sharedPreferences.getString("channel_icon_action", activity.getResources().getString(R.string.pref_default_channel_icon_action))) > 0
@@ -466,7 +464,7 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
     }
 
     @Override
-    public boolean onLongClick(View view, int position) {
+    public boolean onLongClick(@NonNull View view, int position) {
         showPopupMenu(view, position);
         return true;
     }
