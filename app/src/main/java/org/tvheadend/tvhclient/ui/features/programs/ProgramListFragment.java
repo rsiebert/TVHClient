@@ -251,7 +251,7 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_play:
                 menuUtils.handleMenuPlayChannel(channelId);

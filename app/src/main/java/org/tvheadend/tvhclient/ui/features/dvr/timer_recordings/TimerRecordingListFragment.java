@@ -127,7 +127,7 @@ public class TimerRecordingListFragment extends BaseFragment implements Recycler
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_add:
                 Intent intent = new Intent(activity, RecordingAddEditActivity.class);

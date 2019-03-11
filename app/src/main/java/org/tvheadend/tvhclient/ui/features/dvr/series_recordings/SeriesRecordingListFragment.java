@@ -126,7 +126,7 @@ public class SeriesRecordingListFragment extends BaseFragment implements Recycle
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_add:
                 Intent intent = new Intent(activity, RecordingAddEditActivity.class);

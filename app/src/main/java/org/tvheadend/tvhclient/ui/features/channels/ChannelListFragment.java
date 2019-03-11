@@ -256,7 +256,7 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_tags:
                 return ChannelTagSelectionDialog.showDialog(activity, channelTags, appRepository.getChannelData().getItems().size(), this);
