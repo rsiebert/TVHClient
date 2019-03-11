@@ -27,6 +27,10 @@ class TimerRecordingViewModel(application: Application) : AndroidViewModel(appli
     }
 
     fun getRecordingByIdSync(id: String): TimerRecording? {
-        return appRepository.timerRecordingData.getItemById(id)
+        return if (!id.isEmpty()) {
+            appRepository.timerRecordingData.getItemById(id)
+        } else {
+            TimerRecording()
+        }
     }
 }

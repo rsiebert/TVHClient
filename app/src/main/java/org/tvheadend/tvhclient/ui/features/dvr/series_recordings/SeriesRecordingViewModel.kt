@@ -27,6 +27,10 @@ class SeriesRecordingViewModel(application: Application) : AndroidViewModel(appl
     }
 
     fun getRecordingByIdSync(id: String): SeriesRecording? {
-        return appRepository.seriesRecordingData.getItemById(id)
+        return if (!id.isEmpty()) {
+            appRepository.seriesRecordingData.getItemById(id)
+        } else {
+            SeriesRecording()
+        }
     }
 }

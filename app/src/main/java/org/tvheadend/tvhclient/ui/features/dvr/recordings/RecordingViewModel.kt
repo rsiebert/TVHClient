@@ -42,6 +42,10 @@ class RecordingViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun getRecordingByIdSync(dvrId: Int): Recording? {
-        return appRepository.recordingData.getItemById(dvrId)
+        return if (dvrId > 0) {
+            appRepository.recordingData.getItemById(dvrId)
+        } else {
+            Recording()
+        }
     }
 }
