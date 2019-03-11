@@ -40,7 +40,7 @@ public class NotificationUtils {
         //noinspection ConstantConditions
         int offset = Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(context).getString("notification_lead_time", context.getResources().getString(R.string.pref_default_notification_lead_time)));
         long notificationTime = (startTime - (offset * 1000 * 60));
-        long currentTime = Calendar.getInstance().getTimeInMillis();
+        long currentTime = System.currentTimeMillis();
 
         Timber.d("Notification time is " + notificationTime + " ms, startTime is " + startTime + " ms, offset is " + offset + " minutes");
         return notificationTime - currentTime;
@@ -86,7 +86,7 @@ public class NotificationUtils {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         if (preferences.getBoolean("notifications_enabled", context.getResources().getBoolean(R.bool.pref_default_notifications_enabled))
                 && recording.isScheduled()
-                && recording.getStart() > Calendar.getInstance().getTimeInMillis()
+                && recording.getStart() > System.currentTimeMillis()
                 && !TextUtils.isEmpty(recording.getTitle())) {
 
             Data data = new Data.Builder()

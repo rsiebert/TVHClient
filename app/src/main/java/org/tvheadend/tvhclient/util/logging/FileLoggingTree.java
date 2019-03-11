@@ -25,7 +25,7 @@ public class FileLoggingTree extends BaseDebugTree {
     }
 
     private void removeLogFiles() {
-        final long currentTime = new Date().getTime();
+        final long currentTime = System.currentTimeMillis();
         final long sevenDays = 7 * 24 * 3600 * 1000;
 
         if (logPath.exists()) {
@@ -55,7 +55,7 @@ public class FileLoggingTree extends BaseDebugTree {
         file = new File(logPath, "tvhclient_" +
                 BuildConfig.VERSION_NAME + "_" +
                 BuildConfig.BUILD_VERSION + "_" +
-                simpleDateFormat.format(new Date().getTime()) + ".log");
+                simpleDateFormat.format(System.currentTimeMillis()) + ".log");
 
         try {
             if (file.createNewFile() || file.exists()) {

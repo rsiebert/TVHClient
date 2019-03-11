@@ -80,7 +80,7 @@ public class MenuUtils {
 
         // Set the time that shall be shown next in the dialog. This is the
         // current time plus the value of the intervalInHours in milliseconds
-        long timeInMillis = Calendar.getInstance().getTimeInMillis() + 1000 * 60 * 60 * intervalInHours;
+        long timeInMillis = System.currentTimeMillis() + 1000 * 60 * 60 * intervalInHours;
 
         // Add the date and time to the list. Remove Increase the time in
         // milliseconds for each iteration by the defined intervalInHours

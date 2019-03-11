@@ -278,7 +278,7 @@ public class ProgramGuideFragment extends BaseFragment implements EpgScrollInter
         // TODO check if this is required
         // Add the selected list index as extra hours to the current time.
         // If the first index was selected then use the current time.
-        long timeInMillis = Calendar.getInstance().getTimeInMillis();
+        long timeInMillis = System.currentTimeMillis();
         timeInMillis += (1000 * 60 * 60 * which * hoursToShow);
         viewModel.setSelectedTime(timeInMillis);
     }

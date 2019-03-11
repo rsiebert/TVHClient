@@ -214,7 +214,7 @@ public class EpgViewPagerFragment extends Fragment implements EpgScrollInterface
         // from this value in minutes the width in pixels. This will be horizontal offset
         // for the time indication. If channel icons are shown then we need to add a
         // the icon width to the offset.
-        final long currentTime = Calendar.getInstance().getTimeInMillis();
+        final long currentTime = System.currentTimeMillis();
         final long durationTime = (currentTime - startTime) / 1000 / 60;
         final int offset = (int) (durationTime * pixelsPerMinute);
 

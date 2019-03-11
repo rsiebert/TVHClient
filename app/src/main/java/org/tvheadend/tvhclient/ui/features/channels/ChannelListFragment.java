@@ -180,7 +180,7 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
         // Initiate a timer that will update the view model data every minute
         // so that the progress bars will be displayed correctly
         currentTimeUpdateTask = () -> {
-            long currentTime = Calendar.getInstance().getTimeInMillis();
+            long currentTime = System.currentTimeMillis();
             Timber.d("Checking if selected time " + selectedTime + " is past current time " + currentTime);
             if (selectedTime < currentTime) {
                 Timber.d("Updated selected time to current time");
@@ -294,7 +294,7 @@ public class ChannelListFragment extends BaseFragment implements RecyclerViewCli
         }
         // Add the selected list index as extra hours to the current time.
         // If the first index was selected then use the current time.
-        long timeInMillis = Calendar.getInstance().getTimeInMillis();
+        long timeInMillis = System.currentTimeMillis();
         timeInMillis += (1000 * 60 * 60 * which * intervalInHours);
         viewModel.setSelectedTime(timeInMillis);
     }

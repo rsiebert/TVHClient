@@ -21,15 +21,14 @@ import org.tvheadend.tvhclient.domain.entity.Program;
 import org.tvheadend.tvhclient.domain.entity.Recording;
 import org.tvheadend.tvhclient.ui.base.BaseFragment;
 import org.tvheadend.tvhclient.ui.base.callbacks.RecyclerViewClickCallback;
-import org.tvheadend.tvhclient.util.menu.PopupMenuUtil;
-import org.tvheadend.tvhclient.util.menu.SearchMenuUtils;
 import org.tvheadend.tvhclient.ui.features.dialogs.GenreColorDialog;
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity;
 import org.tvheadend.tvhclient.ui.features.search.SearchRequestInterface;
 import org.tvheadend.tvhclient.ui.features.search.StartSearchInterface;
 import org.tvheadend.tvhclient.util.MiscUtils;
+import org.tvheadend.tvhclient.util.menu.PopupMenuUtil;
+import org.tvheadend.tvhclient.util.menu.SearchMenuUtils;
 
-import java.util.Date;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -111,7 +110,7 @@ public class ProgramListFragment extends BaseFragment implements RecyclerViewCli
             if (bundle != null) {
                 channelId = bundle.getInt("channelId", 0);
                 channelName = bundle.getString("channelName");
-                selectedTime = bundle.getLong("selectedTime", new Date().getTime());
+                selectedTime = bundle.getLong("selectedTime", System.currentTimeMillis());
                 searchQuery = bundle.getString(SearchManager.QUERY);
             }
         }

@@ -22,7 +22,6 @@ import org.tvheadend.tvhclient.data.service.htsp.HtspFileInputStream;
 import org.tvheadend.tvhclient.data.service.htsp.HtspMessage;
 import org.tvheadend.tvhclient.data.service.htsp.HtspMessageListener;
 import org.tvheadend.tvhclient.data.worker.EpgDataUpdateWorker;
-import org.tvheadend.tvhclient.ui.features.notification.NotificationUtils;
 import org.tvheadend.tvhclient.domain.entity.Channel;
 import org.tvheadend.tvhclient.domain.entity.ChannelTag;
 import org.tvheadend.tvhclient.domain.entity.Connection;
@@ -34,6 +33,7 @@ import org.tvheadend.tvhclient.domain.entity.ServerStatus;
 import org.tvheadend.tvhclient.domain.entity.TagAndChannel;
 import org.tvheadend.tvhclient.domain.entity.TimerRecording;
 import org.tvheadend.tvhclient.ui.base.utils.SnackbarUtils;
+import org.tvheadend.tvhclient.ui.features.notification.NotificationUtils;
 import org.tvheadend.tvhclient.util.MiscUtils;
 
 import java.io.BufferedInputStream;
@@ -44,7 +44,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -402,7 +401,7 @@ public class HtspService extends Service implements HtspConnectionStateListener,
         Timber.d("Sync events from server required: " + syncEventsRequired);
 
         // Send the first sync message to any broadcast listeners
-        if (syncRequired) {
+        if (syncRequired || syncEventsRequired) {
             Timber.d("Sending status that sync has started");
             sendSyncStateMessage(SyncStateReceiver.State.SYNC_STARTED,
                     getString(R.string.loading_data), "");
@@ -463,7 +462,7 @@ public class HtspService extends Service implements HtspConnectionStateListener,
 
         // The initial sync is considered to be done at this point.
         // Send the message to the listeners that the sync is done
-        if (syncRequired) {
+        if (syncRequired || syncEventsRequired) {
             sendSyncStateMessage(SyncStateReceiver.State.SYNC_DONE,
                     getString(R.string.loading_data_done), "");
         }
@@ -473,7 +472,7 @@ public class HtspService extends Service implements HtspConnectionStateListener,
         initialSyncWithServerRunning = false;
 
         Timber.d("Deleting events in the database that are older than one day from now");
-        long pastTime = Calendar.getInstance().getTimeInMillis() - (24 * 60 * 60 * 1000);
+        long pastTime = System.currentTimeMillis() - (24 * 60 * 60 * 1000);
         appRepository.getProgramData().removeItemsByTime(pastTime);
 
         Timber.d("Starting background worker to load more epg data");

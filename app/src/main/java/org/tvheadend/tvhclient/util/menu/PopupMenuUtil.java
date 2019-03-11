@@ -72,7 +72,7 @@ public class PopupMenuUtil {
 
             // Show the play menu item and the cast menu item (if available)
             // when the current time is between the program start and end time
-            long currentTime = new Date().getTime();
+            long currentTime = System.currentTimeMillis();
             if (program != null
                     && program.getStart() > 0
                     && program.getStop() > 0
@@ -85,7 +85,7 @@ public class PopupMenuUtil {
         // Show the add reminder menu only for programs and
         // recordings where the start time is in the future.
         if (isUnlocked && PreferenceManager.getDefaultSharedPreferences(context).getBoolean("notifications_enabled", context.getResources().getBoolean(R.bool.pref_default_notifications_enabled))) {
-            long currentTime = new Date().getTime();
+            long currentTime = System.currentTimeMillis();
             long startTime = currentTime;
             if (program != null && program.getStart() > 0) {
                 startTime = program.getStart();
