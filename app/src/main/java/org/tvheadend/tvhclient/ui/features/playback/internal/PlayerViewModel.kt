@@ -336,7 +336,7 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
         Timber.d("Timeshift start time is $startTime")
 
         val currentTime = if (timeshiftOffsetPts != Long.MIN_VALUE)
-            Calendar.getInstance().timeInMillis + timeshiftOffsetPts / 1000 else player.currentPosition
+            System.currentTimeMillis() + timeshiftOffsetPts / 1000 else player.currentPosition
         Timber.d("Timeshift current time is $currentTime")
 
         val time = Math.max(currentTime + offset, startTime)

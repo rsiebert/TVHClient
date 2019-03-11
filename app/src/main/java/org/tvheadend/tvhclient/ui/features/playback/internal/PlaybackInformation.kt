@@ -37,12 +37,12 @@ class PlaybackInformation {
     val remainingTime: String
         get() {
             val sdf = SimpleDateFormat("mm:ss", Locale.US)
-            return sdf.format(stopTime - Calendar.getInstance().timeInMillis)
+            return sdf.format(stopTime - System.currentTimeMillis())
         }
 
     val elapsedTime: String
         get() {
             val sdf = SimpleDateFormat("mm:ss", Locale.US)
-            return sdf.format(Calendar.getInstance().timeInMillis - startTime)
+            return sdf.format(System.currentTimeMillis() - startTime)
         }
 }
