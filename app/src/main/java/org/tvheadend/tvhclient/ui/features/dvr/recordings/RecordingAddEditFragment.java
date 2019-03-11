@@ -225,7 +225,7 @@ public class RecordingAddEditFragment extends BaseFragment implements BackPresse
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 cancel();
