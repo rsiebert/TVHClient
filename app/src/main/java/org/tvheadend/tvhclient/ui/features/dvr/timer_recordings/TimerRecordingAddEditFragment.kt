@@ -32,8 +32,14 @@ class TimerRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Reco
     lateinit var priorityTextView: TextView
     @BindView(R.id.days_of_week)
     lateinit var daysOfWeekTextView: TextView
+    @BindView(R.id.time_enabled)
+    lateinit var timeEnabledCheckBox: CheckBox
+    @BindView(R.id.start_time_label)
+    lateinit var startTimeLabelTextView: TextView
     @BindView(R.id.start_time)
     lateinit var startTimeTextView: TextView
+    @BindView(R.id.stop_time_label)
+    lateinit var stopTimeLabelTextView: TextView
     @BindView(R.id.stop_time)
     lateinit var stopTimeTextView: TextView
     @BindView(R.id.directory)
@@ -64,12 +70,19 @@ class TimerRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Reco
      */
     private val intentData: Intent
         get() {
-            val intent = Intent(activity, HtspService::class.java)
+            val intent = Intent(context, HtspService::class.java)
             intent.putExtra("directory", viewModel.recording.directory)
             intent.putExtra("title", viewModel.recording.title)
             intent.putExtra("name", viewModel.recording.name)
-            intent.putExtra("start", viewModel.recording.start)
-            intent.putExtra("stop", viewModel.recording.stop)
+
+            // Assume no start time is specified if 0:00 is selected
+            if (viewModel.recording.isTimeEnabled) {
+                intent.putExtra("start", viewModel.recording.start)
+                intent.putExtra("stop", viewModel.recording.stop)
+            } else {
+                intent.putExtra("start", -1)
+                intent.putExtra("stop", -1)
+            }
             intent.putExtra("daysOfWeek", viewModel.recording.daysOfWeek)
             intent.putExtra("priority", viewModel.recording.priority)
             intent.putExtra("enabled", if (viewModel.recording.isEnabled) 1 else 0)
@@ -170,6 +183,21 @@ class TimerRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Reco
         daysOfWeekTextView.setOnClickListener {
             RecordingUtils.handleDayOfWeekSelection(activity, viewModel.recording.daysOfWeek, this@TimerRecordingAddEditFragment)
         }
+
+        timeEnabledCheckBox.isChecked = viewModel.recording.isTimeEnabled
+
+        timeEnabledCheckBox.setOnClickListener {
+            val checked = timeEnabledCheckBox.isChecked
+            viewModel.recording.isTimeEnabled = checked
+
+            startTimeLabelTextView.visibility = if (checked) View.VISIBLE else View.GONE
+            startTimeTextView.visibility = if (checked) View.VISIBLE else View.GONE
+            startTimeTextView.isEnabled = checked
+
+            stopTimeLabelTextView.visibility = if (checked) View.VISIBLE else View.GONE
+            stopTimeTextView.visibility = if (checked) View.VISIBLE else View.GONE
+            stopTimeTextView.isEnabled = checked
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -269,7 +297,7 @@ class TimerRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Reco
         } else if (tag == "stopTime") {
             viewModel.stopTimeInMillis = milliSeconds
             // If the stop time is before the start time, update the start time with the stop value
-            if (milliSeconds < viewModel.recording.start) {
+            if (milliSeconds < viewModel.recording.startTimeInMillis) {
                 viewModel.startTimeInMillis = milliSeconds
             }
         }
