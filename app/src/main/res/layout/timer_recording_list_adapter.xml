@@ -10,10 +10,6 @@
             type="org.tvheadend.tvhclient.domain.entity.TimerRecording" />
 
         <variable
-            name="gmtOffset"
-            type="int" />
-
-        <variable
             name="htspVersion"
             type="int" />
 
@@ -127,7 +123,7 @@
             android:gravity="end"
             app:layout_constraintEnd_toStartOf="@+id/stop"
             app:layout_constraintTop_toBottomOf="@+id/duration"
-            app:timeText="@{recording.start - gmtOffset}" />
+            app:timeText="@{recording.startTimeInMillis}" />
 
         <TextView
             android:id="@+id/stop"
@@ -139,7 +135,7 @@
             android:gravity="end"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/duration"
-            app:timeText="@{recording.stop - gmtOffset}" />
+            app:timeText="@{recording.stopTimeInMillis}" />
 
         <TextView
             android:id="@+id/disabled"

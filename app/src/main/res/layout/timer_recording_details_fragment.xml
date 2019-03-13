@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
@@ -13,9 +14,6 @@
             name="htspVersion"
             type="int" />
 
-        <variable
-            name="gmtOffset"
-            type="int" />
     </data>
 
     <LinearLayout
@@ -31,7 +29,7 @@
             android:layout_height="fill_parent"
             android:paddingBottom="16dp">
 
-            <androidx.constraintlayout.widget.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -75,7 +73,6 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/channel_label" />
 
-
                 <TextView
                     android:id="@+id/recording_time_label"
                     style="?attr/TitleFont"
@@ -99,7 +96,7 @@
                     android:layout_marginTop="8dp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/recording_time_label"
-                    app:timeText="@{recording.start - gmtOffset}" />
+                    app:timeText="@{recording.startTimeInMillis}" />
 
                 <TextView
                     android:id="@+id/stop_time"
@@ -111,7 +108,7 @@
                     android:layout_marginTop="8dp"
                     app:layout_constraintStart_toEndOf="@+id/start_time"
                     app:layout_constraintTop_toBottomOf="@+id/recording_time_label"
-                    app:timeText="@{recording.stop - gmtOffset}" />
+                    app:timeText="@{recording.stopTimeInMillis}" />
 
                 <TextView
                     android:id="@+id/duration_label"
