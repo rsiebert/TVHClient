@@ -10,6 +10,10 @@ interface ServerStatusDao {
     @Query("DELETE FROM server_status WHERE connection_id = :id")
     fun deleteByConnectionId(id: Int)
 
+    @Transaction
+    @Query("$SERVER_STATUS_BASE_QUERY WHERE $CONNECTION_IS_ACTIVE")
+    fun loadAllServerStatus(): LiveData<List<ServerStatus>>
+
     @Query("$SERVER_STATUS_BASE_QUERY WHERE $CONNECTION_IS_ACTIVE")
     fun loadActiveServerStatusSync(): ServerStatus
 
@@ -33,6 +37,10 @@ interface ServerStatusDao {
 
     @Query("$SERVER_STATUS_BASE_QUERY WHERE s.connection_id = :id")
     fun loadServerStatusById(id: Int): LiveData<ServerStatus>
+
+    @get:Query("SELECT COUNT (*) FROM server_status AS s " +
+            "WHERE " + CONNECTION_IS_ACTIVE)
+    val serverStatusCount: LiveData<Int>
 
     companion object {
 

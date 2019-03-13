@@ -2,8 +2,6 @@ package org.tvheadend.tvhclient.domain.repository.data_source
 
 import android.os.AsyncTask
 import androidx.lifecycle.LiveData
-import com.crashlytics.android.Crashlytics
-import io.fabric.sdk.android.Fabric
 import org.tvheadend.tvhclient.data.db.AppRoomDatabase
 import org.tvheadend.tvhclient.domain.entity.ServerStatus
 import timber.log.Timber
@@ -15,7 +13,7 @@ class ServerStatusData(private val db: AppRoomDatabase) : DataSourceInterface<Se
     val liveDataActiveItem: LiveData<ServerStatus>
         get() = db.serverStatusDao.loadActiveServerStatus()
 
-    val activeItem: ServerStatus?
+    val activeItem: ServerStatus
         get() {
             try {
                 return ActiveServerStatusTask(db).execute().get()
@@ -24,7 +22,11 @@ class ServerStatusData(private val db: AppRoomDatabase) : DataSourceInterface<Se
             } catch (e: ExecutionException) {
                 Timber.d("Loading active server status task aborted", e)
             }
-            return null
+            // Create a new server status object with the connection id
+            val serverStatus = ServerStatus()
+            serverStatus.connectionId = db.connectionDao.loadActiveConnectionSync().id
+            addItem(serverStatus)
+            return serverStatus
         }
 
     override fun addItem(item: ServerStatus) {
@@ -39,15 +41,15 @@ class ServerStatusData(private val db: AppRoomDatabase) : DataSourceInterface<Se
         AsyncTask.execute { db.serverStatusDao.delete(item) }
     }
 
-    override fun getLiveDataItemCount(): LiveData<Int>? {
-        return null
+    override fun getLiveDataItemCount(): LiveData<Int> {
+        return db.serverStatusDao.serverStatusCount
     }
 
-    override fun getLiveDataItems(): LiveData<List<ServerStatus>>? {
-        return null
+    override fun getLiveDataItems(): LiveData<List<ServerStatus>> {
+        return db.serverStatusDao.loadAllServerStatus()
     }
 
-    override fun getLiveDataItemById(id: Any): LiveData<ServerStatus>? {
+    override fun getLiveDataItemById(id: Any): LiveData<ServerStatus> {
         return db.serverStatusDao.loadServerStatusById(id as Int)
     }
 
@@ -59,7 +61,6 @@ class ServerStatusData(private val db: AppRoomDatabase) : DataSourceInterface<Se
         } catch (e: ExecutionException) {
             Timber.d("Loading server status by id task aborted", e)
         }
-
         return null
     }
 
@@ -76,28 +77,8 @@ class ServerStatusData(private val db: AppRoomDatabase) : DataSourceInterface<Se
 
     private class ActiveServerStatusTask internal constructor(private val db: AppRoomDatabase) : AsyncTask<Void, Void, ServerStatus>() {
 
-        override fun doInBackground(vararg voids: Void): ServerStatus? {
-
-            var serverStatus: ServerStatus? = db.serverStatusDao.loadActiveServerStatusSync()
-            if (serverStatus == null) {
-                var msg = "Trying to get active server status from database returned no entry."
-                Timber.e(msg)
-                if (Fabric.isInitialized()) {
-                    Crashlytics.logException(Exception(msg))
-                }
-
-                val connection = db.connectionDao.loadActiveConnectionSync()
-                serverStatus = ServerStatus().also { it.connectionId = connection.id }
-                db.serverStatusDao.insert(serverStatus)
-
-                msg = "Trying to get active server status from database returned no entry.\n" +
-                        "Inserted new server status for active connection " + connection.id
-                Timber.e(msg)
-                if (Fabric.isInitialized()) {
-                    Crashlytics.logException(Exception(msg))
-                }
-            }
-            return serverStatus
+        override fun doInBackground(vararg voids: Void): ServerStatus {
+            return db.serverStatusDao.loadActiveServerStatusSync()
         }
     }
 }
