@@ -11,8 +11,6 @@ import org.tvheadend.tvhclient.domain.entity.ProgramInterface;
 import org.tvheadend.tvhclient.domain.entity.Recording;
 import org.tvheadend.tvhclient.util.MiscUtils;
 
-import java.util.Date;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import timber.log.Timber;
@@ -94,7 +92,7 @@ public class PopupMenuUtil {
         }
     }
 
-    public static void prepareSearchMenu(@NonNull Menu menu, String title, boolean isNetworkAvailable) {
+    public static void prepareSearchMenu(@NonNull Menu menu, @Nullable String title, boolean isNetworkAvailable) {
         boolean visible = isNetworkAvailable && !TextUtils.isEmpty(title);
         MenuItem searchMenuItem = menu.findItem(R.id.menu_search);
         if (searchMenuItem != null) {
