@@ -393,4 +393,5 @@
     <string name="disconnect">Verbindung trennen</string>
     <string name="audio_settings">Audio-Einstellungen</string>
     <string name="subtitle_settings">Subtitle-Einstellungen</string>
+    <string name="any">Beliebig</string>
 </resources>
