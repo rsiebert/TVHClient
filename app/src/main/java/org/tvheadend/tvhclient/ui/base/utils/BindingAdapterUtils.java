@@ -496,6 +496,11 @@ public class BindingAdapterUtils {
      */
     @BindingAdapter("timeText")
     public static void setLocalizedTime(TextView view, long time) {
+        if (time < 0) {
+            view.setText(view.getContext().getString(R.string.any));
+            return;
+        }
+
         String localizedTime = "";
 
         final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(view.getContext());
@@ -522,6 +527,11 @@ public class BindingAdapterUtils {
 
     @BindingAdapter("dateText")
     public static void setLocalizedDate(TextView view, long date) {
+        if (date < 0) {
+            view.setText(view.getContext().getString(R.string.any));
+            return;
+        }
+
         String localizedDate = "";
         Context context = view.getContext();
 
