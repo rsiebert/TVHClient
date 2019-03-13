@@ -446,12 +446,12 @@ public class HtspUtils {
             seriesRecording.setApproxTime(msg.getInteger("approxTime"));
         }
         if (msg.containsKey("start")) {
-            // The message value is in minutes, convert to milliseconds
-            seriesRecording.setStart(msg.getLong("start") * 1000 * 60);
+            // The message value is in minutes
+            seriesRecording.setStart(msg.getLong("start"));
         }
         if (msg.containsKey("startWindow")) {
-            // The message value is in minutes, convert to milliseconds
-            seriesRecording.setStartWindow(msg.getLong("startWindow") * 1000 * 60);
+            // The message value is in minutes
+            seriesRecording.setStartWindow(msg.getLong("startWindow"));
         }
         if (msg.containsKey("startExtra")) {
             seriesRecording.setStartExtra(msg.getLong("startExtra"));
