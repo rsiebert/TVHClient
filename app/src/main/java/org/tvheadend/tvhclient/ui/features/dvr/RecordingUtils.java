@@ -11,7 +11,6 @@ import org.tvheadend.tvhclient.domain.entity.ServerProfile;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -37,14 +36,6 @@ public class RecordingUtils {
     public static String getDateStringFromTimeInMillis(long milliSeconds) {
         SimpleDateFormat sdf = new SimpleDateFormat("dd:MM", Locale.US);
         return sdf.format(milliSeconds);
-    }
-
-    public static long getMinutesFromTimeInMillis(long milliSeconds) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(milliSeconds);
-        int hour = calendar.get(Calendar.HOUR_OF_DAY);
-        int minute = calendar.get(Calendar.MINUTE);
-        return (long) (hour * 60 + minute);
     }
 
     public static String getTimeStringFromTimeInMillis(long milliSeconds) {
