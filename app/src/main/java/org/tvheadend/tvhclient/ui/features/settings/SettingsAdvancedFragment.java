@@ -52,7 +52,7 @@ public class SettingsAdvancedFragment extends BasePreferenceFragment implements 
         findPreference("clear_search_history").setOnPreferenceClickListener(this);
         findPreference("clear_icon_cache").setOnPreferenceClickListener(this);
 
-        notificationsEnabledPreference = (CheckBoxPreference) findPreference("notifications_enabled");
+        notificationsEnabledPreference = findPreference("notifications_enabled");
         notificationsEnabledPreference.setOnPreferenceClickListener(this);
         notificationsEnabledPreference.setEnabled(isUnlocked());
     }
