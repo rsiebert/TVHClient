@@ -542,12 +542,12 @@ public class HtspUtils {
             }
         }
         if (msg.containsKey("start")) {
-            // The message value is in minutes, convert to milliseconds
-            timerRecording.setStart(msg.getLong("start") * 1000 * 60);
+            // The message value is in minutes
+            timerRecording.setStart(msg.getLong("start"));
         }
         if (msg.containsKey("stop")) {
-            // The message value is in minutes, convert to milliseconds
-            timerRecording.setStop(msg.getLong("stop") * 1000 * 60);
+            // The message value is in minutes
+            timerRecording.setStop(msg.getLong("stop"));
         }
         if (msg.containsKey("retention")) {
             if (msg.getInteger("retention") > 0) {
