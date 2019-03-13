@@ -38,7 +38,6 @@ public class SettingsUserInterfaceFragment extends BasePreferenceFragment implem
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        addPreferencesFromResource(R.xml.preferences_ui);
 
         getToolbarInterface().setTitle(getString(R.string.pref_user_interface));
         getToolbarInterface().setSubtitle("");
