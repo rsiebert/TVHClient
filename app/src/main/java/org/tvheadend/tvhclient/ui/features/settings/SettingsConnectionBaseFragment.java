@@ -18,6 +18,7 @@ import org.tvheadend.tvhclient.ui.base.utils.SnackbarUtils;
 
 import javax.inject.Inject;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.preference.CheckBoxPreference;
@@ -61,17 +62,17 @@ public abstract class SettingsConnectionBaseFragment extends PreferenceFragmentC
         setHasOptionsMenu(true);
 
         // Get the connectivity preferences for later usage
-        namePreference = (EditTextPreference) findPreference("name");
-        hostnamePreference = (EditTextPreference) findPreference("hostname");
-        htspPortPreference = (EditTextPreference) findPreference("htsp_port");
-        streamingPortPreference = (EditTextPreference) findPreference("streaming_port");
-        usernamePreference = (EditTextPreference) findPreference("username");
-        passwordPreference = (EditTextPreference) findPreference("password");
-        activeEnabledPreference = (CheckBoxPreference) findPreference("active_enabled");
-        wolEnabledPreference = (CheckBoxPreference) findPreference("wol_enabled");
-        wolMacAddressPreference = (EditTextPreference) findPreference("wol_mac_address");
-        wolPortPreference = (EditTextPreference) findPreference("wol_port");
-        wolUseBroadcastEnabled = (CheckBoxPreference) findPreference("wol_broadcast_enabled");
+        namePreference = findPreference("name");
+        hostnamePreference = findPreference("hostname");
+        htspPortPreference = findPreference("htsp_port");
+        streamingPortPreference = findPreference("streaming_port");
+        usernamePreference = findPreference("username");
+        passwordPreference = findPreference("password");
+        activeEnabledPreference = findPreference("active_enabled");
+        wolEnabledPreference = findPreference("wol_enabled");
+        wolMacAddressPreference = findPreference("wol_mac_address");
+        wolPortPreference = findPreference("wol_port");
+        wolUseBroadcastEnabled = findPreference("wol_broadcast_enabled");
 
         namePreference.setOnPreferenceChangeListener(this);
         hostnamePreference.setOnPreferenceChangeListener(this);
@@ -135,13 +136,13 @@ public abstract class SettingsConnectionBaseFragment extends PreferenceFragmentC
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.save_cancel_options_menu, menu);
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_save:
                 save();
