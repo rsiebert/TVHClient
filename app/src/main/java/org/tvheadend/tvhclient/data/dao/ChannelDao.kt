@@ -86,6 +86,11 @@ interface ChannelDao {
     @Delete
     fun delete(channel: Channel)
 
+    @Query("DELETE FROM channels " +
+            "WHERE id = :id " +
+            " AND connection_id IN (SELECT id FROM connections WHERE active = 1)")
+    fun deleteById(id: Int)
+
     @Query("DELETE FROM channels")
     fun deleteAll()
 

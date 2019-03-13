@@ -40,6 +40,10 @@ class ChannelData(private val db: AppRoomDatabase) : DataSourceInterface<Channel
         AsyncTask.execute { db.channelDao.delete(item) }
     }
 
+    fun removeItemById(id: Int) {
+        AsyncTask.execute { db.channelDao.deleteById(id) }
+    }
+
     override fun getLiveDataItemCount(): LiveData<Int> {
         return db.channelDao.itemCount
     }
