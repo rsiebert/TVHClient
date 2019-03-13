@@ -844,11 +844,12 @@ public class HtspService extends Service implements HtspConnectionStateListener,
      * @param msg The message with the updated series recording data
      */
     private void onAutorecEntryUpdate(HtspMessage msg) {
-        SeriesRecording recording = appRepository.getSeriesRecordingData().getItemById(msg.getString("id"));
-        if (recording == null) {
-            Timber.d("Could not find a series recording with id " + msg.getString("id") + " in the database");
+        String id = msg.getString("id", "");
+        if (id.isEmpty()) {
+            Timber.d("Could not find a series recording with id " + id + " in the database");
             return;
         }
+        SeriesRecording recording = appRepository.getSeriesRecordingData().getItemById(msg.getString("id"));
         SeriesRecording updatedRecording = HtspUtils.convertMessageToSeriesRecordingModel(recording, msg);
         appRepository.getSeriesRecordingData().updateItem(updatedRecording);
     }
@@ -860,11 +861,10 @@ public class HtspService extends Service implements HtspConnectionStateListener,
      * @param msg The message with the series recording id that was deleted
      */
     private void onAutorecEntryDelete(HtspMessage msg) {
-        if (msg.containsKey("id")) {
+        String id = msg.getString("id", "");
+        if (!id.isEmpty()) {
             SeriesRecording seriesRecording = appRepository.getSeriesRecordingData().getItemById(msg.getString("id"));
-            if (seriesRecording != null) {
-                appRepository.getSeriesRecordingData().removeItem(seriesRecording);
-            }
+            appRepository.getSeriesRecordingData().removeItem(seriesRecording);
         }
     }
 
@@ -887,11 +887,12 @@ public class HtspService extends Service implements HtspConnectionStateListener,
      * @param msg The message with the updated timer recording data
      */
     private void onTimerRecEntryUpdate(HtspMessage msg) {
-        TimerRecording recording = appRepository.getTimerRecordingData().getItemById(msg.getString("id"));
-        if (recording == null) {
-            Timber.d("Could not find a timer recording with id " + msg.getString("id") + " in the database");
+        String id = msg.getString("id", "");
+        if (id.isEmpty()) {
+            Timber.d("Could not find a timer recording with id " + id + " in the database");
             return;
         }
+        TimerRecording recording = appRepository.getTimerRecordingData().getItemById(id);
         TimerRecording updatedRecording = HtspUtils.convertMessageToTimerRecordingModel(recording, msg);
         appRepository.getTimerRecordingData().updateItem(updatedRecording);
     }
@@ -903,11 +904,10 @@ public class HtspService extends Service implements HtspConnectionStateListener,
      * @param msg The message with the recording id that was deleted
      */
     private void onTimerRecEntryDelete(HtspMessage msg) {
-        if (msg.containsKey("id")) {
-            TimerRecording timerRecording = appRepository.getTimerRecordingData().getItemById(msg.getString("id"));
-            if (timerRecording != null) {
-                appRepository.getTimerRecordingData().removeItem(timerRecording);
-            }
+        String id = msg.getString("id", "");
+        if (!id.isEmpty()) {
+            TimerRecording timerRecording = appRepository.getTimerRecordingData().getItemById(id);
+            appRepository.getTimerRecordingData().removeItem(timerRecording);
         }
     }
 
