@@ -6,6 +6,8 @@ import androidx.lifecycle.LiveData
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.data.repository.AppRepository
 import org.tvheadend.tvhclient.domain.entity.SeriesRecording
+import timber.log.Timber
+import java.util.*
 import javax.inject.Inject
 
 class SeriesRecordingViewModel(application: Application) : AndroidViewModel(application) {
@@ -13,8 +15,10 @@ class SeriesRecordingViewModel(application: Application) : AndroidViewModel(appl
     @Inject
     lateinit var appRepository: AppRepository
 
-    val recordings: LiveData<List<SeriesRecording>>?
+    var recording = SeriesRecording()
+    val recordings: LiveData<List<SeriesRecording>>
     val numberOfRecordings: LiveData<Int>
+    var recordingProfileNameId: Int = 0
 
     init {
         MainApplication.getComponent().inject(this)
@@ -22,15 +26,47 @@ class SeriesRecordingViewModel(application: Application) : AndroidViewModel(appl
         numberOfRecordings = appRepository.seriesRecordingData.getLiveDataItemCount()
     }
 
-    fun getRecordingById(id: String): LiveData<SeriesRecording>? {
+    fun getRecordingById(id: String): LiveData<SeriesRecording> {
         return appRepository.seriesRecordingData.getLiveDataItemById(id)
     }
 
-    fun getRecordingByIdSync(id: String): SeriesRecording? {
-        return if (!id.isEmpty()) {
-            appRepository.seriesRecordingData.getItemById(id)
-        } else {
-            SeriesRecording()
+    fun loadRecordingByIdSync(id: String) {
+        recording = appRepository.seriesRecordingData.getItemById(id)
+    }
+
+    var startTimeInMillis: Long = 0
+        get() {
+            Timber.d("Get time in millis is ${recording.startTimeInMillis}, start minutes are ${recording.start}")
+            return recording.startTimeInMillis
         }
+        set(milliSeconds) {
+            field = milliSeconds
+            recording.start = getMinutesFromTime(milliSeconds)
+        }
+
+    var startWindowTimeInMillis: Long = 0
+        get() {
+            Timber.d("Get time in millis is ${recording.startWindowTimeInMillis}, start minutes are ${recording.startWindow}")
+            return recording.startWindowTimeInMillis
+        }
+        set(milliSeconds) {
+            field = milliSeconds
+            recording.startWindow = getMinutesFromTime(milliSeconds)
+        }
+
+    /**
+     * The start and stop time handling is done in milliseconds within the app, but the
+     * server requires and provides minutes instead. In case the start and stop times of
+     * a recording need to be updated the milliseconds will be converted to minutes.
+     */
+    private fun getMinutesFromTime(milliSeconds : Long) : Long {
+        val calendar = Calendar.getInstance()
+        calendar.timeInMillis = milliSeconds
+        val hour = calendar.get(Calendar.HOUR_OF_DAY)
+        val minute = calendar.get(Calendar.MINUTE)
+
+        val minutes = (hour * 60 + minute).toLong()
+        Timber.d("Set time in millis is $milliSeconds, start minutes are $minutes")
+        return minutes
     }
 }

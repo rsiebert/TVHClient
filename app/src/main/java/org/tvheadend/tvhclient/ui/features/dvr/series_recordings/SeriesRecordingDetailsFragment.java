@@ -81,7 +81,6 @@ public class SeriesRecordingDetailsFragment extends BaseFragment implements Reco
                 recording = rec;
                 itemBinding.setRecording(recording);
                 itemBinding.setHtspVersion(htspVersion);
-                itemBinding.setGmtOffset(serverStatus.getGmtoffset());
                 // The toolbar is hidden as a default to prevent pressing any icons if no recording
                 // has been loaded yet. The toolbar is shown here because a recording was loaded
                 nestedToolbar.setVisibility(View.VISIBLE);
@@ -124,7 +123,7 @@ public class SeriesRecordingDetailsFragment extends BaseFragment implements Reco
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         // The recording might be null in case the viewmodel
         // has not yet loaded the recording for the given id
         if (recording == null) {

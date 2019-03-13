@@ -83,7 +83,7 @@ public class SeriesRecordingListFragment extends BaseFragment implements Recycle
         toolbarInterface.setTitle(TextUtils.isEmpty(searchQuery)
                 ? getString(R.string.series_recordings) : getString(R.string.search_results));
 
-        recyclerViewAdapter = new SeriesRecordingRecyclerViewAdapter(isDualPane, this, htspVersion, serverStatus.getGmtoffset());
+        recyclerViewAdapter = new SeriesRecordingRecyclerViewAdapter(isDualPane, this, htspVersion);
         recyclerView.setLayoutManager(new LinearLayoutManager(activity.getApplicationContext()));
         recyclerView.addItemDecoration(new DividerItemDecoration(activity.getApplicationContext(), LinearLayoutManager.VERTICAL));
         recyclerView.setItemAnimator(new DefaultItemAnimator());

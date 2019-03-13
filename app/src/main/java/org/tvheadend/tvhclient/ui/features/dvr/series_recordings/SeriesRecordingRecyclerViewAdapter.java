@@ -24,13 +24,11 @@ class SeriesRecordingRecyclerViewAdapter extends RecyclerView.Adapter<SeriesReco
     private final List<SeriesRecording> recordingList = new ArrayList<>();
     private List<SeriesRecording> recordingListFiltered = new ArrayList<>();
     private final int htspVersion;
-    private final int gmtOffset;
     private int selectedPosition = 0;
 
-    SeriesRecordingRecyclerViewAdapter(boolean isDualPane, RecyclerViewClickCallback clickCallback, int htspVersion, int gmtOffset) {
+    SeriesRecordingRecyclerViewAdapter(boolean isDualPane, RecyclerViewClickCallback clickCallback, int htspVersion) {
         this.clickCallback = clickCallback;
         this.htspVersion = htspVersion;
-        this.gmtOffset = gmtOffset;
         this.isDualPane = isDualPane;
     }
 
@@ -46,7 +44,7 @@ class SeriesRecordingRecyclerViewAdapter extends RecyclerView.Adapter<SeriesReco
     public void onBindViewHolder(@NonNull SeriesRecordingViewHolder holder, int position) {
         if (recordingListFiltered.size() > position) {
             SeriesRecording recording = recordingListFiltered.get(position);
-            holder.bind(recording, position, (selectedPosition == position), htspVersion, gmtOffset, clickCallback);
+            holder.bind(recording, position, (selectedPosition == position), htspVersion, clickCallback);
         }
     }
 
@@ -146,10 +144,9 @@ class SeriesRecordingRecyclerViewAdapter extends RecyclerView.Adapter<SeriesReco
             this.isDualPane = isDualPane;
         }
 
-        void bind(SeriesRecording recording, int position, boolean isSelected, int htspVersion, int gmtOffset, RecyclerViewClickCallback clickCallback) {
+        void bind(SeriesRecording recording, int position, boolean isSelected, int htspVersion, RecyclerViewClickCallback clickCallback) {
             binding.setRecording(recording);
             binding.setPosition(position);
-            binding.setGmtOffset(gmtOffset);
             binding.setHtspVersion(htspVersion);
             binding.setIsSelected(isSelected);
             binding.setIsDualPane(isDualPane);

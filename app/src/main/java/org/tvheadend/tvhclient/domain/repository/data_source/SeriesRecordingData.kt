@@ -26,24 +26,25 @@ class SeriesRecordingData(private val db: AppRoomDatabase) : DataSourceInterface
         return db.seriesRecordingDao.recordingCount
     }
 
-    override fun getLiveDataItems(): LiveData<List<SeriesRecording>>? {
+    override fun getLiveDataItems(): LiveData<List<SeriesRecording>> {
         return db.seriesRecordingDao.loadAllRecordings()
     }
 
-    override fun getLiveDataItemById(id: Any): LiveData<SeriesRecording>? {
+    override fun getLiveDataItemById(id: Any): LiveData<SeriesRecording> {
         return db.seriesRecordingDao.loadRecordingById(id as String)
     }
 
-    override fun getItemById(id: Any): SeriesRecording? {
-        try {
-            return SeriesRecordingByIdTask(db, id as String).execute().get()
-        } catch (e: InterruptedException) {
-            Timber.d("Loading series recording by id task got interrupted", e)
-        } catch (e: ExecutionException) {
-            Timber.d("Loading series recording by id task aborted", e)
+    override fun getItemById(id: Any): SeriesRecording {
+        if (!(id as String).isEmpty()) {
+            try {
+                return SeriesRecordingByIdTask(db, id).execute().get()
+            } catch (e: InterruptedException) {
+                Timber.d("Loading series recording by id task got interrupted", e)
+            } catch (e: ExecutionException) {
+                Timber.d("Loading series recording by id task aborted", e)
+            }
         }
-
-        return null
+        return SeriesRecording()
     }
 
     override fun getItems(): List<SeriesRecording> {

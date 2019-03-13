@@ -8,11 +8,6 @@ import java.util.*
 @Entity(tableName = "series_recordings", primaryKeys = ["id", "connection_id"])
 data class SeriesRecording(
 
-        @Ignore
-        private val time: Long = Calendar.getInstance().timeInMillis,
-        @Ignore
-        private val offset: Long = (30 * 60 * 1000).toLong(),
-
         var id: String = "",                    // str   required   ID (string!) of dvrAutorecEntry.
         @ColumnInfo(name = "enabled")
         var isEnabled: Boolean = true,          // u32   required   If autorec entry is enabled (activated).
@@ -27,9 +22,9 @@ data class SeriesRecording(
         var priority: Int = 2,                  // u32   required   Priority (0 = Important, 1 = High, 2 = Normal, 3 = Low, 4 = Unimportant, 5 = Not set).
         @ColumnInfo(name = "approx_time")
         var approxTime: Int = 0,                // u32   required   Minutes from midnight (up to 24*60).
-        var start: Long = time,                 // s32   required   Exact start time (minutes from midnight) (Added in version 18).
+        var start: Long = 0,                    // s32   required   Exact start time (minutes from midnight) (Added in version 18).
         @ColumnInfo(name = "start_window")
-        var startWindow: Long = time + offset,  // s32   required   Exact stop time (minutes from midnight) (Added in version 18).
+        var startWindow: Long = 0,              // s32   required   Exact stop time (minutes from midnight) (Added in version 18).
         @ColumnInfo(name = "start_extra")
         var startExtra: Long = 0,               // s64   required   Extra start minutes (pre-time).
         @ColumnInfo(name = "stop_extra")
@@ -55,9 +50,34 @@ data class SeriesRecording(
         var channelIcon: String? = null,
 
         @Ignore
-        var isTimeEnabled: Boolean = start >= 0 || startWindow >= 0
+        var isTimeEnabled: Boolean = start >= 0 && startWindow >= 0
 ) {
     val duration: Int
-        get() = ((startWindow - start) / 60 / 1000).toInt()
+        get() = (startWindow - start).toInt()
 
+    /**
+     * The start time in milliseconds from the current time at 0 o'clock plus the given minutes
+     */
+    @Suppress("unused")
+    val startTimeInMillis: Long
+        get() {
+            val calendar = Calendar.getInstance()
+            calendar.set(Calendar.HOUR_OF_DAY, 0)
+            calendar.set(Calendar.MINUTE, 0)
+            calendar.set(Calendar.SECOND, 0)
+            return calendar.timeInMillis + (start * 60 * 1000)
+        }
+
+    /**
+     * The stop time in milliseconds from the current time at 0 o'clock plus the given minutes
+     */
+    @Suppress("unused")
+    val startWindowTimeInMillis: Long
+        get() {
+            val calendar = Calendar.getInstance()
+            calendar.set(Calendar.HOUR_OF_DAY, 0)
+            calendar.set(Calendar.MINUTE, 0)
+            calendar.set(Calendar.SECOND, 0)
+            return calendar.timeInMillis + (startWindow * 60 * 1000)
+        }
 }
