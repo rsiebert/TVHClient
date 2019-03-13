@@ -217,7 +217,7 @@ public class HtspConnection extends Thread {
 
         sendMessage(helloMessage, response -> {
 
-            response.setMethod("");
+            response.setMethod("serverStatus");
             for (HtspMessageListener listener : messageListeners) {
                 listener.onMessage(response);
             }
