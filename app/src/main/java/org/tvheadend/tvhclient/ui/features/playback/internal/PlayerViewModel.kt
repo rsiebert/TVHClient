@@ -150,7 +150,7 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
 
             Timber.d("Creating data source")
             val serverStatus = appRepository.serverStatusData.activeItem
-            val serverProfile = appRepository.serverProfileData.getItemById(serverStatus?.htspPlaybackServerProfileId ?: 0)
+            val serverProfile = appRepository.serverProfileData.getItemById(serverStatus.htspPlaybackServerProfileId)
             htspSubscriptionDataSourceFactory = HtspSubscriptionDataSource.Factory(context, htspConnection, serverProfile?.name)
             dataSource = htspSubscriptionDataSourceFactory?.currentDataSource
 

@@ -19,8 +19,8 @@ abstract class BasePreferenceFragment : PreferenceFragmentCompat() {
     lateinit var toolbarInterface: ToolbarInterface
 
     var isUnlocked: Boolean = false
-    var htspVersion: Int = 0
-    var serverStatus: ServerStatus? = null
+    var htspVersion: Int = 13
+    lateinit var serverStatus: ServerStatus
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -32,7 +32,7 @@ abstract class BasePreferenceFragment : PreferenceFragmentCompat() {
         MainApplication.getComponent().inject(this)
 
         serverStatus = appRepository.serverStatusData.activeItem
-        htspVersion = serverStatus?.htspVersion ?: 13
+        htspVersion = serverStatus.htspVersion
         isUnlocked = MainApplication.getInstance().isUnlocked
     }
 }

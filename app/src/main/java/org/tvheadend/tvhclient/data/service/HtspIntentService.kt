@@ -49,7 +49,7 @@ class HtspIntentService : JobIntentService(), HtspConnectionStateListener {
         execService = Executors.newScheduledThreadPool(10)
         connection = appRepository.connectionData.activeItem
 
-        htspVersion = appRepository.serverStatusData.activeItem?.htspVersion ?: 13
+        htspVersion = appRepository.serverStatusData.activeItem.htspVersion
         val connectionTimeout = Integer.valueOf(sharedPreferences.getString("connection_timeout", appContext.resources.getString(R.string.pref_default_connection_timeout))!!) * 1000
         htspConnection = HtspConnection(
                 connection.username, connection.password,
