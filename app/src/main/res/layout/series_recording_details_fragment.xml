@@ -13,9 +13,6 @@
             name="htspVersion"
             type="int" />
 
-        <variable
-            name="gmtOffset"
-            type="int" />
     </data>
 
     <LinearLayout
@@ -138,7 +135,7 @@
                     android:layout_marginTop="8dp"
                     app:layout_constraintStart_toEndOf="@+id/start_after_label"
                     app:layout_constraintTop_toBottomOf="@+id/time_window_label"
-                    app:timeText="@{recording.start - gmtOffset}" />
+                    app:timeText="@{recording.start &lt; 0 ? recording.start : recording.startTimeInMillis}" />
 
                 <TextView
                     android:id="@+id/start_before_label"
@@ -158,7 +155,7 @@
                     android:layout_marginTop="8dp"
                     app:layout_constraintStart_toStartOf="@+id/start_after_time"
                     app:layout_constraintTop_toBottomOf="@+id/start_after_time"
-                    app:timeText="@{recording.startWindow - gmtOffset}" />
+                    app:timeText="@{recording.startWindow &lt; 0 ? recording.startWindow : recording.startWindowTimeInMillis}" />
 
                 <TextView
                     android:id="@+id/minimum_duration_label"

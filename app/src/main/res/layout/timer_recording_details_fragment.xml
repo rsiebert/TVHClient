@@ -96,7 +96,7 @@
                     android:layout_marginTop="8dp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/recording_time_label"
-                    app:timeText="@{recording.startTimeInMillis}" />
+                    app:timeText="@{recording.start &lt; 0 ? recording.start : recording.startTimeInMillis}" />
 
                 <TextView
                     android:id="@+id/stop_time"
@@ -108,7 +108,7 @@
                     android:layout_marginTop="8dp"
                     app:layout_constraintStart_toEndOf="@+id/start_time"
                     app:layout_constraintTop_toBottomOf="@+id/recording_time_label"
-                    app:timeText="@{recording.stopTimeInMillis}" />
+                    app:timeText="@{recording.stop &lt; 0 ? recording.stop : recording.stopTimeInMillis}" />
 
                 <TextView
                     android:id="@+id/duration_label"

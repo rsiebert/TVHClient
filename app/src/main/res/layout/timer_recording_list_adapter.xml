@@ -123,7 +123,7 @@
             android:gravity="end"
             app:layout_constraintEnd_toStartOf="@+id/stop"
             app:layout_constraintTop_toBottomOf="@+id/duration"
-            app:timeText="@{recording.startTimeInMillis}" />
+            app:timeText="@{recording.start &lt; 0 ? recording.start : recording.startTimeInMillis}" />
 
         <TextView
             android:id="@+id/stop"
@@ -135,7 +135,7 @@
             android:gravity="end"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/duration"
-            app:timeText="@{recording.stopTimeInMillis}" />
+            app:timeText="@{recording.stop &lt; 0 ? recording.stop : recording.stopTimeInMillis}" />
 
         <TextView
             android:id="@+id/disabled"
