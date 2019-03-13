@@ -118,7 +118,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/channel" />
 
-
         <TextView
             android:id="@+id/start_time_label"
             style="?attr/TitleFont"
@@ -144,7 +143,6 @@
             app:layout_constraintStart_toStartOf="@+id/start_time_label"
             app:layout_constraintTop_toBottomOf="@+id/start_time_label" />
 
-
         <TextView
             android:id="@+id/start_window_time_label"
             style="?attr/TitleFont"
@@ -168,7 +166,6 @@
             android:text="@string/not_set"
             app:layout_constraintStart_toStartOf="@+id/start_window_time_label"
             app:layout_constraintTop_toBottomOf="@+id/start_window_time_label" />
-
 
         <TextView
             android:id="@+id/duplicate_detection_label"
