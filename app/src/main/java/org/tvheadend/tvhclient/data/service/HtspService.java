@@ -753,7 +753,7 @@ public class HtspService extends Service implements HtspConnectionStateListener,
             Channel channel = appRepository.getChannelData().getItemById(channelId);
             if (channel != null) {
                 deleteIconFileFromCache(channel.getIcon());
-                appRepository.getChannelData().removeItem(channel);
+                appRepository.getChannelData().removeItemById(channel.getId());
             }
         }
     }
