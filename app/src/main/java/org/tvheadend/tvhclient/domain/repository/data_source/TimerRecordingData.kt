@@ -26,24 +26,25 @@ class TimerRecordingData(private val db: AppRoomDatabase) : DataSourceInterface<
         return db.timerRecordingDao.recordingCount
     }
 
-    override fun getLiveDataItems(): LiveData<List<TimerRecording>>? {
+    override fun getLiveDataItems(): LiveData<List<TimerRecording>> {
         return db.timerRecordingDao.loadAllRecordings()
     }
 
-    override fun getLiveDataItemById(id: Any): LiveData<TimerRecording>? {
+    override fun getLiveDataItemById(id: Any): LiveData<TimerRecording> {
         return db.timerRecordingDao.loadRecordingById(id as String)
     }
 
-    override fun getItemById(id: Any): TimerRecording? {
-        try {
-            return TimerRecordingByIdTask(db, id as String).execute().get()
-        } catch (e: InterruptedException) {
-            Timber.d("Loading timer recording by id task got interrupted", e)
-        } catch (e: ExecutionException) {
-            Timber.d("Loading timer recording by id task aborted", e)
+    override fun getItemById(id: Any): TimerRecording {
+        if (!(id as String).isEmpty()) {
+            try {
+                return TimerRecordingByIdTask(db, id).execute().get()
+            } catch (e: InterruptedException) {
+                Timber.d("Loading timer recording by id task got interrupted", e)
+            } catch (e: ExecutionException) {
+                Timber.d("Loading timer recording by id task aborted", e)
+            }
         }
-
-        return null
+        return TimerRecording()
     }
 
     override fun getItems(): List<TimerRecording> {
