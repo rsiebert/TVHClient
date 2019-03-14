@@ -52,11 +52,11 @@ class ProgramData(private val db: AppRoomDatabase) : DataSourceInterface<Program
         return db.programDao.itemCount
     }
 
-    override fun getLiveDataItems(): LiveData<List<Program>>? {
+    override fun getLiveDataItems(): LiveData<List<Program>> {
         return db.programDao.loadPrograms()
     }
 
-    override fun getLiveDataItemById(id: Any): LiveData<Program>? {
+    override fun getLiveDataItemById(id: Any): LiveData<Program> {
         return db.programDao.loadProgramById(id as Int)
     }
 

@@ -59,15 +59,15 @@ class ConnectionData(private val db: AppRoomDatabase) : DataSourceInterface<Conn
         }
     }
 
-    override fun getLiveDataItemCount(): LiveData<Int>? {
+    override fun getLiveDataItemCount(): LiveData<Int> {
         return db.connectionDao.connectionCount
     }
 
-    override fun getLiveDataItems(): LiveData<List<Connection>>? {
+    override fun getLiveDataItems(): LiveData<List<Connection>> {
         return db.connectionDao.loadAllConnections()
     }
 
-    override fun getLiveDataItemById(id: Any): LiveData<Connection>? {
+    override fun getLiveDataItemById(id: Any): LiveData<Connection> {
         return db.connectionDao.loadConnectionById(id as Int)
     }
 

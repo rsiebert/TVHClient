@@ -4,11 +4,11 @@ import androidx.lifecycle.LiveData
 
 interface DataSourceInterface<T> {
 
-    fun getLiveDataItemCount(): LiveData<Int>?
+    fun getLiveDataItemCount(): LiveData<Int>
 
-    fun getLiveDataItems(): LiveData<List<T>>?
+    fun getLiveDataItems(): LiveData<List<T>>
 
-    fun getLiveDataItemById(id: Any): LiveData<T>?
+    fun getLiveDataItemById(id: Any): LiveData<T>
 
     fun getItems(): List<T>
 

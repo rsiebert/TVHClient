@@ -44,15 +44,15 @@ class RecordingData(private val db: AppRoomDatabase) : DataSourceInterface<Recor
         AsyncTask.execute { db.recordingDao.deleteAll() }
     }
 
-    override fun getLiveDataItemCount(): LiveData<Int>? {
-        return null
+    override fun getLiveDataItemCount(): LiveData<Int> {
+        return MutableLiveData()
     }
 
     override fun getLiveDataItems(): LiveData<List<Recording>> {
         return db.recordingDao.loadAllRecordings()
     }
 
-    override fun getLiveDataItemById(id: Any): LiveData<Recording>? {
+    override fun getLiveDataItemById(id: Any): LiveData<Recording> {
         return db.recordingDao.loadRecordingById(id as Int)
     }
 

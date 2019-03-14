@@ -2,6 +2,7 @@ package org.tvheadend.tvhclient.domain.repository.data_source
 
 import android.os.AsyncTask
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import org.tvheadend.tvhclient.data.db.AppRoomDatabase
 import org.tvheadend.tvhclient.domain.entity.ServerProfile
 import timber.log.Timber
@@ -77,16 +78,16 @@ class ServerProfileData(private val db: AppRoomDatabase) : DataSourceInterface<S
         AsyncTask.execute { db.serverProfileDao.deleteAll() }
     }
 
-    override fun getLiveDataItemCount(): LiveData<Int>? {
-        return null
+    override fun getLiveDataItemCount(): LiveData<Int> {
+        return MutableLiveData()
     }
 
-    override fun getLiveDataItems(): LiveData<List<ServerProfile>>? {
-        return null
+    override fun getLiveDataItems(): LiveData<List<ServerProfile>> {
+        return MutableLiveData()
     }
 
-    override fun getLiveDataItemById(id: Any): LiveData<ServerProfile>? {
-        return null
+    override fun getLiveDataItemById(id: Any): LiveData<ServerProfile> {
+        return MutableLiveData()
     }
 
     override fun getItemById(id: Any): ServerProfile? {

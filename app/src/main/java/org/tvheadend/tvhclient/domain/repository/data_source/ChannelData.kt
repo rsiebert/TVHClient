@@ -2,6 +2,7 @@ package org.tvheadend.tvhclient.domain.repository.data_source
 
 import android.os.AsyncTask
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import org.tvheadend.tvhclient.data.db.AppRoomDatabase
 import org.tvheadend.tvhclient.domain.entity.Channel
 import org.tvheadend.tvhclient.domain.entity.EpgChannel
@@ -48,12 +49,12 @@ class ChannelData(private val db: AppRoomDatabase) : DataSourceInterface<Channel
         return db.channelDao.itemCount
     }
 
-    override fun getLiveDataItems(): LiveData<List<Channel>>? {
-        return null
+    override fun getLiveDataItems(): LiveData<List<Channel>> {
+        return MutableLiveData()
     }
 
-    override fun getLiveDataItemById(id: Any): LiveData<Channel>? {
-        return null
+    override fun getLiveDataItemById(id: Any): LiveData<Channel> {
+        return MutableLiveData()
     }
 
     override fun getItemById(id: Any): Channel? {
