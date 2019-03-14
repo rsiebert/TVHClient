@@ -21,7 +21,7 @@ import timber.log.Timber;
 
 import static org.tvheadend.tvhclient.ui.features.dvr.recordings.RecordingListDiffCallback.PAYLOAD_DATA_SIZE;
 
-class RecordingRecyclerViewAdapter extends RecyclerView.Adapter<RecordingRecyclerViewAdapter.RecordingViewHolder> implements Filterable {
+public class RecordingRecyclerViewAdapter extends RecyclerView.Adapter<RecordingRecyclerViewAdapter.RecordingViewHolder> implements Filterable {
 
     private final RecyclerViewClickCallback clickCallback;
     private final boolean isDualPane;
