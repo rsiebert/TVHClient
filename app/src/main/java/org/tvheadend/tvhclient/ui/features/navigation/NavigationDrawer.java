@@ -207,9 +207,7 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
             headerResult.addProfiles(new ProfileDrawerItem().withName(R.string.no_connection_available));
         }
         Connection connection = appRepository.getConnectionData().getActiveItem();
-        if (connection != null) {
-            headerResult.setActiveProfile(connection.getId());
-        }
+        headerResult.setActiveProfile(connection.getId());
     }
 
     @Override
@@ -231,9 +229,7 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
                 })
                 .onNegative(((dialog, which) -> {
                     Connection connection = appRepository.getConnectionData().getActiveItem();
-                    if (connection != null) {
-                        headerResult.setActiveProfile(connection.getId());
-                    }
+                    headerResult.setActiveProfile(connection.getId());
                 }))
                 .cancelable(false)
                 .canceledOnTouchOutside(false)
