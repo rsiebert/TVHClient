@@ -4,7 +4,6 @@ import android.app.Application
 import android.content.SharedPreferences
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.data.repository.AppRepository
 import org.tvheadend.tvhclient.domain.entity.Connection
@@ -30,6 +29,6 @@ class ConnectionViewModel(application: Application) : AndroidViewModel(applicati
 
     init {
         MainApplication.getComponent().inject(this)
-        allConnections = appRepository.connectionData.getLiveDataItems() ?: MutableLiveData()
+        allConnections = appRepository.connectionData.getLiveDataItems()
     }
 }
