@@ -83,10 +83,8 @@ class TimerRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, Se
                 recyclerViewAdapter.addItems(recordings)
             }
 
-                recyclerView.visibility = View.VISIBLE
-
-                progressBar.visibility = View.GONE
-
+            recyclerView.visibility = View.VISIBLE
+            progressBar.visibility = View.GONE
 
             if (TextUtils.isEmpty(searchQuery)) {
                 toolbarInterface.setSubtitle(activity.resources.getQuantityString(R.plurals.items, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
