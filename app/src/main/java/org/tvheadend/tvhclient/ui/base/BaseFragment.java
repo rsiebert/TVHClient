@@ -52,7 +52,7 @@ public abstract class BaseFragment extends Fragment implements NetworkStatusList
 
         MainApplication.getComponent().inject(this);
         if (activity instanceof NetworkStatusListener) {
-            isNetworkAvailable = ((NetworkStatusListener) activity).isNetworkAvailable();
+            isNetworkAvailable = ((NetworkStatusListener) activity).onNetworkIsAvailable();
         }
 
         mainFrameLayout = activity.findViewById(R.id.main);
@@ -99,7 +99,7 @@ public abstract class BaseFragment extends Fragment implements NetworkStatusList
     }
 
     @Override
-    public boolean isNetworkAvailable() {
+    public boolean onNetworkIsAvailable() {
         return this.isNetworkAvailable;
     }
 

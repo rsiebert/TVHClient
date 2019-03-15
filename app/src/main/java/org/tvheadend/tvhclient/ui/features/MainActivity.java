@@ -499,7 +499,7 @@ public class MainActivity extends BaseActivity implements NavigationDrawerCallba
     }
 
     @Override
-    public boolean isNetworkAvailable() {
+    public boolean onNetworkIsAvailable() {
         return isNetworkAvailable;
     }
 

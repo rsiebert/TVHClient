@@ -119,7 +119,7 @@ class SearchActivity : BaseActivity(), StartSearchInterface, NetworkStatusListen
         invalidateOptionsMenu()
     }
 
-    override fun isNetworkAvailable(): Boolean {
+    override fun onNetworkIsAvailable(): Boolean {
         return isNetworkAvailable
     }
 

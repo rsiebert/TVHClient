@@ -9,7 +9,7 @@ interface NetworkStatusListener {
      *
      * @return True if network is available, false otherwise
      */
-    fun isNetworkAvailable(): Boolean
+    fun onNetworkIsAvailable(): Boolean
 
     /**
      * Called by a broadcast receiver when the network status has changed.
