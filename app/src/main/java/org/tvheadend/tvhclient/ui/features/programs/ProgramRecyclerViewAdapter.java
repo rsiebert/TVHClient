@@ -22,7 +22,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
-class ProgramRecyclerViewAdapter extends RecyclerView.Adapter<ProgramRecyclerViewAdapter.ProgramViewHolder> implements Filterable {
+public class ProgramRecyclerViewAdapter extends RecyclerView.Adapter<ProgramRecyclerViewAdapter.ProgramViewHolder> implements Filterable {
 
     private final LastProgramVisibleListener onLastProgramVisibleListener;
     private final RecyclerViewClickCallback clickCallback;
