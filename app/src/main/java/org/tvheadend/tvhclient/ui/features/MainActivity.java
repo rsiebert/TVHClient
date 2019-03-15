@@ -165,7 +165,7 @@ public class MainActivity extends BaseActivity implements NavigationDrawerCallba
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
         // add the values which need to be saved from the drawer and header to the bundle
         outState = navigationDrawer.saveInstanceState(outState);
         outState.putInt("navigationMenuId", selectedNavigationMenuId);
