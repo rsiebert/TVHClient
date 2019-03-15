@@ -86,9 +86,9 @@ class SeriesRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, S
             progressBar.visibility = View.GONE
 
             if (TextUtils.isEmpty(searchQuery)) {
-                toolbarInterface.setSubtitle(activity.resources.getQuantityString(R.plurals.items, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
+                toolbarInterface.setSubtitle(resources.getQuantityString(R.plurals.items, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
             } else {
-                toolbarInterface.setSubtitle(activity.resources.getQuantityString(R.plurals.series_recordings, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
+                toolbarInterface.setSubtitle(resources.getQuantityString(R.plurals.series_recordings, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
             }
 
             if (isDualPane && recyclerViewAdapter.itemCount > 0) {
@@ -130,8 +130,7 @@ class SeriesRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, S
     override fun onPrepareOptionsMenu(menu: Menu) {
         super.onPrepareOptionsMenu(menu)
 
-        if (sharedPreferences.getBoolean("delete_all_recordings_menu_enabled",
-                        activity.resources.getBoolean(R.bool.pref_default_delete_all_recordings_menu_enabled))
+        if (sharedPreferences.getBoolean("delete_all_recordings_menu_enabled", resources.getBoolean(R.bool.pref_default_delete_all_recordings_menu_enabled))
                 && recyclerViewAdapter.itemCount > 1
                 && isNetworkAvailable) {
             menu.findItem(R.id.menu_record_remove_all).isVisible = true
@@ -217,9 +216,9 @@ class SeriesRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, S
 
     override fun onFilterComplete(i: Int) {
         if (TextUtils.isEmpty(searchQuery)) {
-            toolbarInterface.setSubtitle(activity.resources.getQuantityString(R.plurals.items, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
+            toolbarInterface.setSubtitle(resources.getQuantityString(R.plurals.items, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
         } else {
-            toolbarInterface.setSubtitle(activity.resources.getQuantityString(R.plurals.series_recordings, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
+            toolbarInterface.setSubtitle(resources.getQuantityString(R.plurals.series_recordings, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
         }
         // Preselect the first result item in the details screen
         if (isDualPane && recyclerViewAdapter.itemCount > 0) {

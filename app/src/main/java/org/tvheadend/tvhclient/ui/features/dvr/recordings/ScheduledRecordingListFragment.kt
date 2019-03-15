@@ -34,7 +34,7 @@ class ScheduledRecordingListFragment : RecordingListFragment(), SearchRequestInt
 
     private fun handleObservedRecordings(recordings: MutableList<Recording>) {
         // Remove all recordings from the list that are duplicated
-        if (sharedPreferences.getBoolean("hide_duplicate_scheduled_recordings_enabled", activity.resources.getBoolean(R.bool.pref_default_hide_duplicate_scheduled_recordings_enabled))) {
+        if (sharedPreferences.getBoolean("hide_duplicate_scheduled_recordings_enabled", resources.getBoolean(R.bool.pref_default_hide_duplicate_scheduled_recordings_enabled))) {
             for (recording in recordings) {
                 if (recording.duplicate == 1) {
                     recordings.remove(recording)
@@ -47,9 +47,9 @@ class ScheduledRecordingListFragment : RecordingListFragment(), SearchRequestInt
         progressBar.visibility = View.GONE
 
         if (TextUtils.isEmpty(searchQuery)) {
-            toolbarInterface.setSubtitle(activity.resources.getQuantityString(R.plurals.items, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
+            toolbarInterface.setSubtitle(resources.getQuantityString(R.plurals.items, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
         } else {
-            toolbarInterface.setSubtitle(activity.resources.getQuantityString(R.plurals.upcoming_recordings, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
+            toolbarInterface.setSubtitle(resources.getQuantityString(R.plurals.upcoming_recordings, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
         }
 
         if (isDualPane && recyclerViewAdapter.itemCount > 0) {
@@ -82,9 +82,9 @@ class ScheduledRecordingListFragment : RecordingListFragment(), SearchRequestInt
 
     override fun onFilterComplete(i: Int) {
         if (TextUtils.isEmpty(searchQuery)) {
-            toolbarInterface.setSubtitle(activity.resources.getQuantityString(R.plurals.items, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
+            toolbarInterface.setSubtitle(resources.getQuantityString(R.plurals.items, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
         } else {
-            toolbarInterface.setSubtitle(activity.resources.getQuantityString(R.plurals.upcoming_recordings, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
+            toolbarInterface.setSubtitle(resources.getQuantityString(R.plurals.upcoming_recordings, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
         }
         // Preselect the first result item in the details screen
         if (isDualPane && recyclerViewAdapter.itemCount > 0) {

@@ -29,9 +29,9 @@ class CompletedRecordingListFragment : RecordingListFragment(), SearchRequestInt
             progressBar.visibility = View.GONE
 
             if (TextUtils.isEmpty(searchQuery)) {
-                toolbarInterface.setSubtitle(activity.resources.getQuantityString(R.plurals.items, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
+                toolbarInterface.setSubtitle(resources.getQuantityString(R.plurals.items, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
             } else {
-                toolbarInterface.setSubtitle(activity.resources.getQuantityString(R.plurals.completed_recordings, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
+                toolbarInterface.setSubtitle(resources.getQuantityString(R.plurals.completed_recordings, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
             }
 
             if (isDualPane && recyclerViewAdapter.itemCount > 0) {
@@ -66,9 +66,9 @@ class CompletedRecordingListFragment : RecordingListFragment(), SearchRequestInt
 
     override fun onFilterComplete(i: Int) {
         if (TextUtils.isEmpty(searchQuery)) {
-            toolbarInterface.setSubtitle(activity.resources.getQuantityString(R.plurals.items, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
+            toolbarInterface.setSubtitle(resources.getQuantityString(R.plurals.items, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
         } else {
-            toolbarInterface.setSubtitle(activity.resources.getQuantityString(R.plurals.completed_recordings, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
+            toolbarInterface.setSubtitle(resources.getQuantityString(R.plurals.completed_recordings, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
         }
         // Preselect the first result item in the details screen
         if (isDualPane && recyclerViewAdapter.itemCount > 0) {

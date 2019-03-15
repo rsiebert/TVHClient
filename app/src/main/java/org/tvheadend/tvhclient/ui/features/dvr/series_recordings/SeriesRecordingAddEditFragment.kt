@@ -138,7 +138,7 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
 
         viewModel = ViewModelProviders.of(activity).get(SeriesRecordingViewModel::class.java)
 
-        duplicateDetectionList = activity.resources.getStringArray(R.array.duplicate_detection_list)
+        duplicateDetectionList = resources.getStringArray(R.array.duplicate_detection_list)
         recordingProfilesList = appRepository.serverProfileData.recordingProfileNames
         profile = appRepository.serverProfileData.getItemById(serverStatus.recordingServerProfileId)
         viewModel.recordingProfileNameId = RecordingUtils.getSelectedProfileId(profile, recordingProfilesList)

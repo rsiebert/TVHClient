@@ -103,8 +103,7 @@ open class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback, Do
     override fun onPrepareOptionsMenu(menu: Menu) {
         super.onPrepareOptionsMenu(menu)
 
-        if (sharedPreferences.getBoolean("delete_all_recordings_menu_enabled",
-                        activity.resources.getBoolean(R.bool.pref_default_delete_all_recordings_menu_enabled))
+        if (sharedPreferences.getBoolean("delete_all_recordings_menu_enabled", resources.getBoolean(R.bool.pref_default_delete_all_recordings_menu_enabled))
                 && recyclerViewAdapter.itemCount > 1
                 && isNetworkAvailable) {
             menu.findItem(R.id.menu_record_remove_all).isVisible = true

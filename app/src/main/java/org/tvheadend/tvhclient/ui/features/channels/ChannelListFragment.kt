@@ -173,11 +173,11 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
         val toolbarTitle = viewModel.getSelectedChannelTagName(activity)
         if (TextUtils.isEmpty(searchQuery)) {
             toolbarInterface.setTitle(toolbarTitle)
-            toolbarInterface.setSubtitle(activity.resources.getQuantityString(R.plurals.items,
+            toolbarInterface.setSubtitle(resources.getQuantityString(R.plurals.items,
                     recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
         } else {
             toolbarInterface.setTitle(getString(R.string.search_results))
-            toolbarInterface.setSubtitle(activity.resources.getQuantityString(R.plurals.channels,
+            toolbarInterface.setSubtitle(resources.getQuantityString(R.plurals.channels,
                     recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
         }
     }
@@ -195,7 +195,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
         // onActivityCreated, so we need to check if any values that affect the representation
         // of the channel list have changed.
 
-        viewModel.setChannelSortOrder(Integer.valueOf(sharedPreferences.getString("channel_sort_order", activity.resources.getString(R.string.pref_default_channel_sort_order))!!))
+        viewModel.setChannelSortOrder(Integer.valueOf(sharedPreferences.getString("channel_sort_order", resources.getString(R.string.pref_default_channel_sort_order))!!))
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -378,7 +378,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
     override fun onClick(view: View, position: Int) {
 
         if ((view.id == R.id.icon || view.id == R.id.icon_text)
-                && Integer.valueOf(sharedPreferences.getString("channel_icon_action", activity.resources.getString(R.string.pref_default_channel_icon_action))!!) > 0
+                && Integer.valueOf(sharedPreferences.getString("channel_icon_action", resources.getString(R.string.pref_default_channel_icon_action))!!) > 0
                 && recyclerViewAdapter.itemCount > 0
                 && isNetworkAvailable) {
             val channel = recyclerViewAdapter.getItem(position)
