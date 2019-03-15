@@ -1,11 +1,14 @@
 $ 2.2.2
   % VERSION 2.2.2
-  _ 06.03.2019
+  _ 15.03.2019
     * Display the stream errors for a recording again
     * Fixed custom language sometimes not being shown
     * Fixed playback sometimes not starting when an external player is used
     * Fixed text overlapping the channel icons in the program list
     * Prevent crashing older servers when requesting http profiles
+    * Fixed showing the wrong start and stop times for timer recordings
+    * Show 'Any' instead of 23:59 for timer and series recording in case no time was provided by the server
+    * Fixed updating the channels in the database when channels were removed on the server
 $ 2.2.1
   % VERSION 2.2.1
   _ 01.03.2019
