@@ -54,8 +54,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
     private var programIdToBeEditedWhenBeingRecorded = 0
     private var channelTags: List<ChannelTag>? = null
     private var selectedTime: Long = 0
-
-    private var currentTimeUpdateTask: Runnable? = null
+    lateinit var currentTimeUpdateTask: Runnable
     private val currentTimeUpdateHandler = Handler()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -106,7 +105,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
         })
 
         Timber.d("Observing channel tags")
-        viewModel.channelTags.observe(viewLifecycleOwner, Observer{ tags ->
+        viewModel.channelTags.observe(viewLifecycleOwner, Observer { tags ->
             if (tags != null) {
                 Timber.d("View model returned ${tags.size} channel tags")
                 channelTags = tags
@@ -114,7 +113,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
         })
 
         Timber.d("Observing channels")
-        viewModel.channels.observe(viewLifecycleOwner, Observer{ channels ->
+        viewModel.channels.observe(viewLifecycleOwner, Observer { channels ->
             if (channels != null) {
                 Timber.d("View model returned ${channels.size} channels")
                 recyclerViewAdapter.addItems(channels)
@@ -134,7 +133,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
         // so the recording status of the particular program can be updated. This is required
         // because the programs are not updated automatically when recordings change.
         Timber.d("Observing recordings")
-        viewModel.allRecordings.observe(viewLifecycleOwner, Observer{ recordings ->
+        viewModel.allRecordings.observe(viewLifecycleOwner, Observer { recordings ->
             if (recordings != null) {
                 Timber.d("View model returned ${recordings.size} recordings")
                 recyclerViewAdapter.addRecordings(recordings)
@@ -164,7 +163,6 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
             }
             currentTimeUpdateHandler.postDelayed(currentTimeUpdateTask, 60000)
         }
-        currentTimeUpdateHandler.post(currentTimeUpdateTask)
     }
 
     private fun showChannelTagOrChannelCount() {
@@ -194,8 +192,13 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
         // When the user returns from the settings only the onResume method is called, not the
         // onActivityCreated, so we need to check if any values that affect the representation
         // of the channel list have changed.
-
         viewModel.setChannelSortOrder(Integer.valueOf(sharedPreferences.getString("channel_sort_order", resources.getString(R.string.pref_default_channel_sort_order))!!))
+        currentTimeUpdateHandler.post(currentTimeUpdateTask)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        currentTimeUpdateHandler.removeCallbacks(currentTimeUpdateTask)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -297,8 +300,10 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
             // already available. If an instance exist already then update the selected time
             // that was selected from the channel list.
             var fragment = fm.findFragmentById(R.id.details)
-            if (fragment !is ProgramListFragment || fragment.shownChannelId != channel.id) {
-                fragment = ProgramListFragment.newInstance(channel.name, channel.id, selectedTime)
+            if (fragment !is ProgramListFragment
+                    || fragment.shownChannelId != channel.id) {
+                fragment = ProgramListFragment.newInstance(channel.name
+                        ?: "", channel.id, selectedTime)
                 fm.beginTransaction()
                         .replace(R.id.details, fragment)
                         .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
