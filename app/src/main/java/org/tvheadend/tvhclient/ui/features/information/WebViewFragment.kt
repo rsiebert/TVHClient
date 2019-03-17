@@ -91,8 +91,8 @@ open class WebViewFragment : BaseFragment(), HtmlFileLoaderTask.Listener {
         }
     }
 
-    override fun onFileContentsLoaded(fileContents: String) {
-        var content = fileContents
+    override fun onFileContentsLoaded(fileContent: String) {
+        var content = fileContent
         if (!TextUtils.isEmpty(content)) {
             if (content.contains("styles_light.css")) {
                 content = if (MiscUtils.getThemeId(activity) == R.style.CustomTheme_Light) {

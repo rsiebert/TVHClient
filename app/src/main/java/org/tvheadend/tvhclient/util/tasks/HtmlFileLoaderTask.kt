@@ -84,6 +84,6 @@ class HtmlFileLoaderTask(context: Context, private val file: String, private val
     }
 
     interface Listener {
-        fun onFileContentsLoaded(content: String)
+        fun onFileContentsLoaded(fileContent: String)
     }
 }
