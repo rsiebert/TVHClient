@@ -1,6 +1,6 @@
 $ 2.2.2
   % VERSION 2.2.2
-  _ 15.03.2019
+  _ 17.03.2019
     * Display the stream errors for a recording again
     * Fixed custom language sometimes not being shown
     * Fixed playback sometimes not starting when an external player is used
