@@ -49,7 +49,7 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
 
     private var selectedTime: Long = 0
     private var selectedListPosition: Int = 0
-    private var shownChannelId: Int = 0
+    var shownChannelId: Int = 0
 
     lateinit var channelName: String
     lateinit var searchQuery: String
@@ -84,9 +84,8 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
         } else {
             selectedListPosition = 0
             shownChannelId = arguments?.getInt("channelId", 0) ?: 0
-            channelName = arguments?.getString("channelName") ?: ""
-            selectedTime = arguments?.getLong("selectedTime", System.currentTimeMillis())
-                    ?: System.currentTimeMillis()
+            channelName = arguments?.getString("channelName", "") ?: ""
+            selectedTime = arguments?.getLong("selectedTime", System.currentTimeMillis()) ?: System.currentTimeMillis()
             searchQuery = arguments?.getString(SearchManager.QUERY) ?: ""
         }
 
