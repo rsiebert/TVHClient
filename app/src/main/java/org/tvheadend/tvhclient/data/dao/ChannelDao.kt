@@ -54,25 +54,6 @@ interface ChannelDao {
     fun loadAllChannelsByTimeAndTag(time: Long, sortOrder: Int, tagIds: List<Int>): LiveData<List<Channel>>
 
     @Transaction
-    @Query(CHANNEL_BASE_QUERY +
-            "LEFT JOIN programs AS program ON program.start <= :time AND program.stop > :time AND program.channel_id = c.id " +
-            "LEFT JOIN programs AS next_program ON next_program.start = program.stop AND next_program.channel_id = c.id " +
-            "WHERE " + CONNECTION_IS_ACTIVE +
-            "GROUP BY c.id " +
-            ORDER_BY)
-    fun loadAllChannelsByTimeSync(time: Long, sortOrder: Int): List<Channel>
-
-    @Transaction
-    @Query(CHANNEL_BASE_QUERY +
-            "LEFT JOIN programs AS program ON program.start <= :time AND program.stop > :time AND program.channel_id = c.id " +
-            "LEFT JOIN programs AS next_program ON next_program.start = program.stop AND next_program.channel_id = c.id " +
-            "WHERE " + CONNECTION_IS_ACTIVE +
-            " AND c.id IN (SELECT channel_id FROM tags_and_channels WHERE tag_id IN (:tagIds)) " +
-            "GROUP BY c.id " +
-            ORDER_BY)
-    fun loadAllChannelsByTimeAndTagSync(time: Long, tagIds: Set<Int>, sortOrder: Int): List<Channel>
-
-    @Transaction
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(channel: Channel)
 

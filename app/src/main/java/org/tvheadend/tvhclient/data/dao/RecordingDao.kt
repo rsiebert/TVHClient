@@ -110,12 +110,6 @@ abstract class RecordingDao {
     @Delete
     abstract fun delete(recordings: List<Recording>)
 
-    @Transaction
-    open fun insertAndDelete(newRecordings: List<Recording>, oldRecordings: List<Recording>) {
-        delete(oldRecordings)
-        insert(newRecordings)
-    }
-
     @Query("DELETE FROM recordings " +
             "WHERE connection_id IN (SELECT id FROM connections WHERE active = 1) " +
             " AND id = :id")
