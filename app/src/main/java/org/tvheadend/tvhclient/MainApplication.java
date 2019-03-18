@@ -42,7 +42,7 @@ import androidx.multidex.MultiDexApplication;
 import io.fabric.sdk.android.Fabric;
 import timber.log.Timber;
 
-import static org.tvheadend.tvhclient.util.Constants.UNLOCKER;
+import static org.tvheadend.tvhclient.util.billing.BillingManager.UNLOCKER;
 
 // TODO use more livedata for connection and server status in a centralized viewmodel
 // TODO move diffutils to background thread

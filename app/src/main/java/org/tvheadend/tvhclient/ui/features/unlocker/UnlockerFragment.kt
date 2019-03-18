@@ -12,9 +12,9 @@ import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.features.information.WebViewFragment
 import org.tvheadend.tvhclient.ui.features.startup.SplashActivity
-import org.tvheadend.tvhclient.util.Constants.UNLOCKER
 import org.tvheadend.tvhclient.util.billing.BillingHandler
 import org.tvheadend.tvhclient.util.billing.BillingManager
+import org.tvheadend.tvhclient.util.billing.BillingManager.UNLOCKER
 import org.tvheadend.tvhclient.util.billing.BillingUpdatesListener
 import org.tvheadend.tvhclient.util.tasks.HtmlFileLoaderTask
 import timber.log.Timber

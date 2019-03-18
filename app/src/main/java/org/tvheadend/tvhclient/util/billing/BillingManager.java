@@ -20,6 +20,9 @@ public class BillingManager implements PurchasesUpdatedListener {
     private BillingUpdatesListener billingUpdatesListener;
     private boolean isServiceConnected = false;
 
+    // Product id for the in-app billing item to unlock the application
+    public static final String UNLOCKER = "unlocker";
+
     public BillingManager(Context context, final BillingUpdatesListener billingUpdatesListener) {
         this.billingUpdatesListener = billingUpdatesListener;
         this.billingClient = BillingClient.newBuilder(context).setListener(this).build();
