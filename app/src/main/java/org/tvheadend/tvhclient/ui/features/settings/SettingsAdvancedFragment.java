@@ -16,7 +16,7 @@ import org.tvheadend.tvhclient.data.service.HtspService;
 import org.tvheadend.tvhclient.data.worker.LoadChannelIconWorker;
 import org.tvheadend.tvhclient.domain.entity.Channel;
 import org.tvheadend.tvhclient.domain.entity.Connection;
-import org.tvheadend.tvhclient.ui.base.utils.SnackbarUtils;
+import org.tvheadend.tvhclient.ui.common.SnackbarUtils;
 import org.tvheadend.tvhclient.ui.features.search.SuggestionProvider;
 import org.tvheadend.tvhclient.ui.features.startup.SplashActivity;
 import org.tvheadend.tvhclient.util.MiscUtils;

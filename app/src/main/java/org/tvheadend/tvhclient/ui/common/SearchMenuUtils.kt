@@ -1,6 +1,6 @@
 @file:JvmName("SearchMenuUtils")
 
-package org.tvheadend.tvhclient.util.menu
+package org.tvheadend.tvhclient.ui.common
 
 import android.app.SearchManager
 import android.content.Context

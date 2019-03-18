@@ -17,7 +17,7 @@ import org.tvheadend.tvhclient.ui.features.dvr.recordings.RecordingViewModel
 import org.tvheadend.tvhclient.ui.features.dvr.series_recordings.SeriesRecordingViewModel
 import org.tvheadend.tvhclient.ui.features.dvr.timer_recordings.TimerRecordingViewModel
 import org.tvheadend.tvhclient.ui.features.programs.ProgramViewModel
-import org.tvheadend.tvhclient.util.tasks.WakeOnLanTask
+import org.tvheadend.tvhclient.ui.common.tasks.WakeOnLanTask
 
 class StatusFragment : BaseFragment() {
 

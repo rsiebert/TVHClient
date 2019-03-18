@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.ui.base.callbacks
+package org.tvheadend.tvhclient.ui.common.callbacks
 
 import android.view.View
 

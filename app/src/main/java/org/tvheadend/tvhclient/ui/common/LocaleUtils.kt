@@ -1,6 +1,6 @@
 @file:JvmName("LocaleUtils")
 
-package org.tvheadend.tvhclient.util
+package org.tvheadend.tvhclient.ui.common
 
 import android.annotation.TargetApi
 import android.content.Context

@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.util.menu;
+package org.tvheadend.tvhclient.ui.common;
 
 
 import android.app.Activity;
@@ -584,7 +584,7 @@ public class MenuUtils {
         if (channelIconAction == 1) {
             handleMenuPlayChannel(channelId);
         } else if (channelIconAction == 2) {
-            if (MiscUtils.getCastSession(activity) != null) {
+            if (CastUtils.getCastSession(activity) != null) {
                 handleMenuCast("channelId", channelId);
             } else {
                 handleMenuPlayChannel(channelId);
@@ -604,7 +604,7 @@ public class MenuUtils {
         if (channelIconAction == 1) {
             handleMenuPlayRecording(recordingId);
         } else if (channelIconAction == 2) {
-            if (MiscUtils.getCastSession(activity) != null) {
+            if (CastUtils.getCastSession(activity) != null) {
                 handleMenuCast("dvrId", recordingId);
             } else {
                 handleMenuPlayRecording(recordingId);

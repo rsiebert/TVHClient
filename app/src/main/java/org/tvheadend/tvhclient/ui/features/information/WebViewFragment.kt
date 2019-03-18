@@ -16,7 +16,7 @@ import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.util.getThemeId
-import org.tvheadend.tvhclient.util.tasks.HtmlFileLoaderTask
+import org.tvheadend.tvhclient.ui.common.tasks.HtmlFileLoaderTask
 import java.util.regex.Pattern
 
 open class WebViewFragment : BaseFragment(), HtmlFileLoaderTask.Listener {

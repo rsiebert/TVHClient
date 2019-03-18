@@ -8,7 +8,7 @@ import android.widget.Filterable;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.domain.entity.SeriesRecording;
 import org.tvheadend.tvhclient.databinding.SeriesRecordingListAdapterBinding;
-import org.tvheadend.tvhclient.ui.base.callbacks.RecyclerViewClickCallback;
+import org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback;
 
 import java.util.ArrayList;
 import java.util.List;

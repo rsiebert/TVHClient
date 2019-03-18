@@ -15,10 +15,10 @@ import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.data.repository.AppRepository
 import org.tvheadend.tvhclient.data.service.SyncStateReceiver
-import org.tvheadend.tvhclient.ui.base.callbacks.ToolbarInterface
+import org.tvheadend.tvhclient.ui.common.callbacks.ToolbarInterface
 import org.tvheadend.tvhclient.ui.features.MainActivity
 import org.tvheadend.tvhclient.ui.features.settings.SettingsActivity
-import org.tvheadend.tvhclient.util.menu.MenuUtils
+import org.tvheadend.tvhclient.ui.common.MenuUtils
 import timber.log.Timber
 import javax.inject.Inject
 

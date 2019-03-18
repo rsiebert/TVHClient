@@ -12,7 +12,7 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.domain.entity.Program;
 import org.tvheadend.tvhclient.domain.entity.Recording;
 import org.tvheadend.tvhclient.databinding.ProgramListAdapterBinding;
-import org.tvheadend.tvhclient.ui.base.callbacks.RecyclerViewClickCallback;
+import org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback;
 
 import java.util.ArrayList;
 import java.util.List;

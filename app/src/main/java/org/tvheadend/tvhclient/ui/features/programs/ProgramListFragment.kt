@@ -26,15 +26,15 @@ import org.tvheadend.tvhclient.data.service.HtspService
 import org.tvheadend.tvhclient.domain.entity.Program
 import org.tvheadend.tvhclient.domain.entity.Recording
 import org.tvheadend.tvhclient.ui.base.BaseFragment
-import org.tvheadend.tvhclient.ui.base.callbacks.RecyclerViewClickCallback
+import org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback
 import org.tvheadend.tvhclient.ui.features.dialogs.GenreColorDialog
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity
 import org.tvheadend.tvhclient.ui.features.search.SearchRequestInterface
 import org.tvheadend.tvhclient.ui.features.search.StartSearchInterface
-import org.tvheadend.tvhclient.util.getCastSession
-import org.tvheadend.tvhclient.util.menu.onMenuSelected
-import org.tvheadend.tvhclient.util.menu.prepareMenu
-import org.tvheadend.tvhclient.util.menu.prepareSearchMenu
+import org.tvheadend.tvhclient.ui.common.getCastSession
+import org.tvheadend.tvhclient.ui.common.onMenuSelected
+import org.tvheadend.tvhclient.ui.common.prepareMenu
+import org.tvheadend.tvhclient.ui.common.prepareSearchMenu
 import timber.log.Timber
 
 class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgramVisibleListener, SearchRequestInterface, Filter.FilterListener {

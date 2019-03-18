@@ -1,6 +1,6 @@
 @file:JvmName("SnackbarUtils")
 
-package org.tvheadend.tvhclient.ui.base.utils
+package org.tvheadend.tvhclient.ui.common
 
 import android.content.Context
 import android.content.Intent
@@ -18,4 +18,3 @@ fun sendSnackbarMessage(context: Context, msg: String) {
     intent.putExtra(SnackbarMessageReceiver.CONTENT, msg)
     LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
 }
-

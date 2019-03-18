@@ -29,7 +29,7 @@ import org.tvheadend.tvhclient.ui.features.settings.SettingsConnectionBaseFragme
 import org.tvheadend.tvhclient.ui.features.settings.SettingsListConnectionsFragment;
 import org.tvheadend.tvhclient.ui.features.startup.StartupFragment;
 import org.tvheadend.tvhclient.util.MigrateUtils;
-import org.tvheadend.tvhclient.util.menu.MenuUtils;
+import org.tvheadend.tvhclient.ui.common.MenuUtils;
 
 import javax.inject.Singleton;
 

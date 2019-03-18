@@ -18,7 +18,7 @@ import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.data.repository.AppRepository
 import org.tvheadend.tvhclient.util.getThemeId
-import org.tvheadend.tvhclient.util.onAttach
+import org.tvheadend.tvhclient.ui.common.onAttach
 import timber.log.Timber
 import javax.inject.Inject
 

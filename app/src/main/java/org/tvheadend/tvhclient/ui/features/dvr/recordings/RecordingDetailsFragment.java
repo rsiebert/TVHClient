@@ -15,12 +15,12 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.databinding.RecordingDetailsFragmentBinding;
 import org.tvheadend.tvhclient.domain.entity.Recording;
 import org.tvheadend.tvhclient.ui.base.BaseFragment;
-import org.tvheadend.tvhclient.util.menu.PopupMenuUtil;
-import org.tvheadend.tvhclient.util.menu.SearchMenuUtils;
+import org.tvheadend.tvhclient.ui.common.CastUtils;
+import org.tvheadend.tvhclient.ui.common.PopupMenuUtil;
+import org.tvheadend.tvhclient.ui.common.SearchMenuUtils;
 import org.tvheadend.tvhclient.ui.features.download.DownloadPermissionGrantedInterface;
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity;
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingRemovedCallback;
-import org.tvheadend.tvhclient.util.MiscUtils;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
@@ -108,7 +108,7 @@ public class RecordingDetailsFragment extends BaseFragment implements RecordingR
             if (recording.isCompleted()) {
                 menu.findItem(R.id.menu_record_remove).setVisible(true);
                 menu.findItem(R.id.menu_play).setVisible(true);
-                menu.findItem(R.id.menu_cast).setVisible(MiscUtils.getCastSession(activity) != null);
+                menu.findItem(R.id.menu_cast).setVisible(CastUtils.getCastSession(activity) != null);
                 menu.findItem(R.id.menu_download).setVisible(isUnlocked);
 
             } else if (recording.isScheduled() && !recording.isRecording()) {
@@ -118,7 +118,7 @@ public class RecordingDetailsFragment extends BaseFragment implements RecordingR
             } else if (recording.isRecording()) {
                 menu.findItem(R.id.menu_record_stop).setVisible(true);
                 menu.findItem(R.id.menu_play).setVisible(true);
-                menu.findItem(R.id.menu_cast).setVisible(MiscUtils.getCastSession(activity) != null);
+                menu.findItem(R.id.menu_cast).setVisible(CastUtils.getCastSession(activity) != null);
                 menu.findItem(R.id.menu_edit).setVisible(isUnlocked);
 
             } else if (recording.isFailed() || recording.isFileMissing() || recording.isMissed() || recording.isAborted()) {
@@ -126,7 +126,7 @@ public class RecordingDetailsFragment extends BaseFragment implements RecordingR
                 // Allow playing a failed recording which size is not zero
                 if (recording.getDataSize() > 0) {
                     menu.findItem(R.id.menu_play).setVisible(true);
-                    menu.findItem(R.id.menu_cast).setVisible(MiscUtils.getCastSession(activity) != null);
+                    menu.findItem(R.id.menu_cast).setVisible(CastUtils.getCastSession(activity) != null);
                 }
             }
         }

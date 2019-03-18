@@ -122,7 +122,7 @@ class HtspIntentService : JobIntentService(), HtspConnectionStateListener {
             val programs = ArrayList<Program>()
             for (obj in message.getList("events")) {
                 val msg = obj as HtspMessage
-                val program = HtspUtils.convertMessageToProgramModel(Program(), msg)
+                val program = convertMessageToProgramModel(Program(), msg)
                 program.connectionId = connection.id
 
                 programs.add(program)
@@ -324,7 +324,7 @@ class HtspIntentService : JobIntentService(), HtspConnectionStateListener {
                 }
             }
 
-            val request = HtspUtils.convertIntentToEventMessage(msgIntent)
+            val request = convertIntentToEventMessage(msgIntent)
             htspConnection.sendMessage(request) { response ->
                 if (response != null) {
                     onGetEvents(response, msgIntent)

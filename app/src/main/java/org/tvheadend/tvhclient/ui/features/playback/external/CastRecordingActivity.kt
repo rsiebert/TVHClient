@@ -10,7 +10,8 @@ import com.google.android.gms.cast.MediaMetadata
 import com.google.android.gms.cast.framework.media.RemoteMediaClient
 import com.google.android.gms.common.images.WebImage
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.util.getCastSession
+import org.tvheadend.tvhclient.ui.common.getCastSession
+import org.tvheadend.tvhclient.ui.common.getCastSession
 import timber.log.Timber
 
 class CastRecordingActivity : BasePlaybackActivity() {

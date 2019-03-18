@@ -22,7 +22,7 @@ import org.tvheadend.tvhclient.data.repository.AppRepository
 import org.tvheadend.tvhclient.domain.entity.Connection
 import org.tvheadend.tvhclient.domain.entity.Recording
 import org.tvheadend.tvhclient.domain.entity.ServerStatus
-import org.tvheadend.tvhclient.ui.base.utils.SnackbarMessageReceiver
+import org.tvheadend.tvhclient.ui.common.SnackbarMessageReceiver
 import timber.log.Timber
 import javax.inject.Inject
 

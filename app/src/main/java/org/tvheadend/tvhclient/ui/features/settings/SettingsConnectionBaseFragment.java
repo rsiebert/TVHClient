@@ -12,9 +12,9 @@ import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.domain.entity.Connection;
-import org.tvheadend.tvhclient.ui.base.callbacks.BackPressedInterface;
-import org.tvheadend.tvhclient.ui.base.callbacks.ToolbarInterface;
-import org.tvheadend.tvhclient.ui.base.utils.SnackbarUtils;
+import org.tvheadend.tvhclient.ui.common.callbacks.BackPressedInterface;
+import org.tvheadend.tvhclient.ui.common.callbacks.ToolbarInterface;
+import org.tvheadend.tvhclient.ui.common.SnackbarUtils;
 
 import javax.inject.Inject;
 

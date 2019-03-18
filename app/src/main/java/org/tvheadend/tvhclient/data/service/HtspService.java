@@ -32,7 +32,7 @@ import org.tvheadend.tvhclient.domain.entity.ServerProfile;
 import org.tvheadend.tvhclient.domain.entity.ServerStatus;
 import org.tvheadend.tvhclient.domain.entity.TagAndChannel;
 import org.tvheadend.tvhclient.domain.entity.TimerRecording;
-import org.tvheadend.tvhclient.ui.base.utils.SnackbarUtils;
+import org.tvheadend.tvhclient.ui.common.SnackbarUtils;
 import org.tvheadend.tvhclient.ui.features.notification.NotificationUtils;
 import org.tvheadend.tvhclient.util.MiscUtils;
 
@@ -92,9 +92,8 @@ public class HtspService extends Service implements HtspConnectionStateListener,
 
         execService = Executors.newScheduledThreadPool(10);
         serverStatus = appRepository.getServerStatusData().getActiveItem();
-        if (serverStatus != null) {
-            htspVersion = serverStatus.getHtspVersion();
-        }
+        htspVersion = serverStatus.getHtspVersion();
+
         //noinspection ConstantConditions
         connectionTimeout = Integer.valueOf(sharedPreferences.getString("connection_timeout", appContext.getResources().getString(R.string.pref_default_connection_timeout))) * 1000;
     }
@@ -1123,7 +1122,7 @@ public class HtspService extends Service implements HtspConnectionStateListener,
         }
 
         int gmtOffsetFromServer = message.getInteger("gmtoffset", 0) * 60 * 1000;
-        int gmtOffset = gmtOffsetFromServer - MiscUtils.getDaylightSavingOffset();
+        int gmtOffset = gmtOffsetFromServer - HtspUtils.getDaylightSavingOffset();
         Timber.d("GMT offset from server is " + gmtOffsetFromServer +
                 ", GMT offset considering daylight saving offset is " + gmtOffset);
 

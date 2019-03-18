@@ -1,11 +1,11 @@
-package org.tvheadend.tvhclient.util.network
+package org.tvheadend.tvhclient.ui.common.network
 
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 
 import org.tvheadend.tvhclient.MainApplication
-import org.tvheadend.tvhclient.ui.base.callbacks.NetworkStatusListener
+import org.tvheadend.tvhclient.ui.common.callbacks.NetworkStatusListener
 
 import java.lang.ref.WeakReference
 

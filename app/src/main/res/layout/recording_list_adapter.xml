@@ -27,7 +27,7 @@
 
         <variable
             name="callback"
-            type="org.tvheadend.tvhclient.ui.base.callbacks.RecyclerViewClickCallback" />
+            type="org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"

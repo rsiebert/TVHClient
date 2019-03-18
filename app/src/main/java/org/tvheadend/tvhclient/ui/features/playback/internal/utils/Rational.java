@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.util;
+package org.tvheadend.tvhclient.ui.features.playback.internal.utils;
 
 public class Rational {
 

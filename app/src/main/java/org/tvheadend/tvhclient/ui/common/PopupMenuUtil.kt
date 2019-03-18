@@ -1,6 +1,6 @@
 @file:JvmName("PopupMenuUtil")
 
-package org.tvheadend.tvhclient.util.menu
+package org.tvheadend.tvhclient.ui.common
 
 import android.content.Context
 import android.preference.PreferenceManager
@@ -9,7 +9,6 @@ import android.view.Menu
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.domain.entity.ProgramInterface
 import org.tvheadend.tvhclient.domain.entity.Recording
-import org.tvheadend.tvhclient.util.getCastSession
 import timber.log.Timber
 
 

@@ -23,8 +23,8 @@ import android.os.Bundle;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.domain.entity.Connection;
 import org.tvheadend.tvhclient.domain.entity.ServerProfile;
-import org.tvheadend.tvhclient.ui.base.callbacks.BackPressedInterface;
-import org.tvheadend.tvhclient.ui.base.utils.SnackbarUtils;
+import org.tvheadend.tvhclient.ui.common.callbacks.BackPressedInterface;
+import org.tvheadend.tvhclient.ui.common.SnackbarUtils;
 
 import java.util.List;
 

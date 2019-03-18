@@ -1,6 +1,6 @@
 @file:JvmName("NetworkUtils")
 
-package org.tvheadend.tvhclient.util.network
+package org.tvheadend.tvhclient.ui.common.network
 
 import android.content.Context
 import android.net.ConnectivityManager

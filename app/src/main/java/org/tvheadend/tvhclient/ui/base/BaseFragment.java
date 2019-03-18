@@ -11,9 +11,9 @@ import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.domain.entity.ServerStatus;
-import org.tvheadend.tvhclient.ui.base.callbacks.NetworkStatusListener;
-import org.tvheadend.tvhclient.ui.base.callbacks.ToolbarInterface;
-import org.tvheadend.tvhclient.util.menu.MenuUtils;
+import org.tvheadend.tvhclient.ui.common.callbacks.NetworkStatusListener;
+import org.tvheadend.tvhclient.ui.common.callbacks.ToolbarInterface;
+import org.tvheadend.tvhclient.ui.common.MenuUtils;
 
 import javax.inject.Inject;
 

@@ -14,7 +14,7 @@ import org.tvheadend.tvhclient.domain.entity.EpgProgram;
 import org.tvheadend.tvhclient.domain.entity.Recording;
 import org.tvheadend.tvhclient.databinding.EpgProgramItemAdapterBinding;
 import org.tvheadend.tvhclient.ui.features.programs.ProgramDetailsFragment;
-import org.tvheadend.tvhclient.ui.base.callbacks.RecyclerViewClickCallback;
+import org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback;
 
 import java.util.ArrayList;
 import java.util.List;

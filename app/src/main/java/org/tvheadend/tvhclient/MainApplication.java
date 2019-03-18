@@ -20,8 +20,8 @@ import org.tvheadend.tvhclient.di.MainApplicationComponent;
 import org.tvheadend.tvhclient.di.modules.MainApplicationModule;
 import org.tvheadend.tvhclient.di.modules.RepositoryModule;
 import org.tvheadend.tvhclient.di.modules.SharedPreferencesModule;
+import org.tvheadend.tvhclient.ui.common.LocaleUtils;
 import org.tvheadend.tvhclient.ui.features.playback.external.ExpandedControlsActivity;
-import org.tvheadend.tvhclient.util.LocaleUtils;
 import org.tvheadend.tvhclient.util.MigrateUtils;
 import org.tvheadend.tvhclient.util.billing.BillingHandler;
 import org.tvheadend.tvhclient.util.billing.BillingManager;
@@ -34,6 +34,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
@@ -235,17 +237,19 @@ public class MainApplication extends MultiDexApplication implements OptionsProvi
     }
 
     @Override
-    public void onConsumeFinished(String token, int result) {
+    public void onConsumeFinished(@NonNull String token, int result) {
 
     }
 
     @Override
-    public void onPurchaseSuccessful(List<Purchase> purchases) {
+    public void onPurchaseSuccessful(@Nullable List<? extends Purchase> purchases) {
         Timber.d("Purchase was successful");
-        for (Purchase purchase : purchases) {
-            if (purchase.getSku().equals(UNLOCKER)) {
-                Timber.d("Received purchase item " + UNLOCKER);
-                isUnlocked = true;
+        if (purchases != null) {
+            for (Purchase purchase : purchases) {
+                if (purchase.getSku().equals(UNLOCKER)) {
+                    Timber.d("Received purchase item " + UNLOCKER);
+                    isUnlocked = true;
+                }
             }
         }
     }

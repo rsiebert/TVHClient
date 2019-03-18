@@ -10,13 +10,13 @@ import com.android.billingclient.api.BillingClient
 import com.android.billingclient.api.Purchase
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
+import org.tvheadend.tvhclient.ui.common.tasks.HtmlFileLoaderTask
 import org.tvheadend.tvhclient.ui.features.information.WebViewFragment
 import org.tvheadend.tvhclient.ui.features.startup.SplashActivity
 import org.tvheadend.tvhclient.util.billing.BillingHandler
 import org.tvheadend.tvhclient.util.billing.BillingManager
 import org.tvheadend.tvhclient.util.billing.BillingManager.UNLOCKER
 import org.tvheadend.tvhclient.util.billing.BillingUpdatesListener
-import org.tvheadend.tvhclient.util.tasks.HtmlFileLoaderTask
 import timber.log.Timber
 
 class UnlockerFragment : WebViewFragment(), HtmlFileLoaderTask.Listener, BillingUpdatesListener {
@@ -109,7 +109,7 @@ class UnlockerFragment : WebViewFragment(), HtmlFileLoaderTask.Listener, Billing
 
     }
 
-    override fun onPurchaseSuccessful(purchases: List<Purchase>) {
+    override fun onPurchaseSuccessful(purchases: List<Purchase>?) {
         Timber.d("Purchase was successful")
         showPurchaseSuccessfulDialog()
     }

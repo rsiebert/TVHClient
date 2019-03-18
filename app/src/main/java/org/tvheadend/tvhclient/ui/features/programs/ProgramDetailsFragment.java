@@ -16,8 +16,8 @@ import org.tvheadend.tvhclient.databinding.ProgramDetailsFragmentBinding;
 import org.tvheadend.tvhclient.domain.entity.Program;
 import org.tvheadend.tvhclient.domain.entity.Recording;
 import org.tvheadend.tvhclient.ui.base.BaseFragment;
-import org.tvheadend.tvhclient.util.menu.PopupMenuUtil;
-import org.tvheadend.tvhclient.util.menu.SearchMenuUtils;
+import org.tvheadend.tvhclient.ui.common.PopupMenuUtil;
+import org.tvheadend.tvhclient.ui.common.SearchMenuUtils;
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity;
 
 import androidx.annotation.NonNull;

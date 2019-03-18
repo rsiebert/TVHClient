@@ -21,11 +21,11 @@ import butterknife.ButterKnife
 import butterknife.Unbinder
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.base.BaseFragment
-import org.tvheadend.tvhclient.ui.base.callbacks.RecyclerViewClickCallback
+import org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback
+import org.tvheadend.tvhclient.ui.common.onMenuSelected
+import org.tvheadend.tvhclient.ui.common.prepareSearchMenu
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity
 import org.tvheadend.tvhclient.ui.features.search.SearchRequestInterface
-import org.tvheadend.tvhclient.util.menu.onMenuSelected
-import org.tvheadend.tvhclient.util.menu.prepareSearchMenu
 import java.util.concurrent.CopyOnWriteArrayList
 
 class TimerRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, SearchRequestInterface, Filter.FilterListener {

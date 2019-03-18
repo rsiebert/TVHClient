@@ -4,7 +4,7 @@ import android.content.Context
 import android.os.AsyncTask
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.util.getThemeId
-import org.tvheadend.tvhclient.util.tasks.HtmlFileLoaderTask
+import org.tvheadend.tvhclient.ui.common.tasks.HtmlFileLoaderTask
 import timber.log.Timber
 import java.io.BufferedReader
 import java.io.InputStream

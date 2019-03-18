@@ -3,8 +3,8 @@ package org.tvheadend.tvhclient.ui.base
 import android.content.Context
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
-import org.tvheadend.tvhclient.ui.base.callbacks.ToolbarInterface
-import org.tvheadend.tvhclient.util.onAttach
+import org.tvheadend.tvhclient.ui.common.callbacks.ToolbarInterface
+import org.tvheadend.tvhclient.ui.common.onAttach
 
 open class BaseActivity : AppCompatActivity(), ToolbarInterface {
 

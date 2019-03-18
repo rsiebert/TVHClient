@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.ui.base.utils
+package org.tvheadend.tvhclient.ui.common
 
 import android.app.Activity
 import android.content.BroadcastReceiver

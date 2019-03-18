@@ -16,8 +16,8 @@ import org.tvheadend.tvhclient.data.service.HtspService
 import org.tvheadend.tvhclient.domain.entity.Channel
 import org.tvheadend.tvhclient.domain.entity.ServerProfile
 import org.tvheadend.tvhclient.ui.base.BaseFragment
-import org.tvheadend.tvhclient.ui.base.callbacks.BackPressedInterface
-import org.tvheadend.tvhclient.ui.base.utils.sendSnackbarMessage
+import org.tvheadend.tvhclient.ui.common.callbacks.BackPressedInterface
+import org.tvheadend.tvhclient.ui.common.sendSnackbarMessage
 import org.tvheadend.tvhclient.ui.features.dvr.*
 import org.tvheadend.tvhclient.util.isServerProfileEnabled
 

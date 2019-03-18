@@ -22,7 +22,7 @@ import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.data.repository.AppRepository
 import org.tvheadend.tvhclient.data.service.htsp.HtspConnection
 import org.tvheadend.tvhclient.data.service.htsp.HtspConnectionStateListener
-import org.tvheadend.tvhclient.util.Rational
+import org.tvheadend.tvhclient.ui.features.playback.internal.utils.Rational
 import timber.log.Timber
 import java.util.*
 import java.util.concurrent.Executors

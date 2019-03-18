@@ -23,16 +23,16 @@ import butterknife.Unbinder
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.domain.entity.ChannelTag
 import org.tvheadend.tvhclient.ui.base.BaseFragment
-import org.tvheadend.tvhclient.ui.base.callbacks.RecyclerViewClickCallback
+import org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback
+import org.tvheadend.tvhclient.ui.common.onMenuSelected
+import org.tvheadend.tvhclient.ui.common.prepareMenu
+import org.tvheadend.tvhclient.ui.common.prepareSearchMenu
+import org.tvheadend.tvhclient.ui.common.tasks.WakeOnLanTask
 import org.tvheadend.tvhclient.ui.features.dialogs.ChannelTagSelectionDialog
 import org.tvheadend.tvhclient.ui.features.dialogs.GenreColorDialog
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity
 import org.tvheadend.tvhclient.ui.features.programs.ProgramListFragment
 import org.tvheadend.tvhclient.ui.features.search.SearchRequestInterface
-import org.tvheadend.tvhclient.util.menu.onMenuSelected
-import org.tvheadend.tvhclient.util.menu.prepareMenu
-import org.tvheadend.tvhclient.util.menu.prepareSearchMenu
-import org.tvheadend.tvhclient.util.tasks.WakeOnLanTask
 import timber.log.Timber
 
 class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDisplayOptionListener, SearchRequestInterface, Filter.FilterListener {

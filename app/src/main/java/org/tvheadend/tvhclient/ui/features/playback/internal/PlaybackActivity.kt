@@ -34,10 +34,10 @@ import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.data.repository.AppRepository
 import org.tvheadend.tvhclient.ui.features.MainActivity
 import org.tvheadend.tvhclient.ui.features.playback.internal.utils.TrackSelectionHelper
-import org.tvheadend.tvhclient.util.Rational
+import org.tvheadend.tvhclient.ui.features.playback.internal.utils.Rational
 import org.tvheadend.tvhclient.util.getIconUrl
 import org.tvheadend.tvhclient.util.getThemeId
-import org.tvheadend.tvhclient.util.onAttach
+import org.tvheadend.tvhclient.ui.common.onAttach
 import timber.log.Timber
 import java.util.*
 import javax.inject.Inject

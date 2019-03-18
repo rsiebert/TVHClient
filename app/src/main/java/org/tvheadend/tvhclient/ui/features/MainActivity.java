@@ -30,9 +30,11 @@ import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.data.service.HtspService;
 import org.tvheadend.tvhclient.data.service.SyncStateReceiver;
 import org.tvheadend.tvhclient.ui.base.BaseActivity;
-import org.tvheadend.tvhclient.ui.base.callbacks.NetworkStatusListener;
-import org.tvheadend.tvhclient.ui.base.utils.SnackbarMessageReceiver;
-import org.tvheadend.tvhclient.ui.base.utils.SnackbarUtils;
+import org.tvheadend.tvhclient.ui.common.CastUtils;
+import org.tvheadend.tvhclient.ui.common.SnackbarMessageReceiver;
+import org.tvheadend.tvhclient.ui.common.SnackbarUtils;
+import org.tvheadend.tvhclient.ui.common.callbacks.NetworkStatusListener;
+import org.tvheadend.tvhclient.ui.common.network.NetworkStatusReceiver;
 import org.tvheadend.tvhclient.ui.features.download.DownloadPermissionGrantedInterface;
 import org.tvheadend.tvhclient.ui.features.dvr.recordings.RecordingDetailsFragment;
 import org.tvheadend.tvhclient.ui.features.dvr.series_recordings.SeriesRecordingDetailsFragment;
@@ -45,7 +47,6 @@ import org.tvheadend.tvhclient.ui.features.programs.ProgramDetailsFragment;
 import org.tvheadend.tvhclient.ui.features.programs.ProgramListFragment;
 import org.tvheadend.tvhclient.ui.features.search.SearchRequestInterface;
 import org.tvheadend.tvhclient.util.MiscUtils;
-import org.tvheadend.tvhclient.util.network.NetworkStatusReceiver;
 
 import javax.inject.Inject;
 
@@ -142,7 +143,7 @@ public class MainActivity extends BaseActivity implements NavigationDrawerCallba
             navigationDrawer.handleSelection(fragment);
         });
 
-        castContext = MiscUtils.getCastContext(this);
+        castContext = CastUtils.getCastContext(this);
         if (castContext != null) {
             Timber.d("Casting is available");
             castSessionManagerListener = new CastSessionManagerListener(this, castSession);
@@ -201,7 +202,7 @@ public class MainActivity extends BaseActivity implements NavigationDrawerCallba
     @Override
     public void onResume() {
         super.onResume();
-        castSession = MiscUtils.getCastSession(this);
+        castSession = CastUtils.getCastSession(this);
     }
 
     @Override

@@ -4,7 +4,7 @@ import android.os.Bundle;
 
 import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.domain.entity.Connection;
-import org.tvheadend.tvhclient.ui.base.utils.SnackbarUtils;
+import org.tvheadend.tvhclient.ui.common.SnackbarUtils;
 
 import androidx.annotation.Nullable;
 import timber.log.Timber;

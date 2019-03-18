@@ -21,14 +21,14 @@ import org.tvheadend.tvhclient.domain.entity.Channel;
 import org.tvheadend.tvhclient.domain.entity.Recording;
 import org.tvheadend.tvhclient.domain.entity.ServerProfile;
 import org.tvheadend.tvhclient.data.service.HtspService;
+import org.tvheadend.tvhclient.ui.common.SnackbarUtils;
 import org.tvheadend.tvhclient.ui.features.dvr.DatePickerFragment;
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingConfigSelectedListener;
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingUtils;
 import org.tvheadend.tvhclient.ui.features.dvr.TimePickerFragment;
 import org.tvheadend.tvhclient.ui.base.BaseFragment;
-import org.tvheadend.tvhclient.ui.base.callbacks.BackPressedInterface;
+import org.tvheadend.tvhclient.ui.common.callbacks.BackPressedInterface;
 import org.tvheadend.tvhclient.util.MiscUtils;
-import org.tvheadend.tvhclient.ui.base.utils.SnackbarUtils;
 
 import java.util.List;
 

@@ -15,8 +15,8 @@ import org.tvheadend.tvhclient.R;
 import org.tvheadend.tvhclient.databinding.TimerRecordingDetailsFragmentBinding;
 import org.tvheadend.tvhclient.domain.entity.TimerRecording;
 import org.tvheadend.tvhclient.ui.base.BaseFragment;
-import org.tvheadend.tvhclient.util.menu.PopupMenuUtil;
-import org.tvheadend.tvhclient.util.menu.SearchMenuUtils;
+import org.tvheadend.tvhclient.ui.common.PopupMenuUtil;
+import org.tvheadend.tvhclient.ui.common.SearchMenuUtils;
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity;
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingRemovedCallback;
 

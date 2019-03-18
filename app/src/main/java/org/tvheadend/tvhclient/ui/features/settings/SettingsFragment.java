@@ -12,7 +12,7 @@ import android.os.Handler;
 import com.afollestad.materialdialogs.folderselector.FolderChooserDialog;
 
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.ui.base.utils.SnackbarUtils;
+import org.tvheadend.tvhclient.ui.common.SnackbarUtils;
 import org.tvheadend.tvhclient.ui.features.MainActivity;
 import org.tvheadend.tvhclient.ui.features.changelog.ChangeLogActivity;
 import org.tvheadend.tvhclient.ui.features.information.WebViewActivity;
