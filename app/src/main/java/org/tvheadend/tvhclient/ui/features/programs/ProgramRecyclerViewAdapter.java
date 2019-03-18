@@ -45,8 +45,9 @@ public class ProgramRecyclerViewAdapter extends RecyclerView.Adapter<ProgramRecy
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(parent.getContext());
         boolean showGenreColors = sharedPreferences.getBoolean("genre_colors_for_programs_enabled", parent.getContext().getResources().getBoolean(R.bool.pref_default_genre_colors_for_programs_enabled));
+        boolean showProgramSubtitles = sharedPreferences.getBoolean("program_subtitle_enabled", parent.getContext().getResources().getBoolean(R.bool.pref_default_program_subtitle_enabled));
 
-        return new ProgramViewHolder(itemBinding, showProgramChannelIcon, showGenreColors);
+        return new ProgramViewHolder(itemBinding, showProgramChannelIcon, showGenreColors, showProgramSubtitles);
     }
 
     @Override
@@ -181,17 +182,20 @@ public class ProgramRecyclerViewAdapter extends RecyclerView.Adapter<ProgramRecy
         private final ProgramListAdapterBinding binding;
         private final boolean showProgramChannelIcon;
         private final boolean showGenreColors;
+        private final boolean showProgramSubtitles;
 
-        ProgramViewHolder(ProgramListAdapterBinding binding, boolean showProgramChannelIcon, boolean showGenreColors) {
+        ProgramViewHolder(ProgramListAdapterBinding binding, boolean showProgramChannelIcon, boolean showGenreColors, boolean showProgramSubtitles) {
             super(binding.getRoot());
             this.binding = binding;
             this.showProgramChannelIcon = showProgramChannelIcon;
             this.showGenreColors = showGenreColors;
+            this.showProgramSubtitles = showProgramSubtitles;
         }
 
         void bind(Program program, int position, RecyclerViewClickCallback clickCallback) {
             binding.setProgram(program);
             binding.setPosition(position);
+            binding.setShowProgramSubtitles(showProgramSubtitles);
             binding.setShowProgramChannelIcon(showProgramChannelIcon);
             binding.setShowGenreColor(showGenreColors);
             binding.setCallback(clickCallback);

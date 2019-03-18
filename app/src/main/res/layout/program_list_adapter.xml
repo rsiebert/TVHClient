@@ -15,6 +15,10 @@
             type="int" />
 
         <variable
+            name="showProgramSubtitles"
+            type="boolean" />
+
+        <variable
             name="showProgramChannelIcon"
             type="boolean" />
 
@@ -117,7 +121,7 @@
             android:ellipsize="end"
             android:singleLine="true"
             android:text="@{program.subtitle}"
-            android:visibility="@{program.subtitle != null &amp;&amp; !program.subtitle.equals(program.title) ? View.VISIBLE : View.GONE}"
+            android:visibility="@{showProgramSubtitles &amp;&amp; program.subtitle != null &amp;&amp; !program.subtitle.equals(program.title) ? View.VISIBLE : View.GONE}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/genre"
             app:layout_constraintTop_toBottomOf="@+id/title"
@@ -133,7 +137,7 @@
             android:ellipsize="end"
             android:singleLine="true"
             android:text="@{program.summary}"
-            android:visibility="@{program.summary != null &amp;&amp; !program.summary.equals(program.subtitle) ? View.VISIBLE : View.GONE}"
+            android:visibility="@{(!showProgramSubtitles &amp;&amp; program.summary != null) || (program.summary != null &amp;&amp; !program.summary.equals(program.subtitle)) ? View.VISIBLE : View.GONE}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/genre"
             app:layout_constraintTop_toBottomOf="@+id/subtitle"
