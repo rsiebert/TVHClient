@@ -18,11 +18,8 @@ import org.tvheadend.tvhclient.domain.entity.ServerProfile
 import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.base.callbacks.BackPressedInterface
 import org.tvheadend.tvhclient.ui.base.utils.SnackbarUtils
-import org.tvheadend.tvhclient.ui.features.dvr.DatePickerFragment
-import org.tvheadend.tvhclient.ui.features.dvr.RecordingConfigSelectedListener
-import org.tvheadend.tvhclient.ui.features.dvr.RecordingUtils
-import org.tvheadend.tvhclient.ui.features.dvr.TimePickerFragment
-import org.tvheadend.tvhclient.util.MiscUtils
+import org.tvheadend.tvhclient.ui.features.dvr.*
+import org.tvheadend.tvhclient.util.isServerProfileEnabled
 import timber.log.Timber
 
 class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, RecordingConfigSelectedListener, DatePickerFragment.Listener, TimePickerFragment.Listener {
@@ -74,7 +71,7 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
 
     private lateinit var recordingProfilesList: Array<String>
     private lateinit var duplicateDetectionList: Array<String>
-    private var channelList: List<Channel>? = null
+    private lateinit var channelList: List<Channel>
     private var profile: ServerProfile? = null
 
     lateinit var viewModel: SeriesRecordingViewModel
@@ -114,7 +111,7 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
             }
 
             // Add the recording profile if available and enabled
-            if (MiscUtils.isServerProfileEnabled(profile, serverStatus) && recordingProfileNameTextView.text.isNotEmpty()) {
+            if (isServerProfileEnabled(profile, serverStatus) && recordingProfileNameTextView.text.isNotEmpty()) {
                 // Use the selected profile. If no change was done in the
                 // selection then the default one from the connection setting will be used
                 intent.putExtra("configName", recordingProfileNameTextView.text.toString())
@@ -141,7 +138,7 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
         duplicateDetectionList = resources.getStringArray(R.array.duplicate_detection_list)
         recordingProfilesList = appRepository.serverProfileData.recordingProfileNames
         profile = appRepository.serverProfileData.getItemById(serverStatus.recordingServerProfileId)
-        viewModel.recordingProfileNameId = RecordingUtils.getSelectedProfileId(profile, recordingProfilesList)
+        viewModel.recordingProfileNameId = getSelectedProfileId(profile, recordingProfilesList)
         channelList = appRepository.channelData.getItems()
 
         if (savedInstanceState == null) {
@@ -171,12 +168,12 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
         channelNameTextView.setOnClickListener {
             // Determine if the server supports recording on all channels
             val allowRecordingOnAllChannels = htspVersion >= 21
-            RecordingUtils.handleChannelListSelection(activity, channelList, allowRecordingOnAllChannels, this@SeriesRecordingAddEditFragment)
+            handleChannelListSelection(activity, channelList, allowRecordingOnAllChannels, this@SeriesRecordingAddEditFragment)
         }
 
-        priorityTextView.text = RecordingUtils.getPriorityName(activity, viewModel.recording.priority)
+        priorityTextView.text = getPriorityName(activity, viewModel.recording.priority)
         priorityTextView.setOnClickListener {
-            RecordingUtils.handlePrioritySelection(activity, viewModel.recording.priority, this@SeriesRecordingAddEditFragment)
+            handlePrioritySelection(activity, viewModel.recording.priority, this@SeriesRecordingAddEditFragment)
         }
 
         if (recordingProfilesList.isEmpty()) {
@@ -188,26 +185,26 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
 
             recordingProfileNameTextView.text = recordingProfilesList[viewModel.recordingProfileNameId]
             recordingProfileNameTextView.setOnClickListener {
-                RecordingUtils.handleRecordingProfileSelection(activity, recordingProfilesList, viewModel.recordingProfileNameId, this)
+                handleRecordingProfileSelection(activity, recordingProfilesList, viewModel.recordingProfileNameId, this)
             }
         }
 
-        startTimeTextView.text = RecordingUtils.getTimeStringFromTimeInMillis(viewModel.startTimeInMillis)
+        startTimeTextView.text = getTimeStringFromTimeInMillis(viewModel.startTimeInMillis)
         startTimeTextView.setOnClickListener {
-            RecordingUtils.handleTimeSelection(activity, viewModel.startTimeInMillis, this@SeriesRecordingAddEditFragment, "startTime")
+            handleTimeSelection(activity, viewModel.startTimeInMillis, this@SeriesRecordingAddEditFragment, "startTime")
         }
 
-        startWindowTimeTextView.text = RecordingUtils.getTimeStringFromTimeInMillis(viewModel.startWindowTimeInMillis)
+        startWindowTimeTextView.text = getTimeStringFromTimeInMillis(viewModel.startWindowTimeInMillis)
         startWindowTimeTextView.setOnClickListener {
-            RecordingUtils.handleTimeSelection(activity, viewModel.startWindowTimeInMillis, this@SeriesRecordingAddEditFragment, "startWindowTime")
+            handleTimeSelection(activity, viewModel.startWindowTimeInMillis, this@SeriesRecordingAddEditFragment, "startWindowTime")
         }
 
         startExtraTimeTextView.setText(viewModel.recording.startExtra.toString())
         stopExtraTimeTextView.setText(viewModel.recording.stopExtra.toString())
 
-        daysOfWeekTextView.text = RecordingUtils.getSelectedDaysOfWeekText(activity, viewModel.recording.daysOfWeek)
+        daysOfWeekTextView.text = getSelectedDaysOfWeekText(activity, viewModel.recording.daysOfWeek)
         daysOfWeekTextView.setOnClickListener {
-            RecordingUtils.handleDayOfWeekSelection(activity, viewModel.recording.daysOfWeek, this@SeriesRecordingAddEditFragment)
+            handleDayOfWeekSelection(activity, viewModel.recording.daysOfWeek, this@SeriesRecordingAddEditFragment)
         }
 
         minDurationEditText.setText(if (viewModel.recording.minDuration > 0) viewModel.recording.minDuration.toString() else getString(R.string.duration_sum))
@@ -330,7 +327,7 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
 
     override fun onPrioritySelected(which: Int) {
         viewModel.recording.priority = which
-        priorityTextView.text = RecordingUtils.getPriorityName(activity, viewModel.recording.priority)
+        priorityTextView.text = getPriorityName(activity, viewModel.recording.priority)
     }
 
     override fun onProfileSelected(which: Int) {
@@ -353,8 +350,8 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
             }
         }
 
-        startTimeTextView.text = RecordingUtils.getTimeStringFromTimeInMillis(viewModel.startTimeInMillis)
-        startWindowTimeTextView.text = RecordingUtils.getTimeStringFromTimeInMillis(viewModel.startWindowTimeInMillis)
+        startTimeTextView.text = getTimeStringFromTimeInMillis(viewModel.startTimeInMillis)
+        startWindowTimeTextView.text = getTimeStringFromTimeInMillis(viewModel.startWindowTimeInMillis)
     }
 
     override fun onDateSelected(milliSeconds: Long, tag: String?) {
@@ -363,7 +360,7 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
 
     override fun onDaysSelected(selectedDays: Int) {
         viewModel.recording.daysOfWeek = selectedDays
-        daysOfWeekTextView.text = RecordingUtils.getSelectedDaysOfWeekText(activity, selectedDays)
+        daysOfWeekTextView.text = getSelectedDaysOfWeekText(activity, selectedDays)
     }
 
     private fun onDuplicateDetectionValueSelected(which: Int) {

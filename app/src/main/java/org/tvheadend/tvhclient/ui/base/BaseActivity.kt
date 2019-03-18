@@ -4,12 +4,12 @@ import android.content.Context
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import org.tvheadend.tvhclient.ui.base.callbacks.ToolbarInterface
-import org.tvheadend.tvhclient.util.LocaleUtils
+import org.tvheadend.tvhclient.util.onAttach
 
 open class BaseActivity : AppCompatActivity(), ToolbarInterface {
 
     override fun attachBaseContext(context: Context) {
-        super.attachBaseContext(LocaleUtils.onAttach(context))
+        super.attachBaseContext(onAttach(context))
     }
 
     override fun setTitle(title: String) {

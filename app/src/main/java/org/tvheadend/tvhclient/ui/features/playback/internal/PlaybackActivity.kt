@@ -34,9 +34,10 @@ import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.data.repository.AppRepository
 import org.tvheadend.tvhclient.ui.features.MainActivity
 import org.tvheadend.tvhclient.ui.features.playback.internal.utils.TrackSelectionHelper
-import org.tvheadend.tvhclient.util.LocaleUtils
-import org.tvheadend.tvhclient.util.MiscUtils
 import org.tvheadend.tvhclient.util.Rational
+import org.tvheadend.tvhclient.util.getIconUrl
+import org.tvheadend.tvhclient.util.getThemeId
+import org.tvheadend.tvhclient.util.onAttach
 import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
@@ -90,7 +91,7 @@ class PlaybackActivity : AppCompatActivity(), PlayerControlView.VisibilityListen
     private var selectedVideoAspectRatio: Rational? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        setTheme(MiscUtils.getThemeId(this))
+        setTheme(getThemeId(this))
         super.onCreate(savedInstanceState)
         setContentView(R.layout.player_overlay_view)
         Timber.d("Creating")
@@ -163,7 +164,7 @@ class PlaybackActivity : AppCompatActivity(), PlayerControlView.VisibilityListen
         viewModel.channelIcon.observe(this, Observer { icon ->
             Timber.d("Received channel icon $icon")
             Picasso.get()
-                    .load(MiscUtils.getIconUrl(this, icon))
+                    .load(getIconUrl(this, icon))
                     .into(iconImageView, object : Callback {
                         override fun onSuccess() {
                             iconTextView.visibility = View.GONE
@@ -206,7 +207,7 @@ class PlaybackActivity : AppCompatActivity(), PlayerControlView.VisibilityListen
     }
 
     override fun attachBaseContext(context: Context) {
-        super.attachBaseContext(LocaleUtils.onAttach(context))
+        super.attachBaseContext(onAttach(context))
     }
 
     override fun onNewIntent(intent: Intent) {

@@ -53,7 +53,7 @@ class ProgramNotificationWorker(val context: Context, workerParams: WorkerParame
             "Program starts at ${sdf.format(startTime)} in ${(startTime - currentTime) / 1000 / 60} minutes."
         }
 
-        val builder = NotificationUtils.getNotificationBuilder(context)
+        val builder = getNotificationBuilder(context)
         builder.setContentTitle(title)
                 .setContentText(eventTitle)
                 .setContentIntent(detailsPendingIntent)

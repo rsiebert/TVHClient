@@ -10,14 +10,14 @@ import com.google.android.gms.cast.MediaMetadata
 import com.google.android.gms.cast.framework.media.RemoteMediaClient
 import com.google.android.gms.common.images.WebImage
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.util.MiscUtils
+import org.tvheadend.tvhclient.util.getCastSession
 import timber.log.Timber
 
 class CastRecordingActivity : BasePlaybackActivity() {
 
     override fun onTicketReceived() {
 
-        val castSession = MiscUtils.getCastSession(this)
+        val castSession = getCastSession(this)
         if (castSession == null) {
             progressBar.visibility = View.GONE
             statusTextView.text = getString(R.string.no_cast_session)

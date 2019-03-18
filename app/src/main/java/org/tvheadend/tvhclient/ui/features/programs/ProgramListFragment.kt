@@ -31,9 +31,10 @@ import org.tvheadend.tvhclient.ui.features.dialogs.GenreColorDialog
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity
 import org.tvheadend.tvhclient.ui.features.search.SearchRequestInterface
 import org.tvheadend.tvhclient.ui.features.search.StartSearchInterface
-import org.tvheadend.tvhclient.util.MiscUtils
-import org.tvheadend.tvhclient.util.menu.PopupMenuUtil
-import org.tvheadend.tvhclient.util.menu.SearchMenuUtils
+import org.tvheadend.tvhclient.util.getCastSession
+import org.tvheadend.tvhclient.util.menu.onMenuSelected
+import org.tvheadend.tvhclient.util.menu.prepareMenu
+import org.tvheadend.tvhclient.util.menu.prepareSearchMenu
 import timber.log.Timber
 
 class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgramVisibleListener, SearchRequestInterface, Filter.FilterListener {
@@ -85,7 +86,8 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
             selectedListPosition = 0
             shownChannelId = arguments?.getInt("channelId", 0) ?: 0
             channelName = arguments?.getString("channelName", "") ?: ""
-            selectedTime = arguments?.getLong("selectedTime", System.currentTimeMillis()) ?: System.currentTimeMillis()
+            selectedTime = arguments?.getLong("selectedTime", System.currentTimeMillis())
+                    ?: System.currentTimeMillis()
             searchQuery = arguments?.getString(SearchManager.QUERY) ?: ""
         }
 
@@ -207,7 +209,7 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
 
         if (!isSearchActive && isNetworkAvailable) {
             menu.findItem(R.id.menu_play).isVisible = true
-            menu.findItem(R.id.menu_cast).isVisible = MiscUtils.getCastSession(activity) != null
+            menu.findItem(R.id.menu_cast).isVisible = getCastSession(activity) != null
         } else {
             menu.findItem(R.id.menu_play).isVisible = false
             menu.findItem(R.id.menu_cast).isVisible = false
@@ -254,11 +256,11 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
         val popupMenu = PopupMenu(activity, view)
         popupMenu.menuInflater.inflate(R.menu.program_popup_and_toolbar_menu, popupMenu.menu)
         popupMenu.menuInflater.inflate(R.menu.external_search_options_menu, popupMenu.menu)
-        PopupMenuUtil.prepareMenu(activity, popupMenu.menu, program, program.recording, isNetworkAvailable, htspVersion, isUnlocked)
-        PopupMenuUtil.prepareSearchMenu(popupMenu.menu, program.title, isNetworkAvailable)
+        prepareMenu(activity, popupMenu.menu, program, program.recording, isNetworkAvailable, htspVersion, isUnlocked)
+        prepareSearchMenu(popupMenu.menu, program.title, isNetworkAvailable)
 
         popupMenu.setOnMenuItemClickListener { item ->
-            if (SearchMenuUtils.onMenuSelected(activity, item.itemId, program.title, program.channelId)) {
+            if (onMenuSelected(activity, item.itemId, program.title, program.channelId)) {
                 return@setOnMenuItemClickListener true
             }
             when (item.itemId) {

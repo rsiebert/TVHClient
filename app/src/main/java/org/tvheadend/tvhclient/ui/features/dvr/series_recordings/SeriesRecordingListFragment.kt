@@ -24,8 +24,9 @@ import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.base.callbacks.RecyclerViewClickCallback
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity
 import org.tvheadend.tvhclient.ui.features.search.SearchRequestInterface
-import org.tvheadend.tvhclient.util.menu.PopupMenuUtil
-import org.tvheadend.tvhclient.util.menu.SearchMenuUtils
+import org.tvheadend.tvhclient.util.menu.prepareMenu
+import org.tvheadend.tvhclient.util.menu.onMenuSelected
+import org.tvheadend.tvhclient.util.menu.prepareSearchMenu
 import java.util.concurrent.CopyOnWriteArrayList
 
 class SeriesRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, SearchRequestInterface, Filter.FilterListener {
@@ -181,11 +182,11 @@ class SeriesRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, S
         popupMenu.menuInflater.inflate(R.menu.series_recordings_popup_menu, popupMenu.menu)
         popupMenu.menuInflater.inflate(R.menu.external_search_options_menu, popupMenu.menu)
 
-        PopupMenuUtil.prepareSearchMenu(popupMenu.menu, seriesRecording.title, isNetworkAvailable)
+        prepareSearchMenu(popupMenu.menu, seriesRecording.title, isNetworkAvailable)
         popupMenu.menu.findItem(R.id.menu_edit).isVisible = isUnlocked
 
         popupMenu.setOnMenuItemClickListener { item ->
-            if (SearchMenuUtils.onMenuSelected(activity, item.itemId, seriesRecording.title)) {
+            if (onMenuSelected(activity, item.itemId, seriesRecording.title)) {
                 return@setOnMenuItemClickListener true
             }
             when (item.itemId) {

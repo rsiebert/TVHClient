@@ -11,7 +11,7 @@ import org.tvheadend.tvhclient.ui.base.BaseActivity
 import org.tvheadend.tvhclient.ui.base.callbacks.NetworkStatusListener
 import org.tvheadend.tvhclient.ui.base.utils.SnackbarUtils
 import org.tvheadend.tvhclient.ui.features.programs.ProgramListFragment
-import org.tvheadend.tvhclient.util.MiscUtils
+import org.tvheadend.tvhclient.util.getThemeId
 import org.tvheadend.tvhclient.util.network.NetworkStatusReceiver
 import timber.log.Timber
 
@@ -21,7 +21,7 @@ class SearchActivity : BaseActivity(), StartSearchInterface, NetworkStatusListen
     private var isNetworkAvailable: Boolean = false
 
     public override fun onCreate(savedInstanceState: Bundle?) {
-        setTheme(MiscUtils.getThemeId(this))
+        setTheme(getThemeId(this))
         super.onCreate(savedInstanceState)
         setContentView(R.layout.misc_content_activity)
 

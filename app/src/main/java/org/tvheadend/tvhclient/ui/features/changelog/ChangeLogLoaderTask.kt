@@ -3,7 +3,7 @@ package org.tvheadend.tvhclient.ui.features.changelog
 import android.content.Context
 import android.os.AsyncTask
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.util.MiscUtils
+import org.tvheadend.tvhclient.util.getThemeId
 import org.tvheadend.tvhclient.util.tasks.HtmlFileLoaderTask
 import timber.log.Timber
 import java.io.BufferedReader
@@ -26,7 +26,7 @@ class ChangeLogLoaderTask(context: Context?, private val lastAppVersion: String,
         if (context != null) {
             Timber.d("Creating input stream from changelog file")
             inputStream = context.resources.openRawResource(R.raw.changelog)
-            isLightTheme = MiscUtils.getThemeId(context) == R.style.CustomTheme_Light
+            isLightTheme = getThemeId(context) == R.style.CustomTheme_Light
         }
     }
 

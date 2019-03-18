@@ -11,7 +11,7 @@ import org.tvheadend.tvhclient.ui.base.utils.SnackbarMessageReceiver
 import org.tvheadend.tvhclient.ui.features.dvr.recordings.RecordingAddEditFragment
 import org.tvheadend.tvhclient.ui.features.dvr.series_recordings.SeriesRecordingAddEditFragment
 import org.tvheadend.tvhclient.ui.features.dvr.timer_recordings.TimerRecordingAddEditFragment
-import org.tvheadend.tvhclient.util.MiscUtils
+import org.tvheadend.tvhclient.util.getThemeId
 
 // TODO split into 3 activities
 
@@ -20,7 +20,7 @@ class RecordingAddEditActivity : BaseActivity() {
     lateinit var snackbarMessageReceiver: SnackbarMessageReceiver
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        setTheme(MiscUtils.getThemeId(this))
+        setTheme(getThemeId(this))
         super.onCreate(savedInstanceState)
         setContentView(R.layout.misc_content_activity)
 

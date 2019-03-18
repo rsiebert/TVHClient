@@ -17,8 +17,8 @@ import com.afollestad.materialdialogs.MaterialDialog
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.data.repository.AppRepository
-import org.tvheadend.tvhclient.util.LocaleUtils
-import org.tvheadend.tvhclient.util.MiscUtils
+import org.tvheadend.tvhclient.util.getThemeId
+import org.tvheadend.tvhclient.util.onAttach
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -37,7 +37,7 @@ abstract class BasePlaybackActivity : AppCompatActivity() {
     lateinit var viewModel: ExternalPlayerViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        setTheme(MiscUtils.getThemeId(this))
+        setTheme(getThemeId(this))
         super.onCreate(savedInstanceState)
         setContentView(R.layout.play_activity)
         MainApplication.getComponent().inject(this)
@@ -70,7 +70,7 @@ abstract class BasePlaybackActivity : AppCompatActivity() {
     }
 
     override fun attachBaseContext(context: Context) {
-        super.attachBaseContext(LocaleUtils.onAttach(context))
+        super.attachBaseContext(onAttach(context))
     }
 
     protected abstract fun onTicketReceived()

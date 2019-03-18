@@ -34,7 +34,7 @@ class RecordingNotificationWorker(val context: Context, workerParams: WorkerPara
         val sdf = SimpleDateFormat("HH:mm", Locale.US)
         val title = "Recording starts at ${sdf.format(startTime)} in ${(startTime - Date().time) / 1000 / 60} minutes."
 
-        val builder = NotificationUtils.getNotificationBuilder(context)
+        val builder = getNotificationBuilder(context)
         builder.setContentTitle(title)
                 .setContentText(dvrTitle)
                 .addAction(R.attr.ic_menu_record_cancel, context.getString(R.string.record_cancel), cancelRecordingPendingIntent)

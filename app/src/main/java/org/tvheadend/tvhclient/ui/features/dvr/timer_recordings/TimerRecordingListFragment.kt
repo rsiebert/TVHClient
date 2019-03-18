@@ -24,8 +24,8 @@ import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.base.callbacks.RecyclerViewClickCallback
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity
 import org.tvheadend.tvhclient.ui.features.search.SearchRequestInterface
-import org.tvheadend.tvhclient.util.menu.PopupMenuUtil
-import org.tvheadend.tvhclient.util.menu.SearchMenuUtils
+import org.tvheadend.tvhclient.util.menu.onMenuSelected
+import org.tvheadend.tvhclient.util.menu.prepareSearchMenu
 import java.util.concurrent.CopyOnWriteArrayList
 
 class TimerRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, SearchRequestInterface, Filter.FilterListener {
@@ -182,10 +182,10 @@ class TimerRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, Se
         val popupMenu = PopupMenu(activity, view)
         popupMenu.menuInflater.inflate(R.menu.timer_recordings_popup_menu, popupMenu.menu)
         popupMenu.menuInflater.inflate(R.menu.external_search_options_menu, popupMenu.menu)
-        PopupMenuUtil.prepareSearchMenu(popupMenu.menu, timerRecording.title, isNetworkAvailable)
+        prepareSearchMenu(popupMenu.menu, timerRecording.title, isNetworkAvailable)
 
         popupMenu.setOnMenuItemClickListener { item ->
-            if (SearchMenuUtils.onMenuSelected(activity, item.itemId, timerRecording.title)) {
+            if (onMenuSelected(activity, item.itemId, timerRecording.title)) {
                 return@setOnMenuItemClickListener true
             }
             when (item.itemId) {

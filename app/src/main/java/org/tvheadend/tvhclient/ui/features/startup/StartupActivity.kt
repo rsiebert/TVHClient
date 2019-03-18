@@ -10,7 +10,7 @@ import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.base.BaseActivity
 import org.tvheadend.tvhclient.ui.base.callbacks.BackPressedInterface
 import org.tvheadend.tvhclient.ui.features.changelog.ChangeLogActivity
-import org.tvheadend.tvhclient.util.MiscUtils
+import org.tvheadend.tvhclient.util.getThemeId
 import timber.log.Timber
 
 class StartupActivity : BaseActivity() {
@@ -18,7 +18,7 @@ class StartupActivity : BaseActivity() {
     private var showStatusFragment = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        setTheme(MiscUtils.getThemeId(this))
+        setTheme(getThemeId(this))
         super.onCreate(savedInstanceState)
         setContentView(R.layout.misc_content_activity)
 

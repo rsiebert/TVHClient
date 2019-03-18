@@ -17,7 +17,7 @@ import org.tvheadend.tvhclient.data.service.htsp.HtspFileInputStream
 import org.tvheadend.tvhclient.data.service.htsp.HtspMessage
 import org.tvheadend.tvhclient.domain.entity.Connection
 import org.tvheadend.tvhclient.domain.entity.Program
-import org.tvheadend.tvhclient.util.MiscUtils
+import org.tvheadend.tvhclient.util.convertUrlToHashString
 import timber.log.Timber
 import java.io.*
 import java.net.URL
@@ -232,7 +232,7 @@ class HtspIntentService : JobIntentService(), HtspConnectionStateListener {
             return
         }
 
-        val file = File(cacheDir, MiscUtils.convertUrlToHashString(url)!! + ".png")
+        val file = File(cacheDir, convertUrlToHashString(url) + ".png")
         if (file.exists()) {
             Timber.d("Icon file " + file.absolutePath + " exists already")
             return

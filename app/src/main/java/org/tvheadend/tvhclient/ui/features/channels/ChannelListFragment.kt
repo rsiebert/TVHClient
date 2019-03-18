@@ -29,8 +29,9 @@ import org.tvheadend.tvhclient.ui.features.dialogs.GenreColorDialog
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity
 import org.tvheadend.tvhclient.ui.features.programs.ProgramListFragment
 import org.tvheadend.tvhclient.ui.features.search.SearchRequestInterface
-import org.tvheadend.tvhclient.util.menu.PopupMenuUtil
-import org.tvheadend.tvhclient.util.menu.SearchMenuUtils
+import org.tvheadend.tvhclient.util.menu.onMenuSelected
+import org.tvheadend.tvhclient.util.menu.prepareMenu
+import org.tvheadend.tvhclient.util.menu.prepareSearchMenu
 import org.tvheadend.tvhclient.util.tasks.WakeOnLanTask
 import timber.log.Timber
 
@@ -327,12 +328,12 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
         popupMenu.menuInflater.inflate(R.menu.program_popup_and_toolbar_menu, popupMenu.menu)
         popupMenu.menuInflater.inflate(R.menu.external_search_options_menu, popupMenu.menu)
 
-        PopupMenuUtil.prepareMenu(activity, popupMenu.menu, program, recording, isNetworkAvailable, htspVersion, isUnlocked)
-        PopupMenuUtil.prepareSearchMenu(popupMenu.menu, channel.programTitle, isNetworkAvailable)
+        prepareMenu(activity, popupMenu.menu, program, recording, isNetworkAvailable, htspVersion, isUnlocked)
+        prepareSearchMenu(popupMenu.menu, channel.programTitle, isNetworkAvailable)
         popupMenu.menu.findItem(R.id.menu_play).isVisible = isNetworkAvailable
 
         popupMenu.setOnMenuItemClickListener { item ->
-            if (SearchMenuUtils.onMenuSelected(activity, item.itemId, channel.programTitle)) {
+            if (onMenuSelected(activity, item.itemId, channel.programTitle)) {
                 return@setOnMenuItemClickListener true
             }
             when (item.itemId) {
