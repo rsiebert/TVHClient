@@ -4,7 +4,7 @@ import android.content.Context
 import android.os.AsyncTask
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.domain.entity.Connection
-import org.tvheadend.tvhclient.ui.base.utils.SnackbarUtils
+import org.tvheadend.tvhclient.ui.base.utils.sendSnackbarMessage
 import timber.log.Timber
 import java.lang.ref.WeakReference
 import java.net.DatagramPacket
@@ -127,8 +127,8 @@ class WakeOnLanTask(context: Context, private val connection: Connection) : Asyn
                     message = ctx.getString(R.string.wol_error, connection.hostname, exception?.localizedMessage)
                 }
             }
+            sendSnackbarMessage(ctx, message)
         }
-        SnackbarUtils.sendSnackbarMessage(ctx, message)
     }
 
     companion object {

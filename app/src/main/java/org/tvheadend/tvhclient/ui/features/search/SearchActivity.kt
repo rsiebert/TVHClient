@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.base.BaseActivity
 import org.tvheadend.tvhclient.ui.base.callbacks.NetworkStatusListener
-import org.tvheadend.tvhclient.ui.base.utils.SnackbarUtils
+import org.tvheadend.tvhclient.ui.base.utils.sendSnackbarMessage
 import org.tvheadend.tvhclient.ui.features.programs.ProgramListFragment
 import org.tvheadend.tvhclient.util.getThemeId
 import org.tvheadend.tvhclient.util.network.NetworkStatusReceiver
@@ -88,7 +88,7 @@ class SearchActivity : BaseActivity(), StartSearchInterface, NetworkStatusListen
     override fun onNetworkStatusChanged(isAvailable: Boolean) {
         onNetworkAvailabilityChanged(isAvailable)
         if (!isNetworkAvailable) {
-            SnackbarUtils.sendSnackbarMessage(this, "No network available")
+            sendSnackbarMessage(this, "No network available")
         }
     }
 

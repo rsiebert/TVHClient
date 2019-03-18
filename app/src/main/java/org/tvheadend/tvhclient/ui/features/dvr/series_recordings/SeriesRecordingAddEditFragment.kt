@@ -17,7 +17,7 @@ import org.tvheadend.tvhclient.domain.entity.Channel
 import org.tvheadend.tvhclient.domain.entity.ServerProfile
 import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.base.callbacks.BackPressedInterface
-import org.tvheadend.tvhclient.ui.base.utils.SnackbarUtils
+import org.tvheadend.tvhclient.ui.base.utils.sendSnackbarMessage
 import org.tvheadend.tvhclient.ui.features.dvr.*
 import org.tvheadend.tvhclient.util.isServerProfileEnabled
 import timber.log.Timber
@@ -264,7 +264,7 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
      */
     private fun save() {
         if (TextUtils.isEmpty(viewModel.recording.title)) {
-            SnackbarUtils.sendSnackbarMessage(activity, R.string.error_empty_title)
+            sendSnackbarMessage(activity, R.string.error_empty_title)
             return
         }
 
