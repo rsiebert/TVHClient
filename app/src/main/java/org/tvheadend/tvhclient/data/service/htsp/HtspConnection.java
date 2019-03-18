@@ -12,6 +12,7 @@ import java.nio.channels.ClosedByInterruptException;
 import java.nio.channels.ClosedChannelException;
 import java.nio.channels.ClosedSelectorException;
 import java.nio.channels.IllegalSelectorException;
+import java.nio.channels.NotYetConnectedException;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
@@ -130,7 +131,10 @@ public class HtspConnection extends Thread {
             socketChannel.register(selector, SelectionKey.OP_CONNECT, signal);
 
             Timber.d("Connecting via socket to " + hostname + ":" + port);
-            socketChannel.connect(new InetSocketAddress(hostname, port));
+            if (!socketChannel.connect(new InetSocketAddress(hostname, port))) {
+                Timber.d("Socket did not yet finish connecting, calling finishConnect()");
+                socketChannel.finishConnect();
+            }
 
             Timber.d("HTSP Connection thread can be started");
             isRunning = true;
@@ -347,6 +351,9 @@ public class HtspConnection extends Thread {
             } catch (CancelledKeyException e) {
                 Timber.e("Invalid selection key was used while processing tcp selection key");
                 isRunning = false;
+            } catch (NotYetConnectedException e) {
+                Timber.e("Not yet connected while while processing tcp selection key");
+                isRunning = false;
             } catch (IOException e) {
                 Timber.e("Exception while processing tcp selection key");
                 isRunning = false;
@@ -360,7 +367,7 @@ public class HtspConnection extends Thread {
     }
 
     private void processTcpSelectionKey(SelectionKey selKey)
-            throws IOException, NullPointerException, IllegalSelectorException, CancelledKeyException {
+            throws IOException, NullPointerException, IllegalSelectorException, CancelledKeyException, NotYetConnectedException {
 
         if (selKey.isConnectable() && selKey.isValid()) {
             SocketChannel sChannel = (SocketChannel) selKey.channel();
