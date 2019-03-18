@@ -26,7 +26,6 @@ class ChangeLogFragment : Fragment(), BackPressedInterface, HtmlFileLoaderTask.L
     lateinit var progressBar: ProgressBar
 
     private lateinit var unbinder: Unbinder
-    private lateinit var changeLogLoaderTask: ChangeLogLoaderTask
     private var showFullChangeLog = false
     private var versionName: String = ""
 
@@ -61,7 +60,6 @@ class ChangeLogFragment : Fragment(), BackPressedInterface, HtmlFileLoaderTask.L
             }
         }
 
-        changeLogLoaderTask = ChangeLogLoaderTask(context, versionName, this)
         showChangelog(showFullChangeLog)
     }
 
@@ -71,11 +69,6 @@ class ChangeLogFragment : Fragment(), BackPressedInterface, HtmlFileLoaderTask.L
         outState.putString("versionNameForChangelog", versionName)
     }
 
-    override fun onPause() {
-        super.onPause()
-        changeLogLoaderTask.cancel(true)
-    }
-
     private fun showChangelog(showFullChangeLog: Boolean) {
         // Make the background transparent to remove flickering. This avoids
         // seeing the default theme background color before the stylesheets are loaded.
@@ -83,7 +76,7 @@ class ChangeLogFragment : Fragment(), BackPressedInterface, HtmlFileLoaderTask.L
         webView.visibility = View.GONE
         progressBar.visibility = View.VISIBLE
 
-        changeLogLoaderTask.execute(showFullChangeLog)
+        ChangeLogLoaderTask(context, versionName, this).execute(showFullChangeLog)
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {
@@ -98,7 +91,7 @@ class ChangeLogFragment : Fragment(), BackPressedInterface, HtmlFileLoaderTask.L
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_full_changelog -> {
-                changeLogLoaderTask.execute(true)
+                ChangeLogLoaderTask(context, versionName, this).execute(true)
                 return true
             }
         }
@@ -116,9 +109,9 @@ class ChangeLogFragment : Fragment(), BackPressedInterface, HtmlFileLoaderTask.L
         activity?.finish()
     }
 
-    override fun onFileContentsLoaded(content: String) {
-        if (!TextUtils.isEmpty(content)) {
-            webView.loadDataWithBaseURL("file:///android_asset/", content, "text/html", "utf-8", null)
+    override fun onFileContentsLoaded(fileContent: String) {
+        if (!TextUtils.isEmpty(fileContent) && isVisible) {
+            webView.loadDataWithBaseURL("file:///android_asset/", fileContent, "text/html", "utf-8", null)
             webView.visibility = View.VISIBLE
             progressBar.visibility = View.GONE
         }
