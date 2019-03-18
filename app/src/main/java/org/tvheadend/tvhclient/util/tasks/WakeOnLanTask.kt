@@ -106,9 +106,9 @@ class WakeOnLanTask(context: Context, private val connection: Connection) : Asyn
      * message is shown to the user
      */
     override fun onPostExecute(result: Int?) {
-        var message = ""
         val ctx = context.get()
         if (ctx != null) {
+            val message: String
             when (result) {
                 WOL_SEND -> {
                     Timber.d("Successfully sent WOL packet to " + connection.hostname)
