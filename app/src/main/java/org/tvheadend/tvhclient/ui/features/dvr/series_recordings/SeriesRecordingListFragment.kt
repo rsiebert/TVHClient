@@ -24,7 +24,6 @@ import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.base.callbacks.RecyclerViewClickCallback
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity
 import org.tvheadend.tvhclient.ui.features.search.SearchRequestInterface
-import org.tvheadend.tvhclient.util.menu.prepareMenu
 import org.tvheadend.tvhclient.util.menu.onMenuSelected
 import org.tvheadend.tvhclient.util.menu.prepareSearchMenu
 import java.util.concurrent.CopyOnWriteArrayList

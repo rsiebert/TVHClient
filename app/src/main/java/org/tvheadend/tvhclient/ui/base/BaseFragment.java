@@ -17,7 +17,6 @@ import org.tvheadend.tvhclient.util.menu.MenuUtils;
 
 import javax.inject.Inject;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
@@ -81,7 +80,7 @@ public abstract class BaseFragment extends Fragment implements NetworkStatusList
     }
 
     @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 activity.finish();

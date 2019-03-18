@@ -34,7 +34,6 @@ import org.tvheadend.tvhclient.util.MiscUtils;
 
 import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
