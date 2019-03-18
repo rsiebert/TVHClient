@@ -1,3 +1,9 @@
+$ 2.2.3
+  % VERSION 2.2.3
+  _ 18.03.2019
+    * Fixed crash when the server did not provide a valid playback path or ticket
+    * Show the program subtitles only when enabled in the UI settings
+    * Small bug fixes
 $ 2.2.2
   % VERSION 2.2.2
   _ 17.03.2019
