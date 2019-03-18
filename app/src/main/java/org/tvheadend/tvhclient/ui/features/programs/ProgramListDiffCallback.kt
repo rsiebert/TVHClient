@@ -20,9 +20,4 @@ internal class ProgramListDiffCallback(private val oldList: List<Program>, priva
     override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
         return newList[newItemPosition] == oldList[oldItemPosition]
     }
-
-    override fun getChangePayload(oldItemPosition: Int, newItemPosition: Int): Any? {
-        // One can return particular field for changed item.
-        return super.getChangePayload(oldItemPosition, newItemPosition)
-    }
 }
