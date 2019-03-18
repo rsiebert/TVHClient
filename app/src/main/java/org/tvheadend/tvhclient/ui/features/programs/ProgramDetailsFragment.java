@@ -160,7 +160,7 @@ public class ProgramDetailsFragment extends BaseFragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // The program might be null in case the viewmodel
+        // The program might be null in case the view model
         // has not yet loaded the program for the given id
         if (program == null) {
             return super.onOptionsItemSelected(item);
