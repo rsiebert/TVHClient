@@ -54,7 +54,7 @@ class MiscData(private val db: AppRoomDatabase) {
             return null
         }
 
-        override fun onPostExecute(aVoid: Void) {
+        override fun onPostExecute(aVoid: Void?) {
             Timber.d("Deleting database contents finished")
             dialog.dismiss()
             callback?.get()?.onDatabaseCleared()
