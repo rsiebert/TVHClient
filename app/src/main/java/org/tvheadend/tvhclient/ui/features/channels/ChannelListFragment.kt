@@ -55,7 +55,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
     private var programIdToBeEditedWhenBeingRecorded = 0
     private var channelTags: List<ChannelTag>? = null
     private var selectedTime: Long = 0
-    lateinit var currentTimeUpdateTask: Runnable
+    private lateinit var currentTimeUpdateTask: Runnable
     private val currentTimeUpdateHandler = Handler()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

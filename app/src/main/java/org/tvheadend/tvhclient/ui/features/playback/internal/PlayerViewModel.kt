@@ -180,7 +180,7 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
         }
     }
 
-    fun releaseMediaSource() {
+    private fun releaseMediaSource() {
         Timber.d("Releasing previous media source")
         player.stop()
         trackSelector.clearSelectionOverrides()

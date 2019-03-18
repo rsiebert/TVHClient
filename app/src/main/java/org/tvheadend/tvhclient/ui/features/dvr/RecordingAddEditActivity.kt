@@ -17,7 +17,7 @@ import org.tvheadend.tvhclient.util.getThemeId
 
 class RecordingAddEditActivity : BaseActivity() {
 
-    lateinit var snackbarMessageReceiver: SnackbarMessageReceiver
+    private lateinit var snackbarMessageReceiver: SnackbarMessageReceiver
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(getThemeId(this))
