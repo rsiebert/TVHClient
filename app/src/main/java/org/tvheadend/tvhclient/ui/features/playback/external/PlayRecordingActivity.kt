@@ -11,7 +11,7 @@ class PlayRecordingActivity : BasePlaybackActivity() {
 
     override fun onTicketReceived() {
         val url = viewModel.getPlaybackUrl()
-        Timber.d("Playing channel from server with url $url")
+        Timber.d("Playing recording from server with url $url")
 
         val intent = Intent(Intent.ACTION_VIEW)
         val title = viewModel.recording?.title ?: ""
