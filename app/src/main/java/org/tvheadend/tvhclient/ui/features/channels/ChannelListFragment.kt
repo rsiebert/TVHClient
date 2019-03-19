@@ -7,7 +7,6 @@ import android.os.Handler
 import android.text.TextUtils
 import android.view.*
 import android.widget.Filter
-import android.widget.ProgressBar
 import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Lifecycle
@@ -16,10 +15,8 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import butterknife.BindView
-import butterknife.ButterKnife
 import butterknife.Unbinder
+import kotlinx.android.synthetic.main.recyclerview_fragment.*
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.domain.entity.ChannelTag
 import org.tvheadend.tvhclient.ui.base.BaseFragment
@@ -36,11 +33,6 @@ import org.tvheadend.tvhclient.ui.features.search.SearchRequestInterface
 import timber.log.Timber
 
 class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDisplayOptionListener, SearchRequestInterface, Filter.FilterListener {
-
-    @BindView(R.id.recycler_view)
-    lateinit var recyclerView: RecyclerView
-    @BindView(R.id.progress_bar)
-    lateinit var progressBar: ProgressBar
 
     lateinit var unbinder: Unbinder
     lateinit var recyclerViewAdapter: ChannelRecyclerViewAdapter
@@ -59,15 +51,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
     private val currentTimeUpdateHandler = Handler()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.recyclerview_fragment, container, false)
-        unbinder = ButterKnife.bind(this, view)
-        return view
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        recyclerView.adapter = null
-        unbinder.unbind()
+        return inflater.inflate(R.layout.recyclerview_fragment, container, false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -87,13 +71,13 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
         }
 
         recyclerViewAdapter = ChannelRecyclerViewAdapter(isDualPane, this)
-        recyclerView.layoutManager = LinearLayoutManager(activity.applicationContext)
-        recyclerView.addItemDecoration(DividerItemDecoration(activity.applicationContext, LinearLayoutManager.VERTICAL))
-        recyclerView.itemAnimator = DefaultItemAnimator()
-        recyclerView.adapter = recyclerViewAdapter
+        recycler_view.layoutManager = LinearLayoutManager(activity.applicationContext)
+        recycler_view.addItemDecoration(DividerItemDecoration(activity.applicationContext, LinearLayoutManager.VERTICAL))
+        recycler_view.itemAnimator = DefaultItemAnimator()
+        recycler_view.adapter = recyclerViewAdapter
 
-        recyclerView.visibility = View.GONE
-        progressBar.visibility = View.VISIBLE
+        recycler_view.visibility = View.GONE
+        progress_bar.visibility = View.VISIBLE
 
         viewModel = ViewModelProviders.of(activity).get(ChannelViewModel::class.java)
 
@@ -120,8 +104,8 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
                 recyclerViewAdapter.addItems(channels)
             }
 
-            recyclerView.visibility = View.VISIBLE
-            progressBar.visibility = View.GONE
+            recycler_view.visibility = View.VISIBLE
+            progress_bar.visibility = View.GONE
 
             showChannelTagOrChannelCount()
 
@@ -247,8 +231,8 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
 
     override fun onTimeSelected(which: Int) {
         selectedTimeOffset = which
-        recyclerView.visibility = View.GONE
-        progressBar.visibility = View.VISIBLE
+        recycler_view.visibility = View.GONE
+        progress_bar.visibility = View.VISIBLE
 
         // Add the selected list index as extra hours to the current time.
         // If the first index was selected then use the current time.
@@ -258,8 +242,8 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
     }
 
     override fun onChannelTagIdsSelected(ids: Set<Int>) {
-        recyclerView.visibility = View.GONE
-        progressBar.visibility = View.VISIBLE
+        recycler_view.visibility = View.GONE
+        progress_bar.visibility = View.VISIBLE
         viewModel.setSelectedChannelTagIds(ids)
     }
 

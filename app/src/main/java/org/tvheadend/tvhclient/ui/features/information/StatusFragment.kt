@@ -2,64 +2,26 @@ package org.tvheadend.tvhclient.ui.features.information
 
 import android.os.Bundle
 import android.view.*
-import android.widget.TextView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import butterknife.BindView
-import butterknife.ButterKnife
-import butterknife.Unbinder
+import kotlinx.android.synthetic.main.status_fragment.*
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.domain.entity.Connection
 import org.tvheadend.tvhclient.domain.entity.ServerStatus
 import org.tvheadend.tvhclient.ui.base.BaseFragment
+import org.tvheadend.tvhclient.ui.common.tasks.WakeOnLanTask
 import org.tvheadend.tvhclient.ui.features.channels.ChannelViewModel
 import org.tvheadend.tvhclient.ui.features.dvr.recordings.RecordingViewModel
 import org.tvheadend.tvhclient.ui.features.dvr.series_recordings.SeriesRecordingViewModel
 import org.tvheadend.tvhclient.ui.features.dvr.timer_recordings.TimerRecordingViewModel
 import org.tvheadend.tvhclient.ui.features.programs.ProgramViewModel
-import org.tvheadend.tvhclient.ui.common.tasks.WakeOnLanTask
 
 class StatusFragment : BaseFragment() {
 
-    @BindView(R.id.connection)
-    lateinit var connectionTextView: TextView
-    @BindView(R.id.channels)
-    lateinit var channelsTextView: TextView
-    @BindView(R.id.programs)
-    lateinit var programsTextView: TextView
-    @BindView(R.id.completed_recordings)
-    lateinit var completedRecordingsTextView: TextView
-    @BindView(R.id.upcoming_recordings)
-    lateinit var upcomingRecordingsTextView: TextView
-    @BindView(R.id.failed_recordings)
-    lateinit var failedRecordingsTextView: TextView
-    @BindView(R.id.removed_recordings)
-    lateinit var removedRecordingsTextView: TextView
-    @BindView(R.id.series_recordings)
-    lateinit var seriesRecordingsTextView: TextView
-    @BindView(R.id.timer_recordings)
-    lateinit var timerRecordingsTextView: TextView
-    @BindView(R.id.currently_recording)
-    lateinit var currentlyRecordingTextView: TextView
-    @BindView(R.id.free_discspace)
-    lateinit var freeDiscSpaceTextView: TextView
-    @BindView(R.id.total_discspace)
-    lateinit var totalDiscSpaceTextView: TextView
-    @BindView(R.id.server_api_version)
-    lateinit var serverApiVersionTextView: TextView
-
-    private lateinit var unbinder: Unbinder
     private lateinit var connection: Connection
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.status_fragment, container, false)
-        unbinder = ButterKnife.bind(this, view)
-        return view
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        unbinder.unbind()
+        return inflater.inflate(R.layout.status_fragment, container, false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -71,7 +33,7 @@ class StatusFragment : BaseFragment() {
 
         connection = appRepository.connectionData.activeItem
         val text = "${connection.name} (${connection.hostname})"
-        connectionTextView.text = text
+        connection_view.text = text
 
         showRecordings()
         showAdditionalInformation()
@@ -109,30 +71,37 @@ class StatusFragment : BaseFragment() {
 
         val programViewModel = ViewModelProviders.of(this).get(ProgramViewModel::class.java)
         programViewModel.numberOfPrograms.observe(viewLifecycleOwner, Observer { count ->
-            programsTextView.text = resources.getQuantityString(R.plurals.programs, count ?: 0, count)
+            programs_view.text = resources.getQuantityString(R.plurals.programs, count ?: 0, count)
         })
 
         val seriesRecordingViewModel = ViewModelProviders.of(this).get(SeriesRecordingViewModel::class.java)
         seriesRecordingViewModel.numberOfRecordings.observe(viewLifecycleOwner, Observer { count ->
-            seriesRecordingsTextView.text = resources.getQuantityString(R.plurals.series_recordings, count ?: 0, count)
+            series_recordings_view.text = resources.getQuantityString(R.plurals.series_recordings, count
+                    ?: 0, count)
         })
 
         val timerRecordingViewModel = ViewModelProviders.of(this).get(TimerRecordingViewModel::class.java)
         timerRecordingViewModel.numberOfRecordings.observe(viewLifecycleOwner, Observer { count ->
-            timerRecordingsTextView.text = resources.getQuantityString(R.plurals.timer_recordings, count ?: 0, count) })
+            timer_recordings_view.text = resources.getQuantityString(R.plurals.timer_recordings, count
+                    ?: 0, count)
+        })
 
         val recordingViewModel = ViewModelProviders.of(this).get(RecordingViewModel::class.java)
         recordingViewModel.numberOfCompletedRecordings.observe(viewLifecycleOwner, Observer { count ->
-            completedRecordingsTextView.text = resources.getQuantityString(R.plurals.completed_recordings, count ?: 0, count)
+            completed_recordings_view.text = resources.getQuantityString(R.plurals.completed_recordings, count
+                    ?: 0, count)
         })
         recordingViewModel.numberOfScheduledRecordings.observe(viewLifecycleOwner, Observer { count ->
-            upcomingRecordingsTextView.text = resources.getQuantityString(R.plurals.upcoming_recordings, count ?: 0, count)
+            upcoming_recordings_view.text = resources.getQuantityString(R.plurals.upcoming_recordings, count
+                    ?: 0, count)
         })
         recordingViewModel.numberOfFailedRecordings.observe(viewLifecycleOwner, Observer { count ->
-            failedRecordingsTextView.text = resources.getQuantityString(R.plurals.failed_recordings, count ?: 0, count)
+            failed_recordings_view.text = resources.getQuantityString(R.plurals.failed_recordings, count
+                    ?: 0, count)
         })
         recordingViewModel.numberOfRemovedRecordings.observe(viewLifecycleOwner, Observer { count ->
-            removedRecordingsTextView.text = resources.getQuantityString(R.plurals.removed_recordings, count ?: 0, count)
+            removed_recordings_view.text = resources.getQuantityString(R.plurals.removed_recordings, count
+                    ?: 0, count)
         })
 
         // Get the programs that are currently being recorded
@@ -149,7 +118,7 @@ class StatusFragment : BaseFragment() {
                     }
                 }
                 // Show which programs are being recorded
-                currentlyRecordingTextView.text = if (currentRecText.isNotEmpty()) currentRecText.toString() else getString(R.string.nothing)
+                currently_recording_view.text = if (currentRecText.isNotEmpty()) currentRecText.toString() else getString(R.string.nothing)
             }
         })
     }
@@ -158,12 +127,12 @@ class StatusFragment : BaseFragment() {
         val channelViewModel = ViewModelProviders.of(activity).get(ChannelViewModel::class.java)
         channelViewModel.numberOfChannels.observe(viewLifecycleOwner, Observer { count ->
             val text = "$count " + getString(R.string.available)
-            channelsTextView.text = text
+            channels_view.text = text
         })
         channelViewModel.serverStatus.observe(viewLifecycleOwner, Observer { serverStatus ->
             if (serverStatus != null) {
-                seriesRecordingsTextView.visibility = if (serverStatus.htspVersion >= 13) View.VISIBLE else View.GONE
-                timerRecordingsTextView.visibility = if (serverStatus.htspVersion >= 18 && isUnlocked) View.VISIBLE else View.GONE
+                series_recordings_view.visibility = if (serverStatus.htspVersion >= 13) View.VISIBLE else View.GONE
+                timer_recordings_view.visibility = if (serverStatus.htspVersion >= 18 && isUnlocked) View.VISIBLE else View.GONE
                 showServerInformation(serverStatus)
             }
         })
@@ -181,7 +150,7 @@ class StatusFragment : BaseFragment() {
                 + serverStatus.serverName + " "
                 + serverStatus.serverVersion + ")")
 
-        serverApiVersionTextView.text = version
+        server_api_version_view.text = version
 
         try {
             // Get the disc space values and convert them to megabytes
@@ -203,12 +172,12 @@ class StatusFragment : BaseFragment() {
             } else {
                 total.toString() + " MB " + getString(R.string.total)
             }
-            freeDiscSpaceTextView.text = freeDiscSpace
-            totalDiscSpaceTextView.text = totalDiscSpace
+            free_discspace_view.text = freeDiscSpace
+            total_discspace_view.text = totalDiscSpace
 
         } catch (e: Exception) {
-            freeDiscSpaceTextView.setText(R.string.unknown)
-            totalDiscSpaceTextView.setText(R.string.unknown)
+            free_discspace_view.setText(R.string.unknown)
+            total_discspace_view.setText(R.string.unknown)
         }
 
     }

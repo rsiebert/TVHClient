@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.text.TextUtils
 import android.view.*
 import android.widget.Filter
-import android.widget.ProgressBar
 import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Lifecycle
@@ -15,41 +14,24 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import butterknife.BindView
-import butterknife.ButterKnife
-import butterknife.Unbinder
+import kotlinx.android.synthetic.main.recyclerview_fragment.*
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback
-import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity
-import org.tvheadend.tvhclient.ui.features.search.SearchRequestInterface
 import org.tvheadend.tvhclient.ui.common.onMenuSelected
 import org.tvheadend.tvhclient.ui.common.prepareSearchMenu
+import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity
+import org.tvheadend.tvhclient.ui.features.search.SearchRequestInterface
 import java.util.concurrent.CopyOnWriteArrayList
 
 class SeriesRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, SearchRequestInterface, Filter.FilterListener {
 
-    @BindView(R.id.recycler_view)
-    lateinit var recyclerView: RecyclerView
-    @BindView(R.id.progress_bar)
-    lateinit var progressBar: ProgressBar
     private var selectedListPosition: Int = 0
-
-    private lateinit var unbinder: Unbinder
     private lateinit var recyclerViewAdapter: SeriesRecordingRecyclerViewAdapter
     private var searchQuery: String = ""
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.recyclerview_fragment, container, false)
-        unbinder = ButterKnife.bind(this, view)
-        return view
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        recyclerView.adapter = null
-        unbinder.unbind()
+        return inflater.inflate(R.layout.recyclerview_fragment, container, false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -69,21 +51,21 @@ class SeriesRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, S
             getString(R.string.search_results))
 
         recyclerViewAdapter = SeriesRecordingRecyclerViewAdapter(isDualPane, this, htspVersion)
-        recyclerView.layoutManager = LinearLayoutManager(activity.applicationContext)
-        recyclerView.addItemDecoration(DividerItemDecoration(activity.applicationContext, LinearLayoutManager.VERTICAL))
-        recyclerView.itemAnimator = DefaultItemAnimator()
-        recyclerView.adapter = recyclerViewAdapter
+        recycler_view.layoutManager = LinearLayoutManager(activity.applicationContext)
+        recycler_view.addItemDecoration(DividerItemDecoration(activity.applicationContext, LinearLayoutManager.VERTICAL))
+        recycler_view.itemAnimator = DefaultItemAnimator()
+        recycler_view.adapter = recyclerViewAdapter
 
-        recyclerView.visibility = View.GONE
-        progressBar.visibility = View.VISIBLE
+        recycler_view.visibility = View.GONE
+        progress_bar.visibility = View.VISIBLE
 
         val viewModel = ViewModelProviders.of(activity).get(SeriesRecordingViewModel::class.java)
         viewModel.recordings.observe(viewLifecycleOwner, Observer { recordings ->
             if (recordings != null) {
                 recyclerViewAdapter.addItems(recordings)
             }
-            recyclerView.visibility = View.VISIBLE
-            progressBar.visibility = View.GONE
+            recycler_view.visibility = View.VISIBLE
+            progress_bar.visibility = View.GONE
 
             if (TextUtils.isEmpty(searchQuery)) {
                 toolbarInterface.setSubtitle(resources.getQuantityString(R.plurals.items, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))

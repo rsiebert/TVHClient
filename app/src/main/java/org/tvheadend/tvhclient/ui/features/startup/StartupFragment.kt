@@ -4,21 +4,16 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.*
-import android.widget.ImageButton
-import android.widget.ProgressBar
-import android.widget.TextView
 import androidx.fragment.app.Fragment
-import butterknife.BindView
-import butterknife.ButterKnife
-import butterknife.Unbinder
+import kotlinx.android.synthetic.main.startup_fragment.*
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.data.repository.AppRepository
 import org.tvheadend.tvhclient.data.service.SyncStateReceiver
+import org.tvheadend.tvhclient.ui.common.MenuUtils
 import org.tvheadend.tvhclient.ui.common.callbacks.ToolbarInterface
 import org.tvheadend.tvhclient.ui.features.MainActivity
 import org.tvheadend.tvhclient.ui.features.settings.SettingsActivity
-import org.tvheadend.tvhclient.ui.common.MenuUtils
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -31,31 +26,12 @@ class StartupFragment : Fragment() {
     @Inject
     lateinit var sharedPreferences: SharedPreferences
 
-    @BindView(R.id.progress_bar)
-    lateinit var progressBar: ProgressBar
-    @BindView(R.id.state)
-    lateinit var stateTextView: TextView
-    @BindView(R.id.details)
-    lateinit var detailsTextView: TextView
-    @BindView(R.id.add_connection_button)
-    lateinit var addConnectionButton: ImageButton
-    @BindView(R.id.settings_button)
-    lateinit var settingsButton: ImageButton
-
-    private lateinit var unbinder: Unbinder
     private lateinit var stateText: String
     private lateinit var detailsText: String
     private lateinit var state: SyncStateReceiver.State
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.startup_fragment, container, false)
-        unbinder = ButterKnife.bind(this, view)
-        return view
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        unbinder.unbind()
+        return inflater.inflate(R.layout.startup_fragment, container, false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -80,8 +56,8 @@ class StartupFragment : Fragment() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putSerializable("state", state)
-        outState.putString("stateText", stateTextView.text.toString())
-        outState.putString("detailsText", detailsTextView.text.toString())
+        outState.putString("stateText", state_view.text.toString())
+        outState.putString("detailsText", details_view.text.toString())
         super.onSaveInstanceState(outState)
     }
 
@@ -90,16 +66,16 @@ class StartupFragment : Fragment() {
             appRepository.connectionData.getItems().isEmpty() -> {
                 Timber.d("No connection available, showing settings button")
                 stateText = getString(R.string.no_connection_available)
-                progressBar.visibility = View.INVISIBLE
-                addConnectionButton.visibility = View.VISIBLE
-                addConnectionButton.setOnClickListener { showSettingsAddNewConnection() }
+                progress_bar.visibility = View.INVISIBLE
+                add_connection_button.visibility = View.VISIBLE
+                add_connection_button.setOnClickListener { showSettingsAddNewConnection() }
             }
             appRepository.connectionData.activeItemId == -1 -> {
                 Timber.d("No active connection available, showing settings button")
                 stateText = getString(R.string.no_connection_active_advice)
-                progressBar.visibility = View.INVISIBLE
-                settingsButton.visibility = View.VISIBLE
-                settingsButton.setOnClickListener { showConnectionListSettings() }
+                progress_bar.visibility = View.INVISIBLE
+                settings_button.visibility = View.VISIBLE
+                settings_button.setOnClickListener { showConnectionListSettings() }
             }
             else -> {
                 Timber.d("Connection is available and active, showing contents")
@@ -107,8 +83,8 @@ class StartupFragment : Fragment() {
             }
         }
 
-        stateTextView.text = stateText
-        detailsTextView.text = detailsText
+        state_view.text = stateText
+        details_view.text = detailsText
     }
 
     override fun onResume() {

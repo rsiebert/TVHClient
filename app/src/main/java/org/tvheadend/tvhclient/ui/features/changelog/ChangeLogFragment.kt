@@ -6,12 +6,8 @@ import android.os.Bundle
 import android.preference.PreferenceManager
 import android.text.TextUtils
 import android.view.*
-import android.webkit.WebView
-import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
-import butterknife.BindView
-import butterknife.ButterKnife
-import butterknife.Unbinder
+import kotlinx.android.synthetic.main.webview_fragment.*
 import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.common.callbacks.BackPressedInterface
@@ -20,24 +16,11 @@ import org.tvheadend.tvhclient.ui.common.tasks.HtmlFileLoaderTask
 
 class ChangeLogFragment : Fragment(), BackPressedInterface, HtmlFileLoaderTask.Listener {
 
-    @BindView(R.id.webview)
-    lateinit var webView: WebView
-    @BindView(R.id.loading)
-    lateinit var progressBar: ProgressBar
-
-    private lateinit var unbinder: Unbinder
     private var showFullChangeLog = false
     private var versionName: String = ""
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.webview_fragment, null)
-        unbinder = ButterKnife.bind(this, view)
-        return view
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        unbinder.unbind()
+        return inflater.inflate(R.layout.webview_fragment, null)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -72,9 +55,9 @@ class ChangeLogFragment : Fragment(), BackPressedInterface, HtmlFileLoaderTask.L
     private fun showChangelog(showFullChangeLog: Boolean) {
         // Make the background transparent to remove flickering. This avoids
         // seeing the default theme background color before the stylesheets are loaded.
-        webView.setBackgroundColor(Color.argb(0, 0, 0, 0))
-        webView.visibility = View.GONE
-        progressBar.visibility = View.VISIBLE
+        webview.setBackgroundColor(Color.argb(0, 0, 0, 0))
+        webview.visibility = View.GONE
+        loading_view.visibility = View.VISIBLE
 
         ChangeLogLoaderTask(context, versionName, this).execute(showFullChangeLog)
     }
@@ -111,9 +94,9 @@ class ChangeLogFragment : Fragment(), BackPressedInterface, HtmlFileLoaderTask.L
 
     override fun onFileContentsLoaded(fileContent: String) {
         if (!TextUtils.isEmpty(fileContent) && isVisible) {
-            webView.loadDataWithBaseURL("file:///android_asset/", fileContent, "text/html", "utf-8", null)
-            webView.visibility = View.VISIBLE
-            progressBar.visibility = View.GONE
+            webview.loadDataWithBaseURL("file:///android_asset/", fileContent, "text/html", "utf-8", null)
+            webview.visibility = View.VISIBLE
+            loading_view.visibility = View.GONE
         }
     }
 }

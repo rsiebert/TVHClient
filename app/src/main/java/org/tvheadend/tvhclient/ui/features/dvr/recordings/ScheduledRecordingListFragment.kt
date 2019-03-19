@@ -6,6 +6,7 @@ import android.view.Menu
 import android.view.View
 import android.widget.Filter
 import androidx.lifecycle.Observer
+import kotlinx.android.synthetic.main.recyclerview_fragment.*
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.domain.entity.Recording
 import org.tvheadend.tvhclient.ui.features.search.SearchRequestInterface
@@ -43,8 +44,8 @@ class ScheduledRecordingListFragment : RecordingListFragment(), SearchRequestInt
         }
         recyclerViewAdapter.addItems(recordings)
 
-        recyclerView.visibility = View.VISIBLE
-        progressBar.visibility = View.GONE
+        recycler_view.visibility = View.VISIBLE
+        progress_bar.visibility = View.GONE
 
         if (TextUtils.isEmpty(searchQuery)) {
             toolbarInterface.setSubtitle(resources.getQuantityString(R.plurals.items, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))

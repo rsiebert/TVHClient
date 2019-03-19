@@ -12,6 +12,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlin-android-extensions'
 
 repositories {
     maven { url 'https://maven.fabric.io/public' }
@@ -30,7 +31,7 @@ android {
         targetSdkVersion 28
 
         versionCode 158
-        versionName "2.2.3"
+        versionName "2.2.4"
 
         // Define the apk naming convention
         applicationId "org.tvheadend.tvhclient"
@@ -65,6 +66,10 @@ android {
 
     dataBinding {
         enabled = true
+    }
+
+    androidExtensions {
+        experimental = true
     }
 
     buildTypes {

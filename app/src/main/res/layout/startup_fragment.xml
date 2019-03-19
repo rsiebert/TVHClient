@@ -29,7 +29,7 @@
         android:layout_marginTop="32dp"
         android:layout_marginEnd="32dp"
         android:layout_marginRight="32dp"
-        app:layout_constraintBottom_toTopOf="@+id/state"
+        app:layout_constraintBottom_toTopOf="@+id/state_view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -37,7 +37,7 @@
         app:layout_constraintVertical_chainStyle="packed" />
 
     <TextView
-        android:id="@+id/state"
+        android:id="@+id/state_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
@@ -46,14 +46,14 @@
         android:layout_marginEnd="32dp"
         android:text="@string/status"
         android:textAlignment="center"
-        app:layout_constraintBottom_toTopOf="@+id/details"
+        app:layout_constraintBottom_toTopOf="@+id/details_view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/progress_bar"
         app:layout_constraintVertical_bias="0.0" />
 
     <TextView
-        android:id="@+id/details"
+        android:id="@+id/details_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
@@ -66,7 +66,7 @@
         app:layout_constraintBottom_toTopOf="@+id/add_connection_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/state" />
+        app:layout_constraintTop_toBottomOf="@+id/state_view" />
 
     <ImageButton
         android:id="@+id/add_connection_button"
@@ -80,7 +80,7 @@
         app:layout_constraintBottom_toTopOf="@+id/settings_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/details" />
+        app:layout_constraintTop_toBottomOf="@+id/details_view" />
 
     <ImageButton
         android:id="@+id/settings_button"
