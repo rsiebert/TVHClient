@@ -50,9 +50,7 @@ class ChannelRecyclerViewAdapter internal constructor(private val isDualPane: Bo
         onBindViewHolder(holder, position)
     }
 
-    internal fun addItems(items: List<Channel>) {
-        val newItems: MutableList<Channel> = ArrayList()
-        newItems.addAll(items)
+    internal fun addItems(newItems: MutableList<Channel>) {
         updateRecordingState(newItems, recordingList)
 
         val oldItems = ArrayList(channelListFiltered)

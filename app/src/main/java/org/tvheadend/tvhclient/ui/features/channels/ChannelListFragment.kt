@@ -101,7 +101,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
         viewModel.channels.observe(viewLifecycleOwner, Observer { channels ->
             if (channels != null) {
                 Timber.d("View model returned ${channels.size} channels")
-                recyclerViewAdapter.addItems(channels)
+                recyclerViewAdapter.addItems(channels.toMutableList())
             }
 
             recycler_view.visibility = View.VISIBLE
