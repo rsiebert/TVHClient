@@ -9,15 +9,15 @@ import androidx.fragment.app.Fragment
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.base.BaseActivity
 import org.tvheadend.tvhclient.ui.common.callbacks.NetworkStatusListener
+import org.tvheadend.tvhclient.ui.common.network.NetworkStatusReceiver
 import org.tvheadend.tvhclient.ui.common.sendSnackbarMessage
 import org.tvheadend.tvhclient.ui.features.programs.ProgramListFragment
 import org.tvheadend.tvhclient.util.getThemeId
-import org.tvheadend.tvhclient.ui.common.network.NetworkStatusReceiver
 import timber.log.Timber
 
 class SearchActivity : BaseActivity(), StartSearchInterface, NetworkStatusListener {
 
-    private var networkStatusReceiver: NetworkStatusReceiver? = null
+    private lateinit var networkStatusReceiver: NetworkStatusReceiver
     private var isNetworkAvailable: Boolean = false
 
     public override fun onCreate(savedInstanceState: Bundle?) {
