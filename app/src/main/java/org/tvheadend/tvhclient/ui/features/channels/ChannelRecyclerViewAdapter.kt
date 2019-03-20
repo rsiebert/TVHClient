@@ -8,12 +8,14 @@ import android.widget.Filter
 import android.widget.Filterable
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.databinding.ChannelListAdapterBinding
 import org.tvheadend.tvhclient.domain.entity.Channel
 import org.tvheadend.tvhclient.domain.entity.Recording
 import org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback
-import java.util.*
+
+import java.util.ArrayList
 import java.util.concurrent.CopyOnWriteArrayList
 
 class ChannelRecyclerViewAdapter internal constructor(private val isDualPane: Boolean, private val clickCallback: RecyclerViewClickCallback) : RecyclerView.Adapter<ChannelRecyclerViewAdapter.ChannelViewHolder>(), Filterable {
@@ -24,7 +26,8 @@ class ChannelRecyclerViewAdapter internal constructor(private val isDualPane: Bo
     private var selectedPosition = 0
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChannelViewHolder {
-        val itemBinding = ChannelListAdapterBinding.inflate(LayoutInflater.from(parent.context))
+        val layoutInflater = LayoutInflater.from(parent.context)
+        val itemBinding = ChannelListAdapterBinding.inflate(layoutInflater, parent, false)
 
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(parent.context)
         val showChannelName = sharedPreferences.getBoolean("channel_name_enabled", parent.context.resources.getBoolean(R.bool.pref_default_channel_name_enabled))
@@ -50,7 +53,6 @@ class ChannelRecyclerViewAdapter internal constructor(private val isDualPane: Bo
     internal fun addItems(items: List<Channel>) {
         val newItems: MutableList<Channel> = ArrayList()
         newItems.addAll(items)
-
         updateRecordingState(newItems, recordingList)
 
         val oldItems = ArrayList(channelListFiltered)
@@ -106,7 +108,6 @@ class ChannelRecyclerViewAdapter internal constructor(private val isDualPane: Bo
                         val programTitle = channel.programTitle ?: ""
                         val programSubtitle = channel.programSubtitle ?: ""
                         val nextProgramTitle = channel.nextProgramTitle ?: ""
-
                         when {
                             name.toLowerCase().contains(charString.toLowerCase()) -> filteredList.add(channel)
                             programTitle.toLowerCase().contains(charString.toLowerCase()) -> filteredList.add(channel)
@@ -137,7 +138,7 @@ class ChannelRecyclerViewAdapter internal constructor(private val isDualPane: Bo
      *
      * @param list List of recordings
      */
-    fun addRecordings(list: List<Recording>) {
+    internal fun addRecordings(list: List<Recording>) {
         recordingList.clear()
         recordingList.addAll(list)
         updateRecordingState(channelListFiltered, recordingList)
@@ -172,24 +173,24 @@ class ChannelRecyclerViewAdapter internal constructor(private val isDualPane: Bo
     }
 
     class ChannelViewHolder(private val binding: ChannelListAdapterBinding,
-                            private val showChannelName: Boolean,
-                            private val showProgramSubtitle: Boolean,
-                            private val showNextProgramTitle: Boolean,
-                            private val showProgressBar: Boolean,
-                            private val showGenreColors: Boolean,
-                            private val isDualPane: Boolean) : RecyclerView.ViewHolder(binding.root) {
+                                     private val showChannelName: Boolean,
+                                     private val showProgramSubtitle: Boolean,
+                                     private val showNextProgramTitle: Boolean,
+                                     private val showProgressBar: Boolean,
+                                     private val showGenreColors: Boolean,
+                                     private val isDualPane: Boolean) : RecyclerView.ViewHolder(binding.getRoot()) {
 
         fun bind(channel: Channel, position: Int, isSelected: Boolean, clickCallback: RecyclerViewClickCallback) {
-            binding.channel = channel
-            binding.position = position
-            binding.isSelected = isSelected
-            binding.showChannelName = showChannelName
-            binding.showProgramSubtitle = showProgramSubtitle
-            binding.showProgressBar = showProgressBar
-            binding.showNextProgramTitle = showNextProgramTitle
-            binding.showGenreColor = showGenreColors
-            binding.isDualPane = isDualPane
-            binding.callback = clickCallback
+            binding.setChannel(channel)
+            binding.setPosition(position)
+            binding.setIsSelected(isSelected)
+            binding.setShowChannelName(showChannelName)
+            binding.setShowProgramSubtitle(showProgramSubtitle)
+            binding.setShowProgressBar(showProgressBar)
+            binding.setShowNextProgramTitle(showNextProgramTitle)
+            binding.setShowGenreColor(showGenreColors)
+            binding.setIsDualPane(isDualPane)
+            binding.setCallback(clickCallback)
             binding.executePendingBindings()
         }
     }
