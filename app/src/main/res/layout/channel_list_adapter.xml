@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
 
@@ -51,7 +50,7 @@
             type="org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?android:attr/selectableItemBackground"
@@ -91,15 +90,15 @@
             android:id="@+id/icon_text"
             style="?attr/ContentFont"
             android:layout_width="56dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginLeft="12dp"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="8dp"
             android:onClick="@{(view) -> callback.onClick(view, position)}"
             app:iconName="@{channel.name}"
             app:iconUrl="@{channel.icon}"
-            app:layout_constraintBottom_toBottomOf="@+id/next_title"
+            app:layout_constraintBottom_toBottomOf="@+id/icon"
             app:layout_constraintStart_toEndOf="@+id/genre"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.0" />
@@ -114,6 +113,7 @@
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"
+            android:singleLine="true"
             android:ellipsize="end"
             android:text="@{channel.name}"
             android:visibility="@{showChannelName ? View.VISIBLE : View.GONE}"
