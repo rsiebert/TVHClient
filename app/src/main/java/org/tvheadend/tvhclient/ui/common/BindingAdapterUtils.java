@@ -15,6 +15,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.databinding.BindingAdapter;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
@@ -27,8 +30,6 @@ import org.tvheadend.tvhclient.util.MiscUtils;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
-import androidx.databinding.BindingAdapter;
-import androidx.recyclerview.widget.RecyclerView;
 import timber.log.Timber;
 
 @SuppressWarnings("unused")
@@ -404,20 +405,23 @@ public class BindingAdapterUtils {
     @BindingAdapter("iconUrl")
     public static void setChannelIcon(ImageView view, String iconUrl) {
         if (TextUtils.isEmpty(iconUrl)) {
+            Timber.d("Channel icon '" + iconUrl + "' is empty or null, hiding icon");
             view.setVisibility(View.GONE);
         } else {
             String url = MiscUtils.getIconUrl(view.getContext(), iconUrl);
+            Timber.d("Channel icon '" + iconUrl + "' is not empty, loading icon from url '" + url + "'");
             Picasso.get()
                     .load(url)
                     .into(view, new Callback() {
                         @Override
                         public void onSuccess() {
+                            Timber.d("Successfully loaded channel icon from url '" + url + "'");
                             view.setVisibility(View.VISIBLE);
                         }
 
                         @Override
                         public void onError(Exception e) {
-                            Timber.d("Could not load channel icon " + url);
+                            Timber.d("Error loading channel icon from url '" + url + "'");
                             view.setVisibility(View.GONE);
                         }
                     });
@@ -442,6 +446,7 @@ public class BindingAdapterUtils {
      */
     @BindingAdapter({"iconName", "iconUrl"})
     public static void setChannelName(TextView view, String name, String iconUrl) {
+        Timber.d("Setting channel name '" + name + "', iconUrl is '" + iconUrl + "'");
         view.setVisibility(TextUtils.isEmpty(iconUrl) ? View.VISIBLE : View.GONE);
         view.setText((!TextUtils.isEmpty(name) ? name : view.getContext().getString(R.string.all_channels)));
     }
