@@ -371,9 +371,10 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
                 && Integer.valueOf(sharedPreferences.getString("channel_icon_action", resources.getString(R.string.pref_default_channel_icon_action))!!) > 0
                 && recyclerViewAdapter.itemCount > 0
                 && isNetworkAvailable) {
-            val channel = recyclerViewAdapter.getItem(position)
-            menuUtils.handleMenuPlayChannelIcon(channel.id)
 
+            recyclerViewAdapter.getItem(position)?.let {
+                menuUtils.handleMenuPlayChannelIcon(it.id)
+            }
         } else {
             showChannelDetails(position)
         }
