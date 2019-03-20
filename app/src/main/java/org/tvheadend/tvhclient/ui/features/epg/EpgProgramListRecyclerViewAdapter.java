@@ -162,7 +162,7 @@ class EpgProgramListRecyclerViewAdapter extends RecyclerView.Adapter<EpgProgramL
             return;
         }
 
-        Fragment fragment = ProgramDetailsFragment.newInstance(program.getEventId(), program.getChannelId());
+        Fragment fragment = ProgramDetailsFragment.Companion.newInstance(program.getEventId(), program.getChannelId());
         FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.main, fragment);
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);

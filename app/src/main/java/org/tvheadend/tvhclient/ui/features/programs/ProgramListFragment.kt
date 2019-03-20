@@ -118,7 +118,7 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
 
     private fun handleObservedPrograms(programs: List<Program>?) {
         if (programs != null) {
-            recyclerViewAdapter.addItems(programs)
+            recyclerViewAdapter.addItems(programs.toMutableList())
         }
         if (isSearchActive) {
             if (activity is StartSearchInterface) {
@@ -186,17 +186,14 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
         // Hide the genre color menu in dual pane mode or if no genre colors shall be shown
         val showGenreColors = sharedPreferences.getBoolean("genre_colors_for_programs_enabled", resources.getBoolean(R.bool.pref_default_genre_colors_for_programs_enabled))
 
-        val genreColorMenu = menu.findItem(R.id.menu_genre_color_info_programs)
-        if (genreColorMenu != null) {
-            genreColorMenu.isVisible = !isDualPane && showGenreColors
-        }
+        menu.findItem(R.id.menu_genre_color_info_programs)?.isVisible = !isDualPane && showGenreColors
 
         if (!isSearchActive && isNetworkAvailable) {
-            menu.findItem(R.id.menu_play).isVisible = true
-            menu.findItem(R.id.menu_cast).isVisible = getCastSession(activity) != null
+            menu.findItem(R.id.menu_play)?.isVisible = true
+            menu.findItem(R.id.menu_cast)?.isVisible = getCastSession(activity) != null
         } else {
-            menu.findItem(R.id.menu_play).isVisible = false
-            menu.findItem(R.id.menu_cast).isVisible = false
+            menu.findItem(R.id.menu_play)?.isVisible = false
+            menu.findItem(R.id.menu_cast)?.isVisible = false
         }
     }
 
@@ -295,18 +292,20 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
         loadingProgramAllowedHandler.postDelayed(loadingProgramsAllowedTask, 2000)
 
         val lastProgram = recyclerViewAdapter.getItem(position)
-        Timber.d("Loading more programs after " + lastProgram.title!!)
+        lastProgram?.let {
+            Timber.d("Loading more programs after " + lastProgram.title)
 
-        val intent = Intent(activity, HtspService::class.java)
-        intent.action = "getEvents"
-        intent.putExtra("eventId", lastProgram.nextEventId)
-        intent.putExtra("channelId", lastProgram.channelId)
-        intent.putExtra("channelName", channelName)
-        intent.putExtra("numFollowing", 25)
-        intent.putExtra("showMessage", true)
+            val intent = Intent(activity, HtspService::class.java)
+            intent.action = "getEvents"
+            intent.putExtra("eventId", lastProgram.nextEventId)
+            intent.putExtra("channelId", lastProgram.channelId)
+            intent.putExtra("channelName", channelName)
+            intent.putExtra("numFollowing", 25)
+            intent.putExtra("showMessage", true)
 
-        if (MainApplication.isActivityVisible()) {
-            activity.startService(intent)
+            if (MainApplication.isActivityVisible()) {
+                activity.startService(intent)
+            }
         }
     }
 
