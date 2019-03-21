@@ -25,35 +25,7 @@
                     android:layout_height="?android:attr/actionBarSize" />
             </com.google.android.material.appbar.AppBarLayout>
 
-            <ProgressBar
-                android:id="@+id/sync_progress"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:indeterminateOnly="true"
-                android:visibility="gone" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:baselineAligned="false"
-                android:orientation="horizontal">
-
-                <FrameLayout
-                    android:id="@+id/main"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.65" />
-
-                <include layout="@layout/view_vertical_divider" />
-
-                <FrameLayout
-                    android:id="@+id/details"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.35" />
-
-            </LinearLayout>
+            <include layout="@layout/dual_screen" />
 
             <fragment
                 android:id="@+id/cast_mini_controller"
