@@ -1,6 +1,7 @@
 $ 2.2.4
   % VERSION 2.2.4
   _ 21.03.2019
+    * Make the menu to jump to a certain time and date in the program guide a free feature
     * Small bug fixes
 $ 2.2.3
   % VERSION 2.2.3
