@@ -1,6 +1,6 @@
 $ 2.2.4
   % VERSION 2.2.4
-  _ 18.03.2019
+  _ 21.03.2019
     * Small bug fixes
 $ 2.2.3
   % VERSION 2.2.3
