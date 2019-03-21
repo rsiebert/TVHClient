@@ -13,6 +13,7 @@ import org.tvheadend.tvhclient.data.repository.AppRepository
 import org.tvheadend.tvhclient.data.service.htsp.HtspConnection
 import org.tvheadend.tvhclient.data.service.htsp.HtspConnectionStateListener
 import org.tvheadend.tvhclient.data.service.htsp.HtspMessage
+import org.tvheadend.tvhclient.data.service.htsp.HtspResponseListener
 import org.tvheadend.tvhclient.domain.entity.Channel
 import org.tvheadend.tvhclient.domain.entity.Connection
 import org.tvheadend.tvhclient.domain.entity.Recording
@@ -120,16 +121,14 @@ class ExternalPlayerViewModel(application: Application) : AndroidViewModel(appli
             recording = appRepository.recordingData.getItemById(dvrId)
             request["dvrId"] = dvrId
         }
-        htspConnection.sendMessage(request) { response ->
-            if (response != null) {
+        htspConnection.sendMessage(request, object : HtspResponseListener {
+            override fun handleResponse(response: HtspMessage) {
                 Timber.d("Received response for ticket request")
                 path = response.getString("path", "")
                 ticket = response.getString("ticket", "")
                 isTicketReceived.postValue(true)
-            } else {
-                Timber.d("No response for ticket request received")
             }
-        }
+        })
     }
 
     fun getServerUrl(convertHostnameToAddress: Boolean = false): String {
@@ -164,11 +163,13 @@ class ExternalPlayerViewModel(application: Application) : AndroidViewModel(appli
     fun getPlaybackUrl(convertHostname: Boolean = false, profileId: Int = 0): String {
         // If the server status is null, then use the default id of zero which will
         // return a null server profile. In this case use the default profile 'pass'
-        val defaultProfile = appRepository.serverProfileData.getItemById(serverStatus?.httpPlaybackServerProfileId ?: 0)
+        val defaultProfile = appRepository.serverProfileData.getItemById(serverStatus?.httpPlaybackServerProfileId
+                ?: 0)
         val defaultProfileName = defaultProfile?.name ?: "pass"
 
         // Get the playback profile for the given id. In case no profile is returned, use the default name
         val serverProfile = appRepository.serverProfileData.getItemById(profileId)
-        return "${getServerUrl(convertHostname)}$path?ticket=$ticket&profile=${serverProfile?.name ?: defaultProfileName}"
+        return "${getServerUrl(convertHostname)}$path?ticket=$ticket&profile=${serverProfile?.name
+                ?: defaultProfileName}"
     }
 }

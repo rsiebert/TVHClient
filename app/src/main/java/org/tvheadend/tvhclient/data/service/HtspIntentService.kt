@@ -11,10 +11,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.data.repository.AppRepository
-import org.tvheadend.tvhclient.data.service.htsp.HtspConnection
-import org.tvheadend.tvhclient.data.service.htsp.HtspConnectionStateListener
-import org.tvheadend.tvhclient.data.service.htsp.HtspFileInputStream
-import org.tvheadend.tvhclient.data.service.htsp.HtspMessage
+import org.tvheadend.tvhclient.data.service.htsp.*
 import org.tvheadend.tvhclient.domain.entity.Connection
 import org.tvheadend.tvhclient.domain.entity.Program
 import org.tvheadend.tvhclient.util.convertUrlToHashString
@@ -145,17 +142,15 @@ class HtspIntentService : JobIntentService(), HtspConnectionStateListener {
             request["dvrId"] = dvrId
         }
 
-        htspConnection.sendMessage(request) { response ->
-            if (response != null) {
+        htspConnection.sendMessage(request, object : HtspResponseListener {
+            override fun handleResponse(response: HtspMessage) {
                 Timber.d("Response is not null")
                 val ticketIntent = Intent("ticket")
                 ticketIntent.putExtra("path", response.getString("path"))
                 ticketIntent.putExtra("ticket", response.getString("ticket"))
-                LocalBroadcastManager.getInstance(this).sendBroadcast(ticketIntent)
-            } else {
-                Timber.d("Response is null")
+                LocalBroadcastManager.getInstance(appContext).sendBroadcast(ticketIntent)
             }
-        }
+        })
     }
 
     /**
@@ -325,8 +320,8 @@ class HtspIntentService : JobIntentService(), HtspConnectionStateListener {
             }
 
             val request = convertIntentToEventMessage(msgIntent)
-            htspConnection.sendMessage(request) { response ->
-                if (response != null) {
+            htspConnection.sendMessage(request, object : HtspResponseListener {
+                override fun handleResponse(response: HtspMessage) {
                     onGetEvents(response, msgIntent)
                     // Release the lock so that all data can be saved
                     if (isLastChannel) {
@@ -335,10 +330,8 @@ class HtspIntentService : JobIntentService(), HtspConnectionStateListener {
                             responseLock.notify()
                         }
                     }
-                } else {
-                    Timber.d("Response is null")
                 }
-            }
+            })
 
             // Wait until the last response from the server was received and the lock released
             if (isLastChannel) {
