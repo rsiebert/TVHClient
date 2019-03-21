@@ -54,7 +54,7 @@ class EpgViewPagerViewHolder internal constructor(private val activity: Fragment
             if (programs.isNotEmpty()) {
                 Timber.d("Loaded ${programs.size} programs for channel ${epgChannel.name}")
                 activity.runOnUiThread {
-                    recyclerViewAdapter.addItems(programs)
+                    recyclerViewAdapter.addItems(programs.toMutableList())
                     recyclerView.visibility = View.VISIBLE
                     progressBar.visibility = View.GONE
                     noProgramsTextView.visibility = View.GONE
