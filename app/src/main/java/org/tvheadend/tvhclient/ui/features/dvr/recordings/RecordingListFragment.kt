@@ -19,6 +19,7 @@ import org.tvheadend.tvhclient.ui.common.getCastSession
 import org.tvheadend.tvhclient.ui.common.onMenuSelected
 import org.tvheadend.tvhclient.ui.common.prepareSearchMenu
 import org.tvheadend.tvhclient.ui.features.download.DownloadPermissionGrantedInterface
+import org.tvheadend.tvhclient.ui.features.download.DownloadRecordingManager
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity
 import java.util.concurrent.CopyOnWriteArrayList
 
@@ -169,8 +170,10 @@ open class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback, Do
                 R.id.menu_record_remove -> return@setOnMenuItemClickListener menuUtils.handleMenuRemoveRecordingSelection(recording, null)
                 R.id.menu_play -> return@setOnMenuItemClickListener menuUtils.handleMenuPlayRecording(recording.id)
                 R.id.menu_cast -> return@setOnMenuItemClickListener menuUtils.handleMenuCast("dvrId", recording.id)
-                R.id.menu_download -> return@setOnMenuItemClickListener menuUtils.handleMenuDownloadSelection(recording.id)
-
+                R.id.menu_download -> {
+                    DownloadRecordingManager(activity, recording.id)
+                    return@setOnMenuItemClickListener true
+                }
                 R.id.menu_edit -> {
                     val intent = Intent(activity, RecordingAddEditActivity::class.java)
                     intent.putExtra("id", recording.id)
@@ -203,8 +206,8 @@ open class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback, Do
 
     override fun downloadRecording() {
         val recording = recyclerViewAdapter.getItem(selectedListPosition)
-        if (recording != null) {
-            menuUtils.handleMenuDownloadSelection(recording.id)
+        recording?.let {
+            DownloadRecordingManager(activity, it.id)
         }
     }
 }

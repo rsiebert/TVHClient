@@ -18,6 +18,8 @@ import org.tvheadend.tvhclient.ui.common.prepareSearchMenu
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingRemovedCallback
 
+// TODO put shownId into the viewmodel
+
 class TimerRecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback {
 
     private lateinit var nestedToolbar: Toolbar
@@ -48,11 +50,7 @@ class TimerRecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback {
 
         // Get the recording id after an orientation change has occurred
         // or when the fragment is shown for the first time
-        shownId = if (savedInstanceState != null) {
-            savedInstanceState.getString("id") ?: ""
-        } else {
-            arguments?.getString("id") ?: ""
-        }
+        shownId = savedInstanceState?.getString("id", "") ?: (arguments?.getString("id", "") ?: "")
 
         val viewModel = ViewModelProviders.of(activity).get(TimerRecordingViewModel::class.java)
         viewModel.getRecordingById(shownId).observe(viewLifecycleOwner, Observer { rec ->
@@ -76,8 +74,8 @@ class TimerRecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback {
         val recording = this.recording ?: return
         prepareSearchMenu(menu, recording.title, isNetworkAvailable)
 
-        nestedToolbar.menu?.findItem(R.id.menu_edit)?.isVisible = true
-        nestedToolbar.menu?.findItem(R.id.menu_record_remove)?.isVisible = true
+        nestedToolbar.menu.findItem(R.id.menu_edit).isVisible = true
+        nestedToolbar.menu.findItem(R.id.menu_record_remove).isVisible = true
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

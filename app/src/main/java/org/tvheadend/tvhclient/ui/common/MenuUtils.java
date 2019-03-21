@@ -5,6 +5,9 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.crashlytics.android.Crashlytics;
 
@@ -21,7 +24,6 @@ import org.tvheadend.tvhclient.domain.entity.ServerProfile;
 import org.tvheadend.tvhclient.domain.entity.ServerStatus;
 import org.tvheadend.tvhclient.domain.entity.TimerRecording;
 import org.tvheadend.tvhclient.ui.features.channels.ChannelDisplayOptionListener;
-import org.tvheadend.tvhclient.ui.features.download.DownloadRecordingManager;
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingRemovedCallback;
 import org.tvheadend.tvhclient.ui.features.notification.NotificationUtils;
 import org.tvheadend.tvhclient.ui.features.playback.external.CastChannelActivity;
@@ -39,8 +41,6 @@ import java.util.Locale;
 
 import javax.inject.Inject;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import io.fabric.sdk.android.Fabric;
 import timber.log.Timber;
 
@@ -128,17 +128,6 @@ public class MenuUtils {
                 })
                 .show();
         return false;
-    }
-
-    public boolean handleMenuDownloadSelection(int dvrId) {
-        Timber.d("Stating download of recording id " + dvrId);
-        Activity activity = this.activity.get();
-        if (activity == null) {
-            Timber.d("Weak reference to activity is null");
-            return false;
-        }
-        new DownloadRecordingManager(activity, dvrId);
-        return true;
     }
 
     public boolean handleMenuRecordSelection(int eventId) {

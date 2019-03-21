@@ -20,6 +20,8 @@ import org.tvheadend.tvhclient.ui.common.prepareSearchMenu
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity
 import timber.log.Timber
 
+// TODO put event and channel Id into the viewmodel
+
 class ProgramDetailsFragment : BaseFragment() {
 
     private lateinit var nestedToolbar: Toolbar
@@ -34,8 +36,8 @@ class ProgramDetailsFragment : BaseFragment() {
     lateinit var itemBinding: ProgramDetailsFragmentBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        itemBinding = DataBindingUtil.inflate<ProgramDetailsFragmentBinding>(inflater, R.layout.program_details_fragment, container, false)
-        val view = itemBinding.getRoot()
+        itemBinding = DataBindingUtil.inflate(inflater, R.layout.program_details_fragment, container, false)
+        val view = itemBinding.root
 
         nestedToolbar = view.findViewById(R.id.nested_toolbar)
         scrollView = view.findViewById(R.id.scrollview)
@@ -67,9 +69,9 @@ class ProgramDetailsFragment : BaseFragment() {
         if (program != null) {
             program?.let {
                 Timber.d("Loaded details for program ${it.title}")
-                itemBinding.setProgram(it)
-                itemBinding.setHtspVersion(htspVersion)
-                itemBinding.setIsProgramArtworkEnabled(isUnlocked && sharedPreferences.getBoolean("program_artwork_enabled", false))
+                itemBinding.program = it
+                itemBinding.htspVersion = htspVersion
+                itemBinding.isProgramArtworkEnabled = isUnlocked && sharedPreferences.getBoolean("program_artwork_enabled", false)
                 // The toolbar is hidden as a default to prevent pressing any icons if no recording
                 // has been loaded yet. The toolbar is shown here because a recording was loaded
                 nestedToolbar.visibility = View.VISIBLE
@@ -112,7 +114,7 @@ class ProgramDetailsFragment : BaseFragment() {
                 // Update the state of the recording (if there is one)
                 // and also the menu items in the nested toolbar
                 program?.recording = recording
-                itemBinding.setProgram(program)
+                itemBinding.program = program
                 activity.invalidateOptionsMenu()
             }
         })
