@@ -320,10 +320,12 @@ public class HtspMessage extends HashMap<String, Object> {
             String name;
             if (namelen == 0) {
                 name = Integer.toString(cnt++);
-            } else {
+            } else if (namelen > 0) {
                 byte[] bName = new byte[namelen];
                 buf.get(bName);
                 name = new String(bName);
+            } else {
+                throw new IOException("Buffer position is negative, namelen " + namelen);
             }
 
             // Get the actual content
