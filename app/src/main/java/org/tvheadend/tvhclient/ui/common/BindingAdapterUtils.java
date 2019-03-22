@@ -362,6 +362,9 @@ public class BindingAdapterUtils {
                 @Override
                 public Bitmap transform(Bitmap source) {
                     int targetWidth = view.getWidth();
+                    if (targetWidth == 0 || source.getHeight() == 0 || source.getWidth() == 0) {
+                        return source;
+                    }
                     double aspectRatio = (double) source.getHeight() / (double) source.getWidth();
                     int targetHeight = (int) (targetWidth * aspectRatio);
                     Bitmap result = Bitmap.createScaledBitmap(source, targetWidth, targetHeight, false);
