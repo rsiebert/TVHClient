@@ -28,6 +28,7 @@ import org.tvheadend.tvhclient.ui.common.tasks.WakeOnLanTask
 import org.tvheadend.tvhclient.ui.features.dialogs.ChannelTagSelectionDialog
 import org.tvheadend.tvhclient.ui.features.dialogs.GenreColorDialog
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity
+import org.tvheadend.tvhclient.ui.features.notification.addNotification
 import org.tvheadend.tvhclient.ui.features.programs.ProgramListFragment
 import org.tvheadend.tvhclient.ui.features.search.SearchRequestInterface
 import timber.log.Timber
@@ -38,13 +39,9 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
     lateinit var recyclerViewAdapter: ChannelRecyclerViewAdapter
     lateinit var viewModel: ChannelViewModel
 
-    private var selectedTimeOffset: Int = 0
-    private var selectedListPosition: Int = 0
-    private var searchQuery: String? = null
-
     // Used in the time selection dialog to show a time entry every x hours.
     private val intervalInHours = 2
-    private var programIdToBeEditedWhenBeingRecorded = 0
+    //private var programIdToBeEditedWhenBeingRecorded = 0
     private var channelTags: List<ChannelTag>? = null
     private var selectedTime: Long = 0
     private lateinit var currentTimeUpdateTask: Runnable
@@ -57,17 +54,10 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        if (savedInstanceState != null) {
-            selectedListPosition = savedInstanceState.getInt("listPosition", 0)
-            selectedTimeOffset = savedInstanceState.getInt("timeOffset")
-            searchQuery = savedInstanceState.getString(SearchManager.QUERY)
-        } else {
-            selectedListPosition = 0
-            selectedTimeOffset = 0
-            val bundle = arguments
-            if (bundle != null) {
-                searchQuery = bundle.getString(SearchManager.QUERY)
-            }
+        viewModel = ViewModelProviders.of(activity).get(ChannelViewModel::class.java)
+
+        if (savedInstanceState == null) {
+            viewModel.searchQuery = arguments?.getString(SearchManager.QUERY) ?: ""
         }
 
         recyclerViewAdapter = ChannelRecyclerViewAdapter(isDualPane, this)
@@ -78,8 +68,6 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
 
         recycler_view.visibility = View.GONE
         progress_bar.visibility = View.VISIBLE
-
-        viewModel = ViewModelProviders.of(activity).get(ChannelViewModel::class.java)
 
         Timber.d("Observing selected time")
         viewModel.selectedTime.observe(viewLifecycleOwner, Observer { time ->
@@ -110,7 +98,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
             showChannelTagOrChannelCount()
 
             if (isDualPane && recyclerViewAdapter.itemCount > 0) {
-                showChannelDetails(selectedListPosition)
+                showChannelDetails(viewModel.selectedListPosition)
             }
         })
 
@@ -125,8 +113,9 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
                 for (recording in recordings) {
                     // Show the edit recording screen of the scheduled recording
                     // in case the user has selected the record and edit menu item.
-                    if (recording.eventId == programIdToBeEditedWhenBeingRecorded && programIdToBeEditedWhenBeingRecorded > 0) {
-                        programIdToBeEditedWhenBeingRecorded = 0
+                    // TODO
+                    if (recording.eventId == viewModel.recordingIdToEdit && viewModel.recordingIdToEdit > 0) {
+                        viewModel.recordingIdToEdit = 0
                         val intent = Intent(activity, RecordingAddEditActivity::class.java)
                         intent.putExtra("id", recording.id)
                         intent.putExtra("type", "recording")
@@ -154,7 +143,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
         // Show either all channels or the name of the selected
         // channel tag and the channel count in the toolbar
         val toolbarTitle = viewModel.getSelectedChannelTagName(activity)
-        if (TextUtils.isEmpty(searchQuery)) {
+        if (TextUtils.isEmpty(viewModel.searchQuery)) {
             toolbarInterface.setTitle(toolbarTitle)
             toolbarInterface.setSubtitle(resources.getQuantityString(R.plurals.items,
                     recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
@@ -163,13 +152,6 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
             toolbarInterface.setSubtitle(resources.getQuantityString(R.plurals.channels,
                     recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
         }
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putInt("listPosition", selectedListPosition)
-        outState.putInt("timeOffset", selectedTimeOffset)
-        outState.putString(SearchManager.QUERY, searchQuery)
     }
 
     override fun onResume() {
@@ -195,7 +177,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
         val showGenreColors = sharedPreferences.getBoolean("genre_colors_for_channels_enabled", resources.getBoolean(R.bool.pref_default_genre_colors_for_channels_enabled))
         val showChannelTagMenu = sharedPreferences.getBoolean("channel_tag_menu_enabled", resources.getBoolean(R.bool.pref_default_channel_tag_menu_enabled))
 
-        if (TextUtils.isEmpty(searchQuery)) {
+        if (TextUtils.isEmpty(viewModel.searchQuery)) {
             menu.findItem(R.id.menu_genre_color_info_channels).isVisible = showGenreColors
             menu.findItem(R.id.menu_timeframe).isVisible = isUnlocked
             menu.findItem(R.id.menu_search).isVisible = recyclerViewAdapter.itemCount > 0
@@ -217,7 +199,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.menu_tags -> ChannelTagSelectionDialog.showDialog(activity, channelTags, appRepository.channelData.getItems().size, this)
-            R.id.menu_timeframe -> menuUtils.handleMenuTimeSelection(selectedTimeOffset, intervalInHours, 12, this)
+            R.id.menu_timeframe -> menuUtils.handleMenuTimeSelection(viewModel.selectedTimeOffset, intervalInHours, 12, this)
             R.id.menu_genre_color_info_channels -> GenreColorDialog.showDialog(activity)
             R.id.menu_sort_order -> menuUtils.handleMenuChannelSortOrderSelection(this)
             R.id.menu_wol -> {
@@ -230,7 +212,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
     }
 
     override fun onTimeSelected(which: Int) {
-        selectedTimeOffset = which
+        viewModel.selectedTimeOffset = which
         recycler_view.visibility = View.GONE
         progress_bar.visibility = View.VISIBLE
 
@@ -258,7 +240,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
      * @param position The selected position in the list
      */
     private fun showChannelDetails(position: Int) {
-        selectedListPosition = position
+        viewModel.selectedListPosition = position
         recyclerViewAdapter.setPosition(position)
         val channel = recyclerViewAdapter.getItem(position)
         if (channel == null || !isVisible
@@ -321,38 +303,50 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
                 return@setOnMenuItemClickListener true
             }
             when (item.itemId) {
-                R.id.menu_record_stop -> return@setOnMenuItemClickListener menuUtils.handleMenuStopRecordingSelection(recording, null)
-                R.id.menu_record_cancel -> return@setOnMenuItemClickListener menuUtils.handleMenuCancelRecordingSelection(recording, null)
-                R.id.menu_record_remove -> return@setOnMenuItemClickListener menuUtils.handleMenuRemoveRecordingSelection(recording, null)
-                R.id.menu_record_once -> return@setOnMenuItemClickListener menuUtils.handleMenuRecordSelection(channel.programId)
+                R.id.menu_record_stop ->
+                    return@setOnMenuItemClickListener menuUtils.handleMenuStopRecordingSelection(recording, null)
+                R.id.menu_record_cancel ->
+                    return@setOnMenuItemClickListener menuUtils.handleMenuCancelRecordingSelection(recording, null)
+                R.id.menu_record_remove ->
+                    return@setOnMenuItemClickListener menuUtils.handleMenuRemoveRecordingSelection(recording, null)
+                R.id.menu_record_once ->
+                    return@setOnMenuItemClickListener menuUtils.handleMenuRecordSelection(channel.programId)
                 R.id.menu_record_once_and_edit -> {
-                    programIdToBeEditedWhenBeingRecorded = channel.programId
+                    // TODO
+                    viewModel.recordingIdToEdit = channel.programId
                     return@setOnMenuItemClickListener menuUtils.handleMenuRecordSelection(channel.programId)
                 }
-                R.id.menu_record_once_custom_profile -> return@setOnMenuItemClickListener menuUtils.handleMenuCustomRecordSelection(channel.programId, channel.id)
-                R.id.menu_record_series -> return@setOnMenuItemClickListener menuUtils.handleMenuSeriesRecordSelection(channel.programTitle)
-                R.id.menu_play -> return@setOnMenuItemClickListener menuUtils.handleMenuPlayChannel(channel.id)
-                R.id.menu_cast -> return@setOnMenuItemClickListener menuUtils.handleMenuCast("channelId", channel.id)
-                R.id.menu_add_notification -> if (program != null) {
-                    return@setOnMenuItemClickListener menuUtils.handleMenuAddNotificationSelection(program)
-                } else {
-                    return@setOnMenuItemClickListener false
+                R.id.menu_record_once_custom_profile ->
+                    return@setOnMenuItemClickListener menuUtils.handleMenuCustomRecordSelection(channel.programId, channel.id)
+                R.id.menu_record_series ->
+                    return@setOnMenuItemClickListener menuUtils.handleMenuSeriesRecordSelection(channel.programTitle)
+                R.id.menu_play ->
+                    return@setOnMenuItemClickListener menuUtils.handleMenuPlayChannel(channel.id)
+                R.id.menu_cast ->
+                    return@setOnMenuItemClickListener menuUtils.handleMenuCast("channelId", channel.id)
+                R.id.menu_add_notification -> {
+                    val profile = appRepository.serverProfileData.getItemById(serverStatus.recordingServerProfileId)
+                    if (program != null) {
+                        addNotification(activity, program, profile)
+                    }
+                    return@setOnMenuItemClickListener true
                 }
-                else -> return@setOnMenuItemClickListener false
+                else ->
+                    return@setOnMenuItemClickListener false
             }
         }
         popupMenu.show()
     }
 
     override fun onSearchRequested(query: String) {
-        searchQuery = query
+        viewModel.searchQuery = query
         recyclerViewAdapter.filter.filter(query, this)
     }
 
     override fun onSearchResultsCleared(): Boolean {
-        return if (!TextUtils.isEmpty(searchQuery)) {
+        return if (!TextUtils.isEmpty(viewModel.searchQuery)) {
             Timber.d("Search result not empty, clearing filter and returning true")
-            searchQuery = ""
+            viewModel.searchQuery = ""
             recyclerViewAdapter.filter.filter("", this)
             true
         } else {
@@ -372,7 +366,8 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
                 && recyclerViewAdapter.itemCount > 0
                 && isNetworkAvailable) {
 
-            recyclerViewAdapter.getItem(position)?.let {
+            val channel = recyclerViewAdapter.getItem(position)
+            channel?.let {
                 menuUtils.handleMenuPlayChannelIcon(it.id)
             }
         } else {
@@ -387,7 +382,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
 
     override fun onFilterComplete(count: Int) {
         showChannelTagOrChannelCount()
-        // Preselect the first result item in the details screen
+        // Show the first search result item in the details screen
         if (isDualPane && recyclerViewAdapter.itemCount > 0) {
             showChannelDetails(0)
         }

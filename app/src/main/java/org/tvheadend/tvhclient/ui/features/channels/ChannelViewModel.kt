@@ -11,6 +11,12 @@ class ChannelViewModel(application: Application) : BaseChannelViewModel(applicat
 
     val channels: LiveData<List<Channel>>
     val numberOfChannels: LiveData<Int> = appRepository.channelData.getLiveDataItemCount()
+    var selectedListPosition = 0
+    var selectedTimeOffset = 0
+    var searchQuery = ""
+
+    var recordingIdToEdit = 0
+
 
     init {
 
