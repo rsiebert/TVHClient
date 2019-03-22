@@ -61,8 +61,6 @@
             style="?attr/ProgramGuideTimelineFont"
             android:layout_width="0dp"
             android:layout_height="36dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
             android:background="?attr/material_drawer_selected"
             android:gravity="start|center_vertical"
             android:padding="8dp"
