@@ -1,6 +1,5 @@
 package org.tvheadend.tvhclient.ui.features.epg
 
-import android.app.SearchManager
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -10,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.databinding.DataBindingUtil
@@ -38,8 +38,6 @@ class EpgViewPagerFragment : Fragment(), EpgScrollInterface {
     private var currentTimeIndication: ImageView? = null
 
     private var showTimeIndication: Boolean = false
-    private var startTime: Long = 0
-    private var endTime: Long = 0
     private var pixelsPerMinute: Float = 0f
 
     private lateinit var updateViewHandler: Handler
@@ -50,7 +48,7 @@ class EpgViewPagerFragment : Fragment(), EpgScrollInterface {
     private lateinit var recyclerViewLinearLayoutManager: LinearLayoutManager
     private lateinit var itemBinding: EpgViewpagerFragmentBinding
     private var enableScrolling: Boolean = false
-    private var searchQuery: String = ""
+    private var fragmentId = 0
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         itemBinding = DataBindingUtil.inflate(inflater, R.layout.epg_viewpager_fragment, container, false)
@@ -70,43 +68,37 @@ class EpgViewPagerFragment : Fragment(), EpgScrollInterface {
         }
     }
 
+    private lateinit var viewModel: EpgViewModel
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         MainApplication.getComponent().inject(this)
 
+        viewModel = ViewModelProviders.of(activity as AppCompatActivity).get(EpgViewModel::class.java)
+
+        // Required to show the vertical current time indication
         constraintSet = ConstraintSet()
         constraintSet.clone(constraintLayout)
 
-        val bundle = arguments
-        if (bundle != null) {
-            startTime = bundle.getLong("epg_start_time", 0)
-            endTime = bundle.getLong("epg_end_time", 0)
-            showTimeIndication = bundle.getBoolean("time_indication_enabled", false)
-            searchQuery = bundle.getString(SearchManager.QUERY) ?: ""
-        }
+        // Get the id that defines the position of the fragment in the viewpager
+        fragmentId = arguments?.getInt("fragmentId") ?: 0
+        showTimeIndication = fragmentId == 0
 
-        itemBinding.startTime = startTime
-        itemBinding.endTime = endTime
+        itemBinding.startTime = viewModel.startTimes[fragmentId]
+        itemBinding.endTime = viewModel.endTimes[fragmentId]
+
         // Calculates the available display width of one minute in pixels. This depends
         // how wide the screen is and how many hours shall be shown in one screen.
         val displayMetrics = DisplayMetrics()
         requireActivity().windowManager.defaultDisplay.getMetrics(displayMetrics)
         val displayWidth = displayMetrics.widthPixels
 
-        // The defined value should not be zero due to checking the value
-        // in the settings. Check it anyway to prevent a divide by zero.
+        pixelsPerMinute = (displayWidth - 221).toFloat() / (60.0f * viewModel.hoursToShow.toFloat())
 
-        var hoursToShow = Integer.parseInt(sharedPreferences.getString("hours_of_epg_data_per_screen", resources.getString(R.string.pref_default_hours_of_epg_data_per_screen))!!)
-        if (hoursToShow == 0) {
-            hoursToShow++
-        }
-        pixelsPerMinute = (displayWidth - 221).toFloat() / (60.0f * hoursToShow.toFloat())
-
-        recyclerViewAdapter = EpgViewPagerRecyclerViewAdapter(requireActivity(), pixelsPerMinute, startTime, endTime)
+        recyclerViewAdapter = EpgViewPagerRecyclerViewAdapter(requireActivity(), pixelsPerMinute, viewModel.startTimes[fragmentId], viewModel.endTimes[fragmentId])
         recyclerViewLinearLayoutManager = LinearLayoutManager(appContext, RecyclerView.VERTICAL, false)
         recyclerView.addItemDecoration(DividerItemDecoration(appContext, LinearLayoutManager.VERTICAL))
         recyclerView.layoutManager = recyclerViewLinearLayoutManager
-        //recyclerView.itemAnimator = DefaultItemAnimator()
         recyclerView.setHasFixedSize(true)
         recyclerView.adapter = recyclerViewAdapter
 
@@ -129,10 +121,10 @@ class EpgViewPagerFragment : Fragment(), EpgScrollInterface {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 if (enableScrolling) {
-                    val position = recyclerViewLinearLayoutManager.findFirstVisibleItemPosition()
-                    val v = recyclerViewLinearLayoutManager.getChildAt(0)
-                    val offset = if (v == null) 0 else v.top - recyclerView.paddingTop
                     activity?.let {
+                        val position = recyclerViewLinearLayoutManager.findFirstVisibleItemPosition()
+                        val view = recyclerViewLinearLayoutManager.getChildAt(0)
+                        val offset = if (view == null) 0 else view.top - recyclerView.paddingTop
                         val fragment = it.supportFragmentManager.findFragmentById(R.id.main)
                         if (fragment is EpgScrollInterface) {
                             (fragment as EpgScrollInterface).onScroll(position, offset)
@@ -180,7 +172,6 @@ class EpgViewPagerFragment : Fragment(), EpgScrollInterface {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putParcelable("layout", recyclerViewLinearLayoutManager.onSaveInstanceState())
-        outState.putString(SearchManager.QUERY, searchQuery)
     }
 
     /**
@@ -193,7 +184,7 @@ class EpgViewPagerFragment : Fragment(), EpgScrollInterface {
         // for the time indication. If channel icons are shown then we need to add a
         // the icon width to the offset.
         val currentTime = System.currentTimeMillis()
-        val durationTime = (currentTime - startTime) / 1000 / 60
+        val durationTime = (currentTime - viewModel.startTimes[fragmentId]) / 1000 / 60
         val offset = (durationTime * pixelsPerMinute).toInt()
 
         // Set the left constraint of the time indication so it shows the actual time
@@ -209,19 +200,15 @@ class EpgViewPagerFragment : Fragment(), EpgScrollInterface {
     }
 
     override fun onScrollStateChanged() {
-
+        // NOP
     }
 
     companion object {
 
-        fun newInstance(startTime: Long, endTime: Long, timeIndicationEnabled: Boolean, searchQuery: String): EpgViewPagerFragment {
+        fun newInstance(fragmentId: Int): EpgViewPagerFragment {
             val fragment = EpgViewPagerFragment()
             val bundle = Bundle()
-            bundle.putLong("epg_start_time", startTime)
-            bundle.putLong("epg_end_time", endTime)
-            // Used to only show the vertical current time indication in the first fragment
-            bundle.putBoolean("time_indication_enabled", timeIndicationEnabled)
-            bundle.putString(SearchManager.QUERY, searchQuery)
+            bundle.putInt("fragmentId", fragmentId)
             fragment.arguments = bundle
             return fragment
         }

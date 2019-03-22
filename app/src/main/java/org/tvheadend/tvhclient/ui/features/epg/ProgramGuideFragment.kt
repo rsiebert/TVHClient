@@ -3,7 +3,6 @@ package org.tvheadend.tvhclient.ui.features.epg
 import android.app.SearchManager
 import android.content.Intent
 import android.os.Bundle
-import android.text.format.Time
 import android.util.SparseArray
 import android.view.*
 import android.widget.Filter
@@ -38,7 +37,6 @@ import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity
 import org.tvheadend.tvhclient.ui.features.search.SearchActivity
 import org.tvheadend.tvhclient.ui.features.search.SearchRequestInterface
 import timber.log.Timber
-import java.util.*
 
 class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewClickCallback, ChannelDisplayOptionListener, Filter.FilterListener, ViewPager.OnPageChangeListener, SearchRequestInterface {
 
@@ -50,16 +48,9 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
     lateinit var progressBar: ProgressBar
 
     lateinit var unbinder: Unbinder
-    private var selectedTimeOffset: Int = 0
-    private var searchQuery: String = ""
     lateinit var viewModel: EpgViewModel
     private lateinit var channelListRecyclerViewAdapter: EpgChannelListRecyclerViewAdapter
 
-    private val startTimes = ArrayList<Long>()
-    private val endTimes = ArrayList<Long>()
-    private var daysToShow: Int = 0
-    private var hoursToShow: Int = 0
-    private var fragmentCount: Int = 0
     private lateinit var viewPagerAdapter: EpgViewPagerAdapter
     private var enableScrolling = true
     private lateinit var channelListRecyclerViewLayoutManager: LinearLayoutManager
@@ -82,28 +73,11 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
         super.onActivityCreated(savedInstanceState)
         forceSingleScreenLayout()
 
-        if (savedInstanceState != null) {
-            selectedTimeOffset = savedInstanceState.getInt("timeOffset")
-            searchQuery = savedInstanceState.getString(SearchManager.QUERY) ?: ""
-        } else {
-            selectedTimeOffset = 0
-            searchQuery = arguments?.getString(SearchManager.QUERY) ?: ""
+        viewModel = ViewModelProviders.of(activity).get(EpgViewModel::class.java)
+
+        if (savedInstanceState == null) {
+            viewModel.searchQuery = arguments?.getString(SearchManager.QUERY) ?: ""
         }
-
-        // Calculates the number of fragments in the view pager. This depends on how many days
-        // shall be shown of the program guide and how many hours shall be visible per fragment.
-
-        hoursToShow = Integer.parseInt(sharedPreferences.getString("hours_of_epg_data_per_screen", resources.getString(R.string.pref_default_hours_of_epg_data_per_screen))!!)
-        // The defined value should not be zero due to checking the value
-        // in the settings. Check it anyway to prevent a divide by zero.
-        if (hoursToShow == 0) {
-            hoursToShow++
-        }
-
-        daysToShow = Integer.parseInt(sharedPreferences.getString("days_of_epg_data", resources.getString(R.string.pref_default_days_of_epg_data))!!)
-        fragmentCount = daysToShow * (24 / hoursToShow)
-
-        calculateViewPagerFragmentStartAndEndTimes()
 
         channelListRecyclerViewAdapter = EpgChannelListRecyclerViewAdapter(this)
         channelListRecyclerViewLayoutManager = LinearLayoutManager(activity)
@@ -133,12 +107,10 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
             }
         })
 
-        viewPagerAdapter = EpgViewPagerAdapter(childFragmentManager, startTimes, endTimes, fragmentCount, searchQuery)
+        viewPagerAdapter = EpgViewPagerAdapter(childFragmentManager, viewModel)
         programViewPager.adapter = viewPagerAdapter
         programViewPager.offscreenPageLimit = 2
         programViewPager.addOnPageChangeListener(this)
-
-        viewModel = ViewModelProviders.of(activity).get(EpgViewModel::class.java)
 
         Timber.d("Observing channel tags")
         viewModel.channelTags.observe(viewLifecycleOwner, Observer { tags ->
@@ -191,12 +163,6 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
         })
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putInt("timeOffset", selectedTimeOffset)
-        outState.putString(SearchManager.QUERY, searchQuery)
-    }
-
     override fun onResume() {
         super.onResume()
         // When the user returns from the settings only the onResume method is called, not the
@@ -226,7 +192,7 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.menu_tags -> ChannelTagSelectionDialog.showDialog(activity, channelTags, appRepository.channelData.getItems().size, this)
-            R.id.menu_timeframe -> menuUtils.handleMenuTimeSelection(selectedTimeOffset, hoursToShow, hoursToShow * daysToShow, this)
+            R.id.menu_timeframe -> menuUtils.handleMenuTimeSelection(viewModel.selectedTimeOffset, viewModel.hoursToShow, viewModel.hoursToShow * viewModel.daysToShow, this)
             R.id.menu_genre_color_info_channels -> GenreColorDialog.showDialog(activity)
             R.id.menu_sort_order -> menuUtils.handleMenuChannelSortOrderSelection(this)
             else -> super.onOptionsItemSelected(item)
@@ -234,14 +200,14 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
     }
 
     override fun onTimeSelected(which: Int) {
-        selectedTimeOffset = which
+        viewModel.selectedTimeOffset = which
         programViewPager.currentItem = which
 
         // TODO check if this is required
         // Add the selected list index as extra hours to the current time.
         // If the first index was selected then use the current time.
         var timeInMillis = System.currentTimeMillis()
-        timeInMillis += (1000 * 60 * 60 * which * hoursToShow).toLong()
+        timeInMillis += (1000 * 60 * 60 * which * viewModel.hoursToShow).toLong()
         viewModel.setSelectedTime(timeInMillis)
     }
 
@@ -290,20 +256,31 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
                 return@setOnMenuItemClickListener true
             }
             when (item.itemId) {
-                R.id.menu_record_stop -> return@setOnMenuItemClickListener menuUtils.handleMenuStopRecordingSelection(recording, null)
-                R.id.menu_record_cancel -> return@setOnMenuItemClickListener menuUtils.handleMenuCancelRecordingSelection(recording, null)
-                R.id.menu_record_remove -> return@setOnMenuItemClickListener menuUtils.handleMenuRemoveRecordingSelection(recording, null)
-                R.id.menu_record_once -> return@setOnMenuItemClickListener menuUtils.handleMenuRecordSelection(program.eventId)
+                R.id.menu_record_stop -> {
+                    return@setOnMenuItemClickListener menuUtils.handleMenuStopRecordingSelection(recording, null)
+                }
+                R.id.menu_record_cancel ->
+                    return@setOnMenuItemClickListener menuUtils.handleMenuCancelRecordingSelection(recording, null)
+                R.id.menu_record_remove ->
+                    return@setOnMenuItemClickListener menuUtils.handleMenuRemoveRecordingSelection(recording, null)
+                R.id.menu_record_once ->
+                    return@setOnMenuItemClickListener menuUtils.handleMenuRecordSelection(program.eventId)
                 R.id.menu_record_once_and_edit -> {
                     programIdToBeEditedWhenBeingRecorded = program.eventId
                     return@setOnMenuItemClickListener menuUtils.handleMenuRecordSelection(program.eventId)
                 }
-                R.id.menu_record_once_custom_profile -> return@setOnMenuItemClickListener menuUtils.handleMenuCustomRecordSelection(program.eventId, program.channelId)
-                R.id.menu_record_series -> return@setOnMenuItemClickListener menuUtils.handleMenuSeriesRecordSelection(program.title)
-                R.id.menu_play -> return@setOnMenuItemClickListener menuUtils.handleMenuPlayChannel(program.channelId)
-                R.id.menu_cast -> return@setOnMenuItemClickListener menuUtils.handleMenuCast("channelId", program.channelId)
-                R.id.menu_add_notification -> return@setOnMenuItemClickListener menuUtils.handleMenuAddNotificationSelection(program)
-                else -> return@setOnMenuItemClickListener false
+                R.id.menu_record_once_custom_profile ->
+                    return@setOnMenuItemClickListener menuUtils.handleMenuCustomRecordSelection(program.eventId, program.channelId)
+                R.id.menu_record_series ->
+                    return@setOnMenuItemClickListener menuUtils.handleMenuSeriesRecordSelection(program.title)
+                R.id.menu_play ->
+                    return@setOnMenuItemClickListener menuUtils.handleMenuPlayChannel(program.channelId)
+                R.id.menu_cast ->
+                    return@setOnMenuItemClickListener menuUtils.handleMenuCast("channelId", program.channelId)
+                R.id.menu_add_notification ->
+                    return@setOnMenuItemClickListener menuUtils.handleMenuAddNotificationSelection(program)
+                else ->
+                    return@setOnMenuItemClickListener false
             }
         }
         popupMenu.show()
@@ -320,41 +297,6 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
         }
     }
 
-    /**
-     * Calculates the day, start and end hours that are valid for the fragment
-     * at the given position. This will be saved in the lists to avoid
-     * calculating this for every fragment again and so we can update the data
-     * when the settings have changed.
-     */
-    private fun calculateViewPagerFragmentStartAndEndTimes() {
-        // Clear the old arrays and initialize
-        // the variables to start fresh
-        startTimes.clear()
-        endTimes.clear()
-
-        // Get the current time in milliseconds
-        val now = Time(Time.getCurrentTimezone())
-        now.setToNow()
-
-        // Get the current time in milliseconds without the seconds but in 30
-        // minute slots. If the current time is later then 16:30 start from
-        // 16:30 otherwise from 16:00.
-        val calendarStartTime = Calendar.getInstance()
-        val minutes = if (now.minute > 30) 30 else 0
-        calendarStartTime.set(now.year, now.month, now.monthDay, now.hour, minutes, 0)
-        var startTime = calendarStartTime.timeInMillis
-
-        // Get the offset time in milliseconds without the minutes and seconds
-        val offsetTime = (hoursToShow * 60 * 60 * 1000).toLong()
-
-        // Set the start and end times for each fragment
-        for (i in 0 until fragmentCount) {
-            startTimes.add(startTime)
-            endTimes.add(startTime + offsetTime - 1)
-            startTime += offsetTime
-        }
-    }
-
     override fun onScroll(position: Int, offset: Int) {
         viewModel.verticalScrollPosition = position
         viewModel.verticalScrollOffset = offset
@@ -366,10 +308,9 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
     }
 
     /**
-     * Scrolls the channel list and the program lists in all available
-     * fragments from the viewpager to the saved position and offset.
-     * When the user swipes the viewpager to show a new fragment it will
-     * not be scrolled here but in the onPageSelected method
+     * The channel list fragment and all program list fragment in the viewpager fragments
+     * will be scrolled to the saved position and offset from the view model.
+     * Only already existing fragments in the view pager will be scrolled
      */
     private fun startScrolling() {
         val position = viewModel.verticalScrollPosition
@@ -380,7 +321,7 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
         for (i in 0 until viewPagerAdapter.registeredFragmentCount) {
             val fragment = viewPagerAdapter.getRegisteredFragment(i)
             if (fragment is EpgScrollInterface) {
-                (fragment as EpgScrollInterface).onScroll(position, offset)
+                fragment.onScroll(position, offset)
             }
         }
     }
@@ -389,14 +330,16 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
         // NOP
     }
 
+    /**
+     * When the user has selected a new fragment the view pager will create the
+     * required neighbour fragments. Inform all those fragments except the current
+     * one to scroll to the required position.
+     */
     override fun onPageSelected(position: Int) {
-        // When a fragment was selected new fragment could have been created by the viewpager.
-        // Scrolls the channel list and the program lists in all available fragments
-        // except the currently visible one from the viewpager to the saved position and offset.
         for (i in position - 1..position + 1) {
             val fragment = viewPagerAdapter.getRegisteredFragment(i)
             if (i != position && fragment is EpgScrollInterface) {
-                (fragment as EpgScrollInterface).onScroll(viewModel.verticalScrollPosition, viewModel.verticalScrollOffset)
+                fragment.onScroll(viewModel.verticalScrollPosition, viewModel.verticalScrollOffset)
             }
         }
     }
@@ -422,7 +365,7 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
         return getString(R.string.search_program_guide)
     }
 
-    private class EpgViewPagerAdapter internal constructor(fragmentManager: FragmentManager, private val startTimes: List<Long>, private val endTimes: List<Long>, private val fragmentCount: Int, private val searchQuery: String) : FragmentStatePagerAdapter(fragmentManager) {
+    private class EpgViewPagerAdapter internal constructor(fragmentManager: FragmentManager, private val viewModel: EpgViewModel) : FragmentStatePagerAdapter(fragmentManager) {
 
         private val registeredFragments = SparseArray<Fragment>()
 
@@ -430,12 +373,7 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
             get() = registeredFragments.size()
 
         override fun getItem(position: Int): Fragment {
-            val showTimeIndication = position == 0
-            return EpgViewPagerFragment.newInstance(
-                    startTimes[position],
-                    endTimes[position],
-                    showTimeIndication,
-                    searchQuery)
+            return EpgViewPagerFragment.newInstance(position)
         }
 
         override fun instantiateItem(container: ViewGroup, position: Int): Any {
@@ -444,17 +382,17 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
             return fragment
         }
 
-        override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
+        override fun destroyItem(container: ViewGroup, position: Int, item: Any) {
             registeredFragments.remove(position)
-            super.destroyItem(container, position, `object`)
+            super.destroyItem(container, position, item)
         }
 
-        internal fun getRegisteredFragment(position: Int): Fragment {
+        internal fun getRegisteredFragment(position: Int): Fragment? {
             return registeredFragments.get(position)
         }
 
         override fun getCount(): Int {
-            return fragmentCount
+            return viewModel.fragmentCount
         }
     }
 }
