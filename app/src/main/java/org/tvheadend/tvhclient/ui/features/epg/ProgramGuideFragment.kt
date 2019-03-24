@@ -34,6 +34,7 @@ import org.tvheadend.tvhclient.ui.features.channels.ChannelDisplayOptionListener
 import org.tvheadend.tvhclient.ui.features.dialogs.ChannelTagSelectionDialog
 import org.tvheadend.tvhclient.ui.features.dialogs.GenreColorDialog
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity
+import org.tvheadend.tvhclient.ui.features.notification.addNotification
 import org.tvheadend.tvhclient.ui.features.search.SearchActivity
 import org.tvheadend.tvhclient.ui.features.search.SearchRequestInterface
 import timber.log.Timber
@@ -181,11 +182,11 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
         val showGenreColors = sharedPreferences.getBoolean("genre_colors_for_channels_enabled", resources.getBoolean(R.bool.pref_default_genre_colors_for_channels_enabled))
         val showChannelTagMenu = sharedPreferences.getBoolean("channel_tag_menu_enabled", resources.getBoolean(R.bool.pref_default_channel_tag_menu_enabled))
 
-        menu.findItem(R.id.menu_genre_color_info_channels).isVisible = showGenreColors
+        menu.findItem(R.id.menu_genre_color_info_channels)?.isVisible = showGenreColors
 
         // Prevent the channel tag menu item from going into the overlay menu
         if (showChannelTagMenu) {
-            menu.findItem(R.id.menu_tags).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
+            menu.findItem(R.id.menu_tags)?.setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
         }
     }
 
@@ -277,8 +278,11 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
                     return@setOnMenuItemClickListener menuUtils.handleMenuPlayChannel(program.channelId)
                 R.id.menu_cast ->
                     return@setOnMenuItemClickListener menuUtils.handleMenuCast("channelId", program.channelId)
-                R.id.menu_add_notification ->
-                    return@setOnMenuItemClickListener menuUtils.handleMenuAddNotificationSelection(program)
+                R.id.menu_add_notification -> {
+                    val profile = appRepository.serverProfileData.getItemById(serverStatus.recordingServerProfileId)
+                    addNotification(activity, program, profile)
+                    return@setOnMenuItemClickListener true
+                }
                 else ->
                     return@setOnMenuItemClickListener false
             }

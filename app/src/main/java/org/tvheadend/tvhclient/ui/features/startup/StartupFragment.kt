@@ -95,7 +95,7 @@ class StartupFragment : Fragment() {
     override fun onPrepareOptionsMenu(menu: Menu) {
         super.onPrepareOptionsMenu(menu)
         // Do not show the reconnect menu in case no connections are available or none is active
-        menu.findItem(R.id.menu_refresh).isVisible = (appRepository.connectionData.activeItemId >= 0)
+        menu.findItem(R.id.menu_refresh)?.isVisible = (appRepository.connectionData.activeItemId >= 0)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

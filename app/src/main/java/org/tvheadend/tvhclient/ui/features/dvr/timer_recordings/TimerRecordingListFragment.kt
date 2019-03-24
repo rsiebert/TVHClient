@@ -116,11 +116,11 @@ class TimerRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, Se
         if (sharedPreferences.getBoolean("delete_all_recordings_menu_enabled", resources.getBoolean(R.bool.pref_default_delete_all_recordings_menu_enabled))
                 && recyclerViewAdapter.itemCount > 1
                 && isNetworkAvailable) {
-            menu.findItem(R.id.menu_record_remove_all).isVisible = true
+            menu.findItem(R.id.menu_record_remove_all)?.isVisible = true
         }
-        menu.findItem(R.id.menu_add).isVisible = isNetworkAvailable
-        menu.findItem(R.id.menu_search).isVisible = recyclerViewAdapter.itemCount > 0
-        menu.findItem(R.id.media_route_menu_item).isVisible = false
+        menu.findItem(R.id.menu_add)?.isVisible = isNetworkAvailable
+        menu.findItem(R.id.menu_search)?.isVisible = recyclerViewAdapter.itemCount > 0
+        menu.findItem(R.id.media_route_menu_item)?.isVisible = false
     }
 
     private fun showRecordingDetails(position: Int) {

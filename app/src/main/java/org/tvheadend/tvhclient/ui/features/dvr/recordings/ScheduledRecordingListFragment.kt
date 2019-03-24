@@ -63,7 +63,7 @@ class ScheduledRecordingListFragment : RecordingListFragment(), SearchRequestInt
 
     override fun onPrepareOptionsMenu(menu: Menu) {
         super.onPrepareOptionsMenu(menu)
-        menu.findItem(R.id.menu_add).isVisible = isUnlocked
+        menu.findItem(R.id.menu_add)?.isVisible = isUnlocked
     }
 
     override fun onSearchRequested(query: String) {

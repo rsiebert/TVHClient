@@ -18,7 +18,7 @@ fun prepareMenu(context: Context,
 
     // Hide the menus because the ones in the toolbar are not hidden when set in the xml
     for (i in 0 until menu.size()) {
-        menu.getItem(i).isVisible = false
+        menu.getItem(i)?.isVisible = false
     }
 
     val recordOnceMenuItem = menu.findItem(R.id.menu_record_once)
@@ -71,8 +71,8 @@ fun prepareMenu(context: Context,
                 && program.stop > 0
                 && currentTime > program.start
                 && currentTime < program.stop) {
-            menu.findItem(R.id.menu_play).isVisible = true
-            menu.findItem(R.id.menu_cast).isVisible = getCastSession(context) != null
+            menu.findItem(R.id.menu_play)?.isVisible = true
+            menu.findItem(R.id.menu_cast)?.isVisible = getCastSession(context) != null
         }
     }
     // Show the add reminder menu only for programs and
@@ -89,13 +89,10 @@ fun prepareMenu(context: Context,
 
 fun prepareSearchMenu(menu: Menu, title: String?, isNetworkAvailable: Boolean) {
     val visible = isNetworkAvailable && !TextUtils.isEmpty(title)
-    val searchMenuItem = menu.findItem(R.id.menu_search)
-    if (searchMenuItem != null) {
-        searchMenuItem.isVisible = visible
-        menu.findItem(R.id.menu_search_imdb).isVisible = visible
-        menu.findItem(R.id.menu_search_fileaffinity).isVisible = visible
-        menu.findItem(R.id.menu_search_youtube).isVisible = visible
-        menu.findItem(R.id.menu_search_google).isVisible = visible
-        menu.findItem(R.id.menu_search_epg).isVisible = visible
-    }
+    menu.findItem(R.id.menu_search)?.isVisible = visible
+    menu.findItem(R.id.menu_search_imdb)?.isVisible = visible
+    menu.findItem(R.id.menu_search_fileaffinity)?.isVisible = visible
+    menu.findItem(R.id.menu_search_youtube)?.isVisible = visible
+    menu.findItem(R.id.menu_search_google)?.isVisible = visible
+    menu.findItem(R.id.menu_search_epg)?.isVisible = visible
 }

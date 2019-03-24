@@ -115,12 +115,12 @@ class SeriesRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, S
         if (sharedPreferences.getBoolean("delete_all_recordings_menu_enabled", resources.getBoolean(R.bool.pref_default_delete_all_recordings_menu_enabled))
                 && recyclerViewAdapter.itemCount > 1
                 && isNetworkAvailable) {
-            menu.findItem(R.id.menu_record_remove_all).isVisible = true
+            menu.findItem(R.id.menu_record_remove_all)?.isVisible = true
         }
 
-        menu.findItem(R.id.menu_add).isVisible = isUnlocked && isNetworkAvailable
-        menu.findItem(R.id.menu_search).isVisible = recyclerViewAdapter.itemCount > 0
-        menu.findItem(R.id.media_route_menu_item).isVisible = false
+        menu.findItem(R.id.menu_add)?.isVisible = isUnlocked && isNetworkAvailable
+        menu.findItem(R.id.menu_search)?.isVisible = recyclerViewAdapter.itemCount > 0
+        menu.findItem(R.id.media_route_menu_item)?.isVisible = false
     }
 
     private fun showRecordingDetails(position: Int) {
@@ -164,7 +164,7 @@ class SeriesRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, S
         popupMenu.menuInflater.inflate(R.menu.external_search_options_menu, popupMenu.menu)
 
         prepareSearchMenu(popupMenu.menu, seriesRecording.title, isNetworkAvailable)
-        popupMenu.menu.findItem(R.id.menu_edit).isVisible = isUnlocked
+        popupMenu.menu.findItem(R.id.menu_edit)?.isVisible = isUnlocked
 
         popupMenu.setOnMenuItemClickListener { item ->
             if (onMenuSelected(activity, item.itemId, seriesRecording.title)) {

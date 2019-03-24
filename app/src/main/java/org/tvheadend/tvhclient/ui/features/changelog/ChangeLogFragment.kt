@@ -63,7 +63,7 @@ class ChangeLogFragment : Fragment(), BackPressedInterface, HtmlFileLoaderTask.L
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {
-        menu.findItem(R.id.menu_full_changelog).isVisible = !showFullChangeLog
+        menu.findItem(R.id.menu_full_changelog)?.isVisible = !showFullChangeLog
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

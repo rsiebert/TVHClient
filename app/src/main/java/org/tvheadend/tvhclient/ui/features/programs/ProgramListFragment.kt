@@ -30,6 +30,7 @@ import org.tvheadend.tvhclient.ui.common.prepareMenu
 import org.tvheadend.tvhclient.ui.common.prepareSearchMenu
 import org.tvheadend.tvhclient.ui.features.dialogs.GenreColorDialog
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity
+import org.tvheadend.tvhclient.ui.features.notification.addNotification
 import org.tvheadend.tvhclient.ui.features.search.SearchRequestInterface
 import org.tvheadend.tvhclient.ui.features.search.StartSearchInterface
 import timber.log.Timber
@@ -257,7 +258,11 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
                 R.id.menu_record_series -> return@setOnMenuItemClickListener menuUtils.handleMenuSeriesRecordSelection(program.title)
                 R.id.menu_play -> return@setOnMenuItemClickListener menuUtils.handleMenuPlayChannel(shownChannelId)
                 R.id.menu_cast -> return@setOnMenuItemClickListener menuUtils.handleMenuCast("channelId", shownChannelId)
-                R.id.menu_add_notification -> return@setOnMenuItemClickListener menuUtils.handleMenuAddNotificationSelection(program)
+                R.id.menu_add_notification -> {
+                    val profile = appRepository.serverProfileData.getItemById(serverStatus.recordingServerProfileId)
+                    addNotification(activity, program, profile)
+                    return@setOnMenuItemClickListener true
+                }
                 else -> return@setOnMenuItemClickListener false
             }
         }

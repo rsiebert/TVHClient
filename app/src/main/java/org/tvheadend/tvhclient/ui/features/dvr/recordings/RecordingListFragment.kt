@@ -89,12 +89,12 @@ open class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback, Do
         if (sharedPreferences.getBoolean("delete_all_recordings_menu_enabled", resources.getBoolean(R.bool.pref_default_delete_all_recordings_menu_enabled))
                 && recyclerViewAdapter.itemCount > 1
                 && isNetworkAvailable) {
-            menu.findItem(R.id.menu_record_remove_all).isVisible = true
+            menu.findItem(R.id.menu_record_remove_all)?.isVisible = true
         }
         // Hide the casting icon as a default.
-        menu.findItem(R.id.media_route_menu_item).isVisible = false
+        menu.findItem(R.id.media_route_menu_item)?.isVisible = false
         // Do not show the search menu when no recordings are available
-        menu.findItem(R.id.menu_search).isVisible = recyclerViewAdapter.itemCount > 0
+        menu.findItem(R.id.menu_search)?.isVisible = recyclerViewAdapter.itemCount > 0
     }
 
     internal fun showRecordingDetails(position: Int) {
@@ -140,23 +140,23 @@ open class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback, Do
 
         if (isNetworkAvailable) {
             if (recording.isCompleted) {
-                popupMenu.menu.findItem(R.id.menu_record_remove).isVisible = true
-                popupMenu.menu.findItem(R.id.menu_play).isVisible = true
-                popupMenu.menu.findItem(R.id.menu_cast).isVisible = getCastSession(activity) != null
-                popupMenu.menu.findItem(R.id.menu_download).isVisible = isUnlocked
+                popupMenu.menu.findItem(R.id.menu_record_remove)?.isVisible = true
+                popupMenu.menu.findItem(R.id.menu_play)?.isVisible = true
+                popupMenu.menu.findItem(R.id.menu_cast)?.isVisible = getCastSession(activity) != null
+                popupMenu.menu.findItem(R.id.menu_download)?.isVisible = isUnlocked
 
             } else if (recording.isScheduled && !recording.isRecording) {
-                popupMenu.menu.findItem(R.id.menu_record_cancel).isVisible = true
-                popupMenu.menu.findItem(R.id.menu_edit).isVisible = isUnlocked
+                popupMenu.menu.findItem(R.id.menu_record_cancel)?.isVisible = true
+                popupMenu.menu.findItem(R.id.menu_edit)?.isVisible = isUnlocked
 
             } else if (recording.isRecording) {
-                popupMenu.menu.findItem(R.id.menu_record_stop).isVisible = true
-                popupMenu.menu.findItem(R.id.menu_play).isVisible = true
-                popupMenu.menu.findItem(R.id.menu_cast).isVisible = getCastSession(activity) != null
-                popupMenu.menu.findItem(R.id.menu_edit).isVisible = isUnlocked
+                popupMenu.menu.findItem(R.id.menu_record_stop)?.isVisible = true
+                popupMenu.menu.findItem(R.id.menu_play)?.isVisible = true
+                popupMenu.menu.findItem(R.id.menu_cast)?.isVisible = getCastSession(activity) != null
+                popupMenu.menu.findItem(R.id.menu_edit)?.isVisible = isUnlocked
 
             } else if (recording.isFailed || recording.isFileMissing || recording.isMissed || recording.isAborted) {
-                popupMenu.menu.findItem(R.id.menu_record_remove).isVisible = true
+                popupMenu.menu.findItem(R.id.menu_record_remove)?.isVisible = true
             }
         }
 

@@ -178,22 +178,22 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
         val showChannelTagMenu = sharedPreferences.getBoolean("channel_tag_menu_enabled", resources.getBoolean(R.bool.pref_default_channel_tag_menu_enabled))
 
         if (TextUtils.isEmpty(viewModel.searchQuery)) {
-            menu.findItem(R.id.menu_genre_color_info_channels).isVisible = showGenreColors
-            menu.findItem(R.id.menu_timeframe).isVisible = isUnlocked
-            menu.findItem(R.id.menu_search).isVisible = recyclerViewAdapter.itemCount > 0
+            menu.findItem(R.id.menu_genre_color_info_channels)?.isVisible = showGenreColors
+            menu.findItem(R.id.menu_timeframe)?.isVisible = isUnlocked
+            menu.findItem(R.id.menu_search)?.isVisible = recyclerViewAdapter.itemCount > 0
 
             // Prevent the channel tag menu item from going into the overlay menu
             if (showChannelTagMenu) {
-                menu.findItem(R.id.menu_tags).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
+                menu.findItem(R.id.menu_tags)?.setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
             }
         } else {
-            menu.findItem(R.id.menu_genre_color_info_channels).isVisible = false
-            menu.findItem(R.id.menu_timeframe).isVisible = false
-            menu.findItem(R.id.menu_search).isVisible = false
-            menu.findItem(R.id.menu_tags).isVisible = false
+            menu.findItem(R.id.menu_genre_color_info_channels)?.isVisible = false
+            menu.findItem(R.id.menu_timeframe)?.isVisible = false
+            menu.findItem(R.id.menu_search)?.isVisible = false
+            menu.findItem(R.id.menu_tags)?.isVisible = false
         }
 
-        menu.findItem(R.id.menu_wol).isVisible = true
+        menu.findItem(R.id.menu_wol)?.isVisible = true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -296,7 +296,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
 
         prepareMenu(activity, popupMenu.menu, program, recording, isNetworkAvailable, htspVersion, isUnlocked)
         prepareSearchMenu(popupMenu.menu, channel.programTitle, isNetworkAvailable)
-        popupMenu.menu.findItem(R.id.menu_play).isVisible = isNetworkAvailable
+        popupMenu.menu.findItem(R.id.menu_play)?.isVisible = isNetworkAvailable
 
         popupMenu.setOnMenuItemClickListener { item ->
             if (onMenuSelected(activity, item.itemId, channel.programTitle)) {

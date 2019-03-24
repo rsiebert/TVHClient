@@ -74,8 +74,8 @@ class SeriesRecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback 
         val recording = this.recording ?: return
         prepareSearchMenu(menu, recording.title, isNetworkAvailable)
 
-        nestedToolbar.menu.findItem(R.id.menu_edit).isVisible = true
-        nestedToolbar.menu.findItem(R.id.menu_record_remove).isVisible = true
+        nestedToolbar.menu.findItem(R.id.menu_edit)?.isVisible = true
+        nestedToolbar.menu.findItem(R.id.menu_record_remove)?.isVisible = true
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

@@ -302,15 +302,15 @@ class PlaybackActivity : AppCompatActivity(), PlayerControlView.VisibilityListen
                     when (viewModel.player.getRendererType(i)) {
                         C.TRACK_TYPE_AUDIO -> {
                             Timber.d("Track renderer type for index $i is audio, showing audio menu")
-                            popupMenu.menu.findItem(R.id.menu_audio).isVisible = true
+                            popupMenu.menu.findItem(R.id.menu_audio)?.isVisible = true
                         }
                         C.TRACK_TYPE_VIDEO -> {
                             Timber.d("Track renderer type for index $i is video")
-                            //popupMenu.menu.findItem(R.id.menu_video).isVisible = true
+                            //popupMenu.menu.findItem(R.id.menu_video)?.isVisible = true
                         }
                         C.TRACK_TYPE_TEXT -> {
                             Timber.d("Track renderer type for index $i is text, showing subtitle menu")
-                            popupMenu.menu.findItem(R.id.menu_subtitle).isVisible = true
+                            popupMenu.menu.findItem(R.id.menu_subtitle)?.isVisible = true
                         }
                     }
                 }

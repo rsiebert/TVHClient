@@ -81,27 +81,27 @@ class RecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback, Downl
         val toolbarMenu = nestedToolbar.menu
         if (isNetworkAvailable) {
             if (recording.isCompleted) {
-                toolbarMenu.findItem(R.id.menu_record_remove).isVisible = true
-                toolbarMenu.findItem(R.id.menu_play).isVisible = true
-                toolbarMenu.findItem(R.id.menu_cast).isVisible = getCastSession(activity) != null
-                toolbarMenu.findItem(R.id.menu_download).isVisible = isUnlocked
+                toolbarMenu.findItem(R.id.menu_record_remove)?.isVisible = true
+                toolbarMenu.findItem(R.id.menu_play)?.isVisible = true
+                toolbarMenu.findItem(R.id.menu_cast)?.isVisible = getCastSession(activity) != null
+                toolbarMenu.findItem(R.id.menu_download)?.isVisible = isUnlocked
 
             } else if (recording.isScheduled && !recording.isRecording) {
-                toolbarMenu.findItem(R.id.menu_record_cancel).isVisible = true
-                toolbarMenu.findItem(R.id.menu_edit).isVisible = isUnlocked
+                toolbarMenu.findItem(R.id.menu_record_cancel)?.isVisible = true
+                toolbarMenu.findItem(R.id.menu_edit)?.isVisible = isUnlocked
 
             } else if (recording.isRecording) {
-                toolbarMenu.findItem(R.id.menu_record_stop).isVisible = true
-                toolbarMenu.findItem(R.id.menu_play).isVisible = true
-                toolbarMenu.findItem(R.id.menu_cast).isVisible = getCastSession(activity) != null
-                toolbarMenu.findItem(R.id.menu_edit).isVisible = isUnlocked
+                toolbarMenu.findItem(R.id.menu_record_stop)?.isVisible = true
+                toolbarMenu.findItem(R.id.menu_play)?.isVisible = true
+                toolbarMenu.findItem(R.id.menu_cast)?.isVisible = getCastSession(activity) != null
+                toolbarMenu.findItem(R.id.menu_edit)?.isVisible = isUnlocked
 
             } else if (recording.isFailed || recording.isFileMissing || recording.isMissed || recording.isAborted) {
-                toolbarMenu.findItem(R.id.menu_record_remove).isVisible = true
+                toolbarMenu.findItem(R.id.menu_record_remove)?.isVisible = true
                 // Allow playing a failed recording which size is not zero
                 if (recording.dataSize > 0) {
-                    toolbarMenu.findItem(R.id.menu_play).isVisible = true
-                    toolbarMenu.findItem(R.id.menu_cast).isVisible = getCastSession(activity) != null
+                    toolbarMenu.findItem(R.id.menu_play)?.isVisible = true
+                    toolbarMenu.findItem(R.id.menu_cast)?.isVisible = getCastSession(activity) != null
                 }
             }
         }

@@ -46,7 +46,7 @@ class StatusFragment : BaseFragment() {
 
     override fun onPrepareOptionsMenu(menu: Menu) {
         super.onPrepareOptionsMenu(menu)
-        menu.findItem(R.id.menu_wol).isVisible = isUnlocked && connection.isWolEnabled
+        menu.findItem(R.id.menu_wol)?.isVisible = isUnlocked && connection.isWolEnabled
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

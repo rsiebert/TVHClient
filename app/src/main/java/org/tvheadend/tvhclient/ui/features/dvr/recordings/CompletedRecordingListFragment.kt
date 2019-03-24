@@ -47,7 +47,7 @@ class CompletedRecordingListFragment : RecordingListFragment(), SearchRequestInt
     override fun onPrepareOptionsMenu(menu: Menu) {
         super.onPrepareOptionsMenu(menu)
         // Show the casting icon when finished recordings are available.
-        menu.findItem(R.id.media_route_menu_item).isVisible = true
+        menu.findItem(R.id.media_route_menu_item)?.isVisible = true
     }
 
     override fun onSearchRequested(query: String) {

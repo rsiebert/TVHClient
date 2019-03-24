@@ -18,6 +18,7 @@ import org.tvheadend.tvhclient.ui.common.onMenuSelected
 import org.tvheadend.tvhclient.ui.common.prepareMenu
 import org.tvheadend.tvhclient.ui.common.prepareSearchMenu
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity
+import org.tvheadend.tvhclient.ui.features.notification.addNotification
 import timber.log.Timber
 
 // TODO put event and channel Id into the viewmodel
@@ -170,7 +171,11 @@ class ProgramDetailsFragment : BaseFragment() {
 
             R.id.menu_cast -> return menuUtils.handleMenuCast("channelId", program.channelId)
 
-            R.id.menu_add_notification -> return menuUtils.handleMenuAddNotificationSelection(program)
+            R.id.menu_add_notification -> {
+                val profile = appRepository.serverProfileData.getItemById(serverStatus.recordingServerProfileId)
+                addNotification(activity, program, profile)
+                return true
+            }
 
             else -> return super.onOptionsItemSelected(item)
         }
