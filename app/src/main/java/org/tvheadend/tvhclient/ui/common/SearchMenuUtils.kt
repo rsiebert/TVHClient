@@ -16,7 +16,7 @@ import java.net.URLEncoder
 
 @JvmOverloads
 fun onMenuSelected(context: Context, menuItemId: Int, title: String?, channelId: Int = 0): Boolean {
-    if (title == null || title.isEmpty()) {
+    if (title.isNullOrEmpty()) {
         return false
     }
     when (menuItemId) {
