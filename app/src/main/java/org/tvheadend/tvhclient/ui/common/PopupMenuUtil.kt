@@ -21,46 +21,35 @@ fun prepareMenu(context: Context,
         menu.getItem(i)?.isVisible = false
     }
 
-    val recordOnceMenuItem = menu.findItem(R.id.menu_record_once)
-    val recordOnceAndEditMenuItem = menu.findItem(R.id.menu_record_once_and_edit)
-    val recordOnceCustomProfileMenuItem = menu.findItem(R.id.menu_record_once_custom_profile)
-    val recordSeriesMenuItem = menu.findItem(R.id.menu_record_series)
-    val recordRemoveMenuItem = menu.findItem(R.id.menu_record_remove)
-    val recordStopMenuItem = menu.findItem(R.id.menu_record_stop)
-    val recordCancelMenuItem = menu.findItem(R.id.menu_record_cancel)
-    val playMenuItem = menu.findItem(R.id.menu_play)
-    val castMenuItem = menu.findItem(R.id.menu_cast)
-    val addReminderMenuItem = menu.findItem(R.id.menu_add_notification)
-
     if (isNetworkAvailable) {
         if (recording == null || (!recording.isRecording
                         && !recording.isScheduled
                         && !recording.isCompleted)) {
             Timber.d("Recording is not recording or scheduled")
-            recordOnceMenuItem.isVisible = true
-            recordOnceAndEditMenuItem.isVisible = isUnlocked
-            recordOnceCustomProfileMenuItem.isVisible = isUnlocked
-            recordSeriesMenuItem.isVisible = htspVersion >= 13
+            menu.findItem(R.id.menu_record_once)?.isVisible = true
+            menu.findItem(R.id.menu_record_once_and_edit)?.isVisible = isUnlocked
+            menu.findItem(R.id.menu_record_once_custom_profile)?.isVisible = isUnlocked
+            menu.findItem(R.id.menu_record_series)?.isVisible = htspVersion >= 13
 
         } else if (recording.isCompleted) {
             Timber.d("Recording is completed ")
-            playMenuItem.isVisible = true
-            castMenuItem.isVisible = getCastSession(context) != null
-            recordRemoveMenuItem.isVisible = true
+            menu.findItem(R.id.menu_play)?.isVisible = true
+            menu.findItem(R.id.menu_cast)?.isVisible = getCastSession(context) != null
+            menu.findItem(R.id.menu_record_remove)?.isVisible = true
 
         } else if (recording.isScheduled && !recording.isRecording) {
             Timber.d("Recording is scheduled")
-            recordCancelMenuItem.isVisible = true
+            menu.findItem(R.id.menu_record_cancel)?.isVisible = true
 
         } else if (recording.isRecording) {
             Timber.d("Recording is being recorded")
-            playMenuItem.isVisible = true
-            castMenuItem.isVisible = getCastSession(context) != null
-            recordStopMenuItem.isVisible = true
+            menu.findItem(R.id.menu_play)?.isVisible = true
+            menu.findItem(R.id.menu_cast)?.isVisible = getCastSession(context) != null
+            menu.findItem(R.id.menu_record_stop)?.isVisible = true
 
         } else if (recording.isFailed || recording.isFileMissing || recording.isMissed || recording.isAborted) {
             Timber.d("Recording is something else")
-            recordRemoveMenuItem.isVisible = true
+            menu.findItem(R.id.menu_record_remove)?.isVisible = true
         }
 
         // Show the play menu item and the cast menu item (if available)
@@ -83,7 +72,7 @@ fun prepareMenu(context: Context,
         if (program != null && program.start > 0) {
             startTime = program.start
         }
-        addReminderMenuItem.isVisible = startTime > currentTime
+        menu.findItem(R.id.menu_add_notification)?.isVisible = startTime > currentTime
     }
 }
 
