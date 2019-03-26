@@ -36,20 +36,28 @@ fun prepareMenu(context: Context,
             menu.findItem(R.id.menu_play)?.isVisible = true
             menu.findItem(R.id.menu_cast)?.isVisible = getCastSession(context) != null
             menu.findItem(R.id.menu_record_remove)?.isVisible = true
+            menu.findItem(R.id.menu_download)?.isVisible = isUnlocked
 
         } else if (recording.isScheduled && !recording.isRecording) {
             Timber.d("Recording is scheduled")
             menu.findItem(R.id.menu_record_cancel)?.isVisible = true
+            menu.findItem(R.id.menu_edit)?.isVisible = isUnlocked
 
         } else if (recording.isRecording) {
             Timber.d("Recording is being recorded")
             menu.findItem(R.id.menu_play)?.isVisible = true
             menu.findItem(R.id.menu_cast)?.isVisible = getCastSession(context) != null
             menu.findItem(R.id.menu_record_stop)?.isVisible = true
+            menu.findItem(R.id.menu_edit)?.isVisible = isUnlocked
 
         } else if (recording.isFailed || recording.isFileMissing || recording.isMissed || recording.isAborted) {
             Timber.d("Recording is something else")
             menu.findItem(R.id.menu_record_remove)?.isVisible = true
+            // Allow playing a failed recording which size is not zero
+            if (recording.dataSize > 0) {
+                menu.findItem(R.id.menu_play)?.isVisible = true
+                menu.findItem(R.id.menu_cast)?.isVisible = getCastSession(context) != null
+            }
         }
 
         // Show the play menu item and the cast menu item (if available)
