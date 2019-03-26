@@ -13,8 +13,8 @@ import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.databinding.RecordingDetailsFragmentBinding
 import org.tvheadend.tvhclient.domain.entity.Recording
 import org.tvheadend.tvhclient.ui.base.BaseFragment
-import org.tvheadend.tvhclient.ui.common.getCastSession
 import org.tvheadend.tvhclient.ui.common.onMenuSelected
+import org.tvheadend.tvhclient.ui.common.prepareMenu
 import org.tvheadend.tvhclient.ui.common.prepareSearchMenu
 import org.tvheadend.tvhclient.ui.features.download.DownloadPermissionGrantedInterface
 import org.tvheadend.tvhclient.ui.features.download.DownloadRecordingManager
@@ -75,36 +75,10 @@ class RecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback, Downl
 
     override fun onPrepareOptionsMenu(menu: Menu) {
         val recording = this.recording ?: return
-
+        // Show or hide search menu items in the main toolbar
         prepareSearchMenu(menu, recording.title, isNetworkAvailable)
-
-        val toolbarMenu = nestedToolbar.menu
-        if (isNetworkAvailable) {
-            if (recording.isCompleted) {
-                toolbarMenu.findItem(R.id.menu_record_remove)?.isVisible = true
-                toolbarMenu.findItem(R.id.menu_play)?.isVisible = true
-                toolbarMenu.findItem(R.id.menu_cast)?.isVisible = getCastSession(activity) != null
-                toolbarMenu.findItem(R.id.menu_download)?.isVisible = isUnlocked
-
-            } else if (recording.isScheduled && !recording.isRecording) {
-                toolbarMenu.findItem(R.id.menu_record_cancel)?.isVisible = true
-                toolbarMenu.findItem(R.id.menu_edit)?.isVisible = isUnlocked
-
-            } else if (recording.isRecording) {
-                toolbarMenu.findItem(R.id.menu_record_stop)?.isVisible = true
-                toolbarMenu.findItem(R.id.menu_play)?.isVisible = true
-                toolbarMenu.findItem(R.id.menu_cast)?.isVisible = getCastSession(activity) != null
-                toolbarMenu.findItem(R.id.menu_edit)?.isVisible = isUnlocked
-
-            } else if (recording.isFailed || recording.isFileMissing || recording.isMissed || recording.isAborted) {
-                toolbarMenu.findItem(R.id.menu_record_remove)?.isVisible = true
-                // Allow playing a failed recording which size is not zero
-                if (recording.dataSize > 0) {
-                    toolbarMenu.findItem(R.id.menu_play)?.isVisible = true
-                    toolbarMenu.findItem(R.id.menu_cast)?.isVisible = getCastSession(activity) != null
-                }
-            }
-        }
+        // Show or hide menus of the nested toolbar
+        prepareMenu(activity, nestedToolbar.menu, null, recording, isNetworkAvailable, htspVersion, isUnlocked)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
