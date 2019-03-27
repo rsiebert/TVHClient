@@ -3,6 +3,14 @@ package org.tvheadend.tvhclient;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleObserver;
+import androidx.lifecycle.OnLifecycleEvent;
+import androidx.lifecycle.ProcessLifecycleOwner;
+import androidx.multidex.MultiDexApplication;
+
 import com.android.billingclient.api.Purchase;
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.core.CrashlyticsCore;
@@ -34,13 +42,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LifecycleObserver;
-import androidx.lifecycle.OnLifecycleEvent;
-import androidx.lifecycle.ProcessLifecycleOwner;
-import androidx.multidex.MultiDexApplication;
 import io.fabric.sdk.android.Fabric;
 import timber.log.Timber;
 
@@ -247,7 +248,7 @@ public class MainApplication extends MultiDexApplication implements OptionsProvi
         if (purchases != null) {
             for (Purchase purchase : purchases) {
                 if (purchase.getSku().equals(UNLOCKER)) {
-                    Timber.d("Received purchase item " + UNLOCKER);
+                    Timber.d("Received purchase item %s", UNLOCKER);
                     isUnlocked = true;
                 }
             }
