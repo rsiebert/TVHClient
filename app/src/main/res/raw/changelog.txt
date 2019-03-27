@@ -1,7 +1,11 @@
 $ 2.2.4
   % VERSION 2.2.4
-  _ 21.03.2019
+  _ 27.03.2019
     * Make the menu to jump to a certain time and date in the program guide a free feature
+    * Show the channel name in case the icon can't be loaded
+    * Fixed setting to show or hide the program detail cover
+    * Show the series recording title in case the name is not set
+    * Support dual screen again on older tablets
     * Small bug fixes
 $ 2.2.3
   % VERSION 2.2.3
