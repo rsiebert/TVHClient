@@ -31,7 +31,7 @@ class FileLoggingTree(context: Context) : BaseDebugTree() {
                     val diff = currentTime - file.lastModified()
                     if (diff > sevenDays) {
                         if (!file.delete()) {
-                            Timber.d("Could not remove logfile '" + file.name + "'")
+                            Timber.d("Could not remove logfile '%s'", file.name)
                         }
                     }
                 }
@@ -68,13 +68,13 @@ class FileLoggingTree(context: Context) : BaseDebugTree() {
 
     }
 
-    override fun log(priority: Int, tag: String, message: String, t: Throwable?) {
+    override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
         if (priority == Log.VERBOSE || priority == Log.INFO) {
             return
         }
         try {
             val stream = FileOutputStream(file, true)
-            stream.write(tag.toByteArray())
+            stream.write(tag?.toByteArray())
             stream.write(" ".toByteArray())
             stream.write((message + "\n").toByteArray())
             stream.close()

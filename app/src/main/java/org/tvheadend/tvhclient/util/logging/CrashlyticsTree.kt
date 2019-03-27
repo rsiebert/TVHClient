@@ -1,16 +1,13 @@
 package org.tvheadend.tvhclient.util.logging
 
 import android.util.Log
-
 import com.crashlytics.android.Crashlytics
-
-import org.tvheadend.tvhclient.BuildConfig
-
 import io.fabric.sdk.android.Fabric
+import org.tvheadend.tvhclient.BuildConfig
 
 class CrashlyticsTree : BaseDebugTree() {
 
-    override fun log(priority: Int, tag: String?, message: String?, t: Throwable?) {
+    override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
         if (priority == Log.VERBOSE || priority == Log.INFO) {
             return
         }
@@ -31,8 +28,8 @@ class CrashlyticsTree : BaseDebugTree() {
 
     companion object {
 
-        private val CRASHLYTICS_KEY_PRIORITY = "priority"
-        private val CRASHLYTICS_KEY_TAG = "tag"
-        private val CRASHLYTICS_KEY_MESSAGE = "message"
+        private const val CRASHLYTICS_KEY_PRIORITY = "priority"
+        private const val CRASHLYTICS_KEY_TAG = "tag"
+        private const val CRASHLYTICS_KEY_MESSAGE = "message"
     }
 }
