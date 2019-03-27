@@ -4,7 +4,6 @@ import android.app.SearchManager
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
-import android.text.TextUtils
 import android.view.*
 import android.widget.Filter
 import androidx.appcompat.widget.PopupMenu
@@ -76,7 +75,7 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
             searchQuery = arguments?.getString(SearchManager.QUERY) ?: ""
         }
 
-        isSearchActive = !TextUtils.isEmpty(searchQuery)
+        isSearchActive = !searchQuery.isEmpty()
 
         if (!isDualPane) {
             toolbarInterface.setTitle(if (isSearchActive) getString(R.string.search_results) else channelName)
@@ -274,7 +273,7 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
     }
 
     override fun onSearchResultsCleared(): Boolean {
-        return if (!TextUtils.isEmpty(searchQuery)) {
+        return if (!searchQuery.isEmpty()) {
             searchQuery = ""
             recyclerViewAdapter.filter.filter("", this)
             true

@@ -45,7 +45,7 @@ class SeriesRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, S
             searchQuery = arguments?.getString(SearchManager.QUERY) ?: ""
         }
 
-        toolbarInterface.setTitle(if (TextUtils.isEmpty(searchQuery))
+        toolbarInterface.setTitle(if (searchQuery.isEmpty())
             getString(R.string.series_recordings)
         else
             getString(R.string.search_results))
@@ -67,7 +67,7 @@ class SeriesRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, S
             recycler_view.visibility = View.VISIBLE
             progress_bar.visibility = View.GONE
 
-            if (TextUtils.isEmpty(searchQuery)) {
+            if (searchQuery.isEmpty()) {
                 toolbarInterface.setSubtitle(resources.getQuantityString(R.plurals.items, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
             } else {
                 toolbarInterface.setSubtitle(resources.getQuantityString(R.plurals.series_recordings, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
@@ -197,7 +197,7 @@ class SeriesRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, S
     }
 
     override fun onFilterComplete(i: Int) {
-        if (TextUtils.isEmpty(searchQuery)) {
+        if (searchQuery.isEmpty()) {
             toolbarInterface.setSubtitle(resources.getQuantityString(R.plurals.items, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
         } else {
             toolbarInterface.setSubtitle(resources.getQuantityString(R.plurals.series_recordings, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
@@ -214,7 +214,7 @@ class SeriesRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, S
     }
 
     override fun onSearchResultsCleared(): Boolean {
-        return if (!TextUtils.isEmpty(searchQuery)) {
+        return if (!searchQuery.isEmpty()) {
             searchQuery = ""
             recyclerViewAdapter.filter.filter("", this)
             true

@@ -4,7 +4,6 @@ import android.app.SearchManager
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
-import android.text.TextUtils
 import android.view.*
 import android.widget.Filter
 import androidx.appcompat.widget.PopupMenu
@@ -41,7 +40,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
 
     private var selectedTimeOffset: Int = 0
     private var selectedListPosition: Int = 0
-    private var searchQuery: String? = null
+    private var searchQuery: String = ""
 
     // Used in the time selection dialog to show a time entry every x hours.
     private val intervalInHours = 2
@@ -61,13 +60,13 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
         if (savedInstanceState != null) {
             selectedListPosition = savedInstanceState.getInt("listPosition", 0)
             selectedTimeOffset = savedInstanceState.getInt("timeOffset")
-            searchQuery = savedInstanceState.getString(SearchManager.QUERY)
+            searchQuery = savedInstanceState.getString(SearchManager.QUERY) ?: ""
         } else {
             selectedListPosition = 0
             selectedTimeOffset = 0
             val bundle = arguments
             if (bundle != null) {
-                searchQuery = bundle.getString(SearchManager.QUERY)
+                searchQuery = bundle.getString(SearchManager.QUERY) ?: ""
             }
         }
 
@@ -155,7 +154,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
         // Show either all channels or the name of the selected
         // channel tag and the channel count in the toolbar
         val toolbarTitle = viewModel.getSelectedChannelTagName(activity)
-        if (TextUtils.isEmpty(searchQuery)) {
+        if (searchQuery.isEmpty()) {
             toolbarInterface.setTitle(toolbarTitle)
             toolbarInterface.setSubtitle(resources.getQuantityString(R.plurals.items,
                     recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
@@ -196,7 +195,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
         val showGenreColors = sharedPreferences.getBoolean("genre_colors_for_channels_enabled", resources.getBoolean(R.bool.pref_default_genre_colors_for_channels_enabled))
         val showChannelTagMenu = sharedPreferences.getBoolean("channel_tag_menu_enabled", resources.getBoolean(R.bool.pref_default_channel_tag_menu_enabled))
 
-        if (TextUtils.isEmpty(searchQuery)) {
+        if (searchQuery.isEmpty()) {
             menu.findItem(R.id.menu_genre_color_info_channels)?.isVisible = showGenreColors
             menu.findItem(R.id.menu_timeframe)?.isVisible = isUnlocked
             menu.findItem(R.id.menu_search)?.isVisible = recyclerViewAdapter.itemCount > 0
@@ -331,8 +330,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
                 R.id.menu_record_once ->
                     return@setOnMenuItemClickListener menuUtils.handleMenuRecordSelection(channel.programId)
                 R.id.menu_record_once_and_edit -> {
-                    // TODO
-                    viewModel.recordingIdToEdit = channel.programId
+                    programIdToBeEditedWhenBeingRecorded = channel.programId
                     return@setOnMenuItemClickListener menuUtils.handleMenuRecordSelection(channel.programId)
                 }
                 R.id.menu_record_once_custom_profile ->
@@ -363,7 +361,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
     }
 
     override fun onSearchResultsCleared(): Boolean {
-        return if (!TextUtils.isEmpty(searchQuery)) {
+        return if (!searchQuery.isEmpty()) {
             Timber.d("Search result not empty, clearing filter and returning true")
             searchQuery = ""
             recyclerViewAdapter.filter.filter("", this)

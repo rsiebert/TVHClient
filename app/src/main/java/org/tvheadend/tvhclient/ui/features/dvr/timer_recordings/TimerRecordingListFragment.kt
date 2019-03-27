@@ -3,7 +3,6 @@ package org.tvheadend.tvhclient.ui.features.dvr.timer_recordings
 import android.app.SearchManager
 import android.content.Intent
 import android.os.Bundle
-import android.text.TextUtils
 import android.view.*
 import android.widget.Filter
 import androidx.appcompat.widget.PopupMenu
@@ -45,7 +44,7 @@ class TimerRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, Se
             searchQuery = arguments?.getString(SearchManager.QUERY) ?: ""
         }
 
-        toolbarInterface.setTitle(if (TextUtils.isEmpty(searchQuery))
+        toolbarInterface.setTitle(if (searchQuery.isEmpty())
             getString(R.string.timer_recordings)
         else
             getString(R.string.search_results))
@@ -68,7 +67,7 @@ class TimerRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, Se
             recycler_view.visibility = View.VISIBLE
             progress_bar.visibility = View.GONE
 
-            if (TextUtils.isEmpty(searchQuery)) {
+            if (searchQuery.isEmpty()) {
                 toolbarInterface.setSubtitle(resources.getQuantityString(R.plurals.items, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
             } else {
                 toolbarInterface.setSubtitle(resources.getQuantityString(R.plurals.timer_recordings, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
@@ -197,7 +196,7 @@ class TimerRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, Se
     }
 
     override fun onFilterComplete(i: Int) {
-        if (TextUtils.isEmpty(searchQuery)) {
+        if (searchQuery.isEmpty()) {
             toolbarInterface.setSubtitle(resources.getQuantityString(R.plurals.items, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
         } else {
             toolbarInterface.setSubtitle(resources.getQuantityString(R.plurals.timer_recordings, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
@@ -214,7 +213,7 @@ class TimerRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, Se
     }
 
     override fun onSearchResultsCleared(): Boolean {
-        return if (!TextUtils.isEmpty(searchQuery)) {
+        return if (!searchQuery.isEmpty()) {
             searchQuery = ""
             recyclerViewAdapter.filter.filter("", this)
             true
