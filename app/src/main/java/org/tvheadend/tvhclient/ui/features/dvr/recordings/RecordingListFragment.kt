@@ -4,6 +4,7 @@ import android.app.SearchManager
 import android.content.Intent
 import android.os.Bundle
 import android.view.*
+import android.widget.Filter
 import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Lifecycle
@@ -21,9 +22,10 @@ import org.tvheadend.tvhclient.ui.common.prepareSearchMenu
 import org.tvheadend.tvhclient.ui.features.download.DownloadPermissionGrantedInterface
 import org.tvheadend.tvhclient.ui.features.download.DownloadRecordingManager
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity
+import org.tvheadend.tvhclient.ui.features.search.SearchRequestInterface
 import java.util.concurrent.CopyOnWriteArrayList
 
-open class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback, DownloadPermissionGrantedInterface {
+abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback, SearchRequestInterface, DownloadPermissionGrantedInterface, Filter.FilterListener {
 
     lateinit var viewModel: RecordingViewModel
     lateinit var recyclerViewAdapter: RecordingRecyclerViewAdapter
@@ -210,4 +212,22 @@ open class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback, Do
             DownloadRecordingManager(activity, it.id)
         }
     }
+
+
+    override fun onSearchRequested(query: String) {
+        searchQuery = query
+        recyclerViewAdapter.filter.filter(query, this)
+    }
+
+    override fun onSearchResultsCleared(): Boolean {
+        return if (!searchQuery.isEmpty()) {
+            searchQuery = ""
+            recyclerViewAdapter.filter.filter("", this)
+            true
+        } else {
+            false
+        }
+    }
+
+    abstract override fun getQueryHint(): String
 }

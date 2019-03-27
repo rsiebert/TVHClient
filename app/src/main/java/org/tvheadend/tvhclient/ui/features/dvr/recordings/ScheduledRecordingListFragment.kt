@@ -1,22 +1,19 @@
 package org.tvheadend.tvhclient.ui.features.dvr.recordings
 
 import android.os.Bundle
-import android.text.TextUtils
 import android.view.Menu
 import android.view.View
-import android.widget.Filter
 import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.recyclerview_fragment.*
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.domain.entity.Recording
-import org.tvheadend.tvhclient.ui.features.search.SearchRequestInterface
 
-class ScheduledRecordingListFragment : RecordingListFragment(), SearchRequestInterface, Filter.FilterListener {
+class ScheduledRecordingListFragment : RecordingListFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        toolbarInterface.setTitle(if (TextUtils.isEmpty(searchQuery))
+        toolbarInterface.setTitle(if (searchQuery.isEmpty())
             getString(R.string.scheduled_recordings)
         else
             getString(R.string.search_results))
@@ -47,7 +44,7 @@ class ScheduledRecordingListFragment : RecordingListFragment(), SearchRequestInt
         recycler_view.visibility = View.VISIBLE
         progress_bar.visibility = View.GONE
 
-        if (TextUtils.isEmpty(searchQuery)) {
+        if (searchQuery.isEmpty()) {
             toolbarInterface.setSubtitle(resources.getQuantityString(R.plurals.items, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
         } else {
             toolbarInterface.setSubtitle(resources.getQuantityString(R.plurals.upcoming_recordings, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
@@ -66,23 +63,8 @@ class ScheduledRecordingListFragment : RecordingListFragment(), SearchRequestInt
         menu.findItem(R.id.menu_add)?.isVisible = isUnlocked
     }
 
-    override fun onSearchRequested(query: String) {
-        searchQuery = query
-        recyclerViewAdapter.filter.filter(query, this)
-    }
-
-    override fun onSearchResultsCleared(): Boolean {
-        return if (!TextUtils.isEmpty(searchQuery)) {
-            searchQuery = ""
-            recyclerViewAdapter.filter.filter("", this)
-            true
-        } else {
-            false
-        }
-    }
-
     override fun onFilterComplete(i: Int) {
-        if (TextUtils.isEmpty(searchQuery)) {
+        if (searchQuery.isEmpty()) {
             toolbarInterface.setSubtitle(resources.getQuantityString(R.plurals.items, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
         } else {
             toolbarInterface.setSubtitle(resources.getQuantityString(R.plurals.upcoming_recordings, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
