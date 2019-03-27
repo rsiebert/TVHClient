@@ -24,7 +24,11 @@ fun prepareMenu(context: Context,
     if (isNetworkAvailable) {
         if (recording == null || (!recording.isRecording
                         && !recording.isScheduled
-                        && !recording.isCompleted)) {
+                        && !recording.isCompleted
+                        && !recording.isFailed
+                        && !recording.isFileMissing
+                        && !recording.isMissed
+                        && !recording.isAborted)) {
             Timber.d("Recording is not recording or scheduled")
             menu.findItem(R.id.menu_record_once)?.isVisible = true
             menu.findItem(R.id.menu_record_once_and_edit)?.isVisible = isUnlocked
@@ -51,7 +55,7 @@ fun prepareMenu(context: Context,
             menu.findItem(R.id.menu_edit)?.isVisible = isUnlocked
 
         } else if (recording.isFailed || recording.isFileMissing || recording.isMissed || recording.isAborted) {
-            Timber.d("Recording is something else")
+            Timber.d("Recording is failed, file is missing, has been missed or was aborted")
             menu.findItem(R.id.menu_record_remove)?.isVisible = true
             // Allow playing a failed recording which size is not zero
             if (recording.dataSize > 0) {
