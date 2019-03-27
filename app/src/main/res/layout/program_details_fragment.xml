@@ -43,11 +43,11 @@
                     android:layout_marginTop="16dp"
                     android:layout_marginEnd="16dp"
                     android:contentDescription="@null"
-                    android:visibility="@{isProgramArtworkEnabled ? View.VISIBLE : View.GONE}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:programImage="@{program.image}" />
+                    app:programImage="@{program.image}"
+                    app:programImageVisibility="@{isProgramArtworkEnabled}" />
 
                 <TextView
                     android:id="@+id/title_label"

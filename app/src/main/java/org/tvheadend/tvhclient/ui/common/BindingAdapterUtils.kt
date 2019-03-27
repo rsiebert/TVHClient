@@ -336,9 +336,9 @@ fun setChannelIcon(view: ImageView, iconUrl: String?, visible: Boolean) {
  * @param view The view where the icon and visibility shall be applied to
  * @param url  The url of the channel icon
  */
-@BindingAdapter("programImage")
-fun setProgramImage(view: ImageView, url: String?) {
-    if (url.isNullOrEmpty()) {
+@BindingAdapter("programImage", "programImageVisibility")
+fun setProgramImage(view: ImageView, url: String?, visible: Boolean) {
+    if (url.isNullOrEmpty() || !visible) {
         view.visibility = View.GONE
     } else {
 
@@ -369,7 +369,7 @@ fun setProgramImage(view: ImageView, url: String?) {
                 .transform(transformation)
                 .into(view, object : Callback {
                     override fun onSuccess() {
-                        view.visibility = View.VISIBLE
+                        view.visibility = if (visible) View.VISIBLE else View.GONE
                     }
 
                     override fun onError(e: Exception) {
