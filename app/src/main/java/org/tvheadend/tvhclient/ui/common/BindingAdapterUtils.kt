@@ -347,6 +347,7 @@ fun setProgramImage(view: ImageView, url: String?, visible: Boolean) {
             override fun transform(source: Bitmap): Bitmap {
                 val targetWidth = view.width
                 if (targetWidth == 0 || source.height == 0 || source.width == 0) {
+                    Timber.d("Returning source image, target width is $targetWidth, source height is ${source.height}, source width is ${source.width}")
                     return source
                 }
                 val aspectRatio = source.height.toDouble() / source.width.toDouble()
@@ -356,6 +357,7 @@ fun setProgramImage(view: ImageView, url: String?, visible: Boolean) {
                     // Same bitmap is returned if sizes are the same
                     source.recycle()
                 }
+                Timber.d("Returning transformed image")
                 return result
             }
 
@@ -369,7 +371,7 @@ fun setProgramImage(view: ImageView, url: String?, visible: Boolean) {
                 .transform(transformation)
                 .into(view, object : Callback {
                     override fun onSuccess() {
-                        view.visibility = if (visible) View.VISIBLE else View.GONE
+                        view.visibility = View.VISIBLE
                     }
 
                     override fun onError(e: Exception) {
