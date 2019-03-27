@@ -16,24 +16,22 @@
  * You should have received a copy of the GNU General Public License
  * along with TVHGuide.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.tvheadend.tvhclient.ui.features.settings;
+package org.tvheadend.tvhclient.ui.features.settings
 
-import android.os.Bundle;
+import android.os.Bundle
 
-import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.R
 
-public class SettingsPlaybackFragment extends BasePreferenceFragment {
+class SettingsPlaybackFragment : BasePreferenceFragment() {
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
 
-        getToolbarInterface().setTitle(getString(R.string.playback));
-        getToolbarInterface().setSubtitle("");
+        toolbarInterface.setTitle(getString(R.string.playback))
+        toolbarInterface.setSubtitle("")
     }
 
-    @Override
-    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
-        setPreferencesFromResource(R.xml.preferences_playback, rootKey);
+    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+        setPreferencesFromResource(R.xml.preferences_playback, rootKey)
     }
 }
