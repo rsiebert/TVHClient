@@ -6,9 +6,11 @@
     </configurations>
   </component>
   <component name="EntryPointsManager">
-    <list size="2">
+    <list size="6">
       <item index="0" class="java.lang.String" itemvalue="androidx.databinding.BindingAdapter" />
       <item index="1" class="java.lang.String" itemvalue="androidx.lifecycle.OnLifecycleEvent" />
+      <item index="2" class="java.lang.String" itemvalue="butterknife.OnCheckedChanged" />
+      <item index="3" class="java.lang.String" itemvalue="butterknife.OnTextChanged" />
     </list>
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
@@ -39,7 +41,7 @@
       </profile-state>
     </entry>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" project-jdk-name="1.8 (4)" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/classes" />
   </component>
 </project>
