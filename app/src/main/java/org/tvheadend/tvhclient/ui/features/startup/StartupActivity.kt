@@ -35,7 +35,7 @@ class StartupActivity : BaseActivity() {
             val showChangeLogRequired = BuildConfig.VERSION_NAME != versionName
 
             if (showChangeLogRequired) {
-                Timber.d("Showing changelog, version name from prefs: " + versionName + ", build version from gradle: " + BuildConfig.VERSION_NAME)
+                Timber.d("Showing changelog, version name from prefs is $versionName, build version from gradle is ${BuildConfig.VERSION_NAME}")
                 val intent = Intent(this, ChangeLogActivity::class.java)
                 intent.putExtra("showFullChangelog", TextUtils.isEmpty(versionName))
                 intent.putExtra("versionNameForChangelog", versionName)

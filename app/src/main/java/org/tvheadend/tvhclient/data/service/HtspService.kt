@@ -284,9 +284,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         }
         if (syncEventsRequired) {
             Timber.d("Enabling requesting of epg data")
-            Timber.d("Adding field to the enableAsyncMetadata request" +
-                    ", epgMaxTime is " + (epgMaxTime + currentTimeInSeconds) +
-                    ", lastUpdate time is " + (currentTimeInSeconds - 12 * 60 * 60))
+            Timber.d("Adding field to the enableAsyncMetadata request, epgMaxTime is ${(epgMaxTime + currentTimeInSeconds)}, lastUpdate time is ${(currentTimeInSeconds - 12 * 60 * 60)}")
 
             enableAsyncMetadataRequest["epg"] = 1
             enableAsyncMetadataRequest["epgMaxTime"] = epgMaxTime + currentTimeInSeconds
@@ -551,7 +549,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
 
         var channelTag = appRepository.channelTagData.getItemById(msg.getInteger("tagId"))
         if (channelTag == null) {
-            Timber.d("Could not find a channel tag with id " + msg.getInteger("tagId") + " in the database")
+            Timber.d("Could not find a channel tag with id ${msg.getInteger("tagId")} in the database")
             channelTag = ChannelTag()
         }
 
@@ -567,7 +565,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         if (syncRequired && pendingChannelTagOps.size % 10 == 0) {
             sendSyncStateMessage(SyncStateReceiver.State.SYNC_IN_PROGRESS,
                     getString(R.string.receiving_data),
-                    "Received " + pendingChannelTagOps.size + " channel tags")
+                    "Received ${pendingChannelTagOps.size} channel tags")
         }
     }
 
@@ -603,18 +601,14 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         channel.connectionId = connection.id
         channel.serverOrder = pendingChannelOps.size + 1
 
-        Timber.d("Sync is running, adding channel " +
-                "name '" + channel.name + "', " +
-                "id " + channel.id + ", " +
-                "number " + channel.displayNumber + ", " +
-                "server order " + channel.serverOrder)
+        Timber.d("Sync is running, adding channel name '${channel.name}', id '${channel.id}', number '${channel.displayNumber}', server order '${channel.serverOrder}")
 
         pendingChannelOps.add(channel)
 
         if (syncRequired && pendingChannelOps.size % 25 == 0) {
             sendSyncStateMessage(SyncStateReceiver.State.SYNC_IN_PROGRESS,
                     getString(R.string.receiving_data),
-                    "Received " + pendingChannelOps.size + " channels")
+                    "Received ${pendingChannelOps.size} channels")
         }
     }
 
@@ -631,7 +625,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
 
         val channel = appRepository.channelData.getItemById(msg.getInteger("channelId"))
         if (channel == null) {
-            Timber.d("Could not find a channel with id " + msg.getInteger("channelId") + " in the database")
+            Timber.d("Could not find a channel with id ${msg.getInteger("channelId")} in the database")
             return
         }
         val updatedChannel = convertMessageToChannelModel(channel, msg)
@@ -670,10 +664,10 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
             pendingRecordingOps.add(recording)
 
             if (syncRequired && pendingRecordingOps.size % 25 == 0) {
-                Timber.d("Sync is running, received " + pendingRecordingOps.size + " recordings")
+                Timber.d("Sync is running, received ${pendingRecordingOps.size} recordings")
                 sendSyncStateMessage(SyncStateReceiver.State.SYNC_IN_PROGRESS,
                         getString(R.string.receiving_data),
-                        "Received " + pendingRecordingOps.size + " recordings")
+                        "Received ${pendingRecordingOps.size} recordings")
             }
         } else {
             appRepository.recordingData.addItem(recording)
@@ -692,7 +686,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         // Get the existing recording
         val recording = appRepository.recordingData.getItemById(msg.getInteger("id"))
         if (recording == null) {
-            Timber.d("Could not find a recording with id " + msg.getInteger("id") + " in the database")
+            Timber.d("Could not find a recording with id ${msg.getInteger("id")} in the database")
             return
         }
         val updatedRecording = convertMessageToRecordingModel(recording, msg)
@@ -701,7 +695,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         removeNotificationById(appContext, recording.id)
         if (sharedPreferences.getBoolean("notifications_enabled", appContext.resources.getBoolean(R.bool.pref_default_notifications_enabled))) {
             if (!recording.isScheduled && !recording.isRecording) {
-                Timber.d("Removing notification for recording " + recording.title)
+                Timber.d("Removing notification for recording ${recording.title}")
                 (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).cancel(recording.id)
             }
         }
@@ -817,7 +811,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
      */
     private fun onEventAdd(msg: HtspMessage) {
         if (!firstEventReceived && syncRequired) {
-            Timber.d("Sync is required and received first event, saving " + pendingChannelOps.size + " channels")
+            Timber.d("Sync is required and received first event, saving ${pendingChannelOps.size} channels")
             appRepository.channelData.addItems(pendingChannelOps)
 
             Timber.d("Updating connection status with full sync completed")
@@ -833,13 +827,13 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
             pendingEventOps.add(program)
 
             if (syncRequired && pendingEventOps.size % 50 == 0) {
-                Timber.d("Sync is running, received " + pendingEventOps.size + " program guide events")
+                Timber.d("Sync is running, received ${pendingEventOps.size} program guide events")
                 sendSyncStateMessage(SyncStateReceiver.State.SYNC_IN_PROGRESS,
                         getString(R.string.receiving_data),
-                        "Received " + pendingEventOps.size + " program guide events")
+                        "Received ${pendingEventOps.size} program guide events")
             }
         } else {
-            Timber.d("Adding event " + program.title)
+            Timber.d("Adding event ${program.title}")
             appRepository.programData.addItem(program)
         }
     }
@@ -853,11 +847,11 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
     private fun onEventUpdate(msg: HtspMessage) {
         val program = appRepository.programData.getItemById(msg.getInteger("eventId"))
         if (program == null) {
-            Timber.d("Could not find a program with id " + msg.getInteger("eventId") + " in the database")
+            Timber.d("Could not find a program with id ${msg.getInteger("eventId")} in the database")
             return
         }
         val updatedProgram = convertMessageToProgramModel(program, msg)
-        Timber.d("Updating event " + updatedProgram.title)
+        Timber.d("Updating event ${updatedProgram.title}")
         appRepository.programData.updateItem(updatedProgram)
     }
 
@@ -893,10 +887,10 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
             }
 
             if (useEventList) {
-                Timber.d("Adding " + programs.size + " events to the list for channel " + channelName)
+                Timber.d("Adding ${programs.size} events to the list for channel $channelName")
                 pendingEventOps.addAll(programs)
             } else {
-                Timber.d("Saving " + programs.size + " events for channel " + channelName)
+                Timber.d("Saving ${programs.size} events for channel $channelName")
                 appRepository.programData.addItems(programs)
             }
         }
@@ -925,7 +919,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
                     serverProfile.comment = msg.getString("comment")
                     serverProfile.type = "htsp_playback"
 
-                    Timber.d("Adding htsp playback profile " + serverProfile.name)
+                    Timber.d("Adding htsp playback profile ${serverProfile.name}")
                     appRepository.serverProfileData.addItem(serverProfile)
                 }
             }
@@ -962,7 +956,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
                                     serverProfile.uuid = profile.getString("key")
                                     serverProfile.type = "http_playback"
 
-                                    Timber.d("Adding http playback profile " + serverProfile.name)
+                                    Timber.d("Adding http playback profile ${serverProfile.name}")
                                     appRepository.serverProfileData.addItem(serverProfile)
                                 }
                             }
@@ -971,7 +965,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
                     }
                 }
             } catch (e: JSONException) {
-                Timber.d("Error parsing JSON data", e)
+                Timber.d(e, "Error parsing JSON data")
             }
 
         }
@@ -995,10 +989,10 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
                 serverProfile.type = "recording"
 
                 if (serverProfile.id == 0) {
-                    Timber.d("Added new recording profile " + serverProfile.name)
+                    Timber.d("Added new recording profile ${serverProfile.name}")
                     appRepository.serverProfileData.addItem(serverProfile)
                 } else {
-                    Timber.d("Updated existing recording profile " + serverProfile.name)
+                    Timber.d("Updated existing recording profile ${serverProfile.name}")
                     appRepository.serverProfileData.updateItem(serverProfile)
                 }
             }
@@ -1010,7 +1004,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
             val updatedServerStatus = convertMessageToServerStatusModel(it, message)
             updatedServerStatus.connectionId = connection.id
             updatedServerStatus.connectionName = connection.name
-            Timber.d("Received initial response from server " + updatedServerStatus.serverName + ", api version: " + updatedServerStatus.htspVersion)
+            Timber.d("Received initial response from server ${updatedServerStatus.serverName}, api version: ${updatedServerStatus.htspVersion}")
 
             appRepository.serverStatusData.updateItem(updatedServerStatus)
         } ?: run {
@@ -1022,16 +1016,13 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         serverStatus?.let {
             val gmtOffsetFromServer = message.getInteger("gmtoffset", 0) * 60 * 1000
             val gmtOffset = gmtOffsetFromServer - daylightSavingOffset
-            Timber.d("GMT offset from server is $gmtOffsetFromServer , " +
-                    "GMT offset considering daylight saving offset is $gmtOffset")
+            Timber.d("GMT offset from server is $gmtOffsetFromServer, GMT offset considering daylight saving offset is $gmtOffset")
 
             it.gmtoffset = gmtOffset
             it.time = message.getLong("time", 0)
             appRepository.serverStatusData.updateItem(it)
 
-            Timber.d("Received system time from server " + it.serverName
-                    + ", server time: " + it.time
-                    + ", server gmt offset: " + it.gmtoffset)
+            Timber.d("Received system time from server ${it.serverName}, server time: ${it.time}, server gmt offset: ${it.gmtoffset}")
         } ?: run {
             Timber.d("Server status is null, can't update system time")
         }
@@ -1043,9 +1034,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
             it.totalDiskSpace = message.getLong("totaldiskspace", 0)
             appRepository.serverStatusData.updateItem(it)
 
-            Timber.d("Received disk space information from server " + it.serverName
-                    + ", free disk space: " + it.freeDiskSpace
-                    + ", total disk space: " + it.totalDiskSpace)
+            Timber.d("Received disk space information from server ${it.serverName}, free disk space: ${it.freeDiskSpace}, total disk space: ${it.totalDiskSpace}")
         } ?: run {
             Timber.d("Server status is null, can't update disc space")
         }
@@ -1055,7 +1044,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
      * Saves all received channels from the initial sync in the database.
      */
     private fun saveAllReceivedChannels() {
-        Timber.d("Saving " + pendingChannelOps.size + " channels")
+        Timber.d("Saving ${pendingChannelOps.size} channels")
 
         if (!pendingChannelOps.isEmpty()) {
             appRepository.channelData.addItems(pendingChannelOps)
@@ -1068,7 +1057,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
      * updated so that the filtering by channel tags works properly
      */
     private fun saveAllReceivedChannelTags() {
-        Timber.d("Saving " + pendingChannelTagOps.size + " channel tags")
+        Timber.d("Saving ${pendingChannelTagOps.size} channel tags")
 
         val pendingRemovedTagAndChannelOps = ArrayList<TagAndChannel>()
         val pendingAddedTagAndChannelOps = ArrayList<TagAndChannel>()
@@ -1094,8 +1083,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
                 }
             }
 
-            Timber.d("Removing " + pendingRemovedTagAndChannelOps.size +
-                    " and adding " + pendingAddedTagAndChannelOps.size + " tag and channel relations")
+            Timber.d("Removing ${pendingRemovedTagAndChannelOps.size} and adding ${pendingAddedTagAndChannelOps.size} tag and channel relations")
             appRepository.tagAndChannelData.addAndRemoveItems(pendingAddedTagAndChannelOps, pendingRemovedTagAndChannelOps)
         }
     }
@@ -1108,7 +1096,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
      * server only provides the list of available recordings.
      */
     private fun saveAllReceivedRecordings() {
-        Timber.d("Removing previously existing recordings and saving " + pendingRecordingOps.size + " new recordings")
+        Timber.d("Removing previously existing recordings and saving ${pendingRecordingOps.size} new recordings")
         appRepository.recordingData.removeItems()
         if (!pendingRecordingOps.isEmpty()) {
             appRepository.recordingData.addItems(pendingRecordingOps)
@@ -1116,7 +1104,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
     }
 
     private fun saveAllReceivedEvents() {
-        Timber.d("Saving " + pendingEventOps.size + " new events")
+        Timber.d("Saving ${pendingEventOps.size} new events")
         if (!pendingEventOps.isEmpty()) {
             appRepository.programData.addItems(pendingEventOps)
         }
@@ -1142,7 +1130,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         for (tag in appRepository.channelTagData.getItems()) {
             execService.execute {
                 try {
-                    Timber.d("Downloading channel icon for channel tag " + tag.tagName)
+                    Timber.d("Downloading channel icon for channel tag ${tag.tagName}")
                     downloadIconFromFileUrl(tag.tagIcon)
                 } catch (e: Exception) {
                     Timber.d("Could not load channel tag icon '${tag.tagIcon}'")
@@ -1169,7 +1157,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
 
         val file = File(cacheDir, convertUrlToHashString(url) + ".png")
         if (file.exists()) {
-            Timber.d("Icon file " + file.absolutePath + " exists already")
+            Timber.d("Icon file ${file.absolutePath} exists already")
             return
         }
 
@@ -1227,7 +1215,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         val url = getIconUrl(appContext, iconUrl)
         val file = File(url)
         if (!file.exists() || !file.delete()) {
-            Timber.d("Could not delete icon " + file.name)
+            Timber.d("Could not delete icon ${file.name}")
         }
     }
 
@@ -1298,8 +1286,8 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         val numberOfProgramsToLoad = intent.getIntExtra("numFollowing", 0)
         val channelList = appRepository.channelData.getItems()
 
-        Timber.d("Database currently contains " + appRepository.programData.itemCount + " events. ")
-        Timber.d("Loading " + numberOfProgramsToLoad + " events for each of the " + channelList.size + " channels")
+        Timber.d("Database currently contains ${appRepository.programData.itemCount} events. ")
+        Timber.d("Loading $numberOfProgramsToLoad events for each of the ${channelList.size} channels")
 
         for (channel in channelList) {
             val lastProgram = appRepository.programData.getLastItemByChannelId(channel.id)
@@ -1312,18 +1300,15 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
 
             when {
                 lastProgram != null -> {
-                    Timber.d("Loading more programs for channel " + channel.name +
-                            " from last program id " + lastProgram.eventId)
+                    Timber.d("Loading more programs for channel ${channel.name} from last program id ${lastProgram.eventId}")
                     msgIntent.putExtra("eventId", lastProgram.nextEventId)
                 }
                 channel.nextEventId > 0 -> {
-                    Timber.d("Loading more programs for channel " + channel.name +
-                            " starting from channel next event id " + channel.nextEventId)
+                    Timber.d("Loading more programs for channel ${channel.name} starting from channel next event id ${channel.nextEventId}")
                     msgIntent.putExtra("eventId", channel.nextEventId)
                 }
                 else -> {
-                    Timber.d("Loading more programs for channel " + channel.name +
-                            " starting from channel event id " + channel.eventId)
+                    Timber.d("Loading more programs for channel ${channel.name} starting from channel event id ${channel.eventId}")
                     msgIntent.putExtra("eventId", channel.eventId)
                 }
             }
@@ -1331,8 +1316,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         }
 
         appRepository.programData.addItems(pendingEventOps)
-        Timber.d("Saved " + pendingEventOps.size + " events for all channels. " +
-                "Database contains " + appRepository.programData.itemCount + " events")
+        Timber.d("Saved ${pendingEventOps.size} events for all channels. Database contains ${appRepository.programData.itemCount} events")
         pendingEventOps.clear()
     }
 

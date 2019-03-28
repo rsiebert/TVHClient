@@ -61,7 +61,7 @@ class MigrateUtils {
                 // to be saved during the initial connection with the server where
                 // channel and tags would not be saved.
                 for (connection in appRepository.connectionData.getItems()) {
-                    Timber.d("Setting sync required for connection " + connection.name + " to save server defined channel order")
+                    Timber.d("Setting sync required for connection ${connection.name} to save server defined channel order")
                     connection.isSyncRequired = true
                     appRepository.connectionData.updateItem(connection)
                 }
@@ -107,7 +107,7 @@ class MigrateUtils {
         for (connection in appRepository.connectionData.getItems()) {
             val serverStatus = appRepository.serverStatusData.getItemById(connection.id)
             if (serverStatus != null) {
-                Timber.d("Clearing playback profile for connection " + connection.name)
+                Timber.d("Clearing playback profile for connection ${connection.name}")
                 // Clear the currently selected htsp playback profile
                 serverStatus.htspPlaybackServerProfileId = 0
                 serverStatus.httpPlaybackServerProfileId = 0
@@ -126,7 +126,7 @@ class MigrateUtils {
             Timber.d("Checking connection $name with id $id")
             var serverStatus = appRepository.serverStatusData.getItemById(id)
             if (serverStatus != null) {
-                Timber.d("Server status exists for connection " + id + ", assigned connection id is " + serverStatus.connectionId)
+                Timber.d("Server status exists for connection $id, assigned connection id is ${serverStatus.connectionId}")
             } else {
                 Timber.d("No server status exists for connection $id, creating new one")
                 serverStatus = ServerStatus()
@@ -143,7 +143,7 @@ class MigrateUtils {
         // Save the previous connection details in a list, then delete the old database and insert the connection details into the new one
         val connectionList = ArrayList<Connection>()
         try {
-            Timber.d("Database is readable " + db?.isOpen)
+            Timber.d("Database is readable ${db?.isOpen}")
             val cursor = db?.rawQuery("SELECT * FROM connections", null)
             cursor?.let {
                 if (it.count > 0) {
@@ -164,14 +164,14 @@ class MigrateUtils {
                         connection.lastUpdate = 0
                         connection.isSyncRequired = true
 
-                        Timber.d("Saving existing connection " + connection.name + " into temporary list")
+                        Timber.d("Saving existing connection ${connection.name} into temporary list")
                         connectionList.add(connection)
                     } while (it.moveToNext())
                 }
             }
             cursor?.close()
-        } catch (ex: SQLiteException) {
-            Timber.d("Error getting connection information from cursor, " + ex.localizedMessage)
+        } catch (e: SQLiteException) {
+            Timber.d(e, "Error getting connection information from cursor")
         }
 
         db?.close()

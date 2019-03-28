@@ -17,9 +17,9 @@ class ChannelData(private val db: AppRoomDatabase) : DataSourceInterface<Channel
             try {
                 return ChannelCountTask(db).execute().get()
             } catch (e: InterruptedException) {
-                Timber.d("Loading channel count task got interrupted", e)
+                Timber.d(e, "Loading channel count task got interrupted")
             } catch (e: ExecutionException) {
-                Timber.d("Loading channel count task aborted", e)
+                Timber.d(e, "Loading channel count task aborted")
             }
 
             return 0
@@ -61,9 +61,9 @@ class ChannelData(private val db: AppRoomDatabase) : DataSourceInterface<Channel
         try {
             return ChannelByIdTask(db, id as Int).execute().get()
         } catch (e: InterruptedException) {
-            Timber.d("Loading channel by id task got interrupted", e)
+            Timber.d(e, "Loading channel by id task got interrupted")
         } catch (e: ExecutionException) {
-            Timber.d("Loading channel by id task aborted", e)
+            Timber.d(e, "Loading channel by id task aborted")
         }
 
         return null
@@ -74,9 +74,9 @@ class ChannelData(private val db: AppRoomDatabase) : DataSourceInterface<Channel
         try {
             channels.addAll(ChannelListTask(db).execute().get())
         } catch (e: InterruptedException) {
-            Timber.d("Loading all channels task got interrupted", e)
+            Timber.d(e, "Loading all channels task got interrupted")
         } catch (e: ExecutionException) {
-            Timber.d("Loading all channels task aborted", e)
+            Timber.d(e, "Loading all channels task aborted")
         }
 
         return channels
@@ -86,16 +86,16 @@ class ChannelData(private val db: AppRoomDatabase) : DataSourceInterface<Channel
         try {
             return ChannelByIdTask(db, id, selectedTime).execute().get()
         } catch (e: InterruptedException) {
-            Timber.d("Loading channel by id task got interrupted", e)
+            Timber.d(e, "Loading channel by id task got interrupted")
         } catch (e: ExecutionException) {
-            Timber.d("Loading channel by id task aborted", e)
+            Timber.d(e, "Loading channel by id task aborted")
         }
 
         return null
     }
 
     fun getAllEpgChannels(channelSortOrder: Int, tagIds: List<Int>): LiveData<List<EpgChannel>> {
-        Timber.d("Loading epg channels with sort order " + channelSortOrder + " and " + tagIds.size + " tags")
+        Timber.d("Loading epg channels with sort order $channelSortOrder and ${tagIds.size} tags")
         return if (tagIds.isEmpty()) {
             db.channelDao.loadAllEpgChannels(channelSortOrder)
         } else {
@@ -104,7 +104,7 @@ class ChannelData(private val db: AppRoomDatabase) : DataSourceInterface<Channel
     }
 
     fun getAllChannelsByTime(selectedTime: Long, channelSortOrder: Int, tagIds: List<Int>): LiveData<List<Channel>> {
-        Timber.d("Loading channels from time " + selectedTime + " with sort order " + channelSortOrder + " and " + tagIds.size + " tags")
+        Timber.d("Loading channels from time $selectedTime with sort order $channelSortOrder and ${tagIds.size} tags")
         return if (tagIds.isEmpty()) {
             db.channelDao.loadAllChannelsByTime(selectedTime, channelSortOrder)
         } else {

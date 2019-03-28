@@ -19,9 +19,9 @@ class ChannelTagData(private val db: AppRoomDatabase) : DataSourceInterface<Chan
             try {
                 return ChannelTagCountTask(db).execute().get()
             } catch (e: InterruptedException) {
-                Timber.d("Loading channel tag count task got interrupted", e)
+                Timber.d(e, "Loading channel tag count task got interrupted")
             } catch (e: ExecutionException) {
-                Timber.d("Loading channel tag count task aborted", e)
+                Timber.d(e, "Loading channel tag count task aborted")
             }
 
             return 0
@@ -73,9 +73,9 @@ class ChannelTagData(private val db: AppRoomDatabase) : DataSourceInterface<Chan
         try {
             return ChannelTagByIdTask(db, id as Int).execute().get()
         } catch (e: InterruptedException) {
-            Timber.d("Loading channel tag by id task got interrupted", e)
+            Timber.d(e, "Loading channel tag by id task got interrupted")
         } catch (e: ExecutionException) {
-            Timber.d("Loading channel tag by id task aborted", e)
+            Timber.d(e, "Loading channel tag by id task aborted")
         }
 
         return null
@@ -86,9 +86,9 @@ class ChannelTagData(private val db: AppRoomDatabase) : DataSourceInterface<Chan
         try {
             channelTags = ChannelTagListTask(db).execute().get()
         } catch (e: InterruptedException) {
-            Timber.d("Loading all channel tags task got interrupted", e)
+            Timber.d(e, "Loading all channel tags task got interrupted")
         } catch (e: ExecutionException) {
-            Timber.d("Loading all channel tags task aborted", e)
+            Timber.d(e, "Loading all channel tags task aborted")
         }
 
         return channelTags

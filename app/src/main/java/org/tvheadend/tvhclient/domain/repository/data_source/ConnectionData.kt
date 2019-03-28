@@ -16,9 +16,9 @@ class ConnectionData(private val db: AppRoomDatabase) : DataSourceInterface<Conn
             try {
                 return ConnectionByIdTask(db).execute().get() ?: Connection().also { it.id = -1 }
             } catch (e: InterruptedException) {
-                Timber.d("Loading active connection task got interrupted", e)
+                Timber.d(e, "Loading active connection task got interrupted")
             } catch (e: ExecutionException) {
-                Timber.d("Loading active connection task aborted", e)
+                Timber.d(e, "Loading active connection task aborted")
             }
             return Connection().also { it.id = -1 }
         }
@@ -75,9 +75,9 @@ class ConnectionData(private val db: AppRoomDatabase) : DataSourceInterface<Conn
         try {
             return ConnectionByIdTask(db, id as Int).execute().get()
         } catch (e: InterruptedException) {
-            Timber.d("Loading connection by id task got interrupted", e)
+            Timber.d(e, "Loading connection by id task got interrupted")
         } catch (e: ExecutionException) {
-            Timber.d("Loading connection by id task aborted", e)
+            Timber.d(e, "Loading connection by id task aborted")
         }
 
         return null
@@ -88,9 +88,9 @@ class ConnectionData(private val db: AppRoomDatabase) : DataSourceInterface<Conn
         try {
             connections.addAll(ConnectionListTask(db).execute().get())
         } catch (e: InterruptedException) {
-            Timber.d("Loading all connections task got interrupted", e)
+            Timber.d(e, "Loading all connections task got interrupted")
         } catch (e: ExecutionException) {
-            Timber.d("Loading all connections task aborted", e)
+            Timber.d(e, "Loading all connections task aborted")
         }
 
         return connections

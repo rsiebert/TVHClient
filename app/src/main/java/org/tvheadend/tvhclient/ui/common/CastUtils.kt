@@ -27,7 +27,7 @@ fun getCastContext(context: Context): CastContext? {
         try {
             return CastContext.getSharedInstance(context)
         } catch (e: RuntimeException) {
-            Timber.e("Could not get cast context", e)
+            Timber.e(e, "Could not get cast context")
         }
     }
     return null

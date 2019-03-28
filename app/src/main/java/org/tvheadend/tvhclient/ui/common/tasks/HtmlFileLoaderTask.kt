@@ -36,14 +36,14 @@ class HtmlFileLoaderTask(context: Context, private val file: String, private val
         try {
             inputStream = context.assets.open(htmlFile)
         } catch (e: IOException) {
-            Timber.e("Could not open file $htmlFile", e.localizedMessage)
+            Timber.e(e, "Could not open file $htmlFile")
         }
 
         if (inputStream == null) {
             try {
                 inputStream = context.assets.open(defaultHtmlFile)
             } catch (e: IOException) {
-                Timber.e("Could not open default file $defaultHtmlFile", e.localizedMessage)
+                Timber.e(e, "Could not open default file $defaultHtmlFile")
             }
         }
 
@@ -65,15 +65,15 @@ class HtmlFileLoaderTask(context: Context, private val file: String, private val
                 reader.close()
 
             } catch (e: UnsupportedEncodingException) {
-                Timber.e("Could not create buffered reader, unsupported encoding", e.localizedMessage)
+                Timber.e(e, "Could not create buffered reader, unsupported encoding")
             } catch (e: IOException) {
-                Timber.e("Error while reading contents from input stream or closing it", e.localizedMessage)
+                Timber.e(e, "Error while reading contents from input stream or closing it")
             }
 
             try {
                 inputStream.close()
             } catch (e: IOException) {
-                Timber.e("Error closing input stream", e.localizedMessage)
+                Timber.e(e, "Error closing input stream")
             }
 
         }

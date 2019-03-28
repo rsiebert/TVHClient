@@ -11,7 +11,7 @@ internal class ConvertHostnameToAddressTask(private val hostname: String) : Asyn
         return try {
             InetAddress.getByName(hostname).hostAddress
         } catch (e: UnknownHostException) {
-            Timber.d("Could not get ip address from $hostname, using hostname as fallback", e)
+            Timber.d(e, "Could not get ip address from $hostname, using hostname as fallback")
             hostname
         }
     }

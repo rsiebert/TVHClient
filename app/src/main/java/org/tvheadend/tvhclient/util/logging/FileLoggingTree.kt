@@ -31,7 +31,7 @@ class FileLoggingTree(context: Context) : BaseDebugTree() {
                     val diff = currentTime - file.lastModified()
                     if (diff > sevenDays) {
                         if (!file.delete()) {
-                            Timber.d("Could not remove logfile '%s'", file.name)
+                            Timber.d("Could not remove logfile ${file.name}")
                         }
                     }
                 }

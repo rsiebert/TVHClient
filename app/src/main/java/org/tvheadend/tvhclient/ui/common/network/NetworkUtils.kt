@@ -26,11 +26,11 @@ private fun isWifiApEnabled(context: Context): Boolean {
             try {
                 return method.invoke(wifiManager) as Boolean
             } catch (e: IllegalArgumentException) {
-                Timber.d("Illegal argument error while invoking method 'isWifiApEnabled'", e)
+                Timber.d(e, "Illegal argument error while invoking method 'isWifiApEnabled'")
             } catch (e: IllegalAccessException) {
-                Timber.d("Illegal access error while invoking method 'isWifiApEnabled'", e)
+                Timber.d(e, "Illegal access error while invoking method 'isWifiApEnabled'")
             } catch (e: InvocationTargetException) {
-                Timber.d("Invocation error while invoking method 'isWifiApEnabled'", e)
+                Timber.d(e, "Invocation error while invoking method 'isWifiApEnabled'")
             }
         }
     }

@@ -116,7 +116,7 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
         Timber.d("Observing channel tags")
         viewModel.channelTags.observe(viewLifecycleOwner, Observer { tags ->
             if (tags != null) {
-                Timber.d("View model returned " + tags.size + " channel tags")
+                Timber.d("View model returned ${tags.size} channel tags")
                 channelTags = tags
             }
         })
@@ -129,7 +129,7 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
             programViewPager.visibility = View.VISIBLE
 
             if (channels != null) {
-                Timber.d("View model returned " + channels.size + " epg channels")
+                Timber.d("View model returned ${channels.size} epg channels")
                 channelListRecyclerViewAdapter.addItems(channels)
             }
             // Show either all channels or the name of the selected
@@ -147,7 +147,7 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
         Timber.d("Observing recordings")
         viewModel.allRecordings.observe(viewLifecycleOwner, Observer { recordings ->
             if (recordings != null) {
-                Timber.d("View model returned " + recordings.size + " recordings")
+                Timber.d("View model returned ${recordings.size} recordings")
                 for (recording in recordings) {
                     // Show the edit recording screen of the scheduled recording
                     // in case the user has selected the record and edit menu item.

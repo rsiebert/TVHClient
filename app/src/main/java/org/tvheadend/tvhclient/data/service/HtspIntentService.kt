@@ -124,7 +124,7 @@ class HtspIntentService : JobIntentService(), HtspConnectionStateListener {
 
                 programs.add(program)
             }
-            Timber.d("Added " + programs.size + " events to the list for channel " + channelName)
+            Timber.d("Added ${programs.size} events to the list for channel $channelName")
             pendingEventOps.addAll(programs)
         }
     }
@@ -229,7 +229,7 @@ class HtspIntentService : JobIntentService(), HtspConnectionStateListener {
 
         val file = File(cacheDir, convertUrlToHashString(url) + ".png")
         if (file.exists()) {
-            Timber.d("Icon file " + file.absolutePath + " exists already")
+            Timber.d("Icon file ${file.absolutePath} exists already")
             return
         }
 
@@ -288,8 +288,8 @@ class HtspIntentService : JobIntentService(), HtspConnectionStateListener {
         val numberOfProgramsToLoad = intent.getIntExtra("numFollowing", 0)
         val channelList = appRepository.channelData.getItems()
 
-        Timber.d("Database currently contains " + appRepository.programData.itemCount + " events. ")
-        Timber.d("Loading " + numberOfProgramsToLoad + " events for each of the " + channelList.size + " channels")
+        Timber.d("Database currently contains ${appRepository.programData.itemCount} events.")
+        Timber.d("Loading $numberOfProgramsToLoad events for each of the ${channelList.size} channels")
 
         var channelCount = 0
         channelList.forEach {

@@ -107,14 +107,14 @@ fun handleChannelListSelection(context: Context, channelList: List<Channel>, sho
 }
 
 fun handlePrioritySelection(context: Context, selectedPriority: Int, callback: RecordingConfigSelectedListener?) {
-    Timber.d("Selected priority is " + if (selectedPriority == 6) 5 else selectedPriority)
+    Timber.d("Selected priority is ${if (selectedPriority == 6) 5 else selectedPriority}")
     val priorityNames = context.resources.getStringArray(R.array.dvr_priority_names)
     MaterialDialog.Builder(context)
             .title(R.string.select_priority)
             .items(*priorityNames)
             .itemsCallbackSingleChoice(if (selectedPriority == 6) 5 else selectedPriority) { _, _, which, _ ->
                 if (callback != null) {
-                    Timber.d("New selected priority is " + if (which == 5) 6 else which)
+                    Timber.d("New selected priority is ${if (which == 5) 6 else which}")
                     callback.onPrioritySelected(if (which == 5) 6 else which)
                 }
                 true

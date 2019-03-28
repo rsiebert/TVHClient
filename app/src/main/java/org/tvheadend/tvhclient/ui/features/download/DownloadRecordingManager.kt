@@ -119,7 +119,7 @@ class DownloadRecordingManager(private val activity: Activity, dvrId: Int) {
      * notification.
      */
     private fun startDownload() {
-        Timber.d("Starting download of recording " + recording.title)
+        Timber.d("Starting download of recording ${recording.title}")
 
         lastDownloadId = downloadManager.enqueue(downloadRequest)
         Timber.d("Started download with id $lastDownloadId")
@@ -131,7 +131,7 @@ class DownloadRecordingManager(private val activity: Activity, dvrId: Int) {
     }
 
     private fun showDownloadStatusMessage() {
-        Timber.d("Checking download status of recording " + recording.title)
+        Timber.d("Checking download status of recording ${recording.title}")
 
         // Initialize the default status message
         var msg = "Download of recording " + recording.title + " was not found"
@@ -168,7 +168,7 @@ class DownloadRecordingManager(private val activity: Activity, dvrId: Int) {
             }
         }
 
-        Timber.d("Download status of recording " + recording.title + " is " + msg)
+        Timber.d("Download status of recording ${recording.title} is $msg")
         val intent = Intent(SnackbarMessageReceiver.ACTION)
         intent.putExtra(SnackbarMessageReceiver.CONTENT, msg)
         intent.putExtra(SnackbarMessageReceiver.DURATION, Snackbar.LENGTH_LONG)

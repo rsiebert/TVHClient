@@ -6,8 +6,8 @@ import androidx.fragment.app.Fragment
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.base.BaseActivity
-import org.tvheadend.tvhclient.ui.common.callbacks.BackPressedInterface
 import org.tvheadend.tvhclient.ui.common.SnackbarMessageReceiver
+import org.tvheadend.tvhclient.ui.common.callbacks.BackPressedInterface
 import org.tvheadend.tvhclient.ui.features.dvr.recordings.RecordingAddEditFragment
 import org.tvheadend.tvhclient.ui.features.dvr.series_recordings.SeriesRecordingAddEditFragment
 import org.tvheadend.tvhclient.ui.features.dvr.timer_recordings.TimerRecordingAddEditFragment
@@ -38,9 +38,9 @@ class RecordingAddEditActivity : BaseActivity() {
                 "timer_recording" -> fragment = TimerRecordingAddEditFragment()
             }
 
-            if (fragment != null) {
-                fragment.arguments = intent.extras
-                supportFragmentManager.beginTransaction().add(R.id.main, fragment).commit()
+            fragment?.let {
+                it.arguments = intent.extras
+                supportFragmentManager.beginTransaction().add(R.id.main, it).commit()
             }
         }
     }

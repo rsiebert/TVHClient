@@ -141,9 +141,9 @@ class ExternalPlayerViewModel(application: Application) : AndroidViewModel(appli
             try {
                 hostname = ConvertHostnameToAddressTask(connection.hostname ?: "").execute().get()
             } catch (e: InterruptedException) {
-                Timber.d("Could not execute task to get ip address from ${connection.hostname}", e)
+                Timber.d(e, "Could not execute task to get ip address from ${connection.hostname}")
             } catch (e: ExecutionException) {
-                Timber.d("Could not execute task to get ip address from ${connection.hostname}", e)
+                Timber.d(e, "Could not execute task to get ip address from ${connection.hostname}")
             }
         } else {
             Timber.d("Hostname ${connection.hostname} to IP address conversion not required")

@@ -4,19 +4,16 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
-
-import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.domain.entity.Recording
-import org.tvheadend.tvhclient.databinding.RecordingListAdapterBinding
-import org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback
-
-import java.util.ArrayList
-import java.util.concurrent.CopyOnWriteArrayList
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import timber.log.Timber
-
+import org.tvheadend.tvhclient.R
+import org.tvheadend.tvhclient.databinding.RecordingListAdapterBinding
+import org.tvheadend.tvhclient.domain.entity.Recording
+import org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback
 import org.tvheadend.tvhclient.ui.features.dvr.recordings.RecordingListDiffCallback.Companion.PAYLOAD_DATA_SIZE
+import timber.log.Timber
+import java.util.*
+import java.util.concurrent.CopyOnWriteArrayList
 
 class RecordingRecyclerViewAdapter internal constructor(private val isDualPane: Boolean, private val clickCallback: RecyclerViewClickCallback, private val htspVersion: Int) : RecyclerView.Adapter<RecordingRecyclerViewAdapter.RecordingViewHolder>(), Filterable {
     private val recordingList = ArrayList<Recording>()
@@ -40,13 +37,13 @@ class RecordingRecyclerViewAdapter internal constructor(private val isDualPane: 
         val recording = recordingListFiltered[position]
 
         if (payloads.isEmpty()) {
-            Timber.d("Recording '" + recording.title + "' has changed, doing a full update")
+            Timber.d("Recording '${recording.title}' has changed, doing a full update")
             holder.bind(recording, position, selectedPosition == position, htspVersion, clickCallback)
         } else {
             for (payload in payloads) {
                 if (payload == PAYLOAD_DATA_SIZE) {
                     // Update only the data size and errors
-                    Timber.d("Recording '" + recording.title + "' has changed, doing a partial update")
+                    Timber.d("Recording '${recording.title}' has changed, doing a partial update")
                     holder.bind(recording, position, selectedPosition == position, htspVersion, clickCallback)
                 }
             }

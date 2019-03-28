@@ -3,7 +3,6 @@ package org.tvheadend.tvhclient.ui.features.dvr.series_recordings
 import android.app.SearchManager
 import android.content.Intent
 import android.os.Bundle
-import android.text.TextUtils
 import android.view.*
 import android.widget.Filter
 import androidx.appcompat.widget.PopupMenu

@@ -18,9 +18,9 @@ class ServerStatusData(private val db: AppRoomDatabase) : DataSourceInterface<Se
             try {
                 return ActiveServerStatusTask(db).execute().get()
             } catch (e: InterruptedException) {
-                Timber.d("Loading active server status task got interrupted", e)
+                Timber.d(e, "Loading active server status task got interrupted")
             } catch (e: ExecutionException) {
-                Timber.d("Loading active server status task aborted", e)
+                Timber.d(e, "Loading active server status task aborted")
             }
             // Create a new server status object with the connection id
             val serverStatus = ServerStatus()
@@ -57,9 +57,9 @@ class ServerStatusData(private val db: AppRoomDatabase) : DataSourceInterface<Se
         try {
             return ServerStatusByIdTask(db, id as Int).execute().get()
         } catch (e: InterruptedException) {
-            Timber.d("Loading server status by id task got interrupted", e)
+            Timber.d(e, "Loading server status by id task got interrupted")
         } catch (e: ExecutionException) {
-            Timber.d("Loading server status by id task aborted", e)
+            Timber.d(e, "Loading server status by id task aborted")
         }
         return null
     }

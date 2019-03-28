@@ -111,11 +111,11 @@ class WakeOnLanTask(context: Context, private val connection: Connection) : Asyn
             val message: String
             when (result) {
                 WOL_SEND -> {
-                    Timber.d("Successfully sent WOL packet to " + connection.hostname)
+                    Timber.d("Successfully sent WOL packet to ${connection.hostname}")
                     message = ctx.getString(R.string.wol_send, connection.hostname)
                 }
                 WOL_SEND_BROADCAST -> {
-                    Timber.d("Successfully sent WOL packet as a broadcast to " + connection.hostname)
+                    Timber.d("Successfully sent WOL packet as a broadcast to ${connection.hostname}")
                     message = ctx.getString(R.string.wol_send_broadcast, connection.hostname)
                 }
                 WOL_INVALID_MAC -> {
