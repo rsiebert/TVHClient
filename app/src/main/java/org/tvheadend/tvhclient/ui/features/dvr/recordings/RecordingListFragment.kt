@@ -213,6 +213,12 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback
         }
     }
 
+    override fun onFilterComplete(i: Int) {
+        // Preselect the first result item in the details screen
+        if (isDualPane && recyclerViewAdapter.itemCount > 0) {
+            showRecordingDetails(0)
+        }
+    }
 
     override fun onSearchRequested(query: String) {
         searchQuery = query

@@ -297,7 +297,7 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
 
         val lastProgram = recyclerViewAdapter.getItem(position)
         lastProgram?.let {
-            Timber.d("Loading more programs after " + lastProgram.title)
+            Timber.d("Loading more programs after ${lastProgram.title}")
 
             val intent = Intent(activity, HtspService::class.java)
             intent.action = "getEvents"
@@ -315,10 +315,12 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
 
     override fun onFilterComplete(count: Int) {
         if (!isDualPane) {
-            if (!isSearchActive) {
-                toolbarInterface.setSubtitle(resources.getQuantityString(R.plurals.items, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
-            } else {
-                toolbarInterface.setSubtitle(resources.getQuantityString(R.plurals.programs, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
+            context?.let {
+                if (!isSearchActive) {
+                    toolbarInterface.setSubtitle(it.resources.getQuantityString(R.plurals.items, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
+                } else {
+                    toolbarInterface.setSubtitle(it.resources.getQuantityString(R.plurals.programs, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
+                }
             }
         }
     }

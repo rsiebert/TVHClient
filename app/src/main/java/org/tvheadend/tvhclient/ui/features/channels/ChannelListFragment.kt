@@ -153,15 +153,17 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
     private fun showChannelTagOrChannelCount() {
         // Show either all channels or the name of the selected
         // channel tag and the channel count in the toolbar
-        val toolbarTitle = viewModel.getSelectedChannelTagName(activity)
-        if (searchQuery.isEmpty()) {
-            toolbarInterface.setTitle(toolbarTitle)
-            toolbarInterface.setSubtitle(resources.getQuantityString(R.plurals.items,
-                    recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
-        } else {
-            toolbarInterface.setTitle(getString(R.string.search_results))
-            toolbarInterface.setSubtitle(resources.getQuantityString(R.plurals.channels,
-                    recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
+        context?.let {
+            val toolbarTitle = viewModel.getSelectedChannelTagName(activity)
+            if (searchQuery.isEmpty()) {
+                toolbarInterface.setTitle(toolbarTitle)
+                toolbarInterface.setSubtitle(it.resources.getQuantityString(R.plurals.items,
+                        recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
+            } else {
+                toolbarInterface.setTitle(getString(R.string.search_results))
+                toolbarInterface.setSubtitle(it.resources.getQuantityString(R.plurals.channels,
+                        recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
+            }
         }
     }
 

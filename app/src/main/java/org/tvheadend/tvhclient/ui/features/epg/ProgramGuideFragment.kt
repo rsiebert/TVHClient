@@ -296,7 +296,7 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
         context?.let {
             val toolbarTitle = viewModel.getSelectedChannelTagName(it)
             toolbarInterface.setTitle(toolbarTitle)
-            toolbarInterface.setSubtitle(activity.resources.getQuantityString(R.plurals.results,
+            toolbarInterface.setSubtitle(it.resources.getQuantityString(R.plurals.results,
                     channelListRecyclerViewAdapter.itemCount, channelListRecyclerViewAdapter.itemCount))
         }
     }

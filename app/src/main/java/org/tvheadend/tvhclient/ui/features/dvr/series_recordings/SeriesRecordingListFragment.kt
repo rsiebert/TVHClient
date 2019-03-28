@@ -196,14 +196,12 @@ class SeriesRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, S
     }
 
     override fun onFilterComplete(i: Int) {
-        if (searchQuery.isEmpty()) {
-            toolbarInterface.setSubtitle(resources.getQuantityString(R.plurals.items, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
-        } else {
-            toolbarInterface.setSubtitle(resources.getQuantityString(R.plurals.series_recordings, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
-        }
-        // Preselect the first result item in the details screen
-        if (isDualPane && recyclerViewAdapter.itemCount > 0) {
-            showRecordingDetails(0)
+        context?.let {
+            if (searchQuery.isEmpty()) {
+                toolbarInterface.setSubtitle(it.resources.getQuantityString(R.plurals.items, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
+            } else {
+                toolbarInterface.setSubtitle(it.resources.getQuantityString(R.plurals.series_recordings, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
+            }
         }
     }
 
