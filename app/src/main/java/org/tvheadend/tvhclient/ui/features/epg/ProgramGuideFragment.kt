@@ -28,8 +28,8 @@ import org.tvheadend.tvhclient.ui.common.onMenuSelected
 import org.tvheadend.tvhclient.ui.common.prepareMenu
 import org.tvheadend.tvhclient.ui.common.prepareSearchMenu
 import org.tvheadend.tvhclient.ui.features.channels.ChannelDisplayOptionListener
-import org.tvheadend.tvhclient.ui.features.dialogs.ChannelTagSelectionDialog
-import org.tvheadend.tvhclient.ui.features.dialogs.GenreColorDialog
+import org.tvheadend.tvhclient.ui.features.dialogs.showChannelTagSelectionDialog
+import org.tvheadend.tvhclient.ui.features.dialogs.showGenreColorDialog
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity
 import org.tvheadend.tvhclient.ui.features.notification.addNotification
 import org.tvheadend.tvhclient.ui.features.search.SearchActivity
@@ -45,7 +45,7 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
     private var enableScrolling = true
     private lateinit var channelListRecyclerViewLayoutManager: LinearLayoutManager
     private var programIdToBeEditedWhenBeingRecorded = 0
-    private var channelTags: List<ChannelTag>? = null
+    private var channelTags: List<ChannelTag> = ArrayList()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.epg_main_fragment, container, false)
@@ -173,9 +173,9 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            R.id.menu_tags -> ChannelTagSelectionDialog.showDialog(activity, channelTags, appRepository.channelData.getItems().size, this)
+            R.id.menu_tags -> showChannelTagSelectionDialog(activity, channelTags.toMutableList(), appRepository.channelData.getItems().size, this)
             R.id.menu_timeframe -> menuUtils.handleMenuTimeSelection(viewModel.selectedTimeOffset, viewModel.hoursToShow, viewModel.hoursToShow * viewModel.daysToShow, this)
-            R.id.menu_genre_color_info_channels -> GenreColorDialog.showDialog(activity)
+            R.id.menu_genre_color_info_channels -> showGenreColorDialog(activity)
             R.id.menu_sort_order -> menuUtils.handleMenuChannelSortOrderSelection(this)
             else -> super.onOptionsItemSelected(item)
         }

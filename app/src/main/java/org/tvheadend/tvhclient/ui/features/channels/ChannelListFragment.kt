@@ -23,8 +23,8 @@ import org.tvheadend.tvhclient.ui.common.onMenuSelected
 import org.tvheadend.tvhclient.ui.common.prepareMenu
 import org.tvheadend.tvhclient.ui.common.prepareSearchMenu
 import org.tvheadend.tvhclient.ui.common.tasks.WakeOnLanTask
-import org.tvheadend.tvhclient.ui.features.dialogs.ChannelTagSelectionDialog
-import org.tvheadend.tvhclient.ui.features.dialogs.GenreColorDialog
+import org.tvheadend.tvhclient.ui.features.dialogs.showChannelTagSelectionDialog
+import org.tvheadend.tvhclient.ui.features.dialogs.showGenreColorDialog
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity
 import org.tvheadend.tvhclient.ui.features.notification.addNotification
 import org.tvheadend.tvhclient.ui.features.programs.ProgramListFragment
@@ -43,7 +43,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
     // Used in the time selection dialog to show a time entry every x hours.
     private val intervalInHours = 2
     private var programIdToBeEditedWhenBeingRecorded = 0
-    private var channelTags: List<ChannelTag>? = null
+    private var channelTags: List<ChannelTag> = ArrayList()
     private var selectedTime: Long = 0
     private lateinit var currentTimeUpdateTask: Runnable
     private val currentTimeUpdateHandler = Handler()
@@ -216,9 +216,9 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            R.id.menu_tags -> ChannelTagSelectionDialog.showDialog(activity, channelTags, appRepository.channelData.getItems().size, this)
+            R.id.menu_tags -> showChannelTagSelectionDialog(activity, channelTags.toMutableList(), appRepository.channelData.getItems().size, this)
             R.id.menu_timeframe -> menuUtils.handleMenuTimeSelection(selectedTimeOffset, intervalInHours, 12, this)
-            R.id.menu_genre_color_info_channels -> GenreColorDialog.showDialog(activity)
+            R.id.menu_genre_color_info_channels -> showGenreColorDialog(activity)
             R.id.menu_sort_order -> menuUtils.handleMenuChannelSortOrderSelection(this)
             R.id.menu_wol -> {
                 val connection = appRepository.connectionData.activeItem

@@ -26,7 +26,7 @@ import org.tvheadend.tvhclient.ui.common.getCastSession
 import org.tvheadend.tvhclient.ui.common.onMenuSelected
 import org.tvheadend.tvhclient.ui.common.prepareMenu
 import org.tvheadend.tvhclient.ui.common.prepareSearchMenu
-import org.tvheadend.tvhclient.ui.features.dialogs.GenreColorDialog
+import org.tvheadend.tvhclient.ui.features.dialogs.showGenreColorDialog
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity
 import org.tvheadend.tvhclient.ui.features.notification.addNotification
 import org.tvheadend.tvhclient.ui.features.search.SearchRequestInterface
@@ -202,7 +202,7 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
                 true
             }
             R.id.menu_cast -> menuUtils.handleMenuCast("channelId", shownChannelId)
-            R.id.menu_genre_color_info_programs -> GenreColorDialog.showDialog(activity)
+            R.id.menu_genre_color_info_programs -> showGenreColorDialog(activity)
             else -> super.onOptionsItemSelected(item)
         }
     }
