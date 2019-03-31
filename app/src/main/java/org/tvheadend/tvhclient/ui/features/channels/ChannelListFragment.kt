@@ -14,7 +14,6 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import butterknife.Unbinder
 import kotlinx.android.synthetic.main.recyclerview_fragment.*
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.domain.entity.ChannelTag
@@ -34,7 +33,6 @@ import timber.log.Timber
 
 class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDisplayOptionListener, SearchRequestInterface, Filter.FilterListener {
 
-    lateinit var unbinder: Unbinder
     lateinit var recyclerViewAdapter: ChannelRecyclerViewAdapter
     lateinit var viewModel: ChannelViewModel
 
@@ -104,8 +102,8 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
                 recyclerViewAdapter.addItems(channels.toMutableList())
             }
 
-            recycler_view.visibility = View.VISIBLE
-            progress_bar.visibility = View.GONE
+            recycler_view?.visibility = View.VISIBLE
+            progress_bar?.visibility = View.GONE
 
             showChannelTagOrChannelCount()
 

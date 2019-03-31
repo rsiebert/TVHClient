@@ -16,8 +16,8 @@ import kotlinx.android.synthetic.main.recyclerview_fragment.*
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback
-import org.tvheadend.tvhclient.ui.common.getCastSession
 import org.tvheadend.tvhclient.ui.common.onMenuSelected
+import org.tvheadend.tvhclient.ui.common.prepareMenu
 import org.tvheadend.tvhclient.ui.common.prepareSearchMenu
 import org.tvheadend.tvhclient.ui.features.download.DownloadPermissionGrantedInterface
 import org.tvheadend.tvhclient.ui.features.download.DownloadRecordingManager
@@ -139,39 +139,23 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback
         popupMenu.menuInflater.inflate(R.menu.recordings_popup_menu, popupMenu.menu)
         popupMenu.menuInflater.inflate(R.menu.external_search_options_menu, popupMenu.menu)
         prepareSearchMenu(popupMenu.menu, recording.title, isNetworkAvailable)
-
-        if (isNetworkAvailable) {
-            if (recording.isCompleted) {
-                popupMenu.menu.findItem(R.id.menu_record_remove)?.isVisible = true
-                popupMenu.menu.findItem(R.id.menu_play)?.isVisible = true
-                popupMenu.menu.findItem(R.id.menu_cast)?.isVisible = getCastSession(activity) != null
-                popupMenu.menu.findItem(R.id.menu_download)?.isVisible = isUnlocked
-
-            } else if (recording.isScheduled && !recording.isRecording) {
-                popupMenu.menu.findItem(R.id.menu_record_cancel)?.isVisible = true
-                popupMenu.menu.findItem(R.id.menu_edit)?.isVisible = isUnlocked
-
-            } else if (recording.isRecording) {
-                popupMenu.menu.findItem(R.id.menu_record_stop)?.isVisible = true
-                popupMenu.menu.findItem(R.id.menu_play)?.isVisible = true
-                popupMenu.menu.findItem(R.id.menu_cast)?.isVisible = getCastSession(activity) != null
-                popupMenu.menu.findItem(R.id.menu_edit)?.isVisible = isUnlocked
-
-            } else if (recording.isFailed || recording.isFileMissing || recording.isMissed || recording.isAborted) {
-                popupMenu.menu.findItem(R.id.menu_record_remove)?.isVisible = true
-            }
-        }
+        prepareMenu(activity, popupMenu.menu, null, recording, isNetworkAvailable, htspVersion, isUnlocked)
 
         popupMenu.setOnMenuItemClickListener { item ->
             if (onMenuSelected(activity, item.itemId, recording.title)) {
                 return@setOnMenuItemClickListener true
             }
             when (item.itemId) {
-                R.id.menu_record_stop -> return@setOnMenuItemClickListener menuUtils.handleMenuStopRecordingSelection(recording, null)
-                R.id.menu_record_cancel -> return@setOnMenuItemClickListener menuUtils.handleMenuCancelRecordingSelection(recording, null)
-                R.id.menu_record_remove -> return@setOnMenuItemClickListener menuUtils.handleMenuRemoveRecordingSelection(recording, null)
-                R.id.menu_play -> return@setOnMenuItemClickListener menuUtils.handleMenuPlayRecording(recording.id)
-                R.id.menu_cast -> return@setOnMenuItemClickListener menuUtils.handleMenuCast("dvrId", recording.id)
+                R.id.menu_record_stop ->
+                    return@setOnMenuItemClickListener menuUtils.handleMenuStopRecordingSelection(recording, null)
+                R.id.menu_record_cancel ->
+                    return@setOnMenuItemClickListener menuUtils.handleMenuCancelRecordingSelection(recording, null)
+                R.id.menu_record_remove ->
+                    return@setOnMenuItemClickListener menuUtils.handleMenuRemoveRecordingSelection(recording, null)
+                R.id.menu_play ->
+                    return@setOnMenuItemClickListener menuUtils.handleMenuPlayRecording(recording.id)
+                R.id.menu_cast ->
+                    return@setOnMenuItemClickListener menuUtils.handleMenuCast("dvrId", recording.id)
                 R.id.menu_download -> {
                     DownloadRecordingManager(activity, recording.id)
                     return@setOnMenuItemClickListener true
@@ -183,7 +167,8 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback
                     activity.startActivity(intent)
                     return@setOnMenuItemClickListener true
                 }
-                else -> return@setOnMenuItemClickListener false
+                else ->
+                    return@setOnMenuItemClickListener false
             }
         }
         popupMenu.show()

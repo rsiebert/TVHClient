@@ -22,8 +22,8 @@ class CompletedRecordingListFragment : RecordingListFragment() {
                 recyclerViewAdapter.addItems(recordings)
             }
 
-            recycler_view.visibility = View.VISIBLE
-            progress_bar.visibility = View.GONE
+            recycler_view?.visibility = View.VISIBLE
+            progress_bar?.visibility = View.GONE
 
             if (searchQuery.isEmpty()) {
                 toolbarInterface.setSubtitle(resources.getQuantityString(R.plurals.items, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))

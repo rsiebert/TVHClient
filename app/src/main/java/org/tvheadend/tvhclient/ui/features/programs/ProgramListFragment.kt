@@ -14,7 +14,6 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import butterknife.Unbinder
 import kotlinx.android.synthetic.main.recyclerview_fragment.*
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
@@ -36,7 +35,6 @@ import timber.log.Timber
 
 class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgramVisibleListener, SearchRequestInterface, Filter.FilterListener {
 
-    lateinit var unbinder: Unbinder
     lateinit var recyclerViewAdapter: ProgramRecyclerViewAdapter
     lateinit var viewModel: ProgramViewModel
 
@@ -125,8 +123,8 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
                 (activity as StartSearchInterface).startSearch()
             }
         }
-        recycler_view.visibility = View.VISIBLE
-        progress_bar.visibility = View.GONE
+        recycler_view?.visibility = View.VISIBLE
+        progress_bar?.visibility = View.GONE
 
         if (!isDualPane) {
             if (!isSearchActive) {
@@ -237,32 +235,41 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
         val popupMenu = PopupMenu(activity, view)
         popupMenu.menuInflater.inflate(R.menu.program_popup_and_toolbar_menu, popupMenu.menu)
         popupMenu.menuInflater.inflate(R.menu.external_search_options_menu, popupMenu.menu)
-        prepareMenu(activity, popupMenu.menu, program, program.recording, isNetworkAvailable, htspVersion, isUnlocked)
         prepareSearchMenu(popupMenu.menu, program.title, isNetworkAvailable)
+        prepareMenu(activity, popupMenu.menu, program, program.recording, isNetworkAvailable, htspVersion, isUnlocked)
 
         popupMenu.setOnMenuItemClickListener { item ->
             if (onMenuSelected(activity, item.itemId, program.title, program.channelId)) {
                 return@setOnMenuItemClickListener true
             }
             when (item.itemId) {
-                R.id.menu_record_stop -> return@setOnMenuItemClickListener menuUtils.handleMenuStopRecordingSelection(recording, null)
-                R.id.menu_record_cancel -> return@setOnMenuItemClickListener menuUtils.handleMenuCancelRecordingSelection(recording, null)
-                R.id.menu_record_remove -> return@setOnMenuItemClickListener menuUtils.handleMenuRemoveRecordingSelection(recording, null)
-                R.id.menu_record_once -> return@setOnMenuItemClickListener menuUtils.handleMenuRecordSelection(program.eventId)
+                R.id.menu_record_stop ->
+                    return@setOnMenuItemClickListener menuUtils.handleMenuStopRecordingSelection(recording, null)
+                R.id.menu_record_cancel ->
+                    return@setOnMenuItemClickListener menuUtils.handleMenuCancelRecordingSelection(recording, null)
+                R.id.menu_record_remove ->
+                    return@setOnMenuItemClickListener menuUtils.handleMenuRemoveRecordingSelection(recording, null)
+                R.id.menu_record_once ->
+                    return@setOnMenuItemClickListener menuUtils.handleMenuRecordSelection(program.eventId)
                 R.id.menu_record_once_and_edit -> {
                     programIdToBeEditedWhenBeingRecorded = program.eventId
                     return@setOnMenuItemClickListener menuUtils.handleMenuRecordSelection(program.eventId)
                 }
-                R.id.menu_record_once_custom_profile -> return@setOnMenuItemClickListener menuUtils.handleMenuCustomRecordSelection(program.eventId, shownChannelId)
-                R.id.menu_record_series -> return@setOnMenuItemClickListener menuUtils.handleMenuSeriesRecordSelection(program.title)
-                R.id.menu_play -> return@setOnMenuItemClickListener menuUtils.handleMenuPlayChannel(shownChannelId)
-                R.id.menu_cast -> return@setOnMenuItemClickListener menuUtils.handleMenuCast("channelId", shownChannelId)
+                R.id.menu_record_once_custom_profile ->
+                    return@setOnMenuItemClickListener menuUtils.handleMenuCustomRecordSelection(program.eventId, shownChannelId)
+                R.id.menu_record_series ->
+                    return@setOnMenuItemClickListener menuUtils.handleMenuSeriesRecordSelection(program.title)
+                R.id.menu_play ->
+                    return@setOnMenuItemClickListener menuUtils.handleMenuPlayChannel(shownChannelId)
+                R.id.menu_cast ->
+                    return@setOnMenuItemClickListener menuUtils.handleMenuCast("channelId", shownChannelId)
                 R.id.menu_add_notification -> {
                     val profile = appRepository.serverProfileData.getItemById(serverStatus.recordingServerProfileId)
                     addNotification(activity, program, profile)
                     return@setOnMenuItemClickListener true
                 }
-                else -> return@setOnMenuItemClickListener false
+                else ->
+                    return@setOnMenuItemClickListener false
             }
         }
         popupMenu.show()
