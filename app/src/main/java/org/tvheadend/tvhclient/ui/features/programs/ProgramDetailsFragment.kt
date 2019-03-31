@@ -101,7 +101,7 @@ class ProgramDetailsFragment : BaseFragment() {
                         break
 
                     } else if (program != null && rec.eventId == program?.eventId) {
-                        Timber.d("Found recording for program " + program?.title)
+                        Timber.d("Found recording for program ${program?.title}")
                         recording = rec
                         recordingExists = true
                         break
