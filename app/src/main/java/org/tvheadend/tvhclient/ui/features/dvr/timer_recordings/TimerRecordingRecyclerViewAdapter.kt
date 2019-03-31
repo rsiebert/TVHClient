@@ -4,17 +4,16 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
-
-import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.domain.entity.TimerRecording
-import org.tvheadend.tvhclient.databinding.TimerRecordingListAdapterBinding
-import org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback
-
-import java.util.ArrayList
-import java.util.concurrent.CopyOnWriteArrayList
 import androidx.recyclerview.widget.RecyclerView
+import org.tvheadend.tvhclient.R
+import org.tvheadend.tvhclient.databinding.TimerRecordingListAdapterBinding
+import org.tvheadend.tvhclient.domain.entity.TimerRecording
+import org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback
+import java.util.*
+import java.util.concurrent.CopyOnWriteArrayList
 
 class TimerRecordingRecyclerViewAdapter internal constructor(private val isDualPane: Boolean, private val clickCallback: RecyclerViewClickCallback, private val htspVersion: Int) : RecyclerView.Adapter<TimerRecordingRecyclerViewAdapter.TimerRecordingViewHolder>(), Filterable {
+
     private val recordingList = ArrayList<TimerRecording>()
     private var recordingListFiltered: MutableList<TimerRecording> = ArrayList()
     private var selectedPosition = 0

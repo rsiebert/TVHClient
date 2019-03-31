@@ -13,6 +13,7 @@ import java.util.*
 import java.util.concurrent.CopyOnWriteArrayList
 
 class EpgChannelListRecyclerViewAdapter(private val clickCallback: RecyclerViewClickCallback) : RecyclerView.Adapter<EpgChannelListRecyclerViewAdapter.EpgChannelViewHolder>(), Filterable {
+
     private val channelList = ArrayList<EpgChannel>()
     private var channelListFiltered: MutableList<EpgChannel> = ArrayList()
 

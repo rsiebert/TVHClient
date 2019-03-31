@@ -1,25 +1,23 @@
 package org.tvheadend.tvhclient.ui.features.programs
 
-import android.content.SharedPreferences
 import android.preference.PreferenceManager
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
-
-import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.domain.entity.Program
-import org.tvheadend.tvhclient.domain.entity.Recording
-import org.tvheadend.tvhclient.databinding.ProgramListAdapterBinding
-import org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback
-
-import java.util.ArrayList
-import java.util.concurrent.CopyOnWriteArrayList
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import org.tvheadend.tvhclient.R
+import org.tvheadend.tvhclient.databinding.ProgramListAdapterBinding
+import org.tvheadend.tvhclient.domain.entity.Program
+import org.tvheadend.tvhclient.domain.entity.Recording
+import org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback
+import java.util.*
+import java.util.concurrent.CopyOnWriteArrayList
 
 class ProgramRecyclerViewAdapter internal constructor(private val showProgramChannelIcon: Boolean, private val clickCallback: RecyclerViewClickCallback, private val onLastProgramVisibleListener: LastProgramVisibleListener) : RecyclerView.Adapter<ProgramRecyclerViewAdapter.ProgramViewHolder>(), Filterable {
+
     private val programList = ArrayList<Program>()
     private var programListFiltered: MutableList<Program> = ArrayList()
     private val recordingList = ArrayList<Recording>()

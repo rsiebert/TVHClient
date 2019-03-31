@@ -16,6 +16,7 @@ import java.util.*
 import java.util.concurrent.CopyOnWriteArrayList
 
 class RecordingRecyclerViewAdapter internal constructor(private val isDualPane: Boolean, private val clickCallback: RecyclerViewClickCallback, private val htspVersion: Int) : RecyclerView.Adapter<RecordingRecyclerViewAdapter.RecordingViewHolder>(), Filterable {
+
     private val recordingList = ArrayList<Recording>()
     private var recordingListFiltered: MutableList<Recording> = ArrayList()
     private var selectedPosition = 0

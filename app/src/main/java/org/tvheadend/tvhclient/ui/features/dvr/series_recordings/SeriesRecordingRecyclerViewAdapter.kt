@@ -13,6 +13,7 @@ import java.util.*
 import java.util.concurrent.CopyOnWriteArrayList
 
 class SeriesRecordingRecyclerViewAdapter internal constructor(private val isDualPane: Boolean, private val clickCallback: RecyclerViewClickCallback, private val htspVersion: Int) : RecyclerView.Adapter<SeriesRecordingRecyclerViewAdapter.SeriesRecordingViewHolder>(), Filterable {
+
     private val recordingList = ArrayList<SeriesRecording>()
     private var recordingListFiltered: MutableList<SeriesRecording> = ArrayList()
     private var selectedPosition = 0

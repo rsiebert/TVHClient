@@ -12,6 +12,7 @@ import java.util.*
 import java.util.concurrent.CopyOnWriteArrayList
 
 internal class EpgViewPagerRecyclerViewAdapter(private val activity: FragmentActivity, private val pixelsPerMinute: Float, private val startTime: Long, private val endTime: Long) : RecyclerView.Adapter<EpgViewPagerViewHolder>(), Filterable {
+
     private val viewPool: RecyclerView.RecycledViewPool = RecyclerView.RecycledViewPool()
     private val channelList = ArrayList<EpgChannel>()
     private var channelListFiltered: MutableList<EpgChannel> = ArrayList()
