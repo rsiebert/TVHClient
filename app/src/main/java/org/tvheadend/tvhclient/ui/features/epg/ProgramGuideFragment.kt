@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.util.SparseArray
 import android.view.*
 import android.widget.Filter
-import android.widget.ProgressBar
 import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -19,9 +18,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE
 import androidx.viewpager.widget.ViewPager
-import butterknife.BindView
-import butterknife.ButterKnife
 import butterknife.Unbinder
+import kotlinx.android.synthetic.main.epg_main_fragment.*
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.domain.entity.ChannelTag
 import org.tvheadend.tvhclient.domain.entity.EpgProgram
@@ -41,13 +39,6 @@ import timber.log.Timber
 
 class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewClickCallback, ChannelDisplayOptionListener, Filter.FilterListener, ViewPager.OnPageChangeListener, SearchRequestInterface {
 
-    @BindView(R.id.channel_list_recycler_view)
-    lateinit var channelListRecyclerView: RecyclerView
-    @BindView(R.id.program_list_viewpager)
-    lateinit var programViewPager: ViewPager
-    @BindView(R.id.progress_bar)
-    lateinit var progressBar: ProgressBar
-
     lateinit var unbinder: Unbinder
     lateinit var viewModel: EpgViewModel
     private lateinit var channelListRecyclerViewAdapter: EpgChannelListRecyclerViewAdapter
@@ -59,15 +50,7 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
     private var channelTags: List<ChannelTag>? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.epg_main_fragment, container, false)
-        unbinder = ButterKnife.bind(this, view)
-        return view
-    }
-
-    override fun onDestroyView() {
-        channelListRecyclerView.adapter = null
-        super.onDestroyView()
-        unbinder.unbind()
+        return inflater.inflate(R.layout.epg_main_fragment, container, false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -82,11 +65,11 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
 
         channelListRecyclerViewAdapter = EpgChannelListRecyclerViewAdapter(this)
         channelListRecyclerViewLayoutManager = LinearLayoutManager(activity)
-        channelListRecyclerView.layoutManager = channelListRecyclerViewLayoutManager
-        channelListRecyclerView.addItemDecoration(DividerItemDecoration(activity, LinearLayoutManager.VERTICAL))
-        channelListRecyclerView.itemAnimator = DefaultItemAnimator()
-        channelListRecyclerView.adapter = channelListRecyclerViewAdapter
-        channelListRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        channel_list_recycler_view.layoutManager = channelListRecyclerViewLayoutManager
+        channel_list_recycler_view.addItemDecoration(DividerItemDecoration(activity, LinearLayoutManager.VERTICAL))
+        channel_list_recycler_view.itemAnimator = DefaultItemAnimator()
+        channel_list_recycler_view.adapter = channelListRecyclerViewAdapter
+        channel_list_recycler_view.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
                 if (newState != SCROLL_STATE_IDLE) {
@@ -109,9 +92,9 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
         })
 
         viewPagerAdapter = EpgViewPagerAdapter(childFragmentManager, viewModel)
-        programViewPager.adapter = viewPagerAdapter
-        programViewPager.offscreenPageLimit = 2
-        programViewPager.addOnPageChangeListener(this)
+        program_list_viewpager.adapter = viewPagerAdapter
+        program_list_viewpager.offscreenPageLimit = 2
+        program_list_viewpager.addOnPageChangeListener(this)
 
         Timber.d("Observing channel tags")
         viewModel.channelTags.observe(viewLifecycleOwner, Observer { tags ->
@@ -124,9 +107,9 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
         Timber.d("Observing epg channels")
         viewModel.epgChannels.observe(viewLifecycleOwner, Observer { channels ->
 
-            progressBar.visibility = View.GONE
-            channelListRecyclerView.visibility = View.VISIBLE
-            programViewPager.visibility = View.VISIBLE
+            progress_bar?.visibility = View.GONE
+            channel_list_recycler_view?.visibility = View.VISIBLE
+            program_list_viewpager?.visibility = View.VISIBLE
 
             if (channels != null) {
                 Timber.d("View model returned ${channels.size} epg channels")
@@ -202,7 +185,7 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
 
     override fun onTimeSelected(which: Int) {
         viewModel.selectedTimeOffset = which
-        programViewPager.currentItem = which
+        program_list_viewpager?.currentItem = which
 
         // TODO check if this is required
         // Add the selected list index as extra hours to the current time.
@@ -213,9 +196,9 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
     }
 
     override fun onChannelTagIdsSelected(ids: Set<Int>) {
-        channelListRecyclerView.visibility = View.GONE
-        programViewPager.visibility = View.GONE
-        progressBar.visibility = View.VISIBLE
+        channel_list_recycler_view?.visibility = View.GONE
+        program_list_viewpager?.visibility = View.GONE
+        progress_bar?.visibility = View.VISIBLE
         viewModel.setSelectedChannelTagIds(ids)
     }
 
