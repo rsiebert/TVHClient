@@ -231,8 +231,8 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
 
     override fun onTimeSelected(which: Int) {
         selectedTimeOffset = which
-        recycler_view.visibility = View.GONE
-        progress_bar.visibility = View.VISIBLE
+        recycler_view?.visibility = View.GONE
+        progress_bar?.visibility = View.VISIBLE
 
         // Add the selected list index as extra hours to the current time.
         // If the first index was selected then use the current time.
@@ -242,8 +242,8 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
     }
 
     override fun onChannelTagIdsSelected(ids: Set<Int>) {
-        recycler_view.visibility = View.GONE
-        progress_bar.visibility = View.VISIBLE
+        recycler_view?.visibility = View.GONE
+        progress_bar?.visibility = View.VISIBLE
         viewModel.setSelectedChannelTagIds(ids)
     }
 
