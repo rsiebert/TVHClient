@@ -20,6 +20,15 @@ class SeriesRecordingViewModel(application: Application) : AndroidViewModel(appl
     val numberOfRecordings: LiveData<Int>
     var recordingProfileNameId: Int = 0
 
+    var isTimeEnabled: Boolean = false
+        set(value) {
+            field = value
+            if (!value) {
+                startTimeInMillis = Calendar.getInstance().timeInMillis
+                startWindowTimeInMillis = Calendar.getInstance().timeInMillis
+            }
+        }
+
     init {
         MainApplication.getComponent().inject(this)
         recordings = appRepository.seriesRecordingData.getLiveDataItems()
@@ -32,6 +41,8 @@ class SeriesRecordingViewModel(application: Application) : AndroidViewModel(appl
 
     fun loadRecordingByIdSync(id: String) {
         recording = appRepository.seriesRecordingData.getItemById(id)
+        // In case one of the values is negative the time setting shall be disabled
+        isTimeEnabled = recording.start >= 0 && recording.startWindow >= 0
     }
 
     var startTimeInMillis: Long = 0
@@ -59,7 +70,7 @@ class SeriesRecordingViewModel(application: Application) : AndroidViewModel(appl
      * server requires and provides minutes instead. In case the start and stop times of
      * a recording need to be updated the milliseconds will be converted to minutes.
      */
-    private fun getMinutesFromTime(milliSeconds : Long) : Long {
+    private fun getMinutesFromTime(milliSeconds: Long): Long {
         val calendar = Calendar.getInstance()
         calendar.timeInMillis = milliSeconds
         val hour = calendar.get(Calendar.HOUR_OF_DAY)

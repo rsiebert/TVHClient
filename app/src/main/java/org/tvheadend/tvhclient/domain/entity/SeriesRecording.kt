@@ -2,7 +2,6 @@ package org.tvheadend.tvhclient.domain.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import androidx.room.Ignore
 import java.util.*
 
 @Entity(tableName = "series_recordings", primaryKeys = ["id", "connection_id"])
@@ -47,10 +46,7 @@ data class SeriesRecording(
         @ColumnInfo(name = "channel_name")
         var channelName: String? = null,
         @ColumnInfo(name = "channel_icon")
-        var channelIcon: String? = null,
-
-        @Ignore
-        var isTimeEnabled: Boolean = start >= 0 && startWindow >= 0
+        var channelIcon: String? = null
 ) {
     val duration: Int
         get() = (startWindow - start).toInt()

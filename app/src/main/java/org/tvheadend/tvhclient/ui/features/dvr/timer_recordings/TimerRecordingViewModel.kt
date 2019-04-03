@@ -20,6 +20,15 @@ class TimerRecordingViewModel(application: Application) : AndroidViewModel(appli
     val numberOfRecordings: LiveData<Int>
     var recordingProfileNameId: Int = 0
 
+    var isTimeEnabled: Boolean = false
+        set(value) {
+            field = value
+            if (!value) {
+                startTimeInMillis = Calendar.getInstance().timeInMillis
+                stopTimeInMillis = Calendar.getInstance().timeInMillis
+            }
+        }
+
     init {
         MainApplication.getComponent().inject(this)
         recordings = appRepository.timerRecordingData.getLiveDataItems()

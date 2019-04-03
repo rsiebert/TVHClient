@@ -4,57 +4,23 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.*
-import android.widget.CheckBox
-import android.widget.CompoundButton
-import android.widget.EditText
-import android.widget.TextView
 import androidx.lifecycle.ViewModelProviders
-import butterknife.*
 import com.afollestad.materialdialogs.MaterialDialog
+import kotlinx.android.synthetic.main.timer_recording_add_edit_fragment.*
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.data.service.HtspService
 import org.tvheadend.tvhclient.domain.entity.Channel
 import org.tvheadend.tvhclient.domain.entity.ServerProfile
 import org.tvheadend.tvhclient.ui.base.BaseFragment
+import org.tvheadend.tvhclient.ui.common.afterTextChanged
 import org.tvheadend.tvhclient.ui.common.callbacks.BackPressedInterface
 import org.tvheadend.tvhclient.ui.common.sendSnackbarMessage
+import org.tvheadend.tvhclient.ui.common.visibleOrGone
 import org.tvheadend.tvhclient.ui.features.dvr.*
 import org.tvheadend.tvhclient.util.isServerProfileEnabled
+import timber.log.Timber
 
 class TimerRecordingAddEditFragment : BaseFragment(), BackPressedInterface, RecordingConfigSelectedListener, DatePickerFragment.Listener, TimePickerFragment.Listener {
-
-    @BindView(R.id.is_enabled)
-    lateinit var isEnabledCheckbox: CheckBox
-    @BindView(R.id.priority)
-    lateinit var priorityTextView: TextView
-    @BindView(R.id.days_of_week)
-    lateinit var daysOfWeekTextView: TextView
-    @BindView(R.id.time_enabled)
-    lateinit var timeEnabledCheckBox: CheckBox
-    @BindView(R.id.start_time_label)
-    lateinit var startTimeLabelTextView: TextView
-    @BindView(R.id.start_time)
-    lateinit var startTimeTextView: TextView
-    @BindView(R.id.stop_time_label)
-    lateinit var stopTimeLabelTextView: TextView
-    @BindView(R.id.stop_time)
-    lateinit var stopTimeTextView: TextView
-    @BindView(R.id.directory)
-    lateinit var directoryEditText: EditText
-    @BindView(R.id.directory_label)
-    lateinit var directoryLabelTextView: TextView
-    @BindView(R.id.title)
-    lateinit var titleEditText: EditText
-    @BindView(R.id.name)
-    lateinit var nameEditText: EditText
-    @BindView(R.id.channel)
-    lateinit var channelNameTextView: TextView
-    @BindView(R.id.dvr_config)
-    lateinit var recordingProfileNameTextView: TextView
-    @BindView(R.id.dvr_config_label)
-    lateinit var recordingProfileLabelTextView: TextView
-
-    lateinit var unbinder: Unbinder
 
     private lateinit var recordingProfilesList: Array<String>
     private lateinit var channelList: List<Channel>
@@ -73,7 +39,7 @@ class TimerRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Reco
             intent.putExtra("name", viewModel.recording.name)
 
             // Assume no start time is specified if 0:00 is selected
-            if (viewModel.recording.isTimeEnabled) {
+            if (viewModel.isTimeEnabled) {
                 intent.putExtra("start", viewModel.recording.start)
                 intent.putExtra("stop", viewModel.recording.stop)
             } else {
@@ -88,23 +54,16 @@ class TimerRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Reco
                 intent.putExtra("channelId", viewModel.recording.channelId)
             }
             // Add the recording profile if available and enabled
-            if (isServerProfileEnabled(profile, serverStatus) && recordingProfileNameTextView.text.isNotEmpty()) {
+            if (isServerProfileEnabled(profile, serverStatus) && dvr_config.text.isNotEmpty()) {
                 // Use the selected profile. If no change was done in the
                 // selection then the default one from the connection setting will be used
-                intent.putExtra("configName", recordingProfileNameTextView.text.toString())
+                intent.putExtra("configName", dvr_config.text.toString())
             }
             return intent
         }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.timer_recording_add_edit_fragment, container, false)
-        unbinder = ButterKnife.bind(this, view)
-        return view
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        unbinder.unbind()
+        return inflater.inflate(R.layout.timer_recording_add_edit_fragment, container, false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -132,69 +91,79 @@ class TimerRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Reco
 
     private fun updateUI() {
 
-        isEnabledCheckbox.visibility = if (htspVersion >= 19) View.VISIBLE else View.GONE
-        isEnabledCheckbox.isChecked = viewModel.recording.isEnabled
-        titleEditText.setText(viewModel.recording.title)
-        nameEditText.setText(viewModel.recording.name)
+        is_enabled.visibleOrGone(htspVersion >= 19)
+        is_enabled.isChecked = viewModel.recording.isEnabled
 
-        directoryLabelTextView.visibility = if (htspVersion >= 19) View.VISIBLE else View.GONE
-        directoryEditText.visibility = if (htspVersion >= 19) View.VISIBLE else View.GONE
-        directoryEditText.setText(viewModel.recording.directory)
+        title.setText(viewModel.recording.title)
+        name.setText(viewModel.recording.name)
 
-        channelNameTextView.text = if (!TextUtils.isEmpty(viewModel.recording.channelName)) viewModel.recording.channelName else getString(R.string.all_channels)
-        channelNameTextView.setOnClickListener {
+        directory_label.visibleOrGone(htspVersion >= 19)
+        directory.visibleOrGone(htspVersion >= 19)
+        directory.setText(viewModel.recording.directory)
+
+        channel_name.text = if (!TextUtils.isEmpty(viewModel.recording.channelName)) viewModel.recording.channelName else getString(R.string.all_channels)
+        channel_name.setOnClickListener {
             // Determine if the server supports recording on all channels
             val allowRecordingOnAllChannels = htspVersion >= 21
             handleChannelListSelection(activity, channelList, allowRecordingOnAllChannels, this@TimerRecordingAddEditFragment)
         }
 
-        priorityTextView.text = getPriorityName(activity, viewModel.recording.priority)
-        priorityTextView.setOnClickListener {
+        priority.text = getPriorityName(activity, viewModel.recording.priority)
+        priority.setOnClickListener {
             handlePrioritySelection(activity, viewModel.recording.priority, this@TimerRecordingAddEditFragment)
         }
 
-        if (recordingProfilesList.isEmpty()) {
-            recordingProfileNameTextView.visibility = View.GONE
-            recordingProfileLabelTextView.visibility = View.GONE
-        } else {
-            recordingProfileNameTextView.visibility = View.VISIBLE
-            recordingProfileLabelTextView.visibility = View.VISIBLE
+        dvr_config.visibleOrGone(!recordingProfilesList.isEmpty())
+        dvr_config_label.visibleOrGone(!recordingProfilesList.isEmpty())
 
-            recordingProfileNameTextView.text = recordingProfilesList[viewModel.recordingProfileNameId]
-            recordingProfileNameTextView.setOnClickListener {
+        if (!recordingProfilesList.isEmpty()) {
+            dvr_config.text = recordingProfilesList[viewModel.recordingProfileNameId]
+            dvr_config.setOnClickListener {
                 handleRecordingProfileSelection(activity, recordingProfilesList, viewModel.recordingProfileNameId, this@TimerRecordingAddEditFragment)
             }
         }
 
-        startTimeTextView.text = getTimeStringFromTimeInMillis(viewModel.startTimeInMillis)
-        startTimeTextView.setOnClickListener {
+        start_time.text = getTimeStringFromTimeInMillis(viewModel.startTimeInMillis)
+        start_time.setOnClickListener {
             handleTimeSelection(activity, viewModel.startTimeInMillis, this@TimerRecordingAddEditFragment, "startTime")
         }
 
-        stopTimeTextView.text = getTimeStringFromTimeInMillis(viewModel.stopTimeInMillis)
-        stopTimeTextView.setOnClickListener {
+        stop_time.text = getTimeStringFromTimeInMillis(viewModel.stopTimeInMillis)
+        stop_time.setOnClickListener {
             handleTimeSelection(activity, viewModel.stopTimeInMillis, this@TimerRecordingAddEditFragment, "stopTime")
         }
 
-        daysOfWeekTextView.text = getSelectedDaysOfWeekText(activity, viewModel.recording.daysOfWeek)
-        daysOfWeekTextView.setOnClickListener {
+        days_of_week.text = getSelectedDaysOfWeekText(activity, viewModel.recording.daysOfWeek)
+        days_of_week.setOnClickListener {
             handleDayOfWeekSelection(activity, viewModel.recording.daysOfWeek, this@TimerRecordingAddEditFragment)
         }
 
-        timeEnabledCheckBox.isChecked = viewModel.recording.isTimeEnabled
+        time_enabled.isChecked = viewModel.isTimeEnabled
+        handleTimeEnabledClick(time_enabled.isChecked)
 
-        timeEnabledCheckBox.setOnClickListener {
-            val checked = timeEnabledCheckBox.isChecked
-            viewModel.recording.isTimeEnabled = checked
-
-            startTimeLabelTextView.visibility = if (checked) View.VISIBLE else View.GONE
-            startTimeTextView.visibility = if (checked) View.VISIBLE else View.GONE
-            startTimeTextView.isEnabled = checked
-
-            stopTimeLabelTextView.visibility = if (checked) View.VISIBLE else View.GONE
-            stopTimeTextView.visibility = if (checked) View.VISIBLE else View.GONE
-            stopTimeTextView.isEnabled = checked
+        time_enabled.setOnClickListener {
+            handleTimeEnabledClick(time_enabled.isChecked)
         }
+
+        title.afterTextChanged { viewModel.recording.title = it }
+        name.afterTextChanged { viewModel.recording.name = it }
+        directory.afterTextChanged { viewModel.recording.directory = it }
+        is_enabled.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.recording.isEnabled = isChecked
+        }
+    }
+
+    private fun handleTimeEnabledClick(checked: Boolean) {
+        Timber.d("Setting time enabled ${time_enabled.isChecked}")
+        viewModel.isTimeEnabled = checked
+
+        start_time_label.visibleOrGone(checked)
+        start_time.visibleOrGone(checked)
+        start_time.isEnabled = checked
+
+        stop_time_label.visibleOrGone(checked)
+        stop_time.visibleOrGone(checked)
+        stop_time.isEnabled = checked
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -271,16 +240,16 @@ class TimerRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Reco
 
     override fun onChannelSelected(channel: Channel) {
         viewModel.recording.channelId = channel.id
-        channelNameTextView.text = channel.name
+        channel_name.text = channel.name
     }
 
     override fun onPrioritySelected(which: Int) {
         viewModel.recording.priority = which
-        priorityTextView.text = getPriorityName(activity, viewModel.recording.priority)
+        priority.text = getPriorityName(activity, viewModel.recording.priority)
     }
 
     override fun onProfileSelected(which: Int) {
-        recordingProfileNameTextView.text = recordingProfilesList[which]
+        dvr_config.text = recordingProfilesList[which]
         viewModel.recordingProfileNameId = which
     }
 
@@ -299,8 +268,8 @@ class TimerRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Reco
             }
         }
 
-        startTimeTextView.text = getTimeStringFromTimeInMillis(viewModel.startTimeInMillis)
-        stopTimeTextView.text = getTimeStringFromTimeInMillis(viewModel.stopTimeInMillis)
+        start_time.text = getTimeStringFromTimeInMillis(viewModel.startTimeInMillis)
+        stop_time.text = getTimeStringFromTimeInMillis(viewModel.stopTimeInMillis)
     }
 
     override fun onDateSelected(milliSeconds: Long, tag: String?) {
@@ -309,30 +278,10 @@ class TimerRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Reco
 
     override fun onDaysSelected(selectedDays: Int) {
         viewModel.recording.daysOfWeek = selectedDays
-        daysOfWeekTextView.text = getSelectedDaysOfWeekText(activity, selectedDays)
+        days_of_week.text = getSelectedDaysOfWeekText(activity, selectedDays)
     }
 
     override fun onBackPressed() {
         cancel()
-    }
-
-    @OnTextChanged(R.id.title)
-    internal fun onTitleTextChanged(text: CharSequence, start: Int, count: Int, after: Int) {
-        viewModel.recording.title = text.toString()
-    }
-
-    @OnTextChanged(R.id.name)
-    internal fun onNameTextChanged(text: CharSequence, start: Int, count: Int, after: Int) {
-        viewModel.recording.name = text.toString()
-    }
-
-    @OnTextChanged(R.id.directory)
-    internal fun onDirectoryTextChanged(text: CharSequence, start: Int, count: Int, after: Int) {
-        viewModel.recording.directory = text.toString()
-    }
-
-    @OnCheckedChanged(R.id.is_enabled)
-    internal fun onEnabledCheckboxChanged(buttonView: CompoundButton, isChecked: Boolean) {
-        viewModel.recording.isEnabled = isChecked
     }
 }
