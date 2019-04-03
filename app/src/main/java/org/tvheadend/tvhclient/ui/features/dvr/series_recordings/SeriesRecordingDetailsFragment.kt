@@ -58,6 +58,7 @@ class SeriesRecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback 
                 recording = rec
                 itemBinding.recording = recording
                 itemBinding.htspVersion = htspVersion
+                itemBinding.isDualPane = isDualPane
                 // The toolbar is hidden as a default to prevent pressing any icons if no recording
                 // has been loaded yet. The toolbar is shown here because a recording was loaded
                 nestedToolbar.visibility = View.VISIBLE
