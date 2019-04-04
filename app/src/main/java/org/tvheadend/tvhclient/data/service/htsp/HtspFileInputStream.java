@@ -2,6 +2,8 @@ package org.tvheadend.tvhclient.data.service.htsp;
 
 import androidx.annotation.NonNull;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -50,7 +52,7 @@ public class HtspFileInputStream extends InputStream {
         long mtime;
 
         @Override
-        public void handleResponse(HtspMessage response) {
+        public void handleResponse(@NotNull HtspMessage response) {
             id = response.getInteger("id", 0);
             size = response.getLong("size", 0);
             mtime = response.getLong("mtime", 0);
@@ -62,7 +64,7 @@ public class HtspFileInputStream extends InputStream {
         byte[] data;
 
         @Override
-        public void handleResponse(HtspMessage response) {
+        public void handleResponse(@NotNull HtspMessage response) {
             data = response.getByteArray("data");
             notifyAll();
         }
@@ -71,7 +73,7 @@ public class HtspFileInputStream extends InputStream {
     class FileCloseResponse implements HtspResponseListener {
 
         @Override
-        public void handleResponse(HtspMessage response) {
+        public void handleResponse(@NotNull HtspMessage response) {
             notifyAll();
         }
     }
