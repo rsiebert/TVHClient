@@ -2,6 +2,8 @@ package org.tvheadend.tvhclient.data.service.htsp;
 
 import android.util.SparseArray;
 
+import androidx.annotation.NonNull;
+
 import org.tvheadend.tvhclient.BuildConfig;
 
 import java.io.IOException;
@@ -28,7 +30,6 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import javax.annotation.Nullable;
 
-import androidx.annotation.NonNull;
 import timber.log.Timber;
 
 // TODO provide an interface to access the connection from outside this package
@@ -141,15 +142,15 @@ public class HtspConnection extends Thread {
             start();
 
         } catch (ClosedByInterruptException e) {
-            Timber.e("Failed to open HTSP connection, interrupted");
+            Timber.e(e, "Failed to open HTSP connection, interrupted");
             connectionListener.onConnectionStateChange(ConnectionState.FAILED_INTERRUPTED);
 
         } catch (UnresolvedAddressException e) {
-            Timber.e("Failed to resolve HTSP server address:", e);
+            Timber.e(e, "Failed to resolve HTSP server address");
             connectionListener.onConnectionStateChange(ConnectionState.FAILED_UNRESOLVED_ADDRESS);
 
         } catch (IOException e) {
-            Timber.e("Caught IOException while opening SocketChannel:", e);
+            Timber.e(e, "Caught IOException while opening SocketChannel");
             connectionListener.onConnectionStateChange(ConnectionState.FAILED_EXCEPTION_OPENING_SOCKET);
 
         } finally {
@@ -166,7 +167,7 @@ public class HtspConnection extends Thread {
                         closeConnection();
                     }
                 } catch (InterruptedException e) {
-                    Timber.d("Waiting for pending connection was interrupted. ", e);
+                    Timber.d(e, "Waiting for pending connection was interrupted.");
                 }
             }
         }
@@ -236,7 +237,7 @@ public class HtspConnection extends Thread {
                 authMessage.put("digest", md.digest());
                 sendMessage(authMessage, authHandler);
             } catch (NoSuchAlgorithmException e) {
-                Timber.d("Could not sent authentication message. ", e);
+                Timber.d(e, "Could not sent authentication message.");
             }
         });
 
@@ -248,7 +249,7 @@ public class HtspConnection extends Thread {
                     connectionListener.onAuthenticationStateChange(AuthenticationState.FAILED);
                 }
             } catch (InterruptedException e) {
-                Timber.d("Waiting for authentication message was interrupted. ", e);
+                Timber.d(e, "Waiting for authentication message was interrupted.");
             }
         }
     }
@@ -271,7 +272,7 @@ public class HtspConnection extends Thread {
             messageQueue.add(message);
             selector.wakeup();
         } catch (Exception e) {
-            Timber.d("Could not send message. ", e);
+            Timber.d(e, "Could not send message.");
         } finally {
             lock.unlock();
         }
@@ -289,15 +290,15 @@ public class HtspConnection extends Thread {
             socketChannel.close();
 
         } catch (ClosedChannelException e) {
-            Timber.d("Failed to register selector with socket channel, closed channel exception", e);
+            Timber.d(e, "Failed to register selector with socket channel, closed channel exception");
         } catch (NullPointerException e) {
-            Timber.d("Failed to register selector with socket channel or closing socket channel, socket channel is null", e);
+            Timber.d(e, "Failed to register selector with socket channel or closing socket channel, socket channel is null");
         } catch (IllegalSelectorException e) {
-            Timber.d("Failed to register selector with socket channel, illegal selector", e);
+            Timber.d(e, "Failed to register selector with socket channel, illegal selector");
         } catch (CancelledKeyException e) {
-            Timber.d("Failed to register selector with socket channel, cancelled key", e);
+            Timber.d(e, "Failed to register selector with socket channel, cancelled key");
         } catch (IOException e) {
-            Timber.d("Failed to close socket channel", e);
+            Timber.d(e, "Failed to close socket channel");
         } finally {
             lock.unlock();
         }
@@ -313,11 +314,11 @@ public class HtspConnection extends Thread {
             try {
                 selector.select(5000);
             } catch (IOException e) {
-                Timber.e("Failed to select from socket channel, I/O error occurred", e);
+                Timber.e(e, "Failed to select from socket channel, I/O error occurred");
                 connectionListener.onConnectionStateChange(ConnectionState.FAILED);
                 isRunning = false;
-            } catch (ClosedSelectorException cse) {
-                Timber.e("Failed to select from socket channel, selector is already closed", cse);
+            } catch (ClosedSelectorException e) {
+                Timber.e(e, "Failed to select from socket channel, selector is already closed");
                 connectionListener.onConnectionStateChange(ConnectionState.FAILED);
                 isRunning = false;
             }
@@ -336,26 +337,26 @@ public class HtspConnection extends Thread {
                 }
                 socketChannel.register(selector, ops);
 
-            } catch (NullPointerException npe) {
-                Timber.d("Failed to register selector with socket channel, socket channel is null", npe);
+            } catch (NullPointerException e) {
+                Timber.d(e, "Failed to register selector with socket channel, socket channel is null");
                 isRunning = false;
-            } catch (IllegalSelectorException ise) {
-                Timber.d("Failed to register selector with socket channel, illegal selector", ise);
+            } catch (IllegalSelectorException e) {
+                Timber.d(e, "Failed to register selector with socket channel, illegal selector");
                 isRunning = false;
             } catch (ClosedChannelException e) {
-                Timber.e("Failed to register selector with socket channel, channel is already closed", e);
+                Timber.e(e, "Failed to register selector with socket channel, channel is already closed");
                 isRunning = false;
             } catch (ClosedSelectorException e) {
-                Timber.e("Failed to register selector with socket channel, selector is already closed", e);
+                Timber.e(e, "Failed to register selector with socket channel, selector is already closed");
                 isRunning = false;
             } catch (CancelledKeyException e) {
-                Timber.e("Invalid selection key was used while processing tcp selection key");
+                Timber.e(e, "Invalid selection key was used while processing tcp selection key");
                 isRunning = false;
             } catch (NotYetConnectedException e) {
-                Timber.e("Not yet connected while while processing tcp selection key");
+                Timber.e(e, "Not yet connected while while processing tcp selection key");
                 isRunning = false;
             } catch (IOException e) {
-                Timber.e("Exception while processing tcp selection key");
+                Timber.e(e, "Exception while processing tcp selection key");
                 isRunning = false;
             } finally {
                 lock.unlock();

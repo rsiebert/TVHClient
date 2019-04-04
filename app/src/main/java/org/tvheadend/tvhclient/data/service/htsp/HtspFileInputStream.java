@@ -1,11 +1,11 @@
 package org.tvheadend.tvhclient.data.service.htsp;
 
-import android.util.Log;
+import androidx.annotation.NonNull;
 
 import java.io.IOException;
 import java.io.InputStream;
 
-import androidx.annotation.NonNull;
+import timber.log.Timber;
 
 public class HtspFileInputStream extends InputStream {
     private final HtspConnection connection;
@@ -90,7 +90,7 @@ public class HtspFileInputStream extends InputStream {
                 fileId = response.id;
                 fileSize = response.size;
             } catch (Throwable e) {
-                Log.e("TVHGuide", "Timeout waiting for fileOpen", e);
+                Timber.e(e, "Timeout waiting for fileOpen");
             }
         }
 
@@ -115,7 +115,7 @@ public class HtspFileInputStream extends InputStream {
                 fileId = -1;
                 fileSize = -1;
             } catch (Throwable e) {
-                Log.e("TVHGuide", "Timeout waiting for fileClose", e);
+                Timber.e(e, "Timeout waiting for fileClose");
             }
         }
     }
@@ -166,7 +166,7 @@ public class HtspFileInputStream extends InputStream {
                 buf = response.data;
                 bufPos = 0;
             } catch (Throwable e) {
-                Log.e("TVHGuide", "Timeout waiting for fileRead", e);
+                Timber.e(e, "Timeout waiting for fileRead");
             }
         }
     }

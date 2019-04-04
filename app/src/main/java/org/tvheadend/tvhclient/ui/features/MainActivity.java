@@ -228,7 +228,7 @@ public class MainActivity extends BaseActivity implements NavigationDrawerCallba
         try {
             CastButtonFactory.setUpMediaRouteButton(getApplicationContext(), menu, R.id.media_route_menu_item);
         } catch (Exception e) {
-            Timber.e("Could not setup media route button", e);
+            Timber.e(e, "Could not setup media route button");
         }
 
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
