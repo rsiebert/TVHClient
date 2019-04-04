@@ -125,9 +125,7 @@ class SettingsFragment : BasePreferenceFragment(), Preference.OnPreferenceClickL
     private fun handlePreferenceProfilesSelected() {
         if (view != null) {
             if (htspVersion < 16) {
-                context?.let {
-                    sendSnackbarMessage(it, R.string.feature_not_supported_by_server)
-                }
+                context?.sendSnackbarMessage(R.string.feature_not_supported_by_server)
             } else {
                 showSelectedSettingsFragment("profiles")
             }
@@ -136,9 +134,7 @@ class SettingsFragment : BasePreferenceFragment(), Preference.OnPreferenceClickL
 
     private fun handlePreferencePlaybackSelected() {
         if (!isUnlocked) {
-            context?.let {
-                sendSnackbarMessage(it, R.string.feature_not_available_in_free_version)
-            }
+            context?.sendSnackbarMessage(R.string.feature_not_available_in_free_version)
         } else {
             showSelectedSettingsFragment("playback")
         }
@@ -175,9 +171,7 @@ class SettingsFragment : BasePreferenceFragment(), Preference.OnPreferenceClickL
 
     private fun handlePreferenceDownloadDirectorySelected() {
         if (!isUnlocked) {
-            context?.let {
-                sendSnackbarMessage(it, R.string.feature_not_available_in_free_version)
-            }
+            context?.sendSnackbarMessage(R.string.feature_not_available_in_free_version)
         } else {
             activity?.let {
                 if (isReadPermissionGranted(it)) {

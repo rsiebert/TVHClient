@@ -201,16 +201,16 @@ class RecordingAddEditFragment : BaseFragment(), BackPressedInterface, Recording
      */
     private fun save() {
         if (TextUtils.isEmpty(viewModel.recording.title) && serverStatus.htspVersion >= 21) {
-            sendSnackbarMessage(R.string.error_empty_title)
+            context?.sendSnackbarMessage(R.string.error_empty_title)
             return
         }
         if (viewModel.recording.channelId == 0 && serverStatus.htspVersion < 21) {
-            sendSnackbarMessage(activity, R.string.error_no_channel_selected)
+            context?.sendSnackbarMessage(R.string.error_no_channel_selected)
             return
         }
 
         if (viewModel.recording.start >= viewModel.recording.stop) {
-            sendSnackbarMessage(activity, R.string.error_start_time_past_stop_time)
+            context?.sendSnackbarMessage(R.string.error_start_time_past_stop_time)
             return
         }
 

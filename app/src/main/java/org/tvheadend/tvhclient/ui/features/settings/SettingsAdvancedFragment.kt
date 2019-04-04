@@ -78,9 +78,7 @@ class SettingsAdvancedFragment : BasePreferenceFragment(), Preference.OnPreferen
 
     private fun handlePreferenceNotificationsSelected() {
         if (!isUnlocked) {
-            context?.let {
-                sendSnackbarMessage(it, R.string.feature_not_available_in_free_version)
-            }
+            context?.sendSnackbarMessage(R.string.feature_not_available_in_free_version)
             notificationsEnabledPreference?.isChecked = false
         }
     }
@@ -230,7 +228,7 @@ class SettingsAdvancedFragment : BasePreferenceFragment(), Preference.OnPreferen
                     .onPositive { _, _ ->
                         val suggestions = SearchRecentSuggestions(activity, SuggestionProvider.AUTHORITY, SuggestionProvider.MODE)
                         suggestions.clearHistory()
-                        sendSnackbarMessage(it, R.string.clear_search_history_done)
+                        context?.sendSnackbarMessage(R.string.clear_search_history_done)
                     }.show()
         }
     }
@@ -259,7 +257,7 @@ class SettingsAdvancedFragment : BasePreferenceFragment(), Preference.OnPreferen
                             }
                             Picasso.get().invalidate(file)
                         }
-                        sendSnackbarMessage(it, R.string.clear_icon_cache_done)
+                        context?.sendSnackbarMessage(R.string.clear_icon_cache_done)
 
                         Timber.d("Starting background worker to reload channel icons")
                         val loadChannelIcons = OneTimeWorkRequest.Builder(LoadChannelIconWorker::class.java).build()

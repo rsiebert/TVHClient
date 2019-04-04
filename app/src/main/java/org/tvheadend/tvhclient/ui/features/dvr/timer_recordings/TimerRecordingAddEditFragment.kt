@@ -191,7 +191,7 @@ class TimerRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Reco
 
     private fun save() {
         if (TextUtils.isEmpty(viewModel.recording.title)) {
-            sendSnackbarMessage(activity, R.string.error_empty_title)
+            context?.sendSnackbarMessage(R.string.error_empty_title)
             return
         }
         if (!TextUtils.isEmpty(viewModel.recording.id)) {

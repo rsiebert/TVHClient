@@ -127,7 +127,7 @@ class WakeOnLanTask(context: Context, private val connection: Connection) : Asyn
                     message = ctx.getString(R.string.wol_error, connection.hostname, exception?.localizedMessage)
                 }
             }
-            sendSnackbarMessage(ctx, message)
+            ctx.sendSnackbarMessage(message)
         }
     }
 

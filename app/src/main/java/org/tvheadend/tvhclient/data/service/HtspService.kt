@@ -1267,7 +1267,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
                 onGetEvents(response, intent)
                 if (showMessage) {
                     Timber.d("Showing message")
-                    sendSnackbarMessage(appContext, getString(R.string.loading_more_programs_finished))
+                    applicationContext?.sendSnackbarMessage(getString(R.string.loading_more_programs_finished))
                 }
             }
         })
@@ -1349,9 +1349,9 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         htspConnection?.sendMessage(request, object : HtspResponseListener {
             override fun handleResponse(response: HtspMessage) {
                 if (response.getInteger("success", 0) == 1) {
-                    sendSnackbarMessage(applicationContext, getString(R.string.success_adding_recording))
+                    applicationContext?.sendSnackbarMessage(getString(R.string.success_adding_recording))
                 } else {
-                    sendSnackbarMessage(applicationContext, getString(R.string.error_adding_recording, response.getString("error", "")))
+                    applicationContext?.sendSnackbarMessage(getString(R.string.error_adding_recording, response.getString("error", "")))
                 }
             }
         })
@@ -1368,9 +1368,9 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         htspConnection?.sendMessage(request, object : HtspResponseListener {
             override fun handleResponse(response: HtspMessage) {
                 if (response.getInteger("success", 0) == 1) {
-                    sendSnackbarMessage(applicationContext, getString(R.string.success_updating_recording))
+                    applicationContext?.sendSnackbarMessage(getString(R.string.success_updating_recording))
                 } else {
-                    sendSnackbarMessage(applicationContext, getString(R.string.error_updating_recording, response.getString("error", "")))
+                    applicationContext?.sendSnackbarMessage(getString(R.string.error_updating_recording, response.getString("error", "")))
                 }
             }
         })
@@ -1385,9 +1385,9 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
             override fun handleResponse(response: HtspMessage) {
                 Timber.d("Response is not null")
                 if (response.getInteger("success", 0) == 1) {
-                    sendSnackbarMessage(applicationContext, getString(R.string.success_removing_recording))
+                    applicationContext?.sendSnackbarMessage(getString(R.string.success_removing_recording))
                 } else {
-                    sendSnackbarMessage(applicationContext, getString(R.string.error_removing_recording, response.getString("error", "")))
+                    applicationContext?.sendSnackbarMessage(getString(R.string.error_removing_recording, response.getString("error", "")))
                 }
             }
         })
@@ -1403,9 +1403,9 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         htspConnection?.sendMessage(request, object : HtspResponseListener {
             override fun handleResponse(response: HtspMessage) {
                 if (response.getInteger("success", 0) == 1) {
-                    sendSnackbarMessage(applicationContext, getString(R.string.success_adding_recording))
+                    applicationContext?.sendSnackbarMessage(getString(R.string.success_adding_recording))
                 } else {
-                    sendSnackbarMessage(applicationContext, getString(R.string.error_adding_recording, response.getString("error", "")))
+                    applicationContext?.sendSnackbarMessage(getString(R.string.error_adding_recording, response.getString("error", "")))
                 }
             }
         })
@@ -1431,9 +1431,9 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
                     addAutorecEntry(intent)
                 } else {
                     if (success) {
-                        sendSnackbarMessage(applicationContext, getString(R.string.success_updating_recording))
+                        applicationContext?.sendSnackbarMessage(getString(R.string.success_updating_recording))
                     } else {
-                        sendSnackbarMessage(applicationContext, getString(R.string.error_updating_recording, response.getString("error", "")))
+                        applicationContext?.sendSnackbarMessage(getString(R.string.error_updating_recording, response.getString("error", "")))
                     }
                 }
             }
@@ -1448,9 +1448,9 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         htspConnection?.sendMessage(request, object : HtspResponseListener {
             override fun handleResponse(response: HtspMessage) {
                 if (response.getInteger("success", 0) == 1) {
-                    sendSnackbarMessage(applicationContext, getString(R.string.success_removing_recording))
+                    applicationContext?.sendSnackbarMessage(getString(R.string.success_removing_recording))
                 } else {
-                    sendSnackbarMessage(applicationContext, getString(R.string.error_removing_recording, response.getString("error", "")))
+                    applicationContext?.sendSnackbarMessage(getString(R.string.error_removing_recording, response.getString("error", "")))
                 }
             }
         })
@@ -1463,9 +1463,9 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         htspConnection?.sendMessage(request, object : HtspResponseListener {
             override fun handleResponse(response: HtspMessage) {
                 if (response.getInteger("success", 0) == 1) {
-                    sendSnackbarMessage(applicationContext, getString(R.string.success_adding_recording))
+                    applicationContext?.sendSnackbarMessage(getString(R.string.success_adding_recording))
                 } else {
-                    sendSnackbarMessage(applicationContext, getString(R.string.error_adding_recording, response.getString("error", "")))
+                    applicationContext?.sendSnackbarMessage(getString(R.string.error_adding_recording, response.getString("error", "")))
                 }
             }
         })
@@ -1491,9 +1491,9 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
                     addTimerrecEntry(intent)
                 } else {
                     if (success) {
-                        sendSnackbarMessage(applicationContext, getString(R.string.success_updating_recording))
+                        applicationContext?.sendSnackbarMessage(getString(R.string.success_updating_recording))
                     } else {
-                        sendSnackbarMessage(applicationContext, getString(R.string.error_updating_recording, response.getString("error", "")))
+                        applicationContext?.sendSnackbarMessage(getString(R.string.error_updating_recording, response.getString("error", "")))
                     }
                 }
             }
@@ -1508,9 +1508,9 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         htspConnection?.sendMessage(request, object : HtspResponseListener {
             override fun handleResponse(response: HtspMessage) {
                 if (response.getInteger("success", 0) == 1) {
-                    sendSnackbarMessage(applicationContext, getString(R.string.success_removing_recording))
+                    applicationContext?.sendSnackbarMessage(getString(R.string.success_removing_recording))
                 } else {
-                    sendSnackbarMessage(applicationContext, getString(R.string.error_removing_recording, response.getString("error", "")))
+                    applicationContext?.sendSnackbarMessage(getString(R.string.error_removing_recording, response.getString("error", "")))
                 }
             }
         })

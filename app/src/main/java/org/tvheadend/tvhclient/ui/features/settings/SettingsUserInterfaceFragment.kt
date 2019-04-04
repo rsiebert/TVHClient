@@ -72,32 +72,24 @@ class SettingsUserInterfaceFragment : BasePreferenceFragment(), Preference.OnPre
 
     private fun handlePreferenceMultipleChannelTagsSelected() {
         if (!isUnlocked) {
-            context?.let {
-                sendSnackbarMessage(it, R.string.feature_not_available_in_free_version)
-            }
+            context?.sendSnackbarMessage(R.string.feature_not_available_in_free_version)
             multipleChannelTagsPreference?.isChecked = false
         }
     }
 
     private fun handlePreferenceShowArtworkSelected() {
         if (!isUnlocked) {
-            context?.let {
-                sendSnackbarMessage(it, R.string.feature_not_available_in_free_version)
-            }
+            context?.sendSnackbarMessage(R.string.feature_not_available_in_free_version)
             programArtworkEnabledPreference?.isChecked = false
         }
     }
 
     private fun handlePreferenceCastingSelected() {
         if (htspVersion < 16) {
-            context?.let {
-                sendSnackbarMessage(it, R.string.feature_not_supported_by_server)
-            }
+            context?.sendSnackbarMessage(R.string.feature_not_supported_by_server)
             castMiniControllerPreference?.isChecked = false
         } else if (!isUnlocked) {
-            context?.let {
-                sendSnackbarMessage(it, R.string.feature_not_available_in_free_version)
-            }
+            context?.sendSnackbarMessage(R.string.feature_not_available_in_free_version)
             castMiniControllerPreference?.isChecked = false
         }
     }
@@ -134,7 +126,6 @@ class SettingsUserInterfaceFragment : BasePreferenceFragment(), Preference.OnPre
                 } catch (ex: NumberFormatException) {
                     prefs.edit().putString(key, resources.getString(R.string.pref_default_days_of_epg_data)).apply()
                 }
-
         }
     }
 }

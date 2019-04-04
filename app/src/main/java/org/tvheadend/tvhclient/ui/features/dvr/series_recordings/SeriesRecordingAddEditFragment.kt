@@ -249,7 +249,7 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
      */
     private fun save() {
         if (TextUtils.isEmpty(viewModel.recording.title)) {
-            sendSnackbarMessage(activity, R.string.error_empty_title)
+            context?.sendSnackbarMessage(R.string.error_empty_title)
             return
         }
 

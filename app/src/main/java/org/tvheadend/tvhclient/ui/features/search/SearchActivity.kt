@@ -88,7 +88,7 @@ class SearchActivity : BaseActivity(), StartSearchInterface, NetworkStatusListen
     override fun onNetworkStatusChanged(isAvailable: Boolean) {
         onNetworkAvailabilityChanged(isAvailable)
         if (!isNetworkAvailable) {
-            sendSnackbarMessage(this, "No network available")
+            sendSnackbarMessage("No network available")
         }
     }
 
