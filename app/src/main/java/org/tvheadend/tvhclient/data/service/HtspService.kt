@@ -685,10 +685,6 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
     private fun onDvrEntryUpdate(msg: HtspMessage) {
         // Get the existing recording
         val recording = appRepository.recordingData.getItemById(msg.getInteger("id"))
-        if (recording == null) {
-            Timber.d("Could not find a recording with id ${msg.getInteger("id")} in the database")
-            return
-        }
         val updatedRecording = convertMessageToRecordingModel(recording, msg)
         appRepository.recordingData.updateItem(updatedRecording)
 
@@ -710,10 +706,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
     private fun onDvrEntryDelete(msg: HtspMessage) {
         if (msg.containsKey("id")) {
             val recording = appRepository.recordingData.getItemById(msg.getInteger("id"))
-            if (recording != null) {
-                appRepository.recordingData.removeItem(recording)
-
-            }
+            appRepository.recordingData.removeItem(recording)
         }
     }
 
