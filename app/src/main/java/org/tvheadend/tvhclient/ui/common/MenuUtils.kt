@@ -151,7 +151,7 @@ class MenuUtils(activity: Activity) {
             Timber.d("Weak reference to activity is null")
             return false
         }
-        Timber.d("Stopping recording " + recording.title)
+        Timber.d("Stopping recording ${recording.title}")
         // Show a confirmation dialog before stopping the recording
         MaterialDialog.Builder(activity)
                 .title(R.string.record_stop)
@@ -175,7 +175,7 @@ class MenuUtils(activity: Activity) {
             Timber.d("Weak reference to activity is null")
             return false
         }
-        Timber.d("Removing recording " + recording.title)
+        Timber.d("Removing recording ${recording.title}")
         // Show a confirmation dialog before removing the recording
         MaterialDialog.Builder(activity)
                 .title(R.string.record_remove)
@@ -199,7 +199,7 @@ class MenuUtils(activity: Activity) {
             Timber.d("Weak reference to activity is null")
             return false
         }
-        Timber.d("Cancelling recording " + recording.title)
+        Timber.d("Cancelling recording ${recording.title}")
         // Show a confirmation dialog before cancelling the recording
         MaterialDialog.Builder(activity)
                 .title(R.string.record_remove)
@@ -223,7 +223,7 @@ class MenuUtils(activity: Activity) {
             Timber.d("Weak reference to activity is null")
             return false
         }
-        Timber.d("Removing series recording " + recording.title)
+        Timber.d("Removing series recording ${recording.title}")
         // Show a confirmation dialog before removing the recording
         MaterialDialog.Builder(activity)
                 .title(R.string.record_remove)
