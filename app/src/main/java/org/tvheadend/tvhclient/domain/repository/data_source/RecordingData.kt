@@ -80,16 +80,17 @@ class RecordingData(private val db: AppRoomDatabase) : DataSourceInterface<Recor
         }
     }
 
-    override fun getItemById(id: Any): Recording? {
-        try {
-            return RecordingByIdTask(db, id as Int, LOAD_BY_ID).execute().get()
-        } catch (e: InterruptedException) {
-            Timber.d(e, "Loading recording by id task got interrupted")
-        } catch (e: ExecutionException) {
-            Timber.d(e, "Loading recording by id task aborted")
+    override fun getItemById(id: Any): Recording {
+        if ((id as Int) > 0) {
+            try {
+                return RecordingByIdTask(db, id, LOAD_BY_ID).execute().get()
+            } catch (e: InterruptedException) {
+                Timber.d(e, "Loading recording by id task got interrupted")
+            } catch (e: ExecutionException) {
+                Timber.d(e, "Loading recording by id task aborted")
+            }
         }
-
-        return null
+        return Recording()
     }
 
     override fun getItems(): List<Recording> {

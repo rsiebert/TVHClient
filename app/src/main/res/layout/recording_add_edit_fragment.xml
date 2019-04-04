@@ -128,7 +128,7 @@
             app:layout_constraintTop_toBottomOf="@+id/description_label" />
 
         <TextView
-            android:id="@+id/channel_label"
+            android:id="@+id/channel_name_label"
             style="?attr/TitleFont"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -141,7 +141,7 @@
             app:layout_constraintTop_toBottomOf="@+id/description" />
 
         <TextView
-            android:id="@+id/channel"
+            android:id="@+id/channel_name"
             style="?attr/ContentFont"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -153,7 +153,7 @@
             android:drawablePadding="4dp"
             android:text="@string/not_set"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/channel_label" />
+            app:layout_constraintTop_toBottomOf="@+id/channel_name_label" />
 
         <TextView
             android:id="@+id/start_time_label"
@@ -166,7 +166,7 @@
             android:text="@string/start_time"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/channel" />
+            app:layout_constraintTop_toBottomOf="@+id/channel_name" />
 
         <TextView
             android:id="@+id/start_time"

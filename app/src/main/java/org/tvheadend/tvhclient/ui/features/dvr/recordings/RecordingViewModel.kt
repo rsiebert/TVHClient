@@ -23,6 +23,9 @@ class RecordingViewModel(application: Application) : AndroidViewModel(applicatio
     val numberOfFailedRecordings: LiveData<Int>
     val numberOfRemovedRecordings: LiveData<Int>
 
+    var recording = Recording()
+    var recordingProfileNameId: Int = 0
+
     init {
         MainApplication.getComponent().inject(this)
 
@@ -41,11 +44,7 @@ class RecordingViewModel(application: Application) : AndroidViewModel(applicatio
         return appRepository.recordingData.getLiveDataItemById(id)
     }
 
-    fun getRecordingByIdSync(dvrId: Int): Recording? {
-        return if (dvrId > 0) {
-            appRepository.recordingData.getItemById(dvrId)
-        } else {
-            Recording()
-        }
+    fun loadRecordingByIdSync(id: Int) {
+        recording = appRepository.recordingData.getItemById(id)
     }
 }
