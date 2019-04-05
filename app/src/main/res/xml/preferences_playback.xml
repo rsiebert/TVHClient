@@ -32,6 +32,7 @@
             android:summary="@string/pref_internal_player_audio_tunneling_enabled_sum"
             android:title="@string/pref_internal_player_audio_tunneling_enabled" />
         <CheckBoxPreference
+            android:enabled="false"
             android:defaultValue="@bool/pref_default_timeshift_enabled"
             android:key="timeshift_enabled"
             android:title="@string/pref_internal_player_timeshift_enabled" />
