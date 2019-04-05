@@ -4,6 +4,7 @@ import android.app.PictureInPictureParams
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.graphics.Point
 import android.os.Build
@@ -71,6 +72,7 @@ class PlaybackActivity : AppCompatActivity(), PlayerControlView.VisibilityListen
         player_forward?.setOnClickListener { onForwardButtonSelected() }
         player_menu?.setOnClickListener { onMenuButtonSelected() }
         player_menu_aspect_ratio?.setOnClickListener { onChangeAspectRatioSelected() }
+        player_menu_fullscreen?.setOnClickListener { onMenuFullscreenSelected() }
 
         Timber.d("Getting view model")
         viewModel = ViewModelProviders.of(this).get(PlayerViewModel::class.java)
@@ -202,6 +204,17 @@ class PlaybackActivity : AppCompatActivity(), PlayerControlView.VisibilityListen
         if (ratio != null) {
             updateVideoAspectRatio(ratio)
         }
+        when (newConfig.orientation) {
+            Configuration.ORIENTATION_PORTRAIT -> {
+                Timber.d("Player is in portrait mode")
+                player_menu_fullscreen?.setImageResource(R.drawable.ic_player_fullscreen)
+            }
+            Configuration.ORIENTATION_LANDSCAPE -> {
+                Timber.d("Player is in landscape mode")
+                player_menu_fullscreen?.setImageResource(R.drawable.ic_player_fullscreen_exit)
+            }
+        }
+
     }
 
     private fun updateVideoAspectRatio(videoAspectRatio: Rational) {
@@ -312,6 +325,17 @@ class PlaybackActivity : AppCompatActivity(), PlayerControlView.VisibilityListen
                     true
                 }
                 .show()
+    }
+
+    private fun onMenuFullscreenSelected() {
+        when (resources.configuration.orientation) {
+            Configuration.ORIENTATION_PORTRAIT -> {
+                requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+            }
+            Configuration.ORIENTATION_LANDSCAPE -> {
+                requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+            }
+        }
     }
 
     fun onRewindButtonSelected() {

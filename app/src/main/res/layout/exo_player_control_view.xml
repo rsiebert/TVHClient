@@ -105,6 +105,31 @@
         app:layout_constraintStart_toEndOf="@+id/player_play"
         app:layout_constraintTop_toTopOf="@+id/player_rewind" />
 
+
+    <ImageButton
+        android:id="@+id/player_menu_aspect_ratio"
+        style="?android:attr/actionOverflowButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@null"
+        android:src="@drawable/ic_player_aspect_ratio"
+        app:layout_constraintEnd_toStartOf="@+id/player_menu_fullscreen"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/player_forward"
+        app:layout_constraintTop_toTopOf="@+id/player_rewind" />
+
+    <ImageButton
+        android:id="@+id/player_menu_fullscreen"
+        style="?android:attr/actionOverflowButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@null"
+        android:src="@drawable/ic_player_fullscreen"
+        app:layout_constraintEnd_toStartOf="@+id/player_menu"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/player_menu_aspect_ratio"
+        app:layout_constraintTop_toTopOf="@+id/player_rewind" />
+
     <ImageButton
         android:id="@+id/player_menu"
         style="?android:attr/actionOverflowButtonStyle"
@@ -114,19 +139,7 @@
         android:src="@drawable/ic_player_menu"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/player_menu_aspect_ratio"
-        app:layout_constraintTop_toTopOf="@+id/player_rewind" />
-
-    <ImageButton
-        android:id="@+id/player_menu_aspect_ratio"
-        style="?android:attr/actionOverflowButtonStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="@null"
-        android:src="@drawable/ic_player_aspect_ratio"
-        app:layout_constraintEnd_toStartOf="@+id/player_menu"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/player_forward"
+        app:layout_constraintStart_toEndOf="@+id/player_menu_fullscreen"
         app:layout_constraintTop_toTopOf="@+id/player_rewind" />
 
     <TextView
