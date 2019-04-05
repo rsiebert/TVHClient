@@ -3,9 +3,6 @@ package org.tvheadend.tvhclient.ui.features.dvr.series_recordings
 import android.content.Intent
 import android.os.Bundle
 import android.view.*
-import android.widget.ScrollView
-import android.widget.TextView
-import androidx.appcompat.widget.Toolbar
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -102,9 +99,8 @@ class SeriesRecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback 
                 activity.startActivity(intent)
                 true
             }
-
-            R.id.menu_record_remove -> menuUtils.handleMenuRemoveSeriesRecordingSelection(recording, this)
-
+            R.id.menu_record_remove ->
+                menuUtils.handleMenuRemoveSeriesRecordingSelection(recording, this)
             else -> super.onOptionsItemSelected(item)
         }
     }

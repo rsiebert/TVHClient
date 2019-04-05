@@ -138,33 +138,31 @@ class ProgramDetailsFragment : BaseFragment() {
             return true
         }
         when (item.itemId) {
-            R.id.menu_record_stop -> return menuUtils.handleMenuStopRecordingSelection(recording, null)
-
-            R.id.menu_record_cancel -> return menuUtils.handleMenuCancelRecordingSelection(recording, null)
-
-            R.id.menu_record_remove -> return menuUtils.handleMenuRemoveRecordingSelection(recording, null)
-
-            R.id.menu_record_once -> return menuUtils.handleMenuRecordSelection(program.eventId)
-
+            R.id.menu_record_stop ->
+                return menuUtils.handleMenuStopRecordingSelection(recording, null)
+            R.id.menu_record_cancel ->
+                return menuUtils.handleMenuCancelRecordingSelection(recording, null)
+            R.id.menu_record_remove ->
+                return menuUtils.handleMenuRemoveRecordingSelection(recording, null)
+            R.id.menu_record_once ->
+                return menuUtils.handleMenuRecordSelection(program.eventId)
             R.id.menu_record_once_and_edit -> {
                 programIdToBeEditedWhenBeingRecorded = program.eventId
                 return menuUtils.handleMenuRecordSelection(program.eventId)
             }
-
-            R.id.menu_record_once_custom_profile -> return menuUtils.handleMenuCustomRecordSelection(program.eventId, program.channelId)
-
-            R.id.menu_record_series -> return menuUtils.handleMenuSeriesRecordSelection(program.title)
-
-            R.id.menu_play -> return menuUtils.handleMenuPlayChannel(program.channelId)
-
-            R.id.menu_cast -> return menuUtils.handleMenuCast("channelId", program.channelId)
-
+            R.id.menu_record_once_custom_profile ->
+                return menuUtils.handleMenuCustomRecordSelection(program.eventId, program.channelId)
+            R.id.menu_record_series ->
+                return menuUtils.handleMenuSeriesRecordSelection(program.title)
+            R.id.menu_play ->
+                return menuUtils.handleMenuPlayChannel(program.channelId)
+            R.id.menu_cast ->
+                return menuUtils.handleMenuCast("channelId", program.channelId)
             R.id.menu_add_notification -> {
                 val profile = appRepository.serverProfileData.getItemById(serverStatus.recordingServerProfileId)
                 addNotification(activity, program, profile)
                 return true
             }
-
             else -> return super.onOptionsItemSelected(item)
         }
     }

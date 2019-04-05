@@ -90,15 +90,14 @@ class RecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback, Downl
             return true
         }
         when (item.itemId) {
-            R.id.menu_play -> return menuUtils.handleMenuPlayRecording(recording.id)
-
-            R.id.menu_cast -> return menuUtils.handleMenuCast("dvrId", recording.id)
-
+            R.id.menu_play ->
+                return menuUtils.handleMenuPlayRecording(recording.id)
+            R.id.menu_cast ->
+                return menuUtils.handleMenuCast("dvrId", recording.id)
             R.id.menu_download -> {
                 DownloadRecordingManager(activity, recording.id)
                 return true
             }
-
             R.id.menu_edit -> {
                 val editIntent = Intent(activity, RecordingAddEditActivity::class.java)
                 editIntent.putExtra("id", recording.id)
@@ -106,13 +105,12 @@ class RecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback, Downl
                 activity.startActivity(editIntent)
                 return true
             }
-
-            R.id.menu_record_stop -> return menuUtils.handleMenuStopRecordingSelection(recording, this)
-
-            R.id.menu_record_cancel -> return menuUtils.handleMenuCancelRecordingSelection(recording, this)
-
-            R.id.menu_record_remove -> return menuUtils.handleMenuRemoveRecordingSelection(recording, this)
-
+            R.id.menu_record_stop ->
+                return menuUtils.handleMenuStopRecordingSelection(recording, this)
+            R.id.menu_record_cancel ->
+                return menuUtils.handleMenuCancelRecordingSelection(recording, this)
+            R.id.menu_record_remove ->
+                return menuUtils.handleMenuRemoveRecordingSelection(recording, this)
             else -> return super.onOptionsItemSelected(item)
         }
     }

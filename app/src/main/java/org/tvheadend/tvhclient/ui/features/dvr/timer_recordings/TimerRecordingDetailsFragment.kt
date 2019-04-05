@@ -99,9 +99,8 @@ class TimerRecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback {
                 activity.startActivity(intent)
                 true
             }
-
-            R.id.menu_record_remove -> menuUtils.handleMenuRemoveTimerRecordingSelection(recording, this)
-
+            R.id.menu_record_remove ->
+                menuUtils.handleMenuRemoveTimerRecordingSelection(recording, this)
             else -> super.onOptionsItemSelected(item)
         }
     }
