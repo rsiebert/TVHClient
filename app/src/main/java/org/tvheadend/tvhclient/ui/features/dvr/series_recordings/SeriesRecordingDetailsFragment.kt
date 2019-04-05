@@ -9,6 +9,8 @@ import androidx.appcompat.widget.Toolbar
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import kotlinx.android.synthetic.main.details_fragment_header.*
+import kotlinx.android.synthetic.main.series_recording_details_fragment.*
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.databinding.SeriesRecordingDetailsFragmentBinding
 import org.tvheadend.tvhclient.domain.entity.SeriesRecording
@@ -24,22 +26,13 @@ import org.tvheadend.tvhclient.ui.features.dvr.RecordingRemovedCallback
 
 class SeriesRecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback {
 
-    private lateinit var nestedToolbar: Toolbar
-    private lateinit var scrollView: ScrollView
-    private lateinit var statusTextView: TextView
-
     private var recording: SeriesRecording? = null
     var shownId: String = ""
     private lateinit var itemBinding: SeriesRecordingDetailsFragmentBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         itemBinding = DataBindingUtil.inflate(inflater, R.layout.series_recording_details_fragment, container, false)
-        val view = itemBinding.root
-
-        nestedToolbar = view.findViewById(R.id.nested_toolbar)
-        scrollView = view.findViewById(R.id.scrollview)
-        statusTextView = view.findViewById(R.id.status)
-        return view
+        return itemBinding.root
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -63,12 +56,12 @@ class SeriesRecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback 
                 itemBinding.isDualPane = isDualPane
                 // The toolbar is hidden as a default to prevent pressing any icons if no recording
                 // has been loaded yet. The toolbar is shown here because a recording was loaded
-                nestedToolbar.visible()
+                nested_toolbar.visible()
                 activity.invalidateOptionsMenu()
             } else {
-                scrollView.gone()
-                statusTextView.text = getString(R.string.error_loading_recording_details)
-                statusTextView.visible()
+                scrollview.gone()
+                status.text = getString(R.string.error_loading_recording_details)
+                status.visible()
             }
         })
     }
@@ -77,8 +70,8 @@ class SeriesRecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback 
         val recording = this.recording ?: return
         prepareSearchMenu(menu, recording.title, isNetworkAvailable)
 
-        nestedToolbar.menu.findItem(R.id.menu_edit)?.isVisible = true
-        nestedToolbar.menu.findItem(R.id.menu_record_remove)?.isVisible = true
+        nested_toolbar.menu.findItem(R.id.menu_edit)?.isVisible = true
+        nested_toolbar.menu.findItem(R.id.menu_record_remove)?.isVisible = true
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -89,8 +82,8 @@ class SeriesRecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.external_search_options_menu, menu)
-        nestedToolbar.inflateMenu(R.menu.recording_details_toolbar_menu)
-        nestedToolbar.setOnMenuItemClickListener { this.onOptionsItemSelected(it) }
+        nested_toolbar.inflateMenu(R.menu.recording_details_toolbar_menu)
+        nested_toolbar.setOnMenuItemClickListener { this.onOptionsItemSelected(it) }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

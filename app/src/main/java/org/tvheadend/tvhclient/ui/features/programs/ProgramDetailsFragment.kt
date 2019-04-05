@@ -3,12 +3,11 @@ package org.tvheadend.tvhclient.ui.features.programs
 import android.content.Intent
 import android.os.Bundle
 import android.view.*
-import android.widget.ScrollView
-import android.widget.TextView
-import androidx.appcompat.widget.Toolbar
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import kotlinx.android.synthetic.main.details_fragment_header.*
+import kotlinx.android.synthetic.main.program_details_fragment.*
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.databinding.ProgramDetailsFragmentBinding
 import org.tvheadend.tvhclient.domain.entity.Program
@@ -23,10 +22,6 @@ import timber.log.Timber
 
 class ProgramDetailsFragment : BaseFragment() {
 
-    private lateinit var nestedToolbar: Toolbar
-    private lateinit var scrollView: ScrollView
-    lateinit var statusTextView: TextView
-
     private var eventId: Int = 0
     private var channelId: Int = 0
     private var program: Program? = null
@@ -36,12 +31,7 @@ class ProgramDetailsFragment : BaseFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         itemBinding = DataBindingUtil.inflate(inflater, R.layout.program_details_fragment, container, false)
-        val view = itemBinding.root
-
-        nestedToolbar = view.findViewById(R.id.nested_toolbar)
-        scrollView = view.findViewById(R.id.scrollview)
-        statusTextView = view.findViewById(R.id.status)
-        return view
+        return itemBinding.root
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -73,13 +63,13 @@ class ProgramDetailsFragment : BaseFragment() {
                 itemBinding.isProgramArtworkEnabled = isUnlocked && sharedPreferences.getBoolean("program_artwork_enabled", false)
                 // The toolbar is hidden as a default to prevent pressing any icons if no recording
                 // has been loaded yet. The toolbar is shown here because a recording was loaded
-                nestedToolbar.visible()
+                nested_toolbar.visible()
                 activity.invalidateOptionsMenu()
             }
         } else {
-            scrollView.gone()
-            statusTextView.text = getString(R.string.error_loading_program_details)
-            statusTextView.visible()
+            scrollview.gone()
+            status.text = getString(R.string.error_loading_program_details)
+            status.visible()
         }
 
         viewModel.getRecordingsByChannelId(channelId).observe(viewLifecycleOwner, Observer { recordings ->
@@ -123,7 +113,7 @@ class ProgramDetailsFragment : BaseFragment() {
         // Show or hide search menu items in the main toolbar
         prepareSearchMenu(menu, program?.title, isNetworkAvailable)
         // Show or hide menus of the nested toolbar
-        prepareMenu(activity, nestedToolbar.menu, program, program?.recording, isNetworkAvailable, htspVersion, isUnlocked)
+        prepareMenu(activity, nested_toolbar.menu, program, program?.recording, isNetworkAvailable, htspVersion, isUnlocked)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -135,8 +125,8 @@ class ProgramDetailsFragment : BaseFragment() {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.external_search_options_menu, menu)
-        nestedToolbar.inflateMenu(R.menu.program_popup_and_toolbar_menu)
-        nestedToolbar.setOnMenuItemClickListener { this.onOptionsItemSelected(it) }
+        nested_toolbar.inflateMenu(R.menu.program_popup_and_toolbar_menu)
+        nested_toolbar.setOnMenuItemClickListener { this.onOptionsItemSelected(it) }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

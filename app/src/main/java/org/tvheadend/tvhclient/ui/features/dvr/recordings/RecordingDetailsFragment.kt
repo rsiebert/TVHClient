@@ -3,12 +3,11 @@ package org.tvheadend.tvhclient.ui.features.dvr.recordings
 import android.content.Intent
 import android.os.Bundle
 import android.view.*
-import android.widget.ScrollView
-import android.widget.TextView
-import androidx.appcompat.widget.Toolbar
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import kotlinx.android.synthetic.main.details_fragment_header.*
+import kotlinx.android.synthetic.main.recording_details_fragment.*
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.databinding.RecordingDetailsFragmentBinding
 import org.tvheadend.tvhclient.domain.entity.Recording
@@ -23,22 +22,13 @@ import org.tvheadend.tvhclient.ui.features.dvr.RecordingRemovedCallback
 
 class RecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback, DownloadPermissionGrantedInterface {
 
-    private lateinit var nestedToolbar: Toolbar
-    private lateinit var scrollView: ScrollView
-    private lateinit var statusTextView: TextView
-
     private var recording: Recording? = null
     var shownDvrId: Int = 0
     private lateinit var itemBinding: RecordingDetailsFragmentBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         itemBinding = DataBindingUtil.inflate(inflater, R.layout.recording_details_fragment, container, false)
-        val view = itemBinding.root
-
-        nestedToolbar = view.findViewById(R.id.nested_toolbar)
-        scrollView = view.findViewById(R.id.scrollview)
-        statusTextView = view.findViewById(R.id.status)
-        return view
+        return itemBinding.root
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -61,12 +51,12 @@ class RecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback, Downl
                 itemBinding.htspVersion = htspVersion
                 // The toolbar is hidden as a default to prevent pressing any icons if no recording
                 // has been loaded yet. The toolbar is shown here because a recording was loaded
-                nestedToolbar.visible()
+                nested_toolbar.visible()
                 activity.invalidateOptionsMenu()
             } else {
-                scrollView.gone()
-                statusTextView.text = getString(R.string.error_loading_recording_details)
-                statusTextView.visible()
+                scrollview.gone()
+                status.text = getString(R.string.error_loading_recording_details)
+                status.visible()
             }
         })
     }
@@ -76,7 +66,7 @@ class RecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback, Downl
         // Show or hide search menu items in the main toolbar
         prepareSearchMenu(menu, recording.title, isNetworkAvailable)
         // Show or hide menus of the nested toolbar
-        prepareMenu(activity, nestedToolbar.menu, null, recording, isNetworkAvailable, htspVersion, isUnlocked)
+        prepareMenu(activity, nested_toolbar.menu, null, recording, isNetworkAvailable, htspVersion, isUnlocked)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -87,8 +77,8 @@ class RecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback, Downl
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.external_search_options_menu, menu)
-        nestedToolbar.inflateMenu(R.menu.recording_details_toolbar_menu)
-        nestedToolbar.setOnMenuItemClickListener { this.onOptionsItemSelected(it) }
+        nested_toolbar.inflateMenu(R.menu.recording_details_toolbar_menu)
+        nested_toolbar.setOnMenuItemClickListener { this.onOptionsItemSelected(it) }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
