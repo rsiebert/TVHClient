@@ -17,8 +17,10 @@ import kotlinx.android.synthetic.main.recyclerview_fragment.*
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback
+import org.tvheadend.tvhclient.ui.common.gone
 import org.tvheadend.tvhclient.ui.common.onMenuSelected
 import org.tvheadend.tvhclient.ui.common.prepareSearchMenu
+import org.tvheadend.tvhclient.ui.common.visible
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity
 import org.tvheadend.tvhclient.ui.features.search.SearchRequestInterface
 import java.util.concurrent.CopyOnWriteArrayList
@@ -55,8 +57,8 @@ class TimerRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, Se
         recycler_view.itemAnimator = DefaultItemAnimator()
         recycler_view.adapter = recyclerViewAdapter
 
-        recycler_view.visibility = View.GONE
-        progress_bar.visibility = View.VISIBLE
+        recycler_view.gone()
+        progress_bar.visible()
 
         val viewModel = ViewModelProviders.of(activity).get(TimerRecordingViewModel::class.java)
         viewModel.recordings.observe(activity, Observer { recordings ->
@@ -64,8 +66,8 @@ class TimerRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, Se
                 recyclerViewAdapter.addItems(recordings)
             }
 
-            recycler_view?.visibility = View.VISIBLE
-            progress_bar?.visibility = View.GONE
+            recycler_view?.visible()
+            progress_bar?.gone()
 
             if (searchQuery.isEmpty()) {
                 toolbarInterface.setSubtitle(resources.getQuantityString(R.plurals.items, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))

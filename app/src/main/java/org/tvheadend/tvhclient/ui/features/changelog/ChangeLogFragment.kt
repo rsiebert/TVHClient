@@ -12,7 +12,9 @@ import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.common.callbacks.BackPressedInterface
 import org.tvheadend.tvhclient.ui.common.callbacks.ToolbarInterface
+import org.tvheadend.tvhclient.ui.common.gone
 import org.tvheadend.tvhclient.ui.common.tasks.HtmlFileLoaderTask
+import org.tvheadend.tvhclient.ui.common.visible
 
 class ChangeLogFragment : Fragment(), BackPressedInterface, HtmlFileLoaderTask.Listener {
 
@@ -56,8 +58,8 @@ class ChangeLogFragment : Fragment(), BackPressedInterface, HtmlFileLoaderTask.L
         // Make the background transparent to remove flickering. This avoids
         // seeing the default theme background color before the stylesheets are loaded.
         webview.setBackgroundColor(Color.argb(0, 0, 0, 0))
-        webview.visibility = View.GONE
-        loading_view.visibility = View.VISIBLE
+        webview.gone()
+        loading_view.visible()
 
         ChangeLogLoaderTask(context, versionName, this).execute(showFullChangeLog)
     }
@@ -95,8 +97,8 @@ class ChangeLogFragment : Fragment(), BackPressedInterface, HtmlFileLoaderTask.L
     override fun onFileContentsLoaded(fileContent: String) {
         if (!TextUtils.isEmpty(fileContent) && isVisible) {
             webview.loadDataWithBaseURL("file:///android_asset/", fileContent, "text/html", "utf-8", null)
-            webview.visibility = View.VISIBLE
-            loading_view.visibility = View.GONE
+            webview.visible()
+            loading_view.gone()
         }
     }
 }

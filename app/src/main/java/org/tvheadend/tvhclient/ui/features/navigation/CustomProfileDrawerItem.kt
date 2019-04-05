@@ -1,12 +1,10 @@
 package org.tvheadend.tvhclient.ui.features.navigation
 
-import android.view.View
 import android.widget.TextView
-
 import com.mikepenz.materialdrawer.holder.StringHolder
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem
-
 import org.tvheadend.tvhclient.R
+import org.tvheadend.tvhclient.ui.common.visible
 
 internal class CustomProfileDrawerItem : ProfileDrawerItem() {
 
@@ -14,11 +12,11 @@ internal class CustomProfileDrawerItem : ProfileDrawerItem() {
         super.bindView(viewHolder, payloads as List<*>)
 
         val name = viewHolder.itemView.findViewById<TextView>(R.id.material_drawer_name)
-        name.visibility = View.VISIBLE
+        name.visible()
         StringHolder.applyTo(this.getName(), name)
 
         val email = viewHolder.itemView.findViewById<TextView>(R.id.material_drawer_email)
-        email.visibility = View.VISIBLE
+        email.visible()
         StringHolder.applyTo(this.getEmail(), email)
 
         //call the onPostBindView method to trigger post bind view actions (like the listener to modify the item if required)

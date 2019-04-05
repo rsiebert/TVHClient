@@ -12,6 +12,8 @@ import org.tvheadend.tvhclient.data.repository.AppRepository
 import org.tvheadend.tvhclient.data.service.SyncStateReceiver
 import org.tvheadend.tvhclient.ui.common.MenuUtils
 import org.tvheadend.tvhclient.ui.common.callbacks.ToolbarInterface
+import org.tvheadend.tvhclient.ui.common.invisible
+import org.tvheadend.tvhclient.ui.common.visible
 import org.tvheadend.tvhclient.ui.features.MainActivity
 import org.tvheadend.tvhclient.ui.features.settings.SettingsActivity
 import timber.log.Timber
@@ -66,15 +68,15 @@ class StartupFragment : Fragment() {
             appRepository.connectionData.getItems().isEmpty() -> {
                 Timber.d("No connection available, showing settings button")
                 stateText = getString(R.string.no_connection_available)
-                progress_bar.visibility = View.INVISIBLE
-                add_connection_button.visibility = View.VISIBLE
+                progress_bar.invisible()
+                add_connection_button.visible()
                 add_connection_button.setOnClickListener { showSettingsAddNewConnection() }
             }
             appRepository.connectionData.activeItemId == -1 -> {
                 Timber.d("No active connection available, showing settings button")
                 stateText = getString(R.string.no_connection_active_advice)
-                progress_bar.visibility = View.INVISIBLE
-                settings_button.visibility = View.VISIBLE
+                progress_bar.invisible()
+                settings_button.visible()
                 settings_button.setOnClickListener { showConnectionListSettings() }
             }
             else -> {

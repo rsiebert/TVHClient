@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Callback
@@ -92,7 +93,7 @@ fun setSeriesInfoText(view: TextView, program: Program?) {
             }
         }
     }
-    view.visibility = if (seriesInfo.isNullOrEmpty()) View.GONE else View.VISIBLE
+    view.visibleOrGone(!seriesInfo.isEmpty())
     view.text = seriesInfo
 }
 
@@ -150,7 +151,7 @@ fun setContentTypeText(view: TextView, contentType: Int) {
         ret.append(0xb0 + i, s[i])
     }
     val contentTypeText = ret.get(contentType, context.getString(R.string.no_data))
-    view.visibility = if (contentTypeText.isEmpty()) View.GONE else View.VISIBLE
+    view.visibleOrGone(!contentTypeText.isEmpty())
     view.text = contentTypeText
 }
 
@@ -173,14 +174,14 @@ fun setDataSizeText(view: TextView, recording: Recording?) {
     if (showRecordingFileStatus
             && recording != null
             && (!recording.isScheduled || recording.isScheduled && recording.isRecording)) {
-        view.visibility = View.VISIBLE
+        view.visible()
         if (recording.dataSize > 1048576) {
             view.text = context.resources.getString(R.string.data_size, recording.dataSize / 1048576, "MB")
         } else {
             view.text = context.resources.getString(R.string.data_size, recording.dataSize / 1024, "KB")
         }
     } else {
-        view.visibility = View.GONE
+        view.gone()
     }
 }
 
@@ -194,10 +195,10 @@ fun setDataErrorText(view: TextView, recording: Recording?) {
             && recording != null
             && !recording.dataErrors.isNullOrEmpty()
             && (!recording.isScheduled || recording.isScheduled && recording.isRecording)) {
-        view.visibility = View.VISIBLE
+        view.visible()
         view.text = context.resources.getString(R.string.data_errors, if (recording.dataErrors == null) "0" else recording.dataErrors)
     } else {
-        view.visibility = View.GONE
+        view.gone()
     }
 }
 
@@ -211,10 +212,10 @@ fun setSubscriptionErrorText(view: TextView, recording: Recording?) {
             && recording != null
             && !recording.isScheduled
             && !recording.subscriptionError.isNullOrEmpty()) {
-        view.visibility = View.VISIBLE
+        view.visible()
         view.text = context.resources.getString(R.string.subscription_error, recording.subscriptionError)
     } else {
-        view.visibility = View.GONE
+        view.gone()
     }
 }
 
@@ -228,10 +229,10 @@ fun setStreamErrorText(view: TextView, recording: Recording?) {
             && recording != null
             && !recording.isScheduled
             && !recording.streamErrors.isNullOrEmpty()) {
-        view.visibility = View.VISIBLE
+        view.visible()
         view.text = context.resources.getString(R.string.stream_errors, recording.streamErrors)
     } else {
-        view.visibility = View.GONE
+        view.gone()
     }
 }
 
@@ -244,16 +245,16 @@ fun setStatusLabelVisibility(view: TextView, recording: Recording?) {
     if (showRecordingFileStatus
             && recording != null
             && !recording.isScheduled) {
-        view.visibility = View.VISIBLE
+        view.visible()
     } else {
-        view.visibility = View.GONE
+        view.gone()
     }
 }
 
 @BindingAdapter("disabledText", "htspVersion")
 fun setDisabledText(view: TextView, recording: Recording?, htspVersion: Int) {
     if (recording == null || !recording.isScheduled) {
-        view.visibility = View.GONE
+        view.gone()
     } else {
         setDisabledText(view, recording.isEnabled, htspVersion)
     }
@@ -261,16 +262,16 @@ fun setDisabledText(view: TextView, recording: Recording?, htspVersion: Int) {
 
 @BindingAdapter("disabledText", "htspVersion")
 fun setDisabledText(view: TextView, isEnabled: Boolean, htspVersion: Int) {
-    view.visibility = if (htspVersion >= 19 && !isEnabled) View.VISIBLE else View.GONE
+    view.visibleOrGone(htspVersion >= 19 && !isEnabled)
     view.setText(if (isEnabled) R.string.recording_enabled else R.string.recording_disabled)
 }
 
 @BindingAdapter("duplicateText", "htspVersion")
 fun setDuplicateText(view: TextView, recording: Recording?, htspVersion: Int) {
     if (recording == null || !recording.isScheduled) {
-        view.visibility = View.GONE
+        view.gone()
     } else {
-        view.visibility = if (htspVersion < 33 || recording.duplicate == 0) View.GONE else View.VISIBLE
+        view.visibleOrGone(htspVersion >= 33 && recording.duplicate != 0)
         view.setText(R.string.duplicate_recording)
     }
 }
@@ -289,18 +290,15 @@ fun setFailedReasonText(view: TextView, recording: Recording?) {
         }
     }
 
-    view.visibility = if (!failedReasonText.isEmpty()
+    view.visibleOrGone(!failedReasonText.isEmpty()
             && recording != null
             && !recording.isCompleted)
-        View.VISIBLE
-    else
-        View.GONE
     view.text = failedReasonText
 }
 
 @BindingAdapter("optionalText")
 fun setOptionalText(view: TextView, text: String?) {
-    view.visibility = if (!text.isNullOrEmpty()) View.VISIBLE else View.GONE
+    view.visibleOrGone(!text.isNullOrEmpty())
     view.text = text
 }
 
@@ -309,15 +307,15 @@ fun setStateIcon(view: ImageView, recording: Recording?) {
     var drawable: Drawable? = null
     if (recording != null) {
         when {
-            recording.isFailed -> drawable = view.context.resources.getDrawable(R.drawable.ic_error_small)
-            recording.isCompleted -> drawable = view.context.resources.getDrawable(R.drawable.ic_success_small)
-            recording.isMissed -> drawable = view.context.resources.getDrawable(R.drawable.ic_error_small)
-            recording.isRecording -> drawable = view.context.resources.getDrawable(R.drawable.ic_rec_small)
-            recording.isScheduled -> drawable = view.context.resources.getDrawable(R.drawable.ic_schedule_small)
+            recording.isFailed -> drawable = ContextCompat.getDrawable(view.context, R.drawable.ic_error_small)
+            recording.isCompleted -> drawable = ContextCompat.getDrawable(view.context, R.drawable.ic_success_small)
+            recording.isMissed -> drawable = ContextCompat.getDrawable(view.context, R.drawable.ic_error_small)
+            recording.isRecording -> drawable = ContextCompat.getDrawable(view.context, R.drawable.ic_rec_small)
+            recording.isScheduled -> drawable = ContextCompat.getDrawable(view.context, R.drawable.ic_schedule_small)
         }
     }
 
-    view.visibility = if (drawable != null) View.VISIBLE else View.GONE
+    view.visibleOrGone(drawable != null)
     view.setImageDrawable(drawable)
 }
 
@@ -326,7 +324,7 @@ fun setChannelIcon(view: ImageView, iconUrl: String?, visible: Boolean) {
     if (visible) {
         setChannelIcon(view, iconUrl)
     } else {
-        view.visibility = View.GONE
+        view.gone()
     }
 }
 
@@ -339,7 +337,7 @@ fun setChannelIcon(view: ImageView, iconUrl: String?, visible: Boolean) {
 @BindingAdapter("programImage", "programImageVisibility")
 fun setProgramImage(view: ImageView, url: String?, visible: Boolean) {
     if (url.isNullOrEmpty() || !visible) {
-        view.visibility = View.GONE
+        view.gone()
     } else {
 
         val transformation = object : Transformation {
@@ -371,12 +369,12 @@ fun setProgramImage(view: ImageView, url: String?, visible: Boolean) {
                 .transform(transformation)
                 .into(view, object : Callback {
                     override fun onSuccess() {
-                        view.visibility = View.VISIBLE
+                        view.visible()
                     }
 
                     override fun onError(e: Exception) {
                         Timber.d("Could not load image $url")
-                        view.visibility = View.GONE
+                        view.gone()
                     }
                 })
     }
@@ -392,7 +390,7 @@ fun setProgramImage(view: ImageView, url: String?, visible: Boolean) {
 fun setChannelIcon(view: ImageView, iconUrl: String?) {
     if (iconUrl.isNullOrEmpty()) {
         Timber.d("Channel icon '$iconUrl' is empty or null, hiding icon")
-        view.visibility = View.GONE
+        view.gone()
     } else {
         val url = getIconUrl(view.context, iconUrl)
         Timber.d("Channel icon '$iconUrl' is not empty, loading icon from url '$url'")
@@ -402,12 +400,12 @@ fun setChannelIcon(view: ImageView, iconUrl: String?) {
                 .into(view, object : Callback {
                     override fun onSuccess() {
                         Timber.d("Successfully loaded channel icon from url '$url'")
-                        view.visibility = View.VISIBLE
+                        view.visible()
                     }
 
                     override fun onError(e: Exception) {
                         Timber.d("Error loading channel icon from url '$url'")
-                        view.visibility = View.GONE
+                        view.gone()
                     }
                 })
     }
@@ -418,7 +416,7 @@ fun setChannelName(view: TextView, name: String?, iconUrl: String?, visible: Boo
     if (visible) {
         setChannelName(view, name, iconUrl)
     } else {
-        view.visibility = View.GONE
+        view.gone()
     }
 }
 
@@ -434,17 +432,17 @@ fun setChannelName(view: TextView, name: String?, iconUrl: String?) {
     view.text = if (!name.isNullOrEmpty()) name else view.context.getString(R.string.all_channels)
 
     if (iconUrl.isNullOrEmpty()) {
-        view.visibility = View.VISIBLE
+        view.visible()
     } else {
         val url = getIconUrl(view.context, iconUrl)
         Picasso.get()
                 .load(url).fetch(object : Callback {
                     override fun onSuccess() {
-                        view.visibility = View.GONE
+                        view.gone()
                     }
 
                     override fun onError(e: Exception) {
-                        view.visibility = View.VISIBLE
+                        view.visible()
                     }
                 })
     }
@@ -512,10 +510,10 @@ fun setLocalizedTime(view: TextView, time: Long) {
         // Show the date as defined with the currently active locale.
         // For the date display the short version will be used
         val locale: Locale?
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-            locale = view.context.resources.configuration.locales.get(0)
+        locale = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            view.context.resources.configuration.locales.get(0)
         } else {
-            locale = view.context.resources.configuration.locale
+            view.context.resources.configuration.locale
         }
         if (locale != null) {
             val df = java.text.DateFormat.getTimeInstance(java.text.DateFormat.SHORT, locale)
@@ -576,10 +574,10 @@ fun setLocalizedDate(view: TextView, date: Long) {
                 // Show the date as defined with the currently active locale.
                 // For the date display the short version will be used
                 val locale: Locale?
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                    locale = context.resources.configuration.locales.get(0)
+                locale = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                    context.resources.configuration.locales.get(0)
                 } else {
-                    locale = context.resources.configuration.locale
+                    context.resources.configuration.locale
                 }
                 if (locale != null) {
                     val df = java.text.DateFormat.getDateInstance(java.text.DateFormat.SHORT, locale)
@@ -616,17 +614,17 @@ fun setGenreColor(view: TextView, contentType: Int, showGenreColors: Boolean, of
             color = R.color.EPG_OTHER
             val type = contentType / 16
             when (type) {
-                0 -> color = context.resources.getColor(R.color.EPG_MOVIES)
-                1 -> color = context.resources.getColor(R.color.EPG_NEWS)
-                2 -> color = context.resources.getColor(R.color.EPG_SHOWS)
-                3 -> color = context.resources.getColor(R.color.EPG_SPORTS)
-                4 -> color = context.resources.getColor(R.color.EPG_CHILD)
-                5 -> color = context.resources.getColor(R.color.EPG_MUSIC)
-                6 -> color = context.resources.getColor(R.color.EPG_ARTS)
-                7 -> color = context.resources.getColor(R.color.EPG_SOCIAL)
-                8 -> color = context.resources.getColor(R.color.EPG_SCIENCE)
-                9 -> color = context.resources.getColor(R.color.EPG_HOBBY)
-                10 -> color = context.resources.getColor(R.color.EPG_SPECIAL)
+                0 -> color = ContextCompat.getColor(view.context, R.color.EPG_MOVIES)
+                1 -> color = ContextCompat.getColor(view.context, R.color.EPG_NEWS)
+                2 -> color = ContextCompat.getColor(view.context, R.color.EPG_SHOWS)
+                3 -> color = ContextCompat.getColor(view.context, R.color.EPG_SPORTS)
+                4 -> color = ContextCompat.getColor(view.context, R.color.EPG_CHILD)
+                5 -> color = ContextCompat.getColor(view.context, R.color.EPG_MUSIC)
+                6 -> color = ContextCompat.getColor(view.context, R.color.EPG_ARTS)
+                7 -> color = ContextCompat.getColor(view.context, R.color.EPG_SOCIAL)
+                8 -> color = ContextCompat.getColor(view.context, R.color.EPG_SCIENCE)
+                9 -> color = ContextCompat.getColor(view.context, R.color.EPG_HOBBY)
+                10 -> color = ContextCompat.getColor(view.context, R.color.EPG_SPECIAL)
             }
 
             // Get the color with the desired alpha value
@@ -639,9 +637,9 @@ fun setGenreColor(view: TextView, contentType: Int, showGenreColors: Boolean, of
         }
 
         view.setBackgroundColor(color)
-        view.visibility = View.VISIBLE
+        view.visible()
     } else {
-        view.visibility = View.GONE
+        view.gone()
     }
 }
 

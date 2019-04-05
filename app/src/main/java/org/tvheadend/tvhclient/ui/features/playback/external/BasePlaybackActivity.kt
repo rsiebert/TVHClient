@@ -5,7 +5,6 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -14,6 +13,7 @@ import kotlinx.android.synthetic.main.play_activity.*
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.data.repository.AppRepository
+import org.tvheadend.tvhclient.ui.common.gone
 import org.tvheadend.tvhclient.ui.common.onAttach
 import org.tvheadend.tvhclient.util.getThemeId
 import timber.log.Timber
@@ -45,7 +45,7 @@ abstract class BasePlaybackActivity : AppCompatActivity() {
                 viewModel.requestTicketFromServer(intent.extras)
             } else {
                 Timber.d("Not connected to server")
-                progress_bar.visibility = View.GONE
+                progress_bar.gone()
                 status.setText(R.string.connection_failed)
             }
         })
@@ -53,7 +53,7 @@ abstract class BasePlaybackActivity : AppCompatActivity() {
         viewModel.isTicketReceived.observe(this, Observer { isTicketReceived ->
             Timber.d("Received ticket $isTicketReceived")
             if (isTicketReceived) {
-                progress_bar.visibility = View.GONE
+                progress_bar.gone()
                 status.text = getString(R.string.starting_playback)
                 onTicketReceived()
             }

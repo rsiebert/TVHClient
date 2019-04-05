@@ -26,12 +26,9 @@ import org.tvheadend.tvhclient.data.repository.AppRepository
 import org.tvheadend.tvhclient.data.service.HtspService
 import org.tvheadend.tvhclient.data.service.SyncStateReceiver
 import org.tvheadend.tvhclient.ui.base.BaseActivity
-import org.tvheadend.tvhclient.ui.common.SnackbarMessageReceiver
+import org.tvheadend.tvhclient.ui.common.*
 import org.tvheadend.tvhclient.ui.common.callbacks.NetworkStatusListener
-import org.tvheadend.tvhclient.ui.common.getCastContext
-import org.tvheadend.tvhclient.ui.common.getCastSession
 import org.tvheadend.tvhclient.ui.common.network.NetworkStatusReceiver
-import org.tvheadend.tvhclient.ui.common.sendSnackbarMessage
 import org.tvheadend.tvhclient.ui.features.download.DownloadPermissionGrantedInterface
 import org.tvheadend.tvhclient.ui.features.dvr.recordings.RecordingDetailsFragment
 import org.tvheadend.tvhclient.ui.features.dvr.series_recordings.SeriesRecordingDetailsFragment
@@ -122,7 +119,7 @@ class MainActivity : BaseActivity(), NavigationDrawerCallback, SearchView.OnQuer
         val showCastingMiniController = isUnlocked && sharedPreferences.getBoolean("casting_minicontroller_enabled",
                 resources.getBoolean(R.bool.pref_default_casting_minicontroller_enabled))
         val miniController = findViewById<View>(R.id.cast_mini_controller)
-        miniController.visibility = if (showCastingMiniController) View.VISIBLE else View.GONE
+        miniController.visibleOrGone(showCastingMiniController)
 
         supportFragmentManager.addOnBackStackChangedListener {
             val fragment = supportFragmentManager.findFragmentById(R.id.main)
@@ -397,18 +394,18 @@ class MainActivity : BaseActivity(), NavigationDrawerCallback, SearchView.OnQuer
 
             SyncStateReceiver.State.SYNC_STARTED -> {
                 Timber.d("Sync started, showing progress bar")
-                syncProgress.visibility = View.VISIBLE
+                syncProgress.visible()
                 sendSnackbarMessage(message)
             }
 
             SyncStateReceiver.State.SYNC_IN_PROGRESS -> {
                 Timber.d("Sync in progress, updating progress bar")
-                syncProgress.visibility = View.VISIBLE
+                syncProgress.visible()
             }
 
             SyncStateReceiver.State.SYNC_DONE -> {
                 Timber.d("Sync done, hiding progress bar")
-                syncProgress.visibility = View.GONE
+                syncProgress.gone()
                 sendSnackbarMessage(message)
             }
 

@@ -15,10 +15,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.recyclerview_fragment.*
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.base.BaseFragment
+import org.tvheadend.tvhclient.ui.common.*
 import org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback
-import org.tvheadend.tvhclient.ui.common.onMenuSelected
-import org.tvheadend.tvhclient.ui.common.prepareMenu
-import org.tvheadend.tvhclient.ui.common.prepareSearchMenu
 import org.tvheadend.tvhclient.ui.features.download.DownloadPermissionGrantedInterface
 import org.tvheadend.tvhclient.ui.features.download.DownloadRecordingManager
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity
@@ -54,8 +52,8 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback
         recycler_view.adapter = recyclerViewAdapter
         viewModel = ViewModelProviders.of(activity).get(RecordingViewModel::class.java)
 
-        recycler_view.visibility = View.GONE
-        progress_bar.visibility = View.VISIBLE
+        recycler_view.gone()
+        progress_bar.visible()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

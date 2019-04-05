@@ -23,10 +23,8 @@ import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.domain.entity.ChannelTag
 import org.tvheadend.tvhclient.domain.entity.EpgProgram
 import org.tvheadend.tvhclient.ui.base.BaseFragment
+import org.tvheadend.tvhclient.ui.common.*
 import org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback
-import org.tvheadend.tvhclient.ui.common.onMenuSelected
-import org.tvheadend.tvhclient.ui.common.prepareMenu
-import org.tvheadend.tvhclient.ui.common.prepareSearchMenu
 import org.tvheadend.tvhclient.ui.features.channels.ChannelDisplayOptionListener
 import org.tvheadend.tvhclient.ui.features.dialogs.showChannelTagSelectionDialog
 import org.tvheadend.tvhclient.ui.features.dialogs.showGenreColorDialog
@@ -105,9 +103,9 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
         Timber.d("Observing epg channels")
         viewModel.epgChannels.observe(viewLifecycleOwner, Observer { channels ->
 
-            progress_bar?.visibility = View.GONE
-            channel_list_recycler_view?.visibility = View.VISIBLE
-            program_list_viewpager?.visibility = View.VISIBLE
+            progress_bar?.gone()
+            channel_list_recycler_view?.visible()
+            program_list_viewpager?.visible()
 
             if (channels != null) {
                 Timber.d("View model returned ${channels.size} epg channels")
@@ -194,9 +192,9 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
     }
 
     override fun onChannelTagIdsSelected(ids: Set<Int>) {
-        channel_list_recycler_view?.visibility = View.GONE
-        program_list_viewpager?.visibility = View.GONE
-        progress_bar?.visibility = View.VISIBLE
+        channel_list_recycler_view?.gone()
+        program_list_viewpager?.gone()
+        progress_bar?.visible()
         viewModel.setSelectedChannelTagIds(ids)
     }
 

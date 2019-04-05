@@ -14,9 +14,7 @@ import org.tvheadend.tvhclient.databinding.ProgramDetailsFragmentBinding
 import org.tvheadend.tvhclient.domain.entity.Program
 import org.tvheadend.tvhclient.domain.entity.Recording
 import org.tvheadend.tvhclient.ui.base.BaseFragment
-import org.tvheadend.tvhclient.ui.common.onMenuSelected
-import org.tvheadend.tvhclient.ui.common.prepareMenu
-import org.tvheadend.tvhclient.ui.common.prepareSearchMenu
+import org.tvheadend.tvhclient.ui.common.*
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity
 import org.tvheadend.tvhclient.ui.features.notification.addNotification
 import timber.log.Timber
@@ -75,13 +73,13 @@ class ProgramDetailsFragment : BaseFragment() {
                 itemBinding.isProgramArtworkEnabled = isUnlocked && sharedPreferences.getBoolean("program_artwork_enabled", false)
                 // The toolbar is hidden as a default to prevent pressing any icons if no recording
                 // has been loaded yet. The toolbar is shown here because a recording was loaded
-                nestedToolbar.visibility = View.VISIBLE
+                nestedToolbar.visible()
                 activity.invalidateOptionsMenu()
             }
         } else {
-            scrollView.visibility = View.GONE
+            scrollView.gone()
             statusTextView.text = getString(R.string.error_loading_program_details)
-            statusTextView.visibility = View.VISIBLE
+            statusTextView.visible()
         }
 
         viewModel.getRecordingsByChannelId(channelId).observe(viewLifecycleOwner, Observer { recordings ->

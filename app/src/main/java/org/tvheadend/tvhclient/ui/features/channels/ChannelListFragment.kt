@@ -18,10 +18,8 @@ import kotlinx.android.synthetic.main.recyclerview_fragment.*
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.domain.entity.ChannelTag
 import org.tvheadend.tvhclient.ui.base.BaseFragment
+import org.tvheadend.tvhclient.ui.common.*
 import org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback
-import org.tvheadend.tvhclient.ui.common.onMenuSelected
-import org.tvheadend.tvhclient.ui.common.prepareMenu
-import org.tvheadend.tvhclient.ui.common.prepareSearchMenu
 import org.tvheadend.tvhclient.ui.common.tasks.WakeOnLanTask
 import org.tvheadend.tvhclient.ui.features.dialogs.showChannelTagSelectionDialog
 import org.tvheadend.tvhclient.ui.features.dialogs.showGenreColorDialog
@@ -74,8 +72,8 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
         recycler_view.itemAnimator = DefaultItemAnimator()
         recycler_view.adapter = recyclerViewAdapter
 
-        recycler_view.visibility = View.GONE
-        progress_bar.visibility = View.VISIBLE
+        recycler_view.gone()
+        progress_bar.visible()
 
         viewModel = ViewModelProviders.of(activity).get(ChannelViewModel::class.java)
 
@@ -102,8 +100,8 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
                 recyclerViewAdapter.addItems(channels.toMutableList())
             }
 
-            recycler_view?.visibility = View.VISIBLE
-            progress_bar?.visibility = View.GONE
+            recycler_view?.visible()
+            progress_bar?.gone()
 
             showChannelTagOrChannelCount()
 
@@ -231,8 +229,8 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
 
     override fun onTimeSelected(which: Int) {
         selectedTimeOffset = which
-        recycler_view?.visibility = View.GONE
-        progress_bar?.visibility = View.VISIBLE
+        recycler_view?.gone()
+        progress_bar?.visible()
 
         // Add the selected list index as extra hours to the current time.
         // If the first index was selected then use the current time.
@@ -242,8 +240,8 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
     }
 
     override fun onChannelTagIdsSelected(ids: Set<Int>) {
-        recycler_view?.visibility = View.GONE
-        progress_bar?.visibility = View.VISIBLE
+        recycler_view?.gone()
+        progress_bar?.visible()
         viewModel.setSelectedChannelTagIds(ids)
     }
 

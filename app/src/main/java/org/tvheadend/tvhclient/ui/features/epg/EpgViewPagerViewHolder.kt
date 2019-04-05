@@ -11,6 +11,8 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.epg_program_list_adapter.*
 import org.tvheadend.tvhclient.domain.entity.EpgChannel
+import org.tvheadend.tvhclient.ui.common.gone
+import org.tvheadend.tvhclient.ui.common.visible
 import timber.log.Timber
 import java.util.concurrent.Executors
 
@@ -33,9 +35,9 @@ class EpgViewPagerViewHolder(override val containerView: View, private val activ
 
     fun bindData(epgChannel: EpgChannel) {
 
-        program_list_recycler_view.visibility = View.GONE
-        progress_bar.visibility = View.VISIBLE
-        no_programs.visibility = View.GONE
+        program_list_recycler_view.gone()
+        progress_bar.visible()
+        no_programs.gone()
 
         execService.execute {
             val programs = viewModel.getProgramsByChannelAndBetweenTimeSync(epgChannel.id, startTime, endTime)
@@ -43,16 +45,16 @@ class EpgViewPagerViewHolder(override val containerView: View, private val activ
                 Timber.d("Loaded ${programs.size} programs for channel ${epgChannel.name}")
                 activity.runOnUiThread {
                     recyclerViewAdapter.addItems(programs.toMutableList())
-                    program_list_recycler_view.visibility = View.VISIBLE
-                    progress_bar.visibility = View.GONE
-                    no_programs.visibility = View.GONE
+                    program_list_recycler_view.visible()
+                    progress_bar.gone()
+                    no_programs.gone()
                 }
             } else {
                 Timber.d("Loaded no programs for channel ${epgChannel.name}")
                 activity.runOnUiThread {
-                    program_list_recycler_view.visibility = View.GONE
-                    progress_bar.visibility = View.GONE
-                    no_programs.visibility = View.VISIBLE
+                    program_list_recycler_view.gone()
+                    progress_bar.gone()
+                    no_programs.visible()
                 }
             }
         }

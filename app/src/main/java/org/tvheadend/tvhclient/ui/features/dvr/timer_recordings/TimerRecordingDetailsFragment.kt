@@ -13,8 +13,10 @@ import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.databinding.TimerRecordingDetailsFragmentBinding
 import org.tvheadend.tvhclient.domain.entity.TimerRecording
 import org.tvheadend.tvhclient.ui.base.BaseFragment
+import org.tvheadend.tvhclient.ui.common.gone
 import org.tvheadend.tvhclient.ui.common.onMenuSelected
 import org.tvheadend.tvhclient.ui.common.prepareSearchMenu
+import org.tvheadend.tvhclient.ui.common.visible
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingRemovedCallback
 
@@ -61,12 +63,12 @@ class TimerRecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback {
                 itemBinding.isDualPane = isDualPane
                 // The toolbar is hidden as a default to prevent pressing any icons if no recording
                 // has been loaded yet. The toolbar is shown here because a recording was loaded
-                nestedToolbar.visibility = View.VISIBLE
+                nestedToolbar.visible()
                 activity.invalidateOptionsMenu()
             } else {
-                scrollView.visibility = View.GONE
+                scrollView.gone()
                 statusTextView.text = getString(R.string.error_loading_recording_details)
-                statusTextView.visibility = View.VISIBLE
+                statusTextView.visible()
             }
         })
     }

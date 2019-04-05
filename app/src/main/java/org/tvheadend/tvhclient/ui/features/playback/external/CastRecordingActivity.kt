@@ -3,7 +3,6 @@ package org.tvheadend.tvhclient.ui.features.playback.external
 import android.content.Intent
 import android.net.Uri
 import android.text.TextUtils
-import android.view.View
 import com.google.android.gms.cast.MediaInfo
 import com.google.android.gms.cast.MediaLoadOptions
 import com.google.android.gms.cast.MediaMetadata
@@ -12,6 +11,7 @@ import com.google.android.gms.common.images.WebImage
 import kotlinx.android.synthetic.main.play_activity.*
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.common.getCastSession
+import org.tvheadend.tvhclient.ui.common.gone
 import timber.log.Timber
 
 class CastRecordingActivity : BasePlaybackActivity() {
@@ -20,7 +20,7 @@ class CastRecordingActivity : BasePlaybackActivity() {
 
         val castSession = getCastSession(this)
         if (castSession == null) {
-            progress_bar.visibility = View.GONE
+            progress_bar.gone()
             status.text = getString(R.string.no_cast_session)
             return
         }
@@ -43,7 +43,7 @@ class CastRecordingActivity : BasePlaybackActivity() {
 
         val castingProfileId = viewModel.serverStatus?.castingServerProfileId ?: 0
         if (castingProfileId == 0) {
-            progress_bar.visibility = View.GONE
+            progress_bar.gone()
             status.text = getString(R.string.error_starting_playback_no_profile)
             return
         }
@@ -59,7 +59,7 @@ class CastRecordingActivity : BasePlaybackActivity() {
 
         val remoteMediaClient = castSession.remoteMediaClient
         if (remoteMediaClient == null) {
-            progress_bar.visibility = View.GONE
+            progress_bar.gone()
             status.setText(R.string.cast_error_no_media_client_available)
             return
         }

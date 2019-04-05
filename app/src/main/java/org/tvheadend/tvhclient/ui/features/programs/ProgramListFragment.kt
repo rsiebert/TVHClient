@@ -21,11 +21,8 @@ import org.tvheadend.tvhclient.data.service.HtspService
 import org.tvheadend.tvhclient.domain.entity.Program
 import org.tvheadend.tvhclient.domain.entity.Recording
 import org.tvheadend.tvhclient.ui.base.BaseFragment
+import org.tvheadend.tvhclient.ui.common.*
 import org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback
-import org.tvheadend.tvhclient.ui.common.getCastSession
-import org.tvheadend.tvhclient.ui.common.onMenuSelected
-import org.tvheadend.tvhclient.ui.common.prepareMenu
-import org.tvheadend.tvhclient.ui.common.prepareSearchMenu
 import org.tvheadend.tvhclient.ui.features.dialogs.showGenreColorDialog
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity
 import org.tvheadend.tvhclient.ui.features.notification.addNotification
@@ -88,8 +85,8 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
         recycler_view.itemAnimator = DefaultItemAnimator()
         recycler_view.adapter = recyclerViewAdapter
 
-        recycler_view.visibility = View.GONE
-        progress_bar.visibility = View.VISIBLE
+        recycler_view.gone()
+        progress_bar.visible()
 
         viewModel = ViewModelProviders.of(activity).get(ProgramViewModel::class.java)
         if (!isSearchActive) {
@@ -123,8 +120,8 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
                 (activity as StartSearchInterface).startSearch()
             }
         }
-        recycler_view?.visibility = View.VISIBLE
-        progress_bar?.visibility = View.GONE
+        recycler_view?.visible()
+        progress_bar?.gone()
 
         if (!isDualPane) {
             if (!isSearchActive) {
