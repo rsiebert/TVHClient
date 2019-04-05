@@ -6,19 +6,16 @@ import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
-import android.widget.ProgressBar
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import butterknife.BindView
-import butterknife.ButterKnife
 import com.afollestad.materialdialogs.MaterialDialog
+import kotlinx.android.synthetic.main.play_activity.*
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.data.repository.AppRepository
-import org.tvheadend.tvhclient.util.getThemeId
 import org.tvheadend.tvhclient.ui.common.onAttach
+import org.tvheadend.tvhclient.util.getThemeId
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -29,11 +26,6 @@ abstract class BasePlaybackActivity : AppCompatActivity() {
     @Inject
     lateinit var sharedPreferences: SharedPreferences
 
-    @BindView(R.id.progress_bar)
-    lateinit var progressBar: ProgressBar
-    @BindView(R.id.status)
-    lateinit var statusTextView: TextView
-
     lateinit var viewModel: ExternalPlayerViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,29 +33,28 @@ abstract class BasePlaybackActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.play_activity)
         MainApplication.getComponent().inject(this)
-        ButterKnife.bind(this)
 
-        statusTextView.setText(R.string.connecting_to_server)
+        status.setText(R.string.connecting_to_server)
 
         viewModel = ViewModelProviders.of(this).get(ExternalPlayerViewModel::class.java)
 
         viewModel.isConnected.observe(this, Observer { isConnected ->
             if (isConnected) {
                 Timber.d("Connected to server, requesting ticket")
-                statusTextView.setText(R.string.requesting_playback_information)
+                status.setText(R.string.requesting_playback_information)
                 viewModel.requestTicketFromServer(intent.extras)
             } else {
                 Timber.d("Not connected to server")
-                progressBar.visibility = View.GONE
-                statusTextView.setText(R.string.connection_failed)
+                progress_bar.visibility = View.GONE
+                status.setText(R.string.connection_failed)
             }
         })
 
         viewModel.isTicketReceived.observe(this, Observer { isTicketReceived ->
             Timber.d("Received ticket $isTicketReceived")
             if (isTicketReceived) {
-                progressBar.visibility = View.GONE
-                statusTextView.text = getString(R.string.starting_playback)
+                progress_bar.visibility = View.GONE
+                status.text = getString(R.string.starting_playback)
                 onTicketReceived()
             }
         })
@@ -84,7 +75,7 @@ abstract class BasePlaybackActivity : AppCompatActivity() {
                 finish()
             } catch (t: Throwable) {
                 Timber.d("Can't execute external media player")
-                statusTextView.setText(R.string.no_media_player)
+                status.setText(R.string.no_media_player)
 
                 // Show a confirmation dialog before deleting the recording
                 MaterialDialog.Builder(this@BasePlaybackActivity)

@@ -1,8 +1,6 @@
 package org.tvheadend.tvhclient.ui.features.epg
 
 import android.view.View
-import android.widget.ProgressBar
-import android.widget.TextView
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -10,44 +8,34 @@ import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import butterknife.BindView
-import butterknife.ButterKnife
-import org.tvheadend.tvhclient.R
+import kotlinx.android.extensions.LayoutContainer
+import kotlinx.android.synthetic.main.epg_program_list_adapter.*
 import org.tvheadend.tvhclient.domain.entity.EpgChannel
 import timber.log.Timber
 import java.util.concurrent.Executors
 
-class EpgViewPagerViewHolder internal constructor(private val activity: FragmentActivity, view: View, pixelsPerMinute: Float, private val startTime: Long, private val endTime: Long, viewPool: RecyclerView.RecycledViewPool) : RecyclerView.ViewHolder(view) {
+class EpgViewPagerViewHolder(override val containerView: View, private val activity: FragmentActivity, pixelsPerMinute: Float, private val startTime: Long, private val endTime: Long, viewPool: RecyclerView.RecycledViewPool) : RecyclerView.ViewHolder(containerView), LayoutContainer {
 
     private val recyclerViewAdapter: EpgProgramListRecyclerViewAdapter
     private val viewModel: EpgViewModel
     private val execService = Executors.newScheduledThreadPool(10)
 
-    @BindView(R.id.program_list_recycler_view)
-    lateinit var recyclerView: RecyclerView
-    @BindView(R.id.progress_bar)
-    lateinit var progressBar: ProgressBar
-    @BindView(R.id.no_programs)
-    lateinit var noProgramsTextView: TextView
-
     init {
-        ButterKnife.bind(this, view)
-
-        recyclerView.layoutManager = CustomHorizontalLayoutManager(view.context)
-        recyclerView.addItemDecoration(DividerItemDecoration(view.context, LinearLayoutManager.HORIZONTAL))
-        recyclerView.itemAnimator = DefaultItemAnimator()
-        recyclerView.setRecycledViewPool(viewPool)
+        program_list_recycler_view.layoutManager = CustomHorizontalLayoutManager(containerView.context)
+        program_list_recycler_view.addItemDecoration(DividerItemDecoration(containerView.context, LinearLayoutManager.HORIZONTAL))
+        program_list_recycler_view.itemAnimator = DefaultItemAnimator()
+        program_list_recycler_view.setRecycledViewPool(viewPool)
         recyclerViewAdapter = EpgProgramListRecyclerViewAdapter(pixelsPerMinute, startTime, endTime)
-        recyclerView.adapter = recyclerViewAdapter
+        program_list_recycler_view.adapter = recyclerViewAdapter
 
         viewModel = ViewModelProviders.of(activity).get(EpgViewModel::class.java)
     }
 
     fun bindData(epgChannel: EpgChannel) {
 
-        recyclerView.visibility = View.GONE
-        progressBar.visibility = View.VISIBLE
-        noProgramsTextView.visibility = View.GONE
+        program_list_recycler_view.visibility = View.GONE
+        progress_bar.visibility = View.VISIBLE
+        no_programs.visibility = View.GONE
 
         execService.execute {
             val programs = viewModel.getProgramsByChannelAndBetweenTimeSync(epgChannel.id, startTime, endTime)
@@ -55,16 +43,16 @@ class EpgViewPagerViewHolder internal constructor(private val activity: Fragment
                 Timber.d("Loaded ${programs.size} programs for channel ${epgChannel.name}")
                 activity.runOnUiThread {
                     recyclerViewAdapter.addItems(programs.toMutableList())
-                    recyclerView.visibility = View.VISIBLE
-                    progressBar.visibility = View.GONE
-                    noProgramsTextView.visibility = View.GONE
+                    program_list_recycler_view.visibility = View.VISIBLE
+                    progress_bar.visibility = View.GONE
+                    no_programs.visibility = View.GONE
                 }
             } else {
                 Timber.d("Loaded no programs for channel ${epgChannel.name}")
                 activity.runOnUiThread {
-                    recyclerView.visibility = View.GONE
-                    progressBar.visibility = View.GONE
-                    noProgramsTextView.visibility = View.VISIBLE
+                    program_list_recycler_view.visibility = View.GONE
+                    progress_bar.visibility = View.GONE
+                    no_programs.visibility = View.VISIBLE
                 }
             }
         }

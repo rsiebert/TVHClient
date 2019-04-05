@@ -8,36 +8,29 @@ import android.content.res.Configuration
 import android.graphics.Point
 import android.os.Build
 import android.os.Bundle
-import android.view.SurfaceView
 import android.view.View
-import android.widget.FrameLayout
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import butterknife.BindView
-import butterknife.ButterKnife
-import butterknife.OnClick
 import com.afollestad.materialdialogs.MaterialDialog
 import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.ui.DefaultTimeBar
 import com.google.android.exoplayer2.ui.PlayerControlView
-import com.google.android.exoplayer2.ui.PlayerView
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.exo_player_control_view.*
+import kotlinx.android.synthetic.main.exo_player_view.*
+import kotlinx.android.synthetic.main.player_overlay_view.*
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.data.repository.AppRepository
+import org.tvheadend.tvhclient.ui.common.*
 import org.tvheadend.tvhclient.ui.features.MainActivity
-import org.tvheadend.tvhclient.ui.features.playback.internal.utils.TrackSelectionHelper
 import org.tvheadend.tvhclient.ui.features.playback.internal.utils.Rational
+import org.tvheadend.tvhclient.ui.features.playback.internal.utils.TrackSelectionHelper
 import org.tvheadend.tvhclient.util.getIconUrl
 import org.tvheadend.tvhclient.util.getThemeId
-import org.tvheadend.tvhclient.ui.common.onAttach
 import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
@@ -48,40 +41,6 @@ class PlaybackActivity : AppCompatActivity(), PlayerControlView.VisibilityListen
     lateinit var sharedPreferences: SharedPreferences
     @Inject
     lateinit var appRepository: AppRepository
-
-    @BindView(R.id.exo_player_frame)
-    lateinit var playerMainFrame: FrameLayout
-    @BindView(R.id.exo_player_surface_view)
-    lateinit var playerSurfaceView: SurfaceView
-    @BindView(R.id.status)
-    lateinit var statusTextView: TextView
-    @BindView(R.id.player_view)
-    lateinit var playerView: PlayerView
-    @BindView(R.id.channel_icon)
-    lateinit var iconImageView: ImageView
-    @BindView(R.id.channel_name)
-    lateinit var iconTextView: TextView
-    @BindView(R.id.program_title)
-    lateinit var titleTextView: TextView
-    @BindView(R.id.program_subtitle)
-    lateinit var subtitleTextView: TextView
-    @BindView(R.id.next_program_title)
-    lateinit var nextTitleTextView: TextView
-    @BindView(R.id.progress)
-    lateinit var progressBar: DefaultTimeBar
-    @BindView(R.id.elapsed_time)
-    lateinit var elapsedTimeTextView: TextView
-    @BindView(R.id.remaining_time)
-    lateinit var remainingTimeTextView: TextView
-
-    @BindView(R.id.player_rewind)
-    lateinit var rewindImageView: ImageButton
-    @BindView(R.id.player_pause)
-    lateinit var pauseImageView: ImageButton
-    @BindView(R.id.player_play)
-    lateinit var playImageView: ImageButton
-    @BindView(R.id.player_forward)
-    lateinit var forwardImageView: ImageButton
 
     private var timeshiftSupported: Boolean = false
     private lateinit var viewModel: PlayerViewModel
@@ -97,30 +56,36 @@ class PlaybackActivity : AppCompatActivity(), PlayerControlView.VisibilityListen
         Timber.d("Creating")
 
         MainApplication.getComponent().inject(this)
-        ButterKnife.bind(this)
 
         timeshiftSupported = sharedPreferences.getBoolean("timeshift_enabled", resources.getBoolean(R.bool.pref_default_timeshift_enabled))
 
-        statusTextView.setText(R.string.connecting_to_server)
-        rewindImageView.visibility = View.INVISIBLE
-        pauseImageView.visibility = View.INVISIBLE
-        playImageView.visibility = View.INVISIBLE
-        forwardImageView.visibility = View.INVISIBLE
+        status.setText(R.string.connecting_to_server)
+        player_rewind?.invisible()
+        player_pause?.invisible()
+        player_play?.invisible()
+        player_forward?.invisible()
+
+        player_play?.setOnClickListener { onPlayButtonSelected() }
+        player_pause?.setOnClickListener { onPauseButtonSelected() }
+        player_rewind?.setOnClickListener { onRewindButtonSelected() }
+        player_forward?.setOnClickListener { onForwardButtonSelected() }
+        player_menu?.setOnClickListener { onMenuButtonSelected() }
+        player_menu_aspect_ratio?.setOnClickListener { onChangeAspectRatioSelected() }
 
         Timber.d("Getting view model")
         viewModel = ViewModelProviders.of(this).get(PlayerViewModel::class.java)
-        viewModel.player.setVideoSurfaceView(playerSurfaceView)
-        playerView.player = viewModel.player
+        viewModel.player.setVideoSurfaceView(exo_player_surface_view)
+        player_view.player = viewModel.player
 
         Timber.d("Observing authentication status")
         viewModel.isConnected.observe(this, Observer { isConnected ->
             if (isConnected) {
                 Timber.d("Connected to server")
-                statusTextView.setText(R.string.connected_to_server)
+                status.setText(R.string.connected_to_server)
                 viewModel.loadMediaSource(intent.extras)
             } else {
                 Timber.d("Not connected to server")
-                statusTextView.setText(R.string.connection_failed)
+                status.setText(R.string.connection_failed)
             }
         })
 
@@ -136,17 +101,17 @@ class PlaybackActivity : AppCompatActivity(), PlayerControlView.VisibilityListen
             Timber.d("Received player playback state $state")
             when (state) {
                 Player.STATE_IDLE -> {
-                    statusTextView.visibility = View.VISIBLE
-                    playerSurfaceView.visibility = View.GONE
+                    status?.visible()
+                    exo_player_surface_view?.gone()
                 }
                 Player.STATE_BUFFERING -> {
-                    statusTextView.visibility = View.VISIBLE
-                    playerSurfaceView.visibility = View.GONE
-                    statusTextView.setText(R.string.player_is_loading_more_data)
+                    status?.visible()
+                    exo_player_surface_view?.gone()
+                    status?.setText(R.string.player_is_loading_more_data)
                 }
                 Player.STATE_READY, Player.STATE_ENDED -> {
-                    statusTextView.visibility = View.GONE
-                    playerSurfaceView.visibility = View.VISIBLE
+                    status?.gone()
+                    exo_player_surface_view?.visible()
                 }
             }
         })
@@ -154,10 +119,10 @@ class PlaybackActivity : AppCompatActivity(), PlayerControlView.VisibilityListen
         Timber.d("Observing player is playing state")
         viewModel.playerIsPlaying.observe(this, Observer { isPlaying ->
             Timber.d("Received player is playing $isPlaying")
-            playImageView.visibility = if (isPlaying) View.INVISIBLE else View.VISIBLE
-            pauseImageView.visibility = if (isPlaying) View.VISIBLE else View.INVISIBLE
-            forwardImageView.visibility = if (isPlaying && timeshiftSupported) View.VISIBLE else View.INVISIBLE
-            rewindImageView.visibility = if (isPlaying && timeshiftSupported) View.VISIBLE else View.INVISIBLE
+            player_play?.visibleOrInvisible(!isPlaying)
+            player_pause?.visibleOrInvisible(isPlaying)
+            player_forward?.visibleOrInvisible(isPlaying && timeshiftSupported)
+            player_rewind?.visibleOrInvisible(isPlaying && timeshiftSupported)
         })
 
         Timber.d("Observing playback information")
@@ -165,44 +130,44 @@ class PlaybackActivity : AppCompatActivity(), PlayerControlView.VisibilityListen
             Timber.d("Received channel icon $icon")
             Picasso.get()
                     .load(getIconUrl(this, icon))
-                    .into(iconImageView, object : Callback {
+                    .into(channel_icon, object : Callback {
                         override fun onSuccess() {
-                            iconTextView.visibility = View.GONE
-                            iconImageView.visibility = View.VISIBLE
+                            channel_name?.gone()
+                            channel_icon?.visible()
                         }
 
                         override fun onError(e: Exception) {
-                            iconTextView.visibility = View.VISIBLE
-                            iconImageView.visibility = View.GONE
+                            channel_name?.visible()
+                            channel_icon?.gone()
                         }
                     })
         })
 
         viewModel.channelName.observe(this, Observer { channelName ->
             Timber.d("Received channel name $channelName")
-            iconTextView.text = channelName
+            channel_name?.text = channelName
         })
         viewModel.title.observe(this, Observer { title ->
             Timber.d("Received title $title")
-            titleTextView.text = title
+            program_title?.text = title
         })
         viewModel.subtitle.observe(this, Observer { subtitle ->
             Timber.d("Received subtitle $subtitle")
-            subtitleTextView.text = subtitle
-            subtitleTextView.visibility = if (subtitle.isEmpty()) View.GONE else View.VISIBLE
+            program_subtitle?.text = subtitle
+            program_subtitle?.visibleOrGone(!subtitle.isEmpty())
         })
         viewModel.nextTitle.observe(this, Observer { nextTitle ->
             Timber.d("Received next title $nextTitle")
-            nextTitleTextView.text = nextTitle
-            nextTitleTextView.visibility = if (nextTitle.isEmpty()) View.GONE else View.VISIBLE
+            next_program_title?.text = nextTitle
+            next_program_title?.visibleOrGone(!nextTitle.isEmpty())
         })
         viewModel.elapsedTime.observe(this, Observer { elapsedTime ->
             Timber.d("Received elapsed time $elapsedTime")
-            elapsedTimeTextView.text = elapsedTime
+            elapsed_time?.text = elapsedTime
         })
         viewModel.remainingTime.observe(this, Observer { remainingTime ->
             Timber.d("Received remaining time $remainingTime")
-            remainingTimeTextView.text = remainingTime
+            remaining_time?.text = remainingTime
         })
     }
 
@@ -268,30 +233,29 @@ class PlaybackActivity : AppCompatActivity(), PlayerControlView.VisibilityListen
             Timber.d("New landscape video dimensions are $width:$height")
         }
 
-        val layoutParams = playerMainFrame.layoutParams
-        layoutParams.width = width
-        layoutParams.height = height
-        playerMainFrame.layoutParams = layoutParams
-        playerMainFrame.requestLayout()
+        exo_player_frame?.let {
+            val layoutParams = it.layoutParams
+            layoutParams.width = width
+            layoutParams.height = height
+            it.layoutParams = layoutParams
+            it.requestLayout()
+        }
     }
 
-    @OnClick(R.id.player_pause)
     fun onPauseButtonSelected() {
         Timber.d("Pause button selected")
         viewModel.pause()
     }
 
-    @OnClick(R.id.player_play)
     fun onPlayButtonSelected() {
         Timber.d("Play button selected")
         viewModel.play()
     }
 
-    @OnClick(R.id.player_menu)
-    fun onMenuButtonSelected(view: View) {
+    fun onMenuButtonSelected() {
         Timber.d("Menu button selected")
 
-        val popupMenu = PopupMenu(this, view)
+        val popupMenu = PopupMenu(this, player_menu)
         popupMenu.menuInflater.inflate(R.menu.player_popup_menu, popupMenu.menu)
 
         val mappedTrackInfo = viewModel.trackSelector.currentMappedTrackInfo
@@ -337,7 +301,6 @@ class PlaybackActivity : AppCompatActivity(), PlayerControlView.VisibilityListen
         }
     }
 
-    @OnClick(R.id.player_menu_aspect_ratio)
     fun onChangeAspectRatioSelected() {
         Timber.d("Change aspect ratio button selected")
         MaterialDialog.Builder(this)
@@ -351,13 +314,11 @@ class PlaybackActivity : AppCompatActivity(), PlayerControlView.VisibilityListen
                 .show()
     }
 
-    @OnClick(R.id.player_rewind)
     fun onRewindButtonSelected() {
         Timber.d("Rewind button selected")
         viewModel.seekBackward()
     }
 
-    @OnClick(R.id.player_forward)
     fun onForwardButtonSelected() {
         Timber.d("Forward button selected")
         viewModel.seekForward()
@@ -397,7 +358,7 @@ class PlaybackActivity : AppCompatActivity(), PlayerControlView.VisibilityListen
 
     override fun onPictureInPictureModeChanged(isInPictureInPictureMode: Boolean, newConfig: Configuration) {
         Timber.d("PIP mode entered $isInPictureInPictureMode")
-        playerView.useController = !isInPictureInPictureMode
+        player_view.useController = !isInPictureInPictureMode
         super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig)
     }
 
