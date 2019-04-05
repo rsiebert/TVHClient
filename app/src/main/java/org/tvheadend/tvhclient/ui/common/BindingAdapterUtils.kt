@@ -608,7 +608,7 @@ fun setGenreColor(view: TextView, contentType: Int, showGenreColors: Boolean, of
     val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 
     if (showGenreColors) {
-        var color = context.resources.getColor(android.R.color.transparent)
+        var color = ContextCompat.getColor(view.context, android.R.color.transparent)
         if (contentType >= 0) {
             // Get the genre color from the content type
             color = R.color.EPG_OTHER
