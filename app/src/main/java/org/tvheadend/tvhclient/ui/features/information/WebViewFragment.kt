@@ -57,7 +57,7 @@ open class WebViewFragment : BaseFragment(), HtmlFileLoaderTask.Listener {
 
     override fun onResume() {
         super.onResume()
-        htmlFileLoaderTask = HtmlFileLoaderTask(activity, website, "en", this)
+        htmlFileLoaderTask = HtmlFileLoaderTask(context!!, website, "en", this)
         htmlFileLoaderTask.execute()
     }
 
@@ -69,7 +69,7 @@ open class WebViewFragment : BaseFragment(), HtmlFileLoaderTask.Listener {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             android.R.id.home -> {
-                activity.finish()
+                activity?.finish()
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -77,10 +77,11 @@ open class WebViewFragment : BaseFragment(), HtmlFileLoaderTask.Listener {
     }
 
     override fun onFileContentsLoaded(fileContent: String) {
+        val ctx = context ?: return
         var content = fileContent
         if (!TextUtils.isEmpty(content)) {
             if (content.contains("styles_light.css")) {
-                content = if (getThemeId(activity) == R.style.CustomTheme_Light) {
+                content = if (getThemeId(ctx) == R.style.CustomTheme_Light) {
                     content.replace("styles_light.css", "html/styles_light.css")
                 } else {
                     content.replace("styles_light.css", "html/styles_dark.css")

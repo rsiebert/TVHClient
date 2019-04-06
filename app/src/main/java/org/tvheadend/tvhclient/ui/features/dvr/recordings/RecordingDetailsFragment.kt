@@ -43,7 +43,7 @@ class RecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback, Downl
         // or when the fragment is shown for the first time
         shownDvrId = savedInstanceState?.getInt("id", 0) ?: (arguments?.getInt("id", 0) ?: 0)
 
-        val viewModel = ViewModelProviders.of(activity).get(RecordingViewModel::class.java)
+        val viewModel = ViewModelProviders.of(activity!!).get(RecordingViewModel::class.java)
         viewModel.getRecordingById(shownDvrId)?.observe(viewLifecycleOwner, Observer { rec ->
             if (rec != null) {
                 recording = rec
@@ -52,7 +52,7 @@ class RecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback, Downl
                 // The toolbar is hidden as a default to prevent pressing any icons if no recording
                 // has been loaded yet. The toolbar is shown here because a recording was loaded
                 nested_toolbar.visible()
-                activity.invalidateOptionsMenu()
+                activity?.invalidateOptionsMenu()
             } else {
                 scrollview.gone()
                 status.text = getString(R.string.error_loading_recording_details)
@@ -62,11 +62,12 @@ class RecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback, Downl
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {
-        val recording = this.recording ?: return
+        val ctx = context ?: return
+        val recording = recording ?: return
         // Show or hide search menu items in the main toolbar
         prepareSearchMenu(menu, recording.title, isNetworkAvailable)
         // Show or hide menus of the nested toolbar
-        prepareMenu(activity, nested_toolbar.menu, null, recording, isNetworkAvailable, htspVersion, isUnlocked)
+        prepareMenu(ctx, nested_toolbar.menu, null, recording, isNetworkAvailable, htspVersion, isUnlocked)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -82,11 +83,13 @@ class RecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback, Downl
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val ctx = context ?: return super.onOptionsItemSelected(item)
+
         // The recording might be null in case the viewmodel
         // has not yet loaded the recording for the given id
         val recording = this.recording ?: return super.onOptionsItemSelected(item)
 
-        if (onMenuSelected(activity, item.itemId, recording.title)) {
+        if (onMenuSelected(ctx, item.itemId, recording.title)) {
             return true
         }
         when (item.itemId) {
@@ -95,14 +98,16 @@ class RecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback, Downl
             R.id.menu_cast ->
                 return menuUtils.handleMenuCast("dvrId", recording.id)
             R.id.menu_download -> {
-                DownloadRecordingManager(activity, recording.id)
+                activity?.let {
+                    DownloadRecordingManager(it, recording.id)
+                }
                 return true
             }
             R.id.menu_edit -> {
                 val editIntent = Intent(activity, RecordingAddEditActivity::class.java)
                 editIntent.putExtra("id", recording.id)
                 editIntent.putExtra("type", "recording")
-                activity.startActivity(editIntent)
+                activity?.startActivity(editIntent)
                 return true
             }
             R.id.menu_record_stop ->
@@ -117,21 +122,21 @@ class RecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback, Downl
 
     override fun onRecordingRemoved() {
         if (!isDualPane) {
-            activity.onBackPressed()
+            activity?.onBackPressed()
         } else {
-            val detailsFragment = activity.supportFragmentManager.findFragmentById(R.id.details)
+            val detailsFragment = activity?.supportFragmentManager?.findFragmentById(R.id.details)
             if (detailsFragment != null) {
-                activity.supportFragmentManager
-                        .beginTransaction()
-                        .remove(detailsFragment)
-                        .commit()
+                activity?.supportFragmentManager?.beginTransaction()?.also {
+                    it.remove(detailsFragment)
+                    it.commit()
+                }
             }
         }
     }
 
     override fun downloadRecording() {
-        recording?.let {
-            DownloadRecordingManager(activity, it.id)
+        activity?.let {
+            DownloadRecordingManager(it, recording?.id ?: 0)
         }
     }
 

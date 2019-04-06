@@ -4,8 +4,8 @@ package org.tvheadend.tvhclient.ui.features.dvr
 
 import android.content.Context
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import com.afollestad.materialdialogs.MaterialDialog
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.domain.entity.Channel
@@ -144,20 +144,24 @@ fun getSelectedProfileId(profile: ServerProfile?, recordingProfilesList: Array<S
     return 0
 }
 
-fun handleDateSelection(activity: AppCompatActivity, milliSeconds: Long, callback: Fragment, tag: String) {
-    val newFragment = DatePickerFragment()
-    val bundle = Bundle()
-    bundle.putLong("milliSeconds", milliSeconds)
-    newFragment.arguments = bundle
-    newFragment.setTargetFragment(callback, 1)
-    newFragment.show(activity.supportFragmentManager, tag)
+fun handleDateSelection(activity: FragmentActivity?, milliSeconds: Long, callback: Fragment, tag: String) {
+    activity?.let {
+        val newFragment = DatePickerFragment()
+        val bundle = Bundle()
+        bundle.putLong("milliSeconds", milliSeconds)
+        newFragment.arguments = bundle
+        newFragment.setTargetFragment(callback, 1)
+        newFragment.show(activity.supportFragmentManager, tag)
+    }
 }
 
-fun handleTimeSelection(activity: AppCompatActivity, milliSeconds: Long, callback: Fragment, tag: String) {
-    val newFragment = TimePickerFragment()
-    val bundle = Bundle()
-    bundle.putLong("milliSeconds", milliSeconds)
-    newFragment.arguments = bundle
-    newFragment.setTargetFragment(callback, 1)
-    newFragment.show(activity.supportFragmentManager, tag)
+fun handleTimeSelection(activity: FragmentActivity?, milliSeconds: Long, callback: Fragment, tag: String) {
+    activity?.let {
+        val newFragment = TimePickerFragment()
+        val bundle = Bundle()
+        bundle.putLong("milliSeconds", milliSeconds)
+        newFragment.arguments = bundle
+        newFragment.setTargetFragment(callback, 1)
+        newFragment.show(activity.supportFragmentManager, tag)
+    }
 }

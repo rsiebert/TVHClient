@@ -53,7 +53,7 @@ class ProgramDetailsFragment : BaseFragment() {
             }
         }
 
-        val viewModel = ViewModelProviders.of(activity).get(ProgramViewModel::class.java)
+        val viewModel = ViewModelProviders.of(activity!!).get(ProgramViewModel::class.java)
         program = viewModel.getProgramByIdSync(eventId)
         if (program != null) {
             program?.let {
@@ -64,7 +64,7 @@ class ProgramDetailsFragment : BaseFragment() {
                 // The toolbar is hidden as a default to prevent pressing any icons if no recording
                 // has been loaded yet. The toolbar is shown here because a recording was loaded
                 nested_toolbar.visible()
-                activity.invalidateOptionsMenu()
+                activity?.invalidateOptionsMenu()
             }
         } else {
             scrollview.gone()
@@ -85,7 +85,7 @@ class ProgramDetailsFragment : BaseFragment() {
                         val intent = Intent(activity, RecordingAddEditActivity::class.java)
                         intent.putExtra("id", rec.id)
                         intent.putExtra("type", "recording")
-                        activity.startActivity(intent)
+                        activity?.startActivity(intent)
                         break
 
                     } else if (program != null && rec.eventId == program?.eventId) {
@@ -104,16 +104,17 @@ class ProgramDetailsFragment : BaseFragment() {
                 // and also the menu items in the nested toolbar
                 program?.recording = recording
                 itemBinding.program = program
-                activity.invalidateOptionsMenu()
+                activity?.invalidateOptionsMenu()
             }
         })
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {
+        val ctx = context ?: return
         // Show or hide search menu items in the main toolbar
         prepareSearchMenu(menu, program?.title, isNetworkAvailable)
         // Show or hide menus of the nested toolbar
-        prepareMenu(activity, nested_toolbar.menu, program, program?.recording, isNetworkAvailable, htspVersion, isUnlocked)
+        prepareMenu(ctx, nested_toolbar.menu, program, program?.recording, isNetworkAvailable, htspVersion, isUnlocked)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -130,11 +131,12 @@ class ProgramDetailsFragment : BaseFragment() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val ctx = context ?: return super.onOptionsItemSelected(item)
         // The program might be null in case the view model
         // has not yet loaded the program for the given id
         val program = this.program ?: return super.onOptionsItemSelected(item)
 
-        if (onMenuSelected(activity, item.itemId, program.title, program.channelId)) {
+        if (onMenuSelected(ctx, item.itemId, program.title, program.channelId)) {
             return true
         }
         when (item.itemId) {
@@ -160,7 +162,9 @@ class ProgramDetailsFragment : BaseFragment() {
                 return menuUtils.handleMenuCast("channelId", program.channelId)
             R.id.menu_add_notification -> {
                 val profile = appRepository.serverProfileData.getItemById(serverStatus.recordingServerProfileId)
-                addNotification(activity, program, profile)
+                activity?.let {
+                    addNotification(it, program, profile)
+                }
                 return true
             }
             else -> return super.onOptionsItemSelected(item)

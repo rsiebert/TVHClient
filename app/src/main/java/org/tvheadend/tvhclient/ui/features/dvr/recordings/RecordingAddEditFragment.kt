@@ -62,7 +62,7 @@ class RecordingAddEditFragment : BaseFragment(), BackPressedInterface, Recording
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        viewModel = ViewModelProviders.of(activity).get(RecordingViewModel::class.java)
+        viewModel = ViewModelProviders.of(activity!!).get(RecordingViewModel::class.java)
 
         recordingProfilesList = appRepository.serverProfileData.recordingProfileNames
         profile = appRepository.serverProfileData.getItemById(serverStatus.recordingServerProfileId)
@@ -83,6 +83,7 @@ class RecordingAddEditFragment : BaseFragment(), BackPressedInterface, Recording
     }
 
     private fun updateUI() {
+        val ctx = context ?: return
 
         title_label.visibleOrGone(htspVersion >= 21)
         title.visibleOrGone(htspVersion >= 21)
@@ -116,7 +117,7 @@ class RecordingAddEditFragment : BaseFragment(), BackPressedInterface, Recording
             channel_name.setOnClickListener {
                 // Determine if the server supports recording on all channels
                 val allowRecordingOnAllChannels = serverStatus.htspVersion >= 21
-                handleChannelListSelection(activity, channelList, allowRecordingOnAllChannels, this@RecordingAddEditFragment)
+                handleChannelListSelection(ctx, channelList, allowRecordingOnAllChannels, this@RecordingAddEditFragment)
             }
         }
 
@@ -124,15 +125,15 @@ class RecordingAddEditFragment : BaseFragment(), BackPressedInterface, Recording
         is_enabled.isChecked = viewModel.recording.isEnabled
 
         priority.visibleOrGone(!viewModel.recording.isRecording)
-        priority.text = getPriorityName(activity, viewModel.recording.priority)
-        priority.setOnClickListener { handlePrioritySelection(activity, viewModel.recording.priority, this@RecordingAddEditFragment) }
+        priority.text = getPriorityName(ctx, viewModel.recording.priority)
+        priority.setOnClickListener { handlePrioritySelection(ctx, viewModel.recording.priority, this@RecordingAddEditFragment) }
 
         dvr_config.visibleOrGone(!(recordingProfilesList.isEmpty() || viewModel.recording.isRecording))
         dvr_config_label.visibleOrGone(!(recordingProfilesList.isEmpty() || viewModel.recording.isRecording))
 
         if (!recordingProfilesList.isEmpty() && !viewModel.recording.isRecording) {
             dvr_config.text = recordingProfilesList[viewModel.recordingProfileNameId]
-            dvr_config.setOnClickListener { handleRecordingProfileSelection(activity, recordingProfilesList, viewModel.recordingProfileNameId, this@RecordingAddEditFragment) }
+            dvr_config.setOnClickListener { handleRecordingProfileSelection(ctx, recordingProfilesList, viewModel.recordingProfileNameId, this@RecordingAddEditFragment) }
         }
 
         if (viewModel.recording.isRecording) {
@@ -224,16 +225,16 @@ class RecordingAddEditFragment : BaseFragment(), BackPressedInterface, Recording
     private fun addRecording() {
         val intent = intentData
         intent.action = "addDvrEntry"
-        activity.startService(intent)
-        activity.finish()
+        activity?.startService(intent)
+        activity?.finish()
     }
 
     private fun updateRecording() {
         val intent = intentData
         intent.action = "updateDvrEntry"
         intent.putExtra("id", id)
-        activity.startService(intent)
-        activity.finish()
+        activity?.startService(intent)
+        activity?.finish()
     }
 
     /**
@@ -243,13 +244,15 @@ class RecordingAddEditFragment : BaseFragment(), BackPressedInterface, Recording
      */
     private fun cancel() {
         // Show confirmation dialog to cancel
-        MaterialDialog.Builder(activity)
-                .content(R.string.cancel_edit_recording)
-                .positiveText(getString(R.string.discard))
-                .negativeText(getString(R.string.cancel))
-                .onPositive { _, _ -> activity.finish() }
-                .onNegative { dialog, _ -> dialog.cancel() }
-                .show()
+        context?.let {
+            MaterialDialog.Builder(it)
+                    .content(R.string.cancel_edit_recording)
+                    .positiveText(getString(R.string.discard))
+                    .negativeText(getString(R.string.cancel))
+                    .onPositive { _, _ -> activity?.finish() }
+                    .onNegative { dialog, _ -> dialog.cancel() }
+                    .show()
+        }
     }
 
     override fun onChannelSelected(channel: Channel) {
@@ -278,7 +281,9 @@ class RecordingAddEditFragment : BaseFragment(), BackPressedInterface, Recording
     }
 
     override fun onPrioritySelected(which: Int) {
-        priority.text = getPriorityName(activity, which)
+        context?.let {
+            priority.text = getPriorityName(it, which)
+        }
         viewModel.recording.priority = which
     }
 

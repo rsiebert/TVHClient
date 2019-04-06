@@ -1,7 +1,6 @@
 package org.tvheadend.tvhclient.ui.features.dvr.recordings
 
 import android.os.Bundle
-import android.view.View
 import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.recyclerview_fragment.*
 import org.tvheadend.tvhclient.R
@@ -37,7 +36,7 @@ class RemovedRecordingListFragment : RecordingListFragment() {
             }
             // Invalidate the menu so that the search menu item is shown in
             // case the adapter contains items now.
-            activity.invalidateOptionsMenu()
+            activity?.invalidateOptionsMenu()
         })
     }
 

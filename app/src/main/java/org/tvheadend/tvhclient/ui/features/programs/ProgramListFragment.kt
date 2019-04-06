@@ -80,15 +80,15 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
         val showProgramChannelIcon = isSearchActive && shownChannelId == 0
 
         recyclerViewAdapter = ProgramRecyclerViewAdapter(showProgramChannelIcon, this, this)
-        recycler_view.layoutManager = LinearLayoutManager(activity.applicationContext)
-        recycler_view.addItemDecoration(DividerItemDecoration(activity.applicationContext, LinearLayoutManager.VERTICAL))
+        recycler_view.layoutManager = LinearLayoutManager(applicationContext)
+        recycler_view.addItemDecoration(DividerItemDecoration(applicationContext, LinearLayoutManager.VERTICAL))
         recycler_view.itemAnimator = DefaultItemAnimator()
         recycler_view.adapter = recyclerViewAdapter
 
         recycler_view.gone()
         progress_bar.visible()
 
-        viewModel = ViewModelProviders.of(activity).get(ProgramViewModel::class.java)
+        viewModel = ViewModelProviders.of(activity!!).get(ProgramViewModel::class.java)
         if (!isSearchActive) {
             Timber.d("Search is not active, loading programs for channel $channelName from time $selectedTime")
             // A channel id and a channel name was given, load only the programs for the
@@ -132,7 +132,7 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
         }
         // Invalidate the menu so that the search menu item is shown in
         // case the adapter contains items now.
-        activity.invalidateOptionsMenu()
+        activity?.invalidateOptionsMenu()
     }
 
     /**
@@ -151,7 +151,7 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
                     val intent = Intent(activity, RecordingAddEditActivity::class.java)
                     intent.putExtra("id", recording.id)
                     intent.putExtra("type", "recording")
-                    activity.startActivity(intent)
+                    activity?.startActivity(intent)
                     break
                 }
             }
@@ -178,6 +178,7 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {
+        val ctx = context ?: return
         // Hide the genre color menu in dual pane mode or if no genre colors shall be shown
         val showGenreColors = sharedPreferences.getBoolean("genre_colors_for_programs_enabled", resources.getBoolean(R.bool.pref_default_genre_colors_for_programs_enabled))
 
@@ -185,7 +186,7 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
 
         if (!isSearchActive && isNetworkAvailable) {
             menu.findItem(R.id.menu_play)?.isVisible = true
-            menu.findItem(R.id.menu_cast)?.isVisible = getCastSession(activity) != null
+            menu.findItem(R.id.menu_cast)?.isVisible = getCastSession(ctx) != null
         } else {
             menu.findItem(R.id.menu_play)?.isVisible = false
             menu.findItem(R.id.menu_cast)?.isVisible = false
@@ -193,14 +194,19 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val ctx = context ?: return super.onOptionsItemSelected(item)
+
         return when (item.itemId) {
             R.id.menu_play -> {
                 menuUtils.handleMenuPlayChannel(shownChannelId)
                 true
             }
-            R.id.menu_cast -> menuUtils.handleMenuCast("channelId", shownChannelId)
-            R.id.menu_genre_color_info_programs -> showGenreColorDialog(activity)
-            else -> super.onOptionsItemSelected(item)
+            R.id.menu_cast ->
+                menuUtils.handleMenuCast("channelId", shownChannelId)
+            R.id.menu_genre_color_info_programs ->
+                showGenreColorDialog(ctx)
+            else ->
+                super.onOptionsItemSelected(item)
         }
     }
 
@@ -214,29 +220,27 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
         }
 
         val fragment = ProgramDetailsFragment.newInstance(program.eventId, program.channelId)
-        val ft = activity.supportFragmentManager.beginTransaction()
-        ft.replace(R.id.main, fragment)
-        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-        ft.addToBackStack(null)
-        ft.commit()
+        activity?.supportFragmentManager?.beginTransaction()?.also {
+            it.replace(R.id.main, fragment)
+            it.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+            it.addToBackStack(null)
+            it.commit()
+        }
     }
 
     private fun showPopupMenu(view: View, position: Int) {
-        val program = recyclerViewAdapter.getItem(position)
-        if (activity == null || program == null) {
-            return
-        }
-
+        val ctx = context ?: return
+        val program = recyclerViewAdapter.getItem(position) ?: return
         val recording = appRepository.recordingData.getItemByEventId(program.eventId)
 
-        val popupMenu = PopupMenu(activity, view)
+        val popupMenu = PopupMenu(ctx, view)
         popupMenu.menuInflater.inflate(R.menu.program_popup_and_toolbar_menu, popupMenu.menu)
         popupMenu.menuInflater.inflate(R.menu.external_search_options_menu, popupMenu.menu)
         prepareSearchMenu(popupMenu.menu, program.title, isNetworkAvailable)
-        prepareMenu(activity, popupMenu.menu, program, program.recording, isNetworkAvailable, htspVersion, isUnlocked)
+        prepareMenu(ctx, popupMenu.menu, program, program.recording, isNetworkAvailable, htspVersion, isUnlocked)
 
         popupMenu.setOnMenuItemClickListener { item ->
-            if (onMenuSelected(activity, item.itemId, program.title, program.channelId)) {
+            if (onMenuSelected(ctx, item.itemId, program.title, program.channelId)) {
                 return@setOnMenuItemClickListener true
             }
             when (item.itemId) {
@@ -262,7 +266,9 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
                     return@setOnMenuItemClickListener menuUtils.handleMenuCast("channelId", shownChannelId)
                 R.id.menu_add_notification -> {
                     val profile = appRepository.serverProfileData.getItemById(serverStatus.recordingServerProfileId)
-                    addNotification(activity, program, profile)
+                    activity?.let {
+                        addNotification(it, program, profile)
+                    }
                     return@setOnMenuItemClickListener true
                 }
                 else ->
@@ -312,7 +318,7 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
             intent.putExtra("showMessage", true)
 
             if (MainApplication.isActivityVisible()) {
-                activity.startService(intent)
+                activity?.startService(intent)
             }
         }
     }

@@ -268,8 +268,11 @@ class PlaybackActivity : AppCompatActivity(), PlayerControlView.VisibilityListen
     fun onMenuButtonSelected() {
         Timber.d("Menu button selected")
 
-        val popupMenu = PopupMenu(this, player_menu)
-        popupMenu.menuInflater.inflate(R.menu.player_popup_menu, popupMenu.menu)
+        var popupMenu: PopupMenu? = null
+        player_menu?.let {
+            popupMenu = PopupMenu(this, player_menu)
+            popupMenu?.menuInflater?.inflate(R.menu.player_popup_menu, popupMenu?.menu)
+        }
 
         val mappedTrackInfo = viewModel.trackSelector.currentMappedTrackInfo
         if (mappedTrackInfo != null) {
@@ -279,22 +282,22 @@ class PlaybackActivity : AppCompatActivity(), PlayerControlView.VisibilityListen
                     when (viewModel.player.getRendererType(i)) {
                         C.TRACK_TYPE_AUDIO -> {
                             Timber.d("Track renderer type for index $i is audio, showing audio menu")
-                            popupMenu.menu.findItem(R.id.menu_audio)?.isVisible = true
+                            popupMenu?.menu?.findItem(R.id.menu_audio)?.isVisible = true
                         }
                         C.TRACK_TYPE_VIDEO -> {
                             Timber.d("Track renderer type for index $i is video")
-                            //popupMenu.menu.findItem(R.id.menu_video)?.isVisible = true
+                            //popupMenu?.menu?.findItem(R.id.menu_video)?.isVisible = true
                         }
                         C.TRACK_TYPE_TEXT -> {
                             Timber.d("Track renderer type for index $i is text, showing subtitle menu")
-                            popupMenu.menu.findItem(R.id.menu_subtitle)?.isVisible = true
+                            popupMenu?.menu?.findItem(R.id.menu_subtitle)?.isVisible = true
                         }
                     }
                 }
             }
 
             Timber.d("Adding popup menu listener")
-            popupMenu.setOnMenuItemClickListener { item ->
+            popupMenu?.setOnMenuItemClickListener { item ->
                 val trackSelectionHelper = TrackSelectionHelper(viewModel.trackSelector, viewModel.adaptiveTrackSelectionFactory)
                 when (item.itemId) {
                     R.id.menu_audio -> {
@@ -310,7 +313,7 @@ class PlaybackActivity : AppCompatActivity(), PlayerControlView.VisibilityListen
                     }
                 }
             }
-            popupMenu.show()
+            popupMenu?.show()
         }
     }
 

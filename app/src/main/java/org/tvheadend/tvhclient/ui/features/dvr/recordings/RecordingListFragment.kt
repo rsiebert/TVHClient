@@ -7,7 +7,6 @@ import android.view.*
 import android.widget.Filter
 import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.FragmentTransaction
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -46,11 +45,11 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback
         }
 
         recyclerViewAdapter = RecordingRecyclerViewAdapter(isDualPane, this, htspVersion)
-        recycler_view.layoutManager = LinearLayoutManager(activity.applicationContext)
-        recycler_view.addItemDecoration(DividerItemDecoration(activity.applicationContext, LinearLayoutManager.VERTICAL))
+        recycler_view.layoutManager = LinearLayoutManager(applicationContext)
+        recycler_view.addItemDecoration(DividerItemDecoration(applicationContext, LinearLayoutManager.VERTICAL))
         recycler_view.itemAnimator = DefaultItemAnimator()
         recycler_view.adapter = recyclerViewAdapter
-        viewModel = ViewModelProviders.of(activity).get(RecordingViewModel::class.java)
+        viewModel = ViewModelProviders.of(activity!!).get(RecordingViewModel::class.java)
 
         recycler_view.gone()
         progress_bar.visible()
@@ -67,7 +66,7 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback
             R.id.menu_add -> {
                 val intent = Intent(activity, RecordingAddEditActivity::class.java)
                 intent.putExtra("type", "recording")
-                activity.startActivity(intent)
+                activity?.startActivity(intent)
                 true
             }
             R.id.menu_record_remove_all -> {
@@ -102,45 +101,46 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback
         recyclerViewAdapter.setPosition(position)
 
         val recording = recyclerViewAdapter.getItem(position)
-        if (recording == null || !isVisible
-                || !activity.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
+        if (recording == null || !isVisible) {
             return
         }
 
+        val fm = activity?.supportFragmentManager
         if (!isDualPane) {
             val fragment = RecordingDetailsFragment.newInstance(recording.id)
-            val ft = activity.supportFragmentManager.beginTransaction()
-            ft.replace(R.id.main, fragment)
-            ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-            ft.addToBackStack(null)
-            ft.commit()
+            fm?.beginTransaction()?.also {
+                it.replace(R.id.main, fragment)
+                it.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                it.addToBackStack(null)
+                it.commit()
+            }
         } else {
             // Check what fragment is currently shown, replace if needed.
-            var fragment = activity.supportFragmentManager.findFragmentById(R.id.details)
+            var fragment = activity?.supportFragmentManager?.findFragmentById(R.id.details)
             if (fragment !is RecordingDetailsFragment || fragment.shownDvrId != recording.id) {
                 // Make new fragment to show this selection.
                 fragment = RecordingDetailsFragment.newInstance(recording.id)
-                val ft = activity.supportFragmentManager.beginTransaction()
-                ft.replace(R.id.details, fragment)
-                ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                ft.commit()
+                fm?.beginTransaction()?.also {
+                    it.replace(R.id.details, fragment)
+                    it.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                    it.commit()
+                }
             }
         }
     }
 
     private fun showPopupMenu(view: View, position: Int) {
-        val recording = recyclerViewAdapter.getItem(position)
-        if (activity == null || recording == null) {
-            return
-        }
-        val popupMenu = PopupMenu(activity, view)
+        val ctx = context ?: return
+        val recording = recyclerViewAdapter.getItem(position) ?: return
+
+        val popupMenu = PopupMenu(ctx, view)
         popupMenu.menuInflater.inflate(R.menu.recordings_popup_menu, popupMenu.menu)
         popupMenu.menuInflater.inflate(R.menu.external_search_options_menu, popupMenu.menu)
         prepareSearchMenu(popupMenu.menu, recording.title, isNetworkAvailable)
-        prepareMenu(activity, popupMenu.menu, null, recording, isNetworkAvailable, htspVersion, isUnlocked)
+        prepareMenu(ctx, popupMenu.menu, null, recording, isNetworkAvailable, htspVersion, isUnlocked)
 
         popupMenu.setOnMenuItemClickListener { item ->
-            if (onMenuSelected(activity, item.itemId, recording.title)) {
+            if (onMenuSelected(ctx, item.itemId, recording.title)) {
                 return@setOnMenuItemClickListener true
             }
             when (item.itemId) {
@@ -155,14 +155,16 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback
                 R.id.menu_cast ->
                     return@setOnMenuItemClickListener menuUtils.handleMenuCast("dvrId", recording.id)
                 R.id.menu_download -> {
-                    DownloadRecordingManager(activity, recording.id)
+                    activity?.let {
+                        DownloadRecordingManager(it, recording.id)
+                    }
                     return@setOnMenuItemClickListener true
                 }
                 R.id.menu_edit -> {
                     val intent = Intent(activity, RecordingAddEditActivity::class.java)
                     intent.putExtra("id", recording.id)
                     intent.putExtra("type", "recording")
-                    activity.startActivity(intent)
+                    activity?.startActivity(intent)
                     return@setOnMenuItemClickListener true
                 }
                 else ->
@@ -191,8 +193,8 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback
 
     override fun downloadRecording() {
         val recording = recyclerViewAdapter.getItem(selectedListPosition)
-        recording?.let {
-            DownloadRecordingManager(activity, it.id)
+        activity?.let {
+            DownloadRecordingManager(it, recording?.id ?: 0)
         }
     }
 

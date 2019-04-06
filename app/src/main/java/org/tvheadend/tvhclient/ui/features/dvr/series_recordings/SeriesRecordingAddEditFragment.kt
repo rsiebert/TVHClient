@@ -79,7 +79,7 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        viewModel = ViewModelProviders.of(activity).get(SeriesRecordingViewModel::class.java)
+        viewModel = ViewModelProviders.of(activity!!).get(SeriesRecordingViewModel::class.java)
 
         duplicateDetectionList = resources.getStringArray(R.array.duplicate_detection_list)
         recordingProfilesList = appRepository.serverProfileData.recordingProfileNames
@@ -101,6 +101,7 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
     }
 
     private fun updateUI() {
+        val ctx = context ?: return
 
         is_enabled.visibleOrGone(htspVersion >= 19)
         is_enabled.isChecked = viewModel.recording.isEnabled
@@ -116,12 +117,12 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
         channel_name.setOnClickListener {
             // Determine if the server supports recording on all channels
             val allowRecordingOnAllChannels = htspVersion >= 21
-            handleChannelListSelection(activity, channelList, allowRecordingOnAllChannels, this@SeriesRecordingAddEditFragment)
+            handleChannelListSelection(ctx, channelList, allowRecordingOnAllChannels, this@SeriesRecordingAddEditFragment)
         }
 
-        priority.text = getPriorityName(activity, viewModel.recording.priority)
+        priority.text = getPriorityName(ctx, viewModel.recording.priority)
         priority.setOnClickListener {
-            handlePrioritySelection(activity, viewModel.recording.priority, this@SeriesRecordingAddEditFragment)
+            handlePrioritySelection(ctx, viewModel.recording.priority, this@SeriesRecordingAddEditFragment)
         }
 
         dvr_config.visibleOrGone(!recordingProfilesList.isEmpty())
@@ -130,7 +131,7 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
         if (!recordingProfilesList.isEmpty()) {
             dvr_config.text = recordingProfilesList[viewModel.recordingProfileNameId]
             dvr_config.setOnClickListener {
-                handleRecordingProfileSelection(activity, recordingProfilesList, viewModel.recordingProfileNameId, this)
+                handleRecordingProfileSelection(ctx, recordingProfilesList, viewModel.recordingProfileNameId, this)
             }
         }
 
@@ -147,9 +148,9 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
         start_extra.setText(viewModel.recording.startExtra.toString())
         stop_extra.setText(viewModel.recording.stopExtra.toString())
 
-        days_of_week.text = getSelectedDaysOfWeekText(activity, viewModel.recording.daysOfWeek)
+        days_of_week.text = getSelectedDaysOfWeekText(ctx, viewModel.recording.daysOfWeek)
         days_of_week.setOnClickListener {
-            handleDayOfWeekSelection(activity, viewModel.recording.daysOfWeek, this@SeriesRecordingAddEditFragment)
+            handleDayOfWeekSelection(ctx, viewModel.recording.daysOfWeek, this@SeriesRecordingAddEditFragment)
         }
 
         minimum_duration.setText(if (viewModel.recording.minDuration > 0) viewModel.recording.minDuration.toString() else getString(R.string.duration_sum))
@@ -273,13 +274,15 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
      * the input will be discarded and the activity will be closed.
      */
     private fun cancel() {
-        MaterialDialog.Builder(activity)
-                .content(R.string.cancel_add_recording)
-                .positiveText(getString(R.string.discard))
-                .negativeText(getString(R.string.cancel))
-                .onPositive { _, _ -> activity.finish() }
-                .onNegative { dialog, _ -> dialog.cancel() }
-                .show()
+        context?.let {
+            MaterialDialog.Builder(it)
+                    .content(R.string.cancel_add_recording)
+                    .positiveText(getString(R.string.discard))
+                    .negativeText(getString(R.string.cancel))
+                    .onPositive { _, _ -> activity?.finish() }
+                    .onNegative { dialog, _ -> dialog.cancel() }
+                    .show()
+        }
     }
 
     /**
@@ -290,8 +293,8 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
     private fun addSeriesRecording() {
         val intent = intentData
         intent.action = "addAutorecEntry"
-        activity.startService(intent)
-        activity.finish()
+        activity?.startService(intent)
+        activity?.finish()
     }
 
     /**
@@ -301,8 +304,8 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
         val intent = intentData
         intent.action = "updateAutorecEntry"
         intent.putExtra("id", viewModel.recording.id)
-        activity.startService(intent)
-        activity.finish()
+        activity?.startService(intent)
+        activity?.finish()
     }
 
     override fun onChannelSelected(channel: Channel) {
@@ -312,7 +315,9 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
 
     override fun onPrioritySelected(which: Int) {
         viewModel.recording.priority = which
-        priority.text = getPriorityName(activity, viewModel.recording.priority)
+        context?.let {
+            priority.text = getPriorityName(it, viewModel.recording.priority)
+        }
     }
 
     override fun onProfileSelected(which: Int) {
@@ -345,7 +350,9 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
 
     override fun onDaysSelected(selectedDays: Int) {
         viewModel.recording.daysOfWeek = selectedDays
-        days_of_week.text = getSelectedDaysOfWeekText(activity, selectedDays)
+        context?.let {
+            days_of_week.text = getSelectedDaysOfWeekText(it, selectedDays)
+        }
     }
 
     private fun onDuplicateDetectionValueSelected(which: Int) {
@@ -354,14 +361,16 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
     }
 
     private fun handleDuplicateDetectionSelection(duplicateDetectionList: Array<String>, duplicateDetectionId: Int) {
-        MaterialDialog.Builder(activity)
-                .title(R.string.select_duplicate_detection)
-                .items(*duplicateDetectionList)
-                .itemsCallbackSingleChoice(duplicateDetectionId) { _, _, which, _ ->
-                    onDuplicateDetectionValueSelected(which)
-                    true
-                }
-                .show()
+        context?.let {
+            MaterialDialog.Builder(it)
+                    .title(R.string.select_duplicate_detection)
+                    .items(*duplicateDetectionList)
+                    .itemsCallbackSingleChoice(duplicateDetectionId) { _, _, which, _ ->
+                        onDuplicateDetectionValueSelected(which)
+                        true
+                    }
+                    .show()
+        }
     }
 
     override fun onBackPressed() {

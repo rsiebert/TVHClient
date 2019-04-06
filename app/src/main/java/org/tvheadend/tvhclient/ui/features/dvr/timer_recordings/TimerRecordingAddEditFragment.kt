@@ -69,7 +69,7 @@ class TimerRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Reco
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        viewModel = ViewModelProviders.of(activity).get(TimerRecordingViewModel::class.java)
+        viewModel = ViewModelProviders.of(activity!!).get(TimerRecordingViewModel::class.java)
 
         recordingProfilesList = appRepository.serverProfileData.recordingProfileNames
         profile = appRepository.serverProfileData.getItemById(serverStatus.recordingServerProfileId)
@@ -90,6 +90,7 @@ class TimerRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Reco
     }
 
     private fun updateUI() {
+        val ctx = context ?: return
 
         is_enabled.visibleOrGone(htspVersion >= 19)
         is_enabled.isChecked = viewModel.recording.isEnabled
@@ -105,12 +106,12 @@ class TimerRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Reco
         channel_name.setOnClickListener {
             // Determine if the server supports recording on all channels
             val allowRecordingOnAllChannels = htspVersion >= 21
-            handleChannelListSelection(activity, channelList, allowRecordingOnAllChannels, this@TimerRecordingAddEditFragment)
+            handleChannelListSelection(ctx, channelList, allowRecordingOnAllChannels, this@TimerRecordingAddEditFragment)
         }
 
-        priority.text = getPriorityName(activity, viewModel.recording.priority)
+        priority.text = getPriorityName(ctx, viewModel.recording.priority)
         priority.setOnClickListener {
-            handlePrioritySelection(activity, viewModel.recording.priority, this@TimerRecordingAddEditFragment)
+            handlePrioritySelection(ctx, viewModel.recording.priority, this@TimerRecordingAddEditFragment)
         }
 
         dvr_config.visibleOrGone(!recordingProfilesList.isEmpty())
@@ -119,7 +120,7 @@ class TimerRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Reco
         if (!recordingProfilesList.isEmpty()) {
             dvr_config.text = recordingProfilesList[viewModel.recordingProfileNameId]
             dvr_config.setOnClickListener {
-                handleRecordingProfileSelection(activity, recordingProfilesList, viewModel.recordingProfileNameId, this@TimerRecordingAddEditFragment)
+                handleRecordingProfileSelection(ctx, recordingProfilesList, viewModel.recordingProfileNameId, this@TimerRecordingAddEditFragment)
             }
         }
 
@@ -133,9 +134,9 @@ class TimerRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Reco
             handleTimeSelection(activity, viewModel.stopTimeInMillis, this@TimerRecordingAddEditFragment, "stopTime")
         }
 
-        days_of_week.text = getSelectedDaysOfWeekText(activity, viewModel.recording.daysOfWeek)
+        days_of_week.text = getSelectedDaysOfWeekText(ctx, viewModel.recording.daysOfWeek)
         days_of_week.setOnClickListener {
-            handleDayOfWeekSelection(activity, viewModel.recording.daysOfWeek, this@TimerRecordingAddEditFragment)
+            handleDayOfWeekSelection(ctx, viewModel.recording.daysOfWeek, this@TimerRecordingAddEditFragment)
         }
 
         time_enabled.isChecked = viewModel.isTimeEnabled
@@ -203,13 +204,15 @@ class TimerRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Reco
 
     private fun cancel() {
         // Show confirmation dialog to cancel
-        MaterialDialog.Builder(activity)
-                .content(R.string.cancel_add_recording)
-                .positiveText(getString(R.string.discard))
-                .negativeText(getString(R.string.cancel))
-                .onPositive { _, _ -> activity.finish() }
-                .onNegative { dialog, _ -> dialog.cancel() }
-                .show()
+        context?.let {
+            MaterialDialog.Builder(it)
+                    .content(R.string.cancel_add_recording)
+                    .positiveText(getString(R.string.discard))
+                    .negativeText(getString(R.string.cancel))
+                    .onPositive { _, _ -> activity?.finish() }
+                    .onNegative { dialog, _ -> dialog.cancel() }
+                    .show()
+        }
     }
 
     /**
@@ -220,8 +223,8 @@ class TimerRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Reco
     private fun addTimerRecording() {
         val intent = intentData
         intent.action = "addTimerecEntry"
-        activity.startService(intent)
-        activity.finish()
+        activity?.startService(intent)
+        activity?.finish()
     }
 
     /**
@@ -234,8 +237,8 @@ class TimerRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Reco
         val intent = intentData
         intent.action = "updateTimerecEntry"
         intent.putExtra("id", viewModel.recording.id)
-        activity.startService(intent)
-        activity.finish()
+        activity?.startService(intent)
+        activity?.finish()
     }
 
     override fun onChannelSelected(channel: Channel) {
@@ -245,7 +248,9 @@ class TimerRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Reco
 
     override fun onPrioritySelected(which: Int) {
         viewModel.recording.priority = which
-        priority.text = getPriorityName(activity, viewModel.recording.priority)
+        context?.let {
+            priority.text = getPriorityName(it, viewModel.recording.priority)
+        }
     }
 
     override fun onProfileSelected(which: Int) {
@@ -278,7 +283,9 @@ class TimerRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Reco
 
     override fun onDaysSelected(selectedDays: Int) {
         viewModel.recording.daysOfWeek = selectedDays
-        days_of_week.text = getSelectedDaysOfWeekText(activity, selectedDays)
+        context?.let {
+            days_of_week.text = getSelectedDaysOfWeekText(it, selectedDays)
+        }
     }
 
     override fun onBackPressed() {

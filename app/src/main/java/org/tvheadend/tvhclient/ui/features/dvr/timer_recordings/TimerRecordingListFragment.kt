@@ -7,7 +7,6 @@ import android.view.*
 import android.widget.Filter
 import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.FragmentTransaction
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DefaultItemAnimator
@@ -52,16 +51,16 @@ class TimerRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, Se
             getString(R.string.search_results))
 
         recyclerViewAdapter = TimerRecordingRecyclerViewAdapter(isDualPane, this, htspVersion)
-        recycler_view.layoutManager = LinearLayoutManager(activity.applicationContext)
-        recycler_view.addItemDecoration(DividerItemDecoration(activity.applicationContext, LinearLayoutManager.VERTICAL))
+        recycler_view.layoutManager = LinearLayoutManager(applicationContext)
+        recycler_view.addItemDecoration(DividerItemDecoration(applicationContext, LinearLayoutManager.VERTICAL))
         recycler_view.itemAnimator = DefaultItemAnimator()
         recycler_view.adapter = recyclerViewAdapter
 
         recycler_view.gone()
         progress_bar.visible()
 
-        val viewModel = ViewModelProviders.of(activity).get(TimerRecordingViewModel::class.java)
-        viewModel.recordings.observe(activity, Observer { recordings ->
+        val viewModel = ViewModelProviders.of(activity!!).get(TimerRecordingViewModel::class.java)
+        viewModel.recordings.observe(viewLifecycleOwner, Observer { recordings ->
             if (recordings != null) {
                 recyclerViewAdapter.addItems(recordings)
             }
@@ -80,7 +79,7 @@ class TimerRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, Se
             }
             // Invalidate the menu so that the search menu item is shown in
             // case the adapter contains items now.
-            activity.invalidateOptionsMenu()
+            activity?.invalidateOptionsMenu()
         })
     }
 
@@ -95,7 +94,7 @@ class TimerRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, Se
             R.id.menu_add -> {
                 val intent = Intent(activity, RecordingAddEditActivity::class.java)
                 intent.putExtra("type", "timer_recording")
-                activity.startActivity(intent)
+                activity?.startActivity(intent)
                 true
             }
             R.id.menu_record_remove_all -> {
@@ -129,46 +128,45 @@ class TimerRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, Se
         recyclerViewAdapter.setPosition(position)
 
         val recording = recyclerViewAdapter.getItem(position)
-        if (recording == null
-                || !isVisible
-                || !activity.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
+        if (recording == null || !isVisible) {
             return
         }
 
+        val fm = activity?.supportFragmentManager
         if (!isDualPane) {
             val fragment = TimerRecordingDetailsFragment.newInstance(recording.id)
-            val ft = activity.supportFragmentManager.beginTransaction()
-            ft.replace(R.id.main, fragment)
-            ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-            ft.addToBackStack(null)
-            ft.commit()
+            fm?.beginTransaction()?.also {
+                it.replace(R.id.main, fragment)
+                it.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                it.addToBackStack(null)
+                it.commit()
+            }
         } else {
             // Check what fragment is currently shown, replace if needed.
-            var fragment = activity.supportFragmentManager.findFragmentById(R.id.main)
+            var fragment = activity?.supportFragmentManager?.findFragmentById(R.id.main)
             if (fragment !is TimerRecordingDetailsFragment || fragment.shownId != recording.id) {
                 // Make new fragment to show this selection.
                 fragment = TimerRecordingDetailsFragment.newInstance(recording.id)
-                val ft = activity.supportFragmentManager.beginTransaction()
-                ft.replace(R.id.details, fragment)
-                ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                ft.commit()
+                fm?.beginTransaction()?.also {
+                    it.replace(R.id.details, fragment)
+                    it.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                    it.commit()
+                }
             }
         }
     }
 
     private fun showPopupMenu(view: View, position: Int) {
-        val timerRecording = recyclerViewAdapter.getItem(position)
-        if (activity == null || timerRecording == null) {
-            return
-        }
+        val ctx = context ?: return
+        val timerRecording = recyclerViewAdapter.getItem(position) ?: return
 
-        val popupMenu = PopupMenu(activity, view)
+        val popupMenu = PopupMenu(ctx, view)
         popupMenu.menuInflater.inflate(R.menu.timer_recordings_popup_menu, popupMenu.menu)
         popupMenu.menuInflater.inflate(R.menu.external_search_options_menu, popupMenu.menu)
         prepareSearchMenu(popupMenu.menu, timerRecording.title, isNetworkAvailable)
 
         popupMenu.setOnMenuItemClickListener { item ->
-            if (onMenuSelected(activity, item.itemId, timerRecording.title)) {
+            if (onMenuSelected(ctx, item.itemId, timerRecording.title)) {
                 return@setOnMenuItemClickListener true
             }
             when (item.itemId) {
@@ -176,7 +174,7 @@ class TimerRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, Se
                     val intent = Intent(activity, RecordingAddEditActivity::class.java)
                     intent.putExtra("id", timerRecording.id)
                     intent.putExtra("type", "timer_recording")
-                    activity.startActivity(intent)
+                    activity?.startActivity(intent)
                     return@setOnMenuItemClickListener true
                 }
                 R.id.menu_record_remove -> {

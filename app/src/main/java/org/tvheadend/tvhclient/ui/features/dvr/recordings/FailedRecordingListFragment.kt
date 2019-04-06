@@ -36,7 +36,7 @@ class FailedRecordingListFragment : RecordingListFragment() {
             }
             // Invalidate the menu so that the search menu item is shown in
             // case the adapter contains items now.
-            activity.invalidateOptionsMenu()
+            activity?.invalidateOptionsMenu()
         })
     }
 

@@ -6,9 +6,9 @@ import android.os.Bundle
 import android.os.Handler
 import android.view.*
 import android.widget.Filter
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.FragmentTransaction
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DefaultItemAnimator
@@ -67,15 +67,15 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
         }
 
         recyclerViewAdapter = ChannelRecyclerViewAdapter(isDualPane, this)
-        recycler_view.layoutManager = LinearLayoutManager(activity.applicationContext)
-        recycler_view.addItemDecoration(DividerItemDecoration(activity.applicationContext, LinearLayoutManager.VERTICAL))
+        recycler_view.layoutManager = LinearLayoutManager(applicationContext)
+        recycler_view.addItemDecoration(DividerItemDecoration(applicationContext, LinearLayoutManager.VERTICAL))
         recycler_view.itemAnimator = DefaultItemAnimator()
         recycler_view.adapter = recyclerViewAdapter
 
         recycler_view.gone()
         progress_bar.visible()
 
-        viewModel = ViewModelProviders.of(activity).get(ChannelViewModel::class.java)
+        viewModel = ViewModelProviders.of(activity!!).get(ChannelViewModel::class.java)
 
         Timber.d("Observing selected time")
         viewModel.selectedTime.observe(viewLifecycleOwner, Observer { time ->
@@ -126,7 +126,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
                         val intent = Intent(activity, RecordingAddEditActivity::class.java)
                         intent.putExtra("id", recording.id)
                         intent.putExtra("type", "recording")
-                        activity.startActivity(intent)
+                        activity?.startActivity(intent)
                         break
                     }
                 }
@@ -150,7 +150,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
         // Show either all channels or the name of the selected
         // channel tag and the channel count in the toolbar
         context?.let {
-            val toolbarTitle = viewModel.getSelectedChannelTagName(activity)
+            val toolbarTitle = viewModel.getSelectedChannelTagName(it)
             if (searchQuery.isEmpty()) {
                 toolbarInterface.setTitle(toolbarTitle)
                 toolbarInterface.setSubtitle(it.resources.getQuantityString(R.plurals.items,
@@ -213,14 +213,20 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val ctx = context ?: return super.onOptionsItemSelected(item)
+
         return when (item.itemId) {
-            R.id.menu_tags -> showChannelTagSelectionDialog(activity, channelTags.toMutableList(), appRepository.channelData.getItems().size, this)
-            R.id.menu_timeframe -> menuUtils.handleMenuTimeSelection(selectedTimeOffset, intervalInHours, 12, this)
-            R.id.menu_genre_color_info_channels -> showGenreColorDialog(activity)
-            R.id.menu_sort_order -> menuUtils.handleMenuChannelSortOrderSelection(this)
+            R.id.menu_tags ->
+                showChannelTagSelectionDialog(ctx, channelTags.toMutableList(), appRepository.channelData.getItems().size, this)
+            R.id.menu_timeframe ->
+                menuUtils.handleMenuTimeSelection(selectedTimeOffset, intervalInHours, 12, this)
+            R.id.menu_genre_color_info_channels ->
+                showGenreColorDialog(ctx)
+            R.id.menu_sort_order ->
+                menuUtils.handleMenuChannelSortOrderSelection(this)
             R.id.menu_wol -> {
                 val connection = appRepository.connectionData.activeItem
-                WakeOnLanTask(activity, connection).execute()
+                WakeOnLanTask(ctx, connection).execute()
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -259,12 +265,11 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
         selectedListPosition = position
         recyclerViewAdapter.setPosition(position)
         val channel = recyclerViewAdapter.getItem(position)
-        if (channel == null || !isVisible
-                || !activity.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
+        if (channel == null || !isVisible) {
             return
         }
 
-        val fm = activity.supportFragmentManager
+        val fm = activity?.supportFragmentManager
         if (!isDualPane) {
             // Show the fragment to display the program list of the selected channel.
             val bundle = Bundle()
@@ -274,23 +279,25 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
 
             val fragment = ProgramListFragment()
             fragment.arguments = bundle
-            fm.beginTransaction()
-                    .replace(R.id.main, fragment)
-                    .addToBackStack(null)
-                    .commit()
+            fm?.beginTransaction()?.also {
+                it.replace(R.id.main, fragment)
+                it.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                it.addToBackStack(null)
+                it.commit()
+            }
         } else {
             // Check if an instance of the program list fragment for the selected channel is
             // already available. If an instance exist already then update the selected time
             // that was selected from the channel list.
-            var fragment = fm.findFragmentById(R.id.details)
+            var fragment = fm?.findFragmentById(R.id.details)
             if (fragment !is ProgramListFragment
                     || fragment.shownChannelId != channel.id) {
-                fragment = ProgramListFragment.newInstance(channel.name
-                        ?: "", channel.id, selectedTime)
-                fm.beginTransaction()
-                        .replace(R.id.details, fragment)
-                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                        .commit()
+                fragment = ProgramListFragment.newInstance(channel.name ?: "", channel.id, selectedTime)
+                fm?.beginTransaction()?.also {
+                    it.replace(R.id.details, fragment)
+                    it.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                    it.commit()
+                }
             } else {
                 fragment.updatePrograms(selectedTime)
             }
@@ -303,19 +310,20 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
             return
         }
 
+        val ctx = context ?: return
         val program = appRepository.programData.getItemById(channel.programId)
         val recording = appRepository.recordingData.getItemByEventId(channel.programId)
 
-        val popupMenu = PopupMenu(activity, view)
+        val popupMenu = PopupMenu(ctx, view)
         popupMenu.menuInflater.inflate(R.menu.program_popup_and_toolbar_menu, popupMenu.menu)
         popupMenu.menuInflater.inflate(R.menu.external_search_options_menu, popupMenu.menu)
 
-        prepareMenu(activity, popupMenu.menu, program, recording, isNetworkAvailable, htspVersion, isUnlocked)
+        prepareMenu(ctx, popupMenu.menu, program, recording, isNetworkAvailable, htspVersion, isUnlocked)
         prepareSearchMenu(popupMenu.menu, channel.programTitle, isNetworkAvailable)
         popupMenu.menu.findItem(R.id.menu_play).isVisible = isNetworkAvailable
 
         popupMenu.setOnMenuItemClickListener { item ->
-            if (onMenuSelected(activity, item.itemId, channel.programTitle)) {
+            if (onMenuSelected(ctx, item.itemId, channel.programTitle)) {
                 return@setOnMenuItemClickListener true
             }
             when (item.itemId) {
@@ -342,7 +350,9 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
                 R.id.menu_add_notification -> {
                     val profile = appRepository.serverProfileData.getItemById(serverStatus.recordingServerProfileId)
                     if (program != null) {
-                        addNotification(activity, program, profile)
+                        (activity as AppCompatActivity?)?.let {
+                            addNotification(it, program, profile)
+                        }
                     }
                     return@setOnMenuItemClickListener true
                 }

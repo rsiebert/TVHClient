@@ -33,7 +33,7 @@ class DownloadRecordingManager(private val activity: Activity, dvrId: Int) {
     @Inject
     lateinit var sharedPreferences: SharedPreferences
 
-    private var recording: Recording
+    private lateinit var recording: Recording
     private var connection: Connection
     private val serverStatus: ServerStatus
     private val downloadManager: DownloadManager
@@ -47,10 +47,12 @@ class DownloadRecordingManager(private val activity: Activity, dvrId: Int) {
         serverStatus = appRepository.serverStatusData.activeItem
         downloadManager = activity.getSystemService(Service.DOWNLOAD_SERVICE) as DownloadManager
 
-        recording = appRepository.recordingData.getItemById(dvrId)
-        Timber.d("Recording is not null")
-        if (isStoragePermissionGranted) {
-            startDownload()
+        if (dvrId > 0) {
+            recording = appRepository.recordingData.getItemById(dvrId)
+            Timber.d("Recording is not null")
+            if (isStoragePermissionGranted) {
+                startDownload()
+            }
         }
     }
 

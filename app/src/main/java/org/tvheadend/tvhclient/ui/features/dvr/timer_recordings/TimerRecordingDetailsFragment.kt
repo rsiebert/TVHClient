@@ -44,7 +44,7 @@ class TimerRecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback {
         // or when the fragment is shown for the first time
         shownId = savedInstanceState?.getString("id", "") ?: (arguments?.getString("id", "") ?: "")
 
-        val viewModel = ViewModelProviders.of(activity).get(TimerRecordingViewModel::class.java)
+        val viewModel = ViewModelProviders.of(activity!!).get(TimerRecordingViewModel::class.java)
         viewModel.getRecordingById(shownId).observe(viewLifecycleOwner, Observer { rec ->
             if (rec != null) {
                 recording = rec
@@ -54,7 +54,7 @@ class TimerRecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback {
                 // The toolbar is hidden as a default to prevent pressing any icons if no recording
                 // has been loaded yet. The toolbar is shown here because a recording was loaded
                 nested_toolbar.visible()
-                activity.invalidateOptionsMenu()
+                activity?.invalidateOptionsMenu()
             } else {
                 scrollview.gone()
                 status.text = getString(R.string.error_loading_recording_details)
@@ -84,11 +84,12 @@ class TimerRecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val ctx = context ?: return super.onOptionsItemSelected(item)
         // The recording might be null in case the viewmodel
         // has not yet loaded the recording for the given id
         val recording = this.recording ?: return super.onOptionsItemSelected(item)
 
-        if (onMenuSelected(activity, item.itemId, recording.title)) {
+        if (onMenuSelected(ctx, item.itemId, recording.title)) {
             return true
         }
         return when (item.itemId) {
@@ -96,7 +97,7 @@ class TimerRecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback {
                 val intent = Intent(activity, RecordingAddEditActivity::class.java)
                 intent.putExtra("type", "timer_recording")
                 intent.putExtra("id", recording.id)
-                activity.startActivity(intent)
+                activity?.startActivity(intent)
                 true
             }
             R.id.menu_record_remove ->
@@ -107,14 +108,14 @@ class TimerRecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback {
 
     override fun onRecordingRemoved() {
         if (!isDualPane) {
-            activity.onBackPressed()
+            activity?.onBackPressed()
         } else {
-            val detailsFragment = activity.supportFragmentManager.findFragmentById(R.id.details)
+            val detailsFragment = activity?.supportFragmentManager?.findFragmentById(R.id.details)
             if (detailsFragment != null) {
-                activity.supportFragmentManager
-                        .beginTransaction()
-                        .remove(detailsFragment)
-                        .commit()
+                activity?.supportFragmentManager?.beginTransaction()?.also {
+                    it.remove(detailsFragment)
+                    it.commit()
+                }
             }
         }
     }

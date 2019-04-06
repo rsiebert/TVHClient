@@ -53,7 +53,7 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
         super.onActivityCreated(savedInstanceState)
         forceSingleScreenLayout()
 
-        viewModel = ViewModelProviders.of(activity).get(EpgViewModel::class.java)
+        viewModel = ViewModelProviders.of(activity!!).get(EpgViewModel::class.java)
 
         if (savedInstanceState == null) {
             viewModel.searchQuery = arguments?.getString(SearchManager.QUERY) ?: ""
@@ -116,7 +116,7 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
             context?.let {
                 val toolbarTitle = viewModel.getSelectedChannelTagName(it)
                 toolbarInterface.setTitle(toolbarTitle)
-                toolbarInterface.setSubtitle(activity.resources.getQuantityString(R.plurals.items,
+                toolbarInterface.setSubtitle(resources.getQuantityString(R.plurals.items,
                         channelListRecyclerViewAdapter.itemCount, channelListRecyclerViewAdapter.itemCount))
             }
         })
@@ -135,7 +135,7 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
                         val intent = Intent(activity, RecordingAddEditActivity::class.java)
                         intent.putExtra("id", recording.id)
                         intent.putExtra("type", "recording")
-                        activity.startActivity(intent)
+                        activity?.startActivity(intent)
                         break
                     }
                 }
@@ -170,12 +170,18 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val ctx = context ?: return super.onOptionsItemSelected(item)
         return when (item.itemId) {
-            R.id.menu_tags -> showChannelTagSelectionDialog(activity, channelTags.toMutableList(), appRepository.channelData.getItems().size, this)
-            R.id.menu_timeframe -> menuUtils.handleMenuTimeSelection(viewModel.selectedTimeOffset, viewModel.hoursToShow, viewModel.hoursToShow * viewModel.daysToShow, this)
-            R.id.menu_genre_color_info_channels -> showGenreColorDialog(activity)
-            R.id.menu_sort_order -> menuUtils.handleMenuChannelSortOrderSelection(this)
-            else -> super.onOptionsItemSelected(item)
+            R.id.menu_tags ->
+                showChannelTagSelectionDialog(ctx, channelTags.toMutableList(), appRepository.channelData.getItems().size, this)
+            R.id.menu_timeframe ->
+                menuUtils.handleMenuTimeSelection(viewModel.selectedTimeOffset, viewModel.hoursToShow, viewModel.hoursToShow * viewModel.daysToShow, this)
+            R.id.menu_genre_color_info_channels ->
+                showGenreColorDialog(ctx)
+            R.id.menu_sort_order ->
+                menuUtils.handleMenuChannelSortOrderSelection(this)
+            else ->
+                super.onOptionsItemSelected(item)
         }
     }
 
@@ -218,21 +224,22 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
     }
 
     internal fun showPopupMenu(view: View, program: EpgProgram?) {
-        if (activity == null || program == null) {
+        val ctx = context ?: return
+        if (program == null) {
             return
         }
 
         val recording = appRepository.recordingData.getItemByEventId(program.eventId)
 
-        val popupMenu = PopupMenu(activity, view)
+        val popupMenu = PopupMenu(ctx, view)
         popupMenu.menuInflater.inflate(R.menu.program_popup_and_toolbar_menu, popupMenu.menu)
         popupMenu.menuInflater.inflate(R.menu.external_search_options_menu, popupMenu.menu)
 
-        prepareMenu(activity, popupMenu.menu, program, program.recording, isNetworkAvailable, htspVersion, isUnlocked)
+        prepareMenu(ctx, popupMenu.menu, program, program.recording, isNetworkAvailable, htspVersion, isUnlocked)
         prepareSearchMenu(popupMenu.menu, program.title, isNetworkAvailable)
 
         popupMenu.setOnMenuItemClickListener { item ->
-            if (onMenuSelected(activity, item.itemId, program.title)) {
+            if (onMenuSelected(ctx, item.itemId, program.title)) {
                 return@setOnMenuItemClickListener true
             }
             when (item.itemId) {
@@ -259,7 +266,9 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
                     return@setOnMenuItemClickListener menuUtils.handleMenuCast("channelId", program.channelId)
                 R.id.menu_add_notification -> {
                     val profile = appRepository.serverProfileData.getItemById(serverStatus.recordingServerProfileId)
-                    addNotification(activity, program, profile)
+                    activity?.let {
+                        addNotification(it, program, profile)
+                    }
                     return@setOnMenuItemClickListener true
                 }
                 else ->

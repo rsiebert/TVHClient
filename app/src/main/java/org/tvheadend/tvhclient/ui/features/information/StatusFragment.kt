@@ -52,11 +52,13 @@ class StatusFragment : BaseFragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             android.R.id.home -> {
-                activity.finish()
+                activity?.finish()
                 true
             }
             R.id.menu_wol -> {
-                WakeOnLanTask(activity, connection).execute()
+                context?.let {
+                    WakeOnLanTask(it, connection).execute()
+                }
                 true
             }
             R.id.menu_refresh -> {
@@ -124,7 +126,7 @@ class StatusFragment : BaseFragment() {
     }
 
     private fun showAdditionalInformation() {
-        val channelViewModel = ViewModelProviders.of(activity).get(ChannelViewModel::class.java)
+        val channelViewModel = ViewModelProviders.of(activity!!).get(ChannelViewModel::class.java)
         channelViewModel.numberOfChannels.observe(viewLifecycleOwner, Observer { count ->
             val text = "$count " + getString(R.string.available)
             channels_view.text = text
