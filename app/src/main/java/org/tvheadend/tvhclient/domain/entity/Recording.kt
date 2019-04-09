@@ -1,9 +1,9 @@
 package org.tvheadend.tvhclient.domain.entity
 
-import android.text.TextUtils
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Ignore
+import org.tvheadend.tvhclient.util.isEqualTo
 import java.util.*
 
 @Entity(tableName = "recordings", primaryKeys = ["id", "connection_id"])
@@ -74,25 +74,25 @@ data class Recording(
 ) {
 
     val isCompleted: Boolean
-        get() = error == null && TextUtils.equals(state, "completed")
+        get() = error == null && state.isEqualTo("completed")
 
     val isRecording: Boolean
-        get() = error == null && TextUtils.equals(state, "recording")
+        get() = error == null && state.isEqualTo("recording")
 
     val isScheduled: Boolean
-        get() = error == null && TextUtils.equals(state, "scheduled")
+        get() = error == null && state.isEqualTo("scheduled")
 
     val isFailed: Boolean
-        get() = TextUtils.equals(state, "invalid")
+        get() = state.isEqualTo("invalid")
 
     val isMissed: Boolean
-        get() = TextUtils.equals(state, "missed")
+        get() = state.isEqualTo("missed")
 
     val isAborted: Boolean
-        get() = TextUtils.equals(error, "Aborted by user") && TextUtils.equals(state, "completed")
+        get() = error.isEqualTo("Aborted by user") && state.isEqualTo("completed")
 
     val isFileMissing: Boolean
-        get() = TextUtils.equals(error, "File missing") && TextUtils.equals(state, "completed")
+        get() = error.isEqualTo("File missing") && state.isEqualTo("completed")
 
     val duration: Int
         get() = ((stop - start) / 1000 / 60).toInt()

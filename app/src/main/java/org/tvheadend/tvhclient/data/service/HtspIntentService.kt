@@ -5,7 +5,6 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.text.TextUtils
 import androidx.core.app.JobIntentService
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import org.tvheadend.tvhclient.MainApplication
@@ -223,7 +222,7 @@ class HtspIntentService : JobIntentService(), HtspConnectionStateListener {
     // Use the icon loading from the original library?
     @Throws(IOException::class)
     private fun downloadIconFromFileUrl(url: String) {
-        if (TextUtils.isEmpty(url)) {
+        if (url.isEmpty()) {
             return
         }
 

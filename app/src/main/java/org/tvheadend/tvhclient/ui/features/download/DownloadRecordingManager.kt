@@ -11,7 +11,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.os.Handler
-import android.text.TextUtils
 import android.util.Base64
 import androidx.core.app.ActivityCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -64,7 +63,7 @@ class DownloadRecordingManager(private val activity: Activity, dvrId: Int) {
             val downloadUrl = "http://" +
                     connection.hostname + ":" +
                     connection.streamingPort +
-                    (if (!TextUtils.isEmpty(serverStatus.webroot)) serverStatus.webroot else "") +
+                    (serverStatus.webroot ?: "") +
                     "/dvrfile/" +
                     recording.id
             // The user and password are required for authentication. They need to be encoded.

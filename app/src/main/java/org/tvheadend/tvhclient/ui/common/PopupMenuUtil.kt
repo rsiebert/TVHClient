@@ -4,7 +4,6 @@ package org.tvheadend.tvhclient.ui.common
 
 import android.content.Context
 import android.preference.PreferenceManager
-import android.text.TextUtils
 import android.view.Menu
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.domain.entity.ProgramInterface
@@ -89,7 +88,7 @@ fun prepareMenu(context: Context,
 }
 
 fun prepareSearchMenu(menu: Menu, title: String?, isNetworkAvailable: Boolean) {
-    val visible = isNetworkAvailable && !TextUtils.isEmpty(title)
+    val visible = isNetworkAvailable && !title.isNullOrEmpty()
     menu.findItem(R.id.menu_search)?.isVisible = visible
     menu.findItem(R.id.menu_search_imdb)?.isVisible = visible
     menu.findItem(R.id.menu_search_fileaffinity)?.isVisible = visible

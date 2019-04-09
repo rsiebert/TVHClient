@@ -1,7 +1,6 @@
 package org.tvheadend.tvhclient.ui.features.programs
 
 import android.preference.PreferenceManager
-import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Filter
@@ -13,6 +12,7 @@ import org.tvheadend.tvhclient.databinding.ProgramListAdapterBinding
 import org.tvheadend.tvhclient.domain.entity.Program
 import org.tvheadend.tvhclient.domain.entity.Recording
 import org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback
+import org.tvheadend.tvhclient.util.isEqualTo
 import java.util.*
 import java.util.concurrent.CopyOnWriteArrayList
 
@@ -135,7 +135,9 @@ class ProgramRecyclerViewAdapter internal constructor(private val showProgramCha
                     // Do a full update only when a new recording was added or the recording
                     // state has changed which results in a different recording state icon
                     // Otherwise do not update the UI
-                    if (oldRecording == null || !TextUtils.equals(oldRecording.error, recording.error) || !TextUtils.equals(oldRecording.state, recording.state)) {
+                    if (oldRecording == null
+                            || !oldRecording.error.isEqualTo(recording.error)
+                            || !oldRecording.state.isEqualTo(recording.state)) {
                         notifyItemChanged(i)
                     }
                     recordingExists = true

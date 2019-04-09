@@ -1,8 +1,8 @@
 package org.tvheadend.tvhclient.ui.features.dvr.recordings
 
-import android.text.TextUtils
 import androidx.recyclerview.widget.DiffUtil
 import org.tvheadend.tvhclient.domain.entity.Recording
+import org.tvheadend.tvhclient.util.isEqualTo
 import timber.log.Timber
 
 class RecordingListDiffCallback(private var oldList: List<Recording>, private var newList: List<Recording>) : DiffUtil.Callback() {
@@ -29,14 +29,14 @@ class RecordingListDiffCallback(private var oldList: List<Recording>, private va
         val newRecording = newList[newItemPosition]
 
         return (newRecording.id == oldRecording.id
-                && TextUtils.equals(newRecording.title, oldRecording.title)
-                && TextUtils.equals(newRecording.subtitle, oldRecording.subtitle)
-                && TextUtils.equals(newRecording.summary, oldRecording.summary)
-                && TextUtils.equals(newRecording.description, oldRecording.description)
-                && TextUtils.equals(newRecording.channelName, oldRecording.channelName)
-                && TextUtils.equals(newRecording.autorecId, oldRecording.autorecId)
-                && TextUtils.equals(newRecording.timerecId, oldRecording.timerecId)
-                && TextUtils.equals(newRecording.dataErrors, oldRecording.dataErrors)
+                && newRecording.title.isEqualTo(oldRecording.title)
+                && newRecording.subtitle.isEqualTo(oldRecording.subtitle)
+                && newRecording.summary.isEqualTo(oldRecording.summary)
+                && newRecording.description.isEqualTo(oldRecording.description)
+                && newRecording.channelName.isEqualTo(oldRecording.channelName)
+                && newRecording.autorecId.isEqualTo(oldRecording.autorecId)
+                && newRecording.timerecId.isEqualTo(oldRecording.timerecId)
+                && newRecording.dataErrors.isEqualTo(oldRecording.dataErrors)
 
                 && newRecording.start == oldRecording.start
                 && newRecording.stop == oldRecording.stop
@@ -44,8 +44,8 @@ class RecordingListDiffCallback(private var oldList: List<Recording>, private va
                 && newRecording.duplicate == oldRecording.duplicate
                 && newRecording.dataSize == oldRecording.dataSize
 
-                && TextUtils.equals(newRecording.error, oldRecording.error)
-                && TextUtils.equals(newRecording.state, oldRecording.state))
+                && newRecording.error.isEqualTo(oldRecording.error)
+                && newRecording.state.isEqualTo(oldRecording.state))
     }
 
     override fun getChangePayload(oldItemPosition: Int, newItemPosition: Int): Any {

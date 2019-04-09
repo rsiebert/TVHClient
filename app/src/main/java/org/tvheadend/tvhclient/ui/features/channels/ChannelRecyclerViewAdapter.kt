@@ -1,21 +1,19 @@
 package org.tvheadend.tvhclient.ui.features.channels
 
 import android.preference.PreferenceManager
-import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.databinding.ChannelListAdapterBinding
 import org.tvheadend.tvhclient.domain.entity.Channel
 import org.tvheadend.tvhclient.domain.entity.Recording
 import org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback
-
-import java.util.ArrayList
+import org.tvheadend.tvhclient.util.isEqualTo
+import java.util.*
 import java.util.concurrent.CopyOnWriteArrayList
 
 class ChannelRecyclerViewAdapter internal constructor(private val isDualPane: Boolean, private val clickCallback: RecyclerViewClickCallback) : RecyclerView.Adapter<ChannelRecyclerViewAdapter.ChannelViewHolder>(), Filterable {
@@ -155,7 +153,9 @@ class ChannelRecyclerViewAdapter internal constructor(private val isDualPane: Bo
                     // Do a full update only when a new recording was added or the recording
                     // state has changed which results in a different recording state icon
                     // Otherwise do not update the UI
-                    if (oldRecording == null || !TextUtils.equals(oldRecording.error, recording.error) || !TextUtils.equals(oldRecording.state, recording.state)) {
+                    if (oldRecording == null
+                            || !oldRecording.error.isEqualTo(recording.error)
+                            || !oldRecording.state.isEqualTo(recording.state)) {
                         notifyItemChanged(i)
                     }
                     recordingExists = true
@@ -171,12 +171,12 @@ class ChannelRecyclerViewAdapter internal constructor(private val isDualPane: Bo
     }
 
     class ChannelViewHolder(private val binding: ChannelListAdapterBinding,
-                                     private val showChannelName: Boolean,
-                                     private val showProgramSubtitle: Boolean,
-                                     private val showNextProgramTitle: Boolean,
-                                     private val showProgressBar: Boolean,
-                                     private val showGenreColors: Boolean,
-                                     private val isDualPane: Boolean) : RecyclerView.ViewHolder(binding.getRoot()) {
+                            private val showChannelName: Boolean,
+                            private val showProgramSubtitle: Boolean,
+                            private val showNextProgramTitle: Boolean,
+                            private val showProgressBar: Boolean,
+                            private val showGenreColors: Boolean,
+                            private val isDualPane: Boolean) : RecyclerView.ViewHolder(binding.getRoot()) {
 
         fun bind(channel: Channel, position: Int, isSelected: Boolean, clickCallback: RecyclerViewClickCallback) {
             binding.setChannel(channel)

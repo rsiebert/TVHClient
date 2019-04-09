@@ -3,7 +3,6 @@ package org.tvheadend.tvhclient.ui.features.notification
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.text.TextUtils
 import androidx.core.app.NotificationManagerCompat
 import androidx.work.ListenableWorker
 import androidx.work.Worker
@@ -38,7 +37,7 @@ class ProgramNotificationWorker(val context: Context, workerParams: WorkerParame
         val recordIntent = Intent(context, HtspService::class.java)
         recordIntent.action = "addDvrEntry"
         recordIntent.putExtra("eventId", eventId)
-        if (!TextUtils.isEmpty(configName)) {
+        if (!configName.isNullOrEmpty()) {
             recordIntent.putExtra("configName", configName)
         }
         val recordPendingIntent = PendingIntent.getService(context, 0, recordIntent, PendingIntent.FLAG_UPDATE_CURRENT)

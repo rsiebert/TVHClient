@@ -1,6 +1,5 @@
 package org.tvheadend.tvhclient.domain.entity
 
-import android.text.TextUtils
 import android.util.Patterns
 import androidx.room.ColumnInfo
 import androidx.room.Entity
@@ -44,7 +43,7 @@ data class Connection(
     }
 
     fun isNameValid(name: String?): Boolean {
-        if (TextUtils.isEmpty(name)) {
+        if (name.isNullOrEmpty()) {
             return false
         }
         // Check if the name contains only valid characters.
@@ -55,7 +54,7 @@ data class Connection(
 
     fun isIpAddressValid(address: String?): Boolean {
         // Do not allow an empty address
-        if (TextUtils.isEmpty(address)) {
+        if (address.isNullOrEmpty()) {
             return false
         }
 

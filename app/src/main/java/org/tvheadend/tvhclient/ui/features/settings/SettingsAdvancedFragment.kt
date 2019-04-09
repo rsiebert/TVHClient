@@ -5,7 +5,6 @@ import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
 import android.provider.SearchRecentSuggestions
-import android.text.TextUtils
 import androidx.core.content.FileProvider
 import androidx.preference.CheckBoxPreference
 import androidx.preference.EditTextPreference
@@ -245,7 +244,7 @@ class SettingsAdvancedFragment : BasePreferenceFragment(), Preference.OnPreferen
                         // connection. Additionally remove the icons from the Picasso cache
                         Timber.d("Deleting channel icons and invalidating cache")
                         for (channel in appRepository.channelData.getItems()) {
-                            if (TextUtils.isEmpty(channel.icon)) {
+                            if (channel.icon.isNullOrEmpty()) {
                                 continue
                             }
                             val url = getIconUrl(it, channel.icon)

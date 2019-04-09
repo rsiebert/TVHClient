@@ -8,7 +8,6 @@ import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.IBinder
-import android.text.TextUtils
 import androidx.core.app.NotificationManagerCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.work.ExistingWorkPolicy
@@ -27,6 +26,7 @@ import org.tvheadend.tvhclient.ui.features.notification.addNotification
 import org.tvheadend.tvhclient.ui.features.notification.removeNotificationById
 import org.tvheadend.tvhclient.util.convertUrlToHashString
 import org.tvheadend.tvhclient.util.getIconUrl
+import org.tvheadend.tvhclient.util.isEqualTo
 import timber.log.Timber
 import java.io.*
 import java.net.URL
@@ -484,7 +484,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         serverStatus?.let {
             if (it.htspPlaybackServerProfileId == 0) {
                 for (profile in appRepository.serverProfileData.htspPlaybackProfiles) {
-                    if (TextUtils.equals(profile.name, "htsp")) {
+                    if (profile.name.isEqualTo("htsp")) {
                         Timber.d("Setting htsp profile to htsp")
                         it.htspPlaybackServerProfileId = profile.id
                         break
@@ -493,7 +493,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
             }
             if (it.httpPlaybackServerProfileId == 0) {
                 for (profile in appRepository.serverProfileData.httpPlaybackProfiles) {
-                    if (TextUtils.equals(profile.name, "pass")) {
+                    if (profile.name.isEqualTo("pass")) {
                         Timber.d("Setting http profile to pass")
                         it.httpPlaybackServerProfileId = profile.id
                         break
@@ -502,7 +502,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
             }
             if (it.recordingServerProfileId == 0) {
                 for (profile in appRepository.serverProfileData.recordingProfiles) {
-                    if (TextUtils.equals(profile.name, "Default Profile")) {
+                    if (profile.name.isEqualTo("Default Profile")) {
                         Timber.d("Setting recording profile to default")
                         it.recordingServerProfileId = profile.id
                         break
@@ -977,7 +977,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
                 serverProfile.connectionId = connection.id
                 serverProfile.uuid = msg.getString("uuid")
                 val name = msg.getString("name")
-                serverProfile.name = if (TextUtils.isEmpty(name)) "Default Profile" else name
+                serverProfile.name = if (name.isNullOrEmpty()) "Default Profile" else name
                 serverProfile.comment = msg.getString("comment")
                 serverProfile.type = "recording"
 
@@ -1202,7 +1202,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
      * @param iconUrl The icon url
      */
     private fun deleteIconFileFromCache(iconUrl: String?) {
-        if (TextUtils.isEmpty(iconUrl)) {
+        if (iconUrl.isNullOrEmpty()) {
             return
         }
         val url = getIconUrl(appContext, iconUrl)
@@ -1536,10 +1536,10 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
     private fun sendSyncStateMessage(state: SyncStateReceiver.State, message: String, details: String?) {
         val intent = Intent(SyncStateReceiver.ACTION)
         intent.putExtra(SyncStateReceiver.STATE, state)
-        if (!TextUtils.isEmpty(message)) {
+        if (!message.isNullOrEmpty()) {
             intent.putExtra(SyncStateReceiver.MESSAGE, message)
         }
-        if (!TextUtils.isEmpty(details)) {
+        if (!details.isNullOrEmpty()) {
             intent.putExtra(SyncStateReceiver.DETAILS, details)
         }
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent)

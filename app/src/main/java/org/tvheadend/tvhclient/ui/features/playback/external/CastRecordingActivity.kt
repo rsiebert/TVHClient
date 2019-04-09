@@ -2,7 +2,6 @@ package org.tvheadend.tvhclient.ui.features.playback.external
 
 import android.content.Intent
 import android.net.Uri
-import android.text.TextUtils
 import com.google.android.gms.cast.MediaInfo
 import com.google.android.gms.cast.MediaLoadOptions
 import com.google.android.gms.cast.MediaMetadata
@@ -30,7 +29,7 @@ class CastRecordingActivity : BasePlaybackActivity() {
         movieMetadata.putString(MediaMetadata.KEY_TITLE, recording.title)
         movieMetadata.putString(MediaMetadata.KEY_SUBTITLE, recording.subtitle)
 
-        if (!TextUtils.isEmpty(recording.channelIcon)) {
+        if (!recording.channelIcon.isNullOrEmpty()) {
             val iconUrl: String? = if (recording.channelIcon != null && recording.channelIcon?.startsWith("http") == true) {
                 recording.channelIcon
             } else {

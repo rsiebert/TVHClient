@@ -2,7 +2,6 @@ package org.tvheadend.tvhclient.ui.features.information
 
 import android.graphics.Color
 import android.os.Bundle
-import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -79,7 +78,7 @@ open class WebViewFragment : BaseFragment(), HtmlFileLoaderTask.Listener {
     override fun onFileContentsLoaded(fileContent: String) {
         val ctx = context ?: return
         var content = fileContent
-        if (!TextUtils.isEmpty(content)) {
+        if (!content.isEmpty()) {
             if (content.contains("styles_light.css")) {
                 content = if (getThemeId(ctx) == R.style.CustomTheme_Light) {
                     content.replace("styles_light.css", "html/styles_light.css")

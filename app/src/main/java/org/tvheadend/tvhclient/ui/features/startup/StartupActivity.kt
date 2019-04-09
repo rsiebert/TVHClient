@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.preference.PreferenceManager
-import android.text.TextUtils
 import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.ui.base.BaseActivity
@@ -37,7 +36,7 @@ class StartupActivity : BaseActivity() {
             if (showChangeLogRequired) {
                 Timber.d("Showing changelog, version name from prefs is $versionName, build version from gradle is ${BuildConfig.VERSION_NAME}")
                 val intent = Intent(this, ChangeLogActivity::class.java)
-                intent.putExtra("showFullChangelog", TextUtils.isEmpty(versionName))
+                intent.putExtra("showFullChangelog", versionName.isNullOrEmpty())
                 intent.putExtra("versionNameForChangelog", versionName)
                 startActivityForResult(intent, 0)
             } else {

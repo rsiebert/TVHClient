@@ -2,7 +2,6 @@ package org.tvheadend.tvhclient.ui.features.epg
 
 import android.content.ContextWrapper
 import android.preference.PreferenceManager
-import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +15,7 @@ import org.tvheadend.tvhclient.domain.entity.EpgProgram
 import org.tvheadend.tvhclient.domain.entity.Recording
 import org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback
 import org.tvheadend.tvhclient.ui.features.programs.ProgramDetailsFragment
+import org.tvheadend.tvhclient.util.isEqualTo
 import java.util.*
 
 internal class EpgProgramListRecyclerViewAdapter(private val pixelsPerMinute: Float, private val fragmentStartTime: Long, private val fragmentStopTime: Long) : RecyclerView.Adapter<EpgProgramListRecyclerViewAdapter.EpgProgramListViewHolder>(), RecyclerViewClickCallback {
@@ -80,7 +80,9 @@ internal class EpgProgramListRecyclerViewAdapter(private val pixelsPerMinute: Fl
                     // Do a full update only when a new recording was added or the recording
                     // state has changed which results in a different recording state icon
                     // Otherwise do not update the UI
-                    if (oldRecording == null || !TextUtils.equals(oldRecording.error, recording.error) || !TextUtils.equals(oldRecording.state, recording.state)) {
+                    if (oldRecording == null
+                            || !oldRecording.error.isEqualTo(recording.error)
+                            || !oldRecording.state.isEqualTo(recording.state)) {
                         notifyItemChanged(i)
                     }
                     recordingExists = true

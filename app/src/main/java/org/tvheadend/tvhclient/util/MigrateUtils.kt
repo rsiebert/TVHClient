@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.database.sqlite.SQLiteException
 import android.os.Environment
-import android.text.TextUtils
 import org.tvheadend.tvhclient.BuildConfig
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
@@ -160,7 +159,7 @@ class MigrateUtils {
                         connection.wolMacAddress = it.getString(it.getColumnIndex("wol_address"))
                         connection.wolPort = it.getInt(it.getColumnIndex("wol_port"))
                         connection.isWolUseBroadcast = it.getInt(it.getColumnIndex("wol_broadcast")) > 0
-                        connection.isWolEnabled = !TextUtils.isEmpty(connection.wolMacAddress)
+                        connection.isWolEnabled = !connection.wolMacAddress.isNullOrEmpty()
                         connection.lastUpdate = 0
                         connection.isSyncRequired = true
 

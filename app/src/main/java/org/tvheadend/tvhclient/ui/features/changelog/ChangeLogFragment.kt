@@ -4,7 +4,6 @@ import android.app.Activity
 import android.graphics.Color
 import android.os.Bundle
 import android.preference.PreferenceManager
-import android.text.TextUtils
 import android.view.*
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.webview_fragment.*
@@ -95,7 +94,7 @@ class ChangeLogFragment : Fragment(), BackPressedInterface, HtmlFileLoaderTask.L
     }
 
     override fun onFileContentsLoaded(fileContent: String) {
-        if (!TextUtils.isEmpty(fileContent) && isVisible) {
+        if (!fileContent.isEmpty() && isVisible) {
             webview.loadDataWithBaseURL("file:///android_asset/", fileContent, "text/html", "utf-8", null)
             webview.visible()
             loading_view.gone()

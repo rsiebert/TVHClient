@@ -3,7 +3,6 @@ package org.tvheadend.tvhclient.ui.features.settings
 
 import android.content.Intent
 import android.os.Bundle
-import android.text.TextUtils
 import android.view.*
 import android.widget.ListView
 import androidx.appcompat.app.AppCompatActivity
@@ -30,7 +29,7 @@ class SettingsListConnectionsFragment : ListFragment(), BackPressedInterface, Ac
     private lateinit var toolbarInterface: ToolbarInterface
     private lateinit var connectionListAdapter: ConnectionListAdapter
     private var actionMode: ActionMode? = null
-    
+
     private lateinit var viewModel: ConnectionViewModel
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -166,7 +165,7 @@ class SettingsListConnectionsFragment : ListFragment(), BackPressedInterface, Ac
         val connection = connectionListAdapter.getItem(position)
         if (connection != null) {
             // Show or hide the wake on LAN menu item
-            menu.getItem(0).isVisible = !TextUtils.isEmpty(connection.wolMacAddress)
+            menu.getItem(0).isVisible = !connection.wolMacAddress.isNullOrEmpty()
             // Show or hide the activate / deactivate menu items
             menu.getItem(1).isVisible = !connection.isActive
             menu.getItem(2).isVisible = connection.isActive

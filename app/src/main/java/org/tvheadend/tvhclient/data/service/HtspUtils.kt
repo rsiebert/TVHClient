@@ -3,12 +3,10 @@
 package org.tvheadend.tvhclient.data.service
 
 import android.content.Intent
-import android.text.TextUtils
 import org.tvheadend.tvhclient.data.service.htsp.HtspMessage
 import org.tvheadend.tvhclient.domain.entity.*
 import timber.log.Timber
 import java.util.*
-
 
 fun convertMessageToChannelTagModel(tag: ChannelTag, msg: HtspMessage, channels: List<Channel>): ChannelTag {
     if (msg.containsKey("tagId")) {
@@ -23,7 +21,7 @@ fun convertMessageToChannelTagModel(tag: ChannelTag, msg: HtspMessage, channels:
         }
     }
     if (msg.containsKey("tagIcon")) {
-        if (!TextUtils.isEmpty(msg.getString("tagIcon"))) {
+        if (!msg.getString("tagIcon").isNullOrEmpty()) {
             tag.tagIcon = msg.getString("tagIcon")
         }
     }
@@ -70,7 +68,7 @@ fun convertMessageToChannelModel(channel: Channel, msg: HtspMessage): Channel {
         channel.name = msg.getString("channelName")
     }
     if (msg.containsKey("channelIcon")) {
-        if (!TextUtils.isEmpty(msg.getString("channelIcon"))) {
+        if (!msg.getString("channelIcon").isNullOrEmpty()) {
             channel.icon = msg.getString("channelIcon")
         }
     }
@@ -126,12 +124,12 @@ fun convertMessageToRecordingModel(recording: Recording, msg: HtspMessage): Reco
         }
     }
     if (msg.containsKey("autorecId")) {
-        if (!TextUtils.isEmpty(msg.getString("autorecId"))) {
+        if (!msg.getString("autorecId").isNullOrEmpty()) {
             recording.autorecId = msg.getString("autorecId")
         }
     }
     if (msg.containsKey("timerecId")) {
-        if (!TextUtils.isEmpty(msg.getString("timerecId"))) {
+        if (!msg.getString("timerecId").isNullOrEmpty()) {
             recording.timerecId = msg.getString("timerecId")
         }
     }
@@ -141,22 +139,22 @@ fun convertMessageToRecordingModel(recording: Recording, msg: HtspMessage): Reco
         }
     }
     if (msg.containsKey("title")) {
-        if (!TextUtils.isEmpty(msg.getString("title"))) {
+        if (!msg.getString("title").isNullOrEmpty()) {
             recording.title = msg.getString("title")
         }
     }
     if (msg.containsKey("subtitle")) {
-        if (!TextUtils.isEmpty(msg.getString("subtitle"))) {
+        if (!msg.getString("subtitle").isNullOrEmpty()) {
             recording.subtitle = msg.getString("subtitle")
         }
     }
     if (msg.containsKey("summary")) {
-        if (!TextUtils.isEmpty(msg.getString("summary"))) {
+        if (!msg.getString("summary").isNullOrEmpty()) {
             recording.summary = msg.getString("summary")
         }
     }
     if (msg.containsKey("description")) {
-        if (!TextUtils.isEmpty(msg.getString("description"))) {
+        if (!msg.getString("description").isNullOrEmpty()) {
             recording.description = msg.getString("description")
         }
     }
@@ -164,37 +162,37 @@ fun convertMessageToRecordingModel(recording: Recording, msg: HtspMessage): Reco
         recording.state = msg.getString("state")
     }
     if (msg.containsKey("error")) {
-        if (!TextUtils.isEmpty(msg.getString("error"))) {
+        if (!msg.getString("error").isNullOrEmpty()) {
             recording.error = msg.getString("error")
         }
     }
     if (msg.containsKey("owner")) {
-        if (!TextUtils.isEmpty(msg.getString("owner"))) {
+        if (!msg.getString("owner").isNullOrEmpty()) {
             recording.owner = msg.getString("owner")
         }
     }
     if (msg.containsKey("creator")) {
-        if (!TextUtils.isEmpty(msg.getString("creator"))) {
+        if (!msg.getString("creator").isNullOrEmpty()) {
             recording.creator = msg.getString("creator")
         }
     }
     if (msg.containsKey("subscriptionError")) {
-        if (!TextUtils.isEmpty(msg.getString("subscriptionError"))) {
+        if (!msg.getString("subscriptionError").isNullOrEmpty()) {
             recording.subscriptionError = msg.getString("subscriptionError")
         }
     }
     if (msg.containsKey("streamErrors")) {
-        if (!TextUtils.isEmpty(msg.getString("streamErrors"))) {
+        if (!msg.getString("streamErrors").isNullOrEmpty()) {
             recording.streamErrors = msg.getString("streamErrors")
         }
     }
     if (msg.containsKey("dataErrors")) {
-        if (!TextUtils.isEmpty(msg.getString("dataErrors"))) {
+        if (!msg.getString("dataErrors").isNullOrEmpty()) {
             recording.dataErrors = msg.getString("dataErrors")
         }
     }
     if (msg.containsKey("path")) {
-        if (!TextUtils.isEmpty(msg.getString("path"))) {
+        if (!msg.getString("path").isNullOrEmpty()) {
             recording.path = msg.getString("path")
         }
     }
@@ -211,12 +209,12 @@ fun convertMessageToRecordingModel(recording: Recording, msg: HtspMessage): Reco
     }
 
     if (msg.containsKey("image")) {
-        if (!TextUtils.isEmpty(msg.getString("image"))) {
+        if (!msg.getString("image").isNullOrEmpty()) {
             recording.image = msg.getString("image")
         }
     }
     if (msg.containsKey("fanart_image")) {
-        if (!TextUtils.isEmpty(msg.getString("fanart_image"))) {
+        if (!msg.getString("fanart_image").isNullOrEmpty()) {
             recording.fanartImage = msg.getString("fanart_image")
         }
     }
@@ -249,22 +247,22 @@ fun convertMessageToProgramModel(program: Program, msg: HtspMessage): Program {
         program.stop = msg.getLong("stop") * 1000
     }
     if (msg.containsKey("title")) {
-        if (!TextUtils.isEmpty(msg.getString("title"))) {
+        if (!msg.getString("title").isNullOrEmpty()) {
             program.title = msg.getString("title")
         }
     }
     if (msg.containsKey("subtitle")) {
-        if (!TextUtils.isEmpty(msg.getString("subtitle"))) {
+        if (!msg.getString("subtitle").isNullOrEmpty()) {
             program.subtitle = msg.getString("subtitle")
         }
     }
     if (msg.containsKey("summary")) {
-        if (!TextUtils.isEmpty(msg.getString("summary"))) {
+        if (!msg.getString("summary").isNullOrEmpty()) {
             program.summary = msg.getString("summary")
         }
     }
     if (msg.containsKey("description")) {
-        if (!TextUtils.isEmpty(msg.getString("description"))) {
+        if (!msg.getString("description").isNullOrEmpty()) {
             program.description = msg.getString("description")
         }
     }
@@ -339,12 +337,12 @@ fun convertMessageToProgramModel(program: Program, msg: HtspMessage): Program {
         }
     }
     if (msg.containsKey("episodeOnscreen")) {
-        if (!TextUtils.isEmpty(msg.getString("episodeOnscreen"))) {
+        if (!msg.getString("episodeOnscreen").isNullOrEmpty()) {
             program.episodeOnscreen = msg.getString("episodeOnscreen")
         }
     }
     if (msg.containsKey("image")) {
-        if (!TextUtils.isEmpty(msg.getString("image"))) {
+        if (!msg.getString("image").isNullOrEmpty()) {
             program.image = msg.getString("image")
         }
     }
@@ -359,17 +357,17 @@ fun convertMessageToProgramModel(program: Program, msg: HtspMessage): Program {
         }
     }
     if (msg.containsKey("episodeOnscreen")) {
-        if (!TextUtils.isEmpty(msg.getString("episodeOnscreen"))) {
+        if (!msg.getString("episodeOnscreen").isNullOrEmpty()) {
             program.episodeOnscreen = msg.getString("episodeOnscreen")
         }
     }
     if (msg.containsKey("serieslinkUri")) {
-        if (!TextUtils.isEmpty(msg.getString("serieslinkUri"))) {
+        if (!msg.getString("serieslinkUri").isNullOrEmpty()) {
             program.serieslinkUri = msg.getString("serieslinkUri")
         }
     }
     if (msg.containsKey("episodeUri")) {
-        if (!TextUtils.isEmpty(msg.getString("episodeUri"))) {
+        if (!msg.getString("episodeUri").isNullOrEmpty()) {
             program.episodeUri = msg.getString("episodeUri")
         }
     }
@@ -451,17 +449,17 @@ fun convertMessageToSeriesRecordingModel(seriesRecording: SeriesRecording, msg: 
         seriesRecording.stopExtra = msg.getLong("stopExtra")
     }
     if (msg.containsKey("title")) {
-        if (!TextUtils.isEmpty(msg.getString("title"))) {
+        if (!msg.getString("title").isNullOrEmpty()) {
             seriesRecording.title = msg.getString("title")
         }
     }
     if (msg.containsKey("fulltext")) {
-        if (!TextUtils.isEmpty(msg.getString("fulltext"))) {
+        if (!msg.getString("fulltext").isNullOrEmpty()) {
             seriesRecording.fulltext = msg.getInteger("fulltext")
         }
     }
     if (msg.containsKey("directory")) {
-        if (!TextUtils.isEmpty(msg.getString("directory"))) {
+        if (!msg.getString("directory").isNullOrEmpty()) {
             seriesRecording.directory = msg.getString("directory")
         }
     }
@@ -471,12 +469,12 @@ fun convertMessageToSeriesRecordingModel(seriesRecording: SeriesRecording, msg: 
         }
     }
     if (msg.containsKey("owner")) {
-        if (!TextUtils.isEmpty(msg.getString("owner"))) {
+        if (!msg.getString("owner").isNullOrEmpty()) {
             seriesRecording.owner = msg.getString("owner")
         }
     }
     if (msg.containsKey("creator")) {
-        if (!TextUtils.isEmpty(msg.getString("creator"))) {
+        if (!msg.getString("creator").isNullOrEmpty()) {
             seriesRecording.creator = msg.getString("creator")
         }
     }
@@ -506,7 +504,7 @@ fun convertMessageToTimerRecordingModel(timerRecording: TimerRecording, msg: Hts
         timerRecording.title = msg.getString("title")
     }
     if (msg.containsKey("directory")) {
-        if (!TextUtils.isEmpty(msg.getString("directory"))) {
+        if (!msg.getString("directory").isNullOrEmpty()) {
             timerRecording.directory = msg.getString("directory")
         }
     }
@@ -546,12 +544,12 @@ fun convertMessageToTimerRecordingModel(timerRecording: TimerRecording, msg: Hts
         }
     }
     if (msg.containsKey("owner")) {
-        if (!TextUtils.isEmpty(msg.getString("owner"))) {
+        if (!msg.getString("owner").isNullOrEmpty()) {
             timerRecording.owner = msg.getString("owner")
         }
     }
     if (msg.containsKey("creator")) {
-        if (!TextUtils.isEmpty(msg.getString("creator"))) {
+        if (!msg.getString("creator").isNullOrEmpty()) {
             timerRecording.creator = msg.getString("creator")
         }
     }

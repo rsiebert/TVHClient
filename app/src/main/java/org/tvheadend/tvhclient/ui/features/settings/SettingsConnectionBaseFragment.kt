@@ -1,7 +1,6 @@
 package org.tvheadend.tvhclient.ui.features.settings
 
 import android.os.Bundle
-import android.text.TextUtils
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -45,7 +44,7 @@ abstract class SettingsConnectionBaseFragment : PreferenceFragmentCompat(), Back
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        
+
         if (activity is ToolbarInterface) {
             toolbarInterface = activity as ToolbarInterface
         }
@@ -92,11 +91,11 @@ abstract class SettingsConnectionBaseFragment : PreferenceFragmentCompat(), Back
     private fun setPreferenceDefaultValues() {
         val name = connection.name
         namePreference.text = name
-        namePreference.summary = if (TextUtils.isEmpty(name)) getString(R.string.pref_name_sum) else name
+        namePreference.summary = if (name.isNullOrEmpty()) getString(R.string.pref_name_sum) else name
 
         val address = connection.hostname
         hostnamePreference.text = address
-        hostnamePreference.summary = if (TextUtils.isEmpty(address)) getString(R.string.pref_host_sum) else address
+        hostnamePreference.summary = if (address.isNullOrEmpty()) getString(R.string.pref_host_sum) else address
 
         val port = connection.port.toString()
         htspPortPreference.text = port
@@ -107,11 +106,11 @@ abstract class SettingsConnectionBaseFragment : PreferenceFragmentCompat(), Back
 
         val username = connection.username
         usernamePreference.text = username
-        usernamePreference.summary = if (TextUtils.isEmpty(username)) getString(R.string.pref_user_sum) else username
+        usernamePreference.summary = if (username.isNullOrEmpty()) getString(R.string.pref_user_sum) else username
 
         val password = connection.password
         passwordPreference.text = password
-        passwordPreference.summary = if (TextUtils.isEmpty(password)) getString(R.string.pref_pass_sum) else getString(R.string.pref_pass_set_sum)
+        passwordPreference.summary = if (password.isNullOrEmpty()) getString(R.string.pref_pass_sum) else getString(R.string.pref_pass_set_sum)
 
         activeEnabledPreference.isChecked = connection.isActive
         wolEnabledPreference.isChecked = connection.isWolEnabled
@@ -119,7 +118,7 @@ abstract class SettingsConnectionBaseFragment : PreferenceFragmentCompat(), Back
         if (!connection.isWolEnabled) {
             val macAddress = connection.wolMacAddress
             wolMacAddressPreference.text = macAddress
-            wolMacAddressPreference.summary = if (TextUtils.isEmpty(macAddress)) getString(R.string.pref_wol_address_sum) else macAddress
+            wolMacAddressPreference.summary = if (macAddress.isNullOrEmpty()) getString(R.string.pref_wol_address_sum) else macAddress
             wolPortPreference.text = connection.wolPort.toString()
             wolPortPreference.summary = getString(R.string.pref_wol_port_sum, connection.wolPort)
             wolUseBroadcastEnabled.isChecked = connection.isWolUseBroadcast

@@ -2,7 +2,6 @@ package org.tvheadend.tvhclient.ui.features.playback.external
 
 import android.content.Intent
 import android.net.Uri
-import android.text.TextUtils
 import timber.log.Timber
 
 class PlayChannelActivity : BasePlaybackActivity() {
@@ -14,7 +13,7 @@ class PlayChannelActivity : BasePlaybackActivity() {
         val intent = Intent(Intent.ACTION_VIEW)
         intent.setDataAndType(Uri.parse(url), "video/*")
 
-        if (!TextUtils.isEmpty(viewModel.channel?.name)) {
+        if (!viewModel.channel?.name.isNullOrEmpty()) {
             intent.putExtra("itemTitle", viewModel.channel?.name)
             intent.putExtra("title", viewModel.channel?.name)
         }

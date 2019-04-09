@@ -7,7 +7,6 @@ import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
 import android.preference.PreferenceManager
-import android.text.TextUtils
 import androidx.core.app.NotificationCompat
 import androidx.work.Data
 import androidx.work.ExistingWorkPolicy
@@ -76,7 +75,7 @@ fun addNotification(context: Context, recording: Recording) {
     if (preferences.getBoolean("notifications_enabled", context.resources.getBoolean(R.bool.pref_default_notifications_enabled))
             && recording.isScheduled
             && recording.start > System.currentTimeMillis()
-            && !TextUtils.isEmpty(recording.title)) {
+            && !recording.title.isNullOrEmpty()) {
 
         val data = Data.Builder()
                 .putString("dvrTitle", recording.title)

@@ -2,7 +2,6 @@ package org.tvheadend.tvhclient.ui.features.dvr.recordings
 
 import android.content.Intent
 import android.os.Bundle
-import android.text.TextUtils
 import android.view.*
 import androidx.lifecycle.ViewModelProviders
 import com.afollestad.materialdialogs.MaterialDialog
@@ -113,7 +112,7 @@ class RecordingAddEditFragment : BaseFragment(), BackPressedInterface, Recording
         channel_name.visibleOrGone(!viewModel.recording.isRecording)
 
         if (!viewModel.recording.isRecording) {
-            channel_name.text = if (!TextUtils.isEmpty(viewModel.recording.channelName)) viewModel.recording.channelName else getString(R.string.all_channels)
+            channel_name.text = viewModel.recording.channelName ?: getString(R.string.all_channels)
             channel_name.setOnClickListener {
                 // Determine if the server supports recording on all channels
                 val allowRecordingOnAllChannels = serverStatus.htspVersion >= 21
@@ -201,7 +200,7 @@ class RecordingAddEditFragment : BaseFragment(), BackPressedInterface, Recording
      * created viewModel.recording.
      */
     private fun save() {
-        if (TextUtils.isEmpty(viewModel.recording.title) && serverStatus.htspVersion >= 21) {
+        if (viewModel.recording.title.isNullOrEmpty() && serverStatus.htspVersion >= 21) {
             context?.sendSnackbarMessage(R.string.error_empty_title)
             return
         }

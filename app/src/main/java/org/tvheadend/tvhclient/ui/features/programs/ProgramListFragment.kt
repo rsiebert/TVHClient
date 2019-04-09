@@ -231,13 +231,13 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
     private fun showPopupMenu(view: View, position: Int) {
         val ctx = context ?: return
         val program = recyclerViewAdapter.getItem(position) ?: return
-        val recording = appRepository.recordingData.getItemByEventId(program.eventId)
 
         val popupMenu = PopupMenu(ctx, view)
         popupMenu.menuInflater.inflate(R.menu.program_popup_and_toolbar_menu, popupMenu.menu)
         popupMenu.menuInflater.inflate(R.menu.external_search_options_menu, popupMenu.menu)
-        prepareSearchMenu(popupMenu.menu, program.title, isNetworkAvailable)
+
         prepareMenu(ctx, popupMenu.menu, program, program.recording, isNetworkAvailable, htspVersion, isUnlocked)
+        prepareSearchMenu(popupMenu.menu, program.title, isNetworkAvailable)
 
         popupMenu.setOnMenuItemClickListener { item ->
             if (onMenuSelected(ctx, item.itemId, program.title, program.channelId)) {
@@ -245,11 +245,11 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
             }
             when (item.itemId) {
                 R.id.menu_record_stop ->
-                    return@setOnMenuItemClickListener menuUtils.handleMenuStopRecordingSelection(recording, null)
+                    return@setOnMenuItemClickListener menuUtils.handleMenuStopRecordingSelection(program.recording, null)
                 R.id.menu_record_cancel ->
-                    return@setOnMenuItemClickListener menuUtils.handleMenuCancelRecordingSelection(recording, null)
+                    return@setOnMenuItemClickListener menuUtils.handleMenuCancelRecordingSelection(program.recording, null)
                 R.id.menu_record_remove ->
-                    return@setOnMenuItemClickListener menuUtils.handleMenuRemoveRecordingSelection(recording, null)
+                    return@setOnMenuItemClickListener menuUtils.handleMenuRemoveRecordingSelection(program.recording, null)
                 R.id.menu_record_once ->
                     return@setOnMenuItemClickListener menuUtils.handleMenuRecordSelection(program.eventId)
                 R.id.menu_record_once_and_edit -> {

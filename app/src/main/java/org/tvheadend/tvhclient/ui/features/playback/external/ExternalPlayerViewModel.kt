@@ -4,7 +4,6 @@ import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.text.TextUtils
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import org.tvheadend.tvhclient.MainApplication
@@ -136,7 +135,7 @@ class ExternalPlayerViewModel(application: Application) : AndroidViewModel(appli
         // This is usually required when a channel or recording shall
         // be played on a chromecast
         var hostname = connection.hostname
-        if (convertHostnameToAddress && !TextUtils.isEmpty(connection.hostname)) {
+        if (convertHostnameToAddress && !connection.hostname.isNullOrEmpty()) {
             Timber.d("Convert hostname ${connection.hostname} to IP address")
             try {
                 hostname = ConvertHostnameToAddressTask(connection.hostname ?: "").execute().get()
@@ -154,7 +153,7 @@ class ExternalPlayerViewModel(application: Application) : AndroidViewModel(appli
             baseUrl = "http://$hostname:${connection.streamingPort}"
         }
 
-        if (!TextUtils.isEmpty(serverStatus?.webroot)) {
+        if (!serverStatus?.webroot.isNullOrEmpty()) {
             baseUrl += serverStatus?.webroot
         }
         return baseUrl

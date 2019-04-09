@@ -2,7 +2,6 @@ package org.tvheadend.tvhclient.ui.features.dvr.series_recordings
 
 import android.content.Intent
 import android.os.Bundle
-import android.text.TextUtils
 import android.view.*
 import androidx.lifecycle.ViewModelProviders
 import com.afollestad.materialdialogs.MaterialDialog
@@ -94,7 +93,7 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
         setHasOptionsMenu(true)
         updateUI()
 
-        toolbarInterface.setTitle(if (!TextUtils.isEmpty(viewModel.recording.id))
+        toolbarInterface.setTitle(if (!viewModel.recording.id.isNullOrEmpty())
             getString(R.string.edit_recording)
         else
             getString(R.string.add_recording))
@@ -113,7 +112,7 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
         directory.visibleOrGone(htspVersion >= 19)
         directory.setText(viewModel.recording.directory)
 
-        channel_name.text = if (!TextUtils.isEmpty(viewModel.recording.channelName)) viewModel.recording.channelName else getString(R.string.all_channels)
+        channel_name.text = viewModel.recording.channelName ?: getString(R.string.all_channels)
         channel_name.setOnClickListener {
             // Determine if the server supports recording on all channels
             val allowRecordingOnAllChannels = htspVersion >= 21
@@ -249,7 +248,7 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
      * created recording.
      */
     private fun save() {
-        if (TextUtils.isEmpty(viewModel.recording.title)) {
+        if (viewModel.recording.title.isNullOrEmpty()) {
             context?.sendSnackbarMessage(R.string.error_empty_title)
             return
         }
@@ -261,7 +260,7 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
             viewModel.recording.maxDuration = viewModel.recording.minDuration
         }
 
-        if (!TextUtils.isEmpty(viewModel.recording.id)) {
+        if (!viewModel.recording.id.isNullOrEmpty()) {
             updateSeriesRecording()
         } else {
             addSeriesRecording()
