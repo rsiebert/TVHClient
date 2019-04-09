@@ -7,8 +7,13 @@ import android.content.SharedPreferences
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.graphics.Point
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.os.Build
 import android.os.Bundle
+import android.view.Surface
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
@@ -50,6 +55,13 @@ class PlaybackActivity : AppCompatActivity(), PlayerControlView.VisibilityListen
     private val videoAspectRatioList = listOf(Rational(5, 4), Rational(4, 3), Rational(16, 9), Rational(16, 10))
     private var selectedVideoAspectRatio: Rational? = null
 
+    private var orientationSensorListener: SensorEventListener? = null
+    private var sensorManager: SensorManager? = null
+    private var orientation: Sensor? = null
+    private var forceOrientation = false
+    private var value0 = -10000f
+    private var value1 = -10000f
+
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(getThemeId(this))
         super.onCreate(savedInstanceState)
@@ -59,6 +71,51 @@ class PlaybackActivity : AppCompatActivity(), PlayerControlView.VisibilityListen
         MainApplication.getComponent().inject(this)
 
         timeshiftSupported = sharedPreferences.getBoolean("timeshift_enabled", resources.getBoolean(R.bool.pref_default_timeshift_enabled))
+
+        sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager?
+        orientation = sensorManager?.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+        orientationSensorListener = object : SensorEventListener {
+            override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
+
+            }
+
+            override fun onSensorChanged(event: SensorEvent?) {
+                event?.let {
+                    if (value0 == it.values[0] && value1 == it.values[1]) {
+                        return
+                    }
+                    val orientation = -1
+                    var value = orientation
+
+                    if (value0 < 0 && it.values[0] > 0) {
+                        // Setting rotation to 270°: Landscape reverse
+                        value = Surface.ROTATION_270
+                    } else if (value0 > 0 && it.values[0] < 0) {
+                        // Setting rotation to 90°: Landscape
+                        value = Surface.ROTATION_90
+                    } else if (value1 < 0 && it.values[1] > 0) {
+                        // Setting rotation to 180°: Portrait reverse
+                        value = Surface.ROTATION_180
+                    } else if (value1 > 0 && it.values[1] < 0) {
+                        // Setting rotation to 0°: Portrait
+                        value = Surface.ROTATION_0
+                    }
+
+                    if (orientation != value && !forceOrientation) {
+                        if ((requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+                                        && (value == Surface.ROTATION_90 || value == Surface.ROTATION_270))
+                                || (requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+                                        && (value == Surface.ROTATION_0 || value == Surface.ROTATION_180))) {
+                            Timber.d("Changing orientation")
+                            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+                        }
+                    }
+
+                    value0 = it.values[0]
+                    value1 = it.values[1]
+                }
+            }
+        }
 
         status.setText(R.string.connecting_to_server)
         player_rewind?.invisible()
@@ -185,15 +242,21 @@ class PlaybackActivity : AppCompatActivity(), PlayerControlView.VisibilityListen
         viewModel.loadMediaSource(intent.extras)
     }
 
-    override fun onStop() {
-        Timber.d("Stopping")
+    override fun onPause() {
+        Timber.d("Pausing")
         viewModel.pause()
-        super.onStop()
+        if (orientation != null) {
+            sensorManager?.unregisterListener(orientationSensorListener)
+        }
+        super.onPause()
     }
 
     override fun onResume() {
         super.onResume()
         Timber.d("Resuming")
+        if (orientation != null) {
+            sensorManager?.registerListener(orientationSensorListener, orientation, SensorManager.SENSOR_DELAY_GAME)
+        }
         viewModel.play()
     }
 
@@ -255,17 +318,17 @@ class PlaybackActivity : AppCompatActivity(), PlayerControlView.VisibilityListen
         }
     }
 
-    fun onPauseButtonSelected() {
+    private fun onPauseButtonSelected() {
         Timber.d("Pause button selected")
         viewModel.pause()
     }
 
-    fun onPlayButtonSelected() {
+    private fun onPlayButtonSelected() {
         Timber.d("Play button selected")
         viewModel.play()
     }
 
-    fun onMenuButtonSelected() {
+    private fun onMenuButtonSelected() {
         Timber.d("Menu button selected")
 
         var popupMenu: PopupMenu? = null
@@ -317,7 +380,7 @@ class PlaybackActivity : AppCompatActivity(), PlayerControlView.VisibilityListen
         }
     }
 
-    fun onChangeAspectRatioSelected() {
+    private fun onChangeAspectRatioSelected() {
         Timber.d("Change aspect ratio button selected")
         MaterialDialog.Builder(this)
                 .title("Select the video aspect ratio")
@@ -333,20 +396,22 @@ class PlaybackActivity : AppCompatActivity(), PlayerControlView.VisibilityListen
     private fun onMenuFullscreenSelected() {
         when (resources.configuration.orientation) {
             Configuration.ORIENTATION_PORTRAIT -> {
+                forceOrientation = true
                 requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
             }
             Configuration.ORIENTATION_LANDSCAPE -> {
+                forceOrientation = false
                 requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
             }
         }
     }
 
-    fun onRewindButtonSelected() {
+    private fun onRewindButtonSelected() {
         Timber.d("Rewind button selected")
         viewModel.seekBackward()
     }
 
-    fun onForwardButtonSelected() {
+    private fun onForwardButtonSelected() {
         Timber.d("Forward button selected")
         viewModel.seekForward()
     }
