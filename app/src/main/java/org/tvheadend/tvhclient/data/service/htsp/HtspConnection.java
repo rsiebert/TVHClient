@@ -271,6 +271,7 @@ public class HtspConnection extends Thread {
             socketChannel.register(selector, SelectionKey.OP_WRITE | SelectionKey.OP_READ | SelectionKey.OP_CONNECT);
             messageQueue.add(message);
             selector.wakeup();
+
         } catch (Exception e) {
             Timber.d(e, "Could not send message.");
         } finally {
@@ -286,8 +287,11 @@ public class HtspConnection extends Thread {
             messageQueue.clear();
             isAuthenticated = false;
             isRunning = false;
-            socketChannel.register(selector, 0);
-            socketChannel.close();
+
+            if (socketChannel.isOpen()) {
+                socketChannel.register(selector, 0);
+                socketChannel.close();
+            }
 
         } catch (ClosedChannelException e) {
             Timber.d(e, "Failed to register selector with socket channel, closed channel exception");
@@ -335,7 +339,9 @@ public class HtspConnection extends Thread {
                 if (!messageQueue.isEmpty()) {
                     ops |= SelectionKey.OP_WRITE;
                 }
-                socketChannel.register(selector, ops);
+                if (socketChannel.isOpen()) {
+                    socketChannel.register(selector, ops);
+                }
 
             } catch (NullPointerException e) {
                 Timber.d(e, "Failed to register selector with socket channel, socket channel is null");
