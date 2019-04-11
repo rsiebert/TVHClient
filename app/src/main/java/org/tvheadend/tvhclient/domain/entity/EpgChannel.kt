@@ -13,5 +13,7 @@ data class EpgChannel(
         @ColumnInfo(name = "name")
         var name: String? = null,
         @ColumnInfo(name = "icon")
-        var icon: String? = null
+        var icon: String? = null,
+        @ColumnInfo(name = "display_number")
+        var displayNumber: String? = null
 )

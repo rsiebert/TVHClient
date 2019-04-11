@@ -105,7 +105,8 @@ interface ChannelDao {
                 "c.name, " +
                 "c.icon, " +
                 "c.number, " +
-                "c.number_minor " +
+                "c.number_minor, " +
+                "c.display_number " +
                 "FROM channels AS c "
 
         const val ORDER_BY = " ORDER BY " +
