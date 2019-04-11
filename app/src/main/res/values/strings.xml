@@ -229,6 +229,8 @@
     <string name="pref_show_cast_minicontroller_sum">Show a cast mini controller at the bottom of the screen to display some information about the current cast.</string>
     <string name="pref_show_channel_name">Show channel name</string>
     <string name="pref_show_channel_name_sum">Additionally to the channel icon display the channel name above the program title in the channel list.</string>
+    <string name="pref_show_channel_number">Show channel number</string>
+    <string name="pref_show_channel_number_sum">Display the channel number below the channel icon.</string>
     <string name="pref_show_next_program">Show next program in channel list</string>
     <string name="pref_show_next_program_sum">The name of the program coming up next is displayed in the channel list. It is shown below the progress indicator.</string>
     <string name="pref_show_notification_offset">Notification time </string>

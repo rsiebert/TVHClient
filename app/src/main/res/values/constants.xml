@@ -34,6 +34,7 @@
     <string name="pref_default_start_screen" translatable="false">0</string>
     <bool name="pref_default_localized_date_time_format_enabled">false</bool>
     <bool name="pref_default_channel_name_enabled">true</bool>
+    <bool name="pref_default_channel_number_enabled">false</bool>
     <string name="pref_default_channel_icon_action" translatable="false">0</string>
     <string name="pref_default_channel_sort_order" translatable="false">0</string>
     <bool name="pref_default_channel_tag_icons_enabled">false</bool>

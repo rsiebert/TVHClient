@@ -24,6 +24,11 @@
             android:key="channel_name_enabled"
             android:summary="@string/pref_show_channel_name_sum"
             android:title="@string/pref_show_channel_name" />
+        <CheckBoxPreference
+            android:defaultValue="@bool/pref_default_channel_number_enabled"
+            android:key="channel_number_enabled"
+            android:summary="@string/pref_show_channel_number_sum"
+            android:title="@string/pref_show_channel_number" />
         <ListPreference
             android:name="@string/pref_play_when_channel_icon_selected"
             android:defaultValue="@string/pref_default_channel_icon_action"
