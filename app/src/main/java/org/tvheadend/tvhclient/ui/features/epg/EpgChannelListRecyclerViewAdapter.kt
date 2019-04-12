@@ -1,5 +1,6 @@
 package org.tvheadend.tvhclient.ui.features.epg
 
+import android.preference.PreferenceManager
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Filter
@@ -20,7 +21,8 @@ class EpgChannelListRecyclerViewAdapter(private val clickCallback: RecyclerViewC
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EpgChannelViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
         val itemBinding = EpgChannelListAdapterBinding.inflate(layoutInflater, parent, false)
-        return EpgChannelViewHolder(itemBinding)
+        val showChannelNumber = PreferenceManager.getDefaultSharedPreferences(parent.context).getBoolean("channel_number_enabled", parent.context.resources.getBoolean(R.bool.pref_default_channel_number_enabled))
+        return EpgChannelViewHolder(itemBinding, showChannelNumber)
     }
 
     override fun onBindViewHolder(holder: EpgChannelViewHolder, position: Int) {
@@ -86,12 +88,13 @@ class EpgChannelListRecyclerViewAdapter(private val clickCallback: RecyclerViewC
         }
     }
 
-    class EpgChannelViewHolder(private val binding: EpgChannelListAdapterBinding) : RecyclerView.ViewHolder(binding.root) {
+    class EpgChannelViewHolder(private val binding: EpgChannelListAdapterBinding, private val showChannelNumber: Boolean) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(channel: EpgChannel, position: Int, clickCallback: RecyclerViewClickCallback) {
             binding.channel = channel
             binding.position = position
             binding.callback = clickCallback
+            binding.showChannelNumber = showChannelNumber
             binding.executePendingBindings()
         }
     }

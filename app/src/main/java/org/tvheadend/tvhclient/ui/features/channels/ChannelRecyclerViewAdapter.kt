@@ -29,12 +29,13 @@ class ChannelRecyclerViewAdapter internal constructor(private val isDualPane: Bo
 
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(parent.context)
         val showChannelName = sharedPreferences.getBoolean("channel_name_enabled", parent.context.resources.getBoolean(R.bool.pref_default_channel_name_enabled))
+        val showChannelNumber = sharedPreferences.getBoolean("channel_number_enabled", parent.context.resources.getBoolean(R.bool.pref_default_channel_number_enabled))
         val showProgressbar = sharedPreferences.getBoolean("program_progressbar_enabled", parent.context.resources.getBoolean(R.bool.pref_default_program_progressbar_enabled))
         val showProgramSubtitle = sharedPreferences.getBoolean("program_subtitle_enabled", parent.context.resources.getBoolean(R.bool.pref_default_program_subtitle_enabled))
         val showNextProgramTitle = sharedPreferences.getBoolean("next_program_title_enabled", parent.context.resources.getBoolean(R.bool.pref_default_next_program_title_enabled))
         val showGenreColors = sharedPreferences.getBoolean("genre_colors_for_channels_enabled", parent.context.resources.getBoolean(R.bool.pref_default_genre_colors_for_channels_enabled))
 
-        return ChannelViewHolder(itemBinding, showChannelName, showProgramSubtitle, showNextProgramTitle, showProgressbar, showGenreColors, isDualPane)
+        return ChannelViewHolder(itemBinding, showChannelName, showChannelNumber, showProgramSubtitle, showNextProgramTitle, showProgressbar, showGenreColors, isDualPane)
     }
 
     override fun onBindViewHolder(holder: ChannelViewHolder, position: Int) {
@@ -172,6 +173,7 @@ class ChannelRecyclerViewAdapter internal constructor(private val isDualPane: Bo
 
     class ChannelViewHolder(private val binding: ChannelListAdapterBinding,
                             private val showChannelName: Boolean,
+                            private val showChannelNumber: Boolean,
                             private val showProgramSubtitle: Boolean,
                             private val showNextProgramTitle: Boolean,
                             private val showProgressBar: Boolean,
@@ -179,16 +181,17 @@ class ChannelRecyclerViewAdapter internal constructor(private val isDualPane: Bo
                             private val isDualPane: Boolean) : RecyclerView.ViewHolder(binding.getRoot()) {
 
         fun bind(channel: Channel, position: Int, isSelected: Boolean, clickCallback: RecyclerViewClickCallback) {
-            binding.setChannel(channel)
-            binding.setPosition(position)
-            binding.setIsSelected(isSelected)
-            binding.setShowChannelName(showChannelName)
-            binding.setShowProgramSubtitle(showProgramSubtitle)
-            binding.setShowProgressBar(showProgressBar)
-            binding.setShowNextProgramTitle(showNextProgramTitle)
-            binding.setShowGenreColor(showGenreColors)
-            binding.setIsDualPane(isDualPane)
-            binding.setCallback(clickCallback)
+            binding.channel = channel
+            binding.position = position
+            binding.isSelected = isSelected
+            binding.showChannelName = showChannelName
+            binding.showChannelNumber = showChannelNumber
+            binding.showProgramSubtitle = showProgramSubtitle
+            binding.showProgressBar = showProgressBar
+            binding.showNextProgramTitle = showNextProgramTitle
+            binding.showGenreColor = showGenreColors
+            binding.isDualPane = isDualPane
+            binding.callback = clickCallback
             binding.executePendingBindings()
         }
     }

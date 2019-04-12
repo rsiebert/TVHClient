@@ -4,6 +4,8 @@
 
     <data>
 
+        <import type="android.view.View" />
+
         <variable
             name="channel"
             type="org.tvheadend.tvhclient.domain.entity.EpgChannel" />
@@ -13,6 +15,10 @@
             type="int" />
 
         <variable
+            name="showChannelNumber"
+            type="boolean" />
+
+        <variable
             name="callback"
             type="org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback" />
     </data>
@@ -20,14 +26,12 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="80dp"
-        android:background="?android:attr/selectableItemBackground"
-        android:paddingBottom="16dp">
+        android:background="?android:attr/selectableItemBackground">
 
         <ImageView
             android:id="@+id/icon"
             android:layout_width="56dp"
             android:layout_height="40dp"
-            android:layout_margin="16dp"
             android:contentDescription="@null"
             android:onClick="@{(view) -> callback.onClick(view, position)}"
             android:scaleType="fitStart"
@@ -41,8 +45,7 @@
             android:id="@+id/icon_text"
             style="?attr/ContentFont"
             android:layout_width="56dp"
-            android:layout_height="56dp"
-            android:layout_margin="16dp"
+            android:layout_height="40dp"
             android:onClick="@{(view) -> callback.onClick(view, position)}"
             app:iconName="@{channel.name}"
             app:iconUrl="@{channel.icon}"
@@ -50,6 +53,21 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/channel_number"
+            style="?attr/ProgramGuideContentFont"
+            android:layout_width="56dp"
+            android:layout_height="20dp"
+            android:ellipsize="end"
+            android:gravity="bottom|center"
+            android:singleLine="true"
+            android:text="6.0"
+            android:visibility="@{showChannelNumber ? View.VISIBLE : View.GONE}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/icon_text" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
