@@ -79,7 +79,7 @@ abstract class SettingsConnectionBaseFragment : PreferenceFragmentCompat(), Back
         wolUseBroadcastEnabled.onPreferenceChangeListener = this
     }
 
-    override fun onCreatePreferences(savedInstanceState: Bundle, rootKey: String) {
+    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.preferences_add_connection, rootKey)
     }
 

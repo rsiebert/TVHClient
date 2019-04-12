@@ -107,7 +107,7 @@ class SettingsProfilesFragment : BasePreferenceFragment(), BackPressedInterface 
         }
     }
 
-    override fun onCreatePreferences(savedInstanceState: Bundle, rootKey: String) {
+    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.preferences_profiles, rootKey)
     }
 
