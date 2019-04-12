@@ -1,3 +1,7 @@
+$ 2.2.7
+  % VERSION 2.2.7
+  _ 12.04.2019
+    * Fixed possible crash in the profile settings screen
 $ 2.2.6
   % VERSION 2.2.6
   _ 12.04.2019
