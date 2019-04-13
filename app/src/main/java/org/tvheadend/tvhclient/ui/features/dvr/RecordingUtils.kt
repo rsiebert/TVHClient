@@ -25,7 +25,7 @@ fun getPriorityName(context: Context, priority: Int): String {
 }
 
 fun getDateStringFromTimeInMillis(milliSeconds: Long): String {
-    val sdf = SimpleDateFormat("dd:MM", Locale.US)
+    val sdf = SimpleDateFormat("dd.MM", Locale.US)
     return sdf.format(milliSeconds)
 }
 
