@@ -72,12 +72,19 @@ class DownloadRecordingManager(private val activity: Activity, dvrId: Int) {
             val recordingTitle = (if (!recording.title.isNullOrEmpty()) recording.title?.replace(" ", "_") else recording.id.toString()) + ".mkv"
 
             Timber.d("Download recording from url $downloadUrl to $downloadDirectory/$recordingTitle")
-            return DownloadManager.Request(Uri.parse(downloadUrl))
+            val request = DownloadManager.Request(Uri.parse(downloadUrl))
                     .addRequestHeader("Authorization", credentials)
                     .setTitle(recording.title)
                     .setDescription(recording.description)
                     .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-                    .setDestinationInExternalPublicDir(downloadDirectory, recordingTitle)
+
+            try {
+                request.setDestinationInExternalPublicDir(downloadDirectory, recordingTitle)
+            } catch (e: IllegalStateException) {
+                Timber.d(e, "Could not set download destination directory to $downloadDirectory, falling back to default ${Environment.DIRECTORY_DOWNLOADS}")
+                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, recordingTitle)
+            }
+            return request
         }
 
     /**
@@ -116,6 +123,7 @@ class DownloadRecordingManager(private val activity: Activity, dvrId: Int) {
      */
     private fun startDownload() {
         Timber.d("Starting download of recording ${recording.title}")
+
 
         lastDownloadId = downloadManager.enqueue(downloadRequest)
         Timber.d("Started download with id $lastDownloadId")
