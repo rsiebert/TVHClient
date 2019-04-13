@@ -2,7 +2,6 @@ package org.tvheadend.tvhclient.ui.features.dvr.recordings
 
 import android.os.Bundle
 import android.view.Menu
-import android.view.View
 import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.recyclerview_fragment.*
 import org.tvheadend.tvhclient.R
@@ -35,11 +34,7 @@ class ScheduledRecordingListFragment : RecordingListFragment() {
     private fun handleObservedRecordings(recordings: MutableList<Recording>) {
         // Remove all recordings from the list that are duplicated
         if (sharedPreferences.getBoolean("hide_duplicate_scheduled_recordings_enabled", resources.getBoolean(R.bool.pref_default_hide_duplicate_scheduled_recordings_enabled))) {
-            for (recording in recordings) {
-                if (recording.duplicate == 1) {
-                    recordings.remove(recording)
-                }
-            }
+            recordings.removeAll { it.duplicate == 1 }
         }
         recyclerViewAdapter.addItems(recordings)
 
