@@ -66,7 +66,10 @@ class RecordingAddEditFragment : BaseFragment(), BackPressedInterface, Recording
         recordingProfilesList = appRepository.serverProfileData.recordingProfileNames
         profile = appRepository.serverProfileData.getItemById(serverStatus.recordingServerProfileId)
         viewModel.recordingProfileNameId = getSelectedProfileId(profile, recordingProfilesList)
-        channelList = appRepository.channelData.getItems()
+
+        val defaultChannelSortOrder = resources.getString(R.string.pref_default_channel_sort_order)
+        val channelSortOrder = Integer.valueOf(sharedPreferences.getString("channel_sort_order", defaultChannelSortOrder) ?: defaultChannelSortOrder)
+        channelList = appRepository.channelData.getChannels(channelSortOrder)
 
         if (savedInstanceState == null) {
             viewModel.loadRecordingByIdSync(arguments?.getInt("id", 0) ?: 0)

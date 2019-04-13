@@ -69,10 +69,10 @@ class ChannelData(private val db: AppRoomDatabase) : DataSourceInterface<Channel
         return null
     }
 
-    override fun getItems(): List<Channel> {
+    fun getChannels(sortOrder: Int = 0): List<Channel> {
         val channels = ArrayList<Channel>()
         try {
-            channels.addAll(ChannelListTask(db).execute().get())
+            channels.addAll(ChannelListTask(db, sortOrder).execute().get())
         } catch (e: InterruptedException) {
             Timber.d(e, "Loading all channels task got interrupted")
         } catch (e: ExecutionException) {
@@ -80,6 +80,10 @@ class ChannelData(private val db: AppRoomDatabase) : DataSourceInterface<Channel
         }
 
         return channels
+    }
+
+    override fun getItems(): List<Channel> {
+        return getChannels()
     }
 
     fun getItemByIdWithPrograms(id: Int, selectedTime: Long): Channel? {
@@ -138,10 +142,10 @@ class ChannelData(private val db: AppRoomDatabase) : DataSourceInterface<Channel
         }
     }
 
-    private class ChannelListTask internal constructor(private val db: AppRoomDatabase) : AsyncTask<Void, Void, List<Channel>>() {
+    private class ChannelListTask internal constructor(private val db: AppRoomDatabase, private val sortOrder: Int) : AsyncTask<Void, Void, List<Channel>>() {
 
         override fun doInBackground(vararg voids: Void): List<Channel> {
-            return db.channelDao.loadAllChannelsSync(0)
+            return db.channelDao.loadAllChannelsSync(sortOrder)
         }
     }
 
