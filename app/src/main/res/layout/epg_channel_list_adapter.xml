@@ -62,7 +62,7 @@
             android:ellipsize="end"
             android:gravity="bottom|center"
             android:singleLine="true"
-            android:text="6.0"
+            android:text="@{channel.displayNumber}"
             android:visibility="@{showChannelNumber ? View.VISIBLE : View.GONE}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
