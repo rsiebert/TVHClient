@@ -35,9 +35,10 @@ class TimerRecordingData(private val db: AppRoomDatabase) : DataSourceInterface<
     }
 
     override fun getItemById(id: Any): TimerRecording {
-        if (!(id as String).isEmpty()) {
+        if ((id as String).isNotEmpty()) {
             try {
-                return TimerRecordingByIdTask(db, id).execute().get()
+                val recording = TimerRecordingByIdTask(db, id).execute().get()
+                return recording ?: TimerRecording()
             } catch (e: InterruptedException) {
                 Timber.d(e, "Loading timer recording by id task got interrupted")
             } catch (e: ExecutionException) {

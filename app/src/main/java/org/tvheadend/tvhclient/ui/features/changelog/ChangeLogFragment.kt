@@ -94,7 +94,7 @@ class ChangeLogFragment : Fragment(), BackPressedInterface, HtmlFileLoaderTask.L
     }
 
     override fun onFileContentsLoaded(fileContent: String) {
-        if (!fileContent.isEmpty() && isVisible) {
+        if (fileContent.isNotEmpty() && isVisible) {
             webview.loadDataWithBaseURL("file:///android_asset/", fileContent, "text/html", "utf-8", null)
             webview.visible()
             loading_view.gone()

@@ -213,12 +213,12 @@ class PlaybackActivity : AppCompatActivity(), PlayerControlView.VisibilityListen
         viewModel.subtitle.observe(this, Observer { subtitle ->
             Timber.d("Received subtitle $subtitle")
             program_subtitle?.text = subtitle
-            program_subtitle?.visibleOrGone(!subtitle.isEmpty())
+            program_subtitle?.visibleOrGone(subtitle.isNotEmpty())
         })
         viewModel.nextTitle.observe(this, Observer { nextTitle ->
             Timber.d("Received next title $nextTitle")
             next_program_title?.text = nextTitle
-            next_program_title?.visibleOrGone(!nextTitle.isEmpty())
+            next_program_title?.visibleOrGone(nextTitle.isNotEmpty())
         })
         viewModel.elapsedTime.observe(this, Observer { elapsedTime ->
             Timber.d("Received elapsed time $elapsedTime")

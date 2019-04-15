@@ -23,16 +23,19 @@ import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DataSpec;
 
+import org.jetbrains.annotations.NotNull;
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
+import org.tvheadend.tvhclient.data.service.HtspService;
 import org.tvheadend.tvhclient.data.service.htsp.HtspConnection;
 import org.tvheadend.tvhclient.data.service.htsp.HtspMessage;
 import org.tvheadend.tvhclient.data.service.htsp.HtspMessageListener;
-import org.tvheadend.tvhclient.data.service.HtspService;
 
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
@@ -43,7 +46,6 @@ import java.nio.ByteBuffer;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 
-import androidx.annotation.NonNull;
 import timber.log.Timber;
 
 public class HtspSubscriptionDataSource implements DataSource, Closeable, HtspMessageListener, HtspDataSourceInterface {
@@ -55,7 +57,7 @@ public class HtspSubscriptionDataSource implements DataSource, Closeable, HtspMe
     static final byte[] HEADER = new byte[]{0, 1, 0, 1, 0, 1, 0, 1};
 
     private final Context context;
-    private HtspConnection htspConnection;
+    private final HtspConnection htspConnection;
     private final String streamProfile;
     private DataSpec dataSpec;
     private final int dataSourceNumber;
@@ -69,7 +71,7 @@ public class HtspSubscriptionDataSource implements DataSource, Closeable, HtspMe
     public static class Factory implements DataSource.Factory {
 
         private final Context context;
-        private HtspConnection htspConnection;
+        private final HtspConnection htspConnection;
         private final String streamProfile;
         private HtspSubscriptionDataSource dataSource;
 
@@ -252,7 +254,7 @@ public class HtspSubscriptionDataSource implements DataSource, Closeable, HtspMe
     }
 
     @Override
-    public void onMessage(HtspMessage message) {
+    public void onMessage(@NotNull HtspMessage message) {
         String method = message.getMethod();
         switch (method) {
             case "subscriptionStart":
@@ -350,9 +352,9 @@ public class HtspSubscriptionDataSource implements DataSource, Closeable, HtspMe
             byteBuffer.flip();
         } catch (IOException e) {
             // Ignore?
-            Timber.w("Caught IOException, ignoring (" + dataSourceNumber + ")", e);
-        } catch (BufferOverflowException boe) {
-            Timber.w("Caught BufferOverflowException, ignoring (" + dataSourceNumber + ")", boe);
+            Timber.w(e, "Caught IOException, ignoring (" + dataSourceNumber + ")");
+        } catch (BufferOverflowException e) {
+            Timber.w(e, "Caught BufferOverflowException, ignoring (" + dataSourceNumber + ")");
         } finally {
             lock.unlock();
             // Ignore

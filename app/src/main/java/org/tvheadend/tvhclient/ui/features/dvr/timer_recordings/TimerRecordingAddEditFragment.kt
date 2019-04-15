@@ -85,7 +85,7 @@ class TimerRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Reco
         setHasOptionsMenu(true)
         updateUI()
 
-        toolbarInterface.setTitle(if (!viewModel.recording.id.isEmpty())
+        toolbarInterface.setTitle(if (viewModel.recording.id.isNotEmpty())
             getString(R.string.edit_recording)
         else
             getString(R.string.add_recording))
@@ -116,10 +116,10 @@ class TimerRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Reco
             handlePrioritySelection(ctx, viewModel.recording.priority, this@TimerRecordingAddEditFragment)
         }
 
-        dvr_config.visibleOrGone(!recordingProfilesList.isEmpty())
-        dvr_config_label.visibleOrGone(!recordingProfilesList.isEmpty())
+        dvr_config.visibleOrGone(recordingProfilesList.isNotEmpty())
+        dvr_config_label.visibleOrGone(recordingProfilesList.isNotEmpty())
 
-        if (!recordingProfilesList.isEmpty()) {
+        if (recordingProfilesList.isNotEmpty()) {
             dvr_config.text = recordingProfilesList[viewModel.recordingProfileNameId]
             dvr_config.setOnClickListener {
                 handleRecordingProfileSelection(ctx, recordingProfilesList, viewModel.recordingProfileNameId, this@TimerRecordingAddEditFragment)
@@ -197,7 +197,7 @@ class TimerRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Reco
             context?.sendSnackbarMessage(R.string.error_empty_title)
             return
         }
-        if (!viewModel.recording.id.isEmpty()) {
+        if (viewModel.recording.id.isNotEmpty()) {
             updateTimerRecording()
         } else {
             addTimerRecording()

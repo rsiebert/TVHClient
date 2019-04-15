@@ -96,7 +96,7 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
         setHasOptionsMenu(true)
         updateUI()
 
-        toolbarInterface.setTitle(if (!viewModel.recording.id.isNullOrEmpty())
+        toolbarInterface.setTitle(if (viewModel.recording.id.isNotEmpty())
             getString(R.string.edit_recording)
         else
             getString(R.string.add_recording))
@@ -127,10 +127,10 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
             handlePrioritySelection(ctx, viewModel.recording.priority, this@SeriesRecordingAddEditFragment)
         }
 
-        dvr_config.visibleOrGone(!recordingProfilesList.isEmpty())
-        dvr_config_label.visibleOrGone(!recordingProfilesList.isEmpty())
+        dvr_config.visibleOrGone(recordingProfilesList.isNotEmpty())
+        dvr_config_label.visibleOrGone(recordingProfilesList.isNotEmpty())
 
-        if (!recordingProfilesList.isEmpty()) {
+        if (recordingProfilesList.isNotEmpty()) {
             dvr_config.text = recordingProfilesList[viewModel.recordingProfileNameId]
             dvr_config.setOnClickListener {
                 handleRecordingProfileSelection(ctx, recordingProfilesList, viewModel.recordingProfileNameId, this)
@@ -263,7 +263,7 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
             viewModel.recording.maxDuration = viewModel.recording.minDuration
         }
 
-        if (!viewModel.recording.id.isNullOrEmpty()) {
+        if (viewModel.recording.id.isNotEmpty()) {
             updateSeriesRecording()
         } else {
             addSeriesRecording()

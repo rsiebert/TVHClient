@@ -4,7 +4,6 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import androidx.core.app.NotificationManagerCompat
-import androidx.work.ListenableWorker
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import org.tvheadend.tvhclient.R
@@ -15,7 +14,7 @@ import java.util.*
 
 class RecordingNotificationWorker(val context: Context, workerParams: WorkerParameters) : Worker(context, workerParams) {
 
-    override fun doWork(): ListenableWorker.Result {
+    override fun doWork(): Result {
         Timber.d("Loading more event data from server")
 
         val dvrTitle = inputData.getString("dvrTitle")
@@ -41,6 +40,6 @@ class RecordingNotificationWorker(val context: Context, workerParams: WorkerPara
 
         NotificationManagerCompat.from(context).notify(dvrId, builder.build())
 
-        return ListenableWorker.Result.success()
+        return Result.success()
     }
 }

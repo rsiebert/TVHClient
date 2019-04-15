@@ -9,7 +9,7 @@ import java.util.Locale;
 
 import timber.log.Timber;
 
-public class ExoPlayerUtils {
+class ExoPlayerUtils {
 
     private ExoPlayerUtils() {
         throw new IllegalAccessError("Utility class");
@@ -48,7 +48,7 @@ public class ExoPlayerUtils {
      * @param format {@link Format} of the track.
      * @return a generated name specific to the track.
      */
-    public static String buildTrackName(Format format) {
+    static String buildTrackName(Format format) {
         String trackName;
         if (MimeTypes.isVideo(format.sampleMimeType)) {
             trackName = joinWithSeparator(joinWithSeparator(joinWithSeparator(

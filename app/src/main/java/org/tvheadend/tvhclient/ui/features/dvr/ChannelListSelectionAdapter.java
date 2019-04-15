@@ -8,6 +8,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.squareup.picasso.Picasso;
 
 import org.tvheadend.tvhclient.R;
@@ -17,9 +20,6 @@ import org.tvheadend.tvhclient.util.MiscUtils;
 import java.lang.ref.WeakReference;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-
 // TODO convert to data binding
 
 public class ChannelListSelectionAdapter extends RecyclerView.Adapter<ChannelListSelectionAdapter.ViewHolder> {
@@ -28,7 +28,7 @@ public class ChannelListSelectionAdapter extends RecyclerView.Adapter<ChannelLis
     private Callback callback;
     private final List<Channel> channelList;
 
-    public interface Callback {
+    interface Callback {
         void onItemClicked(Channel channel);
     }
 

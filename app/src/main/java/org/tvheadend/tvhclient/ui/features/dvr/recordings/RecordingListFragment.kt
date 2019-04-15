@@ -211,7 +211,7 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback
     }
 
     override fun onSearchResultsCleared(): Boolean {
-        return if (!searchQuery.isEmpty()) {
+        return if (searchQuery.isNotEmpty()) {
             searchQuery = ""
             recyclerViewAdapter.filter.filter("", this)
             true

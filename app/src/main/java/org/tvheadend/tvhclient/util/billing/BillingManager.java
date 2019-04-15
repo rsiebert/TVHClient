@@ -3,6 +3,8 @@ package org.tvheadend.tvhclient.util.billing;
 import android.app.Activity;
 import android.content.Context;
 
+import androidx.annotation.Nullable;
+
 import com.android.billingclient.api.BillingClient;
 import com.android.billingclient.api.BillingClientStateListener;
 import com.android.billingclient.api.BillingFlowParams;
@@ -11,13 +13,12 @@ import com.android.billingclient.api.PurchasesUpdatedListener;
 
 import java.util.List;
 
-import androidx.annotation.Nullable;
 import timber.log.Timber;
 
 public class BillingManager implements PurchasesUpdatedListener {
 
-    private BillingClient billingClient;
-    private BillingUpdatesListener billingUpdatesListener;
+    private final BillingClient billingClient;
+    private final BillingUpdatesListener billingUpdatesListener;
     private boolean isServiceConnected = false;
 
     // Product id for the in-app billing item to unlock the application

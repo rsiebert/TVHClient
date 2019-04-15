@@ -355,7 +355,7 @@ class HtspIntentService : JobIntentService(), HtspConnectionStateListener {
     companion object {
 
         fun enqueueWork(context: Context, work: Intent) {
-            JobIntentService.enqueueWork(context, HtspIntentService::class.java, 1, work)
+            enqueueWork(context, HtspIntentService::class.java, 1, work)
         }
     }
 }

@@ -78,7 +78,7 @@ class ProgramRecyclerViewAdapter internal constructor(private val showProgramCha
 
     override fun getFilter(): Filter {
         return object : Filter() {
-            override fun performFiltering(charSequence: CharSequence): Filter.FilterResults {
+            override fun performFiltering(charSequence: CharSequence): FilterResults {
                 val charString = charSequence.toString()
                 var filteredList: MutableList<Program> = ArrayList()
                 if (charString.isEmpty()) {
@@ -96,12 +96,12 @@ class ProgramRecyclerViewAdapter internal constructor(private val showProgramCha
                     }
                 }
 
-                val filterResults = Filter.FilterResults()
+                val filterResults = FilterResults()
                 filterResults.values = filteredList
                 return filterResults
             }
 
-            override fun publishResults(charSequence: CharSequence, filterResults: Filter.FilterResults) {
+            override fun publishResults(charSequence: CharSequence, filterResults: FilterResults) {
                 programListFiltered = filterResults.values as ArrayList<Program>
                 notifyDataSetChanged()
             }
@@ -152,15 +152,15 @@ class ProgramRecyclerViewAdapter internal constructor(private val showProgramCha
         }
     }
 
-    class ProgramViewHolder(private val binding: ProgramListAdapterBinding, private val showProgramChannelIcon: Boolean, private val showGenreColors: Boolean, private val showProgramSubtitles: Boolean) : RecyclerView.ViewHolder(binding.getRoot()) {
+    class ProgramViewHolder(private val binding: ProgramListAdapterBinding, private val showProgramChannelIcon: Boolean, private val showGenreColors: Boolean, private val showProgramSubtitles: Boolean) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(program: Program, position: Int, clickCallback: RecyclerViewClickCallback) {
-            binding.setProgram(program)
-            binding.setPosition(position)
-            binding.setShowProgramSubtitles(showProgramSubtitles)
-            binding.setShowProgramChannelIcon(showProgramChannelIcon)
-            binding.setShowGenreColor(showGenreColors)
-            binding.setCallback(clickCallback)
+            binding.program = program
+            binding.position = position
+            binding.showProgramSubtitles = showProgramSubtitles
+            binding.showProgramChannelIcon = showProgramChannelIcon
+            binding.showGenreColor = showGenreColors
+            binding.callback = clickCallback
             binding.executePendingBindings()
         }
     }

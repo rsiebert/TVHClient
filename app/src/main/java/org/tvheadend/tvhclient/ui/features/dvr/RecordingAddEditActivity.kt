@@ -31,8 +31,7 @@ class RecordingAddEditActivity : BaseActivity() {
 
         if (savedInstanceState == null) {
             var fragment: Fragment? = null
-            val type = intent.getStringExtra("type")
-            when (type) {
+            when (intent.getStringExtra("type")) {
                 "recording" -> fragment = RecordingAddEditFragment()
                 "series_recording" -> fragment = SeriesRecordingAddEditFragment()
                 "timer_recording" -> fragment = TimerRecordingAddEditFragment()

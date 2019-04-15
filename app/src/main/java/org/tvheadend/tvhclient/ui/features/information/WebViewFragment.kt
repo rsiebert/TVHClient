@@ -78,7 +78,7 @@ open class WebViewFragment : BaseFragment(), HtmlFileLoaderTask.Listener {
     override fun onFileContentsLoaded(fileContent: String) {
         val ctx = context ?: return
         var content = fileContent
-        if (!content.isEmpty()) {
+        if (content.isNotEmpty()) {
             if (content.contains("styles_light.css")) {
                 content = if (getThemeId(ctx) == R.style.CustomTheme_Light) {
                     content.replace("styles_light.css", "html/styles_light.css")

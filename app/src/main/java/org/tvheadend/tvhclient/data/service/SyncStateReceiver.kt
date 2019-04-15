@@ -46,7 +46,7 @@ class SyncStateReceiver(callback: Listener) : BroadcastReceiver() {
          * @param message Main text message describing the state
          * @param details Additional text message to describe any details
          */
-        fun onSyncStateChanged(state: SyncStateReceiver.State, message: String, details: String)
+        fun onSyncStateChanged(state: State, message: String, details: String)
     }
 
     companion object {

@@ -57,7 +57,7 @@ class EpgChannelListRecyclerViewAdapter(private val clickCallback: RecyclerViewC
 
     override fun getFilter(): Filter {
         return object : Filter() {
-            override fun performFiltering(charSequence: CharSequence): Filter.FilterResults {
+            override fun performFiltering(charSequence: CharSequence): FilterResults {
                 val charString = charSequence.toString()
                 if (charString.isEmpty()) {
                     channelListFiltered = channelList
@@ -76,12 +76,12 @@ class EpgChannelListRecyclerViewAdapter(private val clickCallback: RecyclerViewC
                     channelListFiltered = filteredList
                 }
 
-                val filterResults = Filter.FilterResults()
+                val filterResults = FilterResults()
                 filterResults.values = channelListFiltered
                 return filterResults
             }
 
-            override fun publishResults(charSequence: CharSequence, filterResults: Filter.FilterResults) {
+            override fun publishResults(charSequence: CharSequence, filterResults: FilterResults) {
                 channelListFiltered = filterResults.values as ArrayList<EpgChannel>
                 notifyDataSetChanged()
             }

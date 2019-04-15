@@ -35,9 +35,10 @@ class SeriesRecordingData(private val db: AppRoomDatabase) : DataSourceInterface
     }
 
     override fun getItemById(id: Any): SeriesRecording {
-        if (!(id as String).isEmpty()) {
+        if ((id as String).isNotEmpty()) {
             try {
-                return SeriesRecordingByIdTask(db, id).execute().get()
+                val recording = SeriesRecordingByIdTask(db, id).execute().get()
+                return recording ?: SeriesRecording()
             } catch (e: InterruptedException) {
                 Timber.d(e, "Loading series recording by id task got interrupted")
             } catch (e: ExecutionException) {

@@ -53,7 +53,7 @@ class MainActivity : BaseActivity(), NavigationDrawerCallback, SearchView.OnQuer
     @Inject
     lateinit var appRepository: AppRepository
 
-    lateinit var syncProgress: ProgressBar
+    private lateinit var syncProgress: ProgressBar
 
     private var searchMenuItem: MenuItem? = null
     private var searchView: SearchView? = null

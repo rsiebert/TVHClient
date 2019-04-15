@@ -369,7 +369,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
     }
 
     override fun onSearchResultsCleared(): Boolean {
-        return if (!searchQuery.isEmpty()) {
+        return if (searchQuery.isNotEmpty()) {
             Timber.d("Search result not empty, clearing filter and returning true")
             searchQuery = ""
             recyclerViewAdapter.filter.filter("", this)

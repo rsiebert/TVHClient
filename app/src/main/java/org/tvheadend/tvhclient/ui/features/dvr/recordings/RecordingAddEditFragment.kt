@@ -133,7 +133,7 @@ class RecordingAddEditFragment : BaseFragment(), BackPressedInterface, Recording
         dvr_config.visibleOrGone(!(recordingProfilesList.isEmpty() || viewModel.recording.isRecording))
         dvr_config_label.visibleOrGone(!(recordingProfilesList.isEmpty() || viewModel.recording.isRecording))
 
-        if (!recordingProfilesList.isEmpty() && !viewModel.recording.isRecording) {
+        if (recordingProfilesList.isNotEmpty() && !viewModel.recording.isRecording) {
             dvr_config.text = recordingProfilesList[viewModel.recordingProfileNameId]
             dvr_config.setOnClickListener { handleRecordingProfileSelection(ctx, recordingProfilesList, viewModel.recordingProfileNameId, this@RecordingAddEditFragment) }
         }

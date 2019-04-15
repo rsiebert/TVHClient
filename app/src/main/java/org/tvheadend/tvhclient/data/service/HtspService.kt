@@ -75,7 +75,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         val action = intent.action
         if (action == null || action.isEmpty()) {
-            return Service.START_NOT_STICKY
+            return START_NOT_STICKY
         }
         Timber.d("Received command $action for service")
 
@@ -120,7 +120,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
             "getMoreEvents" -> getMoreEvents(intent)
             "loadChannelIcons" -> loadAllChannelIcons()
         }
-        return Service.START_NOT_STICKY
+        return START_NOT_STICKY
     }
 
     override fun onDestroy() {
@@ -153,8 +153,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
     }
 
     override fun onMessage(response: HtspMessage) {
-        val method = response.method
-        when (method) {
+        when (response.method) {
             "tagAdd" -> onTagAdd(response)
             "tagUpdate" -> onTagUpdate(response)
             "tagDelete" -> onTagDelete(response)
@@ -747,7 +746,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
      */
     private fun onAutorecEntryDelete(msg: HtspMessage) {
         val id = msg.getString("id", "")
-        if (!id.isEmpty()) {
+        if (id.isNotEmpty()) {
             val seriesRecording = appRepository.seriesRecordingData.getItemById(msg.getString("id"))
             appRepository.seriesRecordingData.removeItem(seriesRecording)
         }
@@ -790,7 +789,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
      */
     private fun onTimerRecEntryDelete(msg: HtspMessage) {
         val id = msg.getString("id", "")
-        if (!id.isEmpty()) {
+        if (id.isNotEmpty()) {
             val timerRecording = appRepository.timerRecordingData.getItemById(id)
             appRepository.timerRecordingData.removeItem(timerRecording)
         }
@@ -1039,7 +1038,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
     private fun saveAllReceivedChannels() {
         Timber.d("Saving ${pendingChannelOps.size} channels")
 
-        if (!pendingChannelOps.isEmpty()) {
+        if (pendingChannelOps.isNotEmpty()) {
             appRepository.channelData.addItems(pendingChannelOps)
         }
     }
@@ -1055,7 +1054,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         val pendingRemovedTagAndChannelOps = ArrayList<TagAndChannel>()
         val pendingAddedTagAndChannelOps = ArrayList<TagAndChannel>()
 
-        if (!pendingChannelTagOps.isEmpty()) {
+        if (pendingChannelTagOps.isNotEmpty()) {
             appRepository.channelTagData.addItems(pendingChannelTagOps)
             for (tag in pendingChannelTagOps) {
 
@@ -1091,14 +1090,14 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
     private fun saveAllReceivedRecordings() {
         Timber.d("Removing previously existing recordings and saving ${pendingRecordingOps.size} new recordings")
         appRepository.recordingData.removeItems()
-        if (!pendingRecordingOps.isEmpty()) {
+        if (pendingRecordingOps.isNotEmpty()) {
             appRepository.recordingData.addItems(pendingRecordingOps)
         }
     }
 
     private fun saveAllReceivedEvents() {
         Timber.d("Saving ${pendingEventOps.size} new events")
-        if (!pendingEventOps.isEmpty()) {
+        if (pendingEventOps.isNotEmpty()) {
             appRepository.programData.addItems(pendingEventOps)
         }
     }
@@ -1536,7 +1535,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
     private fun sendSyncStateMessage(state: SyncStateReceiver.State, message: String, details: String?) {
         val intent = Intent(SyncStateReceiver.ACTION)
         intent.putExtra(SyncStateReceiver.STATE, state)
-        if (!message.isNullOrEmpty()) {
+        if (message.isNotEmpty()) {
             intent.putExtra(SyncStateReceiver.MESSAGE, message)
         }
         if (!details.isNullOrEmpty()) {

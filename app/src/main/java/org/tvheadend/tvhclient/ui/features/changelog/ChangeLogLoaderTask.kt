@@ -3,8 +3,8 @@ package org.tvheadend.tvhclient.ui.features.changelog
 import android.content.Context
 import android.os.AsyncTask
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.util.getThemeId
 import org.tvheadend.tvhclient.ui.common.tasks.HtmlFileLoaderTask
+import org.tvheadend.tvhclient.util.getThemeId
 import timber.log.Timber
 import java.io.BufferedReader
 import java.io.InputStream
@@ -61,7 +61,7 @@ class ChangeLogLoaderTask(context: Context?, private val lastAppVersion: String,
             // Remove any spaces before or after the line
             line = line.trim()
             // Get the first character which indicates the type of content on each line
-            val marker: Char = if (!line.isEmpty()) line[0] else '0'
+            val marker: Char = if (line.isNotEmpty()) line[0] else '0'
             if (marker == '$') {
                 // begin of a version section
                 closeList()

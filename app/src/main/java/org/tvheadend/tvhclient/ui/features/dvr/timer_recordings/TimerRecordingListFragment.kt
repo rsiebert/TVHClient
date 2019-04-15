@@ -211,7 +211,7 @@ class TimerRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, Se
     }
 
     override fun onSearchResultsCleared(): Boolean {
-        return if (!searchQuery.isEmpty()) {
+        return if (searchQuery.isNotEmpty()) {
             searchQuery = ""
             recyclerViewAdapter.filter.filter("", this)
             true

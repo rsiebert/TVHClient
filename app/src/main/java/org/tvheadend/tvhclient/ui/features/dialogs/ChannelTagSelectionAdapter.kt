@@ -35,7 +35,7 @@ class ChannelTagSelectionAdapter(private val channelTagList: List<ChannelTag>, p
         val showChannelTagIcons = sharedPreferences.getBoolean("channel_tag_icons_enabled",
                 parent.context.resources.getBoolean(R.bool.pref_default_channel_tag_icons_enabled))
 
-        return ChannelTagSelectionAdapter.ViewHolder(binding, showChannelTagIcons, this)
+        return ViewHolder(binding, showChannelTagIcons, this)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {

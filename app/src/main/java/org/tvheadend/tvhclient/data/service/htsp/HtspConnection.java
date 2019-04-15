@@ -47,13 +47,13 @@ public class HtspConnection extends Thread {
     private final ByteBuffer inputByteBuffer;
     private int seq;
 
-    private HtspConnectionStateListener connectionListener;
-    private Set<HtspMessageListener> messageListeners = new HashSet<>();
+    private final HtspConnectionStateListener connectionListener;
+    private final Set<HtspMessageListener> messageListeners = new HashSet<>();
     private final SparseArray<HtspResponseListener> responseHandlers;
     private final LinkedList<HtspMessage> messageQueue;
     private boolean isAuthenticated = false;
     private Selector selector;
-    private int connectionTimeout;
+    private final int connectionTimeout;
 
     public void addMessageListener(@NonNull HtspMessageListener listener) {
         messageListeners.add(listener);

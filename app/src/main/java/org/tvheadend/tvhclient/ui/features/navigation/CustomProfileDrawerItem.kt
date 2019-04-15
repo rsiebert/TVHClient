@@ -8,7 +8,7 @@ import org.tvheadend.tvhclient.ui.common.visible
 
 internal class CustomProfileDrawerItem : ProfileDrawerItem() {
 
-    override fun bindView(viewHolder: ProfileDrawerItem.ViewHolder, payloads: List<*>?) {
+    override fun bindView(viewHolder: ViewHolder, payloads: List<*>?) {
         super.bindView(viewHolder, payloads as List<*>)
 
         val name = viewHolder.itemView.findViewById<TextView>(R.id.material_drawer_name)

@@ -197,7 +197,11 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
 
     override fun onConnectionStateChange(state: HtspConnection.ConnectionState) {
         when (state) {
-            HtspConnection.ConnectionState.FAILED..HtspConnection.ConnectionState.FAILED_EXCEPTION_OPENING_SOCKET -> {
+            HtspConnection.ConnectionState.FAILED,
+            HtspConnection.ConnectionState.FAILED_INTERRUPTED,
+            HtspConnection.ConnectionState.FAILED_CONNECTING_TO_SERVER,
+            HtspConnection.ConnectionState.FAILED_UNRESOLVED_ADDRESS,
+            HtspConnection.ConnectionState.FAILED_EXCEPTION_OPENING_SOCKET -> {
                 Timber.d("Connection failed")
                 isConnected.postValue(false)
             }

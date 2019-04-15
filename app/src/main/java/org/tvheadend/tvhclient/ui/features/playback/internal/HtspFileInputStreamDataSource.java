@@ -6,6 +6,7 @@ import android.net.Uri;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DataSpec;
 
+import org.jetbrains.annotations.NotNull;
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.data.service.htsp.HtspConnection;
 import org.tvheadend.tvhclient.data.service.htsp.HtspMessage;
@@ -24,7 +25,7 @@ public class HtspFileInputStreamDataSource implements DataSource, Closeable, Hts
     private static final AtomicInteger subscriptionCount = new AtomicInteger();
 
     private final Context context;
-    private HtspConnection htspConnection;
+    private final HtspConnection htspConnection;
     private DataSpec dataSpec;
     private final int dataSourceNumber;
 
@@ -38,7 +39,7 @@ public class HtspFileInputStreamDataSource implements DataSource, Closeable, Hts
     public static class Factory implements DataSource.Factory {
 
         private final Context context;
-        private HtspConnection htspConnection;
+        private final HtspConnection htspConnection;
         private HtspFileInputStreamDataSource dataSource;
 
         Factory(Context context, HtspConnection htspConnection) {
@@ -168,7 +169,7 @@ public class HtspFileInputStreamDataSource implements DataSource, Closeable, Hts
             try {
                 fileReadRequest.wait(5000);
             } catch (InterruptedException e) {
-                Timber.d("Waiting for fileReadRequest message was interrupted. ", e);
+                Timber.d(e, "Waiting for fileReadRequest message was interrupted");
             }
         }
 
@@ -217,7 +218,7 @@ public class HtspFileInputStreamDataSource implements DataSource, Closeable, Hts
     }
 
     @Override
-    public void onMessage(HtspMessage response) {
+    public void onMessage(@NotNull HtspMessage response) {
 
     }
 
@@ -278,7 +279,7 @@ public class HtspFileInputStreamDataSource implements DataSource, Closeable, Hts
             try {
                 request.wait(5000);
             } catch (InterruptedException e) {
-                Timber.d("Waiting for fileReadRequest message was interrupted. ", e);
+                Timber.d(e, "Waiting for fileReadRequest message was interrupted.");
             }
         }
     }

@@ -14,19 +14,19 @@ class CastSessionManagerListener(private val activity: Activity, private var cas
         if (session === castSession) {
             castSession = null
         }
-        activity?.invalidateOptionsMenu()
+        activity.invalidateOptionsMenu()
     }
 
     override fun onSessionResumed(session: CastSession, wasSuspended: Boolean) {
         Timber.d("Cast session resumed, was suspended $wasSuspended")
         castSession = session
-        activity?.invalidateOptionsMenu()
+        activity.invalidateOptionsMenu()
     }
 
     override fun onSessionStarted(session: CastSession, sessionId: String) {
         Timber.d("Cast session started with id $sessionId")
         castSession = session
-        activity?.invalidateOptionsMenu()
+        activity.invalidateOptionsMenu()
     }
 
     override fun onSessionStarting(session: CastSession) {

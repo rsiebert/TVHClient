@@ -11,7 +11,7 @@ class GenreColorListAdapter internal constructor(private val contentInfo: Array<
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
         val itemBinding = GenreColorListAdapterBinding.inflate(layoutInflater, parent, false)
-        return GenreColorListAdapter.ViewHolder(itemBinding)
+        return ViewHolder(itemBinding)
     }
 
     override fun getItemCount(): Int {

@@ -90,7 +90,7 @@ class RecordingRecyclerViewAdapter internal constructor(private val isDualPane: 
 
     override fun getFilter(): Filter {
         return object : Filter() {
-            override fun performFiltering(charSequence: CharSequence): Filter.FilterResults {
+            override fun performFiltering(charSequence: CharSequence): FilterResults {
                 val charString = charSequence.toString()
                 if (charString.isEmpty()) {
                     recordingListFiltered = recordingList
@@ -112,27 +112,27 @@ class RecordingRecyclerViewAdapter internal constructor(private val isDualPane: 
                     recordingListFiltered = filteredList
                 }
 
-                val filterResults = Filter.FilterResults()
+                val filterResults = FilterResults()
                 filterResults.values = recordingListFiltered
                 return filterResults
             }
 
-            override fun publishResults(charSequence: CharSequence, filterResults: Filter.FilterResults) {
+            override fun publishResults(charSequence: CharSequence, filterResults: FilterResults) {
                 recordingListFiltered = filterResults.values as ArrayList<Recording>
                 notifyDataSetChanged()
             }
         }
     }
 
-    class RecordingViewHolder(private val binding: RecordingListAdapterBinding, private val isDualPane: Boolean) : RecyclerView.ViewHolder(binding.getRoot()) {
+    class RecordingViewHolder(private val binding: RecordingListAdapterBinding, private val isDualPane: Boolean) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(recording: Recording, position: Int, isSelected: Boolean, htspVersion: Int, clickCallback: RecyclerViewClickCallback) {
-            binding.setRecording(recording)
-            binding.setPosition(position)
-            binding.setHtspVersion(htspVersion)
-            binding.setIsSelected(isSelected)
-            binding.setIsDualPane(isDualPane)
-            binding.setCallback(clickCallback)
+            binding.recording = recording
+            binding.position = position
+            binding.htspVersion = htspVersion
+            binding.isSelected = isSelected
+            binding.isDualPane = isDualPane
+            binding.callback = clickCallback
             binding.executePendingBindings()
         }
     }

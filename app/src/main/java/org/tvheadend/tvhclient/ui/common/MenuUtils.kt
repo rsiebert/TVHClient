@@ -294,7 +294,7 @@ class MenuUtils(activity: Activity) {
                                 }
                                 activity.startService(intent)
                                 try {
-                                    Thread.sleep(500)
+                                    sleep(500)
                                 } catch (e: InterruptedException) {
                                     // NOP
                                 }
@@ -326,7 +326,7 @@ class MenuUtils(activity: Activity) {
                                 intent.putExtra("id", id)
                                 activity.startService(intent)
                                 try {
-                                    Thread.sleep(500)
+                                    sleep(500)
                                 } catch (e: InterruptedException) {
                                     // NOP
                                 }
@@ -358,7 +358,7 @@ class MenuUtils(activity: Activity) {
                                 intent.putExtra("id", id)
                                 activity.startService(intent)
                                 try {
-                                    Thread.sleep(500)
+                                    sleep(500)
                                 } catch (e: InterruptedException) {
                                     // NOP
                                 }

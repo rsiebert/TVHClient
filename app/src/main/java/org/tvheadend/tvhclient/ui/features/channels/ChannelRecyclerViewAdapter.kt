@@ -90,7 +90,7 @@ class ChannelRecyclerViewAdapter internal constructor(private val isDualPane: Bo
 
     override fun getFilter(): Filter {
         return object : Filter() {
-            override fun performFiltering(charSequence: CharSequence): Filter.FilterResults {
+            override fun performFiltering(charSequence: CharSequence): FilterResults {
                 val charString = charSequence.toString()
                 if (charString.isEmpty()) {
                     channelListFiltered = channelList
@@ -115,12 +115,12 @@ class ChannelRecyclerViewAdapter internal constructor(private val isDualPane: Bo
                     channelListFiltered = filteredList
                 }
 
-                val filterResults = Filter.FilterResults()
+                val filterResults = FilterResults()
                 filterResults.values = channelListFiltered
                 return filterResults
             }
 
-            override fun publishResults(charSequence: CharSequence, filterResults: Filter.FilterResults) {
+            override fun publishResults(charSequence: CharSequence, filterResults: FilterResults) {
                 channelListFiltered = filterResults.values as ArrayList<Channel>
                 notifyDataSetChanged()
             }
@@ -178,7 +178,7 @@ class ChannelRecyclerViewAdapter internal constructor(private val isDualPane: Bo
                             private val showNextProgramTitle: Boolean,
                             private val showProgressBar: Boolean,
                             private val showGenreColors: Boolean,
-                            private val isDualPane: Boolean) : RecyclerView.ViewHolder(binding.getRoot()) {
+                            private val isDualPane: Boolean) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(channel: Channel, position: Int, isSelected: Boolean, clickCallback: RecyclerViewClickCallback) {
             binding.channel = channel

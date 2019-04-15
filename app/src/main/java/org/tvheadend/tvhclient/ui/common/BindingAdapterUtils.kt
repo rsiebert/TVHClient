@@ -93,7 +93,7 @@ fun setSeriesInfoText(view: TextView, program: Program?) {
             }
         }
     }
-    view.visibleOrGone(!seriesInfo.isEmpty())
+    view.visibleOrGone(seriesInfo.isNotEmpty())
     view.text = seriesInfo
 }
 
@@ -151,7 +151,7 @@ fun setContentTypeText(view: TextView, contentType: Int) {
         ret.append(0xb0 + i, s[i])
     }
     val contentTypeText = ret.get(contentType, context.getString(R.string.no_data))
-    view.visibleOrGone(!contentTypeText.isEmpty())
+    view.visibleOrGone(contentTypeText.isNotEmpty())
     view.text = contentTypeText
 }
 
@@ -290,7 +290,7 @@ fun setFailedReasonText(view: TextView, recording: Recording?) {
         }
     }
 
-    view.visibleOrGone(!failedReasonText.isEmpty()
+    view.visibleOrGone(failedReasonText.isNotEmpty()
             && recording != null
             && !recording.isCompleted)
     view.text = failedReasonText
@@ -509,8 +509,7 @@ fun setLocalizedTime(view: TextView, time: Long) {
     if (sharedPreferences.getBoolean("localized_date_time_format_enabled", view.context.resources.getBoolean(R.bool.pref_default_localized_date_time_format_enabled))) {
         // Show the date as defined with the currently active locale.
         // For the date display the short version will be used
-        val locale: Locale?
-        locale = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+        val locale: Locale? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             view.context.resources.configuration.locales.get(0)
         } else {
             view.context.resources.configuration.locale
@@ -573,8 +572,7 @@ fun setLocalizedDate(view: TextView, date: Long) {
             if (prefs.getBoolean("localized_date_time_format_enabled", false)) {
                 // Show the date as defined with the currently active locale.
                 // For the date display the short version will be used
-                val locale: Locale?
-                locale = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                val locale: Locale? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     context.resources.configuration.locales.get(0)
                 } else {
                     context.resources.configuration.locale
@@ -612,8 +610,7 @@ fun setGenreColor(view: TextView, contentType: Int, showGenreColors: Boolean, of
         if (contentType >= 0) {
             // Get the genre color from the content type
             color = R.color.EPG_OTHER
-            val type = contentType / 16
-            when (type) {
+            when (contentType / 16) {
                 0 -> color = ContextCompat.getColor(view.context, R.color.EPG_MOVIES)
                 1 -> color = ContextCompat.getColor(view.context, R.color.EPG_NEWS)
                 2 -> color = ContextCompat.getColor(view.context, R.color.EPG_SHOWS)

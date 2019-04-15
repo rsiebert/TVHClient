@@ -70,7 +70,7 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
             searchQuery = arguments?.getString(SearchManager.QUERY) ?: ""
         }
 
-        isSearchActive = !searchQuery.isEmpty()
+        isSearchActive = searchQuery.isNotEmpty()
 
         if (!isDualPane) {
             toolbarInterface.setTitle(if (isSearchActive) getString(R.string.search_results) else channelName)
@@ -283,7 +283,7 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
     }
 
     override fun onSearchResultsCleared(): Boolean {
-        return if (!searchQuery.isEmpty()) {
+        return if (searchQuery.isNotEmpty()) {
             searchQuery = ""
             recyclerViewAdapter.filter.filter("", this)
             true

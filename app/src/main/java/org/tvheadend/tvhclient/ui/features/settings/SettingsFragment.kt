@@ -192,7 +192,7 @@ class SettingsFragment : BasePreferenceFragment(), Preference.OnPreferenceClickL
 
     private fun isReadPermissionGranted(activity: FragmentActivity): Boolean {
         return if (Build.VERSION.SDK_INT >= 23) {
-            if (activity.checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+            if (activity.checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
                 true
             } else {
                 requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 1)
