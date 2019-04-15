@@ -1,3 +1,9 @@
+$ 2.2.9
+  % VERSION 2.2.9
+  _ 15.04.2019
+    * Show the correct channel numbers in the program guide
+    * Updated translations
+    * Small bug fixes and improvements under the hood
 $ 2.2.8
   % VERSION 2.2.8
   _ 13.04.2019
