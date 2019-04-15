@@ -280,7 +280,7 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="16dp"
-                    android:text="@{program.channelName != null ? program.channelName : @string/not_set}"
+                    android:text="@{program.channelName != null ? program.channelName : @string/hint_not_set}"
                     android:visibility="@{program.channelName != null ? View.VISIBLE : View.GONE}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"

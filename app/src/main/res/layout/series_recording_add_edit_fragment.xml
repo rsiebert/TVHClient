@@ -99,7 +99,7 @@
             android:drawableEnd="?attr/ic_arrow_drop_down_like_spinner"
             android:drawableRight="?attr/ic_arrow_drop_down_like_spinner"
             android:drawablePadding="4dp"
-            android:text="@string/not_set"
+            android:text="@string/hint_not_set"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/channel_label" />
 
@@ -139,7 +139,7 @@
             android:drawableEnd="?attr/ic_arrow_drop_down_like_spinner"
             android:drawableRight="?attr/ic_arrow_drop_down_like_spinner"
             android:drawablePadding="4dp"
-            android:text="@string/not_set"
+            android:text="@string/hint_not_set"
             app:layout_constraintStart_toStartOf="@+id/start_time_label"
             app:layout_constraintTop_toBottomOf="@+id/start_time_label" />
 
@@ -163,7 +163,7 @@
             android:drawableEnd="?attr/ic_arrow_drop_down_like_spinner"
             android:drawableRight="?attr/ic_arrow_drop_down_like_spinner"
             android:drawablePadding="4dp"
-            android:text="@string/not_set"
+            android:text="@string/hint_not_set"
             app:layout_constraintStart_toStartOf="@+id/start_window_time_label"
             app:layout_constraintTop_toBottomOf="@+id/start_window_time_label" />
 
@@ -191,7 +191,7 @@
             android:drawableEnd="?attr/ic_arrow_drop_down_like_spinner"
             android:drawableRight="?attr/ic_arrow_drop_down_like_spinner"
             android:drawablePadding="4dp"
-            android:text="@string/not_set"
+            android:text="@string/hint_not_set"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/duplicate_detection_label" />
 
@@ -347,7 +347,7 @@
             android:drawableEnd="?attr/ic_arrow_drop_down_like_spinner"
             android:drawableRight="?attr/ic_arrow_drop_down_like_spinner"
             android:drawablePadding="4dp"
-            android:text="@string/not_set"
+            android:text="@string/hint_not_set"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/priority_label" />
 
@@ -375,7 +375,7 @@
             android:drawableEnd="?attr/ic_arrow_drop_down_like_spinner"
             android:drawableRight="?attr/ic_arrow_drop_down_like_spinner"
             android:drawablePadding="4dp"
-            android:text="@string/not_set"
+            android:text="@string/hint_not_set"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/dvr_config_label" />
 
