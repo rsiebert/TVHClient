@@ -197,11 +197,16 @@ class TimerRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Reco
             context?.sendSnackbarMessage(R.string.error_empty_title)
             return
         }
+
+        val intent = intentData
         if (viewModel.recording.id.isNotEmpty()) {
-            updateTimerRecording()
+            intent.action = "updateTimerecEntry"
+            intent.putExtra("id", viewModel.recording.id)
         } else {
-            addTimerRecording()
+            intent.action = "addTimerecEntry"
         }
+        activity?.startService(intent)
+        activity?.finish()
     }
 
     private fun cancel() {
@@ -215,32 +220,6 @@ class TimerRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Reco
                     .onNegative { dialog, _ -> dialog.cancel() }
                     .show()
         }
-    }
-
-    /**
-     * Adds a new timer recording with the given values. This method is also
-     * called when a recording is being edited. It adds a recording with edited
-     * values which was previously removed.
-     */
-    private fun addTimerRecording() {
-        val intent = intentData
-        intent.action = "addTimerecEntry"
-        activity?.startService(intent)
-        activity?.finish()
-    }
-
-    /**
-     * Updates the timer recording with the given values.
-     * If the API version supports it, use the native service call method
-     * otherwise the old recording is removed and a new one with the
-     * edited values is added afterwards. This is done in the service
-     */
-    private fun updateTimerRecording() {
-        val intent = intentData
-        intent.action = "updateTimerecEntry"
-        intent.putExtra("id", viewModel.recording.id)
-        activity?.startService(intent)
-        activity?.finish()
     }
 
     override fun onChannelSelected(channel: Channel) {

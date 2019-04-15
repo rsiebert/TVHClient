@@ -217,24 +217,13 @@ class RecordingAddEditFragment : BaseFragment(), BackPressedInterface, Recording
             return
         }
 
-        if (id > 0) {
-            updateRecording()
+        val intent = intentData
+        if (viewModel.recording.id > 0) {
+            intent.action = "updateDvrEntry"
+            intent.putExtra("id", viewModel.recording.id)
         } else {
-            addRecording()
+            intent.action = "addDvrEntry"
         }
-    }
-
-    private fun addRecording() {
-        val intent = intentData
-        intent.action = "addDvrEntry"
-        activity?.startService(intent)
-        activity?.finish()
-    }
-
-    private fun updateRecording() {
-        val intent = intentData
-        intent.action = "updateDvrEntry"
-        intent.putExtra("id", id)
         activity?.startService(intent)
         activity?.finish()
     }

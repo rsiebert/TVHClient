@@ -263,11 +263,15 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
             viewModel.recording.maxDuration = viewModel.recording.minDuration
         }
 
+        val intent = intentData
         if (viewModel.recording.id.isNotEmpty()) {
-            updateSeriesRecording()
+            intent.action = "updateAutorecEntry"
+            intent.putExtra("id", viewModel.recording.id)
         } else {
-            addSeriesRecording()
+            intent.action = "addAutorecEntry"
         }
+        activity?.startService(intent)
+        activity?.finish()
     }
 
     /**
@@ -285,29 +289,6 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
                     .onNegative { dialog, _ -> dialog.cancel() }
                     .show()
         }
-    }
-
-    /**
-     * Adds a new series recording with the given values. This method is also
-     * called when a recording is being edited. It adds a recording with edited
-     * values which was previously removed.
-     */
-    private fun addSeriesRecording() {
-        val intent = intentData
-        intent.action = "addAutorecEntry"
-        activity?.startService(intent)
-        activity?.finish()
-    }
-
-    /**
-     * Update the series recording with the given values.
-     */
-    private fun updateSeriesRecording() {
-        val intent = intentData
-        intent.action = "updateAutorecEntry"
-        intent.putExtra("id", viewModel.recording.id)
-        activity?.startService(intent)
-        activity?.finish()
     }
 
     override fun onChannelSelected(channel: Channel) {
