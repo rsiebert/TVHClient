@@ -84,7 +84,6 @@
     <string name="error_loading_program_details">Impossible de charger les détails du programme</string>
     <string name="error_loading_recording_details">Impossible de charger les détails de l\'enregistrement</string>
     <string name="error_removing_recording">L\'enregistrement n\'a pas été supprimé! %s</string>
-    <string name="error_starting_playback_no_connection">Erreur au lancement du programme. Impossible de trouver la connection et les informations du serveur.</string>
     <string name="error_starting_playback_no_profile">Erreur au lancement du programme. Aucun profile de lancement de programme séléctionné dans les paramétres.</string>
     <string name="error_updating_recording">L\'enregistrement n\'a pas été mis à jour! %s</string>
     <string name="extra_start_time">Minutes avant le début (pre-time)</string>
@@ -119,10 +118,9 @@
     <string name="no_connection_active_advice">Au moins une connexion est définie, mais n\'est pas activée.</string>
     <!-- Connection related -->
     <string name="no_connection_available">Aucune connexion définie.</string>
-    <string name="no_connection_available_advice">Aucune connexion définie. Au moins une connexion est nécessaire.</string>
     <string name="no_data">Aucun programme disponible</string>
     <string name="no_media_player">Aucun lecteur de média trouvé</string>
-    <string name="not_set">Non défini</string>
+    <string name="hint_not_set">Non défini</string>
     <string name="nothing">Rien</string>
     <string name="part">Partie</string>
     <string name="play">Lancer</string>
@@ -172,7 +170,6 @@
     <string name="pref_genre_colors_sum">Spécifie les couleurs des types d\'émissions.</string>
     <string name="pref_genre_colors_visibility">visibilité des couleurs de genre</string>
     <string name="pref_genre_colors_visibility_message">Paramètre la visibilité des couleurs. Plus la valeur est grande, plus la couleur sera foncée.</string>
-    <string name="pref_genre_colors_visibility_value">%1$d%% visible</string>
     <string name="pref_hide_duplicate_scheduled_recordings">Cacher les enregistrements dupliqués</string>
     <string name="pref_show_menu_delete_all_recordings">Afficher le menu \'Supprimer tous les enregistrements\'</string>
     <string name="pref_host">Nom d\'hôte</string>
@@ -257,7 +254,6 @@
     <!-- Unlocker related -->
     <string name="purchase">Achat</string>
     <string name="rating">Notation</string>
-    <string name="received_playback_information">Informations pour le lancement du programme reçu du serveur</string>
     <string name="reconnect">Reconnecter</string>
     <string name="record_cancel">Annuler l\'enregistrement</string>
     <string name="record_once">Enregistrer</string>
@@ -291,7 +287,7 @@
     <string name="search_epg">Recherche dans le guide des programmes</string>
     <string name="search_fileaffinity">Rechercher sur FileAffinity</string>
     <string name="search_google">Rechercher sur Google</string>
-    <string name="search_imdb">Rechercher sur IMDB</string>
+    <string name="search_imdb">Rechercher sur IMDb</string>
     <string name="search_results">Résultat de la recherche</string>
     <string name="search_youtube">Rechercher sur YouTube</string>
     <string name="season">Saison</string>
@@ -346,8 +342,6 @@
     <string name="wol_send_broadcast">Paquet de WoL en broadcast envoyé avec succès à \'%s\'</string>
     <string name="yesterday">Hier</string>
     <string name="help_and_support">Aide et soutien</string>
-    <string name="error_starting_playback_no_recording">Erreur de démarrage de la lecture. Aucun enregistrement n\'a pu être chargé.</string>
-    <string name="error_starting_playback_no_channel">Erreur de démarrage de la lecture. Aucune chaîne ne peut être chargée.</string>
     <string name="pref_htsp_playback_profiles">Profils de lecture (lecteur interne)</string>
     <string name="pref_htsp_playback_profiles_sum">Sélectionnez un profil utilisé par le lecteur interne pour lire un programme enregistré à l\'aide du lecteur interne.</string>
     <string name="pref_http_playback_profiles">Profils de lecture (lecteurs externes)</string>
@@ -389,4 +383,15 @@
     <string name="selection_disabled">Handicapés</string>
     <string name="selection_default">Activé</string>
     <string name="pref_host_hint">www.server.com ou 192.168.0.10</string>
+    <string name="subtitle_settings">Paramètres de sous-titres</string>
+    <string name="enable_random_adaptation">Activer l\'adaptation aléatoire</string>
+    <string name="player_is_loading_more_data">Veuillez patienter, le lecteur charge plus de données…</string>
+    <string name="receiving_data">Réception de données</string>
+    <string name="pref_show_channel_number_sum">Affiche le numéro du canal sous l’icône du canal.</string>
+    <string name="pref_show_channel_number">Afficher le numéro de chaîne</string>
+    <string name="disconnect">Déconnecter</string>
+    <string name="connect">Relier</string>
+    <string name="cast_error_no_media_client_available">Impossible d\'obtenir le client multimédia à distance de la session de distribution.</string>
+    <string name="audio_settings">Les paramètres audio</string>
+    <string name="any">Toute</string>
 </resources>

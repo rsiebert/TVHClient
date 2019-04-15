@@ -86,10 +86,7 @@
     <string name="error_no_channel_selected">Kérjük, válasszon egy csatornát. A szerver verzió nem támogatja az összes csatornán történő felvételt.</string>
     <string name="error_removing_recording">A felvétel nem lett eltávolítva! %s</string>
     <string name="error_start_time_past_stop_time">A kezdési idő nem haladhatja meg a leállási időt.</string>
-    <string name="error_starting_playback_no_connection">Hiba a lejátszás indításakor. Nem sikerült betölteni a szükséges kapcsolat- és szerveradatokat.</string>
     <string name="error_starting_playback_no_profile">Hiba a lejátszás indításakor. A beállításokban nincs kiválasztva lejátszási profil..</string>
-    <string name="error_starting_playback_no_channel">Hiba a lejátszás indításakor. Nem lehet a csatornát betölteni.</string>
-    <string name="error_starting_playback_no_recording">Hiba a lejátszás indításakor. A felvétel nem tölthető be.</string>
     <string name="error_updating_recording">A felvétel nem frissült! %s</string>
     <string name="extra_start_time">Extra kezdő időtartam percben</string>
     <string name="extra_stop_time">Extra befejező időtartam percben</string>
@@ -124,10 +121,9 @@
     <string name="no_connection_active_advice">Legalább egy kapcsolat van definiálva, de nincs aktiválva.</string>
     <!-- Connection related -->
     <string name="no_connection_available">Nincs elérhető kapcsolat</string>
-    <string name="no_connection_available_advice">Nincs elérhető kapcsolat. Legalább egy szükséges.</string>
     <string name="no_data">Nincs elérhető adat</string>
     <string name="no_media_player">Nem található médialejátszó</string>
-    <string name="not_set">Nincs beállítva</string>
+    <string name="hint_not_set">Nincs beállítva</string>
     <string name="nothing">Semmi</string>
     <string name="part">Rész</string>
     <string name="play">Lejátszás</string>
@@ -177,7 +173,6 @@
     <string name="pref_genre_colors_sum">Adja meg, hogy melyik képernyőn jelenjen meg a műfaj színe.</string>
     <string name="pref_genre_colors_visibility">A műfaj színének láthatósága</string>
     <string name="pref_genre_colors_visibility_message">Állítsa be a színek láthatóságát. A magasabb értékek erősebb színeket jelentenek.</string>
-    <string name="pref_genre_colors_visibility_value">%1$d%% látható</string>
     <string name="pref_hide_duplicate_scheduled_recordings">Az ismételt ütemezett felvételek elrejtése.</string>
     <string name="pref_show_menu_delete_all_recordings">Mutassa meg az \"Összes felvétel törlése\" menüt</string>
     <string name="pref_host">Gépnév</string>
@@ -271,7 +266,6 @@
     <!-- Unlcoker related -->
     <string name="purchase">Fizetés</string>
     <string name="rating">Értékelés</string>
-    <string name="received_playback_information">A szerverről érkezett lejátszási információk</string>
     <string name="reconnect">Újracsatlakozás</string>
     <string name="record_cancel">A felvétel törlése</string>
     <string name="record_once">Felvétel</string>
@@ -305,7 +299,7 @@
     <string name="search_epg">Keresés a műsorújságban</string>
     <string name="search_fileaffinity">Keresés a FileAffinity-n</string>
     <string name="search_google">Keresés Google-al</string>
-    <string name="search_imdb">Keresés IMDB-n</string>
+    <string name="search_imdb">Keresés IMDb-n</string>
     <string name="search_results">Találatok</string>
     <string name="search_youtube">Keresés YouTube-on</string>
     <string name="season">Évad</string>
@@ -389,4 +383,15 @@
     <string name="pref_copy_playback_url_to_clipboard_enabled_sum">Lejátszási problémák esetén a másolás használható a lejátszás tesztelésére a böngészőben.</string>
     <string name="selection_default">Engedélyezve</string>
     <string name="pref_host_hint">www.server.com vagy 192.168.0.10</string>
+    <string name="subtitle_settings">Felirat beállítások</string>
+    <string name="player_is_loading_more_data">Kérjük, várjon, a lejátszó további adatokat tölt be…</string>
+    <string name="receiving_data">Adatok fogadása</string>
+    <string name="pref_show_channel_number_sum">Jelenítse meg a csatorna számát a csatorna ikon alatt.</string>
+    <string name="pref_show_channel_number">A csatornaszám megjelenítése</string>
+    <string name="enable_random_adaptation">Véletlenszerű adaptálás engedélyezése</string>
+    <string name="disconnect">Szétkapcsol</string>
+    <string name="connect">Csatlakozás</string>
+    <string name="cast_error_no_media_client_available">Nem sikerült a távoli média kliens a leadott munkamenetből.</string>
+    <string name="audio_settings">Hangbeállítások</string>
+    <string name="any">Bármilyen</string>
 </resources>

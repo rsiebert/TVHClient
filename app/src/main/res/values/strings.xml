@@ -11,7 +11,6 @@
     <string name="airing">Airing</string>
     <string name="all_channels">All channels</string>
     <string name="app_name">TVHClient</string>
-    <string name="authentication_failed">Authentication failed</string>
     <string name="available">Available</string>
     <string name="bad_username_or_password">Wrong username or password</string>
     <string name="cancel">Cancel</string>
@@ -86,10 +85,7 @@
     <string name="error_no_channel_selected">Please select a channel. You server version does not support recording on all channels.</string>
     <string name="error_removing_recording">Recording was not removed! %s</string>
     <string name="error_start_time_past_stop_time">The start time must not be past the stop time.</string>
-    <string name="error_starting_playback_no_connection">Error starting playback. Could not load required connection and server information.</string>
     <string name="error_starting_playback_no_profile">Error starting playback. No playback profile is selected in the settings.</string>
-    <string name="error_starting_playback_no_channel">Error starting playback. No channel could be loaded.</string>
-    <string name="error_starting_playback_no_recording">Error starting playback. No recording could be loaded.</string>
     <string name="error_updating_recording">Recording was not updated! %s</string>
     <string name="extra_start_time">Extra start minutes (pre-time)</string>
     <string name="extra_stop_time">Extra stop minutes (post-time)</string>
@@ -124,10 +120,9 @@
     <string name="no_connection_active_advice">At least one connection is defined, but not activated.</string>
     <!-- Connection related -->
     <string name="no_connection_available">No connection available</string>
-    <string name="no_connection_available_advice">No connection available. At least one is required.</string>
     <string name="no_data">No program data available</string>
     <string name="no_media_player">No media player found</string>
-    <string name="not_set">Not set</string>
+    <string name="hint_not_set">Not set</string>
     <string name="nothing">Nothing</string>
     <string name="part">Part</string>
     <string name="play">Play</string>
@@ -144,7 +139,7 @@
     <string name="pref_clear_database_sum">Removes all information from the database. This includes all channels, channel tags, programs and recordings.</string>
     <string name="pref_clear_icon_cache">Clear channel icon cache</string>
     <string name="pref_clear_search_history">Clear search history</string>
-    <string name="pref_connection_timeout">Connection Timeout</string>
+    <string name="pref_connection_timeout">Connection timeout</string>
     <string name="pref_connection_timeout_sum">Defines the time in seconds until the connection with the server must be fully established. Increasing the value can improve the connectivity on slow networks.</string>
     <string name="pref_connections">Connections</string>
     <string name="pref_crash_reporting_settings">Crash Reporting Settings</string>
@@ -177,7 +172,6 @@
     <string name="pref_genre_colors_sum">Specify on which screens the genre color shall be shown.</string>
     <string name="pref_genre_colors_visibility">Genre color visibility</string>
     <string name="pref_genre_colors_visibility_message">Set the visibility of the colors. Higher values mean stronger colors.</string>
-    <string name="pref_genre_colors_visibility_value">%1$d%% visible</string>
     <string name="pref_hide_duplicate_scheduled_recordings">Hide duplicate scheduled recordings</string>
     <string name="pref_show_menu_delete_all_recordings">Show the \'Delete all recordings\' menu</string>
     <string name="pref_host">Hostname or IP address</string>
@@ -233,7 +227,7 @@
     <string name="pref_show_channel_number_sum">Display the channel number below the channel icon.</string>
     <string name="pref_show_next_program">Show next program in channel list</string>
     <string name="pref_show_next_program_sum">The name of the program coming up next is displayed in the channel list. It is shown below the progress indicator.</string>
-    <string name="pref_show_notification_offset">Notification time </string>
+    <string name="pref_show_notification_offset">Notification time</string>
     <string name="pref_show_notification_offset_sum">Define the time that a notification shall be shown in advance before the actual start of a recording.</string>
     <string name="pref_show_notifications">Show notifications</string>
     <string name="pref_show_notifications_sum">Informs the user whenever a recording has started or has been completed.</string>
@@ -271,10 +265,8 @@
     <string name="priority">Priority</string>
     <string name="programs">Programs</string>
     <string name="progress">%1$d%% of the show already shown</string>
-    <!-- Unlcoker related -->
     <string name="purchase">Purchase</string>
     <string name="rating">Rating</string>
-    <string name="received_playback_information">Received playback information from server</string>
     <string name="reconnect">Reconnect</string>
     <string name="record_cancel">Cancel recording</string>
     <string name="record_once">Record</string>
@@ -308,7 +300,7 @@
     <string name="search_epg">Search the program guide</string>
     <string name="search_fileaffinity">Search on FileAffinity</string>
     <string name="search_google">Search on Google</string>
-    <string name="search_imdb">Search on IMDB</string>
+    <string name="search_imdb">Search on IMDb</string>
     <string name="search_results">Search results</string>
     <string name="search_youtube">Search on YouTube</string>
     <string name="season">Season</string>
@@ -316,7 +308,7 @@
     <string name="select_connection">Select connection</string>
     <string name="select_duplicate_detection">Select duplicate detection method</string>
     <string name="select_dvr_config">Select recording profile</string>
-    <string name="select_log_file">Select logfile</string>
+    <string name="select_log_file">Select log file</string>
     <string name="select_priority">Select priority</string>
     <string name="select_time">Show programs that are running at the selected time.</string>
     <string name="send_wol">Wake up</string>
@@ -378,7 +370,7 @@
     <string name="pref_playback_sum">Choose how live TV programs or recordings are played.</string>
     <string name="pref_internal_player_for_channels_enabled">Play Live-TV with the internal player</string>
     <string name="pref_internal_player_for_recordings_enabled">Play recordings with the internal player</string>
-    <string name="pref_internal_player_buffer_duration">Buffer Duration</string>
+    <string name="pref_internal_player_buffer_duration">Buffer duration</string>
     <string name="pref_internal_player_buffer_duration_sum">How many seconds to buffer before starting playback</string>
     <string name="pref_internal_player_buffer_duration_dialog_title">Buffer duration in seconds</string>
     <string name="pref_internal_player_audio_passthrough_enabled">Enable Audio Passthrough</string>
@@ -401,4 +393,5 @@
     <string name="player_is_loading_more_data">Please wait, player is loading more data…</string>
     <string name="minus" translatable="false">-</string>
     <string name="any">Any</string>
+    <string name="authentication_failed">Authentication failed</string>
 </resources>

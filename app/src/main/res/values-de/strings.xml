@@ -84,10 +84,7 @@
     <string name="error_loading_program_details">Programdetails konnten nicht gefunden werden</string>
     <string name="error_loading_recording_details">Aufnahmedetails konnten nicht gefunden werden</string>
     <string name="error_removing_recording">Aufnahme konnte nicht entfernt werden! %s</string>
-    <string name="error_starting_playback_no_connection">Fehler beim Starten der Wiedergabe. Die erforderlichen Verbindungs- und Serverinformationen konnten nicht geladen werden.</string>
     <string name="error_starting_playback_no_profile">Fehler beim Starten der Wiedergabe. In den Einstellungen ist kein Wiedergabe-Profil ausgewählt.</string>
-    <string name="error_starting_playback_no_channel">Fehler beim Starten der Wiedergabe. Es konnte kein Sender geladen werden.</string>
-    <string name="error_starting_playback_no_recording">Fehler beim Starten der Wiedergabe. Es konnte keine Aufnahme geladen werden.</string>
     <string name="error_updating_recording">Aufnahme konnte nicht aktualisiert werden! %s</string>
     <string name="extra_start_time">Zusätzliche Minuten (Vorlaufzeit)</string>
     <string name="extra_stop_time">Zusätzliche Minuten (Nachlaufzeit)</string>
@@ -122,10 +119,9 @@
     <string name="no_connection_active_advice">Mindestens eine Verbindung existiert, ist aber nicht aktiviert.</string>
     <!-- Connection related -->
     <string name="no_connection_available">Keine Verbindung verfügbar</string>
-    <string name="no_connection_available_advice">Keine Verbindung definiert. Mindestens eine muss vorhanden sein.</string>
     <string name="no_data">Keine Programme verfügbar</string>
     <string name="no_media_player">Konnte keinen Mediaplayer finden.</string>
-    <string name="not_set">Nicht gesetzt</string>
+    <string name="hint_not_set">Nicht gesetzt</string>
     <string name="nothing">Keine</string>
     <string name="part">Teil</string>
     <string name="play">Abspielen</string>
@@ -174,7 +170,6 @@
     <string name="pref_genre_colors_sum">Zeigt zu jedem Sender oder Programm das dazugehörige Genre farbig an.</string>
     <string name="pref_genre_colors_visibility">Sichtbarkeit der Genrefarben</string>
     <string name="pref_genre_colors_visibility_message">Definiere wie stark die Farben sichtbar sein sollen. Je höher der Wert, desto stärker wirken die Farben.</string>
-    <string name="pref_genre_colors_visibility_value">%1$d%% sichtbar</string>
     <string name="pref_hide_duplicate_scheduled_recordings">Ausblenden von doppelten geplanten Aufnahmen</string>
     <string name="pref_show_menu_delete_all_recordings">Zeige Menü \'Alle Aufnahmen löschen\'</string>
     <string name="pref_host">Hostname oder IP-Adresse</string>
@@ -271,7 +266,6 @@
     <!-- Unlcoker related -->
     <string name="purchase">Kaufen</string>
     <string name="rating">Bewertung</string>
-    <string name="received_playback_information">Wiedergabeinformationen vom Server empfangen</string>
     <string name="reconnect">Neu verbinden</string>
     <string name="record_cancel">Aufnahme abbrechen</string>
     <string name="record_once">Aufnehmen</string>
@@ -305,7 +299,7 @@
     <string name="search_epg">Suche im TV-Programm</string>
     <string name="search_fileaffinity">Suche auf der FileAffinity Webseite</string>
     <string name="search_google">Suche auf Google</string>
-    <string name="search_imdb">Suche auf der IMDB Webseite</string>
+    <string name="search_imdb">Suche auf der IMDb Webseite</string>
     <string name="search_results">Suchergebnisse</string>
     <string name="search_youtube">Suche auf YouTube</string>
     <string name="season">Staffel</string>
@@ -396,4 +390,8 @@
     <string name="audio_settings">Audio-Einstellungen</string>
     <string name="subtitle_settings">Subtitle-Einstellungen</string>
     <string name="any">Beliebig</string>
+    <string name="cast_error_no_media_client_available">Der Remote-Media-Client konnte nicht geladen werden.</string>
+    <string name="enable_random_adaptation">Zufällige Anpassung aktivieren</string>
+    <string name="player_is_loading_more_data">Bitte warten Sie, der Player lädt mehr Daten…</string>
+    <string name="receiving_data">Empfange Daten</string>
 </resources>

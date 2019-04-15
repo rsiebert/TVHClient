@@ -86,7 +86,6 @@
     <string name="error_no_channel_selected">Wybierz kanał. Twoja wersja serwera nie obsługuje nagrywania na wszystkich kanałach.</string>
     <string name="error_removing_recording">Nagranie nie zostało usunięte! %s</string>
     <string name="error_start_time_past_stop_time">TCzas rozpoczęcia nie może być dłuższy niż czas zakończenia.</string>
-    <string name="error_starting_playback_no_connection">Błąd podczas rozpoczynania odtwarzania. Nie można załadować wymaganych informacji o połączeniu i serwerze.</string>
     <string name="error_starting_playback_no_profile">Błąd podczas rozpoczynania odtwarzania. W ustawieniach nie wybrano profilu odtwarzania.</string>
     <string name="error_updating_recording">Nagranie nie zostało zaktualizowane! %s</string>
     <string name="extra_start_time">Ekstra minuty rozpoczęcia (przed czasem)</string>
@@ -121,10 +120,9 @@
     <string name="no_connection_active_advice">Co najmniej jedno połączenie jest zdefioniowane, ale nie jest aktywowane.</string>
     <!-- Connection related -->
     <string name="no_connection_available">Nadal nie ma zdefiniowanego połączenia. Musisz dodać co najmniej jedno połączenie z menu ustawień.</string>
-    <string name="no_connection_available_advice">Brak połaczenia. Musisz dodać conajmniej jedno z menu ustawień.</string>
     <string name="no_data">Brak dostępnych danych dla kanału</string>
     <string name="no_media_player">Nie znaleziono odtwarzacza multimedialnego</string>
-    <string name="not_set">Nie ustawiono</string>
+    <string name="hint_not_set">Nie ustawiono</string>
     <string name="nothing">Brak</string>
     <string name="part">Odcinek</string>
     <string name="play">Odtwórz</string>
@@ -174,7 +172,6 @@
     <string name="pref_genre_colors_sum">Określ na których ekranach rodzaje kolorów maja być wyświetlane.</string>
     <string name="pref_genre_colors_visibility">Widoczność rodzaju koloru</string>
     <string name="pref_genre_colors_visibility_message">Ustaw widoczność kolorów. Wyższe wartości oznaczją mocniejsze kolory.</string>
-    <string name="pref_genre_colors_visibility_value">%1$d%% widoczności</string>
     <string name="pref_hide_duplicate_scheduled_recordings">Ukryj zduplikowane zaplanowane nagrania</string>
     <string name="pref_show_menu_delete_all_recordings">Pokaż menu \"Usuń wszystkie nagrania\"</string>
     <string name="pref_host">Nazwa hosta</string>
@@ -264,7 +261,6 @@
     <!-- Unlocker related -->
     <string name="purchase">Zakup</string>
     <string name="rating">Ocena</string>
-    <string name="received_playback_information">Otrzymano informację o odtwarzaniu z serwera</string>
     <string name="reconnect">POnowne łaczenie</string>
     <string name="record_cancel">Anuluj nagranie</string>
     <string name="record_once">Nagraj</string>
@@ -298,7 +294,7 @@
     <string name="search_epg">Szukaj w przewodniku programów</string>
     <string name="search_fileaffinity">Szukaj na FileAffinity</string>
     <string name="search_google">Szukaj na Google</string>
-    <string name="search_imdb">Szukaj na IMDB</string>
+    <string name="search_imdb">Szukaj na IMDb</string>
     <string name="search_results">Wyniki wyszukiwania</string>
     <string name="search_youtube">Szukaj na YouTube</string>
     <string name="season">Sezon</string>
@@ -357,6 +353,45 @@
     <string name="pref_htsp_playback_profiles_sum">Wybierz profil, który jest używany przez odtwarzacz wewnętrzny, aby odtwarzać nagrany program za pomocą odtwarzacza wewnętrznego.</string>
     <string name="pref_http_playback_profiles">Profile odtwarzania (odtwarzacze zewnętrzne)</string>
     <string name="pref_http_playback_profiles_sum">Wybierz profil używany przez odtwarzacz zewnętrzny, aby odtwarzać nagrany program za pomocą odtwarzacza zewnętrznego.</string>
-    <string name="error_starting_playback_no_channel">Błąd podczas rozpoczynania odtwarzania. Nie można załadować żadnego kanału.</string>
-    <string name="error_starting_playback_no_recording">Błąd podczas rozpoczynania odtwarzania. Nie można załadować żadnego nagrania.</string>
+    <string name="subtitle_settings">Ustawienia napisów</string>
+    <string name="selection_default">Włączone</string>
+    <string name="selection_disabled">Wyłączone</string>
+    <string name="search_timer_recordings">Wyszukaj nagrania z timerem</string>
+    <string name="search_series_recordings">Wyszukaj nagrania z serii</string>
+    <string name="search_scheduled_recordings">Wyszukaj zaplanowane nagrania</string>
+    <string name="search_removed_recordings">Wyszukaj usunięte nagrania</string>
+    <string name="search_programs">Szukaj programów</string>
+    <string name="search_program_guide">Przewodnik po programach wyszukiwania</string>
+    <string name="search_failed_recordings">Wyszukaj nieudane nagrania</string>
+    <string name="search_completed_recordings">Wyszukaj zakończone nagrania</string>
+    <string name="search_channels">Szukaj kanałów</string>
+    <string name="receiving_data">Odbieranie danych</string>
+    <string name="pref_show_channel_number_sum">Wyświetl numer kanału poniżej ikony kanału.</string>
+    <string name="pref_show_channel_number">Pokaż numer kanału</string>
+    <string name="pref_playback_sum">Wybierz sposób odtwarzania programów telewizyjnych na żywo lub nagrań.</string>
+    <string name="pref_playback">Odtwarzanie nagranego dźwięku</string>
+    <string name="pref_multiple_channel_tags_enabled_sum">Filtruj kanały, wybierając więcej niż jeden znacznik kanału</string>
+    <string name="pref_multiple_channel_tags_enabled">Wybierz wiele tagów kanału</string>
+    <string name="pref_internal_player_timeshift_enabled">Włącz obsługę Timeshift</string>
+    <string name="pref_internal_player_for_recordings_enabled">Odtwarzaj nagrania za pomocą wewnętrznego odtwarzacza</string>
+    <string name="pref_internal_player_for_channels_enabled">Graj na żywo za pomocą wewnętrznego odtwarzacza</string>
+    <string name="pref_internal_player_buffer_duration_sum">Ile sekund buforować przed rozpoczęciem odtwarzania</string>
+    <string name="pref_internal_player_buffer_duration_dialog_title">Czas trwania bufora w sekundach</string>
+    <string name="pref_internal_player_buffer_duration">Czas trwania bufora</string>
+    <string name="pref_internal_player_audio_tunneling_enabled_sum">Włącz obsługę tunelowania dźwięku DSP</string>
+    <string name="pref_internal_player_audio_tunneling_enabled">Włącz tunelowanie dźwięku</string>
+    <string name="pref_internal_player_audio_passthrough_enabled_sum">Musisz także upewnić się, że ustawienia audio systemu umożliwiają przesyłanie</string>
+    <string name="pref_internal_player_audio_passthrough_enabled">Włącz przejście audio</string>
+    <string name="pref_host_hint">www.server.com lub 192.168.0.10</string>
+    <string name="pref_copy_playback_url_to_clipboard_enabled_sum">W przypadku problemów z odtwarzaniem skopiowany adres URL można wykorzystać do testowania odtwarzania w przeglądarce.</string>
+    <string name="pref_copy_playback_url_to_clipboard_enabled">Skopiuj Url odtwarzania do schowka</string>
+    <string name="player_is_loading_more_data">Poczekaj, odtwarzacz ładuje więcej danych…</string>
+    <string name="multiple_channel_tags">Wiele tagów kanałów</string>
+    <string name="enable_random_adaptation">Włącz losową adaptację</string>
+    <string name="disconnect">Rozłączyć się</string>
+    <string name="connect">Połączyć</string>
+    <string name="cast_error_no_media_client_available">Nie można uzyskać zdalnego klienta mediów z sesji rzutowania.</string>
+    <string name="audio_settings">Ustawienia dźwięku</string>
+    <string name="any">Każdy</string>
+    <string name="deleting_database_contents">Usuwanie zawartości bazy danych…</string>
 </resources>

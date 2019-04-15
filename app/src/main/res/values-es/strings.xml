@@ -42,7 +42,7 @@
     <string name="currently_recording">Actualmente grabando</string>
     <string name="data_errors">Errores de datos: %1$s</string>
     <string name="data_size">Tamaño de archivo: %1$d %2$s</string>
-    <string name="days_of_week">Dias de la semana</string>
+    <string name="days_of_week">Días de la semana</string>
     <string name="delete">Eliminar</string>
     <string name="delete_connection">"¿De verdad quieres eliminar la conexión? '%s'?"</string>
     <string name="description">Descripción</string>
@@ -86,10 +86,7 @@
     <string name="error_no_channel_selected">Por favor seleccione un canal. La versión del servidor no admite la grabación en todos los canales.</string>
     <string name="error_removing_recording">Error eliminando grabación! %s</string>
     <string name="error_start_time_past_stop_time">La hora de inicio no debe ser pasada..</string>
-    <string name="error_starting_playback_no_channel">Error al iniciar la reproducción. No se pudo cargar ningún canal.</string>
-    <string name="error_starting_playback_no_connection">Error al iniciar la reproducción. No se pudo cargar la conexión requerida y la información del servidor.</string>
     <string name="error_starting_playback_no_profile">Error al iniciar la reproducción. No se ha seleccionado ningún perfil de reproducción en la configuración.</string>
-    <string name="error_starting_playback_no_recording">Error al iniciar la reproducción. No se pudo cargar ninguna grabación.</string>
     <string name="error_updating_recording">La grabación no fue actualizada! %s</string>
     <string name="extra_start_time">Minutos adicionales de inicio (pre-tiempo)</string>
     <string name="extra_stop_time">Minutos adicionales de parada (pos-tiempo)</string>
@@ -105,7 +102,7 @@
     <string name="genre_color_info">Explicar los colores del género</string>
     <string name="genre_color_list">Lista de colores de género y su significado.</string>
     <string name="help_and_support">Ayuda y soporte</string>
-    <string name="in_2_days">En 2 dias</string>
+    <string name="in_2_days">En 2 días</string>
     <string name="initializing">Inicializando</string>
     <string name="intro_overlay_text">"Toca para emitir TV en vivo o grabaciones en tu TV. Verifique que cumpla con los requisitos descritos en la configuración de transmisión."</string>
     <string name="is_series_recording">Esta grabación es parte de una grabación en serie</string>
@@ -124,10 +121,9 @@
     <string name="no_cast_session">No hay sesión de emisión disponible</string>
     <string name="no_connection_active_advice">Al menos una conexión está definida, pero no está activada.</string>
     <string name="no_connection_available">No hay conexión disponible</string>
-    <string name="no_connection_available_advice">No hay conexión disponible. Al menos uno es requerido.</string>
     <string name="no_data">No hay datos del programa disponibles</string>
     <string name="no_media_player">No se encontró ningún reproductor multimedia</string>
-    <string name="not_set">No establecido</string>
+    <string name="hint_not_set">No establecido</string>
     <string name="nothing">Nada</string>
     <string name="part">Parte</string>
     <string name="play">Reproducir</string>
@@ -151,7 +147,7 @@
     <string name="pref_customize_user_interface">Personaliza la interfaz de usuario</string>
     <string name="pref_customize_user_interface_sum">Elija entre una variedad de opciones para decidir qué información se mostrará en cada pantalla.</string>
     <string name="pref_date_time_format">Formato de hora y fecha</string>
-    <string name="pref_date_time_format_sum">"Muestra la fecha y la hora como se usa habitualmente en tu país. De lo contrario, se utiliza el formato '31 .12.2017, 21:09 '."</string>
+    <string name="pref_date_time_format_sum">Muestra la fecha y la hora como se usa habitualmente en tu país. De lo contrario, se utiliza el formato \'31 .12.2017, 21:09\'.</string>
     <string name="pref_debug_mode">Modo de depuración</string>
     <string name="pref_debug_mode_sum">Escriba información detallada en un archivo de registro en el almacenamiento interno. Podría ralentizar la aplicación un poco si está habilitado.</string>
     <string name="pref_default_menu">Pantalla de inicio</string>
@@ -177,7 +173,6 @@
     <string name="pref_genre_colors_sum">Especifique en qué pantallas se mostrará el color del género.</string>
     <string name="pref_genre_colors_visibility">Visibilidad del color del género</string>
     <string name="pref_genre_colors_visibility_message">Establecer la visibilidad de los colores. Los valores más altos significan colores más fuertes.</string>
-    <string name="pref_genre_colors_visibility_value">%1$d%% visible</string>
     <string name="pref_hide_duplicate_scheduled_recordings">Ocultar grabaciones programadas duplicadas</string>
     <string name="pref_show_menu_delete_all_recordings">Mostrar el menú \'Borrar todas las grabaciones\'</string>
     <string name="pref_host">Nombre o IP del servidor</string>
@@ -206,7 +201,7 @@
     <string name="pref_menu_visibility_sum">Ocultar o mostrar ciertos elementos del menú.</string>
     <string name="pref_misc">misceláneo</string>
     <string name="pref_name">Nombre de la conexión</string>
-    <string name="pref_name_error_invalid">El nombre solo debe contener letras, números, menos y guión bajo.</string>
+    <string name="pref_name_error_invalid">El nombre solo debe contener letras, números, menos y guion bajo.</string>
     <string name="pref_multiple_channel_tags_enabled">Selección de varios grupos de etiquetas.</string>
     <string name="pref_multiple_channel_tags_enabled_sum">Filtre la lista de estaciones mostradas en múltiples grupos de etiquetas</string>
     <string name="pref_name_sum">Ingrese un nombre único de la conexión</string>
@@ -264,7 +259,7 @@
     <string name="pref_unlocker">Características adicionales</string>
     <string name="pref_unlocker_sum">Habilite el acceso a funciones adicionales y admita un mayor desarrollo comprando la versión desbloqueada de TVHClient..</string>
     <string name="pref_user">Usuario</string>
-    <string name="pref_user_interface">Interface de usuario</string>
+    <string name="pref_user_interface">Interfaz de usuario</string>
     <string name="pref_user_sum">Ingrese usuario</string>
     <string name="pref_visible_menu_icon_tags">"Mostrar siempre el menú 'Etiquetas de canal'"</string>
     <string name="pref_visible_menu_icon_tags_sum">Mantenga el menú de etiqueta de canal visible en la barra de acciones. Impide que el menú se mueva al menú de tres puntos si no hay suficiente espacio.</string>
@@ -274,13 +269,12 @@
     <string name="pref_wol_broadcast">Usar difusión</string>
     <string name="pref_wol_broadcast_sum">Envíe el paquete WOL como una transmisión. Algunos enrutadores no permiten este tipo de WOL.</string>
     <string name="pref_wol_port">Activar en el puerto lan</string>
-    <string name="pref_wol_port_sum">Puerto %d sera usado para activar el servidor. Por defecto es 9.</string>
+    <string name="pref_wol_port_sum">Puerto %d será usado para activar el servidor. Por defecto es 9.</string>
     <string name="priority">Prioridad</string>
     <string name="programs">Programas</string>
     <string name="progress">%1$d%% del evento ya mostrado</string>
     <string name="purchase">Comprar</string>
     <string name="rating">Clasificación</string>
-    <string name="received_playback_information">Información de reproducción recibida del servidor</string>
     <string name="reconnect">Reconectar</string>
     <string name="record_cancel">Cancelar la grabación</string>
     <string name="record_once">Grabar</string>
@@ -317,7 +311,7 @@
     <string name="search_failed_recordings">Buscar grabaciones fallidas</string>
     <string name="search_fileaffinity">Buscar en FileAffinity</string>
     <string name="search_google">Buscar en Google</string>
-    <string name="search_imdb">Buscar en IMDB</string>
+    <string name="search_imdb">Buscar en IMDb</string>
     <string name="search_results">Resultados de la búsqueda</string>
     <string name="search_program_guide">Buscar guia de programa</string>
     <string name="search_programs">Buscar programas</string>
@@ -369,7 +363,7 @@
     <string name="tomorrow">Mañana</string>
     <string name="total">Total</string>
     <string name="tuesday">Martes</string>
-    <string name="two_days_ago">Hace dos dias</string>
+    <string name="two_days_ago">Hace dos días</string>
     <string name="unknown">Desconocido</string>
     <string name="wednesday">Miercoles</string>
     <string name="wol_address_invalid">La dirección MAC no es válida. Por favor verifica tu configuración.</string>
@@ -387,4 +381,14 @@
     <string name="selection_disabled">Discapacitado</string>
     <string name="selection_default">Activado</string>
     <string name="enable_random_adaptation">Habilitar la adaptación aleatoria</string>
+    <string name="subtitle_settings">Ajustes de subtítulos</string>
+    <string name="receiving_data">Recibiendo información</string>
+    <string name="pref_show_channel_number_sum">Muestra el número de canal debajo del icono de canal.</string>
+    <string name="pref_show_channel_number">Mostrar número de canal</string>
+    <string name="player_is_loading_more_data">Por favor espere, el jugador está cargando más datos…</string>
+    <string name="disconnect">Desconectar</string>
+    <string name="connect">Conectar</string>
+    <string name="cast_error_no_media_client_available">No se pudo obtener el cliente de medios remoto de la sesión de conversión.</string>
+    <string name="audio_settings">Configuraciones de audio</string>
+    <string name="any">Alguna</string>
 </resources>
