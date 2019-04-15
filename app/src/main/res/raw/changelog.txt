@@ -1,3 +1,7 @@
+$ 2.2.10
+  % VERSION 2.2.10
+  _ 15.04.2019
+    * Fixed error where changes to an edited recording were not saved
 $ 2.2.9
   % VERSION 2.2.9
   _ 15.04.2019
