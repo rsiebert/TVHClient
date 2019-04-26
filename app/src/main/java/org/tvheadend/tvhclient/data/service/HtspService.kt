@@ -72,9 +72,9 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         connectionTimeout = Integer.valueOf(sharedPreferences.getString("connection_timeout", appContext.resources.getString(R.string.pref_default_connection_timeout))!!) * 1000
     }
 
-    override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
-        val action = intent.action
-        if (action == null || action.isEmpty()) {
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        val action = intent?.action ?: return START_NOT_STICKY
+        if (action.isEmpty()) {
             return START_NOT_STICKY
         }
         Timber.d("Received command $action for service")
