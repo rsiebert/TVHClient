@@ -217,13 +217,11 @@ public class MainApplication extends MultiDexApplication implements OptionsProvi
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     public void onAppBackgrounded() {
-        Timber.d("App is now in the background");
         activityVisible = false;
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     public void onAppForegrounded() {
-        Timber.d("App is now in the foreground");
         activityVisible = true;
     }
 
