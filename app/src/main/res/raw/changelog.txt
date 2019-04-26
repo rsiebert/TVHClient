@@ -1,3 +1,7 @@
+$ 2.2.11
+  % VERSION 2.2.11
+  _ 17.04.2019
+    * Small improvements under the hood
 $ 2.2.10
   % VERSION 2.2.10
   _ 15.04.2019
