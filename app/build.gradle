@@ -118,7 +118,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 
     // Casting
-    implementation 'com.google.android.gms:play-services-cast-framework:16.1.2'
+    implementation 'com.google.android.gms:play-services-cast-framework:16.2.0'
     implementation 'androidx.mediarouter:mediarouter:1.0.0'
 
     // Billing
@@ -142,8 +142,8 @@ dependencies {
     kapt 'androidx.room:room-compiler:2.0.0'
 
     // Dependency injection
-    implementation 'com.google.dagger:dagger:2.21'
-    kapt 'com.google.dagger:dagger-compiler:2.21'
+    implementation 'com.google.dagger:dagger:2.22.1'
+    kapt 'com.google.dagger:dagger-compiler:2.22.1'
 
     // Logging library
     implementation 'com.jakewharton.timber:timber:4.7.1'
@@ -161,4 +161,7 @@ dependencies {
 
     // Use multidex because the method count is over 64k
     implementation 'androidx.multidex:multidex:2.0.1'
+
+    // Required to connect to the tvheadend server
+    implementation project(path: ':htsp')
 }
