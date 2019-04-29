@@ -16,11 +16,11 @@
 
 package org.tvheadend.tvhclient.ui.features.playback.internal.reader;
 
+import androidx.annotation.NonNull;
+
 import com.google.android.exoplayer2.extractor.ExtractorOutput;
 
-import org.tvheadend.tvhclient.data.service.htsp.HtspMessage;
-
-import androidx.annotation.NonNull;
+import org.tvheadend.htsp.HtspMessage;
 
 public interface StreamReader {
     void createTracks(HtspMessage stream, ExtractorOutput output);

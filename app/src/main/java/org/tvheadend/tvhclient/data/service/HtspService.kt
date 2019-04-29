@@ -15,10 +15,10 @@ import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import org.json.JSONException
 import org.json.JSONObject
+import org.tvheadend.htsp.*
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.data.repository.AppRepository
-import org.tvheadend.tvhclient.data.service.htsp.*
 import org.tvheadend.tvhclient.data.worker.EpgDataUpdateWorker
 import org.tvheadend.tvhclient.domain.entity.*
 import org.tvheadend.tvhclient.ui.common.sendSnackbarMessage

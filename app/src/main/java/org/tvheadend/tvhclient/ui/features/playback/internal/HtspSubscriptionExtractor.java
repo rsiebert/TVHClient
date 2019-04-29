@@ -19,6 +19,8 @@ package org.tvheadend.tvhclient.ui.features.playback.internal;
 import android.content.Context;
 import android.util.SparseArray;
 
+import androidx.annotation.NonNull;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.extractor.Extractor;
 import com.google.android.exoplayer2.extractor.ExtractorInput;
@@ -27,7 +29,7 @@ import com.google.android.exoplayer2.extractor.PositionHolder;
 import com.google.android.exoplayer2.extractor.SeekMap;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 
-import org.tvheadend.tvhclient.data.service.htsp.HtspMessage;
+import org.tvheadend.htsp.HtspMessage;
 import org.tvheadend.tvhclient.ui.features.playback.internal.reader.StreamReader;
 import org.tvheadend.tvhclient.ui.features.playback.internal.reader.StreamReadersFactory;
 
@@ -36,7 +38,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.Arrays;
 
-import androidx.annotation.NonNull;
 import timber.log.Timber;
 
 class HtspSubscriptionExtractor implements Extractor {

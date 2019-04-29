@@ -22,7 +22,7 @@ import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.util.MimeTypes;
 
-import org.tvheadend.tvhclient.data.service.htsp.HtspMessage;
+import org.tvheadend.htsp.HtspMessage;
 
 import androidx.annotation.NonNull;
 

@@ -7,11 +7,11 @@ import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DataSpec;
 
 import org.jetbrains.annotations.NotNull;
+import org.tvheadend.htsp.HtspConnection;
+import org.tvheadend.htsp.HtspMessage;
+import org.tvheadend.htsp.HtspMessageListener;
+import org.tvheadend.htsp.HtspResponseListener;
 import org.tvheadend.tvhclient.MainApplication;
-import org.tvheadend.tvhclient.data.service.htsp.HtspConnection;
-import org.tvheadend.tvhclient.data.service.htsp.HtspMessage;
-import org.tvheadend.tvhclient.data.service.htsp.HtspMessageListener;
-import org.tvheadend.tvhclient.data.service.htsp.HtspResponseListener;
 
 import java.io.Closeable;
 import java.nio.ByteBuffer;

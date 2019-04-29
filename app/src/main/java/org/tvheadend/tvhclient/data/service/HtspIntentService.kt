@@ -7,10 +7,10 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.core.app.JobIntentService
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import org.tvheadend.htsp.*
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.data.repository.AppRepository
-import org.tvheadend.tvhclient.data.service.htsp.*
 import org.tvheadend.tvhclient.domain.entity.Connection
 import org.tvheadend.tvhclient.domain.entity.Program
 import org.tvheadend.tvhclient.util.convertUrlToHashString

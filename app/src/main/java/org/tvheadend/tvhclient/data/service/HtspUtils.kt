@@ -3,7 +3,7 @@
 package org.tvheadend.tvhclient.data.service
 
 import android.content.Intent
-import org.tvheadend.tvhclient.data.service.htsp.HtspMessage
+import org.tvheadend.htsp.HtspMessage
 import org.tvheadend.tvhclient.domain.entity.*
 import timber.log.Timber
 import java.util.*

@@ -9,10 +9,10 @@ import androidx.lifecycle.MutableLiveData
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.data.repository.AppRepository
-import org.tvheadend.tvhclient.data.service.htsp.HtspConnection
-import org.tvheadend.tvhclient.data.service.htsp.HtspConnectionStateListener
-import org.tvheadend.tvhclient.data.service.htsp.HtspMessage
-import org.tvheadend.tvhclient.data.service.htsp.HtspResponseListener
+import org.tvheadend.htsp.HtspConnection
+import org.tvheadend.htsp.HtspConnectionStateListener
+import org.tvheadend.htsp.HtspMessage
+import org.tvheadend.htsp.HtspResponseListener
 import org.tvheadend.tvhclient.domain.entity.Channel
 import org.tvheadend.tvhclient.domain.entity.Connection
 import org.tvheadend.tvhclient.domain.entity.Recording
