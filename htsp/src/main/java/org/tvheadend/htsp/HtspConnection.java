@@ -1,10 +1,9 @@
-package org.tvheadend.tvhclient.data.service.htsp;
+package org.tvheadend.htsp;
 
 import android.util.SparseArray;
 
 import androidx.annotation.NonNull;
-
-import org.tvheadend.tvhclient.BuildConfig;
+import androidx.annotation.Nullable;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -28,13 +27,11 @@ import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import javax.annotation.Nullable;
-
 import timber.log.Timber;
 
 // TODO provide an interface to access the connection from outside this package
 
-public class HtspConnection extends Thread {
+public class HtspConnection extends Thread implements HtspConnectionInterface {
 
     private final String username;
     private final String password;
@@ -55,10 +52,12 @@ public class HtspConnection extends Thread {
     private Selector selector;
     private final int connectionTimeout;
 
+    @Override
     public void addMessageListener(@NonNull HtspMessageListener listener) {
         messageListeners.add(listener);
     }
 
+    @Override
     public void removeMessageListener(@NonNull HtspMessageListener listener) {
         messageListeners.remove(listener);
     }
@@ -111,6 +110,7 @@ public class HtspConnection extends Thread {
     }
 
     // synchronized, non blocking connect
+    @Override
     public void openConnection() {
         Timber.i("Opening HTSP Connection");
         connectionListener.onConnectionStateChange(ConnectionState.CONNECTING);
@@ -174,6 +174,7 @@ public class HtspConnection extends Thread {
         Timber.d("Opened HTSP Connection");
     }
 
+    @Override
     public boolean isNotConnected() {
         return socketChannel == null
                 || !socketChannel.isOpen()
@@ -181,11 +182,13 @@ public class HtspConnection extends Thread {
                 || !isRunning;
     }
 
+    @Override
     public boolean isAuthenticated() {
         return isAuthenticated;
     }
 
     // synchronized, blocking auth
+    @Override
     public void authenticate() {
         Timber.d("Starting authentication");
 
@@ -254,10 +257,12 @@ public class HtspConnection extends Thread {
         }
     }
 
+    @Override
     public void sendMessage(@NonNull HtspMessage message) {
         sendMessage(message, null);
     }
 
+    @Override
     public void sendMessage(@NonNull HtspMessage message, @Nullable HtspResponseListener listener) {
         if (isNotConnected()) {
             Timber.d("Not sending message, not connected to server");
@@ -279,6 +284,7 @@ public class HtspConnection extends Thread {
         }
     }
 
+    @Override
     public void closeConnection() {
         Timber.d("Closing HTSP connection");
         lock.lock();

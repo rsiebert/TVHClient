@@ -1,4 +1,4 @@
-package org.tvheadend.tvhclient.data.service.htsp;
+package org.tvheadend.htsp;
 
 import androidx.annotation.NonNull;
 
