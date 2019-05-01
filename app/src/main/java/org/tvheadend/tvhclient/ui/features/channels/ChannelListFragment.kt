@@ -26,6 +26,7 @@ import org.tvheadend.tvhclient.ui.features.dialogs.showGenreColorDialog
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity
 import org.tvheadend.tvhclient.ui.features.notification.addNotification
 import org.tvheadend.tvhclient.ui.features.programs.ProgramListFragment
+import org.tvheadend.tvhclient.ui.features.search.SearchActivity
 import org.tvheadend.tvhclient.ui.features.search.SearchRequestInterface
 import timber.log.Timber
 
@@ -364,20 +365,16 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
     }
 
     override fun onSearchRequested(query: String) {
-        searchQuery = query
-        recyclerViewAdapter.filter.filter(query, this)
+        // Start searching for programs on all channels
+        val searchIntent = Intent(activity, SearchActivity::class.java)
+        searchIntent.putExtra(SearchManager.QUERY, query)
+        searchIntent.action = Intent.ACTION_SEARCH
+        searchIntent.putExtra("type", "channel_list")
+        startActivity(searchIntent)
     }
 
     override fun onSearchResultsCleared(): Boolean {
-        return if (searchQuery.isNotEmpty()) {
-            Timber.d("Search result not empty, clearing filter and returning true")
-            searchQuery = ""
-            recyclerViewAdapter.filter.filter("", this)
-            true
-        } else {
-            Timber.d("Search results empty, returning false")
-            false
-        }
+        return false
     }
 
     override fun getQueryHint(): String {

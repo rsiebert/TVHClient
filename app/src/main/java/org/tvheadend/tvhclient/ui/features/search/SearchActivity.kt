@@ -41,6 +41,7 @@ class SearchActivity : BaseActivity(), StartSearchInterface, NetworkStatusListen
             var fragment: Fragment? = null
             when (type) {
                 "program_guide" -> fragment = ProgramListFragment()
+                "channel_list" -> fragment = ProgramListFragment()
             }
 
             if (fragment != null) {
