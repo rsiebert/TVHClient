@@ -235,7 +235,7 @@
             android:layout_marginRight="16dp"
             android:progress="@{channel.progress}"
             android:scaleY="0.5"
-            android:visibility="@{channel.progress >= 0 &amp;&amp; showProgressBar ? View.VISIBLE : View.GONE}"
+            android:visibility="@{channel.programId > 0 &amp;&amp; channel.progress >= 0 &amp;&amp; showProgressBar ? View.VISIBLE : View.GONE}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/channel_name"
             app:layout_constraintTop_toBottomOf="@+id/duration" />
