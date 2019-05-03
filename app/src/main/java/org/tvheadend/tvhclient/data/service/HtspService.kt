@@ -116,6 +116,8 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
             "getTicket" -> getTicket(intent)
             "getProfiles" -> getProfiles()
             "getDvrConfigs" -> getDvrConfigs()
+            "getSubscriptions" -> getSubscriptions()
+            "getInputs" -> getInputs()
             // Internal calls that are called from the intent service
             "getMoreEvents" -> getMoreEvents(intent)
             "loadChannelIcons" -> loadAllChannelIcons()
@@ -344,19 +346,21 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
                     getString(R.string.loading_data_done), "")
         }
 
-        syncRequired = false
-        syncEventsRequired = false
-        initialSyncWithServerRunning = false
-
         Timber.d("Deleting events in the database that are older than one day from now")
         val pastTime = System.currentTimeMillis() - 24 * 60 * 60 * 1000
         appRepository.programData.removeItemsByTime(pastTime)
 
-        Timber.d("Starting background worker to load more epg data")
-        val updateEpgWorker = OneTimeWorkRequest.Builder(EpgDataUpdateWorker::class.java)
-                .setInitialDelay(5, TimeUnit.SECONDS)
-                .build()
-        WorkManager.getInstance().enqueueUniqueWork("UpdateEpg", ExistingWorkPolicy.REPLACE, updateEpgWorker)
+        if (syncRequired) {
+            Timber.d("Starting background worker to load more epg data")
+            val updateEpgWorker = OneTimeWorkRequest.Builder(EpgDataUpdateWorker::class.java)
+                    .setInitialDelay(5, TimeUnit.SECONDS)
+                    .build()
+            WorkManager.getInstance().enqueueUniqueWork("UpdateEpg", ExistingWorkPolicy.REPLACE, updateEpgWorker)
+        }
+
+        syncRequired = false
+        syncEventsRequired = false
+        initialSyncWithServerRunning = false
 
         Timber.d("Done receiving initial data from server")
     }
@@ -435,6 +439,38 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
             })
         } else {
             Timber.d("Not requesting http profiles because the API version is too low")
+        }
+    }
+
+    private fun getSubscriptions() {
+        if (htspVersion >= 26) {
+            val request = HtspMessage()
+            request.method = "api"
+            request["path"] = "status/subscriptions"
+            htspConnection?.sendMessage(request, object : HtspResponseListener {
+                override fun handleResponse(response: HtspMessage) {
+                    Timber.d("Received response to status/subscriptions")
+                    onSubscriptions(response)
+                }
+            })
+        } else {
+            Timber.d("Not requesting subscription status because the API version is too low")
+        }
+    }
+
+    private fun getInputs() {
+        if (htspVersion >= 26) {
+            val request = HtspMessage()
+            request.method = "api"
+            request["path"] = "status/inputs"
+            htspConnection?.sendMessage(request, object : HtspResponseListener {
+                override fun handleResponse(response: HtspMessage) {
+                    Timber.d("Received response to status/inputs")
+                    onInputs(response)
+                }
+            })
+        } else {
+            Timber.d("Not requesting subscription status because the API version is too low")
         }
     }
 
@@ -921,6 +957,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
     private fun onHttpProfiles(message: HtspMessage) {
         Timber.d("Handling http playback profiles")
         if (message.containsKey("response")) {
+            Timber.d("Received playback profile data")
             try {
                 val response = JSONObject(message.getString("response"))
                 if (response.has("entries")) {
@@ -959,7 +996,110 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
             } catch (e: JSONException) {
                 Timber.d(e, "Error parsing JSON data")
             }
+        } else {
+            Timber.d("No http playback profile data available")
+        }
+    }
 
+    private fun onSubscriptions(message: HtspMessage) {
+        Timber.d("Handling http subscription status")
+        if (message.containsKey("response")) {
+            Timber.d("Received subscription status data")
+            try {
+                val response = JSONObject(message.getString("response"))
+                if (response.has("entries")) {
+                    val entries = response.getJSONArray("entries")
+                    Timber.d("Received status of ${entries.length()} subscriptions")
+
+                    appRepository.subscriptionData.removeItems()
+
+                    if (entries.length() > 0) {
+                        var i = 0
+                        val totalObject = entries.length()
+                        while (i < totalObject) {
+                            Timber.d("Reading subscription $i of $totalObject")
+                            val entry = entries.getJSONObject(i)
+                            if (entry.has("id")) {
+                                // Taken from https://github.com/tvheadend/tvheadend/blob/master/src/webui/static/app/status.js
+                                val subscription = Subscription()
+                                subscription.id = entry.getInt("id")
+                                subscription.connectionId = connection.id
+
+                                subscription.hostname = if (entry.has("hostname")) entry.getString("hostname") else ""
+                                subscription.username = if (entry.has("username")) entry.getString("username") else ""
+                                subscription.title = if (entry.has("title")) entry.getString("title") else ""
+                                subscription.client = if (entry.has("client")) entry.getString("client") else ""
+                                subscription.channel = if (entry.has("channel")) entry.getString("channel") else ""
+                                subscription.service = if (entry.has("service")) entry.getString("service") else ""
+                                subscription.profile = if (entry.has("profile")) entry.getString("profile") else ""
+                                subscription.state = if (entry.has("state")) entry.getString("state") else ""
+                                subscription.errors = if (entry.has("errors")) entry.getInt("errors") else 0
+                                subscription.dataIn = if (entry.has("in")) entry.getInt("in") else 0
+                                subscription.dataOut = if (entry.has("out")) entry.getInt("out") else 0
+                                subscription.start = if (entry.has("state")) entry.getInt("state") else 0
+
+                                appRepository.subscriptionData.addItem(subscription)
+                            }
+                            i++
+                        }
+                    }
+                }
+            } catch (e: JSONException) {
+                Timber.d(e, "Error parsing JSON data")
+            }
+        } else {
+            Timber.d("No subscription status data available")
+        }
+    }
+
+    private fun onInputs(message: HtspMessage) {
+        Timber.d("Handling http input status")
+        if (message.containsKey("response")) {
+            Timber.d("Received input status data")
+            try {
+                val response = JSONObject(message.getString("response"))
+                if (response.has("entries")) {
+                    val entries = response.getJSONArray("entries")
+                    Timber.d("Received status of ${entries.length()} inputs")
+
+                    appRepository.inputData.removeItems()
+
+                    if (entries.length() > 0) {
+                        var i = 0
+                        val totalObject = entries.length()
+                        while (i < totalObject) {
+                            Timber.d("Reading input $i of $totalObject")
+                            val entry = entries.getJSONObject(i)
+                            if (entry.has("uuid")) {
+                                // Taken from https://github.com/tvheadend/tvheadend/blob/master/src/webui/static/app/status.js
+                                val input = Input()
+                                input.uuid = entry.getString("uuid")
+                                input.connectionId = connection.id
+
+                                input.input = if (entry.has("input")) entry.getString("input") else ""
+                                input.username = if (entry.has("input")) entry.getString("input") else ""
+                                input.stream = if (entry.has("stream")) entry.getString("stream") else ""
+                                input.numberOfSubscriptions = if (entry.has("subs")) entry.getInt("subs") else 0
+                                input.weight = if (entry.has("weight")) entry.getInt("weight") else 0
+                                input.signalStrength = if (entry.has("signal")) entry.getInt("signal") else 0
+                                input.bitErrorRate = if (entry.has("ber")) entry.getInt("ber") else 0
+                                input.uncorrectedBlocks = if (entry.has("unc")) entry.getInt("unc") else 0
+                                input.signalNoiseRatio = if (entry.has("snr")) entry.getInt("snr") else 0
+                                input.bandWidth = if (entry.has("bps")) entry.getInt("bps") else 0
+                                input.continuityErrors = if (entry.has("cc")) entry.getInt("cc") else 0
+                                input.transportErrors = if (entry.has("te")) entry.getInt("te") else 0
+
+                                appRepository.inputData.addItem(input)
+                            }
+                            i++
+                        }
+                    }
+                }
+            } catch (e: JSONException) {
+                Timber.d(e, "Error parsing JSON data")
+            }
+        } else {
+            Timber.d("No input status data available")
         }
     }
 
