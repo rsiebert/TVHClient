@@ -378,7 +378,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
     }
 
     override fun getQueryHint(): String {
-        return getString(R.string.search_channels)
+        return getString(R.string.search_programs)
     }
 
     override fun onClick(view: View, position: Int) {
