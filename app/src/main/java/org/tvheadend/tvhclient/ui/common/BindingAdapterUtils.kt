@@ -18,7 +18,7 @@ import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.Transformation
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.domain.entity.Program
+import org.tvheadend.tvhclient.domain.entity.ProgramInterface
 import org.tvheadend.tvhclient.domain.entity.Recording
 import org.tvheadend.tvhclient.util.getIconUrl
 import timber.log.Timber
@@ -58,7 +58,7 @@ fun setLayoutWidth(view: View, width: Int) {
 }
 
 @BindingAdapter("seriesInfoText")
-fun setSeriesInfoText(view: TextView, program: Program?) {
+fun setSeriesInfoText(view: TextView, program: ProgramInterface?) {
     val context = view.context
     val season = context.resources.getString(R.string.season)
     val episode = context.resources.getString(R.string.episode)

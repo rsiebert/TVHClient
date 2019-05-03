@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import org.tvheadend.tvhclient.data.db.AppRoomDatabase
 import org.tvheadend.tvhclient.domain.entity.EpgProgram
 import org.tvheadend.tvhclient.domain.entity.Program
+import org.tvheadend.tvhclient.domain.entity.SearchResultProgram
 import timber.log.Timber
 import java.util.*
 import java.util.concurrent.ExecutionException
@@ -85,7 +86,7 @@ class ProgramData(private val db: AppRoomDatabase) : DataSourceInterface<Program
         return programs
     }
 
-    fun getLiveDataItemsFromTime(time: Long): LiveData<List<Program>> {
+    fun getLiveDataItemsFromTime(time: Long): LiveData<List<SearchResultProgram>> {
         return db.programDao.loadProgramsFromTime(time)
     }
 

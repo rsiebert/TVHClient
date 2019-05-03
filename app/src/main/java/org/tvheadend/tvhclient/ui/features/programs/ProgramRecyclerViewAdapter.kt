@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.databinding.ProgramListAdapterBinding
-import org.tvheadend.tvhclient.domain.entity.Program
+import org.tvheadend.tvhclient.domain.entity.ProgramInterface
 import org.tvheadend.tvhclient.domain.entity.Recording
 import org.tvheadend.tvhclient.ui.common.callbacks.RecyclerViewClickCallback
 import org.tvheadend.tvhclient.util.isEqualTo
@@ -18,8 +18,8 @@ import java.util.concurrent.CopyOnWriteArrayList
 
 class ProgramRecyclerViewAdapter internal constructor(private val showProgramChannelIcon: Boolean, private val clickCallback: RecyclerViewClickCallback, private val onLastProgramVisibleListener: LastProgramVisibleListener) : RecyclerView.Adapter<ProgramRecyclerViewAdapter.ProgramViewHolder>(), Filterable {
 
-    private val programList = ArrayList<Program>()
-    private var programListFiltered: MutableList<Program> = ArrayList()
+    private val programList = ArrayList<ProgramInterface>()
+    private var programListFiltered: MutableList<ProgramInterface> = ArrayList()
     private val recordingList = ArrayList<Recording>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProgramViewHolder {
@@ -47,7 +47,7 @@ class ProgramRecyclerViewAdapter internal constructor(private val showProgramCha
         onBindViewHolder(holder, position)
     }
 
-    internal fun addItems(newItems: MutableList<Program>) {
+    internal fun addItems(newItems: MutableList<ProgramInterface>) {
         updateRecordingState(newItems, recordingList)
 
         val oldItems = ArrayList(programListFiltered)
@@ -68,7 +68,7 @@ class ProgramRecyclerViewAdapter internal constructor(private val showProgramCha
         return R.layout.program_list_adapter
     }
 
-    fun getItem(position: Int): Program? {
+    fun getItem(position: Int): ProgramInterface? {
         return if (programListFiltered.size > position && position >= 0) {
             programListFiltered[position]
         } else {
@@ -80,7 +80,7 @@ class ProgramRecyclerViewAdapter internal constructor(private val showProgramCha
         return object : Filter() {
             override fun performFiltering(charSequence: CharSequence): FilterResults {
                 val charString = charSequence.toString()
-                var filteredList: MutableList<Program> = ArrayList()
+                var filteredList: MutableList<ProgramInterface> = ArrayList()
                 if (charString.isEmpty()) {
                     filteredList = programList
                 } else {
@@ -102,7 +102,7 @@ class ProgramRecyclerViewAdapter internal constructor(private val showProgramCha
             }
 
             override fun publishResults(charSequence: CharSequence, filterResults: FilterResults) {
-                programListFiltered = filterResults.values as ArrayList<Program>
+                programListFiltered = filterResults.values as ArrayList<ProgramInterface>
                 notifyDataSetChanged()
             }
         }
@@ -122,7 +122,7 @@ class ProgramRecyclerViewAdapter internal constructor(private val showProgramCha
         updateRecordingState(programListFiltered, recordingList)
     }
 
-    private fun updateRecordingState(programs: MutableList<Program>, recordings: List<Recording>) {
+    private fun updateRecordingState(programs: MutableList<ProgramInterface>, recordings: List<Recording>) {
         for (i in programs.indices) {
             val program = programs[i]
             var recordingExists = false
@@ -154,7 +154,7 @@ class ProgramRecyclerViewAdapter internal constructor(private val showProgramCha
 
     class ProgramViewHolder(private val binding: ProgramListAdapterBinding, private val showProgramChannelIcon: Boolean, private val showGenreColors: Boolean, private val showProgramSubtitles: Boolean) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(program: Program, position: Int, clickCallback: RecyclerViewClickCallback) {
+        fun bind(program: ProgramInterface, position: Int, clickCallback: RecyclerViewClickCallback) {
             binding.program = program
             binding.position = position
             binding.showProgramSubtitles = showProgramSubtitles

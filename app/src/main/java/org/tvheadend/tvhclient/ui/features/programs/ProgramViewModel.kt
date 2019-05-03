@@ -7,6 +7,7 @@ import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.data.repository.AppRepository
 import org.tvheadend.tvhclient.domain.entity.Program
 import org.tvheadend.tvhclient.domain.entity.Recording
+import org.tvheadend.tvhclient.domain.entity.SearchResultProgram
 import javax.inject.Inject
 
 class ProgramViewModel(application: Application) : AndroidViewModel(application) {
@@ -27,7 +28,7 @@ class ProgramViewModel(application: Application) : AndroidViewModel(application)
         return appRepository.programData.getLiveDataItemByChannelIdAndTime(channelId, time)
     }
 
-    fun getProgramsFromTime(time: Long): LiveData<List<Program>> {
+    fun getProgramsFromTime(time: Long): LiveData<List<SearchResultProgram>> {
         return appRepository.programData.getLiveDataItemsFromTime(time)
     }
 

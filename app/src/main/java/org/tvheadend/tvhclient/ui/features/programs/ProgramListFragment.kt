@@ -19,6 +19,7 @@ import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.data.service.HtspService
 import org.tvheadend.tvhclient.domain.entity.Program
+import org.tvheadend.tvhclient.domain.entity.ProgramInterface
 import org.tvheadend.tvhclient.domain.entity.Recording
 import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.common.*
@@ -94,8 +95,8 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
             // A channel id and a channel name was given, load only the programs for the
             // specific channel and from the current time. Also load only those recordings
             // that belong to the given channel
-            viewModel.getProgramsByChannelFromTime(shownChannelId, selectedTime).observe(viewLifecycleOwner, Observer<List<Program>> { this.handleObservedPrograms(it) })
-            viewModel.getRecordingsByChannelId(shownChannelId).observe(viewLifecycleOwner, Observer<List<Recording>> { this.handleObservedRecordings(it) })
+            viewModel.getProgramsByChannelFromTime(shownChannelId, selectedTime).observe(viewLifecycleOwner, Observer { this.handleObservedPrograms(it) })
+            viewModel.getRecordingsByChannelId(shownChannelId).observe(viewLifecycleOwner, Observer { this.handleObservedRecordings(it) })
 
             loadingMoreProgramAllowed = true
             loadingProgramsAllowedTask = Runnable { loadingMoreProgramAllowed = true }
@@ -104,14 +105,14 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
             Timber.d("Search is active, loading programs from current time $selectedTime")
             // No channel and channel name was given, load all programs
             // from the current time and all recordings from all channels
-            viewModel.getProgramsFromTime(selectedTime).observe(viewLifecycleOwner, Observer<List<Program>> { this.handleObservedPrograms(it) })
-            viewModel.recordings?.observe(viewLifecycleOwner, Observer<List<Recording>> { this.handleObservedRecordings(it) })
+            viewModel.getProgramsFromTime(selectedTime).observe(viewLifecycleOwner, Observer { this.handleObservedPrograms(it) })
+            viewModel.recordings?.observe(viewLifecycleOwner, Observer { this.handleObservedRecordings(it) })
 
             loadingMoreProgramAllowed = false
         }
     }
 
-    private fun handleObservedPrograms(programs: List<Program>?) {
+    private fun handleObservedPrograms(programs: List<ProgramInterface>?) {
         if (programs != null) {
             recyclerViewAdapter.addItems(programs.toMutableList())
         }

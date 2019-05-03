@@ -8,7 +8,7 @@
 
         <variable
             name="program"
-            type="org.tvheadend.tvhclient.domain.entity.Program" />
+            type="org.tvheadend.tvhclient.domain.entity.ProgramInterface" />
 
         <variable
             name="position"

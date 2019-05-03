@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.room.*
 import org.tvheadend.tvhclient.domain.entity.EpgProgram
 import org.tvheadend.tvhclient.domain.entity.Program
+import org.tvheadend.tvhclient.domain.entity.SearchResultProgram
 
 @Dao
 interface ProgramDao {
@@ -17,17 +18,17 @@ interface ProgramDao {
     val itemCountSync: Int
 
     @Transaction
-    @Query(PROGRAM_BASE_QUERY +
-            "WHERE " + CONNECTION_IS_ACTIVE +
+    @Query(BASE_PROGRAM_BASE_QUERY +
+            " WHERE $CONNECTION_IS_ACTIVE" +
             " AND ((p.start >= :time) " +
             "  OR (p.start <= :time AND p.stop >= :time)) " +
             "GROUP BY p.id " +
             "ORDER BY p.start, p.channel_name ASC")
-    fun loadProgramsFromTime(time: Long): LiveData<List<Program>>
+    fun loadProgramsFromTime(time: Long): LiveData<List<SearchResultProgram>>
 
     @Transaction
     @Query(PROGRAM_BASE_QUERY +
-            "WHERE " + CONNECTION_IS_ACTIVE +
+            " WHERE " + CONNECTION_IS_ACTIVE +
             " AND p.channel_id = :channelId " +
             " AND ((p.start >= :time) " +
             "  OR (p.start <= :time AND p.stop >= :time)) " +
@@ -37,8 +38,7 @@ interface ProgramDao {
 
     @Transaction
     @Query(EPG_PROGRAM_BASE_QUERY +
-            "LEFT JOIN channels AS c ON c.id = channel_id " +
-            "WHERE " + CONNECTION_IS_ACTIVE +
+            " WHERE " + CONNECTION_IS_ACTIVE +
             " AND channel_id = :channelId " +
             // Program is within time slot
             " AND ((start >= :startTime AND stop <= :endTime) " +
@@ -115,21 +115,29 @@ interface ProgramDao {
 
     companion object {
 
-        const val PROGRAM_BASE_QUERY = "SELECT DISTINCT p.*," +
+        const val BASE_PROGRAM_BASE_QUERY = "SELECT p.id, p.title, p.subtitle, p.summary, p.description, " +
+                "p.content_type, p.channel_id, " +
+                "p.start, p.stop, " +
+                "p.episode_on_screen, p.season_number, p.episode_number, p.part_number," +
                 "c.name AS channel_name, " +
                 "c.icon AS channel_icon " +
                 "FROM programs AS p " +
                 "LEFT JOIN channels AS c ON c.id = p.channel_id "
 
-        const val EPG_PROGRAM_BASE_QUERY = "SELECT DISTINCT p.id, " +
+        const val PROGRAM_BASE_QUERY = "SELECT p.*," +
+                "c.name AS channel_name, " +
+                "c.icon AS channel_icon " +
+                "FROM programs AS p " +
+                "LEFT JOIN channels AS c ON c.id = p.channel_id "
+
+        const val EPG_PROGRAM_BASE_QUERY = "SELECT p.id, " +
                 "p.title, p.subtitle, " +
                 "p.channel_id, " +
                 "p.connection_id, " +
                 "p.start, p.stop, " +
-                "p.content_type, " +
-                "c.name AS channel_name, " +
-                "c.icon AS channel_icon " +
-                "FROM programs AS p "
+                "p.content_type " +
+                "FROM programs AS p " +
+                "LEFT JOIN channels AS c ON c.id = channel_id "
 
         const val CONNECTION_IS_ACTIVE = " p.connection_id IN (SELECT id FROM connections WHERE active = 1) "
     }
