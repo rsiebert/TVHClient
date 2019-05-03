@@ -25,4 +25,8 @@ interface RepositoryInterface {
     val tagAndChannelData: TagAndChannelData
 
     val miscData: MiscData
+
+    val subscriptionData: SubscriptionData
+
+    val inputData: InputData
 }
