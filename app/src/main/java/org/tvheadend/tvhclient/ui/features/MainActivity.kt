@@ -122,7 +122,7 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
 
         supportFragmentManager.addOnBackStackChangedListener {
             val fragment = supportFragmentManager.findFragmentById(R.id.main)
-            navigationDrawer.handleSelection(fragment)
+            navigationDrawer.handleMenuSelection(fragment)
         }
 
         castContext = getCastContext(this)
