@@ -17,7 +17,6 @@ class TimerRecordingViewModel(application: Application) : AndroidViewModel(appli
 
     var recording = TimerRecording()
     val recordings: LiveData<List<TimerRecording>>
-    val numberOfRecordings: LiveData<Int>
     var recordingProfileNameId: Int = 0
 
     var isTimeEnabled: Boolean = false
@@ -32,7 +31,6 @@ class TimerRecordingViewModel(application: Application) : AndroidViewModel(appli
     init {
         MainApplication.getComponent().inject(this)
         recordings = appRepository.timerRecordingData.getLiveDataItems()
-        numberOfRecordings = appRepository.timerRecordingData.getLiveDataItemCount()
     }
 
     fun getRecordingById(id: String): LiveData<TimerRecording> {

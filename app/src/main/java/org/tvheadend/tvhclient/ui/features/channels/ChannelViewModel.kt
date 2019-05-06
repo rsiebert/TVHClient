@@ -10,7 +10,6 @@ import timber.log.Timber
 class ChannelViewModel(application: Application) : BaseChannelViewModel(application) {
 
     val channels: LiveData<List<Channel>>
-    val numberOfChannels: LiveData<Int> = appRepository.channelData.getLiveDataItemCount()
 
     init {
 

@@ -17,7 +17,6 @@ class SeriesRecordingViewModel(application: Application) : AndroidViewModel(appl
 
     var recording = SeriesRecording()
     val recordings: LiveData<List<SeriesRecording>>
-    val numberOfRecordings: LiveData<Int>
     var recordingProfileNameId: Int = 0
 
     var isTimeEnabled: Boolean = false
@@ -32,7 +31,6 @@ class SeriesRecordingViewModel(application: Application) : AndroidViewModel(appl
     init {
         MainApplication.getComponent().inject(this)
         recordings = appRepository.seriesRecordingData.getLiveDataItems()
-        numberOfRecordings = appRepository.seriesRecordingData.getLiveDataItemCount()
     }
 
     fun getRecordingById(id: String): LiveData<SeriesRecording> {

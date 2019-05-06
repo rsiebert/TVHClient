@@ -18,11 +18,6 @@ class RecordingViewModel(application: Application) : AndroidViewModel(applicatio
     val failedRecordings: LiveData<List<Recording>>
     val removedRecordings: LiveData<List<Recording>>
 
-    val numberOfCompletedRecordings: LiveData<Int>
-    val numberOfScheduledRecordings: LiveData<Int>
-    val numberOfFailedRecordings: LiveData<Int>
-    val numberOfRemovedRecordings: LiveData<Int>
-
     var recording = Recording()
     var recordingProfileNameId: Int = 0
 
@@ -33,11 +28,6 @@ class RecordingViewModel(application: Application) : AndroidViewModel(applicatio
         scheduledRecordings = appRepository.recordingData.getLiveDataItemsByType("scheduled")
         failedRecordings = appRepository.recordingData.getLiveDataItemsByType("failed")
         removedRecordings = appRepository.recordingData.getLiveDataItemsByType("removed")
-
-        numberOfCompletedRecordings = appRepository.recordingData.getLiveDataCountByType("completed")
-        numberOfScheduledRecordings = appRepository.recordingData.getLiveDataCountByType("scheduled")
-        numberOfFailedRecordings = appRepository.recordingData.getLiveDataCountByType("failed")
-        numberOfRemovedRecordings = appRepository.recordingData.getLiveDataCountByType("removed")
     }
 
     fun getRecordingById(id: Int): LiveData<Recording>? {

@@ -15,13 +15,11 @@ class ProgramViewModel(application: Application) : AndroidViewModel(application)
     @Inject
     lateinit var appRepository: AppRepository
 
-    val numberOfPrograms: LiveData<Int>
     val recordings: LiveData<List<Recording>>?
 
     init {
         MainApplication.getComponent().inject(this)
         recordings = appRepository.recordingData.getLiveDataItems()
-        numberOfPrograms = appRepository.programData.getLiveDataItemCount()
     }
 
     fun getProgramsByChannelFromTime(channelId: Int, time: Long): LiveData<List<Program>> {
