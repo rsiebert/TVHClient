@@ -2,7 +2,7 @@ package org.tvheadend.tvhclient.ui.common.tasks
 
 import android.content.Context
 import android.os.AsyncTask
-import android.preference.PreferenceManager
+import androidx.preference.PreferenceManager
 import timber.log.Timber
 import java.io.*
 import java.lang.ref.WeakReference

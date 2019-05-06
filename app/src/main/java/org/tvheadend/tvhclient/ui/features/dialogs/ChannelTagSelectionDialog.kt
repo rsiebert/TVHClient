@@ -1,7 +1,7 @@
 package org.tvheadend.tvhclient.ui.features.dialogs
 
 import android.content.Context
-import android.preference.PreferenceManager
+import androidx.preference.PreferenceManager
 
 import com.afollestad.materialdialogs.MaterialDialog
 

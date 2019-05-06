@@ -3,7 +3,7 @@
 package org.tvheadend.tvhclient.ui.common
 
 import android.content.Context
-import android.preference.PreferenceManager
+import androidx.preference.PreferenceManager
 import android.view.Menu
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.domain.entity.ProgramInterface

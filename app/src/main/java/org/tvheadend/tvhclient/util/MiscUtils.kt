@@ -3,7 +3,7 @@
 package org.tvheadend.tvhclient.util
 
 import android.content.Context
-import android.preference.PreferenceManager
+import androidx.preference.PreferenceManager
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.domain.entity.ServerProfile
 import org.tvheadend.tvhclient.domain.entity.ServerStatus

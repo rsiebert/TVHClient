@@ -3,7 +3,7 @@ package org.tvheadend.tvhclient.ui.features.changelog
 import android.app.Activity
 import android.graphics.Color
 import android.os.Bundle
-import android.preference.PreferenceManager
+import androidx.preference.PreferenceManager
 import android.view.*
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.webview_fragment.*

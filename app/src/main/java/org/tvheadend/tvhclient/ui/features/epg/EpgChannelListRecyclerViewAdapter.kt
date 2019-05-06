@@ -1,6 +1,6 @@
 package org.tvheadend.tvhclient.ui.features.epg
 
-import android.preference.PreferenceManager
+import androidx.preference.PreferenceManager
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Filter
