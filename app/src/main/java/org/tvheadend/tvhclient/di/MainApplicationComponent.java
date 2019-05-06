@@ -11,13 +11,16 @@ import org.tvheadend.tvhclient.di.modules.MainApplicationModule;
 import org.tvheadend.tvhclient.di.modules.RepositoryModule;
 import org.tvheadend.tvhclient.di.modules.SharedPreferencesModule;
 import org.tvheadend.tvhclient.ui.base.BaseFragment;
+import org.tvheadend.tvhclient.ui.common.MenuUtils;
 import org.tvheadend.tvhclient.ui.features.MainActivity;
+import org.tvheadend.tvhclient.ui.features.MainViewModel;
 import org.tvheadend.tvhclient.ui.features.channels.BaseChannelViewModel;
 import org.tvheadend.tvhclient.ui.features.download.DownloadRecordingManager;
 import org.tvheadend.tvhclient.ui.features.dvr.recordings.RecordingViewModel;
 import org.tvheadend.tvhclient.ui.features.dvr.series_recordings.SeriesRecordingViewModel;
 import org.tvheadend.tvhclient.ui.features.dvr.timer_recordings.TimerRecordingViewModel;
 import org.tvheadend.tvhclient.ui.features.epg.EpgViewPagerFragment;
+import org.tvheadend.tvhclient.ui.features.information.StatusViewModel;
 import org.tvheadend.tvhclient.ui.features.playback.external.BasePlaybackActivity;
 import org.tvheadend.tvhclient.ui.features.playback.external.ExternalPlayerViewModel;
 import org.tvheadend.tvhclient.ui.features.playback.internal.PlaybackActivity;
@@ -29,7 +32,6 @@ import org.tvheadend.tvhclient.ui.features.settings.SettingsConnectionBaseFragme
 import org.tvheadend.tvhclient.ui.features.settings.SettingsListConnectionsFragment;
 import org.tvheadend.tvhclient.ui.features.startup.StartupFragment;
 import org.tvheadend.tvhclient.util.MigrateUtils;
-import org.tvheadend.tvhclient.ui.common.MenuUtils;
 
 import javax.inject.Singleton;
 
@@ -93,4 +95,8 @@ public interface MainApplicationComponent {
     void inject(PlayerViewModel playerViewModel);
 
     void inject(ExternalPlayerViewModel externalPlayerViewModel);
+
+    void inject(StatusViewModel statusViewModel);
+
+    void inject(MainViewModel mainViewModel);
 }
