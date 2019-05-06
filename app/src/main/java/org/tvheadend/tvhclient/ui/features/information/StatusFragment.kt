@@ -1,24 +1,23 @@
 package org.tvheadend.tvhclient.ui.features.information
 
+import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.view.*
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.status_fragment.*
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.domain.entity.Connection
-import org.tvheadend.tvhclient.domain.entity.ServerStatus
+import org.tvheadend.tvhclient.data.service.HtspService
 import org.tvheadend.tvhclient.ui.base.BaseFragment
 import org.tvheadend.tvhclient.ui.common.tasks.WakeOnLanTask
-import org.tvheadend.tvhclient.ui.features.channels.ChannelViewModel
 import org.tvheadend.tvhclient.ui.features.dvr.recordings.RecordingViewModel
-import org.tvheadend.tvhclient.ui.features.dvr.series_recordings.SeriesRecordingViewModel
-import org.tvheadend.tvhclient.ui.features.dvr.timer_recordings.TimerRecordingViewModel
-import org.tvheadend.tvhclient.ui.features.programs.ProgramViewModel
+import timber.log.Timber
 
 class StatusFragment : BaseFragment() {
 
-    private lateinit var connection: Connection
+    private lateinit var statusUpdateTask: Runnable
+    private val statusUpdateHandler = Handler()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.status_fragment, container, false)
@@ -31,12 +30,28 @@ class StatusFragment : BaseFragment() {
         toolbarInterface.setTitle(getString(R.string.status))
         toolbarInterface.setSubtitle("")
 
-        connection = appRepository.connectionData.activeItem
-        val text = "${connection.name} (${connection.hostname})"
-        connection_view.text = text
+        showStatus()
+        showServerInformation()
+        showSubscriptionAndInputStatus()
 
-        showRecordings()
-        showAdditionalInformation()
+        statusUpdateTask = Runnable {
+            val intent = Intent(activity, HtspService::class.java)
+            intent.action = "getSubscriptions"
+            activity?.startService(intent)
+            intent.action = "getInputs"
+            activity?.startService(intent)
+            statusUpdateHandler.postDelayed(statusUpdateTask, 5000)
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        statusUpdateHandler.removeCallbacks(statusUpdateTask)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        statusUpdateHandler.post(statusUpdateTask)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -46,7 +61,7 @@ class StatusFragment : BaseFragment() {
 
     override fun onPrepareOptionsMenu(menu: Menu) {
         super.onPrepareOptionsMenu(menu)
-        menu.findItem(R.id.menu_wol)?.isVisible = isUnlocked && connection.isWolEnabled
+        menu.findItem(R.id.menu_wol)?.isVisible = isUnlocked && mainViewModel.activeConnection.isWolEnabled
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -57,7 +72,7 @@ class StatusFragment : BaseFragment() {
             }
             R.id.menu_wol -> {
                 context?.let {
-                    WakeOnLanTask(it, connection).execute()
+                    WakeOnLanTask(it, mainViewModel.activeConnection).execute()
                 }
                 true
             }
@@ -69,44 +84,48 @@ class StatusFragment : BaseFragment() {
         }
     }
 
-    private fun showRecordings() {
+    private fun showStatus() {
 
-        val programViewModel = ViewModelProviders.of(this).get(ProgramViewModel::class.java)
-        programViewModel.numberOfPrograms.observe(viewLifecycleOwner, Observer { count ->
+        val text = "${mainViewModel.activeConnection.name} (${mainViewModel.activeConnection.hostname})"
+        connection_view.text = text
+
+        series_recordings_view.visibility = if (mainViewModel.activeServerStatus.htspVersion >= 13) View.VISIBLE else View.GONE
+        timer_recordings_view.visibility = if (mainViewModel.activeServerStatus.htspVersion >= 18 && isUnlocked) View.VISIBLE else View.GONE
+
+        mainViewModel.channelCount.observe(viewLifecycleOwner, Observer { count ->
+            val channelCountText = "$count ${getString(R.string.available)}"
+            channels_view.text = channelCountText
+        })
+        mainViewModel.programCount.observe(viewLifecycleOwner, Observer { count ->
             programs_view.text = resources.getQuantityString(R.plurals.programs, count ?: 0, count)
         })
-
-        val seriesRecordingViewModel = ViewModelProviders.of(this).get(SeriesRecordingViewModel::class.java)
-        seriesRecordingViewModel.numberOfRecordings.observe(viewLifecycleOwner, Observer { count ->
+        mainViewModel.seriesRecordingCount.observe(viewLifecycleOwner, Observer { count ->
             series_recordings_view.text = resources.getQuantityString(R.plurals.series_recordings, count
                     ?: 0, count)
         })
-
-        val timerRecordingViewModel = ViewModelProviders.of(this).get(TimerRecordingViewModel::class.java)
-        timerRecordingViewModel.numberOfRecordings.observe(viewLifecycleOwner, Observer { count ->
+        mainViewModel.timerRecordingCount.observe(viewLifecycleOwner, Observer { count ->
             timer_recordings_view.text = resources.getQuantityString(R.plurals.timer_recordings, count
                     ?: 0, count)
         })
-
-        val recordingViewModel = ViewModelProviders.of(this).get(RecordingViewModel::class.java)
-        recordingViewModel.numberOfCompletedRecordings.observe(viewLifecycleOwner, Observer { count ->
+        mainViewModel.completedRecordingCount.observe(viewLifecycleOwner, Observer { count ->
             completed_recordings_view.text = resources.getQuantityString(R.plurals.completed_recordings, count
                     ?: 0, count)
         })
-        recordingViewModel.numberOfScheduledRecordings.observe(viewLifecycleOwner, Observer { count ->
+        mainViewModel.scheduledRecordingCount.observe(viewLifecycleOwner, Observer { count ->
             upcoming_recordings_view.text = resources.getQuantityString(R.plurals.upcoming_recordings, count
                     ?: 0, count)
         })
-        recordingViewModel.numberOfFailedRecordings.observe(viewLifecycleOwner, Observer { count ->
+        mainViewModel.failedRecordingCount.observe(viewLifecycleOwner, Observer { count ->
             failed_recordings_view.text = resources.getQuantityString(R.plurals.failed_recordings, count
                     ?: 0, count)
         })
-        recordingViewModel.numberOfRemovedRecordings.observe(viewLifecycleOwner, Observer { count ->
+        mainViewModel.removedRecordingCount.observe(viewLifecycleOwner, Observer { count ->
             removed_recordings_view.text = resources.getQuantityString(R.plurals.removed_recordings, count
                     ?: 0, count)
         })
 
         // Get the programs that are currently being recorded
+        val recordingViewModel = ViewModelProviders.of(this).get(RecordingViewModel::class.java)
         recordingViewModel.scheduledRecordings.observe(viewLifecycleOwner, Observer { recordings ->
             if (recordings != null) {
                 val currentRecText = StringBuilder()
@@ -125,28 +144,14 @@ class StatusFragment : BaseFragment() {
         })
     }
 
-    private fun showAdditionalInformation() {
-        val channelViewModel = ViewModelProviders.of(activity!!).get(ChannelViewModel::class.java)
-        channelViewModel.numberOfChannels.observe(viewLifecycleOwner, Observer { count ->
-            val text = "$count " + getString(R.string.available)
-            channels_view.text = text
-        })
-        channelViewModel.serverStatus.observe(viewLifecycleOwner, Observer { serverStatus ->
-            if (serverStatus != null) {
-                series_recordings_view.visibility = if (serverStatus.htspVersion >= 13) View.VISIBLE else View.GONE
-                timer_recordings_view.visibility = if (serverStatus.htspVersion >= 18 && isUnlocked) View.VISIBLE else View.GONE
-                showServerInformation(serverStatus)
-            }
-        })
-    }
-
     /**
      * Shows the server api version and the available and total disc
      * space either in MB or GB to avoid showing large numbers.
      * This depends on the size of the value.
      */
-    private fun showServerInformation(serverStatus: ServerStatus) {
+    private fun showServerInformation() {
 
+        val serverStatus = mainViewModel.activeServerStatus
         val version = (serverStatus.htspVersion.toString()
                 + "   (" + getString(R.string.server) + ": "
                 + serverStatus.serverName + " "
@@ -181,6 +186,19 @@ class StatusFragment : BaseFragment() {
             free_discspace_view.setText(R.string.unknown)
             total_discspace_view.setText(R.string.unknown)
         }
+    }
 
+    private fun showSubscriptionAndInputStatus() {
+        val statusViewModel = ViewModelProviders.of(activity!!).get(StatusViewModel::class.java)
+        statusViewModel.subscriptions.observe(viewLifecycleOwner, Observer { subscriptions ->
+            if (subscriptions != null) {
+                Timber.d("Received subscription status")
+            }
+        })
+        statusViewModel.inputs.observe(viewLifecycleOwner, Observer { inputs ->
+            if (inputs != null) {
+                Timber.d("Received input status")
+            }
+        })
     }
 }
