@@ -73,6 +73,8 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
     private lateinit var timeUpdateRunnable: Runnable
     private val timeUpdateHandler = Handler()
 
+    var pipModeActive : Boolean = false
+
     init {
         Timber.d("Initializing view model")
         MainApplication.getComponent().inject(this)
@@ -309,8 +311,10 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
     }
 
     fun pause() {
-        player.playWhenReady = false
-        dataSource?.pause()
+        if (!pipModeActive) {
+            player.playWhenReady = false
+            dataSource?.pause()
+        }
     }
 
     fun play() {

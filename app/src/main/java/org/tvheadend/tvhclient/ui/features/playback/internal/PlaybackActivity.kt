@@ -3,7 +3,6 @@ package org.tvheadend.tvhclient.ui.features.playback.internal
 import android.app.PictureInPictureParams
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.graphics.Point
@@ -19,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.preference.PreferenceManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.Player
@@ -28,9 +28,7 @@ import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.exo_player_control_view.*
 import kotlinx.android.synthetic.main.exo_player_view.*
 import kotlinx.android.synthetic.main.player_overlay_view.*
-import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.data.repository.AppRepository
 import org.tvheadend.tvhclient.ui.common.*
 import org.tvheadend.tvhclient.ui.features.MainActivity
 import org.tvheadend.tvhclient.ui.features.playback.internal.utils.Rational
@@ -39,14 +37,8 @@ import org.tvheadend.tvhclient.util.getIconUrl
 import org.tvheadend.tvhclient.util.getThemeId
 import timber.log.Timber
 import java.util.*
-import javax.inject.Inject
 
 class PlaybackActivity : AppCompatActivity(), PlayerControlView.VisibilityListener {
-
-    @Inject
-    lateinit var sharedPreferences: SharedPreferences
-    @Inject
-    lateinit var appRepository: AppRepository
 
     private var timeshiftSupported: Boolean = false
     private lateinit var viewModel: PlayerViewModel
@@ -68,15 +60,14 @@ class PlaybackActivity : AppCompatActivity(), PlayerControlView.VisibilityListen
         setContentView(R.layout.player_overlay_view)
         Timber.d("Creating")
 
-        MainApplication.getComponent().inject(this)
-
-        timeshiftSupported = sharedPreferences.getBoolean("timeshift_enabled", resources.getBoolean(R.bool.pref_default_timeshift_enabled))
+        timeshiftSupported = PreferenceManager.getDefaultSharedPreferences(this)
+                .getBoolean("timeshift_enabled", resources.getBoolean(R.bool.pref_default_timeshift_enabled))
 
         sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager?
         orientation = sensorManager?.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
         orientationSensorListener = object : SensorEventListener {
             override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
-
+                // NOP
             }
 
             override fun onSensorChanged(event: SensorEvent?) {
@@ -440,6 +431,9 @@ class PlaybackActivity : AppCompatActivity(), PlayerControlView.VisibilityListen
             val ratio = selectedVideoAspectRatio
             if (ratio != null) {
                 Timber.d("Entering PIP mode with ratio ${ratio.numerator}:${ratio.denominator}")
+                // Set the value already here because the onPause method is called before the onPictureInPictureModeChanged.
+                // This would pause the player before we know that the PIP mode has been entered.
+                viewModel.pipModeActive = true
                 enterPictureInPictureMode(
                         PictureInPictureParams.Builder()
                                 .setAspectRatio(android.util.Rational(ratio.numerator, ratio.denominator))
@@ -451,6 +445,7 @@ class PlaybackActivity : AppCompatActivity(), PlayerControlView.VisibilityListen
     override fun onPictureInPictureModeChanged(isInPictureInPictureMode: Boolean, newConfig: Configuration) {
         Timber.d("PIP mode entered $isInPictureInPictureMode")
         player_view.useController = !isInPictureInPictureMode
+        viewModel.pipModeActive = isInPictureInPictureMode
         super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig)
     }
 
