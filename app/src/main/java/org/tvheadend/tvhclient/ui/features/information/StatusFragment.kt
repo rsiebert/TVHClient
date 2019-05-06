@@ -189,13 +189,12 @@ class StatusFragment : BaseFragment() {
     }
 
     private fun showSubscriptionAndInputStatus() {
-        val statusViewModel = ViewModelProviders.of(activity!!).get(StatusViewModel::class.java)
-        statusViewModel.subscriptions.observe(viewLifecycleOwner, Observer { subscriptions ->
+        mainViewModel.subscriptions.observe(viewLifecycleOwner, Observer { subscriptions ->
             if (subscriptions != null) {
                 Timber.d("Received subscription status")
             }
         })
-        statusViewModel.inputs.observe(viewLifecycleOwner, Observer { inputs ->
+        mainViewModel.inputs.observe(viewLifecycleOwner, Observer { inputs ->
             if (inputs != null) {
                 Timber.d("Received input status")
             }
