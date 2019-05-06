@@ -124,7 +124,7 @@ class SettingsFragment : BasePreferenceFragment(), Preference.OnPreferenceClickL
 
     private fun handlePreferenceProfilesSelected() {
         if (view != null) {
-            if (htspVersion < 16) {
+            if (serverStatus.htspVersion < 16) {
                 context?.sendSnackbarMessage(R.string.feature_not_supported_by_server)
             } else {
                 showSelectedSettingsFragment("profiles")
