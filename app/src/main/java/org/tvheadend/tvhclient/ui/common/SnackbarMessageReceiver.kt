@@ -4,9 +4,7 @@ import android.app.Activity
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-
 import com.google.android.material.snackbar.Snackbar
-
 import java.lang.ref.WeakReference
 
 /**
@@ -19,10 +17,10 @@ class SnackbarMessageReceiver(activity: Activity) : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         if (intent.hasExtra(CONTENT)) {
             val activity = this.activity.get()
-            if (activity != null && activity.currentFocus != null) {
+            if (activity != null) {
                 val msg = intent.getStringExtra(CONTENT)
                 val duration = intent.getIntExtra(DURATION, Snackbar.LENGTH_SHORT)
-                Snackbar.make(activity.currentFocus!!, msg, duration).show()
+                Snackbar.make(activity.findViewById(android.R.id.content), msg, duration).show()
             }
         }
     }
