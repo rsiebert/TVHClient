@@ -20,7 +20,9 @@ class SnackbarMessageReceiver(activity: Activity) : BroadcastReceiver() {
             if (activity != null) {
                 val msg = intent.getStringExtra(CONTENT)
                 val duration = intent.getIntExtra(DURATION, Snackbar.LENGTH_SHORT)
-                Snackbar.make(activity.findViewById(android.R.id.content), msg, duration).show()
+                val snackbar = Snackbar.make(activity.findViewById(android.R.id.content), msg, duration)
+                snackbar.config(activity)
+                snackbar.show()
             }
         }
     }
