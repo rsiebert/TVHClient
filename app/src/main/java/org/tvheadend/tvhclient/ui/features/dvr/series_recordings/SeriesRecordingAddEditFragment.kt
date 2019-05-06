@@ -155,8 +155,8 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
             handleDayOfWeekSelection(ctx, viewModel.recording.daysOfWeek, this@SeriesRecordingAddEditFragment)
         }
 
-        minimum_duration.setText(if (viewModel.recording.minDuration > 0) viewModel.recording.minDuration.toString() else getString(R.string.duration_sum))
-        maximum_duration.setText(if (viewModel.recording.maxDuration > 0) viewModel.recording.maxDuration.toString() else getString(R.string.duration_sum))
+        minimum_duration.setText(if (viewModel.recording.minDuration > 0) (viewModel.recording.minDuration/60).toString() else getString(R.string.duration_sum))
+        maximum_duration.setText(if (viewModel.recording.maxDuration > 0) (viewModel.recording.maxDuration/60).toString() else getString(R.string.duration_sum))
 
         time_enabled.isChecked = viewModel.isTimeEnabled
         handleTimeEnabledClick(time_enabled.isChecked)
