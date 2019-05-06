@@ -44,9 +44,8 @@ class SeriesRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Rec
             if (viewModel.isTimeEnabled) {
                 Timber.d("Intent Recording start time is ${viewModel.recording.start}")
                 Timber.d("Intent Recording startWindow time is ${viewModel.recording.startWindow}")
-                // TODO why do we need to add 15 minutes here?
-                intent.putExtra("start", viewModel.recording.start + 15L)
-                intent.putExtra("startWindow", viewModel.recording.startWindow + 15L)
+                intent.putExtra("start", viewModel.recording.start)
+                intent.putExtra("startWindow", viewModel.recording.startWindow)
             } else {
                 intent.putExtra("start", (-1).toLong())
                 intent.putExtra("startWindow", (-1).toLong())
