@@ -18,11 +18,11 @@ import android.widget.ProgressBar
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.gms.cast.framework.*
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.data.repository.AppRepository
 import org.tvheadend.tvhclient.data.service.HtspService
 import org.tvheadend.tvhclient.data.service.SyncStateReceiver
 import org.tvheadend.tvhclient.ui.base.BaseActivity
@@ -35,25 +35,19 @@ import org.tvheadend.tvhclient.ui.features.dvr.series_recordings.SeriesRecording
 import org.tvheadend.tvhclient.ui.features.dvr.timer_recordings.TimerRecordingDetailsFragment
 import org.tvheadend.tvhclient.ui.features.epg.ProgramGuideFragment
 import org.tvheadend.tvhclient.ui.features.navigation.NavigationDrawer
-import org.tvheadend.tvhclient.ui.features.navigation.NavigationDrawerCallback
 import org.tvheadend.tvhclient.ui.features.playback.external.CastSessionManagerListener
 import org.tvheadend.tvhclient.ui.features.programs.ProgramDetailsFragment
 import org.tvheadend.tvhclient.ui.features.programs.ProgramListFragment
 import org.tvheadend.tvhclient.ui.features.search.SearchRequestInterface
 import org.tvheadend.tvhclient.util.getThemeId
 import timber.log.Timber
-import javax.inject.Inject
 
 // TODO what happens when no connection to the server is active and the user presses an action in a notification?
 
-class MainActivity : BaseActivity(), NavigationDrawerCallback, SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, SyncStateReceiver.Listener, NetworkStatusListener {
-
-    @Inject
-    lateinit var sharedPreferences: SharedPreferences
-    @Inject
-    lateinit var appRepository: AppRepository
+class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, SyncStateReceiver.Listener, NetworkStatusListener {
 
     private lateinit var syncProgress: ProgressBar
+    private lateinit var sharedPreferences: SharedPreferences
 
     private var searchMenuItem: MenuItem? = null
     private var searchView: SearchView? = null
@@ -76,11 +70,16 @@ class MainActivity : BaseActivity(), NavigationDrawerCallback, SearchView.OnQuer
 
     private var isSavedInstanceStateNull: Boolean = false
 
+    private var searchQuery: String = ""
+    private lateinit var queryTextSubmitTask: Runnable
+    private val queryTextSubmitHandler = Handler()
+
     public override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(getThemeId(this))
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_activity)
 
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
         syncProgress = findViewById(R.id.sync_progress)
 
         MainApplication.getComponent().inject(this)
@@ -99,9 +98,7 @@ class MainActivity : BaseActivity(), NavigationDrawerCallback, SearchView.OnQuer
             actionBar.setHomeButtonEnabled(true)
         }
 
-        navigationDrawer = NavigationDrawer(this, savedInstanceState, toolbar, appRepository, this)
-        navigationDrawer.createHeader()
-        navigationDrawer.createMenu()
+        navigationDrawer = NavigationDrawer(this, savedInstanceState, toolbar, viewModel)
 
         // When the activity is created it got called by the main activity. Get the initial
         // navigation menu position and show the associated fragment with it. When the device
@@ -110,10 +107,12 @@ class MainActivity : BaseActivity(), NavigationDrawerCallback, SearchView.OnQuer
             isSavedInstanceStateNull = true
             isNetworkAvailable = false
             selectedNavigationMenuId = Integer.parseInt(sharedPreferences.getString("start_screen", resources.getString(R.string.pref_default_start_screen))!!)
+            searchQuery = ""
         } else {
             isSavedInstanceStateNull = false
             isNetworkAvailable = savedInstanceState.getBoolean("isNetworkAvailable", false)
             selectedNavigationMenuId = savedInstanceState.getInt("navigationMenuId", NavigationDrawer.MENU_CHANNELS)
+            searchQuery = savedInstanceState.getString(SearchManager.QUERY) ?: ""
         }
 
         val showCastingMiniController = isUnlocked && sharedPreferences.getBoolean("casting_minicontroller_enabled",
@@ -140,12 +139,22 @@ class MainActivity : BaseActivity(), NavigationDrawerCallback, SearchView.OnQuer
             Timber.d("Casting is not available, casting will no be enabled")
         }
 
-        // Update the drawer menu so that all available menu items are
-        // shown in case the recording counts have changed or the user has
-        // bought the unlocked version to enable all features
-        navigationDrawer.showConnectionsInDrawerHeader()
-        navigationDrawer.startObservingViewModels()
-        handleDrawerItemSelected(selectedNavigationMenuId)
+        queryTextSubmitTask = Runnable {
+            val fragment = supportFragmentManager.findFragmentById(R.id.main)
+            if (fragment is SearchRequestInterface
+                    && fragment.isVisible
+                    // Disable search as you type in the epg because when doing a search in the
+                    // program guide, the search results will be shown in a separate fragment program list.
+                    && fragment !is ProgramGuideFragment) {
+                fragment.onSearchRequested(searchQuery)
+            }
+        }
+
+        Timber.d("Observing navigation menu id")
+        viewModel.navigationMenuId.observe(this, Observer { id ->
+            Timber.d("Selected navigation id changed to $id")
+            handleDrawerItemSelected(id)
+        })
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -154,9 +163,9 @@ class MainActivity : BaseActivity(), NavigationDrawerCallback, SearchView.OnQuer
         out = navigationDrawer.saveInstanceState(out)
         out.putInt("navigationMenuId", selectedNavigationMenuId)
         out.putBoolean("isNetworkAvailable", isNetworkAvailable)
+        out.putString(SearchManager.QUERY, searchQuery)
         super.onSaveInstanceState(out)
     }
-
 
     public override fun onStart() {
         super.onStart()
@@ -194,6 +203,7 @@ class MainActivity : BaseActivity(), NavigationDrawerCallback, SearchView.OnQuer
                 Timber.e(e, "Could not remove cast state listener or get cast session manager")
             }
         }
+        queryTextSubmitHandler.removeCallbacks(queryTextSubmitTask)
         super.onPause()
     }
 
@@ -277,40 +287,28 @@ class MainActivity : BaseActivity(), NavigationDrawerCallback, SearchView.OnQuer
             Timber.d("Saved instance is null or selected id has changed, creating new fragment")
             fragment = navigationDrawer.getFragmentFromSelection(position)
         } else {
-            Timber.d("Saved instance is not null, trying to existing fragment")
+            Timber.d("Saved instance is not null, trying to retrieve existing fragment")
             fragment = supportFragmentManager.findFragmentById(R.id.main)
             addFragmentToBackStack = false
         }
 
+        // A new or existing main fragment shall be shown. So save the menu position so we
+        // know which one was selected. Additionally remove any old details fragment in case
+        // dual pane mode is active to prevent showing wrong details data.
+        // Finally show the new main fragment and add it to the back stack
+        // only if it is a new fragment and not an existing one.
         if (fragment != null) {
-            // Save the menu position so we know which one was selected
             selectedNavigationMenuId = position
-
-            // Remove the old details fragment if there is one so that it is not visible when
-            // the new main fragment is loaded. It takes a while until the new details
-            // fragment is visible. This prevents showing wrong data when switching screens.
             if (isDualPane) {
                 val detailsFragment = supportFragmentManager.findFragmentById(R.id.details)
                 if (detailsFragment != null) {
-                    supportFragmentManager
-                            .beginTransaction()
-                            .remove(detailsFragment)
-                            .commit()
+                    supportFragmentManager.beginTransaction().remove(detailsFragment).commit()
                 }
             }
-
-            // Show the new fragment that represents the selected menu entry.
-            val ft = supportFragmentManager
-                    .beginTransaction()
-                    .replace(R.id.main, fragment)
-            // Only add the fragment to the back stack if a new one has been created.
-            // Existing fragments that were already available due to an orientation
-            // change shall not be added to the back stack. This prevents having to
-            // press the back key as often as the device was rotated.
-            if (addFragmentToBackStack) {
-                ft.addToBackStack(null)
+            supportFragmentManager.beginTransaction().replace(R.id.main, fragment).let {
+                if (addFragmentToBackStack) it.addToBackStack(null)
+                it.commit()
             }
-            ft.commit()
         }
     }
 
@@ -329,13 +327,8 @@ class MainActivity : BaseActivity(), NavigationDrawerCallback, SearchView.OnQuer
         return true
     }
 
-    override fun onNavigationMenuSelected(id: Int) {
-        if (selectedNavigationMenuId != id) {
-            handleDrawerItemSelected(id)
-        }
-    }
-
     override fun onQueryTextSubmit(query: String): Boolean {
+        queryTextSubmitHandler.removeCallbacks(queryTextSubmitTask)
         searchMenuItem?.collapseActionView()
         val fragment = supportFragmentManager.findFragmentById(R.id.main)
         if (fragment is SearchRequestInterface && fragment.isVisible) {
@@ -345,15 +338,11 @@ class MainActivity : BaseActivity(), NavigationDrawerCallback, SearchView.OnQuer
     }
 
     override fun onQueryTextChange(newText: String): Boolean {
+        searchQuery = newText
         if (newText.length >= 3) {
-            val fragment = supportFragmentManager.findFragmentById(R.id.main)
-            if (fragment is SearchRequestInterface
-                    && fragment.isVisible
-                    // Disable search as you type in the epg because when doing a search in the
-                    // program guide, the search results will be shown in a separate fragment program list.
-                    && fragment !is ProgramGuideFragment) {
-                fragment.onSearchRequested(newText)
-            }
+            Timber.d("Search query is ${newText.length} characters long, starting timer to start searching")
+            queryTextSubmitHandler.removeCallbacks(queryTextSubmitTask)
+            queryTextSubmitHandler.postDelayed(queryTextSubmitTask, 2000)
         }
         return true
     }
@@ -409,7 +398,8 @@ class MainActivity : BaseActivity(), NavigationDrawerCallback, SearchView.OnQuer
                 sendSnackbarMessage(message)
             }
 
-            else -> { }
+            else -> {
+            }
         }
     }
 

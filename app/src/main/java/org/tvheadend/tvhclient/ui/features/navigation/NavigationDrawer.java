@@ -5,6 +5,11 @@ import android.os.Bundle;
 import android.util.TypedValue;
 import android.view.View;
 
+import androidx.annotation.AttrRes;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
@@ -20,37 +25,26 @@ import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
 import org.tvheadend.tvhclient.MainApplication;
 import org.tvheadend.tvhclient.R;
-import org.tvheadend.tvhclient.domain.entity.Connection;
-import org.tvheadend.tvhclient.data.repository.AppRepository;
 import org.tvheadend.tvhclient.data.service.HtspService;
+import org.tvheadend.tvhclient.domain.entity.Connection;
+import org.tvheadend.tvhclient.ui.features.MainViewModel;
 import org.tvheadend.tvhclient.ui.features.channels.ChannelListFragment;
-import org.tvheadend.tvhclient.ui.features.channels.ChannelViewModel;
 import org.tvheadend.tvhclient.ui.features.dvr.recordings.CompletedRecordingListFragment;
 import org.tvheadend.tvhclient.ui.features.dvr.recordings.FailedRecordingListFragment;
-import org.tvheadend.tvhclient.ui.features.dvr.recordings.RecordingViewModel;
 import org.tvheadend.tvhclient.ui.features.dvr.recordings.RemovedRecordingListFragment;
 import org.tvheadend.tvhclient.ui.features.dvr.recordings.ScheduledRecordingListFragment;
 import org.tvheadend.tvhclient.ui.features.dvr.series_recordings.SeriesRecordingListFragment;
-import org.tvheadend.tvhclient.ui.features.dvr.series_recordings.SeriesRecordingViewModel;
 import org.tvheadend.tvhclient.ui.features.dvr.timer_recordings.TimerRecordingListFragment;
-import org.tvheadend.tvhclient.ui.features.dvr.timer_recordings.TimerRecordingViewModel;
 import org.tvheadend.tvhclient.ui.features.epg.ProgramGuideFragment;
 import org.tvheadend.tvhclient.ui.features.information.StatusFragment;
 import org.tvheadend.tvhclient.ui.features.information.WebViewFragment;
-import org.tvheadend.tvhclient.ui.features.unlocker.UnlockerFragment;
-import org.tvheadend.tvhclient.ui.features.settings.ConnectionViewModel;
 import org.tvheadend.tvhclient.ui.features.settings.SettingsActivity;
 import org.tvheadend.tvhclient.ui.features.startup.SplashActivity;
+import org.tvheadend.tvhclient.ui.features.unlocker.UnlockerFragment;
 import org.tvheadend.tvhclient.util.MiscUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import androidx.annotation.AttrRes;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProviders;
 
 public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, Drawer.OnDrawerItemClickListener {
 
@@ -71,22 +65,30 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
     private final Bundle savedInstanceState;
     private final AppCompatActivity activity;
     private final Toolbar toolbar;
-    private final NavigationDrawerCallback callback;
-    private final boolean isUnlocked;
     private AccountHeader headerResult;
     private Drawer result;
-    private final AppRepository appRepository;
+    private MainViewModel viewModel;
 
-    public NavigationDrawer(AppCompatActivity activity, Bundle savedInstanceState, Toolbar toolbar, AppRepository appRepository, NavigationDrawerCallback callback) {
+    public NavigationDrawer(AppCompatActivity activity, Bundle savedInstanceState, Toolbar toolbar, MainViewModel viewModel) {
         this.activity = activity;
         this.savedInstanceState = savedInstanceState;
         this.toolbar = toolbar;
-        this.callback = callback;
-        this.isUnlocked = MainApplication.getInstance().isUnlocked();
-        this.appRepository = appRepository;
+        this.viewModel = viewModel;
+
+        createHeader();
+        createMenu();
+
+        viewModel.getConnections().observe(activity, this::showConnectionsInDrawerHeader);
+        viewModel.getChannelCount().observe(activity, count -> result.updateBadge(MENU_CHANNELS, new StringHolder(count + "")));
+        viewModel.getSeriesRecordingCount().observe(activity, count -> result.updateBadge(MENU_SERIES_RECORDINGS, new StringHolder(count + "")));
+        viewModel.getTimerRecordingCount().observe(activity, count -> result.updateBadge(MENU_TIMER_RECORDINGS, new StringHolder(count + "")));
+        viewModel.getCompletedRecordingCount().observe(activity, count -> result.updateBadge(MENU_COMPLETED_RECORDINGS, new StringHolder(count + "")));
+        viewModel.getScheduledRecordingCount().observe(activity, count -> result.updateBadge(MENU_SCHEDULED_RECORDINGS, new StringHolder(count + "")));
+        viewModel.getFailedRecordingCount().observe(activity, count -> result.updateBadge(MENU_FAILED_RECORDINGS, new StringHolder(count + "")));
+        viewModel.getRemovedRecordingCount().observe(activity, count -> result.updateBadge(MENU_REMOVED_RECORDINGS, new StringHolder(count + "")));
     }
 
-    public void createHeader() {
+    private void createHeader() {
         headerResult = new AccountHeaderBuilder()
                 .withActivity(activity)
                 .withCompactStyle(true)
@@ -98,7 +100,7 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
                 .build();
     }
 
-    public void createMenu() {
+    private void createMenu() {
         BadgeStyle badgeStyle = new BadgeStyle()
                 .withColorRes(getResourceIdFromAttr(R.attr.material_drawer_badge));
 
@@ -164,7 +166,7 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
                 timerRecordingsItem,
                 failedRecordingsItem,
                 removedRecordingsItem);
-        if (!isUnlocked) {
+        if (!MainApplication.getInstance().isUnlocked()) {
             drawerBuilder.addDrawerItems(
                     new DividerDrawerItem(),
                     extrasItem);
@@ -184,7 +186,7 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
         return typedValue.resourceId;
     }
 
-    public void showConnectionsInDrawerHeader() {
+    private void showConnectionsInDrawerHeader(List<Connection> connections) {
         // Remove old profiles from the header
         List<Long> profileIdList = new ArrayList<>();
         for (IProfile profile : headerResult.getProfiles()) {
@@ -194,9 +196,8 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
             headerResult.removeProfileByIdentifier(id);
         }
         // Add the existing connections as new profiles
-        final List<Connection> connectionList = appRepository.getConnectionData().getItems();
-        if (connectionList.size() > 0) {
-            for (Connection c : connectionList) {
+        if (connections.size() > 0) {
+            for (Connection c : connections) {
                 headerResult.addProfiles(
                         new CustomProfileDrawerItem()
                                 .withIdentifier(c.getId())
@@ -206,7 +207,7 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
         } else {
             headerResult.addProfiles(new ProfileDrawerItem().withName(R.string.no_connection_available));
         }
-        Connection connection = appRepository.getConnectionData().getActiveItem();
+        Connection connection = viewModel.getActiveConnection();
         headerResult.setActiveProfile(connection.getId());
     }
 
@@ -228,7 +229,7 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
                     handleNewServerSelected((int) profile.getIdentifier());
                 })
                 .onNegative(((dialog, which) -> {
-                    Connection connection = appRepository.getConnectionData().getActiveItem();
+                    Connection connection = viewModel.getActiveConnection();
                     headerResult.setActiveProfile(connection.getId());
                 }))
                 .cancelable(false)
@@ -247,11 +248,7 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
      */
     private void handleNewServerSelected(int id) {
         activity.stopService(new Intent(activity, HtspService.class));
-
-        Connection connection = appRepository.getConnectionData().getItemById(id);
-        if (connection != null) {
-            connection.setActive(true);
-            appRepository.getConnectionData().updateItem(connection);
+        if (viewModel.updateConnection(id)) {
             Intent intent = new Intent(activity, SplashActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             activity.startActivity(intent);
@@ -262,10 +259,7 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
     @Override
     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
         result.closeDrawer();
-        int id = (int) drawerItem.getIdentifier();
-        if (callback != null) {
-            callback.onNavigationMenuSelected(id);
-        }
+        viewModel.setSelectedNavigationMenuId((int) drawerItem.getIdentifier());
         return true;
     }
 
@@ -277,27 +271,6 @@ public class NavigationDrawer implements AccountHeader.OnAccountHeaderListener, 
         outState = result.saveInstanceState(outState);
         outState = headerResult.saveInstanceState(outState);
         return outState;
-    }
-
-    public void startObservingViewModels() {
-
-        ConnectionViewModel connectionViewModel = ViewModelProviders.of(activity).get(ConnectionViewModel.class);
-        connectionViewModel.getAllConnections().observe(activity, connections -> showConnectionsInDrawerHeader());
-
-        ChannelViewModel channelViewModel = ViewModelProviders.of(activity).get(ChannelViewModel.class);
-        channelViewModel.getNumberOfChannels().observe(activity, count -> result.updateBadge(MENU_CHANNELS, new StringHolder(count + "")));
-
-        SeriesRecordingViewModel seriesRecordingViewModel = ViewModelProviders.of(activity).get(SeriesRecordingViewModel.class);
-        seriesRecordingViewModel.getNumberOfRecordings().observe(activity, count -> result.updateBadge(MENU_SERIES_RECORDINGS, new StringHolder(count + "")));
-
-        TimerRecordingViewModel timerRecordingViewModel = ViewModelProviders.of(activity).get(TimerRecordingViewModel.class);
-        timerRecordingViewModel.getNumberOfRecordings().observe(activity, count -> result.updateBadge(MENU_TIMER_RECORDINGS, new StringHolder(count + "")));
-
-        RecordingViewModel recordingViewModel = ViewModelProviders.of(activity).get(RecordingViewModel.class);
-        recordingViewModel.getNumberOfCompletedRecordings().observe(activity, count -> result.updateBadge(MENU_COMPLETED_RECORDINGS, new StringHolder(count + "")));
-        recordingViewModel.getNumberOfScheduledRecordings().observe(activity, count -> result.updateBadge(MENU_SCHEDULED_RECORDINGS, new StringHolder(count + "")));
-        recordingViewModel.getNumberOfFailedRecordings().observe(activity, count -> result.updateBadge(MENU_FAILED_RECORDINGS, new StringHolder(count + "")));
-        recordingViewModel.getNumberOfRemovedRecordings().observe(activity, count -> result.updateBadge(MENU_REMOVED_RECORDINGS, new StringHolder(count + "")));
     }
 
     public void handleSelection(Fragment fragment) {
