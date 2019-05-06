@@ -7,6 +7,7 @@ import android.view.MenuItem
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.data.repository.AppRepository
@@ -16,6 +17,7 @@ import org.tvheadend.tvhclient.ui.common.callbacks.NetworkStatusListener
 import org.tvheadend.tvhclient.ui.common.callbacks.ToolbarInterface
 import org.tvheadend.tvhclient.ui.common.gone
 import org.tvheadend.tvhclient.ui.common.visible
+import org.tvheadend.tvhclient.ui.features.MainViewModel
 import javax.inject.Inject
 
 abstract class BaseFragment : Fragment(), NetworkStatusListener {
@@ -33,6 +35,7 @@ abstract class BaseFragment : Fragment(), NetworkStatusListener {
     protected var htspVersion: Int = 0
     protected var isNetworkAvailable: Boolean = false
 
+    protected lateinit var mainViewModel: MainViewModel
     protected lateinit var menuUtils: MenuUtils
     lateinit var serverStatus: ServerStatus
 
@@ -51,11 +54,13 @@ abstract class BaseFragment : Fragment(), NetworkStatusListener {
             isNetworkAvailable = (activity as NetworkStatusListener).onNetworkIsAvailable()
         }
 
+        mainViewModel = ViewModelProviders.of(activity as BaseActivity).get(MainViewModel::class.java)
+
         menuUtils = MenuUtils(activity!!)
         mainFrameLayout = activity?.findViewById(R.id.main)
         detailsFrameLayout = activity?.findViewById(R.id.details)
 
-        serverStatus = appRepository.serverStatusData.activeItem
+        serverStatus = mainViewModel.activeServerStatus
         htspVersion = serverStatus.htspVersion
         isUnlocked = MainApplication.getInstance().isUnlocked
 
