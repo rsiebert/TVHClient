@@ -5,7 +5,6 @@ import android.app.Activity
 import android.app.DownloadManager
 import android.app.Service
 import android.content.Intent
-import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
@@ -14,44 +13,25 @@ import android.os.Handler
 import android.util.Base64
 import androidx.core.app.ActivityCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.preference.PreferenceManager
 import com.google.android.material.snackbar.Snackbar
-import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.data.repository.AppRepository
 import org.tvheadend.tvhclient.domain.entity.Connection
 import org.tvheadend.tvhclient.domain.entity.Recording
 import org.tvheadend.tvhclient.domain.entity.ServerStatus
 import org.tvheadend.tvhclient.ui.common.SnackbarMessageReceiver
 import timber.log.Timber
-import javax.inject.Inject
 
-class DownloadRecordingManager(private val activity: Activity, dvrId: Int) {
+class DownloadRecordingManager(private val activity: Activity, private val connection: Connection, private val serverStatus: ServerStatus, private val recording: Recording) {
 
-    @Inject
-    lateinit var appRepository: AppRepository
-    @Inject
-    lateinit var sharedPreferences: SharedPreferences
-
-    private lateinit var recording: Recording
-    private var connection: Connection
-    private val serverStatus: ServerStatus
     private val downloadManager: DownloadManager
     private var lastDownloadId: Long = 0
 
     init {
-        Timber.d("Initializing download manager, given recording id is $dvrId")
-        MainApplication.getComponent().inject(this)
-
-        connection = appRepository.connectionData.activeItem
-        serverStatus = appRepository.serverStatusData.activeItem
+        Timber.d("Initializing download manager, given recording id is ${recording.id}")
         downloadManager = activity.getSystemService(Service.DOWNLOAD_SERVICE) as DownloadManager
-
-        if (dvrId > 0) {
-            recording = appRepository.recordingData.getItemById(dvrId)
-            Timber.d("Recording is not null")
-            if (isStoragePermissionGranted) {
-                startDownload()
-            }
+        if (isStoragePermissionGranted) {
+            startDownload()
         }
     }
 
@@ -59,7 +39,8 @@ class DownloadRecordingManager(private val activity: Activity, dvrId: Int) {
         get() {
             // The path that can be specified can only be in the external storage.
             // Therefore /storage/emulated/0 is fixed, only the location within this folder can be changed
-            val downloadDirectory = sharedPreferences.getString("download_directory", Environment.DIRECTORY_DOWNLOADS)
+            val downloadDirectory = PreferenceManager.getDefaultSharedPreferences(activity)
+                    .getString("download_directory", Environment.DIRECTORY_DOWNLOADS)
             val downloadUrl = "http://" +
                     connection.hostname + ":" +
                     connection.streamingPort +
