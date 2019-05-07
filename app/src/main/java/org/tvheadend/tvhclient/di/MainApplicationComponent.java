@@ -10,19 +10,14 @@ import org.tvheadend.tvhclient.data.service.HtspService;
 import org.tvheadend.tvhclient.di.modules.MainApplicationModule;
 import org.tvheadend.tvhclient.di.modules.RepositoryModule;
 import org.tvheadend.tvhclient.di.modules.SharedPreferencesModule;
-import org.tvheadend.tvhclient.ui.base.BaseFragment;
 import org.tvheadend.tvhclient.ui.common.MenuUtils;
 import org.tvheadend.tvhclient.ui.features.MainActivity;
 import org.tvheadend.tvhclient.ui.features.MainViewModel;
 import org.tvheadend.tvhclient.ui.features.channels.BaseChannelViewModel;
-import org.tvheadend.tvhclient.ui.features.download.DownloadRecordingManager;
 import org.tvheadend.tvhclient.ui.features.dvr.recordings.RecordingViewModel;
 import org.tvheadend.tvhclient.ui.features.dvr.series_recordings.SeriesRecordingViewModel;
 import org.tvheadend.tvhclient.ui.features.dvr.timer_recordings.TimerRecordingViewModel;
-import org.tvheadend.tvhclient.ui.features.epg.EpgViewPagerFragment;
-import org.tvheadend.tvhclient.ui.features.playback.external.BasePlaybackActivity;
 import org.tvheadend.tvhclient.ui.features.playback.external.ExternalPlayerViewModel;
-import org.tvheadend.tvhclient.ui.features.playback.internal.PlaybackActivity;
 import org.tvheadend.tvhclient.ui.features.playback.internal.PlayerViewModel;
 import org.tvheadend.tvhclient.ui.features.programs.ProgramViewModel;
 import org.tvheadend.tvhclient.ui.features.settings.BasePreferenceFragment;
@@ -51,49 +46,44 @@ public interface MainApplicationComponent {
 
     void inject(MainApplication mainApplication);
 
-    void inject(RecordingViewModel recordingViewModel);
 
-    void inject(BaseFragment baseFragment);
+    void inject(MainViewModel mainViewModel);
 
-    void inject(BasePreferenceFragment basePreferenceFragment);
+    void inject(ConnectionViewModel connectionViewModel);
+
+    void inject(BaseChannelViewModel baseChannelViewModel);
 
     void inject(ProgramViewModel programViewModel);
+
+    void inject(RecordingViewModel recordingViewModel);
 
     void inject(TimerRecordingViewModel timerRecordingViewModel);
 
     void inject(SeriesRecordingViewModel seriesRecordingViewModel);
 
-    void inject(BasePlaybackActivity basePlayActivity);
-
-    void inject(MenuUtils menuUtils);
-
-    void inject(SettingsListConnectionsFragment settingsListConnectionsFragment);
-
-    void inject(ConnectionViewModel connectionViewModel);
-
-    void inject(MigrateUtils migrateUtils);
-
-    void inject(DownloadRecordingManager downloadRecordingManager);
-
-    void inject(MainActivity mainActivity);
-
-    void inject(StartupFragment startupFragment);
-
-    void inject(EpgViewPagerFragment epgViewPagerFragment);
-
-    void inject(SettingsConnectionBaseFragment settingsConnectionBaseFragment);
-
-    void inject(BaseChannelViewModel baseChannelViewModel);
-
-    void inject(HtspService htspService);
-
-    void inject(HtspIntentService htspIntentService);
-
-    void inject(PlaybackActivity playbackActivity);
-
     void inject(PlayerViewModel playerViewModel);
 
     void inject(ExternalPlayerViewModel externalPlayerViewModel);
 
-    void inject(MainViewModel mainViewModel);
+
+    void inject(MainActivity mainActivity);
+
+
+    void inject(MenuUtils menuUtils);
+
+    void inject(MigrateUtils migrateUtils);
+
+
+    void inject(BasePreferenceFragment basePreferenceFragment);
+
+    void inject(SettingsListConnectionsFragment settingsListConnectionsFragment);
+
+    void inject(StartupFragment startupFragment);
+
+    void inject(SettingsConnectionBaseFragment settingsConnectionBaseFragment);
+
+
+    void inject(HtspService htspService);
+
+    void inject(HtspIntentService htspIntentService);
 }

@@ -50,9 +50,9 @@ class SeriesRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, S
         else
             getString(R.string.search_results))
 
-        recyclerViewAdapter = SeriesRecordingRecyclerViewAdapter(isDualPane, this, htspVersion)
-        recycler_view.layoutManager = LinearLayoutManager(applicationContext)
-        recycler_view.addItemDecoration(DividerItemDecoration(applicationContext, LinearLayoutManager.VERTICAL))
+        recyclerViewAdapter = SeriesRecordingRecyclerViewAdapter(isDualPane, this, serverStatus.htspVersion)
+        recycler_view.layoutManager = LinearLayoutManager(activity)
+        recycler_view.addItemDecoration(DividerItemDecoration(activity, LinearLayoutManager.VERTICAL))
         recycler_view.itemAnimator = DefaultItemAnimator()
         recycler_view.adapter = recyclerViewAdapter
 

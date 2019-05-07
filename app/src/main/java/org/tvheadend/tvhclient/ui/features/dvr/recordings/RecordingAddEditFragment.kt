@@ -23,7 +23,6 @@ class RecordingAddEditFragment : BaseFragment(), BackPressedInterface, Recording
 
     private lateinit var viewModel: RecordingViewModel
     private lateinit var recordingProfilesList: Array<String>
-    private lateinit var channelList: List<Channel>
     private var profile: ServerProfile? = null
 
     private// Pass on seconds not milliseconds
@@ -63,13 +62,9 @@ class RecordingAddEditFragment : BaseFragment(), BackPressedInterface, Recording
 
         viewModel = ViewModelProviders.of(activity!!).get(RecordingViewModel::class.java)
 
-        recordingProfilesList = appRepository.serverProfileData.recordingProfileNames
-        profile = appRepository.serverProfileData.getItemById(serverStatus.recordingServerProfileId)
+        recordingProfilesList = mainViewModel.getRecordingProfileNames()
+        profile = mainViewModel.getRecordingProfile()
         viewModel.recordingProfileNameId = getSelectedProfileId(profile, recordingProfilesList)
-
-        val defaultChannelSortOrder = resources.getString(R.string.pref_default_channel_sort_order)
-        val channelSortOrder = Integer.valueOf(sharedPreferences.getString("channel_sort_order", defaultChannelSortOrder) ?: defaultChannelSortOrder)
-        channelList = appRepository.channelData.getChannels(channelSortOrder)
 
         if (savedInstanceState == null) {
             viewModel.loadRecordingByIdSync(arguments?.getInt("id", 0) ?: 0)
@@ -87,20 +82,20 @@ class RecordingAddEditFragment : BaseFragment(), BackPressedInterface, Recording
     private fun updateUI() {
         val ctx = context ?: return
 
-        title_label.visibleOrGone(htspVersion >= 21)
-        title.visibleOrGone(htspVersion >= 21)
+        title_label.visibleOrGone(serverStatus.htspVersion >= 21)
+        title.visibleOrGone(serverStatus.htspVersion >= 21)
         title.setText(viewModel.recording.title)
 
-        subtitle_label.visibleOrGone(htspVersion >= 21)
+        subtitle_label.visibleOrGone(serverStatus.htspVersion >= 21)
         subtitle.visibleOrGone(serverStatus.htspVersion >= 21)
         subtitle.setText(viewModel.recording.subtitle)
 
-        summary_label.visibleOrGone(htspVersion >= 21)
-        summary.visibleOrGone(htspVersion >= 21)
+        summary_label.visibleOrGone(serverStatus.htspVersion >= 21)
+        summary.visibleOrGone(serverStatus.htspVersion >= 21)
         summary.setText(viewModel.recording.summary)
 
-        description_label.visibleOrGone(htspVersion >= 21)
-        description.visibleOrGone(htspVersion >= 21)
+        description_label.visibleOrGone(serverStatus.htspVersion >= 21)
+        description.visibleOrGone(serverStatus.htspVersion >= 21)
         description.setText(viewModel.recording.description)
 
         stop_time.text = getTimeStringFromTimeInMillis(viewModel.recording.stop)
@@ -119,11 +114,11 @@ class RecordingAddEditFragment : BaseFragment(), BackPressedInterface, Recording
             channel_name.setOnClickListener {
                 // Determine if the server supports recording on all channels
                 val allowRecordingOnAllChannels = serverStatus.htspVersion >= 21
-                handleChannelListSelection(ctx, channelList, allowRecordingOnAllChannels, this@RecordingAddEditFragment)
+                handleChannelListSelection(ctx, mainViewModel.getChannelList(), allowRecordingOnAllChannels, this@RecordingAddEditFragment)
             }
         }
 
-        is_enabled.visibleOrGone(htspVersion >= 23 && !viewModel.recording.isRecording)
+        is_enabled.visibleOrGone(serverStatus.htspVersion >= 23 && !viewModel.recording.isRecording)
         is_enabled.isChecked = viewModel.recording.isEnabled
 
         priority.visibleOrGone(!viewModel.recording.isRecording)

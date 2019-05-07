@@ -89,8 +89,8 @@ class StatusFragment : BaseFragment() {
         val text = "${mainViewModel.activeConnection.name} (${mainViewModel.activeConnection.hostname})"
         connection_view.text = text
 
-        series_recordings_view.visibility = if (mainViewModel.activeServerStatus.htspVersion >= 13) View.VISIBLE else View.GONE
-        timer_recordings_view.visibility = if (mainViewModel.activeServerStatus.htspVersion >= 18 && isUnlocked) View.VISIBLE else View.GONE
+        series_recordings_view.visibility = if (serverStatus.htspVersion >= 13) View.VISIBLE else View.GONE
+        timer_recordings_view.visibility = if (serverStatus.htspVersion >= 18 && isUnlocked) View.VISIBLE else View.GONE
 
         mainViewModel.channelCount.observe(viewLifecycleOwner, Observer { count ->
             val channelCountText = "$count ${getString(R.string.available)}"
@@ -132,7 +132,7 @@ class StatusFragment : BaseFragment() {
                 for (rec in recordings) {
                     if (rec.isRecording) {
                         currentRecText.append(getString(R.string.currently_recording)).append(": ").append(rec.title)
-                        val channel = appRepository.channelData.getItemById(rec.channelId)
+                        val channel = mainViewModel.getChannelById(rec.channelId)
                         if (channel != null) {
                             currentRecText.append(" (").append(getString(R.string.channel)).append(" ").append(channel.name).append(")\n")
                         }

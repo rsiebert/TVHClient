@@ -2,17 +2,18 @@ package org.tvheadend.tvhclient.data.service
 
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.core.app.JobIntentService
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.preference.PreferenceManager
 import org.tvheadend.htsp.*
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.data.repository.AppRepository
 import org.tvheadend.tvhclient.domain.entity.Connection
 import org.tvheadend.tvhclient.domain.entity.Program
+import org.tvheadend.tvhclient.domain.entity.ServerStatus
 import org.tvheadend.tvhclient.util.convertUrlToHashString
 import timber.log.Timber
 import java.io.*
@@ -27,14 +28,10 @@ class HtspIntentService : JobIntentService(), HtspConnectionStateListener {
     private val execService: ScheduledExecutorService
     private var htspConnection: HtspConnection
     private var connection: Connection
-    private val htspVersion: Int
+    private val serverStatus: ServerStatus
 
     @Inject
-    lateinit var appContext: Context
-    @Inject
     lateinit var appRepository: AppRepository
-    @Inject
-    lateinit var sharedPreferences: SharedPreferences
 
     private val pendingEventOps = ArrayList<Program>()
     private val authenticationLock = Object()
@@ -44,9 +41,9 @@ class HtspIntentService : JobIntentService(), HtspConnectionStateListener {
         MainApplication.getComponent().inject(this)
         execService = Executors.newScheduledThreadPool(10)
         connection = appRepository.connectionData.activeItem
+        serverStatus = appRepository.serverStatusData.activeItem
 
-        htspVersion = appRepository.serverStatusData.activeItem.htspVersion
-        val connectionTimeout = Integer.valueOf(sharedPreferences.getString("connection_timeout", appContext.resources.getString(R.string.pref_default_connection_timeout))!!) * 1000
+        val connectionTimeout = Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(this).getString("connection_timeout", resources.getString(R.string.pref_default_connection_timeout))!!) * 1000
         htspConnection = HtspConnection(
                 connection.username, connection.password,
                 connection.hostname, connection.port,
@@ -147,7 +144,7 @@ class HtspIntentService : JobIntentService(), HtspConnectionStateListener {
                 val ticketIntent = Intent("ticket")
                 ticketIntent.putExtra("path", response.getString("path"))
                 ticketIntent.putExtra("ticket", response.getString("ticket"))
-                LocalBroadcastManager.getInstance(appContext).sendBroadcast(ticketIntent)
+                LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(ticketIntent)
             }
         })
     }
@@ -235,7 +232,7 @@ class HtspIntentService : JobIntentService(), HtspConnectionStateListener {
         var inputStream: InputStream
         when {
             url.startsWith("http") -> inputStream = BufferedInputStream(URL(url).openStream())
-            htspVersion > 9 -> inputStream = HtspFileInputStream(htspConnection, url)
+            serverStatus.htspVersion > 9 -> inputStream = HtspFileInputStream(htspConnection, url)
             else -> return
         }
 
@@ -249,7 +246,7 @@ class HtspIntentService : JobIntentService(), HtspConnectionStateListener {
 
         if (url.startsWith("http")) {
             inputStream = BufferedInputStream(URL(url).openStream())
-        } else if (htspVersion > 9) {
+        } else if (serverStatus.htspVersion > 9) {
             inputStream = HtspFileInputStream(htspConnection, url)
         }
 

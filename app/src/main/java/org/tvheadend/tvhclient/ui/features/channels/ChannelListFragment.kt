@@ -38,6 +38,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
     private var selectedTimeOffset: Int = 0
     private var selectedListPosition: Int = 0
     private var searchQuery: String = ""
+    private var channelCount: Int = 0
 
     // Used in the time selection dialog to show a time entry every x hours.
     private val intervalInHours = 2
@@ -68,8 +69,8 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
         }
 
         recyclerViewAdapter = ChannelRecyclerViewAdapter(isDualPane, this)
-        recycler_view.layoutManager = LinearLayoutManager(applicationContext)
-        recycler_view.addItemDecoration(DividerItemDecoration(applicationContext, LinearLayoutManager.VERTICAL))
+        recycler_view.layoutManager = LinearLayoutManager(activity)
+        recycler_view.addItemDecoration(DividerItemDecoration(activity, LinearLayoutManager.VERTICAL))
         recycler_view.itemAnimator = DefaultItemAnimator()
         recycler_view.adapter = recyclerViewAdapter
 
@@ -132,6 +133,10 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
                     }
                 }
             }
+        })
+
+        mainViewModel.channelCount.observe(viewLifecycleOwner, Observer { count ->
+            channelCount = count
         })
 
         // Initiate a timer that will update the view model data every minute
@@ -218,7 +223,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
 
         return when (item.itemId) {
             R.id.menu_tags ->
-                showChannelTagSelectionDialog(ctx, channelTags.toMutableList(), appRepository.channelData.getItems().size, this)
+                showChannelTagSelectionDialog(ctx, channelTags.toMutableList(), channelCount, this)
             R.id.menu_timeframe ->
                 menuUtils.handleMenuTimeSelection(selectedTimeOffset, intervalInHours, 12, this)
             R.id.menu_genre_color_info_channels ->
@@ -226,7 +231,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
             R.id.menu_sort_order ->
                 menuUtils.handleMenuChannelSortOrderSelection(this)
             R.id.menu_wol -> {
-                val connection = appRepository.connectionData.activeItem
+                val connection = mainViewModel.activeConnection
                 WakeOnLanTask(ctx, connection).execute()
                 true
             }
@@ -312,14 +317,14 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
         }
 
         val ctx = context ?: return
-        val program = appRepository.programData.getItemById(channel.programId)
-        val recording = appRepository.recordingData.getItemByEventId(channel.programId)
+        val program = mainViewModel.getProgramById(channel.programId)
+        val recording = mainViewModel.getRecordingById(channel.programId)
 
         val popupMenu = PopupMenu(ctx, view)
         popupMenu.menuInflater.inflate(R.menu.program_popup_and_toolbar_menu, popupMenu.menu)
         popupMenu.menuInflater.inflate(R.menu.external_search_options_menu, popupMenu.menu)
 
-        prepareMenu(ctx, popupMenu.menu, program, recording, isNetworkAvailable, htspVersion, isUnlocked)
+        prepareMenu(ctx, popupMenu.menu, program, recording, isNetworkAvailable, serverStatus.htspVersion, isUnlocked)
         prepareSearchMenu(popupMenu.menu, channel.programTitle, isNetworkAvailable)
         popupMenu.menu.findItem(R.id.menu_play).isVisible = isNetworkAvailable
 
@@ -349,10 +354,9 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
                 R.id.menu_cast ->
                     return@setOnMenuItemClickListener menuUtils.handleMenuCast("channelId", channel.id)
                 R.id.menu_add_notification -> {
-                    val profile = appRepository.serverProfileData.getItemById(serverStatus.recordingServerProfileId)
                     if (program != null) {
                         (activity as AppCompatActivity?)?.let {
-                            addNotification(it, program, profile)
+                            addNotification(it, program, mainViewModel.getRecordingProfile())
                         }
                     }
                     return@setOnMenuItemClickListener true

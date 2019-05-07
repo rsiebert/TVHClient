@@ -22,7 +22,6 @@ import timber.log.Timber
 class TimerRecordingAddEditFragment : BaseFragment(), BackPressedInterface, RecordingConfigSelectedListener, DatePickerFragment.Listener, TimePickerFragment.Listener {
 
     private lateinit var recordingProfilesList: Array<String>
-    private lateinit var channelList: List<Channel>
     private var profile: ServerProfile? = null
 
     lateinit var viewModel: TimerRecordingViewModel
@@ -70,13 +69,9 @@ class TimerRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Reco
 
         viewModel = ViewModelProviders.of(activity!!).get(TimerRecordingViewModel::class.java)
 
-        recordingProfilesList = appRepository.serverProfileData.recordingProfileNames
-        profile = appRepository.serverProfileData.getItemById(serverStatus.recordingServerProfileId)
+        recordingProfilesList = mainViewModel.getRecordingProfileNames()
+        profile = mainViewModel.getRecordingProfile()
         viewModel.recordingProfileNameId = getSelectedProfileId(profile, recordingProfilesList)
-
-        val defaultChannelSortOrder = resources.getString(R.string.pref_default_channel_sort_order)
-        val channelSortOrder = Integer.valueOf(sharedPreferences.getString("channel_sort_order", defaultChannelSortOrder) ?: defaultChannelSortOrder)
-        channelList = appRepository.channelData.getChannels(channelSortOrder)
 
         if (savedInstanceState == null) {
             viewModel.loadRecordingByIdSync(arguments?.getString("id", "") ?: "")
@@ -94,21 +89,21 @@ class TimerRecordingAddEditFragment : BaseFragment(), BackPressedInterface, Reco
     private fun updateUI() {
         val ctx = context ?: return
 
-        is_enabled.visibleOrGone(htspVersion >= 19)
+        is_enabled.visibleOrGone(serverStatus.htspVersion >= 19)
         is_enabled.isChecked = viewModel.recording.isEnabled
 
         title.setText(viewModel.recording.title)
         name.setText(viewModel.recording.name)
 
-        directory_label.visibleOrGone(htspVersion >= 19)
-        directory.visibleOrGone(htspVersion >= 19)
+        directory_label.visibleOrGone(serverStatus.htspVersion >= 19)
+        directory.visibleOrGone(serverStatus.htspVersion >= 19)
         directory.setText(viewModel.recording.directory)
 
         channel_name.text = viewModel.recording.channelName ?: getString(R.string.all_channels)
         channel_name.setOnClickListener {
             // Determine if the server supports recording on all channels
-            val allowRecordingOnAllChannels = htspVersion >= 21
-            handleChannelListSelection(ctx, channelList, allowRecordingOnAllChannels, this@TimerRecordingAddEditFragment)
+            val allowRecordingOnAllChannels = serverStatus.htspVersion >= 21
+            handleChannelListSelection(ctx, mainViewModel.getChannelList(), allowRecordingOnAllChannels, this@TimerRecordingAddEditFragment)
         }
 
         priority.text = getPriorityName(ctx, viewModel.recording.priority)

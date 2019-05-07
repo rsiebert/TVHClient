@@ -1,7 +1,5 @@
 package org.tvheadend.tvhclient.ui.features.epg
 
-import android.content.Context
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Handler
 import android.util.DisplayMetrics
@@ -20,17 +18,10 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE
-import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.databinding.EpgViewpagerFragmentBinding
-import javax.inject.Inject
 
 class EpgViewPagerFragment : Fragment(), EpgScrollInterface {
-
-    @Inject
-    lateinit var appContext: Context
-    @Inject
-    lateinit var sharedPreferences: SharedPreferences
 
     private lateinit var constraintLayout: ConstraintLayout
     private lateinit var recyclerView: RecyclerView
@@ -72,7 +63,6 @@ class EpgViewPagerFragment : Fragment(), EpgScrollInterface {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        MainApplication.getComponent().inject(this)
 
         viewModel = ViewModelProviders.of(activity as AppCompatActivity).get(EpgViewModel::class.java)
 
@@ -96,8 +86,8 @@ class EpgViewPagerFragment : Fragment(), EpgScrollInterface {
         pixelsPerMinute = (displayWidth - 221).toFloat() / (60.0f * viewModel.hoursToShow.toFloat())
 
         recyclerViewAdapter = EpgViewPagerRecyclerViewAdapter(requireActivity(), pixelsPerMinute, viewModel.startTimes[fragmentId], viewModel.endTimes[fragmentId])
-        recyclerViewLinearLayoutManager = LinearLayoutManager(appContext, RecyclerView.VERTICAL, false)
-        recyclerView.addItemDecoration(DividerItemDecoration(appContext, LinearLayoutManager.VERTICAL))
+        recyclerViewLinearLayoutManager = LinearLayoutManager(activity, RecyclerView.VERTICAL, false)
+        recyclerView.addItemDecoration(DividerItemDecoration(activity, LinearLayoutManager.VERTICAL))
         recyclerView.layoutManager = recyclerViewLinearLayoutManager
         recyclerView.setHasFixedSize(true)
         recyclerView.adapter = recyclerViewAdapter

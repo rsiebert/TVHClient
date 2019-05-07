@@ -44,6 +44,7 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
     private lateinit var channelListRecyclerViewLayoutManager: LinearLayoutManager
     private var programIdToBeEditedWhenBeingRecorded = 0
     private var channelTags: List<ChannelTag> = ArrayList()
+    private var channelCount: Int = 0
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.epg_main_fragment, container, false)
@@ -141,6 +142,10 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
                 }
             }
         })
+
+        mainViewModel.channelCount.observe(viewLifecycleOwner, Observer { count ->
+            channelCount = count
+        })
     }
 
     override fun onResume() {
@@ -173,7 +178,7 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
         val ctx = context ?: return super.onOptionsItemSelected(item)
         return when (item.itemId) {
             R.id.menu_tags ->
-                showChannelTagSelectionDialog(ctx, channelTags.toMutableList(), appRepository.channelData.getItems().size, this)
+                showChannelTagSelectionDialog(ctx, channelTags.toMutableList(), channelCount, this)
             R.id.menu_timeframe ->
                 menuUtils.handleMenuTimeSelection(viewModel.selectedTimeOffset, viewModel.hoursToShow, viewModel.hoursToShow * viewModel.daysToShow, this)
             R.id.menu_genre_color_info_channels ->
@@ -229,13 +234,13 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
             return
         }
 
-        val recording = appRepository.recordingData.getItemByEventId(program.eventId)
+        val recording = mainViewModel.getRecordingById(program.eventId)
 
         val popupMenu = PopupMenu(ctx, view)
         popupMenu.menuInflater.inflate(R.menu.program_popup_and_toolbar_menu, popupMenu.menu)
         popupMenu.menuInflater.inflate(R.menu.external_search_options_menu, popupMenu.menu)
 
-        prepareMenu(ctx, popupMenu.menu, program, program.recording, isNetworkAvailable, htspVersion, isUnlocked)
+        prepareMenu(ctx, popupMenu.menu, program, program.recording, isNetworkAvailable, serverStatus.htspVersion, isUnlocked)
         prepareSearchMenu(popupMenu.menu, program.title, isNetworkAvailable)
 
         popupMenu.setOnMenuItemClickListener { item ->
@@ -265,9 +270,8 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
                 R.id.menu_cast ->
                     return@setOnMenuItemClickListener menuUtils.handleMenuCast("channelId", program.channelId)
                 R.id.menu_add_notification -> {
-                    val profile = appRepository.serverProfileData.getItemById(serverStatus.recordingServerProfileId)
                     activity?.let {
-                        addNotification(it, program, profile)
+                        addNotification(it, program, mainViewModel.getRecordingProfile())
                     }
                     return@setOnMenuItemClickListener true
                 }

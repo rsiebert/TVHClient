@@ -49,7 +49,7 @@ class TimerRecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback {
             if (rec != null) {
                 recording = rec
                 itemBinding.recording = recording
-                itemBinding.htspVersion = htspVersion
+                itemBinding.htspVersion = serverStatus.htspVersion
                 itemBinding.isDualPane = isDualPane
                 // The toolbar is hidden as a default to prevent pressing any icons if no recording
                 // has been loaded yet. The toolbar is shown here because a recording was loaded

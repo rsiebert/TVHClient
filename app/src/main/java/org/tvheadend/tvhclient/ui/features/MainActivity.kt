@@ -9,7 +9,6 @@ import android.content.pm.PackageManager
 import android.database.Cursor
 import android.os.Bundle
 import android.os.Handler
-import android.preference.PreferenceManager
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
@@ -20,6 +19,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.preference.PreferenceManager
 import com.google.android.gms.cast.framework.*
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R

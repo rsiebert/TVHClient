@@ -1,33 +1,30 @@
 package org.tvheadend.tvhclient.ui.features.startup
 
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.startup_fragment.*
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.data.repository.AppRepository
 import org.tvheadend.tvhclient.data.service.SyncStateReceiver
+import org.tvheadend.tvhclient.ui.base.BaseActivity
 import org.tvheadend.tvhclient.ui.common.MenuUtils
 import org.tvheadend.tvhclient.ui.common.callbacks.ToolbarInterface
 import org.tvheadend.tvhclient.ui.common.invisible
 import org.tvheadend.tvhclient.ui.common.visible
 import org.tvheadend.tvhclient.ui.features.MainActivity
+import org.tvheadend.tvhclient.ui.features.MainViewModel
 import org.tvheadend.tvhclient.ui.features.settings.SettingsActivity
 import timber.log.Timber
-import javax.inject.Inject
 
 // TODO add nice background image
 
 class StartupFragment : Fragment() {
 
-    @Inject
-    lateinit var appRepository: AppRepository
-    @Inject
-    lateinit var sharedPreferences: SharedPreferences
-
+    protected lateinit var mainViewModel: MainViewModel
     private lateinit var stateText: String
     private lateinit var detailsText: String
     private lateinit var state: SyncStateReceiver.State
@@ -54,6 +51,28 @@ class StartupFragment : Fragment() {
             stateText = getString(R.string.initializing)
             detailsText = ""
         }
+
+        mainViewModel = ViewModelProviders.of(activity as BaseActivity).get(MainViewModel::class.java)
+        mainViewModel.connectionCount.observe(viewLifecycleOwner, Observer { count ->
+            if (count == 0) {
+                Timber.d("No connection available, showing settings button")
+                stateText = getString(R.string.no_connection_available)
+                progress_bar.invisible()
+                add_connection_button.visible()
+                add_connection_button.setOnClickListener { showSettingsAddNewConnection() }
+            } else {
+                if (mainViewModel.activeConnection.id == -1) {
+                    Timber.d("No active connection available, showing settings button")
+                    stateText = getString(R.string.no_connection_active_advice)
+                    progress_bar.invisible()
+                    settings_button.visible()
+                    settings_button.setOnClickListener { showConnectionListSettings() }
+                } else {
+                    Timber.d("Connection is available and active, showing contents")
+                    showContentScreen()
+                }
+            }
+        })
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -63,41 +82,10 @@ class StartupFragment : Fragment() {
         super.onSaveInstanceState(outState)
     }
 
-    private fun handleStartupProcedure() {
-        when {
-            appRepository.connectionData.getItems().isEmpty() -> {
-                Timber.d("No connection available, showing settings button")
-                stateText = getString(R.string.no_connection_available)
-                progress_bar.invisible()
-                add_connection_button.visible()
-                add_connection_button.setOnClickListener { showSettingsAddNewConnection() }
-            }
-            appRepository.connectionData.activeItemId == -1 -> {
-                Timber.d("No active connection available, showing settings button")
-                stateText = getString(R.string.no_connection_active_advice)
-                progress_bar.invisible()
-                settings_button.visible()
-                settings_button.setOnClickListener { showConnectionListSettings() }
-            }
-            else -> {
-                Timber.d("Connection is available and active, showing contents")
-                showContentScreen()
-            }
-        }
-
-        state_view.text = stateText
-        details_view.text = detailsText
-    }
-
-    override fun onResume() {
-        super.onResume()
-        handleStartupProcedure()
-    }
-
     override fun onPrepareOptionsMenu(menu: Menu) {
         super.onPrepareOptionsMenu(menu)
         // Do not show the reconnect menu in case no connections are available or none is active
-        menu.findItem(R.id.menu_refresh)?.isVisible = (appRepository.connectionData.activeItemId >= 0)
+        menu.findItem(R.id.menu_refresh)?.isVisible = (mainViewModel.activeConnection.id > 0)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

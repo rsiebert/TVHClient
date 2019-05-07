@@ -48,7 +48,7 @@ class RecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback, Downl
             if (rec != null) {
                 recording = rec
                 itemBinding.recording = recording
-                itemBinding.htspVersion = htspVersion
+                itemBinding.htspVersion = serverStatus.htspVersion
                 // The toolbar is hidden as a default to prevent pressing any icons if no recording
                 // has been loaded yet. The toolbar is shown here because a recording was loaded
                 nested_toolbar.visible()
@@ -67,7 +67,7 @@ class RecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback, Downl
         // Show or hide search menu items in the main toolbar
         prepareSearchMenu(menu, recording.title, isNetworkAvailable)
         // Show or hide menus of the nested toolbar
-        prepareMenu(ctx, nested_toolbar.menu, null, recording, isNetworkAvailable, htspVersion, isUnlocked)
+        prepareMenu(ctx, nested_toolbar.menu, null, recording, isNetworkAvailable, serverStatus.htspVersion, isUnlocked)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -99,7 +99,7 @@ class RecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback, Downl
                 return menuUtils.handleMenuCast("dvrId", recording.id)
             R.id.menu_download -> {
                 activity?.let {
-                    DownloadRecordingManager(it, recording.id)
+                    DownloadRecordingManager(it, mainViewModel.activeConnection, mainViewModel.activeServerStatus, recording)
                 }
                 return true
             }
@@ -136,7 +136,9 @@ class RecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback, Downl
 
     override fun downloadRecording() {
         activity?.let {
-            DownloadRecordingManager(it, recording?.id ?: 0)
+            recording?.let { rec ->
+                DownloadRecordingManager(it, mainViewModel.activeConnection, mainViewModel.activeServerStatus, rec)
+            }
         }
     }
 

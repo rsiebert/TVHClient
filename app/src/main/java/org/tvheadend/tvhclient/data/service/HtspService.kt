@@ -4,12 +4,12 @@ import android.app.NotificationManager
 import android.app.Service
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.IBinder
 import androidx.core.app.NotificationManagerCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.preference.PreferenceManager
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
@@ -39,14 +39,11 @@ import javax.inject.Inject
 class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener {
 
     @Inject
-    lateinit var appContext: Context
-    @Inject
     lateinit var appRepository: AppRepository
-    @Inject
-    lateinit var sharedPreferences: SharedPreferences
 
     private lateinit var execService: ScheduledExecutorService
     private lateinit var connection: Connection
+    private lateinit var serverStatus: ServerStatus
     private var htspConnection: HtspConnection? = null
 
     private val pendingEventOps = ArrayList<Program>()
@@ -58,8 +55,6 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
     private var syncEventsRequired: Boolean = false
     private var syncRequired: Boolean = false
     private var firstEventReceived = false
-    private var htspVersion = 13
-    private var serverStatus: ServerStatus? = null
     private var connectionTimeout: Int = 0
 
     override fun onCreate() {
@@ -68,8 +63,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
 
         execService = Executors.newScheduledThreadPool(10)
         serverStatus = appRepository.serverStatusData.activeItem
-        htspVersion = serverStatus?.htspVersion ?: 13
-        connectionTimeout = Integer.valueOf(sharedPreferences.getString("connection_timeout", appContext.resources.getString(R.string.pref_default_connection_timeout))!!) * 1000
+        connectionTimeout = Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(this).getString("connection_timeout", resources.getString(R.string.pref_default_connection_timeout))!!) * 1000
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -268,7 +262,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         enableAsyncMetadataRequest.method = "enableAsyncMetadata"
 
 
-        val epgMaxTime = java.lang.Long.parseLong(sharedPreferences.getString("epg_max_time", appContext.resources.getString(R.string.pref_default_epg_max_time))!!)
+        val epgMaxTime = java.lang.Long.parseLong(PreferenceManager.getDefaultSharedPreferences(this).getString("epg_max_time", resources.getString(R.string.pref_default_epg_max_time))!!)
         val currentTimeInSeconds = System.currentTimeMillis() / 1000L
         val lastUpdateTime = connection.lastUpdate
 
@@ -428,7 +422,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
     }
 
     private fun getHttpProfiles() {
-        if (htspVersion >= 26) {
+        if (serverStatus.htspVersion >= 26) {
             val request = HtspMessage()
             request.method = "api"
             request["path"] = "profile/list"
@@ -443,7 +437,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
     }
 
     private fun getSubscriptions() {
-        if (htspVersion >= 26) {
+        if (serverStatus.htspVersion >= 26) {
             val request = HtspMessage()
             request.method = "api"
             request["path"] = "status/subscriptions"
@@ -459,7 +453,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
     }
 
     private fun getInputs() {
-        if (htspVersion >= 26) {
+        if (serverStatus.htspVersion >= 26) {
             val request = HtspMessage()
             request.method = "api"
             request["path"] = "status/inputs"
@@ -516,7 +510,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
 
     private fun setDefaultProfileSelection() {
         Timber.d("Setting default profiles in case none are selected yet")
-        serverStatus?.let {
+        serverStatus.let {
             if (it.htspPlaybackServerProfileId == 0) {
                 for (profile in appRepository.serverProfileData.htspPlaybackProfiles) {
                     if (profile.name.isEqualTo("htsp")) {
@@ -545,8 +539,6 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
                 }
             }
             appRepository.serverStatusData.updateItem(it)
-        } ?: run {
-            Timber.d("Server status is null, can't set default profile selections")
         }
     }
 
@@ -708,7 +700,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
             appRepository.recordingData.addItem(recording)
         }
 
-        addNotification(appContext, recording)
+        addNotification(this, recording)
     }
 
     /**
@@ -723,8 +715,8 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         val updatedRecording = convertMessageToRecordingModel(recording, msg)
         appRepository.recordingData.updateItem(updatedRecording)
 
-        removeNotificationById(appContext, recording.id)
-        if (sharedPreferences.getBoolean("notifications_enabled", appContext.resources.getBoolean(R.bool.pref_default_notifications_enabled))) {
+        removeNotificationById(this, recording.id)
+        if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("notifications_enabled", resources.getBoolean(R.bool.pref_default_notifications_enabled))) {
             if (!recording.isScheduled && !recording.isRecording) {
                 Timber.d("Removing notification for recording ${recording.title}")
                 (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).cancel(recording.id)
@@ -1132,20 +1124,18 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
     }
 
     private fun onServerStatus(message: HtspMessage) {
-        serverStatus?.let {
+        serverStatus.let {
             val updatedServerStatus = convertMessageToServerStatusModel(it, message)
             updatedServerStatus.connectionId = connection.id
             updatedServerStatus.connectionName = connection.name
             Timber.d("Received initial response from server ${updatedServerStatus.serverName}, api version: ${updatedServerStatus.htspVersion}")
 
             appRepository.serverStatusData.updateItem(updatedServerStatus)
-        } ?: run {
-            Timber.d("Server status is null, can't update server status")
         }
     }
 
     private fun onSystemTime(message: HtspMessage) {
-        serverStatus?.let {
+        serverStatus.let {
             val gmtOffsetFromServer = message.getInteger("gmtoffset", 0) * 60 * 1000
             val gmtOffset = gmtOffsetFromServer - daylightSavingOffset
             Timber.d("GMT offset from server is $gmtOffsetFromServer, GMT offset considering daylight saving offset is $gmtOffset")
@@ -1155,20 +1145,16 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
             appRepository.serverStatusData.updateItem(it)
 
             Timber.d("Received system time from server ${it.serverName}, server time: ${it.time}, server gmt offset: ${it.gmtoffset}")
-        } ?: run {
-            Timber.d("Server status is null, can't update system time")
         }
     }
 
     private fun onDiskSpace(message: HtspMessage) {
-        serverStatus?.let {
+        serverStatus.let {
             it.freeDiskSpace = message.getLong("freediskspace", 0)
             it.totalDiskSpace = message.getLong("totaldiskspace", 0)
             appRepository.serverStatusData.updateItem(it)
 
             Timber.d("Received disk space information from server ${it.serverName}, free disk space: ${it.freeDiskSpace}, total disk space: ${it.totalDiskSpace}")
-        } ?: run {
-            Timber.d("Server status is null, can't update disc space")
         }
     }
 
@@ -1177,7 +1163,6 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
      */
     private fun saveAllReceivedChannels() {
         Timber.d("Saving ${pendingChannelOps.size} channels")
-
         if (pendingChannelOps.isNotEmpty()) {
             appRepository.channelData.addItems(pendingChannelOps)
         }
@@ -1296,7 +1281,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         var inputStream: InputStream
         when {
             url.startsWith("http") -> inputStream = BufferedInputStream(URL(url).openStream())
-            htspVersion > 9 -> inputStream = HtspFileInputStream(htspConnection, url)
+            serverStatus.htspVersion > 9 -> inputStream = HtspFileInputStream(htspConnection, url)
             else -> return
         }
 
@@ -1310,11 +1295,11 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
 
         if (url.startsWith("http")) {
             inputStream = BufferedInputStream(URL(url).openStream())
-        } else if (htspVersion > 9) {
+        } else if (serverStatus.htspVersion > 9) {
             inputStream = HtspFileInputStream(htspConnection, url)
         }
 
-        val scale = appContext.resources.displayMetrics.density
+        val scale = resources.displayMetrics.density
         val width = (64 * scale).toInt()
         val height = (64 * scale).toInt()
 
@@ -1344,7 +1329,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         if (iconUrl.isNullOrEmpty()) {
             return
         }
-        val url = getIconUrl(appContext, iconUrl)
+        val url = getIconUrl(this, iconUrl)
         val file = File(url)
         if (!file.exists() || !file.delete()) {
             Timber.d("Could not delete icon ${file.name}")
@@ -1475,7 +1460,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
     }
 
     private fun addDvrEntry(intent: Intent) {
-        val request = convertIntentToDvrMessage(intent, htspVersion)
+        val request = convertIntentToDvrMessage(intent, serverStatus.htspVersion)
         request["method"] = "addDvrEntry"
 
         htspConnection?.sendMessage(request, object : HtspResponseListener {
@@ -1493,7 +1478,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
     }
 
     private fun updateDvrEntry(intent: Intent) {
-        val request = convertIntentToDvrMessage(intent, htspVersion)
+        val request = convertIntentToDvrMessage(intent, serverStatus.htspVersion)
         request["method"] = "updateDvrEntry"
         request["id"] = intent.getIntExtra("id", 0)
 
@@ -1529,7 +1514,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
     }
 
     private fun addAutorecEntry(intent: Intent) {
-        val request = convertIntentToAutorecMessage(intent, htspVersion)
+        val request = convertIntentToAutorecMessage(intent, serverStatus.htspVersion)
         request["method"] = "addAutorecEntry"
 
         htspConnection?.sendMessage(request, object : HtspResponseListener {
@@ -1545,8 +1530,8 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
 
     private fun updateAutorecEntry(intent: Intent) {
         var request = HtspMessage()
-        if (htspVersion >= 25) {
-            request = convertIntentToAutorecMessage(intent, htspVersion)
+        if (serverStatus.htspVersion >= 25) {
+            request = convertIntentToAutorecMessage(intent, serverStatus.htspVersion)
             request["method"] = "updateAutorecEntry"
         } else {
             request["method"] = "deleteAutorecEntry"
@@ -1559,7 +1544,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
                 // not exist on the server. First delete the entry and if this was
                 // successful add a new entry with the new values.
                 val success = response.getInteger("success", 0) == 1
-                if (htspVersion < 25 && success) {
+                if (serverStatus.htspVersion < 25 && success) {
                     addAutorecEntry(intent)
                 } else {
                     if (success) {
@@ -1589,7 +1574,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
     }
 
     private fun addTimerrecEntry(intent: Intent) {
-        val request = convertIntentToTimerecMessage(intent, htspVersion)
+        val request = convertIntentToTimerecMessage(intent, serverStatus.htspVersion)
         request["method"] = "addTimerecEntry"
 
         htspConnection?.sendMessage(request, object : HtspResponseListener {
@@ -1605,8 +1590,8 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
 
     private fun updateTimerrecEntry(intent: Intent) {
         var request = HtspMessage()
-        if (htspVersion >= 25) {
-            request = convertIntentToTimerecMessage(intent, htspVersion)
+        if (serverStatus.htspVersion >= 25) {
+            request = convertIntentToTimerecMessage(intent, serverStatus.htspVersion)
             request["method"] = "updateTimerecEntry"
         } else {
             request["method"] = "deleteTimerecEntry"
@@ -1619,7 +1604,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
                 // not exist on the server. First delete the entry and if this was
                 // successful add a new entry with the new values.
                 val success = response.getInteger("success", 0) == 1
-                if (htspVersion < 25 && success) {
+                if (serverStatus.htspVersion < 25 && success) {
                     addTimerrecEntry(intent)
                 } else {
                     if (success) {

@@ -8,7 +8,6 @@ import androidx.lifecycle.ViewModelProviders
 import org.tvheadend.tvhclient.ui.common.callbacks.ToolbarInterface
 import org.tvheadend.tvhclient.ui.common.onAttach
 import org.tvheadend.tvhclient.ui.features.MainViewModel
-import timber.log.Timber
 
 open class BaseActivity : AppCompatActivity(), ToolbarInterface {
 
@@ -16,7 +15,6 @@ open class BaseActivity : AppCompatActivity(), ToolbarInterface {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Timber.d("Initializing main view model")
         viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
     }
 

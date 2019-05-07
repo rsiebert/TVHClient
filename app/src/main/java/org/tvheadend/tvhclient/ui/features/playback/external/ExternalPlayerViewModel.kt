@@ -1,18 +1,18 @@
 package org.tvheadend.tvhclient.ui.features.playback.external
 
 import android.app.Application
-import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
-import org.tvheadend.tvhclient.MainApplication
-import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.data.repository.AppRepository
+import androidx.preference.PreferenceManager
 import org.tvheadend.htsp.HtspConnection
 import org.tvheadend.htsp.HtspConnectionStateListener
 import org.tvheadend.htsp.HtspMessage
 import org.tvheadend.htsp.HtspResponseListener
+import org.tvheadend.tvhclient.MainApplication
+import org.tvheadend.tvhclient.R
+import org.tvheadend.tvhclient.data.repository.AppRepository
 import org.tvheadend.tvhclient.domain.entity.Channel
 import org.tvheadend.tvhclient.domain.entity.Connection
 import org.tvheadend.tvhclient.domain.entity.Recording
@@ -25,8 +25,6 @@ import javax.inject.Inject
 
 class ExternalPlayerViewModel(application: Application) : AndroidViewModel(application), HtspConnectionStateListener {
 
-    @Inject
-    lateinit var context: Context
     @Inject
     lateinit var sharedPreferences: SharedPreferences
     @Inject
@@ -55,7 +53,7 @@ class ExternalPlayerViewModel(application: Application) : AndroidViewModel(appli
         serverStatus = appRepository.serverStatusData.activeItem
 
         Timber.d("Starting connection")
-        val connectionTimeout = Integer.valueOf(sharedPreferences.getString("connection_timeout", application.resources.getString(R.string.pref_default_connection_timeout))!!) * 1000
+        val connectionTimeout = Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(application).getString("connection_timeout", application.resources.getString(R.string.pref_default_connection_timeout))!!) * 1000
         htspConnection = HtspConnection(
                 connection.username ?: "",
                 connection.password ?: "",

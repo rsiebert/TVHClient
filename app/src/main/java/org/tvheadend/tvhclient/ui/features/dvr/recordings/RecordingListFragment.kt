@@ -44,9 +44,9 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback
             searchQuery = arguments?.getString(SearchManager.QUERY) ?: ""
         }
 
-        recyclerViewAdapter = RecordingRecyclerViewAdapter(isDualPane, this, htspVersion)
-        recycler_view.layoutManager = LinearLayoutManager(applicationContext)
-        recycler_view.addItemDecoration(DividerItemDecoration(applicationContext, LinearLayoutManager.VERTICAL))
+        recyclerViewAdapter = RecordingRecyclerViewAdapter(isDualPane, this, serverStatus.htspVersion)
+        recycler_view.layoutManager = LinearLayoutManager(activity)
+        recycler_view.addItemDecoration(DividerItemDecoration(activity, LinearLayoutManager.VERTICAL))
         recycler_view.itemAnimator = DefaultItemAnimator()
         recycler_view.adapter = recyclerViewAdapter
         viewModel = ViewModelProviders.of(activity!!).get(RecordingViewModel::class.java)
@@ -137,7 +137,7 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback
         popupMenu.menuInflater.inflate(R.menu.recordings_popup_menu, popupMenu.menu)
         popupMenu.menuInflater.inflate(R.menu.external_search_options_menu, popupMenu.menu)
         prepareSearchMenu(popupMenu.menu, recording.title, isNetworkAvailable)
-        prepareMenu(ctx, popupMenu.menu, null, recording, isNetworkAvailable, htspVersion, isUnlocked)
+        prepareMenu(ctx, popupMenu.menu, null, recording, isNetworkAvailable, serverStatus.htspVersion, isUnlocked)
 
         popupMenu.setOnMenuItemClickListener { item ->
             if (onMenuSelected(ctx, item.itemId, recording.title)) {
@@ -156,7 +156,7 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback
                     return@setOnMenuItemClickListener menuUtils.handleMenuCast("dvrId", recording.id)
                 R.id.menu_download -> {
                     activity?.let {
-                        DownloadRecordingManager(it, recording.id)
+                        DownloadRecordingManager(it, mainViewModel.activeConnection, mainViewModel.activeServerStatus, recording)
                     }
                     return@setOnMenuItemClickListener true
                 }
@@ -192,9 +192,9 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback
     }
 
     override fun downloadRecording() {
-        val recording = recyclerViewAdapter.getItem(selectedListPosition)
+        val rec = recyclerViewAdapter.getItem(selectedListPosition) ?: return
         activity?.let {
-            DownloadRecordingManager(it, recording?.id ?: 0)
+            DownloadRecordingManager(it, mainViewModel.activeConnection, mainViewModel.activeServerStatus, rec)
         }
     }
 

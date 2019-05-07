@@ -59,7 +59,7 @@ class ProgramDetailsFragment : BaseFragment() {
             program?.let {
                 Timber.d("Loaded details for program ${it.title}")
                 itemBinding.program = it
-                itemBinding.htspVersion = htspVersion
+                itemBinding.htspVersion = serverStatus.htspVersion
                 itemBinding.isProgramArtworkEnabled = isUnlocked && sharedPreferences.getBoolean("program_artwork_enabled", false)
                 // The toolbar is hidden as a default to prevent pressing any icons if no recording
                 // has been loaded yet. The toolbar is shown here because a recording was loaded
@@ -114,7 +114,7 @@ class ProgramDetailsFragment : BaseFragment() {
         // Show or hide search menu items in the main toolbar
         prepareSearchMenu(menu, program?.title, isNetworkAvailable)
         // Show or hide menus of the nested toolbar
-        prepareMenu(ctx, nested_toolbar.menu, program, program?.recording, isNetworkAvailable, htspVersion, isUnlocked)
+        prepareMenu(ctx, nested_toolbar.menu, program, program?.recording, isNetworkAvailable, serverStatus.htspVersion, isUnlocked)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -161,9 +161,8 @@ class ProgramDetailsFragment : BaseFragment() {
             R.id.menu_cast ->
                 return menuUtils.handleMenuCast("channelId", program.channelId)
             R.id.menu_add_notification -> {
-                val profile = appRepository.serverProfileData.getItemById(serverStatus.recordingServerProfileId)
                 activity?.let {
-                    addNotification(it, program, profile)
+                    addNotification(it, program, mainViewModel.getRecordingProfile())
                 }
                 return true
             }

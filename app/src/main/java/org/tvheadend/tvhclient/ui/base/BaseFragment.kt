@@ -1,6 +1,5 @@
 package org.tvheadend.tvhclient.ui.base
 
-import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.MenuItem
@@ -8,9 +7,9 @@ import android.widget.FrameLayout
 import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
+import androidx.preference.PreferenceManager
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.data.repository.AppRepository
 import org.tvheadend.tvhclient.domain.entity.ServerStatus
 import org.tvheadend.tvhclient.ui.common.MenuUtils
 import org.tvheadend.tvhclient.ui.common.callbacks.NetworkStatusListener
@@ -18,33 +17,24 @@ import org.tvheadend.tvhclient.ui.common.callbacks.ToolbarInterface
 import org.tvheadend.tvhclient.ui.common.gone
 import org.tvheadend.tvhclient.ui.common.visible
 import org.tvheadend.tvhclient.ui.features.MainViewModel
-import javax.inject.Inject
 
 abstract class BaseFragment : Fragment(), NetworkStatusListener {
 
-    @Inject
-    lateinit var applicationContext: Context
-    @Inject
-    lateinit var sharedPreferences: SharedPreferences
-    @Inject
-    lateinit var appRepository: AppRepository
-
+    protected lateinit var sharedPreferences: SharedPreferences
     protected lateinit var toolbarInterface: ToolbarInterface
     protected var isDualPane: Boolean = false
     protected var isUnlocked: Boolean = false
-    protected var htspVersion: Int = 0
     protected var isNetworkAvailable: Boolean = false
 
     protected lateinit var mainViewModel: MainViewModel
     protected lateinit var menuUtils: MenuUtils
-    lateinit var serverStatus: ServerStatus
+    protected lateinit var serverStatus: ServerStatus
 
     private var mainFrameLayout: FrameLayout? = null
     private var detailsFrameLayout: FrameLayout? = null
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        MainApplication.getComponent().inject(this)
 
         if (activity is ToolbarInterface) {
             toolbarInterface = activity as ToolbarInterface
@@ -54,6 +44,7 @@ abstract class BaseFragment : Fragment(), NetworkStatusListener {
             isNetworkAvailable = (activity as NetworkStatusListener).onNetworkIsAvailable()
         }
 
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity)
         mainViewModel = ViewModelProviders.of(activity as BaseActivity).get(MainViewModel::class.java)
 
         menuUtils = MenuUtils(activity!!)
@@ -61,7 +52,6 @@ abstract class BaseFragment : Fragment(), NetworkStatusListener {
         detailsFrameLayout = activity?.findViewById(R.id.details)
 
         serverStatus = mainViewModel.activeServerStatus
-        htspVersion = serverStatus.htspVersion
         isUnlocked = MainApplication.getInstance().isUnlocked
 
         // Check if we have a frame in which to embed the details fragment.

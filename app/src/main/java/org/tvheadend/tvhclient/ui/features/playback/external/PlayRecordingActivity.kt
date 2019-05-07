@@ -3,6 +3,7 @@ package org.tvheadend.tvhclient.ui.features.playback.external
 import android.content.Intent
 import android.net.Uri
 import android.os.Environment
+import androidx.preference.PreferenceManager
 import org.tvheadend.tvhclient.MainApplication
 import timber.log.Timber
 import java.io.File
@@ -19,7 +20,8 @@ class PlayRecordingActivity : BasePlaybackActivity() {
         intent.putExtra("title",title)
 
         // Check if the recording exists in the download folder, if not stream it from the server
-        val downloadDirectory = sharedPreferences.getString("download_directory", Environment.DIRECTORY_DOWNLOADS)
+        val downloadDirectory = PreferenceManager.getDefaultSharedPreferences(this)
+                .getString("download_directory", Environment.DIRECTORY_DOWNLOADS)
         val file = File(downloadDirectory, "$title.mkv")
 
         if (file.exists() && MainApplication.getInstance().isUnlocked) {

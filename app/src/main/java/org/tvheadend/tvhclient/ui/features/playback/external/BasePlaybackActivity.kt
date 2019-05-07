@@ -2,7 +2,6 @@ package org.tvheadend.tvhclient.ui.features.playback.external
 
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -10,21 +9,13 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.afollestad.materialdialogs.MaterialDialog
 import kotlinx.android.synthetic.main.play_activity.*
-import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.data.repository.AppRepository
 import org.tvheadend.tvhclient.ui.common.gone
 import org.tvheadend.tvhclient.ui.common.onAttach
 import org.tvheadend.tvhclient.util.getThemeId
 import timber.log.Timber
-import javax.inject.Inject
 
 abstract class BasePlaybackActivity : AppCompatActivity() {
-
-    @Inject
-    lateinit var appRepository: AppRepository
-    @Inject
-    lateinit var sharedPreferences: SharedPreferences
 
     lateinit var viewModel: ExternalPlayerViewModel
 
@@ -32,7 +23,6 @@ abstract class BasePlaybackActivity : AppCompatActivity() {
         setTheme(getThemeId(this))
         super.onCreate(savedInstanceState)
         setContentView(R.layout.play_activity)
-        MainApplication.getComponent().inject(this)
 
         status.setText(R.string.connecting_to_server)
 

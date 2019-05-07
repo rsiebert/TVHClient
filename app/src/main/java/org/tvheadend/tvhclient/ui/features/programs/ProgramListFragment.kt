@@ -81,8 +81,8 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
         val showProgramChannelIcon = isSearchActive && shownChannelId == 0
 
         recyclerViewAdapter = ProgramRecyclerViewAdapter(showProgramChannelIcon, this, this)
-        recycler_view.layoutManager = LinearLayoutManager(applicationContext)
-        recycler_view.addItemDecoration(DividerItemDecoration(applicationContext, LinearLayoutManager.VERTICAL))
+        recycler_view.layoutManager = LinearLayoutManager(activity)
+        recycler_view.addItemDecoration(DividerItemDecoration(activity, LinearLayoutManager.VERTICAL))
         recycler_view.itemAnimator = DefaultItemAnimator()
         recycler_view.adapter = recyclerViewAdapter
 
@@ -237,7 +237,7 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
         popupMenu.menuInflater.inflate(R.menu.program_popup_and_toolbar_menu, popupMenu.menu)
         popupMenu.menuInflater.inflate(R.menu.external_search_options_menu, popupMenu.menu)
 
-        prepareMenu(ctx, popupMenu.menu, program, program.recording, isNetworkAvailable, htspVersion, isUnlocked)
+        prepareMenu(ctx, popupMenu.menu, program, program.recording, isNetworkAvailable, serverStatus.htspVersion, isUnlocked)
         prepareSearchMenu(popupMenu.menu, program.title, isNetworkAvailable)
 
         popupMenu.setOnMenuItemClickListener { item ->
@@ -266,9 +266,8 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
                 R.id.menu_cast ->
                     return@setOnMenuItemClickListener menuUtils.handleMenuCast("channelId", shownChannelId)
                 R.id.menu_add_notification -> {
-                    val profile = appRepository.serverProfileData.getItemById(serverStatus.recordingServerProfileId)
                     activity?.let {
-                        addNotification(it, program, profile)
+                        addNotification(it, program, mainViewModel.getRecordingProfile())
                     }
                     return@setOnMenuItemClickListener true
                 }
