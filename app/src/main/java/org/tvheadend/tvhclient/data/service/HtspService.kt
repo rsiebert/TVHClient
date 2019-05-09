@@ -4,12 +4,12 @@ import android.app.NotificationManager
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.IBinder
 import androidx.core.app.NotificationManagerCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import androidx.preference.PreferenceManager
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
@@ -40,6 +40,8 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
 
     @Inject
     lateinit var appRepository: AppRepository
+    @Inject
+    lateinit var sharedPreferences: SharedPreferences
 
     private lateinit var execService: ScheduledExecutorService
     private lateinit var connection: Connection
@@ -63,7 +65,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
 
         execService = Executors.newScheduledThreadPool(10)
         serverStatus = appRepository.serverStatusData.activeItem
-        connectionTimeout = Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(this).getString("connection_timeout", resources.getString(R.string.pref_default_connection_timeout))!!) * 1000
+        connectionTimeout = Integer.valueOf(sharedPreferences.getString("connection_timeout", resources.getString(R.string.pref_default_connection_timeout))!!) * 1000
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -262,7 +264,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         enableAsyncMetadataRequest.method = "enableAsyncMetadata"
 
 
-        val epgMaxTime = java.lang.Long.parseLong(PreferenceManager.getDefaultSharedPreferences(this).getString("epg_max_time", resources.getString(R.string.pref_default_epg_max_time))!!)
+        val epgMaxTime = java.lang.Long.parseLong(sharedPreferences.getString("epg_max_time", resources.getString(R.string.pref_default_epg_max_time))!!)
         val currentTimeInSeconds = System.currentTimeMillis() / 1000L
         val lastUpdateTime = connection.lastUpdate
 
@@ -716,7 +718,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         appRepository.recordingData.updateItem(updatedRecording)
 
         removeNotificationById(this, recording.id)
-        if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("notifications_enabled", resources.getBoolean(R.bool.pref_default_notifications_enabled))) {
+        if (sharedPreferences.getBoolean("notifications_enabled", resources.getBoolean(R.bool.pref_default_notifications_enabled))) {
             if (!recording.isScheduled && !recording.isRecording) {
                 Timber.d("Removing notification for recording ${recording.title}")
                 (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).cancel(recording.id)

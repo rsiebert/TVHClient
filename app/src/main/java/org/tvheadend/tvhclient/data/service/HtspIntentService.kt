@@ -2,11 +2,11 @@ package org.tvheadend.tvhclient.data.service
 
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.core.app.JobIntentService
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import androidx.preference.PreferenceManager
 import org.tvheadend.htsp.*
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
@@ -32,6 +32,8 @@ class HtspIntentService : JobIntentService(), HtspConnectionStateListener {
 
     @Inject
     lateinit var appRepository: AppRepository
+    @Inject
+    lateinit var sharedPreferences: SharedPreferences
 
     private val pendingEventOps = ArrayList<Program>()
     private val authenticationLock = Object()
@@ -43,7 +45,7 @@ class HtspIntentService : JobIntentService(), HtspConnectionStateListener {
         connection = appRepository.connectionData.activeItem
         serverStatus = appRepository.serverStatusData.activeItem
 
-        val connectionTimeout = Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(this).getString("connection_timeout", resources.getString(R.string.pref_default_connection_timeout))!!) * 1000
+        val connectionTimeout = Integer.valueOf(sharedPreferences.getString("connection_timeout", resources.getString(R.string.pref_default_connection_timeout))!!) * 1000
         htspConnection = HtspConnection(
                 connection.username, connection.password,
                 connection.hostname, connection.port,
