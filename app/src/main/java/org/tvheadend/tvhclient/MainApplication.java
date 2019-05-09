@@ -47,13 +47,9 @@ import timber.log.Timber;
 
 import static org.tvheadend.tvhclient.util.billing.BillingManager.UNLOCKER;
 
-// TODO use more livedata for connection and server status in a centralized viewmodel
 // TODO move diffutils to background thread
 // TODO Use paged loading
 // TODO hide features menu when unlocker gets available later
-// TODO show channel text if no icon is available
-// TODO check where injected app context can be used
-
 // TODO Move the variable programIdToBeEditedWhenBeingRecorded into the viewmodels
 // TODO use a base viewmodel with generics
 
