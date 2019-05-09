@@ -118,6 +118,7 @@ class RecordingRecyclerViewAdapter internal constructor(private val isDualPane: 
             }
 
             override fun publishResults(charSequence: CharSequence, filterResults: FilterResults) {
+                @Suppress("UNCHECKED_CAST")
                 recordingListFiltered = filterResults.values as ArrayList<Recording>
                 notifyDataSetChanged()
             }

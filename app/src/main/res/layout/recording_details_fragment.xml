@@ -10,8 +10,9 @@
             type="org.tvheadend.tvhclient.domain.entity.Recording" />
 
         <variable
-            name="htspVersion"
-            type="int" />
+            name="viewModel"
+            type="org.tvheadend.tvhclient.ui.features.dvr.recordings.RecordingViewModel" />
+
     </data>
 
     <LinearLayout
@@ -55,7 +56,7 @@
                     android:layout_marginEnd="8dp"
                     android:layout_marginRight="8dp"
                     app:disabledText="@{recording}"
-                    app:htspVersion="@{htspVersion}"
+                    app:htspVersion="@{viewModel.htspVersion}"
                     app:layout_constraintEnd_toStartOf="@+id/state"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />

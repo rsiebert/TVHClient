@@ -10,8 +10,8 @@
             type="org.tvheadend.tvhclient.domain.entity.Recording" />
 
         <variable
-            name="htspVersion"
-            type="int" />
+            name="viewModel"
+            type="org.tvheadend.tvhclient.ui.features.dvr.recordings.RecordingViewModel" />
 
         <variable
             name="position"
@@ -24,6 +24,10 @@
         <variable
             name="isDualPane"
             type="boolean" />
+
+        <variable
+            name="htspVersion"
+            type="int" />
 
         <variable
             name="callback"
@@ -104,6 +108,7 @@
             android:layout_marginRight="16dp"
             android:ellipsize="end"
             android:singleLine="true"
+            android:visibility="@{recording.subtitle != null &amp;&amp; !recording.subtitle.equals(recording.title) ? View.VISIBLE : View.GONE}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/title"
             app:layout_constraintTop_toBottomOf="@+id/title"
@@ -118,6 +123,7 @@
             android:layout_marginRight="16dp"
             android:ellipsize="end"
             android:singleLine="true"
+            android:visibility="@{recording.summary != null &amp;&amp; !recording.summary.equals(recording.subtitle) ? View.VISIBLE : View.GONE}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/title"
             app:layout_constraintTop_toBottomOf="@+id/subtitle"
@@ -296,10 +302,10 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"
-            app:streamErrorText="@{recording}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/title"
-            app:layout_constraintTop_toBottomOf="@+id/data_errors" />
+            app:layout_constraintTop_toBottomOf="@+id/data_errors"
+            app:streamErrorText="@{recording}" />
 
         <ImageView
             android:id="@+id/dual_pane_list_item_selection"

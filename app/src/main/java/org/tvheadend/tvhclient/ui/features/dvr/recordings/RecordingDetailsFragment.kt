@@ -43,12 +43,11 @@ class RecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback, Downl
         // or when the fragment is shown for the first time
         shownDvrId = savedInstanceState?.getInt("id", 0) ?: (arguments?.getInt("id", 0) ?: 0)
 
-        val viewModel = ViewModelProviders.of(activity!!).get(RecordingViewModel::class.java)
         viewModel.getRecordingById(shownDvrId)?.observe(viewLifecycleOwner, Observer { rec ->
             if (rec != null) {
                 recording = rec
                 itemBinding.recording = recording
-                itemBinding.htspVersion = serverStatus.htspVersion
+                itemBinding.htspVersion = htspVersion
                 // The toolbar is hidden as a default to prevent pressing any icons if no recording
                 // has been loaded yet. The toolbar is shown here because a recording was loaded
                 nested_toolbar.visible()
@@ -67,7 +66,7 @@ class RecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback, Downl
         // Show or hide search menu items in the main toolbar
         prepareSearchMenu(menu, recording.title, isNetworkAvailable)
         // Show or hide menus of the nested toolbar
-        prepareMenu(ctx, nested_toolbar.menu, null, recording, isNetworkAvailable, serverStatus.htspVersion, isUnlocked)
+        prepareMenu(ctx, nested_toolbar.menu, null, recording, isNetworkAvailable, htspVersion, isUnlocked)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -99,7 +98,7 @@ class RecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback, Downl
                 return menuUtils.handleMenuCast("dvrId", recording.id)
             R.id.menu_download -> {
                 activity?.let {
-                    DownloadRecordingManager(it, mainViewModel.activeConnection, mainViewModel.activeServerStatus, recording)
+                    DownloadRecordingManager(it, connection, serverStatus, recording)
                 }
                 return true
             }
@@ -137,7 +136,7 @@ class RecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback, Downl
     override fun downloadRecording() {
         activity?.let {
             recording?.let { rec ->
-                DownloadRecordingManager(it, mainViewModel.activeConnection, mainViewModel.activeServerStatus, rec)
+                DownloadRecordingManager(it, connection, serverStatus, rec)
             }
         }
     }

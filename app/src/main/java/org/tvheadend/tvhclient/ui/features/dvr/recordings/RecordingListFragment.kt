@@ -26,7 +26,7 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback
 
     lateinit var viewModel: RecordingViewModel
     lateinit var recyclerViewAdapter: RecordingRecyclerViewAdapter
-    var selectedListPosition: Int = 0
+    private var selectedListPosition: Int = 0
     var searchQuery: String = ""
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -35,6 +35,7 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        viewModel = ViewModelProviders.of(activity!!).get(RecordingViewModel::class.java)
 
         if (savedInstanceState != null) {
             selectedListPosition = savedInstanceState.getInt("listPosition", 0)
@@ -44,12 +45,12 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback
             searchQuery = arguments?.getString(SearchManager.QUERY) ?: ""
         }
 
-        recyclerViewAdapter = RecordingRecyclerViewAdapter(isDualPane, this, serverStatus.htspVersion)
+        recyclerViewAdapter = RecordingRecyclerViewAdapter(isDualPane, this, htspVersion)
         recycler_view.layoutManager = LinearLayoutManager(activity)
         recycler_view.addItemDecoration(DividerItemDecoration(activity, LinearLayoutManager.VERTICAL))
         recycler_view.itemAnimator = DefaultItemAnimator()
         recycler_view.adapter = recyclerViewAdapter
-        viewModel = ViewModelProviders.of(activity!!).get(RecordingViewModel::class.java)
+
 
         recycler_view.gone()
         progress_bar.visible()
@@ -96,7 +97,7 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback
         menu.findItem(R.id.menu_search)?.isVisible = recyclerViewAdapter.itemCount > 0
     }
 
-    internal fun showRecordingDetails(position: Int) {
+    private fun showRecordingDetails(position: Int) {
         selectedListPosition = position
         recyclerViewAdapter.setPosition(position)
 
@@ -191,10 +192,28 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback
         return true
     }
 
+    fun updateUI(stringId: Int) {
+        recycler_view?.visible()
+        progress_bar?.gone()
+
+        if (searchQuery.isEmpty()) {
+            toolbarInterface.setSubtitle(resources.getQuantityString(R.plurals.items, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
+        } else {
+            toolbarInterface.setSubtitle(resources.getQuantityString(stringId, recyclerViewAdapter.itemCount, recyclerViewAdapter.itemCount))
+        }
+
+        if (isDualPane && recyclerViewAdapter.itemCount > 0) {
+            showRecordingDetails(selectedListPosition)
+        }
+        // Invalidate the menu so that the search menu item is shown in
+        // case the adapter contains items now.
+        activity?.invalidateOptionsMenu()
+    }
+
     override fun downloadRecording() {
         val rec = recyclerViewAdapter.getItem(selectedListPosition) ?: return
         activity?.let {
-            DownloadRecordingManager(it, mainViewModel.activeConnection, mainViewModel.activeServerStatus, rec)
+            DownloadRecordingManager(it, connection, serverStatus, rec)
         }
     }
 
