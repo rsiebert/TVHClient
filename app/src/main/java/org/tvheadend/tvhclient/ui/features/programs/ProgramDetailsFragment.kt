@@ -22,6 +22,7 @@ import timber.log.Timber
 
 class ProgramDetailsFragment : BaseFragment() {
 
+    private lateinit var viewModel: ProgramViewModel
     private var eventId: Int = 0
     private var channelId: Int = 0
     private var program: Program? = null
@@ -36,6 +37,8 @@ class ProgramDetailsFragment : BaseFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        viewModel = ViewModelProviders.of(activity!!).get(ProgramViewModel::class.java)
+
         forceSingleScreenLayout()
 
         if (!isDualPane) {
@@ -53,14 +56,12 @@ class ProgramDetailsFragment : BaseFragment() {
             }
         }
 
-        val viewModel = ViewModelProviders.of(activity!!).get(ProgramViewModel::class.java)
         program = viewModel.getProgramByIdSync(eventId)
         if (program != null) {
             program?.let {
                 Timber.d("Loaded details for program ${it.title}")
                 itemBinding.program = it
-                itemBinding.htspVersion = serverStatus.htspVersion
-                itemBinding.isProgramArtworkEnabled = isUnlocked && sharedPreferences.getBoolean("program_artwork_enabled", false)
+                itemBinding.viewModel = viewModel
                 // The toolbar is hidden as a default to prevent pressing any icons if no recording
                 // has been loaded yet. The toolbar is shown here because a recording was loaded
                 nested_toolbar.visible()
@@ -114,7 +115,7 @@ class ProgramDetailsFragment : BaseFragment() {
         // Show or hide search menu items in the main toolbar
         prepareSearchMenu(menu, program?.title, isNetworkAvailable)
         // Show or hide menus of the nested toolbar
-        prepareMenu(ctx, nested_toolbar.menu, program, program?.recording, isNetworkAvailable, serverStatus.htspVersion, isUnlocked)
+        prepareMenu(ctx, nested_toolbar.menu, program, program?.recording, isNetworkAvailable, htspVersion, isUnlocked)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

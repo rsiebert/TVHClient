@@ -55,6 +55,7 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        viewModel = ViewModelProviders.of(activity!!).get(ProgramViewModel::class.java)
 
         if (savedInstanceState != null) {
             shownChannelId = savedInstanceState.getInt("channelId", 0)
@@ -78,9 +79,9 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
         }
 
         // Show the channel icons when a search is active and all channels shall be searched
-        val showProgramChannelIcon = isSearchActive && shownChannelId == 0
+        viewModel.showProgramChannelIcon = isSearchActive && shownChannelId == 0
 
-        recyclerViewAdapter = ProgramRecyclerViewAdapter(showProgramChannelIcon, this, this)
+        recyclerViewAdapter = ProgramRecyclerViewAdapter(viewModel, this, this)
         recycler_view.layoutManager = LinearLayoutManager(activity)
         recycler_view.addItemDecoration(DividerItemDecoration(activity, LinearLayoutManager.VERTICAL))
         recycler_view.itemAnimator = DefaultItemAnimator()
@@ -89,7 +90,6 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
         recycler_view.gone()
         progress_bar.visible()
 
-        viewModel = ViewModelProviders.of(activity!!).get(ProgramViewModel::class.java)
         if (!isSearchActive) {
             Timber.d("Search is not active, loading programs for channel $channelName from time $selectedTime")
             // A channel id and a channel name was given, load only the programs for the
@@ -237,7 +237,7 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
         popupMenu.menuInflater.inflate(R.menu.program_popup_and_toolbar_menu, popupMenu.menu)
         popupMenu.menuInflater.inflate(R.menu.external_search_options_menu, popupMenu.menu)
 
-        prepareMenu(ctx, popupMenu.menu, program, program.recording, isNetworkAvailable, serverStatus.htspVersion, isUnlocked)
+        prepareMenu(ctx, popupMenu.menu, program, program.recording, isNetworkAvailable, htspVersion, isUnlocked)
         prepareSearchMenu(popupMenu.menu, program.title, isNetworkAvailable)
 
         popupMenu.setOnMenuItemClickListener { item ->

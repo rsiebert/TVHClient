@@ -1,10 +1,12 @@
 package org.tvheadend.tvhclient.ui.features.programs
 
-import androidx.preference.PreferenceManager
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LifecycleRegistry
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import org.tvheadend.tvhclient.R
@@ -16,7 +18,7 @@ import org.tvheadend.tvhclient.util.isEqualTo
 import java.util.*
 import java.util.concurrent.CopyOnWriteArrayList
 
-class ProgramRecyclerViewAdapter internal constructor(private val showProgramChannelIcon: Boolean, private val clickCallback: RecyclerViewClickCallback, private val onLastProgramVisibleListener: LastProgramVisibleListener) : RecyclerView.Adapter<ProgramRecyclerViewAdapter.ProgramViewHolder>(), Filterable {
+class ProgramRecyclerViewAdapter internal constructor(private val viewModel: ProgramViewModel, private val clickCallback: RecyclerViewClickCallback, private val onLastProgramVisibleListener: LastProgramVisibleListener) : RecyclerView.Adapter<ProgramRecyclerViewAdapter.ProgramViewHolder>(), Filterable {
 
     private val programList = ArrayList<ProgramInterface>()
     private var programListFiltered: MutableList<ProgramInterface> = ArrayList()
@@ -25,12 +27,9 @@ class ProgramRecyclerViewAdapter internal constructor(private val showProgramCha
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProgramViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
         val itemBinding = ProgramListAdapterBinding.inflate(layoutInflater, parent, false)
-
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(parent.context)
-        val showGenreColors = sharedPreferences.getBoolean("genre_colors_for_programs_enabled", parent.context.resources.getBoolean(R.bool.pref_default_genre_colors_for_programs_enabled))
-        val showProgramSubtitles = sharedPreferences.getBoolean("program_subtitle_enabled", parent.context.resources.getBoolean(R.bool.pref_default_program_subtitle_enabled))
-
-        return ProgramViewHolder(itemBinding, showProgramChannelIcon, showGenreColors, showProgramSubtitles)
+        val viewHolder = ProgramViewHolder(itemBinding, viewModel)
+        itemBinding.lifecycleOwner = viewHolder
+        return viewHolder
     }
 
     override fun onBindViewHolder(holder: ProgramViewHolder, position: Int) {
@@ -102,6 +101,7 @@ class ProgramRecyclerViewAdapter internal constructor(private val showProgramCha
             }
 
             override fun publishResults(charSequence: CharSequence, filterResults: FilterResults) {
+                @Suppress("UNCHECKED_CAST")
                 programListFiltered = filterResults.values as ArrayList<ProgramInterface>
                 notifyDataSetChanged()
             }
@@ -152,14 +152,40 @@ class ProgramRecyclerViewAdapter internal constructor(private val showProgramCha
         }
     }
 
-    class ProgramViewHolder(private val binding: ProgramListAdapterBinding, private val showProgramChannelIcon: Boolean, private val showGenreColors: Boolean, private val showProgramSubtitles: Boolean) : RecyclerView.ViewHolder(binding.root) {
+    override fun onViewAttachedToWindow(holder: ProgramViewHolder) {
+        super.onViewAttachedToWindow(holder)
+        holder.markAttach()
+    }
+
+    override fun onViewDetachedFromWindow(holder: ProgramViewHolder) {
+        super.onViewDetachedFromWindow(holder)
+        holder.markDetach()
+    }
+
+    class ProgramViewHolder(private val binding: ProgramListAdapterBinding, private val viewModel: ProgramViewModel) : RecyclerView.ViewHolder(binding.root), LifecycleOwner {
+
+        private val lifecycleRegistry = LifecycleRegistry(this)
+
+        init {
+            lifecycleRegistry.markState(Lifecycle.State.INITIALIZED)
+        }
+
+        fun markAttach() {
+            lifecycleRegistry.markState(Lifecycle.State.STARTED)
+        }
+
+        fun markDetach() {
+            lifecycleRegistry.markState(Lifecycle.State.DESTROYED)
+        }
+
+        override fun getLifecycle(): Lifecycle {
+            return lifecycleRegistry
+        }
 
         fun bind(program: ProgramInterface, position: Int, clickCallback: RecyclerViewClickCallback) {
             binding.program = program
             binding.position = position
-            binding.showProgramSubtitles = showProgramSubtitles
-            binding.showProgramChannelIcon = showProgramChannelIcon
-            binding.showGenreColor = showGenreColors
+            binding.viewModel = viewModel
             binding.callback = clickCallback
             binding.executePendingBindings()
         }

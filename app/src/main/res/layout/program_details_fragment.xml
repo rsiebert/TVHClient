@@ -10,8 +10,8 @@
             type="org.tvheadend.tvhclient.domain.entity.Program" />
 
         <variable
-            name="htspVersion"
-            type="int" />
+            name="viewModel"
+            type="org.tvheadend.tvhclient.ui.features.programs.ProgramViewModel" />
 
         <variable
             name="isProgramArtworkEnabled"
@@ -47,7 +47,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:programImage="@{program.image}"
-                    app:programImageVisibility="@{isProgramArtworkEnabled}" />
+                    app:programImageVisibility="@{safeUnbox(viewModel.showProgramArtwork)}" />
 
                 <TextView
                     android:id="@+id/title_label"

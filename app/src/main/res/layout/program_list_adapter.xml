@@ -11,20 +11,12 @@
             type="org.tvheadend.tvhclient.domain.entity.ProgramInterface" />
 
         <variable
+            name="viewModel"
+            type="org.tvheadend.tvhclient.ui.features.programs.ProgramViewModel" />
+
+        <variable
             name="position"
             type="int" />
-
-        <variable
-            name="showProgramSubtitles"
-            type="boolean" />
-
-        <variable
-            name="showProgramChannelIcon"
-            type="boolean" />
-
-        <variable
-            name="showGenreColor"
-            type="boolean" />
 
         <variable
             name="callback"
@@ -51,7 +43,7 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:showGenreColor="@{showGenreColor}" />
+            app:showGenreColor="@{safeUnbox(viewModel.showGenreColor)}" />
 
         <ImageView
             android:id="@+id/icon"
@@ -63,7 +55,7 @@
             android:contentDescription="@null"
             android:scaleType="fitStart"
             app:iconUrl="@{program.channelIcon}"
-            app:iconVisibility="@{showProgramChannelIcon}"
+            app:iconVisibility="@{safeUnbox(viewModel.showProgramChannelIcon)}"
             app:layout_constraintStart_toEndOf="@+id/genre"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -78,7 +70,7 @@
             android:layout_marginBottom="8dp"
             app:iconName="@{program.channelName}"
             app:iconUrl="@{program.channelIcon}"
-            app:iconVisibility="@{showProgramChannelIcon}"
+            app:iconVisibility="@{safeUnbox(viewModel.showProgramChannelIcon)}"
             app:layout_constraintStart_toEndOf="@+id/genre"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.0" />
@@ -96,7 +88,7 @@
             app:layout_constraintEnd_toStartOf="@+id/state"
             app:layout_constraintStart_toEndOf="@+id/genre"
             app:layout_constraintTop_toTopOf="parent"
-            app:marginStart="@{showProgramChannelIcon}" />
+            app:marginStart="@{safeUnbox(viewModel.showProgramChannelIcon)}" />
 
         <ImageView
             android:id="@+id/state"
@@ -121,11 +113,11 @@
             android:ellipsize="end"
             android:singleLine="true"
             android:text="@{program.subtitle}"
-            android:visibility="@{showProgramSubtitles &amp;&amp; program.subtitle != null &amp;&amp; !program.subtitle.equals(program.title) ? View.VISIBLE : View.GONE}"
+            android:visibility="@{safeUnbox(viewModel.showProgramSubtitles) &amp;&amp; program.subtitle != null &amp;&amp; !program.subtitle.equals(program.title) ? View.VISIBLE : View.GONE}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/genre"
             app:layout_constraintTop_toBottomOf="@+id/title"
-            app:marginStart="@{showProgramChannelIcon}" />
+            app:marginStart="@{safeUnbox(viewModel.showProgramChannelIcon)}" />
 
         <TextView
             android:id="@+id/summary"
@@ -137,11 +129,11 @@
             android:ellipsize="end"
             android:singleLine="true"
             android:text="@{program.summary}"
-            android:visibility="@{(!showProgramSubtitles &amp;&amp; program.summary != null) || (program.summary != null &amp;&amp; !program.summary.equals(program.subtitle)) ? View.VISIBLE : View.GONE}"
+            android:visibility="@{(!safeUnbox(viewModel.showProgramSubtitles) &amp;&amp; program.summary != null) || (program.summary != null &amp;&amp; !program.summary.equals(program.subtitle)) ? View.VISIBLE : View.GONE}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/genre"
             app:layout_constraintTop_toBottomOf="@+id/subtitle"
-            app:marginStart="@{showProgramChannelIcon}" />
+            app:marginStart="@{safeUnbox(viewModel.showProgramChannelIcon)}" />
 
         <TextView
             android:id="@+id/content_type"
@@ -155,7 +147,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/genre"
             app:layout_constraintTop_toBottomOf="@+id/summary"
-            app:marginStart="@{showProgramChannelIcon}" />
+            app:marginStart="@{safeUnbox(viewModel.showProgramChannelIcon)}" />
 
         <TextView
             android:id="@+id/date"
@@ -170,7 +162,7 @@
             app:layout_constraintBottom_toTopOf="@+id/progress"
             app:layout_constraintStart_toEndOf="@+id/genre"
             app:layout_constraintTop_toBottomOf="@+id/content_type"
-            app:marginStart="@{showProgramChannelIcon}" />
+            app:marginStart="@{safeUnbox(viewModel.showProgramChannelIcon)}" />
 
         <TextView
             android:id="@+id/start_time"
@@ -236,7 +228,7 @@
             app:layout_constraintBottom_toTopOf="@+id/series_info"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/genre"
-            app:marginStart="@{showProgramChannelIcon}" />
+            app:marginStart="@{safeUnbox(viewModel.showProgramChannelIcon)}" />
 
         <TextView
             android:id="@+id/series_info"
@@ -250,7 +242,7 @@
             app:layout_constraintBottom_toTopOf="@+id/description"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/genre"
-            app:marginStart="@{showProgramChannelIcon}"
+            app:marginStart="@{safeUnbox(viewModel.showProgramChannelIcon)}"
             app:seriesInfoText="@{program}" />
 
         <TextView
@@ -266,7 +258,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/genre"
-            app:marginStart="@{showProgramChannelIcon}"
+            app:marginStart="@{safeUnbox(viewModel.showProgramChannelIcon)}"
             app:optionalText="@{program.description}" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
