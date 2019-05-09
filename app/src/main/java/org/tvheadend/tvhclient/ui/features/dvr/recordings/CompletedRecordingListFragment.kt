@@ -15,7 +15,7 @@ class CompletedRecordingListFragment : RecordingListFragment() {
         else
             getString(R.string.search_results))
 
-        viewModel.completedRecordings.observe(viewLifecycleOwner, Observer { recordings ->
+        recordingViewModel.completedRecordings.observe(viewLifecycleOwner, Observer { recordings ->
             if (recordings != null) {
                 recyclerViewAdapter.addItems(recordings)
             }

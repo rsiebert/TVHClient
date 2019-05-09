@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.preference.PreferenceManager
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
+import org.tvheadend.tvhclient.domain.entity.Connection
 import org.tvheadend.tvhclient.domain.entity.ServerStatus
 import org.tvheadend.tvhclient.ui.common.MenuUtils
 import org.tvheadend.tvhclient.ui.common.callbacks.NetworkStatusListener
@@ -24,10 +25,11 @@ abstract class BaseFragment : Fragment(), NetworkStatusListener {
     protected lateinit var toolbarInterface: ToolbarInterface
     protected var isDualPane: Boolean = false
     protected var isUnlocked: Boolean = false
+    protected var htspVersion: Int = 13
     protected var isNetworkAvailable: Boolean = false
 
-    protected lateinit var mainViewModel: MainViewModel
     protected lateinit var menuUtils: MenuUtils
+    protected lateinit var connection: Connection
     protected lateinit var serverStatus: ServerStatus
 
     private var mainFrameLayout: FrameLayout? = null
@@ -45,13 +47,15 @@ abstract class BaseFragment : Fragment(), NetworkStatusListener {
         }
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity)
-        mainViewModel = ViewModelProviders.of(activity as BaseActivity).get(MainViewModel::class.java)
 
         menuUtils = MenuUtils(activity!!)
         mainFrameLayout = activity?.findViewById(R.id.main)
         detailsFrameLayout = activity?.findViewById(R.id.details)
 
-        serverStatus = mainViewModel.activeServerStatus
+        val mainViewModel = ViewModelProviders.of(activity as BaseActivity).get(MainViewModel::class.java)
+        connection = mainViewModel.connection
+        serverStatus = mainViewModel.serverStatus
+        htspVersion = serverStatus.htspVersion
         isUnlocked = MainApplication.getInstance().isUnlocked
 
         // Check if we have a frame in which to embed the details fragment.

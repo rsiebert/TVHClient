@@ -11,7 +11,7 @@ import org.tvheadend.tvhclient.domain.entity.EpgChannel
 import java.util.*
 import java.util.concurrent.CopyOnWriteArrayList
 
-internal class EpgViewPagerRecyclerViewAdapter(private val activity: FragmentActivity, private val pixelsPerMinute: Float, private val startTime: Long, private val endTime: Long) : RecyclerView.Adapter<EpgViewPagerViewHolder>(), Filterable {
+internal class EpgViewPagerRecyclerViewAdapter(private val activity: FragmentActivity, private val epgViewModel: EpgViewModel, private val fragmentId: Int) : RecyclerView.Adapter<EpgViewPagerViewHolder>(), Filterable {
 
     private val viewPool: RecyclerView.RecycledViewPool = RecyclerView.RecycledViewPool()
     private val channelList = ArrayList<EpgChannel>()
@@ -19,7 +19,7 @@ internal class EpgViewPagerRecyclerViewAdapter(private val activity: FragmentAct
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EpgViewPagerViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(viewType, parent, false)
-        return EpgViewPagerViewHolder(view, activity, pixelsPerMinute, startTime, endTime, viewPool)
+        return EpgViewPagerViewHolder(view, activity, epgViewModel, fragmentId, viewPool)
     }
 
     override fun onBindViewHolder(holder: EpgViewPagerViewHolder, position: Int) {

@@ -15,6 +15,10 @@
             type="org.tvheadend.tvhclient.ui.features.channels.ChannelViewModel" />
 
         <variable
+            name="isDualPane"
+            type="boolean" />
+
+        <variable
             name="position"
             type="int" />
 
@@ -87,7 +91,7 @@
             android:layout_height="20dp"
             android:layout_marginStart="12dp"
             android:layout_marginLeft="12dp"
-            android:layout_marginBottom="54dp"
+            android:layout_marginBottom="16dp"
             android:ellipsize="end"
             android:gravity="center"
             android:singleLine="true"
@@ -257,7 +261,7 @@
             android:layout_marginBottom="8dp"
             android:contentDescription="@null"
             android:scaleType="center"
-            android:visibility="@{viewModel.isDualPane ? View.VISIBLE : View.GONE}"
+            android:visibility="@{isDualPane ? View.VISIBLE : View.GONE}"
             app:backgroundImage="@{isSelected}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

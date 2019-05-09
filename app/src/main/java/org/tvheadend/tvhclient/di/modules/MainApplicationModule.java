@@ -1,6 +1,7 @@
 package org.tvheadend.tvhclient.di.modules;
 
 import android.content.Context;
+
 import androidx.annotation.NonNull;
 
 import javax.inject.Singleton;
@@ -19,7 +20,7 @@ public class MainApplicationModule {
 
     @Provides
     @Singleton
-    public Context provideContext() {
+    Context provideContext() {
         return appContext;
     }
 }

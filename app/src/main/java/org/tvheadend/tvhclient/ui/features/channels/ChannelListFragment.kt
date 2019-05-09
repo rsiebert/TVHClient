@@ -69,7 +69,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
             }
         }
 
-        recyclerViewAdapter = ChannelRecyclerViewAdapter(viewModel, this)
+        recyclerViewAdapter = ChannelRecyclerViewAdapter(viewModel, isDualPane, this)
         recycler_view.layoutManager = LinearLayoutManager(activity)
         recycler_view.addItemDecoration(DividerItemDecoration(activity, LinearLayoutManager.VERTICAL))
         recycler_view.itemAnimator = DefaultItemAnimator()
@@ -135,7 +135,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
             }
         })
 
-        mainViewModel.channelCount.observe(viewLifecycleOwner, Observer { count ->
+        viewModel.channelCount.observe(viewLifecycleOwner, Observer { count ->
             channelCount = count
         })
 
@@ -178,10 +178,6 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
 
     override fun onResume() {
         super.onResume()
-        // When the user returns from the settings only the onResume method is called, not the
-        // onActivityCreated, so we need to check if any values that affect the representation
-        // of the channel list have changed.
-        viewModel.setChannelSortOrder(Integer.valueOf(sharedPreferences.getString("channel_sort_order", resources.getString(R.string.pref_default_channel_sort_order))!!))
         currentTimeUpdateHandler.post(currentTimeUpdateTask)
     }
 
@@ -231,7 +227,6 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
             R.id.menu_sort_order ->
                 menuUtils.handleMenuChannelSortOrderSelection(this)
             R.id.menu_wol -> {
-                val connection = mainViewModel.activeConnection
                 WakeOnLanTask(ctx, connection).execute()
                 true
             }
@@ -317,8 +312,8 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
         }
 
         val ctx = context ?: return
-        val program = mainViewModel.getProgramById(channel.programId)
-        val recording = mainViewModel.getRecordingById(channel.programId)
+        val program = viewModel.getProgramById(channel.programId)
+        val recording = viewModel.getRecordingById(channel.programId)
 
         val popupMenu = PopupMenu(ctx, view)
         popupMenu.menuInflater.inflate(R.menu.program_popup_and_toolbar_menu, popupMenu.menu)
@@ -356,7 +351,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
                 R.id.menu_add_notification -> {
                     if (program != null) {
                         (activity as AppCompatActivity?)?.let {
-                            addNotification(it, program, mainViewModel.getRecordingProfile())
+                            addNotification(it, program, viewModel.getRecordingProfile())
                         }
                     }
                     return@setOnMenuItemClickListener true

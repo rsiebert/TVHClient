@@ -26,10 +26,13 @@ import javax.inject.Inject
 class HtspIntentService : JobIntentService(), HtspConnectionStateListener {
 
     private val execService: ScheduledExecutorService
-    private var htspConnection: HtspConnection
-    private var connection: Connection
+    private val htspConnection: HtspConnection
+    private val connection: Connection
     private val serverStatus: ServerStatus
+    private var htspVersion: Int = 13
 
+    @Inject
+    lateinit var appContext: Context
     @Inject
     lateinit var appRepository: AppRepository
     @Inject
@@ -44,8 +47,9 @@ class HtspIntentService : JobIntentService(), HtspConnectionStateListener {
         execService = Executors.newScheduledThreadPool(10)
         connection = appRepository.connectionData.activeItem
         serverStatus = appRepository.serverStatusData.activeItem
+        htspVersion = serverStatus.htspVersion
 
-        val connectionTimeout = Integer.valueOf(sharedPreferences.getString("connection_timeout", resources.getString(R.string.pref_default_connection_timeout))!!) * 1000
+        val connectionTimeout = Integer.valueOf(sharedPreferences.getString("connection_timeout", appContext.resources.getString(R.string.pref_default_connection_timeout))!!) * 1000
         htspConnection = HtspConnection(
                 connection.username, connection.password,
                 connection.hostname, connection.port,
@@ -234,7 +238,7 @@ class HtspIntentService : JobIntentService(), HtspConnectionStateListener {
         var inputStream: InputStream
         when {
             url.startsWith("http") -> inputStream = BufferedInputStream(URL(url).openStream())
-            serverStatus.htspVersion > 9 -> inputStream = HtspFileInputStream(htspConnection, url)
+            htspVersion > 9 -> inputStream = HtspFileInputStream(htspConnection, url)
             else -> return
         }
 
@@ -248,11 +252,11 @@ class HtspIntentService : JobIntentService(), HtspConnectionStateListener {
 
         if (url.startsWith("http")) {
             inputStream = BufferedInputStream(URL(url).openStream())
-        } else if (serverStatus.htspVersion > 9) {
+        } else if (htspVersion > 9) {
             inputStream = HtspFileInputStream(htspConnection, url)
         }
 
-        val scale = resources.displayMetrics.density
+        val scale = appContext.resources.displayMetrics.density
         val width = (64 * scale).toInt()
         val height = (64 * scale).toInt()
 

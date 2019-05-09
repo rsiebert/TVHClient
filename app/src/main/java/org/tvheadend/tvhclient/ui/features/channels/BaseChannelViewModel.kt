@@ -1,33 +1,32 @@
 package org.tvheadend.tvhclient.ui.features.channels
 
-import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.data.repository.AppRepository
-import org.tvheadend.tvhclient.domain.entity.ChannelTag
-import org.tvheadend.tvhclient.domain.entity.Recording
-import org.tvheadend.tvhclient.domain.entity.ServerStatus
+import org.tvheadend.tvhclient.domain.entity.*
 import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
 
-open class BaseChannelViewModel(application: Application) : AndroidViewModel(application) {
+open class BaseChannelViewModel() : ViewModel() {
 
+    @Inject
+    lateinit var appContext: Context
     @Inject
     lateinit var appRepository: AppRepository
     @Inject
     lateinit var sharedPreferences: SharedPreferences
 
     val channelTags: LiveData<List<ChannelTag>>
-    val allRecordings: LiveData<List<Recording>>
+    val recordings: LiveData<List<Recording>>
     val serverStatus: LiveData<ServerStatus>
     val selectedChannelTagIds: LiveData<List<Int>?>
-
+    val channelCount: LiveData<Int>
     val selectedTime = MutableLiveData<Long>()
     val channelSortOrder = MutableLiveData<Int>()
 
@@ -37,13 +36,14 @@ open class BaseChannelViewModel(application: Application) : AndroidViewModel(app
 
         serverStatus = appRepository.serverStatusData.liveDataActiveItem
         channelTags = appRepository.channelTagData.getLiveDataItems()
-        allRecordings = appRepository.recordingData.getLiveDataItems()
+        recordings = appRepository.recordingData.getLiveDataItems()
         selectedChannelTagIds = appRepository.channelTagData.liveDataSelectedItemIds
+        channelCount = appRepository.channelData.getLiveDataItemCount()
 
         Timber.d("Loading time, sort order and channel tags ids from database")
         selectedTime.postValue(Date().time)
 
-        val defaultChannelSortOrder = application.resources.getString(R.string.pref_default_channel_sort_order)
+        val defaultChannelSortOrder = appContext.resources.getString(R.string.pref_default_channel_sort_order)
         channelSortOrder.postValue(Integer.valueOf(sharedPreferences.getString("channel_sort_order", defaultChannelSortOrder) ?: defaultChannelSortOrder))
     }
 
@@ -89,5 +89,17 @@ open class BaseChannelViewModel(application: Application) : AndroidViewModel(app
         } else {
             context.getString(R.string.multiple_channel_tags)
         }
+    }
+
+    fun getRecordingById(id: Int): Recording? {
+        return appRepository.recordingData.getItemByEventId(id)
+    }
+
+    fun getRecordingProfile(): ServerProfile? {
+        return appRepository.serverProfileData.getItemById(appRepository.serverStatusData.activeItem.recordingServerProfileId)
+    }
+
+    fun getProgramById(id: Int): Program? {
+        return appRepository.programData.getItemById(id)
     }
 }

@@ -19,10 +19,12 @@ import org.tvheadend.tvhclient.ui.common.visible
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingRemovedCallback
 
+// TODO put recording into the viewmodel
 // TODO put shownId into the viewmodel
 
 class SeriesRecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback {
 
+    private lateinit var seriesRecordingViewModel: SeriesRecordingViewModel
     private var recording: SeriesRecording? = null
     var shownId: String = ""
     private lateinit var itemBinding: SeriesRecordingDetailsFragmentBinding
@@ -34,6 +36,7 @@ class SeriesRecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback 
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        seriesRecordingViewModel = ViewModelProviders.of(activity!!).get(SeriesRecordingViewModel::class.java)
 
         if (!isDualPane) {
             toolbarInterface.setTitle(getString(R.string.details))
@@ -44,12 +47,11 @@ class SeriesRecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback 
         // or when the fragment is shown for the first time
         shownId = savedInstanceState?.getString("id", "") ?: (arguments?.getString("id", "") ?: "")
 
-        val viewModel = ViewModelProviders.of(activity!!).get(SeriesRecordingViewModel::class.java)
-        viewModel.getRecordingById(shownId).observe(viewLifecycleOwner, Observer { rec ->
+        seriesRecordingViewModel.getRecordingById(shownId).observe(viewLifecycleOwner, Observer { rec ->
             if (rec != null) {
                 recording = rec
                 itemBinding.recording = recording
-                itemBinding.htspVersion = serverStatus.htspVersion
+                itemBinding.htspVersion = htspVersion
                 itemBinding.isDualPane = isDualPane
                 // The toolbar is hidden as a default to prevent pressing any icons if no recording
                 // has been loaded yet. The toolbar is shown here because a recording was loaded

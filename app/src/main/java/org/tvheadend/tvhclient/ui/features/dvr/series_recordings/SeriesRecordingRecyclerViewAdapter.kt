@@ -101,6 +101,7 @@ class SeriesRecordingRecyclerViewAdapter internal constructor(private val isDual
             }
 
             override fun publishResults(charSequence: CharSequence, filterResults: FilterResults) {
+                @Suppress("UNCHECKED_CAST")
                 recordingListFiltered = filterResults.values as ArrayList<SeriesRecording>
                 notifyDataSetChanged()
             }

@@ -34,7 +34,7 @@ import timber.log.Timber
 class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgramVisibleListener, SearchRequestInterface, Filter.FilterListener {
 
     lateinit var recyclerViewAdapter: ProgramRecyclerViewAdapter
-    lateinit var viewModel: ProgramViewModel
+    lateinit var programViewModel: ProgramViewModel
 
     private var selectedTime: Long = 0
     private var selectedListPosition: Int = 0
@@ -55,7 +55,7 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(activity!!).get(ProgramViewModel::class.java)
+        programViewModel = ViewModelProviders.of(activity!!).get(ProgramViewModel::class.java)
 
         if (savedInstanceState != null) {
             shownChannelId = savedInstanceState.getInt("channelId", 0)
@@ -79,9 +79,9 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
         }
 
         // Show the channel icons when a search is active and all channels shall be searched
-        viewModel.showProgramChannelIcon = isSearchActive && shownChannelId == 0
+        programViewModel.showProgramChannelIcon = isSearchActive && shownChannelId == 0
 
-        recyclerViewAdapter = ProgramRecyclerViewAdapter(viewModel, this, this)
+        recyclerViewAdapter = ProgramRecyclerViewAdapter(programViewModel, this, this)
         recycler_view.layoutManager = LinearLayoutManager(activity)
         recycler_view.addItemDecoration(DividerItemDecoration(activity, LinearLayoutManager.VERTICAL))
         recycler_view.itemAnimator = DefaultItemAnimator()
@@ -95,8 +95,8 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
             // A channel id and a channel name was given, load only the programs for the
             // specific channel and from the current time. Also load only those recordings
             // that belong to the given channel
-            viewModel.getProgramsByChannelFromTime(shownChannelId, selectedTime).observe(viewLifecycleOwner, Observer { this.handleObservedPrograms(it) })
-            viewModel.getRecordingsByChannelId(shownChannelId).observe(viewLifecycleOwner, Observer { this.handleObservedRecordings(it) })
+            programViewModel.getProgramsByChannelFromTime(shownChannelId, selectedTime).observe(viewLifecycleOwner, Observer { this.handleObservedPrograms(it) })
+            programViewModel.getRecordingsByChannelId(shownChannelId).observe(viewLifecycleOwner, Observer { this.handleObservedRecordings(it) })
 
             loadingMoreProgramAllowed = true
             loadingProgramsAllowedTask = Runnable { loadingMoreProgramAllowed = true }
@@ -105,8 +105,8 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
             Timber.d("Search is active, loading programs from current time $selectedTime")
             // No channel and channel name was given, load all programs
             // from the current time and all recordings from all channels
-            viewModel.getProgramsFromTime(selectedTime).observe(viewLifecycleOwner, Observer { this.handleObservedPrograms(it) })
-            viewModel.recordings?.observe(viewLifecycleOwner, Observer { this.handleObservedRecordings(it) })
+            programViewModel.getProgramsFromTime(selectedTime).observe(viewLifecycleOwner, Observer { this.handleObservedPrograms(it) })
+            programViewModel.recordings?.observe(viewLifecycleOwner, Observer { this.handleObservedRecordings(it) })
 
             loadingMoreProgramAllowed = false
         }
@@ -267,7 +267,7 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
                     return@setOnMenuItemClickListener menuUtils.handleMenuCast("channelId", shownChannelId)
                 R.id.menu_add_notification -> {
                     activity?.let {
-                        addNotification(it, program, mainViewModel.getRecordingProfile())
+                        addNotification(it, program, programViewModel.getRecordingProfile())
                     }
                     return@setOnMenuItemClickListener true
                 }
@@ -346,7 +346,7 @@ class ProgramListFragment : BaseFragment(), RecyclerViewClickCallback, LastProgr
 
     fun updatePrograms(selectedTime: Long) {
         this.selectedTime = selectedTime
-        viewModel.getProgramsByChannelFromTime(shownChannelId, selectedTime).observe(viewLifecycleOwner, Observer<List<Program>> { this.handleObservedPrograms(it) })
+        programViewModel.getProgramsByChannelFromTime(shownChannelId, selectedTime).observe(viewLifecycleOwner, Observer<List<Program>> { this.handleObservedPrograms(it) })
     }
 
     companion object {

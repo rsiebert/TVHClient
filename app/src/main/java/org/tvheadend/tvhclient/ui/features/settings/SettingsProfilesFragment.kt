@@ -25,6 +25,8 @@ import org.tvheadend.tvhclient.domain.entity.ServerProfile
 import org.tvheadend.tvhclient.ui.common.callbacks.BackPressedInterface
 import org.tvheadend.tvhclient.ui.common.sendSnackbarMessage
 
+// TODO use view model to store the selected ids
+
 class SettingsProfilesFragment : BasePreferenceFragment(), BackPressedInterface {
 
     private lateinit var recordingProfilesPreference: ListPreference
@@ -40,7 +42,7 @@ class SettingsProfilesFragment : BasePreferenceFragment(), BackPressedInterface 
         super.onActivityCreated(savedInstanceState)
 
         toolbarInterface.setTitle(getString(R.string.pref_profiles))
-        toolbarInterface.setSubtitle(appRepository.connectionData.activeItem.name ?: "")
+        toolbarInterface.setSubtitle(settingsViewModel.connection.name ?: "")
 
         htspPlaybackProfilesPreference = findPreference("htsp_playback_profiles")!!
         httpPlaybackProfilesPreference = findPreference("http_playback_profiles")!!
@@ -59,18 +61,10 @@ class SettingsProfilesFragment : BasePreferenceFragment(), BackPressedInterface 
             castingServerProfileId = serverStatus.castingServerProfileId
         }
 
-        addProfiles(htspPlaybackProfilesPreference,
-                appRepository.serverProfileData.htspPlaybackProfiles,
-                htspPlaybackServerProfileId)
-        addProfiles(httpPlaybackProfilesPreference,
-                appRepository.serverProfileData.httpPlaybackProfiles,
-                httpPlaybackServerProfileId)
-        addProfiles(recordingProfilesPreference,
-                appRepository.serverProfileData.recordingProfiles,
-                recordingServerProfileId)
-        addProfiles(castingProfilesPreference,
-                appRepository.serverProfileData.httpPlaybackProfiles,
-                castingServerProfileId)
+        addProfiles(htspPlaybackProfilesPreference, settingsViewModel.getHtspProfiles(), htspPlaybackServerProfileId)
+        addProfiles(httpPlaybackProfilesPreference, settingsViewModel.getHttpProfiles(), httpPlaybackServerProfileId)
+        addProfiles(recordingProfilesPreference, settingsViewModel.getRecordingProfiles(), recordingServerProfileId)
+        addProfiles(castingProfilesPreference, settingsViewModel.getHttpProfiles(), castingServerProfileId)
 
         setHttpPlaybackProfileListSummary()
         setHtspPlaybackProfileListSummary()
@@ -115,7 +109,7 @@ class SettingsProfilesFragment : BasePreferenceFragment(), BackPressedInterface 
         if (htspPlaybackServerProfileId == 0) {
             htspPlaybackProfilesPreference.summary = "None"
         } else {
-            val playbackProfile = appRepository.serverProfileData.getItemById(htspPlaybackServerProfileId)
+            val playbackProfile = settingsViewModel.getProfileById(htspPlaybackServerProfileId)
             htspPlaybackProfilesPreference.summary = playbackProfile?.name
         }
     }
@@ -124,7 +118,7 @@ class SettingsProfilesFragment : BasePreferenceFragment(), BackPressedInterface 
         if (httpPlaybackServerProfileId == 0) {
             httpPlaybackProfilesPreference.summary = "None"
         } else {
-            val playbackProfile = appRepository.serverProfileData.getItemById(httpPlaybackServerProfileId)
+            val playbackProfile = settingsViewModel.getProfileById(httpPlaybackServerProfileId)
             httpPlaybackProfilesPreference.summary = playbackProfile?.name
         }
     }
@@ -133,7 +127,7 @@ class SettingsProfilesFragment : BasePreferenceFragment(), BackPressedInterface 
         if (recordingServerProfileId == 0) {
             recordingProfilesPreference.summary = "None"
         } else {
-            val recordingProfile = appRepository.serverProfileData.getItemById(recordingServerProfileId)
+            val recordingProfile = settingsViewModel.getProfileById(recordingServerProfileId)
             recordingProfilesPreference.summary = recordingProfile?.name
         }
     }
@@ -142,7 +136,7 @@ class SettingsProfilesFragment : BasePreferenceFragment(), BackPressedInterface 
         if (castingServerProfileId == 0) {
             castingProfilesPreference.summary = "None"
         } else {
-            val castingProfile = appRepository.serverProfileData.getItemById(castingServerProfileId)
+            val castingProfile = settingsViewModel.getProfileById(castingServerProfileId)
             castingProfilesPreference.summary = castingProfile?.name
         }
     }
@@ -162,7 +156,7 @@ class SettingsProfilesFragment : BasePreferenceFragment(), BackPressedInterface 
         if (isUnlocked) {
             serverStatus.castingServerProfileId = castingServerProfileId
         }
-        appRepository.serverStatusData.updateItem(serverStatus)
+        settingsViewModel.updateServerStatus(serverStatus)
         activity?.finish()
     }
 

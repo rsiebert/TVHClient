@@ -18,11 +18,12 @@ import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity
 import org.tvheadend.tvhclient.ui.features.notification.addNotification
 import timber.log.Timber
 
+// TODO put program into the viewmodel
 // TODO put event and channel Id into the viewmodel
 
 class ProgramDetailsFragment : BaseFragment() {
 
-    private lateinit var viewModel: ProgramViewModel
+    private lateinit var programViewModel: ProgramViewModel
     private var eventId: Int = 0
     private var channelId: Int = 0
     private var program: Program? = null
@@ -37,7 +38,7 @@ class ProgramDetailsFragment : BaseFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(activity!!).get(ProgramViewModel::class.java)
+        programViewModel = ViewModelProviders.of(activity!!).get(ProgramViewModel::class.java)
 
         forceSingleScreenLayout()
 
@@ -56,12 +57,12 @@ class ProgramDetailsFragment : BaseFragment() {
             }
         }
 
-        program = viewModel.getProgramByIdSync(eventId)
+        program = programViewModel.getProgramByIdSync(eventId)
         if (program != null) {
             program?.let {
                 Timber.d("Loaded details for program ${it.title}")
                 itemBinding.program = it
-                itemBinding.viewModel = viewModel
+                itemBinding.viewModel = programViewModel
                 // The toolbar is hidden as a default to prevent pressing any icons if no recording
                 // has been loaded yet. The toolbar is shown here because a recording was loaded
                 nested_toolbar.visible()
@@ -73,7 +74,7 @@ class ProgramDetailsFragment : BaseFragment() {
             status.visible()
         }
 
-        viewModel.getRecordingsByChannelId(channelId).observe(viewLifecycleOwner, Observer { recordings ->
+        programViewModel.getRecordingsByChannelId(channelId).observe(viewLifecycleOwner, Observer { recordings ->
             Timber.d("Got recordings")
             if (recordings != null) {
                 var recordingExists = false
@@ -163,7 +164,7 @@ class ProgramDetailsFragment : BaseFragment() {
                 return menuUtils.handleMenuCast("channelId", program.channelId)
             R.id.menu_add_notification -> {
                 activity?.let {
-                    addNotification(it, program, mainViewModel.getRecordingProfile())
+                    addNotification(it, program, programViewModel.getRecordingProfile())
                 }
                 return true
             }

@@ -16,7 +16,7 @@ import org.tvheadend.tvhclient.ui.common.visible
 import timber.log.Timber
 import java.util.concurrent.Executors
 
-class EpgViewPagerViewHolder(override val containerView: View, private val activity: FragmentActivity, pixelsPerMinute: Float, private val startTime: Long, private val endTime: Long, viewPool: RecyclerView.RecycledViewPool) : RecyclerView.ViewHolder(containerView), LayoutContainer {
+class EpgViewPagerViewHolder(override val containerView: View, private val activity: FragmentActivity, private val epgViewModel: EpgViewModel, private val fragmentId: Int, viewPool: RecyclerView.RecycledViewPool) : RecyclerView.ViewHolder(containerView), LayoutContainer {
 
     private val recyclerViewAdapter: EpgProgramListRecyclerViewAdapter
     private val viewModel: EpgViewModel = ViewModelProviders.of(activity).get(EpgViewModel::class.java)
@@ -27,7 +27,7 @@ class EpgViewPagerViewHolder(override val containerView: View, private val activ
         program_list_recycler_view.addItemDecoration(DividerItemDecoration(containerView.context, LinearLayoutManager.HORIZONTAL))
         program_list_recycler_view.itemAnimator = DefaultItemAnimator()
         program_list_recycler_view.setRecycledViewPool(viewPool)
-        recyclerViewAdapter = EpgProgramListRecyclerViewAdapter(viewModel, pixelsPerMinute, startTime, endTime)
+        recyclerViewAdapter = EpgProgramListRecyclerViewAdapter(viewModel, fragmentId)
         program_list_recycler_view.adapter = recyclerViewAdapter
     }
 
@@ -38,7 +38,7 @@ class EpgViewPagerViewHolder(override val containerView: View, private val activ
         no_programs.gone()
 
         execService.execute {
-            val programs = viewModel.getProgramsByChannelAndBetweenTimeSync(epgChannel.id, startTime, endTime)
+            val programs = viewModel.getProgramsByChannelAndBetweenTimeSync(epgChannel.id, fragmentId)
             if (programs.isNotEmpty()) {
                 Timber.d("Loaded ${programs.size} programs for channel ${epgChannel.name}")
                 activity.runOnUiThread {

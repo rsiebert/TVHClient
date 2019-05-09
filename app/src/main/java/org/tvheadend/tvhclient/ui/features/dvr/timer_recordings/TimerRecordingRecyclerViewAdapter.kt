@@ -102,6 +102,7 @@ class TimerRecordingRecyclerViewAdapter internal constructor(private val isDualP
             }
 
             override fun publishResults(charSequence: CharSequence, filterResults: FilterResults) {
+                @Suppress("UNCHECKED_CAST")
                 recordingListFiltered = filterResults.values as ArrayList<TimerRecording>
                 notifyDataSetChanged()
             }

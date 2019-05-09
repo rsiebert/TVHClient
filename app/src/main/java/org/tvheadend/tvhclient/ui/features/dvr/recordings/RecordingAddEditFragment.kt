@@ -32,6 +32,7 @@ class RecordingAddEditFragment : BaseFragment(), BackPressedInterface, Recording
     // selection then the default one from the connection setting will be used
     val intentData: Intent
         get() {
+            // TODO get this from the viewmodel
             val intent = Intent(activity, HtspService::class.java)
             intent.putExtra("title", viewModel.recording.title)
             intent.putExtra("subtitle", viewModel.recording.subtitle)
@@ -47,7 +48,7 @@ class RecordingAddEditFragment : BaseFragment(), BackPressedInterface, Recording
                 intent.putExtra("priority", viewModel.recording.priority)
                 intent.putExtra("enabled", if (viewModel.recording.isEnabled) 1 else 0)
             }
-            if (isServerProfileEnabled(profile, serverStatus) && dvr_config.text.isNotEmpty()) {
+            if (isServerProfileEnabled(profile, htspVersion) && dvr_config.text.isNotEmpty()) {
                 intent.putExtra("configName", dvr_config.text.toString())
             }
             return intent
@@ -62,8 +63,8 @@ class RecordingAddEditFragment : BaseFragment(), BackPressedInterface, Recording
 
         viewModel = ViewModelProviders.of(activity!!).get(RecordingViewModel::class.java)
 
-        recordingProfilesList = mainViewModel.getRecordingProfileNames()
-        profile = mainViewModel.getRecordingProfile()
+        recordingProfilesList = viewModel.getRecordingProfileNames()
+        profile = viewModel.getRecordingProfile()
         viewModel.recordingProfileNameId = getSelectedProfileId(profile, recordingProfilesList)
 
         if (savedInstanceState == null) {
@@ -82,20 +83,20 @@ class RecordingAddEditFragment : BaseFragment(), BackPressedInterface, Recording
     private fun updateUI() {
         val ctx = context ?: return
 
-        title_label.visibleOrGone(serverStatus.htspVersion >= 21)
-        title.visibleOrGone(serverStatus.htspVersion >= 21)
+        title_label.visibleOrGone(htspVersion >= 21)
+        title.visibleOrGone(htspVersion >= 21)
         title.setText(viewModel.recording.title)
 
-        subtitle_label.visibleOrGone(serverStatus.htspVersion >= 21)
-        subtitle.visibleOrGone(serverStatus.htspVersion >= 21)
+        subtitle_label.visibleOrGone(htspVersion >= 21)
+        subtitle.visibleOrGone(htspVersion >= 21)
         subtitle.setText(viewModel.recording.subtitle)
 
-        summary_label.visibleOrGone(serverStatus.htspVersion >= 21)
-        summary.visibleOrGone(serverStatus.htspVersion >= 21)
+        summary_label.visibleOrGone(htspVersion >= 21)
+        summary.visibleOrGone(htspVersion >= 21)
         summary.setText(viewModel.recording.summary)
 
-        description_label.visibleOrGone(serverStatus.htspVersion >= 21)
-        description.visibleOrGone(serverStatus.htspVersion >= 21)
+        description_label.visibleOrGone(htspVersion >= 21)
+        description.visibleOrGone(htspVersion >= 21)
         description.setText(viewModel.recording.description)
 
         stop_time.text = getTimeStringFromTimeInMillis(viewModel.recording.stop)
@@ -113,12 +114,12 @@ class RecordingAddEditFragment : BaseFragment(), BackPressedInterface, Recording
             channel_name.text = viewModel.recording.channelName ?: getString(R.string.all_channels)
             channel_name.setOnClickListener {
                 // Determine if the server supports recording on all channels
-                val allowRecordingOnAllChannels = serverStatus.htspVersion >= 21
-                handleChannelListSelection(ctx, mainViewModel.getChannelList(), allowRecordingOnAllChannels, this@RecordingAddEditFragment)
+                val allowRecordingOnAllChannels = htspVersion >= 21
+                handleChannelListSelection(ctx, viewModel.getChannelList(), allowRecordingOnAllChannels, this@RecordingAddEditFragment)
             }
         }
 
-        is_enabled.visibleOrGone(serverStatus.htspVersion >= 23 && !viewModel.recording.isRecording)
+        is_enabled.visibleOrGone(htspVersion >= 23 && !viewModel.recording.isRecording)
         is_enabled.isChecked = viewModel.recording.isEnabled
 
         priority.visibleOrGone(!viewModel.recording.isRecording)
@@ -198,11 +199,11 @@ class RecordingAddEditFragment : BaseFragment(), BackPressedInterface, Recording
      * created viewModel.recording.
      */
     private fun save() {
-        if (viewModel.recording.title.isNullOrEmpty() && serverStatus.htspVersion >= 21) {
+        if (viewModel.recording.title.isNullOrEmpty() && htspVersion >= 21) {
             context?.sendSnackbarMessage(R.string.error_empty_title)
             return
         }
-        if (viewModel.recording.channelId == 0 && serverStatus.htspVersion < 21) {
+        if (viewModel.recording.channelId == 0 && htspVersion < 21) {
             context?.sendSnackbarMessage(R.string.error_no_channel_selected)
             return
         }

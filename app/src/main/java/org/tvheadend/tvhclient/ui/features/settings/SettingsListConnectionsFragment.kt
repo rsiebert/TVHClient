@@ -10,31 +10,25 @@ import androidx.fragment.app.ListFragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.afollestad.materialdialogs.MaterialDialog
-import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.data.repository.AppRepository
 import org.tvheadend.tvhclient.data.service.HtspService
 import org.tvheadend.tvhclient.ui.common.callbacks.BackPressedInterface
 import org.tvheadend.tvhclient.ui.common.callbacks.ToolbarInterface
 import org.tvheadend.tvhclient.ui.common.tasks.WakeOnLanTask
 import org.tvheadend.tvhclient.ui.features.startup.SplashActivity
 import timber.log.Timber
-import javax.inject.Inject
 
 class SettingsListConnectionsFragment : ListFragment(), BackPressedInterface, ActionMode.Callback {
-
-    @Inject
-    lateinit var appRepository: AppRepository
 
     private lateinit var toolbarInterface: ToolbarInterface
     private lateinit var connectionListAdapter: ConnectionListAdapter
     private var actionMode: ActionMode? = null
 
-    private lateinit var viewModel: ConnectionViewModel
+    private lateinit var settingsViewModel: SettingsViewModel
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        MainApplication.getComponent().inject(this)
+        settingsViewModel = ViewModelProviders.of(activity as AppCompatActivity).get(SettingsViewModel::class.java)
 
         if (activity is ToolbarInterface) {
             toolbarInterface = activity as ToolbarInterface
@@ -46,10 +40,9 @@ class SettingsListConnectionsFragment : ListFragment(), BackPressedInterface, Ac
         listView.choiceMode = ListView.CHOICE_MODE_SINGLE
         setHasOptionsMenu(true)
 
-        viewModel = ViewModelProviders.of(activity as AppCompatActivity).get(ConnectionViewModel::class.java)
-        viewModel.connectionHasChanged = false
+        settingsViewModel.connectionHasChanged = false
         activity?.let {
-            viewModel.allConnections.observe(it, Observer { connections ->
+            settingsViewModel.allConnections.observe(it, Observer { connections ->
                 if (connections != null) {
                     connectionListAdapter.clear()
                     connectionListAdapter.addAll(connections)
@@ -100,15 +93,15 @@ class SettingsListConnectionsFragment : ListFragment(), BackPressedInterface, Ac
         when (item.itemId) {
             R.id.menu_set_active -> {
                 connection.isActive = true
-                appRepository.connectionData.updateItem(connection)
-                viewModel.connectionHasChanged = true
+                settingsViewModel.updateConnection(connection)
+                settingsViewModel.connectionHasChanged = true
                 mode.finish()
                 return true
             }
 
             R.id.menu_set_not_active -> {
                 connection.isActive = false
-                appRepository.connectionData.updateItem(connection)
+                settingsViewModel.updateConnection(connection)
                 mode.finish()
                 return true
             }
@@ -136,7 +129,7 @@ class SettingsListConnectionsFragment : ListFragment(), BackPressedInterface, Ac
                             .content(getString(R.string.delete_connection, connection.name))
                             .positiveText(getString(R.string.delete))
                             .negativeText(getString(R.string.cancel))
-                            .onPositive { _, _ -> appRepository.connectionData.removeItem(connection) }
+                            .onPositive { _, _ -> settingsViewModel.removeConnection(connection) }
                             .onNegative { dialog, _ -> dialog.cancel() }
                             .show()
                 }
@@ -177,7 +170,7 @@ class SettingsListConnectionsFragment : ListFragment(), BackPressedInterface, Ac
 
     override fun onBackPressed() {
         when {
-            viewModel.activeConnectionId < 0 -> context?.let {
+            settingsViewModel.activeConnectionId < 0 -> context?.let {
                 MaterialDialog.Builder(it)
                         .title(R.string.dialog_title_disconnect_from_server)
                         .content(R.string.dialog_content_disconnect_from_server)
@@ -185,7 +178,7 @@ class SettingsListConnectionsFragment : ListFragment(), BackPressedInterface, Ac
                         .onPositive { _, _ -> reconnect() }
                         .show()
             }
-            viewModel.connectionHasChanged -> context?.let {
+            settingsViewModel.connectionHasChanged -> context?.let {
                 MaterialDialog.Builder(it)
                         .title(R.string.dialog_title_connection_changed)
                         .content(R.string.dialog_content_connection_changed)
@@ -194,7 +187,7 @@ class SettingsListConnectionsFragment : ListFragment(), BackPressedInterface, Ac
                         .show()
             }
             else -> {
-                viewModel.connectionHasChanged = false
+                settingsViewModel.connectionHasChanged = false
                 activity?.finish()
             }
         }
@@ -209,20 +202,13 @@ class SettingsListConnectionsFragment : ListFragment(), BackPressedInterface, Ac
         Timber.d("Reconnecting to server, new initial sync will be done")
         activity?.stopService(Intent(activity, HtspService::class.java))
 
-        if (viewModel.activeConnectionId >= 0) {
-            val connection = appRepository.connectionData.getItemById(viewModel.activeConnectionId)
-            if (connection != null) {
-                connection.isSyncRequired = true
-                connection.lastUpdate = 0
-                appRepository.connectionData.updateItem(connection)
-            }
-        }
+        settingsViewModel.setSyncRequiredForActiveConnection()
 
         val intent = Intent(activity, SplashActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         activity?.startActivity(intent)
 
-        viewModel.connectionHasChanged = false
+        settingsViewModel.connectionHasChanged = false
         activity?.finish()
     }
 }

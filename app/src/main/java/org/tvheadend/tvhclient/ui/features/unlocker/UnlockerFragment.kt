@@ -50,7 +50,7 @@ class UnlockerFragment : WebViewFragment(), HtmlFileLoaderTask.Listener, Billing
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.menu_purchase -> {
-                if (!MainApplication.getInstance().isUnlocked) {
+                if (!isUnlocked) {
                     Timber.d("Unlocker not purchased")
                     billingManager.initiatePurchaseFlow(activity, UNLOCKER, null, BillingClient.SkuType.INAPP)
                 } else {
@@ -108,11 +108,11 @@ class UnlockerFragment : WebViewFragment(), HtmlFileLoaderTask.Listener, Billing
     }
 
     override fun onBillingClientSetupFinished() {
-
+        Timber.d("Billing client setup finished")
     }
 
     override fun onConsumeFinished(token: String, result: Int) {
-
+        Timber.d("Token \$token has been consumed with result \$result")
     }
 
     override fun onPurchaseSuccessful(purchases: List<Purchase>?) {

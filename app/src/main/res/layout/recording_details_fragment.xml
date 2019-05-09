@@ -13,6 +13,10 @@
             name="viewModel"
             type="org.tvheadend.tvhclient.ui.features.dvr.recordings.RecordingViewModel" />
 
+        <variable
+            name="htspVersion"
+            type="int" />
+
     </data>
 
     <LinearLayout
@@ -56,7 +60,7 @@
                     android:layout_marginEnd="8dp"
                     android:layout_marginRight="8dp"
                     app:disabledText="@{recording}"
-                    app:htspVersion="@{viewModel.htspVersion}"
+                    app:htspVersion="@{htspVersion}"
                     app:layout_constraintEnd_toStartOf="@+id/state"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -369,10 +373,10 @@
                     android:layout_marginTop="16dp"
                     android:layout_marginEnd="16dp"
                     android:text="@string/status"
-                    app:statusLabelVisibility="@{recording}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/comment" />
+                    app:layout_constraintTop_toBottomOf="@+id/comment"
+                    app:statusLabelVisibility="@{recording}" />
 
                 <TextView
                     android:id="@+id/data_size"
@@ -395,10 +399,10 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="4dp"
                     android:layout_marginEnd="16dp"
-                    app:subscriptionErrorText="@{recording}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/data_size" />
+                    app:layout_constraintTop_toBottomOf="@+id/data_size"
+                    app:subscriptionErrorText="@{recording}" />
 
                 <TextView
                     android:id="@+id/stream_errors"
@@ -408,10 +412,10 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="4dp"
                     android:layout_marginEnd="16dp"
-                    app:streamErrorText="@{recording}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/subscription_error" />
+                    app:layout_constraintTop_toBottomOf="@+id/subscription_error"
+                    app:streamErrorText="@{recording}" />
 
                 <TextView
                     android:id="@+id/data_errors"

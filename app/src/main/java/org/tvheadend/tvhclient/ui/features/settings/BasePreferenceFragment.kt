@@ -6,23 +6,18 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
 import org.tvheadend.tvhclient.MainApplication
-import org.tvheadend.tvhclient.data.repository.AppRepository
 import org.tvheadend.tvhclient.domain.entity.ServerStatus
 import org.tvheadend.tvhclient.ui.base.BaseActivity
 import org.tvheadend.tvhclient.ui.common.callbacks.ToolbarInterface
-import org.tvheadend.tvhclient.ui.features.MainViewModel
-import javax.inject.Inject
 
 abstract class BasePreferenceFragment : PreferenceFragmentCompat() {
 
-    @Inject
-    lateinit var appRepository: AppRepository
-
     lateinit var toolbarInterface: ToolbarInterface
     lateinit var sharedPreferences: SharedPreferences
-    protected lateinit var mainViewModel: MainViewModel
+    lateinit var settingsViewModel: SettingsViewModel
 
-    var isUnlocked: Boolean = false
+    protected var isUnlocked: Boolean = false
+    protected var htspVersion: Int = 13
     lateinit var serverStatus: ServerStatus
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -32,12 +27,11 @@ abstract class BasePreferenceFragment : PreferenceFragmentCompat() {
             toolbarInterface = activity as ToolbarInterface
         }
 
-        MainApplication.getComponent().inject(this)
-
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity)
-        mainViewModel = ViewModelProviders.of(activity as BaseActivity).get(MainViewModel::class.java)
+        settingsViewModel = ViewModelProviders.of(activity as BaseActivity).get(SettingsViewModel::class.java)
 
-        serverStatus = appRepository.serverStatusData.activeItem
+        serverStatus = settingsViewModel.serverStatus
+        htspVersion = serverStatus.htspVersion
         isUnlocked = MainApplication.getInstance().isUnlocked
     }
 }

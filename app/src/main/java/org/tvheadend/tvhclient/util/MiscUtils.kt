@@ -6,10 +6,8 @@ import android.content.Context
 import androidx.preference.PreferenceManager
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.domain.entity.ServerProfile
-import org.tvheadend.tvhclient.domain.entity.ServerStatus
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
-
 
 /**
  * Converts the given url into a unique hash value.
@@ -50,6 +48,6 @@ fun getThemeId(context: Context): Int {
     return if (theme) R.style.CustomTheme_Light else R.style.CustomTheme
 }
 
-fun isServerProfileEnabled(serverProfile: ServerProfile?, serverStatus: ServerStatus): Boolean {
-    return serverProfile != null && serverStatus.htspVersion >= 16
+fun isServerProfileEnabled(serverProfile: ServerProfile?, htspVersion: Int): Boolean {
+    return serverProfile != null && htspVersion >= 16
 }

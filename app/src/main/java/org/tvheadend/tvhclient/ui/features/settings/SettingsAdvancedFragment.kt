@@ -91,16 +91,8 @@ class SettingsAdvancedFragment : BasePreferenceFragment(), Preference.OnPreferen
                     .negativeText(R.string.cancel)
                     .onPositive { dialog, _ ->
                         Timber.d("Clear database requested")
-
-                        // Update the connection with the information that a new sync is required.
-                        val connection = appRepository.connectionData.activeItem
-                        connection.isSyncRequired = true
-                        connection.lastUpdate = 0
-                        appRepository.connectionData.updateItem(connection)
-
-                        // Clear the database contents, when done the callback
-                        // is triggered which will restart the application
-                        appRepository.miscData.clearDatabase(it, this@SettingsAdvancedFragment)
+                        settingsViewModel.setSyncRequiredForActiveConnection()
+                        settingsViewModel.clearDatabase(this@SettingsAdvancedFragment)
                         dialog.dismiss()
                     }
                     .onNegative { dialog, _ -> dialog.dismiss() }
@@ -243,7 +235,7 @@ class SettingsAdvancedFragment : BasePreferenceFragment(), Preference.OnPreferen
                         // Delete all channel icon files that were downloaded for the active
                         // connection. Additionally remove the icons from the Picasso cache
                         Timber.d("Deleting channel icons and invalidating cache")
-                        for (channel in appRepository.channelData.getItems()) {
+                        for (channel in settingsViewModel.getChannelList()) {
                             if (channel.icon.isNullOrEmpty()) {
                                 continue
                             }

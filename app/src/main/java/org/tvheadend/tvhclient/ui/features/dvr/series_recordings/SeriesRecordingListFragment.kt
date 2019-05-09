@@ -26,6 +26,7 @@ import java.util.concurrent.CopyOnWriteArrayList
 
 class SeriesRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, SearchRequestInterface, Filter.FilterListener {
 
+    private lateinit var seriesRecordingViewModel: SeriesRecordingViewModel
     private var selectedListPosition: Int = 0
     private lateinit var recyclerViewAdapter: SeriesRecordingRecyclerViewAdapter
     private var searchQuery: String = ""
@@ -36,6 +37,7 @@ class SeriesRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, S
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        seriesRecordingViewModel = ViewModelProviders.of(activity!!).get(SeriesRecordingViewModel::class.java)
 
         if (savedInstanceState != null) {
             selectedListPosition = savedInstanceState.getInt("listPosition", 0)
@@ -50,7 +52,7 @@ class SeriesRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, S
         else
             getString(R.string.search_results))
 
-        recyclerViewAdapter = SeriesRecordingRecyclerViewAdapter(isDualPane, this, serverStatus.htspVersion)
+        recyclerViewAdapter = SeriesRecordingRecyclerViewAdapter(isDualPane, this, htspVersion)
         recycler_view.layoutManager = LinearLayoutManager(activity)
         recycler_view.addItemDecoration(DividerItemDecoration(activity, LinearLayoutManager.VERTICAL))
         recycler_view.itemAnimator = DefaultItemAnimator()
@@ -59,8 +61,7 @@ class SeriesRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, S
         recycler_view.gone()
         progress_bar.visible()
 
-        val viewModel = ViewModelProviders.of(activity!!).get(SeriesRecordingViewModel::class.java)
-        viewModel.recordings.observe(viewLifecycleOwner, Observer { recordings ->
+        seriesRecordingViewModel.recordings.observe(viewLifecycleOwner, Observer { recordings ->
             if (recordings != null) {
                 recyclerViewAdapter.addItems(recordings)
             }

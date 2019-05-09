@@ -11,23 +11,19 @@ import androidx.preference.EditTextPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import com.afollestad.materialdialogs.MaterialDialog
-import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.data.repository.AppRepository
 import org.tvheadend.tvhclient.domain.entity.Connection
 import org.tvheadend.tvhclient.ui.common.callbacks.BackPressedInterface
 import org.tvheadend.tvhclient.ui.common.callbacks.ToolbarInterface
 import org.tvheadend.tvhclient.ui.common.sendSnackbarMessage
-import javax.inject.Inject
+
+// TODO use view model to store the connection
 
 abstract class SettingsConnectionBaseFragment : PreferenceFragmentCompat(), BackPressedInterface, Preference.OnPreferenceChangeListener {
 
-    @Inject
-    lateinit var appRepository: AppRepository
-
     lateinit var toolbarInterface: ToolbarInterface
     lateinit var connection: Connection
-    lateinit var viewModel: ConnectionViewModel
+    lateinit var settingsViewModel: SettingsViewModel
     internal var connectionValuesChanged: Boolean = false
 
     private lateinit var namePreference: EditTextPreference
@@ -48,9 +44,8 @@ abstract class SettingsConnectionBaseFragment : PreferenceFragmentCompat(), Back
         if (activity is ToolbarInterface) {
             toolbarInterface = activity as ToolbarInterface
         }
-        MainApplication.getComponent().inject(this)
 
-        viewModel = ViewModelProviders.of(activity as AppCompatActivity).get(ConnectionViewModel::class.java)
+        settingsViewModel = ViewModelProviders.of(activity as AppCompatActivity).get(SettingsViewModel::class.java)
         setHasOptionsMenu(true)
 
         // Get the connectivity preferences for later usage

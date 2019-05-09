@@ -43,10 +43,11 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
     @Inject
     lateinit var sharedPreferences: SharedPreferences
 
-    private lateinit var execService: ScheduledExecutorService
     private lateinit var connection: Connection
     private lateinit var serverStatus: ServerStatus
+    private var htspVersion: Int = 13
     private var htspConnection: HtspConnection? = null
+    private val execService: ScheduledExecutorService = Executors.newScheduledThreadPool(10)
 
     private val pendingEventOps = ArrayList<Program>()
     private val pendingChannelOps = ArrayList<Channel>()
@@ -63,7 +64,6 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         Timber.d("Starting service")
         MainApplication.getComponent().inject(this)
 
-        execService = Executors.newScheduledThreadPool(10)
         serverStatus = appRepository.serverStatusData.activeItem
         connectionTimeout = Integer.valueOf(sharedPreferences.getString("connection_timeout", resources.getString(R.string.pref_default_connection_timeout))!!) * 1000
     }
@@ -424,7 +424,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
     }
 
     private fun getHttpProfiles() {
-        if (serverStatus.htspVersion >= 26) {
+        if (htspVersion >= 26) {
             val request = HtspMessage()
             request.method = "api"
             request["path"] = "profile/list"
@@ -439,7 +439,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
     }
 
     private fun getSubscriptions() {
-        if (serverStatus.htspVersion >= 26) {
+        if (htspVersion >= 26) {
             val request = HtspMessage()
             request.method = "api"
             request["path"] = "status/subscriptions"
@@ -455,7 +455,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
     }
 
     private fun getInputs() {
-        if (serverStatus.htspVersion >= 26) {
+        if (htspVersion >= 26) {
             val request = HtspMessage()
             request.method = "api"
             request["path"] = "status/inputs"
@@ -1283,7 +1283,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
         var inputStream: InputStream
         when {
             url.startsWith("http") -> inputStream = BufferedInputStream(URL(url).openStream())
-            serverStatus.htspVersion > 9 -> inputStream = HtspFileInputStream(htspConnection, url)
+            htspVersion > 9 -> inputStream = HtspFileInputStream(htspConnection, url)
             else -> return
         }
 
@@ -1297,7 +1297,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
 
         if (url.startsWith("http")) {
             inputStream = BufferedInputStream(URL(url).openStream())
-        } else if (serverStatus.htspVersion > 9) {
+        } else if (htspVersion > 9) {
             inputStream = HtspFileInputStream(htspConnection, url)
         }
 
@@ -1462,7 +1462,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
     }
 
     private fun addDvrEntry(intent: Intent) {
-        val request = convertIntentToDvrMessage(intent, serverStatus.htspVersion)
+        val request = convertIntentToDvrMessage(intent, htspVersion)
         request["method"] = "addDvrEntry"
 
         htspConnection?.sendMessage(request, object : HtspResponseListener {
@@ -1480,7 +1480,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
     }
 
     private fun updateDvrEntry(intent: Intent) {
-        val request = convertIntentToDvrMessage(intent, serverStatus.htspVersion)
+        val request = convertIntentToDvrMessage(intent, htspVersion)
         request["method"] = "updateDvrEntry"
         request["id"] = intent.getIntExtra("id", 0)
 
@@ -1516,7 +1516,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
     }
 
     private fun addAutorecEntry(intent: Intent) {
-        val request = convertIntentToAutorecMessage(intent, serverStatus.htspVersion)
+        val request = convertIntentToAutorecMessage(intent, htspVersion)
         request["method"] = "addAutorecEntry"
 
         htspConnection?.sendMessage(request, object : HtspResponseListener {
@@ -1532,8 +1532,8 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
 
     private fun updateAutorecEntry(intent: Intent) {
         var request = HtspMessage()
-        if (serverStatus.htspVersion >= 25) {
-            request = convertIntentToAutorecMessage(intent, serverStatus.htspVersion)
+        if (htspVersion >= 25) {
+            request = convertIntentToAutorecMessage(intent, htspVersion)
             request["method"] = "updateAutorecEntry"
         } else {
             request["method"] = "deleteAutorecEntry"
@@ -1546,7 +1546,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
                 // not exist on the server. First delete the entry and if this was
                 // successful add a new entry with the new values.
                 val success = response.getInteger("success", 0) == 1
-                if (serverStatus.htspVersion < 25 && success) {
+                if (htspVersion < 25 && success) {
                     addAutorecEntry(intent)
                 } else {
                     if (success) {
@@ -1576,7 +1576,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
     }
 
     private fun addTimerrecEntry(intent: Intent) {
-        val request = convertIntentToTimerecMessage(intent, serverStatus.htspVersion)
+        val request = convertIntentToTimerecMessage(intent, htspVersion)
         request["method"] = "addTimerecEntry"
 
         htspConnection?.sendMessage(request, object : HtspResponseListener {
@@ -1592,8 +1592,8 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
 
     private fun updateTimerrecEntry(intent: Intent) {
         var request = HtspMessage()
-        if (serverStatus.htspVersion >= 25) {
-            request = convertIntentToTimerecMessage(intent, serverStatus.htspVersion)
+        if (htspVersion >= 25) {
+            request = convertIntentToTimerecMessage(intent, htspVersion)
             request["method"] = "updateTimerecEntry"
         } else {
             request["method"] = "deleteTimerecEntry"
@@ -1606,7 +1606,7 @@ class HtspService : Service(), HtspConnectionStateListener, HtspMessageListener 
                 // not exist on the server. First delete the entry and if this was
                 // successful add a new entry with the new values.
                 val success = response.getInteger("success", 0) == 1
-                if (serverStatus.htspVersion < 25 && success) {
+                if (htspVersion < 25 && success) {
                     addTimerrecEntry(intent)
                 } else {
                     if (success) {

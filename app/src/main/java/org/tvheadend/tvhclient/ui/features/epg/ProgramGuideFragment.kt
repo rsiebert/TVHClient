@@ -36,7 +36,7 @@ import timber.log.Timber
 
 class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewClickCallback, ChannelDisplayOptionListener, Filter.FilterListener, ViewPager.OnPageChangeListener, SearchRequestInterface {
 
-    lateinit var viewModel: EpgViewModel
+    private lateinit var epgViewModel: EpgViewModel
     private lateinit var channelListRecyclerViewAdapter: EpgChannelListRecyclerViewAdapter
 
     private lateinit var viewPagerAdapter: EpgViewPagerAdapter
@@ -52,15 +52,15 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(activity!!).get(EpgViewModel::class.java)
+        epgViewModel = ViewModelProviders.of(activity!!).get(EpgViewModel::class.java)
 
         forceSingleScreenLayout()
 
         if (savedInstanceState == null) {
-            viewModel.searchQuery = arguments?.getString(SearchManager.QUERY) ?: ""
+            epgViewModel.searchQuery = arguments?.getString(SearchManager.QUERY) ?: ""
         }
 
-        channelListRecyclerViewAdapter = EpgChannelListRecyclerViewAdapter(viewModel, this)
+        channelListRecyclerViewAdapter = EpgChannelListRecyclerViewAdapter(epgViewModel, this)
         channelListRecyclerViewLayoutManager = LinearLayoutManager(activity)
         channel_list_recycler_view.layoutManager = channelListRecyclerViewLayoutManager
         channel_list_recycler_view.addItemDecoration(DividerItemDecoration(activity, LinearLayoutManager.VERTICAL))
@@ -88,13 +88,13 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
             }
         })
 
-        viewPagerAdapter = EpgViewPagerAdapter(childFragmentManager, viewModel)
+        viewPagerAdapter = EpgViewPagerAdapter(childFragmentManager, epgViewModel)
         program_list_viewpager.adapter = viewPagerAdapter
         program_list_viewpager.offscreenPageLimit = 2
         program_list_viewpager.addOnPageChangeListener(this)
 
         Timber.d("Observing channel tags")
-        viewModel.channelTags.observe(viewLifecycleOwner, Observer { tags ->
+        epgViewModel.channelTags.observe(viewLifecycleOwner, Observer { tags ->
             if (tags != null) {
                 Timber.d("View model returned ${tags.size} channel tags")
                 channelTags = tags
@@ -102,7 +102,7 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
         })
 
         Timber.d("Observing epg channels")
-        viewModel.epgChannels.observe(viewLifecycleOwner, Observer { channels ->
+        epgViewModel.epgChannels.observe(viewLifecycleOwner, Observer { channels ->
 
             progress_bar?.gone()
             channel_list_recycler_view?.visible()
@@ -115,7 +115,7 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
             // Show either all channels or the name of the selected
             // channel tag and the channel count in the toolbar
             context?.let {
-                val toolbarTitle = viewModel.getSelectedChannelTagName(it)
+                val toolbarTitle = epgViewModel.getSelectedChannelTagName(it)
                 toolbarInterface.setTitle(toolbarTitle)
                 toolbarInterface.setSubtitle(resources.getQuantityString(R.plurals.items,
                         channelListRecyclerViewAdapter.itemCount, channelListRecyclerViewAdapter.itemCount))
@@ -125,7 +125,7 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
         // Observe all recordings here in case a recording shall be edited right after it was added.
         // This needs to be done in this fragment because the popup menu handling is also done here.
         Timber.d("Observing recordings")
-        viewModel.recordings.observe(viewLifecycleOwner, Observer { recordings ->
+        epgViewModel.recordings.observe(viewLifecycleOwner, Observer { recordings ->
             if (recordings != null) {
                 Timber.d("View model returned ${recordings.size} recordings")
                 for (recording in recordings) {
@@ -143,18 +143,9 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
             }
         })
 
-        mainViewModel.channelCount.observe(viewLifecycleOwner, Observer { count ->
+        epgViewModel.channelCount.observe(viewLifecycleOwner, Observer { count ->
             channelCount = count
         })
-    }
-
-    override fun onResume() {
-        super.onResume()
-        // When the user returns from the settings only the onResume method is called, not the
-        // onActivityCreated, so we need to check if any values that affect the representation
-        // of the channel list have changed.
-
-        viewModel.setChannelSortOrder(Integer.valueOf(sharedPreferences.getString("channel_sort_order", resources.getString(R.string.pref_default_channel_sort_order))!!))
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -180,7 +171,7 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
             R.id.menu_tags ->
                 showChannelTagSelectionDialog(ctx, channelTags.toMutableList(), channelCount, this)
             R.id.menu_timeframe ->
-                menuUtils.handleMenuTimeSelection(viewModel.selectedTimeOffset, viewModel.hoursToShow, viewModel.hoursToShow * viewModel.daysToShow, this)
+                menuUtils.handleMenuTimeSelection(epgViewModel.selectedTimeOffset, epgViewModel.hoursToShow, epgViewModel.hoursToShow * epgViewModel.daysToShow, this)
             R.id.menu_genre_color_info_channels ->
                 showGenreColorDialog(ctx)
             R.id.menu_sort_order ->
@@ -191,26 +182,26 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
     }
 
     override fun onTimeSelected(which: Int) {
-        viewModel.selectedTimeOffset = which
+        epgViewModel.selectedTimeOffset = which
         program_list_viewpager?.currentItem = which
 
         // TODO check if this is required
         // Add the selected list index as extra hours to the current time.
         // If the first index was selected then use the current time.
         var timeInMillis = System.currentTimeMillis()
-        timeInMillis += (1000 * 60 * 60 * which * viewModel.hoursToShow).toLong()
-        viewModel.setSelectedTime(timeInMillis)
+        timeInMillis += (1000 * 60 * 60 * which * epgViewModel.hoursToShow).toLong()
+        epgViewModel.setSelectedTime(timeInMillis)
     }
 
     override fun onChannelTagIdsSelected(ids: Set<Int>) {
         channel_list_recycler_view?.gone()
         program_list_viewpager?.gone()
         progress_bar?.visible()
-        viewModel.setSelectedChannelTagIds(ids)
+        epgViewModel.setSelectedChannelTagIds(ids)
     }
 
     override fun onChannelSortOrderSelected(id: Int) {
-        viewModel.setChannelSortOrder(id)
+        epgViewModel.setChannelSortOrder(id)
     }
 
     override fun onClick(view: View, position: Int) {
@@ -234,13 +225,13 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
             return
         }
 
-        val recording = mainViewModel.getRecordingById(program.eventId)
+        val recording = epgViewModel.getRecordingById(program.eventId)
 
         val popupMenu = PopupMenu(ctx, view)
         popupMenu.menuInflater.inflate(R.menu.program_popup_and_toolbar_menu, popupMenu.menu)
         popupMenu.menuInflater.inflate(R.menu.external_search_options_menu, popupMenu.menu)
 
-        prepareMenu(ctx, popupMenu.menu, program, program.recording, isNetworkAvailable, viewModel.htspVersion, viewModel.isUnlocked)
+        prepareMenu(ctx, popupMenu.menu, program, program.recording, isNetworkAvailable, htspVersion, isUnlocked)
         prepareSearchMenu(popupMenu.menu, program.title, isNetworkAvailable)
 
         popupMenu.setOnMenuItemClickListener { item ->
@@ -271,7 +262,7 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
                     return@setOnMenuItemClickListener menuUtils.handleMenuCast("channelId", program.channelId)
                 R.id.menu_add_notification -> {
                     activity?.let {
-                        addNotification(it, program, mainViewModel.getRecordingProfile())
+                        addNotification(it, program, epgViewModel.getRecordingProfile())
                     }
                     return@setOnMenuItemClickListener true
                 }
@@ -286,7 +277,7 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
         // Show either all channels or the name of the selected
         // channel tag and the channel count in the toolbar
         context?.let {
-            val toolbarTitle = viewModel.getSelectedChannelTagName(it)
+            val toolbarTitle = epgViewModel.getSelectedChannelTagName(it)
             toolbarInterface.setTitle(toolbarTitle)
             toolbarInterface.setSubtitle(it.resources.getQuantityString(R.plurals.results,
                     channelListRecyclerViewAdapter.itemCount, channelListRecyclerViewAdapter.itemCount))
@@ -294,8 +285,8 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
     }
 
     override fun onScroll(position: Int, offset: Int) {
-        viewModel.verticalScrollPosition = position
-        viewModel.verticalScrollOffset = offset
+        epgViewModel.verticalScrollPosition = position
+        epgViewModel.verticalScrollOffset = offset
         startScrolling()
     }
 
@@ -309,8 +300,8 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
      * Only already existing fragments in the view pager will be scrolled
      */
     private fun startScrolling() {
-        val position = viewModel.verticalScrollPosition
-        val offset = viewModel.verticalScrollOffset
+        val position = epgViewModel.verticalScrollPosition
+        val offset = epgViewModel.verticalScrollOffset
 
         channelListRecyclerViewLayoutManager.scrollToPositionWithOffset(position, offset)
 
@@ -335,7 +326,7 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
         for (i in position - 1..position + 1) {
             val fragment = viewPagerAdapter.getRegisteredFragment(i)
             if (i != position && fragment is EpgScrollInterface) {
-                fragment.onScroll(viewModel.verticalScrollPosition, viewModel.verticalScrollOffset)
+                fragment.onScroll(epgViewModel.verticalScrollPosition, epgViewModel.verticalScrollOffset)
             }
         }
     }

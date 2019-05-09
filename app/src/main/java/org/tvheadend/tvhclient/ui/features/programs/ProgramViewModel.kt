@@ -11,6 +11,7 @@ import org.tvheadend.tvhclient.data.repository.AppRepository
 import org.tvheadend.tvhclient.domain.entity.Program
 import org.tvheadend.tvhclient.domain.entity.Recording
 import org.tvheadend.tvhclient.domain.entity.SearchResultProgram
+import org.tvheadend.tvhclient.domain.entity.ServerProfile
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -73,5 +74,9 @@ class ProgramViewModel() : ViewModel(), SharedPreferences.OnSharedPreferenceChan
 
     fun getRecordingsByChannelId(channelId: Int): LiveData<List<Recording>> {
         return appRepository.recordingData.getLiveDataItemsByChannelId(channelId)
+    }
+
+    fun getRecordingProfile(): ServerProfile? {
+        return appRepository.serverProfileData.getItemById(appRepository.serverStatusData.activeItem.recordingServerProfileId)
     }
 }

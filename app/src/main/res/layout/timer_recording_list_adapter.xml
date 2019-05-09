@@ -82,14 +82,32 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
+            android:id="@+id/name"
+            style="?attr/SubtitleFont"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="88dp"
+            android:layout_marginLeft="88dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_weight="0.9"
+            android:ellipsize="end"
+            android:visibility="@{recording.name != null &amp;&amp; recording.name.length() > 0 &amp;&amp; !recording.name.equals(recording.title) ? View.VISIBLE : View.GONE}"
+            android:text="@{recording.name}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
             android:id="@+id/channel"
             style="?attr/ContentFont"
             android:layout_width="0dip"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:text="@{recording.channelName != null ? recording.channelName : @string/all_channels}"
-            app:layout_constraintStart_toStartOf="@+id/title"
-            app:layout_constraintTop_toBottomOf="@+id/title" />
+            app:layout_constraintStart_toStartOf="@+id/name"
+            app:layout_constraintTop_toBottomOf="@+id/name" />
 
         <TextView
             android:id="@+id/duration"

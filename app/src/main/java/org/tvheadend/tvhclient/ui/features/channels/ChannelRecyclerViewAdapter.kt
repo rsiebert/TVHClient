@@ -18,7 +18,7 @@ import org.tvheadend.tvhclient.util.isEqualTo
 import java.util.*
 import java.util.concurrent.CopyOnWriteArrayList
 
-class ChannelRecyclerViewAdapter internal constructor(private val viewModel: ChannelViewModel, private val clickCallback: RecyclerViewClickCallback) : RecyclerView.Adapter<ChannelRecyclerViewAdapter.ChannelViewHolder>(), Filterable {
+class ChannelRecyclerViewAdapter internal constructor(private val viewModel: ChannelViewModel, private val isDualPane: Boolean, private val clickCallback: RecyclerViewClickCallback) : RecyclerView.Adapter<ChannelRecyclerViewAdapter.ChannelViewHolder>(), Filterable {
 
     private val recordingList = ArrayList<Recording>()
     private val channelList = ArrayList<Channel>()
@@ -28,7 +28,7 @@ class ChannelRecyclerViewAdapter internal constructor(private val viewModel: Cha
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChannelViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
         val itemBinding = ChannelListAdapterBinding.inflate(layoutInflater, parent, false)
-        val viewHolder = ChannelViewHolder(itemBinding, viewModel)
+        val viewHolder = ChannelViewHolder(itemBinding, viewModel, isDualPane)
         itemBinding.lifecycleOwner = viewHolder
         return viewHolder
     }
@@ -178,7 +178,8 @@ class ChannelRecyclerViewAdapter internal constructor(private val viewModel: Cha
     }
 
     class ChannelViewHolder(private val binding: ChannelListAdapterBinding,
-                            private val viewModel: ChannelViewModel) : RecyclerView.ViewHolder(binding.root), LifecycleOwner {
+                            private val viewModel: ChannelViewModel,
+                            private val isDualPane: Boolean) : RecyclerView.ViewHolder(binding.root), LifecycleOwner {
 
         private val lifecycleRegistry = LifecycleRegistry(this)
 
@@ -203,6 +204,7 @@ class ChannelRecyclerViewAdapter internal constructor(private val viewModel: Cha
             binding.position = position
             binding.isSelected = isSelected
             binding.viewModel = viewModel
+            binding.isDualPane = isDualPane
             binding.callback = clickCallback
             binding.executePendingBindings()
         }

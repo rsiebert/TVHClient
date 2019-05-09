@@ -20,7 +20,7 @@ import org.tvheadend.tvhclient.ui.features.programs.ProgramDetailsFragment
 import org.tvheadend.tvhclient.util.isEqualTo
 import java.util.*
 
-internal class EpgProgramListRecyclerViewAdapter(private val viewModel: EpgViewModel, private val pixelsPerMinute: Float, private val fragmentStartTime: Long, private val fragmentStopTime: Long) : RecyclerView.Adapter<EpgProgramListRecyclerViewAdapter.EpgProgramListViewHolder>(), RecyclerViewClickCallback {
+internal class EpgProgramListRecyclerViewAdapter(private val viewModel: EpgViewModel, private val fragmentId: Int) : RecyclerView.Adapter<EpgProgramListRecyclerViewAdapter.EpgProgramListViewHolder>(), RecyclerViewClickCallback {
 
     private val programList = ArrayList<EpgProgram>()
     private val recordingList = ArrayList<Recording>()
@@ -37,9 +37,9 @@ internal class EpgProgramListRecyclerViewAdapter(private val viewModel: EpgViewM
         if (programList.size > position) {
             val program = programList[position]
 
-            val startTime = if (program.start < fragmentStartTime) fragmentStartTime else program.start
-            val stopTime = if (program.stop > fragmentStopTime) fragmentStopTime else program.stop
-            val layoutWidth = ((stopTime - startTime) / 1000 / 60 * pixelsPerMinute).toInt()
+            val startTime = if (program.start < viewModel.startTimes[fragmentId]) viewModel.startTimes[fragmentId] else program.start
+            val stopTime = if (program.stop > viewModel.endTimes[fragmentId]) viewModel.endTimes[fragmentId] else program.stop
+            val layoutWidth = ((stopTime - startTime) / 1000 / 60 * viewModel.pixelsPerMinute).toInt()
 
             holder.bind(program, position, layoutWidth)
         }

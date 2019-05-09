@@ -233,7 +233,7 @@ public class MainApplication extends MultiDexApplication implements OptionsProvi
 
     @Override
     public void onConsumeFinished(@NonNull String token, int result) {
-
+        Timber.d("Token $token has been consumed with result $result");
     }
 
     @Override

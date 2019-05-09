@@ -26,6 +26,7 @@ import java.util.concurrent.CopyOnWriteArrayList
 
 class TimerRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, SearchRequestInterface, Filter.FilterListener {
 
+    private lateinit var timerRecordingViewModel: TimerRecordingViewModel
     private var selectedListPosition: Int = 0
     private lateinit var recyclerViewAdapter: TimerRecordingRecyclerViewAdapter
     private var searchQuery: String = ""
@@ -36,6 +37,7 @@ class TimerRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, Se
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        timerRecordingViewModel = ViewModelProviders.of(activity!!).get(TimerRecordingViewModel::class.java)
 
         if (savedInstanceState != null) {
             selectedListPosition = savedInstanceState.getInt("listPosition", 0)
@@ -50,7 +52,7 @@ class TimerRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, Se
         else
             getString(R.string.search_results))
 
-        recyclerViewAdapter = TimerRecordingRecyclerViewAdapter(isDualPane, this, serverStatus.htspVersion)
+        recyclerViewAdapter = TimerRecordingRecyclerViewAdapter(isDualPane, this, htspVersion)
         recycler_view.layoutManager = LinearLayoutManager(activity)
         recycler_view.addItemDecoration(DividerItemDecoration(activity, LinearLayoutManager.VERTICAL))
         recycler_view.itemAnimator = DefaultItemAnimator()
@@ -59,8 +61,7 @@ class TimerRecordingListFragment : BaseFragment(), RecyclerViewClickCallback, Se
         recycler_view.gone()
         progress_bar.visible()
 
-        val viewModel = ViewModelProviders.of(activity!!).get(TimerRecordingViewModel::class.java)
-        viewModel.recordings.observe(viewLifecycleOwner, Observer { recordings ->
+        timerRecordingViewModel.recordings.observe(viewLifecycleOwner, Observer { recordings ->
             if (recordings != null) {
                 recyclerViewAdapter.addItems(recordings)
             }

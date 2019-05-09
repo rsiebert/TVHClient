@@ -21,11 +21,9 @@ import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem
 import com.mikepenz.materialdrawer.model.interfaces.IProfile
-import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.data.service.HtspService
 import org.tvheadend.tvhclient.domain.entity.Connection
-import org.tvheadend.tvhclient.ui.features.MainViewModel
 import org.tvheadend.tvhclient.ui.features.channels.ChannelListFragment
 import org.tvheadend.tvhclient.ui.features.dvr.recordings.CompletedRecordingListFragment
 import org.tvheadend.tvhclient.ui.features.dvr.recordings.FailedRecordingListFragment
@@ -35,6 +33,7 @@ import org.tvheadend.tvhclient.ui.features.dvr.series_recordings.SeriesRecording
 import org.tvheadend.tvhclient.ui.features.dvr.timer_recordings.TimerRecordingListFragment
 import org.tvheadend.tvhclient.ui.features.epg.ProgramGuideFragment
 import org.tvheadend.tvhclient.ui.features.information.StatusFragment
+import org.tvheadend.tvhclient.ui.features.information.StatusViewModel
 import org.tvheadend.tvhclient.ui.features.information.WebViewFragment
 import org.tvheadend.tvhclient.ui.features.settings.SettingsActivity
 import org.tvheadend.tvhclient.ui.features.startup.SplashActivity
@@ -42,7 +41,14 @@ import org.tvheadend.tvhclient.ui.features.unlocker.UnlockerFragment
 import org.tvheadend.tvhclient.util.getThemeId
 import java.util.*
 
-class NavigationDrawer(private val activity: AppCompatActivity, private val savedInstanceState: Bundle?, private val toolbar: Toolbar, private val viewModel: MainViewModel) : AccountHeader.OnAccountHeaderListener, Drawer.OnDrawerItemClickListener {
+// TODO savedstate required?
+
+class NavigationDrawer(private val activity: AppCompatActivity,
+                       private val savedInstanceState: Bundle?,
+                       private val toolbar: Toolbar,
+                       private val navigationViewModel: NavigationViewModel,
+                       private val statusViewModel: StatusViewModel,
+                       private val isUnlocked: Boolean) : AccountHeader.OnAccountHeaderListener, Drawer.OnDrawerItemClickListener {
 
     private lateinit var headerResult: AccountHeader
     private lateinit var result: Drawer
@@ -51,14 +57,15 @@ class NavigationDrawer(private val activity: AppCompatActivity, private val save
         createHeader()
         createMenu()
 
-        viewModel.connections.observe(activity, Observer { this.showConnectionsInDrawerHeader(it) })
-        viewModel.channelCount.observe(activity, Observer { count -> result.updateBadge(MENU_CHANNELS.toLong(), StringHolder(count.toString())) })
-        viewModel.seriesRecordingCount.observe(activity, Observer { count -> result.updateBadge(MENU_SERIES_RECORDINGS.toLong(), StringHolder(count.toString())) })
-        viewModel.timerRecordingCount.observe(activity, Observer { count -> result.updateBadge(MENU_TIMER_RECORDINGS.toLong(), StringHolder(count.toString())) })
-        viewModel.completedRecordingCount.observe(activity, Observer { count -> result.updateBadge(MENU_COMPLETED_RECORDINGS.toLong(), StringHolder(count.toString())) })
-        viewModel.scheduledRecordingCount.observe(activity, Observer { count -> result.updateBadge(MENU_SCHEDULED_RECORDINGS.toLong(), StringHolder(count.toString())) })
-        viewModel.failedRecordingCount.observe(activity, Observer { count -> result.updateBadge(MENU_FAILED_RECORDINGS.toLong(), StringHolder(count.toString())) })
-        viewModel.removedRecordingCount.observe(activity, Observer { count -> result.updateBadge(MENU_REMOVED_RECORDINGS.toLong(), StringHolder(count.toString())) })
+        navigationViewModel.connections.observe(activity, Observer { this.showConnectionsInDrawerHeader(it) })
+
+        statusViewModel.channelCount.observe(activity, Observer { count -> result.updateBadge(MENU_CHANNELS.toLong(), StringHolder(count.toString())) })
+        statusViewModel.seriesRecordingCount.observe(activity, Observer { count -> result.updateBadge(MENU_SERIES_RECORDINGS.toLong(), StringHolder(count.toString())) })
+        statusViewModel.timerRecordingCount.observe(activity, Observer { count -> result.updateBadge(MENU_TIMER_RECORDINGS.toLong(), StringHolder(count.toString())) })
+        statusViewModel.completedRecordingCount.observe(activity, Observer { count -> result.updateBadge(MENU_COMPLETED_RECORDINGS.toLong(), StringHolder(count.toString())) })
+        statusViewModel.scheduledRecordingCount.observe(activity, Observer { count -> result.updateBadge(MENU_SCHEDULED_RECORDINGS.toLong(), StringHolder(count.toString())) })
+        statusViewModel.failedRecordingCount.observe(activity, Observer { count -> result.updateBadge(MENU_FAILED_RECORDINGS.toLong(), StringHolder(count.toString())) })
+        statusViewModel.removedRecordingCount.observe(activity, Observer { count -> result.updateBadge(MENU_REMOVED_RECORDINGS.toLong(), StringHolder(count.toString())) })
     }
 
     private fun createHeader() {
@@ -139,7 +146,7 @@ class NavigationDrawer(private val activity: AppCompatActivity, private val save
                 timerRecordingsItem,
                 failedRecordingsItem,
                 removedRecordingsItem)
-        if (!MainApplication.getInstance().isUnlocked) {
+        if (!isUnlocked) {
             drawerBuilder.addDrawerItems(
                     DividerDrawerItem(),
                     extrasItem)
@@ -180,15 +187,15 @@ class NavigationDrawer(private val activity: AppCompatActivity, private val save
         } else {
             headerResult.addProfiles(ProfileDrawerItem().withName(R.string.no_connection_available))
         }
-        val (id) = viewModel.activeConnection
-        headerResult.setActiveProfile(id.toLong())
+
+        headerResult.setActiveProfile(navigationViewModel.connection.id.toLong())
     }
 
-    override fun onProfileChanged(view: View, profile: IProfile<*>, current: Boolean): Boolean {
+    override fun onProfileChanged(view: View, profile: IProfile<*>, isSameProfile: Boolean): Boolean {
         result.closeDrawer()
 
         // Do nothing if the same profile has been selected
-        if (current) {
+        if (isSameProfile) {
             return true
         }
 
@@ -201,8 +208,7 @@ class NavigationDrawer(private val activity: AppCompatActivity, private val save
                     handleNewServerSelected(profile.identifier.toInt())
                 }
                 .onNegative { _, _ ->
-                    val (id) = viewModel.activeConnection
-                    headerResult.setActiveProfile(id.toLong())
+                    headerResult.setActiveProfile(navigationViewModel.connection.id.toLong())
                 }
                 .cancelable(false)
                 .canceledOnTouchOutside(false)
@@ -219,7 +225,7 @@ class NavigationDrawer(private val activity: AppCompatActivity, private val save
      */
     private fun handleNewServerSelected(id: Int) {
         activity.stopService(Intent(activity, HtspService::class.java))
-        if (viewModel.updateConnection(id)) {
+        if (navigationViewModel.setNewActiveConnection(id)) {
             val intent = Intent(activity, SplashActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             activity.startActivity(intent)
@@ -229,7 +235,7 @@ class NavigationDrawer(private val activity: AppCompatActivity, private val save
 
     override fun onItemClick(view: View, position: Int, drawerItem: IDrawerItem<*, *>): Boolean {
         result.closeDrawer()
-        viewModel.setSelectedNavigationMenuId(drawerItem.identifier.toInt())
+        navigationViewModel.setSelectedNavigationMenuId(drawerItem.identifier.toInt())
         return true
     }
 

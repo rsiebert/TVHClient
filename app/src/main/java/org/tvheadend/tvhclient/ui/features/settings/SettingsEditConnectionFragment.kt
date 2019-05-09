@@ -1,9 +1,7 @@
 package org.tvheadend.tvhclient.ui.features.settings
 
 import android.os.Bundle
-
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.domain.entity.Connection
 
 class SettingsEditConnectionFragment : SettingsConnectionBaseFragment() {
 
@@ -21,12 +19,12 @@ class SettingsEditConnectionFragment : SettingsConnectionBaseFragment() {
             connectionValuesChanged = savedInstanceState.getBoolean("connection_values_changed")
         }
 
-        connection = appRepository.connectionData.getItemById(connectionId) ?: Connection()
+        connection = settingsViewModel.getConnectionById(connectionId)
     }
 
     override fun save() {
-        appRepository.connectionData.updateItem(connection)
-        viewModel.connectionHasChanged = connectionValuesChanged
+        settingsViewModel.updateConnection(connection)
+        settingsViewModel.connectionHasChanged = connectionValuesChanged
         activity?.finish()
     }
 

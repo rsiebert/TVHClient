@@ -85,7 +85,7 @@ class SettingsUserInterfaceFragment : BasePreferenceFragment(), Preference.OnPre
     }
 
     private fun handlePreferenceCastingSelected() {
-        if (serverStatus.htspVersion < 16) {
+        if (htspVersion < 16) {
             context?.sendSnackbarMessage(R.string.feature_not_supported_by_server)
             castMiniControllerPreference?.isChecked = false
         } else if (!isUnlocked) {

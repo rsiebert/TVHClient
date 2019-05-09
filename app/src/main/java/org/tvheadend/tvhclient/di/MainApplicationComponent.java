@@ -17,14 +17,12 @@ import org.tvheadend.tvhclient.ui.features.channels.BaseChannelViewModel;
 import org.tvheadend.tvhclient.ui.features.dvr.recordings.RecordingViewModel;
 import org.tvheadend.tvhclient.ui.features.dvr.series_recordings.SeriesRecordingViewModel;
 import org.tvheadend.tvhclient.ui.features.dvr.timer_recordings.TimerRecordingViewModel;
+import org.tvheadend.tvhclient.ui.features.information.StatusViewModel;
+import org.tvheadend.tvhclient.ui.features.navigation.NavigationViewModel;
 import org.tvheadend.tvhclient.ui.features.playback.external.ExternalPlayerViewModel;
 import org.tvheadend.tvhclient.ui.features.playback.internal.PlayerViewModel;
 import org.tvheadend.tvhclient.ui.features.programs.ProgramViewModel;
-import org.tvheadend.tvhclient.ui.features.settings.BasePreferenceFragment;
-import org.tvheadend.tvhclient.ui.features.settings.ConnectionViewModel;
-import org.tvheadend.tvhclient.ui.features.settings.SettingsConnectionBaseFragment;
-import org.tvheadend.tvhclient.ui.features.settings.SettingsListConnectionsFragment;
-import org.tvheadend.tvhclient.ui.features.startup.StartupFragment;
+import org.tvheadend.tvhclient.ui.features.settings.SettingsViewModel;
 import org.tvheadend.tvhclient.util.MigrateUtils;
 
 import javax.inject.Singleton;
@@ -46,10 +44,13 @@ public interface MainApplicationComponent {
 
     void inject(MainApplication mainApplication);
 
-
     void inject(MainViewModel mainViewModel);
 
-    void inject(ConnectionViewModel connectionViewModel);
+    void inject(NavigationViewModel navigationViewModel);
+
+    void inject(StatusViewModel statusViewModel);
+
+    void inject(SettingsViewModel settingsViewModel);
 
     void inject(BaseChannelViewModel baseChannelViewModel);
 
@@ -65,23 +66,11 @@ public interface MainApplicationComponent {
 
     void inject(ExternalPlayerViewModel externalPlayerViewModel);
 
-
     void inject(MainActivity mainActivity);
-
 
     void inject(MenuUtils menuUtils);
 
     void inject(MigrateUtils migrateUtils);
-
-
-    void inject(BasePreferenceFragment basePreferenceFragment);
-
-    void inject(SettingsListConnectionsFragment settingsListConnectionsFragment);
-
-    void inject(StartupFragment startupFragment);
-
-    void inject(SettingsConnectionBaseFragment settingsConnectionBaseFragment);
-
 
     void inject(HtspService htspService);
 

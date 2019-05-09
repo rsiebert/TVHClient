@@ -6,12 +6,10 @@ import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import com.afollestad.materialdialogs.MaterialDialog
 import kotlinx.android.synthetic.main.startup_fragment.*
-import org.tvheadend.tvhclient.MainApplication
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.data.service.SyncStateReceiver
-import org.tvheadend.tvhclient.ui.base.BaseActivity
-import org.tvheadend.tvhclient.ui.common.MenuUtils
+import org.tvheadend.tvhclient.data.service.HtspService
 import org.tvheadend.tvhclient.ui.common.callbacks.ToolbarInterface
 import org.tvheadend.tvhclient.ui.common.invisible
 import org.tvheadend.tvhclient.ui.common.visible
@@ -24,10 +22,7 @@ import timber.log.Timber
 
 class StartupFragment : Fragment() {
 
-    protected lateinit var mainViewModel: MainViewModel
-    private lateinit var stateText: String
-    private lateinit var detailsText: String
-    private lateinit var state: SyncStateReceiver.State
+    private lateinit var mainViewModel: MainViewModel
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.startup_fragment, container, false)
@@ -35,35 +30,30 @@ class StartupFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        MainApplication.getComponent().inject(this)
+        mainViewModel = ViewModelProviders.of(activity!!).get(MainViewModel::class.java)
+
         setHasOptionsMenu(true)
 
         if (activity is StartupActivity) {
             (activity as ToolbarInterface).setTitle(getString(R.string.status))
         }
 
-        if (savedInstanceState != null) {
-            state = savedInstanceState.getSerializable("state") as SyncStateReceiver.State
-            stateText = savedInstanceState.getString("stateText", "")
-            detailsText = savedInstanceState.getString("detailsText", "")
-        } else {
-            state = SyncStateReceiver.State.IDLE
-            stateText = getString(R.string.initializing)
-            detailsText = ""
-        }
+        startup_status.text = savedInstanceState?.getString("stateText", "")
+                ?: getString(R.string.initializing)
+        startup_status.visible()
+        progress_bar.visible()
 
-        mainViewModel = ViewModelProviders.of(activity as BaseActivity).get(MainViewModel::class.java)
         mainViewModel.connectionCount.observe(viewLifecycleOwner, Observer { count ->
             if (count == 0) {
                 Timber.d("No connection available, showing settings button")
-                stateText = getString(R.string.no_connection_available)
+                startup_status.text = getString(R.string.no_connection_available)
                 progress_bar.invisible()
                 add_connection_button.visible()
                 add_connection_button.setOnClickListener { showSettingsAddNewConnection() }
             } else {
-                if (mainViewModel.activeConnection.id == -1) {
+                if (mainViewModel.connection.id == -1) {
                     Timber.d("No active connection available, showing settings button")
-                    stateText = getString(R.string.no_connection_active_advice)
+                    startup_status.text = getString(R.string.no_connection_active_advice)
                     progress_bar.invisible()
                     settings_button.visible()
                     settings_button.setOnClickListener { showConnectionListSettings() }
@@ -76,16 +66,14 @@ class StartupFragment : Fragment() {
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        outState.putSerializable("state", state)
-        outState.putString("stateText", state_view.text.toString())
-        outState.putString("detailsText", details_view.text.toString())
+        outState.putString("stateText", startup_status.text.toString())
         super.onSaveInstanceState(outState)
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {
         super.onPrepareOptionsMenu(menu)
         // Do not show the reconnect menu in case no connections are available or none is active
-        menu.findItem(R.id.menu_refresh)?.isVisible = (mainViewModel.activeConnection.id > 0)
+        menu.findItem(R.id.menu_refresh)?.isVisible = (mainViewModel.connection.id > 0)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -100,9 +88,23 @@ class StartupFragment : Fragment() {
                 true
             }
             R.id.menu_refresh -> {
-                val currentActivity = activity
-                if (currentActivity != null) {
-                    MenuUtils(currentActivity).handleMenuReconnectSelection()
+                activity?.let {
+                    MaterialDialog.Builder(it)
+                            .title(R.string.dialog_title_reconnect_to_server)
+                            .content(R.string.dialog_content_reconnect_to_server)
+                            .negativeText(R.string.cancel)
+                            .positiveText(R.string.reconnect)
+                            .onPositive { _, _ ->
+                                Timber.d("Reconnect requested, stopping service and updating active connection to require a full sync")
+                                it.stopService(Intent(activity, HtspService::class.java))
+
+                                mainViewModel.setConnectionSyncRequired()
+                                // Finally restart the application to show the startup fragment
+                                val intent = Intent(activity, SplashActivity::class.java)
+                                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                it.startActivity(intent)
+                            }
+                            .show()
                 }
                 true
             }

@@ -16,6 +16,7 @@ import timber.log.Timber
 
 class StatusFragment : BaseFragment() {
 
+    private lateinit var statusViewModel: StatusViewModel
     private lateinit var statusUpdateTask: Runnable
     private val statusUpdateHandler = Handler()
 
@@ -25,6 +26,8 @@ class StatusFragment : BaseFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        statusViewModel = ViewModelProviders.of(activity!!).get(StatusViewModel::class.java)
+
         forceSingleScreenLayout()
 
         toolbarInterface.setTitle(getString(R.string.status))
@@ -61,7 +64,7 @@ class StatusFragment : BaseFragment() {
 
     override fun onPrepareOptionsMenu(menu: Menu) {
         super.onPrepareOptionsMenu(menu)
-        menu.findItem(R.id.menu_wol)?.isVisible = isUnlocked && mainViewModel.activeConnection.isWolEnabled
+        menu.findItem(R.id.menu_wol)?.isVisible = isUnlocked && connection.isWolEnabled
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -72,7 +75,7 @@ class StatusFragment : BaseFragment() {
             }
             R.id.menu_wol -> {
                 context?.let {
-                    WakeOnLanTask(it, mainViewModel.activeConnection).execute()
+                    WakeOnLanTask(it, connection).execute()
                 }
                 true
             }
@@ -86,40 +89,40 @@ class StatusFragment : BaseFragment() {
 
     private fun showStatus() {
 
-        val text = "${mainViewModel.activeConnection.name} (${mainViewModel.activeConnection.hostname})"
+        val text = "${connection.name} (${connection.hostname})"
         connection_view.text = text
 
-        series_recordings_view.visibility = if (serverStatus.htspVersion >= 13) View.VISIBLE else View.GONE
-        timer_recordings_view.visibility = if (serverStatus.htspVersion >= 18 && isUnlocked) View.VISIBLE else View.GONE
+        series_recordings_view.visibility = if (htspVersion >= 13) View.VISIBLE else View.GONE
+        timer_recordings_view.visibility = if (htspVersion >= 18 && isUnlocked) View.VISIBLE else View.GONE
 
-        mainViewModel.channelCount.observe(viewLifecycleOwner, Observer { count ->
+        statusViewModel.channelCount.observe(viewLifecycleOwner, Observer { count ->
             val channelCountText = "$count ${getString(R.string.available)}"
             channels_view.text = channelCountText
         })
-        mainViewModel.programCount.observe(viewLifecycleOwner, Observer { count ->
+        statusViewModel.programCount.observe(viewLifecycleOwner, Observer { count ->
             programs_view.text = resources.getQuantityString(R.plurals.programs, count ?: 0, count)
         })
-        mainViewModel.seriesRecordingCount.observe(viewLifecycleOwner, Observer { count ->
+        statusViewModel.seriesRecordingCount.observe(viewLifecycleOwner, Observer { count ->
             series_recordings_view.text = resources.getQuantityString(R.plurals.series_recordings, count
                     ?: 0, count)
         })
-        mainViewModel.timerRecordingCount.observe(viewLifecycleOwner, Observer { count ->
+        statusViewModel.timerRecordingCount.observe(viewLifecycleOwner, Observer { count ->
             timer_recordings_view.text = resources.getQuantityString(R.plurals.timer_recordings, count
                     ?: 0, count)
         })
-        mainViewModel.completedRecordingCount.observe(viewLifecycleOwner, Observer { count ->
+        statusViewModel.completedRecordingCount.observe(viewLifecycleOwner, Observer { count ->
             completed_recordings_view.text = resources.getQuantityString(R.plurals.completed_recordings, count
                     ?: 0, count)
         })
-        mainViewModel.scheduledRecordingCount.observe(viewLifecycleOwner, Observer { count ->
+        statusViewModel.scheduledRecordingCount.observe(viewLifecycleOwner, Observer { count ->
             upcoming_recordings_view.text = resources.getQuantityString(R.plurals.upcoming_recordings, count
                     ?: 0, count)
         })
-        mainViewModel.failedRecordingCount.observe(viewLifecycleOwner, Observer { count ->
+        statusViewModel.failedRecordingCount.observe(viewLifecycleOwner, Observer { count ->
             failed_recordings_view.text = resources.getQuantityString(R.plurals.failed_recordings, count
                     ?: 0, count)
         })
-        mainViewModel.removedRecordingCount.observe(viewLifecycleOwner, Observer { count ->
+        statusViewModel.removedRecordingCount.observe(viewLifecycleOwner, Observer { count ->
             removed_recordings_view.text = resources.getQuantityString(R.plurals.removed_recordings, count
                     ?: 0, count)
         })
@@ -132,7 +135,7 @@ class StatusFragment : BaseFragment() {
                 for (rec in recordings) {
                     if (rec.isRecording) {
                         currentRecText.append(getString(R.string.currently_recording)).append(": ").append(rec.title)
-                        val channel = mainViewModel.getChannelById(rec.channelId)
+                        val channel = statusViewModel.getChannelById(rec.channelId)
                         if (channel != null) {
                             currentRecText.append(" (").append(getString(R.string.channel)).append(" ").append(channel.name).append(")\n")
                         }
@@ -151,8 +154,7 @@ class StatusFragment : BaseFragment() {
      */
     private fun showServerInformation() {
 
-        val serverStatus = mainViewModel.activeServerStatus
-        val version = (serverStatus.htspVersion.toString()
+        val version = (htspVersion.toString()
                 + "   (" + getString(R.string.server) + ": "
                 + serverStatus.serverName + " "
                 + serverStatus.serverVersion + ")")
@@ -189,12 +191,12 @@ class StatusFragment : BaseFragment() {
     }
 
     private fun showSubscriptionAndInputStatus() {
-        mainViewModel.subscriptions.observe(viewLifecycleOwner, Observer { subscriptions ->
+        statusViewModel.subscriptions.observe(viewLifecycleOwner, Observer { subscriptions ->
             if (subscriptions != null) {
                 Timber.d("Received subscription status")
             }
         })
-        mainViewModel.inputs.observe(viewLifecycleOwner, Observer { inputs ->
+        statusViewModel.inputs.observe(viewLifecycleOwner, Observer { inputs ->
             if (inputs != null) {
                 Timber.d("Received input status")
             }

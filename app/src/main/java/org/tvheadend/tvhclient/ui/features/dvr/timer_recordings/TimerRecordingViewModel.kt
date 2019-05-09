@@ -1,10 +1,15 @@
 package org.tvheadend.tvhclient.ui.features.dvr.timer_recordings
 
 import android.app.Application
+import android.content.Context
+import android.content.SharedPreferences
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import org.tvheadend.tvhclient.MainApplication
+import org.tvheadend.tvhclient.R
 import org.tvheadend.tvhclient.data.repository.AppRepository
+import org.tvheadend.tvhclient.domain.entity.Channel
+import org.tvheadend.tvhclient.domain.entity.ServerProfile
 import org.tvheadend.tvhclient.domain.entity.TimerRecording
 import timber.log.Timber
 import java.util.*
@@ -13,7 +18,11 @@ import javax.inject.Inject
 class TimerRecordingViewModel(application: Application) : AndroidViewModel(application) {
 
     @Inject
+    lateinit var appContext: Context
+    @Inject
     lateinit var appRepository: AppRepository
+    @Inject
+    lateinit var sharedPreferences: SharedPreferences
 
     var recording = TimerRecording()
     val recordings: LiveData<List<TimerRecording>>
@@ -73,5 +82,19 @@ class TimerRecordingViewModel(application: Application) : AndroidViewModel(appli
         val minutes = (hour * 60 + minute).toLong()
         Timber.d("Time in millis is $milliSeconds, start minutes are $minutes")
         return minutes
+    }
+
+    fun getChannelList(): List<Channel> {
+        val defaultChannelSortOrder = appContext.resources.getString(R.string.pref_default_channel_sort_order)
+        val channelSortOrder = Integer.valueOf(sharedPreferences.getString("channel_sort_order", defaultChannelSortOrder) ?: defaultChannelSortOrder)
+        return appRepository.channelData.getChannels(channelSortOrder)
+    }
+
+    fun getRecordingProfileNames(): Array<String> {
+        return appRepository.serverProfileData.recordingProfileNames
+    }
+
+    fun getRecordingProfile(): ServerProfile? {
+        return appRepository.serverProfileData.getItemById(appRepository.serverStatusData.activeItem.recordingServerProfileId)
     }
 }

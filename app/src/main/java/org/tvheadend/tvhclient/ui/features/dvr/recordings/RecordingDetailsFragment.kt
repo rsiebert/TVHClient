@@ -18,10 +18,12 @@ import org.tvheadend.tvhclient.ui.features.download.DownloadRecordingManager
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingAddEditActivity
 import org.tvheadend.tvhclient.ui.features.dvr.RecordingRemovedCallback
 
+// TODO put recording into the viewmodel
 // TODO put shownId into the viewmodel
 
 class RecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback, DownloadPermissionGrantedInterface {
 
+    private lateinit var recordingViewModel: RecordingViewModel
     private var recording: Recording? = null
     var shownDvrId: Int = 0
     private lateinit var itemBinding: RecordingDetailsFragmentBinding
@@ -33,6 +35,7 @@ class RecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback, Downl
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        recordingViewModel = ViewModelProviders.of(activity!!).get(RecordingViewModel::class.java)
 
         if (!isDualPane) {
             toolbarInterface.setTitle(getString(R.string.details))
@@ -43,7 +46,8 @@ class RecordingDetailsFragment : BaseFragment(), RecordingRemovedCallback, Downl
         // or when the fragment is shown for the first time
         shownDvrId = savedInstanceState?.getInt("id", 0) ?: (arguments?.getInt("id", 0) ?: 0)
 
-        viewModel.getRecordingById(shownDvrId)?.observe(viewLifecycleOwner, Observer { rec ->
+
+        recordingViewModel.getRecordingById(shownDvrId)?.observe(viewLifecycleOwner, Observer { rec ->
             if (rec != null) {
                 recording = rec
                 itemBinding.recording = recording

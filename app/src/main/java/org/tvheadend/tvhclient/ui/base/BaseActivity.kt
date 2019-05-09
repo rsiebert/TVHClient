@@ -1,22 +1,12 @@
 package org.tvheadend.tvhclient.ui.base
 
 import android.content.Context
-import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProviders
 import org.tvheadend.tvhclient.ui.common.callbacks.ToolbarInterface
 import org.tvheadend.tvhclient.ui.common.onAttach
-import org.tvheadend.tvhclient.ui.features.MainViewModel
 
 open class BaseActivity : AppCompatActivity(), ToolbarInterface {
-
-    lateinit var viewModel: MainViewModel
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
-    }
 
     override fun attachBaseContext(context: Context) {
         super.attachBaseContext(onAttach(context))

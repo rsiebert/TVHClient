@@ -21,6 +21,7 @@ class EpgViewModel : BaseChannelViewModel(), SharedPreferences.OnSharedPreferenc
     var showProgramSubtitle: MutableLiveData<Boolean> = MutableLiveData()
     var showGenreColor: MutableLiveData<Boolean> = MutableLiveData()
 
+    var pixelsPerMinute: Float = 0f
     var verticalScrollOffset = 0
     var verticalScrollPosition = 0
     var selectedTimeOffset = 0
@@ -92,8 +93,8 @@ class EpgViewModel : BaseChannelViewModel(), SharedPreferences.OnSharedPreferenc
         return appRepository.recordingData.getLiveDataItemsByChannelId(channelId)
     }
 
-    fun getProgramsByChannelAndBetweenTimeSync(channelId: Int, startTime: Long, endTime: Long): List<EpgProgram> {
-        return appRepository.programData.getItemByChannelIdAndBetweenTime(channelId, startTime, endTime)
+    fun getProgramsByChannelAndBetweenTimeSync(channelId: Int, fragmentId: Int): List<EpgProgram> {
+        return appRepository.programData.getItemByChannelIdAndBetweenTime(channelId, startTimes[fragmentId], endTimes[fragmentId])
     }
 
     internal inner class EpgChannelLiveData(selectedChannelSortOrder: LiveData<Int>,

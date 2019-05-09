@@ -35,21 +35,23 @@ class MenuUtils(activity: Activity) {
     lateinit var sharedPreferences: SharedPreferences
 
     private val isUnlocked: Boolean
-    private val activity: WeakReference<Activity>
-    private val serverStatus: ServerStatus
+    private val activityReference: WeakReference<Activity>
     private val connection: Connection?
+    private val serverStatus: ServerStatus
+    private var htspVersion: Int = 13
 
     init {
         MainApplication.getComponent().inject(this)
 
-        this.activity = WeakReference(activity)
-        this.isUnlocked = MainApplication.getInstance().isUnlocked
-        this.connection = appRepository.connectionData.activeItem
-        this.serverStatus = appRepository.serverStatusData.activeItem
+        activityReference = WeakReference(activity)
+        isUnlocked = MainApplication.getInstance().isUnlocked
+        connection = appRepository.connectionData.activeItem
+        serverStatus = appRepository.serverStatusData.activeItem
+        htspVersion = serverStatus.htspVersion
     }
 
     fun handleMenuTimeSelection(currentSelection: Int, intervalInHours: Int, maxIntervalsToShow: Int, callback: ChannelDisplayOptionListener?): Boolean {
-        val activity = this.activity.get() ?: return false
+        val activity = activityReference.get() ?: return false
 
         val startDateFormat = SimpleDateFormat("dd.MM.yyyy - HH.00", Locale.US)
         val endDateFormat = SimpleDateFormat("HH.00", Locale.US)
@@ -83,7 +85,7 @@ class MenuUtils(activity: Activity) {
     }
 
     fun handleMenuChannelSortOrderSelection(callback: ChannelDisplayOptionListener): Boolean {
-        val activity = this.activity.get()
+        val activity = activityReference.get()
         if (activity == null) {
             Timber.d("Weak reference to activity is null")
             return false
@@ -109,7 +111,7 @@ class MenuUtils(activity: Activity) {
     }
 
     fun handleMenuRecordSelection(eventId: Int): Boolean {
-        val activity = this.activity.get()
+        val activity = activityReference.get()
         if (activity == null) {
             Timber.d("Weak reference to activity is null")
             return false
@@ -120,7 +122,7 @@ class MenuUtils(activity: Activity) {
         intent.putExtra("eventId", eventId)
 
         val profile = appRepository.serverProfileData.getItemById(serverStatus.recordingServerProfileId)
-        if (profile != null && isServerProfileEnabled(profile, serverStatus)) {
+        if (profile != null && isServerProfileEnabled(profile, htspVersion)) {
             intent.putExtra("configName", profile.name)
         }
         activity.startService(intent)
@@ -128,7 +130,7 @@ class MenuUtils(activity: Activity) {
     }
 
     fun handleMenuSeriesRecordSelection(title: String?): Boolean {
-        val activity = this.activity.get()
+        val activity = activityReference.get()
         if (activity == null) {
             Timber.d("Weak reference to activity is null")
             return false
@@ -138,7 +140,7 @@ class MenuUtils(activity: Activity) {
         intent.putExtra("title", title)
 
         val profile = appRepository.serverProfileData.getItemById(serverStatus.recordingServerProfileId)
-        if (profile != null && isServerProfileEnabled(profile, serverStatus)) {
+        if (profile != null && isServerProfileEnabled(profile, htspVersion)) {
             intent.putExtra("configName", profile.name)
         }
         activity.startService(intent)
@@ -146,7 +148,7 @@ class MenuUtils(activity: Activity) {
     }
 
     fun handleMenuStopRecordingSelection(recording: Recording?, callback: RecordingRemovedCallback?): Boolean {
-        val activity = this.activity.get()
+        val activity = activityReference.get()
         if (activity == null || recording == null) {
             Timber.d("Weak reference to activity is null")
             return false
@@ -170,7 +172,7 @@ class MenuUtils(activity: Activity) {
     }
 
     fun handleMenuRemoveRecordingSelection(recording: Recording?, callback: RecordingRemovedCallback?): Boolean {
-        val activity = this.activity.get()
+        val activity = activityReference.get()
         if (activity == null || recording == null) {
             Timber.d("Weak reference to activity is null")
             return false
@@ -194,7 +196,7 @@ class MenuUtils(activity: Activity) {
     }
 
     fun handleMenuCancelRecordingSelection(recording: Recording?, callback: RecordingRemovedCallback?): Boolean {
-        val activity = this.activity.get()
+        val activity = activityReference.get()
         if (activity == null || recording == null) {
             Timber.d("Weak reference to activity is null")
             return false
@@ -218,7 +220,7 @@ class MenuUtils(activity: Activity) {
     }
 
     fun handleMenuRemoveSeriesRecordingSelection(recording: SeriesRecording?, callback: RecordingRemovedCallback?): Boolean {
-        val activity = this.activity.get()
+        val activity = activityReference.get()
         if (activity == null || recording == null) {
             Timber.d("Weak reference to activity is null")
             return false
@@ -242,7 +244,7 @@ class MenuUtils(activity: Activity) {
     }
 
     fun handleMenuRemoveTimerRecordingSelection(recording: TimerRecording?, callback: RecordingRemovedCallback?): Boolean {
-        val activity = this.activity.get()
+        val activity = activityReference.get()
         if (activity == null || recording == null) {
             Timber.d("Weak reference to activity is null")
             return false
@@ -271,7 +273,7 @@ class MenuUtils(activity: Activity) {
     }
 
     fun handleMenuRemoveAllRecordingsSelection(items: List<Recording>): Boolean {
-        val activity = this.activity.get()
+        val activity = activityReference.get()
         if (activity == null) {
             Timber.d("Weak reference to activity is null")
             return false
@@ -307,7 +309,7 @@ class MenuUtils(activity: Activity) {
     }
 
     fun handleMenuRemoveAllSeriesRecordingSelection(items: List<SeriesRecording>): Boolean {
-        val activity = this.activity.get()
+        val activity = activityReference.get()
         if (activity == null) {
             Timber.d("Weak reference to activity is null")
             return false
@@ -339,7 +341,7 @@ class MenuUtils(activity: Activity) {
     }
 
     fun handleMenuRemoveAllTimerRecordingSelection(items: List<TimerRecording>): Boolean {
-        val activity = this.activity.get()
+        val activity = activityReference.get()
         if (activity == null) {
             Timber.d("Weak reference to activity is null")
             return false
@@ -371,7 +373,7 @@ class MenuUtils(activity: Activity) {
     }
 
     fun handleMenuCustomRecordSelection(eventId: Int, channelId: Int): Boolean {
-        val activity = this.activity.get()
+        val activity = activityReference.get()
         if (activity == null) {
             Timber.d("Weak reference to activity is null")
             return false
@@ -411,7 +413,7 @@ class MenuUtils(activity: Activity) {
     }
 
     fun handleMenuReconnectSelection(): Boolean {
-        val activity = this.activity.get()
+        val activity = activityReference.get()
         if (activity == null) {
             Timber.d("Weak reference to activity is null")
             return false
@@ -448,7 +450,7 @@ class MenuUtils(activity: Activity) {
     }
 
     fun handleMenuPlayChannel(channelId: Int): Boolean {
-        val activity = this.activity.get()
+        val activity = activityReference.get()
         if (activity == null) {
             Timber.d("Weak reference to activity is null")
             return false
@@ -468,7 +470,7 @@ class MenuUtils(activity: Activity) {
     }
 
     fun handleMenuPlayRecording(dvrId: Int): Boolean {
-        val activity = this.activity.get()
+        val activity = activityReference.get()
         if (activity == null) {
             Timber.d("Weak reference to activity is null")
             return false
@@ -487,7 +489,7 @@ class MenuUtils(activity: Activity) {
     }
 
     fun handleMenuCast(type: String, id: Int): Boolean {
-        val activity = this.activity.get()
+        val activity = activityReference.get()
         if (activity == null) {
             Timber.d("Weak reference to activity is null")
             return false
@@ -511,7 +513,7 @@ class MenuUtils(activity: Activity) {
     }
 
     fun handleMenuPlayChannelIcon(channelId: Int) {
-        val activity = this.activity.get()
+        val activity = activityReference.get()
         if (activity == null) {
             Timber.d("Weak reference to activity is null")
             return
@@ -531,7 +533,7 @@ class MenuUtils(activity: Activity) {
     }
 
     fun handleMenuPlayRecordingIcon(recordingId: Int) {
-        val activity = this.activity.get()
+        val activity = activityReference.get()
         if (activity == null) {
             Timber.d("Weak reference to activity is null")
             return

@@ -24,7 +24,7 @@ import java.util.concurrent.CopyOnWriteArrayList
 
 abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback, SearchRequestInterface, DownloadPermissionGrantedInterface, Filter.FilterListener {
 
-    lateinit var viewModel: RecordingViewModel
+    lateinit var recordingViewModel: RecordingViewModel
     lateinit var recyclerViewAdapter: RecordingRecyclerViewAdapter
     private var selectedListPosition: Int = 0
     var searchQuery: String = ""
@@ -35,7 +35,7 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(activity!!).get(RecordingViewModel::class.java)
+        recordingViewModel = ViewModelProviders.of(activity!!).get(RecordingViewModel::class.java)
 
         if (savedInstanceState != null) {
             selectedListPosition = savedInstanceState.getInt("listPosition", 0)
@@ -138,7 +138,7 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback
         popupMenu.menuInflater.inflate(R.menu.recordings_popup_menu, popupMenu.menu)
         popupMenu.menuInflater.inflate(R.menu.external_search_options_menu, popupMenu.menu)
         prepareSearchMenu(popupMenu.menu, recording.title, isNetworkAvailable)
-        prepareMenu(ctx, popupMenu.menu, null, recording, isNetworkAvailable, serverStatus.htspVersion, isUnlocked)
+        prepareMenu(ctx, popupMenu.menu, null, recording, isNetworkAvailable, htspVersion, isUnlocked)
 
         popupMenu.setOnMenuItemClickListener { item ->
             if (onMenuSelected(ctx, item.itemId, recording.title)) {
@@ -157,7 +157,7 @@ abstract class RecordingListFragment : BaseFragment(), RecyclerViewClickCallback
                     return@setOnMenuItemClickListener menuUtils.handleMenuCast("dvrId", recording.id)
                 R.id.menu_download -> {
                     activity?.let {
-                        DownloadRecordingManager(it, mainViewModel.activeConnection, mainViewModel.activeServerStatus, recording)
+                        DownloadRecordingManager(it, connection, serverStatus, recording)
                     }
                     return@setOnMenuItemClickListener true
                 }

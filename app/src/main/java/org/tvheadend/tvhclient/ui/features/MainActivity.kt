@@ -18,6 +18,7 @@ import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.PreferenceManager
 import com.google.android.gms.cast.framework.*
@@ -34,7 +35,9 @@ import org.tvheadend.tvhclient.ui.features.dvr.recordings.RecordingDetailsFragme
 import org.tvheadend.tvhclient.ui.features.dvr.series_recordings.SeriesRecordingDetailsFragment
 import org.tvheadend.tvhclient.ui.features.dvr.timer_recordings.TimerRecordingDetailsFragment
 import org.tvheadend.tvhclient.ui.features.epg.ProgramGuideFragment
+import org.tvheadend.tvhclient.ui.features.information.StatusViewModel
 import org.tvheadend.tvhclient.ui.features.navigation.NavigationDrawer
+import org.tvheadend.tvhclient.ui.features.navigation.NavigationViewModel
 import org.tvheadend.tvhclient.ui.features.playback.external.CastSessionManagerListener
 import org.tvheadend.tvhclient.ui.features.programs.ProgramDetailsFragment
 import org.tvheadend.tvhclient.ui.features.programs.ProgramListFragment
@@ -45,6 +48,9 @@ import timber.log.Timber
 // TODO what happens when no connection to the server is active and the user presses an action in a notification?
 
 class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, SyncStateReceiver.Listener, NetworkStatusListener {
+
+    lateinit var navigationViewModel: NavigationViewModel
+    lateinit var statusViewModel: StatusViewModel
 
     private lateinit var syncProgress: ProgressBar
     private lateinit var sharedPreferences: SharedPreferences
@@ -79,11 +85,13 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_activity)
 
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
-        syncProgress = findViewById(R.id.sync_progress)
-
         MainApplication.getComponent().inject(this)
 
+        navigationViewModel = ViewModelProviders.of(this).get(NavigationViewModel::class.java)
+        statusViewModel = ViewModelProviders.of(this).get(StatusViewModel::class.java)
+
+        syncProgress = findViewById(R.id.sync_progress)
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
         networkStatusReceiver = NetworkStatusReceiver(this)
         snackbarMessageReceiver = SnackbarMessageReceiver(this)
         syncStateReceiver = SyncStateReceiver(this)
@@ -98,7 +106,7 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
             actionBar.setHomeButtonEnabled(true)
         }
 
-        navigationDrawer = NavigationDrawer(this, savedInstanceState, toolbar, viewModel)
+        navigationDrawer = NavigationDrawer(this, savedInstanceState, toolbar, navigationViewModel, statusViewModel, isUnlocked)
 
         // When the activity is created it got called by the main activity. Get the initial
         // navigation menu position and show the associated fragment with it. When the device
@@ -151,7 +159,7 @@ class MainActivity : BaseActivity(), SearchView.OnQueryTextListener, SearchView.
         }
 
         Timber.d("Observing navigation menu id")
-        viewModel.navigationMenuId.observe(this, Observer { id ->
+        navigationViewModel.navigationMenuId.observe(this, Observer { id ->
             Timber.d("Selected navigation id changed to $id")
             handleDrawerItemSelected(id)
         })

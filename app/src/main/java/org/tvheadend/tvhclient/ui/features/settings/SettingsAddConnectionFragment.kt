@@ -25,11 +25,11 @@ class SettingsAddConnectionFragment : SettingsConnectionBaseFragment() {
         } else if (!connection.isPortValid(connection.streamingPort)) {
             context?.sendSnackbarMessage(R.string.pref_port_error_invalid)
         } else {
-            appRepository.connectionData.addItem(connection)
+            settingsViewModel.addConnection(connection)
             // Save the information in the view model that a new connection is active.
             // This will then trigger a reconnect when the user leaves the connection list screen
             if (connection.isActive) {
-                viewModel.connectionHasChanged = true
+                settingsViewModel.connectionHasChanged = true
             }
             activity?.finish()
         }
