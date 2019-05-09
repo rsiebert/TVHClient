@@ -44,7 +44,7 @@ public class RepositoryModule {
     @Singleton
     @NonNull
     @Provides
-    AppRepository providesAppRepository(AppRoomDatabase db, Context context) {
+    AppRepository providesAppRepository(AppRoomDatabase db) {
         return new AppRepository(
                 new ChannelData(db),
                 new ProgramData(db),
