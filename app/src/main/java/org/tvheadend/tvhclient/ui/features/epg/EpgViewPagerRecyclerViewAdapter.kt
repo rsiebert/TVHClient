@@ -59,6 +59,7 @@ internal class EpgViewPagerRecyclerViewAdapter(private val activity: FragmentAct
             }
 
             override fun publishResults(charSequence: CharSequence, filterResults: FilterResults) {
+                @Suppress("UNCHECKED_CAST")
                 channelListFiltered = filterResults.values as ArrayList<EpgChannel>
                 notifyDataSetChanged()
             }

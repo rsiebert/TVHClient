@@ -19,7 +19,7 @@ import java.util.concurrent.Executors
 class EpgViewPagerViewHolder(override val containerView: View, private val activity: FragmentActivity, pixelsPerMinute: Float, private val startTime: Long, private val endTime: Long, viewPool: RecyclerView.RecycledViewPool) : RecyclerView.ViewHolder(containerView), LayoutContainer {
 
     private val recyclerViewAdapter: EpgProgramListRecyclerViewAdapter
-    private val viewModel: EpgViewModel
+    private val viewModel: EpgViewModel = ViewModelProviders.of(activity).get(EpgViewModel::class.java)
     private val execService = Executors.newScheduledThreadPool(10)
 
     init {
@@ -27,10 +27,8 @@ class EpgViewPagerViewHolder(override val containerView: View, private val activ
         program_list_recycler_view.addItemDecoration(DividerItemDecoration(containerView.context, LinearLayoutManager.HORIZONTAL))
         program_list_recycler_view.itemAnimator = DefaultItemAnimator()
         program_list_recycler_view.setRecycledViewPool(viewPool)
-        recyclerViewAdapter = EpgProgramListRecyclerViewAdapter(pixelsPerMinute, startTime, endTime)
+        recyclerViewAdapter = EpgProgramListRecyclerViewAdapter(viewModel, pixelsPerMinute, startTime, endTime)
         program_list_recycler_view.adapter = recyclerViewAdapter
-
-        viewModel = ViewModelProviders.of(activity).get(EpgViewModel::class.java)
     }
 
     fun bindData(epgChannel: EpgChannel) {

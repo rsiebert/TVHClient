@@ -1,12 +1,14 @@
 package org.tvheadend.tvhclient.ui.features.epg
 
 import android.content.ContextWrapper
-import androidx.preference.PreferenceManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentTransaction
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LifecycleRegistry
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import org.tvheadend.tvhclient.R
@@ -18,7 +20,7 @@ import org.tvheadend.tvhclient.ui.features.programs.ProgramDetailsFragment
 import org.tvheadend.tvhclient.util.isEqualTo
 import java.util.*
 
-internal class EpgProgramListRecyclerViewAdapter(private val pixelsPerMinute: Float, private val fragmentStartTime: Long, private val fragmentStopTime: Long) : RecyclerView.Adapter<EpgProgramListRecyclerViewAdapter.EpgProgramListViewHolder>(), RecyclerViewClickCallback {
+internal class EpgProgramListRecyclerViewAdapter(private val viewModel: EpgViewModel, private val pixelsPerMinute: Float, private val fragmentStartTime: Long, private val fragmentStopTime: Long) : RecyclerView.Adapter<EpgProgramListRecyclerViewAdapter.EpgProgramListViewHolder>(), RecyclerViewClickCallback {
 
     private val programList = ArrayList<EpgProgram>()
     private val recordingList = ArrayList<Recording>()
@@ -26,12 +28,9 @@ internal class EpgProgramListRecyclerViewAdapter(private val pixelsPerMinute: Fl
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EpgProgramListViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
         val itemBinding = EpgProgramItemAdapterBinding.inflate(layoutInflater, parent, false)
-
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(parent.context)
-        val showProgramSubtitle = sharedPreferences.getBoolean("program_subtitle_enabled", parent.context.resources.getBoolean(R.bool.pref_default_program_subtitle_enabled))
-        val showGenreColors = sharedPreferences.getBoolean("genre_colors_for_program_guide_enabled", parent.context.resources.getBoolean(R.bool.pref_default_genre_colors_for_program_guide_enabled))
-
-        return EpgProgramListViewHolder(itemBinding, showProgramSubtitle, showGenreColors, this)
+        val viewHolder = EpgProgramListViewHolder(itemBinding, viewModel, this)
+        itemBinding.lifecycleOwner = viewHolder
+        return viewHolder
     }
 
     override fun onBindViewHolder(holder: EpgProgramListViewHolder, position: Int) {
@@ -162,14 +161,41 @@ internal class EpgProgramListRecyclerViewAdapter(private val pixelsPerMinute: Fl
         return true
     }
 
-    internal class EpgProgramListViewHolder(private val binding: EpgProgramItemAdapterBinding, private val showProgramSubtitle: Boolean, private val showGenreColors: Boolean, private val clickCallback: RecyclerViewClickCallback) : RecyclerView.ViewHolder(binding.root) {
+    override fun onViewAttachedToWindow(holder: EpgProgramListViewHolder) {
+        super.onViewAttachedToWindow(holder)
+        holder.markAttach()
+    }
+
+    override fun onViewDetachedFromWindow(holder: EpgProgramListViewHolder) {
+        super.onViewDetachedFromWindow(holder)
+        holder.markDetach()
+    }
+
+    internal class EpgProgramListViewHolder(private val binding: EpgProgramItemAdapterBinding, private val viewModel: EpgViewModel, private val clickCallback: RecyclerViewClickCallback) : RecyclerView.ViewHolder(binding.root), LifecycleOwner {
+
+        private val lifecycleRegistry = LifecycleRegistry(this)
+
+        init {
+            lifecycleRegistry.markState(Lifecycle.State.INITIALIZED)
+        }
+
+        fun markAttach() {
+            lifecycleRegistry.markState(Lifecycle.State.STARTED)
+        }
+
+        fun markDetach() {
+            lifecycleRegistry.markState(Lifecycle.State.DESTROYED)
+        }
+
+        override fun getLifecycle(): Lifecycle {
+            return lifecycleRegistry
+        }
 
         fun bind(program: EpgProgram, position: Int, layoutWidth: Int) {
             binding.program = program
             binding.position = position
             binding.layoutWidth = layoutWidth
-            binding.showGenreColor = showGenreColors
-            binding.showProgramSubtitle = showProgramSubtitle
+            binding.viewModel = viewModel
             binding.callback = clickCallback
             binding.executePendingBindings()
         }

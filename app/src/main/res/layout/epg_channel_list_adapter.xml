@@ -11,12 +11,12 @@
             type="org.tvheadend.tvhclient.domain.entity.EpgChannel" />
 
         <variable
-            name="position"
-            type="int" />
+            name="viewModel"
+            type="org.tvheadend.tvhclient.ui.features.epg.EpgViewModel" />
 
         <variable
-            name="showChannelNumber"
-            type="boolean" />
+            name="position"
+            type="int" />
 
         <variable
             name="callback"
@@ -63,7 +63,7 @@
             android:gravity="bottom|center"
             android:singleLine="true"
             android:text="@{channel.displayNumber}"
-            android:visibility="@{showChannelNumber ? View.VISIBLE : View.GONE}"
+            android:visibility="@{safeUnbox(viewModel.showChannelNumber) ? View.VISIBLE : View.GONE}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

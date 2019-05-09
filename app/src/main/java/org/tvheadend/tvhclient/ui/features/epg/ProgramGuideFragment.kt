@@ -52,15 +52,15 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        forceSingleScreenLayout()
-
         viewModel = ViewModelProviders.of(activity!!).get(EpgViewModel::class.java)
+
+        forceSingleScreenLayout()
 
         if (savedInstanceState == null) {
             viewModel.searchQuery = arguments?.getString(SearchManager.QUERY) ?: ""
         }
 
-        channelListRecyclerViewAdapter = EpgChannelListRecyclerViewAdapter(this)
+        channelListRecyclerViewAdapter = EpgChannelListRecyclerViewAdapter(viewModel, this)
         channelListRecyclerViewLayoutManager = LinearLayoutManager(activity)
         channel_list_recycler_view.layoutManager = channelListRecyclerViewLayoutManager
         channel_list_recycler_view.addItemDecoration(DividerItemDecoration(activity, LinearLayoutManager.VERTICAL))
@@ -125,7 +125,7 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
         // Observe all recordings here in case a recording shall be edited right after it was added.
         // This needs to be done in this fragment because the popup menu handling is also done here.
         Timber.d("Observing recordings")
-        viewModel.allRecordings.observe(viewLifecycleOwner, Observer { recordings ->
+        viewModel.recordings.observe(viewLifecycleOwner, Observer { recordings ->
             if (recordings != null) {
                 Timber.d("View model returned ${recordings.size} recordings")
                 for (recording in recordings) {
@@ -240,7 +240,7 @@ class ProgramGuideFragment : BaseFragment(), EpgScrollInterface, RecyclerViewCli
         popupMenu.menuInflater.inflate(R.menu.program_popup_and_toolbar_menu, popupMenu.menu)
         popupMenu.menuInflater.inflate(R.menu.external_search_options_menu, popupMenu.menu)
 
-        prepareMenu(ctx, popupMenu.menu, program, program.recording, isNetworkAvailable, serverStatus.htspVersion, isUnlocked)
+        prepareMenu(ctx, popupMenu.menu, program, program.recording, isNetworkAvailable, viewModel.htspVersion, viewModel.isUnlocked)
         prepareSearchMenu(popupMenu.menu, program.title, isNetworkAvailable)
 
         popupMenu.setOnMenuItemClickListener { item ->
