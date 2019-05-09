@@ -54,6 +54,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        viewModel = ViewModelProviders.of(activity!!).get(ChannelViewModel::class.java)
 
         if (savedInstanceState != null) {
             selectedListPosition = savedInstanceState.getInt("listPosition", 0)
@@ -68,7 +69,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
             }
         }
 
-        recyclerViewAdapter = ChannelRecyclerViewAdapter(isDualPane, this)
+        recyclerViewAdapter = ChannelRecyclerViewAdapter(viewModel, this)
         recycler_view.layoutManager = LinearLayoutManager(activity)
         recycler_view.addItemDecoration(DividerItemDecoration(activity, LinearLayoutManager.VERTICAL))
         recycler_view.itemAnimator = DefaultItemAnimator()
@@ -77,7 +78,6 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
         recycler_view.gone()
         progress_bar.visible()
 
-        viewModel = ViewModelProviders.of(activity!!).get(ChannelViewModel::class.java)
 
         Timber.d("Observing selected time")
         viewModel.selectedTime.observe(viewLifecycleOwner, Observer { time ->
@@ -116,7 +116,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
         // so the recording status of the particular program can be updated. This is required
         // because the programs are not updated automatically when recordings change.
         Timber.d("Observing recordings")
-        viewModel.allRecordings.observe(viewLifecycleOwner, Observer { recordings ->
+        viewModel.recordings.observe(viewLifecycleOwner, Observer { recordings ->
             if (recordings != null) {
                 Timber.d("View model returned ${recordings.size} recordings")
                 recyclerViewAdapter.addRecordings(recordings)
@@ -324,7 +324,7 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
         popupMenu.menuInflater.inflate(R.menu.program_popup_and_toolbar_menu, popupMenu.menu)
         popupMenu.menuInflater.inflate(R.menu.external_search_options_menu, popupMenu.menu)
 
-        prepareMenu(ctx, popupMenu.menu, program, recording, isNetworkAvailable, serverStatus.htspVersion, isUnlocked)
+        prepareMenu(ctx, popupMenu.menu, program, recording, isNetworkAvailable, htspVersion, isUnlocked)
         prepareSearchMenu(popupMenu.menu, channel.programTitle, isNetworkAvailable)
         popupMenu.menu.findItem(R.id.menu_play).isVisible = isNetworkAvailable
 
@@ -386,7 +386,6 @@ class ChannelListFragment : BaseFragment(), RecyclerViewClickCallback, ChannelDi
     }
 
     override fun onClick(view: View, position: Int) {
-
         if ((view.id == R.id.icon || view.id == R.id.icon_text)
                 && Integer.valueOf(sharedPreferences.getString("channel_icon_action", resources.getString(R.string.pref_default_channel_icon_action))!!) > 0
                 && recyclerViewAdapter.itemCount > 0

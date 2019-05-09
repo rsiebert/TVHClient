@@ -11,8 +11,8 @@
             type="org.tvheadend.tvhclient.domain.entity.Channel" />
 
         <variable
-            name="htspVersion"
-            type="int" />
+            name="viewModel"
+            type="org.tvheadend.tvhclient.ui.features.channels.ChannelViewModel" />
 
         <variable
             name="position"
@@ -20,34 +20,6 @@
 
         <variable
             name="isSelected"
-            type="boolean" />
-
-        <variable
-            name="showChannelName"
-            type="boolean" />
-
-        <variable
-            name="showChannelNumber"
-            type="boolean" />
-
-        <variable
-            name="showProgramSubtitle"
-            type="boolean" />
-
-        <variable
-            name="showNextProgramTitle"
-            type="boolean" />
-
-        <variable
-            name="showProgressBar"
-            type="boolean" />
-
-        <variable
-            name="showGenreColor"
-            type="boolean" />
-
-        <variable
-            name="isDualPane"
             type="boolean" />
 
         <variable
@@ -75,7 +47,7 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:showGenreColor="@{showGenreColor}" />
+            app:showGenreColor="@{safeUnbox(viewModel.showGenreColor)}" />
 
         <ImageView
             android:id="@+id/icon"
@@ -120,7 +92,7 @@
             android:gravity="center"
             android:singleLine="true"
             android:text="@{channel.displayNumber}"
-            android:visibility="@{showChannelNumber ? View.VISIBLE : View.GONE}"
+            android:visibility="@{safeUnbox(viewModel.showChannelNumber) ? View.VISIBLE : View.GONE}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/genre" />
 
@@ -137,7 +109,7 @@
             android:ellipsize="end"
             android:singleLine="true"
             android:text="@{channel.name}"
-            android:visibility="@{showChannelName ? View.VISIBLE : View.GONE}"
+            android:visibility="@{safeUnbox(viewModel.showChannelName) ? View.VISIBLE : View.GONE}"
             app:layout_constraintEnd_toStartOf="@+id/state"
             app:layout_constraintStart_toEndOf="@+id/genre"
             app:layout_constraintTop_toTopOf="parent" />
@@ -180,7 +152,7 @@
             android:ellipsize="end"
             android:singleLine="true"
             android:text="@{channel.programSubtitle}"
-            android:visibility="@{channel.programId > 0  &amp;&amp; showProgramSubtitle &amp;&amp; channel.programSubtitle != null &amp;&amp; !channel.programSubtitle.equals(channel.programTitle) ? View.VISIBLE : View.GONE}"
+            android:visibility="@{channel.programId > 0  &amp;&amp; safeUnbox(viewModel.showProgramSubtitle) == true &amp;&amp; channel.programSubtitle != null &amp;&amp; !channel.programSubtitle.equals(channel.programTitle) ? View.VISIBLE : View.GONE}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/channel_name"
             app:layout_constraintTop_toBottomOf="@+id/title" />
@@ -235,7 +207,7 @@
             android:layout_marginRight="16dp"
             android:progress="@{channel.progress}"
             android:scaleY="0.5"
-            android:visibility="@{channel.programId > 0 &amp;&amp; channel.progress >= 0 &amp;&amp; showProgressBar ? View.VISIBLE : View.GONE}"
+            android:visibility="@{channel.programId > 0 &amp;&amp; channel.progress >= 0 &amp;&amp; safeUnbox(viewModel.showProgressBar) == true ? View.VISIBLE : View.GONE}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/channel_name"
             app:layout_constraintTop_toBottomOf="@+id/duration" />
@@ -252,7 +224,7 @@
             android:maxLines="2"
             android:singleLine="false"
             android:text="@{channel.nextProgramTitle}"
-            android:visibility="@{channel.nextProgramId > 0 &amp;&amp; showNextProgramTitle &amp;&amp; channel.nextProgramTitle != null ? View.VISIBLE : View.GONE}"
+            android:visibility="@{channel.nextProgramId > 0 &amp;&amp; safeUnbox(viewModel.showNextProgramTitle) == true &amp;&amp; channel.nextProgramTitle != null ? View.VISIBLE : View.GONE}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/channel_name"
@@ -285,7 +257,7 @@
             android:layout_marginBottom="8dp"
             android:contentDescription="@null"
             android:scaleType="center"
-            android:visibility="@{isDualPane ? View.VISIBLE : View.GONE}"
+            android:visibility="@{viewModel.isDualPane ? View.VISIBLE : View.GONE}"
             app:backgroundImage="@{isSelected}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

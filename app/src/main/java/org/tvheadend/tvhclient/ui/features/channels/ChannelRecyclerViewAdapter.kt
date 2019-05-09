@@ -1,10 +1,12 @@
 package org.tvheadend.tvhclient.ui.features.channels
 
-import androidx.preference.PreferenceManager
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LifecycleRegistry
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import org.tvheadend.tvhclient.R
@@ -16,7 +18,7 @@ import org.tvheadend.tvhclient.util.isEqualTo
 import java.util.*
 import java.util.concurrent.CopyOnWriteArrayList
 
-class ChannelRecyclerViewAdapter internal constructor(private val isDualPane: Boolean, private val clickCallback: RecyclerViewClickCallback) : RecyclerView.Adapter<ChannelRecyclerViewAdapter.ChannelViewHolder>(), Filterable {
+class ChannelRecyclerViewAdapter internal constructor(private val viewModel: ChannelViewModel, private val clickCallback: RecyclerViewClickCallback) : RecyclerView.Adapter<ChannelRecyclerViewAdapter.ChannelViewHolder>(), Filterable {
 
     private val recordingList = ArrayList<Recording>()
     private val channelList = ArrayList<Channel>()
@@ -26,16 +28,9 @@ class ChannelRecyclerViewAdapter internal constructor(private val isDualPane: Bo
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChannelViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
         val itemBinding = ChannelListAdapterBinding.inflate(layoutInflater, parent, false)
-
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(parent.context)
-        val showChannelName = sharedPreferences.getBoolean("channel_name_enabled", parent.context.resources.getBoolean(R.bool.pref_default_channel_name_enabled))
-        val showChannelNumber = sharedPreferences.getBoolean("channel_number_enabled", parent.context.resources.getBoolean(R.bool.pref_default_channel_number_enabled))
-        val showProgressbar = sharedPreferences.getBoolean("program_progressbar_enabled", parent.context.resources.getBoolean(R.bool.pref_default_program_progressbar_enabled))
-        val showProgramSubtitle = sharedPreferences.getBoolean("program_subtitle_enabled", parent.context.resources.getBoolean(R.bool.pref_default_program_subtitle_enabled))
-        val showNextProgramTitle = sharedPreferences.getBoolean("next_program_title_enabled", parent.context.resources.getBoolean(R.bool.pref_default_next_program_title_enabled))
-        val showGenreColors = sharedPreferences.getBoolean("genre_colors_for_channels_enabled", parent.context.resources.getBoolean(R.bool.pref_default_genre_colors_for_channels_enabled))
-
-        return ChannelViewHolder(itemBinding, showChannelName, showChannelNumber, showProgramSubtitle, showNextProgramTitle, showProgressbar, showGenreColors, isDualPane)
+        val viewHolder = ChannelViewHolder(itemBinding, viewModel)
+        itemBinding.lifecycleOwner = viewHolder
+        return viewHolder
     }
 
     override fun onBindViewHolder(holder: ChannelViewHolder, position: Int) {
@@ -121,6 +116,7 @@ class ChannelRecyclerViewAdapter internal constructor(private val isDualPane: Bo
             }
 
             override fun publishResults(charSequence: CharSequence, filterResults: FilterResults) {
+                @Suppress("UNCHECKED_CAST")
                 channelListFiltered = filterResults.values as ArrayList<Channel>
                 notifyDataSetChanged()
             }
@@ -171,26 +167,42 @@ class ChannelRecyclerViewAdapter internal constructor(private val isDualPane: Bo
         }
     }
 
+    override fun onViewAttachedToWindow(holder: ChannelViewHolder) {
+        super.onViewAttachedToWindow(holder)
+        holder.markAttach()
+    }
+
+    override fun onViewDetachedFromWindow(holder: ChannelViewHolder) {
+        super.onViewDetachedFromWindow(holder)
+        holder.markDetach()
+    }
+
     class ChannelViewHolder(private val binding: ChannelListAdapterBinding,
-                            private val showChannelName: Boolean,
-                            private val showChannelNumber: Boolean,
-                            private val showProgramSubtitle: Boolean,
-                            private val showNextProgramTitle: Boolean,
-                            private val showProgressBar: Boolean,
-                            private val showGenreColors: Boolean,
-                            private val isDualPane: Boolean) : RecyclerView.ViewHolder(binding.root) {
+                            private val viewModel: ChannelViewModel) : RecyclerView.ViewHolder(binding.root), LifecycleOwner {
+
+        private val lifecycleRegistry = LifecycleRegistry(this)
+
+        init {
+            lifecycleRegistry.markState(Lifecycle.State.INITIALIZED)
+        }
+
+        fun markAttach() {
+            lifecycleRegistry.markState(Lifecycle.State.STARTED)
+        }
+
+        fun markDetach() {
+            lifecycleRegistry.markState(Lifecycle.State.DESTROYED)
+        }
+
+        override fun getLifecycle(): Lifecycle {
+            return lifecycleRegistry
+        }
 
         fun bind(channel: Channel, position: Int, isSelected: Boolean, clickCallback: RecyclerViewClickCallback) {
             binding.channel = channel
             binding.position = position
             binding.isSelected = isSelected
-            binding.showChannelName = showChannelName
-            binding.showChannelNumber = showChannelNumber
-            binding.showProgramSubtitle = showProgramSubtitle
-            binding.showProgressBar = showProgressBar
-            binding.showNextProgramTitle = showNextProgramTitle
-            binding.showGenreColor = showGenreColors
-            binding.isDualPane = isDualPane
+            binding.viewModel = viewModel
             binding.callback = clickCallback
             binding.executePendingBindings()
         }
