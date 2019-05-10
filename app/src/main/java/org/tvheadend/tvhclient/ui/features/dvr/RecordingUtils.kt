@@ -97,12 +97,16 @@ fun handleChannelListSelection(context: Context, channelList: List<Channel>, sho
             .title(R.string.tags)
             .adapter(channelListSelectionAdapter, null)
             .build()
+
     // Set the callback to handle clicks. This needs to be done after the
     // dialog creation so that the inner method has access to the dialog variable
-    channelListSelectionAdapter.setCallback { channel ->
-        callback?.onChannelSelected(channel)
-        dialog?.dismiss()
-    }
+    channelListSelectionAdapter.setCallback(object : ChannelListSelectionAdapter.Callback {
+        override fun onItemClicked(channel: Channel) {
+            callback?.onChannelSelected(channel)
+            dialog?.dismiss()
+        }
+    })
+
     dialog!!.show()
 }
 
