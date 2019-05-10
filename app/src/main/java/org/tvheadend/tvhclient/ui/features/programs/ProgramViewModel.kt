@@ -54,9 +54,9 @@ class ProgramViewModel() : ViewModel(), SharedPreferences.OnSharedPreferenceChan
         Timber.d("Shared preference $key has changed")
         if (sharedPreferences == null) return
         when (key) {
-            "genre_colors_for_programs_enabled" -> showGenreColor.value = sharedPreferences.getBoolean("genre_colors_for_programs_enabled", appContext.resources.getBoolean(R.bool.pref_default_genre_colors_for_programs_enabled))
-            "program_subtitle_enabled" -> showProgramSubtitles.value = sharedPreferences.getBoolean("program_subtitle_enabled", appContext.resources.getBoolean(R.bool.pref_default_program_subtitle_enabled))
-            "program_artwork_enabled" -> showProgramArtwork.value = sharedPreferences.getBoolean("program_artwork_enabled", appContext.resources.getBoolean(R.bool.pref_default_program_artwork_enabled))
+            "genre_colors_for_programs_enabled" -> showGenreColor.value = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_genre_colors_for_programs_enabled))
+            "program_subtitle_enabled" -> showProgramSubtitles.value = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_program_subtitle_enabled))
+            "program_artwork_enabled" -> showProgramArtwork.value = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_program_artwork_enabled))
         }
     }
 

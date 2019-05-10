@@ -67,12 +67,12 @@ class ChannelViewModel : BaseChannelViewModel(), SharedPreferences.OnSharedPrefe
         Timber.d("Shared preference $key has changed")
         if (sharedPreferences == null) return
         when (key) {
-            "channel_name_enabled" -> showChannelName.value = sharedPreferences.getBoolean("channel_name_enabled", appContext.resources.getBoolean(R.bool.pref_default_channel_name_enabled))
-            "channel_number_enabled" -> showChannelNumber.value = sharedPreferences.getBoolean("channel_number_enabled", appContext.resources.getBoolean(R.bool.pref_default_channel_number_enabled))
-            "program_progressbar_enabled" -> showProgressBar.value = sharedPreferences.getBoolean("program_progressbar_enabled", appContext.resources.getBoolean(R.bool.pref_default_program_progressbar_enabled))
-            "program_subtitle_enabled" -> showProgramSubtitle.value = sharedPreferences.getBoolean("program_subtitle_enabled", appContext.resources.getBoolean(R.bool.pref_default_program_subtitle_enabled))
-            "next_program_title_enabled" -> showNextProgramTitle.value = sharedPreferences.getBoolean("next_program_title_enabled", appContext.resources.getBoolean(R.bool.pref_default_next_program_title_enabled))
-            "genre_colors_for_channels_enabled" -> showGenreColor.value = sharedPreferences.getBoolean("genre_colors_for_channels_enabled", appContext.resources.getBoolean(R.bool.pref_default_genre_colors_for_channels_enabled))
+            "channel_name_enabled" -> showChannelName.value = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_channel_name_enabled))
+            "channel_number_enabled" -> showChannelNumber.value = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_channel_number_enabled))
+            "program_progressbar_enabled" -> showProgressBar.value = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_program_progressbar_enabled))
+            "program_subtitle_enabled" -> showProgramSubtitle.value = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_program_subtitle_enabled))
+            "next_program_title_enabled" -> showNextProgramTitle.value = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_next_program_title_enabled))
+            "genre_colors_for_channels_enabled" -> showGenreColor.value = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_genre_colors_for_channels_enabled))
         }
     }
 

@@ -83,9 +83,9 @@ class EpgViewModel : BaseChannelViewModel(), SharedPreferences.OnSharedPreferenc
         Timber.d("Shared preference $key has changed")
         if (sharedPreferences == null) return
         when (key) {
-            "channel_number_enabled" -> showChannelNumber.value = sharedPreferences.getBoolean("channel_number_enabled", appContext.resources.getBoolean(R.bool.pref_default_channel_number_enabled))
-            "program_subtitle_enabled" -> showProgramSubtitle.value = sharedPreferences.getBoolean("program_subtitle_enabled", appContext.resources.getBoolean(R.bool.pref_default_program_subtitle_enabled))
-            "genre_colors_for_program_guide_enabled" -> showGenreColor.value = sharedPreferences.getBoolean("genre_colors_for_program_guide_enabled", appContext.resources.getBoolean(R.bool.pref_default_genre_colors_for_program_guide_enabled))
+            "channel_number_enabled" -> showChannelNumber.value = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_channel_number_enabled))
+            "program_subtitle_enabled" -> showProgramSubtitle.value = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_program_subtitle_enabled))
+            "genre_colors_for_program_guide_enabled" -> showGenreColor.value = sharedPreferences.getBoolean(key, appContext.resources.getBoolean(R.bool.pref_default_genre_colors_for_program_guide_enabled))
         }
     }
 
