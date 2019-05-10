@@ -18,7 +18,7 @@
             android:summary="@string/pref_date_time_format_sum"
             android:title="@string/pref_date_time_format" />
     </PreferenceCategory>
-    <PreferenceCategory android:title="@string/pref_channels">
+    <PreferenceCategory android:title="@string/channels">
         <CheckBoxPreference
             android:defaultValue="@bool/pref_default_channel_name_enabled"
             android:key="channel_name_enabled"
@@ -68,7 +68,7 @@
             android:title="@string/pref_show_next_program" />
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/pref_programs">
+    <PreferenceCategory android:title="@string/programs">
         <CheckBoxPreference
             android:defaultValue="@bool/pref_default_program_subtitle_enabled"
             android:key="program_subtitle_enabled"
@@ -81,7 +81,7 @@
             android:title="@string/pref_show_program_artwork" />
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="Recordings">
+    <PreferenceCategory android:title="@string/recordings">
         <CheckBoxPreference
             android:defaultValue="@bool/pref_default_hide_duplicate_scheduled_recordings_enabled"
             android:key="hide_duplicate_scheduled_recordings_enabled"
