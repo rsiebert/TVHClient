@@ -49,7 +49,7 @@ class RecordingData(private val db: AppRoomDatabase) : DataSourceInterface<Recor
     }
 
     override fun getLiveDataItems(): LiveData<List<Recording>> {
-        return db.recordingDao.loadAllRecordings()
+        return db.recordingDao.loadRecordings()
     }
 
     override fun getLiveDataItemById(id: Any): LiveData<Recording> {
@@ -57,17 +57,27 @@ class RecordingData(private val db: AppRoomDatabase) : DataSourceInterface<Recor
     }
 
     fun getLiveDataItemsByChannelId(channelId: Int): LiveData<List<Recording>> {
-        return db.recordingDao.loadAllRecordingsByChannelId(channelId)
+        return db.recordingDao.loadRecordingsByChannelId(channelId)
     }
 
-    fun getLiveDataItemsByType(type: String): LiveData<List<Recording>> {
-        return when (type) {
-            "completed" -> db.recordingDao.loadAllCompletedRecordings()
-            "scheduled" -> db.recordingDao.loadAllScheduledRecordings()
-            "failed" -> db.recordingDao.loadAllFailedRecordings()
-            "removed" -> db.recordingDao.loadAllRemovedRecordings()
-            else -> MutableLiveData()
+    fun getCompletedRecordings(): LiveData<List<Recording>> {
+        return db.recordingDao.loadCompletedRecordings()
+    }
+
+    fun getScheduledRecordings(hideDuplicates: Boolean): LiveData<List<Recording>> {
+        return if (hideDuplicates) {
+            db.recordingDao.loadUniqueScheduledRecordings()
+        } else {
+            db.recordingDao.loadScheduledRecordings()
         }
+    }
+
+    fun getFailedRecordings(): LiveData<List<Recording>> {
+        return db.recordingDao.loadFailedRecordings()
+    }
+
+    fun getRemovedRecordings(): LiveData<List<Recording>> {
+        return db.recordingDao.loadRemovedRecordings()
     }
 
     fun getLiveDataCountByType(type: String): LiveData<Int> {

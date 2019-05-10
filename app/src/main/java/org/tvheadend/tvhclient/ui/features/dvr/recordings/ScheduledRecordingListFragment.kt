@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.Menu
 import androidx.lifecycle.Observer
 import org.tvheadend.tvhclient.R
-import org.tvheadend.tvhclient.domain.entity.Recording
 
 class ScheduledRecordingListFragment : RecordingListFragment() {
 
@@ -15,26 +14,13 @@ class ScheduledRecordingListFragment : RecordingListFragment() {
             getString(R.string.scheduled_recordings)
         else
             getString(R.string.search_results))
-    }
 
-    override fun onResume() {
-        super.onResume()
-        // TODO consider duplicate setting for all recording types
-        // Start observing the recordings here because the onActivityCreated method is not
-        // called when the user has returned from the settings activity. In this case
-        // the changes to the recording UI like hiding duplicates would not become active.
         recordingViewModel.scheduledRecordings.observe(viewLifecycleOwner, Observer { recordings ->
-            this.handleObservedRecordings(recordings.toMutableList())
+            if (recordings != null) {
+                recyclerViewAdapter.addItems(recordings)
+            }
+            updateUI(R.plurals.upcoming_recordings)
         })
-    }
-
-    private fun handleObservedRecordings(recordings: MutableList<Recording>) {
-        // Remove all recordings from the list that are duplicated
-        if (sharedPreferences.getBoolean("hide_duplicate_scheduled_recordings_enabled", resources.getBoolean(R.bool.pref_default_hide_duplicate_scheduled_recordings_enabled))) {
-            recordings.removeAll { it.duplicate == 1 }
-        }
-        recyclerViewAdapter.addItems(recordings)
-        updateUI(R.plurals.upcoming_recordings)
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {

@@ -37,21 +37,29 @@ abstract class RecordingDao {
     @Query(RECORDING_BASE_QUERY +
             "WHERE " + CONNECTION_IS_ACTIVE +
             "ORDER BY rec.start DESC")
-    abstract fun loadAllRecordings(): LiveData<List<Recording>>
+    abstract fun loadRecordings(): LiveData<List<Recording>>
 
     @Transaction
     @Query(RECORDING_BASE_QUERY +
             "WHERE " + CONNECTION_IS_ACTIVE +
             " AND rec.error IS NULL AND rec.state = 'completed'" +
             "ORDER BY rec.start DESC")
-    abstract fun loadAllCompletedRecordings(): LiveData<List<Recording>>
+    abstract fun loadCompletedRecordings(): LiveData<List<Recording>>
+
+    @Transaction
+    @Query(RECORDING_BASE_QUERY +
+            "WHERE " + CONNECTION_IS_ACTIVE +
+            " AND rec.error IS NULL AND (rec.state = 'recording' OR rec.state = 'scheduled')" +
+            " AND rec.duplicate = 0 " +
+            "ORDER BY rec.start ASC")
+    abstract fun loadUniqueScheduledRecordings(): LiveData<List<Recording>>
 
     @Transaction
     @Query(RECORDING_BASE_QUERY +
             "WHERE " + CONNECTION_IS_ACTIVE +
             " AND rec.error IS NULL AND (rec.state = 'recording' OR rec.state = 'scheduled')" +
             "ORDER BY rec.start ASC")
-    abstract fun loadAllScheduledRecordings(): LiveData<List<Recording>>
+    abstract fun loadScheduledRecordings(): LiveData<List<Recording>>
 
     @Transaction
     @Query(RECORDING_BASE_QUERY +
@@ -60,14 +68,14 @@ abstract class RecordingDao {
             " OR (rec.error IS NULL  AND rec.state='missed') " +
             " OR (rec.error='Aborted by user' AND rec.state='completed')" +
             "ORDER BY rec.start DESC")
-    abstract fun loadAllFailedRecordings(): LiveData<List<Recording>>
+    abstract fun loadFailedRecordings(): LiveData<List<Recording>>
 
     @Transaction
     @Query(RECORDING_BASE_QUERY +
             "WHERE " + CONNECTION_IS_ACTIVE +
             " AND rec.error = 'File missing' AND rec.state = 'completed'" +
             "ORDER BY rec.start DESC")
-    abstract fun loadAllRemovedRecordings(): LiveData<List<Recording>>
+    abstract fun loadRemovedRecordings(): LiveData<List<Recording>>
 
     @Transaction
     @Query(RECORDING_BASE_QUERY +
@@ -85,7 +93,7 @@ abstract class RecordingDao {
     @Query(RECORDING_BASE_QUERY +
             "WHERE " + CONNECTION_IS_ACTIVE +
             " AND rec.channel_id = :channelId")
-    abstract fun loadAllRecordingsByChannelId(channelId: Int): LiveData<List<Recording>>
+    abstract fun loadRecordingsByChannelId(channelId: Int): LiveData<List<Recording>>
 
     @Transaction
     @Query(RECORDING_BASE_QUERY +
